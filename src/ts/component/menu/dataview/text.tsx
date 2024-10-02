@@ -14,7 +14,6 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		super(props);
 
 		this.onInput = this.onInput.bind(this);
-		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 	};
 	
@@ -29,7 +28,6 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 				id="input"
 				placeholder={placeholder}
 				readonly={!canEdit}
-				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onInput={this.onInput}
 				onPaste={this.onInput}
@@ -63,10 +61,6 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		this.resize();
 	};
 
-	onFocus () {
-		keyboard.setFocus(true);
-	};
-
 	onBlur (e: any) {
 		this.save();
 	};
@@ -76,8 +70,9 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		const { data } = param;
 		const { onChange } = data;
 
-		keyboard.setFocus(false);
-		onChange(this.getValue().trim());
+		if (onChange) {
+			onChange(this.getValue().trim());
+		};
 	};
 
 	getValue (): string {

@@ -419,7 +419,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const filter = view.getFilter(itemId);
 		const isReadonly = this.isReadonly();
 
-		if (isReadonly) {
+		if (isReadonly || S.Menu.isAnimating('select')) {
 			return;
 		};
 
@@ -427,20 +427,17 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			setActive(item, false);
 		};
 
-		let options = [];
-		let key = item.id;
+		const menuParam = {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			noFlipY: true,
+		};
 
 		if (item.id == 'relation') {
-			const menuParam = {
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: getSize().width,
-				horizontal: I.MenuDirection.Right,
-				vertical: I.MenuDirection.Center,
-				passThrough: true,
-			};
-
 			U.Menu.sortOrFilterRelationSelect(menuParam, {
-				menuParam,
 				rootId,
 				blockId,
 				getView,
@@ -448,10 +445,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					this.onChange('relationKey', item.relationKey ? item.relationKey : item.id);
 				}
 			});
-
 			return;
 		};
 
+		let options = [];
 		switch (item.id) {
 			case 'condition': {
 				if (Relation.isDictionary(filter.relationKey)) {
@@ -470,19 +467,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		S.Menu.closeAll([ 'select' ], () => {
 			S.Menu.open('select', {
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center,
-				isSub: true,
-				noFlipY: true,
+				...menuParam,
 				data: {
 					noFilter: true,
 					noVirtualisation: true,
 					rebind: this.rebind,
-					value: item[key],
+					value: item[item.id],
 					options,
 					onSelect: (e: any, el: any) => {
-						this.onChange(key, el.id);
+						this.onChange(item.id, el.id);
 					}
 				}
 			});
@@ -639,7 +632,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			horizontal: I.MenuDirection.Center,
 			data: { 
 				rebind: this.rebind,
-				value: value, 
+				value, 
+				canEdit: true,
 				onChange: (value: number) => {
 					this.onChange('value', value);
 				},
@@ -673,6 +667,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					value: item.value || [], 
 					relation: observable.box(relation),
 					canAdd: true,
+					canEdit: true,
 					onChange: value => this.onChange('value', value),
 				},
 			});
@@ -711,6 +706,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					filters,
 					relation: observable.box(relation),
 					canAdd: true,
+					canEdit: true,
 					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
 

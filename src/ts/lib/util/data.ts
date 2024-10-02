@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding, Preview } from 'Lib';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -144,6 +144,16 @@ class UtilData {
 		v = v || I.BlockVAlign.Top;
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
+
+	emojiParam (t: I.TextStyle) {
+		let s = 20;
+		switch (t) {
+			case I.TextStyle.Header1:	 s = 30; break;
+			case I.TextStyle.Header2:	 s = 26; break;
+			case I.TextStyle.Header3: 	 s = 22; break;
+		};
+		return s;
+	};
 	
 	onInfo (info: I.AccountInfo) {
 		S.Block.rootSet(info.homeObjectId);
@@ -216,7 +226,7 @@ class UtilData {
 
 					const space = U.Space.getSpaceview();
 
-					if (!space.isPersonal) {
+					if (!space.isPersonal && !space.isShared && Storage.get('shareBannerClosed')) {
 						Onboarding.start('space', keyboard.isPopup(), false);
 					};
 
@@ -250,6 +260,19 @@ class UtilData {
 		analytics.event('OpenAccount');
 	};
 
+	onAuthWithoutSpace (routeParam?: any) {
+		routeParam = routeParam || {};
+
+		this.createGlobalSubscriptions(() => {
+			const spaces = U.Space.getList();
+			if (spaces.length) {
+				U.Router.switchSpace(spaces[0].targetSpaceId, '', false, routeParam.onRouteChange);
+			} else {
+				U.Router.go('/main/void', routeParam);
+			};
+		});
+	};
+
 	createAllSubscriptions (callBack?: () => void) {
 		this.createGlobalSubscriptions(() => {
 			this.createSpaceSubscriptions(callBack);
@@ -258,11 +281,19 @@ class UtilData {
 
 	createGlobalSubscriptions (callBack?: () => void) {
 		const { account } = S.Auth;
+
+		if (!account) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.profile,
 				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -282,20 +313,49 @@ class UtilData {
 			},
 		];
 
-		if (account) {
+		this.createSubscriptions(list, () => {
+			this.createMyParticipantSubscriptions(null, callBack);
+		});
+	};
+
+	createMyParticipantSubscriptions (ids: string[], callBack?: () => void) {
+		const { account } = S.Auth;
+
+		if (!account) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		let spaces = U.Space.getList();
+		if (ids && ids.length) {
+			spaces = spaces.filter(it => ids.includes(it.targetSpaceId));
+		};
+
+		if (!spaces.length) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		const list = [];
+
+		spaces.forEach(space => {
 			list.push({
-				subId: J.Constant.subId.myParticipant,
+				subId: [ J.Constant.subId.myParticipant, space.targetSpaceId ].join('-'),
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-					{ relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space.targetSpaceId },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: U.Space.getParticipantId(space.targetSpaceId, account.id) },
 				],
+				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				noDeps: true,
 			});
-		};
+		});
 
 		this.createSubscriptions(list, callBack);
 	};
@@ -303,15 +363,6 @@ class UtilData {
 	createSpaceSubscriptions (callBack?: () => void): void {
 		const { space } = S.Common;
 		const list: any[] = [
-			{
-				subId: J.Constant.subId.profile,
-				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
-				],
-				noDeps: true,
-				ignoreWorkspace: true,
-				ignoreHidden: false,
-			},
 			{
 				subId: J.Constant.subId.deleted,
 				keys: [],
@@ -428,6 +479,10 @@ class UtilData {
 		return J.Relation.default.concat(J.Relation.syncStatus);
 	};
 
+	chatRelationKeys () {
+		return J.Relation.default.concat([ 'source' ]);
+	};
+
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
 		C.WalletCreateSession(phrase, key, (message: any) => {
 
@@ -473,7 +528,7 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, limit } = param || {};
+		const { withSet, withCollection, withChat, limit } = param || {};
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
@@ -481,7 +536,10 @@ class UtilData {
 		let items: any[] = [];
 
 		items = items.concat(S.Record.getTypes().filter(it => {
-			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
+			return pageLayouts.includes(it.recommendedLayout) && 
+				!skipLayouts.includes(it.recommendedLayout) && 
+				(it.spaceId == space) &&
+				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
 
 		if (limit) {
@@ -492,16 +550,20 @@ class UtilData {
 			items.push(S.Record.getSetType());
 		};
 
+		if (withChat && config.experimental) {
+			items.push(S.Record.getChatType());
+		};
+
 		if (withCollection) {
 			items.push(S.Record.getCollectionType());
 		};
 
 		items = items.filter(it => it);
-
 		if (!config.debug.hiddenObject) {
 			items = items.filter(it => !it.isHidden);
 		};
 
+		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
 		return items;
 	};
 
@@ -610,18 +672,6 @@ class UtilData {
 		return 0;
 	};
 
-	sortByWeight (c1: any, c2: any) {
-		if (c1._sortWeight_ > c2._sortWeight_) return -1;
-		if (c1._sortWeight_ < c2._sortWeight_) return 1;
-		return this.sortByName(c1, c2);
-	};
-
-	sortByFormat (c1: any, c2: any) {
-		if (c1.format > c2.format) return 1;
-		if (c1.format < c2.format) return -1;
-		return this.sortByName(c1, c2);
-	};
-
 	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
 		const idx1 = ids.indexOf(c1.id);
 		const idx2 = ids.indexOf(c2.id);
@@ -632,9 +682,24 @@ class UtilData {
 	};
 
 	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
-		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
-		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		const k1 = Number(c1[key]) || 0;
+		const k2 = Number(c2[key]) || 0;
+
+		if (k1 > k2) return dir == I.SortType.Asc ? 1 : -1;
+		if (k1 < k2) return dir == I.SortType.Asc ? -1 : 1;
 		return this.sortByName(c1, c2);
+	};
+
+	sortByWeight (c1: any, c2: any) {
+		return this.sortByNumericKey('_sortWeight_', c1, c2, I.SortType.Desc);
+	};
+
+	sortByFormat (c1: any, c2: any) {
+		return this.sortByNumericKey('format', c1, c2, I.SortType.Asc);
+	};
+
+	sortByLastUsedDate (c1: any, c2: any) {
+		return this.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc);
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
@@ -699,6 +764,48 @@ class UtilData {
 		return [ I.CoverType.Upload, I.CoverType.Source ].includes(type);
 	};
 
+	searchDefaultFilters (param: any) {
+		const { config, space } = S.Common;
+		const { ignoreWorkspace, ignoreHidden, ignoreDeleted, withArchived } = param;
+		const filters = param.filters || [];
+		const chatDerivedType = S.Record.getChatDerivedType();
+
+		filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chatDerived });
+
+		if (!ignoreWorkspace) {
+			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
+		};
+
+		if (ignoreHidden && !config.debug.hiddenObject) {
+			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (ignoreDeleted) {
+			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (!withArchived) {
+			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (!config.experimental) {
+			const chatType = S.Record.getChatType();
+
+			if (chatType) {
+				filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatType?.id });
+			};
+
+			filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chat });
+		};
+
+		if (chatDerivedType) {
+			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatDerivedType.id });
+		};
+
+		return filters;
+	};
+
 	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
 		if (message.error.code) {
 			return;
@@ -743,30 +850,13 @@ class UtilData {
 			collectionId: ''
 		}, param);
 
-
-		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived, collectionId } = param;
+		const { subId, idField, sorts, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
+		const filters = this.searchDefaultFilters(param);
 
 		if (!subId) {
 			console.error('[U.Data].searchSubscribe: subId is empty');
 			return;
-		};
-
-		if (!ignoreWorkspace) {
-			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
-		};
-
-		if (ignoreHidden && !config.debug.hiddenObject) {
-			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (ignoreDeleted) {
-			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (!withArchived) {
-			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!keys.includes(idField)) {
@@ -825,8 +915,6 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space } = S.Common;
-
 		param = Object.assign({
 			idField: 'id',
 			fullText: '',
@@ -841,25 +929,9 @@ class UtilData {
 			withArchived: false,
 		}, param);
 
-		const { idField, filters, sorts, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
+		const { idField, sorts, offset, limit } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
-
-		if (!ignoreWorkspace) {
-			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
-		};
-
-		if (ignoreHidden && !config.debug.hiddenObject) {
-			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (ignoreDeleted) {
-			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (!withArchived) {
-			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
-		};
+		const filters = this.searchDefaultFilters(param);
 
 		if (!keys.includes(idField)) {
 			keys.push(idField);
@@ -906,7 +978,7 @@ class UtilData {
 	graphFilters () {
 		const { space } = S.Common;
 		const templateType = S.Record.getTemplateType();
-		const filters = [
+		const filters: any[] = [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
@@ -1040,7 +1112,7 @@ class UtilData {
 		});
 	};
 
-	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
+	groupDateSections (records: any[], key: string, sectionTemplate?: any, dir?: I.SortType) {
 		const now = U.Date.now();
 		const { d, m, y } = U.Date.getCalendarDateParam(now);
 		const today = now - U.Date.timestamp(y, m, d);
@@ -1055,16 +1127,19 @@ class UtilData {
 			older: []
 		};
 
+		const groupNames = [ 'today', 'yesterday', 'lastWeek', 'lastMonth', 'older' ];
+		if (dir == I.SortType.Asc) {
+			groupNames.reverse();
+		};
+
 		let groupedRecords = [];
 
 		if (!sectionTemplate) {
 			sectionTemplate = {};
 		};
 
-
 		records.forEach((record) => {
 			const diff = now - record[key];
-
 			if (diff < today) {
 				groups.today.push(record);
 			} else
@@ -1081,10 +1156,13 @@ class UtilData {
 			};
 		});
 
-		Object.keys(groups).forEach((key) => {
-			if (groups[key].length) {
-				groupedRecords.push(Object.assign({ id: key, isSection: true }, sectionTemplate));
-				groupedRecords = groupedRecords.concat(groups[key]);
+		groupNames.forEach((name) => {
+			if (groups[name].length) {
+				groupedRecords.push(Object.assign({ id: name, isSection: true }, sectionTemplate));
+				if (dir) {
+					groups[name] = groups[name].sort((c1, c2) => U.Data.sortByNumericKey(key, c1, c2, dir));
+				};
+				groupedRecords = groupedRecords.concat(groups[name]);
 			};
 		});
 

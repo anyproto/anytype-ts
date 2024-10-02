@@ -52,16 +52,18 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const subIdTemplate = this.getSubIdTemplate();
 		const templates = S.Record.getRecordIds(subIdTemplate, '');
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isTemplate = object.uniqueKey == J.Constant.typeKey.template;
 
 		const layout: any = U.Menu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
-		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
+		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		const recommendedKeys = recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
 
 		const allowedObject = object.isInstalled && U.Object.isInPageLayouts(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
-		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
+		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) && !U.Object.isParticipantLayout(object.recommendedLayout);
+		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite && !isTemplate;
+		const allowedLayout = ![ I.ObjectLayout.Bookmark, I.ObjectLayout.Chat, I.ObjectLayout.Participant ].includes(object.recommendedLayout);
 		
 		const subIdObject = this.getSubIdObject();
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
@@ -82,13 +84,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				return false;
 			};
 			return config.debug.hiddenObject ? true : !it.isHidden;
-		});
+		}).sort(U.Data.sortByName);
 
 		const isFileType = U.Object.isInFileLayouts(object.recommendedLayout);
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => v ? U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
+				mapper: v => v ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v) : '',
 			},
 		];
 
@@ -132,7 +134,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						{...this.props} 
 						ref={ref => this.refHead = ref} 
 						placeholder={translate('defaultNameType')} 
-						rootId={rootId} onCreate={this.onCreate} 
+						rootId={rootId} 
+						onCreate={this.onCreate} 
 					/>
 
 					{showTemplates ? (
@@ -202,7 +205,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						</div>
 					</div>
 
-					{object.isInstalled ? (
+					{object.isInstalled && !object._empty_ ? (
 						<div className="section set">
 							<div className="title">{totalObject} {U.Common.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
@@ -213,6 +216,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									rootId={rootId} 
 									columns={columns} 
 									filters={filtersObject} 
+									relationKeys={recommendedKeys}
 								/>
 							</div>
 						</div>
@@ -336,8 +340,18 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const allowedObject = U.Object.isInPageLayouts(type.recommendedLayout) || U.Object.isInSetLayouts(type.recommendedLayout);
+		const layout = type.recommendedLayout;
 		const options = [];
+		
+		let allowedObject = 
+			U.Object.isInPageLayouts(layout) || 
+			U.Object.isInSetLayouts(layout) || 
+			U.Object.isBookmarkLayout(layout) ||
+			U.Object.isChatLayout(layout);
+
+		if (type.uniqueKey == J.Constant.typeKey.template) {
+			allowedObject = false;
+		};
 
 		if (allowedObject) {
 			options.push({ id: 'object', name: translate('commonNewObject') });
@@ -377,7 +391,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		if (!type) {
 			return;
 		};
-		
+
 		const details: any = {};
 
 		if (U.Object.isInSetLayouts(type.recommendedLayout)) {

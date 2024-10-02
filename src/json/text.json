@@ -36,6 +36,7 @@
 	"commonGraph": "Graph",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
+	"commonAllContent": "All objects",
 	"commonBin": "Bin",
 	"commonToday": "Today",
 	"commonTomorrow": "Tomorrow",
@@ -59,6 +60,10 @@
 	"commonAdd": "Add",
 	"commonDone": "Done",
 	"commonUnlink": "Unlink",
+	"commonUnlinkFromType": "Unlink from Type",
+	"commonUnlinkFromObject": "Unlink from Object",
+	"commonUnlinkFromSet": "Unlink from Set",
+	"commonFromCollection": "Unlink from Collection",
 	"commonDeletedObject": "Non-existent object",
 	"commonDeletedType": "Deleted type",
 	"commonDeletedRelation": "Deleted Relation",
@@ -152,7 +157,16 @@
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObject": "Create Object",
 	"commonUrl": "Url",
+	"commonEdit": "Edit",
+	"commonShare": "Share",
 	"commonDoNotShowAgain": "Don’t show this again",
+	"commonObject": "Object",
+	"commonMedia": "Media",
+	"commonFile": "File",
+	"commonMembers": "Members",
+	"commonNothingFound": "Nothing found",
+	"commonEntrySpace": "My First Space",
+	"commonSystem": "System",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -167,8 +181,18 @@
 	"pluralRequest": "request|requests",
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
+	"pluralWeek": "week|weeks",
+	"pluralMonth": "month|months",
 	"pluralYear": "year|years",
 	"pluralDevice": "device|devices",
+
+	"pluralImage": "Image|Images",
+	"pluralVideo": "Video|Videos",
+	"pluralAudio": "Audio|Audios",
+	"pluralFile": "File|Files",
+	"pluralPdf": "Pdf|Pdfs",
+	"pluralBookmark": "Bookmark|Bookmarks",
+	"pluralAttachment": "Attachment|Attachments",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -313,6 +337,7 @@
 	"headerGraphTooltipSettings": "Settings",
 
 	"shareTooltipLabel": "<b>Share Anytype</b> with<br/>those you care about",
+	"shareBannerLabel": "<b>Share the space!</b> Invite your friends and build together.",
 
 	"authInviteTitle": "Welcome to Anytype",
 	"authInviteLabel": "Enter your invite code. If you don't have one, visit <a href=\"https:\/\/anytype.io\">anytype.io<\/a> to register for early access. We are inviting new testers on a rolling basis.",
@@ -362,6 +387,30 @@
 	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It cannot be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
 	"authOnboardPhraseSubmit": "Show my Key",
 
+	"onboardingExperienceSubTitle": "Build your first space",
+	"onboardingExperienceTypeTitle": "Who Will Use This Space?",
+	"onboardingExperiencePurposeTitle": "What Life Area Is This Space For?",
+	"onboardingExperienceUsecaseTitle": "Pick an Experience To Start",
+	"onboardingExperienceUsecaseButtonSelectExperience": "Select this Experience",
+
+	"onboardingExperienceUsecaseStartFromScratchTitle": "Start Without A Template",
+	"onboardingExperienceUsecaseStartFromScratchText": "Structure your space yourself. If you change your mind, you can always add an experience from our gallery later on.",
+	"onboardingExperienceUsecaseButtonStartFromScratch": "Start From Scratch",
+
+	"onboardingExperienceItemsPrivateTitle": "Just Me",
+	"onboardingExperienceItemsPrivateText": "A private place for your notes, files, and bookmarks",
+	"onboardingExperienceItemsSharedTitle": "With Others",
+	"onboardingExperienceItemsSharedText": "Your household, team, class, friend group, etc.",
+	"onboardingExperienceItemsPersonalTitle": "Personal",
+	"onboardingExperienceItemsPersonalPrivateText": "Diary, creative writing, recipe book, household management",
+	"onboardingExperienceItemsPersonalSharedText": "Household management, shared recipe book ",
+	"onboardingExperienceItemsEducationTitle": "Education",
+	"onboardingExperienceItemsEducationText": "Course notes, assignment tracking, exam calendar",
+	"onboardingExperienceItemsWorkTitle": "Work",
+	"onboardingExperienceItemsWorkText": "Project management, personal meeting notes, freelance work",
+	"onboardingExperienceItemsCommunityTitle": "Community",
+	"onboardingExperienceItemsCommunityText": "Neighborhood groups, fan communities, gardening tips",
+
 	"usecase2Title": "Personal projects",
 	"usecase2Label": "Manage your personal projects and tasks with complete privacy",
 	"usecase3Title": "Bookshelf",
@@ -394,31 +443,6 @@
 
 	"pageMainNavigationItemEmptyTitle": "Object can not be shown",
 
-	"pageMainStoreTypes": "Types",
-	"pageMainStoreRelations": "Relations",
-	"pageMainStoreTypesTitle": "Types are like categories<br/>that help you group and manage<br/>your Objects.",
-	"pageMainStoreTypesPlaceholder": "Search or create a new Type...",
-	"pageMainStoreTypesService": "Service Type",
-	"pageMainStoreTypeInstalled": "Type is installed",
-	"pageMainStoreTypeInstall": "Install Type",
-	"pageMainStoreTypeEmpty": "<b>Your type list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above",
-	"pageMainStoreRelationsTitle": "All Objects are connected.<br />Use Relations to build connections between Objects.",
-	"pageMainStoreRelationsPlaceholder": "Search or create a new Relation...",
-	"pageMainStoreRelationsService": "Service Relation",
-	"pageMainStoreRelationsInstalled": "Relation is installed",
-	"pageMainStoreRelationsInstall": "Install Relation",
-	"pageMainStoreRelationsEmpty": "<b>Your Relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above",
-	"pageMainStoreMyTypes": "My Types",
-	"pageMainStoreMyRelations": "My Relations",
-	"pageMainStoreBannerTitle": "What can I build with Anytype?",
-	"pageMainStoreBannerButton": "Explore",
-	"pageMainStoreSort": "Sort by",
-	"pageMainStoreSortNameAsc": "Name A->Z",
-	"pageMainStoreSortNameDesc": "Name Z->A",
-	"pageMainStoreSortCreatedAsc": "Oldest created",
-	"pageMainStoreSortCreatedDesc": "Newest created",
-	"pageMainStoreSortLastUsedDesc": "Recently used",
-
 	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
@@ -443,7 +467,12 @@
 	"pageMainHistoryCurrent": "Current version",
 	"pageMainHistoryRestore": "Restore",
 
+	"pageMainVoidTitle": "You're all out of spaces",
+	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
+	"pageMainVoidCreateSpace": "Create space",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
+	"pageAuthLoginShortPhrase": "Key is too short",
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
@@ -488,7 +517,7 @@
 	"blockNameExistingPage": "Add link",
 	"blockNameExistingFile": "Add file",
 	"blockNameFile": "File",
-	"blockNameImage": "Picture",
+	"blockNameImage": "Image",
 	"blockNameVideo": "Video",
 	"blockNameAudio": "Audio",
 	"blockNamePdf": "PDF",
@@ -606,6 +635,7 @@
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
 	"blockEmbedOffline": "You are not connected to the Internet",
+	"blockEmbedExternalImage": "External image",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
@@ -645,6 +675,20 @@
 
 	"blockTypeMyTypes": "My Types",
 
+	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
+	"blockChatMessageExpand": "Expand",
+	"blockChatMessageCollapse": "Collapse",
+	"blockChatReactionAdd": "Add reaction",
+	"blockChatReply": "Reply",
+	"blockChatPlaceholder": "Enter your message",
+	"blockChatButtonObject": "Add object",
+	"blockChatButtonEmoji": "Add emoji",
+	"blockChatButtonMention": "Add mention",
+	"blockChatNewMessages": "New messages",
+	"blockChatMessageEdited": "(edited)",
+	"blockChatEditing": "Editing message",
+	"blockChatReplying": "Replying to %s",
+
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
 	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
@@ -680,14 +724,6 @@
 	"popupSettingsColorModeButtonLight": "Light",
 	"popupSettingsColorModeButtonDark": "Dark",
 	"popupSettingsColorModeButtonSystem": "System",
-
-	"popupSettingsWallpaperTitle": "Wallpaper",
-	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",
-
-	"popupSettingsPicture": "Pictures",
-	"popupSettingsColor": "Colors",
-	"popupSettingsGradient": "Gradients",
-	"popupSettingsCodeStub": "Follow the white rabbit",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
@@ -748,7 +784,6 @@
 	"popupSettingsSpaceIndexShareManageTitle": "Manage sharing",
 	"popupSettingsSpaceIndexShareManageText": "Copy invite link, approve requests and manage members",
 
-	"popupSettingsSpaceIndexShareMembersTitle": "Members",
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
@@ -809,7 +844,6 @@
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
 
-	"popupSettingsSpaceShareMembersTitle": "Members",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
@@ -819,8 +853,6 @@
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareShowQR": "Show QR code",
-
-	"popupSettingsSpaceMembersTitle": "Members",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -841,8 +873,8 @@
 	"popupSettingsMembershipSlide3Text": "Our network's value exceeds the sum of its parts. Your membership sustains the infrastructure for its growth which underpins this network.",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
-	"popupSettingsMembershipPerYear": "per year",
-	"popupSettingsMembershipPerYears": "per %s %s",
+	"popupSettingsMembershipPerGenericSingle": "per %s",
+	"popupSettingsMembershipPerGenericMany": "per %s %s",
 	"popupSettingsMembershipLearnMore": "Learn more",
 	"popupSettingsMembershipCurrent": "Current",
 	"popupSettingsMembershipManage": "Manage",
@@ -861,6 +893,11 @@
 	"popupSettingsOnboardingStoragePath": "Vault Data Location",
 	"popupSettingsOnboardingLocalOnlyWarningText": "Anytype can't transfer your data between directories. <br/>Your Spaces data will be downloaded from another device. <br/>Please ensure that you have such a device active on the same network.",
 	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
+	"popupSettingsOnboardingLocalOnlyNote": "This is an experimental mode.<br/>Use at your own risk.",
+	"popupSettingsOnboardingLocalOnlyConfirmText": "Local-only mode is an experimental feature and does not provide security benefits. Please use it at your own risk, as data loss may occur.",
+	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
+	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don’t use it",
+
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
@@ -905,7 +942,7 @@
 
 	"popupSettingsImportNotionDescription": "Import your Notion files through the Notion API with 3 simple steps",
 	"popupSettingsImportNotionTokenPlaceholder": "Paste your integration token",
-	"popupSettingsImportNotionHowTo": "How to import from Notion",
+	"popupSettingsImportNotionHowTo": "How to import from Notion (see <a href=\"%s\">FAQ</a>)",
 	"popupSettingsImportNotionStepByStepGuide": "Step-by-step guide",
 	"popupSettingsImportNotionIntegrationList11": "Create the integration you need to get Notion files",
 	"popupSettingsImportNotionIntegrationList12": "Settings &amp; members → My connections → Develop or manage integrations → <b><a href=\"https://www.notion.so/my-integrations\">New integration</a></b>",
@@ -927,8 +964,11 @@
 	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
 
 	"popupMembershipPaidTitle": "Pick your unique name",
-	"popupMembershipPaidTextPerYear": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a year.",
-	"popupMembershipPaidTextPerYears": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
+
+	"popupMembershipPaidTextUnlimited": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain.",
+	"popupMembershipPaidTextPerGenericSingle": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a %s.",
+	"popupMembershipPaidTextPerGenericMany": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
+
 	"popupMembershipPaidPlaceholder": "Enter your name",
 	"popupMembershipPayByCard": "Pay by Card",
 	"popupMembershipPayByCrypto": "Pay by Crypto",
@@ -1027,6 +1067,9 @@
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
 	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?",
+
+	"popupConfirmChatDeleteMessageTitle": "Delete message",
+	"popupConfirmChatDeleteMessageText": "Are you sure you want to delete this message?",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1150,7 +1193,6 @@
 	"popupShortcutNavigationBasics2": "Open the Flow pane",
 	"popupShortcutNavigationBasics3": "Open the Graph pane",
 	"popupShortcutNavigationBasics4": "Open the Search pane",
-	"popupShortcutNavigationBasics5": "Open the Library pane",
 	"popupShortcutNavigationBasics6": "Return to the home screen",
 	"popupShortcutNavigationBasics7": "Show previous object from History",
 	"popupShortcutNavigationBasics8": "Show next Object from History",
@@ -1331,8 +1373,6 @@
 	"menuBlockLinkFilterPlaceholder": "Paste link or search Objects",
 	"menuBlockLinkSectionsLinkToWebsite": "Link to website",
 
-	"menuBlockRelationEditUnlinkFromType": "Unlink from Type",
-	"menuBlockRelationEditUnlinkFromObject": "Unlink from Object",
 	"menuBlockRelationEditSelectObjectType": "Select Object Type",
 	"menuBlockRelationEditLimitObjectTypes": "Limit Object Types",
 	"menuBlockRelationEditIncludeTime": "Include time",
@@ -1509,11 +1549,6 @@
 	"menuWidgetNumberOfObjects": "Number of Objects",
 	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetEditWidgets": "Edit Widgets",
-	"menuWidgetFavorites": "Favorites",
-	"menuWidgetSets": "Sets",
-	"menuWidgetCollections": "Collections",
-	"menuWidgetRecentEdit": "Recently edited",
-	"menuWidgetRecentOpen": "Recently opened",
 	"menuWidgetRecentOpenCaption": "On this device",
 
 	"menuPreviewLatexExample": "Example: %s",
@@ -1533,6 +1568,8 @@
 	"syncButtonNameError3": "No access",
 	"syncButtonNameOffline": "No internet",
 
+	"syncButtonStaging": "Staging",
+
 	"menuSyncStatusTitle": "Sync status",
 
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
@@ -1543,6 +1580,7 @@
 	"menuSyncStatusInfoNetworkTitle": "Anytype network",
 	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
 	"menuSyncStatusInfoNetworkMessageSyncing": "%s %s syncing...",
+	"menuSyncStatusInfoNetworkMessageSyncMightBeSlow": "Sync might be slow",
 
 	"menuSyncStatusInfoNetworkMessageError1": "Storage limit reached",
 	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
@@ -1718,10 +1756,10 @@
 	"widgetRecentOpen": "Recently opened",
 	"widgetSet": "Sets",
 	"widgetCollection": "Collections",
+	"widgetChat": "Chats",
 	"widgetEdit": "Edit widgets",
 	"widgetAdd": "Add widget",
 	"widgetLibrary": "Library",
-	"widgetBin": "Bin",
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here",
@@ -1761,6 +1799,23 @@
 	"sidebarMenuAll": "Spaces & widgets",
 	"sidebarMenuSidebar": "Only widgets",
 	"sidebarMenuFocus": "Focus mode",
+
+	"sidebarObjectTypeObject": "Pages",
+	"sidebarObjectTypeList": "Lists",
+	"sidebarObjectTypeType": "Object Types",
+	"sidebarObjectTypeFile": "Files",
+	"sidebarObjectTypeMedia": "Media",
+	"sidebarObjectTypeBookmark": "Bookmarks",
+	"sidebarObjectTypeRelation": "Relations",
+
+	"sidebarObjectShow": "Show",
+	"sidebarObjectSort": "Sort",
+	"sidebarObjectOrphan": "Only unlinked",
+	"sidebarObjectOrphanLabel": "Unlinked objects that do not have a direct link or backlink with other objects in the graph.",
+	"sidebarObjectEmpty": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
+
+	"sidebarObjectSortCreated": "Date created",
+	"sidebarObjectSortUpdated": "Date updated",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
@@ -2045,7 +2100,7 @@
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 
-	"origin0": "None",
+	"origin0": "Empty",
 	"origin1": "Clipboard",
 	"origin2": "Drag'n'Drop",
 	"origin3": "Imported object",
@@ -2079,8 +2134,16 @@
 	"notificationGalleryErrorTitle": "Something went wrong",
 	"notificationGalleryErrorText": "Oops! <b>'%s'</b> wasn't installed. Please check your Internet connection and try again or post a report in our community.",
 
-	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
-	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
+	"notificationImportErrorTitle5": "No Items to Import",
+	"notificationImportErrorText5": "There are no items to import. Please check your file type or Import selection and try again.",
+	"notificationImportErrorTitle6": "Import Canceled",
+	"notificationImportErrorText6": "The import has been canceled.",
+	"notificationImportErrorTitle7": "Import Limit Exceeded",
+	"notificationImportErrorText7": "The file exceeds the import limit of 1,000 rows or 10 columns. Please adjust your file and try again.",
+	"notificationImportErrorTitle8": "File Load Error",
+	"notificationImportErrorText8": "We couldn’t load your files. Please check your files and try again, or manually transfer the files.",
+	"notificationImportErrorTitle9": "Permission Denied",
+	"notificationImportErrorText9": "We don’t have permission to import into this Anytype space.",
 
 	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>'%s'</b> space",
 

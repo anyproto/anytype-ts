@@ -72,7 +72,7 @@
 
                     .valid { 
 						display: flex; flex-direction: column; justify-content: space-between; height: 152px; padding: 43px 0 10px; margin-bottom: 16px;
-						border-radius: 8px; background: var(--color-shape-highlight-light-solid); 
+						border-radius: 8px; background: var(--color-shape-highlight-light); 
 					}
                     .valid {
                         .label { @include text-small; margin-bottom: 1px; }

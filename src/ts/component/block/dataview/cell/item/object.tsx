@@ -5,7 +5,8 @@ import { I, S, U } from 'Lib';
 
 interface Props {
 	cellId: string;
-	iconSize: number;
+	size?: number;
+	iconSize?: number;
 	relation?: any;
 	canEdit?: boolean;
 	getObject: () => any;
@@ -24,7 +25,7 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { cellId, iconSize, relation, canEdit } = this.props;
+		const { cellId, size, iconSize, relation, canEdit } = this.props;
 		const cn = [ 'element' ];
 		const object = this.getObject();
 		const { done, isReadonly, isArchived, layout } = object;
@@ -45,7 +46,8 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 				<IconObject 
 					id={`${cellId}-icon`}
 					object={object} 
-					size={iconSize} 
+					size={size} 
+					iconSize={iconSize}
 					canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(layout)} 
 				/>
 			);

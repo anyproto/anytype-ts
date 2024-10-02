@@ -128,8 +128,9 @@ class Sidebar {
 	};
 
 	setElementsWidth (width: any): void {
-		this.obj.find('#sidebarHead').css({ width });
-		this.obj.find('#sidebarBody').css({ width });
+		this.obj.find('#head').css({ width });
+		this.obj.find('#body').css({ width });
+		this.obj.find('#shareBanner').css({ width: (width ? width - 24 : '') });
 	};
 
 	setWidth (w: number): void {
@@ -156,7 +157,7 @@ class Sidebar {
 	};
 
 	onMouseMove (): void {
-		const { showVault, hideSidebar, isFullScreen } = S.Common;
+		const { showVault, hideSidebar } = S.Common;
 
 		if (!this.obj || !this.obj.length || keyboard.isDragging) {
 			return;
@@ -207,22 +208,24 @@ class Sidebar {
 		this.initObjects();
 
 		if ((width === null) && this.obj && this.obj.length) {
-			if (this.obj.css('display') != 'none') {
-				width = this.obj.outerWidth();
-			};
+			width = this.obj.outerWidth();
+		};
+
+		if (!keyboard.isMain() || keyboard.isMainVoid()) {
+			width = 0;
 		};
 
 		const { isClosed } = this.data;
 		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
+		const vw = isClosed || !showVault || !keyboard.isMain() ? 0 : J.Size.vault.width;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
-		
-		let toggleX = width ? width - 40 + (showVault ? vw : 0) : 84;
-		if (!width && (isFullScreen || !U.Common.isPlatformMac())) {
-			toggleX -= 68;
+
+		let toggleX = 16;
+		if ((width && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
+			toggleX = 84;
 		};
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
@@ -243,7 +246,7 @@ class Sidebar {
 			this.toggleButton.removeClass('sidebarAnimation');
 		};
 
-		navigation?.setX(width + vw, animate);
+		navigation?.position(width + vw, animate);
 		width ? this.header.addClass('withSidebar') : this.header.removeClass('withSidebar');
 
 		this.page.css({ width: pageWidth });
@@ -281,7 +284,9 @@ class Sidebar {
 			return;
 		};
 
-		this.obj.css({ width: v.isClosed ? 0 : v.width });
+		const width = v.isClosed ? 0 : v.width;
+
+		this.obj.css({ width });
 	};
 
 	/**
@@ -320,6 +325,10 @@ class Sidebar {
 
 	getVaultDuration (width: number): number {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
+	};
+
+	objectContainerToggle () {
+		S.Common.showObjectSet(!S.Common.showObject);
 	};
 
 };

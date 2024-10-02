@@ -308,7 +308,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		]);
 		
 		if (filter && filter.text) {
-			const actions = U.Menu.getActions({});
+			const actions = U.Menu.getActions({ count: 1 });
 
 			if (block.canTurnPage()) {
 				actions.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
@@ -555,10 +555,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						param.fields = { 
 							lang: (Storage.get('codeLang') || J.Constant.default.codeLang),
 						};
-					};
-
-					if ([ I.TextStyle.Code, I.TextStyle.Callout ].includes(param.content.style)) {
-						param.bgColor = 'grey';
 					};
 				};
 

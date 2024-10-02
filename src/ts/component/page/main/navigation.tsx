@@ -3,8 +3,10 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
+import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
 import { I, C, S, U, keyboard, focus, translate } from 'Lib';
+
+import Item from 'Component/sidebar/object/item';
 
 interface State {
 	loading: boolean;
@@ -13,7 +15,7 @@ interface State {
 	pagesOut: I.PageInfo[];
 };
 
-const HEIGHT = 96;
+const HEIGHT = 88;
 
 enum Panel { 
 	Left = 1, 
@@ -54,29 +56,12 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const { info, pagesIn, pagesOut, loading } = this.state;
 		const rootId = this.getRootId();
 
-		const Item = (item: any) => {
-			const { layout, name, description, snippet } = item || {};
-
-			return (
-				<div 
-					id={'item-' + item.id} 
-					className="item" 
-					onMouseEnter={e => this.onOver(e, item)}
-					onMouseLeave={() => this.unsetActive()}
-				>
-					<div className="inner" onClick={e => this.onClick(e, item)}>
-						<IconObject object={item} forceLetter={true} size={48} iconSize={24} />
-						<div className="info">
-							<ObjectName object={item} />
-							<ObjectDescription object={item} />
-						</div>
-					</div>
-					<Icon className="arrow" />
-				</div>
-			);
-		};
-
 		const rowRenderer = (list: I.PageInfo[], cache: any, { index, key, style, parent, panel }) => {
+			const item: any = list[index];
+
+			item.index = index;
+			item.panel = panel;
+
 			return (
 				<CellMeasurer
 					key={key}
@@ -86,31 +71,44 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					rowIndex={index}
 				>
 					<div className="row" style={style}>
-						<Item {...list[index]} index={index} panel={panel} />
+						<Item 
+							item={item}
+							onClick={e => this.onClick(e, item)}
+							onMouseEnter={() => this.onOver(item)}
+							onMouseLeave={() => this.unsetActive()}
+						/>
 					</div>
 				</CellMeasurer>
 			);
 		};
 
-		const ItemEmpty = (item: any) => {
-			return (
-				<div className="row">
-					<div className="item empty">
-						<div className="name">{item.name}</div>
-						<Icon className="arrow" />
-					</div>
+		const ItemEmpty = (item: any) => (
+			<div className="row">
+				<div className="item empty">
+					<div className="name">{item.name}</div>
 				</div>
-			);
-		};
+			</div>
+		);
 
 		const Selected = (item: any) => {
-			const { name, description, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
+			const { id, name, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
+			const isFile = U.Object.isInFileLayouts(layout);
+			const cn = [ 'item', U.Data.layoutClass(id, layout), 'selected' ];
+			const iconSize = isFile ? 48 : null;
+
+			let description = null;
+			if (isFile) {
+				cn.push('isFile');
+				description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
+			} else {
+				description = <ObjectDescription object={item} />;
+			};
 
 			return (
-				<div id={'item-' + item.id} className="item selected">
-					<IconObject object={item} forceLetter={true} size={48} />
+				<div id={`item-${id}`} className={cn.join(' ')}>
+					<IconObject object={item} size={48} iconSize={iconSize} />
 					<ObjectName object={item} />
-					<ObjectDescription object={item} />
+					{description}
 					
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 				
@@ -288,7 +286,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			const hh = header.height();
 			const oh = container.height() - hh;
 
-			node.css({ paddingTop: isPopup ? 0 : hh });
 			sides.css({ height: oh });
 			items.css({ height: oh });
 			empty.css({ height: oh, lineHeight: oh + 'px' });
@@ -392,7 +389,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		node.find('.items .item.active').removeClass('active');
 	};
 
-	onOver (e: any, item: any) {
+	onOver (item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.panel = item.panel;
 			this.n = item.index;

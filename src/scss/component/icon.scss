@@ -4,6 +4,8 @@
 	display: inline-block; vertical-align: middle; background-size: 100% 100%; background-repeat: no-repeat;
 	background-position: center center; transition: $transitionAllCommon; position: relative;
 }
+.icon.withBackground { width: 28px !important; height: 28px !important; background-size: 20px !important; border-radius: 6px; }
+.icon.withBackground:hover, .icon.withBackground.hover  { background-color: var(--color-shape-highlight-medium) !important; };
 
 .arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 
@@ -19,18 +21,18 @@
 .icon.ghost { background-image: url('~img/icon/ghost.svg'); }
 
 .icon.relation.default { background-image: url('~img/icon/menu/action/block/relation0.svg'); }
-.icon.relation.c-longText { background-image: url('~img/icon/relation/small/longText.svg'); }
-.icon.relation.c-shortText { background-image: url('~img/icon/relation/small/shortText.svg'); }
-.icon.relation.c-number { background-image: url('~img/icon/relation/small/number.svg'); }
-.icon.relation.c-date { background-image: url('~img/icon/relation/small/date.svg'); }
-.icon.relation.c-select.isMultiSelect { background-image: url('~img/icon/relation/small/multiSelect.svg'); }
-.icon.relation.c-select.isSelect { background-image: url('~img/icon/relation/small/select.svg'); }
-.icon.relation.c-object { background-image: url('~img/icon/relation/small/object.svg'); }
-.icon.relation.c-file { background-image: url('~img/icon/relation/small/file.svg'); }
-.icon.relation.c-checkbox { background-image: url('~img/icon/relation/small/checkbox.svg'); }
-.icon.relation.c-url { background-image: url('~img/icon/relation/small/url.svg'); }
-.icon.relation.c-email { background-image: url('~img/icon/relation/small/email.svg'); }
-.icon.relation.c-phone { background-image: url('~img/icon/relation/small/phone.svg'); }
+.icon.relation.c-longText { background-image: url('~img/icon/relation/longText.svg'); }
+.icon.relation.c-shortText { background-image: url('~img/icon/relation/shortText.svg'); }
+.icon.relation.c-number { background-image: url('~img/icon/relation/number.svg'); }
+.icon.relation.c-date { background-image: url('~img/icon/relation/date.svg'); }
+.icon.relation.c-select.isMultiSelect { background-image: url('~img/icon/relation/multiSelect.svg'); }
+.icon.relation.c-select.isSelect { background-image: url('~img/icon/relation/select.svg'); }
+.icon.relation.c-object { background-image: url('~img/icon/relation/object.svg'); }
+.icon.relation.c-file { background-image: url('~img/icon/relation/file.svg'); }
+.icon.relation.c-checkbox { background-image: url('~img/icon/relation/checkbox.svg'); }
+.icon.relation.c-url { background-image: url('~img/icon/relation/url.svg'); }
+.icon.relation.c-email { background-image: url('~img/icon/relation/email.svg'); }
+.icon.relation.c-phone { background-image: url('~img/icon/relation/phone.svg'); }
 
 .icon.layout.c-page { background-image: url('~img/icon/object/page.svg'); }
 .icon.layout.c-human { background-image: url('~img/icon/object/human.svg'); }

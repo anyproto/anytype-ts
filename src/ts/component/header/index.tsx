@@ -7,7 +7,6 @@ import HeaderMainObject from './main/object';
 import HeaderMainHistory from './main/history';
 import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
-import HeaderMainStore from './main/store';
 import HeaderMainEmpty from './main/empty';
 
 interface Props extends I.HeaderComponent {
@@ -21,7 +20,6 @@ const Components = {
 	mainHistory:		 HeaderMainHistory,
 	mainGraph:			 HeaderMainGraph,
 	mainNavigation:		 HeaderMainNavigation,
-	mainStore:			 HeaderMainStore,
 	mainEmpty:			 HeaderMainEmpty,
 };
 
@@ -86,7 +84,7 @@ class Header extends React.Component<Props> {
 		return (
 			<React.Fragment>
 				<Icon 
-					className="expand" 
+					className="expand withBackground" 
 					tooltip={translate('commonOpenObject')} 
 					onClick={onOpen || this.onExpand} 
 				/>

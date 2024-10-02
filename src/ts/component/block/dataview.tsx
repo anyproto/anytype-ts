@@ -591,7 +591,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return J.Constant.templateId.blank;
 	};
 
-	recordCreate (e: any, template: any, dir: number, groupId?: string) {
+	recordCreate (e: any, template: any, dir: number, groupId?: string, idx?: number) {
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
@@ -649,16 +649,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			const object = message.details;
 			const oldIndex = records.indexOf(message.objectId);
 
-			if (isCollection) {
-				C.ObjectCollectionAdd(objectId, [ object.id ]);
-			};
-
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
+			// If idx present use idx otherwise use dir to add record to the beginning or end of the list
 			if (oldIndex < 0) {
-				dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
-			} else {
-				records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
+				if (idx >= 0) {
+					records.splice(idx, 0, message.objectId);
+				} else {
+					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+				};
+			} else {	
+				const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
+				records = arrayMove(records, oldIndex, newIndex);
+			};
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
 
 			if (groupId) {
@@ -679,14 +685,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			if ([ I.ViewType.Calendar ].includes(view.type)) {
 				U.Object.openConfig(object);
 			} else {
-				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-				const ref = this.refCells.get(id);
-
 				if (U.Object.isNoteLayout(object.layout)) {
 					this.onCellClick(e, 'name', object.id);
-				} else
-				if (ref) {
-					window.setTimeout(() => ref.onClick(e), 15);
+				} else {
+					window.setTimeout(() => {
+						const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+						const ref = this.refCells.get(id);
+
+						if (ref) {
+							ref.onClick(e)
+						};
+					}, 15);
 				};
 
 				analytics.createObject(object.type, object.layout, this.analyticsRoute(), message.middleTime);
@@ -704,18 +713,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onRecordAdd (e: any, dir: number, groupId?: string, menuParam?: any) {
+	onRecordAdd (e: any, dir: number, groupId?: string, menuParam?: any, idx?: number) {
 		if (e.persist) {
 			e.persist();
 		};
 
 		const typeId = this.getTypeId();
 		const type = S.Record.getTypeById(typeId);
+		const view = this.getView();
+
+		if ((view.type == I.ViewType.Board) && !groupId) {
+			groupId = 'empty';
+		};
 
 		if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
 			this.onBookmarkMenu(e, dir, groupId, menuParam);
 		} else {
-			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId);
+			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);
 		};
 	};
 
@@ -949,7 +963,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				route: this.analyticsRoute(),
 				relationKeys: this.getVisibleRelations().map(it => it.relationKey),
 				view,
-				allowedLink: true,
+				allowedLinkTo: true,
 				allowedOpen: true,
 			}
 		});
@@ -1245,9 +1259,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
 		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
+		const templateType = S.Record.getTemplateType();
 
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {
+				isAllowed = false;
+				break;
+			};
+
+			if (templateType && (type.id == templateType.id)) {
 				isAllowed = false;
 				break;
 			};

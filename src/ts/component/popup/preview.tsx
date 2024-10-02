@@ -44,7 +44,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		if (object) {
 			name = <ObjectName object={object} />;
-			menu = <Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />;
+			menu = <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} />;
 		};
 
 		return (
@@ -193,10 +193,10 @@ class PopupPreview extends React.Component<I.Popup> {
 		let w = 0, h = 0;
 		if (width > height) {
 			w = Math.min(maxWidth, width);
-			h = Math.min(maxHeight, w / (width / height));
+			h = w / (width / height);
 		} else {
 			h = Math.min(maxHeight, height);
-			w = Math.min(maxWidth, h / (height / width));
+			w = h / (height / width);
 		};
 
 		wrap.css({ width: w, height: h });

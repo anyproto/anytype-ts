@@ -88,7 +88,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			// Add block's paddings to height
 			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
-				const block = $('#block-' + data.id);
+				const block = $(`#block-${data.id}`);
 				if (block.length) {
 					const top = parseInt(block.css('paddingTop'));
 					const bot = parseInt(block.css('paddingBottom'));
@@ -129,6 +129,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			return;
 		};
 
+		const electron = U.Common.getElectron();
 		const dataTransfer = e.dataTransfer;
 		const items = U.Common.getDataTransferItems(dataTransfer.items);
 		const isFileDrop = dataTransfer.files && dataTransfer.files.length;
@@ -171,7 +172,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		if (isFileDrop) {
 			const paths: string[] = [];
 			for (const file of dataTransfer.files) {
-				paths.push(file.path);
+				const path = electron.webFilePath(file);
+				if (path) {
+					paths.push(path);
+				};
 			};
 
 			console.log('[DragProvider].onDrop paths', paths);

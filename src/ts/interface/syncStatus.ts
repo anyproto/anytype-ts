@@ -3,6 +3,7 @@ export enum SyncStatusSpace {
 	Syncing					 = 1,
 	Error					 = 2,
 	Offline					 = 3,
+	Upgrade		 			 = 4,
 };
 
 export enum SyncStatusObject {

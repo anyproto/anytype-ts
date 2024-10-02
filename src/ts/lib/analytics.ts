@@ -5,7 +5,7 @@ const KEYS = [
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor', 'emptyType', 'status',
+	'processor', 'emptyType', 'status', 'sort',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -44,6 +44,7 @@ class Analytics {
 		mention: 'Mention',
 		media: 'Media',
 		calendar: 'Calendar',
+		allObjects: 'AllObjects',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

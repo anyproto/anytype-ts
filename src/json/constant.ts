@@ -15,7 +15,7 @@ export default {
 	allowedSchemes:		 [ 'https?', 'mailto', 'tel' ],
 
 	count: {
-		icon:			 16,
+		icon:			 10,
 		phrase:			 { letter: 8, word: 12 }
 	},
 	
@@ -37,12 +37,24 @@ export default {
 		space:			 10,
 		notification:	 20,
 		graphDepth:		 5,
+
+		chat: {
+			messages:		 100,
+			attachments:	 10,
+			files:			 10,
+			mentions:		 10,
+			text:			 2000,
+			reactions:		 {
+				self:		 10,
+				all:		 20,
+			},
+		}
 	},
 
 	default: {
 		interfaceLang:	 'en-US',
 		codeLang:		 'plain',
-		typeKey:		 'ot-note',
+		typeKey:		 'ot-page',
 		pinTime:		 600,
 	},
 
@@ -54,7 +66,6 @@ export default {
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 400,
-		login:			 800,
 		sidebar:		 180,
 	},
 
@@ -88,9 +99,10 @@ export default {
 		archive:		 'archive',
 		sidebar:		 'sidebar',
 		space:			 'space',
-		files:			 'files',
+		fileManager:	 'fileManager',
 		participant:	 'participant',
-		myParticipant:	 'myParticipant'
+		myParticipant:	 'myParticipant',
+		allObject:		 'allObject',
 	},
 
 	typeKey: {
@@ -111,7 +123,9 @@ export default {
 		collection:		 'ot-collection',
 		dashboard:		 'ot-dashboard',
 		date:			 'ot-date',
-		profile:		 'ot-profile'
+		profile:		 'ot-profile',
+		chat:			 'ot-chat',
+		chatDerived:	 'ot-chatDerived',
 	},
 
 	templateId: {
@@ -125,7 +139,8 @@ export default {
 		featured:		 'featuredRelations',
 		dataview:		 'dataview',
 		type:			 'type',
-		header:			 'header'
+		header:			 'header',
+		chat:			 'chat',
 	},
 
 	widgetId: {
@@ -133,7 +148,8 @@ export default {
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
 		set:			 'set',
-		collection:		 'collection'
+		collection:		 'collection',
+		chat:			 'chat',
 	},
 
 	monthDays: {

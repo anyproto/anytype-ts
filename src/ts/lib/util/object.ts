@@ -16,16 +16,15 @@ class UtilObject {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Date: 		 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
-			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
+			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 		};
 		return r;
 	};
@@ -154,6 +153,7 @@ class UtilObject {
 
 		if (details.type) {
 			const type = S.Record.getTypeById(details.type);
+
 			if (type) {
 				typeKey = type.uniqueKey;
 
@@ -287,10 +287,14 @@ class UtilObject {
 	};
 
 	isInHumanLayouts (layout: I.ObjectLayout): boolean {
-		return [ I.ObjectLayout.Human, I.ObjectLayout.Participant ].includes(layout);
+		return this.getHumanLayouts().includes(layout);
 	};
 
 	// --------------------------------------------------------- //
+
+	isSpaceViewLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.SpaceView;
+	};
 
 	isSetLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Set;
@@ -337,8 +341,20 @@ class UtilObject {
 		return layout == I.ObjectLayout.Bookmark;
 	};
 
+	isChatLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Chat;
+	};
+
 	isImageLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Image;
+	};
+
+	isDateLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Date;
+	};
+
+	isFileLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.File;
 	};
 
 	// --------------------------------------------------------- //
@@ -362,7 +378,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -377,6 +393,7 @@ class UtilObject {
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
+			I.ObjectLayout.ChatDerived,
 		];
 	};
 
@@ -387,6 +404,13 @@ class UtilObject {
 			I.ObjectLayout.Audio,
 			I.ObjectLayout.Video,
 			I.ObjectLayout.Pdf,
+		];
+	};
+
+	getHumanLayouts (): I.ObjectLayout[] {
+		return [ 
+			I.ObjectLayout.Human, 
+			I.ObjectLayout.Participant,
 		];
 	};
 
@@ -407,12 +431,22 @@ class UtilObject {
 			I.ObjectLayout.Option, 
 			I.ObjectLayout.SpaceView, 
 			I.ObjectLayout.Space,
+			I.ObjectLayout.ChatDerived,
 		];
 	};
 
-	isAllowedTemplate (typeId): boolean {
+	isAllowedTemplate (typeId: string): boolean {
 		const type = S.Record.getTypeById(typeId);
+
+		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
+			return false;
+		};
+
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+	};
+
+	isAllowedObject (layout: I.ObjectLayout): boolean {
+		return this.getPageLayouts().concat(I.ObjectLayout.Chat).includes(layout);
 	};
 
 };

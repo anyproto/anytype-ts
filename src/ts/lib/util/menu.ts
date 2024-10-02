@@ -94,6 +94,7 @@ class UtilMenu {
 
 		if (config.experimental) {
 			ret = ret.concat([
+				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
@@ -107,7 +108,7 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
-		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true, withChat: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
@@ -180,11 +181,12 @@ class UtilMenu {
 
 	// Action menu
 	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject } = param;
+		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject, count } = param;
 		const cmd = keyboard.cmdSymbol();
+		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
-			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
+			{ id: 'copy', icon: 'copy', name: copyName, caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];
 
@@ -408,7 +410,11 @@ class UtilMenu {
 				};
 			};
 
-			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(id)) {
+			if ([ 
+				J.Constant.widgetId.set, 
+				J.Constant.widgetId.collection,
+				J.Constant.widgetId.chat,
+			].includes(id)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
 		};
@@ -832,13 +838,15 @@ class UtilMenu {
 	};
 
 	getFixedWidgets () {
+		const { config } = S.Common;
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
-			{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
-			{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
-			{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
-			{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
-		];
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
+			config.experimental ? { id: J.Constant.widgetId.chat, name: translate('widgetChat'), iconEmoji: '💬' } : null,
+			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
+			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
+		].filter(it => it);
 	};
 
 	sortOrFilterRelationSelect (menuParam: any, param: any) {
@@ -856,12 +864,22 @@ class UtilMenu {
 			S.Menu.close('select');
 		};
 
+		const onOpen = context => {
+			menuContext = context;
+
+			if (menuParam.onOpen) {
+				menuParam.onOpen(context);
+			};
+		};
+
+		delete(menuParam.onOpen);
+
 		S.Menu.open('select', {
 			width: 256,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
-			onOpen: context => menuContext = context,
+			onOpen,
 			...menuParam,
 			data: {
 				options,
@@ -958,6 +976,48 @@ class UtilMenu {
 
 	codeLangOptions (): I.Option[] {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
+	};
+
+	getObjectContainerSortOptions (sortId: I.SortId, sortType: I.SortType, withOrphans: boolean): any[] {
+		return ([
+			{ name: translate('sidebarObjectShow'), isSection: true },
+			{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
+			{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
+
+			{ isDiv: true },
+
+			{ name: translate('sidebarObjectSort'), isSection: true },
+			{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
+			{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
+			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
+		] as any[]).map(it => {
+			it.type = I.SortType.Asc;
+			if (it.id == sortId) {
+				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+				it.sortArrow = sortType;
+			};
+			return it;
+		});
+	};
+
+	dateFormatOptions () {
+		return ([
+			{ id: I.DateFormat.MonthAbbrBeforeDay },
+			{ id: I.DateFormat.MonthAbbrAfterDay },
+			{ id: I.DateFormat.Short },
+			{ id: I.DateFormat.ShortUS },
+			{ id: I.DateFormat.ISO },
+		] as any[]).map(it => {
+			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
+			return it;
+		});
+	};
+
+	timeFormatOptions () {
+		return [
+			{ id: I.TimeFormat.H12, name: translate('menuDataviewDate12Hour') },
+			{ id: I.TimeFormat.H24, name: translate('menuDataviewDate24Hour') },
+		];
 	};
 
 };

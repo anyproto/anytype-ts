@@ -95,12 +95,26 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalFullscreen')} />
-						<Switch className="big" value={fullscreenObject} onChange={(e: any, v: boolean) => S.Common.fullscreenObjectSet(v)} />
+						<Switch
+							className="big"
+							value={fullscreenObject}
+							onChange={(e: any, v: boolean) => {
+								S.Common.fullscreenObjectSet(v);
+								analytics.event('ShowObjectFullscreen', { type: v });
+							}}
+						/>
 					</div>
 
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalRelativeDates')} />
-						<Switch className="big" value={showRelativeDates} onChange={(e: any, v: boolean) => S.Common.showRelativeDatesSet(v)} />
+						<Switch
+							className="big"
+							value={showRelativeDates}
+							onChange={(e: any, v: boolean) => {
+								S.Common.showRelativeDatesSet(v);
+								analytics.event('RelativeDates', { type: v });
+							}}
+						/>
 					</div>
 				</div>
 
@@ -125,7 +139,14 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 					<div className="item">
 						<Label text={translate('electronMenuShowTray')} />
-						<Switch className="big" value={!hideTray} onChange={(e: any, v: boolean) => Renderer.send('setHideTray', v)} />
+						<Switch
+							className="big"
+							value={!hideTray}
+							onChange={(e: any, v: boolean) => {
+								Renderer.send('setHideTray', v);
+								analytics.event('ShowInSystemTray', { type: v });
+							}}
+						/>
 					</div>
 
 					{canHideMenu ? (

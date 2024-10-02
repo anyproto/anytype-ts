@@ -23,7 +23,7 @@
 		.iconObject {
 			.iconImage { border: 2px solid var(--color-bg-primary); }
 		}
-		.iconObject.isTask, .iconObject.isBookmark { background: none; position: absolute; top: 2px; left: -24px; box-shadow: 0px 0px !important; }
+		.iconObject.isTask { background: none; position: absolute; top: 2px; left: -24px; box-shadow: 0px 0px !important; }
 		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: 700; position: relative; width: 100%; }
 		.description { @include text-small; @include text-overflow-nw; }
 

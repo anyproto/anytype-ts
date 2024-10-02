@@ -39,10 +39,7 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 				}
 			}
 
-			.categories { 
-				padding: 18px 24px; background: var(--color-shape-highlight-light-solid); /*border-bottom: 1px solid var(--color-shape-secondary);*/
-				position: sticky; top: 0px; left: 0px; z-index: 10;
-			}
+			.categories { padding: 18px 24px; background: var(--color-shape-tertiary); position: sticky; top: 0px; left: 0px; z-index: 10; }
 			.categories {
 				.inner { transform: translate3d(0px,0px,0px); transition: 0.3s transform $easeInQuint; white-space: nowrap; }
 				.item { 
@@ -67,8 +64,8 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 				}
 
 				.gradient { position: absolute; top: 0px; z-index: 1; width: 26%; height: 100%; pointer-events: none; transition: $transitionAllCommon; }
-				.gradient.left { left: 0px; background: linear-gradient(to left, rgba(79, 79, 79, 0) 0%, var(--color-shape-highlight-light-solid) 100%); }
-				.gradient.right { right: 0px; background: linear-gradient(to right, rgba(79, 79, 79, 0) 0%, var(--color-shape-highlight-light-solid) 100%); }
+				.gradient.left { left: 0px; background: linear-gradient(to left, rgba(79, 79, 79, 0) 0%, var(--color-shape-tertiary) 100%); }
+				.gradient.right { right: 0px; background: linear-gradient(to right, rgba(79, 79, 79, 0) 0%, var(--color-shape-tertiary) 100%); }
 
 				.icon.arrow { 
 					position: absolute; top: 50%; width: 32px; height: 32px; background-color: var(--color-bg-primary); border-radius: 50%; 

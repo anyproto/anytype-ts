@@ -144,8 +144,8 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			data: {
 				filter: mark ? mark.param : '',
 				type: mark ? mark.type : null,
-				onChange: (newType: I.MarkType, param: string) => {
-					onChange(Mark.toggleLink({ type: newType, param, range }, marks));
+				onChange: (type: I.MarkType, param: string) => {
+					onChange(Mark.toggleLink({ type, param, range }, marks));
 				}
 			}
 		});

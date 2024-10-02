@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, J, keyboard, Preview, translate, analytics } from 'Lib';
+import { I, C, S, U, J, keyboard, Preview, translate, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
@@ -54,7 +54,7 @@ const Navigation = observer(class Navigation extends React.Component {
 							keyboard.onQuickCapture(false, { isSub: true, passThrough: false });
 						}, 1000);
 					};
-					buttonPlus.onMouseLeave = () => {};
+					buttonPlus.onMouseLeave = () => window.clearTimeout(this.timeoutPlus);
 					break;
 				};
 
@@ -70,7 +70,10 @@ const Navigation = observer(class Navigation extends React.Component {
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
 		].filter(it => it).map(it => {
 			if (!it.onMouseEnter && !it.disabled) {
-				it.onMouseEnter = e => this.onTooltipShow(e, it.tooltip, it.caption);
+				it.onMouseEnter = e => {
+					window.clearTimeout(this.timeoutPlus);
+					this.onTooltipShow(e, it.tooltip, it.caption)
+				};
 			};
 			if (!it.onMouseLeave) {
 				it.onMouseLeave = () => Preview.tooltipHide(false);
@@ -145,7 +148,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
-	setX (sw: number, animate: boolean) {
+	position (sw: number, animate: boolean) {
 		const node = $(this.node);
 		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();

@@ -215,7 +215,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		const length = this.getItems().length;
 
 		raf(() => {
-			const container = $('#listWidget');
+			const container = $('#sidebar #containerWidget #list');
 			const obj = $(`#widget-${parent.id}`);
 			const node = $(this.node);
 			const head = obj.find('.head');

@@ -399,7 +399,7 @@ class UtilCommon {
 	};
 	
 	lbBr (s: string) {
-		return s.toString().replace(new RegExp(/\n+/gi), '<br/>');
+		return s.toString().replace(new RegExp(/\n/gi), '<br/>');
 	};
 	
 	mapToArray (list: any[], field: string): any {
@@ -888,11 +888,11 @@ class UtilCommon {
 	fixAsarPath (path: string): string {
 		const electron = this.getElectron();
 
-		if (!electron.dirname || !electron.isPackaged) {
+		if (!electron.dirName || !electron.isPackaged) {
 			return path;
 		};
 
-		let href = electron.dirname(location.href);
+		let href = electron.dirName(location.href);
 		href = href.replace('/app.asar/', '/app.asar.unpacked/');
 		return href + path.replace(/^\.\//, '/');
 	};
@@ -953,6 +953,55 @@ class UtilCommon {
 			if (p == '&amp;') p = '&';
 			return p;
 		});
+	};
+
+	copyCssSingle (src: HTMLElement, dst: HTMLElement) {
+		const styles = document.defaultView.getComputedStyle(src, '');
+		const css: any = {};
+
+		for (let i = 0; i < styles.length; i++) {
+			const name = styles[i];
+			const value = styles.getPropertyValue(name);
+
+			css[name] = value;
+		};
+
+		css.visibility = 'visible';
+		$(dst).css(css);
+	};
+
+	copyCss (src: HTMLElement, dst: HTMLElement) {
+		this.copyCssSingle(src, dst);
+
+		const srcList = src.getElementsByTagName('*');
+		const dstList = dst.getElementsByTagName('*');
+
+		for (let i = 0; i < srcList.length; i++) {
+			const srcElement = srcList[i] as HTMLElement;
+			const dstElement = dstList[i] as HTMLElement;
+
+			this.copyCssSingle(srcElement, dstElement);
+		};
+	};
+
+	notification (param: any, onClick?: () => void) {
+		const title = U.Common.stripTags(String(param.title || ''));
+		const text = U.Common.stripTags(String(param.text || ''));
+
+		if (!text) {
+			return;
+		};
+
+		const electron = this.getElectron();
+		const item = new window.Notification(title, { body: text });
+
+		item.onclick = () => {
+			electron.focus();
+
+			if (onClick) {
+				onClick();
+			};
+		};
 	};
 
 };

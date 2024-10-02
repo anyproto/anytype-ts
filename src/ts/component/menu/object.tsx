@@ -112,13 +112,13 @@ class MenuObject extends React.Component<I.Menu> {
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
-		let download = { id: 'download', icon: 'download', name: translate('commonDownload') };
-		let open = { id: 'open', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let pagePublish = { id: 'pagePublish', icon: 'publish', name: translate('menuObjectPublish') };
+		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
+		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -160,7 +160,9 @@ class MenuObject extends React.Component<I.Menu> {
 		const hasShortMenu = (
 			U.Object.isTypeOrRelationLayout(object.layout) ||
 			U.Object.isInFileLayouts(object.layout) ||
-			U.Object.isInSetLayouts(object.layout)
+			U.Object.isInSetLayouts(object.layout) ||
+			U.Object.isParticipantLayout(object.layout) ||
+			U.Object.isChatLayout(object.layout)
 		);
 
 		const allowedArchive = canWrite && canDelete;
@@ -177,11 +179,11 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedUninstall = canWrite && object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout) && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
-		const allowedExport = !isFilePreview;
+		const allowedExport = !isFilePreview && !U.Object.isChatLayout(object.layout);
 		const allowedPrint = !isFilePreview;
-		const allowedDownload = U.Object.isInFileLayouts(object.layout);
-		const allowedOpen = U.Object.isInFileLayouts(object.layout);
 		const allowedPublish = config.experimental;
+		const allowedDownloadFile = U.Object.isInFileLayouts(object.layout);
+		const allowedOpenFile = U.Object.isInFileLayouts(object.layout);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedLock)		 pageLock = null;
@@ -199,9 +201,9 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedAddCollection)	 addCollection = null;
 		if (!allowedExport)		 pageExport = null;
 		if (!allowedPrint)		 print = null;
-		if (!allowedDownload)	 download = null;
-		if (!allowedOpen)		 open = null;
 		if (!allowedPublish)	 pagePublish = null;
+		if (!allowedDownloadFile) downloadFile = null;
+		if (!allowedOpenFile)	 openFile = null;
 
 		if (!canWrite) {
 			template = null;
@@ -220,7 +222,7 @@ class MenuObject extends React.Component<I.Menu> {
 				{ children: [ linkTo, addCollection ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
-				{ children: [ open, download ] },
+				{ children: [ openFile, downloadFile ] },
 			];
 		} else {
 			if (isTemplate) {
@@ -337,6 +339,7 @@ class MenuObject extends React.Component<I.Menu> {
 						onClick: (details: any) => {
 							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, [ rootId ]);
+								U.Object.openAuto(message.details);
 							});
 						},
 					},
@@ -523,12 +526,12 @@ class MenuObject extends React.Component<I.Menu> {
 				break;
 			};
 
-			case 'open': {
+			case 'openFile': {
 				Action.openFile(object.id, route);
 				break;
 			};
 
-			case 'download': {
+			case 'downloadFile': {
 				Action.downloadFile(object.id, route, U.Object.isImageLayout(object.layout));
 				break;
 			};
