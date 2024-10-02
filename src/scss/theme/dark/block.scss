@@ -22,9 +22,8 @@
     /* Common */
 
     .block {
-        .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
+        .icon.dnd { background-image: url('#{$themePath}/icon/block/menu.svg'); }
     }
-    .block:hover > .wrapMenu > .icon.dnd { background-image: url('#{$themePath}/icon/block/menu1.svg'); }
 
     /* BlockFile */
 
@@ -190,6 +189,19 @@
 		}
 		.message.isSelf {
 			.side.right { background: #162908; }
+		}
+
+		.form {
+			.icon.send { background: url('#{$themePath}/icon/chat/buttons/send.svg'); }
+
+			.attachments {
+				.swiper-button-prev { background: linear-gradient(-90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
+				.swiper-button-next { background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
+				.swiper-button-prev::before,
+				.swiper-button-next::before { box-shadow: none; }
+				.swiper-button-prev::after,
+				.swiper-button-next::after { background-image: url('#{$themePath}/arrow/chatFormAttachment.svg'); }
+			}
 		}
 	}
 }

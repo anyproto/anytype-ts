@@ -296,7 +296,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				readonly: Boolean(readonly || root?.isLocked() || !allowed),
 				noDelete: (item.scope == I.RelationScope.Type),
 				relationId: item.id,
-				ref: 'menu',
+				ref: 'object',
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},

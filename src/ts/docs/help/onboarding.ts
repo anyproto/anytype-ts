@@ -60,67 +60,6 @@ export default {
         },
     }),
 
-    storeType: () => ({
-        category: translate('onboardingStoreType'),
-        items: [
-            {
-                description: `
-					<p>${translate('onboardingStoreType11')}</p>
-				`,
-                video: './img/help/onboarding/library-1-add-type.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingStoreType21')}</p>
-					<p>${translate('onboardingStoreType22')}</p>
-				`,
-                video: './img/help/onboarding/library-2-new-type.mp4',
-                buttonText: translate('commonOk'),
-            },
-        ],
-        param: {
-            element: '#page.isFull #footer #button-help',
-            classNameWrap: 'fixed',
-            className: 'isWizard',
-            vertical: I.MenuDirection.Top,
-            horizontal: I.MenuDirection.Right,
-            noArrow: true,
-            noClose: true,
-            passThrough: true,
-            offsetY: -4
-        },
-    }),
-
-    storeRelation: () => ({
-        category: translate('onboardingStoreRelation'),
-        items: [
-            {
-                description: `
-					<p>${translate('onboardingStoreRelation11')}</p>
-				`,
-                video: './img/help/onboarding/library-3-relation.mp4',
-                buttonText: translate('onboardingStoreRelation1Button'),
-            },
-            {
-                description: `
-					<p>${translate('onboardingStoreRelation21')}</p>
-				`,
-				buttonText: translate('onboardingStoreRelation2Button'),
-            },
-        ],
-        param: {
-            element: '#page.isFull #footer #button-help',
-            classNameWrap: 'fixed',
-            className: 'isWizard',
-            vertical: I.MenuDirection.Top,
-            horizontal: I.MenuDirection.Right,
-            noArrow: true,
-            noClose: true,
-            passThrough: true,
-            offsetY: -4
-        },
-    }),
-
     objectCreationStart: () => ({
         category: translate('onboardingObjectCreationStart'),
         items: [
@@ -181,6 +120,7 @@ export default {
 		return {
 			category: translate('onboardingDashboard'),
 			showConfetti: true,
+			showDimmer: true,
 			items: [
 				{
 					name: translate('onboardingDashboard1Title'),

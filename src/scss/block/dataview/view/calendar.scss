@@ -18,7 +18,7 @@
 				.body { overflow: scroll; border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px;  }
 				.body::-webkit-scrollbar { width: 6px; height: 0px; }
 				.body::-webkit-scrollbar-track { background: transparent; }
-				.body::-webkit-scrollbar-thumb { background: var(--color-shape-secondary); border-radius: 3px; }
+				.body::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 3px; }
 			}
 
 			.day { 

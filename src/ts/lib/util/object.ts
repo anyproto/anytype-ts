@@ -20,7 +20,6 @@ class UtilObject {
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
-			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
@@ -287,7 +286,15 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	isInHumanLayouts (layout: I.ObjectLayout): boolean {
+		return this.getHumanLayouts().includes(layout);
+	};
+
 	// --------------------------------------------------------- //
+
+	isSpaceViewLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.SpaceView;
+	};
 
 	isSetLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Set;
@@ -342,6 +349,14 @@ class UtilObject {
 		return layout == I.ObjectLayout.Image;
 	};
 
+	isDateLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Date;
+	};
+
+	isFileLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.File;
+	};
+
 	// --------------------------------------------------------- //
 
 	getPageLayouts (): I.ObjectLayout[] {
@@ -363,7 +378,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat);
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -392,6 +407,13 @@ class UtilObject {
 		];
 	};
 
+	getHumanLayouts (): I.ObjectLayout[] {
+		return [ 
+			I.ObjectLayout.Human, 
+			I.ObjectLayout.Participant,
+		];
+	};
+
 	// --------------------------------------------------------- //
 
 	getFileTypeByLayout (layout: I.ObjectLayout): I.FileType {
@@ -413,8 +435,13 @@ class UtilObject {
 		];
 	};
 
-	isAllowedTemplate (typeId): boolean {
+	isAllowedTemplate (typeId: string): boolean {
 		const type = S.Record.getTypeById(typeId);
+
+		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
+			return false;
+		};
+
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
 	};
 

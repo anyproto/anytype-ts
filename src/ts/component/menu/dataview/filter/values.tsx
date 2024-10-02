@@ -418,7 +418,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const view = getView();
 		const filter = view.getFilter(itemId);
 		const isReadonly = this.isReadonly();
-		const key = item.id;
 
 		if (isReadonly || S.Menu.isAnimating('select')) {
 			return;
@@ -428,19 +427,17 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			setActive(item, false);
 		};
 
-		let options = [];
+		const menuParam = {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			noFlipY: true,
+		};
 
 		if (item.id == 'relation') {
-			const menuParam = {
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: getSize().width,
-				horizontal: I.MenuDirection.Right,
-				vertical: I.MenuDirection.Center,
-				passThrough: true,
-			};
-
 			U.Menu.sortOrFilterRelationSelect(menuParam, {
-				menuParam,
 				rootId,
 				blockId,
 				getView,
@@ -451,6 +448,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
+		let options = [];
 		switch (item.id) {
 			case 'condition': {
 				if (Relation.isDictionary(filter.relationKey)) {
@@ -469,11 +467,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		S.Menu.closeAll([ 'select' ], () => {
 			S.Menu.open('select', {
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center,
-				isSub: true,
-				noFlipY: true,
+				...menuParam,
 				data: {
 					noFilter: true,
 					noVirtualisation: true,

@@ -94,8 +94,11 @@ class Onboarding {
 		if (isPopup) {
 			cnw.push('fromPopup');
 		};
+		if (section.showDimmer) {
+			cnw.push('fromOnboarding');
+		};
 		param.classNameWrap = cnw.join(' ');
-		
+
 		if (param.container) {
 			param.containerVertical = Number(param.containerVertical) || I.MenuDirection.Top;
 			param.containerHorizontal = Number(param.containerHorizontal) || I.MenuDirection.Left;

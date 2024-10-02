@@ -408,7 +408,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="sides">
 										<div className="side left">
 											<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-											<Label text={U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), space.createdDate)} />
+											<Label text={U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, space.createdDate)} />
 										</div>
 									</div>
 								</div>
@@ -472,6 +472,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				filter: '',
 				filters: [
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(I.ObjectLayout.Chat) },
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				onClick: (item: any) => {
 					S.Common.typeSet(item.uniqueKey);

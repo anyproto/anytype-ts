@@ -289,6 +289,11 @@ class DetailStore {
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
+		object.iconOption = Number(object.iconOption) || 1;
+
+		if (object.iconOption > 10) {
+			object.iconOption = object.iconOption - 10;
+		};
 
 		// Access type
 		object.isPersonal = object.spaceAccessType == I.SpaceType.Personal;

@@ -228,7 +228,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	updateSettings () {
 		this.send('updateSettings', S.Common.getGraph(this.props.storageKey));
-		analytics.event('GraphSettings');
 	};
 
 	onDragStart (e: any) {
@@ -411,7 +410,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				route: analytics.route.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
-				allowedLink: true,
+				allowedLinkTo: true,
 				allowedOpen: true,
 				onLinkTo: (sourceId: string, targetId: string) => {
 					const target = this.getNode(targetId);

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { Action, I, J, keyboard, Mark, S, translate, U } from 'Lib';
@@ -16,7 +15,7 @@ interface Props extends I.BlockComponent {
 	onMenuClose: () => void;
 	onMention: () => void;
 	getObjectFromPath: (path: string) => void;
-	addFiles: (files: any, callBack?: () => void) => void;
+	addAttachments: (attachments: any[], callBack?: () => void) => void;
 	removeBookmark: (url: string) => void;
 };
 
@@ -232,7 +231,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onAttachment (menu?: string) {
-		const { blockId, attachments, onMenuClose, onChatButtonSelect, addFiles, getObjectFromPath } = this.props;
+		const { blockId, attachments, onMenuClose, onChatButtonSelect, addAttachments, getObjectFromPath } = this.props;
 
 		const options: any[] = [
 			{ id: 'object', icon: 'object', name: translate('commonObject') },
@@ -244,7 +243,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		const upload = () => {
 			Action.openFileDialog([], paths => {
 				if (paths.length) {
-					addFiles([ getObjectFromPath(paths[0]) ]);
+					addAttachments([ getObjectFromPath(paths[0]) ]);
 				};
 			});
 		};

@@ -16,7 +16,7 @@ class HeaderAuthIndex extends React.Component {
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
-					<Icon className="settings" onClick={this.onSettings} />
+					<Icon className="settings withBackground" onClick={this.onSettings} />
 				</div>
 			</React.Fragment>
 		);

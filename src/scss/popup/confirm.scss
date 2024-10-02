@@ -30,7 +30,6 @@
 			.icon.confirm { width: 96px; background-image: url('~img/icon/popup/confirm/confirm.svg'); }
 			.icon.invite { width: 68px; background-image: url('~img/icon/popup/confirm/invite.svg'); }
 			.icon.sad { width: 68px; background-image: url('~img/icon/popup/confirm/sad.svg'); }
-			.icon.welcome { width: 221px; height: 72px; background-image: url('~img/icon/popup/confirm/welcome.svg'); }
 			.icon.warning { width: 96px; background-image: url('~img/icon/popup/confirm/warning.svg'); }
 		}
 
@@ -67,11 +66,6 @@
 
 	.popup.popupConfirm.isLeft {
 		.innerWrap { text-align: left; }
-	}
-
-	.popup.popupConfirm.welcome {
-		.innerWrap { width: 488px; padding: 24px; border-radius: 16px; background: linear-gradient(180deg, #fef2c6 0%, #ececec 100%); }
-		.label { margin-bottom: 12px; }
 	}
 
 	.popup.popupConfirm.localOnlyWarning {

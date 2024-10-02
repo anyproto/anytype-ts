@@ -132,17 +132,50 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	loadObjects (callBack?: () => void) {
+		const { param } = this.props;
+		const { data } = param;
+		const { relationKeys } = data;
 		const objectIds = this.getObjectIds();
-		const relationKeys = this.getRelationKeys();
+		const keys = this.getRelationKeys();
 
 		U.Data.searchSubscribe({
 			subId: SUB_ID_OBJECT,
 			filters: [
 				{ relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
 			],
-			keys: J.Relation.default.concat(relationKeys),
+			keys: J.Relation.default.concat(keys),
 			noDeps: true,
-		}, callBack);
+		}, () => {
+			if (!relationKeys) {
+				const objects = this.getObjects();
+
+				let keys = [];
+
+				objects.forEach(it => {
+					const type = S.Record.getTypeById(it.type);
+					if (!type) {
+						return;
+					};
+
+					const recommended = (type.recommendedRelations || []).map(it => {
+						const relation = S.Record.getRelationById(it);
+						return relation ? relation.relationKey : '';
+					}).filter(it => it);
+
+					if (recommended.length) {
+						keys = keys.concat(recommended);
+					};
+				});
+
+				if (keys.length) {
+					this.props.param.data.relationKeys = U.Common.arrayUnique(keys);
+				};
+			};
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	loadDeps (callBack?: () => void) {
@@ -221,21 +254,14 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getRelationKeys (): string[] {
-		return U.Common.arrayUnique([ 'done' ].concat(this.props.param.data.relationKeys || J.Relation.default));
+		return U.Common.arrayUnique(this.props.param.data.relationKeys || J.Relation.default);
 	};
 
 	getRelations (): any[] {
 		const { config } = S.Common;
 
 		let ret = this.getRelationKeys().map(relationKey => S.Record.getRelationByKey(relationKey));
-
-		ret = ret.filter(it => {
-			if ([ 'done' ].includes(it.relationKey)) {
-				return true;
-			};
-
-			return (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue;
-		});
+		ret = ret.filter(it => (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue);
 		ret = ret.sort(U.Data.sortByName);
 		return ret;
 	};

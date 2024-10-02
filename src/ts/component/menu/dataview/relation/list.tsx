@@ -49,7 +49,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			if (item.relation.isHidden) {
 				cn.push('isHidden');
 			};
-			if (!isReadonly) {
+			if (isReadonly) {
 				cn.push('isReadonly');
 			};
 
