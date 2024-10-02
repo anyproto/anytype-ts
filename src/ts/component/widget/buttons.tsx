@@ -62,7 +62,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			{ id: 'all', name: translate('commonAllContent') },
 		];
 
-		if (!space.isPersonal) {
+		if (space.isShared) {
 			ret.unshift({ id: 'member', name: translate('commonMembers') });
 		};
 
