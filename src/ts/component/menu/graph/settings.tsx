@@ -114,13 +114,14 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 
 	onDragEnd (id: string, v: number) {
 		const values = this.getValues();
-		
+
 		if (id == 'depth') {
 			values[id] = this.getDepth(v);
 		} else {
 			values[id] = v;
 		};
 
+		analytics.event('GraphSettings', { id, count: values[id] });
 		this.save(values);
 	};
 

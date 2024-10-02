@@ -915,9 +915,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
 						this.updateMarkup(value, to, to);
-					}
-				}
-			})
+					},
+				},
+			});
 		});
 	};
 

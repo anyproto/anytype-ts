@@ -168,6 +168,7 @@
 	"commonEntrySpace": "My First Space",
 	"commonSystem": "System",
 	"commonMainChat": "Main сhat",
+	"commonMenu": "Menu",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1234,7 +1235,6 @@
 	"popupShortcutMarkdownBeginningOfLine10": "Create line divider",
 	"popupShortcutMarkdownBeginningOfLine11": "Create dots divider",
 
-	"popupShortcutCommandMenu": "Menu",
 	"popupShortcutCommandMenu1": "Activate command menu",
 	"popupShortcutCommandMenu2": "Move in menu",
 	"popupShortcutCommandMenu3": "Get into & close sub menu",
