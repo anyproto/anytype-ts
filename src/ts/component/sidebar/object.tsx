@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Icon, Button, Label, EmptySearch } from 'Component';
-import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
+import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action, Relation } from 'Lib';
 
 import Item from './object/item';
 
@@ -363,6 +363,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			sorts,
 			limit,
 			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
+			noDeps: true,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, (message: any) => {
@@ -408,6 +409,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	getItems () {
 		let records = this.getRecords();
+
 		if (this.withSections()) {
 			const option = this.getSortOption();
 
@@ -417,14 +419,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onClick (e: any, item: any) {
-		const withCommand = e.metaKey || e.ctrlKey || e.shiftKey;
-
-		if (withCommand) {
+		if (keyboard.withCommand(e)) {
 			this.selected = this.selected || [];
 
 			if (e.metaKey || e.ctrlKey) {
 				this.selected = this.selected.includes(item.id) ? this.selected.filter(it => it != item.id) : this.selected.concat(item.id);
 			} else 
+			if (e.altKey) {
+				this.selected = this.selected.filter(it => it != item.id);
+			} else
 			if (e.shiftKey) {
 				this.selected = this.selected.concat(item.id);
 			};
@@ -552,7 +555,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 		];
 	};
 
@@ -595,13 +598,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			this.filter = v;
 			this.loadSearchIds(true);
 
-			analytics.event('SearchInput', { route: analytics.route.allObjects })
+			analytics.event('SearchInput', { route: analytics.route.allObjects });
 		}, J.Constant.delay.keyboard);
 	};
 
 	onFilterClear () {
 		this.searchIds = null;
 		this.load(true);
+
+		analytics.event('SearchInput', { route: analytics.route.allObjects });
 	};
 
 	onBookmarkMenu (details: any, callBack: (id: string) => void) {

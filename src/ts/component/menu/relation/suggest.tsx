@@ -85,6 +85,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						style={param.style}
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						onClick={e => this.onClick(e, item)}
+						withMore={item.isInstalled}
+						onMore={e => this.onEdit(e, item)}
 					/>
 				);
 			};
@@ -461,6 +463,30 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				Action.install(item, true, message => cb(message.details));
 			};
 		};
+	};
+
+	onEdit (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { param, getId, getSize } = this.props;
+		const { data, classNameWrap } = param;
+		const { rootId, menuIdEdit } = data;
+
+		S.Menu.open(menuIdEdit, { 
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			noAnimation: true,
+			classNameWrap,
+			data: {
+				rootId,
+				relationId: item.id,
+				saveCommand: () => {
+					this.load(true);
+				},
+			}
+		});
 	};
 
 	getRowHeight (item: any) {

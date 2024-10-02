@@ -288,6 +288,10 @@ class UtilObject {
 
 	// --------------------------------------------------------- //
 
+	isSpaceViewLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.SpaceView;
+	};
+
 	isSetLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Set;
 	};
@@ -370,7 +374,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat);
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {

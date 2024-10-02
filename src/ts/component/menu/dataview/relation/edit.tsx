@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, U, J, Relation, translate, Dataview, keyboard, analytics, Preview } from 'Lib';
+import { I, C, S, U, J, Relation, translate, Dataview, keyboard, analytics, Preview, Action } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 
 const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<I.Menu> {
@@ -214,11 +214,20 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, extendedOptions, readonly } = data;
+		const object = S.Detail.get(rootId, rootId);
 		const relation = this.getRelation();
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const canFilter = !isFile;
 		const canSort = !isFile;
 		const canHide = relation && (relation.relationKey != 'name');
+		
+		let unlinkText = translate('commonUnlink');
+		if (U.Object.isCollectionLayout(object.layout)) {
+			unlinkText = translate('commonUnlinkFromCollection');
+		};
+		if (U.Object.isSetLayout(object.layout)) {
+			unlinkText = translate('commonUnlinkFromSet');
+		};
 
 		let canDuplicate = true;
 		let canDelete = true;
@@ -239,6 +248,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				children: [
 					relation ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
 					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
+					canDelete ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
 					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonDelete') } : null,
 				]
 			}
@@ -311,9 +321,15 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				break;
 			};
 
-			case 'remove': {
+			case 'unlink': {
 				this.props.close();
 				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ]);
+				break;
+			};
+
+			case 'remove': {
+				this.props.close();
+				Action.uninstall(relation, true);
 				break;
 			};
 

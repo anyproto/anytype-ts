@@ -226,17 +226,11 @@ class UtilData {
 
 					const space = U.Space.getSpaceview();
 
-					if (!space.isPersonal) {
+					if (!space.isPersonal && !space.isShared && Storage.get('shareBannerClosed')) {
 						Onboarding.start('space', keyboard.isPopup(), false);
 					};
 
 					Storage.clearDeletedSpaces();
-
-					if (Storage.get('showShareTooltipOnLogin')) {
-						Storage.set('showShareTooltipOnLogin', false);
-						Preview.shareTooltipShow();
-						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
-					};
 
 					if (callBack) {
 						callBack();
@@ -267,10 +261,12 @@ class UtilData {
 	};
 
 	onAuthWithoutSpace (routeParam?: any) {
+		routeParam = routeParam || {};
+
 		this.createGlobalSubscriptions(() => {
 			const spaces = U.Space.getList();
 			if (spaces.length) {
-				U.Router.switchSpace(spaces[0].targetSpaceId);
+				U.Router.switchSpace(spaces[0].targetSpaceId, '', false, routeParam.onRouteChange);
 			} else {
 				U.Router.go('/main/void', routeParam);
 			};
@@ -320,11 +316,11 @@ class UtilData {
 		];
 
 		this.createSubscriptions(list, () => {
-			this.createMyParticipantSubscriptions(callBack);
+			this.createMyParticipantSubscriptions(null, callBack);
 		});
 	};
 
-	createMyParticipantSubscriptions (callBack?: () => void) {
+	createMyParticipantSubscriptions (ids: string[], callBack?: () => void) {
 		const { account } = S.Auth;
 
 		if (!account) {
@@ -334,8 +330,10 @@ class UtilData {
 			return;
 		};
 
-		const spaces = U.Space.getList();
-		const list = [];
+		let spaces = U.Space.getList();
+		if (ids && ids.length) {
+			spaces = spaces.filter(it => ids.includes(it.targetSpaceId));
+		};
 
 		if (!spaces.length) {
 			if (callBack) {
@@ -343,6 +341,8 @@ class UtilData {
 			};
 			return;
 		};
+
+		const list = [];
 
 		spaces.forEach(space => {
 			list.push({
