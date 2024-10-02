@@ -2,7 +2,6 @@ export default {
 	iconSpace: {
 		text: '#fff',
 		bg: {
-			grey: '#949494',
 			yellow: '#ecd91b',
 			orange: '#ffb522',
 			red: '#f55522',
@@ -11,8 +10,8 @@ export default {
 			blue: '#3e58eb',
 			ice: '#2aa7ee',
 			teal: '#0fc8ba',
-			lime: '#5dd400',
-			green: '#57c600'
+			green: '#57c600',
+			grey: '#949494',
 		},
 
 		list: [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime', 'green' ],
