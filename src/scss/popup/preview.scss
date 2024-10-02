@@ -1,14 +1,39 @@
 @import "~scss/_mixins";
 
+$galleryHeaderH: 52px;
+$galleryFooterH: 96px;
+$gallerySlidesH: calc(100vh - $galleryHeaderH - $galleryFooterH);
+
 .popups {
 	.popup.popupPreview.showDimmer {
 		.dimmer { background: rgba(0,0,0,0.80); }
 	}
 
 	.popup.popupPreview {
-		.innerWrap { border-radius: 6px; }
+		.innerWrap { border-radius: 6px; background: none; }
 		.innerWrap.anim { transition: $transitionAllCommon; }
 		#loader { background: var(--color-bg-primary); width: 100%; height: 100%; border-radius: 6px; }
+
+		.wrap { width: 100vw; height: 100vh; overflow: hidden; line-height: 0px; }
+		.wrap {
+			.galleryHeader { position: relative; height: $galleryHeaderH; }
+
+			.gallerySlides { position: relative; height: $gallerySlidesH; }
+			.gallerySlides {
+				.swiper-slide { height: $gallerySlidesH; }
+				.previewItem { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+				.mediaContainer { position: relative; z-index: 2; }
+				.itemDimmer { position: absolute; z-index: 0; width: 100%; height: 100%; }
+			}
+
+			.galleryFooter { position: relative; height: $galleryFooterH; }
+			.galleryFooter {
+				.thumbnails { height: 100%; }
+				.swiper { height: 100%; }
+				.swiper-wrapper { justify-content: center; align-items: center; }
+				.swiper-slide { width: 72px !important; height: 72px !important;}
+			}
+		}
 
 		.head { 
 			display: flex; align-items: center; position: absolute; left: 0px; top: 0px; height: 52px; justify-content: space-between;
@@ -21,30 +46,6 @@
 			.side.right { text-align: right; }
 			.icon.more { background-image: url('~img/icon/popup/preview/more.svg'); };
 		}
-		.wrap { width: 100%; height: 100%; overflow: hidden; line-height: 0px; }
 		.media { width: 100%; height: 100%; object-fit: contain; margin: 0px auto; }
-
-		.galleryWrapper { height: 100%; display: flex; flex-direction: column; gap: 8px 0px; }
-		.galleryWrapper {
-			.gallery,
-			.thumbnails { position: relative; }
-			.gallery,
-			.thumbnails {
-				.swiper { height: 100%; }
-			}
-
-			.previewItem { position: relative; }
-			.mediaContainer { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-
-			.gallery { height: 100%; }
-			.gallery {
-				.media { width: unset; height: unset; max-width: 100%; max-height: 100%;}
-			}
-			.thumbnails { height: 96px; flex-shrink: 0; }
-			.thumbnails {
-				.previewItem { width: 96px; height: 96px; }
-				.media { max-width: 100%; max-height: 96px; object-fit: cover; }
-			}
-		}
 	}
 }

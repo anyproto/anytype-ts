@@ -77,6 +77,7 @@ class PopupPreview extends React.Component<I.Popup> {
 					<div className="mediaContainer">
 						{content}
 					</div>
+					<div className="itemDimmer" onClick={() => close()} />
 				</div>
 			);
 		};
@@ -122,6 +123,7 @@ class PopupPreview extends React.Component<I.Popup> {
 					{gallery.length > 1 ? (
 						<div className="thumbnails">
 							<Swiper
+								height={HEIGHT_FOOTER}
 								initialSlide={initial}
 								spaceBetween={8}
 								slidesPerView={10}
@@ -144,10 +146,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		this.onLoad();
 		this.rebind();
 		this.setCurrent();
-	};
-	
-	componentDidUpdate () {
-		this.onLoad();
 	};
 
 	componentWillUnmount () {
@@ -213,7 +211,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		};
 
 		if (this.thumbs.activeIndex != data.activeIndex) {
-			console.log('HERE', this.thumbs.activeIndex, data.activeIndex)
 			this.thumbs.slideTo(data.activeIndex);
 		};
 
@@ -255,33 +252,21 @@ class PopupPreview extends React.Component<I.Popup> {
 		const { gallery } = data;
 		const isGallery = gallery.length > 1;
 		const node = $(`#${getId()}-innerWrap`);
-		const wrap = node.find(`#wrap`);
 		const element = node.find(`#itemPreview-${idx}`);
 		const loader = element.find('.loader')
 		const obj = this.galleryMap.get(idx);
 		const { src, type, isLoaded, width, height } = obj;
 		const { ww, wh } = U.Common.getWindowDimensions();
-		const mh = wh - BORDER * 2;
+		const mh = wh - (HEIGHT_FOOTER + HEIGHT_HEADER);
 		const mw = ww - BORDER * 2 - sidebar.getDummyWidth();
-
-		if (isGallery) {
-			wrap.css({ width: WIDTH_VIDEO, height: HEIGHT_VIDEO + HEIGHT_THUMBS });
-			element.css({ width: WIDTH_VIDEO, height: HEIGHT_VIDEO });
-			position();
-		};
 
 		switch (type) {
 			case I.FileType.Image: {
 				if (isLoaded) {
 					if (width && height) {
-						this.resizeImage(mw, mh, width, height);
+						this.resizeImage(idx, mw, mh, width, height);
 					};
 					break;
-				};
-
-				if (!isGallery){
-					wrap.css({ width: WIDTH_DEFAULT, height: HEIGHT_DEFAULT });
-					position();
 				};
 
 				const img = new Image();
@@ -292,7 +277,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 					loader.remove();
 
-					this.resizeImage(mw, mh, obj.width, obj.height);
+					this.resizeImage(idx, mw, mh, obj.width, obj.height);
 					this.galleryMap.set(idx, obj);
 				};
 
@@ -320,25 +305,14 @@ class PopupPreview extends React.Component<I.Popup> {
 				videoEl.onerror = this.onError;
 
 				video.css({ width, height });
-
-				if (!isGallery) {
-					wrap.css({ width, height });
-					position();
-				};
 			};
 		};
 	};
 
-	resizeImage (maxWidth: number, maxHeight: number, width: number, height: number) {
-		const { param, getId, position } = this.props;
-		const { data } = param;
-		const { gallery } = data;
+	resizeImage (idx: number, maxWidth: number, maxHeight: number, width: number, height: number) {
+		const { getId } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
-		const wrap = obj.find('#wrap');
-
-		if (gallery.length > 1) {
-			return;
-		};
+		const wrap = obj.find(`#itemPreview-${idx} .mediaContainer`);
 
 		let w = 0, h = 0;
 		if (width > height) {
@@ -350,7 +324,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		};
 
 		wrap.css({ width: w, height: h });
-		position();
 	};
 
 };
