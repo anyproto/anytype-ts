@@ -616,6 +616,26 @@ class Keyboard {
 				break;
 			};
 
+			case 'systemInfo': {
+				const props: any = {};
+				const { cpu, graphics, memLayout, diskLayout } = arg;
+				const { manufacturer, brand, speed, cores } = cpu;
+				const { controllers, displays } = graphics;
+
+				props.systemCpu = [ manufacturer, brand ].join(', ');
+				props.systemCpuSpeed = [ `${speed}GHz`, `${cores} cores` ].join(', ');
+				props.systemVideo = (controllers || []).map(it => it.model).join(', ');
+				props.systemDisplay = (displays || []).map(it => it.model).join(', ');
+				props.systemResolution = `${window.screen.width}x${window.screen.height}`;
+				props.systemMemory = (memLayout || []).map(it => U.File.size(it.size)).join(', ');
+				props.systemMemoryType = (memLayout || []).map(it => it.type).join(', ');
+				props.systemDisk = (diskLayout || []).map(it => U.File.size(it.size)).join(', ');
+				props.systemDiskName = (diskLayout || []).map(it => it.name).join(', ');
+
+				analytics.setProperty(props);
+				break;
+			};
+
 		};
 	};
 

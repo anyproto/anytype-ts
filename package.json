@@ -148,7 +148,8 @@
 		"selection-ranges": "^3.0.3",
 		"sha1": "^1.1.1",
 		"stream-slicer": "^0.0.6",
-		"swiper": "^11.0.3"
+		"swiper": "^11.0.3",
+		"systeminformation": "^5.23.5"
 	},
 	"build": {
 		"npmRebuild": true,

@@ -114,7 +114,7 @@ class Analytics {
 			this.instance.setVersionName(electron.version.app);
 		};
 
-		this.instance.setUserProperties(props);
+		this.setProperty(props);
 		this.removeContext();
 		this.setVersion();
 
@@ -152,11 +152,11 @@ class Analytics {
 		};
 
 		this.instance.setUserId(id);
+		this.log(`[Analytics].profile: ${id}`);	
 
 		if (id) {
-			this.instance.setUserProperties({ networkId });
+			this.setProperty({ networkId });
 		};
-		this.log(`[Analytics].profile: ${id} networkId: ${networkId}`);	
 	};
 
 	setContext (context: string, id: string) {
@@ -172,10 +172,12 @@ class Analytics {
 	};
 
 	setTier (tier: I.TierType) {
-		const t = I.TierType[tier] || 'Custom';
+		this.setProperty({ tier: I.TierType[tier] || 'Custom' });
+	};
 
-		this.instance.setUserProperties({ tier: t });
-		this.log(`[Analytics].setTier: ${t}`);
+	setProperty (props: any) {
+		this.instance.setUserProperties(props);
+		this.log(`[Analytics].setProperty: ${JSON.stringify(props, null, 3)}`);
 	};
 
 	event (code: string, data?: any) {
