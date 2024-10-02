@@ -444,15 +444,16 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const logPath = U.Common.getElectron().logPath();
 		const tmpPath = U.Common.getElectron().tmpPath();
+		const route = analytics.route.menuSystem;
 
 		switch (cmd) {
 			case 'search': {
-				this.onSearchMenu('', 'MenuSystem');
+				this.onSearchMenu('', route);
 				break;
 			};
 
 			case 'print': {
-				this.onPrint('MenuSystem');
+				this.onPrint(route);
 				break;
 			};
 
@@ -477,40 +478,25 @@ class Keyboard {
 
 			case 'undo': {
 				if (!this.isFocused) {
-					this.onUndo(rootId, 'MenuSystem');
+					this.onUndo(rootId, route);
 				};
 				break;
 			};
 
 			case 'redo': {
 				if (!this.isFocused) {
-					this.onRedo(rootId, 'MenuSystem');
+					this.onRedo(rootId, route);
 				};
 				break;
 			};
 
 			case 'createObject': {
-				this.pageCreate({}, 'MenuSystem');
+				this.pageCreate({}, route);
 				break;
 			};
 
 			case 'createSpace': {
-				const items = U.Space.getList();
-
-				if (items.length >= J.Constant.limit.space) {
-					break;
-				};
-
-				S.Popup.open('settings', { 
-					className: 'isSpaceCreate',
-					data: { 
-						page: 'spaceCreate', 
-						isSpace: true,
-						onCreate: (id) => {
-							U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
-						},
-					}, 
-				});
+				Action.createSpace(route);
 				break;
 			};
 

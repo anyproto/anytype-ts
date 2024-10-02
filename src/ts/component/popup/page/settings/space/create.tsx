@@ -195,7 +195,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { param } = this.props;
 		const { isLoading, usecase, iconOption } = this.state;
 		const { data } = param;
-		const { onCreate } = data;
+		const { onCreate, route } = data;
 
 		if (isLoading) {
 			return;
@@ -212,7 +212,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			};
 		};
 
-		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
+		const details = {
+			name,
+			iconOption,
+			spaceDashboardId: I.HomePredefinedId.Last,
+		};
+
+		C.WorkspaceCreate(details, usecase, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (message.error.code) {
@@ -220,16 +226,23 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				return;
 			};
 
-			const ids = U.Menu.getVaultItems().map(it => it.id);
-			ids.unshift(message.objectId);
-			Storage.set('spaceOrder', ids, true);
+			C.WorkspaceSetInfo(message.objectId, details, () => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+					return;
+				};
 
-			if (onCreate) {
-				onCreate(message.objectId);
-			};
+				const ids = U.Menu.getVaultItems().map(it => it.id);
+				ids.unshift(message.objectId);
+				Storage.set('spaceOrder', ids, true);
 
-			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route: analytics.route.navigation });
-			analytics.event('SelectUsecase', { type: usecase });
+				if (onCreate) {
+					onCreate(message.objectId);
+				};
+
+				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route });
+				analytics.event('SelectUsecase', { type: usecase });
+			});
 		});
 	};
 
