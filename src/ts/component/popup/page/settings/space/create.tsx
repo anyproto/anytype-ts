@@ -212,7 +212,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			};
 		};
 
-		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
+		const details = {
+			name,
+			iconOption,
+			spaceDashboardId: I.HomePredefinedId.Last,
+		};
+
+		C.WorkspaceCreate(details, usecase, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (message.error.code) {
