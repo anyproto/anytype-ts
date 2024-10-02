@@ -44,14 +44,14 @@ export default [
 	
 	text(''),
 	text(`Thanks again for your patience and feedback as we work to improve Anytype 🫶`),	
-																  
+
 	div(),
 	// --------------------------------------------//
 
 	title(`Anytype Desktop 0.42.0 Released!`),
 	text(`This release brings a redesigned sidebar, brand-new widgets, and the highly anticipated inline LaTeX feature, along with numerous quality-of-life improvements and bug fixes for an even smoother Anytype experience. Don’t miss our new sync status indicator—it’s like having a little tech guru keeping you informed! Enjoy exploring the updates 🏄‍♀️`),
 	text(''),
-																  
+
 	h2(`Highlights 💫`, I.BlockHAlign.Center),
 	text(''),
 

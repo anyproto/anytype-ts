@@ -693,7 +693,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						const ref = this.refCells.get(id);
 
 						if (ref) {
-							ref.onClick(e)
+							ref.onClick(e);
 						};
 					}, 15);
 				};

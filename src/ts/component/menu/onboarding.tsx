@@ -78,7 +78,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 						autoPlay={true} 
 						loop={true} 
 					/>
- 				) : ''}
+				) : ''}
 
 				<div className="bottom">
 					{l > 1 ? (
