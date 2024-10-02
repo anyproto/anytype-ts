@@ -524,6 +524,10 @@
 				"to": "node_modules/supports-color"
 			},
 			{
+				"from": "node_modules/systeminformation",
+				"to": "node_modules/systeminformation"
+			},
+			{
 				"from": "node_modules/through2",
 				"to": "node_modules/through2"
 			},
