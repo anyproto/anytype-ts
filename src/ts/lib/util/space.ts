@@ -154,7 +154,7 @@ class UtilSpace {
 		const space = this.getSpaceview();
 		const closed = Storage.get('shareBannerClosed');
 
-		return !space.isShared && !closed && this.isMyOwner() && !hasShared;
+		return !space.isPersonal && !space.isShared && !closed && this.isMyOwner() && !hasShared;
 	};
 
 	getReaderLimit () {
