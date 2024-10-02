@@ -198,8 +198,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const templateType = S.Record.getTemplateType();
 
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
+			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -321,9 +321,10 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	onType () {
-		const { id, getId, param } = this.props;
+		const { getId, param } = this.props;
 		const { data } = param;
 		const { onTypeChange } = data;
+		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts()).concat(I.ObjectLayout.Chat);
 
 		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
@@ -332,7 +333,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				rebind: this.rebind,
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: allowedLayouts },
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				onClick: type => {
 					data.typeId = type.id;

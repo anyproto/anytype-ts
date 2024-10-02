@@ -414,7 +414,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		switch (tab) {
 			case Tab.Library: {
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -798,18 +798,20 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onSmileSelect (id: string, skin: number) {
+		skin = Number(skin) || 1;
+
 		const { param, storageSet } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
-		const value = id ? U.Smile.nativeById(id, this.skin) : '';
+		const value = id ? U.Smile.nativeById(id, skin) : '';
 
 		data.value = value;
 		
 		if (value) {
-			this.skin = Number(skin) || 1;
-			this.setLastIds(id, this.skin);
+			this.skin = skin;
+			this.setLastIds(id, skin);
 
-			storageSet({ skin: this.skin });
+			storageSet({ skin });
 		};
 
 		if (onSelect) {
@@ -1013,7 +1015,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onDragOver (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -1021,7 +1023,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -1029,12 +1031,13 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
 		const { close } = this.props;
-		const file = e.dataTransfer.files[0].path;
+		const electron = U.Common.getElectron();
+		const file = electron.webFilePath(e.dataTransfer.files[0]);
 		const node = $(this.node);
 		const zone = node.find('.dropzone');
 		

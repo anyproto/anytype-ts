@@ -11,7 +11,7 @@
 	#footer { right: $historyPanelWidth; }
 
 	#body {
-		> #historySideLeft { padding: 52px 0px 80px 0px; width: calc(100% - $historyPanelWidth); overflow-x: hidden; overflow-y: auto; position: relative; }
+		> #historySideLeft { padding: 0px 0px 80px 0px; width: calc(100% - $historyPanelWidth); overflow-x: hidden; overflow-y: auto; position: relative; }
 
 		> #historySideRight { width: $historyPanelWidth; z-index: 20; background: var(--color-shape-tertiary); display: flex; flex-direction: column; position: relative; }
 		> #historySideRight {
@@ -21,8 +21,7 @@
 			}
 			> .head {
 				.name { @include text-overflow-nw; }
-				.icon.close { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; background-image: url('~img/icon/close.svg'); }
-				.icon.close:hover { background-color: var(--color-shape-highlight-medium); }
+				.icon.close { background-image: url('~img/icon/close.svg'); }
 			}
 
 			> .scroll { display: flex; flex-direction: column; gap: 12px 0px; overflow-y: auto; flex-grow: 1; padding: 0px 12px 12px 12px; }

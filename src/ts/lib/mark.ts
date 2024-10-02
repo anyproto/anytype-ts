@@ -207,6 +207,10 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
+		if (!range) {
+			return null;
+		};
+
 		const map = U.Common.mapToArray(marks, 'type');
 		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
 
@@ -394,15 +398,9 @@ class Mark {
 		text = text.replace(/contenteditable="[^"]+"/g, '');
 
 		// TODO: find classes by color or background
-		text = text.replace(/<font(?:[^>]*?)>([^<]*)(?:<\/font>)?/g, (s: string, p: string) => {
-			return p;
-		});
-		text = text.replace(/<span style="background-color:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => {
-			return p;
-		});
-		text = text.replace(/<span style="font-weight:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => {
-			return p;
-		});
+		text = text.replace(/<font(?:[^>]*?)>([^<]*)(?:<\/font>)?/g, (s: string, p: string) => p);
+		text = text.replace(/<span style="background-color:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => p);
+		text = text.replace(/<span style="font-weight:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => p);
 
 		// Fix browser markup bug
 		text = text.replace(/<\/?(i|b|strike|font|search)[^>]*>/g, (s: string, p: string) => {
@@ -662,7 +660,8 @@ class Mark {
 			const mark = marks[i];
 			if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type) && 
 				(mark.range.from >= newMark.range.from) && 
-				(mark.range.to <= newMark.range.to)
+				(mark.range.to <= newMark.range.to) &&
+				(mark.param == newMark.param)
 			) {
 				marks.splice(i, 1);
 				i--;

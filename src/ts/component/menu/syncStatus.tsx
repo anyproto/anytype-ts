@@ -253,11 +253,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
 			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued, I.SyncStatusObject.Synced ] },
-			{ relationKey: 'syncDate', type: I.SortType.Desc },
+			{ relationKey: 'syncDate', type: I.SortType.Desc, includeTime: true },
 		];
 
 		this.setState({ isLoading: true });
@@ -334,10 +334,16 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		let message = '';
 		let isConnected = false;
 		let isError = false;
+		let isSlow = false;
 
 		if ([ I.SyncStatusSpace.Syncing, I.SyncStatusSpace.Synced ].includes(status)) {
 			isConnected = true;
 			className = 'connected';
+		} else
+		if (I.SyncStatusSpace.Upgrade == status) {
+			isConnected = true;
+			isSlow = true;
+			className = 'connectedSlow';
 		} else
 		if (I.SyncStatusSpace.Error == status) {
 			isError = true;
@@ -350,6 +356,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				title = translate('menuSyncStatusInfoNetworkTitle');
 
 				if (isConnected) {
+					if (isSlow) {
+						message = translate('menuSyncStatusInfoNetworkMessageSyncMightBeSlow');
+						buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
+					} else
 					if (syncingCounter) {
 						message = U.Common.sprintf(translate('menuSyncStatusInfoNetworkMessageSyncing'), syncingCounter, U.Common.plural(syncingCounter, translate('pluralLCObject')));
 					} else {

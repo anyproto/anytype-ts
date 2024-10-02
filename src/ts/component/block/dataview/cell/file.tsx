@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, S, U, translate, Relation } from 'Lib';
+import { I, S, Relation } from 'Lib';
 
 interface State { 
 	isEditing: boolean; 
@@ -21,7 +21,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 	};
 
 	render () {
-		const { subId, relation, recordId, getRecord, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
+		const { subId, relation, recordId, size, iconSize, placeholder, arrayLimit, getRecord, elementMapper } = this.props;
 		const record = getRecord(recordId);
 		
 		if (!record) {
@@ -49,7 +49,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 		const Item = (item: any) => (
 			<div className="element" onClick={e => this.onClick(e, item)}>
 				<div className="flex">
-					<IconObject object={item} size={iconSize} />
+					<IconObject object={item} size={size} iconSize={iconSize} />
 					<ObjectName object={item} />
 				</div>
 			</div>
@@ -65,7 +65,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 					</span>
 				) : (
-					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
+					<div className="empty">{placeholder}</div>
 				)}
 			</div>
 		);
@@ -93,12 +93,6 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 	};
 
 	onClick (e: any, item: any) {
-		const { canOpen, canEdit } = this.props;
-
-		if (canOpen && !canEdit) {
-			e.stopPropagation();
-			U.Object.openConfig(item);
-		};
 	};
 
 });

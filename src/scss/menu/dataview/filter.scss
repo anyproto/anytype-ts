@@ -37,20 +37,24 @@
 			}
 			.txt {
 				> .name { @include text-overflow-nw; max-width: 100%; }
-				> .flex { line-height: 20px; gap: 0px 4px; max-width: 100%; }
-
+				> .flex { line-height: 20px; max-width: 100%; }
 				> .name, > .flex { display: flex; align-items: center; }
-				> .name::after, > .flex::after { content: ''; width: 20px; height: 20px; flex-shrink: 0; }
-				> .name::after { background-image: url('~img/arrow/select/dark.svg'); }
-				> .flex::after { background-image: url('~img/arrow/select/light.svg'); }
 
-				.condition { color: var(--color-text-secondary); }
+				.condition { color: var(--color-text-secondary); margin-right: 4px; }
 				.value { color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; }
 			}
 		}
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 		.item.isReadonly {
 			.txt { width: calc(100% - 50px); }
+		}
+
+		.item:not(.isReadonly) {
+			.txt {
+				> .name::after, > .flex::after { content: ''; width: 20px; height: 20px; flex-shrink: 0; }
+				> .name::after { background-image: url('~img/arrow/select/dark.svg'); }
+				> .flex::after { background-image: url('~img/arrow/select/light.svg'); }
+			}
 		}
 
 		.item:not(.isReadonly):hover, 

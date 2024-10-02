@@ -143,7 +143,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			>
 				<div className="head">
 					<div className="name">{translate('commonVersionHistory')}</div>
-					<Icon className="close" onClick={this.onClose} />
+					<Icon className="close withBackground" onClick={this.onClose} />
 				</div>
 
 				<div 

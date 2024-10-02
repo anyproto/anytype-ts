@@ -24,7 +24,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.onSelect = this.onSelect.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
@@ -52,7 +51,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		let icon = null;
 		if (targetObjectId && !isCollection) {
-			icon = <Icon id="head-source-select" className="source" onClick={this.onSource} />;
+			icon = <Icon id="head-source-select" className="source withBackground" onClick={this.onSource} />;
 		} else {
 			icon = <div id="head-source-select" />;
 		};
@@ -68,7 +67,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					id="value"
 					readonly={readonly || !isEditing}
 					placeholder={placeholder}
-					onFocus={this.onFocus}
 					onMouseDown={this.onTitle}
 					onBlur={this.onBlur}
 					onKeyDown={this.onKeyDown}
@@ -179,7 +177,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		if (isCollection) {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
@@ -192,8 +190,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			};
 		} else {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
-				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');
@@ -266,13 +264,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		onSourceTypeSelect(`#block-${block.id} #head-source-select`);
 	};
 
-	onFocus () {
-		keyboard.setFocus(true);
-	};
-
 	onBlur () {
-		keyboard.setFocus(false);
-
 		this.save();
 		window.setTimeout(() => this.setEditing(false), 40);
 	};
@@ -359,11 +351,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	onIconSelect (icon: string) {
-		U.Object.setIcon(this.props.block.content.targetObjectId, icon, '');
+		U.Object.setIcon(this.props.block.getTargetObjectId(), icon, '');
 	};
 
 	onIconUpload (objectId: string) {
-		U.Object.setIcon(this.props.block.content.targetObjectId, '', objectId);
+		U.Object.setIcon(this.props.block.getTargetObjectId(), '', objectId);
 	};
 
 	setRange (range: I.TextRange) {

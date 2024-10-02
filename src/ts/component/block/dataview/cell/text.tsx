@@ -75,13 +75,27 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				EditorComponent = () => <span>{value}</span>;
 			} else 
 			if (isDate) {
-				const mask = [ '99.99.9999' ];
+				const mask = [];
 				const ph = [];
 
-				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
-					ph.push('mm.dd.yyyy');
-				} else {
-					ph.push('dd.mm.yyyy');
+				switch (viewRelation.dateFormat) {
+					case I.DateFormat.ISO: {
+						mask.push('9999.99.99');
+						ph.push('yyyy.mm.dd');
+						break;
+					};
+
+					case I.DateFormat.ShortUS: {
+						mask.push('99.99.9999');
+						ph.push('mm.dd.yyyy');
+						break;
+					};
+
+					default: {
+						mask.push('99.99.9999');
+						ph.push('dd.mm.yyyy');
+						break;
+					};
 				};
 				
 				if (viewRelation.includeTime) {
@@ -112,7 +126,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						ref={ref => this.ref = ref} 
 						id="input" 
 						{...item} 
-						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
+						placeholder={placeholder}
 						onKeyUp={this.onKeyUp} 
 					/>
 				);
@@ -145,11 +159,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					if (isName && U.Object.isNoteLayout(record.layout)) {
 						content = <span className="emptyText">{translate('commonEmpty')}</span>;
 					} else {
-						content = (
-							<div className="empty">
-								{placeholder || translate(`placeholderCell${relation.format}`)}
-							</div>
-						);
+						content = <div className="empty">{placeholder}</div>;
 					};
 				};
 				return content;
@@ -160,8 +170,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					value = Number(value) || 0;
 
 					const day = showRelativeDates ? U.Date.dayString(value) : null;
-					const date = day ? day : U.Date.date(U.Date.dateFormat(viewRelation.dateFormat), value);
-					const time = U.Date.date(U.Date.timeFormat(viewRelation.timeFormat), value);
+					const date = day ? day : U.Date.dateWithFormat(viewRelation.dateFormat, value);
+					const time = U.Date.timeWithFormat(viewRelation.timeFormat, value);
 					
 					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {
@@ -242,9 +252,25 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				};
 			} else
 			if (relation.format == I.RelationType.Date) {
-				const format = [
-					(viewRelation.dateFormat == I.DateFormat.ShortUS) ? 'm.d.Y' : 'd.m.Y'
-				];
+				const format = [];
+
+				switch (viewRelation.dateFormat) {
+					case I.DateFormat.ISO: {
+						format.push('Y.m.d');
+						break;
+					};
+
+					case I.DateFormat.ShortUS: {
+						format.push('m.d.Y');
+						break;
+					};
+
+					default: {
+						format.push('d.m.Y');
+						break;
+					};
+				};
+
 				if (viewRelation.includeTime) {
 					format.push('H:i');
 				};
@@ -329,7 +355,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onKeyUp (e: any, value: string) {
-		const { relation } = this.props;
+		const { relation, groupId, onRecordAdd, recordIdx } = this.props;
 
 		if (relation.format == I.RelationType.LongText) {
 			return;
@@ -347,25 +373,23 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		let ret = false;
 
-		keyboard.shortcut('enter, escape', e, () => {
+		keyboard.shortcut('escape, enter, enter+shift', e, (pressed) => {
 			e.preventDefault();
+			e.persist();
 
 			this.save(value, () => {
 				S.Menu.closeAll(J.Menu.cell);
 
 				this.range = null;
 				this.setEditing(false);
+
+				if (pressed == 'enter+shift') {
+					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
+				};
 			});
 
 			ret = true;
 		});
-
-		/*
-		if (!ret) {
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.save(value), J.Constant.delay.keyboard);
-		};
-		*/
 	};
 
 	onKeyUpDate (e: any, value: any) {

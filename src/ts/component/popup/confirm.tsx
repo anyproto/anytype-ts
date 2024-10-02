@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { Title, Icon, Label, Button } from 'Component';
-import { I, keyboard, translate } from 'Lib';
+import { Title, Icon, Label, Button, Checkbox } from 'Component';
+import { I, keyboard, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup> {
 
 	refButtons: any = null;
+	refCheckbox: any = null;
 	n = 0;
 
 	constructor (props: I.Popup) {
 		super(props);
 		
+		this.onCheck = this.onCheck.bind(this);
 		this.onConfirm = this.onConfirm.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -20,7 +22,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 	render() {
 		const { param } = this.props;
 		const { data } = param;
-		const { title, text, icon } = data;
+		const { title, text, icon, storageKey } = data;
 		
 		const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
 		const canCancel = undefined === data.canCancel ? true : data.canCancel;
@@ -31,7 +33,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		const bgColor = data.bgColor || '';
 		
 		return (
-			<React.Fragment>
+			<div className={[ 'wrap', (storageKey ? 'withCheckbox' : '') ].join(' ')}>
 				{icon ? (
 					<div className={[ 'iconWrapper', bgColor ].join(' ')}>
 						<Icon className={icon} />
@@ -40,11 +42,18 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 				<Title text={title} />
 				<Label text={text} />
 
+				{storageKey ? (
+					<div className="checkboxWrapper" onClick={this.onCheck}>
+						<Checkbox ref={ref => this.refCheckbox = ref} value={false} />
+						<Label text={translate('commonDoNotShowAgain')} />
+					</div>
+				) : ''}
+
 				<div ref={ref => this.refButtons = ref} className="buttons">
 					{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={this.onConfirm} onMouseEnter={this.onMouseEnter} /> : ''}
 					{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={this.onCancel} onMouseEnter={this.onMouseEnter} /> : ''}
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	};
 
@@ -116,6 +125,16 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		if (onConfirm) {
 			onConfirm();
 		};
+	};
+
+	onCheck (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { storageKey } = data;
+		const value = this.refCheckbox.getValue();
+
+		this.refCheckbox.toggle();
+		Storage.set(storageKey, !value);
 	};
 	
 	onCancel (e: any) {

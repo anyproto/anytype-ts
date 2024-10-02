@@ -141,7 +141,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 	};
 
 	componentDidUpdate (): void {
-		if (this.refList) {
+		if (this.refList && this.top) {
 			this.refList.scrollToPosition(this.top);
 		};
 
@@ -184,8 +184,8 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		const children = S.Block.getChildren(root, root, it => it.isLink());
 		const ro = records[oldIndex];
 		const rn = records[newIndex];
-		const oidx = children.findIndex(it => it.content.targetBlockId == ro);
-		const nidx = children.findIndex(it => it.content.targetBlockId == rn);
+		const oidx = children.findIndex(it => it.getTargetObjectId() == ro);
+		const nidx = children.findIndex(it => it.getTargetObjectId() == rn);
 		const current = children[oidx];
 		const target = children[nidx];
 		const childrenIds = S.Block.getChildrenIds(root, root);
@@ -215,7 +215,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		const length = this.getItems().length;
 
 		raf(() => {
-			const container = $('#listWidget');
+			const container = $('#sidebar #containerWidget #list');
 			const obj = $(`#widget-${parent.id}`);
 			const node = $(this.node);
 			const head = obj.find('.head');

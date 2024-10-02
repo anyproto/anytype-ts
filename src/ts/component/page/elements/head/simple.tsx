@@ -8,6 +8,7 @@ interface Props {
 	placeholder?: string;
 	isContextMenuDisabled?: boolean;
 	readonly?: boolean;
+	noIcon?: boolean;
 	onCreate?: () => void;
 };
 
@@ -34,9 +35,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, onCreate, isContextMenuDisabled, readonly } = this.props;
+		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon } = this.props;
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
+		const object = S.Detail.get(rootId, rootId);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -121,13 +122,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			<div ref={node => this.node = node} className={cn.join(' ')}>
 				<div className="side left">
 					<div className="titleWrap">
-						{check.withIcon ? (
+						{!noIcon && check.withIcon ? (
 							<IconObject 
 								id={'block-icon-' + rootId} 
 								size={32} 
 								iconSize={32}
 								object={object} 
-								forceLetter={true}
 								canEdit={canEditIcon} 
 							/>
 						) : ''}
@@ -176,12 +176,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	onFocus (e: any, item: any) {
-		keyboard.setFocus(true);
 		this.placeholderCheck(item.id);
 	};
 
 	onBlur (e: any, item: any) {
-		keyboard.setFocus(false);
 		window.clearTimeout(this.timeout);
 		this.save();
 	};

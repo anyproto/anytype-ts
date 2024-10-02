@@ -49,12 +49,12 @@ const forceProps = {
 		distance: 100,
 	},
 	forceX: {
-		strength: 0.1,
-		x: 0.45,
+		strength: 0.01,
+		x: 0.5,
 	},
 	forceY: {
-		strength: 0.1,
-		y: 0.45,
+		strength: 0.01,
+		y: 0.5,
 	},
 };
 
@@ -198,11 +198,11 @@ initForces = () => {
 	.strength(d => d.source.type == d.target.type ? 1 : 0.5);
 
 	simulation.force('forceX')
-	.strength(d => d.isOrphan ? forceX.strength : 0)
+	.strength(d => !d.isOrphan ? forceX.strength : 0)
 	.x(width * forceX.x);
 
 	simulation.force('forceY')
-	.strength(d => d.isOrphan ? forceY.strength : 0)
+	.strength(d => !d.isOrphan ? forceY.strength : 0)
 	.y(height * forceY.y);
 
 	updateForces();

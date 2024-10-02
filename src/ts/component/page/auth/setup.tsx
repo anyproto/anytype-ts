@@ -141,21 +141,23 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const { mode, path } = networkConfig;
 
 		C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
-			if (this.setError(message.error) || !message.account) {
+			const { account } = message;
+
+			if (this.setError(message.error) || !account) {
 				return;
 			};
 
-			S.Auth.accountSet(message.account);
-			S.Common.configSet(message.account.config, false);
+			S.Auth.accountSet(account);
+			S.Common.configSet(account.config, false);
 
 			const spaceId = Storage.get('spaceId');
 			if (spaceId) {
 				U.Router.switchSpace(spaceId);
 			} else {
-				U.Data.onInfo(message.account.info);
-				U.Data.onAuth({ routeParam: { animate } });
+				U.Data.onAuthWithoutSpace({ replace: true });
 			};
 
+			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce(false);
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});

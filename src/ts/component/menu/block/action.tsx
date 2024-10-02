@@ -172,7 +172,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 	
 	getSections () {
-		
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
@@ -182,7 +181,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return [];
 		};
 		
-		const { config } = S.Common;
 		const { filter } = this.state;
 		const { hAlign, content, bgColor } = block;
 		const { color, style } = content;
@@ -234,7 +232,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 		};
 
-		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject };
+		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
 		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 
@@ -418,7 +416,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						this.moveToPage(item.id);
@@ -432,7 +430,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 					onSelect: (item: any) => {
 						C.BlockFileSetTargetObjectId(rootId, blockId, item.id);
@@ -458,7 +456,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					position: I.BlockPosition.Bottom,
 					skipIds,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					canAdd: true,
 					onSelect: () => close()
@@ -547,7 +545,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					};
 
 					filters = filters.concat([
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
+						{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 					]);
 				} else {
 					addParam.onClick = (details: any) => {
@@ -555,8 +553,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					};
 
 					filters = filters.concat([
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
-						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+						{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+						{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 					]);
 				};
 
@@ -607,7 +605,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 		switch (item.itemId) {
 			case 'download': {
-				Action.download(block, 'menu');
+				Action.downloadFile(targetObjectId, analytics.route.menuAction, block.isFileImage());
 				break;
 			};
 

@@ -47,11 +47,23 @@ class UtilDate {
 		let i: any = 0;
 		let s: any = 0;
 
-		if (format == I.DateFormat.ShortUS) {
-			[ m, d, y ] = String(date || '').split('.');
-		} else {
-			[ d, m, y ] = String(date || '').split('.');
+		switch (format) {
+			case I.DateFormat.ISO: {
+				[ y, m, d ] = String(date || '').split('.');
+				break;
+			};
+
+			case I.DateFormat.ShortUS: {
+				[ m, d, y ] = String(date || '').split('.');
+				break;
+			};
+
+			default: {
+				[ d, m, y ] = String(date || '').split('.');
+				break;
+			};
 		};
+
 		[ h, i, s ] = String(time || '').split(':');
 
 		y = Number(y) || 0;
@@ -178,6 +190,10 @@ class UtilDate {
 		return f;
 	};
 
+	dateWithFormat (f: I.DateFormat, t: number): string {
+		return this.date(this.dateFormat(f), t);
+	};
+
 	timeFormat (v: I.TimeFormat): string {
 		let f = '';
 		switch (v) {
@@ -186,6 +202,10 @@ class UtilDate {
 			case I.TimeFormat.H24:	 f = 'H:i'; break;
 		};
 		return f;
+	};
+
+	timeWithFormat (f: I.TimeFormat, t: number): string {
+		return this.date(this.timeFormat(f), t);
 	};
 
 	dayString (t: any): string {

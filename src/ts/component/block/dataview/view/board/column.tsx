@@ -12,6 +12,7 @@ interface Props extends I.ViewComponent {
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
+	recordIdx?: number;
 };
 
 const Column = observer(class Column extends React.Component<Props> {
@@ -29,11 +30,13 @@ const Column = observer(class Column extends React.Component<Props> {
 		this.onLoadMore = this.onLoadMore.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.getCoverObject = this.getCoverObject.bind(this);
 	};
 
 	render () {
 		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn, getTarget } = this.props;
 		const view = getView();
+		const { coverRelationKey, hideIcon } = view;
 		const target = getTarget();
 		const subId = getSubId();
 		const items = this.getItems();
@@ -108,6 +111,8 @@ const Column = observer(class Column extends React.Component<Props> {
 								id={item.id}
 								groupId={id}
 								getRecord={() => item}
+								getCoverObject={this.getCoverObject}
+								recordIdx={i}
 							/>
 						))}
 
@@ -152,9 +157,9 @@ const Column = observer(class Column extends React.Component<Props> {
 		const subId = getSubId();
 		const limit = getLimit() + this.offset;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
-		].concat(view.filters);
+		].concat(view.filters as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
 
@@ -163,7 +168,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		};
 
 		if (searchIds) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
 		if (clear) {
@@ -201,6 +206,20 @@ const Column = observer(class Column extends React.Component<Props> {
 		return applyObjectOrder(id, U.Common.objectCopy(S.Record.getRecordIds(getSubId(), ''))).map(id => ({ id }));
 	};
 
+	getCoverObject (id: string): any {
+		const { getView, getKeys, getSubId } = this.props;
+		const view = getView();
+
+		if (!view.coverRelationKey) {
+			return null;
+		};
+
+		const subId = getSubId();
+		const record = S.Detail.get(subId, id, getKeys(view.id));
+
+		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
+	};
+
 	onLoadMore () {
 		const { getLimit } = this.props;
 
@@ -227,8 +246,14 @@ const Column = observer(class Column extends React.Component<Props> {
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
+			onOpen: () => {
+				$(element).addClass('active');
+				node.addClass('active');
+			},
+			onClose: () => {
+				$(element).removeClass('active');
+				node.removeClass('active');
+			},
 			data: {
 				rootId,
 				blockId: block.id,

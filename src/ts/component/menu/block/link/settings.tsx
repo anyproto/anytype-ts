@@ -139,7 +139,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { data } = param;
         const { rootId, blockId } = data;
         const block = S.Block.getLeaf(rootId, blockId);
-        const object = S.Detail.get(rootId, block.content.targetBlockId);
+        const object = S.Detail.get(rootId, block.getTargetObjectId());
 
         return U.Data.checkLinkSettings(block.content, object.layout);
 	};
@@ -184,7 +184,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			return [];
 		};
 
-        const object = S.Detail.get(rootId, block.content.targetBlockId);
+        const object = S.Detail.get(rootId, block.getTargetObjectId());
         const content = this.getContent();
 		const isCard = content.cardStyle == I.LinkCardStyle.Card;
 		const isText = content.cardStyle == I.LinkCardStyle.Text;

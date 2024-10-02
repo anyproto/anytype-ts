@@ -42,9 +42,17 @@ class Notification implements I.Notification {
 
 		switch (this.type) {
 			case I.NotificationType.Import: {
-				if ((importType == I.ImportType.Notion) && (errorCode == J.Error.Code.NO_OBJECTS_TO_IMPORT)) {
-					this.title = translate('notificationNotionErrorNoObjectsTitle');
-					this.text = translate('notificationNotionErrorNoObjectsText');
+				const codes = [
+					J.Error.Code.NO_OBJECTS_TO_IMPORT,
+					J.Error.Code.IMPORT_IS_CANCELED,
+					J.Error.Code.LIMIT_OF_ROWS_OR_RELATIONS_EXCEEDED,
+					J.Error.Code.FILE_LOAD_ERROR,
+					J.Error.Code.INSUFFICIENT_PERMISSIONS,
+				];
+
+				if (codes.includes(errorCode)) {
+					this.title = translate(`notificationImportErrorTitle${errorCode}`);
+					this.text = translate(`notificationImportErrorText${errorCode}`);
 				};
 				break;
 			};

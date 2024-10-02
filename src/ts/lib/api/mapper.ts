@@ -2,7 +2,6 @@ import { I, M, U, Encode, Decode } from 'Lib';
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
-import { DeviceList } from 'ts/lib/api/command';
 
 export const Mapper = {
 
@@ -26,6 +25,7 @@ export const Mapper = {
 		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
 		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
 		if (v == V.WIDGET)		 		 t = I.BlockType.Widget;
+		if (v == V.CHAT)				 t = I.BlockType.Chat;
 		return t;
 	},
 
@@ -255,6 +255,10 @@ export const Mapper = {
 				limit: obj.getLimit(),
 				viewId: obj.getViewid(),
 			};
+		},
+
+		BlockChat: () => {
+			return {};
 		},
 
 		Block: (obj: Model.Block): I.Block => {
@@ -575,7 +579,7 @@ export const Mapper = {
 				description: obj.getDescription(),
 				nameMinLength: obj.getAnynameminlength(),
 				isTest: obj.getIstest(),
-				periodType: obj.getPeriodtype(),
+				periodType: obj.getPeriodtype() as number,
 				period: obj.getPeriodvalue(),
 				priceCents: obj.getPricestripeusdcents(),
 				colorStr: obj.getColorstr(),
@@ -619,6 +623,45 @@ export const Mapper = {
 				isConnected: obj.getIsconnected(),
 				archived: obj.getArchived()
 			};
+		},
+
+		ChatMessage: (obj: Model.ChatMessage): any => {
+			return {
+				id: obj.getId(),
+				orderId: obj.getOrderid(),
+				creator: obj.getCreator(),
+				createdAt: obj.getCreatedat(),
+				modifiedAt: obj.getModifiedat(),
+				replyToMessageId: obj.getReplytomessageid(),
+				content: Mapper.From.ChatMessageContent(obj.getMessage()),
+				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
+				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
+			};
+		},
+
+		ChatMessageContent (obj: Model.ChatMessage.MessageContent): I.ChatMessageContent {
+			return {
+				text: obj.getText(),
+				style: obj.getStyle() as number,
+				marks: (obj.getMarksList() || []).map(Mapper.From.Mark),
+			};
+		},
+
+		ChatMessageAttachment (obj: Model.ChatMessage.Attachment): I.ChatMessageAttachment {
+			return {
+				target: obj.getTarget(),
+				type: obj.getType() as number,
+			};
+		},
+
+		ChatMessageReaction (obj: Model.ChatMessage.Reactions)  {
+			const reactions = [];
+
+			obj.getReactionsMap().forEach((identityList, emoji) => {
+				reactions.push({ icon: emoji, authors: identityList.getIdsList() });
+			});
+
+			return reactions;
 		},
 
     },
@@ -797,6 +840,12 @@ export const Mapper = {
 			return content;
 		},
 
+		BlockChat: (obj: any) => {
+			const content = new Model.Block.Content.Chat();
+			
+			return content;
+		},
+
 		Block: (obj: any) => {
 			obj = obj || {};
 			obj.type = String(obj.type || I.BlockType.Empty);
@@ -853,6 +902,7 @@ export const Mapper = {
 			item.setQuickoption(obj.quickOption);
 			item.setValue(Encode.value(obj.value));
 			item.setIncludetime(obj.includeTime);
+			item.setNestedfiltersList((obj.nestedFilters || []).map(Mapper.To.Filter));
 
 			return item;
 		},
@@ -958,6 +1008,52 @@ export const Mapper = {
 			return item;
 		},
 
+		ChatMessage: (obj: I.ChatMessage) => {
+			const item = new Model.ChatMessage();
+
+			item.setId(obj.id);
+			item.setOrderid(obj.orderId);
+			item.setCreator(obj.creator);
+			item.setReplytomessageid(obj.replyToMessageId);
+			item.setMessage(Mapper.To.ChatMessageContent(obj.content));
+			item.setAttachmentsList(obj.attachments.map(Mapper.To.ChatMessageAttachment));
+			item.setReactions(Mapper.To.ChatMessageReaction(obj.reactions));
+
+			return item;
+		},
+
+		ChatMessageContent: (obj: I.ChatMessageContent) => {
+			const item = new Model.ChatMessage.MessageContent();
+
+			item.setText(obj.text);
+			item.setStyle(obj.style as number);
+			item.setMarksList(obj.marks.map(Mapper.To.Mark));
+
+			return item;
+		},
+
+		ChatMessageAttachment: (obj: I.ChatMessageAttachment) => {
+			const item = new Model.ChatMessage.Attachment();
+
+			item.setTarget(obj.target);
+			item.setType(obj.type as number);
+
+			return item;
+		},
+
+		ChatMessageReaction: (map: any) => {
+			const reactions = new Model.ChatMessage.Reactions();
+
+			(map || []).forEach(it => {
+				const identities = new Model.ChatMessage.Reactions.IdentityList();
+
+				identities.setIdsList(it.authors);
+				reactions.getReactionsMap().set(it.icon, identities);
+			});
+
+			return reactions;
+		},
+
 	},
 
 	Event: {
@@ -1036,6 +1132,13 @@ export const Mapper = {
 			if (v == V.THREADSTATUS) 				 t = 'ThreadStatus';
 			if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'SpaceSyncStatusUpdate';
 			if (v == V.P2PSTATUSUPDATE)		 		 t = 'P2PStatusUpdate';
+
+			if (v == V.IMPORTFINISH)				 t = 'ImportFinish';
+
+			if (v == V.CHATADD)						 t = 'ChatAdd';
+			if (v == V.CHATUPDATE)					 t = 'ChatUpdate';
+			if (v == V.CHATDELETE)					 t = 'ChatDelete';
+			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
 
 			return t;
 		},
@@ -1492,6 +1595,43 @@ export const Mapper = {
 				devicesCounter: obj.getDevicescounter(),
 			};
 		},
+
+		ImportFinish: (obj: Events.Event.Import.Finish) => {
+			return {
+				collectionId: obj.getRootcollectionid(),
+				count: obj.getObjectscount(),
+				type: obj.getImporttype(),
+			};
+		},
+
+		ChatAdd: (obj: Events.Event.Chat.Add) => {
+			return {
+				id: obj.getId(),
+				orderId: obj.getOrderid(),
+				message: Mapper.From.ChatMessage(obj.getMessage()),
+			};
+		},
+
+		ChatUpdate: (obj: Events.Event.Chat.Update) => {
+			return {
+				id: obj.getId(),
+				message: Mapper.From.ChatMessage(obj.getMessage()),
+			};
+		},
+
+		ChatDelete: (obj: Events.Event.Chat.Delete) => {
+			return {
+				id: obj.getId(),
+			};
+		},
+
+		ChatUpdateReactions: (obj: Events.Event.Chat.UpdateReactions) => {
+			return {
+				id: obj.getId(),
+				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
+			};
+		},
+
 	},
 
 };

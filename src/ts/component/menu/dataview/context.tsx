@@ -87,6 +87,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
+		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
@@ -103,12 +104,13 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedFav = true;
 		let allowedCopy = true;
 		let allowedType = true;
-		let allowedLink = data.allowedLink;
+		let allowedLinkTo = data.allowedLinkTo;
 		let allowedOpen = data.allowedOpen;
 		let allowedCollection = true;
 		let allowedUnlink = isCollection;
 		let allowedWidget = true;
 		let allowedRelation = true;
+		let allowedLink = true;
 
 		objectIds.forEach((it: string) => {
 			const object = this.getObject(subId, getObject, it);
@@ -135,6 +137,14 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
 				allowedRelation = false;
 			};
+			if (U.Object.isTypeOrRelationLayout(object.layout)) {
+				allowedRelation = false;
+				allowedWidget = false;
+				allowedLinkTo = false;
+				allowedCopy	= false;
+				allowedCollection = false;
+				allowedFav = false;
+			};
 		});
 
 		if (favCnt == length) {
@@ -145,8 +155,9 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (length > 1) {
 			allowedOpen = false;
-			allowedLink = false;
+			allowedLinkTo = false;
 			allowedWidget = false;
+			allowedLink = false;			
 		};
 
 		if (!canWrite) {
@@ -154,7 +165,7 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedFav = false;
 			allowedCopy = false;
 			allowedType = false;
-			allowedLink = false;
+			allowedLinkTo = false;
 			allowedUnlink = false;
 			allowedWidget = false;
 			allowedRelation = false;
@@ -163,7 +174,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (archiveCnt == length) {
 			allowedOpen = false;
-			allowedLink = false;
+			allowedLinkTo = false;
 			allowedUnlink = false;
 			allowedType = false;
 			allowedFav = false;
@@ -177,16 +188,18 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedFav)		 fav = null;
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedType)		 changeType = null;
-		if (!allowedLink)		 linkTo = null;
+		if (!allowedLinkTo)		 linkTo = null;
 		if (!allowedOpen)		 open = null;
 		if (!allowedUnlink)		 unlink = null;
 		if (!allowedWidget)		 createWidget = null;
 		if (!allowedRelation)	 relation = null;
 		if (!allowedCollection)	 addCollection = null;
+		if (!allowedLink)		 pageLink = null;
 
 		let sections = [
-			{ children: [ createWidget, open, fav, linkTo, addCollection, exportObject, relation ] },
-			{ children: [ changeType, pageCopy, unlink, archive ] },
+			{ children: [ createWidget, open, changeType, relation, pageLink ] },
+			{ children: [ fav, linkTo, addCollection ] },
+			{ children: [ pageCopy, exportObject, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -242,6 +255,7 @@ class MenuContext extends React.Component<I.Menu> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			noAutoHover: true,
 			className,
 			classNameWrap,
 			data: {
@@ -256,7 +270,7 @@ class MenuContext extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						C.ObjectListSetObjectType(objectIds, item.uniqueKey);
@@ -272,8 +286,8 @@ class MenuContext extends React.Component<I.Menu> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
 					blockId: itemId,
@@ -300,8 +314,8 @@ class MenuContext extends React.Component<I.Menu> {
 				menuParam.className = 'single';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
-						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
 					blockId: itemId,
@@ -314,7 +328,7 @@ class MenuContext extends React.Component<I.Menu> {
 						onClick: (details: any) => {
 							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, objectIds);
-								U.Object.openConfig(message.details);
+								U.Object.openAuto(message.details);
 							});
 						},
 					},
@@ -332,7 +346,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 		};
 
-		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+		if (menuId && !S.Menu.isOpen(menuId, item.id) && !S.Menu.isAnimating(menuId)) {
 			S.Menu.closeAll(J.Menu.dataviewContext, () => {
 				S.Menu.open(menuId, menuParam);
 			});
@@ -388,6 +402,16 @@ class MenuContext extends React.Component<I.Menu> {
 						cb();
 					};
 				});
+				break;
+			};
+
+			case 'pageLink': {
+				if (!first) {
+					break;
+				};
+
+				U.Common.clipboardCopy({ text: `${J.Constant.protocol}://${U.Object.universalRoute(first)}` });
+				analytics.event('CopyLink', { route });
 				break;
 			};
 

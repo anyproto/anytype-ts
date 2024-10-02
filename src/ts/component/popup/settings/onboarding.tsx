@@ -34,6 +34,11 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 			it.name = translate(`networkMode${it.id}Title`);
 			it.description = translate(`networkMode${it.id}Text`);
 			it.withDescription = true;
+
+			if (it.id == I.NetworkMode.Local) {
+				it.note = translate('popupSettingsOnboardingLocalOnlyNote');
+			};
+
 			return it;
 		});
 
@@ -72,7 +77,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 								menuParam={{ 
 									horizontal: I.MenuDirection.Right, 
 									width: 300,
-									className: 'fixed',
+									className: 'fixed withFullDescripion',
+									data: { noVirtualisation: true, noScroll: true }
 								}}
 							/>
 						</div>
@@ -134,33 +140,62 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		const { networkConfig } = S.Auth;
 		const userPath = U.Common.getElectron().userPath();
 
-		if (this.config.mode !== networkConfig.mode) {
-			analytics.event('SelectNetwork', { route: analytics.route.onboarding, type: this.config.mode });
+		const save = () => {
+			if (this.config.mode !== networkConfig.mode) {
+				analytics.event('SelectNetwork', { route: analytics.route.onboarding, type: this.config.mode });
+			};
+
+			if (this.config.path !== networkConfig.path) {
+				analytics.event('UploadNetworkConfiguration', { route: analytics.route.onboarding });
+			};
+
+			if (this.config.userPath !== userPath) {
+				Renderer.send('setUserDataPath', this.config.userPath);
+				S.Common.dataPathSet(this.config.userPath);
+				delete this.config.userPath;
+			};
+
+			S.Auth.networkConfigSet(this.config);
+			this.props.close();
 		};
 
-		if (this.config.path !== networkConfig.path) {
-			analytics.event('UploadNetworkConfiguration', { route: analytics.route.onboarding });
+		if (this.config.mode == I.NetworkMode.Local) {
+			S.Popup.open('confirm', {
+				className: 'localOnlyWarning',
+				data: {
+					icon: 'warning',
+					title: translate('commonAreYouSure'),
+					text: translate('popupSettingsOnboardingLocalOnlyConfirmText'),
+					textConfirm: translate('popupSettingsOnboardingLocalOnlyConfirmConfirm'),
+					textCancel: translate('popupSettingsOnboardingLocalOnlyConfirmCancel'),
+					colorConfirm: 'blank',
+					colorCancel: 'blank',
+					onConfirm: save,
+					onCancel: () => {
+						this.config.mode = I.NetworkMode.Default;
+						this.refMode?.setValue(I.NetworkMode.Default);
+						this.forceUpdate();
+					}
+				}
+			});
+		} else {
+			save();
 		};
-
-		if (this.config.userPath !== userPath) {
-			Renderer.send('setUserDataPath', this.config.userPath);
-			S.Common.dataPathSet(this.config.userPath);
-			delete this.config.userPath;
-		};
-
-		S.Auth.networkConfigSet(this.config);
-		this.props.close();
 	};
 
 	onPathClick (path: string) {
 		if (path) {
-			Renderer.send('pathOpen', U.Common.getElectron().dirname(path));
+			Renderer.send('openPath', U.Common.getElectron().dirName(path));
 		};
 	};
 
 	onChangeStorage () {
 		const onConfirm = () => {
-			Action.openDirectoryDialog({}, (paths: string[]) => this.onChange('userPath', paths[0]));
+			Action.openDirectoryDialog({}, (paths: string[]) => {
+				this.onChange('userPath', paths[0]);
+
+				analytics.event('ChangeStorageLocation', { type: 'Change', route: analytics.route.onboarding });
+			});
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {
@@ -173,6 +208,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	onResetStorage () {
 		const onConfirm = () => {
 			this.onChange('userPath', U.Common.getElectron().defaultPath());
+
+			analytics.event('ChangeStorageLocation', { type: 'Reset', route: analytics.route.onboarding });
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {
@@ -194,6 +231,9 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onTooltipShow (e: any, text: string) {
+		if (!text) {
+			return;
+		};
 		Preview.tooltipShow({ text, element: $(e.currentTarget) });
 	};
 

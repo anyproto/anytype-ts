@@ -10,24 +10,6 @@
     }
 }
 
-/* PageMainStore */
-
-.pageMainStore {
-    .body {
-        .items {
-            .item {
-				.buttons {
-					.icon.lock { background-image: url('#{$themePath}/icon/store/lock.svg'); }
-					.icon.check { background-image: url('#{$themePath}/icon/store/check0.svg'); }
-					.icon.check:hover { background-image: url('#{$themePath}/icon/store/check1.svg'); }
-					.icon.plus { background-image: url('#{$themePath}/icon/store/plus0.svg'); }
-					.icon.plus:hover { background-image: url('#{$themePath}/icon/store/plus1.svg'); }
-				}
-            }
-        }
-    }
-}
-
 /* PageMainType */
 
 .pageMainType {

@@ -102,7 +102,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { membership } = S.Auth;
 		const { membershipTiersList } = S.Common;
 		const sections = this.getSections().filter(it => !it.isHidden);
-		const participant = U.Space.getParticipant();
+		const profile = U.Space.getProfile();
+		const participant = U.Space.getParticipant() || profile;
 		const cnr = [ 'side', 'right', U.Common.toCamelCase('tab-' + page) ];
 		const length = sections.length;
 
@@ -144,7 +145,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			if (action.id == 'account') {
 				if (participant) {
 					name = participant?.globalName || participant?.name;
-					icon = <IconObject object={{ ...participant, name }} size={36} iconSize={36} forceLetter={true} />;
+					icon = <IconObject object={{ ...participant, name }} size={36} iconSize={36} />;
 				};
 
 				cn.push('itemAccount');

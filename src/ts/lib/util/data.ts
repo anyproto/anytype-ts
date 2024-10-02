@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding, Preview } from 'Lib';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -71,7 +71,7 @@ class UtilData {
 
 		switch (block.type) {
 			case I.BlockType.File: {
-				if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
+				if ((style == I.FileStyle.Link) || [ I.FileType.File, I.FileType.None ].includes(type)) {
 					c.push(dc);
 				} else {
 					c.push(`blockMedia is${I.FileType[type]}`);
@@ -143,6 +143,16 @@ class UtilData {
 	alignVIcon (v: I.BlockVAlign): string {
 		v = v || I.BlockVAlign.Top;
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
+	};
+
+	emojiParam (t: I.TextStyle) {
+		let s = 20;
+		switch (t) {
+			case I.TextStyle.Header1:	 s = 30; break;
+			case I.TextStyle.Header2:	 s = 26; break;
+			case I.TextStyle.Header3: 	 s = 22; break;
+		};
+		return s;
 	};
 	
 	onInfo (info: I.AccountInfo) {
@@ -216,7 +226,7 @@ class UtilData {
 
 					const space = U.Space.getSpaceview();
 
-					if (!space.isPersonal) {
+					if (!space.isPersonal && !space.isShared && Storage.get('shareBannerClosed')) {
 						Onboarding.start('space', keyboard.isPopup(), false);
 					};
 
@@ -250,6 +260,19 @@ class UtilData {
 		analytics.event('OpenAccount');
 	};
 
+	onAuthWithoutSpace (routeParam?: any) {
+		routeParam = routeParam || {};
+
+		this.createGlobalSubscriptions(() => {
+			const spaces = U.Space.getList();
+			if (spaces.length) {
+				U.Router.switchSpace(spaces[0].targetSpaceId, '', false, routeParam.onRouteChange);
+			} else {
+				U.Router.go('/main/void', routeParam);
+			};
+		});
+	};
+
 	createAllSubscriptions (callBack?: () => void) {
 		this.createGlobalSubscriptions(() => {
 			this.createSpaceSubscriptions(callBack);
@@ -258,11 +281,19 @@ class UtilData {
 
 	createGlobalSubscriptions (callBack?: () => void) {
 		const { account } = S.Auth;
+
+		if (!account) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.profile,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -272,7 +303,7 @@ class UtilData {
 				subId: J.Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
@@ -282,20 +313,49 @@ class UtilData {
 			},
 		];
 
-		if (account) {
+		this.createSubscriptions(list, () => {
+			this.createMyParticipantSubscriptions(null, callBack);
+		});
+	};
+
+	createMyParticipantSubscriptions (ids: string[], callBack?: () => void) {
+		const { account } = S.Auth;
+
+		if (!account) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		let spaces = U.Space.getList();
+		if (ids && ids.length) {
+			spaces = spaces.filter(it => ids.includes(it.targetSpaceId));
+		};
+
+		if (!spaces.length) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		const list = [];
+
+		spaces.forEach(space => {
 			list.push({
-				subId: J.Constant.subId.myParticipant,
+				subId: [ J.Constant.subId.myParticipant, space.targetSpaceId ].join('-'),
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space.targetSpaceId },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: U.Space.getParticipantId(space.targetSpaceId, account.id) },
 				],
+				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				noDeps: true,
 			});
-		};
+		});
 
 		this.createSubscriptions(list, callBack);
 	};
@@ -304,19 +364,10 @@ class UtilData {
 		const { space } = S.Common;
 		const list: any[] = [
 			{
-				subId: J.Constant.subId.profile,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
-				],
-				noDeps: true,
-				ignoreWorkspace: true,
-				ignoreHidden: false,
-			},
-			{
 				subId: J.Constant.subId.deleted,
 				keys: [],
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
+					{ relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
 				],
 				ignoreDeleted: false,
 				noDeps: true,
@@ -325,8 +376,8 @@ class UtilData {
 				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
 					{ relationKey: 'spaceId', type: I.SortType.Desc },
@@ -345,8 +396,8 @@ class UtilData {
 				subId: J.Constant.subId.relation,
 				keys: J.Relation.relation,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -360,7 +411,7 @@ class UtilData {
 				subId: J.Constant.subId.option,
 				keys: J.Relation.option,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
@@ -372,7 +423,7 @@ class UtilData {
 				subId: J.Constant.subId.participant,
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
@@ -428,6 +479,10 @@ class UtilData {
 		return J.Relation.default.concat(J.Relation.syncStatus);
 	};
 
+	chatRelationKeys () {
+		return J.Relation.default.concat([ 'source' ]);
+	};
+
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
 		C.WalletCreateSession(phrase, key, (message: any) => {
 
@@ -473,7 +528,7 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, limit } = param || {};
+		const { withSet, withCollection, withChat, limit } = param || {};
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
@@ -481,7 +536,10 @@ class UtilData {
 		let items: any[] = [];
 
 		items = items.concat(S.Record.getTypes().filter(it => {
-			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
+			return pageLayouts.includes(it.recommendedLayout) && 
+				!skipLayouts.includes(it.recommendedLayout) && 
+				(it.spaceId == space) &&
+				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
 
 		if (limit) {
@@ -492,24 +550,28 @@ class UtilData {
 			items.push(S.Record.getSetType());
 		};
 
+		if (withChat && config.experimental) {
+			items.push(S.Record.getChatType());
+		};
+
 		if (withCollection) {
 			items.push(S.Record.getCollectionType());
 		};
 
 		items = items.filter(it => it);
-
 		if (!config.debug.hiddenObject) {
 			items = items.filter(it => !it.isHidden);
 		};
 
+		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
 		return items;
 	};
 
 	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
 		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
+			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -610,18 +672,6 @@ class UtilData {
 		return 0;
 	};
 
-	sortByWeight (c1: any, c2: any) {
-		if (c1._sortWeight_ > c2._sortWeight_) return -1;
-		if (c1._sortWeight_ < c2._sortWeight_) return 1;
-		return this.sortByName(c1, c2);
-	};
-
-	sortByFormat (c1: any, c2: any) {
-		if (c1.format > c2.format) return 1;
-		if (c1.format < c2.format) return -1;
-		return this.sortByName(c1, c2);
-	};
-
 	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
 		const idx1 = ids.indexOf(c1.id);
 		const idx2 = ids.indexOf(c2.id);
@@ -632,15 +682,30 @@ class UtilData {
 	};
 
 	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
-		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
-		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		const k1 = Number(c1[key]) || 0;
+		const k2 = Number(c2[key]) || 0;
+
+		if (k1 > k2) return dir == I.SortType.Asc ? 1 : -1;
+		if (k1 < k2) return dir == I.SortType.Asc ? -1 : 1;
 		return this.sortByName(c1, c2);
+	};
+
+	sortByWeight (c1: any, c2: any) {
+		return this.sortByNumericKey('_sortWeight_', c1, c2, I.SortType.Desc);
+	};
+
+	sortByFormat (c1: any, c2: any) {
+		return this.sortByNumericKey('format', c1, c2, I.SortType.Asc);
+	};
+
+	sortByLastUsedDate (c1: any, c2: any) {
+		return this.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc);
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
-			{ operator: I.FilterOperator.And, relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
+			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
+			{ relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
 		];
 
 		this.search({
@@ -699,6 +764,48 @@ class UtilData {
 		return [ I.CoverType.Upload, I.CoverType.Source ].includes(type);
 	};
 
+	searchDefaultFilters (param: any) {
+		const { config, space } = S.Common;
+		const { ignoreWorkspace, ignoreHidden, ignoreDeleted, withArchived } = param;
+		const filters = param.filters || [];
+		const chatDerivedType = S.Record.getChatDerivedType();
+
+		filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chatDerived });
+
+		if (!ignoreWorkspace) {
+			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
+		};
+
+		if (ignoreHidden && !config.debug.hiddenObject) {
+			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (ignoreDeleted) {
+			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (!withArchived) {
+			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (!config.experimental) {
+			const chatType = S.Record.getChatType();
+
+			if (chatType) {
+				filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatType?.id });
+			};
+
+			filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chat });
+		};
+
+		if (chatDerivedType) {
+			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatDerivedType.id });
+		};
+
+		return filters;
+	};
+
 	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
 		if (message.error.code) {
 			return;
@@ -710,8 +817,12 @@ class UtilData {
 		const mapper = it => ({ id: it[idField], details: it });
 
 		let details = [];
-		details = details.concat(message.dependencies.map(mapper));
-		details = details.concat(message.records.map(mapper));
+		if (message.dependencies && message.dependencies.length) {
+			details = details.concat(message.dependencies.map(mapper));
+		};
+		if (message.records && message.records.length) {
+			details = details.concat(message.records.map(mapper));
+		};
 
 		S.Detail.set(subId, details);
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
@@ -739,30 +850,13 @@ class UtilData {
 			collectionId: ''
 		}, param);
 
-
-		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived, collectionId } = param;
+		const { subId, idField, sorts, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
+		const filters = this.searchDefaultFilters(param);
 
 		if (!subId) {
 			console.error('[U.Data].searchSubscribe: subId is empty');
 			return;
-		};
-
-		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
-		};
-
-		if (ignoreHidden && !config.debug.hiddenObject) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (ignoreDeleted) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (!withArchived) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!keys.includes(idField)) {
@@ -821,8 +915,6 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space } = S.Common;
-
 		param = Object.assign({
 			idField: 'id',
 			fullText: '',
@@ -837,25 +929,9 @@ class UtilData {
 			withArchived: false,
 		}, param);
 
-		const { idField, filters, sorts, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
+		const { idField, sorts, offset, limit } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
-
-		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
-		};
-
-		if (ignoreHidden && !config.debug.hiddenObject) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (ignoreDeleted) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (!withArchived) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
-		};
+		const filters = this.searchDefaultFilters(param);
 
 		if (!keys.includes(idField)) {
 			keys.push(idField);
@@ -902,18 +978,18 @@ class UtilData {
 	graphFilters () {
 		const { space } = S.Common;
 		const templateType = S.Record.getTemplateType();
-		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
+		const filters: any[] = [
+			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
+			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
+			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
+			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
 
 		if (templateType) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ templateType.id ] },);
+			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType.id });
 		};
 		return filters;
 	};
@@ -937,17 +1013,18 @@ class UtilData {
 		};
 
 		C.MembershipGetStatus(true, (message: any) => {
+			if (!message.membership) {
+				return;
+			};
+
 			const membership = new M.Membership(message.membership);
+			const { status, tier } = membership;
 
-			if (membership) {
-				const { status, tier } = membership;
+			S.Auth.membershipSet(membership);
+			analytics.setTier(tier);
 
-				S.Auth.membershipSet(membership);
-				analytics.setTier(tier);
-
-				if (status && (status == I.MembershipStatus.Finalization)) {
-					S.Popup.open('membershipFinalization', { data: { tier } });
-				};
+			if (status && (status == I.MembershipStatus.Finalization)) {
+				S.Popup.open('membershipFinalization', { data: { tier } });
 			};
 
 			if (callBack) {
@@ -999,6 +1076,8 @@ class UtilData {
 
 		let phrase = '';
 
+		analytics.event('StartCreateAccount');
+
 		C.WalletCreate(dataPath, (message) => {
 			if (message.error.code) {
 				onError(message.error.description);
@@ -1033,7 +1112,7 @@ class UtilData {
 		});
 	};
 
-	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
+	groupDateSections (records: any[], key: string, sectionTemplate?: any, dir?: I.SortType) {
 		const now = U.Date.now();
 		const { d, m, y } = U.Date.getCalendarDateParam(now);
 		const today = now - U.Date.timestamp(y, m, d);
@@ -1048,16 +1127,19 @@ class UtilData {
 			older: []
 		};
 
+		const groupNames = [ 'today', 'yesterday', 'lastWeek', 'lastMonth', 'older' ];
+		if (dir == I.SortType.Asc) {
+			groupNames.reverse();
+		};
+
 		let groupedRecords = [];
 
 		if (!sectionTemplate) {
 			sectionTemplate = {};
 		};
 
-
 		records.forEach((record) => {
 			const diff = now - record[key];
-
 			if (diff < today) {
 				groups.today.push(record);
 			} else
@@ -1074,10 +1156,13 @@ class UtilData {
 			};
 		});
 
-		Object.keys(groups).forEach((key) => {
-			if (groups[key].length) {
-				groupedRecords.push(Object.assign({ id: key, isSection: true }, sectionTemplate));
-				groupedRecords = groupedRecords.concat(groups[key]);
+		groupNames.forEach((name) => {
+			if (groups[name].length) {
+				groupedRecords.push(Object.assign({ id: name, isSection: true }, sectionTemplate));
+				if (dir) {
+					groups[name] = groups[name].sort((c1, c2) => U.Data.sortByNumericKey(key, c1, c2, dir));
+				};
+				groupedRecords = groupedRecords.concat(groups[name]);
 			};
 		});
 

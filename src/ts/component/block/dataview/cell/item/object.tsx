@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
-import { I, S } from 'Lib';
+import { I, S, U } from 'Lib';
 
 interface Props {
 	cellId: string;
-	iconSize: number;
+	size?: number;
+	iconSize?: number;
 	relation?: any;
 	canEdit?: boolean;
 	getObject: () => any;
@@ -24,10 +25,10 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { cellId, iconSize, relation, canEdit } = this.props;
+		const { cellId, size, iconSize, relation, canEdit } = this.props;
 		const cn = [ 'element' ];
 		const object = this.getObject();
-		const { done, isReadonly, isArchived } = object;
+		const { done, isReadonly, isArchived, layout } = object;
 		const allowedDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 
 		let iconObject = null;
@@ -45,8 +46,9 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 				<IconObject 
 					id={`${cellId}-icon`}
 					object={object} 
-					size={iconSize} 
-					canEdit={!isReadonly && !isArchived && allowedDetails} 
+					size={size} 
+					iconSize={iconSize}
+					canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(layout)} 
 				/>
 			);
 		};

@@ -11,6 +11,7 @@ interface Props {
 	width: number;
 	className?: string;
 	recordId?: string;
+	recordIdx?: number;
 	getRecord?(id: string): any;
 	getIdPrefix?(): string;
 	onRef?(ref: any, id: string): void;

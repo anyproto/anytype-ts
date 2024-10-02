@@ -105,6 +105,10 @@ class MenuManager {
 					{ label: Util.translate('electronMenuCopy'), role: 'copy' },
 					{ label: Util.translate('electronMenuCut'), role: 'cut' },
 					{ label: Util.translate('electronMenuPaste'), role: 'paste' },
+					{ 
+						label: Util.translate('electronMenuPastePlain'), accelerator: 'CmdOrCtrl+Shift+V',
+						click: () => Util.send(this.win, 'commandEditor', 'pastePlain'),
+					},
 
 					Separator,
 
@@ -400,11 +404,11 @@ class MenuManager {
 				} 
 			},
 
-			(is.windows || is.linux) ? { 
-				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: !config.hideMenuBar, click: () => { 
-					Api.setMenuBarVisibility(this.win, !config.hideMenuBar);
+			(is.windows || is.linux) ? {
+				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: config.hideMenuBar, click: () => {
+					Api.setMenuBarVisibility(this.win, config.hideMenuBar);
 					this.initTray();
-				} 
+				}
 			} : null,
 
 			Separator,

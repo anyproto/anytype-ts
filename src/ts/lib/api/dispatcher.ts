@@ -93,7 +93,8 @@ class Dispatcher {
 	};
 
 	event (event: Events.Event, skipDebug?: boolean) {
-		const { config } = S.Common;
+		const { config, space } = S.Common;
+		const { account } = S.Auth;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
 		const electron = U.Common.getElectron();
@@ -122,6 +123,8 @@ class Dispatcher {
 		};
 
 		let updateParents = false;
+		let updateNumbers = false;
+		let updateMarkup = false;
 
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
@@ -195,22 +198,6 @@ class Dispatcher {
 					break;
 				};
 
-				/*
-				case 'FileLimitReached': {
-					const { bytesLimit, localUsage, spaces } = S.Common.spaceStorage;
-					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
-					const percentageUsed = Math.floor(U.Common.getPercent(bytesUsed, bytesLimit));
-
-					if (percentageUsed >= 99) {
-						Preview.toastShow({ action: I.ToastAction.StorageFull });
-					} else
-					if (localUsage > bytesLimit) {
-						Preview.toastShow({ text: translate('toastFileLimitReached') });
-					};
-					break;
-				};
-				*/
-
 				case 'BlockAdd': {
 					const { blocks } = mapped;
 
@@ -225,6 +212,7 @@ class Dispatcher {
 					};
 
 					updateParents = true;
+					updateNumbers = true;
 					break;
 				};
 
@@ -245,6 +233,7 @@ class Dispatcher {
 					};
 
 					updateParents = true;
+					updateNumbers = true;
 					break;
 				};
 
@@ -254,10 +243,12 @@ class Dispatcher {
 					S.Block.updateStructure(rootId, id, childrenIds);
 
 					if (id == rootId) {
-						S.Block.checkTypeSelect(rootId);
+						S.Block.checkBlockType(rootId);
+						S.Block.checkBlockChat(rootId);
 					};
 
 					updateParents = true;
+					updateNumbers = true;
 					break;
 				};
 
@@ -350,6 +341,8 @@ class Dispatcher {
 					};
 
 					S.Block.updateContent(rootId, id, content);
+
+					updateNumbers = true;
 					break;
 				};
 
@@ -536,7 +529,7 @@ class Dispatcher {
 					const content: any = {};
 
 					if (text !== null) {
-						content.key = text;
+						content.text = text;
 					};
 
 					S.Block.updateContent(rootId, id, content);
@@ -801,6 +794,13 @@ class Dispatcher {
 					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
+
+					// Added space should be subscribed to my participant
+					if (U.Object.isSpaceViewLayout(details.layout) && details.targetSpaceId) {
+						U.Data.createMyParticipantSubscriptions([ details.targetSpaceId ]);
+					};
+
+					updateMarkup = true;
 					break;
 				};
 
@@ -808,6 +808,8 @@ class Dispatcher {
 					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, false);
+
+					updateMarkup = true;
 					break;
 				};
 
@@ -818,7 +820,10 @@ class Dispatcher {
 					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
 					S.Detail.delete(rootId, id, keys);
-					S.Block.checkTypeSelect(rootId);
+					S.Block.checkBlockType(rootId);
+					S.Block.checkBlockChat(rootId);
+
+					updateMarkup = true;
 					break;
 				};
 
@@ -875,7 +880,7 @@ class Dispatcher {
 					S.Notification.add(item);
 
 					if (isMainWindow && !electron.isFocused()) {
-						new window.Notification(U.Common.stripTags(item.title), { body: U.Common.stripTags(item.text) }).onclick = () => electron.focus();
+						U.Common.notification(item);
 					};
 					break;
 				};
@@ -914,6 +919,65 @@ class Dispatcher {
 				case 'MembershipUpdate': {
 					S.Auth.membershipUpdate(mapped.membership);
 					U.Data.getMembershipTiers(true);
+					break;
+				};
+
+				case 'ImportFinish': {
+					const { collectionId, count, type } = mapped;
+
+					if (collectionId) {
+						window.setTimeout(() => {
+							S.Popup.open('objectManager', { 
+								data: { 
+									collectionId, 
+									type: I.ObjectManagerPopup.Favorites,
+								} 
+							});
+						}, S.Popup.getTimeout() + 10);
+					};
+
+					analytics.event('Import', { type, count });
+					break;
+				};
+
+				case 'ChatAdd': {
+					const orderId = mapped.orderId;
+					const list = S.Chat.getList(rootId);
+					const message = new M.ChatMessage(mapped.message);
+					const author = U.Space.getParticipant(U.Space.getParticipantId(space, message.creator));
+
+					let idx = list.findIndex(it => it.orderId == orderId);
+					if (idx < 0) {
+						idx = list.length;
+					};
+
+					S.Chat.add(rootId, idx, message);
+
+					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
+						U.Common.notification({ title: author?.name, text: message.content.text });
+					};
+
+					$(window).trigger('messageAdd', [ message ]);
+					break;
+				};
+
+				case 'ChatUpdate': {
+					S.Chat.update(rootId, mapped.message);
+					break;
+				};
+
+				case 'ChatDelete': {
+					S.Chat.delete(rootId, mapped.id);
+					break;
+				};
+
+				case 'ChatUpdateReactions': {
+					const message = S.Chat.getMessage(rootId, mapped.id);
+					if (message) {
+						set(message, { reactions: mapped.reactions });
+					};
+
+					$(window).trigger('updateReactions', [ message ]);
 					break;
 				};
 
@@ -969,9 +1033,14 @@ class Dispatcher {
 		if (updateParents) {
 			S.Block.updateStructureParents(rootId);
 		};
-		
-		S.Block.updateNumbers(rootId); 
-		S.Block.updateMarkup(rootId);
+
+		if (updateNumbers) {
+			S.Block.updateNumbers(rootId); 
+		};
+
+		if (updateMarkup) {
+			S.Block.updateMarkup(rootId);
+		};
 	};
 
 	getUniqueSubIds (subIds: string[]) {
@@ -1005,7 +1074,8 @@ class Dispatcher {
 				S.Block.update(rootId, rootId, { layout: details.layout });
 			};
 
-			S.Block.checkTypeSelect(rootId);
+			S.Block.checkBlockType(rootId);
+			S.Block.checkBlockChat(rootId);
 		};
 
 		if (undefined !== details.setOf) {
@@ -1094,12 +1164,23 @@ class Dispatcher {
 			content: {}
 		}));
 
+		// BlockChat
+		blocks.push(new M.Block({
+			id: J.Constant.blockId.chat,
+			parentId: rootId,
+			type: I.BlockType.Chat,
+			fields: {},
+			childrenIds: [],
+			content: {}
+		}));
+
 		S.Block.set(contextId, blocks);
 		S.Block.setStructure(contextId, structure);
 		S.Block.updateStructureParents(contextId);
 		S.Block.updateNumbers(contextId); 
 		S.Block.updateMarkup(contextId);
-		S.Block.checkTypeSelect(contextId);
+		S.Block.checkBlockType(contextId);
+		S.Block.checkBlockChat(contextId);
 
 		keyboard.setWindowTitle();
 	};

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Input, Label, Icon, Error } from 'Component';
-import { I, C, S, translate, analytics } from 'Lib';
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 import Head from '../head';
 
 interface State {
@@ -48,7 +48,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 				<div className="line" />
 
 				<div className="helpWrapper flex">
-					<Title text={translate('popupSettingsImportNotionHowTo')} />
+					<Title text={U.Common.sprintf(translate('popupSettingsImportNotionHowTo'), J.Url.notionFAQ)} />
 					<div className="btn" onClick={() => onPage('importNotionHelp')}>
 						<Icon className="help" />{translate('popupSettingsImportNotionStepByStepGuide')}
 					</div>

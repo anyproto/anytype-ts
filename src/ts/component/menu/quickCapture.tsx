@@ -218,10 +218,13 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const filter = String(this.filter || '');
+		const layouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts()).concat(I.ObjectLayout.Chat);
+
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
-			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
+			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+			{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: layouts },
+			{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		const sorts = [
 			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
@@ -306,7 +309,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		} else {
 			const pinned = pinnedIds.map(id => S.Record.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
-			items = U.Data.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
+			items = U.Data.getObjectTypesForNewObject({ withChat: true }).filter(it => !pinnedIds.includes(it.id));
 			items = items.slice(0, LIMIT_PINNED - pinned.length);
 			items.push(S.Record.getSetType());
 			items.push(S.Record.getCollectionType());

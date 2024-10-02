@@ -15,8 +15,8 @@ export enum DateFormat {
 };
 
 export enum TimeFormat {
-	H12 = 0,
-	H24 = 1,
+	H12		 = 0,
+	H24		 = 1,
 };
 
 export enum ViewType {
@@ -26,6 +26,14 @@ export enum ViewType {
 	Board	 = 3,
 	Calendar = 4,
 	Graph	 = 5,
+};
+
+export enum SortId {
+	All			 = 'all',
+	Orphan		 = 'orphan',
+	Updated		 = 'updated',
+	Created		 = 'created',
+	Name		 = 'name',
 };
 
 export enum SortType { 
@@ -41,8 +49,9 @@ export enum EmptyType {
 };
 
 export enum FilterOperator { 
-	And		 = 0, 
-	Or		 = 1,
+	None	 = 0,
+	And		 = 1,
+	Or		 = 2,
 };
 
 export enum FilterCondition { 
@@ -92,11 +101,12 @@ export interface Sort {
 export interface Filter {
 	id?: string;
 	relationKey: string;
-	operator: FilterOperator;
 	condition: FilterCondition;
+	value: any;
+	operator?: FilterOperator;
 	format?: I.RelationType;
 	quickOption?: FilterQuickOption;
-	value: any;
+	nestedFilters?: Filter[];
 };
 
 export interface ViewRelation {
@@ -120,9 +130,9 @@ export interface ViewComponent {
 	refCells?: any;
 	recordId?: string;
 	getRecord?(id: string): any;
+	getRecords?(): string[];
 	onRef?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
-	getRecords?(): string[];
 	getCoverObject?(id: string): any;
 	getView?(): View;
 	getSources?(): string[];
@@ -205,6 +215,7 @@ export interface Cell {
 	canEdit?: boolean;
 	pageContainer?: string;
 	isInline?: boolean;
+	size?: number;
 	iconSize?: number;
 	placeholder?: string;
 	withLabel?: boolean;
@@ -215,13 +226,17 @@ export interface Cell {
 	menuClassName?: string;
 	menuClassNameWrap?: string;
 	recordId?: string;
+	recordIdx?: number;
+	groupId?: string;
 	getRecord?(id: string): any;
+	getRecords?(): string[];
 	getView?(): View;
 	onChange?(value: any, callBack?: (message: any) => void): void;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
+	onRecordAdd?(e: any, dir: number, groupId?: string, menuParam?: any, idx?: number): void;
 	cellPosition?(cellId: string): void;
 	elementMapper?(relation: any, item: any): any;
 };

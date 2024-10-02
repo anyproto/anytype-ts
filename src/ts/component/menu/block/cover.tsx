@@ -218,7 +218,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 			case Tab.Library: {
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -346,7 +346,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	onDragOver (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -357,7 +357,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -368,14 +368,15 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const file = e.dataTransfer.files[0].path;
+		const electron = U.Common.getElectron();
+		const file = electron.webFilePath(e.dataTransfer.files[0]);
 		const node = $(this.node);
 		const zone = node.find('.dropzone');
 		

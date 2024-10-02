@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
-import { I, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
+import { I, S, U, J, Relation, keyboard, analytics } from 'Lib';
 import ItemObject from './item/object';
 
 interface State { 
@@ -38,7 +38,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
+		const { id, recordId, relation, size, iconSize, arrayLimit, canEdit, placeholder, getRecord, elementMapper } = this.props;
 		const record = getRecord(recordId);
 		const cn = [ 'wrap' ];
 
@@ -47,18 +47,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 
 		let value = this.getItems();
-
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
-		const length = value.length;
-
-		if (arrayLimit) {
-			value = value.slice(0, arrayLimit);
-			if (length > arrayLimit) {
-				cn.push('overLimit');
-			};
-		};
-
 		let content = null;
+
 		if (isEditing) {
 			content = (
 				<div id="value" onClick={this.focus}>
@@ -71,18 +61,19 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 									key={i}
 									id={`item-${item.id}`}
 									className="itemWrap isDraggable"
-									draggable={true}
+									draggable={canEdit}
 									{...U.Common.dataProps({ id: item.id, index: i })}
 								>
 									<ItemObject 
 										key={item.id} 
 										cellId={id}
 										getObject={() => item}
+										size={size}
 										iconSize={iconSize} 
 										relation={relation} 
 										elementMapper={elementMapper}
-										canEdit={true}
-										onClick={(e, item) => this.onClick(e, item.id)}
+										canEdit={canEdit}
+										onClick={(e, item) => this.onClick(e, item)}
 										onRemove={(e: any, id: string) => this.onValueRemove(id)}
 									/>
 								</span>
@@ -90,26 +81,37 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 						</DragBox>
 					</span>
 					
-					<span 
-						id="entry" 
-						contentEditable={true}
-						suppressContentEditableWarning={true} 
-						onFocus={this.onFocus}
-						onBlur={this.onBlur}
-						onInput={this.onInput}
-						onKeyPress={this.onKeyPress}
-						onKeyDown={this.onKeyDown}
-						onKeyUp={this.onKeyUp}
-						onCompositionStart={() => keyboard.setComposition(true)}
-						onCompositionEnd={() => keyboard.setComposition(false)}
-						onClick={e => e.stopPropagation()}
-					>
-						{'\n'}
-					</span>
+					{canEdit ? (
+						<span 
+							id="entry" 
+							contentEditable={true}
+							suppressContentEditableWarning={true} 
+							onFocus={this.onFocus}
+							onBlur={this.onBlur}
+							onInput={this.onInput}
+							onKeyPress={this.onKeyPress}
+							onKeyDown={this.onKeyDown}
+							onKeyUp={this.onKeyUp}
+							onCompositionStart={() => keyboard.setComposition(true)}
+							onCompositionEnd={() => keyboard.setComposition(false)}
+							onClick={e => e.stopPropagation()}
+						>
+							{'\n'}
+						</span>
+					) : ''}
 				</div>
 			);
 		} else {
-			if (!value.length) {
+			const length = value.length;
+
+			if (arrayLimit) {
+				value = value.slice(0, arrayLimit);
+				if (length > arrayLimit) {
+					cn.push('overLimit');
+				};
+			};
+
+			if (!length) {
 				content = <div className="empty">{placeholder}</div>;
 			} else {
 				content = (
@@ -119,11 +121,12 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 								key={item.id} 
 								cellId={id}
 								getObject={() => item}
+								size={size}
 								iconSize={iconSize} 
 								relation={relation} 
 								elementMapper={elementMapper} 
-								canEdit={!readonly}
-								onClick={e => this.onClick(e, item.id)}
+								canEdit={canEdit}
+								onClick={e => this.onClick(e, item)}
 							/>
 						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
@@ -180,18 +183,11 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 	};
 
-	onClick (e: any, id: string) {
-		const item = this.getItems().find(item => item.id == id);
-		if (!item) {
-			return;
-		};
-
-		// Template type is disabled for opening
-		const templateType = S.Record.getTemplateType();
-		const canOpen = this.props.canOpen && (item.id != templateType.id);
-
-		if (canOpen) {
+	onClick (e: any, item: any) {
+		const { isEditing } = this.state;
+		if (isEditing) {
 			e.stopPropagation();
+
 			U.Object.openConfig(item);
 		};
 	};

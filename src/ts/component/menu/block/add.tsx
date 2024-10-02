@@ -308,7 +308,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		]);
 		
 		if (filter && filter.text) {
-			const actions = U.Menu.getActions({});
+			const actions = U.Menu.getActions({ count: 1 });
 
 			if (block.canTurnPage()) {
 				actions.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
@@ -417,7 +417,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 				});
 				break;
@@ -436,7 +436,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Link,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 				});
 				break;
@@ -446,7 +446,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						menuParam.data.onSelect();
@@ -525,7 +525,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			if (item.isAction) {
 				switch (item.itemId) {
 					case 'download':
-						Action.download(block, 'menu');
+						Action.downloadFile(block.getTargetObjectId(), analytics.route.menuAdd, block.isFileImage());
 						break;
 
 					case 'copy':
@@ -555,10 +555,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						param.fields = { 
 							lang: (Storage.get('codeLang') || J.Constant.default.codeLang),
 						};
-					};
-
-					if ([ I.TextStyle.Code, I.TextStyle.Callout ].includes(param.content.style)) {
-						param.bgColor = 'grey';
 					};
 				};
 

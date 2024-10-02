@@ -2,6 +2,7 @@
 
 html.bodyIndex, html.bodyAuth {
 	--color-bg-primary: #000 !important;
+	--color-bg-secondary: #252525 !important;
 
 	--color-text-primary: #d4d4d4 !important;
 	--color-text-secondary: #9a9a9a !important;
@@ -70,14 +71,19 @@ html.bodyIndex, html.bodyAuth {
     	.dot.active { background-color: var(--color-text-primary) !important; }
 	}
 
-	.tooltip { 
+	.tooltip:not(.menuNote) {
 		width: 410px; padding: 12px 16px; background: var(--color-popup) !important; color: var(--color-text-secondary) !important; box-shadow: var(--shadow) !important; @include text-common; 
 		white-space: normal;
 	}
-	.tooltip {
+	.tooltip:not(.menuNote) {
 		.txt { line-height: 22px; }
 		b { display: block; font-weight: 500; color: var(--color-text-primary) !important; }
 		ul { list-style-position: inside; padding-left: 0.75em; }
+	}
+
+	.tooltip.menuNote { white-space: nowrap; background-color: var(--color-bg-secondary); color: var(--color-text-inversion); padding: 4px 8px; @include text-small; }
+	.tooltip.menuNote {
+		.txt { line-height: 18px; }
 	}
 
 	.toast { background: var(--color-shape-tertiary); color: var(--color-text-primary); }

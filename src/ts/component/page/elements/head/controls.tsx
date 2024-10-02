@@ -98,7 +98,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const node = $(this.node);
 		const object = S.Detail.get(rootId, rootId, []);
 		const cb = () => S.Menu.update('smile', { element: `#block-icon-${rootId}` });
-		const root = S.Block.getLeaf(rootId, rootId);
 
 		focus.clear(true);
 
@@ -108,7 +107,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			onOpen: () => node.addClass('hover'),
 			onClose: () => node.removeClass('hover'),
 			data: {
-				noUpload: root.isObjectType(),
+				noUpload: U.Object.isTypeLayout(object.layout),
 				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
 					U.Object.setIcon(rootId, icon, '', cb);
@@ -162,7 +161,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	onDragOver (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 
@@ -171,7 +170,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -180,11 +179,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
-		const file = e.dataTransfer.files[0].path;
+		const electron = U.Common.getElectron();
+		const file = electron.webFilePath(e.dataTransfer.files[0]);
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');

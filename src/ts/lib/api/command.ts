@@ -1,6 +1,6 @@
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
-import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
+import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper, keyboard } from 'Lib';
 
 const { Rpc, Empty } = Commands;
 
@@ -1329,10 +1329,9 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 		// Save last opened object
 		const object = S.Detail.get(objectId, objectId, []);
-		const windowId = U.Common.getCurrentElectronWindowId();
 
-		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
-			Storage.setLastOpened(windowId, { id: object.id, layout: object.layout, spaceId: object.spaceId });
+		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
+			Storage.setLastOpened(U.Common.getCurrentElectronWindowId(), { id: object.id, layout: object.layout });
 		};
 
 		if (callBack) {
@@ -1358,7 +1357,6 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 		};
 	});
 };
-
 
 export const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
@@ -1516,6 +1514,24 @@ export const ObjectListSetDetails = (objectIds: string[], details: any[], callBa
 	request.setDetailsList(details);
 
 	dispatcher.request(ObjectListSetDetails.name, request, callBack);
+};
+
+export const ObjectListModifyDetailValues = (objectIds: string[], operations: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ListModifyDetailValues.Request();
+
+	request.setObjectidsList(objectIds);
+	request.setOperationsList(operations.map(it => {
+		const op = new Rpc.Object.ListModifyDetailValues.Request.Operation();
+
+		op.setRelationkey(it.relationKey);
+		op.setAdd(Encode.value(it.add));
+		op.setSet(Encode.value(it.set));
+		op.setRemove(Encode.value(it.remove));
+
+		return op;
+	}));
+
+	dispatcher.request(ObjectListModifyDetailValues.name, request, callBack);
 };
 
 export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
@@ -1740,6 +1756,14 @@ export const ObjectCollectionSort = (contextId: string, objectIds: string[], cal
 	request.setObjectidsList(objectIds);
 
 	dispatcher.request(ObjectCollectionSort.name, request, callBack);
+};
+
+export const ObjectChatAdd = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ChatAdd.Request();
+
+	request.setObjectid(objectId);
+
+	dispatcher.request(ObjectChatAdd.name, request, callBack);
 };
 
 // ---------------------- OBJECT LIST ---------------------- //
@@ -2115,4 +2139,81 @@ export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) =>
 
 export const DeviceList = (callBack?: (message: any) => void) => {
 	dispatcher.request(DeviceList.name, new Commands.Empty(), callBack);
+};
+
+// ---------------------- CHAT ---------------------- //
+
+export const ChatAddMessage = (objectId: string, message: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.AddMessage.Request();
+
+	request.setChatobjectid(objectId);
+	request.setMessage(Mapper.To.ChatMessage(message));
+
+	dispatcher.request(ChatAddMessage.name, request, callBack);
+};
+
+export const ChatEditMessageContent = (objectId: string, messageId: string, message: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.EditMessageContent.Request();
+
+	request.setChatobjectid(objectId);
+	request.setMessageid(messageId);
+	request.setEditedmessage(Mapper.To.ChatMessage(message));
+
+	dispatcher.request(ChatEditMessageContent.name, request, callBack);
+};
+
+export const ChatToggleMessageReaction = (objectId: string, messageId: string, emoji: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.ToggleMessageReaction.Request();
+
+	request.setChatobjectid(objectId);
+	request.setMessageid(messageId);
+	request.setEmoji(emoji);
+
+	dispatcher.request(ChatToggleMessageReaction.name, request, callBack);
+};
+
+export const ChatDeleteMessage = (objectId: string, messageId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.DeleteMessage.Request();
+
+	request.setChatobjectid(objectId);
+	request.setMessageid(messageId);
+
+	dispatcher.request(ChatDeleteMessage.name, request, callBack);
+
+};
+
+export const ChatGetMessages = (objectId: string, beforeOrderId: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.GetMessages.Request();
+
+	request.setChatobjectid(objectId);
+	request.setBeforeorderid(beforeOrderId);
+	request.setLimit(limit);
+
+	dispatcher.request(ChatGetMessages.name, request, callBack);
+};
+
+export const ChatSubscribeLastMessages = (objectId: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.SubscribeLastMessages.Request();
+
+	request.setChatobjectid(objectId);
+	request.setLimit(limit);
+
+	dispatcher.request(ChatSubscribeLastMessages.name, request, callBack);
+};
+
+export const ChatUnsubscribe = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.Unsubscribe.Request();
+
+	request.setChatobjectid(objectId);
+
+	dispatcher.request(ChatUnsubscribe.name, request, callBack);
+};
+
+export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.GetMessagesByIds.Request();
+
+	request.setChatobjectid(objectId);
+	request.setMessageidsList(ids);
+
+	dispatcher.request(ChatGetMessagesByIds.name, request, callBack);
 };

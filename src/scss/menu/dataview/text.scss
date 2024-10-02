@@ -3,7 +3,10 @@
 .menus {
 
 	.menu.menuDataviewText {
-		#input { -webkit-user-modify: read-write-plaintext-only; white-space: normal; z-index: 1; @include text-common; overflow: auto; height: 100%; width: 100%; }
+		#input { 
+			-webkit-user-modify: read-write-plaintext-only; white-space: normal; z-index: 1; @include text-common; overflow: auto; height: 100%; width: 100%;
+			user-select: text;
+		}
 	}
 
 	.menu.menuDataviewText:not(.fromFeatured) { box-shadow: 0px 0px; background: transparent; }

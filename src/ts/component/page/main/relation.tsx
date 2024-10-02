@@ -14,6 +14,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	id = '';
 	refHeader: any = null;
 	refHead: any = null;
+	refListType: any = null;
+	refListObject: any = null;
 
 	state = {
 		isDeleted: false,
@@ -42,18 +44,18 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const columnsObject: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
+				mapper: v => U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v),
 			},
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
 		];
 
 		const filtersType: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-			{ operator: I.FilterOperator.And, relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
+			{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+			{ relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
 		];
 		const filtersObject: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
 		];
 
 		return (
@@ -75,33 +77,39 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						rootId={rootId} onCreate={this.onCreate} 
 					/>
 
-					<div className="section set">
-						<div className="title">{totalType} {U.Common.plural(totalType, translate('pluralObjectType'))}</div>
-						<div className="content">
-							<ListObject 
-								{...this.props}
-								subId={subIdType} 
-								rootId={rootId} 
-								columns={[]} 
-								filters={filtersType} 
-							/>
-						</div>
-					</div>
-
-					{object.isInstalled ? (
-						<div className="section set">
-							<div className="title">{totalObject} {U.Common.sprintf(translate('pageMainRelationObjectsCreated'), U.Common.plural(totalObject, translate('pluralObject')))}</div>
-							<div className="content">
-								<ListObject 
-									{...this.props} 
-									sources={[ rootId ]} 
-									subId={subIdObject} 
-									rootId={rootId} 
-									columns={columnsObject} 
-									filters={filtersObject} 
-								/>
+					{!object._empty_ ? (
+						<React.Fragment>
+							<div className="section set">
+								<div className="title">{totalType} {U.Common.plural(totalType, translate('pluralObjectType'))}</div>
+								<div className="content">
+									<ListObject 
+										ref={ref => this.refListType = ref}
+										{...this.props}
+										subId={subIdType} 
+										rootId={rootId} 
+										columns={[]} 
+										filters={filtersType} 
+									/>
+								</div>
 							</div>
-						</div>
+
+							{object.isInstalled ? (
+								<div className="section set">
+									<div className="title">{totalObject} {U.Common.sprintf(translate('pageMainRelationObjectsCreated'), U.Common.plural(totalObject, translate('pluralObject')))}</div>
+									<div className="content">
+										<ListObject 
+											ref={ref => this.refListObject = ref}
+											{...this.props} 
+											sources={[ rootId ]} 
+											subId={subIdObject} 
+											rootId={rootId} 
+											columns={columnsObject} 
+											filters={filtersObject} 
+										/>
+									</div>
+								</div>
+							) : ''}
+						</React.Fragment>
 					) : ''}
 				</div>
 

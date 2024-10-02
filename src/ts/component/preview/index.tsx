@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
-import { I, S, U, Preview, Mark, translate, Renderer } from 'Lib';
+import { I, S, U, Preview, Mark, translate, Action } from 'Lib';
 
 const OFFSET_Y = 8;
 const BORDER = 12;
@@ -107,7 +107,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 		switch (type) {
 			case I.PreviewType.Link: {
-				Renderer.send('urlOpen', target);	
+				Action.openUrl(target);	
 				break;
 			};
 
@@ -144,8 +144,8 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			data: {
 				filter: mark ? mark.param : '',
 				type: mark ? mark.type : null,
-				onChange: (newType: I.MarkType, param: string) => {
-					onChange(Mark.toggleLink({ type: newType, param, range }, marks));
+				onChange: (type: I.MarkType, param: string) => {
+					onChange(Mark.toggleLink({ type, param, range }, marks));
 				}
 			}
 		});
@@ -181,12 +181,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 	position () {
 		const { preview } = S.Common;
-		const { element, rect } = preview;
-
-		if (!element && !rect) {
-			return;
-		};
-
+		const { x, y, width, height } = preview;
 		const win = $(window);
 		const obj = $('#preview');
 		const poly = obj.find('.polygon');
@@ -194,67 +189,46 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const st = win.scrollTop();
 		const ow = obj.outerWidth();
 		const oh = obj.outerHeight();
-
-		let ox = 0;
-		let oy = 0;
-		let nw = 0;
-		let nh = 0;
-
-		if (rect) {
-			ox = rect.x;
-			oy = rect.y;
-			nw = rect.width;
-			nh = rect.height;
-		} else 
-		if (element && element.length) {
-			const offset = element.offset();
-
-			ox = offset.left;
-			oy = offset.top;
-			nw = element.outerWidth();
-			nh = element.outerHeight();
-		}; 
-
 		const css: any = { opacity: 0, left: 0, top: 0 };
-		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + OFFSET_Y, clipPath: '' };
+		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: height + OFFSET_Y, clipPath: '' };
 
 		let typeY = I.MenuDirection.Bottom;		
-		let ps = (1 - nw / ow) / 2 * 100;
-		let pe = ps + nw / ow * 100;
+		let ps = (1 - width / ow) / 2 * 100;
+		let pe = ps + width / ow * 100;
 		let cpTop = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
 		let cpBot = 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)';
 		
-		if (ow < nw) {
-			pcss.width = nw;
-			pcss.left = (ow - nw) / 2;
-			ps = (nw - ow) / nw / 2 * 100;
-			pe = (1 - (nw - ow) / nw / 2) * 100;
+		if (ow < width) {
+			pcss.width = width;
+			pcss.left = (ow - width) / 2;
+			ps = (width - ow) / width / 2 * 100;
+			pe = (1 - (width - ow) / width / 2) * 100;
 			
 			cpTop = 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)';
 			cpBot = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
 		};
 
-		if (oy + oh + nh >= st + wh) {
+		if (y + oh + height >= st + wh) {
 			typeY = I.MenuDirection.Top;
 		};
 		
 		if (typeY == I.MenuDirection.Top) {
-			css.top = oy - oh - OFFSET_Y;
+			css.top = y - oh - OFFSET_Y;
 			css.transform = 'translateY(-5%)';
 				
-			pcss.bottom = -nh - OFFSET_Y;
+			pcss.bottom = -height - OFFSET_Y;
 			pcss.clipPath = cpTop;
 		};
 			
 		if (typeY == I.MenuDirection.Bottom) {
-			css.top = oy + nh + OFFSET_Y;
+			css.top = y + height + OFFSET_Y;
 			css.transform = 'translateY(5%)';
 				
-			pcss.top = -nh - OFFSET_Y;
+			pcss.top = -height - OFFSET_Y;
 			pcss.clipPath = cpBot;
 		};
 			
-		css.left = ox - ow / 2 + nw / 2;
+		css.left = x - ow / 2 + width / 2;
 		css.left = Math.max(BORDER, css.left);
 		css.left = Math.min(ww - ow - BORDER, css.left);
 
