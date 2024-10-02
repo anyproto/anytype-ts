@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Storage, Onboarding } from 'Lib';
+import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Storage, Onboarding } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -270,6 +270,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			const details = { 
 				name: translate('commonEntrySpace'), 
 				spaceDashboardId: I.HomePredefinedId.Last,
+				iconOption: U.Common.rand(1, J.Constant.count.icon),
 			};
 
 			C.WorkspaceSetInfo(S.Common.space, details, () => {
