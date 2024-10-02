@@ -23,16 +23,18 @@ $gallerySlidesH: calc(100vh - $galleryHeaderH - $galleryFooterH);
 				.swiper-slide { height: $gallerySlidesH; }
 				.previewItem { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 				.mediaContainer { position: relative; z-index: 2; }
-				.itemDimmer { position: absolute; z-index: 0; width: 100%; height: 100%; }
 			}
 
 			.galleryFooter { position: relative; height: $galleryFooterH; }
 			.galleryFooter {
-				.thumbnails { height: 100%; }
-				.swiper { height: 100%; }
-				.swiper-wrapper { justify-content: center; align-items: center; }
-				.swiper-slide { width: 72px !important; height: 72px !important;}
+				.thumbnails { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; }
+				.swiper { z-index: 2; }
+				.swiper-slide { width: unset; display: flex; align-items: center; opacity: 0.5; }
+				.swiper-slide.swiper-slide-thumb-active { opacity: 1; }
+				.previewItem { width: 72px; height: 72px; border-radius: 4px; overflow: hidden; }
 			}
+
+			.innerDimmer { position: absolute; z-index: 0; width: 100%; height: 100%; }
 		}
 
 		.head { 

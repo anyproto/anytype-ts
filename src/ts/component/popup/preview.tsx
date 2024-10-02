@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Loader, Icon, ObjectName } from 'Component';
 import { I, S, J, U, keyboard, sidebar } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Keyboard, Mousewheel } from 'swiper/modules';
+import { Keyboard, Mousewheel, Thumbs } from 'swiper/modules';
 
 const BORDER = 16;
 const WIDTH_VIDEO = 1040;
@@ -23,7 +23,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		super(props);
 
 		this.onMore = this.onMore.bind(this);
-		this.onSlideChange = this.onSlideChange.bind(this);
 		this.onError = this.onError.bind(this);
 		this.setCurrent = this.setCurrent.bind(this);
 	};
@@ -38,18 +37,6 @@ class PopupPreview extends React.Component<I.Popup> {
 			const { src, type, object } = item;
 			const id = U.Common.toCamelCase([ 'item', (isThumb ? 'thumb' : 'preview'), idx ].join('-'));
 			const loader = !isThumb ? <Loader className="loader" /> : '';
-
-			const onClick = (e: any) => {
-				if (isThumb) {
-					e.preventDefault();
-					e.stopPropagation();
-
-					if (this.swiper.activeIndex != idx) {
-						this.swiper.slideTo(idx);
-						this.thumbs.slideTo(idx);
-					};
-				};
-			};
 
 			let content = null;
 
@@ -66,12 +53,12 @@ class PopupPreview extends React.Component<I.Popup> {
 			};
 
 			return (
-				<div onClick={onClick} id={id} className="previewItem">
+				<div id={id} className="previewItem">
 					{loader}
 					<div className="mediaContainer">
 						{content}
 					</div>
-					<div className="itemDimmer" onClick={() => close()} />
+					<div className="innerDimmer" onClick={() => close()} />
 				</div>
 			);
 		};
@@ -101,9 +88,10 @@ class PopupPreview extends React.Component<I.Popup> {
 						centeredSlides={true}
 						keyboard={{ enabled: true }}
 						mousewheel={true}
-						modules={[ Mousewheel, Keyboard ]}
+						thumbs={{ swiper: this.thumbs }}
+						modules={[ Mousewheel, Keyboard, Thumbs ]}
 						onSwiper={swiper => this.swiper = swiper}
-						onTransitionEnd={(data) => this.onSlideChange(data)}
+						onTransitionEnd={(data) => this.setCurrent(data.activeIndex)}
 					>
 						{gallery.map((item: any, i: number) => (
 							<SwiperSlide key={i}>
@@ -117,11 +105,11 @@ class PopupPreview extends React.Component<I.Popup> {
 					{gallery.length > 1 ? (
 						<div className="thumbnails">
 							<Swiper
-								height={HEIGHT_FOOTER}
+								onSwiper={swiper => this.thumbs = swiper}
 								initialSlide={initial}
 								spaceBetween={8}
-								slidesPerView={10}
-								onSwiper={swiper => this.thumbs = swiper}
+								slidesPerView={'auto'}
+								modules={[ Thumbs ]}
 							>
 								{gallery.map((item: any, i: number) => (
 									<SwiperSlide key={i}>
@@ -129,6 +117,8 @@ class PopupPreview extends React.Component<I.Popup> {
 									</SwiperSlide>
 								))}
 							</Swiper>
+
+							<div className="innerDimmer" onClick={() => close()} />
 						</div>
 					) : ''}
 				</div>
@@ -197,18 +187,6 @@ class PopupPreview extends React.Component<I.Popup> {
 				isFilePreview: true,
 			}
 		});
-	};
-
-	onSlideChange (data) {
-		if (!this.thumbs && !this.swiper) {
-			return;
-		};
-
-		if (this.thumbs.activeIndex != data.activeIndex) {
-			this.thumbs.slideTo(data.activeIndex);
-		};
-
-		this.setCurrent(data.activeIndex);
 	};
 
 	onLoad () {
@@ -304,6 +282,7 @@ class PopupPreview extends React.Component<I.Popup> {
 				videoEl.onerror = this.onError;
 
 				video.css({ width: w, height: h });
+				break;
 			};
 		};
 	};
