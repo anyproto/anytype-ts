@@ -1,25 +1,19 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Loader, Icon, ObjectName, Checkbox } from 'Component';
+import { Loader, Icon, ObjectName } from 'Component';
 import { I, S, J, U, keyboard, sidebar } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Mousewheel } from 'swiper/modules';
 
 const BORDER = 16;
-const WIDTH_DEFAULT = 450;
-const HEIGHT_DEFAULT = 300;
 const WIDTH_VIDEO = 1040;
 const HEIGHT_VIDEO = 585;
-const HEIGHT_THUMBS = 104;
 
 const HEIGHT_HEADER = 52;
 const HEIGHT_FOOTER = 96;
 
 class PopupPreview extends React.Component<I.Popup> {
-	
-	isLoaded = false;
-	width = 0;
-	height = 0;
+
 	swiper = null;
 	thumbs = null;
 	galleryMap: Map<number, any> = new Map();
@@ -247,24 +241,18 @@ class PopupPreview extends React.Component<I.Popup> {
 	};
 
 	resize (idx: number) {
-		const { param, getId, position } = this.props;
-		const { data } = param;
-		const { gallery } = data;
-		const isGallery = gallery.length > 1;
+		const { getId } = this.props;
 		const node = $(`#${getId()}-innerWrap`);
 		const element = node.find(`#itemPreview-${idx}`);
 		const loader = element.find('.loader')
 		const obj = this.galleryMap.get(idx);
 		const { src, type, isLoaded, width, height } = obj;
-		const { ww, wh } = U.Common.getWindowDimensions();
-		const mh = wh - (HEIGHT_FOOTER + HEIGHT_HEADER);
-		const mw = ww - BORDER * 2 - sidebar.getDummyWidth();
 
 		switch (type) {
 			case I.FileType.Image: {
 				if (isLoaded) {
 					if (width && height) {
-						this.resizeImage(idx, mw, mh, width, height);
+						this.resizeMedia(idx, width, height);
 					};
 					break;
 				};
@@ -277,7 +265,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 					loader.remove();
 
-					this.resizeImage(idx, mw, mh, obj.width, obj.height);
+					this.resizeMedia(idx, obj.width, obj.height);
 					this.galleryMap.set(idx, obj);
 				};
 
@@ -287,29 +275,41 @@ class PopupPreview extends React.Component<I.Popup> {
 			};
 
 			case I.FileType.Video: {
-				if (isLoaded && !isGallery) {
-					position();
+				if (isLoaded) {
+					if (width && height) {
+						this.resizeMedia(idx, width, height);
+					};
 					break;
 				};
 
 				const video = element.find('video');
 				const videoEl = video.get(0);
-				const width = WIDTH_VIDEO;
-				const height = HEIGHT_VIDEO;
 
-				videoEl.oncanplay = () => {
-					loader.remove();
+				let w = WIDTH_VIDEO;
+				let h = HEIGHT_VIDEO;
+
+				videoEl.onloadedmetadata = () => {
+					w = videoEl.videoWidth;
+					h = videoEl.videoHeight;
+
 					obj.isLoaded = true;
+					obj.width = w;
+					obj.height = h;
+					loader.remove();
+
 					this.galleryMap.set(idx, obj);
+					this.resizeMedia(idx, w, h);
+					video.css({ width: '100%', height: '100%' });
 				};
 				videoEl.onerror = this.onError;
 
-				video.css({ width, height });
+				video.css({ width: w, height: h });
 			};
 		};
 	};
 
-	resizeImage (idx: number, maxWidth: number, maxHeight: number, width: number, height: number) {
+	resizeMedia (idx: number, width: number, height: number) {
+		const { maxWidth, maxHeight } = this.getMaxWidthHeight();
 		const { getId } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find(`#itemPreview-${idx} .mediaContainer`);
@@ -324,6 +324,14 @@ class PopupPreview extends React.Component<I.Popup> {
 		};
 
 		wrap.css({ width: w, height: h });
+	};
+
+	getMaxWidthHeight () {
+		const { ww, wh } = U.Common.getWindowDimensions();
+		const maxHeight = wh - (HEIGHT_FOOTER + HEIGHT_HEADER);
+		const maxWidth = ww - BORDER * 2 - sidebar.getDummyWidth();
+
+		return { maxWidth, maxHeight };
 	};
 
 };
