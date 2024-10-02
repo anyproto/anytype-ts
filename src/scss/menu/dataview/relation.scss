@@ -13,7 +13,7 @@
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
 		}
-		.item:hover::before { background: var(--color-shape-highlight-medium); }
+		.item.hover::before { background: var(--color-shape-highlight-medium); }
 
 		.bottom { flex-shrink: 0; }
 		.bottom {

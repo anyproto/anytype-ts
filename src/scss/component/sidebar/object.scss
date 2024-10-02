@@ -2,19 +2,18 @@
 > #containerObject {
 	> .inner { display: flex; flex-direction: column; width: 100%; height: 100%; background: var(--color-bg-primary); border-radius: 12px; }
 	> .inner {
-		> .head { display: flex; flex-direction: column; gap: 8px 0px; overflow: hidden; }
+		> .head { display: flex; flex-direction: column; gap: 8px 0px; overflow: hidden; padding: 0px 0px 12px 0px; }
 		> .head {
 			.titleWrap { 
-				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 20px 16px 8px 10px; 
+				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 16px 10px 1px 10px; justify-content: space-between;
 			}
 			.titleWrap {
+				.side { height: 32px; }
+				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+
 				.title { @include text-paragraph; font-weight: 600; flex-grow: 1; }
-				.icon.back { 
-					width: 24px; height: 24px; border-radius: 4px; background-size: 20px; flex-shrink: 0; background-image: url('~img/icon/widget/back.svg'); 
-				}
-			}
-			.titleWrap:hover {
-				.icon.back { background-color: var(--color-shape-highlight-medium); }
+				.icon.back { flex-shrink: 0; background-image: url('~img/icon/widget/back.svg'); }
+				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 			}
 
 			.sides { display: flex; flex-direction: row; gap: 0px 8px; }
@@ -24,38 +23,74 @@
 				.side.right:empty { display: none; }
 			}
 
-			.sides.sidesSort { padding: 0px 10px; }
-			.sides.sidesFilter { padding: 0px 16px; }
+			.tabs, .sides.sidesFilter { padding: 0px 16px; }
 
-			.icon.sort { background-image: url('~img/icon/store/sort.svg') }
+			.tabs { margin: 0px 0px 3px 0px; position: relative; }
+			.tabs {
+				.scrollWrap { overflow: hidden; }
+				.scroll { 
+					display: flex; align-items: center; gap: 0px 12px; font-weight: 500; color: var(--color-control-active); transition: 0.3s transform $easeInQuint;
+					transform: translate3d(0px,0px,0px);
+				}
 
-			.select { border: 0px; padding: 4px 20px 4px 6px; font-weight: 500; }
-			.select {
-				.clickable {
-					.icon { display: none; }
+				.tab { white-space: nowrap; flex-shrink: 0; transition: $transitionAllCommon;  }
+				.tab.active, .tab:hover { color: var(--color-text-primary); }
+
+				.controls { position: absolute; top: -4px; left: 0px; width: 100%; display: flex; justify-content: space-between; }
+				.controls {
+					.side { width: 60px; position: relative; }
+					.side.hide {
+						.icon.arrow, .gradient { display: none; }
+					}
+
+					.icon.arrow { background-image: url('~img/arrow/sidebarObjectTab.svg'); position: absolute; z-index: 2; top: 0px; }
+					.gradient { position: absolute; width: 100%; height: 28px; z-index: 1; top: 0px; pointer-events: none; }
+
+					.side.left {
+						.icon.arrow { left: 16px; transform: rotateZ(180deg); }
+						.gradient { left: 0px; background-image: linear-gradient(270deg, rgba(255,255,255,0) 0px, var(--color-bg-primary) 16px, var(--color-bg-primary) 100%); }
+					}
+
+					.side.right {
+						.icon.arrow { right: 16px; }
+						.gradient { right: 0px; background-image: linear-gradient(90deg, rgba(255,255,255,0) 0px, var(--color-bg-primary) 16px, var(--color-bg-primary) 100%); }
+					}
 				}
 			}
 
 			.filter { padding: 0px 4px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
 			.filter {
-				.inner { height: 26px; }
+				.inner { height: 26px; gap: 0px; }
 				.line { display: none; }
+				.icon.search { background-size: 13px; }
+				.icon.clear { margin-left: 8px; }
 			}
+
+			.label { padding: 8px 16px; @include text-small; color: var(--color-text-secondary); }
 		}
 
 		> .body { flex-grow: 1; overflow: hidden; }
 		> .body {
-			.ReactVirtualized__List { padding: 8px; overscroll-behavior: none; }
+			.ReactVirtualized__List { padding: 0px 8px 8px 8px; overscroll-behavior: none; }
+			.emptySearch { height: auto; }
+			.emptySearch {
+				.txt { color: var(--color-text-secondary); }
+				.small { @include text-small; }
+			}
 
 			.items { height: 100%; }
 
 			.item { padding: 8px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; position: relative; }
 			.item {
-				.iconObject { flex-shrink: 0; border-radius: 6px; }
+				.iconObject { flex-shrink: 0; }
 				.iconObject.c48 { background-color: var(--color-shape-tertiary); }
 
-				.info { width: 100%; display: flex; flex-direction: column; gap: 2px 0px; }
+				.info { width: 100%; display: flex; flex-direction: column; }
+
+				.nameWrap { flex-grow: 1; overflow: hidden; }
 				.name { @include text-overflow-nw; width: 100%; }
+
+				.icon.lock { width: 16px !important; height: 16px !important; background-image: url('~img/icon/widget/lock.svg'); flex-shrink: 0; }
 
 				.bottomWrap { 
 					display: flex; @include text-overflow-nw; width: 100%; @include text-small; color: var(--color-text-secondary); gap: 0px 6px; 
@@ -68,6 +103,9 @@
 					.bullet { width: 2px; height: 2px; border-radius: 50%; background-color: var(--color-text-secondary); flex-shrink: 0; display: none; }
 				}
 			}
+			.item:not(.isType):not(.isRelation) {
+				.iconObject { border-radius: 6px; }
+			}
 
 			.item.withDescr {
 				.bullet { display: block; }
@@ -77,11 +115,10 @@
 				.info { width: calc(100% - 60px); }
 			}
 
-			.item.isType, .item.isRelation { gap: 0px; }
 			.item.isType, .item.isRelation {
 				.iconObject { background-color: unset; }
 
-				.info { width: calc(100% - 26px); }
+				.info { width: calc(100% - 28px); }
 				.nameWrap { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 				.descrWrap {
 					.type, .descr::before { display: none; }
@@ -99,11 +136,14 @@
 				.iconObject { background-color: unset !important; }
 			}
 
+			.item.isSection { @include text-small; color: var(--color-text-secondary); padding: 8px 8px 2px 8px; }
+
 			.item::before {
 				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
 				pointer-events: none; border-radius: 6px;
 			}
-			.item:hover::before, .item.active::before { background: var(--color-shape-highlight-medium); }
+			.item.active::before { background: var(--color-shape-highlight-medium); }
+			.item.selected::before { background: var(--color-system-selection); }
 		}
 	}
 }

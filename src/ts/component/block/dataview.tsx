@@ -990,7 +990,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				route: this.analyticsRoute(),
 				relationKeys: this.getVisibleRelations().map(it => it.relationKey),
 				view,
-				allowedLink: true,
+				allowedLinkTo: true,
 				allowedOpen: true,
 			}
 		});
@@ -1286,9 +1286,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
 		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
+		const templateType = S.Record.getTemplateType();
 
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {
+				isAllowed = false;
+				break;
+			};
+
+			if (templateType && (type.id == templateType.id)) {
 				isAllowed = false;
 				break;
 			};

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, S, U, J, Preview, translate } from 'Lib';
+import { I, S, U, J, Preview, translate, Relation } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -36,7 +36,7 @@ interface Props {
 	onMouseLeave?(e: any): void;
 };
 
-const LAYOUT_EMOJI = [ 
+const LAYOUTS_WITH_EMOJI_GALLERY = [ 
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
@@ -53,7 +53,8 @@ const IconSize = {
 	24: 20,
 	26: 22,
 	28: 22,
-	32: 28,
+	30: 22,
+	32: 22,
 	36: 24,
 	40: 24,
 	42: 24,
@@ -73,24 +74,22 @@ const IconSize = {
 const FontSize = {
 	14: 10,
 	16: 10,
-	18: 10,
-	20: 12,
+	18: 11,
+	20: 13,
 	22: 14,
-	24: 14,
+	24: 16,
 	26: 16,
-	32: 18,
+	30: 20,
+	32: 20,
 	36: 24,
 	40: 24,
 	42: 24,
 	44: 24,
 	48: 28,
-	56: 34,
-	64: 44,
-	80: 48,
-	96: 66,
-	108: 66,
-	112: 66,
-	128: 72,
+	56: 40,
+	64: 40,
+	80: 64,
+	96: 64,
 };
 
 const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type' ];
@@ -189,6 +188,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
+			case I.ObjectLayout.Collection:
 			case I.ObjectLayout.Set: {
 				if (iconImage) {
 					cn.push('withImage');
@@ -244,9 +244,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					break;
 				};
 
-				const key = iconSize < 28 ? 'small' : 'big';
-				const name = U.Common.toCamelCase(I.RelationType[relationFormat]);
-				const src = require(`img/icon/relation/${key}/${name}.svg`).default;
+				const src = require(`img/icon/relation/${Relation.typeName(relationFormat)}.svg`).default;
 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={src} className={icn.join(' ')} />;
@@ -292,7 +290,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					cn.push('withOption');
-					icon = <img src={this.gradientSvg(iconOption || 1, 0.35)} className={icn.join(' ')} />;
+					icon = <img src={this.spaceSvg(iconOption)} className={icn.join(' ')} />;
 				};
 				break;
 			};
@@ -380,7 +378,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
 		const isTask = U.Object.isTaskLayout(object.layout);
-		const isEmoji = LAYOUT_EMOJI.includes(object.layout);
+		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(object.layout);
 
 		if (onClick) {
 			onClick(e);
@@ -447,66 +445,31 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	iconSize () {
 		const { size, iconSize } = this.props;
-		const object = this.getObject();
-		const { layout, iconImage, isDeleted } = object;
-
-		let s = IconSize[size];
-
-		if (isDeleted) {
-			return s;
-		};
-
-		if ((size == 18) && (U.Object.isTaskLayout(layout))) {
-			s = 16;
-		} else
-		if ((size == 48) && U.Object.isRelationLayout(layout)) {
-			s = 28;
-		} else
-		if (size >= 40) {
-			if ([ I.ObjectLayout.Human, I.ObjectLayout.Participant ].includes(layout)) {
-				s = size;
-			};
-
-			if ([ I.ObjectLayout.Set, I.ObjectLayout.SpaceView ].includes(layout) && iconImage) {
-				s = size;
-			};
-		};
-
-		if (iconSize) {
-			s = iconSize;
-		};
-		return s;
+		return iconSize || IconSize[size];
 	};
 
-	fontSize (layout: I.ObjectLayout, size: number) {
+	fontSize (size: number) {
 		let s = FontSize[size];
 
-		if ((size == 64) && ([ I.ObjectLayout.Type, I.ObjectLayout.Set ].indexOf(layout) >= 0)) {
-			s = 44;
+		if (size > 96) {
+			s = 72;
 		};
 
 		return s;
 	};
 
-	svgBgColor () {
-		return J.Theme[S.Common.getThemeClass()]?.icon.bg[this.props.color];
-	};
-
-	svgColor () {
-		return J.Theme[S.Common.getThemeClass()]?.icon.text;
+	fontWeight (size: number) {
+		return size > 18 ? 600 : 500;
 	};
 
 	userSvg (): string {
 		const { size } = this.props;
-		const object = this.getObject();
-		const { layout } = object;
-		const iconSize = this.iconSize();
-		const name = this.iconName();
+		const color = J.Theme[S.Common.getThemeClass()]?.iconUser;
 		
-		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${this.svgBgColor()}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
+		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${color.bg}" />`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${this.fontWeight(size)}" font-size="${this.fontSize(size)}px">${this.iconName()}</text>`;
 		const svg = `
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
 				${circle}
 				${text}
 			</svg>
@@ -515,25 +478,16 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	gradientSvg (option: number, radius: number): string {
-		const iconSize = this.iconSize();
-		const item = J.Color.icons.colors[option - 1] as any;
-		const { from, to } = J.Color.icons.steps;
+	spaceSvg (option: number): string {
+		const { bg, list } = J.Theme.iconSpace;
+		const { size } = this.props;
+		const bgColor = bg[list[option - 1]];
 
-		const gradient = `
-			<defs>
-				<radialGradient id="gradient">
-					<stop offset="${from}" stop-color="${item.from}" />
-					<stop offset="${to}" stop-color="${item.to}" />
-				</radialGradient>
-			</defs>
-		`;
-
-		const circle = `<circle cx="50%" cy="50%" r="${radius * 100}%" fill="url(#gradient)" />`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${this.fontWeight(size)}" font-size="${this.fontSize(size)}px">${this.iconName()}</text>`;
 		const svg = `
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
-				${gradient}
-				${circle}
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
+				<rect width="${size}" height="${size}" fill="${bgColor}"/>
+				${text}
 			</svg>
 		`;
 

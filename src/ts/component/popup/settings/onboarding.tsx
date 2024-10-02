@@ -77,7 +77,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 								menuParam={{ 
 									horizontal: I.MenuDirection.Right, 
 									width: 300,
-									className: 'fixed',
+									className: 'fixed withFullDescripion',
+									data: { noVirtualisation: true, noScroll: true }
 								}}
 							/>
 						</div>

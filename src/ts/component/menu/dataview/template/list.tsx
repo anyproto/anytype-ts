@@ -334,6 +334,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				filter: '',
 				filters: [
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: allowedLayouts },
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				onClick: type => {
 					data.typeId = type.id;

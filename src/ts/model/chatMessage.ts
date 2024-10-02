@@ -30,12 +30,12 @@ class ChatMessageContent implements I.ChatMessageContent {
 class ChatMessageAttachment implements I.ChatMessageAttachment {
 
 	target = '';
-	type: I.ChatAttachmentType = I.ChatAttachmentType.File;
+	type: I.AttachmentType = I.AttachmentType.File;
 
 	constructor (props: I.ChatMessageAttachment) {
 
 		this.target = String(props.target || '');
-		this.type = Number(props.type) || I.ChatAttachmentType.File;
+		this.type = Number(props.type) || I.AttachmentType.File;
 
 		makeObservable(this, {
 			target: observable,

@@ -1,4 +1,3 @@
-import Color from './color';
 import Constant from './constant';
 import Error from './error';
 import Extension from './extension';
@@ -15,7 +14,6 @@ const Emoji = require('./emoji.json');
 const Latex = require('./latex.json');
 
 export {
-	Color,
 	Constant,
 	Emoji,
 	Error,

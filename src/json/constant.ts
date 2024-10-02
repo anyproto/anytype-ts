@@ -15,7 +15,7 @@ export default {
 	allowedSchemes:		 [ 'https?', 'mailto', 'tel' ],
 
 	count: {
-		icon:			 16,
+		icon:			 10,
 		phrase:			 { letter: 8, word: 12 }
 	},
 	
@@ -54,7 +54,7 @@ export default {
 	default: {
 		interfaceLang:	 'en-US',
 		codeLang:		 'plain',
-		typeKey:		 'ot-note',
+		typeKey:		 'ot-page',
 		pinTime:		 600,
 	},
 
@@ -66,7 +66,6 @@ export default {
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 400,
-		login:			 800,
 		sidebar:		 180,
 	},
 
@@ -126,6 +125,7 @@ export default {
 		date:			 'ot-date',
 		profile:		 'ot-profile',
 		chat:			 'ot-chat',
+		chatDerived:	 'ot-chatDerived',
 	},
 
 	templateId: {

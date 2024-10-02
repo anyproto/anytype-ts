@@ -838,14 +838,15 @@ class UtilMenu {
 	};
 
 	getFixedWidgets () {
+		const { config } = S.Common;
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
-			{ id: J.Constant.widgetId.chat, name: translate('widgetChat'), iconEmoji: '💬' },
+			config.experimental ? { id: J.Constant.widgetId.chat, name: translate('widgetChat'), iconEmoji: '💬' } : null,
 			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
 			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
-		];
+		].filter(it => it);
 	};
 
 	sortOrFilterRelationSelect (menuParam: any, param: any) {
@@ -977,34 +978,18 @@ class UtilMenu {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
-	getStoreSortOptions (tab: I.StoreTab, view: I.StoreView) {
-		let options: any[] = [
-			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
-			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Desc },
-		];
-
-		if (view == I.StoreView.Library) {
-			options = options.concat([
-				{ isDiv: true },
-				{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
-				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Asc },
-			]);
-		};
-
-		if (tab == I.StoreTab.Type) {
-			options = options.concat([
-				{ isDiv: true },
-				{ id: 'lastUsedDateDesc', name: translate('pageMainStoreSortLastUsedDesc'), relationKey: 'lastUsedDate', icon: 'time', type: I.SortType.Desc },
-			]);
-		};
-		return options;
-	};
-
-	getObjectContainerSortOptions (sortId: string, sortType: I.SortType): any[] {
+	getObjectContainerSortOptions (sortId: I.SortId, sortType: I.SortType, withOrphans: boolean): any[] {
 		return ([
-			{ id: 'updated', name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
-			{ id: 'created', name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
-			{ id: 'name', name: translate('commonName'), relationKey: 'name' },
+			{ name: translate('sidebarObjectShow'), isSection: true },
+			{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
+			{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
+
+			{ isDiv: true },
+
+			{ name: translate('sidebarObjectSort'), isSection: true },
+			{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
+			{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
+			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
 		] as any[]).map(it => {
 			it.type = I.SortType.Asc;
 			if (it.id == sortId) {
@@ -1013,6 +998,26 @@ class UtilMenu {
 			};
 			return it;
 		});
+	};
+
+	dateFormatOptions () {
+		return ([
+			{ id: I.DateFormat.MonthAbbrBeforeDay },
+			{ id: I.DateFormat.MonthAbbrAfterDay },
+			{ id: I.DateFormat.Short },
+			{ id: I.DateFormat.ShortUS },
+			{ id: I.DateFormat.ISO },
+		] as any[]).map(it => {
+			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
+			return it;
+		});
+	};
+
+	timeFormatOptions () {
+		return [
+			{ id: I.TimeFormat.H12, name: translate('menuDataviewDate12Hour') },
+			{ id: I.TimeFormat.H24, name: translate('menuDataviewDate24Hour') },
+		];
 	};
 
 };

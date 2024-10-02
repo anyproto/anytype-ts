@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Storage, Preview } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Storage, Preview, Mark } from 'Lib';
 
 import Message from './chat/message';
 import Form from './chat/form';
@@ -43,6 +43,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.getMessages = this.getMessages.bind(this);
+		this.getReplyContent = this.getReplyContent.bind(this);
 	};
 
 	render () {
@@ -58,7 +59,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const Section = (item: any) => {
 			let date = U.Date.dayString(item.createdAt);
 			if (!date) {
-				date = U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), item.createdAt);
+				date = U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, item.createdAt);
 			};
 
 			return (
@@ -81,6 +82,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onContextMenu={e => this.onContextMenu(e, item)}
 							onMore={e => this.onContextMenu(e, item, true)}
 							onReply={e => this.onReply(e, item)}
+							getReplyContent={this.getReplyContent}
 						/>
 					))}
 				</div>
@@ -117,6 +119,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					scrollToBottom={this.scrollToBottom}
 					scrollToMessage={this.scrollToMessage}
 					getMessages={this.getMessages}
+					getReplyContent={this.getReplyContent}
 				/>
 			</div>
 		);
@@ -132,7 +135,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.loadMessages(true, () => {
 			this.loadReplies(() => {
+				this.replies = this.getReplies();
+
 				this.loadDeps(() => {
+					this.deps = this.getDeps();
+
 					this.setState({ isLoading: false }, () => {
 						const messages = this.getMessages();
 						const length = messages.length;
@@ -252,6 +259,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			deps = deps.concat(attachments);
 		});
 
+		if (this.refForm) {
+			deps = deps.concat((this.refForm.state.attachments || []).map(it => it.target));
+			deps = deps.concat((this.refForm.marks || []).filter(it => markTypes.includes(it.type)).map(it => it.param));
+		};
+
 		return deps;
 	};
 
@@ -285,6 +297,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			if (callBack) {
 				callBack();
 			};
+
+			this.refForm?.forceUpdate();
 		});
 	};
 
@@ -326,7 +340,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const sections = [];
 
 		messages.forEach(item => {
-			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), item.createdAt);
+			const key = U.Date.dateWithFormat(I.DateFormat.ShortUS, item.createdAt);
 			const section = sections.find(it => it.key == key);
 
 			if (!section) {
@@ -517,6 +531,54 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onReply (e: React.MouseEvent, message: any) {
 		this.refForm.onReply(message);
+	};
+
+	getReplyContent (message: any): any {
+		const { creator, content } = message;
+		const { space } = S.Common;
+		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
+		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
+		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
+		const attachments = (message.attachments || []).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
+		const l = attachments.length;
+
+		let text: string = '';
+		let attachmentText: string = '';
+		let attachment: any = null;
+		let isMultiple: boolean = false;
+
+		if (content.text) {
+			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+		};
+
+		if (!l) {
+			return { title, text };
+		};
+
+		const first = attachments[0];
+
+		if (l == 1) {
+			attachmentText = first.name || U.Common.plural(1, translate('pluralAttachment'));
+			attachment = first;
+		} else {
+			let attachmentLayout = I.ObjectLayout[first.layout];
+
+			attachment = first;
+			attachments.forEach((el) => {
+				if ((I.ObjectLayout[el.layout] != attachmentLayout) || !layouts.includes(el.layout)) {
+					isMultiple = true;
+					attachment = null;
+					attachmentLayout = 'Attachment';
+				};
+			});
+			attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
+		};
+
+		if (!text) {
+			text = attachmentText;
+		};
+
+		return { title, text, attachment, isMultiple };
 	};
 
 	onDragOver (e: React.DragEvent) {

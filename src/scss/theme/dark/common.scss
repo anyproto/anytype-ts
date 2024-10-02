@@ -7,31 +7,30 @@ html.themeDark {
 
 	--color-text-primary: #ebebeb;
 	--color-text-secondary: #9a9a9a;
-	--color-text-tertiary: #606060;
+	--color-text-tertiary: #656565;
 	--color-text-inversion: #171717;
 
 	/* Shape */
 
-	--color-shape-primary: #555;
-	--color-shape-secondary: #3f3f3f;
-	--color-shape-tertiary: #2b2b2b;
+	--color-shape-primary: #313131;
+	--color-shape-secondary: #292929;
+	--color-shape-tertiary: #232323;
 
-	--color-shape-highlight-dark: rgba(238, 238, 238, 0.24);
-	--color-shape-highlight-medium: rgba(238, 238, 238, 0.12);
-	--color-shape-highlight-light: rgba(238, 238, 238, 0.06);
-	--color-shape-highlight-light-solid: #242424;
+	--color-shape-highlight-dark: rgba(255, 255, 255, 0.11);
+	--color-shape-highlight-medium: rgba(255, 255, 255, 0.05);
+	--color-shape-highlight-light: rgba(255, 255, 255, 0.03);
 
 	/* Control */
 
 	--color-control-accent: #d4d4d4;
-	--color-control-active: #9a9a9a;
-	--color-control-inactive: #464646;
+	--color-control-active: #737373;
+	--color-control-inactive: #414141;
 	--color-control-bg: #fff;
 
 	/* Background */
 
 	--color-bg-primary: #171717;
-	--color-bg-secondary: #252525;
+	--color-bg-secondary: #191919;
 	--color-bg-tertiary: #464646;
 	--color-bg-loader: rgba(0,0,0,0.7);
 
@@ -50,33 +49,29 @@ html.themeDark {
 
     .cover.type2.black { background-color: #000 !important; }
 
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 	::selection { background-color: var(--color-system-selection); }
 
-	.iconObject.withOption.isSpaceView { background: #000 !important; }
+	.bgColor-grey { background: #232323 !important; }
+	.bgColor-yellow { background: #242317 !important; }
+	.bgColor-orange { background: #262117 !important; }
+	.bgColor-red { background: #2d1d18 !important; }
+	.bgColor-pink { background: #2d1926 !important; }
+	.bgColor-purple { background: #281c2c !important; }
+	.bgColor-blue { background: #1e2131 !important; }
+	.bgColor-ice { background: #17252d !important; }
+	.bgColor-teal { background: #162827 !important; }
+	.bgColor-lime { background: #202919 !important; }
 
-    .bgColor-grey { background: var(--color-shape-secondary) !important; }
-	.bgColor-yellow { background: #423c00 !important; }
-	.bgColor-orange { background: #483308 !important; }
-	.bgColor-red { background: #6b2109 !important; }
-	.bgColor-pink { background: #6f124f !important; }
-	.bgColor-purple { background: #5b2171 !important; }
-	.bgColor-blue { background: #00349a !important; }
-	.bgColor-ice { background: #044062 !important; }
-	.bgColor-teal { background: #02443e !important; }
-	.bgColor-lime { background: #214307 !important; }
-
-    .isMultiSelect.tagColor-default { background: unset !important; }
-    .isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: var(--color-shape-secondary) !important; }
-	.isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: #423c00 !important; }
-    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: #483308 !important; }
-    .isMultiSelect.tagColor-red { color: var(--color-red) !important; background: #6b2109 !important; }
-    .isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: #6f124f !important; }
-    .isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: #5b2171 !important; }
-    .isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #00349a !important; }
-    .isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: #044062 !important; }
-    .isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: #02443e !important; }
-    .isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: #214307 !important; }
+	.isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: #3c3c3c !important; }
+    .isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: #55500D !important; }
+    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: #5f430a !important; }
+    .isMultiSelect.tagColor-red { color: var(--color-red) !important; background: #74321e !important; }
+    .isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: #712055 !important; }
+    .isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: #542663 !important; }
+    .isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #2b3368 !important; }
+    .isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: #19465f !important; }
+    .isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: #16534e !important; }
+    .isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: #36551d !important; }
 
 	.selectionTarget.isSelectionSelected::after, 
 	.block.isSelectionSelected > .wrapContent > .selectionTarget::after 
@@ -236,6 +231,15 @@ html.themeDark {
 
     .icon.ghost { background-image: url('#{$themePath}/icon/ghost.svg'); }
 
+	/* Editor */
+
+	.editorWrapper {
+		.editor {
+			.icon.buttonAdd { background-image: url('#{$themePath}/icon/block/add0.svg'); }
+			.icon.buttonAdd:hover { background-image: url('#{$themePath}/icon/block/add1.svg'); }
+		}
+	}
+
     /* EditorControls */
 
     .editorControls {
@@ -259,15 +263,6 @@ html.themeDark {
         .path { border: 0px; line-height: 28px; }
         .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
     }
-
-	.header.mainStore.withBanner {
-		.bannerWrapper {
-			.banner { color: var(--color-text-inversion); }
-			.banner {
-				.button { background-color: var(--color-bg-primary); color: var(--color-text-primary); }
-			}
-		}
-	}
 
 	/* Vault */
 
@@ -309,6 +304,7 @@ html.themeDark {
 
 	/* Navigation */
 
+	.navigationPanel { background-color: rgba(0, 0, 0, 0.6); }
 	.navigationPanel {
 		.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(255, 255, 255, 0.1); }
 	}
@@ -333,6 +329,12 @@ html.themeDark {
         .icon.smile { background-image: url('#{$themePath}/icon/share/smile.svg'); }
         .icon.close { background-color: var(--color-bg-secondary); }
     }
+
+	.shareBanner { background: var(--color-bg-primary); }
+	.shareBanner {
+		.icon.smile { background-image: url('#{$themePath}/icon/share/banner.svg'); }
+		.icon.close { background-color: var(--color-shape-secondary); }
+	}
 
 	@import "./menu";
     @import "./popup";

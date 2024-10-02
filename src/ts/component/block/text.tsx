@@ -297,42 +297,52 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const { block } = this.props;
-		if (block.isTextCode() || !this.refEditable) {
+		const ref = this.refEditable;
+
+		if (block.isTextCode() || !ref) {
 			return;
 		};
-
-		const reg = /(^|\s)\$((?:[^$\\]|\\.)*?)\$([^\d]|$)/g;
-
-		let value = this.refEditable.getHtmlValue();
-
-		if (!reg.test(value)) {
-			return;
-		};
-
-		value = U.Common.fromHtmlSpecialChars(value);
 
 		const tag = Mark.getTag(I.MarkType.Latex);
-		const html = value.replace(reg, (s: string, p1: string, p2: string, p3: string) => {
-			let ret = '';
+		const value = this.refEditable.getHtmlValue();
+		const reg = /(^|[^\d])?\$((?:[^$<]|\.)*?)\$([^\d]|$)/gi;
 
+		if (!/\$((?:[^$<]|\.)*?)\$/.test(value)) {
+			return;
+		};
+
+		const match = value.matchAll(reg);
+
+		const render = (s: string) => {
+			s = U.Common.fromHtmlSpecialChars(s);
+
+			let ret = s;
 			try {
-				ret = katex.renderToString(U.Common.stripTags(p2), { 
+				ret = katex.renderToString(s, { 
 					displayMode: false, 
 					throwOnError: false,
 					output: 'html',
 					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
 				});
 
-				ret = ret ? `${p1}<${tag}>${ret}</${tag}>${p3}` : s;
-			} catch (e) {
-				ret = s;
-			};
-
+				ret = ret ? ret : s;
+			} catch (e) {};
 			return ret;
+		};
+
+		let html = value;
+
+		match.forEach((m: any) => {
+			const m0 = String(m[0] || '');
+			const m1 = String(m[1] || '');
+			const m2 = String(m[2] || '');
+			const m3 = String(m[3] || '');
+
+			html = html.replace(m0, `${m1}<${tag}>${render(m2)}</${tag}>${m3}`);
 		});
 
-		if (this.refEditable && (html !== value)) {
-			this.refEditable.setValue(html);
+		if (html !== value) {
+			ref.setValue(html);
 		};
 	};
 
@@ -601,16 +611,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
 			e.preventDefault();
 
-			const l = e.key.length;
+			const length = key.length;
 			const cut = value.slice(range.from, range.to);
-			const closingSymbol = twinePairs[key] || key;
+			const closing = twinePairs[key] || key;
 
-			value = U.Common.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
+			value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
 
-			this.marks = Mark.adjust(this.marks, range.from, l);
+			this.marks = Mark.adjust(this.marks, range.from, length + closing.length);
 
 			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				focus.set(block.id, { from: range.from + l, to: range.to + l });
+				focus.set(block.id, { from: range.from + length, to: range.to + length });
 				focus.apply();
 			});
 

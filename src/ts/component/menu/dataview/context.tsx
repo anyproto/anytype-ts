@@ -87,6 +87,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
+		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
@@ -103,12 +104,13 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedFav = true;
 		let allowedCopy = true;
 		let allowedType = true;
-		let allowedLink = data.allowedLink;
+		let allowedLinkTo = data.allowedLinkTo;
 		let allowedOpen = data.allowedOpen;
 		let allowedCollection = true;
 		let allowedUnlink = isCollection;
 		let allowedWidget = true;
 		let allowedRelation = true;
+		let allowedLink = true;
 
 		objectIds.forEach((it: string) => {
 			const object = this.getObject(subId, getObject, it);
@@ -135,6 +137,14 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
 				allowedRelation = false;
 			};
+			if (U.Object.isTypeOrRelationLayout(object.layout)) {
+				allowedRelation = false;
+				allowedWidget = false;
+				allowedLinkTo = false;
+				allowedCopy	= false;
+				allowedCollection = false;
+				allowedFav = false;
+			};
 		});
 
 		if (favCnt == length) {
@@ -145,8 +155,9 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (length > 1) {
 			allowedOpen = false;
-			allowedLink = false;
+			allowedLinkTo = false;
 			allowedWidget = false;
+			allowedLink = false;			
 		};
 
 		if (!canWrite) {
@@ -154,7 +165,7 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedFav = false;
 			allowedCopy = false;
 			allowedType = false;
-			allowedLink = false;
+			allowedLinkTo = false;
 			allowedUnlink = false;
 			allowedWidget = false;
 			allowedRelation = false;
@@ -163,7 +174,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (archiveCnt == length) {
 			allowedOpen = false;
-			allowedLink = false;
+			allowedLinkTo = false;
 			allowedUnlink = false;
 			allowedType = false;
 			allowedFav = false;
@@ -177,15 +188,16 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedFav)		 fav = null;
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedType)		 changeType = null;
-		if (!allowedLink)		 linkTo = null;
+		if (!allowedLinkTo)		 linkTo = null;
 		if (!allowedOpen)		 open = null;
 		if (!allowedUnlink)		 unlink = null;
 		if (!allowedWidget)		 createWidget = null;
 		if (!allowedRelation)	 relation = null;
 		if (!allowedCollection)	 addCollection = null;
+		if (!allowedLink)		 pageLink = null;
 
 		let sections = [
-			{ children: [ createWidget, open, changeType, relation ] },
+			{ children: [ createWidget, open, changeType, relation, pageLink ] },
 			{ children: [ fav, linkTo, addCollection ] },
 			{ children: [ pageCopy, exportObject, unlink, archive ] },
 		];
@@ -390,6 +402,16 @@ class MenuContext extends React.Component<I.Menu> {
 						cb();
 					};
 				});
+				break;
+			};
+
+			case 'pageLink': {
+				if (!first) {
+					break;
+				};
+
+				U.Common.clipboardCopy({ text: `${J.Constant.protocol}://${U.Object.universalRoute(first)}` });
+				analytics.event('CopyLink', { route });
 				break;
 			};
 

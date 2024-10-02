@@ -26,10 +26,9 @@ export enum ObjectLayout {
 	Empty		 = 100,
 	Navigation	 = 101,
 	Graph		 = 102,
-	Store		 = 103,
-	History		 = 104,
-	Archive		 = 105,
-	Block		 = 106,
+	History		 = 103,
+	Archive		 = 104,
+	Block		 = 105,
 };
 
 export enum RelationType { 
