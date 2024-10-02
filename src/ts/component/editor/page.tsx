@@ -341,7 +341,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const title = S.Block.getLeaf(rootId, J.Constant.blockId.title);
-		if (!title.getLength()) {
+		if (title && !title.getLength()) {
 			focus.set(title.id, { from: 0, to: 0 });
 			focus.apply();
 		};
