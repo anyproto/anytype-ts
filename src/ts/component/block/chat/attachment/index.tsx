@@ -195,7 +195,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		const { object } = this.props;
 		const src = S.Common.fileUrl(object.id);
 
-		this.previewItem = { src, type: I.FileType.Video };
+		this.previewItem = { type: I.FileType.Video, src, object };
 
 		return (
 			<MediaVideo 
