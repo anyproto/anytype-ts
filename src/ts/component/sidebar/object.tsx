@@ -51,6 +51,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.onScroll = this.onScroll.bind(this);
 		this.onTabOver = this.onTabOver.bind(this);
 		this.onTabLeave = this.onTabLeave.bind(this);
+		this.onTabScroll = this.onTabScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
@@ -129,7 +130,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 							onMouseEnter={this.onTabOver} 
 							onMouseLeave={this.onTabLeave}
 						>
-							<div className="scrollWrap">
+							<div 
+								className="scrollWrap"
+								onScroll={this.onTabScroll}
+							>
 								<div className="scroll">
 									{typeOptions.map(it => {
 										const cn = [ 'tab' ];
@@ -237,6 +241,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.rebind();
 		this.resize();
 		this.load(true);
+
+		const idx = this.getTypeOptions().findIndex(it => it.id == this.type);
+		this.scrollToTab(idx);
 
 		analytics.event('ScreenLibrary');
 	};
@@ -964,18 +971,28 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.scrollToTab(this.tabIndex);
 	};
 
+	onTabScroll () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const scroll = tabs.find('.scrollWrap');
+
+		this.x = scroll.scrollLeft();
+		this.checkTabX();
+		this.checkTabButtons();
+	};
+
 	scrollToTab (idx: number) {
 		const node = $(this.node);
 		const tabs = node.find('#tabs');
-		const scroll = tabs.find('.scroll');
+		const scroll = tabs.find('.scrollWrap');
 
 		this.tabIndex = idx;
 		this.checkTabIndex();
 
-		this.x = -this.tabArray[this.tabIndex].x;
+		this.x = this.tabArray[this.tabIndex].x;
 		this.checkTabX();
 
-		scroll.css({ transform: `translate3d(${this.x}px, 0px, 0px)` });
+		scroll.animate({ scrollLeft: this.x }, 200);
 		this.checkTabButtons();
 	};
 
@@ -986,8 +1003,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const max = this.getMaxWidth();
 		const sw = scroll.width();
 
-		this.x = Math.min(0, this.x);
-		this.x = Math.max(-(max - sw), this.x);
+		this.x = Math.floor(this.x);
+		this.x = Math.max(0, this.x);
+		this.x = Math.min(max - sw, this.x);
 	};
 
 	checkTabIndex () {
@@ -1010,8 +1028,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const max = this.getMaxWidth();
 		const sw = scroll.width();
 
-		this.x >= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
-		this.x <= -(max - sw) ? sideRight.addClass('hide') : sideRight.removeClass('hide');
+		this.x <= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
+		this.x >= max - sw - 1 ? sideRight.addClass('hide') : sideRight.removeClass('hide');
 	};
 
 	getMaxWidth () {
