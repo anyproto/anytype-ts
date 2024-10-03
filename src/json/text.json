@@ -689,6 +689,7 @@
 	"blockChatMessageEdited": "(edited)",
 	"blockChatEditing": "Editing message",
 	"blockChatReplying": "Replying to %s",
+	"blockChatFormReadonly": "Only editors can send messages. Contact the owner to request access.",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
