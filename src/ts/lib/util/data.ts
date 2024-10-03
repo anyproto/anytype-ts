@@ -863,7 +863,7 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSearchSubscribe(subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId, (message: any) => {
+		C.ObjectSearchSubscribe(subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
 
 			if (callBack) {
@@ -897,7 +897,7 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSubscribeIds(subId, ids, keys, true, noDeps, (message: any) => {
+		C.ObjectSubscribeIds(subId, ids, keys, noDeps, (message: any) => {
 			message.records.sort((c1: any, c2: any) => {
 				const i1 = ids.indexOf(c1.id);
 				const i2 = ids.indexOf(c2.id);
