@@ -248,7 +248,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.load(true);
 
 		const idx = this.getTypeOptions().findIndex(it => it.id == this.type);
-		this.scrollToTab(idx);
+		this.scrollToTab(idx, false);
 
 		analytics.event('ScreenLibrary');
 	};
@@ -974,7 +974,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onTabArrow (dir: number) {
 		this.tabIndex += dir;
 		this.checkTabIndex();
-		this.scrollToTab(this.tabIndex);
+		this.scrollToTab(this.tabIndex, true);
 	};
 
 	onTabScroll () {
@@ -996,7 +996,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.checkTabButtons();
 	};
 
-	scrollToTab (idx: number) {
+	scrollToTab (idx: number, animate: boolean) {
 		const node = $(this.node);
 		const tabs = node.find('#tabs');
 		const scroll = tabs.find('.scrollWrap');
@@ -1007,7 +1007,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.x = this.tabArray[this.tabIndex].x;
 		this.checkTabX();
 
-		scroll.animate({ scrollLeft: this.x }, 200);
+		scroll.animate({ scrollLeft: this.x }, animate ? 200 : 0);
 		this.checkTabButtons();
 	};
 
