@@ -412,7 +412,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	getSortOption () {
-		return U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
+		return U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
 	};
 
 	getRecords () {
@@ -424,8 +424,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		if (this.withSections()) {
 			const option = this.getSortOption();
-
-			records = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
+			if (option) {
+				records = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
+			};
 		};
 		return records;
 	};
@@ -469,7 +470,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onMore (e: any) {
 		e.stopPropagation();
 
-		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan);
+		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan);
 
 		let menuContext = null;
 
@@ -498,7 +499,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					this.load(true);
 
 					const storage = this.storageGet();
-					const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan);
+					const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan);
 					
 					storage.sort[this.type] = { id: item.id, type: item.type };
 
