@@ -978,19 +978,30 @@ class UtilMenu {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
-	getObjectContainerSortOptions (sortId: I.SortId, sortType: I.SortType, withOrphans: boolean): any[] {
-		return ([
-			{ name: translate('sidebarObjectShow'), isSection: true },
-			{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
-			{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
+	getObjectContainerSortOptions (type: I.ObjectContainerType, sortId: I.SortId, sortType: I.SortType, withOrphans: boolean): any[] {
+		let ret: any[] = [];
 
-			{ isDiv: true },
+		if (type == I.ObjectContainerType.Type) {
+			ret = ret.concat([
+				{ name: translate('sidebarObjectSort'), isSection: true },
+				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
+			]);
+		} else {
+			ret = ret.concat([
+				{ name: translate('sidebarObjectShow'), isSection: true },
+				{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
+				{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
 
-			{ name: translate('sidebarObjectSort'), isSection: true },
-			{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
-			{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
-			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
-		] as any[]).map(it => {
+				{ isDiv: true },
+
+				{ name: translate('sidebarObjectSort'), isSection: true },
+				{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
+				{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
+				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
+			]);
+		};
+
+		return ret.map(it => {
 			it.type = I.SortType.Asc;
 			if (it.id == sortId) {
 				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;

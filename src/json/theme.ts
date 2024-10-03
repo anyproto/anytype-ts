@@ -65,7 +65,7 @@ export default {
 	dark: {
 
 		color: {
-			default: '#252525',
+			default: '#ebebeb',
 			yellow: '#ecd91b',
 			orange: '#ffb522',
 			red: '#f55522',

@@ -137,9 +137,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		this.setCurrent();
 
 		// swiper need to catch up with thumbs in case of no objects
-		window.setTimeout(() => {
-			this.forceUpdate();
-		}, 100);
+		window.setTimeout(() => this.forceUpdate(), 100);
 	};
 
 	componentWillUnmount () {
@@ -181,26 +179,32 @@ class PopupPreview extends React.Component<I.Popup> {
 	};
 
 	onExpand () {
-		const { id, layout } = this.current;
-
-		S.Popup.closeAll(null, () => U.Object.openRoute({ id, layout }));
+		S.Popup.closeAll(null, () => U.Object.openAuto(this.current));
 	};
 	
 	onMore () {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { object } = data;
+		const { getId, close } = this.props;
+
+		if (!this.current) {
+			return;
+		};
+
+		const cb = () => {
+			close();
+		};
 
 		S.Menu.open('object', {
 			element: `#${getId()} #button-header-more`,
 			horizontal: I.MenuDirection.Right,
 			subIds: J.Menu.object,
 			data: {
-				rootId: object.id,
-				blockId: object.id,
-				blockIds: [ object.id ],
-				object,
+				rootId: this.current.id,
+				blockId: this.current.id,
+				blockIds: [ this.current.id ],
+				object: this.current,
 				isFilePreview: true,
+				onArchive: cb,
+				onDelete: cb,
 			}
 		});
 	};

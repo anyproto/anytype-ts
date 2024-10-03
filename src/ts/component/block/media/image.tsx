@@ -231,23 +231,47 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	};
 	
 	onClick (e: any) {
-		const { rootId, block } = this.props;
-		const target = block.getTargetObjectId();
-		const object = S.Detail.get(rootId, target, []);
-
-		if (!keyboard.withCommand(e)) {
-			S.Popup.open('preview', { 
-				data: {
-					gallery: [
-						{
-							object,
-							src: S.Common.imageUrl(target, J.Size.image),
-							type: I.FileType.Image,
-						}
-					]
-				},
-			});
+		if (keyboard.withCommand(e)) {
+			return;
 		};
+
+		const { rootId, block } = this.props;
+		const blocks = S.Block.getBlocks(rootId, (it: I.Block) => it.isFileImage() || it.isFileVideo());
+		const idx = blocks.findIndex(it => it.id == block.id);
+		const gallery = [];
+
+		blocks.forEach(it => {
+			const target = it.getTargetObjectId();
+			const type = it.isFileImage() ? I.FileType.Image : I.FileType.Video;
+			const object = S.Detail.get(rootId, target, []);
+
+			if (object._empty_ || object.isDeleted) {
+				return;
+			};
+
+			let src = '';
+
+			switch (object.layout) {
+				case I.ObjectLayout.Image: {
+					src = S.Common.imageUrl(target, J.Size.image);
+					break;
+				};
+
+				case I.ObjectLayout.Video: {
+					src = S.Common.fileUrl(target);
+					break;
+				};
+			};
+
+			gallery.push({ object, src, type });
+		});
+
+		S.Popup.open('preview', { 
+			data: {
+				initialIdx: idx,
+				gallery,
+			},
+		});
 	};
 
 	onDownload () {

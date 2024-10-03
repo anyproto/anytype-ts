@@ -25,13 +25,12 @@
 
 			.tabs, .sides.sidesFilter { padding: 0px 16px; }
 
-			.tabs { margin: 0px 0px 3px 0px; position: relative; }
+			.tabs { position: relative; }
 			.tabs {
-				.scrollWrap { overflow: hidden; }
-				.scroll { 
-					display: flex; align-items: center; gap: 0px 12px; font-weight: 500; color: var(--color-control-active); transition: 0.3s transform $easeInQuint;
-					transform: translate3d(0px,0px,0px);
-				}
+				.scrollWrap { overflow-y: hidden; overflow-x: auto; padding: 0px 0px 3px 0px; }
+				.scrollWrap::-webkit-scrollbar { display: none; }
+
+				.scroll { display: flex; align-items: center; gap: 0px 12px; font-weight: 500; color: var(--color-control-active); }
 
 				.tab { white-space: nowrap; flex-shrink: 0; transition: $transitionAllCommon;  }
 				.tab.active, .tab:hover { color: var(--color-text-primary); }
