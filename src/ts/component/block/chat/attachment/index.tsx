@@ -163,6 +163,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		const { object } = this.props;
 
 		this.previewItem = { type: I.FileType.Image };
+
 		if (!this.src) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string, param: any) => {
