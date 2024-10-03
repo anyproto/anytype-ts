@@ -301,9 +301,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, dataChange, skipIds, keys, spaceId } = data;
+		const { type, dataMapper, dataSort, dataChange, skipIds, keys } = data;
 		const filter = String(data.filter || '');
 		const templateType = S.Record.getTemplateType();
+		const spaceId = data.spaceId || S.Common.space;
 		
 		const filters: any[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },

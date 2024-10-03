@@ -446,6 +446,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onBlurInput () {
+		const { rootId, block } = this.props;
+
+		S.Block.updateContent(rootId, block.id, { text: this.getValue() });
 		this.save();
 	};
 
@@ -466,12 +469,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const range = this.getRange();
-		if (!range) {
-			return;
-		};
+		this.range = this.getRange();
 
-		S.Common.filterSet(range.from, '');
+		S.Common.filterSet(this.range.from, '');
 		this.onLatexMenu(e, 'select', true);
 	};
 
@@ -517,6 +517,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					const value = U.Common.stringInsert(this.getValue(), text, from, to);
+
+					to += text.length;
 
 					this.setValue(value);
 					this.setRange({ from: to, to });
@@ -795,14 +797,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	save (callBack?: (message: any) => void) {
 		const { rootId, block, readonly } = this.props;
 		
-		if (readonly) {
-			return;
+		if (!readonly) {
+			C.BlockLatexSetText(rootId, block.id, this.getValue(), callBack);
 		};
-
-		const value = this.getValue();
-
-		S.Block.updateContent(rootId, block.id, { text: value });
-		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
 	getRange (): I.TextRange {
