@@ -55,6 +55,15 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 							content = this.renderImage();
 							break;
 						};
+						case 'audio': {
+							if (!J.Constant.fileExtension.audio.includes(t2)) {
+								break;
+							};
+
+							cn.push('isAudio');
+							content = this.renderAudio();
+							break;
+						};
 					};
 				};
 				break;
@@ -207,8 +216,9 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	renderAudio () {
 		const { object } = this.props;
+		const src = object.src || S.Common.fileUrl(object.id);
 		const playlist = [ 
-			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
+			{ name: U.File.name(object), src },
 		];
 
 		return <MediaAudio playlist={playlist} />;
