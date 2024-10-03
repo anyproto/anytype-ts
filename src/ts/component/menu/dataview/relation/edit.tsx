@@ -322,14 +322,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			case 'unlink': {
-				this.props.close();
-				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ]);
+				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => this.props.close());
 				break;
 			};
 
 			case 'remove': {
-				this.props.close();
-				Action.uninstall(relation, true);
+				Action.uninstall(relation, true, '', () => {
+					C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => this.props.close());
+				});
 				break;
 			};
 
