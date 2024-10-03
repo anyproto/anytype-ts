@@ -355,12 +355,17 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 	};
 
 	onScroll () {
+		const { showVault } = S.Common;
 		const node = $(this.node);
 		const head = node.find('#head');
 		const body = node.find('#body');
 		const top = body.scrollTop();
 
-		top > 32 ? head.addClass('show') : head.removeClass('show');
+		head.removeClass('show');
+
+		if (showVault && (top > 32)) {
+			head.addClass('show')
+		};
 	};
 
 	onContextMenu () {
