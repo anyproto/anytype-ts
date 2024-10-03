@@ -25,7 +25,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		this.onMore = this.onMore.bind(this);
 		this.onError = this.onError.bind(this);
 		this.onExpand = this.onExpand.bind(this);
-		this.setCurrent = this.setCurrent.bind(this);
 	};
 
 	render () {
@@ -209,15 +208,22 @@ class PopupPreview extends React.Component<I.Popup> {
 		});
 	};
 
-	onError (idx) {
+	onError (idx: number) {
 		const { getId } = this.props;
 		const node = $(`#${getId()}-innerWrap`);
 		const wrap = node.find(`#itemPreview-${idx}`);
-		const obj = this.galleryMap.get(idx);
 
-		wrap
-			.addClass('brokenMedia')
-			.find('.loader').remove();
+		if (!wrap.length) {
+			return;
+		};
+
+		const obj = this.galleryMap.get(idx);
+		if (!obj) {
+			return;
+		};
+
+		wrap.addClass('brokenMedia');
+		wrap.find('.loader').remove();
 
 		obj.isLoaded = true;
 		this.galleryMap.set(idx, obj);
@@ -267,7 +273,7 @@ class PopupPreview extends React.Component<I.Popup> {
 					this.galleryMap.set(idx, obj);
 				};
 
-				img.onerror = this.onError;
+				img.onerror = () => this.onError(idx);
 				img.src = src;
 				break;
 			};
@@ -299,7 +305,7 @@ class PopupPreview extends React.Component<I.Popup> {
 					this.resizeMedia(idx, w, h);
 					video.css({ width: '100%', height: '100%' });
 				};
-				videoEl.onerror = this.onError;
+				videoEl.onerror = () => this.onError(idx);
 
 				video.css({ width: w, height: h });
 				break;

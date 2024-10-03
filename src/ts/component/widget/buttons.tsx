@@ -17,8 +17,6 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 		const space = U.Space.getSpaceview();
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 
-		console.log(space);
-
 		return (
 			<div className="body">
 				{items.map((item, i) => {
