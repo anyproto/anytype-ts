@@ -73,8 +73,6 @@ class PopupPreview extends React.Component<I.Popup> {
 			);
 		};
 
-		console.log(current);
-
 		return (
 			<div id="wrap" className="wrap">
 				<div className="galleryHeader">
@@ -175,8 +173,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		};
 
 		const item = gallery[idx];
-
-		console.log(gallery, item);
 
 		if (item.object) {
 			this.setState({ current: item.object });
