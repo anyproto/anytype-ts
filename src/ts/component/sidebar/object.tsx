@@ -244,10 +244,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		this.refFilter.focus();
 		this.rebind();
-		this.resize();
 		this.load(true);
 
-		const idx = this.getTypeOptions().findIndex(it => it.id == this.type);
+		const idx = Math.max(0, this.getTypeOptions().findIndex(it => it.id == this.type));
 		this.scrollToTab(idx, false);
 
 		analytics.event('ScreenLibrary');
@@ -1001,13 +1000,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const tabs = node.find('#tabs');
 		const scroll = tabs.find('.scrollWrap');
 
+		this.fillTabArray();
+
 		this.tabIndex = idx;
 		this.checkTabIndex();
 
 		this.x = this.tabArray[this.tabIndex].x;
 		this.checkTabX();
 
-		scroll.animate({ scrollLeft: this.x }, animate ? 200 : 0);
+		if (animate) {
+			scroll.animate({ scrollLeft: this.x }, 200);
+		} else {
+			scroll.scrollLeft(this.x);
+		};
 		this.checkTabButtons();
 	};
 
@@ -1071,9 +1076,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	resize () {
-		this.tabIndex = 0;
-		this.fillTabArray();
-		this.onTabArrow(0);
+		this.scrollToTab(0, false);
 	};
 
 });
