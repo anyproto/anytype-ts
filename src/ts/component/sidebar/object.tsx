@@ -135,14 +135,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								onScroll={this.onTabScroll}
 							>
 								<div className="scroll">
-									{typeOptions.map(it => {
+									{typeOptions.map((it: any, i: number) => {
 										const cn = [ 'tab' ];
+
 										if (this.type == it.id) {
 											cn.push('active');
 										};
 
 										return (
-											<div key={it.id} className={cn.join(' ')} onClick={() => this.onSwitchType(it.id)}>
+											<div 
+												key={it.id} 
+												className={cn.join(' ')} 
+												onClick={() => this.onSwitchType(it.id)}
+											>
 												{it.name}
 											</div>
 										);
@@ -977,7 +982,16 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const scroll = tabs.find('.scrollWrap');
 
 		this.x = scroll.scrollLeft();
+
+		for (const item of this.tabArray) {
+			if ((this.x >= item.x) && (this.x <= item.x + item.w)) {
+				this.tabIndex = item.i;
+				break;
+			};
+		};
+
 		this.checkTabX();
+		this.checkTabIndex();
 		this.checkTabButtons();
 	};
 
@@ -1009,13 +1023,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	checkTabIndex () {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const items = tabs.find('.tab');
-		const length = items.length;
-
 		this.tabIndex = Math.max(0, this.tabIndex);
-		this.tabIndex = Math.min(length - 1, this.tabIndex);
+		this.tabIndex = Math.min(this.tabArray.length - 1, this.tabIndex);
 	};
 
 	checkTabButtons () {
