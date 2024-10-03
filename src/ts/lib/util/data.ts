@@ -898,7 +898,7 @@ class UtilData {
 		};
 
 		C.ObjectSubscribeIds(subId, ids, keys, noDeps, (message: any) => {
-			message.records.sort((c1: any, c2: any) => {
+			(message.records || []).sort((c1: any, c2: any) => {
 				const i1 = ids.indexOf(c1.id);
 				const i2 = ids.indexOf(c2.id);
 				if (i1 > i2) return 1; 
