@@ -226,6 +226,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	onPreview () {
 		const { onPreview } = this.props;
 
+		if (!this.previewItem) {
+			return;
+		};
+
 		if (onPreview) {
 			onPreview(this.previewItem);
 		} else {
