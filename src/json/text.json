@@ -1815,6 +1815,7 @@
 
 	"sidebarObjectSortCreated": "Date created",
 	"sidebarObjectSortUpdated": "Date updated",
+	"sidebarObjectSortLastUsed": "Date last used",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

@@ -984,6 +984,7 @@ class UtilMenu {
 		if (type == I.ObjectContainerType.Type) {
 			ret = ret.concat([
 				{ name: translate('sidebarObjectSort'), isSection: true },
+				{ id: I.SortId.LastUsed, name: translate('sidebarObjectSortLastUsed'), relationKey: 'lastUsedDate' },
 				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
 			]);
 		} else {
