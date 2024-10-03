@@ -18,7 +18,7 @@ $gallerySlidesH: calc(100vh - $galleryHeaderH - $galleryFooterH);
 		.wrap {
 			.galleryHeader { 
 				position: relative; -webkit-app-region: no-drag; display: flex; align-items: center; justify-content: space-between; width: 100%; color: var(--color-text-secondary); 
-				text-shadow: 0px 0px 5px rgba(0,0,0,0.7); padding: 16px; z-index: 1;
+				text-shadow: 0px 0px 5px rgba(0,0,0,0.7); padding: 16px; z-index: 1; height: $galleryHeaderH;
 			}
 			.galleryHeader {
 				.side.center { text-align: center; max-width: calc(100% - 80px); height: 100%; display: flex; align-items: center; }

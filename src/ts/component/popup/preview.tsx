@@ -102,10 +102,10 @@ class PopupPreview extends React.Component<I.Popup> {
 						thumbs={{ swiper: this.thumbs }}
 						navigation={true}
 						modules={[ Mousewheel, Keyboard, Thumbs, Navigation ]}
-						onTransitionEnd={(data) => this.setCurrent(data.activeIndex)}
+						onTransitionEnd={data => this.setCurrent(data.activeIndex)}
 					>
 						{gallery.map((item: any, i: number) => (
-							<SwiperSlide key={i}>
+							<SwiperSlide key={i} onClick={() => close()}>
 								{getContent(item, i)}
 							</SwiperSlide>
 						))}
@@ -183,7 +183,10 @@ class PopupPreview extends React.Component<I.Popup> {
 		keyboard.shortcut('escape', e, () => this.props.close());
 	};
 
-	onExpand () {
+	onExpand (e: any) {
+		e.stopPropagation();
+		e.preventDefault();
+
 		const { current } = this.state;
 
 		S.Popup.closeAll(null, () => {
@@ -193,7 +196,10 @@ class PopupPreview extends React.Component<I.Popup> {
 		});
 	};
 	
-	onMore () {
+	onMore (e: any) {
+		e.stopPropagation();
+		e.preventDefault();
+
 		const { getId, close } = this.props;
 		const { current } = this.state;
 
@@ -201,9 +207,7 @@ class PopupPreview extends React.Component<I.Popup> {
 			return;
 		};
 
-		const cb = () => {
-			close();
-		};
+		const cb = () => close();
 
 		S.Menu.open('object', {
 			element: `#${getId()} #button-header-more`,

@@ -162,7 +162,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	renderImage () {
 		const { object } = this.props;
 
-		this.previewItem = { type: I.FileType.Image };
+		this.previewItem = { type: I.FileType.Image, object };
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
@@ -174,7 +174,6 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				this.src = './img/space.svg';
 			} else {
 				this.src = S.Common.imageUrl(object.id, J.Size.image);
-				this.previewItem.object = object;
 			};
 		};
 
