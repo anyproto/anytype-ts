@@ -145,15 +145,29 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	renderBookmark () {
 		const { object } = this.props;
+		const { picture, source } = object;
+		const cn = [ 'inner', 'isVertical' ];
+
+		if (picture) {
+			cn.push('withImage');
+		};
 
 		return (
-			<div className="clickable" onClick={this.onOpen}>
-				<div className="info">
-					<div className="descr">
+			<div
+				className={cn.join(' ')}
+				onClick={this.onOpen}
+				{...U.Common.dataProps({ href: source })}
+			>
+				<div className="side left">
+					<div className="link">
 						<IconObject object={object} size={14} />
-						<div className="url">{U.Common.shortUrl(object.source)}</div>
+						{U.Common.shortUrl(source)}
 					</div>
 					<ObjectName object={object} />
+					<ObjectDescription object={object} />
+				</div>
+				<div className="side right">
+					{picture ? <img src={S.Common.imageUrl(picture, 500)} className="img" /> : ''}
 				</div>
 			</div>
 		);

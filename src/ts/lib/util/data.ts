@@ -506,7 +506,7 @@ class UtilData {
 	};
 
 	chatRelationKeys () {
-		return J.Relation.default.concat([ 'source' ]);
+		return J.Relation.default.concat([ 'source', 'picture' ]);
 	};
 
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
