@@ -270,16 +270,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.unbind();
 	};
 
-	initSort () {
-		const storage = this.storageGet();
-		const sort = storage.sort[this.type];
-
-		if (sort) {
-			this.sortId = sort.id;
-			this.sortType = sort.type;
-		};
-	};
-
 	rebind () {
 		this.unbind();
 
@@ -298,6 +288,16 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	unbind () {
 		$(window).off('keydown.sidebarObject');
 		$(this.node).off('click');
+	};
+
+	initSort () {
+		const storage = this.storageGet();
+		const sort = storage.sort[this.type];
+
+		if (sort) {
+			this.sortId = sort.id;
+			this.sortType = sort.type;
+		};
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
