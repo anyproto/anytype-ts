@@ -270,6 +270,16 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.unbind();
 	};
 
+	initSort () {
+		const storage = this.storageGet();
+		const sort = storage.sort[this.type];
+
+		if (sort) {
+			this.sortId = sort.id;
+			this.sortType = sort.type;
+		};
+	};
+
 	rebind () {
 		this.unbind();
 
@@ -553,6 +563,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.type = id as I.ObjectContainerType;
 		storage.type = this.type;
 
+		this.initSort();
 		this.storageSet(storage);
 		this.load(true);
 
