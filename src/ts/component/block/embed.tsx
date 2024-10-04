@@ -227,7 +227,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		node.find('#receiver').remove();
-		isOnline ? preview.hide() : preview.show();
+
+		if (![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid ].includes(processor)) {
+			isOnline ? preview.hide() : preview.show();
+		};
 
 		if (isOnline && (isShowing || U.Embed.allowAutoRender(processor))) {
 			this.setContent(this.text);
