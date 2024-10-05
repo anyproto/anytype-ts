@@ -24,7 +24,6 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		this.onMore = this.onMore.bind(this);
 		this.onError = this.onError.bind(this);
-		this.onExpand = this.onExpand.bind(this);
 		this.setCurrent = this.setCurrent.bind(this);
 	};
 
@@ -77,7 +76,6 @@ class PopupPreview extends React.Component<I.Popup> {
 								<ObjectName object={this.current} />
 							</div>
 							<div className="side right">
-								<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onExpand} />
 								<Icon id="button-header-more" tooltip={translate('commonMenu')} className="more" onClick={this.onMore} />
 							</div>
 						</div>
@@ -178,10 +176,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		keyboard.shortcut('escape', e, () => this.props.close());
 	};
 
-	onExpand () {
-		S.Popup.closeAll(null, () => U.Object.openAuto(this.current));
-	};
-	
 	onMore () {
 		const { getId, close } = this.props;
 
@@ -209,15 +203,18 @@ class PopupPreview extends React.Component<I.Popup> {
 		});
 	};
 
-	onError (idx) {
+	onError (idx: number) {
 		const { getId } = this.props;
 		const node = $(`#${getId()}-innerWrap`);
 		const wrap = node.find(`#itemPreview-${idx}`);
 		const obj = this.galleryMap.get(idx);
 
-		wrap
-			.addClass('brokenMedia')
-			.find('.loader').remove();
+		if (!obj) {
+			return;
+		};
+
+		wrap.addClass('brokenMedia');
+		wrap.find('.loader').remove();
 
 		obj.isLoaded = true;
 		this.galleryMap.set(idx, obj);
@@ -267,7 +264,7 @@ class PopupPreview extends React.Component<I.Popup> {
 					this.galleryMap.set(idx, obj);
 				};
 
-				img.onerror = this.onError;
+				img.onerror = () => this.onError(idx);
 				img.src = src;
 				break;
 			};
@@ -299,7 +296,7 @@ class PopupPreview extends React.Component<I.Popup> {
 					this.resizeMedia(idx, w, h);
 					video.css({ width: '100%', height: '100%' });
 				};
-				videoEl.onerror = this.onError;
+				videoEl.onerror = () => this.onError(idx);
 
 				video.css({ width: w, height: h });
 				break;
