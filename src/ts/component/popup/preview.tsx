@@ -166,7 +166,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		const item = gallery[idx];
 
-		if (item.object) {
+		if (item && item.object) {
 			this.current = item.object;
 			this.forceUpdate();
 		};
