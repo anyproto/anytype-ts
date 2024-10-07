@@ -49,9 +49,9 @@
 
 		.inner.withImage.isVertical {
 			.side.left { width: 100%; }
-			.side.right { width: 100%; padding: 0px 16px 16px; aspect-ratio: 40/21; }
+			.side.right { width: 100%; padding: 0px 16px; margin-bottom: 16px; }
 			.side.right {
-				.img { width: 100%; height: auto; }
+				.img { width: 100%; height: 100%; }
 			}
 		}
 
