@@ -41,7 +41,7 @@
 		.inner.withImage {
 			.sides { align-items: stretch; }
 			.side.left { width: calc(100% - 28%); padding: 16px 12px 16px 16px; }
-			.side.right { width: 28%; min-height: 90px; display: flex; justify-content: flex-start; align-items: center; position: relative; overflow: hidden; aspect-ratio: 40/21; }
+			.side.right { width: 28%; min-height: 90px; display: flex; justify-content: flex-start; align-items: center; position: relative; overflow: hidden; aspect-ratio: 7/3;  max-height: 122px;}
 			.side.right {
 				.img { width: calc(100% - 16px); height: calc(100% - 32px); position: static; left: auto; top: auto; border-radius: 4px; }
 			}
@@ -49,7 +49,7 @@
 
 		.inner.withImage.isVertical {
 			.side.left { width: 100%; }
-			.side.right { width: 100%; padding: 0px 16px; margin-bottom: 16px; }
+			.side.right { width: 100%; padding: 0px 16px; margin-bottom: 16px; max-height: unset; }
 			.side.right {
 				.img { width: 100%; height: 100%; }
 			}
