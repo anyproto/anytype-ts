@@ -104,7 +104,15 @@
 		}
 
 		.block.blockText {
-			 .wrapContent { min-height: 24px; }
+			> .wrapContent { min-height: 24px; }
+
+			&.textCallout {
+				> .wrapContent {
+					> .selectionTarget {
+						> .dropTarget { padding: 16px; }
+					}
+				}
+			}
 		}
 		.block.blockDiv { margin: 30px 0px; }
 	}
