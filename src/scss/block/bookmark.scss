@@ -46,6 +46,9 @@
 				.img { width: calc(100% - 16px); height: calc(100% - 32px); position: static; left: auto; top: auto; border-radius: 4px; }
 			}
 		}
+		.inner.withImage:not(.isVertical) {
+			.side.left { display: flex; flex-direction: column; justify-content: center; }
+		}
 
 		.inner.withImage.isVertical {
 			.side.left { width: 100%; }
