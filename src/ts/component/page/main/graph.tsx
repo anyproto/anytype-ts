@@ -19,12 +19,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	timeoutLoading = 0;
 	rootId = '';
 
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onTab = this.onTab.bind(this);
-	};
-
 	render () {
 		const rootId = this.getRootId();
 
@@ -38,9 +32,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					ref={ref => this.refHeader = ref} 
 					component="mainGraph" 
 					rootId={rootId} 
-					tabs={U.Menu.getGraphTabs()} 
-					tab="graph" 
-					onTab={this.onTab} 
 					layout={I.ObjectLayout.Graph}
 				/>
 
@@ -173,15 +164,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		const { rootId, match } = this.props;
 		return this.rootId || (rootId ? rootId : match.params.id);
 	};
-
-	onTab (id: string) {
-		const tab = U.Menu.getGraphTabs().find(it => it.id == id);
-
-		if (tab) {
-			U.Object.openAuto({ id: this.getRootId(), layout: tab.layout });
-		};
-	};
-
 });
 
 export default PageMainGraph;

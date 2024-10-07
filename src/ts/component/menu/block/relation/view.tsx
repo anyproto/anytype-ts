@@ -313,6 +313,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const ref = this.cellRefs.get(Relation.cellId(PREFIX, relationKey, rootId));
 
+		if (relationKey == 'backlinks') {
+			U.Object.openAuto({ id: rootId, layout: I.ObjectLayout.Navigation });
+		} else
 		if (ref) {
 			ref.onClick(e);
 		};
