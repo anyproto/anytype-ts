@@ -1907,6 +1907,17 @@
 	"onboardingShareSpaceTitle": "Co-create, share and collaborate on Spaces!",
 	"onboardingShareSpaceDescription": "Click the space widget to open space settings. From there, you can share the space and invite members to collaborate.",
 
+	"onboardingSpacesTitle": "Spaces",
+	"onboardingSpacesText": "<b>This is your Space.</b> Click here to customize its name or icon, or to securely migrate and protect your data. ",
+	"onboardingAllObjectTitle": "All Objects",
+	"onboardingAllObjectText": "<b>Everything in Anytype is an Object.</b> All objects is where all your content lives.",
+	"onboardingWidgetsTitle": "Widgets",
+	"onboardingWidgetsText": "<b>Use Widgets</b> to create custom views of your data. Add and adjust them to suit your workflow.",
+	"onboardingMultipleSpacesTitle": "Multiple Spaces",
+	"onboardingMultipleSpacesText": "<b>Use the sidebar to create more spaces.</b> Spaces allow you to collaborate seamlessly. They also help you focus on specific projects, teams or areas of your life.",
+	"onboardingGalleryTitle": "Gallery",
+	"onboardingGalleryText": "<b>Find use cases that match your needs.</b> Import them from the Gallery: a library created by the Anytype Team and Community.",
+
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",

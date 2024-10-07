@@ -114,6 +114,72 @@ export default {
         },
     }),
 
+	basics: () => ({
+		showDimmer: true,
+		items: [
+			{
+				category: translate('onboardingSpacesTitle'),
+				description: translate('onboardingSpacesText'),
+				param: {
+					element: '#widget-space',
+					noArrow: true,
+					horizontal: I.MenuDirection.Right,
+					topline: true,
+					width: 288,
+					offsetX: -312,
+				}
+			},
+			{
+				category: translate('onboardingAllObjectTitle'),
+				description: translate('onboardingAllObjectText'),
+				param: {
+					element: '#widget-buttons',
+					noArrow: true,
+					horizontal: I.MenuDirection.Right,
+					topline: true,
+					width: 288,
+					offsetX: -312,
+				}
+			},
+			{
+				category: translate('onboardingWidgetsTitle'),
+				description: translate('onboardingWidgetsText'),
+				param: {
+					element: '.widgetView',
+					noArrow: true,
+					horizontal: I.MenuDirection.Right,
+					topline: true,
+					width: 288,
+					offsetX: -312,
+				}
+			},
+			{
+				category: translate('onboardingMultipleSpacesTitle'),
+				description: translate('onboardingMultipleSpacesText'),
+				param: {
+					element: '#vault #item-add',
+					noArrow: true,
+					horizontal: I.MenuDirection.Right,
+					topline: true,
+					width: 288,
+					offsetX: -318,
+				}
+			},
+			{
+				category: translate('onboardingGalleryTitle'),
+				description: translate('onboardingGalleryText'),
+				param: {
+					element: '#vault #item-gallery',
+					noArrow: true,
+					horizontal: I.MenuDirection.Right,
+					topline: true,
+					width: 288,
+					offsetX: -318,
+				}
+			},
+		]
+	}),
+
     dashboard: () => {
 		const canWrite = U.Space.canMyParticipantWrite();
 

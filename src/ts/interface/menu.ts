@@ -18,6 +18,7 @@ export interface MenuParam {
 	type?: MenuType;
 	vertical?: MenuDirection;
 	horizontal?: MenuDirection;
+	topline?: boolean;
 	fixedX?: number;
 	fixedY?: number;
 	offsetX?: any;
