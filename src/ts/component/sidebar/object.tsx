@@ -578,7 +578,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 		];
 	};
 
