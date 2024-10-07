@@ -130,7 +130,7 @@ class UtilSpace {
 	};
 
 	canMyParticipantWrite (spaceId?: string): boolean {
-		const space = this.getSpaceview(spaceId);
+		const space = this.getSpaceviewBySpaceId(spaceId);
 		const participant = this.getMyParticipant(spaceId);
 
 		if (!space || space._empty_) {
