@@ -293,6 +293,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, loadData } = data;
+
+		if (!getView) {
+			return;
+		};
+
 		const view = getView();
 		const relation = this.getRelation();
 

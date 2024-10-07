@@ -869,6 +869,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			element.off('click.link').on('click.link', e => {
 				e.preventDefault();
+
 				isInside ? U.Router.go(route, {}) : Renderer.send('urlOpen', target);
 			});
 		});
