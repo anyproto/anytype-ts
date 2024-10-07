@@ -37,7 +37,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	render (): any {
 		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon } = this.props;
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();

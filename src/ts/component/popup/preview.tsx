@@ -32,6 +32,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		this.onMore = this.onMore.bind(this);
 		this.onError = this.onError.bind(this);
 		this.onExpand = this.onExpand.bind(this);
+		this.setCurrent = this.setCurrent.bind(this);
 	};
 
 	render () {
@@ -83,7 +84,6 @@ class PopupPreview extends React.Component<I.Popup> {
 								<ObjectName object={current} />
 							</div>
 							<div className="side right">
-								<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onExpand} />
 								<Icon id="button-header-more" tooltip={translate('commonMenu')} className="more" onClick={this.onMore} />
 							</div>
 						</React.Fragment>
@@ -174,7 +174,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		const item = gallery[idx];
 
-		if (item.object) {
+		if (item && item.object) {
 			this.setState({ current: item.object });
 		};
 	};

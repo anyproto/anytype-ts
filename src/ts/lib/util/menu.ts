@@ -981,7 +981,7 @@ class UtilMenu {
 	getObjectContainerSortOptions (type: I.ObjectContainerType, sortId: I.SortId, sortType: I.SortType, withOrphans: boolean): any[] {
 		let ret: any[] = [];
 
-		if (type == I.ObjectContainerType.Type) {
+		if ([ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(type)) {
 			ret = ret.concat([
 				{ name: translate('sidebarObjectSort'), isSection: true },
 				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
@@ -992,7 +992,6 @@ class UtilMenu {
 				{ name: translate('sidebarObjectShow'), isSection: true },
 				{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
 				{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
-
 				{ isDiv: true },
 
 				{ name: translate('sidebarObjectSort'), isSection: true },

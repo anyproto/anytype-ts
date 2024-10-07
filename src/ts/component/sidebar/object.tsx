@@ -290,6 +290,16 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		$(this.node).off('click');
 	};
 
+	initSort () {
+		const storage = this.storageGet();
+		const sort = storage.sort[this.type];
+
+		if (sort) {
+			this.sortId = sort.id;
+			this.sortType = sort.type;
+		};
+	};
+
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const option = this.getSortOption();
 		const template = S.Record.getTemplateType();
@@ -553,6 +563,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.type = id as I.ObjectContainerType;
 		storage.type = this.type;
 
+		this.initSort();
 		this.storageSet(storage);
 		this.load(true);
 
@@ -567,7 +578,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 		];
 	};
 
