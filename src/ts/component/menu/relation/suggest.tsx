@@ -481,6 +481,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			noAnimation: true,
 			classNameWrap,
 			data: {
+				...data,
 				rootId,
 				relationId: item.id,
 				saveCommand: () => {
