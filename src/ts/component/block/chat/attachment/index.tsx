@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
-import { I, U, S, J } from 'Lib';
+import { I, U, S, J, Action } from 'Lib';
 
 interface Props {
 	object: any;
@@ -20,6 +20,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		super(props);
 
 		this.onOpen = this.onOpen.bind(this);
+		this.onOpenBookmark = this.onOpenBookmark.bind(this);
 		this.onPreview = this.onPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.getPreviewItem = this.getPreviewItem.bind(this);
@@ -155,7 +156,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		return (
 			<div
 				className={cn.join(' ')}
-				onClick={this.onOpen}
+				onClick={this.onOpenBookmark}
 				{...U.Common.dataProps({ href: source })}
 			>
 				<div className="side left">
@@ -234,6 +235,13 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		if (!object.isTmp) {
 			U.Object.openPopup(object);
 		};
+	};
+
+	onOpenBookmark () {
+		const { object } = this.props;
+		const { source } = object;
+
+		Action.openUrl(source);
 	};
 
 	onPreview () {
