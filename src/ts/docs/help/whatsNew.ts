@@ -28,14 +28,15 @@ export default [
 	h3(`All Objects`),
 	text(`Our improved navigation makes it much easier to browse through all your content. Now, you can search across all your Objects, Sets & Collections, and Media & Files in one place, with options to sort by Date or Name. Additionally, the simplified Library and the Bin also live in the new widget.`),
 	video('43/1.mp4'),
+	text(``),
 
 	h3(`More Views & Widgets`),
 	text(`..have been updated to improve visual usability.`),
 
 	bullet(`<b>Gallery</b> has a fresh appearance for widgets.`),
 	bullet(`<b>Kanban</b> supports displaying page covers on cards in a layout.`),
-
 	video('43/2.mp4'),
+	text(``),
 
 	h2(`Quality-of-Life`),
 	bullet(`Pressing Enter inside empty list and toggle blocks behaves as Shift + Tab for that block: moves up a level. Thanks, @${link('https://community.anytype.io/t/move-indented-bullet-points-to-the-left-using-enter-key/12082', 'purplekiwi')} & @${link('https://community.anytype.io/t/move-indented-bullet-points-to-the-left-using-enter-key/12082', 'Shampra')}!`),
