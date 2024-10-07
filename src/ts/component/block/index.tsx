@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, focus, Storage, Preview, Renderer, Mark, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Loader } from 'Component';
 
 import BlockDataview from './dataview';
@@ -806,21 +806,11 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
-		items.off('mouseenter.link');
-		items.on('mouseenter.link', e => {
-			const sr = U.Common.getSelectionRange();
-			if (sr && !sr.collapsed) {
-				return;
-			};
+		items.each((i: number, item: any) => {
+			item = $(item);
 
-			const element = $(e.currentTarget);
-			const range = String(element.attr('data-range') || '').split('-');
-			const url = String(element.attr('href') || '');
-
-			if (!url) {
-				return;
-			};
-
+			const range = String(item.attr('data-range') || '').split('-');
+			const url = String(item.attr('href') || '');
 			const scheme = U.Common.getScheme(url);
 			const isInside = scheme == J.Constant.protocol;
 
@@ -844,33 +834,44 @@ const Block = observer(class Block extends React.Component<Props> {
 				type = I.PreviewType.Link;
 			};
 
-			Preview.previewShow({
-				target,
-				type,
-				element,
-				range: { 
-					from: Number(range[0]) || 0,
-					to: Number(range[1]) || 0, 
-				},
-				marks,
-				onChange: marks => {
-					const restricted = [];
-					if (block.isTextHeader()) {
-						restricted.push(I.MarkType.Bold);
-					};
-
-					const parsed = Mark.fromHtml(value, restricted);
-
-					this.setMarks(parsed.text, marks);
-				},
-				noUnlink: readonly,
-				noEdit: readonly,
-			});
-
-			element.off('click.link').on('click.link', e => {
+			item.off('click.link').on('click.link', e => {
 				e.preventDefault();
 
-				isInside ? U.Router.go(route, {}) : Renderer.send('urlOpen', target);
+				isInside ? U.Router.go(route, {}) : Action.openUrl(target);
+			});
+
+			item.off('mouseenter.link').on('mouseenter.link', e => {
+				const sr = U.Common.getSelectionRange();
+				if (sr && !sr.collapsed) {
+					return;
+				};
+
+				if (!url) {
+					return;
+				};
+
+				Preview.previewShow({
+					target,
+					type,
+					element: item,
+					range: { 
+						from: Number(range[0]) || 0,
+						to: Number(range[1]) || 0, 
+					},
+					marks,
+					onChange: marks => {
+						const restricted = [];
+						if (block.isTextHeader()) {
+							restricted.push(I.MarkType.Bold);
+						};
+
+						const parsed = Mark.fromHtml(value, restricted);
+
+						this.setMarks(parsed.text, marks);
+					},
+					noUnlink: readonly,
+					noEdit: readonly,
+				});
 			});
 		});
 	};
