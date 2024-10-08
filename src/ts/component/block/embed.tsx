@@ -219,7 +219,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				S.Menu.close('blockLatex');
 
 				this.placeholderCheck();
-				this.save(() => { 
+				this.save(true, () => { 
 					this.setEditing(false);
 					S.Menu.close('previewLatex');
 				});
@@ -404,7 +404,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		if (!keyboard.isArrow(e)) {
 			this.setContent(value);
-			this.save();
+			this.save(false);
 		};
 	};
 
@@ -433,7 +433,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const cb = () => {
 			this.setValue(value);
 			this.setRange({ from: to, to });
-			this.save();
+			this.save(true);
 		};
 
 		if (block.isEmbedKroki()) {
@@ -449,7 +449,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onBlurInput () {
-		this.save();
+		this.save(true);
 	};
 
 	onKrokiTypeChange (type: string, callBack?: () => void) {
@@ -521,9 +521,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					const value = U.Common.stringInsert(this.getValue(), text, from, to);
 
+					to += text.length;
+
 					this.setValue(value);
 					this.setRange({ from: to, to });
-					this.save();
+					this.save(true);
 				},
 			},
 		};
@@ -795,7 +797,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setShowing(true);
 	};
 
-	save (callBack?: (message: any) => void) {
+	save (update: boolean, callBack?: (message: any) => void) {
 		const { rootId, block, readonly } = this.props;
 		
 		if (readonly) {
@@ -804,7 +806,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const value = this.getValue();
 
-		S.Block.updateContent(rootId, block.id, { text: value });
+		if (update) {
+			S.Block.updateContent(rootId, block.id, { text: value });
+		};
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
@@ -823,11 +827,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		const { block } = this.props;
+		const win = $(window);
 
 		keyboard.disableSelection(true);
 		this.range = this.getRange();
 
-		const win = $(window);
 		win.off(`mouseup.${block.id}`).on(`mouseup.${block.id}`, () => {	
 			keyboard.disableSelection(false);
 			win.off(`mouseup.${block.id}`);
