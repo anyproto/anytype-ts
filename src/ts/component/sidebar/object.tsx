@@ -502,17 +502,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						this.sortId = item.id;
 						this.sortType = item.type;
 
+						const storage = this.storageGet();
+
+						storage.sort[this.type] = { id: item.id, type: item.type };
+
+						this.storageSet(storage);
+
 						analytics.event('ChangeLibrarySort', { type: item.id, sort: I.SortType[item.type] });
 					};
 
 					this.load(true);
 
-					const storage = this.storageGet();
 					const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan);
 					
-					storage.sort[this.type] = { id: item.id, type: item.type };
-
-					this.storageSet(storage);
 					menuContext.ref.updateOptions(options);
 				},
 			}
