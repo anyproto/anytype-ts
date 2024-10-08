@@ -130,15 +130,7 @@ class UtilSpace {
 	};
 
 	canMyParticipantWrite (spaceId?: string): boolean {
-		spaceId = spaceId || S.Common.space;
-
-		const space = this.getSpaceviewBySpaceId(spaceId);
 		const participant = this.getMyParticipant(spaceId);
-
-		if (!space || space._empty_) {
-			return false;
-		};
-
 		return participant ? (participant.isWriter || participant.isOwner) : true;
 	};
 
