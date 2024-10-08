@@ -228,19 +228,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
     };
 
 	componentDidMount () {
-		const storage = this.storageGet();
+		const storage = this.storageGet() || {};
 
-		if (storage) {
-			this.type = storage.type || I.ObjectContainerType.Object;
-			this.orphan = storage.orphan || false;
-
-			const sort = storage.sort[this.type];
-
-			if (sort) {
-				this.sortId = sort.id;
-				this.sortType = sort.type;
-			};
-		};
+		this.type = storage.type || I.ObjectContainerType.Object;
+		this.orphan = storage.orphan || false;
+		this.initSort();
 
 		this.refFilter.focus();
 		this.rebind();
@@ -292,7 +284,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	initSort () {
 		const storage = this.storageGet();
-		const sort = storage.sort[this.type];
+		
+		let sort = storage.sort[this.type];
+
+		if (!sort) {
+			const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan).filter(it => it.isSort);
+			if (options.length) {
+				sort = options[0];
+			};
+		};
 
 		if (sort) {
 			this.sortId = sort.id;

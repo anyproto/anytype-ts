@@ -984,8 +984,8 @@ class UtilMenu {
 		if ([ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(type)) {
 			ret = ret.concat([
 				{ name: translate('sidebarObjectSort'), isSection: true },
-				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
-				{ id: I.SortId.LastUsed, name: translate('sidebarObjectSortLastUsed'), relationKey: 'lastUsedDate' },
+				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true },
+				{ id: I.SortId.LastUsed, name: translate('sidebarObjectSortLastUsed'), relationKey: 'lastUsedDate', isSort: true },
 			]);
 		} else {
 			ret = ret.concat([
@@ -995,9 +995,9 @@ class UtilMenu {
 				{ isDiv: true },
 
 				{ name: translate('sidebarObjectSort'), isSection: true },
-				{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
-				{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
-				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
+				{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate', isSort: true },
+				{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate', isSort: true },
+				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true },
 			]);
 		};
 
