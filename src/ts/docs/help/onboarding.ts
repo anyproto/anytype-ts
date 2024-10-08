@@ -419,5 +419,26 @@ export default {
 			],
 		};
 	},
+	gallery: () => {
+		const width = 432;
+		return {
+			items: [
+				{
+					name: translate('popupUsecaseBannerTitle'),
+					description: translate('popupUsecaseBannerText'),
+					noButton: true,
+					param: {
+						element: '#category-collaboration',
+						className: 'isSpace',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Left,
+						width,
+						offsetY: 14,
+					}
+				},
+			],
+		};
+	},
 
 };

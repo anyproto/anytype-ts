@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics, Onboarding } from 'Lib';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
 
 interface State {
@@ -34,7 +34,6 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			fixedWidth: true,
 		});
 
-		this.onBanner = this.onBanner.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onCategory = this.onCategory.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
@@ -74,6 +73,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			return (
 				<div 
 					className={cn.join(' ')} 
+					id={`category-${item.id}`}
 					onClick={() => this.onCategory(item)}
 				>
 					{item.icon ? <Icon className={item.icon} /> : ''}
@@ -135,10 +135,6 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 					<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />
 				</div>
 
-				<div className="banner" onClick={this.onBanner}>
-					<div className="inner">{translate('popupUsecaseBannerText')}</div>
-				</div>
-
 				<div className="mid">
 
 					<Title text={translate('popupUsecaseListTitle')} />
@@ -193,12 +189,17 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		C.GalleryDownloadIndex((message: any) => {
 			S.Common.gallery = {
-				categories: (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
+				categories: (message.categories || []).map(it => {
+					console.log(it.id);
+					return ({ ...it, name: this.categoryName(it.id) });
+				}),
 				list: message.list || [],
 			};
 			
 			this.setState({ isLoading: false });
 		});
+
+		Onboarding.start('gallery', true, false);
 
 		analytics.event('ScreenGallery');
 	};
@@ -335,15 +336,6 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		this.checkPage();
 
 		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
-	};
-
-	onBanner () {
-		const { gallery } = S.Common;
-		const category = gallery.categories.find(it => it.id == 'collaboration');
-
-		if (category) {
-			this.onCategory(category);
-		};
 	};
 
 };

@@ -1242,7 +1242,8 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
-	"popupUsecaseBannerText": "Introducing local-first collaboration! Co-create, share and collaborate on Spaces!",
+	"popupUsecaseBannerTitle": "Introducing the local-first collaboration",
+	"popupUsecaseBannerText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no relations shown yet",
