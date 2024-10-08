@@ -466,6 +466,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const { x, y } = keyboard.mouse.page;
 
 		S.Menu.open('dataviewContext', {
+			element: `#sidebar #containerObject #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
 			data: {
 				objectIds,
