@@ -66,5 +66,7 @@ html.platformWindows, html.platformLinux {
 	}
 }
 
-#item-add.onboardingElement .iconWrap,
-#item-gallery.onboardingElement .iconWrap { background-color: var(--color-shape-tertiary) !important; }
+#item-add.onboardingElement,
+#item-gallery.onboardingElement {
+	.iconWrap { background-color: var(--color-shape-tertiary) !important; }
+}
