@@ -13,7 +13,7 @@ interface State {
 const LIMIT = 20;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_DEFAULT = 64;
-const HEIGHT_ITEM_SYSTEM = 36;
+const HEIGHT_ITEM_COMPACT = 36;
 
 const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
 	
@@ -28,6 +28,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	sortId: I.SortId = I.SortId.Updated;
 	sortType: I.SortType = I.SortType.Desc;
 	orphan = false;
+	compact = false;
 	type: I.ObjectContainerType = I.ObjectContainerType.Object;
 	searchIds: string[] = null;
 	filter = '';
@@ -85,7 +86,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					<Item
 						item={item}
 						style={param.style}
-						allowSystemLayout={true}
+						compact={this.compact}
 						onClick={e => this.onClick(e, item)}
 						onContext={() => this.onContext(item)}
 						onMouseEnter={() => this.onOver(item)}
@@ -232,6 +233,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		this.type = storage.type || I.ObjectContainerType.Object;
 		this.orphan = storage.orphan || false;
+		this.compact = storage.compact || false;
 		this.initSort();
 
 		this.refFilter.focus();
@@ -287,9 +289,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const sort = storage.sort[this.type];
 
 		if (!sort) {
-			const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan).filter(it => it.isSort);
+			const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact).filter(it => it.isSort);
 			if (options.length) {
 				this.sortId = options[0].id;
+				this.sortType = options[0].defaultType;
 			};
 		};
 
@@ -420,7 +423,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	getSortOption () {
-		return U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
+		return U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact).find(it => it.id == this.sortId);
 	};
 
 	getRecords () {
@@ -479,7 +482,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onMore (e: any) {
 		e.stopPropagation();
 
-		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan);
+		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
 
 		let menuContext = null;
 
@@ -494,26 +497,29 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				options,
 				noClose: true,
 				onSelect: (e: any, item: any) => {
+					const storage = this.storageGet();
+
 					if ([ I.SortId.All, I.SortId.Orphan ].includes(item.id)) {
 						this.orphan = item.id == I.SortId.Orphan;
+						storage.orphan = this.orphan;
 
 						analytics.event('ChangeLibraryTypeLink', { type: item.id == I.SortId.Orphan ? 'Unlinked' : 'All' });
-					} else {
+					} else
+					if ([ I.SortId.List, I.SortId.Compact ].includes(item.id)) {
+						this.compact = item.id == I.SortId.Compact;
+						storage.compact = this.compact;						
+					}else {
 						this.sortId = item.id;
 						this.sortType = item.type;
 
-						const storage = this.storageGet();
-
 						storage.sort[this.type] = { id: item.id, type: item.type };
-
-						this.storageSet(storage);
-
 						analytics.event('ChangeLibrarySort', { type: item.id, sort: I.SortType[item.type] });
 					};
 
+					this.storageSet(storage);
 					this.load(true);
 
-					const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan);
+					const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
 					
 					menuContext.ref.updateOptions(options);
 				},
@@ -930,8 +936,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	getRowHeight (item: any): number {
 		let h = HEIGHT_ITEM_DEFAULT;
-		if (U.Object.isTypeOrRelationLayout(item.layout)) {
-			h = HEIGHT_ITEM_SYSTEM;
+		if (this.compact) {
+			h = HEIGHT_ITEM_COMPACT;
 		};
 		if (item.isSection) {
 			h = HEIGHT_SECTION;
