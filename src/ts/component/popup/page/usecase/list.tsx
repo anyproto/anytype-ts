@@ -189,11 +189,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 				categories: (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
 				list: message.list || [],
 			};
-			
+
+			Onboarding.start('collaboration', true, false);
 			this.setState({ isLoading: false });
 		});
-
-		Onboarding.start('collaboration', true, false);
 
 		analytics.event('ScreenGallery');
 	};
