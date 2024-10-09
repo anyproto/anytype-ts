@@ -1288,6 +1288,7 @@
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
 	"popupUsecaseAuthor": "Made by @%s",
+	"popupUsecaseAuthorShort": "By @%s",
 	"popupUsecaseUpdated": "Updated: %s",
 	"popupUsecaseInstall": "Install",
 	"popupUsecaseMenuLabel": "Install experience to",
@@ -1296,7 +1297,6 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
-	"popupUsecaseBannerText": "Introducing local-first collaboration! Co-create, share and collaborate on Spaces!",
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no relations shown yet",
@@ -1906,6 +1906,9 @@
 
 	"onboardingShareSpaceTitle": "Co-create, share and collaborate on Spaces!",
 	"onboardingShareSpaceDescription": "Click the space widget to open space settings. From there, you can share the space and invite members to collaborate.",
+
+	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
+	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",

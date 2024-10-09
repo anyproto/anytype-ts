@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics, Onboarding } from 'Lib';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
 
 interface State {
@@ -34,7 +34,6 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			fixedWidth: true,
 		});
 
-		this.onBanner = this.onBanner.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onCategory = this.onCategory.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
@@ -67,13 +66,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 				cn.push('active');
 			};
 
-			if (item.id == 'collaboration') {
-				cn.push('hl');
-			};
-
 			return (
 				<div 
 					className={cn.join(' ')} 
+					id={`category-${item.id}`}
 					onClick={() => this.onCategory(item)}
 				>
 					{item.icon ? <Icon className={item.icon} /> : ''}
@@ -87,10 +83,11 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 			return (
 				<div className="item" onClick={e => this.onClick(e, item)}>
-					<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
 					<div className="name">{item.title}</div>
-					<div className="descr">{item.description}</div>
-					<div className="author" onClick={() => onAuthor(item.author)}>@{getAuthor(item.author)}</div>
+					<div className="author" onClick={() => onAuthor(item.author)}>{U.Common.sprintf(translate('popupUsecaseAuthorShort'), getAuthor(item.author))}</div>
+					<div className='pictureWrapper'>
+						<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
+					</div>
 				</div>
 			);
 		};
@@ -133,10 +130,6 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 					<Icon id="arrowLeft" className="arrow left" onClick={() => this.onArrow(-1)} />
 					<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />
-				</div>
-
-				<div className="banner" onClick={this.onBanner}>
-					<div className="inner">{translate('popupUsecaseBannerText')}</div>
 				</div>
 
 				<div className="mid">
@@ -199,6 +192,8 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			
 			this.setState({ isLoading: false });
 		});
+
+		Onboarding.start('collaboration', true, false);
 
 		analytics.event('ScreenGallery');
 	};
@@ -335,15 +330,6 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		this.checkPage();
 
 		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
-	};
-
-	onBanner () {
-		const { gallery } = S.Common;
-		const category = gallery.categories.find(it => it.id == 'collaboration');
-
-		if (category) {
-			this.onCategory(category);
-		};
 	};
 
 };
