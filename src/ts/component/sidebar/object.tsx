@@ -284,13 +284,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	initSort () {
 		const storage = this.storageGet();
-		
-		let sort = storage.sort[this.type];
+		const sort = storage.sort[this.type];
 
 		if (!sort) {
 			const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan).filter(it => it.isSort);
 			if (options.length) {
-				sort = options[0];
+				this.sortId = options[0].id;
 			};
 		};
 
