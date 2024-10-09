@@ -1234,6 +1234,7 @@
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
 	"popupUsecaseAuthor": "Made by @%s",
+	"popupUsecaseAuthorShort": "By @%s",
 	"popupUsecaseUpdated": "Updated: %s",
 	"popupUsecaseInstall": "Install",
 	"popupUsecaseMenuLabel": "Install experience to",

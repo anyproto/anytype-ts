@@ -419,7 +419,7 @@ export default {
 			],
 		};
 	},
-	gallery: () => {
+	collaboration: () => {
 		const width = 432;
 		return {
 			items: [
@@ -428,7 +428,7 @@ export default {
 					description: translate('popupUsecaseBannerText'),
 					noButton: true,
 					param: {
-						element: '#category-collaboration',
+						element: '#onboardingCollaborationGalleryAnchor',
 						className: 'isSpace',
 						classNameWrap: 'fixed',
 						vertical: I.MenuDirection.Bottom,

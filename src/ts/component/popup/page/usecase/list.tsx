@@ -66,14 +66,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 				cn.push('active');
 			};
 
-			if (item.id == 'collaboration') {
-				cn.push('hl');
-			};
-
 			return (
 				<div 
 					className={cn.join(' ')} 
-					id={`category-${item.id}`}
+					id={item.id == 'collaboration' ? 'onboardingCollaborationGalleryAnchor' : ""}
 					onClick={() => this.onCategory(item)}
 				>
 					{item.icon ? <Icon className={item.icon} /> : ''}
@@ -87,16 +83,19 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 			return (
 				<div className="item" onClick={e => this.onClick(e, item)}>
-					<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
 					<div className="name">{item.title}</div>
-					<div className="descr">{item.description}</div>
-					<div className="author" onClick={() => onAuthor(item.author)}>@{getAuthor(item.author)}</div>
+					<div className="author" onClick={() => onAuthor(item.author)}>{U.Common.sprintf(translate('popupUsecaseAuthorShort'), getAuthor(item.author))}</div>
+					<div className='picture-container'>
+						<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
+					</div>
 				</div>
 			);
 		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
+			const isLast = param.index === items.length - 1;
 
 			return (
 				<CellMeasurer
@@ -108,7 +107,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 					hasFixedWidth={() => {}}
 				>
 					{({ measure }) => (
-						<div key={`gallery-row-${param.index}`} className="row" style={param.style}>
+						<div key={`gallery-row-${param.index}`} className="row" style={{...param.style, paddingBottom: isLast ? "0" : "14px"}}>
 							{item.children.map(child => <Item key={child.id} {...child} />)}
 						</div>
 					)}
@@ -199,7 +198,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			this.setState({ isLoading: false });
 		});
 
-		Onboarding.start('gallery', true, false);
+		Onboarding.start('collaboration', true, false);
 
 		analytics.event('ScreenGallery');
 	};
