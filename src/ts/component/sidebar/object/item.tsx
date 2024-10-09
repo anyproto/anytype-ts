@@ -7,7 +7,7 @@ import { U, S } from 'Lib';
 interface Props {
 	item: any;
 	style?: any;
-	allowSystemLayout?: boolean;
+	compact?: boolean;
 	isLocked?: boolean;
 	onClick?: (item: any) => void;
 	onContext?: (item: any) => void;
@@ -20,21 +20,22 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 	node = null;
 
     render() {
-		const { item, style, allowSystemLayout, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
+		const { item, style, compact, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
 		const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 		const type = S.Record.getTypeById(item.type);
 		const isFile = U.Object.isInFileLayouts(item.layout);
-		const asSystemObject = allowSystemLayout && U.Object.isTypeOrRelationLayout(item.layout);
+
+		if (compact) {
+			cn.push('isCompact');
+		};
 
 		let iconSmall = null;
 		let iconLarge = null;
 		let description = null;
 		let content = null;
 
-		if (asSystemObject) {
-			const size = U.Object.isTypeLayout(item.layout) ? 18 : 20;
-
-			iconSmall = <IconObject object={item} size={size} iconSize={18} />;
+		if (compact) {
+			iconSmall = <IconObject object={item} size={18} iconSize={18} />;
 		} else {
 			const iconSize = isFile ? 48 : null;
 
@@ -47,7 +48,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 			description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
 		};
 
-		if (!asSystemObject) {
+		if (!compact) {
 			content = (
 				<React.Fragment>
 					{iconLarge}

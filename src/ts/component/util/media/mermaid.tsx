@@ -17,7 +17,10 @@ const Mermaid = observer(class Mermaid extends React.Component<Props> {
 		const { chart } = this.props;
 
 		return (
-			<div ref={ref => this.node = ref} className="mermaid">{chart}</div>
+			<div ref={ref => this.node = ref} className="mermaidWrapper">
+				<div className="error" />
+				<div className="mermaid">{chart}</div>
+			</div>
 		);
 	};
 
@@ -27,8 +30,12 @@ const Mermaid = observer(class Mermaid extends React.Component<Props> {
 	};
 
 	async componentDidUpdate (prevProps: Props) {
+		const node = $(this.node);
+
 		this.init();
-		$(this.node).removeAttr('data-processed');
+		node.find('.chart').removeAttr('data-processed');
+		node.find('.error').text('');
+
 		await this.drawDiagram();
 	};
 
@@ -49,9 +56,22 @@ const Mermaid = observer(class Mermaid extends React.Component<Props> {
 	async drawDiagram () {
 		const node = $(this.node);
 		const { chart } = this.props;
-		const { svg } = await mermaid.render('mermaid-chart', chart);
+
+		let svg: any = '';
+
+		try {
+			const res = await mermaid.render('mermaid-chart', chart);
+			console.log(res);
+
+			if (res) {
+				svg = res;
+			};
+		} catch (e) {
+			console.error('[Mermaid].drawDiagram', e);
+			node.find('.error').text(e.message);
+		};
 		
-		node.html(svg);
+		node.find('.chart').html(svg);
     };
 
 });

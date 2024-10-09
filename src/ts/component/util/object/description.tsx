@@ -25,9 +25,7 @@ class Description extends React.Component<Props> {
 			return null;
 		};
 
-		return (
-			<div className={className}>{description}</div>
-		);
+		return <div className={className} dangerouslySetInnerHTML={{ __html: U.Common.sanitize(description) }} />;
 	};
 	
 };
