@@ -33,6 +33,7 @@
 .iconObject.c24 { width: 24px; height: 24px; }
 .iconObject.c26 { width: 26px; height: 26px; }
 .iconObject.c28 { width: 28px; height: 28px; }
+.iconObject.c30 { width: 30px; height: 30px; }
 .iconObject.c32 { width: 32px; height: 32px; }
 .iconObject.c36 { width: 36px; height: 36px; }
 .iconObject.c40 { width: 40px; height: 40px; }
@@ -46,6 +47,7 @@
 .iconObject.c108 { width: 108px; height: 108px; }
 .iconObject.c112 { width: 112px; height: 112px; }
 .iconObject.c128 { width: 128px; height: 128px; }
+.iconObject.c160 { width: 160px; height: 160px; }
 
 .iconObject.c48,
 .iconObject.c56,
@@ -54,8 +56,54 @@
 .iconObject.c96,
 .iconObject.c108,
 .iconObject.c112,
-.iconObject.c128 {
+.iconObject.c128
+.iconObject.c160 {
 	display: block; overflow: hidden; background-color: var(--color-shape-tertiary);
+}
+.iconObject.isTask { background-color: unset; }
+
+.iconObject.c14,
+.iconObject.c16,
+.iconObject.c18,
+.iconObject.c20 {
+	border-radius: 2px;
+}
+
+.iconObject.c22,
+.iconObject.c24,
+.iconObject.c25 {
+	border-radius: 3px;
+}
+
+.iconObject.c28,
+.iconObject.c30,
+.iconObject.c32,
+.iconObject.c36 {
+	border-radius: 4px;
+}
+
+.iconObject.c40,
+.iconObject.c42 {
+	border-radius: 5px;
+}
+
+.iconObject.c44,
+.iconObject.c48 {
+	border-radius: 6px;
+}
+
+.iconObject.c56,
+.iconObject.c64,
+.iconObject.c80 {
+	border-radius: 8px;
+}
+
+.iconObject.c96,
+.iconObject.c108,
+.iconObject.c112,
+.iconObject.c128,
+.iconObject.c160 {
+	border-radius: 12px;
 }
 
 .iconObject.c36, 
@@ -67,21 +115,9 @@
 .iconObject.c96,
 .iconObject.c108,
 .iconObject.c112,
-.iconObject.c128 {
+.iconObject.c128
+.iconObject.c160 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
-}
-
-.iconObject.c56,
-.iconObject.c64,
-.iconObject.c80 {
-	border-radius: 14px;
-}
-
-.iconObject.c96,
-.iconObject.c108,
-.iconObject.c112,
-.iconObject.c128 {
-	border-radius: 20px;
 }
 
 .iconObject.isFile,
@@ -89,22 +125,9 @@
 	background-color: unset;
 }
 
-.iconObject.c40.isRelation, .iconObject.c48.isRelation { border-radius: 8px; background-color: var(--color-shape-tertiary); }
-.iconObject.c40.withLetter, .iconObject.c48.withLetter { border-radius: 8px; }
-
-.iconObject.withLetter { background-color: var(--color-shape-tertiary); }
-
-.iconObject.withImage { border-radius: 2px !important; background-color: unset !important; }
-.iconObject.withImage.c64, 
-.iconObject.withImage.c80, 
-.iconObject.withImage.c96, 
-.iconObject.withImage.c108, 
-.iconObject.withImage.c112, 
-.iconObject.withImage.c128 { border-radius: 4px !important; }
-.iconObject.withImage.c112:not(.isHuman):not(.isParticipant), .iconObject.withImage.c128:not(.isHuman):not(.isParticipant) { border-radius: 8px !important; }
+.iconObject.withImage { background-color: unset !important; }
 
 .iconObject.isHuman, .iconObject.isParticipant { border-radius: 100% !important; background-color: unset; }
-.iconObject.isHuman.withImage, .iconObject.isParticipant.withImage { border-radius: 100% !important; background-color: unset; }
 
 .iconObject.isSpaceView { border-radius: 2px !important; }
 .iconObject.isSpaceView.c64, 
@@ -112,5 +135,5 @@
 .iconObject.isSpaceView.c96, 
 .iconObject.isSpaceView.c108, 
 .iconObject.isSpaceView.c112, 
-.iconObject.isSpaceView.c128 { border-radius: 4px !important; }
-.iconObject.withOption.isSpaceView { background: var(--color-control-accent) !important; }
+.iconObject.isSpaceView.c128,
+.iconObject.isSpaceView.c160 { border-radius: 4px !important; }

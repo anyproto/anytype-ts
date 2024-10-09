@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { MenuItemVertical, Button, Share } from 'Component';
-import { I, S, U, J, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, translate, Preview } from 'Lib';
+import { MenuItemVertical, Button, ShareTooltip } from 'Component';
+import { I, S, U, J, Onboarding, keyboard, analytics, Action, Highlight, Storage, translate, Preview } from 'Lib';
 
 class MenuHelp extends React.Component<I.Menu> {
 
@@ -41,7 +41,7 @@ class MenuHelp extends React.Component<I.Menu> {
 						return content;
 					})}
 				</div>
-				<Share />
+				<ShareTooltip />
 			</React.Fragment>
 		);
 	};
@@ -94,10 +94,6 @@ class MenuHelp extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
 		const isGraph = keyboard.isMainGraph();
-		const isStore = keyboard.isMainStore();
-		const storeTab = Storage.get('tabStore');
-		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
-		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
 		const home = U.Space.getDashboard();
 
 		close();
@@ -121,7 +117,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			case 'tutorial':
 			case 'privacy':
 			case 'community': {
-				Renderer.send('urlOpen', J.Url[item.id]);
+				Action.openUrl(J.Url[item.id]);
 				break;
 			};
 
@@ -154,12 +150,6 @@ class MenuHelp extends React.Component<I.Menu> {
 				} else
 				if (isGraph) {
 					key = 'mainGraph';
-				} else
-				if (isStoreType) {
-					key = 'storeType';
-				} else
-				if (isStoreRelation) {
-					key = 'storeRelation';
 				} else {
 					const { page, action } = keyboard.getMatch().params;
 

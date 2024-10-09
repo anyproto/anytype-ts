@@ -22,9 +22,8 @@
     /* Common */
 
     .block {
-        .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
+        .icon.dnd { background-image: url('#{$themePath}/icon/block/menu.svg'); }
     }
-    .block:hover > .wrapMenu > .icon.dnd { background-image: url('#{$themePath}/icon/block/menu1.svg'); }
 
     /* BlockFile */
 
@@ -155,8 +154,25 @@
 
     /* BlockText */
 
-    .block.blockText.textCallout > .wrapContent { background: var(--color-shape-highlight-medium); }
-    .block.blockText.textCode > .wrapContent { background: var(--color-shape-highlight-medium); }
+	.block.blockText {
+		markupbgcolor {
+			&.bgColor-grey { background: #3c3c3c !important; }
+			&.bgColor-yellow { background: #55500d !important; }
+			&.bgColor-orange { background: #5f430a !important; }
+			&.bgColor-red { background: #74321e !important; }
+			&.bgColor-pink { background: #712055 !important; }
+			&.bgColor-purple { background: #542663 !important; }
+			&.bgColor-blue { background: #2b3368 !important; }
+			&.bgColor-ice { background: #19465f !important; }
+			&.bgColor-teal { background: #16534e !important; }
+			&.bgColor-lime { background: #36551d !important; }
+		}
+	}
+
+    .block.blockText.textCallout, 
+	.block.blockText.textCallout {
+		> .wrapContent { background: var(--color-shape-highlight-medium); }
+	}
 
     /* BlockBookmark */
 
@@ -176,9 +192,33 @@
 		}
 	}
 
-	/* BlockIconPage */
+	/* BlockChat */
+	.block.blockChat {
+		.message {
+			.side.right { background: var(--color-shape-tertiary); }
 
-	.block.blockIconPage {
-		.iconObject { background-color: var(--color-bg-tertiary) !important; box-shadow: 0px 0px 0px 4px var(--color-bg-tertiary); }
+			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('#{$themePath}/icon/chat/buttons/reaction1.svg'); }
+
+			> .flex > .controls {
+				.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('#{$themePath}/icon/chat/buttons/reply1.svg'); }
+				.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+			}
+		}
+		.message.isSelf {
+			.side.right { background: #162908; }
+		}
+
+		.form {
+			.icon.send { background: url('#{$themePath}/icon/chat/buttons/send.svg'); }
+
+			.attachments {
+				.swiper-button-prev { background: linear-gradient(-90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
+				.swiper-button-next { background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
+				.swiper-button-prev::before,
+				.swiper-button-next::before { box-shadow: none; }
+				.swiper-button-prev::after,
+				.swiper-button-next::after { background-image: url('#{$themePath}/arrow/chatFormAttachment.svg'); }
+			}
+		}
 	}
 }

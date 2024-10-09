@@ -1,4 +1,5 @@
 import * as React from 'react';
+import raf from 'raf';
 import { getRange, setRange } from 'selection-ranges';
 import { I, U, keyboard, Mark } from 'Lib';
 
@@ -10,6 +11,7 @@ interface Props {
 	placeholder?: string;
 	readonly?: boolean;
 	spellcheck?: boolean;
+	maxLength?: number;
 	onKeyDown?: (e: any) => void;
 	onKeyUp?: (e: any) => void;
 	onFocus?: (e: any) => void;
@@ -37,13 +39,15 @@ class Editable extends React.Component<Props> {
 		this.onInput = this.onInput.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
 		const { 
-			id, classNameWrap, classNameEditor, classNamePlaceholder, readonly, placeholder, spellcheck, onFocus, onBlur, onSelect, onPaste, 
+			id, classNameWrap, classNameEditor, classNamePlaceholder, readonly, placeholder, spellcheck, onSelect, onPaste, 
 			onMouseDown, onMouseUp, onDragStart
 		} = this.props;
 		const cnw = [ 'editableWrap' ];
@@ -88,8 +92,8 @@ class Editable extends React.Component<Props> {
 					spellCheck={spellcheck}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
-					onFocus={onFocus}
-					onBlur={onBlur}
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
 					onSelect={onSelect}
 					onPaste={onPaste}
 					onMouseUp={onMouseUp}
@@ -162,6 +166,10 @@ class Editable extends React.Component<Props> {
 	};
 
 	setRange (range: I.TextRange) {
+		if (!range || !this._isMounted) {
+			return;
+		};
+
 		const el = $(this.refEditable).get(0);
 
 		el.focus({ preventScroll: true });
@@ -184,8 +192,17 @@ class Editable extends React.Component<Props> {
 			return;
 		};
 
-		if (this.props.onKeyDown) {
-			this.props.onKeyDown(e);
+		const { maxLength, onKeyDown } = this.props;
+
+		if (maxLength) {
+			const text = this.getTextValue();
+			if ((text.length >= maxLength) && !keyboard.isSpecial(e)) {
+				e.preventDefault();
+			};
+		};
+
+		if (onKeyDown) {
+			onKeyDown(e);
 		};
 	};
 
@@ -197,6 +214,22 @@ class Editable extends React.Component<Props> {
 
 		if (this.props.onKeyUp) {
 			this.props.onKeyUp(e);
+		};
+	};
+
+	onFocus (e: any) {
+		keyboard.setFocus(true);
+
+		if (this.props.onFocus) {
+			this.props.onFocus(e);
+		};
+	};
+
+	onBlur (e: any) {
+		keyboard.setFocus(false);
+
+		if (this.props.onBlur) {
+			this.props.onBlur(e);
 		};
 	};
 

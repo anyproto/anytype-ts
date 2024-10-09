@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, U, J, keyboard, analytics, Storage } from 'Lib';
+import { I, S, U, J, keyboard, analytics, Storage, sidebar } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -302,7 +302,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	
 	componentDidMount () {
 		const { id, param } = this.props;
-		const { initialTab, onOpen } = param;
+		const { initialTab, onOpen, noAutoHover } = param;
 
 		this._isMounted = true;
 		this.poly = $('#menu-polygon');
@@ -316,7 +316,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const obj = $(`#${this.getId()}`);
 		const el = this.getElement();
 
-		if (el && el.length) {
+		if (!noAutoHover && el && el.length) {
 			el.addClass('hover');
 		};
 
@@ -458,9 +458,20 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		return ret;
 	};
 
+	getBorderLeft () {
+		let ret = J.Size.menuBorder;
+
+		if (S.Common.showVault && !sidebar.data.isClosed) {
+			ret += J.Size.vault.width;
+		};
+
+		return ret;
+	};
+
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const borderLeft = this.getBorderLeft();
 		const borderTop = this.getBorderTop();
 		const borderBottom = this.getBorderBottom();
 
@@ -519,6 +530,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				oy = top;
 			};
 
+			if (isFixed) {
+				oy -= scrollTop;
+			};
+
 			let x = ox;
 			let y = oy;
 			let flipX = false;
@@ -573,12 +588,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					break;
 			};
 
-			if (isFixed) {
-				oy -= scrollTop;
-				y -= scrollTop;
-			};
-
-			x = Math.max(J.Size.vault.width + J.Size.menuBorder, x);
+			x = Math.max(borderLeft, x);
 			x = Math.min(ww - width - J.Size.menuBorder, x);
 
 			y = Math.max(borderTop, y);
@@ -813,31 +823,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const l = items.length;
 		const item = items[this.ref.n];
 
-		const onArrowDown = () => {
-			this.ref.n++;
-			if (this.ref.n > l - 1) {
-				this.ref.n = 0;
-			};
+		const onArrow = (dir: number) => {
+			this.ref.n += dir;
 
-			const item = items[this.ref.n];
-			if (!item) {
-				return;
-			};
-
-			if (item.isDiv || item.isSection) {
-				onArrowDown();
-				return;
-			};
-
-			this.setActive(null, true);
-
-			if (!item.arrow && this.ref.onOver) {
-				this.ref.onOver(e, item);
-			};
-		};
-
-		const onArrowUp = () => {
-			this.ref.n--;
 			if (this.ref.n < 0) {
 				if ((this.ref.n == -1) && refInput) {
 					this.ref.n = -1;
@@ -847,18 +835,23 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				};
 			};
 
+			if (this.ref.n > l - 1) {
+				this.ref.n = 0;
+			};
+
 			const item = items[this.ref.n];
 
 			if (!item) {
 				return;
 			};
 
-			if (item.isDiv || item.isSection) {
-				onArrowUp();
+			if ((item.isDiv || item.isSection) && (items.length > 1)) {
+				onArrow(dir);
 				return;
 			};
 
 			this.setActive(null, true);
+
 			if (!item.arrow && this.ref.onOver) {
 				this.ref.onOver(e, item);
 			};
@@ -866,12 +859,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		keyboard.shortcut('arrowup', e, () => {
 			e.preventDefault();
-			onArrowUp();
+			onArrow(-1);
 		});
 
 		keyboard.shortcut('arrowdown', e, () => {
 			e.preventDefault();
-			onArrowDown();
+			onArrow(1);
 		});
 
 		if (this.ref && this.ref.onClick) {	
@@ -979,12 +972,15 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		let el = menu.find(`#item-${$.escapeSelector(item.itemId)}`);
-		if (!el.length) {
+		let el = null;
+		if (item.itemId) {
+			el = menu.find(`#item-${$.escapeSelector(item.itemId)}`);
+		};
+		if (item.id && (!el || !el.length)) {
 			el = menu.find(`#item-${$.escapeSelector(item.id)}`);
 		};
 
-		if (!el.length) {
+		if (!el || !el.length) {
 			return;
 		};
 

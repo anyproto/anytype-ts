@@ -76,7 +76,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const ButtonItem = (item: any) => {
 			const elementId = `button-${block.id}-${item.id}`;
-			const cn = [ `btn-${item.id}` ];
+			const cn = [ `btn-${item.id}`, 'withBackground' ];
 
 			if (item.on) {
 				cn.push('on');
@@ -152,7 +152,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 						<Filter
 							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
-							icon="search"
+							icon="search withBackground"
 							tooltip={translate('commonSearch')}
 							tooltipCaption={`${cmd} + F`}
 							onChange={onFilterChange}
@@ -264,20 +264,15 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
 		} = this.props;
 		const view = getView();
-		const obj = $(element);
 		const toggleParam = {
-			onOpen: () => {
-				obj.addClass('active');
-				this.toggleHoverArea(true);
-			},
-			onClose: () => {
-				obj.removeClass('active');
-				this.toggleHoverArea(false);
-			}
+			onOpen: () => this.toggleHoverArea(true),
+			onClose: () => this.toggleHoverArea(false),
 		};
+		const isFilter = component == 'dataviewFilterList';
+		const isSort = component == 'dataviewSort';
 
-		if (((component == 'dataviewSort') && !view.sorts.length) || ((component == 'dataviewFilterList') && !view.filters.length)) {
-			this.sortOrFilterRelationSelect(component,{ ...toggleParam, element }, () => {
+		if (!readonly && ((isFilter && !view.filters.length) || (isSort && !view.sorts.length))) {
+			this.sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
 				this.onButton(element, component);
 			});
 			return;
@@ -297,6 +292,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				readonly,
 				rootId,
 				blockId: block.id,
+				view: observable.box(view),
+				isInline,
+				isCollection,
 				loadData,
 				getView,
 				getSources,
@@ -304,8 +302,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				getTarget,
 				getTypeId,
 				getTemplateId,
-				isInline,
-				isCollection,
 				isAllowedDefaultType,
 				onTemplateAdd,
 				onSortAdd,
@@ -313,13 +309,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				onViewSwitch: this.onViewSwitch,
 				onViewCopy: this.onViewCopy,
 				onViewRemove: this.onViewRemove,
-				view: observable.box(view),
-				onAdd: (menuId, menuWidth) => {
-					this.sortOrFilterRelationSelect(component,{
+				onFilterOrSortAdd: (menuId: string, component: string, menuWidth: number) => {
+					this.sortOrFilterRelationSelect(component, {
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
 						horizontal: I.MenuDirection.Right,
-						vertical: I.MenuDirection.Center
+						vertical: I.MenuDirection.Center,
 					});
 				},
 			},
@@ -335,11 +330,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		S.Menu.open(component, param);
 	};
 
-	sortOrFilterRelationSelect (component: string, param: any, callBack?: () => void) {
+	sortOrFilterRelationSelect (component: string, menuParam: Partial<I.MenuParam>, callBack?: () => void) {
 		const { rootId, block, getView } = this.props;
 
-		U.Menu.sortOrFilterRelationSelect({
-			menuParam: param,
+		U.Menu.sortOrFilterRelationSelect(menuParam, {
 			rootId,
 			blockId: block.id,
 			getView,
@@ -356,15 +350,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	onSortOrFilterAdd (item: any, component: string, callBack: () => void) {
 		const { onSortAdd, onFilterAdd } = this.props;
 
-		let newItem = {
+		let newItem: any = {
 			relationKey: item.relationKey ? item.relationKey : item.id
 		};
 
 		if (component == 'dataviewSort') {
-			newItem = Object.assign(newItem, {
-				type: I.SortType.Asc,
-			});
-
+			newItem.type = I.SortType.Asc;
 			onSortAdd(newItem, callBack);
 		} else
 		if (component == 'dataviewFilterList') {
@@ -372,7 +363,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 
 			newItem = Object.assign(newItem, {
-				operator: I.FilterOperator.And,
 				condition: condition as I.FilterCondition,
 				value: Relation.formatValue(item, null, false),
 			});

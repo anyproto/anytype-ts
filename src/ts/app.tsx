@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar, Vault, Share, Loader } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar, Vault, ShareTooltip, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -202,7 +202,7 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<ListNotification key="listNotification" />
-						<Share showOnce={true} />
+						<ShareTooltip showOnce={true} />
 						<Vault ref={ref => S.Common.refSet('vault', ref)} />
 
 						<Switch>
@@ -272,7 +272,6 @@ class App extends React.Component<object, State> {
 			this.setState({ isLoading: true });
 
 			Storage.delete('menuSearchText');
-			Storage.delete('lastOpenedObject');
 		});
 
 		Renderer.on('zoom', () => {
@@ -359,10 +358,10 @@ class App extends React.Component<object, State> {
 							if (spaceId) {
 								U.Router.switchSpace(spaceId, '', false, cb);
 							} else {
-								U.Data.onInfo(account.info);
-								U.Data.onAuth({}, cb);
+								U.Data.onAuthWithoutSpace({ replace: true });
 							};
 
+							U.Data.onInfo(account.info);
 							U.Data.onAuthOnce(false);
 						};
 					});

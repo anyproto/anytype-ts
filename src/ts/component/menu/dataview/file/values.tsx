@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
-import { I, C, S, U, J, Relation, Renderer, keyboard, Action, translate } from 'Lib';
+import { I, S, U, J, Relation, Renderer, keyboard, translate } from 'Lib';
 
 const MENU_ID = 'dataviewFileList';
 
@@ -19,11 +19,12 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onAdd = this.onAdd.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 	};
 
 	render () {
-		const { position, getId, setHover } = this.props;
+		const { param, position, getId, setHover } = this.props;
+		const { data } = param;
+		const { canEdit } = data;
 		const items = this.getItems();
 		
         const Handle = SortableHandle(() => (
@@ -62,8 +63,12 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 			return (
 				<div id={`item-${item.id}`} className={cn.join(' ')}>
-					<Handle />
-					<div className="clickable" onClick={() => U.Object.openConfig(item)} onContextMenu={e => this.onMore(e, item)}>
+					{canEdit ? <Handle /> : ''}
+					<div 
+						className="clickable" 
+						onClick={() => U.Object.openConfig(item)} 
+						onContextMenu={e => this.onMore(e, item)}
+					>
 						{content}
 					</div>
 					<div className="buttons">
@@ -99,17 +104,19 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 					/>
 				) : <EmptySearch />}
 
-				<div className="bottom">
-					<div className="line" />
-					<MenuItemVertical 
-						id="add" 
-						icon="plus" 
-						name={translate('commonAdd')} 
-						onClick={this.onAdd}
-						onMouseEnter={() => setHover({ id: 'add' })}
-						onMouseLeave={() => setHover()}
-					/>
-				</div>
+				{canEdit ? (
+					<div className="bottom">
+						<div className="line" />
+						<MenuItemVertical 
+							id="add" 
+							icon="plus" 
+							name={translate('commonAdd')} 
+							onClick={this.onAdd}
+							onMouseEnter={() => setHover({ id: 'add' })}
+							onMouseLeave={() => setHover()}
+						/>
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -159,7 +166,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				noClose: true,
 				placeholderFocus: translate('menuDataviewFileValuesFindAFile'),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() }
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() }
 				],
 				onChange: (value: string[], callBack?: () => void) => {
 					this.save(value);
@@ -168,27 +175,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 						callBack();
 					};
 				},
-				onUpload: (id: string, callBack?: () => void) => {
-					this.add(id);
-
-					if (callBack) {
-						callBack();
-					};
-				}
 			}
 		});
 	};
 	
-	onUpload (e: any) {
-		Action.openFileDialog([], paths => {
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, (message: any) => {
-				if (!message.error.code) {
-					this.add(message.objectId);
-				};
-			});
-		});
-	};
-
 	add (objectId: string) {
 		const { param } = this.props;
 		const { data } = param;
@@ -201,9 +191,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(U.Common.arrayUnique(value), () => {
-			S.Menu.updateData(id, { value });
-		});
+		onChange(U.Common.arrayUnique(value), () => S.Menu.updateData(id, { value }));
 	};
 
 	onMore (e: any, item: any) {
@@ -212,8 +200,20 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { onChange } = data;
 		const itemEl = $(`#${getId()} #item-${item.id}`);
 		const element = `#${getId()} #item-${item.id} .icon.more`;
+		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 		let value = Relation.getArrayValue(data.value);
+		let options: any[] = [
+			{ id: 'open', icon: 'expand', name: translate('commonOpen') },
+			{ id: 'download', icon: 'download', name: translate('commonDownload') },
+		];
+
+		if (isAllowed) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
+			]);
+		};
 
 		S.Menu.open('select', { 
 			element,
@@ -229,12 +229,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			},
 			data: {
 				value: '',
-				options: [
-					{ id: 'open', icon: 'expand', name: translate('commonOpen') },
-					{ id: 'download', icon: 'download', name: translate('commonDownload') },
-					{ isDiv: true },
-					{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
-				],
+				options,
 				onSelect: (event: any, el: any) => {
 
 					switch (el.id) {

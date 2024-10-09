@@ -32,9 +32,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	render () {
 		const { param, getId, setHover } = this.props;
 		const { data } = param;
-		const { loadData, rootId, blockId } = data;
+		const { loadData } = data;
 		const items = this.getItems();
-		const allowed = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowed = this.isAllowed();
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -267,7 +267,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			menuParam: {
 				element,
 				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center
+				vertical: I.MenuDirection.Center,
 			}
 		};
 
@@ -326,11 +326,19 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 58;
+		const offset = this.isAllowed() ? 58 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();
+	};
+
+	isAllowed () {	
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+
+		return !readonly && S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 	};
 
 });

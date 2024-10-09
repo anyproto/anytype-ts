@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, J, keyboard, translate } from 'Lib';
+import { I, S, J, keyboard, translate, analytics } from 'Lib';
 import { MenuItemVertical, Drag } from 'Component';
 
 const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
@@ -114,13 +114,14 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 
 	onDragEnd (id: string, v: number) {
 		const values = this.getValues();
-		
+
 		if (id == 'depth') {
 			values[id] = this.getDepth(v);
 		} else {
 			values[id] = v;
 		};
 
+		analytics.event('GraphSettings', { id, count: values[id] });
 		this.save(values);
 	};
 
@@ -128,6 +129,8 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		const values = this.getValues();
 		values[id] = !values[id];
 		this.save(values);
+
+		analytics.event('GraphSettings', { id });
 	};
 
 	save (values: I.GraphSettings) {
@@ -148,7 +151,6 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getSections (): any[] {
-		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { allowLocal } = data;
@@ -161,7 +163,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'marker', name: translate('menuGraphSettingsArrows') },
 					{ id: 'icon', name: translate('menuGraphSettingsIcons') },
 					{ id: 'preview', name: translate('menuGraphSettingsPreview') },
-					(config.experimental ? { id: 'cluster', name: translate('menuGraphSettingsCluster') } : null),
+					{ id: 'cluster', name: translate('menuGraphSettingsCluster') },
 				] 
 			},
 			{ 
@@ -178,7 +180,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 				{ id: 'local', name: translate('menuGraphSettingsLocal') },
 			];
 
-			if (values.local && config.experimental) {
+			if (values.local) {
 				children.push({ id: 'depth', name: translate('menuGraphSettingsDepth'), withDrag: true });
 			};
 

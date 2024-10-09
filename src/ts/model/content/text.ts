@@ -1,7 +1,7 @@
 import { I, U } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
-class Mark implements I.Mark {
+export class Mark implements I.Mark {
 	
 	type: I.MarkType = I.MarkType.Strike;
 	param = '';
@@ -23,7 +23,7 @@ class Mark implements I.Mark {
 
 };
 
-class BlockContentText implements I.ContentText {
+export class BlockContentText implements I.ContentText {
 	
 	text = '';
 	style: I.TextStyle = I.TextStyle.Paragraph;
@@ -56,5 +56,3 @@ class BlockContentText implements I.ContentText {
 	};
 
 };
-
-export default BlockContentText;

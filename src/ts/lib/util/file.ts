@@ -1,5 +1,5 @@
 import loadImage from 'blueimp-load-image';
-import { S, U, J, Relation } from 'Lib';
+import { I, S, U, J, Relation } from 'Lib';
 
 const SIZE_UNIT = 1024;
 const UNITS = {
@@ -26,7 +26,8 @@ class UtilFile {
 				break;
 			};
 		};
-		return U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + unit;
+
+		return ret ? U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + unit : '';
 	};
 
 	icon (object: any): string {
@@ -76,20 +77,32 @@ class UtilFile {
 			icon = 'video';
 		};
 			
-		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md', 'tsx', 'scss' ].indexOf(e) >= 0) {
+		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md', 'tsx', 'scss', 'html', 'yml', 'rtf' ].includes(e)) {
 			icon = 'text';
 		};
 			
-		if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
+		if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].includes(e)) {
 			icon = 'archive';
 		};
 
-		if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
+		if ([ 'xls', 'xlsx', 'sqlite' ].includes(e)) {
 			icon = 'table';
 		};
 
-		if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
+		if ([ 'ppt', 'pptx', 'key' ].includes(e)) {
 			icon = 'presentation';
+		};
+
+		if ([ 'aif' ].includes(e)) {
+			icon = 'audio';
+		};
+
+		if ([ 'dwg', 'ai' ].includes(e)) {
+			icon = 'other';
+		};
+
+		if ([ 'ai' ].includes(e)) {
+			icon = 'image';
 		};
 
 		for (const k in J.Constant.fileExtension) {
@@ -127,14 +140,13 @@ class UtilFile {
 			type: 'image/png',
 			quality: 0.95,
 			canvas: true,
-			contain: true
 		}, param);
 		
 		loadImage.parseMetaData(file, (data: any) => {
 			if (data.exif) {
 				param = Object.assign(param, { orientation: data.exif.get('Orientation') });
 			};
-			
+
 			loadImage(file, success, param);
 		});
 	};
@@ -168,6 +180,33 @@ class UtilFile {
 		};
 
 		return `${name}.${fileExt}`;
+	};
+
+	layoutByMime (mime: string) {
+		const t = mime.split('/');
+		
+		let layout = I.ObjectLayout.File;
+		if (t.length) {
+			switch (t[0]) {
+				case 'image':
+					layout = I.ObjectLayout.Image;
+					break;
+
+				case 'video':
+					layout = I.ObjectLayout.Video;
+					break;
+
+				case 'audio':
+					layout = I.ObjectLayout.Audio;
+					break;
+			};
+		};
+
+		return layout;
+	};
+
+	checkDropFiles (e: React.DragEvent): boolean {
+		return (e.dataTransfer.files && e.dataTransfer.files.length) ? true : false;
 	};
 
 };

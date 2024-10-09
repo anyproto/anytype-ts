@@ -12,16 +12,15 @@
 
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: var(--color-text-secondary); display: inline-block; vertical-align: middle; margin: 0px 2px; }
 
-		.cell { white-space: nowrap; }
+		.cell { white-space: nowrap; display: inline-block }
 		.cell.canEdit {
 			.cellContent {
 				.empty { display: inline; }
 			}
 		}
+		.cell:last-child .bullet { display: none; }
 
-		.cell.first .bullet { display: none; }
-
-		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background $transitionCommon; cursor: default; }
+		.cellContent { display: inline-block; border-radius: 4px; vertical-align: top; padding: 0px 6px; transition: background $transitionCommon; cursor: default; }
 		.cellContent.disabled { opacity: 1; }
 
 		.cellContent:not(.disabled):hover, .cellContent:not(.disabled).hover { background: var(--color-shape-highlight-medium); }
@@ -70,9 +69,8 @@
 			.iconObject { display: inline-block; vertical-align: middle; margin: -1px 6px 0px 0px !important; }
 		}
 
-		.cellContent.c-checkbox { padding: 5px 3px; }
 		.cellContent.c-checkbox {
-			.icon { margin: 0px 5px 0px 0px; }
+			.icon { margin: 0px 4px 0px 0px; }
 		}
 
 		.cellContent.c-longText {
@@ -82,7 +80,7 @@
 	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	.block.blockFeatured.align0 {
-		.cell.first { margin-left: -6px; }
+		> .wrapContent > .selectionTarget > .dropTarget { margin-left: -6px; }
 	}
 
 	.block.blockFeatured.small { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }

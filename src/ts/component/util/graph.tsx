@@ -105,9 +105,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const theme = S.Common.getThemeClass();
 		const settings = S.Common.getGraph(storageKey);
 
+		this.images = {};
 		this.zoom = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
+
+		node.find('canvas').remove();
 
 		this.canvas = d3.select(elementId).append('canvas')
 		.attr('width', (width * density) + 'px')
@@ -125,12 +128,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			width,
 			height,
 			density,
-			nodes: this.nodes,
-			edges: this.edges,
-			theme: theme,
-			colors: J.Theme[theme].graph || {},
+			theme,
 			settings,
 			rootId,
+			nodes: this.nodes,
+			edges: this.edges,
+			colors: J.Theme[theme].graph || {},
 		}, [ transfer ]);
 
 		d3.select(this.canvas)
@@ -146,11 +149,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			const { local } = S.Common.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
 
+			let event = '';
 			if (local) {
-				this.send('onSetRootId', { x, y });
+				event = 'onSetRootId';
 			} else {
-				this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
+				event = e.shiftKey ? 'onSelect' : 'onClick';
 			};
+
+			this.send(event, { x, y });
 		})
 		.on('dblclick', (e: any) => {
 			if (e.shiftKey) {
@@ -222,7 +228,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	updateSettings () {
 		this.send('updateSettings', S.Common.getGraph(this.props.storageKey));
-		analytics.event('GraphSettings');
 	};
 
 	onDragStart (e: any) {
@@ -233,7 +238,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onDragMove (e: any) {
 		const p = d3.pointer(e, d3.select(this.canvas));
 		const node = $(this.node);
-		
+
 		if (!node || !node.length) {
 			return;
 		};
@@ -405,7 +410,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				route: analytics.route.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
-				allowedLink: true,
+				allowedLinkTo: true,
 				allowedOpen: true,
 				onLinkTo: (sourceId: string, targetId: string) => {
 					const target = this.getNode(targetId);

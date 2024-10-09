@@ -85,6 +85,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						style={param.style}
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						onClick={e => this.onClick(e, item)}
+						withMore={item.isInstalled}
+						onMore={e => this.onEdit(e, item)}
 					/>
 				);
 			};
@@ -220,12 +222,13 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data } = param;
 		const filter = String(data.filter || '');
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ S.Common.space, J.Constant.storeSpaceId ] },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
-			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: data.skipKeys || [] },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
+			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+			{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: data.skipKeys || [] },
 		];
 		const sorts = [
 			{ relationKey: 'spaceId', type: I.SortType.Desc },
+			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
@@ -361,7 +364,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const skipKeys = data.skipKeys || [];
 
 		const sources = this.getLibrarySources();
-		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -377,16 +379,18 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			},
 		};
 
+		let menuId = '';
+
 		switch (item.id) {
 			case 'store': {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId },
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
-					{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
+					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
+					{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
 				];
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -440,9 +444,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				data: {
 					...data,
 					rebind: this.rebind,
-					onChange: () => { 
-						close(); 
-					},
+					onChange: () => close(),
 				}
 			});
 		} else 
@@ -462,6 +464,31 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				Action.install(item, true, message => cb(message.details));
 			};
 		};
+	};
+
+	onEdit (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { param, getId, getSize } = this.props;
+		const { data, classNameWrap } = param;
+		const { rootId, menuIdEdit } = data;
+
+		S.Menu.open(menuIdEdit, { 
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			noAnimation: true,
+			classNameWrap,
+			data: {
+				...data,
+				rootId,
+				relationId: item.id,
+				saveCommand: () => {
+					this.load(true);
+				},
+			}
+		});
 	};
 
 	getRowHeight (item: any) {

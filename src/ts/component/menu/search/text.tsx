@@ -139,6 +139,10 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	search () {
+		if (!this.container || !this.container.length) {
+			return;
+		};
+
 		const value = this.ref.getValue();
 		if (value && (this.last == value)) {
 			return;
@@ -208,6 +212,10 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	clear () {
+		if (!this.container || !this.container.length) {
+			return;
+		};
+
 		const node = $(this.node);
 		const switcher = node.find('#switcher');
 		const tag = Mark.getTag(I.MarkType.Search);

@@ -58,7 +58,6 @@ class MenuStore {
 
     update (id: string, param: any) {
 		const item = this.get(id);
-
 		if (item) {
 			param.data = Object.assign(item.param.data, param.data);
 			set(item, { param: Object.assign(item.param, param) });
@@ -115,6 +114,7 @@ class MenuStore {
 
     close (id: string, callBack?: () => void) {
 		const item = this.get(id);
+
 		if (!item) {
 			if (callBack) {
 				callBack();
@@ -138,7 +138,7 @@ class MenuStore {
 
 		const onTimeout = () => {
 			this.menuList = this.menuList.filter(it => it.id != id);
-				
+
 			if (onClose) {
 				onClose();
 			};

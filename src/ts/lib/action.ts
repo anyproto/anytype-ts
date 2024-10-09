@@ -35,6 +35,13 @@ class Action {
 			return;
 		};
 
+		const object = S.Detail.get(rootId, rootId);
+
+		if (U.Object.isChatLayout(object.layout)) {
+			C.ChatUnsubscribe(object.chatId);
+			S.Chat.clear(object.id);
+		};
+
 		S.Record.metaClear(rootId, '');
 		S.Record.recordsClear(rootId, '');
 		S.Detail.clear(rootId);
@@ -51,7 +58,7 @@ class Action {
 
 		S.Record.metaClear(subId, '');
 		S.Record.recordsClear(subId, '');
-		S.Record.recordsClear(subId + '/dep', '');
+		S.Record.recordsClear(`${subId}/dep`, '');
 		S.Record.viewsClear(rootId, blockId);
 
 		S.Detail.clear(subId);
@@ -69,24 +76,6 @@ class Action {
 		});
 	};
 	
-	download (block: I.Block, route: string) {
-		if (!block) {
-			return;
-		};
-
-		const { content } = block;
-		const { type, targetObjectId } = content;
-
-		if (!targetObjectId) {
-			return;
-		};
-		
-		const url = block.isFileImage() ? S.Common.imageUrl(targetObjectId, 1000000) : S.Common.fileUrl(targetObjectId);
-
-		Renderer.send('download', url, { saveAs: true });
-		analytics.event('DownloadMedia', { type, route });
-	};
-
 	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, targetContextId, blockIds, blockId, position, (message: any) => {
 			if (message.error.code) {
@@ -175,16 +164,52 @@ class Action {
 		focus.apply();
 	};
 
-	openFile (id: string) {
+	openUrl (url: string) {
+		url = U.Common.urlFix(url);
+
+		const storageKey = 'openUrl';
+		const scheme = U.Common.getScheme(url);
+		const cb = () => Renderer.send('openUrl', url);
+
+		if (!Storage.get(storageKey) && !scheme.match(new RegExp(`^(${J.Constant.allowedSchemes.join('|')})$`))) {
+			S.Popup.open('confirm', {
+				data: {
+					icon: 'confirm',
+					bgColor: 'red',
+					title: translate('popupConfirmOpenExternalLinkTitle'),
+					text: translate('popupConfirmOpenExternalLinkText'),
+					textConfirm: translate('commonYes'),
+					storageKey,
+					onConfirm: () => cb(),
+				}
+			});
+		} else {
+			cb();
+		};
+	};
+
+	openFile (id: string, route: string) {
 		if (!id) {
 			return;
 		};
 
 		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
-				Renderer.send('pathOpen', message.path);
+				Renderer.send('openPath', message.path);
+				analytics.event('OpenMedia', { route });
 			};
 		});
+	};
+
+	downloadFile (id: string, route: string, isImage: boolean) {
+		if (!id) {
+			return;
+		};
+		
+		const url = isImage ? S.Common.imageUrl(id, 1000000) : S.Common.fileUrl(id);
+
+		Renderer.send('download', url, { saveAs: true });
+		analytics.event('DownloadMedia', { route });
 	};
 
 	openFileDialog (extensions: string[], callBack?: (paths: string[]) => void) {
@@ -389,14 +414,14 @@ class Action {
 					};
 
 					C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
-						if (onError(message.error) || !message.account) {
+						const { account } = message;
+
+						if (onError(message.error) || !account) {
 							return;
 						};
 
-						S.Auth.accountSet(message.account);
-						S.Common.configSet(message.account.config, false);
-
-						U.Data.onInfo(message.account.info);
+						S.Auth.accountSet(account);
+						S.Common.configSet(account.config, false);
 
 						const routeParam = {
 							replace: true,
@@ -407,7 +432,8 @@ class Action {
 							},
 						};
 
-						U.Data.onAuth({ routeParam });
+						U.Data.onInfo(account.info);
+						U.Data.onAuthWithoutSpace(routeParam);
 						U.Data.onAuthOnce(true);
 					});
 				});
@@ -446,8 +472,8 @@ class Action {
 
 	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
 		const fileOptions: any = { 
-			properties: [ 'openFile' ],
-			filters: [ 
+			properties: [ 'openFile', 'multiSelections' ],
+			filters: [
 				{ name: 'Filtered extensions', extensions },
 			],
 		};
@@ -471,21 +497,6 @@ class Action {
 					return;
 				};
 
-				const { collectionId, count } = message;
-
-				if (collectionId) {
-					window.setTimeout(() => {
-						S.Popup.open('objectManager', { 
-							data: { 
-								collectionId, 
-								type: I.ObjectManagerPopup.Favorites,
-							} 
-						});
-					}, S.Popup.getTimeout() + 10);
-				};
-
-				analytics.event('Import', { middleTime: message.middleTime, type, count });
-
 				if (callBack) {	
 					callBack(message);
 				};
@@ -506,7 +517,7 @@ class Action {
 					return;
 				};
 
-				Renderer.send('pathOpen', paths[0]);
+				Renderer.send('openPath', paths[0]);
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
 				if (callBack) {
@@ -545,6 +556,9 @@ class Action {
 		blocks = U.Common.arrayUniqueObjects(blocks, 'id');
 		blocks = blocks.map((it: I.Block) => {
 			const element = S.Block.getMapElement(rootId, it.id);
+			if (!element) {
+				return null;
+			};
 
 			if (it.type == I.BlockType.Dataview) {
 				it.content.views = S.Record.getViews(rootId, it.id);
@@ -552,7 +566,7 @@ class Action {
 
 			it.childrenIds = element.childrenIds;
 			return it;
-		});
+		}).filter(it => it);
 
 		if (isCut) {
 			next = S.Block.getNextBlock(rootId, focused, -1, it => it.isFocusable());
@@ -583,14 +597,41 @@ class Action {
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
+	createSpace (route: string) {
+		if (!U.Space.canCreateSpace()) {
+			return;
+		};
+
+		S.Popup.closeAll(null, () => {
+			S.Popup.open('settings', {
+				className: 'isSpaceCreate',
+				data: {
+					page: 'spaceCreate',
+					isSpace: true,
+					route,
+					onCreate: id => {
+						U.Router.switchSpace(id, '', true, () => {
+							const { widgets } = S.Block;
+
+							Storage.initPinnedTypes();
+
+							const blocks = S.Block.getChildren(widgets, widgets);
+							blocks.forEach(block => Storage.setToggle('widget', block.id, true));
+						});
+					},
+				},
+			});
+		});
+	};
+
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
 		const deleted = U.Space.getSpaceviewBySpaceId(id);
+		const list = U.Space.getList().filter(it => it.targetSpaceId != id);
 
 		if (!deleted) {
 			return;
 		};
 
-		const { accountSpaceId } = S.Auth;
 		const { space } = S.Common;
 		const isOwner = U.Space.isMyOwner(id);
 		const name = U.Common.shorten(deleted.name, 32);
@@ -624,7 +665,12 @@ class Action {
 					};
 
 					if (space == id) {
-						U.Router.switchSpace(accountSpaceId, '', false, cb);
+						if (list.length) {
+							U.Router.switchSpace(list[0].targetSpaceId, '', false, cb);
+						} else {
+							cb();
+							U.Router.go('/main/void', { replace: true });
+						};
 					} else {
 						cb();
 					};
@@ -650,13 +696,25 @@ class Action {
 	};
 
 	setInterfaceLang (id: string) {
+		const { config } = S.Common;
+		const { languages } = config;
+
 		Renderer.send('setInterfaceLang', id);
+
+		if (!Storage.get('setSpellingLang') && !languages.length) {
+			const check = J.Lang.interfaceToSpellingLangMap[id];
+			if (check) {
+				this.setSpellingLang([ check ]);
+				Storage.set('setSpellingLang', true);
+			};
+		};
+
 		analytics.event('SwitchInterfaceLanguage', { type: id });
 	};
 
-	setSpellingLang (id: string) {
-		Renderer.send('setSpellingLang', id);
-		analytics.event('AddSpellcheckLanguage', { type: id });
+	setSpellingLang (langs: string[]) {
+		Renderer.send('setSpellingLang', langs);
+		analytics.event('AddSpellcheckLanguage');
 	};
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
@@ -693,7 +751,7 @@ class Action {
 				layout = I.WidgetLayout.Link;
 			} else 
 			if (U.Object.isInSetLayouts(object.layout)) {
-				layout = I.WidgetLayout.Compact;
+				layout = I.WidgetLayout.View;
 			} else
 			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;
@@ -746,28 +804,6 @@ class Action {
 		});
 
 		analytics.event('ScreenRevokeShareLink');
-	};
-
-	welcome () {
-		S.Popup.open('confirm', {
-			className: 'welcome',
-			preventCloseByClick: true,
-			preventCloseByEscape: true,
-			data: {
-				icon: 'welcome',
-				title: translate('popupConfirmWelcomeTitle'),
-				text: translate('popupConfirmWelcomeText'),
-				textConfirm: translate('popupConfirmWelcomeButton'),
-				canCancel: false,
-				onConfirm: () => {
-					S.Popup.replace('confirm', 'usecase', {
-						onClose: () => {
-							Onboarding.start('dashboard', false, false);
-						}
-					});
-				},
-			},
-		});
 	};
 
 	addToCollection (targetId: string, objectIds: string[]) {

@@ -64,12 +64,29 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				buttonText = translate('popupSettingsMembershipManage');
 			} else 
 			if (item.period) {
-				if (item.period) {
-					if (item.period == 1) {
-						period = translate('popupSettingsMembershipPerYear');
-					} else {
-						period = U.Common.sprintf(translate('popupSettingsMembershipPerYears'), item.period, U.Common.plural(item.period, translate('pluralYear')));
+				// default is year
+				let periodLabel = translate('pluralYear');
+				if (item.periodType) {
+					switch (item.periodType) {
+						case I.MembershipTierDataPeriodType.PeriodTypeDays: {
+							periodLabel = translate('pluralDay');
+							break;
+						};
+						case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
+							periodLabel = translate('pluralWeek');
+							break;
+						};
+						case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
+							periodLabel = translate('pluralMonth');
+							break;
+						};
 					};
+				};
+
+				if (item.period == 1) {
+					period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(item.period, periodLabel));
+				} else {
+					period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), item.period, U.Common.plural(item.period, periodLabel));
 				};
 			};
 

@@ -18,7 +18,6 @@
 		}
 		.footer { display: none; }
 
-		#bodyWrapper { padding: 0px; }
 		#bodyWrapper > #loader { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 
 		.pageMainEdit {
@@ -41,11 +40,6 @@
 			.wrapper { padding-top: 74px; }
 		}
 
-		.pageMainStore {
-			.wrapper.withBanner { padding: 0px; }
-			.ReactVirtualized__List { padding-top: 0px; }
-		}
-
 		.pageMainType {
 			.wrapper { padding-top: 0px; }
 		}
@@ -62,6 +56,10 @@
 
 		.pageMainMedia {
 			.blocks { padding-top: 16px; }
+		}
+
+		.pageMainChat {
+			.formWrapper.isFixed { padding-bottom: 16px; }
 		}
 
 	}	

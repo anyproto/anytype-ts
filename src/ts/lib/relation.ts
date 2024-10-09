@@ -274,7 +274,7 @@ class Relation {
 
 			case 'origin': {
 				value = Number(value) || I.ObjectOrigin.None;
-				return (value == I.ObjectOrigin.None) ? null : translate(`origin${value}`);
+				return translate(`origin${value}`);
 			};
 
 			case 'importType': {
@@ -294,11 +294,8 @@ class Relation {
 		const ret: any[] = [];
 		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = S.Record.getRelationByKey(it.relationKey);
-			return relation && (it.relationKey != 'done');
+			return !!relation;
 		});
-		const idxName = relations.findIndex(it => it.relationKey == 'name');
-
-		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, { relationKey: 'done' });
 
 		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = S.Record.getRelationByKey(it.relationKey);
@@ -362,7 +359,7 @@ class Relation {
 		};
 		
 		let options: any[] = S.Record.getObjectRelations(rootId, blockId).filter((it: any) => {
-			return it.isInstalled && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
+			return it.isInstalled && formats.includes(it.format) && !it.isHidden;
 		});
 
 		options.sort((c1: any, c2: any) => {
@@ -394,10 +391,10 @@ class Relation {
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 
-	public getPageLimitOptions (type: I.ViewType) {
+	public getPageLimitOptions (type: I.ViewType, isInline: boolean) {
 		let options = [ 10, 20, 50, 70, 100 ];
 		if (type == I.ViewType.Gallery) {
-			options = [ 12, 24, 60, 84, 120 ];
+			options = isInline ? [ 12, 24, 60, 84, 120 ] : [ 60, 84, 120 ];
 		};
 		return options.map(it => ({ id: it, name: it }));
 	};
@@ -479,6 +476,10 @@ class Relation {
 
 	public isUrl (type: I.RelationType) {
 		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
+	};
+
+	public isText (type: I.RelationType) {
+		return this.isUrl(type) || [ I.RelationType.Number, I.RelationType.ShortText ].includes(type);
 	};
 
 	public getUrlScheme (type: I.RelationType, value: string): string {
@@ -584,11 +585,12 @@ class Relation {
 		const details: any = { name };
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const objectTypes = this.getArrayValue(relation.objectTypes);
+		const skipLayouts = U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant);
 
 		let type = null;
 
 		if (objectTypes.length) {
-			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !U.Object.isInFileOrSystemLayouts(it.recommendedLayout));
+			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !skipLayouts.includes(it.recommendedLayout));
 			const l = allowedTypes.length;
 
 			if (l) {
@@ -598,6 +600,10 @@ class Relation {
 					flags.push(I.ObjectFlag.SelectType);
 				};
 			};
+		};
+
+		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
+			type = null;
 		};
 
 		if (type) {

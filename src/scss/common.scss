@@ -6,7 +6,7 @@ html, body { height: 100%; }
 
 body {
 	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow-x: hidden; overflow-y: auto; background: var(--color-bg-primary);
-	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none;
+	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none; scrollbar-gutter: stable both-edges;
 }
 body.colResize { cursor: col-resize !important; }
 body.colResize * { cursor: col-resize !important; user-select: none !important; }
@@ -58,6 +58,8 @@ input, textarea, select { font-family: 'Inter'; }
 #globalFade.show { opacity: 1; }
 #graphPreview { position: fixed; z-index: 1000; }
 
+.onboardingDimmer { content: ''; position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.25); -webkit-app-region: no-drag; z-index: 999; }
+
 html.platformWindows {
 	body { overflow-y: overlay; }
 }
@@ -66,13 +68,21 @@ html.platformLinux {
 	body { overflow-y: auto; }
 }
 
-html.platformWindows, html.platformLinux {
+.customScrollbar {
 	::-webkit-scrollbar { width: 6px; height: 6px; }
-	::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.5); border-radius: 6px; }
+	::-webkit-scrollbar-thumb { background: transparent; border-radius: 6px; }
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
+}
+.customScrollbar:hover {
+	::-webkit-scrollbar-thumb { background: var(--color-control-active); }
+}
 
-	.overPopup { padding-right: 10px; }
+html.platformWindows, html.platformLinux {
+	::-webkit-scrollbar { width: 6px; height: 6px; }
+	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 6px; }
+	::-webkit-scrollbar-corner { background-color: transparent; }
+	::-webkit-scrollbar-button { display: none; }
 }
 
 .dn { display: none !important; }
@@ -86,8 +96,7 @@ html.platformWindows, html.platformLinux {
 .isReadonly { -webkit-user-modify: unset !important; cursor: default !important; }
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
-.over { overflow: hidden !important; }
-.overPopup { overflow: hidden !important; }
+.over, .overPopup { overflow: hidden !important; }
 .empty, .emptyText { color: var(--color-text-tertiary); }
 .isDone { color: var(--color-text-secondary); }
 .placeholder { 
@@ -106,12 +115,6 @@ html.platformWindows, html.platformLinux {
 .editableWrap { position: relative; }
 
 a { color: var(--color-text-primary); }
-
-markuphighlight { background: #b2dff9 !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
-markuphighlight.active { background: orange !important; }
-
-markupsearch { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
-markupsearch.active { background: orange !important; }
 
 .dropTarget.isOver.middle { background: var(--color-system-drop-zone) !important; }
 .dropTarget.isOver.top { box-shadow: 0px -2px 0px var(--color-system-accent-100); }
@@ -211,5 +214,5 @@ markupsearch.active { background: orange !important; }
 	.icon.download { display: none; }
 }
 
-@import "scss/debug.scss";
-@import "scss/font.scss";
+@import "scss/debug";
+@import "scss/font";

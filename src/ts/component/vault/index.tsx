@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar } from 'Lib';
+import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
 
 import VaultItem from './item';
 
@@ -12,6 +12,7 @@ const Vault = observer(class Vault extends React.Component {
 	isAnimating = false;
 	checkKeyUp = false;
 	closeSidebar = false;
+	closeVault = false;
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
@@ -117,6 +118,12 @@ const Vault = observer(class Vault extends React.Component {
 	onKeyDown (e: any) {
 		const key = e.key.toLowerCase();
 		const { isClosed, width } = sidebar.data;
+		const { showVault } = S.Common;
+
+		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
+			this.checkKeyUp = true;
+			this.pressed.add(key);
+		};
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			this.pressed.add(key);
@@ -126,9 +133,17 @@ const Vault = observer(class Vault extends React.Component {
 			this.checkKeyUp = true;
 			this.onArrow(pressed.match('shift') ? -1 : 1);
 
-			if (isClosed) {
-				this.closeSidebar = true;
-				sidebar.open(width);
+			if (!sidebar.isAnimating) {
+				if (!showVault) {
+					S.Common.showVaultSet(true);
+					sidebar.resizePage(width, false);
+					this.closeVault = true;
+				};
+
+				if (isClosed) {
+					this.closeSidebar = true;
+					sidebar.open(width);
+				};
 			};
 		});
 	};
@@ -147,19 +162,33 @@ const Vault = observer(class Vault extends React.Component {
 
 		this.checkKeyUp = false;
 
+		const { width } = sidebar.data;
 		const node = $(this.node);
 		const items = this.getSpaceItems();
 		const item = items[this.n];
 
+		this.checkKeyUp = false;
+
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
-			U.Router.switchSpace(item.targetSpaceId, '', true);
+			if (item.targetSpaceId != S.Common.space) {
+				U.Router.switchSpace(item.targetSpaceId, '', true);
+			};
 		};
 
-		if (this.closeSidebar) {
-			sidebar.close();
-			this.closeSidebar = false;
+		if (!sidebar.isAnimating) {
+			if (this.closeVault) {
+				S.Common.showVaultSet(false);
+				sidebar.resizePage(width, false);
+				this.closeVault = false;
+			};
+
+			if (this.closeSidebar) {
+				sidebar.close();
+				this.closeSidebar = false;
+			};
 		};
+
 		Preview.tooltipHide();
 	};
 
@@ -249,16 +278,7 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onAdd () {
-		S.Popup.open('settings', { 
-			className: 'isSpaceCreate',
-			data: { 
-				page: 'spaceCreate', 
-				isSpace: true,
-				onCreate: (id) => {
-					U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
-				},
-			}, 
-		});
+		Action.createSpace(analytics.route.vault);
 	};
 
 	onContextMenu (e: any, item: any) {

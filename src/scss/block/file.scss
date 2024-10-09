@@ -20,12 +20,8 @@
 
 		.iconObject { flex-shrink: 0; }
 	}
-	.block.blockFile:hover {
-		.download { opacity: 1; }
-	}
 	
 	.block.blockFile > .wrapContent > .selectionTarget > .dropTarget { @include text-overflow-nw;  }
-	.block.blockFile > .wrapContent > .selectionTarget.isSelectionSelected .download { display: none; }
 	.block.blockFile.withContent > .wrapContent > .selectionTarget > .dropTarget { padding: 3px 0px; }
 
 	.block.blockFile:not(.withContent) > .wrapContent > .selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }

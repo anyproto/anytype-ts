@@ -296,7 +296,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				readonly: Boolean(readonly || root?.isLocked() || !allowed),
 				noDelete: (item.scope == I.RelationScope.Type),
 				relationId: item.id,
-				ref: 'menu',
+				ref: 'object',
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
@@ -310,15 +310,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	onCellClick (e: any, relationKey: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { readonly, rootId } = data;
-		const relation = S.Record.getRelationByKey(relationKey);
-
-		if (!relation || readonly || relation.isReadonlyValue) {
-			return;
-		};
-
-		const id = Relation.cellId(PREFIX, relationKey, rootId);
-		const ref = this.cellRefs.get(id);
+		const { rootId } = data;
+		const ref = this.cellRefs.get(Relation.cellId(PREFIX, relationKey, rootId));
 
 		if (ref) {
 			ref.onClick(e);
@@ -335,7 +328,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
 		if ((undefined !== object[relationKey]) && !U.Common.compareJSON(object[relationKey], value)) {
-			analytics.changeRelationValue(relation, value, 'menu');
+			analytics.changeRelationValue(relation, value, { type: 'menu', id: 'Single' });
 		};
 	};
 

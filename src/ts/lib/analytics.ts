@@ -5,7 +5,7 @@ const KEYS = [
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor', 'emptyType', 'status',
+	'processor', 'emptyType', 'status', 'sort',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -16,6 +16,7 @@ class Analytics {
 	instance: any = null;
 
 	public route = {
+		block: 'Block',
 		navigation: 'Navigation',
 		onboarding: 'Onboarding',
 		collection: 'Collection',
@@ -41,12 +42,19 @@ class Analytics {
 		relation: 'Relation',
 		link: 'Link',
 		mention: 'Mention',
+		media: 'Media',
+		calendar: 'Calendar',
+		allObjects: 'AllObjects',
+		vault: 'Vault',
+		void: 'Void',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
 		menuSystem: 'MenuSystem',
 		menuHelp: 'MenuHelp',
 		menuContext: 'MenuContext',
+		menuAction: 'MenuAction',
+		menuAdd: 'MenuAdd',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -81,6 +89,7 @@ class Analytics {
 		const { interfaceLang } = S.Common;
 		const electron = U.Common.getElectron();
 		const platform = U.Common.getPlatform();
+		const hasDefaultPath = electron.userPath() == electron.defaultPath();
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(J.Constant.amplitude, null, Object.assign({
@@ -99,6 +108,7 @@ class Analytics {
 			deviceType: 'Desktop',
 			platform,
 			interfaceLang,
+			hasDefaultPath: Number(hasDefaultPath),
 		};
 
 		if (electron.version) {
@@ -106,7 +116,7 @@ class Analytics {
 			this.instance.setVersionName(electron.version.app);
 		};
 
-		this.instance.setUserProperties(props);
+		this.setProperty(props);
 		this.removeContext();
 		this.setVersion();
 
@@ -144,11 +154,11 @@ class Analytics {
 		};
 
 		this.instance.setUserId(id);
+		this.log(`[Analytics].profile: ${id}`);	
 
 		if (id) {
-			this.instance.setUserProperties({ networkId });
+			this.setProperty({ networkId });
 		};
-		this.log(`[Analytics].profile: ${id} networkId: ${networkId}`);	
 	};
 
 	setContext (context: string, id: string) {
@@ -164,10 +174,12 @@ class Analytics {
 	};
 
 	setTier (tier: I.TierType) {
-		const t = I.TierType[tier] || 'Custom';
+		this.setProperty({ tier: I.TierType[tier] || 'Custom' });
+	};
 
-		this.instance.setUserProperties({ tier: t });
-		this.log(`[Analytics].setTier: ${t}`);
+	setProperty (props: any) {
+		this.instance.setUserProperties(props);
+		this.log(`[Analytics].setProperty: ${JSON.stringify(props, null, 3)}`);
 	};
 
 	event (code: string, data?: any) {
@@ -473,6 +485,11 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeSpaceDashboard': {
+				data.type = U.Common.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -512,7 +529,7 @@ class Analytics {
 		this.event('CreateObject', { objectType, layout, route, middleTime: time });
 	};
 
-	changeRelationValue (relation: any, value: any, type: string) {
+	changeRelationValue (relation: any, value: any, param: any) {
 		if (!relation) {
 			return;
 		};
@@ -523,7 +540,7 @@ class Analytics {
 		} else {
 			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
 		};
-		this.event(key, { type, relationKey: relation.relationKey, format: relation.format });
+		this.event(key, { ...param, relationKey: relation.relationKey, format: relation.format });
 	};
 
 	pageMapper (params: any): string {

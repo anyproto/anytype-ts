@@ -11,6 +11,10 @@ const SPACE_KEYS = [
 	'scroll',
 	'defaultType',
 	'pinnedTypes',
+	'chat',
+	'popupSearch',
+	'focus',
+	'openUrl',
 ];
 
 class Storage {
@@ -297,6 +301,19 @@ class Storage {
 		return isPopup ? `${key}Popup` : key;
 	};
 
+	setFocus (rootId: string, state: I.FocusState) {
+		const obj = this.get('focus') || {};
+
+		obj[rootId] = state;
+		this.set('focus', obj, true);
+		return obj;
+	};
+
+	getFocus (rootId: string): I.FocusState {
+		const obj = this.get('focus') || {};
+		return obj[rootId];
+	};
+
 	setOnboarding (key: string) {
 		const keys = this.get('onboarding') || [];
 		
@@ -417,6 +434,18 @@ class Storage {
 		let ret = '';
 		try { ret = JSON.parse(s); } catch (e) { /**/ };
 		return ret;
+	};
+
+	setChat (id: string, obj: any) {
+		const map = this.get('chat') || {};
+
+		map[id] = Object.assign(map[id] || {}, obj);
+		this.set('chat', map);
+	};
+
+	getChat (id: string) {
+		const map = this.get('chat') || {};
+		return map[id] || {};
 	};
 	
 };

@@ -7,11 +7,10 @@ import Prism from 'prismjs';
 import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Renderer, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
 
 const katex = require('katex');
 const pako = require('pako');
-const mermaid = require('mermaid').default;
 
 require('katex/dist/contrib/mhchem');
 
@@ -30,6 +29,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	node = null;
 	refEditable = null;
 	refType = null;
+	range: I.TextRange = null;
 	state = {
 		isShowing: false,
 		isEditing: false,
@@ -45,7 +45,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.onFocusBlock = this.onFocusBlock.bind(this);
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
 		this.onKeyUpInput = this.onKeyUpInput.bind(this);
-		this.onFocusInput = this.onFocusInput.bind(this);
 		this.onBlurInput = this.onBlurInput.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
@@ -57,7 +56,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	render () {
-		const { isOnline } = S.Common;
+		const { isOnline, theme } = S.Common;
 		const { isShowing, isEditing } = this.state;
 		const { readonly, block } = this.props;
 		const { content, fields, hAlign } = block;
@@ -114,7 +113,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				</div>
 			);
 		} else {
-			source = <Icon className="source" onMouseDown={this.onEdit} />;
+			source = <Icon className="source withBackground" onMouseDown={this.onEdit} />;
 			placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 			empty = !text ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
@@ -155,7 +154,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					readonly={readonly}
 					placeholder={placeholder}
 					onSelect={this.onSelect}
-					onFocus={this.onFocusInput}
 					onBlur={this.onBlurInput}
 					onKeyUp={this.onKeyUpInput} 
 					onKeyDown={this.onKeyDownInput}
@@ -191,8 +189,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setText(block.content.text);
 		this.setValue(this.text);
 		this.setContent(this.text);
-		this.rebind();
 		this.onScroll();
+		this.rebind();
 	};
 
 	rebind () {
@@ -221,7 +219,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				S.Menu.close('blockLatex');
 
 				this.placeholderCheck();
-				this.save(() => { 
+				this.save(true, () => { 
 					this.setEditing(false);
 					S.Menu.close('previewLatex');
 				});
@@ -229,7 +227,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		node.find('#receiver').remove();
-		isOnline ? preview.hide() : preview.show();
+
+		if (![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid ].includes(processor)) {
+			isOnline ? preview.hide() : preview.show();
+		};
 
 		if (isOnline && (isShowing || U.Embed.allowAutoRender(processor))) {
 			this.setContent(this.text);
@@ -293,6 +294,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setState({ isEditing }, () => {
 			if (isEditing) {
 				const length = this.text.length;
+
 				this.setRange({ from: length, to: length });
 			} else {
 				$(window).off(`mouseup.${block.id} mousedown.${block.id}`);
@@ -311,8 +313,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onFocusBlock () {
-		focus.set(this.props.block.id, { from: 0, to: 0 });
-		this.setRange({ from: 0, to: 0 });
+		const { block } = this.props;
+		const range = this.range || { from: 0, to: 0 };
+
+		focus.set(block.id, range);
+		this.setRange(range);
 	};
 
 	onKeyDownBlock (e: any) {
@@ -332,6 +337,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
+			});
+
+			keyboard.shortcut(`tab`, e, () => {
+				e.preventDefault();
 			});
 		};
 
@@ -395,7 +404,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		if (!keyboard.isArrow(e)) {
 			this.setContent(value);
-			this.save();
+			this.save(false);
 		};
 	};
 
@@ -424,7 +433,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const cb = () => {
 			this.setValue(value);
 			this.setRange({ from: to, to });
-			this.save();
+			this.save(true);
 		};
 
 		if (block.isEmbedKroki()) {
@@ -439,13 +448,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 	};
 
-	onFocusInput () {
-		keyboard.setFocus(true);
-	};
-
 	onBlurInput () {
-		keyboard.setFocus(false);
-		this.save();
+		this.save(true);
 	};
 
 	onKrokiTypeChange (type: string, callBack?: () => void) {
@@ -517,9 +521,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					const value = U.Common.stringInsert(this.getValue(), text, from, to);
 
+					to += text.length;
+
 					this.setValue(value);
 					this.setRange({ from: to, to });
-					this.save();
+					this.save(true);
 				},
 			},
 		};
@@ -740,7 +746,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					item.off('click').click((e: any) => {
 						e.preventDefault();
-						Renderer.send('urlOpen', item.attr('href'));
+						Action.openUrl(item.attr('href'));
 					});
 				});
 
@@ -791,7 +797,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setShowing(true);
 	};
 
-	save (callBack?: (message: any) => void) {
+	save (update: boolean, callBack?: (message: any) => void) {
 		const { rootId, block, readonly } = this.props;
 		
 		if (readonly) {
@@ -800,7 +806,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const value = this.getValue();
 
-		S.Block.updateContent(rootId, block.id, { text: value });
+		if (update) {
+			S.Block.updateContent(rootId, block.id, { text: value });
+		};
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
@@ -809,6 +817,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setRange (range: I.TextRange) {
+		this.range = range;
 		this.refEditable.setRange(range);
 	};
 
@@ -818,10 +827,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		const { block } = this.props;
+		const win = $(window);
 
 		keyboard.disableSelection(true);
+		this.range = this.getRange();
 
-		const win = $(window);
 		win.off(`mouseup.${block.id}`).on(`mouseup.${block.id}`, () => {	
 			keyboard.disableSelection(false);
 			win.off(`mouseup.${block.id}`);

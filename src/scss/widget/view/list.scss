@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
-.viewList, .viewGrid, .viewGraph { display: flex; flex-direction: column; height: 100%; }
-.viewList, .viewGrid, .viewGraph {
+.viewList, .viewGrid { display: flex; flex-direction: column; height: 100%; }
+.viewList, .viewGrid {
 	.ReactVirtualized__List { padding: 8px 8px 12px 8px; }
 
 	.body { display: flex; flex-direction: column; }
@@ -22,7 +22,7 @@
 
 			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; width: 100%; }
 			.iconObject { flex-shrink: 0; }
-			.iconObject.isTask { background: none; }
+			.iconObject.isTask { background: none !important; }
 
 			.name { @include text-overflow-nw; }
 			.descr { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }

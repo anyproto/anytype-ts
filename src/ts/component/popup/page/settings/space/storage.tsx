@@ -20,7 +20,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
             { icon: 'remove', text: translate('commonDeleteImmediately'), onClick: this.onRemove }
         ];
         const filters: I.Filter[] = [
-            { operator: I.FilterOperator.And, relationKey: 'fileSyncStatus', condition: I.FilterCondition.Equal, value: I.FileSyncStatus.Synced },
+            { relationKey: 'fileSyncStatus', condition: I.FilterCondition.Equal, value: I.FileSyncStatus.Synced },
         ];
 		const sorts: I.Sort[] = [
 			{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
@@ -33,7 +33,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
                 <ListObjectManager
                     ref={ref => this.ref = ref}
-                    subId={J.Constant.subId.files}
+                    subId={J.Constant.subId.fileManager}
                     rowLength={2}
                     withArchived={true}
                     buttons={buttons}
@@ -56,6 +56,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
     onBack () {
         this.props.onPage('spaceIndex');
     };
+
 });
 
 export default PopupSettingsPageStorageManager;

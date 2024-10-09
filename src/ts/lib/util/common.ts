@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import DOMPurify from 'dompurify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark } from 'Lib';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;
 
@@ -298,7 +298,7 @@ class UtilCommon {
 		s = String(s || '');
 		l = Number(l) || 16;
 		if (s.length > l) {
-			s = s.substring(0, l) + (!noEnding ? '...' : '');
+			s = s.substring(0, l) + (!noEnding ? '…' : '');
 		};
 		return s;
 	};
@@ -365,16 +365,12 @@ class UtilCommon {
 	};
 
 	formatNumber (v: number): string {
-		v = Number(v) || 0;
-		
-		const s = String(v || '');
-		if (String(s).length < 6) {
+		let s = String(v || '');
+		if (s.length < 6) {
 			return s;
 		};
 
-		let ret = String(v || '');
 		let parts = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 8 }).formatToParts(v);
-
 		if (parts && parts.length) {
 			parts = parts.map((it: any) => {
 				if (it.type == 'group') {
@@ -382,9 +378,9 @@ class UtilCommon {
 				};
 				return it.value;
 			});
-			ret = parts.join('');
+			s = parts.join('');
 		};
-		return ret;
+		return s;
 	};
 
 	textStyle (obj: any, param: any) {
@@ -403,7 +399,7 @@ class UtilCommon {
 	};
 	
 	lbBr (s: string) {
-		return s.toString().replace(new RegExp(/\n+/gi), '<br/>');
+		return s.toString().replace(new RegExp(/\n/gi), '<br/>');
 	};
 	
 	mapToArray (list: any[], field: string): any {
@@ -465,11 +461,11 @@ class UtilCommon {
 	};
 	
 	onUrl (url: string) {
-		Renderer.send('urlOpen', url);
+		Action.openUrl(url);
 	};
 
 	onPath (path: string) {
-		Renderer.send('pathOpen', path);
+		Renderer.send('openPath', path);
 	};
 	
 	checkEmail (v: string) {
@@ -591,7 +587,7 @@ class UtilCommon {
 					onConfirm: () => {
 						C.DebugTree(rootId, logPath, (message: any) => {
 							if (!message.error.code) {
-								Renderer.send('pathOpen', logPath);
+								Renderer.send('openPath', logPath);
 							};
 						});
 
@@ -609,8 +605,8 @@ class UtilCommon {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
-				title: translate('popupConfirmUpdateNeedTitle'),
-				text: translate('popupConfirmUpdateNeedText'),
+				title: translate('popupConfirmNeedUpdateTitle'),
+				text: translate('popupConfirmNeedUpdateText'),
 				textConfirm: translate('commonUpdate'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
@@ -892,11 +888,11 @@ class UtilCommon {
 	fixAsarPath (path: string): string {
 		const electron = this.getElectron();
 
-		if (!electron.dirname || !electron.isPackaged) {
+		if (!electron.dirName || !electron.isPackaged) {
 			return path;
 		};
 
-		let href = electron.dirname(location.href);
+		let href = electron.dirName(location.href);
 		href = href.replace('/app.asar/', '/app.asar.unpacked/');
 		return href + path.replace(/^\.\//, '/');
 	};
@@ -948,6 +944,64 @@ class UtilCommon {
 
 	htmlSpecialChars (s: string) {
 		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	};
+
+	fromHtmlSpecialChars (s: string) {
+		return String(s || '').replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
+			if (p == '&lt;') p = '<';
+			if (p == '&gt;') p = '>';
+			if (p == '&amp;') p = '&';
+			return p;
+		});
+	};
+
+	copyCssSingle (src: HTMLElement, dst: HTMLElement) {
+		const styles = document.defaultView.getComputedStyle(src, '');
+		const css: any = {};
+
+		for (let i = 0; i < styles.length; i++) {
+			const name = styles[i];
+			const value = styles.getPropertyValue(name);
+
+			css[name] = value;
+		};
+
+		css.visibility = 'visible';
+		$(dst).css(css);
+	};
+
+	copyCss (src: HTMLElement, dst: HTMLElement) {
+		this.copyCssSingle(src, dst);
+
+		const srcList = src.getElementsByTagName('*');
+		const dstList = dst.getElementsByTagName('*');
+
+		for (let i = 0; i < srcList.length; i++) {
+			const srcElement = srcList[i] as HTMLElement;
+			const dstElement = dstList[i] as HTMLElement;
+
+			this.copyCssSingle(srcElement, dstElement);
+		};
+	};
+
+	notification (param: any, onClick?: () => void) {
+		const title = U.Common.stripTags(String(param.title || ''));
+		const text = U.Common.stripTags(String(param.text || ''));
+
+		if (!text) {
+			return;
+		};
+
+		const electron = this.getElectron();
+		const item = new window.Notification(title, { body: text });
+
+		item.onclick = () => {
+			electron.focus();
+
+			if (onClick) {
+				onClick();
+			};
+		};
 	};
 
 };

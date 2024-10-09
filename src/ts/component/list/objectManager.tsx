@@ -177,7 +177,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         );
 
         let content = null;
-        if (!items.length && !isLoading) {
+        if (!items.length) {
             if (!filter) {
                 controls = null;
             } else {
@@ -384,7 +384,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 		const sorts = [].concat(this.props.sorts || []);
 
         if (filter) {
-            filters.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
+            filters.push({ relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
         };
 
         this.setState({ isLoading: true });

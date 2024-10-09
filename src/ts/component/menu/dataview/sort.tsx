@@ -298,11 +298,10 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			horizontal: I.MenuDirection.Right,
-			vertical: I.MenuDirection.Center
+			vertical: I.MenuDirection.Center,
 		};
 
-		U.Menu.sortOrFilterRelationSelect({
-			menuParam,
+		U.Menu.sortOrFilterRelationSelect(menuParam, {
 			rootId,
 			blockId,
 			getView,
@@ -313,17 +312,17 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 
 	onAdd () {
-		const { param, getId, getSize } = this.props;
+		const { id, param, getId, getSize } = this.props;
 		const { data } = param;
-		const { onSortAdd, onAdd } = data;
+		const { onSortAdd, onFilterOrSortAdd } = data;
 		const relationOptions = this.getRelationOptions();
 
 		if (!relationOptions.length) {
 			return;
 		};
 
-		if (onAdd) {
-			onAdd(getId(), getSize().width);
+		if (onFilterOrSortAdd) {
+			onFilterOrSortAdd(getId(), param.component || id, getSize().width);
 			return;
 		};
 

@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Select, Switch } from 'Component';
-import { I, S, U, translate, Action, analytics } from 'Lib';
+import { Title, Label, Select, Switch, Icon } from 'Component';
+import { I, S, U, translate, Action, analytics, Renderer } from 'Lib';
 
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
-	constructor (props: I.PopupSettings) {
-		super(props);
-	};
-
 	render () {
-		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject } = S.Common;
-		const { languages } = config;
+		const { getId } = this.props;
+		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject, hideSidebar, showRelativeDates, showVault } = S.Common;
+		const { hideTray, hideMenuBar, languages } = config;
+
+		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
 		const interfaceLanguages = U.Menu.getInterfaceLanguages();
 		const spellingLanguages = U.Menu.getSpellingLanguages();
 		const navigationMenuModes: I.Option[] = [
@@ -23,10 +22,13 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
 		].map(it => ({ ...it, id: String(it.id) }));
+		const sidebarMode = showVault ? translate('sidebarMenuAll') : translate('sidebarMenuSidebar');
 
 		return (
 			<React.Fragment>
 				<Title text={translate('popupSettingsPersonalTitle')} />
+
+				<Label className="section" text={translate('popupSettingsPersonalSectionLanguage')} />
 
 				<div className="actionItems">
 
@@ -57,7 +59,11 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
 						/>
 					</div>
+				</div>
 
+				<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
+
+				<div className="actionItems">
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalNavigationMenu')} />
 
@@ -89,8 +95,66 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalFullscreen')} />
-						<Switch className="big" value={fullscreenObject} onChange={(e: any, v: boolean) => S.Common.fullscreenObjectSet(v)} />
+						<Switch
+							className="big"
+							value={fullscreenObject}
+							onChange={(e: any, v: boolean) => {
+								S.Common.fullscreenObjectSet(v);
+								analytics.event('ShowObjectFullscreen', { type: v });
+							}}
+						/>
 					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalRelativeDates')} />
+						<Switch
+							className="big"
+							value={showRelativeDates}
+							onChange={(e: any, v: boolean) => {
+								S.Common.showRelativeDatesSet(v);
+								analytics.event('RelativeDates', { type: v });
+							}}
+						/>
+					</div>
+				</div>
+
+				<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
+
+				<div className="actionItems">
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalSidebar')} />
+						<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => S.Common.hideSidebarSet(v)} />
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalSidebarMode')} />
+						<div id="sidebarMode" className="select" onMouseDown={() => U.Menu.sidebarContext(`#${getId()} #sidebarMode`)}>
+							<div className="item">
+								<div className="name">{sidebarMode}</div>
+							</div>
+							<Icon className="arrow light" />
+						</div>
+					</div>
+
+					<div className="item">
+						<Label text={translate('electronMenuShowTray')} />
+						<Switch
+							className="big"
+							value={!hideTray}
+							onChange={(e: any, v: boolean) => {
+								Renderer.send('setHideTray', v);
+								analytics.event('ShowInSystemTray', { type: v });
+							}}
+						/>
+					</div>
+
+					{canHideMenu ? (
+						<div className="item">
+							<Label text={translate('electronMenuShowMenu')} />
+							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)} />
+						</div>
+					) : ''}
 				</div>
 
 			</React.Fragment>

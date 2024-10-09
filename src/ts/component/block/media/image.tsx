@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Icon, Error } from 'Component';
-import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
+import { I, C, S, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 
 const BlockImage = observer(class BlockImage extends React.Component<I.BlockComponent> {
 
@@ -231,15 +231,53 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	};
 	
 	onClick (e: any) {
-		if (!keyboard.withCommand(e)) {
-			const src = S.Common.imageUrl(this.props.block.content.targetObjectId, J.Size.image);
-
-			S.Popup.open('preview', { data: { src, type: I.FileType.Image } });
+		if (keyboard.withCommand(e)) {
+			return;
 		};
+
+		const { rootId, block } = this.props;
+		const blocks = S.Block.getBlocks(rootId, (it: I.Block) => it.isFileImage() || it.isFileVideo());
+		const idx = blocks.findIndex(it => it.id == block.id);
+		const gallery = [];
+
+		blocks.forEach(it => {
+			const target = it.getTargetObjectId();
+			const type = it.isFileImage() ? I.FileType.Image : I.FileType.Video;
+			const object = S.Detail.get(rootId, target, []);
+
+			if (object._empty_ || object.isDeleted) {
+				return;
+			};
+
+			let src = '';
+
+			switch (object.layout) {
+				case I.ObjectLayout.Image: {
+					src = S.Common.imageUrl(target, J.Size.image);
+					break;
+				};
+
+				case I.ObjectLayout.Video: {
+					src = S.Common.fileUrl(target);
+					break;
+				};
+			};
+
+			gallery.push({ object, src, type });
+		});
+
+		S.Popup.open('preview', { 
+			data: {
+				initialIdx: idx,
+				gallery,
+			},
+		});
 	};
 
 	onDownload () {
-		Action.download(this.props.block, 'block');
+		const { block } = this.props;
+
+		Action.downloadFile(block.getTargetObjectId(), analytics.route.block, block.isFileImage());
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {

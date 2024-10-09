@@ -15,11 +15,11 @@
 	}
 	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg') !important; }
 
-	.item { display: flex; background: none !important; padding: 0px !important; }
+	.item { display: flex; background: none !important; padding: 0px !important; overflow: hidden; }
 	.item {
 		.icon, .iconObject { transition: none; margin-right: 6px; flex-shrink: 0; }
 		.name { width: 100%; @include text-overflow-nw; }
-		.caption { display: none; }
+		.caption, .note { display: none; }
 	}
 	.item::before { display: none; }
 

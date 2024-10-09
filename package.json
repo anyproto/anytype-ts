@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.41.39-beta",
+	"version": "0.42.32-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -62,7 +62,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^31.0.0",
+		"electron": "^31.0.2",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -73,7 +73,7 @@
 		"npm": "^10.5.0",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
-		"sass": "^1.62.0",
+		"sass": "1.77.6",
 		"sass-loader": "^8.0.2",
 		"source-map-loader": "^0.2.4",
 		"style-loader": "^1.2.1",
@@ -97,6 +97,7 @@
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
 		"blueimp-load-image": "^2.31.0",
+		"copy-webpack-plugin": "^12.0.2",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
 		"d3-force-cluster": "^0.1.2",
@@ -105,7 +106,7 @@
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^3.0.9",
-		"electron-updater": "^6.1.8",
+		"electron-updater": "^6.2.1",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.5.2",
@@ -117,12 +118,13 @@
 		"install": "^0.13.0",
 		"jquery": "^3.5.1",
 		"js-htmlencode": "^0.3.0",
-		"katex": "^0.16.9",
+		"katex": "^0.16.11",
 		"keytar": "^7.7.0",
 		"lazy-val": "^1.0.4",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
 		"mermaid": "^10.9.0",
+		"mime-types": "^2.1.35",
 		"mobx": "^6.6.1",
 		"mobx-logger": "^0.7.1",
 		"mobx-react": "^7.5.2",
@@ -146,7 +148,8 @@
 		"selection-ranges": "^3.0.3",
 		"sha1": "^1.1.1",
 		"stream-slicer": "^0.0.6",
-		"swiper": "^11.0.3"
+		"swiper": "^11.0.3",
+		"systeminformation": "^5.23.5"
 	},
 	"build": {
 		"npmRebuild": true,
@@ -177,6 +180,7 @@
 			"dist/font/**/*",
 			"dist/workers/**/*",
 			"dist/*.node",
+			"dist/cmaps/**/*",
 			"dist/embed/**/*",
 			"dist/challenge/**/*",
 			"dist/img/**/*",
@@ -193,7 +197,8 @@
 			"node_modules/p-try",
 			"node_modules/p-finally",
 			"node_modules/file-type",
-			"node_modules/regedit"
+			"node_modules/regedit",
+			"node_modules/mime-types"
 		],
 		"extraResources": [
 			{
@@ -226,6 +231,7 @@
 			"dist/nativeMessagingHost.exe",
 			"dist/nativeMessagingHost",
 			"dist/*.node",
+			"dist/cmaps/**/*",
 			"dist/font/**/*",
 			"dist/workers/**/*",
 			"!node_modules/**/*",
@@ -280,6 +286,10 @@
 			{
 				"from": "node_modules/util",
 				"to": "node_modules/util"
+			},
+			{
+				"from": "node_modules/mime-types",
+				"to": "node_modules/mime-types"
 			},
 			{
 				"from": "node_modules/@electron",
@@ -514,6 +524,10 @@
 				"to": "node_modules/supports-color"
 			},
 			{
+				"from": "node_modules/systeminformation",
+				"to": "node_modules/systeminformation"
+			},
+			{
 				"from": "node_modules/through2",
 				"to": "node_modules/through2"
 			},
@@ -564,9 +578,8 @@
 			"artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			],
 			"signIgnore": [
@@ -584,9 +597,8 @@
 			"icon": "electron/img/icons/256x256.ico",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			]
 		},
@@ -602,9 +614,8 @@
 			"description": "Anytype",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			],
 			"desktop": {

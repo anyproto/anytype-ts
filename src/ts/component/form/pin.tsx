@@ -1,9 +1,10 @@
 import * as React from 'react';
 import sha1 from 'sha1';
 import { Input } from 'Component';
-import { J, keyboard } from 'Lib';
+import { keyboard } from 'Lib';
 
 interface Props {
+	isNumeric?: boolean;
 	pinLength?: number;
 	expectedPin?: string | null;
 	focusOnMount?: boolean;
@@ -29,6 +30,7 @@ class Pin extends React.Component<Props, State> {
 		expectedPin: null,
 		focusOnMount: true,
 		isVisible: false,
+		isNumeric: false,
 	};
 
 	state = {
@@ -41,20 +43,27 @@ class Pin extends React.Component<Props, State> {
 	timeout = 0;
 
 	render () {
-		const { pinLength } = this.props;
+		const { pinLength, isNumeric } = this.props;
+		const props: any = {
+			maxLength: 1,
+			onKeyUp: this.onInputKeyUp,
+		};
+
+		if (isNumeric) {
+			props.inputMode = 'numeric';
+		};
 
 		return (
 			<div className="pin" onClick={this.onClick}>
 				{Array(pinLength).fill(null).map((_, i) => (
 					<Input 
 						ref={ref => this.inputRefs[i] = ref} 
-						maxLength={1} 
 						key={i} 
 						onPaste={e => this.onPaste(e, i)}
 						onFocus={() => this.onInputFocus(i)} 
-						onKeyUp={this.onInputKeyUp} 
 						onKeyDown={e => this.onInputKeyDown(e, i)} 
 						onChange={(_, value) => this.onInputChange(i, value)} 
+						{...props}
 					/>
 				))}
 			</div>
@@ -117,7 +126,11 @@ class Pin extends React.Component<Props, State> {
 	reset () {
 		this.setState({ index: 0 }, () => {
 			this.clear();
-			this.focus();	
+			this.focus();
+
+			for (const i in this.inputRefs) {
+				this.inputRefs[i].setType('text');
+			};
 		});
 	};
 
@@ -128,6 +141,7 @@ class Pin extends React.Component<Props, State> {
 	};
 
 	onInputKeyDown = (e, index: number) => {
+		const { isNumeric } = this.props;
 		const prev = this.inputRefs[index - 1];
 
 		if (prev) {
@@ -137,50 +151,66 @@ class Pin extends React.Component<Props, State> {
 				prev.focus();
 			});
 		};
+
+		if (isNumeric) {
+			keyboard.shortcut('arrowup, arrowdown', e, () => {
+				e.preventDefault();
+			});
+		};
 	};
 
 	onInputKeyUp = () => {
-		const { pinLength: size } = this.props;
-		const pin = this.getValue();
+		const { pinLength } = this.props;
 
-		if (pin.length === size) {
+		if (this.getValue().length === pinLength) {
 			this.check();
 		};
 	};
 
 	onInputChange = (index: number, value: string) => {
-		const { isVisible } = this.props;
+		const { isVisible, isNumeric } = this.props;
 		const input = this.inputRefs[index];
 		const next = this.inputRefs[index + 1];
 
-		if (!value) {
+		let newValue = value;
+		if (isNumeric) {
+			newValue = newValue.replace(/[^\d]/g, '');
+		};
+		if (newValue.length > 1) {
+			newValue = newValue.slice(0, 1);
+		};
+
+		if (newValue != value) {
+			input.setValue(newValue);
+		};
+
+		if (!newValue) {
 			input.setType('text');
 			return;
-		}
+		};
 
 		if (next) {
 			next.focus();
 		};
 
-		if (isVisible) {
-			return;
+		if (!isVisible) {
+			this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
 		};
-
-		this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
 	};
 
-	onPaste (e, index: number) {
+	async onPaste (e: any, index: number) {
 		e.preventDefault();
 
 		const { pinLength } = this.props;
-		const data = e.clipboardData;
-		const value = String(data.getData('text/plain') || '').split('');
+		const text = await navigator.clipboard.readText();
+		const value = String(text || '').split('');
 
 		for (let i = index; i < pinLength; i++) {
 			const input = this.inputRefs[i];
 			const char = value[i - index] || '';
 
 			input.setValue(char);
+			input.setType('text');
 		};
 
 		this.inputRefs[pinLength - 1].focus();

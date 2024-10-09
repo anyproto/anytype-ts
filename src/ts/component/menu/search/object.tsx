@@ -93,7 +93,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 				if (isBig && !item.isAdd) {
 					props.withDescription = true;
-					props.forceLetter = true;
 					props.iconSize = 40;
 				} else {
 					props.caption = (type ? type.name : undefined);
@@ -246,12 +245,18 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (canAdd && canWrite) {
 			let name = '';
+			let icon = 'plus';
+
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
 					name = U.Common.sprintf(addParam.nameWithFilter, filter);
 				} else 
 				if (addParam.name) {
 					name = addParam.name;
+				};
+
+				if (addParam.icon) {
+					icon = addParam.icon;
 				};
 			};
 
@@ -264,7 +269,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					items.unshift({ isDiv: true });
 				};
 
-				items.unshift({ id: 'add', icon: 'plus', name, isAdd: true });
+				items.unshift({ id: 'add', icon, name, isAdd: true });
 			};
 		};
 
@@ -272,7 +277,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
@@ -301,7 +306,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const templateType = S.Record.getTemplateType();
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(data.filters || []);
 
 		let sorts = [].concat(data.sorts || []);
@@ -315,14 +320,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (skipIds && skipIds.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
+			filters.push({ relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo, I.NavigationType.Link ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id });
+			filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() });
+			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id });
 		};
 
 		if (clear) {
@@ -399,7 +404,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
+		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose, route } = data;
 		const addParam: any = data.addParam || {};
 		const object = S.Detail.get(rootId, blockId);
 
@@ -472,7 +477,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			} else {
 				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.search, (message: any) => {
+				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route || analytics.route.search, (message: any) => {
 					process(message.details, true);
 					close();
 				});

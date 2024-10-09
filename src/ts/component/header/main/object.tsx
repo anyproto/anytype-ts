@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Sync, ObjectName } from 'Component';
+import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
 import { I, S, U, J, keyboard, translate } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
@@ -36,13 +36,14 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const object = S.Detail.get(rootId, rootId, J.Relation.template);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !U.Object.isTypeOrRelationLayout(object.layout);
-		const canSync = showMenu && !object.templateIsBundled && !root.isObjectParticipant();
+		const canSync = showMenu && !object.templateIsBundled && !U.Object.isParticipantLayout(object.layout);
 		const cmd = keyboard.cmdSymbol();
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 		const bannerProps: any = {};
 
 		let center = null;
 		let banner = I.BannerType.None;
+		let locked = '';
 
 		if (object.isArchived && U.Space.canMyParticipantWrite()) {
 			banner = I.BannerType.IsArchived;
@@ -53,6 +54,13 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		if (allowedTemplateSelect && templatesCnt) {
 			banner = I.BannerType.TemplateSelect;
 			bannerProps.count = templatesCnt + 1;
+		};
+
+		if (isLocked) {
+			locked = translate('headerObjectLocked');
+		} else
+		if (U.Object.isTypeOrRelationLayout(object.layout) && !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
+			locked = translate('commonSystem');
 		};
 
 		if (banner == I.BannerType.None) {
@@ -67,7 +75,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 					<div className="inner">
 						<IconObject object={object} size={18} />
 						<ObjectName object={object} />
-						{isLocked ? <Icon className="lock" /> : ''}
+						{locked ? <Label text={locked} className="lock" /> : ''}
 					</div>
 				</div>
 			);
@@ -87,8 +95,8 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				</div>
 
 				<div className="side right">
-					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" tooltipCaption={`${cmd} + Shift + R`} className="relation" onClick={this.onRelation} /> : ''}
-					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} /> : ''}
+					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" tooltipCaption={`${cmd} + Shift + R`} className="relation withBackground" onClick={this.onRelation} /> : ''}
+					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} /> : ''}
 				</div>
 			</React.Fragment>
 		);

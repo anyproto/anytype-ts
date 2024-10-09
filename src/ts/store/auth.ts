@@ -165,7 +165,6 @@ class AuthStore {
                 this.tokenSet('');
 			});
 
-			analytics.event('LogOut');
 			Renderer.send('logout');
 		};
 
@@ -182,6 +181,7 @@ class AuthStore {
 		S.Record.clearAll();
 		S.Menu.closeAllForced();
 		S.Notification.clear();
+		S.Chat.clearAll();
 
 		this.clearAll();
 		Storage.logout();

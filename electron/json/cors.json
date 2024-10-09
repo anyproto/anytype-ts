@@ -120,7 +120,8 @@
 		"https://sketchfab.com",
 		"https://media.sketchfab.com",
 		"https://sentry.io",
-		"https://*.any.coop"
+		"https://*.any.coop",
+		"https://*.amplitude.com"
 	],
 
 	"script-src-elem": [

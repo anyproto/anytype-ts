@@ -61,6 +61,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const members = this.getParticipantList();
 		const length = members.length;
 		const isShareActive = U.Space.isShareActive();
+		const isSpaceOwner = U.Space.isMyOwner();
 
 		let limitLabel = '';
 		let limitButton = '';
@@ -88,42 +89,52 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			let tag = null;
 			let button = null;
 
-			if (item.isJoining) {
-				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
-				button = (
-					<Button
-						className="c36"
-						color="blank"
-						text={translate('popupSettingsSpaceShareViewRequest')}
-						onClick={() => this.onJoinRequest(item)}
-					/>
-				);
+			if (isSpaceOwner) {
+				if (isCurrent) {
+					button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
+				} else
+				if (item.isJoining) {
+					button = (
+						<Button
+							className="c36"
+							color="blank"
+							text={translate('popupSettingsSpaceShareViewRequest')}
+							onClick={() => this.onJoinRequest(item)}
+						/>
+					);
+				} else 
+				if (item.isRemoving) {
+					button = (
+						<Button
+							className="c36"
+							color="blank"
+							text={translate('commonApprove')}
+							onClick={() => this.onLeaveRequest(item)}
+						/>
+					);
+				} else {
+					button = (
+						<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item)}>
+							<div className="item">
+								<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
+							</div>
+							<Icon className="arrow dark" />
+						</div>
+					);
+				};
 			} else 
-			if (item.isRemoving) {
-				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
-				button = (
-					<Button
-						className="c36"
-						color="blank"
-						text={translate('commonApprove')}
-						onClick={() => this.onLeaveRequest(item)}
-					/>
-				);
+			if (item.isActive) {
+				button = <Label color="grey" text={translate(`participantPermissions${item.permissions}`)} />;
 			} else 
 			if (item.isDeclined || item.isRemoved) {
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
-			} else
-			if (item.isOwner) {
-				button = <Label color="grey" text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
-			} else {
-				button = (
-					<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item)}>
-						<div className="item">
-							<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
-						</div>
-						<Icon className="arrow light" />
-					</div>
-				);
+			};
+
+			if (item.isJoining) {
+				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
+			} else 
+			if (item.isRemoving) {
+				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
 			};
 		
 			return (
@@ -165,8 +176,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 
 					<div className="icons">
-						<Icon className="question" onClick={this.onInfo} />
-						{space.isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
+						<Icon className="question withBackground" onClick={this.onInfo} />
+						{space.isShared ? <Icon id="button-more-space" className="more withBackground" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 
@@ -178,7 +189,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						<div className="inviteLinkWrapper">
 							<div className="inputWrapper">
 								<Input ref={ref => this.refInput = ref} readonly={true} value={U.Space.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
-								<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
+								<Icon id="button-more-link" className="more withBackground" onClick={this.onMoreLink} />
 							</div>
 							<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
 						</div>
@@ -196,7 +207,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				</div>
 
 				<div id="sectionMembers" className="section sectionMembers">
-					<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
+					<Title text={translate('commonMembers')} />
 
 					{showLimit ? (
 						<div className="row payment">

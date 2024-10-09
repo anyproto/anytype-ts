@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, U, J, analytics, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, Relation, Action, Preview, translate } from 'Lib';
 
 import CellText from './text';
 import CellSelect from './select';
@@ -16,6 +16,7 @@ interface Props extends I.Cell {
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	maxWidth?: number;
+	recordIdx?: number;
 };
 
 const Cell = observer(class Cell extends React.Component<Props> {
@@ -63,6 +64,23 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		];
 
 		let CellComponent: any = null;
+		let placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`); 
+
+		if (!canEdit) {
+			placeholder = translate(`placeholderCellCommon`);
+		};
+
+		const props = {
+			...this.props,
+			ref: ref => this.ref = ref,
+			id,
+			key: id,
+			canEdit,
+			relation,
+			placeholder,
+			onChange: this.onChange,
+		};
+
 		switch (relation.format) {
 			default:
 			case I.RelationType.ShortText:
@@ -105,15 +123,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
-				<CellComponent 
-					ref={ref => this.ref = ref} 
-					{...this.props} 
-					id={id} 
-					key={id}
-					canEdit={canEdit}
-					relation={relation}
-					onChange={this.onChange} 
-				/>
+				<CellComponent {...props} />
 			</div>
 		);
 	};
@@ -164,7 +174,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder, isInline } = this.props;
+		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, cellPosition, placeholder, isInline } = this.props;
 		const record = getRecord(recordId);
 		const relation = this.getRelation();
 
@@ -177,9 +187,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 		if (!canEdit) {
 			if (Relation.isUrl(relation.format) && value) {
-				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
+				Action.openUrl(Relation.getUrlScheme(relation.format, value) + value);
+				return;
 			};
-			return;
+
+			if (relation.format == I.RelationType.Checkbox) {
+				return;
+			};
 		};
 
 		const { config } = S.Common;
@@ -187,6 +201,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 		const className = [];
+		const pageContainer = $(this.props.pageContainer);
 
 		if (menuClassName) {
 			className.push(menuClassName);
@@ -222,11 +237,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				this.ref.onClick();
 			};
 
+			keyboard.disableSelection(true);
 			win.trigger('resize');
 		};
 
 		const setOff = () => {
 			keyboard.disableBlur(false);
+			keyboard.disableSelection(false);
 
 			if (this.ref && this.ref.onBlur) {
 				this.ref.onBlur();
@@ -260,6 +277,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				relation: observable.box(relation),
 				record,
 				placeholder,
+				canEdit,
 				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);
@@ -363,9 +381,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 				if (e.shiftKey && value) {
 					const scheme = Relation.getUrlScheme(relation.format, value);
-					Renderer.send('urlOpen', scheme + value);
+					Action.openUrl(scheme + value);
 
 					ret = true;
+					break;
+				};
+
+				if (!value) {
 					break;
 				};
 
@@ -391,7 +413,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 						switch (item.id) {
 							case 'go': {
-								Renderer.send('urlOpen', scheme + value);
+								Action.openUrl(scheme + value);
 								analytics.event('RelationUrlOpen');
 								break;
 							};
@@ -429,6 +451,17 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			return;
 		};
 
+		const bindContainerClick = () => {
+			pageContainer.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => { 
+				if (!$(e.target).parents(`#${cellId}`).length) {
+					S.Menu.closeAll(J.Menu.cell);
+					setOff();
+
+					pageContainer.off(`mousedown.cell${cellId}`);
+				};
+			});
+		};
+
 		if (menuId) {
 			if (S.Common.cellId != cellId) {
 				S.Common.cellId = cellId;
@@ -442,11 +475,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					setOn();
 				};
 
-				$(pageContainer).off('mousedown.cell').on('mousedown.cell', (e: any) => { 
-					if (!$(e.target).parents(`#${cellId}`).length) {
-						S.Menu.closeAll(J.Menu.cell); 
-					};
-				});
+				bindContainerClick();
 
 				if (!config.debug.ui) {
 					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Menu.cell));
@@ -459,6 +488,10 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			};
 		} else {
 			setOn();
+
+			if (!canEdit && Relation.isText(relation.format)) {
+				bindContainerClick();
+			};
 		};
 	};
 

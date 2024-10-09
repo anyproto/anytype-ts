@@ -31,10 +31,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	render () {
-		const { error, iconOption, usecase, isLoading } = this.state;
+		const { error, iconOption, isLoading } = this.state;
 		const { onSpaceTypeTooltip } = this.props;
+		const usecase = this.getUsecase(this.state.usecase);
 		const space = {
 			layout: I.ObjectLayout.SpaceView,
+			name: usecase.name,
 			iconOption,
 		};
 		const options = this.getUsecaseOptions();
@@ -52,7 +54,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							id="spaceIcon"
 							size={96}
 							object={space}
-							forceLetter={true}
 							canEdit={false}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
 						/>
@@ -161,14 +162,18 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			{ id: I.Usecase.Strategic, icon: 'bulb' },
         ]));
 
-		return ret.map((it: any) => ({
-			...it,
-			name: translate(`usecase${it.id}Title`),
-			description: translate(`usecase${it.id}Label`),
-			withDescription: true,
-			iconSize: 40,
-			object: { iconEmoji: `:${it.icon}:` }
-		}));
+		return ret.map(it => {
+			const name = translate(`usecase${it.id}Title`);
+
+			return {
+				...it,
+				name,
+				description: translate(`usecase${it.id}Label`),
+				withDescription: true,
+				iconSize: 40,
+				object: { name, iconEmoji: `:${it.icon}:` }
+			};
+		});
 	};
 
 	onSelectUsecase (id: any) {
@@ -190,7 +195,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { param } = this.props;
 		const { isLoading, usecase, iconOption } = this.state;
 		const { data } = param;
-		const { onCreate } = data;
+		const { onCreate, route } = data;
 
 		if (isLoading) {
 			return;
@@ -207,7 +212,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			};
 		};
 
-		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
+		const details = {
+			name,
+			iconOption,
+			spaceDashboardId: I.HomePredefinedId.Last,
+		};
+
+		C.WorkspaceCreate(details, usecase, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (message.error.code) {
@@ -215,16 +226,23 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				return;
 			};
 
-			const ids = U.Menu.getVaultItems().map(it => it.id);
-			ids.unshift(message.objectId);
-			Storage.set('spaceOrder', ids, true);
+			C.WorkspaceSetInfo(message.objectId, details, () => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+					return;
+				};
 
-			if (onCreate) {
-				onCreate(message.objectId);
-			};
+				const ids = U.Menu.getVaultItems().map(it => it.id);
+				ids.unshift(message.objectId);
+				Storage.set('spaceOrder', ids, true);
 
-			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route: analytics.route.navigation });
-			analytics.event('SelectUsecase', { type: usecase });
+				if (onCreate) {
+					onCreate(message.objectId);
+				};
+
+				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route });
+				analytics.event('SelectUsecase', { type: usecase });
+			});
 		});
 	};
 

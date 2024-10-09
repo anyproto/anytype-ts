@@ -20,6 +20,7 @@
 	"dist/nativeMessagingHost.exe",
 	"dist/nativeMessagingHost",
 	"dist/*.node",
+	"dist/cmaps/**/*",
 	"dist/font/**/*",
 	"dist/workers/**/*",
 	"!node_modules/**/*",
@@ -74,5 +75,9 @@
     {
 		"from": "node_modules/util",
 		"to": "node_modules/util"
+    },
+    {
+		"from": "node_modules/mime-types",
+		"to": "node_modules/mime-types"
     }
 ]

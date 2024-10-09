@@ -5,6 +5,7 @@ export default {
 	iconPage: 256,
 	image: 1920,
 	cover: 1920,
+	coverPadding: 356,
 	menuBorder: 10,
 	header: 52,
 
@@ -17,7 +18,7 @@ export default {
 	},
 
 	sidebar: {
-		width: { min: 240, max: 500, default: 336, close: 180 }
+		width: { min: 240, max: 500, default: 336, close: 180 },
 	},
 
 	table: {

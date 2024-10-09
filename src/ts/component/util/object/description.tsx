@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, U } from 'Lib';
+import { U } from 'Lib';
 
 interface Props {
 	object: any;
@@ -15,13 +15,17 @@ class Description extends React.Component<Props> {
 	render () {
 		const { className } = this.props;
 		const object = this.props.object || {};
-		const description = U.Object.isNoteLayout(object.layout) ? (object.description || object.snippet) : '';
 
-		return (
-			<div className={className}>
-				{description}
-			</div>
-		);
+		let { description } = object;
+		if (U.Object.isNoteLayout(object.layout)) {
+			description = '';
+		};
+
+		if (!description) {
+			return null;
+		};
+
+		return <div className={className} dangerouslySetInnerHTML={{ __html: U.Common.sanitize(description) }} />;
 	};
 	
 };

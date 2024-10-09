@@ -38,10 +38,7 @@
 					}
 
 					.side.right {
-						.icon { 
-							flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; vertical-align: top; opacity: 0; 
-							cursor: default; 
-						}
+						.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; vertical-align: top; opacity: 0; cursor: default; }
 						.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
 						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
@@ -77,7 +74,7 @@
             .card { width: 246px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; cursor: default; }
 			.card {
 				.cardContent { 
-					border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; padding: 16px; background: var(--color-bg-primary); transition: border-color $transitionCommon;
+					border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; background: var(--color-bg-primary); transition: border-color $transitionCommon;
 					box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 				}
 
@@ -124,7 +121,7 @@
 
 			.card.add.isOver.bottom::before { top: -6px; }
 			.card.isEditing {
-				.cardContent { border: 2px solid var(--color-system-accent-100); padding: 15px; }
+				.cardContent { border: 2px solid var(--color-system-accent-100); }
 			}
         }
     }

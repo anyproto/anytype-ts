@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, IconObject, Switch, Select } from 'Component';
+import { Icon, IconObject, Switch, Select, ObjectName } from 'Component';
 import { I, U } from 'Lib';
 
 class MenuItemVertical extends React.Component<I.MenuItem> {
@@ -10,13 +10,16 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 	render () {
 		const { 
 			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore,
-			className, style, iconSize, switchValue, selectValue, options, readonly, forceLetter, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
-			selectMenuParam, subComponent
+			className, style, iconSize, switchValue, selectValue, options, readonly, withDefault, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
+			selectMenuParam, subComponent, note, sortArrow
 		} = this.props;
 		const cn = [ 'item' ];
 		const withArrow = arrow || subComponent;
 
 		let hasClick = true;
+		let iconMainElement = null;
+		let iconSideElement = null;
+		let nameElement = <div className="name">{name}</div>;
 
 		if (className) {
 			cn.push(className);
@@ -54,9 +57,9 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			cn.push('isReadonly');
 		};
 
-		let iconElement = null;
 		if (object) {
-			iconElement = <IconObject object={object} size={iconSize} forceLetter={forceLetter} />;
+			iconMainElement = <IconObject object={object} size={iconSize} />;
+			nameElement = <ObjectName object={object} />;
 
 			if (object.isHidden) {
 				cn.push('isHidden');
@@ -64,19 +67,42 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		} else 
 		if (icon) {
 			cn.push('withIcon');
-			iconElement = <Icon className={[ icon, 'iconMain' ].join(' ')} inner={inner} />;
+			iconMainElement = <Icon className={[ icon, 'iconMain' ].join(' ')} inner={inner} />;
+		};
+
+		if (withArrow) {
+			iconSideElement = <Icon className="arrow" />;
+		};
+		if (checkbox) {
+			iconSideElement = <Icon className="chk" />;
+		};
+		if (note) {
+			cn.push('withNote');
+			iconSideElement = (
+				<Icon
+					className="note"
+					tooltip={note}
+					tooltipY={I.MenuDirection.Top}
+					tooltipClassName="menuNote"
+				/>
+			);
+		};
+		if (undefined !== sortArrow) {
+			cn.push('withSortArrow');
+			iconSideElement = <Icon className={`sortArrow c${sortArrow}`} />;
 		};
 
 		let content = null;
 		if (withDescription) {
 			content = (
 				<React.Fragment>
-					{iconElement}
+					{iconMainElement}
 					<div className="info">
 						<div className="txt">
-							<div className="name">{name}</div>
+							{nameElement}
 							<div className="descr">{description}</div>
 						</div>
+						{iconSideElement}
 					</div>
 				</React.Fragment>
 			);
@@ -120,8 +146,9 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						className="clickable" 
 						onMouseDown={hasClick ? undefined : onClick}
 					>
-						{iconElement}
-						<div className="name">{name}</div>
+						{iconMainElement}
+						{nameElement}
+						{iconSideElement}
 					</div>
 					{additional}
 				</React.Fragment>
@@ -139,8 +166,6 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				style={style}
 			>
 				{content}
-				{withArrow ? <Icon className="arrow" /> : ''}
-				{checkbox ? <Icon className="chk" /> : ''}
 			</div>
 		);
     };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
-import { I, C, S, U, focus, translate, analytics, Renderer, keyboard, Preview } from 'Lib';
+import { I, C, S, U, focus, translate, analytics, Action, keyboard, Preview } from 'Lib';
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<I.BlockComponent> {
 
@@ -95,12 +95,12 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 							{...U.Common.dataProps({ href: url })}
 						>
 							<div className={cnl.join(' ')}>
-								<ObjectName object={object} />
-								<ObjectDescription object={object} />
 								<div className="link">
 									{iconImage ? <img src={S.Common.imageUrl(iconImage, 16)} className="fav" /> : ''}
 									{U.Common.shortUrl(url)}
 								</div>
+								<ObjectName object={object} />
+								<ObjectDescription object={object} />
 
 								{archive}
 							</div>
@@ -248,7 +248,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	};
 
 	open () {
-		Renderer.send('urlOpen', U.Common.urlFix(this.getUrl()));
+		Action.openUrl(this.getUrl());
 		analytics.event('BlockBookmarkOpenUrl');
 	};
 	

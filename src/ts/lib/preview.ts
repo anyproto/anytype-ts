@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, keyboard, sidebar } from 'Lib';
+import { I, S, U, J, keyboard, sidebar, analytics } from 'Lib';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
@@ -169,13 +169,28 @@ class Preview {
 		param.type = param.type || I.PreviewType.Default;
 		param.delay = (undefined === param.delay) ? DELAY_PREVIEW : param.delay;
 		
-		const { element, rect, passThrough } = param;
+		const { rect, passThrough } = param;
+		const element = $(param.element);
 		const obj = $('#preview');
 
 		if (!element && !rect) {
 			return;
 		};
-		
+
+		if (rect) {
+			param = Object.assign(param, rect);
+		} else 
+		if (element && element.length) {
+			const offset = element.offset();
+
+			param = Object.assign(param, { 
+				x: offset.left, 
+				y: offset.top, 
+				width: element.outerWidth(), 
+				height: element.outerHeight(),
+			});
+		};
+
 		if (element) {
 			element.off('mouseleave.preview').on('mouseleave.preview', () => {
 				window.clearTimeout(this.timeout.preview); 
@@ -288,6 +303,7 @@ class Preview {
 	 */
 	shareTooltipShow () {
 		S.Common.shareTooltipSet(true);
+		analytics.event('OnboardingTooltip', { id: 'ShareApp' });
 	};
 
 	/**

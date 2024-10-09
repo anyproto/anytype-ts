@@ -212,7 +212,12 @@ export enum FileSyncStatus {
 	NotSynced		 = 2,
 };
 
-export enum StoreTab {
+export enum ObjectContainerType {
+	Object			 = 'object',
+	List			 = 'list',
+	File			 = 'file',
+	Media			 = 'media',
+	Bookmark		 = 'bookmark',
 	Type			 = 'type',
 	Relation		 = 'relation',
 };
@@ -264,4 +269,9 @@ export interface GraphSettings {
 	cluster: boolean;
 	filter: string;
 	depth: number;
+};
+
+export interface FocusState {
+	focused: string;
+	range: I.TextRange;
 };

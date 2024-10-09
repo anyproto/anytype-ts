@@ -4,11 +4,11 @@
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
-	.note { 
+	> .note { 
 		background: linear-gradient(270deg, #262cd2 0%, #0c82ef 100%); border-radius: 4px; height: 80px; color: var(--color-bg-primary); position: absolute; 
 		left: 16px; top: 38px; width: calc(100% - 32px); line-height: 80px; text-align: center; z-index: 2;
 	}
-	.note {
+	> .note {
 		.inner { display: inline-block; width: 704px; margin: 0px auto; vertical-align: middle; line-height: 1; }
 		.sides { display: flex; }
 		.side.left { width: 576px; margin-right: 34px; text-align: left; @include text-common; line-height: 20px; }
@@ -17,9 +17,10 @@
 
 	.editor {
 		.icon.buttonAdd { 
-			width: 20px; height: 20px; position: absolute; z-index: 5; user-select: none; background-image: url('~img/icon/block/add.svg'); 
-			transition: opacity 0.075s ease-in-out, transform 0.075s ease-in-out; display: none;
+			width: 19px; height: 19px; position: absolute; z-index: 5; user-select: none; background-image: url('~img/icon/block/add0.svg'); 
+			transition: opacity 0.075s ease-in-out, transform 0.075s ease-in-out, background-image 0.1s $easeInQuint; display: none;
 		}
+		.icon.buttonAdd:hover { background-image: url('~img/icon/block/add1.svg'); }
 		.icon.buttonAdd.show { display: block; }
 		
 		.blockLast { margin-left: -50px; }
@@ -77,8 +78,8 @@
 
 	.blocks {
 		.block {
-			.wrapContent { width: 100% !important; }
-			.wrapContent {
+			> .wrapContent { width: 100% !important; }
+			> .wrapContent {
 				.link { white-space: nowrap; }
 				.note { text-align: right; color: var(--color-text-tertiary); display: block; }
 		
@@ -96,8 +97,22 @@
 			}
 		}
 
+		.block.align1 {
+			> .wrapContent {
+				.flex { justify-content: center; }
+			}
+		}
+
 		.block.blockText {
-			 .wrapContent { min-height: 24px; }
+			> .wrapContent { min-height: 24px; }
+
+			&.textCallout {
+				> .wrapContent {
+					> .selectionTarget {
+						> .dropTarget { padding: 16px; }
+					}
+				}
+			}
 		}
 		.block.blockDiv { margin: 30px 0px; }
 	}
@@ -174,6 +189,29 @@
 	.editorControls { height: 70px; margin-bottom: 8px; }
 }
 
+/* Chat */
+
+.editorWrapper.isChat {
+	.blocks { max-width: 704px; width: calc(100% - 32px); margin: 0px auto; padding: 0px; user-select: none; }
+	.blocks {
+		.block {
+			.wrapMenu { display: none; }
+			.wrapContent { width: 100%; }
+		}
+		.block.blockChat { padding: 0px; margin: 0px; }
+
+		.editorControls { height: 52px; width: 100%; margin-bottom: 8px; }
+
+		.headSimple {
+			.side.right { display: none; }
+		}
+	}
+}
+
+.editorWrapper.isChat.withIcon {
+	.controlButtons { left: 0px; }
+}
+
 /* Set, Collection, Date */
 
 .editorWrapper.isSet,
@@ -205,9 +243,12 @@
 }
 
 .editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withIconAndCover { padding-top: 356px; }
+.editorWrapper.isCollection.withIconAndCover,
+.editorWrapper.isChat.withIconAndCover { padding-top: 356px; }
+
 .editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withIconAndCover {
+.editorWrapper.isCollection.withIconAndCover,
+.editorWrapper.isChat.withIconAndCover {
 	.controlButtons { left: 0px !important; }
 }
 

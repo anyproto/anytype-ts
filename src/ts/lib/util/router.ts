@@ -60,6 +60,8 @@ class UtilRouter {
 			return;
 		};
 
+		param = param || {};
+
 		const { replace, animate, onFadeOut, onFadeIn, onRouteChange, delay } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
@@ -72,7 +74,7 @@ class UtilRouter {
 		S.Menu.closeAll();
 		S.Popup.closeAll();
 
-		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, J.Constant.blankRouteId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
@@ -127,10 +129,8 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route?: string, sendEvent?: boolean, callBack?: () => void) {
-		const { space } = S.Common;
-		const { accountSpaceId } = S.Auth;
-
-		if (!id || (space == id)) {
+		if (!id) {
+			console.log('[UtilRouter].swithSpace: id is empty');
 			return;
 		};
 
@@ -142,9 +142,7 @@ class UtilRouter {
 
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
-				if (id != accountSpaceId) {
-					this.switchSpace(accountSpaceId, route, false, callBack);
-				};
+				U.Data.onAuthWithoutSpace();
 				return;
 			};
 

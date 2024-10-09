@@ -3,21 +3,23 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, translate } from 'Lib';
-import ListWidget from 'Component/list/widget';
+import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
+
+import SidebarWidget from './widget';
+import SidebarObject from './object';
 
 const Sidebar = observer(class Sidebar extends React.Component {
 	
 	private _isMounted = false;
 	node = null;
-	refBody = null;
     ox = 0;
 	oy = 0;
 	sx = 0;
-	refList = null;
 	frame = 0;
 	width = 0;
 	movedX = false;
+	refWidget = null;
+	refObject = null;
 
 	constructor (props) {
 		super(props);
@@ -26,31 +28,24 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		this.onResizeMove = this.onResizeMove.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onHandleClick = this.onHandleClick.bind(this);
+		this.onToggleClick = this.onToggleClick.bind(this);
+		this.onToggleContext = this.onToggleContext.bind(this);
 	};
 
     render() {
+		const { showVault, showObject } = S.Common;
         const cn = [ 'sidebar' ];
-		const space = U.Space.getSpaceview();
 		const cmd = keyboard.cmdSymbol();
-		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-		const memberCnt = participants.filter(it => it.isActive).length;
-
-		let status = '';
-		if (space && !space._empty_) {
-			if (space.isShared) {
-				status = U.Common.sprintf('%d %s', memberCnt, U.Common.plural(memberCnt, translate('pluralMember')));
-			} else {
-				status = translate(`spaceAccessType${space.spaceAccessType}`);
-			};
-		};
 
         return (
 			<React.Fragment>
 				<Icon 
 					id="sidebarToggle"
+					className="withBackground"
 					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 					tooltipY={I.MenuDirection.Bottom}
-					onClick={() => sidebar.toggleOpenClose()}
+					onClick={this.onToggleClick}
+					onContextMenu={this.onToggleContext}
 				/>
 
 				<div 
@@ -58,19 +53,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebar" 
 					className={cn.join(' ')} 
 				>
-					<div className="inner">
-						<div id="sidebarHead" className="head" onClick={this.onHeadClick}>
-							{status ? <div className="status">{status}</div> : ''}
-						</div>
-						<div 
-							id="sidebarBody"
-							ref={ref => this.refBody = ref}
-							className="body"
-						>
-							<ListWidget ref={ref => this.refList = ref} {...this.props} />
-						</div>
-					</div>
-
+					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : <SidebarWidget {...this.props} ref={ref => this.refWidget = ref} />}
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
@@ -79,18 +62,35 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		);
     };
 
-	// Lifecycle Methods
-
 	componentDidMount (): void {
 		this._isMounted = true;
+		this.init();
 
 		sidebar.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
 	};
 
 	componentWillUnmount (): void {
 		this._isMounted = false;
 
 		Preview.tooltipHide(true);
+	};
+
+	init () {
+		const { showVault } = S.Common;
+		const node = $(this.node);
+		const vault = $(S.Common.getRef('vault').node);
+
+		if (showVault) {
+			node.addClass('withVault');
+			vault.removeClass('isHidden');
+		} else {
+			node.removeClass('withVault');
+			vault.addClass('isHidden');
+		};
 	};
 
 	setActive (id: string): void {
@@ -172,6 +172,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			this.width = w;
+			this.refObject?.resize();
 		});
 	};
 
@@ -180,7 +181,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		keyboard.setResize(false);
 		raf.cancel(this.frame);
 
-		$('body').removeClass('rowResize colResize');
+		$('body').removeClass('colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 
 		window.setTimeout(() => this.movedX = false, 15);
@@ -188,15 +189,16 @@ const Sidebar = observer(class Sidebar extends React.Component {
 
 	onHandleClick () {
 		if (!this.movedX) {
-			sidebar.toggleOpenClose();
+			this.onToggleClick();
 		};
 	};
 
-	onHeadClick () {
-		const space = U.Space.getSpaceview();
-		if (space && space.isShared) {
-			S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
-		};
+	onToggleClick () {
+		sidebar.toggleOpenClose();
+	};
+
+	onToggleContext () {
+		U.Menu.sidebarContext('#sidebarToggle');
 	};
 
 });

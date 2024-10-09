@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
+const si = require('systeminformation');
 
 const MenuManager = require('./menu.js');
 const ConfigManager = require('./config.js');
@@ -140,15 +141,15 @@ class Api {
 		WindowManager.command(win, cmd, param);
 	};
 
-	windowOpen (win, route) {
+	openWindow (win, route) {
 		WindowManager.createMain({ route, isChild: true });
 	};
 
-	urlOpen (win, url) {
+	openUrl (win, url) {
 		shell.openExternal(url);
 	};
 
-	pathOpen (win, path) {
+	openPath (win, path) {
 		shell.openPath(path);
 	};
 
@@ -213,6 +214,12 @@ class Api {
 	reload (win, route) {
 		win.route = route;
 		win.webContents.reload();
+	};
+
+	systemInfo (win) {
+		si.getStaticData().then(data => {
+			Util.send(win, 'commandGlobal', 'systemInfo', data);
+		});
 	};
 
 };
