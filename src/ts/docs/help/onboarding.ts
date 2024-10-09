@@ -359,6 +359,7 @@ export default {
 			],
 		};
 	},
+	
 	collaboration: () => {
 		const width = 432;
 		return {
