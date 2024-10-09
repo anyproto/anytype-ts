@@ -100,7 +100,7 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 				.item {
 					.name { @include text-header3; @include clamp1; font-weight: 500; margin: 16px 16px 2px 16px}
 					.author { @include text-small; color: var(--color-text-secondary); margin: 0 16px 14px 16px;}
-					.picture-container {
+					.pictureWrapper {
 						aspect-ratio: 416/287;
 						background-color: var(--color-shape-tertiary);
 						display: grid;

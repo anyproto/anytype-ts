@@ -85,7 +85,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 				<div className="item" onClick={e => this.onClick(e, item)}>
 					<div className="name">{item.title}</div>
 					<div className="author" onClick={() => onAuthor(item.author)}>{U.Common.sprintf(translate('popupUsecaseAuthorShort'), getAuthor(item.author))}</div>
-					<div className='picture-container'>
+					<div className='pictureWrapper'>
 						<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
 					</div>
 				</div>
