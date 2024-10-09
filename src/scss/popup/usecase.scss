@@ -22,11 +22,6 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 		}
 
 		.page.pageList {
-			.banner { 
-				padding: 16px; background-image: $hl-gradient; display: flex; align-items: center; justify-content: center; @include text-paragraph; 
-				color: var(--color-control-accent);
-			}
-
 			.mid { padding: 56px 56px 0px 56px; text-align: center; }
 			.mid {
 				.title { margin: 0px 0px 2px 0px; }
