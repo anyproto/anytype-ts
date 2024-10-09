@@ -369,7 +369,7 @@ export default {
 					description: translate('onboardingCollaborationText'),
 					noButton: true,
 					param: {
-						element: '#popup-usecase #category-collaboration',
+						element: '#popupUsecase #category-collaboration',
 						className: 'isSpace',
 						classNameWrap: 'fixed',
 						vertical: I.MenuDirection.Bottom,
