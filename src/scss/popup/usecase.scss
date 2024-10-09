@@ -80,7 +80,8 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 				.ReactVirtualized__List { padding: 56px 0px 56px 0px; overflow: visible !important; }
 				.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
 
-				.row { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+				.row { display: grid; gap: 14px; padding-bottom: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+				.row:last-child { padding-bottom: 0px }
 
 				.item { 
   					border: 1px solid var(--color-shape-secondary);

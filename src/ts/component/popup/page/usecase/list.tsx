@@ -107,7 +107,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 					hasFixedWidth={() => {}}
 				>
 					{({ measure }) => (
-						<div key={`gallery-row-${param.index}`} className="row" style={{...param.style, paddingBottom: isLast ? "0" : "14px"}}>
+						<div key={`gallery-row-${param.index}`} className="row" style={param.style}>
 							{item.children.map(child => <Item key={child.id} {...child} />)}
 						</div>
 					)}
