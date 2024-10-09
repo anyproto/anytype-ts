@@ -964,8 +964,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		e.persist();
 
-		console.log('FOCUS', block.getText());
-
 		this.placeholderCheck();
 		this.setValue(block.getText());
 
