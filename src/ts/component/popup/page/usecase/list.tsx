@@ -95,8 +95,6 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 
-			const isLast = param.index === items.length - 1;
-
 			return (
 				<CellMeasurer
 					key={param.key}
