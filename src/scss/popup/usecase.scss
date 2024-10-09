@@ -108,9 +108,7 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 					}
 
 					.picture { 
-						max-width: 354px;
 						width: calc(100% - 32px);
-						max-height: 255px;
 						height: calc(100% - 32px);
 						background-size: cover; background-repeat: no-repeat; background-position: center; 
 						border-radius: 6px;
