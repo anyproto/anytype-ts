@@ -470,7 +470,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	position () {
 		const { id, param } = this.props;
-		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, topline } = param;
 		const borderLeft = this.getBorderLeft();
 		const borderTop = this.getBorderTop();
 		const borderBottom = this.getBorderBottom();
@@ -560,6 +560,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 						y = oy - height - offsetY;
 					};
 					break;
+			};
+
+			if (topline) {
+				y = oy;
 			};
 
 			switch (horizontal) {
@@ -1038,7 +1042,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { param } = this.props;
 		const { element } = param;
 
-		return $(element);
+		return $(element).first();
 	};
 
 	getSize (): { width: number; height: number; } {
