@@ -84,15 +84,9 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 				.row:last-child { padding-bottom: 0px }
 
 				.item { 
-  					border: 1px solid var(--color-shape-secondary);
-  					border-radius: 12px;
-  					overflow: hidden; // Ensures content doesn't overflow rounded corners
-					margin: 0; 
-					border-radius: 12px;
-					padding: 0;
-					box-sizing: border-box;
-					}
-					
+					border: 1px solid var(--color-shape-secondary); border-radius: 12px; overflow: hidden; // Ensures content doesn't overflow rounded corners
+					margin: 0; border-radius: 12px; padding: 0; box-sizing: border-box;
+				}
 				.item {
 					.name { @include text-header3; @include clamp1; font-weight: 500; margin: 16px 16px 2px 16px}
 					.author { @include text-small; color: var(--color-text-secondary); margin: 0 16px 14px 16px;}
@@ -102,13 +96,9 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 						display: grid;
 						place-items: center; 
 					}
-
 					.picture { 
-						width: calc(100% - 32px);
-						height: calc(100% - 32px);
-						background-size: cover; background-repeat: no-repeat; background-position: center; 
-						border-radius: 6px;
-						margin: 0;
+						width: calc(100% - 32px); height: calc(100% - 32px); background-size: cover; background-repeat: no-repeat;
+						background-position: center; border-radius: 6px; margin: 0;
 					}
 				}
 			}
