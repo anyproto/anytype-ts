@@ -188,10 +188,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		C.GalleryDownloadIndex((message: any) => {
 			S.Common.gallery = {
-				categories: (message.categories || []).map(it => {
-					console.log(it.id);
-					return ({ ...it, name: this.categoryName(it.id) });
-				}),
+				categories: (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
 				list: message.list || [],
 			};
 			
