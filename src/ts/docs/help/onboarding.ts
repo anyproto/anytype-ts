@@ -368,7 +368,7 @@ export default {
 					description: translate('popupUsecaseBannerText'),
 					noButton: true,
 					param: {
-						element: '#onboardingCollaborationGalleryAnchor',
+						element: '#category-collaboration',
 						className: 'isSpace',
 						classNameWrap: 'fixed',
 						vertical: I.MenuDirection.Bottom,

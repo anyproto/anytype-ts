@@ -69,7 +69,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			return (
 				<div 
 					className={cn.join(' ')} 
-					id={item.id == 'collaboration' ? 'onboardingCollaborationGalleryAnchor' : ""}
+					id={`category-${item.id}`}
 					onClick={() => this.onCategory(item)}
 				>
 					{item.icon ? <Icon className={item.icon} /> : ''}
