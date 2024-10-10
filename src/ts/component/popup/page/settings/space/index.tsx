@@ -49,7 +49,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const creator = S.Detail.get(J.Constant.subId.space, space.creator);
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
-		const personalSpace = U.Space.getSpaceviewBySpaceId(accountSpaceId);
+		const profile = U.Space.getProfile();
 		const usageCn = [ 'item' ];
 
 		const requestCnt = this.getRequestCnt();
@@ -81,7 +81,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
-		if (personalSpace && (sharedCnt >= personalSpace.sharedSpacesLimit) && !space.isShared) {
+		if ((sharedCnt >= profile.sharedSpacesLimit) && !space.isShared) {
 			canShare = false;
 			canMembers = false;
 		};

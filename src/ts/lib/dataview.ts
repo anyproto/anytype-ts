@@ -101,7 +101,6 @@ class Dataview {
 			keys: J.Relation.default,
 			offset: 0,
 			limit: 0,
-			ignoreWorkspace: false,
 			sources: [],
 			clear: false,
 			collectionId: '',
