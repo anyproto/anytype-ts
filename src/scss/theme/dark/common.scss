@@ -285,6 +285,13 @@ html.themeDark {
 		}
 	}
 
+	#item-add.onboardingElement,
+	#item-gallery.onboardingElement { background-color: unset !important;}
+	#item-add.onboardingElement,
+	#item-gallery.onboardingElement {
+		.iconWrap { background-color: #000000 !important; }
+	}
+
 	/* Sidebar */
 
 	.sidebar { background-color: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
@@ -346,3 +353,6 @@ html.themeDark {
 html.platformWindows.themeDark, html.platformLinux.themeDark {
 	::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 }
+
+.onboardingDimmer { background-color: var(--color-text-inversion); opacity: 0.8; }
+.onboardingElement { background-color: #000000 !important; }

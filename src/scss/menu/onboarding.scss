@@ -1,12 +1,12 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuOnboarding { border: 1px solid #3f3f3f; background-color: #171717; color: #f8f8f8; width: var(--menu-width-value); }
+	.menu.menuOnboarding { border: 1px solid var(--color-shape-secondary-inversion); background-color: var(--color-bg-primary-inversion); color: #f8f8f8; width: var(--menu-width-value); }
 	.menu.menuOnboarding {
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
 
-		.category { @include text-small; font-weight: 500; letter-spacing: -0.12px; color: #9a9a9a; margin: 0px 0px 8px 0px; }
+		.category { @include text-small; font-weight: 500; letter-spacing: -0.12px; color: var(--color-text-secondary-inversion); margin: 0px 0px 8px 0px; }
 		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 700; margin-bottom: 2px; width: calc(100% - 20px); }
 		.descr {
 			.icon { width: 16px; height: 16px; margin: -2px 0px 0px 0px; }
@@ -59,11 +59,11 @@
 			.steps {
 				.step {
 					width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
-					background: #3f3f3f; transition: $transitionAllCommon;
+					background: var(--color-shape-secondary-inversion); transition: $transitionAllCommon;
 				}
 				.step:hover { background: #737373; }
 				.step.active,
-				.step.active:hover { background: #e3e3e3; cursor: default; }
+				.step.active:hover { background: var(--color-text-secondary-inversion); cursor: default; }
 				.step:last-of-type { margin-right: 0px; }
 			}
 
@@ -81,5 +81,4 @@
 	.menu.menuOnboarding.isSpace {
 		video { height: auto; }
 	}
-
 }
