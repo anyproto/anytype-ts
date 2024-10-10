@@ -471,7 +471,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Common.copyToast(translate('commonUrl'), `${J.Constant.protocol}://${U.Object.universalRoute(object)}`);
+				U.Common.copyToast(translate('commonLink'), `${J.Constant.protocol}://${U.Object.universalRoute(object)}`);
 				analytics.event('CopyLink', { route });
 				break;
 			};

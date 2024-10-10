@@ -628,7 +628,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'copyUrl': {
-				U.Common.copyToast(translate('commonUrl'), block.content.url);
+				U.Common.copyToast(translate('commonLink'), block.content.url);
 				break;
 			};
 				
