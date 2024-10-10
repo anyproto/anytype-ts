@@ -107,6 +107,9 @@ html.themeDark {
 	markupsearch { color: var(--color-bg-primary) !important; }
 	markuphighlight { background: #044062 !important; }
 
+	.onboardingDimmer { background-color: var(--color-text-inversion); opacity: 0.8; }
+	.onboardingElement { background-color: #000000 !important; }
+
 	/* Components */
 
 	.loaderWrapper {
@@ -353,6 +356,3 @@ html.themeDark {
 html.platformWindows.themeDark, html.platformLinux.themeDark {
 	::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 }
-
-.onboardingDimmer { background-color: var(--color-text-inversion); opacity: 0.8; }
-.onboardingElement { background-color: #000000 !important; }

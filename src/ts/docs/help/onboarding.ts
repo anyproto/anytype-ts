@@ -114,56 +114,62 @@ export default {
         },
     }),
 
-	basics: () => ({
-		showDimmer: true,
-		param: {
-			noArrow: true,
-			horizontal: I.MenuDirection.Right,
-			topline: true,
-			width: 288,
-			offsetX: -312,
-			noClose: true,
-		},
-		items: [
-			{
-				category: translate('onboardingSpacesTitle'),
-				description: translate('onboardingSpacesText'),
-				param: {
-					element: '#widget-space',
-				}
+	basics: () => {
+
+		return ({
+			showDimmer: true,
+			param: {
+				noArrow: true,
+				horizontal: I.MenuDirection.Right,
+				topline: true,
+				width: 288,
+				offsetX: -312,
+				noClose: true,
+				highlightNodes: null,
+				hiddenElements: [ '#widget-buttons', '.widgetView', '.widgetTree' ]
 			},
-			{
-				category: translate('onboardingAllObjectTitle'),
-				description: translate('onboardingAllObjectText'),
-				param: {
-					element: '#widget-buttons',
-				}
-			},
-			{
-				category: translate('onboardingWidgetsTitle'),
-				description: translate('onboardingWidgetsText'),
-				param: {
-					element: '.widgetView',
-				}
-			},
-			{
-				category: translate('onboardingMultipleSpacesTitle'),
-				description: translate('onboardingMultipleSpacesText'),
-				param: {
-					element: '#vault #item-add',
-					offsetX: -318,
-				}
-			},
-			{
-				category: translate('onboardingGalleryTitle'),
-				description: translate('onboardingGalleryText'),
-				param: {
-					element: '#vault #item-gallery',
-					offsetX: -318,
-				}
-			},
-		]
-	}),
+			items: [
+				{
+					category: translate('onboardingSpacesTitle'),
+					description: translate('onboardingSpacesText'),
+					param: {
+						element: '#widget-space',
+					}
+				},
+				{
+					category: translate('onboardingAllObjectTitle'),
+					description: translate('onboardingAllObjectText'),
+					param: {
+						element: '#widget-buttons',
+					}
+				},
+				{
+					category: translate('onboardingWidgetsTitle'),
+					description: translate('onboardingWidgetsText'),
+					param: {
+						element: '.widgetView',
+						highlightNodes: $('#containerWidget').find('.widget.widgetView, .widget.widgetTree')
+					}
+				},
+				{
+					category: translate('onboardingMultipleSpacesTitle'),
+					description: translate('onboardingMultipleSpacesText'),
+					param: {
+						element: '#vault #item-add',
+						offsetX: -318,
+					}
+				},
+				{
+					category: translate('onboardingGalleryTitle'),
+					description: translate('onboardingGalleryText'),
+					param: {
+						element: '#vault #item-gallery',
+						offsetX: -318,
+					}
+				},
+			]
+		});
+	},
 
     dashboard: () => {
 		const canWrite = U.Space.canMyParticipantWrite();

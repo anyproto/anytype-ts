@@ -125,6 +125,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	componentDidMount () {
 		this.rebind();
 		this.event();
+		this.hideElements();
 		this.initDimmer();
 
 		U.Common.renderLinks($(this.node));
@@ -162,9 +163,24 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		this.clearDimmer();
 	};
 
+	hideElements () {
+		const { param } = this.props;
+		const { hiddenElements } = param;
+
+		if (!hiddenElements) {
+			return;
+		};
+
+		hiddenElements.forEach((el) => {
+			$(el).css({ visibility: 'hidden' });
+		});
+	};
+
 	initDimmer () {
 		const { param } = this.props;
+		const { highlightNodes } = param;
 		const section = this.getSection();
+		const highlight = highlightNodes ? highlightNodes : $(param.element);
 
 		if (!section.showDimmer) {
 			return;
@@ -177,25 +193,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		this.frame = raf(() => {
 			const body = $('body');
 
-			// const element = $(param.element);
-			// const clone = element.clone();
-			// const { top, left } = element.offset();
-			// const st = $(window).scrollTop();
-			//
-			// if (this.hiddenElement) {
-			// 	this.hiddenElement.css({ visibility: 'visible' });
-			// 	this.hiddenElement = null;
-			// };
-			//
-			// body.append(clone);
-			// U.Common.copyCss(element.get(0), clone.get(0));
-			//
-			// this.hiddenElement = element;
-			// element.css({ visibility: 'hidden' });
-			// clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
-			// clone.after('<div class="onboardingDimmer"></div>');
-
-			body.find(param.element).each((idx, el) => {
+			highlight.each((idx, el) => {
 				const element = $(el);
 				const clone = element.clone();
 				const { top, left } = element.offset();
@@ -212,8 +210,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				this.hiddenElement = element;
 				element.css({ visibility: 'hidden' });
 				clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
-				$('.onboardingDimmer').remove();
-				clone.after('<div class="onboardingDimmer"></div>');
+
+				if (idx == highlight.length - 1) {
+					clone.after('<div class="onboardingDimmer"></div>');
+				};
 			});
 		});
 	};

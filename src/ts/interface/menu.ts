@@ -37,6 +37,8 @@ export interface MenuParam {
 	withBack?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
+	highlightNodes?: any;
+	hiddenElements?: string[];
 	noFlipX?: boolean;
 	noFlipY?: boolean;
 	noClose?: boolean;
