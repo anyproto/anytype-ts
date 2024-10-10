@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
+import { observer } from 'mobx-react';
+import { getRange, setRange } from 'selection-ranges';
 import { Tag, Icon, DragBox } from 'Component';
 import { I, S, U, Relation, translate, keyboard } from 'Lib';
 
@@ -89,6 +89,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 										color={item.color}
 										canEdit={canEdit && !isSelect} 
 										className={Relation.selectClassName(relation.format)}
+										onClick={e => this.onClick(e, item.id)}
 										onRemove={() => this.onValueRemove(item.id)}
 									/>
 								</span>
@@ -131,6 +132,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 								text={item.name} 
 								color={item.color}
 								className={Relation.selectClassName(relation.format)}
+								onClick={e => this.onClick(e, item.id)}
 								onContextMenu={e => this.onContextMenu(e, item)}
 							/>
 						))}
@@ -244,6 +246,20 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		this.placeholderCheck();
 	};
 
+	onClick (e: any, id: string) {
+		if (!this.props.canOpen) {
+			return;
+		};
+
+		const item = this.getItems().find(item => item.id == id);
+		if (!item) {
+			return;
+		};
+
+		e.stopPropagation();
+		U.Object.openPopup(item);
+	};
+
 	placeholderCheck () {
 		if (!this._isMounted) {
 			return;
@@ -254,17 +270,8 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
 
-		if (value.existing.length) {
-			list.show();
-		} else {
-			list.hide();
-		};
-
-		if (value.new || value.existing.length) {
-			placeholder.hide();
-		} else {
-			placeholder.show();
-		};
+		value.existing.length ? list.show() : list.hide();
+		value.new || value.existing.length ? placeholder.hide() : placeholder.show();
 	};
 
 	clear () {
