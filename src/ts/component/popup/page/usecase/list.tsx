@@ -8,7 +8,7 @@ interface State {
 	category: any;
 };
 
-const HEIGHT = 450;
+const HEIGHT = 378;
 const LIMIT = 2;
 
 class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
@@ -83,8 +83,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 			return (
 				<div className="item" onClick={e => this.onClick(e, item)}>
-					<div className="name">{item.title}</div>
-					<div className="author" onClick={() => onAuthor(item.author)}>{U.Common.sprintf(translate('popupUsecaseAuthorShort'), getAuthor(item.author))}</div>
+					<div className="info">
+						<div className="name">{item.title}</div>
+						<div className="author" onClick={() => onAuthor(item.author)}>{U.Common.sprintf(translate('popupUsecaseAuthorShort'), getAuthor(item.author))}</div>
+					</div>					
 					<div className='pictureWrapper'>
 						<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
 					</div>
@@ -104,11 +106,9 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					{({ measure }) => (
-						<div key={`gallery-row-${param.index}`} className="row" style={param.style}>
-							{item.children.map(child => <Item key={child.id} {...child} />)}
-						</div>
-					)}
+					<div key={`gallery-row-${param.index}`} className="row" style={param.style}>
+						{item.children.map(child => <Item key={child.id} {...child} />)}
+					</div>
 				</CellMeasurer>
 			);
 		};
@@ -162,7 +162,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 											width={Number(width) || 0}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={param => this.cache.rowHeight(param)}
+											rowHeight={HEIGHT}
 											rowRenderer={rowRenderer}
 											isScrolling={isScrolling}
 											scrollTop={scrollTop}
