@@ -1358,6 +1358,20 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 	});
 };
 
+export const ObjectPublish = (spaceId: string, objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Publish.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(ObjectPublish.name, request, (message: any) => {
+		if (callBack) {
+			callBack(message);
+		};
+	});
+};
+
+
 export const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
 
