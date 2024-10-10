@@ -314,7 +314,6 @@ class DetailStore {
 
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
-		object.name = U.File.name(object);
 		return object;
 	};
 

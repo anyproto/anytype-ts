@@ -360,4 +360,26 @@ export default {
 		};
 	},
 
+	collaboration: () => {
+		const width = 432;
+		return {
+			items: [
+				{
+					name: translate('onboardingCollaborationTitle'),
+					description: translate('onboardingCollaborationText'),
+					noButton: true,
+					param: {
+						element: '#popupUsecase #category-collaboration',
+						className: 'isSpace',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Left,
+						width,
+						offsetY: 14,
+					}
+				},
+			],
+		};
+	},
+
 };

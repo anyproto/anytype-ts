@@ -99,7 +99,6 @@ export default {
 		'sourceObject',
 		'uniqueKey',
 		'defaultTemplateId',
-		'lastUsedDate'
 	],
 
 	graph: [

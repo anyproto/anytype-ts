@@ -403,19 +403,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			return;
 		};
 
-		let ret = false;
-
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 			this.save(this.value, () => S.Menu.close(MENU_ID));
-
-			ret = true;
 		});
-
-		if (!ret) {
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.save(this.value), J.Constant.delay.keyboard);
-		};
 	};
 
 	onFocus (e: any) {

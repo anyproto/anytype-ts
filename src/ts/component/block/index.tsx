@@ -532,7 +532,6 @@ const Block = observer(class Block extends React.Component<Props> {
 		if (
 			isContextMenuDisabled || 
 			readonly || 
-			block.isSelectable() || 
 			(block.isText() && (focused == block.id)) || 
 			block.isTable() || 
 			block.isDataview()

@@ -295,6 +295,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				rootId,
 				canEdit: !this.isReadonly(),
 				nameAdd: translate('menuBlockRelationEditAddObjectType'),
+				nameCreate: translate('commonCreateObjectTypeWithName'),
 				addParam: {
 					details: { type: type.id }
 				},

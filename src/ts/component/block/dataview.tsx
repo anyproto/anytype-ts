@@ -786,7 +786,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-			onOpen: context => menuContext = context,
+			onOpen: context => {
+				menuContext = context;
+				this.refControls?.toggleHoverArea(true);
+			},
+			onClose: () => {
+				menuContext = null;
+				this.refControls?.toggleHoverArea(false);
+			},
 			data: {
 				rootId,
 				blockId: block.id,
@@ -897,7 +904,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (keyboard.withCommand(e)) {
 				if (!ids.length) {
-					U.Object.openWindow(record);
+					U.Object.openEvent(e, record);
 				};
 			} else {
 				U.Object.openConfig(record);
