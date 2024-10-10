@@ -1922,6 +1922,13 @@
 	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
 	"onboardingMembershipButton": "Lovely!",
 
+	"onboardingSyncStatusTitle": "Synchronisation",
+	"onboardingSyncStatusText": "<b>View your network and peer-to-peer connection status here,</b> along with a list of synced objects.",
+	"onboardingSyncStatusButton": "Perfect",
+	"onboardingMobileTitle": "Mobile Applications",
+	"onboardingMobileText": "<b>Sync to your mobile devices locally, without internet.</b> Scan the QR code to download the iOS or Android App and make use of peer-to-peer sync.",
+	"onboardingMobileButton": "Great",
+
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",

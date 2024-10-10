@@ -220,8 +220,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	clearDimmer () {
 		const { param } = this.props;
+		const { highlightNodes } = param;
 		const section = this.getSection();
-		const element = $(param.element);
+		const element = highlightNodes ? highlightNodes : $(param.element);
 
 		if (!section.showDimmer) {
 			return;

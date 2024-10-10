@@ -190,6 +190,41 @@ export default {
 		]
 	}),
 
+	syncStatus: () => ({
+		showDimmer: true,
+		param: {
+			noArrow: true,
+			width: 288,
+			noClose: true,
+			highlightNodes: null,
+		},
+		items: [
+			{
+				category: translate('onboardingSyncStatusTitle'),
+				description: translate('onboardingSyncStatusText'),
+				buttonText: translate('onboardingSyncStatusButton'),
+				param: {
+					element: '#menuSyncStatus',
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Right,
+					highlightNodes: $('body').find('#menuSyncStatus, #button-header-sync'),
+					offsetY: 14,
+				}
+			},
+			{
+				category: translate('onboardingMobileTitle'),
+				description: translate('onboardingMobileText'),
+				buttonText: translate('onboardingMobileButton'),
+				param: {
+					element: '#icon-p2p',
+					horizontal: I.MenuDirection.Right,
+					topline: true,
+					offsetX: -295,
+				}
+			},
+		]
+	}),
+
     dashboard: () => {
 		const canWrite = U.Space.canMyParticipantWrite();
 
