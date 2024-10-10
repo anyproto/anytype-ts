@@ -48,7 +48,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const { config } = S.Common;
 		const rootId = this.getRootId();
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Record.getTypeById(rootId);
+		const object = S.Detail.get(rootId, rootId, J.Relation.type);
 
 		if (!object) {
 			return null;
