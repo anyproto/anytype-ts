@@ -45,9 +45,9 @@
 
 				.item { 
 					display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px; 
-					transition: $transitionAllCommon; 
+					transition: background-color $transitionCommon; background-color: var(--color-shape-tertiary);
 				}
-				.item:hover, .item.active { background: var(--color-shape-highlight-medium); }
+				.item:hover, .item.active { background-color: var(--color-shape-highlight-medium); }
 				.item {
 					.icon { width: 24px; height: 24px; flex-shrink: 0; }
 					.icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }

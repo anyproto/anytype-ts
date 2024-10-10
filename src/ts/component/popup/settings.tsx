@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, S, U, analytics, Action, keyboard, translate, Preview } from 'Lib';
+import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding } from 'Lib';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -230,6 +230,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		this.rebind();
 
 		keyboard.disableNavigation(true);
+
+		Onboarding.start('membership', true, false);
 	};
 
 	componentDidUpdate () {

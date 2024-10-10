@@ -1918,6 +1918,10 @@
 	"onboardingGalleryTitle": "Gallery",
 	"onboardingGalleryText": "<b>Find use cases that match your needs.</b> Import them from the Gallery: a library created by the Anytype Team and Community.",
 
+	"onboardingMembershipTitle": "Membership",
+	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
+	"onboardingMembershipButton": "Lovely!",
+
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
