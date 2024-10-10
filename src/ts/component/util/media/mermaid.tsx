@@ -61,8 +61,6 @@ const Mermaid = observer(class Mermaid extends React.Component<Props> {
 
 		try {
 			const res = await mermaid.render('mermaid-chart', chart);
-			console.log(res);
-
 			if (res) {
 				svg = res;
 			};
