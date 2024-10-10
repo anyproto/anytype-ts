@@ -807,11 +807,9 @@ class Action {
 			},
 		};
 
-		C.ObjectPublish(S.Common.space, objectId, (message: any) => {
+	  C.ObjectPublish(S.Common.space, objectId, (message: any) => {
+        console.log("--- message:", message);
 			if (!message.error.code) {
-				data = Object.assign(data, message.objectView);
-
-				U.Common.clipboardCopy({ text: JSON.stringify(data) });
 			};
 			console.log(message);
 		});
