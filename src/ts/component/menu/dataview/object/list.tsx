@@ -308,7 +308,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, canEdit } = data;
+		const { canAdd, canEdit, nameCreate } = data;
 		const value = Relation.getArrayValue(data.value);
 		const typeNames = this.getTypeNames();
 
@@ -324,7 +324,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: U.Common.sprintf(translate('commonCreateObjectWithName'), data.filter) });
+			ret.push({ id: 'add', name: U.Common.sprintf(nameCreate || translate('commonCreateObjectWithName'), data.filter) });
 		};
 
 		return ret;

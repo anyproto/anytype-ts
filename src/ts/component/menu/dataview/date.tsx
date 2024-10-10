@@ -147,9 +147,11 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		const { param, getId, getSize, close } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, blockId, relationKey, getView } = data;
+		const options = this.getOptions(item.itemId);
 
 		let relation = null;
 		let view = null;
+		let value = null;
 
 		if (getView) {
 			view = getView();
@@ -158,8 +160,11 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			relation = S.Record.getRelationByKey(relationKey);
 		};
 
-		const options = this.getOptions(item.itemId);
-		const value = options.find(it => it.id == relation[item.itemId]) || options[0];
+		if (relation) {
+			value = options.find(it => it.id == relation[item.itemId]);
+		} else if (options.length) {
+			value = options[0];
+		};
 
 		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id}`,
