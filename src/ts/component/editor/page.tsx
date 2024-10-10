@@ -1815,7 +1815,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					};
 				});
 
-
 				const lastId = message.blockIds[count - 1];
 				const block = S.Block.getLeaf(rootId, lastId);
 				
