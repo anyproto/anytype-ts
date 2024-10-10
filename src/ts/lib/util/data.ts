@@ -468,7 +468,7 @@ class UtilData {
 	};
 
 	typeRelationKeys () {
-		return J.Relation.default.concat(J.Relation.type);
+		return J.Relation.default.concat(J.Relation.type).concat('lastUsedDate');
 	};
 
 	participantRelationKeys () {
