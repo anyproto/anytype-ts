@@ -807,11 +807,16 @@ class Action {
 			},
 		};
 
-	  C.ObjectPublish(S.Common.space, objectId, (message: any) => {
-        console.log("--- message:", message);
-			if (!message.error.code) {
+		C.ObjectPublish(S.Common.space, objectId, (message: any) => {
+			if (message.error.code) {
+				return;
 			};
-			console.log(message);
+
+			const { key, cid } = message;
+			const publishedUrl = `http://localhost:8787/?cid=${cid}&key=${key}`;
+			Preview.toastShow({ text: `Published! URL copied to clipboard: ${publishedUrl}` });
+			U.Common.clipboardCopy({ text: publishedUrl });
+
 		});
 	};
 
