@@ -23,12 +23,16 @@ class MediaAudio extends React.Component<Props> {
     refVolume: any = null;
     current: PlaylistItem = { name: '', src: '' };
     audioNode: HTMLAudioElement;
+    resizeObserver: ResizeObserver;
 
     constructor (props: Props) {
         super(props);
 
+        
         this.onPlayClick = this.onPlayClick.bind(this);
         this.onMute = this.onMute.bind(this);
+        this.onResize = this.onResize.bind(this);
+        this.resizeObserver = new ResizeObserver(this.onResize);
     };
 
     render () {
@@ -82,6 +86,8 @@ class MediaAudio extends React.Component<Props> {
 			this.current = playlist[0];
 		};
 
+        this.resizeObserver.observe(this.node);
+
 		this.forceUpdate();
     };
 
@@ -92,6 +98,7 @@ class MediaAudio extends React.Component<Props> {
 
     componentWillUnmount () {
         this.unbind();
+        this.resizeObserver.disconnect();
     };
 
     rebind () {
@@ -127,6 +134,11 @@ class MediaAudio extends React.Component<Props> {
             this.refVolume.resize();
         };
     };
+
+    onResize () {
+        this.resize();
+        this.rebind();
+    }
 
     onPlayClick (e: React.MouseEvent) {
 		e.preventDefault();
