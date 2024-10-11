@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { S } from 'Lib';
+import { I, U, S } from 'Lib';
 
 import PageType from './page/type';
 
@@ -35,6 +35,7 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 		};
 
 		const Component = Components[page];
+		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${page}`) ];
 
         return (
 			<div 
@@ -42,7 +43,11 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 				id="sidebarRight"
 				className="sidebar right"
 			>
-				{Component ? <Component ref={ref => this.refChild = ref} {...this.props} /> : ''}
+				{Component ? (
+					<div className={cn.join(' ')}>
+						<Component ref={ref => this.refChild = ref} {...this.props} /> 
+					</div>
+				): ''}
 			</div>
 		);
     };

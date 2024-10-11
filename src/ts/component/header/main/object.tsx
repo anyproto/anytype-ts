@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
-import { I, S, U, J, keyboard, translate } from 'Lib';
+import { I, S, U, J, keyboard, translate, sidebar } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
 interface State {
@@ -154,7 +154,14 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, [ 'isArchived' ]);
 
-		this.props.onRelation({}, { readonly: object.isArchived });
+		//this.props.onRelation({}, { readonly: object.isArchived });
+
+		// TODO: tmp code
+		window.setTimeout(() => {
+			S.Common.showSidebarRightSet(!S.Common.showSidebarRight);
+			sidebar.resizePage(null, false);
+			S.Common.getRef('sidebarRight').setPage('type');
+		}, 100);
 	};
 
 	updateTemplatesCnt () {
