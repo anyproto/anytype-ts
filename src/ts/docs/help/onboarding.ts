@@ -24,42 +24,6 @@ export default {
 		},
     }),
 
-    mainSet: () => ({
-        category: translate('onboardingMainSet'),
-        items: [
-            {
-                description: `
-					<p>${translate('onboardingMainSet11')}</p>
-				`,
-                video: './img/help/onboarding/set-1-to-collection.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingMainSet21')}</p>
-				`,
-                video: './img/help/onboarding/set-2-new-object.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingMainSet31')}</p>
-					<p>${translate('onboardingMainSet32')}</p>
-				`,
-                buttonText: translate('onboardingMainSet3Button'),
-            }
-        ],
-        param: {
-            element: '#page.isFull #footer #button-help',
-            classNameWrap: 'fixed',
-            className: 'isWizard',
-            vertical: I.MenuDirection.Top,
-            horizontal: I.MenuDirection.Right,
-            noArrow: true,
-            noClose: true,
-            passThrough: true,
-            offsetY: -4
-        },
-    }),
-
     objectCreationStart: () => ({
         category: translate('onboardingObjectCreationStart'),
         items: [
@@ -222,6 +186,44 @@ export default {
 					offsetX: -295,
 				}
 			},
+		]
+	}),
+
+	sets: () => ({
+		items: [
+			{
+				category: translate('onboardingSetsTitle'),
+				description: translate('onboardingSetsText'),
+				buttonText: translate('onboardingSetsButton'),
+				param: {
+					noArrow: true,
+					element: '#dataviewControlsSideRight',
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Right,
+					offsetY: 14,
+				}
+			}
+		]
+	}),
+
+	collections: () => ({
+		showDimmer: true,
+		param: {
+			noArrow: true,
+			noClose: true,
+		},
+		items: [
+			{
+				category: translate('onboardingCollectionsTitle'),
+				description: translate('onboardingCollectionsText'),
+				noButton: true,
+				param: {
+					element: '#emptyButton',
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					offsetY: 8,
+				}
+			}
 		]
 	}),
 

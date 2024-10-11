@@ -1929,6 +1929,13 @@
 	"onboardingMobileText": "<b>Sync to your mobile devices locally, without internet.</b> Scan the QR code to download the iOS or Android App and make use of peer-to-peer sync.",
 	"onboardingMobileButton": "Great",
 
+	"onboardingSetsTitle": "Sets",
+	"onboardingSetsText": "<b>A set gathers all objects of a certain type in your space.</b> Explore what's already here or add more by clicking +New Object.",
+	"onboardingSetsButton": "Perfect",
+
+	"onboardingCollectionsTitle": "Collections",
+	"onboardingCollectionsText": "<b>Create an object in the collection.</b> Use collections to store and organise handpicked objects and files.",
+
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",

@@ -249,24 +249,43 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { viewId } = block.content;
 		const match = keyboard.getMatch();
 		const subId = this.getSubId();
+		const isCollection = this.isCollection();
 
 		if (match.params.viewId || viewId) {
 			S.Record.metaSet(subId, '', { viewId: match.params.viewId || viewId });
 		};
 
-		this.reloadData();
+		this.reloadData(() => {
+			const records = this.getRecords();
+			const length = records.length;
+			const isCompletedSets = isCollection || (Onboarding.isCompleted('sets') && !isCollection);
+
+			if (isInline) {
+				return;
+			};
+
+			if (isCollection && !length) {
+				Onboarding.start('collections', isPopup);
+			};
+			if (isCompletedSets && this.isAllowedObject() && this.isAllowedDefaultType() && length) {
+				Onboarding.start('setSettings', isPopup);
+			};
+		});
+
 		this.init();
 		this.resize();
 		this.rebind();
+
+		if (!isInline && !isCollection) {
+			window.setTimeout(() => {
+				Onboarding.start('sets', isPopup);
+			}, J.Constant.delay.menu);
+		};
 
 		const view = this.getView();
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
 
 		analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view?.type });
-
-		if (!isInline && Onboarding.isCompleted('mainSet') && this.isAllowedObject() && this.isAllowedDefaultType()) {
-			Onboarding.start('setSettings', isPopup);
-		};
 	};
 
 	componentDidUpdate () {
@@ -417,12 +436,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	reloadData () {
+	reloadData (cb?: () => void) {
 		const view = this.getView();
 
 		if (view) {
 			S.Record.metaSet(this.getSubId(), '', { viewId: view.id, offset: 0, total: 0 });
-			this.loadData(view.id, 0, true);
+			this.loadData(view.id, 0, true, () => {
+				if (cb) {
+					cb();
+				};
+			});
 		};
 	};
 

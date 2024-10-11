@@ -220,7 +220,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	clearDimmer () {
 		const { param } = this.props;
-		const { highlightNodes } = param;
+		const { highlightNodes, hiddenElements } = param;
 		const section = this.getSection();
 		const element = highlightNodes ? highlightNodes : $(param.element);
 
@@ -232,6 +232,12 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		$('.onboardingDimmer').remove();
 
 		element.css({ visibility: 'visible' });
+
+		if (hiddenElements) {
+			hiddenElements.forEach((el) => {
+				$(el).css({ visibility: 'hidden' });
+			});
+		};
 
 		if (this.frame) {
 			raf.cancel(this.frame);

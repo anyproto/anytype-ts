@@ -5,6 +5,7 @@
 	.menu.menuOnboarding {
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
+		.arrowDirection { background-image: url('~img/arrow/menuDirectionInversion.svg') }
 
 		.category { @include text-small; font-weight: 500; letter-spacing: -0.12px; color: var(--color-text-secondary-inversion); margin: 0px 0px 8px 0px; }
 		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 700; margin-bottom: 2px; width: calc(100% - 20px); }
