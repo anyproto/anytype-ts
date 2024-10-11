@@ -274,8 +274,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 						</div>
 					) : ''}
 
-					{withArrow ? <Icon id="arrowDirection" className={[ 'arrowDirection', 'c' + arrowDirection ].join(' ')} /> : ''}
-
 					<div className="content">
 						<Component 
 							ref={ref => this.ref = ref}
@@ -290,8 +288,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							getPosition={this.getPosition}
 							position={this.position} 
 							close={this.close}
-						/>
+							/>
 					</div>
+					
+					{withArrow ? <Icon id="arrowDirection" className={[ 'arrowDirection', 'c' + arrowDirection ].join(' ')} /> : ''}
 				</div>
 				{!noDimmer ? (
 					<Dimmer onClick={this.onDimmerClick} className={cd.join(' ')} />

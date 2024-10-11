@@ -322,11 +322,12 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	save () {
+		const { isEditing } = this.state;
 		const { block, getTarget } = this.props;
 		const { targetObjectId } = block.content;
 		const object = getTarget();
 
-		if (!targetObjectId) {
+		if (!isEditing || !targetObjectId) {
 			return;
 		};
 		

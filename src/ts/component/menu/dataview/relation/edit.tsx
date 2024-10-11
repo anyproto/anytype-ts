@@ -470,7 +470,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			data: {
 				rootId,
 				nameAdd: translate('menuDataviewRelationEditAddObjectType'),
+				nameCreate: translate('commonCreateObjectTypeWithName'),
 				placeholderFocus: translate('menuDataviewRelationEditFilterObjectTypes'),
+				canEdit: true,
 				value: this.objectTypes, 
 				types: [ S.Record.getTypeType()?.id ],
 				filters: [

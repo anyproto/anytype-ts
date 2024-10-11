@@ -148,7 +148,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const selection = S.Common.getRef('selectionProvider');
 		const cb = {
 			0: () => { 
-				keyboard.withCommand(e) ? U.Object.openWindow(record) : U.Object.openConfig(record); 
+				keyboard.withCommand(e) ? U.Object.openEvent(e, record) : U.Object.openConfig(record); 
 			},
 			2: () => onContext(e, record.id)
 		};

@@ -35,6 +35,8 @@ export enum SortId {
 	Created		 = 'created',
 	Name		 = 'name',
 	LastUsed	 = 'lastUsed',
+	List		 = 'list',
+	Compact		 = 'compact',
 };
 
 export enum SortType { 

@@ -49,7 +49,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const object = S.Detail.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
 			const isCollection = U.Object.isCollectionLayout(object.layout);
 			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
