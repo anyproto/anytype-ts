@@ -1,7 +1,4 @@
-> #containerWidget { 
-	height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0;
-	background-color: var(--color-shape-tertiary); 
-}
+> #containerWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 > #containerWidget {
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
