@@ -1,18 +1,22 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { I, S } from 'Lib';
 
-const SidebarPageType = observer(class SidebarPageType extends React.Component {
+const SidebarPageType = observer(class SidebarPageType extends React.Component<I.SidebarPageComponent> {
 	
 	node = null;
 
-	constructor (props) {
+	constructor (props: I.SidebarPageComponent) {
 		super(props);
 
 	};
 
-    render() {
+    render () {
+		const { rootId } = this.props;
+		const type = S.Record.getTypeById(rootId);
+
         return (
-			<div>Edit Type</div>
+			<div>Edit Type {type.name}</div>
 		);
     };
 

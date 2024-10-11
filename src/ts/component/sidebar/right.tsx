@@ -6,6 +6,7 @@ import PageType from './page/type';
 
 interface State {
 	page: string;
+	rootId: string;
 };
 
 const Components = {
@@ -14,21 +15,16 @@ const Components = {
 
 const SidebarRight = observer(class SidebarRight extends React.Component<{}, State> {
 	
-	private _isMounted = false;
 	node = null;
 	refChild = null;
 	state = {
 		page: '',
-	};
-
-	constructor (props) {
-		super(props);
-
+		rootId: '',
 	};
 
     render() {
 		const { showSidebarRight } = S.Common;
-		const { page } = this.state;
+		const { page, rootId } = this.state;
 
 		if (!showSidebarRight) {
 			return null;
@@ -45,27 +41,16 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 			>
 				{Component ? (
 					<div className={cn.join(' ')}>
-						<Component ref={ref => this.refChild = ref} {...this.props} /> 
+						<Component 
+							ref={ref => this.refChild = ref} 
+							{...this.props} 
+							rootId={rootId} 
+						/> 
 					</div>
 				): ''}
 			</div>
 		);
     };
-
-	componentDidMount (): void {
-		this._isMounted = true;
-	};
-
-	componentDidUpdate (): void {
-	};
-
-	componentWillUnmount (): void {
-		this._isMounted = false;
-	};
-
-	setPage (page: string): void {
-		this.setState({ page });
-	};
 
 });
 

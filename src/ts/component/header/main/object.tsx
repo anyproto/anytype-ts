@@ -154,14 +154,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, [ 'isArchived' ]);
 
-		//this.props.onRelation({}, { readonly: object.isArchived });
-
-		// TODO: tmp code
-		window.setTimeout(() => {
-			S.Common.showSidebarRightSet(!S.Common.showSidebarRight);
-			sidebar.resizePage(null, false);
-			S.Common.getRef('sidebarRight').setPage('type');
-		}, 100);
+		this.props.onRelation({}, { readonly: object.isArchived });
 	};
 
 	updateTemplatesCnt () {
