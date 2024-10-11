@@ -1,7 +1,10 @@
 @import "~scss/_mixins";
 
-.bodyMainVoid {
-	.navigationPanel, #sidebar { display: none; }
+.bodyMain.bodyMainVoid {
+    #navigationPanel,
+	#sidebarToggle,
+	.sidebar,
+    .sidebarDummy { display: none; }
 }
 
 .pageMainVoid {

@@ -63,18 +63,18 @@
 	.side.left { transition: padding-left $transitionSidebarTime linear; }
 }
 
-.header:not(.withSidebar) {
+.header:not(.withSidebarLeft) {
 	.side.left { padding-left: 120px; }
 }
 
 html:not(.platformMac) {
-	.header:not(.withSidebar) {
+	.header:not(.withSidebarLeft) {
 		.side.left { padding-left: 52px; }
 	}
 }
 
 body.isFullScreen {
-	.header:not(.withSidebar) {
+	.header:not(.withSidebarLeft) {
 		.side.left { padding-left: 52px; }
 	}
 }

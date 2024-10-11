@@ -8,7 +8,7 @@ import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 import SidebarWidget from './widget';
 import SidebarObject from './object';
 
-const Sidebar = observer(class Sidebar extends React.Component {
+const SidebarLeft = observer(class SidebarLeft extends React.Component {
 	
 	private _isMounted = false;
 	node = null;
@@ -50,7 +50,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 
 				<div 
 					ref={node => this.node = node}
-					id="sidebar" 
+					id="sidebarLeft" 
 					className={cn.join(' ')} 
 				>
 					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : <SidebarWidget {...this.props} ref={ref => this.refWidget = ref} />}
@@ -203,4 +203,4 @@ const Sidebar = observer(class Sidebar extends React.Component {
 
 });
 
-export default Sidebar;
+export default SidebarLeft;

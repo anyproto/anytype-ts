@@ -21,9 +21,11 @@ import ListObjectManager from './list/objectManager';
 
 import Header from './header';
 import Footer from './footer';
-import Sidebar from './sidebar';
 import Vault from './vault';
 import Widget from './widget';
+
+import SidebarLeft from './sidebar/left';
+import SidebarRight from './sidebar/right';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -162,7 +164,9 @@ export {
 	Graph,
 	Cell,
 
-	Sidebar,
+	SidebarLeft,
+	SidebarRight,
+
 	Vault,
 	Widget,
 

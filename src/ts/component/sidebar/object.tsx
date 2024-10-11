@@ -468,7 +468,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const { x, y } = keyboard.mouse.page;
 
 		S.Menu.open('dataviewContext', {
-			element: `#sidebar #containerObject #item-${item.id}`,
+			element: `#sidebarLeft #containerObject #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
 			data: {
 				objectIds,
@@ -487,7 +487,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		let menuContext = null;
 
 		S.Menu.open('select', {
-			element: '#sidebar #containerObject #button-object-more',
+			element: '#sidebarLeft #containerObject #button-object-more',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			className: 'fixed',
@@ -645,7 +645,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const width = node.width() - 32;
 
 		S.Menu.open('dataviewCreateBookmark', {
-			element: '#sidebar #containerObject #button-object-create',
+			element: '#sidebarLeft #containerObject #button-object-create',
 			offsetY: 4,
 			width,
 			className: 'fixed',
@@ -664,7 +664,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const width = node.width() - 32;
 
 		S.Menu.open('blockRelationEdit', { 
-			element: '#sidebar #containerObject #button-object-create',
+			element: '#sidebarLeft #containerObject #button-object-create',
 			offsetY: 4,
 			width,
 			className: 'fixed',
