@@ -40,12 +40,11 @@ class MediaAudio extends React.Component<Props> {
                 <audio id="audio" preload="auto" src={this.current.src} />
 
                 <div className="controls">
+                <div className="name">
+                    <span>{this.current.name}</span>
+                </div>
+                <div className='controlsWrapper'>
                     <Icon className="play" onClick={this.onPlayClick} />
-
-                    <div className="name">
-                        <span>{this.current.name}</span>
-                    </div>
-
                     <Drag
                         id="time"
                         ref={ref => this.refTime = ref}
@@ -67,6 +66,7 @@ class MediaAudio extends React.Component<Props> {
                         value={1}
                         onMove={(e: any, v: number) => this.onVolume(v)}
                     />
+                    </div>
                 </div>
             </div>
         );

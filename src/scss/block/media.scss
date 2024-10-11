@@ -94,8 +94,8 @@
 		.icon.play { display: none; }
 	}
 
-	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: var(--color-shape-tertiary); }
-	.block.blockMedia.isAudio > .wrapContent > .selectionTarget > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 8px; overflow: hidden; }
+	.block.blockMedia.isAudio.withContent > .wrapContent {box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); background-color: var(--color-bg-primary); }
+	.block.blockMedia.isAudio > .wrapContent > .selectionTarget > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px 12px; border-radius: 8px; overflow: hidden; }
 
 	.block.blockMedia > .wrapContent > .selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 	.block.blockMedia.isPdf.withContent > .wrapContent > .selectionTarget.isSelectionSelected::after { border-radius: 0px; }
