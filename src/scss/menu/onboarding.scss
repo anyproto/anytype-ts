@@ -82,4 +82,8 @@
 	.menu.menuOnboarding.isSpace {
 		video { height: auto; }
 	}
+
+	.menu.menuOnboarding.qrDownload {
+		.wrap::before { content: ''; width: 256px; height: 256px; background: url('~img/icon/onboarding/qrDownload.png') 50% 50% no-repeat; background-size: 122px; }
+	}
 }

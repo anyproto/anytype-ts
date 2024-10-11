@@ -180,6 +180,7 @@ export default {
 				description: translate('onboardingMobileText'),
 				buttonText: translate('onboardingMobileButton'),
 				param: {
+					className: 'qrDownload',
 					element: '#icon-p2p',
 					horizontal: I.MenuDirection.Right,
 					topline: true,

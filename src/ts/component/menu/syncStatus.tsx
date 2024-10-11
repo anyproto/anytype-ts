@@ -273,7 +273,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			this.setState({ isLoading: false });
 
 			window.setTimeout(() => {
-				Onboarding.start('syncStatus', false, false);
+				Onboarding.start('syncStatus', false);
 			}, J.Constant.delay.menu);
 		});
 	};
