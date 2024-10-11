@@ -21,12 +21,19 @@ export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
 	title(`Desktop 0.43.0 Released!`),
-	callout(`A big thank you to our amazing Community for the valuable suggestions and reports that continue to help us along the way! We're excited to share these updates with you - let's dive in.`, '💌'),
+	callout(`A big thank you to our amazing Community for the valuable suggestions and reports that continue to help us along the way!`, '💌'),
 
 	h2(`Highlights on this release`),
+	text(`In this update, we've focused on important technical improvements. Although the major changes are under the hood, they lay the groundwork for future features and enhancements. Alongside this fundamental work, we have also made a number of smaller upgrades and fixes - let's dive in.`),
+
+	h3(`Improved Full-Text Search Speed`),
+	text(`We’ve upgraded our search functionality with a new library to improve speed, particularly for large spaces. Users with extensive spaces will experience faster search.`),
+
+	h3(`Enhanced Any-Store for Faster Performance`),
+	text(`We have implemented a new local database to enhance performance significantly. Users with large spaces will enjoy faster loading times and smoother interactions throughout the app.`),
 
 	h3(`All Objects`),
-	text(`Our improved navigation makes it much easier to browse through all your content. Now, you can search across all your Objects, Sets & Collections, and Media & Files in one place, with options to sort by Date or Name. Additionally, the simplified Library and the Bin also live in the new widget.`),
+	text(`Our <b>improved navigation</b> makes it much easier to browse through all your content. Now, you can search across all your Objects, Sets & Collections, and Media & Files in one place, with options to sort by Date or Name. Additionally, the simplified Library and the Bin also live in the new widget.`),
 	video('43/1.mp4'),
 	text(``),
 
@@ -104,10 +111,6 @@ export default [
 	bullet(`Multiple file selection on import is fixed.`),
 	bullet(`When adding an object relation to Set, the selection popup correctly closes instantly.`),
 	bullet(`Fixed an issue on Linux where the menu visibility toggle was not working correctly through the window menu.`),
-
-	h2(`Tech`),
-	bullet(`We have moved to a new search engine: from Bleve to Tantivy.`),
-	bullet(`We have switched local database to our own implementation called Any-Store, that uses SQLite under the hood.`),
 
 	div(),
 	// --------------------------------------------//
