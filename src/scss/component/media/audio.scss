@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.mediaAudio { width: 100%; border: 1px solid var(--color-shape-secondary); }
+.mediaAudio { width: 100%; border: 1px solid var(--color-shape-secondary); container-type: inline-size; container-name: media-audio;}
 .mediaAudio {
     .controls { width: 100%; min-width: 160px; position: relative; text-align: left; color: var(--color-text-primary); }
     .controls {
@@ -10,12 +10,13 @@
         }
         .name span { display: inline-block; min-width: 100%; height: 100%; @include clamp1; }
 
-        .controlsWrapper { display: flex; align-items: center; justify-content: space-between;}
-            
-        .controlsWrapper {
-            div { flex: 0 1 auto; }
+        .controlsWrapper { display: flex; align-items: center; column-gap: 10px; }
+        @container media-audio (max-width: 500px) { .controlsWrapper { column-gap: 5px; }; }
 
-            .timeDragWrapper { flex: 1 0 auto; padding-left: 10px; }
+        .controlsWrapper {
+            div { flex: 0 1 auto;}
+
+            .timeDragWrapper { flex: 1 0 auto; }
 
             --icon-size: 20px;
 
@@ -32,8 +33,10 @@
             .icon.volume { width: var(--icon-size); height: var(--icon-size);  min-width: var(--icon-size); min-height: var(--icon-size); background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
     
-            .time { @include text-small; text-align: right; line-height: 20px; text-wrap: nowrap; width: 86px; text-align: center;
-                    flex-basis: 112px;
+            .time { @include text-small; text-align: right; line-height: 20px; text-wrap: nowrap; width: 86px; text-align: center; }
+
+            @container media-audio (max-width: 500px) {
+                .time { display: none; }
             }
     
             .input-drag { display: inline-block; vertical-align: top; height: 20px;}
@@ -45,7 +48,6 @@
             }
         }
 
-        
         #time { margin: 6px 0px; width: 100%; display: block; }
         #volume { width: 40px; opacity: 0; transition: opacity $transitionCommon; }
     }
