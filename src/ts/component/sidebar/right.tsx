@@ -2,10 +2,24 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { S } from 'Lib';
 
-const SidebarRight = observer(class SidebarRight extends React.Component {
+import PageType from './page/type';
+
+interface State {
+	page: string;
+};
+
+const Components = {
+	type: PageType,
+};
+
+const SidebarRight = observer(class SidebarRight extends React.Component<{}, State> {
 	
 	private _isMounted = false;
 	node = null;
+	refChild = null;
+	state = {
+		page: '',
+	};
 
 	constructor (props) {
 		super(props);
@@ -14,10 +28,13 @@ const SidebarRight = observer(class SidebarRight extends React.Component {
 
     render() {
 		const { showSidebarRight } = S.Common;
+		const { page } = this.state;
 
 		if (!showSidebarRight) {
 			return null;
 		};
+
+		const Component = Components[page];
 
         return (
 			<div 
@@ -25,6 +42,7 @@ const SidebarRight = observer(class SidebarRight extends React.Component {
 				id="sidebarRight"
 				className="sidebar right"
 			>
+				{Component ? <Component ref={ref => this.refChild = ref} {...this.props} /> : ''}
 			</div>
 		);
     };
@@ -38,6 +56,10 @@ const SidebarRight = observer(class SidebarRight extends React.Component {
 
 	componentWillUnmount (): void {
 		this._isMounted = false;
+	};
+
+	setPage (page: string): void {
+		this.setState({ page });
 	};
 
 });
