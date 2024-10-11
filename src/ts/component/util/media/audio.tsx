@@ -45,14 +45,17 @@ class MediaAudio extends React.Component<Props> {
                 </div>
                 <div className='controlsWrapper'>
                     <Icon className="play" onClick={this.onPlayClick} />
-                    <Drag
-                        id="time"
-                        ref={ref => this.refTime = ref}
-                        value={0}
-                        onStart={(e: any, v: number) => this.onTime(v)}
-                        onMove={(e: any, v: number) => this.onTime(v)}
-                        onEnd={(e: any, v: number) => this.onTimeEnd(v)}
-                    />
+
+                    <div className='timeDragWrapper'>
+                        <Drag
+                            id="time"
+                            ref={ref => this.refTime = ref}
+                            value={0}
+                            onStart={(e: any, v: number) => this.onTime(v)}
+                            onMove={(e: any, v: number) => this.onTime(v)}
+                            onEnd={(e: any, v: number) => this.onTimeEnd(v)}
+                        />
+                    </div>
 
                     <div className="time">
                         <span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;

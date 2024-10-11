@@ -6,12 +6,16 @@
     .controls {
         .name {
             @include text-common; display: inline-block; vertical-align: top;
-            line-height: 20px; width: calc(100% - 26px);
+            line-height: 20px; width: calc(100% - 26px); padding-bottom: 3px;
         }
         .name span { display: inline-block; min-width: 100%; height: 100%; @include clamp1; }
 
-        .controlsWrapper { display: flex; flex-direction: row; align-items: center;}
+        .controlsWrapper { display: flex; align-items: center; justify-content: space-between;}
+            
         .controlsWrapper {
+            div { flex: 0 1 auto; }
+
+            .timeDragWrapper { flex: 1 0 auto; padding-left: 10px; }
 
             --icon-size: 20px;
 
@@ -28,9 +32,11 @@
             .icon.volume { width: var(--icon-size); height: var(--icon-size);  min-width: var(--icon-size); min-height: var(--icon-size); background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
     
-            .time { @include text-small; text-align: right; line-height: 20px; text-wrap: nowrap; }
+            .time { @include text-small; text-align: right; line-height: 20px; text-wrap: nowrap; width: 86px; text-align: center;
+                    flex-basis: 112px;
+            }
     
-            .input-drag { display: inline-block; vertical-align: top; height: 20px; flex-grow: 1;}
+            .input-drag { display: inline-block; vertical-align: top; height: 20px;}
             .input-drag {
                 .icon { width: 6px; height: 6px; border: 0px; background: none; }
                 .bullet { width: 12px; height: 12px; border-radius: 6px; background: var(--color-control-accent); }
@@ -38,6 +44,7 @@
                 .back { width: 100%; height: 4px; background: var(--color-shape-secondary); transform: translateY(-50%); margin-top: 0px; }
             }
         }
+
         
         #time { margin: 6px 0px; width: 100%; display: block; }
         #volume { width: 40px; opacity: 0; transition: opacity $transitionCommon; }
