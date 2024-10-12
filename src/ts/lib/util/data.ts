@@ -468,7 +468,7 @@ class UtilData {
 	};
 
 	typeRelationKeys () {
-		return J.Relation.default.concat(J.Relation.type);
+		return J.Relation.default.concat(J.Relation.type).concat('lastUsedDate');
 	};
 
 	participantRelationKeys () {
@@ -480,7 +480,7 @@ class UtilData {
 	};
 
 	chatRelationKeys () {
-		return J.Relation.default.concat([ 'source' ]);
+		return J.Relation.default.concat([ 'source', 'picture' ]);
 	};
 
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
@@ -863,7 +863,7 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSearchSubscribe(subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId, (message: any) => {
+		C.ObjectSearchSubscribe(subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
 
 			if (callBack) {
@@ -897,8 +897,8 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSubscribeIds(subId, ids, keys, true, noDeps, (message: any) => {
-			message.records.sort((c1: any, c2: any) => {
+		C.ObjectSubscribeIds(subId, ids, keys, noDeps, (message: any) => {
+			(message.records || []).sort((c1: any, c2: any) => {
 				const i1 = ids.indexOf(c1.id);
 				const i2 = ids.indexOf(c2.id);
 				if (i1 > i2) return 1; 

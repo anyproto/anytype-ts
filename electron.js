@@ -140,6 +140,8 @@ function createWindow () {
 	MenuManager.initMenu();
 	MenuManager.initTray();
 
+	Api.systemInfo(mainWindow);
+
 	installNativeMessagingHost();
 
 	ipcMain.removeHandler('Api');

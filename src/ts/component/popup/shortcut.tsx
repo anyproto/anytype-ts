@@ -148,6 +148,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 							{ com: `${cmd} + Minus`,		 name: translate('popupShortcutMainBasics17') },
 							{ com: `${cmd} + 0`,			 name: translate('popupShortcutMainBasics18') },
 							{ com: `Ctrl + Tab, Ctrl + Shift + Tab`, name: translate('popupShortcutMainBasics20') },
+							{ com: `${cmd} + Shift + M`, name: translate('popupShortcutMainBasics21') },
 						]
 					},
 
@@ -289,7 +290,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 				name: translate('popupShortcutCommand'),
 				children: [
 					{
-						name: translate('popupShortcutCommandMenu'), children: [
+						name: translate('commonMenu'), children: [
 							{ com: '/',					 name: translate('popupShortcutCommandMenu1') },
 							{ com: '↓ & ↑',				 name: translate('popupShortcutCommandMenu2') },
 							{ com: '→ & ←',				 name: translate('popupShortcutCommandMenu3') },

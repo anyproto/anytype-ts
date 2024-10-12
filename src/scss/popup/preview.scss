@@ -1,23 +1,82 @@
 @import "~scss/_mixins";
 
+$galleryHeaderH: 52px;
+$galleryFooterH: 96px;
+$gallerySlidesH: calc(100vh - $galleryHeaderH - $galleryFooterH);
+
 .popups {
+	.popup.popupPreview.showDimmer {
+		.dimmer { background: rgba(0,0,0,0.80); }
+	}
+
 	.popup.popupPreview {
-		.innerWrap { border-radius: 6px; }
+		.innerWrap { border-radius: 6px; background: none; }
 		.innerWrap.anim { transition: $transitionAllCommon; }
 		#loader { background: var(--color-bg-primary); width: 100%; height: 100%; border-radius: 6px; }
+
+		.wrap { width: 100vw; height: 100vh; overflow: hidden; }
+		.wrap {
+			.galleryHeader { position: relative; height: $galleryHeaderH; }
+
+			.gallerySlides { position: relative; height: $gallerySlidesH; }
+			.gallerySlides {
+				.swiper-slide { height: $gallerySlidesH; }
+				.previewItem { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+				.mediaContainer { position: relative; z-index: 2; }
+
+				.swiper-button-prev,
+				.swiper-button-next { position: absolute; z-index: 3; top: 50%; margin-top: -20px; width: 40px; height: 40px; background: url('~img/arrow/gallery.svg'); }
+				.swiper-button-prev { left: 16px; transform: rotateZ(180deg); }
+				.swiper-button-next { right: 16px; }
+				.swiper-button-disabled { display: none; }
+			}
+
+			.galleryFooter { position: relative; height: $galleryFooterH; }
+			.galleryFooter {
+				.thumbnails { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; }
+				.swiper { z-index: 2; }
+				.swiper-slide { width: unset; display: flex; align-items: center; }
+				.previewItem { width: 72px; height: 72px; border-radius: 4px; overflow: hidden; }
+				.mediaContainer { position: relative; width: 100%; height: 100%; }
+
+				.swiper-slide {
+					video, img { opacity: 0.5; }
+				}
+				.swiper-slide.swiper-slide-thumb-active {
+					video, img { opacity: 1; }
+				}
+
+				.previewItem.isVideo {
+					.mediaContainer {
+						video { position: absolute; width: 150px; height: 150px; left: 50%; top: 50%; margin: -75px 0px 0px -75px; }
+					}
+					.mediaContainer::before { content: ''; position: absolute; z-index: 2; width: 100%; height: 100%; background: #252525; opacity: 0.2; }
+					.mediaContainer::after {
+						content: ''; position: absolute; z-index: 3; width: 44px; height: 44px; left: 50%; top: 50%; margin: -22px 0px 0px -22px;
+						background: url('~img/icon/popup/preview/play.svg');
+					}
+				}
+			}
+
+			.innerDimmer { position: absolute; z-index: 0; width: 100%; height: 100%; }
+		}
 
 		.head { 
 			display: flex; align-items: center; position: absolute; left: 0px; top: 0px; height: 52px; justify-content: space-between;
 			width: 100%; color: var(--color-text-inversion); text-shadow: 0px 0px 5px rgba(0,0,0,0.7); padding: 0px 16px; z-index: 1;
 		}
 		.head {
-			.side.center { text-align: center; max-width: calc(100% - 80px); }
-			.name { @include text-overflow-nw; }
+			.side.center { text-align: center; max-width: calc(100% - 80px); height: 100%; display: flex; align-items: center; }
+			.name { @include text-overflow-nw; line-height: 18px; }
 
-			.side.right { text-align: right; }
-			.icon.more { background-image: url('~img/icon/popup/preview/more.svg'); };
+			.side.right { text-align: right; display: flex; gap: 0px 16px; align-items: center; }
+			.side.right {
+				.icon { width: 20px; height: 20px; opacity: 0.75; }
+				.icon:hover, .icon.hover { opacity: 1; }
+				.icon.expand { background-image: url('~img/icon/expand.svg'); };
+				.icon.more { background-image: url('~img/icon/popup/preview/more.svg'); }
+			}
 		}
-		.wrap { width: 100%; height: 100%; overflow: hidden; line-height: 0px; }
 		.media { width: 100%; height: 100%; object-fit: contain; margin: 0px auto; }
 	}
 }

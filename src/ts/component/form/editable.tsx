@@ -166,20 +166,14 @@ class Editable extends React.Component<Props> {
 	};
 
 	setRange (range: I.TextRange) {
-		if (!range) {
+		if (!range || !this._isMounted) {
 			return;
 		};
 
-		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
+		const el = $(this.refEditable).get(0);
 
-			const el = $(this.refEditable).get(0);
-
-			el.focus({ preventScroll: true });
-			setRange(el, { start: range.from, end: range.to });
-		});
+		el.focus({ preventScroll: true });
+		setRange(el, { start: range.from, end: range.to });
 	};
 
 	onInput (e: any) {
