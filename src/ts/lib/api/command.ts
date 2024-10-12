@@ -1364,11 +1364,7 @@ export const ObjectPublish = (spaceId: string, objectId: string, callBack?: (mes
 	request.setObjectid(objectId);
 	request.setSpaceid(spaceId);
 
-	dispatcher.request(ObjectPublish.name, request, (message: any) => {
-		if (callBack) {
-			callBack(message);
-		};
-	});
+	dispatcher.request(ObjectPublish.name, request, callBack);
 };
 
 

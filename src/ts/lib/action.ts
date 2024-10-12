@@ -836,19 +836,21 @@ class Action {
 
 		C.ObjectShow(objectId, 'publish', S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				data = Object.assign(data, message.objectView);
-
-				C.ObjectPublish(S.Common.space, JSON.stringify(data), (message: any) => {
-					if (message.error.code) {
-						return;
-					};
-
-					const { key, cid } = message;
-					const publishedUrl = `http://localhost:8787/?cid=${cid}&key=${key}`;
-					Preview.toastShow({ text: `Published! URL copied to clipboard: ${publishedUrl}` });
-					U.Common.clipboardCopy({ text: publishedUrl });
-				});
+				return;
 			};
+
+			data = Object.assign(data, message.objectView);
+
+			C.ObjectPublish(S.Common.space, JSON.stringify(data), (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				const { key, cid } = message;
+				const url = `http://localhost:8787/?cid=${cid}&key=${key}`;
+
+				U.Common.copyToast(translate('commonLink'), url);
+			});
 		});
 
 	};
