@@ -295,6 +295,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				rootId,
 				canEdit: !this.isReadonly(),
 				nameAdd: translate('menuBlockRelationEditAddObjectType'),
+				nameCreate: translate('commonCreateObjectTypeWithName'),
 				addParam: {
 					details: { type: type.id }
 				},
@@ -423,7 +424,17 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	onRemove (e: any) {
-		Action.uninstall(this.getRelation(), true);
+		const { close, param } = this.props;
+		const { data } = param;
+		const { deleteCommand } = data;
+
+		Action.uninstall(this.getRelation(), true, '', () => {
+			if (deleteCommand) {
+				deleteCommand();
+			};
+
+			close();
+		});
 	};
 
 	onSubmit (e: any) {
