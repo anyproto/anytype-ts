@@ -444,15 +444,16 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const logPath = U.Common.getElectron().logPath();
 		const tmpPath = U.Common.getElectron().tmpPath();
+		const route = analytics.route.menuSystem;
 
 		switch (cmd) {
 			case 'search': {
-				this.onSearchMenu('', 'MenuSystem');
+				this.onSearchMenu('', route);
 				break;
 			};
 
 			case 'print': {
-				this.onPrint('MenuSystem');
+				this.onPrint(route);
 				break;
 			};
 
@@ -477,40 +478,25 @@ class Keyboard {
 
 			case 'undo': {
 				if (!this.isFocused) {
-					this.onUndo(rootId, 'MenuSystem');
+					this.onUndo(rootId, route);
 				};
 				break;
 			};
 
 			case 'redo': {
 				if (!this.isFocused) {
-					this.onRedo(rootId, 'MenuSystem');
+					this.onRedo(rootId, route);
 				};
 				break;
 			};
 
 			case 'createObject': {
-				this.pageCreate({}, 'MenuSystem');
+				this.pageCreate({}, route);
 				break;
 			};
 
 			case 'createSpace': {
-				const items = U.Space.getList();
-
-				if (items.length >= J.Constant.limit.space) {
-					break;
-				};
-
-				S.Popup.open('settings', { 
-					className: 'isSpaceCreate',
-					data: { 
-						page: 'spaceCreate', 
-						isSpace: true,
-						onCreate: (id) => {
-							U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
-						},
-					}, 
-				});
+				Action.createSpace(route);
 				break;
 			};
 
@@ -613,6 +599,26 @@ class Keyboard {
 
 			case 'interfaceLang': {
 				Action.setInterfaceLang(arg);
+				break;
+			};
+
+			case 'systemInfo': {
+				const props: any = {};
+				const { cpu, graphics, memLayout, diskLayout } = arg;
+				const { manufacturer, brand, speed, cores } = cpu;
+				const { controllers, displays } = graphics;
+
+				props.systemCpu = [ manufacturer, brand ].join(', ');
+				props.systemCpuSpeed = [ `${speed}GHz`, `${cores} cores` ].join(', ');
+				props.systemVideo = (controllers || []).map(it => it.model).join(', ');
+				props.systemDisplay = (displays || []).map(it => it.model).join(', ');
+				props.systemResolution = `${window.screen.width}x${window.screen.height}`;
+				props.systemMemory = (memLayout || []).map(it => U.File.size(it.size)).join(', ');
+				props.systemMemoryType = (memLayout || []).map(it => it.type).join(', ');
+				props.systemDisk = (diskLayout || []).map(it => U.File.size(it.size)).join(', ');
+				props.systemDiskName = (diskLayout || []).map(it => it.name).join(', ');
+
+				analytics.setProperty(props);
 				break;
 			};
 

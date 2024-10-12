@@ -39,7 +39,7 @@ window.AnytypeGlobalConfig = {
 	emojiUrl: J.Extension.clipper.emojiUrl, 
 	menuBorderTop: 16, 
 	menuBorderBottom: 16, 
-	debug: { mw: false },
+	flagsMw: { request: false },
 };
 
 let rootId = '';

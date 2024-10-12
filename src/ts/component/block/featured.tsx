@@ -636,6 +636,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('dataviewSource', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
+				noFlipX: true,
 				offsetY: 4,
 				data: {
 					rootId,

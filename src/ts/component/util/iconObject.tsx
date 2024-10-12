@@ -253,7 +253,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Bookmark: {
 				if (iconImage) {
-					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					defaultIcon('bookmark');

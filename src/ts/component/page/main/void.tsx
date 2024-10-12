@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button } from 'Component';
-import { I, S, Storage, translate, U } from 'Lib';
+import { I, translate, Action, analytics } from 'Lib';
 
 const PageMainVoid = observer(class PageMainVoid extends React.Component<I.PageComponent> {
 
@@ -26,16 +26,7 @@ const PageMainVoid = observer(class PageMainVoid extends React.Component<I.PageC
 	};
 
 	onClick () {
-		S.Popup.open('settings', {
-			className: 'isSpaceCreate',
-			data: {
-				page: 'spaceCreate',
-				isSpace: true,
-				onCreate: (id) => {
-					U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
-				},
-			},
-		});
+		Action.createSpace(analytics.route.void);
 	};
 	
 });

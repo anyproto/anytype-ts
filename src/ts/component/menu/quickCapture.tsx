@@ -456,7 +456,9 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				const object = message.details;
 
 				U.Object.openAuto(object);
+
 				analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
+				analytics.event('SelectObjectType', { objectType: object.type });
 			});
 		};
 

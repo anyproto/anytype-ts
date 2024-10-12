@@ -417,6 +417,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					onClick: (item: any) => {
 						this.moveToPage(item.id);
@@ -627,7 +628,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'copyUrl': {
-				U.Common.copyToast(translate('commonUrl'), block.content.url);
+				U.Common.copyToast(translate('commonLink'), block.content.url);
 				break;
 			};
 				

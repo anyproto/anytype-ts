@@ -233,6 +233,9 @@ class UtilObject {
 		let name = '';
 		if (this.isNoteLayout(layout)) {
 			name = snippet || translate('commonEmpty');
+		} else 
+		if (this.isInFileLayouts(layout)) {
+			name = U.File.name(object);
 		} else {
 			name = object.name || translate('defaultNamePage');
 		};

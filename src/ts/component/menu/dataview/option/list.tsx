@@ -54,7 +54,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const active = value.includes(item.id);
-			const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ])
+			const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 			
 			let content = null;
 			if (item.id == 'add') {
@@ -348,7 +348,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
-		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ])
+		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 
 		if (!isAllowed) {
 			return;

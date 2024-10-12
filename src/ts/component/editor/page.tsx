@@ -335,19 +335,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	focusInit () {
 		const { rootId, isPopup } = this.props;
 		const isReadonly = this.isReadonly();
+		const storage = Storage.getFocus(rootId);
 
 		if (isReadonly) {
 			return;
 		};
-
-		const title = S.Block.getLeaf(rootId, J.Constant.blockId.title);
-		if (title && !title.getLength()) {
-			focus.set(title.id, { from: 0, to: 0 });
-			focus.apply();
-		};
-
-		/*
-		const storage = Storage.getFocus(rootId);
 
 		let block = null;
 		let from = 0;
@@ -358,10 +350,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			from = storage.range.from;
 			to = storage.range.to;
 		};
+
 		if (!block) {
-			block = S.Block.getFirstBlock(rootId, 1, it => it.isText() && !it.getLength());
-			from = 0;
-			to = 0;
+			block = S.Block.getLeaf(rootId, J.Constant.blockId.title);
+			if (block && block.getLength()) {
+				block = null;
+			};
 		};
 
 		if (!block) {
@@ -372,7 +366,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.apply();
 
 		window.setTimeout(() => focus.scroll(isPopup, block.id), 10);
-		*/
 	};
 	
 	unbind () {
@@ -1821,7 +1814,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						S.Block.toggle(rootId, block.id, true);
 					};
 				});
-
 
 				const lastId = message.blockIds[count - 1];
 				const block = S.Block.getLeaf(rootId, lastId);
