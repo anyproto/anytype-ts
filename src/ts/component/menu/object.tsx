@@ -362,7 +362,7 @@ class MenuObject extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, onSelect } = data;
+		const { blockId, rootId, onSelect, onArchive, onDelete } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
 		const route = analytics.route.menuObject;
@@ -429,7 +429,13 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 				
 			case 'pageArchive': {
-				Action.archive([ object.id ], () => onBack());
+				Action.archive([ object.id ], () => {
+					if (onArchive) {
+						onArchive();
+					} else {
+						onBack();
+					};
+				});
 				break;
 			};
 
@@ -439,7 +445,13 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageRemove': {
-				Action.delete([ object.id ], route, () => onBack());
+				Action.delete([ object.id ], route, () => {
+					if (onDelete) {
+						onDelete();
+					} else {
+						onBack();
+					};
+				});
 				break;
 			};
 
@@ -459,7 +471,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Common.clipboardCopy({ text: `${J.Constant.protocol}://${U.Object.universalRoute(object)}` });
+				U.Common.copyToast(translate('commonLink'), `${J.Constant.protocol}://${U.Object.universalRoute(object)}`);
 				analytics.event('CopyLink', { route });
 				break;
 			};

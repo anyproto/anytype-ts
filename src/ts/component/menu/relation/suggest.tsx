@@ -228,6 +228,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		];
 		const sorts = [
 			{ relationKey: 'spaceId', type: I.SortType.Desc },
+			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
@@ -480,6 +481,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			noAnimation: true,
 			classNameWrap,
 			data: {
+				...data,
 				rootId,
 				relationId: item.id,
 				saveCommand: () => {

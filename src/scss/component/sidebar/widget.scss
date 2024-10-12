@@ -14,7 +14,7 @@
 		.name { opacity: 1; transform: translate3d(0px,0px,0px); }
 	}
 
-	> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: auto; overscroll-behavior: none; }
+	> .body { height: calc(100% - 52px); padding: 0px 6px 12px 12px; position: relative; flex-grow: 1; overflow: auto; overscroll-behavior: none; }
 	> .body {
 		@keyframes shake1 {
 			0% { transform: rotate(-0.5deg); }

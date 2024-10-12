@@ -54,6 +54,8 @@ class Sidebar {
 	};
 
 	initObjects () {
+		const vault = S.Common.getRef('vault');
+
 		this.obj = $('#sidebar');
 		this.page = $('#page.isFull');
 		this.header = this.page.find('#header');
@@ -61,7 +63,10 @@ class Sidebar {
 		this.loader = this.page.find('#loader');
 		this.dummy = $('#sidebarDummy');
 		this.toggleButton = $('#sidebarToggle');
-		this.vault = $(S.Common.getRef('vault').node);
+
+		if (vault) {
+			this.vault = $(vault.node);
+		};
 	};
 
 	close (): void {
