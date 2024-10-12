@@ -80,6 +80,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { space } = S.Common;
 		const value = this.getTextValue();
 
+		if (readonly) {
+			return (
+				<div id="formWrapper" className="formWrapper">
+					<div className="readonly">{translate('blockChatFormReadonly')}</div>
+				</div>
+			);
+		};
+
 		let title = '';
 		let text = '';
 		let icon: any = null;
@@ -141,7 +149,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					<Editable 
 						ref={ref => this.refEditable = ref}
 						id="messageBox"
-						readonly={readonly}
 						maxLength={J.Constant.limit.chat.text}
 						placeholder={translate('blockChatPlaceholder')}
 						onSelect={this.onSelect}
@@ -172,25 +179,23 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						</div>
 					) : ''}
 
-					{!readonly ? (
-						<Buttons
-							ref={ref => this.refButtons = ref}
-							{...this.props}
-							value={value}
-							hasSelection={this.hasSelection}
-							getMarksAndRange={this.getMarksAndRange}
-							attachments={attachments}
-							caretMenuParam={this.caretMenuParam}
-							onMention={this.onMention}
-							onChatButtonSelect={this.onChatButtonSelect}
-							onTextButtonToggle={this.onTextButtonToggle}
-							getObjectFromPath={this.getObjectFromPath}
-							addAttachments={this.addAttachments}
-							onMenuClose={this.onMenuClose}
-							removeBookmark={this.removeBookmark}
-							onVoice={this.onVoice}
-						/>
-					) : ''}
+					<Buttons
+						ref={ref => this.refButtons = ref}
+						{...this.props}
+						value={value}
+						hasSelection={this.hasSelection}
+						getMarksAndRange={this.getMarksAndRange}
+						attachments={attachments}
+						caretMenuParam={this.caretMenuParam}
+						onMention={this.onMention}
+						onChatButtonSelect={this.onChatButtonSelect}
+						onTextButtonToggle={this.onTextButtonToggle}
+						getObjectFromPath={this.getObjectFromPath}
+						addAttachments={this.addAttachments}
+						onMenuClose={this.onMenuClose}
+						removeBookmark={this.removeBookmark}
+						onVoice={this.onVoice}
+					/>
 
 					<Icon id="send" className="send" onClick={this.onSend} />
 				</div>
@@ -199,6 +204,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		if (this.props.readonly) {
+			return;
+		};
+
 		this._isMounted = true;
 		this.checkSendButton();
 
@@ -221,6 +230,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		if (this.props.readonly) {
+			return;
+		};
+
 		this.renderMarkup();
 		this.checkSendButton();
 	};
@@ -931,9 +944,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
 						this.updateMarkup(value, to, to);
-					}
-				}
-			})
+					},
+				},
+			});
 		});
 	};
 

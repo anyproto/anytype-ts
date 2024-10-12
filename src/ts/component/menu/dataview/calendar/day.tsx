@@ -127,7 +127,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		const items = S.Record.getRecords(S.Record.getSubId(rootId, blockId), [ relationKey ]);
 		const current = [ d, m, y ].join('-');
 		const ret = items.filter(it => U.Date.date('j-n-Y', it[relationKey]) == current);
-		const relation = S.Record.getRelationByKey(relationKey)
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!readonly && !relation.isReadonlyValue && onCreate) {
 			ret.push({ id: 'add', icon: 'plus', name: translate('commonCreateNewObject') });

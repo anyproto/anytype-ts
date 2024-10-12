@@ -72,7 +72,7 @@ const Navigation = observer(class Navigation extends React.Component {
 			if (!it.onMouseEnter && !it.disabled) {
 				it.onMouseEnter = e => {
 					window.clearTimeout(this.timeoutPlus);
-					this.onTooltipShow(e, it.tooltip, it.caption)
+					this.onTooltipShow(e, it.tooltip, it.caption);
 				};
 			};
 			if (!it.onMouseLeave) {

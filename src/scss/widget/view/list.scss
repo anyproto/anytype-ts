@@ -62,7 +62,7 @@
 		.item {
 			.info { width: 100%; }
 			.inner { padding: 8px; gap: 0px 12px; }
-			.iconObject { background: var(--color-shape-tertiary); border-radius: 10px; }
+			.iconObject { background: var(--color-shape-tertiary); border-radius: 6px; }
 		}
 		.item:hover, .item.active {
 			.info { width: calc(100% - 36px); }

@@ -585,11 +585,12 @@ class Relation {
 		const details: any = { name };
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const objectTypes = this.getArrayValue(relation.objectTypes);
+		const skipLayouts = U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant);
 
 		let type = null;
 
 		if (objectTypes.length) {
-			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !U.Object.isInFileOrSystemLayouts(it.recommendedLayout));
+			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !skipLayouts.includes(it.recommendedLayout));
 			const l = allowedTypes.length;
 
 			if (l) {

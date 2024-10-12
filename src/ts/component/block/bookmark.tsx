@@ -95,12 +95,12 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 							{...U.Common.dataProps({ href: url })}
 						>
 							<div className={cnl.join(' ')}>
-								<ObjectName object={object} />
-								<ObjectDescription object={object} />
 								<div className="link">
 									{iconImage ? <img src={S.Common.imageUrl(iconImage, 16)} className="fav" /> : ''}
 									{U.Common.shortUrl(url)}
 								</div>
+								<ObjectName object={object} />
+								<ObjectDescription object={object} />
 
 								{archive}
 							</div>

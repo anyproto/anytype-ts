@@ -544,22 +544,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onAdd () {
-		if (!U.Space.canCreateSpace()) {
-			return;
-		};
-
-		S.Popup.closeAll(null, () => {
-			S.Popup.open('settings', { 
-				className: 'isSpaceCreate',
-				data: { 
-					page: 'spaceCreate', 
-					isSpace: true,
-					onCreate: (id) => {
-						U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
-					},
-				}, 
-			});
-		});
+		Action.createSpace(analytics.route.settingsSpaceIndex);
 	};
 
 	checkName (v: string): string {

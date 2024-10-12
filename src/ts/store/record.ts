@@ -303,8 +303,8 @@ class RecordStore {
 	};
 
 	getTypes () {
-		return this.getRecordIds(J.Constant.subId.type, '').map(id => this.getTypeById(id)).
-			filter(it => it && !it.isArchived && !it.isDeleted);
+		return this.getRecordIds(J.Constant.subId.type, '').map(id => S.Detail.get(J.Constant.subId.type, id)).
+			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 
 	getRelations () {

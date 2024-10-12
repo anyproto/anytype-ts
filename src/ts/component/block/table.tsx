@@ -158,7 +158,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	unbind () {
 		const { block } = this.props;
-		$(window).off('resize.' + block.id);
+		$(window).off(`resize.${block.id}`);
 	};
 
 	rebind () {
@@ -167,7 +167,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		this.unbind();
 
-		win.on(`resize.${block.id} resizeInit`, () => this.resize());
+		win.on(`resize.${block.id} resizeInit`, () => raf(() => this.resize()));
 	};
 
 	getData () {

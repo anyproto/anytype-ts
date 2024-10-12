@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.42.24-alpha",
+	"version": "0.42.38-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -149,7 +149,8 @@
 		"selection-ranges": "^3.0.3",
 		"sha1": "^1.1.1",
 		"stream-slicer": "^0.0.6",
-		"swiper": "^11.0.3"
+		"swiper": "^11.0.3",
+		"systeminformation": "^5.23.5"
 	},
 	"build": {
 		"npmRebuild": true,
@@ -522,6 +523,10 @@
 			{
 				"from": "node_modules/supports-color",
 				"to": "node_modules/supports-color"
+			},
+			{
+				"from": "node_modules/systeminformation",
+				"to": "node_modules/systeminformation"
 			},
 			{
 				"from": "node_modules/through2",
