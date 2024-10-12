@@ -70,6 +70,7 @@ class Popup extends React.Component {
 
 	componentDidMount () {
 		U.Router.init(history);
+		U.Smile.init();
 
 		const win = $(window);
 

@@ -41,7 +41,7 @@ const ShareBanner = observer(class ShareBanner extends React.Component<Props, {}
 	onClick () {
 		S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
 
-		analytics.event('SpaceShare', { type: 'OpenSettings' });
+		analytics.event('ClickOnboardingTooltip', { id: 'SpaceShare', type: 'OpenSettings' });
 	};
 
 	onClose (e) {
@@ -51,7 +51,7 @@ const ShareBanner = observer(class ShareBanner extends React.Component<Props, {}
 		Storage.set('shareBannerClosed', true);
 		this.props.onClose();
 
-		analytics.event('SpaceShare', { type: 'Close' });
+		analytics.event('ClickOnboardingTooltip', { id: 'SpaceShare', type: 'Close' });
 	};
 
 });

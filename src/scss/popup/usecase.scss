@@ -22,11 +22,6 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 		}
 
 		.page.pageList {
-			.banner { 
-				padding: 16px; background-image: $hl-gradient; display: flex; align-items: center; justify-content: center; @include text-paragraph; 
-				color: var(--color-control-accent);
-			}
-
 			.mid { padding: 56px 56px 0px 56px; text-align: center; }
 			.mid {
 				.title { margin: 0px 0px 2px 0px; }
@@ -82,20 +77,29 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 
 			.items { padding: 0px 56px; }
 			.items {
-				.ReactVirtualized__List { padding: 56px 0px 24px 0px; overflow: visible !important; }
+				.ReactVirtualized__List { padding: 56px 0px; overflow: visible !important; }
 				.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
 
-				.row { display: grid; gap: 32px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+				.row { display: grid; gap: 14px; padding-bottom: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+				.row:last-child { padding-bottom: 0px }
 
-				.item { margin: 0px 0px 32px 0px; }
+				.item { 
+					border: 1px solid var(--color-shape-secondary); overflow: hidden; margin: 0px; border-radius: 12px; padding: 0px;
+					box-sizing: border-box; display: flex; flex-direction: column; height: 364px;
+				}
 				.item {
-					.picture { 
-						aspect-ratio: 68/45; background-size: cover; background-repeat: no-repeat; background-position: center; border-radius: 8px;
-						margin: 0px 0px 12px 0px; box-shadow: $shadow;
+					.info { padding: 16px; }
+
+					.name { @include text-header3; @include text-overflow-nw; font-weight: 500; }
+					.author { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
+
+					.pictureWrapper { 
+						background-color: var(--color-shape-tertiary); display: grid; place-items: center; flex-grow: 1; padding: 16px;
 					}
-					.name { @include text-header2; @include clamp1; margin: 0px 0px 2px 0px; font-weight: 500; }
-					.descr { @include text-common; @include clamp2; margin: 0px 0px 12px 0px; }
-					.author { @include text-small; color: var(--color-text-secondary); }
+					.picture { 
+						width: 100%; height: 100%; background-size: cover; background-repeat: no-repeat; background-position: center; 
+						border-radius: 6px;
+					}
 				}
 			}
 		}
