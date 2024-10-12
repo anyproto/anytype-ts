@@ -154,6 +154,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				let name = U.Object.name(item);
 				if (meta.highlight && (meta.relationKey == 'name')) {
 					name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
+
+					if (U.Object.isInFileLayouts(item.layout)) {
+						name = U.File.name({ ...object, name });
+					};
 				} else {
 					name = U.Common.htmlSpecialChars(name);
 				};

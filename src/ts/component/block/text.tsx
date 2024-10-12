@@ -33,7 +33,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	marks: I.Mark[] = [];
 	text = '';
 	clicks = 0;
-	preventSaveOnBlur = false;
 	preventMenu = false;
 	frame = 0;
 
@@ -858,7 +857,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let value = this.getValue();
 		value = U.Common.stringCut(value, range.from - 1, range.from);
 
-		this.preventSaveOnBlur = true;
 		S.Common.filterSet(range.from - 1, '');
 
 		raf(() => {
@@ -874,9 +872,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				},
 				noFlipX: false,
 				noFlipY: false,
-				onClose: () => {
-					this.preventSaveOnBlur = false;
-				},
 				data: {
 					rootId,
 					blockId: block.id,
@@ -989,10 +984,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		focus.clear(true);
-
-		if (!this.preventSaveOnBlur) {
-			this.setText(this.marks, true);
-		};
+		this.setText(this.marks, true);
 
 		if (onBlur) {
 			onBlur(e);

@@ -55,7 +55,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 
 			let labelPrefix = '';
 			if (el.id == 'personal') {
-				labelPrefix = U.Common.toCamelCase(`onboardingExperienceItems-${el.id}-${I.SpaceType[type]}`)
+				labelPrefix = U.Common.toCamelCase(`onboardingExperienceItems-${el.id}-${I.SpaceType[type]}`);
 			};
 
 			return (
@@ -130,7 +130,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 						<Button onClick={() => this.onUsecaseSelect()} className="c24" text={buttonText} />
 					</div>
 				</React.Fragment>
-			)
+			);
 		} else {
 			content = <div className="cards">{items.map((el, i) => <Card key={i} {...el} />)}</div>;
 		};

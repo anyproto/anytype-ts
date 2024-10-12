@@ -840,6 +840,7 @@ class Dispatcher {
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
+						S.Detail.delete(subId, id, []);
 					};
 					break;
 				};
