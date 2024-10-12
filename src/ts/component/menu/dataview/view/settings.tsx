@@ -207,6 +207,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		if (withName) {
 			this.param.name = this.getViewName();
+			view.name = this.param.name;
 		};
 
 		Dataview.viewUpdate(rootId, blockId, view.id, this.param, onSave);
