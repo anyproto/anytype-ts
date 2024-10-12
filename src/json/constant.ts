@@ -103,7 +103,7 @@ export default {
 		space:			 'space',
 		fileManager:	 'fileManager',
 		participant:	 'participant',
-		myParticipant:	 'myParticipant',
+		subSpace:		 'subSpace',
 		allObject:		 'allObject',
 	},
 

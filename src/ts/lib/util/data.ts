@@ -316,11 +316,11 @@ class UtilData {
 		];
 
 		this.createSubscriptions(list, () => {
-			this.createMyParticipantSubscriptions(null, callBack);
+			this.createSubSpaceSubscriptions(null, callBack);
 		});
 	};
 
-	createMyParticipantSubscriptions (ids: string[], callBack?: () => void) {
+	createSubSpaceSubscriptions (ids: string[], callBack?: () => void) {
 		const { account } = S.Auth;
 
 		if (!account) {
@@ -345,12 +345,21 @@ class UtilData {
 		const list = [];
 
 		spaces.forEach(space => {
+			const ids = [
+				space.creator,
+				U.Space.getParticipantId(space.targetSpaceId, account.id),
+			];
+
+			if (![ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId)) {
+				ids.push(space.spaceDashboardId);
+			};
+
 			list.push({
 				spaceId: space.targetSpaceId,
-				subId: [ J.Constant.subId.myParticipant, space.targetSpaceId ].join('-'),
+				subId: U.Space.getSubSpaceSubId(space.targetSpaceId),
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: U.Space.getParticipantId(space.targetSpaceId, account.id) },
+					{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
