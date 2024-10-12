@@ -32,7 +32,7 @@
 				.items {
 					.item { display: flex; flex-direction: row; padding: 12px 0px; border-bottom: 1px solid var(--color-shape-secondary); }
 					.item {
-						.key { flex-basis: 180px; flex-shrink: 0; font-weight: 500; color: var(--color-control-active); }
+						.key { flex-basis: 30%; flex-shrink: 0; font-weight: 500; color: var(--color-control-active); }
 						.descr { flex: 1; padding-left: 14px; }
 					}
 				}

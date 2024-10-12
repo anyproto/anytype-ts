@@ -255,8 +255,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
 
-			U.Object.openAuto(object);
-
+			U.Object.openConfig(object);
 			analytics.createObject(object.type, object.layout, analytics.route.calendar, message.middleTime);
 		});
 	};

@@ -130,13 +130,7 @@ class UtilSpace {
 	};
 
 	canMyParticipantWrite (spaceId?: string): boolean {
-		const space = this.getSpaceview(spaceId);
 		const participant = this.getMyParticipant(spaceId);
-
-		if (!space || space._empty_) {
-			return false;
-		};
-
 		return participant ? (participant.isWriter || participant.isOwner) : true;
 	};
 
@@ -154,7 +148,7 @@ class UtilSpace {
 		const space = this.getSpaceview();
 		const closed = Storage.get('shareBannerClosed');
 
-		return !space.isShared && !closed && this.isMyOwner() && !hasShared;
+		return !space.isPersonal && !space.isShared && !closed && this.isMyOwner() && !hasShared;
 	};
 
 	getReaderLimit () {

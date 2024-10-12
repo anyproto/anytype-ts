@@ -103,7 +103,7 @@ class Focus {
 		const st = container.scrollTop();
 		const y = isPopup ? (no - container.offset().top + st) : no;
 
-		if ((y >= st) && (y <= st + ch - o)) {
+		if ((y >= st) && (y <= st + ch / 2 - o)) {
 			return;
 		};
 

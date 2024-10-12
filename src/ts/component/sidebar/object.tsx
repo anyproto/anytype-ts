@@ -13,7 +13,7 @@ interface State {
 const LIMIT = 20;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_DEFAULT = 64;
-const HEIGHT_ITEM_SYSTEM = 36;
+const HEIGHT_ITEM_COMPACT = 36;
 
 const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
 	
@@ -28,6 +28,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	sortId: I.SortId = I.SortId.Updated;
 	sortType: I.SortType = I.SortType.Desc;
 	orphan = false;
+	compact = false;
 	type: I.ObjectContainerType = I.ObjectContainerType.Object;
 	searchIds: string[] = null;
 	filter = '';
@@ -51,6 +52,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.onScroll = this.onScroll.bind(this);
 		this.onTabOver = this.onTabOver.bind(this);
 		this.onTabLeave = this.onTabLeave.bind(this);
+		this.onTabScroll = this.onTabScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
@@ -84,7 +86,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					<Item
 						item={item}
 						style={param.style}
-						allowSystemLayout={true}
+						compact={this.compact}
 						onClick={e => this.onClick(e, item)}
 						onContext={() => this.onContext(item)}
 						onMouseEnter={() => this.onOver(item)}
@@ -129,16 +131,24 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 							onMouseEnter={this.onTabOver} 
 							onMouseLeave={this.onTabLeave}
 						>
-							<div className="scrollWrap">
+							<div 
+								className="scrollWrap"
+								onScroll={this.onTabScroll}
+							>
 								<div className="scroll">
-									{typeOptions.map(it => {
+									{typeOptions.map((it: any, i: number) => {
 										const cn = [ 'tab' ];
+
 										if (this.type == it.id) {
 											cn.push('active');
 										};
 
 										return (
-											<div key={it.id} className={cn.join(' ')} onClick={() => this.onSwitchType(it.id)}>
+											<div 
+												key={it.id} 
+												className={cn.join(' ')} 
+												onClick={() => this.onSwitchType(it.id)}
+											>
 												{it.name}
 											</div>
 										);
@@ -219,24 +229,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
     };
 
 	componentDidMount () {
-		const storage = this.storageGet();
+		const storage = this.storageGet() || {};
 
-		if (storage) {
-			this.type = storage.type || I.ObjectContainerType.Object;
-			this.orphan = storage.orphan || false;
-
-			const sort = storage.sort[this.type];
-
-			if (sort) {
-				this.sortId = sort.id;
-				this.sortType = sort.type;
-			};
-		};
+		this.type = storage.type || I.ObjectContainerType.Object;
+		this.orphan = storage.orphan || false;
+		this.compact = storage.compact || false;
+		this.initSort();
 
 		this.refFilter.focus();
 		this.rebind();
-		this.resize();
 		this.load(true);
+
+		const idx = Math.max(0, this.getTypeOptions().findIndex(it => it.id == this.type));
+		this.scrollToTab(idx, false);
 
 		analytics.event('ScreenLibrary');
 	};
@@ -277,6 +282,24 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	unbind () {
 		$(window).off('keydown.sidebarObject');
 		$(this.node).off('click');
+	};
+
+	initSort () {
+		const storage = this.storageGet();
+		const sort = storage.sort[this.type];
+
+		if (!sort) {
+			const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact).filter(it => it.isSort);
+			if (options.length) {
+				this.sortId = options[0].id;
+				this.sortType = options[0].defaultType;
+			};
+		};
+
+		if (sort) {
+			this.sortId = sort.id;
+			this.sortType = sort.type;
+		};
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -399,7 +422,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	getSortOption () {
-		return U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
+		return U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact).find(it => it.id == this.sortId);
 	};
 
 	getRecords () {
@@ -411,8 +434,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		if (this.withSections()) {
 			const option = this.getSortOption();
-
-			records = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
+			if (option) {
+				records = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
+			};
 		};
 		return records;
 	};
@@ -443,6 +467,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const { x, y } = keyboard.mouse.page;
 
 		S.Menu.open('dataviewContext', {
+			element: `#sidebar #containerObject #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
 			data: {
 				objectIds,
@@ -456,7 +481,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onMore (e: any) {
 		e.stopPropagation();
 
-		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan);
+		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
 
 		let menuContext = null;
 
@@ -471,25 +496,30 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				options,
 				noClose: true,
 				onSelect: (e: any, item: any) => {
+					const storage = this.storageGet();
+
 					if ([ I.SortId.All, I.SortId.Orphan ].includes(item.id)) {
 						this.orphan = item.id == I.SortId.Orphan;
+						storage.orphan = this.orphan;
 
 						analytics.event('ChangeLibraryTypeLink', { type: item.id == I.SortId.Orphan ? 'Unlinked' : 'All' });
-					} else {
+					} else
+					if ([ I.SortId.List, I.SortId.Compact ].includes(item.id)) {
+						this.compact = item.id == I.SortId.Compact;
+						storage.compact = this.compact;						
+					}else {
 						this.sortId = item.id;
 						this.sortType = item.type;
 
+						storage.sort[this.type] = { id: item.id, type: item.type };
 						analytics.event('ChangeLibrarySort', { type: item.id, sort: I.SortType[item.type] });
 					};
 
+					this.storageSet(storage);
 					this.load(true);
 
-					const storage = this.storageGet();
-					const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan);
+					const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
 					
-					storage.sort[this.type] = { id: item.id, type: item.type };
-
-					this.storageSet(storage);
 					menuContext.ref.updateOptions(options);
 				},
 			}
@@ -540,6 +570,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.type = id as I.ObjectContainerType;
 		storage.type = this.type;
 
+		this.initSort();
 		this.storageSet(storage);
 		this.load(true);
 
@@ -554,7 +585,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 		];
 	};
 
@@ -904,8 +935,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	getRowHeight (item: any): number {
 		let h = HEIGHT_ITEM_DEFAULT;
-		if (U.Object.isTypeOrRelationLayout(item.layout)) {
-			h = HEIGHT_ITEM_SYSTEM;
+		if (this.compact) {
+			h = HEIGHT_ITEM_COMPACT;
 		};
 		if (item.isSection) {
 			h = HEIGHT_SECTION;
@@ -960,21 +991,46 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onTabArrow (dir: number) {
 		this.tabIndex += dir;
 		this.checkTabIndex();
-		this.scrollToTab(this.tabIndex);
+		this.scrollToTab(this.tabIndex, true);
 	};
 
-	scrollToTab (idx: number) {
+	onTabScroll () {
 		const node = $(this.node);
 		const tabs = node.find('#tabs');
-		const scroll = tabs.find('.scroll');
+		const scroll = tabs.find('.scrollWrap');
+
+		this.x = scroll.scrollLeft();
+
+		for (const item of this.tabArray) {
+			if ((this.x >= item.x) && (this.x <= item.x + item.w)) {
+				this.tabIndex = item.i;
+				break;
+			};
+		};
+
+		this.checkTabX();
+		this.checkTabIndex();
+		this.checkTabButtons();
+	};
+
+	scrollToTab (idx: number, animate: boolean) {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const scroll = tabs.find('.scrollWrap');
+
+		this.fillTabArray();
 
 		this.tabIndex = idx;
 		this.checkTabIndex();
 
-		this.x = -this.tabArray[this.tabIndex].x;
+		this.x = this.tabArray[this.tabIndex].x;
 		this.checkTabX();
 
-		scroll.css({ transform: `translate3d(${this.x}px, 0px, 0px)` });
+		if (animate) {
+			scroll.animate({ scrollLeft: this.x }, 200);
+		} else {
+			scroll.scrollLeft(this.x);
+		};
 		this.checkTabButtons();
 	};
 
@@ -985,18 +1041,14 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const max = this.getMaxWidth();
 		const sw = scroll.width();
 
-		this.x = Math.min(0, this.x);
-		this.x = Math.max(-(max - sw), this.x);
+		this.x = Math.floor(this.x);
+		this.x = Math.max(0, this.x);
+		this.x = Math.min(max - sw, this.x);
 	};
 
 	checkTabIndex () {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const items = tabs.find('.tab');
-		const length = items.length;
-
 		this.tabIndex = Math.max(0, this.tabIndex);
-		this.tabIndex = Math.min(length - 1, this.tabIndex);
+		this.tabIndex = Math.min(this.tabArray.length - 1, this.tabIndex);
 	};
 
 	checkTabButtons () {
@@ -1009,8 +1061,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const max = this.getMaxWidth();
 		const sw = scroll.width();
 
-		this.x >= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
-		this.x <= -(max - sw) ? sideRight.addClass('hide') : sideRight.removeClass('hide');
+		this.x <= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
+		this.x >= max - sw - 1 ? sideRight.addClass('hide') : sideRight.removeClass('hide');
 	};
 
 	getMaxWidth () {
@@ -1042,9 +1094,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	resize () {
-		this.tabIndex = 0;
-		this.fillTabArray();
-		this.onTabArrow(0);
+		this.scrollToTab(0, false);
 	};
 
 });

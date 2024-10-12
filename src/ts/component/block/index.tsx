@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, focus, Storage, Preview, Renderer, Mark, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Loader } from 'Component';
 
 import BlockDataview from './dataview';
@@ -532,7 +532,6 @@ const Block = observer(class Block extends React.Component<Props> {
 		if (
 			isContextMenuDisabled || 
 			readonly || 
-			block.isSelectable() || 
 			(block.isText() && (focused == block.id)) || 
 			block.isTable() || 
 			block.isDataview()
@@ -806,21 +805,11 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
-		items.off('mouseenter.link');
-		items.on('mouseenter.link', e => {
-			const sr = U.Common.getSelectionRange();
-			if (sr && !sr.collapsed) {
-				return;
-			};
+		items.each((i: number, item: any) => {
+			item = $(item);
 
-			const element = $(e.currentTarget);
-			const range = String(element.attr('data-range') || '').split('-');
-			const url = String(element.attr('href') || '');
-
-			if (!url) {
-				return;
-			};
-
+			const range = String(item.attr('data-range') || '').split('-');
+			const url = String(item.attr('href') || '');
 			const scheme = U.Common.getScheme(url);
 			const isInside = scheme == J.Constant.protocol;
 
@@ -844,33 +833,47 @@ const Block = observer(class Block extends React.Component<Props> {
 				type = I.PreviewType.Link;
 			};
 
-			Preview.previewShow({
-				target,
-				type,
-				element,
-				range: { 
-					from: Number(range[0]) || 0,
-					to: Number(range[1]) || 0, 
-				},
-				marks,
-				onChange: marks => {
-					const restricted = [];
-					if (block.isTextHeader()) {
-						restricted.push(I.MarkType.Bold);
-					};
-
-					const parsed = Mark.fromHtml(value, restricted);
-
-					this.setMarks(parsed.text, marks);
-				},
-				noUnlink: readonly,
-				noEdit: readonly,
-			});
-
-			element.off('click.link').on('click.link', e => {
+			item.off('click.link').on('click.link', e => {
 				e.preventDefault();
-				isInside ? U.Router.go(route, {}) : Renderer.send('urlOpen', target);
+
+				isInside ? U.Router.go(route, {}) : Action.openUrl(target);
 			});
+
+			item.off('mouseenter.link').on('mouseenter.link', e => {
+				const sr = U.Common.getSelectionRange();
+				if (sr && !sr.collapsed) {
+					return;
+				};
+
+				if (!url) {
+					return;
+				};
+
+				Preview.previewShow({
+					target,
+					type,
+					element: item,
+					range: { 
+						from: Number(range[0]) || 0,
+						to: Number(range[1]) || 0, 
+					},
+					marks,
+					onChange: marks => {
+						const restricted = [];
+						if (block.isTextHeader()) {
+							restricted.push(I.MarkType.Bold);
+						};
+
+						const parsed = Mark.fromHtml(value, restricted);
+
+						this.setMarks(parsed.text, marks);
+					},
+					noUnlink: readonly,
+					noEdit: readonly,
+				});
+			});
+
+			U.Common.textStyle(item, { border: 0.5 });
 		});
 	};
 
@@ -938,8 +941,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				};
 			});
 
-			clickable.off('mouseenter.mention');
-			clickable.on('mouseenter.mention', e => {
+			clickable.off('mouseenter.mention').on('mouseenter.mention', e => {
 				const sr = U.Common.getSelectionRange();
 				if (sr && !sr.collapsed) {
 					return;
@@ -974,6 +976,8 @@ const Block = observer(class Block extends React.Component<Props> {
 					},
 				});
 			});
+
+			U.Common.textStyle(item, { border: 0.5 });
 		});
 	};
 
@@ -992,59 +996,58 @@ const Block = observer(class Block extends React.Component<Props> {
 			
 			const param = item.attr('data-param');
 			const object = S.Detail.get(rootId, param, []);
+			const range = String(item.attr('data-range') || '').split('-');
 
 			if (object._empty_ || object.isDeleted) {
 				item.addClass('disabled');
 			};
-		});
 
-		items.off('mouseenter.object mouseleave.object');
-		items.on('mouseleave.object', () => Preview.tooltipHide(false));
-		items.on('mouseenter.object', e => {
-			const sr = U.Common.getSelectionRange();
-			if (sr && !sr.collapsed) {
-				return;
-			};
+			item.off('mouseenter.object mouseleave.object');
+			item.on('mouseleave.object', () => Preview.tooltipHide(false));
 
-			const element = $(e.currentTarget);
-			const range = String(element.attr('data-range') || '').split('-');
-			const param = String(element.attr('data-param') || '');
-			const object = S.Detail.get(rootId, param, []);
-			
-			let tt = '';
-			if (object.isDeleted) {
-				tt = translate('commonDeletedObject');
-			};
+			item.on('mouseenter.object', e => {
+				const sr = U.Common.getSelectionRange();
+				if (sr && !sr.collapsed) {
+					return;
+				};
 
-			if (tt) {
-				Preview.tooltipShow({ text: tt, element });
-				return;
-			};
+				let tt = '';
+				if (object.isDeleted) {
+					tt = translate('commonDeletedObject');
+				};
 
-			if (!param || object.isDeleted) {
-				return;
-			};
+				if (tt) {
+					Preview.tooltipShow({ text: tt, element: item });
+					return;
+				};
 
-			element.off('click.object').on('click.object', e => {
-				e.preventDefault();
-				U.Object.openEvent(e, object);
-			});
+				if (!param || object.isDeleted) {
+					return;
+				};
 
-			Preview.previewShow({
-				target: object.id,
-				object,
-				element,
-				marks,
-				range: { 
-					from: Number(range[0]) || 0,
-					to: Number(range[1]) || 0, 
-				},
-				noUnlink: readonly,
-				noEdit: readonly,
-				onChange: marks => {
-					const parsed = Mark.fromHtml(value, []);
-					this.setMarks(parsed.text, marks);
-				},
+				item.off('click.object').on('click.object', e => {
+					e.preventDefault();
+					U.Object.openEvent(e, object);
+				});
+
+				Preview.previewShow({
+					target: object.id,
+					object,
+					element: item,
+					marks,
+					range: { 
+						from: Number(range[0]) || 0,
+						to: Number(range[1]) || 0, 
+					},
+					noUnlink: readonly,
+					noEdit: readonly,
+					onChange: marks => {
+						const parsed = Mark.fromHtml(value, []);
+						this.setMarks(parsed.text, marks);
+					},
+				});
+
+				U.Common.textStyle(item, { border: 0.5 });
 			});
 		});
 	};
