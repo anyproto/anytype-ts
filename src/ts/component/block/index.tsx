@@ -873,7 +873,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				});
 			});
 
-			U.Common.textStyle(item, { border: 0.5 });
+			U.Common.textStyle(item, { border: 0.35 });
 		});
 	};
 
@@ -977,7 +977,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				});
 			});
 
-			U.Common.textStyle(item, { border: 0.5 });
+			U.Common.textStyle(item, { border: 0.35 });
 		});
 	};
 
@@ -1047,7 +1047,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					},
 				});
 
-				U.Common.textStyle(item, { border: 0.5 });
+				U.Common.textStyle(item, { border: 0.35 });
 			});
 		});
 	};
