@@ -50,11 +50,7 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		const Item = (item: any) => {
 			const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
-
-			let icon = null;
-			if (!hideIcon) {
-				icon = <IconObject object={item} size={16} canEdit={canEdit} />;
-			};
+			const icon = hideIcon ? null : <IconObject id={`item-${item.id}-icon`} object={item} size={16} canEdit={canEdit} />;
 
 			return (
 				<div 
