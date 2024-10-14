@@ -137,10 +137,10 @@ export default {
 		'spaceAccessType',
 		'readersLimit',
 		'writersLimit',
-		'sharedSpacesLimit',
 		'targetSpaceId',
 		'creator',
-		'createdDate'
+		'createdDate',
+		'spaceMainChatId'
 	],
 
 	participant: [

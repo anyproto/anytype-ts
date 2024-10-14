@@ -45,7 +45,7 @@ class UtilSpace {
 		if (id == I.HomePredefinedId.Last) {
 			ret = this.getLastOpened();
 		} else {
-			ret = S.Detail.get(J.Constant.subId.space, id);
+			ret = S.Detail.get(U.Space.getSubSpaceSubId(space.targetSpaceId), id);
 		};
 
 		if (!ret || ret._empty_ || ret.isDeleted) {
@@ -113,6 +113,10 @@ class UtilSpace {
 		return object._empty_ ? null : object;
 	};
 
+	getSubSpaceSubId (spaceId: string) {
+		return [ J.Constant.subId.subSpace, spaceId ].join('-');
+	};
+
 	getMyParticipant (spaceId?: string) {
 		const { account } = S.Auth;
 		const { space } = S.Common;
@@ -123,10 +127,14 @@ class UtilSpace {
 
 		spaceId = spaceId || space;
 
-		const subId = [ J.Constant.subId.myParticipant, spaceId ].join('-');
+		const subId = this.getSubSpaceSubId(spaceId);
 		const object = S.Detail.get(subId, this.getParticipantId(spaceId, account.id));
 
 		return object._empty_ ? null : object;
+	};
+
+	getCreator (spaceId: string, id: string) {
+		return S.Detail.get(this.getSubSpaceSubId(spaceId), id);
 	};
 
 	canMyParticipantWrite (spaceId?: string): boolean {

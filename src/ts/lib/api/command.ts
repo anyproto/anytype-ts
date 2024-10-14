@@ -1544,9 +1544,10 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 	dispatcher.request(ObjectListModifyDetailValues.name, request, callBack);
 };
 
-export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+export const ObjectSearch = (spaceId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
 
+	request.setSpaceid(spaceId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setFulltext(fullText);
@@ -1557,9 +1558,10 @@ export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[
 	dispatcher.request(ObjectSearch.name, request, callBack);
 };
 
-export const ObjectSearchWithMeta = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+export const ObjectSearchWithMeta = (spaceId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchWithMeta.Request();
 
+	request.setSpaceid(spaceId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setFulltext(fullText);
@@ -1570,9 +1572,10 @@ export const ObjectSearchWithMeta = (filters: I.Filter[], sorts: I.Sort[], keys:
 	dispatcher.request(ObjectSearchWithMeta.name, request, callBack);
 };
 
-export const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
+export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
+	request.setSpaceid(spaceId);
 	request.setSubid(subId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
@@ -1601,9 +1604,10 @@ export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKe
 	dispatcher.request(ObjectGroupsSubscribe.name, request, callBack);
 };
 
-export const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], noDeps: boolean, callBack?: (message: any) => void) => {
+export const ObjectSubscribeIds = (spaceId: string, subId: string, ids: string[], keys: string[], noDeps: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SubscribeIds.Request();
 
+	request.setSpaceid(spaceId);
 	request.setSubid(subId);
 	request.setIdsList(ids);
 	request.setKeysList(keys);
