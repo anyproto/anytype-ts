@@ -210,11 +210,6 @@
                 .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
             }
 
-			.steps {
-                .step:not(.active) { background: var(--color-shape-primary); }
-                .step:not(.active):hover { background: var(--color-control-active); }
-            }
-
             .category { color: #5c5a54; }
         }
 	}

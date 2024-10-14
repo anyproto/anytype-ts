@@ -18,7 +18,7 @@ export interface MenuParam {
 	type?: MenuType;
 	vertical?: MenuDirection;
 	horizontal?: MenuDirection;
-	stickToElementEdge?: boolean;
+	stickToElementEdge?: MenuDirection;
 	fixedX?: number;
 	fixedY?: number;
 	offsetX?: any;

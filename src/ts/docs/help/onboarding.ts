@@ -83,7 +83,7 @@ export default {
 		param: {
 			noArrow: true,
 			horizontal: I.MenuDirection.Right,
-			stickToElementEdge: true,
+			stickToElementEdge: I.MenuDirection.Top,
 			width: 288,
 			offsetX: -312,
 			noClose: true,
@@ -178,6 +178,7 @@ export default {
 					element: '#menuSyncStatus',
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Right,
+					stickToElementEdge: I.MenuDirection.None,
 					highlightElements: [ '#menuSyncStatus', '#button-header-sync' ],
 					offsetY: 14,
 				}
@@ -191,7 +192,7 @@ export default {
 					className: 'qrDownload',
 					element: '#icon-p2p',
 					horizontal: I.MenuDirection.Right,
-					stickToElementEdge: true,
+					stickToElementEdge: I.MenuDirection.Top,
 					offsetX: -295,
 				}
 			},

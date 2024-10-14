@@ -223,7 +223,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { page } = data;
+		const { page, isSpace } = data;
 		const items = this.getItems();
 
 		this.onPage(page || items[0].id);
@@ -231,7 +231,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 		keyboard.disableNavigation(true);
 
-		Onboarding.start('membership', true, false);
+		if (!isSpace && this.withMembership()) {
+			Onboarding.start('membership', true, false);
+		};
 	};
 
 	componentDidUpdate () {
@@ -288,7 +290,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
-			if (isAnytypeNetwork && isOnline) {
+			if (this.withMembership()) {
 				settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') });
 			};
 
@@ -304,6 +306,13 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
 			];
 		};
+	};
+
+	withMembership () {
+		const { isOnline } = S.Common;
+		const isAnytypeNetwork = U.Data.isAnytypeNetwork();
+
+		return isAnytypeNetwork && isOnline;
 	};
 
 	getItems () {

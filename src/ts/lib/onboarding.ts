@@ -81,6 +81,7 @@ class Onboarding {
 		param.force = force;
 		param.noAutoHover = true;
 		param.highlightElements = param.highlightElements || [];
+		param.hiddenElements = param.hiddenElements || [];
 
 		if ('function' != typeof(param.offsetX)) {
 			param.offsetX = Number(param.offsetX) || 0;
