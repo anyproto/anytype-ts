@@ -495,8 +495,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
 			const scrollTop = win.scrollTop();
-			const offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
-			const offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
+
+			let offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
+			let offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
 
 			let ew = 0;
 			let eh = 0;
@@ -538,6 +539,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			let y = oy;
 			let flipX = false;
 
+			if (topline) {
+				offsetY = -eh;
+			};
+
 			switch (vertical) {
 				case I.MenuDirection.Top:
 					y = oy - height + offsetY;
@@ -560,10 +565,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 						y = oy - height - offsetY;
 					};
 					break;
-			};
-
-			if (topline) {
-				y = oy;
 			};
 
 			switch (horizontal) {
