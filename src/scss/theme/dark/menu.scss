@@ -211,8 +211,8 @@
             }
 
 			.steps {
-                .step:not(.active) { background: var(--color-shape-secondary); }
-                .step:not(.active):hover { background: var(--color-shape-primary); }
+                .step:not(.active) { background: var(--color-shape-primary); }
+                .step:not(.active):hover { background: var(--color-control-active); }
             }
 
             .category { color: #5c5a54; }
