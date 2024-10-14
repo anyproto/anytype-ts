@@ -813,6 +813,10 @@ const Block = observer(class Block extends React.Component<Props> {
 			const scheme = U.Common.getScheme(url);
 			const isInside = scheme == J.Constant.protocol;
 
+			if (!url) {
+				return;
+			};
+
 			let route = '';
 			let target;
 			let type;
@@ -833,7 +837,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				type = I.PreviewType.Link;
 			};
 
-			item.off('click.link').on('click.link', e => {
+			item.off('mousedown.link').on('mousedown.link', e => {
 				e.preventDefault();
 
 				isInside ? U.Router.go(route, {}) : Action.openUrl(target);
@@ -842,10 +846,6 @@ const Block = observer(class Block extends React.Component<Props> {
 			item.off('mouseenter.link').on('mouseenter.link', e => {
 				const sr = U.Common.getSelectionRange();
 				if (sr && !sr.collapsed) {
-					return;
-				};
-
-				if (!url) {
 					return;
 				};
 
@@ -995,37 +995,33 @@ const Block = observer(class Block extends React.Component<Props> {
 			const object = S.Detail.get(rootId, param, []);
 			const range = String(item.attr('data-range') || '').split('-');
 
+			if (!param) {
+				return;
+			};
+
 			if (object._empty_ || object.isDeleted) {
 				item.addClass('disabled');
 			};
 
-			item.off('mouseenter.object mouseleave.object');
-			item.on('mouseleave.object', () => Preview.tooltipHide(false));
+			item.off('mousedown.object').on('mousedown.object', e => {
+				e.preventDefault();
+				U.Object.openEvent(e, object);
+			});
 
-			item.on('mouseenter.object', e => {
+			item.off('mouseleave.object').on('mouseleave.object', () => Preview.tooltipHide(false));
+
+			item.off('mouseenter.object').on('mouseenter.object', () => {
 				const sr = U.Common.getSelectionRange();
+				const tt = object.isDeleted ? translate('commonDeletedObject') : '';
+
 				if (sr && !sr.collapsed) {
 					return;
-				};
-
-				let tt = '';
-				if (object.isDeleted) {
-					tt = translate('commonDeletedObject');
 				};
 
 				if (tt) {
 					Preview.tooltipShow({ text: tt, element: item });
 					return;
 				};
-
-				if (!param || object.isDeleted) {
-					return;
-				};
-
-				item.off('click.object').on('click.object', e => {
-					e.preventDefault();
-					U.Object.openEvent(e, object);
-				});
 
 				Preview.previewShow({
 					target: object.id,
