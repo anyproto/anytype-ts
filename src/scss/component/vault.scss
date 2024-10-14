@@ -65,8 +65,3 @@ html.platformWindows, html.platformLinux {
 		.head { height: 12px; }
 	}
 }
-
-#item-add.onboardingElement,
-#item-gallery.onboardingElement {
-	.iconWrap { background-color: var(--color-shape-tertiary) !important; }
-}

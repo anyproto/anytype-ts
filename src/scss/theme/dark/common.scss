@@ -288,10 +288,8 @@ html.themeDark {
 		}
 	}
 
-	#item-add.onboardingElement,
-	#item-gallery.onboardingElement { background-color: unset !important;}
-	#item-add.onboardingElement,
-	#item-gallery.onboardingElement {
+	.onboardingElement.onboardingVaultItem { background-color: unset !important; }
+	.onboardingElement.onboardingVaultItem {
 		.iconWrap { background-color: #000000 !important; }
 	}
 

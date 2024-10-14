@@ -197,10 +197,12 @@
 
     /* Onboarding */
 
-	.menu.menuOnboarding { border-color: var(--color-shape-secondary); background: var(--color-shape-tertiary); }
+	.menu.menuOnboarding { box-shadow: inset 0px 0px 0px 1px var(--color-shape-secondary); background: var(--color-shape-tertiary); }
 	.menu.menuOnboarding {
 		a { color: var(--color-bg-primary); }
 		.highlight { color: var(--color-system-accent-100); }
+
+        .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
 
         .bottom {
             .round {

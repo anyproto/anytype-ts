@@ -45,7 +45,7 @@
 
 				.item { 
 					display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px; 
-					transition: background-color $transitionCommon; background-color: var(--color-shape-tertiary);
+					transition: background-color $transitionCommon;
 				}
 				.item:hover, .item.active { background-color: var(--color-shape-highlight-medium); }
 				.item {

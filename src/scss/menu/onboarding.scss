@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuOnboarding { border: 1px solid var(--color-shape-secondary-inversion); background-color: var(--color-bg-primary-inversion); color: #f8f8f8; width: var(--menu-width-value); }
+	.menu.menuOnboarding { box-shadow: inset 0px 0px 0px 1px var(--color-shape-secondary-inversion); background-color: var(--color-bg-primary-inversion); color: #f8f8f8; width: var(--menu-width-value); }
 	.menu.menuOnboarding {
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
@@ -21,9 +21,8 @@
 		}
 		a { color: var(--color-text-inversion); text-decoration: underline; }
 
-		.icon.close { 
-			width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; background-image: url('~img/icon/menu/onboarding/close.svg');
-		}
+		.icon.close { width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; border-radius: 4px; background-image: url('~img/icon/menu/onboarding/close0.svg'); }
+		.icon.close:hover { background-image: url('~img/icon/menu/onboarding/close1.svg'); }
 
 		video { margin-top: 12px; border-radius: 4px; border: 1px solid var(--color-shape-secondary); cursor: zoom-in; aspect-ratio: 16/9; object-fit: cover; }
 		.confettiCanvas { position: absolute; pointer-events: none; width: 100%;  height: 100%; left: 0; top: 0; }
@@ -87,3 +86,11 @@
 		.wrap::before { content: ''; width: 256px; height: 256px; background: url('~img/icon/onboarding/qrDownload.png') 50% 50% no-repeat; background-size: 122px; }
 	}
 }
+
+.onboardingElement.onboardingDataviewEmptyButton { background-color: var(--color-shape-tertiary) !important; transition: none !important; }
+.onboardingElement.onboardingSettingsItem { background-color: var(--color-shape-tertiary) !important; }
+.onboardingElement.onboardingVaultItem {
+	.iconWrap { background-color: var(--color-shape-tertiary) !important; }
+}
+.onboardingElement.onboardingHeaderSync.sync { background-color: var(--color-shape-tertiary) !important; }
+.onboardingElement.onboardingIconP2P { background-color: var(--color-shape-tertiary) !important; border-radius: 50% !important; }

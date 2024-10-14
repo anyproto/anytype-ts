@@ -88,7 +88,7 @@ export default {
 			offsetX: -312,
 			noClose: true,
 			highlightNodes: null,
-			hiddenElements: [ '#widget-buttons', '.widgetView', '.widgetTree' ],
+			hiddenElements: [ '#widget-buttons', '.widgetView', '.widgetTree', '#containerWidget #list .buttons' ],
 		},
 		items: [
 			{
@@ -116,6 +116,7 @@ export default {
 			{
 				category: translate('onboardingMultipleSpacesTitle'),
 				description: translate('onboardingMultipleSpacesText'),
+				cloneElementClassName: 'onboardingVaultItem',
 				param: {
 					element: '#vault #item-add',
 					offsetX: -318,
@@ -124,6 +125,7 @@ export default {
 			{
 				category: translate('onboardingGalleryTitle'),
 				description: translate('onboardingGalleryText'),
+				cloneElementClassName: 'onboardingVaultItem',
 				param: {
 					element: '#vault #item-gallery',
 					offsetX: -318,
@@ -134,7 +136,6 @@ export default {
 
 	membership: () => ({
 		showDimmer: true,
-		cloneElementClassName: 'settingsHover',
 		param: {
 			noArrow: true,
 			horizontal: I.MenuDirection.Right,
@@ -152,6 +153,7 @@ export default {
 				category: translate('onboardingMembershipTitle'),
 				description: translate('onboardingMembershipText'),
 				buttonText: translate('onboardingMembershipButton'),
+				cloneElementClassName: 'onboardingSettingsItem',
 				param: {
 					element: '#popupSettings #item-membership',
 				}
@@ -172,6 +174,7 @@ export default {
 				category: translate('onboardingSyncStatusTitle'),
 				description: translate('onboardingSyncStatusText'),
 				buttonText: translate('onboardingSyncStatusButton'),
+				cloneElementClassName: 'onboardingHeaderSync',
 				param: {
 					element: '#menuSyncStatus',
 					vertical: I.MenuDirection.Bottom,
@@ -184,6 +187,7 @@ export default {
 				category: translate('onboardingMobileTitle'),
 				description: translate('onboardingMobileText'),
 				buttonText: translate('onboardingMobileButton'),
+				cloneElementClassName: 'onboardingIconP2P',
 				param: {
 					className: 'qrDownload',
 					element: '#icon-p2p',
@@ -222,6 +226,7 @@ export default {
 			{
 				category: translate('onboardingCollectionsTitle'),
 				description: translate('onboardingCollectionsText'),
+				cloneElementClassName: 'onboardingDataviewEmptyButton',
 				noButton: true,
 				param: {
 					element: '#emptyButton',

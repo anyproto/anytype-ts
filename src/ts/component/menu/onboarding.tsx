@@ -159,8 +159,19 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	componentWillUnmount(): void {
+		const { param } = this.props;
+		const { hiddenElements } = param;
+
 		this.unbind();
 		this.clearDimmer();
+
+		if (!hiddenElements) {
+			return;
+		};
+
+		hiddenElements.forEach((el) => {
+			$(el).css({ visibility: 'visible' });
+		});
 	};
 
 	hideElements () {
@@ -178,9 +189,12 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	initDimmer () {
 		const { param } = this.props;
-		const { highlightNodes } = param;
+		const { highlightNodes, data } = param;
 		const section = this.getSection();
 		const highlight = highlightNodes ? highlightNodes : $(param.element);
+		const { current } = data;
+		const { items } = section;
+		const item = items[current];
 		const body = $('body');
 
 		if (!section.showDimmer) {
@@ -206,8 +220,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				body.append(clone);
 				U.Common.copyCss(element.get(0), clone.get(0));
 
-				if (section.cloneElementClassName) {
-					clone.addClass(section.cloneElementClassName);
+				if (item.cloneElementClassName) {
+					clone.addClass(item.cloneElementClassName);
 				};
 
 				this.hiddenElement = element;
