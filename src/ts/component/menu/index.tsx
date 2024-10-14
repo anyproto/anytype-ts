@@ -572,6 +572,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 			switch (horizontal) {
 				case I.MenuDirection.Left:
+					if (stickToElementEdge) {
+						offsetX = ew;
+					};
+
 					x += offsetX;
 
 					// Switch
@@ -586,6 +590,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					break;
 
 				case I.MenuDirection.Right:
+					if (stickToElementEdge) {
+						offsetX = -ew;
+					};
+
 					x -= width + offsetX - ew;
 
 					// Switch
