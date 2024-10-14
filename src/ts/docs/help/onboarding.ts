@@ -83,7 +83,7 @@ export default {
 		param: {
 			noArrow: true,
 			horizontal: I.MenuDirection.Right,
-			topline: true,
+			stickToElementEdge: true,
 			width: 288,
 			offsetX: -312,
 			noClose: true,
@@ -139,7 +139,6 @@ export default {
 		param: {
 			noArrow: true,
 			horizontal: I.MenuDirection.Right,
-			//topline: true,
 			width: 288,
 			offsetX: -304,
 			offsetY: () => {
@@ -192,7 +191,7 @@ export default {
 					className: 'qrDownload',
 					element: '#icon-p2p',
 					horizontal: I.MenuDirection.Right,
-					topline: true,
+					stickToElementEdge: true,
 					offsetX: -295,
 				}
 			},

@@ -470,7 +470,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	position () {
 		const { id, param } = this.props;
-		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, topline } = param;
+		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge } = param;
 		const borderLeft = this.getBorderLeft();
 		const borderTop = this.getBorderTop();
 		const borderBottom = this.getBorderBottom();
@@ -498,7 +498,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 			let offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
 			let offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
-
 			let ew = 0;
 			let eh = 0;
 			let ox = 0;
@@ -539,12 +538,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			let y = oy;
 			let flipX = false;
 
-			if (topline) {
-				offsetY = -eh;
-			};
-
 			switch (vertical) {
 				case I.MenuDirection.Top:
+					if (stickToElementEdge) {
+						offsetY = eh;
+					};
+
 					y = oy - height + offsetY;
 					
 					// Switch
@@ -558,6 +557,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					break;
 
 				case I.MenuDirection.Bottom:
+					if (stickToElementEdge) {
+						offsetY = -eh;
+					};
+
 					y = oy + eh + offsetY;
 
 					// Switch
@@ -569,6 +572,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 			switch (horizontal) {
 				case I.MenuDirection.Left:
+					if (stickToElementEdge) {
+						offsetX = ew;
+					};
+
 					x += offsetX;
 
 					// Switch
@@ -583,6 +590,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					break;
 
 				case I.MenuDirection.Right:
+					if (stickToElementEdge) {
+						offsetX = -ew;
+					};
+
 					x -= width + offsetX - ew;
 
 					// Switch

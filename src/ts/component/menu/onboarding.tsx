@@ -159,39 +159,23 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	componentWillUnmount(): void {
-		const { param } = this.props;
-		const { hiddenElements } = param;
-
 		this.unbind();
 		this.clearDimmer();
+		this.showElements();
+	};
 
-		if (!hiddenElements) {
-			return;
-		};
-
-		hiddenElements.forEach((el) => {
-			$(el).css({ visibility: 'visible' });
-		});
+	showElements () {
+		this.props.param.hiddenElements.forEach(el => $(el).css({ visibility: 'visible' }));
 	};
 
 	hideElements () {
-		const { param } = this.props;
-		const { hiddenElements } = param;
-
-		if (!hiddenElements) {
-			return;
-		};
-
-		hiddenElements.forEach((el) => {
-			$(el).css({ visibility: 'hidden' });
-		});
+		this.props.param.hiddenElements.forEach(el => $(el).css({ visibility: 'hidden' }));
 	};
 
 	initDimmer () {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, highlightElements } = param;
 		const section = this.getSection();
-		const highlight = param.highlightElements;
 		const { current } = data;
 		const { items } = section;
 		const item = items[current];
@@ -201,8 +185,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			return;
 		};
 
-		if (!highlight.length) {
-			highlight.push(param.element);
+		if (!highlightElements.length) {
+			highlightElements.push(param.element);
 		};
 
 		if (this.frame) {
@@ -210,7 +194,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		this.frame = raf(() => {
-			highlight.forEach(selector => {
+			highlightElements.forEach(selector => {
 				$(selector).each((idx, el) => {
 					const element = $(el);
 					const clone = element.clone();
