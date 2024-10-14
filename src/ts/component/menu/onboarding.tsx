@@ -190,15 +190,19 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	initDimmer () {
 		const { param } = this.props;
 		const { data } = param;
-		const { current } = data;
 		const section = this.getSection();
+		const highlight = param.highlightElements || [];
+		const { current } = data;
 		const { items } = section;
 		const item = items[current];
-		const highlight = param.highlightElements || [ param.element ];
 		const body = $('body');
 
 		if (!section.showDimmer) {
 			return;
+		};
+
+		if (!highlight.length) {
+			highlight.push(param.element);
 		};
 
 		if (this.frame) {
@@ -238,7 +242,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	clearDimmer () {
 		const { param } = this.props;
 		const section = this.getSection();
-		const highlight = param.highlightElements || [ param.element ];
 
 		if (!section.showDimmer) {
 			return;
@@ -247,7 +250,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		$('.onboardingElement').remove();
 		$('.onboardingDimmer').remove();
 
-		highlight.forEach(selector => {
+		param.highlightElements = param.highlightElements || [ param.element ];
+		param.highlightElements.forEach(selector => {
 			$(selector).css({ visibility: 'visible' });
 		});
 
