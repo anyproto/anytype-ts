@@ -608,6 +608,7 @@ class UtilMenu {
 									canAdd: true,
 									onSelect: el => {
 										onSelect(el, true);
+										menuContext.close();
 
 										analytics.event('ChangeSpaceDashboard', { type: I.HomePredefinedId.Existing });
 									},
