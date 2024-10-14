@@ -87,7 +87,7 @@ export default {
 			width: 288,
 			offsetX: -312,
 			noClose: true,
-			highlightNodes: null,
+			highlightNodes: [],
 			hiddenElements: [ '#widget-buttons', '.widgetView', '.widgetTree', '#containerWidget #list .buttons' ],
 		},
 		items: [
@@ -110,7 +110,7 @@ export default {
 				description: translate('onboardingWidgetsText'),
 				param: {
 					element: '.widgetView',
-					highlightNodes: $('#containerWidget').find('.widget.widgetView, .widget.widgetTree')
+					highlightNodes: [ '#containerWidget .widget.widgetView', '#containerWidget .widget.widgetTree' ]
 				}
 			},
 			{
@@ -167,7 +167,7 @@ export default {
 			noArrow: true,
 			width: 288,
 			noClose: true,
-			highlightNodes: null,
+			highlightNodes: [],
 		},
 		items: [
 			{
@@ -179,7 +179,7 @@ export default {
 					element: '#menuSyncStatus',
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Right,
-					highlightNodes: $('body').find('#menuSyncStatus, #button-header-sync'),
+					highlightNodes: [ '#menuSyncStatus', '#button-header-sync' ],
 					offsetY: 14,
 				}
 			},

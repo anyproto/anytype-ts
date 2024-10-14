@@ -191,7 +191,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { highlightNodes, data } = param;
 		const section = this.getSection();
-		const highlight = highlightNodes ? highlightNodes : $(param.element);
+		const highlight = highlightNodes || [];
 		const { current } = data;
 		const { items } = section;
 		const item = items[current];
@@ -201,54 +201,64 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			return;
 		};
 
+		if (!highlight.length) {
+			highlight.push(param.element);
+		};
+
 		if (this.frame) {
 			raf.cancel(this.frame);
 		};
 
 		this.frame = raf(() => {
-			highlight.each((idx, el) => {
-				const element = $(el);
-				const clone = element.clone();
-				const { top, left } = element.offset();
-				const st = $(window).scrollTop();
+			highlight.forEach(selector => {
+				$(selector).each((idx, el) => {
+					const element = $(el);
+					const clone = element.clone();
+					const { top, left } = element.offset();
+					const st = $(window).scrollTop();
 
-				if (this.hiddenElement) {
-					this.hiddenElement.css({ visibility: 'visible' });
-					this.hiddenElement = null;
-				};
+					if (this.hiddenElement) {
+						this.hiddenElement.css({ visibility: 'visible' });
+						this.hiddenElement = null;
+					};
 
-				body.append(clone);
-				U.Common.copyCss(element.get(0), clone.get(0));
+					body.append(clone);
+					U.Common.copyCss(element.get(0), clone.get(0));
 
-				if (item.cloneElementClassName) {
-					clone.addClass(item.cloneElementClassName);
-				};
+					if (item.cloneElementClassName) {
+						clone.addClass(item.cloneElementClassName);
+					};
 
-				this.hiddenElement = element;
-				element.css({ visibility: 'hidden' });
-				clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
-
-				if (idx == highlight.length - 1) {
-					clone.after('<div class="onboardingDimmer"></div>');
-				};
+					this.hiddenElement = element;
+					element.css({ visibility: 'hidden' });
+					clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
+				});
 			});
 		});
+
+		body.append('<div class="onboardingDimmer"></div>');
 	};
 
 	clearDimmer () {
 		const { param } = this.props;
-		const { highlightNodes, hiddenElements } = param;
+		const { highlightNodes } = param;
 		const section = this.getSection();
-		const element = highlightNodes ? highlightNodes : $(param.element);
+		const highlight = highlightNodes || [];
 
 		if (!section.showDimmer) {
 			return;
 		};
 
+		if (!highlight.length) {
+			highlight.push(param.element);
+		};
+
 		$('.onboardingElement').remove();
 		$('.onboardingDimmer').remove();
 
-		element.css({ visibility: 'visible' });
+		highlight.forEach(selector => {
+			$(selector).css({ visibility: 'visible' });
+		});
 
 		if (this.frame) {
 			raf.cancel(this.frame);
