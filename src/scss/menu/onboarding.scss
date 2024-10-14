@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuOnboarding { box-shadow: inset 0px 0px 0px 1px var(--color-shape-secondary-inversion); background-color: var(--color-bg-primary-inversion); color: #f8f8f8; width: var(--menu-width-value); }
+	.menu.menuOnboarding { box-shadow: inset 0px 0px 0px 1px var(--color-shape-secondary-inversion); background-color: var(--color-bg-primary-inversion); color: var(--color-text-primary-inversion); width: var(--menu-width-value); }
 	.menu.menuOnboarding {
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
