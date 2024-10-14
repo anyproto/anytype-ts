@@ -154,7 +154,7 @@
 
 				.select {
 					background: none; border: solid 1px var(--color-shape-secondary); font-weight: 400; text-decoration: none;
-					min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px; padding-left: 10px;
+					min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px; padding-left: 10px; max-width: 250px;
 				}
 				.select:hover { background: var(--color-shape-highlight-medium); }
 				.select {

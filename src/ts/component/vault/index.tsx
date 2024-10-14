@@ -149,7 +149,12 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onKeyUp (e: any) {
-		this.pressed.delete(e.key.toLowerCase());
+		const key = String(e.key || '').toLowerCase();
+		if (!key) {
+			return;
+		};
+
+		this.pressed.delete(key);
 
 		if (
 			(this.pressed.has(Key.ctrl) || 
