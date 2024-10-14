@@ -309,10 +309,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	withMembership () {
-		const { isOnline } = S.Common;
-		const isAnytypeNetwork = U.Data.isAnytypeNetwork();
-
-		return isAnytypeNetwork && isOnline;
+		return S.Common.isOnline && U.Data.isAnytypeNetwork();
 	};
 
 	getItems () {
