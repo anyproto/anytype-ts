@@ -843,7 +843,7 @@ class Action {
 		};
 
 		C.ObjectShow(objectId, 'publish', S.Common.space, (message: any) => {
-			if (!message.error.code) {
+			if (message.error.code) {
 				return;
 			};
 
