@@ -233,12 +233,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		element.css({ visibility: 'visible' });
 
-		if (hiddenElements) {
-			hiddenElements.forEach((el) => {
-				$(el).css({ visibility: 'hidden' });
-			});
-		};
-
 		if (this.frame) {
 			raf.cancel(this.frame);
 		};

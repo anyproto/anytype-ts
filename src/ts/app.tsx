@@ -218,6 +218,10 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
+
+		window.setTimeout(() => {
+			Onboarding.start('basics', false, true);
+		}, 1000)
 	};
 
 	init () {

@@ -255,6 +255,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 							const blocks = S.Block.getChildren(widgets, widgets);
 							blocks.forEach(block => Storage.setToggle('widget', block.id, true));
+							Onboarding.start('basics', false, false);
 						},
 						onFadeIn: () => {
 							Onboarding.start('basics', false, false);
