@@ -256,31 +256,34 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.reloadData(() => {
-			const records = this.getRecords();
-			const length = records.length;
-			const isCompletedSets = isCollection || (Onboarding.isCompleted('sets') && !isCollection);
-
 			if (isInline) {
 				return;
 			};
 
-			if (isCollection && !length) {
-				Onboarding.start('collections', isPopup);
-			};
-			if (isCompletedSets && this.isAllowedObject() && this.isAllowedDefaultType() && length) {
-				Onboarding.start('setSettings', isPopup);
-			};
+			const { total } = S.Record.getMeta(subId, '');
+			const isCompletedSets = Onboarding.isCompleted('sets');
+
+			window.setTimeout(() => {
+				if (!isCollection && !isCompletedSets) {
+					Onboarding.start('sets', isPopup);
+				} else 
+				if (isCollection && !total) {
+					Onboarding.start('collections', isPopup);
+				} else 
+				if (
+					(isCollection || (isCompletedSets && !isCollection)) && 
+					this.isAllowedObject() && 
+					this.isAllowedDefaultType() && 
+					total
+				) {
+					Onboarding.start('setSettings', isPopup);
+				};
+			}, J.Constant.delay.menu);
 		});
 
 		this.init();
 		this.resize();
 		this.rebind();
-
-		if (!isInline && !isCollection) {
-			window.setTimeout(() => {
-				Onboarding.start('sets', isPopup);
-			}, J.Constant.delay.menu);
-		};
 
 		const view = this.getView();
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';

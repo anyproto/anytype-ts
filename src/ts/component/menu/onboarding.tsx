@@ -40,11 +40,11 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		let buttons = [];
 		let category = '';
 
+		if (item.category) {
+			category = item.category;
+		} else
 		if (section.category) {
 			category = section.category;
-		} else
-		if (item.category) {
-			category = item.category
 		};
 
 		if (!item.noButton) {
@@ -181,6 +181,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { highlightNodes } = param;
 		const section = this.getSection();
 		const highlight = highlightNodes ? highlightNodes : $(param.element);
+		const body = $('body');
 
 		if (!section.showDimmer) {
 			return;
@@ -191,8 +192,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		this.frame = raf(() => {
-			const body = $('body');
-
 			highlight.each((idx, el) => {
 				const element = $(el);
 				const clone = element.clone();
@@ -206,6 +205,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 				body.append(clone);
 				U.Common.copyCss(element.get(0), clone.get(0));
+
+				if (section.cloneElementClassName) {
+					clone.addClass(section.cloneElementClassName);
+				};
 
 				this.hiddenElement = element;
 				element.css({ visibility: 'hidden' });
@@ -232,12 +235,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		$('.onboardingDimmer').remove();
 
 		element.css({ visibility: 'visible' });
-
-		if (hiddenElements) {
-			hiddenElements.forEach((el) => {
-				$(el).css({ visibility: 'hidden' });
-			});
-		};
 
 		if (this.frame) {
 			raf.cancel(this.frame);

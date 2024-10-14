@@ -134,12 +134,17 @@ export default {
 
 	membership: () => ({
 		showDimmer: true,
+		cloneElementClassName: 'settingsHover',
 		param: {
 			noArrow: true,
 			horizontal: I.MenuDirection.Right,
-			topline: true,
+			//topline: true,
 			width: 288,
 			offsetX: -304,
+			offsetY: () => {
+				const $element = $('#popupSettings #item-membership');
+				return -$element.outerHeight();
+			},
 			noClose: true,
 		},
 		items: [

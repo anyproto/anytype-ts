@@ -980,7 +980,7 @@ class UtilCommon {
 			const srcElement = srcList[i] as HTMLElement;
 			const dstElement = dstList[i] as HTMLElement;
 
-			this.copyCssSingle(srcElement, dstElement);
+			this.copyCssSingle(srcElement, dstElement, );
 		};
 	};
 

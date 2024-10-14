@@ -15,7 +15,6 @@
 		.mainSides {
 			> .side.left { background: var(--color-bg-secondary); }
 			> .side.left {
-				.item { background-color: unset; }
 				.item {
 					.icon.logout { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
 				}

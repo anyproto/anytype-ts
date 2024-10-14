@@ -1039,10 +1039,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getElement () {
-		const { param } = this.props;
-		const { element } = param;
-
-		return $(element).first();
+		return $(this.props.param.element).first();
 	};
 
 	getSize (): { width: number; height: number; } {
