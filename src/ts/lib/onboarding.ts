@@ -80,6 +80,7 @@ class Onboarding {
 		param.recalcRect = null;
 		param.force = force;
 		param.noAutoHover = true;
+		param.highlightElements = param.highlightElements || [];
 
 		if ('function' != typeof(param.offsetX)) {
 			param.offsetX = Number(param.offsetX) || 0;
