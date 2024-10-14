@@ -901,11 +901,13 @@ const Block = observer(class Block extends React.Component<Props> {
 				return;
 			};
 
-			const object = S.Detail.get(rootId, data.param, []);
+			const range = String(item.attr('data-range') || '').split('-');
+			const param = String(item.attr('data-param') || '');
+			const object = S.Detail.get(rootId, param, []);
 			const { id, _empty_, layout, done, isDeleted, isArchived } = object;
 			const isTask = U.Object.isTaskLayout(layout);
 			const name = item.find('name');
-			const clickable = isTask ? item.find('name') : item;
+			const clickable = isTask ? name : item;
 
 			let icon = null;
 			if (_empty_) {
@@ -941,25 +943,20 @@ const Block = observer(class Block extends React.Component<Props> {
 				};
 			});
 
+			if (!param || item.hasClass('disabled')) {
+				return;
+			};
+
+			clickable.off('mousedown.mention').on('mousedown.mention', e => {
+				e.preventDefault();
+				U.Object.openEvent(e, object);
+			});
+
 			clickable.off('mouseenter.mention').on('mouseenter.mention', e => {
 				const sr = U.Common.getSelectionRange();
 				if (sr && !sr.collapsed) {
 					return;
 				};
-
-				const range = String(item.attr('data-range') || '').split('-');
-				const param = String(item.attr('data-param') || '');
-
-				if (!param || item.hasClass('disabled')) {
-					return;
-				};
-
-				const object = S.Detail.get(rootId, param, []);
-
-				clickable.off('click.mention').on('click.mention', e => {
-					e.preventDefault();
-					U.Object.openEvent(e, object);
-				});
 
 				Preview.previewShow({
 					object,

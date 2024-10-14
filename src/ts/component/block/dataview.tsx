@@ -336,7 +336,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onFocus () {
-		focus.set(this.props.block.id, { from: 0, to: 0 });
+		if (this.props.isInline) {
+			focus.set(this.props.block.id, { from: 0, to: 0 });
+		};
 	};
 
 	loadData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
