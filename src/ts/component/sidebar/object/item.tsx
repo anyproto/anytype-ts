@@ -41,7 +41,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 		} else {
 			const iconSize = isFile ? 48 : null;
 
-			iconLarge = <IconObject object={item} size={48} iconSize={iconSize} />;
+			iconLarge = <IconObject object={item} size={48} iconSize={iconSize} canEdit={canEdit} />;
 			description = <ObjectDescription object={item} />;
 		};
 
