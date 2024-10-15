@@ -257,7 +257,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		};
 
 		e.stopPropagation();
-		U.Object.openPopup(item);
+		//U.Object.openPopup(item);
 	};
 
 	placeholderCheck () {
