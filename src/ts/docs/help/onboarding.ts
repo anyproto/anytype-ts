@@ -226,8 +226,8 @@ export default {
 			{
 				category: translate('onboardingCollectionsTitle'),
 				description: translate('onboardingCollectionsText'),
+				buttonText: translate('onboardingCollectionsButton'),
 				cloneElementClassName: 'onboardingDataviewEmptyButton',
-				noButton: true,
 				param: {
 					element: '#emptyButton',
 					vertical: I.MenuDirection.Bottom,
