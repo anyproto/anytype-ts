@@ -24,7 +24,7 @@
 	.iconCommon.c56, .smileImage.c56, .iconImage.c56, .iconFile.c56, .iconCheckbox.c56 { @include pos-abs-mid; width: 56px; height: 56px; margin: -28px 0px 0px -28px; }
 	.iconCommon.c64, .smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
 
-	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
+	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; border-radius: inherit; }
 }
 .iconObject.c14 { width: 14px; height: 14px; }
 .iconObject.c16 { width: 16px; height: 16px; }
