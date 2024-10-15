@@ -618,14 +618,16 @@ class Action {
 					isSpace: true,
 					route,
 					onCreate: id => {
-						U.Router.switchSpace(id, '', true, () => {
+						const cb = () => {
 							const { widgets } = S.Block;
 
 							Storage.initPinnedTypes();
 
 							const blocks = S.Block.getChildren(widgets, widgets);
 							blocks.forEach(block => Storage.setToggle('widget', block.id, true));
-						});
+						};
+
+						U.Router.switchSpace(id, '', true, { onRouteChange: cb });
 					},
 				},
 			});

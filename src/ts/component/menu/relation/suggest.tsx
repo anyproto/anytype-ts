@@ -484,9 +484,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				...data,
 				rootId,
 				relationId: item.id,
-				saveCommand: () => {
-					this.load(true);
-				},
+				noUnlink: true,
+				saveCommand: () => this.load(true),
 			}
 		});
 	};

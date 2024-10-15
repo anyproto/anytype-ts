@@ -1,12 +1,13 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuOnboarding { width: var(--menu-width-value); }
+	.menu.menuOnboarding { box-shadow: inset 0px 0px 0px 1px var(--color-shape-secondary-inversion); background-color: var(--color-bg-primary-inversion); color: var(--color-text-primary-inversion); width: var(--menu-width-value); }
 	.menu.menuOnboarding {
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
+		.arrowDirection { background-image: url('~img/arrow/menuDirectionInversion.svg') }
 
-		.category { @include text-small; font-weight: 500; letter-spacing: -0.12px; color: var(--color-text-secondary); margin: 0px 0px 8px 0px; }
+		.category { @include text-small; font-weight: 500; letter-spacing: -0.12px; color: var(--color-text-secondary-inversion); margin: 0px 0px 8px 0px; }
 		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 700; margin-bottom: 2px; width: calc(100% - 20px); }
 		.descr {
 			.icon { width: 16px; height: 16px; margin: -2px 0px 0px 0px; }
@@ -20,14 +21,14 @@
 		}
 		a { color: var(--color-text-inversion); text-decoration: underline; }
 
-		.icon.close { 
-			width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; background-image: url('~img/icon/menu/onboarding/close.svg');
-		}
+		.icon.close { width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; border-radius: 4px; background-image: url('~img/icon/menu/onboarding/close0.svg'); }
+		.icon.close:hover { background-image: url('~img/icon/menu/onboarding/close1.svg'); }
 
 		video { margin-top: 12px; border-radius: 4px; border: 1px solid var(--color-shape-secondary); cursor: zoom-in; aspect-ratio: 16/9; object-fit: cover; }
 		.confettiCanvas { position: absolute; pointer-events: none; width: 100%;  height: 100%; left: 0; top: 0; }
 		
-		.bottom { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-top: 20px; }
+		.bottom { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-top: 16px; }
+		.bottom.withSteps { justify-content: space-between; }
 		.bottom:empty { display: none; }
 
 		.bottom {
@@ -50,17 +51,20 @@
 			.buttons { display: flex; gap: 8px; }
 			.buttons {
 				.button.blank { font-weight: 500; }
+				.button.black { font-weight: 500; background-color: #d4d4d4; color: #171717; }
+				.button.black:not(.disabled):hover,
+				.button.black:not(.disabled).hover { background: #737373; }
 			}
 
 			.steps { display: flex; flex-wrap: nowrap; }
 			.steps {
 				.step {
 					width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
-					background: var(--color-shape-tertiary); transition: $transitionAllCommon;
+					background: var(--color-text-tertiary-inversion); transition: $transitionAllCommon;
 				}
-				.step:hover { background: var(--color-shape-primary); }
+				.step:hover { background: var(--color-text-secondary-inversion); }
 				.step.active,
-				.step.active:hover { background: var(--color-system-accent-100); cursor: default; }
+				.step.active:hover { background: var(--color-text-primary-inversion); cursor: default; }
 				.step:last-of-type { margin-right: 0px; }
 			}
 
@@ -79,4 +83,15 @@
 		video { height: auto; }
 	}
 
+	.menu.menuOnboarding.qrDownload {
+		.wrap::before { content: ''; width: 256px; height: 256px; background: url('~img/icon/onboarding/qrDownload.png') 50% 50% no-repeat; background-size: 122px; }
+	}
 }
+
+.onboardingElement.onboardingDataviewEmptyButton { background-color: var(--color-shape-tertiary) !important; transition: none !important; }
+.onboardingElement.onboardingSettingsItem { background-color: var(--color-shape-tertiary) !important; }
+.onboardingElement.onboardingVaultItem {
+	.iconWrap { background-color: var(--color-shape-tertiary) !important; }
+}
+.onboardingElement.onboardingHeaderSync.sync { background-color: var(--color-shape-tertiary) !important; }
+.onboardingElement.onboardingIconP2P { background-color: var(--color-shape-tertiary) !important; border-radius: 50% !important; }
