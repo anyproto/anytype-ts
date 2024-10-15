@@ -213,7 +213,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, extendedOptions, readonly } = data;
+		const { rootId, blockId, extendedOptions, readonly, noUnlink } = data;
 		const object = S.Detail.get(rootId, rootId);
 		const relation = this.getRelation();
 		const isFile = relation && (relation.format == I.RelationType.File);
@@ -248,7 +248,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				children: [
 					relation ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
 					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
-					canDelete ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
+					canDelete && !noUnlink ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
 					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonDelete') } : null,
 				]
 			}
