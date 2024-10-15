@@ -702,7 +702,7 @@ class UtilMenu {
 		const { targetSpaceId } = space;
 
 		if ((targetSpaceId == accountSpaceId)) {
-			return;
+			//return;
 		};
 
 		const isOwner = U.Space.isMyOwner(targetSpaceId);

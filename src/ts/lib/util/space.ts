@@ -3,7 +3,15 @@ import { I, S, U, J, Storage, translate } from 'Lib';
 class UtilSpace {
 
 	openDashboard (type: string, param?: any) {
+		param = param || {};
+
+		const space = this.getSpaceview();
 		const fn = U.Common.toCamelCase(`open-${type}`);
+
+		if (!space || space._empty_ || space.isAccountDeleted || !space.isLocalOk) {
+			this.openFirstSpaceOrVoid(null, param);
+			return;
+		};
 		
 		let home = this.getDashboard();
 
@@ -22,11 +30,25 @@ class UtilSpace {
 
 		if (!home) {
 			U.Object.openRoute({ layout: I.ObjectLayout.Empty }, param);
-			return;
-		};
-
+		} else
 		if (U.Object[fn]) {
 			U.Object[fn](home, param);
+		};
+	};
+
+	openFirstSpaceOrVoid (filter?: (it: any) => boolean, param?: Partial<I.RouteParam>) {
+		param = param || {};
+
+		let spaces = this.getList();
+
+		if (filter) {
+			spaces = spaces.filter(filter);
+		};
+
+		if (spaces.length) {
+			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param.onRouteChange);
+		} else {
+			U.Router.go('/main/void', param);
 		};
 	};
 

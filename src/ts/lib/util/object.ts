@@ -35,7 +35,7 @@ class UtilObject {
 		};
 
 		const id = String(object.id || '');
-		const spaceId = object.spaceId || S.Common.space;
+		const spaceId = object.spaceId || S.Common.space || '';
 		const action = this.actionByLayout(object.layout);
 
 		if (!action) {
