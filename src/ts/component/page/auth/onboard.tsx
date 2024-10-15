@@ -272,7 +272,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 							};
 						},
 						onFadeIn: () => {
-							Onboarding.start('dashboard', false, false);
+							Onboarding.start('basics', false);
 						},
 					};
 

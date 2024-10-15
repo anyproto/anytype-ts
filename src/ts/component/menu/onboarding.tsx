@@ -33,11 +33,19 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { data } = param;
 		const { key, current } = data;
 		const section = Onboarding.getSection(key);
-		const { items, category, showConfetti } = section;
+		const { items, showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
 
 		let buttons = [];
+		let category = '';
+
+		if (item.category) {
+			category = item.category;
+		} else
+		if (section.category) {
+			category = section.category;
+		};
 
 		if (!item.noButton) {
 			let buttonText = translate('commonNext');
@@ -117,6 +125,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	componentDidMount () {
 		this.rebind();
 		this.event();
+		this.hideElements();
 		this.initDimmer();
 
 		U.Common.renderLinks($(this.node));
@@ -152,14 +161,32 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	componentWillUnmount(): void {
 		this.unbind();
 		this.clearDimmer();
+		this.showElements();
+	};
+
+	showElements () {
+		this.props.param.hiddenElements.forEach(el => $(el).css({ visibility: 'visible' }));
+	};
+
+	hideElements () {
+		this.props.param.hiddenElements.forEach(el => $(el).css({ visibility: 'hidden' }));
 	};
 
 	initDimmer () {
 		const { param } = this.props;
+		const { data, highlightElements } = param;
 		const section = this.getSection();
+		const { current } = data;
+		const { items } = section;
+		const item = items[current];
+		const body = $('body');
 
 		if (!section.showDimmer) {
 			return;
+		};
+
+		if (!highlightElements.length) {
+			highlightElements.push(param.element);
 		};
 
 		if (this.frame) {
@@ -167,31 +194,38 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		this.frame = raf(() => {
-			const body = $('body');
-			const element = $(param.element);
-			const clone = element.clone();
-			const { top, left } = element.offset();
-			const st = $(window).scrollTop();
+			highlightElements.forEach(selector => {
+				$(selector).each((idx, el) => {
+					const element = $(el);
+					const clone = element.clone();
+					const { top, left } = element.offset();
+					const st = $(window).scrollTop();
 
-			if (this.hiddenElement) {
-				this.hiddenElement.css({ visibility: 'visible' });
-				this.hiddenElement = null;
-			};
+					if (this.hiddenElement) {
+						this.hiddenElement.css({ visibility: 'visible' });
+						this.hiddenElement = null;
+					};
 
-			body.append(clone);
-			U.Common.copyCss(element.get(0), clone.get(0));
+					body.append(clone);
+					U.Common.copyCss(element.get(0), clone.get(0));
 
-			this.hiddenElement = element;
-			element.css({ visibility: 'hidden' });
-			clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
-			clone.after('<div class="onboardingDimmer"></div>');
+					if (item.cloneElementClassName) {
+						clone.addClass(item.cloneElementClassName);
+					};
+
+					this.hiddenElement = element;
+					element.css({ visibility: 'hidden' });
+					clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
+				});
+			});
 		});
+
+		body.append('<div class="onboardingDimmer"></div>');
 	};
 
 	clearDimmer () {
 		const { param } = this.props;
 		const section = this.getSection();
-		const element = $(param.element);
 
 		if (!section.showDimmer) {
 			return;
@@ -200,7 +234,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		$('.onboardingElement').remove();
 		$('.onboardingDimmer').remove();
 
-		element.css({ visibility: 'visible' });
+		param.highlightElements.concat([ param.element ]).forEach(selector => {
+			$(selector).css({ visibility: 'visible' });
+		});
 
 		if (this.frame) {
 			raf.cancel(this.frame);

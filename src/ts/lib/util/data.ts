@@ -266,7 +266,7 @@ class UtilData {
 		this.createGlobalSubscriptions(() => {
 			const spaces = U.Space.getList();
 			if (spaces.length) {
-				U.Router.switchSpace(spaces[0].targetSpaceId, '', false, routeParam.onRouteChange);
+				U.Router.switchSpace(spaces[0].targetSpaceId, '', false, routeParam);
 			} else {
 				U.Router.go('/main/void', routeParam);
 			};
