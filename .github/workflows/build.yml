@@ -37,12 +37,11 @@ jobs:
           echo GOBIN=$(go env GOPATH)/bin >> $GITHUB_ENV
           echo $(go env GOPATH)/bin >> $GITHUB_PATH
 
-      - name: Setup Python
-        steps:
-          uses: actions/checkout@v4
-          uses: actions/setup-python@v5
-          with:
-            python-version: '3.11' 
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
 
       - name: Install AzureSignTool
         if: matrix.os == 'windows-latest'
