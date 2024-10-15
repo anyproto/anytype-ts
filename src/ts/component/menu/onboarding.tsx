@@ -36,6 +36,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { items, showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
+		const withSteps = l > 1;
 
 		let buttons = [];
 		let category = '';
@@ -88,8 +89,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 					/>
 				) : ''}
 
-				<div className="bottom">
-					{l > 1 ? (
+				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
+					{withSteps ? (
 						<div className="steps">
 							{[ ...Array(l) ].map((e: number, i: number) => {
 								const cn = [ 'step' ];
