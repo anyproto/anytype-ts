@@ -46,7 +46,7 @@ jobs:
 
       - name: Setup distutils
         if: matrix.os != 'windows-latest'
-        run: sudo -H pip install setuptools
+        run: sudo -H pip install setuptools --break-system-packages
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
