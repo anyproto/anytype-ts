@@ -461,29 +461,6 @@ export default {
 		}
 	),
 
-	space: () => {
-		const width = 505;
-		return {
-			items: [
-				{
-					name: translate('onboardingShareSpaceTitle'),
-					description: translate('onboardingShareSpaceDescription'),
-					video: './img/help/onboarding/share-space.mp4',
-					noButton: true,
-					param: {
-						element: '#widget-space',
-						className: 'isSpace',
-						classNameWrap: 'fixed',
-						vertical: I.MenuDirection.Center,
-						horizontal: I.MenuDirection.Right,
-						width,
-						offsetX: -(width + 10),
-					}
-				},
-			],
-		};
-	},
-
 	collaboration: () => {
 		const width = 432;
 		return {

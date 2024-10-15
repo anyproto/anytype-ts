@@ -1905,9 +1905,6 @@
 	"onboardingQuickCaptureTitle": "Use Different Object Types",
 	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
 
-	"onboardingShareSpaceTitle": "Co-create, share and collaborate on Spaces!",
-	"onboardingShareSpaceDescription": "Click the space widget to open space settings. From there, you can share the space and invite members to collaborate.",
-
 	"onboardingSpacesTitle": "Spaces",
 	"onboardingSpacesText": "<b>This is your Space.</b> Click here to customize its name or icon, or to securely migrate and protect your data. ",
 	"onboardingAllObjectTitle": "All Objects",

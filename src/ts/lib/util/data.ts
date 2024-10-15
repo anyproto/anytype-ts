@@ -224,12 +224,6 @@ class UtilData {
 						I.SurveyType.Object, 
 					].forEach(it => Survey.check(it));
 
-					const space = U.Space.getSpaceview();
-
-					if (!space.isPersonal && !space.isShared && Storage.get('shareBannerClosed')) {
-						Onboarding.start('space', keyboard.isPopup(), false);
-					};
-
 					Storage.clearDeletedSpaces();
 
 					if (callBack) {
