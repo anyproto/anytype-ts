@@ -37,16 +37,22 @@ jobs:
           echo GOBIN=$(go env GOPATH)/bin >> $GITHUB_ENV
           echo $(go env GOPATH)/bin >> $GITHUB_PATH
 
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install LibSecret
+        if: matrix.os == 'ubuntu-latest'
+        run:
+          sudo apt-get install libsecret-1-dev
+
       - name: Install AzureSignTool
         if: matrix.os == 'windows-latest'
         run: dotnet tool install --global AzureSignTool
 
       - name: Check out Git repository
         uses: actions/checkout@v1
-
-      - name: Setup distutils
-        if: matrix.os != 'windows-latest'
-        run: sudo -H pip install setuptools
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1

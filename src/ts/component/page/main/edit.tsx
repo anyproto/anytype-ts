@@ -49,7 +49,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 			if (U.Object.isTemplate(object.type)) {
 				key = 'template';
 			} else 
-			if (!S.Block.checkBlockTypeExists(rootId)) {
+			if (!S.Block.checkBlockTypeExists(rootId) && Onboarding.isCompleted('basics')) {
 				key = 'editor';
 			};
 			if (key) {

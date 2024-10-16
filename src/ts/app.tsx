@@ -357,7 +357,7 @@ class App extends React.Component<object, State> {
 							S.Common.configSet(account.config, false);
 
 							if (spaceId) {
-								U.Router.switchSpace(spaceId, '', false, cb);
+								U.Router.switchSpace(spaceId, '', false, { onFadeIn: cb });
 							} else {
 								U.Data.onAuthWithoutSpace({ replace: true });
 							};

@@ -305,6 +305,7 @@ class MenuManager {
 
 	initTray () {
 		const { config } = ConfigManager;
+		const WindowManager = require('./window.js');
 		const Api = require('./api.js');
 
 		this.destroy();
@@ -317,6 +318,10 @@ class MenuManager {
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
 			{ label: Util.translate('electronMenuOpen'), click: () => this.winShow() },
+
+			Separator,
+
+			{ label: Util.translate('electronMenuNewWindow'), accelerator: 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
 
 			Separator,
 
