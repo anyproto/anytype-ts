@@ -699,7 +699,7 @@ class UtilMenu {
 		const { accountSpaceId } = S.Auth;
 		const { targetSpaceId } = space;
 
-		if ((targetSpaceId == accountSpaceId)) {
+		if (targetSpaceId == accountSpaceId) {
 			return;
 		};
 
