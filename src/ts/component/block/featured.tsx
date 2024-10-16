@@ -59,7 +59,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp}
 			>
-				<span id="onboardingAnchor" />
 
 				{this.renderType()}
 				{this.renderSetOf()}
