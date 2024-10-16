@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName, EmptySearch } from 'Component';
-import { I, C, S, U, Action, translate, analytics } from 'Lib';
+import { I, C, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -269,7 +269,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			keys: U.Data.syncStatusRelationKeys(),
 			offset: 0,
 			limit: 30,
-		}, () => this.setState({ isLoading: false }));
+		}, () => {
+			this.setState({ isLoading: false });
+
+			window.setTimeout(() => Onboarding.start('syncStatus', false), J.Constant.delay.menu);
+		});
 	};
 
 	getItems () {

@@ -99,7 +99,7 @@
 					.filter {
 						.inner { gap: 0px; height: 100%; }
 						.filterInputWrap { overflow: hidden; width: 0px; transition: width 0.2s $easeInQuint; }
-						.icon.clear, .line { display: none !important; }
+						.line { display: none !important; }
 						.icon.search { background-image: url('~img/icon/dataview/button/search.svg'); }
 					}
 					.filter.isActive {

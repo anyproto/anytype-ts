@@ -1905,8 +1905,35 @@
 	"onboardingQuickCaptureTitle": "Use Different Object Types",
 	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
 
-	"onboardingShareSpaceTitle": "Co-create, share and collaborate on Spaces!",
-	"onboardingShareSpaceDescription": "Click the space widget to open space settings. From there, you can share the space and invite members to collaborate.",
+	"onboardingSpacesTitle": "Spaces",
+	"onboardingSpacesText": "<b>This is your Space.</b> Click here to customize its name or icon, or to securely migrate and protect your data. ",
+	"onboardingAllObjectTitle": "All Objects",
+	"onboardingAllObjectText": "<b>Everything in Anytype is an Object.</b> All objects is where all your content lives.",
+	"onboardingWidgetsTitle": "Widgets",
+	"onboardingWidgetsText": "<b>Use Widgets</b> to create custom views of your data. Add and adjust them to suit your workflow.",
+	"onboardingMultipleSpacesTitle": "Multiple Spaces",
+	"onboardingMultipleSpacesText": "<b>Use the sidebar to create more spaces.</b> Spaces allow you to collaborate seamlessly. They also help you focus on specific projects, teams or areas of your life.",
+	"onboardingGalleryTitle": "Gallery",
+	"onboardingGalleryText": "<b>Find use cases that match your needs.</b> Import them from the Gallery: a library created by the Anytype Team and Community.",
+
+	"onboardingMembershipTitle": "Membership",
+	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
+	"onboardingMembershipButton": "Lovely!",
+
+	"onboardingSyncStatusTitle": "Synchronisation",
+	"onboardingSyncStatusText": "<b>View your network and peer-to-peer connection status here,</b> along with a list of synced objects.",
+	"onboardingSyncStatusButton": "Perfect",
+	"onboardingMobileTitle": "Mobile Applications",
+	"onboardingMobileText": "<b>Sync to your mobile devices locally, without internet.</b> Scan the QR code to download the iOS or Android App and make use of peer-to-peer sync.",
+	"onboardingMobileButton": "Great",
+
+	"onboardingSetsTitle": "Sets",
+	"onboardingSetsText": "<b>A set gathers all objects of a certain type in your space.</b> Explore what's already here or add more by clicking +New Object.",
+	"onboardingSetsButton": "Perfect",
+
+	"onboardingCollectionsTitle": "Collections",
+	"onboardingCollectionsText": "<b>Create an object in the collection.</b> Use collections to store and organise handpicked objects and files.",
+	"onboardingCollectionsButton": "Okay!",
 
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
 	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",

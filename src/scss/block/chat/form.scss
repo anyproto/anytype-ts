@@ -116,8 +116,10 @@
 	.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
 }
 
-.formWrapperReadonly {
-	display: flex; justify-content: center; align-items: center; gap: 0px 8px; height: 40px; border-radius: 8px; @include text-small;
-	border: 1px solid var(--color-shape-primary); background: var(--color-shape-tertiary);
+.formWrapper {
+	.readonly {
+		display: flex; justify-content: center; align-items: center; gap: 0px 8px; height: 40px; border-radius: 8px; @include text-small;
+		border: 1px solid var(--color-shape-primary); background: var(--color-shape-tertiary);
+	}
+	.readonly::before { content: ''; display: block; width: 8px; height: 12px; background: url('~img/icon/lock.svg'); }
 }
-.formWrapperReadonly::before { content: ''; display: block; width: 8px; height: 12px; background: url('~img/icon/lock.svg'); }
