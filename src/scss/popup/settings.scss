@@ -197,7 +197,7 @@
 				}
 			}
 
-			> .side.right.tabSpaceIndex, .side.right.tabSpaceCreate {
+			> .side.right.tabSpaceIndex {
 				.spaceHeader { margin: 0px 0px 32px 0px; display: flex; flex-wrap: nowrap; width: 100%; gap: 0px 24px; }
 				.spaceHeader {
 					.iconWrapper { width: 96px; flex-shrink: 0; }
@@ -337,25 +337,6 @@
 
 					.buttons {
 						.button { width: 100%; }
-					}
-				}
-			}
-
-			> .side.right.tabSpaceCreate {
-				> .title { margin: 0px 0px 24px 0px !important; }
-
-				.spaceHeader { display: flex; align-items: center; margin: 0px 0px 16px 0px; }
-				.spaceHeader {
-					.headerContent .name { margin-bottom: 12px; }
-					.iconObject:hover:after { opacity: 0 !important; }
-				}
-
-				.sections { margin: 0px 0px 24px 0px; }
-				.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: var(--color-bg-loader); z-index: 1; }
-
-				.select {
-					.item {
-						.descr { display: none; }
 					}
 				}
 			}
@@ -629,22 +610,17 @@
 
 			> .side.right.tabImportIndex, 
 			> .side.right.tabExportIndex {
-				.items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+				.items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 				.item { 
-					height: 94px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; transition: $transitionAllCommon;
-					position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-				}
-
-				@media (max-width: 700px) {
-					.items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-					.item { width: auto; }
+					height: 72px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; transition: $transitionAllCommon;
+					position: relative; display: flex; flex-direction: row; align-items: center; padding: 16px; gap: 0px 12px;
 				}
 
 				.item:hover { border-color: var(--color-text-primary); }
 
 				.item {
-					.icon { width: 28px; margin: 0px 0px 8px 0px; height: 28px; background-size: contain; background-position: top center; }
-					.name { @include text-small; line-height: 1em; }
+					.icon { width: 40px; height: 40px; background-size: contain; background-position: top center; flex-shrink: 0; }
+					.name { font-weight: 500; }
 				}
 			}
 
@@ -859,10 +835,6 @@
 
 	.popupSettings.isSpace {
 		.innerWrap { width: 684px; height: 700px; }
-	}
-
-	.popupSettings.isSpaceCreate {
-		.innerWrap { width: 684px; height: 406px; }
 	}
 
 	.popupSettingsOnboarding {

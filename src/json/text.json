@@ -805,10 +805,6 @@
 	"popupSettingsSpaceIndexCreatedByTitle": "Created by",
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
 
-	"popupSettingsSpaceCreateTitle": "Create a space",
-	"popupSettingsSpaceCreateUsecaseTitle": "How do you want to start?",
-	"popupSettingsSpaceCreateUsecaseLabel": "We can load some objects for you",
-
 	"popupSettingsSpaceStorageManagerTitle": "Synced files",
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
@@ -955,6 +951,10 @@
 	"popupSettingsImportNotionIntegrationList32": "Select document → ... → Add Connections → Confirm Integration",
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
+
+	"popupSpaceCreateLabel": "Encrypted & local-first",
+	"popupSpaceCreateCreate": "Create from scratch",
+	"popupSpaceCreateImport": "Import my data",
 
 	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
 	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
