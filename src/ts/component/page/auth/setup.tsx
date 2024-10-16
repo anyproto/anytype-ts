@@ -152,7 +152,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 			const spaceId = Storage.get('spaceId');
 			if (spaceId) {
-				U.Router.switchSpace(spaceId);
+				U.Router.switchSpace(spaceId, '', false, {});
 			} else {
 				U.Data.onAuthWithoutSpace({ replace: true });
 			};
