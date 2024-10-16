@@ -470,7 +470,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	position () {
 		const { id, param } = this.props;
-		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge } = param;
 		const borderLeft = this.getBorderLeft();
 		const borderTop = this.getBorderTop();
 		const borderBottom = this.getBorderBottom();
@@ -495,9 +495,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
 			const scrollTop = win.scrollTop();
-			const offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
-			const offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
 
+			let offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
+			let offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
 			let ew = 0;
 			let eh = 0;
 			let ox = 0;
@@ -537,6 +537,15 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			let x = ox;
 			let y = oy;
 			let flipX = false;
+
+			if (stickToElementEdge) {
+				switch (stickToElementEdge) {
+					case I.MenuDirection.Top: offsetY = -eh; break;
+					case I.MenuDirection.Bottom: offsetY = eh; break;
+					case I.MenuDirection.Left: offsetX = -ew; break;
+					case I.MenuDirection.Right: offsetX = ew; break;
+				};
+			};
 
 			switch (vertical) {
 				case I.MenuDirection.Top:
@@ -1035,10 +1044,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getElement () {
-		const { param } = this.props;
-		const { element } = param;
-
-		return $(element);
+		return $(this.props.param.element).first();
 	};
 
 	getSize (): { width: number; height: number; } {

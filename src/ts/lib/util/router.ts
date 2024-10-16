@@ -75,7 +75,7 @@ class UtilRouter {
 		S.Popup.closeAll();
 
 		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, J.Constant.blankRouteId, space ].includes(routeParam.spaceId)) {
-			this.switchSpace(routeParam.spaceId, route);
+			this.switchSpace(routeParam.spaceId, route, false, routeParam);
 			return;
 		};
 
@@ -128,7 +128,7 @@ class UtilRouter {
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
 	};
 
-	switchSpace (id: string, route?: string, sendEvent?: boolean, callBack?: () => void) {
+	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any) {
 		if (!id) {
 			console.log('[UtilRouter].swithSpace: id is empty');
 			return;
@@ -160,7 +160,7 @@ class UtilRouter {
 					Storage.set('spaceId', id);
 
 					U.Data.onInfo(message.info);
-					U.Data.onAuth({ route }, callBack);
+					U.Data.onAuth({ route, routeParam });
 				}
 			});
 		});

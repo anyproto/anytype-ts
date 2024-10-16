@@ -24,7 +24,10 @@
 				.icon.close { background-image: url('~img/icon/close.svg'); }
 			}
 
-			> .scroll { display: flex; flex-direction: column; gap: 12px 0px; overflow-y: auto; flex-grow: 1; padding: 0px 12px 12px 12px; }
+			> .scrollWrap { flex-grow: 1; overflow-y: auto; }
+			> .scrollWrap {
+				> .scroll { display: flex; flex-direction: column; gap: 12px 0px; padding: 0px 12px 12px 12px; }
+			}
 
 			.section { background: var(--color-bg-primary); border-radius: 10px; -webkit-app-region: no-drag; padding: 0px 0px 8px 0px; }
 			.section {

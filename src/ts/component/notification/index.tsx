@@ -118,7 +118,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		switch (action) {
 			case 'spaceSwitch': {
-				U.Router.switchSpace(payload.spaceId, '', true);
+				U.Router.switchSpace(payload.spaceId, '', true, {});
 				break;
 			};
 
