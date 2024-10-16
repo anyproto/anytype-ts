@@ -13,6 +13,7 @@ interface Column {
 };
 
 interface Props {
+	spaceId: string;
 	subId: string;
 	rootId: string;
 	columns: Column[];
@@ -27,6 +28,7 @@ const LIMIT = 50;
 const ListObject = observer(class ListObject extends React.Component<Props> {
 
 	public static defaultProps: Props = {
+		spaceId: '',
 		subId: '',
 		rootId: '',
 		columns: [],
@@ -189,7 +191,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {
-		const { subId, sources } = this.props;
+		const { spaceId, subId, sources } = this.props;
 		const offset = (page - 1) * LIMIT;
 		const filters = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
@@ -198,6 +200,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		S.Record.metaSet(subId, '', { offset });
 
 		U.Data.searchSubscribe({
+			spaceId,
 			subId,
 			sorts: [
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
@@ -209,7 +212,6 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			limit: LIMIT,
 			ignoreHidden: true,
 			ignoreDeleted: true,
-			ignoreWorkspace: true,
 		}, callBack);
 	};
 

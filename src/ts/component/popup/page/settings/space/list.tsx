@@ -13,7 +13,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const Row = (space: any) => {
 			const { targetSpaceId } = space;
 			const participant = U.Space.getMyParticipant(targetSpaceId);
-			const creator = S.Detail.get(J.Constant.subId.space, space.creator);
+			const creator = U.Space.getCreator(targetSpaceId, space.creator);
 			const hasMenu = targetSpaceId != accountSpaceId;
 
 			let creatorElement = null;

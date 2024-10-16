@@ -3,7 +3,15 @@ import { I, S, U, J, Storage, translate } from 'Lib';
 class UtilSpace {
 
 	openDashboard (type: string, param?: any) {
+		param = param || {};
+
+		const space = this.getSpaceview();
 		const fn = U.Common.toCamelCase(`open-${type}`);
+
+		if (!space || space._empty_ || space.isAccountDeleted || !space.isLocalOk) {
+			this.openFirstSpaceOrVoid(null, param);
+			return;
+		};
 		
 		let home = this.getDashboard();
 
@@ -22,11 +30,25 @@ class UtilSpace {
 
 		if (!home) {
 			U.Object.openRoute({ layout: I.ObjectLayout.Empty }, param);
-			return;
-		};
-
+		} else
 		if (U.Object[fn]) {
 			U.Object[fn](home, param);
+		};
+	};
+
+	openFirstSpaceOrVoid (filter?: (it: any) => boolean, param?: Partial<I.RouteParam>) {
+		param = param || {};
+
+		let spaces = this.getList();
+
+		if (filter) {
+			spaces = spaces.filter(filter);
+		};
+
+		if (spaces.length) {
+			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param.onRouteChange);
+		} else {
+			U.Router.go('/main/void', param);
 		};
 	};
 
@@ -45,7 +67,7 @@ class UtilSpace {
 		if (id == I.HomePredefinedId.Last) {
 			ret = this.getLastOpened();
 		} else {
-			ret = S.Detail.get(J.Constant.subId.space, id);
+			ret = S.Detail.get(U.Space.getSubSpaceSubId(space.targetSpaceId), id);
 		};
 
 		if (!ret || ret._empty_ || ret.isDeleted) {
@@ -113,6 +135,10 @@ class UtilSpace {
 		return object._empty_ ? null : object;
 	};
 
+	getSubSpaceSubId (spaceId: string) {
+		return [ J.Constant.subId.subSpace, spaceId ].join('-');
+	};
+
 	getMyParticipant (spaceId?: string) {
 		const { account } = S.Auth;
 		const { space } = S.Common;
@@ -123,10 +149,14 @@ class UtilSpace {
 
 		spaceId = spaceId || space;
 
-		const subId = [ J.Constant.subId.myParticipant, spaceId ].join('-');
+		const subId = this.getSubSpaceSubId(spaceId);
 		const object = S.Detail.get(subId, this.getParticipantId(spaceId, account.id));
 
 		return object._empty_ ? null : object;
+	};
+
+	getCreator (spaceId: string, id: string) {
+		return S.Detail.get(this.getSubSpaceSubId(spaceId), id);
 	};
 
 	canMyParticipantWrite (spaceId?: string): boolean {

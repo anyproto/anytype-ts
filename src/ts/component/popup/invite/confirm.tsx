@@ -116,13 +116,12 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 	load () {
 		U.Data.search({
+			spaceId: this.getSpaceId(),
 			keys: U.Data.participantRelationKeys(),
 			filters: [
 				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-				{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
 			],
 			ignoreHidden: false,
-			ignoreWorkspace: true,
 			ignoreDeleted: true,
 			noDeps: true,
 		}, (message: any) => {

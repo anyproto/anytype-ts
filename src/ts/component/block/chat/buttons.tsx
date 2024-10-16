@@ -259,9 +259,9 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		];
 
 		const upload = () => {
-			Action.openFileDialog([], paths => {
+			Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
 				if (paths.length) {
-					addAttachments([ getObjectFromPath(paths[0]) ]);
+					addAttachments(paths.map(path => getObjectFromPath(path)));
 				};
 			});
 		};

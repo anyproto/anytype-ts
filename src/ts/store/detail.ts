@@ -285,8 +285,8 @@ class DetailStore {
 		object.spaceLocalStatus = Number(object.spaceLocalStatus) || I.SpaceStatus.Unknown;
 		object.readersLimit = Number(object.readersLimit) || 0;
 		object.writersLimit = Number(object.writersLimit) || 0;
-		object.sharedSpacesLimit = Number(object.sharedSpacesLimit) || 0;
 		object.spaceId = Relation.getStringValue(object.spaceId);
+		object.spaceMainChatId = Relation.getStringValue(object.spaceMainChatId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;

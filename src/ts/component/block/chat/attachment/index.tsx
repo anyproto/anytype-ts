@@ -186,7 +186,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	renderImage () {
 		const { object } = this.props;
 
-		this.previewItem = { type: I.FileType.Image };
+		this.previewItem = { type: I.FileType.Image, object };
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
@@ -198,7 +198,6 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				this.src = './img/space.svg';
 			} else {
 				this.src = S.Common.imageUrl(object.id, J.Size.image);
-				this.previewItem.object = object;
 			};
 		};
 
@@ -219,7 +218,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		const { object } = this.props;
 		const src = S.Common.fileUrl(object.id);
 
-		this.previewItem = { src, type: I.FileType.Video };
+		this.previewItem = { type: I.FileType.Video, src, object };
 
 		return (
 			<MediaVideo 
@@ -257,6 +256,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	onPreview () {
 		const { onPreview } = this.props;
+
+		if (!this.previewItem) {
+			return;
+		};
 
 		if (onPreview) {
 			onPreview(this.previewItem);
