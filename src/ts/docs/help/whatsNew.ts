@@ -112,6 +112,9 @@ export default [
 	bullet(`When adding an object relation to Set, the selection popup correctly closes instantly.`),
 	bullet(`Fixed an issue on Linux where the menu visibility toggle was not working correctly through the window menu.`),
 
+	h2(`Platform Updates`),
+	bullet(`Starting with the next release, we will no longer support MacOS Catalina. This decision comes as Apple has officially dropped support for this version, and maintaining compatibility requires significant development effort on our end. We understand this change may affect some users, but it's a necessary step to ensure smoother updates.`),
+
 	div(),
 	// --------------------------------------------//
 
