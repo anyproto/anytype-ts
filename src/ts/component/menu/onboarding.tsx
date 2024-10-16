@@ -322,11 +322,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				break;
 			};
 
-			case 'import': {
-				this.onImport();
-				break;
-			};
-
 			case 'changeType':
 				S.Menu.open('typeSuggest', {
 					element: `#${getId()}`,
@@ -439,12 +434,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		});
 
 		analytics.event('ScreenOnboardingVideo');
-	};
-
-	onImport () {
-		this.props.close(() => {
-			S.Popup.open('settings', { data: { isSpace: true, page: 'importIndex' }, className: 'isSpace' });
-		});
 	};
 
 	setError (error: { description: string, code: number}) {

@@ -199,7 +199,6 @@ class UtilSpace {
 
 		Storage.initPinnedTypes();
 
-
 		if (!blocks.length) {
 			return;
 		};
