@@ -146,7 +146,7 @@ class MenuHelp extends React.Component<I.Menu> {
 					key = 'mainSet';
 				} else
 				if (isEditor) {
-					key = S.Block.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'editor';
+					key = S.Block.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'basics';
 				} else
 				if (isGraph) {
 					key = 'mainGraph';
