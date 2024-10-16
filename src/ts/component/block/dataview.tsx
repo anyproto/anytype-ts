@@ -249,12 +249,38 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { viewId } = block.content;
 		const match = keyboard.getMatch();
 		const subId = this.getSubId();
+		const isCollection = this.isCollection();
 
 		if (match.params.viewId || viewId) {
 			S.Record.metaSet(subId, '', { viewId: match.params.viewId || viewId });
 		};
 
-		this.reloadData();
+		this.reloadData(() => {
+			if (isInline) {
+				return;
+			};
+
+			const { total } = S.Record.getMeta(subId, '');
+			const isCompletedSets = Onboarding.isCompleted('sets');
+
+			window.setTimeout(() => {
+				if (!isCollection && !isCompletedSets) {
+					Onboarding.start('sets', isPopup);
+				} else 
+				if (isCollection && !total) {
+					Onboarding.start('collections', isPopup);
+				} else 
+				if (
+					(isCollection || (isCompletedSets && !isCollection)) && 
+					this.isAllowedObject() && 
+					this.isAllowedDefaultType() && 
+					total
+				) {
+					Onboarding.start('setSettings', isPopup);
+				};
+			}, J.Constant.delay.menu);
+		});
+
 		this.init();
 		this.resize();
 		this.rebind();
@@ -263,10 +289,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
 
 		analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view?.type });
-
-		if (!isInline && Onboarding.isCompleted('mainSet') && this.isAllowedObject() && this.isAllowedDefaultType()) {
-			Onboarding.start('setSettings', isPopup);
-		};
 	};
 
 	componentDidUpdate () {
@@ -336,7 +358,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onFocus () {
-		focus.set(this.props.block.id, { from: 0, to: 0 });
+		if (this.props.isInline) {
+			focus.set(this.props.block.id, { from: 0, to: 0 });
+		};
 	};
 
 	loadData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
@@ -417,12 +441,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	reloadData () {
+	reloadData (cb?: () => void) {
 		const view = this.getView();
 
 		if (view) {
 			S.Record.metaSet(this.getSubId(), '', { viewId: view.id, offset: 0, total: 0 });
-			this.loadData(view.id, 0, true);
+			this.loadData(view.id, 0, true, () => {
+				if (cb) {
+					cb();
+				};
+			});
 		};
 	};
 

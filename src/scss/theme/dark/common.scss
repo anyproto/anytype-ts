@@ -107,6 +107,9 @@ html.themeDark {
 	markupsearch { color: var(--color-bg-primary) !important; }
 	markuphighlight { background: #044062 !important; }
 
+	.onboardingDimmer { background-color: var(--color-text-inversion); opacity: 0.8; }
+	.onboardingElement { background-color: #000 !important; }
+
 	/* Components */
 
 	.loaderWrapper {
@@ -283,6 +286,11 @@ html.themeDark {
 		.item.settings {
 			.iconWrap { background-image: url('#{$themePath}/icon/vault/settings.svg'); }
 		}
+	}
+
+	.onboardingElement.onboardingVaultItem { background-color: unset !important; }
+	.onboardingElement.onboardingVaultItem {
+		.iconWrap { background-color: #000000 !important; }
 	}
 
 	/* Sidebar */

@@ -149,7 +149,12 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onKeyUp (e: any) {
-		this.pressed.delete(e.key.toLowerCase());
+		const key = String(e.key || '').toLowerCase();
+		if (!key) {
+			return;
+		};
+
+		this.pressed.delete(key);
 
 		if (
 			(this.pressed.has(Key.ctrl) || 
@@ -172,7 +177,7 @@ const Vault = observer(class Vault extends React.Component {
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
 			if (item.targetSpaceId != S.Common.space) {
-				U.Router.switchSpace(item.targetSpaceId, '', true);
+				U.Router.switchSpace(item.targetSpaceId, '', true, {});
 			};
 		};
 
@@ -212,7 +217,7 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			default: {
-				U.Router.switchSpace(item.targetSpaceId, '', true);
+				U.Router.switchSpace(item.targetSpaceId, '', true, {});
 				break;
 			};
 		};

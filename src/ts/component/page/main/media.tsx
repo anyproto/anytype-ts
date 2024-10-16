@@ -297,6 +297,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const { isPopup } = this.props;
 		const container = U.Common.getPageContainer(isPopup);
 		const rootId = this.getRootId();
+		const object = S.Detail.get(rootId, rootId, []);
+		const type = S.Record.getTypeById(object.type);
 
 		S.Menu.open('relationSuggest', { 
 			element: container.find('#item-add'),
@@ -308,6 +310,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: S.Record.getObjectRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					if (type && !type.recommendedRelations.includes(relation.relationKey)) {
+						C.ObjectTypeRelationAdd(type.id, [ relation.relationKey ]);
+					};
+
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
 			}
