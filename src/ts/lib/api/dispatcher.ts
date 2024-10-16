@@ -795,11 +795,6 @@ class Dispatcher {
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
 
-					// Added space should be subscribed to my participant
-					if (U.Object.isSpaceViewLayout(details.layout) && details.targetSpaceId) {
-						U.Data.createSubSpaceSubscriptions([ details.targetSpaceId ]);
-					};
-
 					updateMarkup = true;
 					break;
 				};
@@ -1049,16 +1044,18 @@ class Dispatcher {
 	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
-		this.getUniqueSubIds(subIds).forEach(subId => S.Detail.update(subId, { id, details }, clear));
+		subIds = this.getUniqueSubIds(subIds);
+		subIds.forEach(subId => S.Detail.update(subId, { id, details }, clear));
 
-		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
-			if (id == S.Block.spaceview) {
-				U.Router.switchSpace(S.Auth.accountSpaceId);
-			};
+		const keys = Object.keys(details);
+		const check = [ 'creator', 'spaceDashboardId', 'spaceAccountStatus' ];
+		const intersection = check.filter(k => keys.includes(k));
 
-			const spaceview = U.Space.getSpaceview(id);
-			if (spaceview && !spaceview._empty_) {
-				Storage.deleteSpace(spaceview.targetSpaceId);
+		if (intersection.length && subIds.length && subIds.includes(J.Constant.subId.space)) {
+			const object = S.Detail.get(J.Constant.subId.space, id, [ 'layout', 'targetSpaceId' ], true);
+
+			if (U.Object.isSpaceViewLayout(object.layout) && object.targetSpaceId) {
+				U.Data.createMyParticipantSubscriptions([ object.targetSpaceId ]);
 			};
 		};
 

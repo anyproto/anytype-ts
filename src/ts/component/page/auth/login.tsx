@@ -140,7 +140,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			};
 
 			if (spaceId) {
-				U.Router.switchSpace(spaceId, '', false, cb);
+				U.Router.switchSpace(spaceId, '', false, { onRouteChange: cb });
 			} else {
 				Animation.from(() => {
 					U.Data.onAuthWithoutSpace({ replace: true, onRouteChange: cb });

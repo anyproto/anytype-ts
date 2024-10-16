@@ -224,12 +224,6 @@ class UtilData {
 						I.SurveyType.Object, 
 					].forEach(it => Survey.check(it));
 
-					const space = U.Space.getSpaceview();
-
-					if (!space.isPersonal && !space.isShared && Storage.get('shareBannerClosed')) {
-						Onboarding.start('space', keyboard.isPopup(), false);
-					};
-
 					Storage.clearDeletedSpaces();
 
 					if (callBack) {
@@ -266,7 +260,7 @@ class UtilData {
 		this.createGlobalSubscriptions(() => {
 			const spaces = U.Space.getList();
 			if (spaces.length) {
-				U.Router.switchSpace(spaces[0].targetSpaceId, '', false, routeParam.onRouteChange);
+				U.Router.switchSpace(spaces[0].targetSpaceId, '', false, routeParam);
 			} else {
 				U.Router.go('/main/void', routeParam);
 			};

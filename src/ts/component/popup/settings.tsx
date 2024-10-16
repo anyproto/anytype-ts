@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, S, U, analytics, Action, keyboard, translate, Preview } from 'Lib';
+import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding } from 'Lib';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -223,13 +223,17 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { page } = data;
+		const { page, isSpace } = data;
 		const items = this.getItems();
 
 		this.onPage(page || items[0].id);
 		this.rebind();
 
 		keyboard.disableNavigation(true);
+
+		if (!isSpace && this.withMembership()) {
+			Onboarding.start('membership', true, false);
+		};
 	};
 
 	componentDidUpdate () {
@@ -286,7 +290,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
-			if (isAnytypeNetwork && isOnline) {
+			if (this.withMembership()) {
 				settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') });
 			};
 
@@ -302,6 +306,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
 			];
 		};
+	};
+
+	withMembership () {
+		return S.Common.isOnline && U.Data.isAnytypeNetwork();
 	};
 
 	getItems () {
