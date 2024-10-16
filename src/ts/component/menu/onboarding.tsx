@@ -443,7 +443,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	onImport () {
 		this.props.close(() => {
-			S.Popup.open('settings', { data: { page: 'importIndex' } });
+			S.Popup.open('settings', { data: { isSpace: true, page: 'importIndex' }, className: 'isSpace' });
 		});
 	};
 
