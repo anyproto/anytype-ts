@@ -18,6 +18,7 @@ export interface MenuParam {
 	type?: MenuType;
 	vertical?: MenuDirection;
 	horizontal?: MenuDirection;
+	stickToElementEdge?: MenuDirection;
 	fixedX?: number;
 	fixedY?: number;
 	offsetX?: any;
@@ -36,6 +37,8 @@ export interface MenuParam {
 	withBack?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
+	highlightElements?: string[];
+	hiddenElements?: string[];
 	noFlipX?: boolean;
 	noFlipY?: boolean;
 	noClose?: boolean;

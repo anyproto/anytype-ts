@@ -97,7 +97,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 									textConfirm: translate('commonOpenSpace'),
 									textCancel: translate('commonCancel'),
 									onConfirm: () => {
-										U.Router.switchSpace(message.spaceId);
+										U.Router.switchSpace(message.spaceId, '', false, {});
 									},
 								},
 							});
