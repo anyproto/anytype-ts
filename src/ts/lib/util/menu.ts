@@ -701,8 +701,8 @@ class UtilMenu {
 		const { accountSpaceId } = S.Auth;
 		const { targetSpaceId } = space;
 
-		if ((targetSpaceId == accountSpaceId)) {
-			//return;
+		if (targetSpaceId == accountSpaceId) {
+			return;
 		};
 
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
