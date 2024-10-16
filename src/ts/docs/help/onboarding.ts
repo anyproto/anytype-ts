@@ -172,7 +172,6 @@ export default {
 			{
 				category: translate('onboardingSyncStatusTitle'),
 				description: translate('onboardingSyncStatusText'),
-				buttonText: translate('onboardingSyncStatusButton'),
 				cloneElementClassName: 'onboardingHeaderSync',
 				param: {
 					element: '#menuSyncStatus',
@@ -318,17 +317,6 @@ export default {
 					description: translate('onboardingDefaultTypeDescription'),
 					param: {
 						element: '#button-dataview-add-record-select',
-						horizontal: I.MenuDirection.Right,
-						offsetX: -4,
-						offsetY: 12,
-					},
-				},
-
-				{
-					name: translate('onboardingCalendarTitle'),
-					description: translate('onboardingCalendarDescription'),
-					param: {
-						element: '#button-dataview-settings',
 						horizontal: I.MenuDirection.Right,
 						offsetX: -4,
 						offsetY: 12,
