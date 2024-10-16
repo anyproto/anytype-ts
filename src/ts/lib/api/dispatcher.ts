@@ -1050,7 +1050,7 @@ class Dispatcher {
 			const object = S.Detail.get(J.Constant.subId.space, id, [ 'layout', 'targetSpaceId' ], true);
 
 			if (U.Object.isSpaceViewLayout(object.layout) && object.targetSpaceId) {
-				U.Data.createMyParticipantSubscriptions([ object.targetSpaceId ]);
+				U.Data.createSubSpaceSubscriptions([ object.targetSpaceId ]);
 			};
 		};
 
