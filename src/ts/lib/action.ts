@@ -636,7 +636,6 @@ class Action {
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
 		const deleted = U.Space.getSpaceviewBySpaceId(id);
-		const list = U.Space.getList().filter(it => it.targetSpaceId != id);
 
 		if (!deleted) {
 			return;
@@ -675,16 +674,7 @@ class Action {
 					};
 
 					if (space == id) {
-						const routeParam = { 
-							replace: true, 
-							onRouteChange: cb,
-						};
-
-						if (list.length) {
-							U.Router.switchSpace(list[0].targetSpaceId, '', false, routeParam);
-						} else {
-							U.Router.go('/main/void', routeParam);
-						};
+						U.Space.openFirstSpaceOrVoid(it => it.targetSpaceId != id, { replace: true, onRouteChange: cb });
 					} else {
 						cb();
 					};
