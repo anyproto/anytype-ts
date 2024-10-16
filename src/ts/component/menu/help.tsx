@@ -140,7 +140,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				let key = '';
 
 				if (isEditor && home && (rootId == home.id)) {
-					key = 'dashboard';
+					key = 'basics';
 				} else 
 				if (isSet) {
 					key = 'mainSet';
