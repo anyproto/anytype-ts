@@ -1876,9 +1876,6 @@
 	"onboardingTemplateSelectTitle": "New Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingQuickCaptureTitle": "Use Different Object Types",
-	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
-
 	"onboardingSpacesTitle": "Spaces",
 	"onboardingSpacesText": "<b>This is your Space.</b> Click here to customize its name or icon, or to securely migrate and protect your data. ",
 	"onboardingAllObjectTitle": "All Objects",
