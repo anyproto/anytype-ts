@@ -38,14 +38,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, blockId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReply, getReplyContent } = this.props;
+		const { rootId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReply, getReplyContent } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
 		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId } = message;
-		const subId = S.Record.getSubId(rootId, blockId);
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
-		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it.isDeleted);
+		const attachments = this.getAttachments();
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
 		const isSelf = creator == account.id;
@@ -315,24 +314,22 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onAttachmentRemove (attachmentId: string) {
-		const { rootId, id } = this.props;
-		const message = S.Chat.getMessage(rootId, id);
-		const attachments = (message.attachments || []).filter(it => it.target != attachmentId);
-
-		this.update({ attachments });
+		this.update({ attachments: this.getAttachments().filter(it => it.target != attachmentId) });
 	};
 
 	onPreview (preview: any) {
-		const data: any = preview;
+		const data: any = { ...preview };
+		const gallery = [];
 
-		let gallery = [];
-
-		Object.keys(this.attachmentRefs).forEach((key) => {
+		Object.keys(this.attachmentRefs).forEach(key => {
 			const ref = this.attachmentRefs[key];
-			gallery.push(ref?.getPreviewItem());
+			if (ref) {
+				const item = ref.getPreviewItem();
+				if (item) {
+					gallery.push(item);
+				};
+			};
 		});
-
-		gallery = gallery.filter(it => it);
 
 		data.gallery = gallery;
 		data.initialIdx = gallery.findIndex(it => it.src == preview.src);
@@ -347,11 +344,16 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		C.ChatEditMessageContent(rootId, id, message);
 	};
 
-	getAttachmentsClass (): string {
+	getAttachments (): any[] {
 		const { rootId, blockId, id } = this.props;
 		const subId = S.Record.getSubId(rootId, blockId);
 		const message = S.Chat.getMessage(rootId, id);
-		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
+
+		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
+	};
+
+	getAttachmentsClass (): string {
+		const attachments = this.getAttachments();
 		const mediaLayouts = [ I.ObjectLayout.Image, I.ObjectLayout.Video ];
 		const media = attachments.filter(it => mediaLayouts.includes(it.layout));
 		const al = attachments.length;
@@ -361,6 +363,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		if (ml && (ml == al)) {
 			c.push(`withLayout ${ml >= 10 ? `layout-10` : `layout-${ml}`}`);
 		};
+
 		return c.join(' ');
 	};
 

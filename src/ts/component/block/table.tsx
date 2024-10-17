@@ -14,7 +14,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	_isMounted = false;
 	node = null;
+	refScroll = null;
 	refTable = null;
+	refRows: Map<string, any> = new Map();
 	offsetX = 0;
 	cache: any = {};
 	scrollX = 0;
@@ -76,7 +78,12 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
-				<div id="scrollWrap" className="scrollWrap" onScroll={this.onScroll}>
+				<div 
+					ref={ref => this.refScroll = ref} 
+					id="scrollWrap" 
+					className="scrollWrap" 
+					onScroll={this.onScroll}
+				>
 					<div className="inner">
 						<div id="selectionFrameContainer" />
 
@@ -141,8 +148,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	componentDidUpdate () {
-		const node = $(this.node);
-		const wrap = node.find('#scrollWrap');
+		const wrap = $(this.refScroll);
 
 		this.data = this.getData();
 		this.initSize();
@@ -166,8 +172,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const win = $(window);
 
 		this.unbind();
-
-		win.on(`resize.${block.id} resizeInit`, () => raf(() => this.resize()));
+		win.on(`resize.${block.id}`, () => raf(() => this.resize()));
 	};
 
 	getData () {
@@ -887,7 +892,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const node = $(this.node);
 		const rows = node.find('.row');
-		const gridTemplateColumns = widths.map(it => it + 'px').join(' ');
+		const gridTemplateColumns = widths.map(it => `${it}px`).join(' ');
 
 		rows.each((i, item) => {
 			item.style.gridTemplateColumns = gridTemplateColumns;
@@ -1092,14 +1097,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	onScroll (e: any) {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			this.scrollX = $(this.refScroll).scrollLeft();
 		};
-
-		const node = $(this.node);
-		const wrap = node.find('#scrollWrap');
-
-		this.scrollX = wrap.scrollLeft();
 	};
 
 	initCache (type: I.BlockType) {
@@ -1518,14 +1518,15 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const { isPopup, rootId, block, getWrapperWidth } = this.props;
 		const parent = S.Block.getParentLeaf(rootId, block.id);
+		const { rows } = this.getData();
 
-		if (!parent) {
+		if (!parent || !rows.length) {
 			return;
 		};
 
 		const node = $(this.node);
-		const wrap = node.find('#scrollWrap');
-		const row = node.find('.row').first();
+		const wrap = $(this.refScroll);
+		const row = node.find(`#row-${rows[0].id}`);
 		const obj = $(`#block-${block.id}`);
 
 		let width = J.Size.blockMenu + 10;
@@ -1557,6 +1558,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
 		};
+
+		console.log('resize');
 	};
 
 });

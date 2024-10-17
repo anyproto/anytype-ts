@@ -245,13 +245,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					const routeParam = {
 						replace: true, 
-						animate: false,
 						onRouteChange: () => {
 							S.Common.fullscreenObjectSet(true);
 							S.Common.showRelativeDatesSet(true);
 
 							U.Space.initSpaceState();
-
 							Onboarding.start('basics', false);
 						},
 					};
