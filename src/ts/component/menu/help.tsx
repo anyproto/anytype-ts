@@ -72,7 +72,7 @@ class MenuHelp extends React.Component<I.Menu> {
 		return [
 			{ id: 'whatsNew', document: 'whatsNew', caption: btn },
 			{ id: 'shortcut', caption: 'Ctrl+Space' },
-			{ id: 'hints' },
+			// { id: 'hints' },
 			{ isDiv: true },
 			{ id: 'gallery' },
 			{ id: 'community' },
