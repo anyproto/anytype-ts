@@ -23,12 +23,16 @@ class MediaAudio extends React.Component<Props> {
     refVolume: any = null;
     current: PlaylistItem = { name: '', src: '' };
     audioNode: HTMLAudioElement;
+    resizeObserver: ResizeObserver;
 
     constructor (props: Props) {
         super(props);
 
+        
         this.onPlayClick = this.onPlayClick.bind(this);
         this.onMute = this.onMute.bind(this);
+        this.onResize = this.onResize.bind(this);
+        this.resizeObserver = new ResizeObserver(this.onResize);
     };
 
     render () {
@@ -40,20 +44,22 @@ class MediaAudio extends React.Component<Props> {
                 <audio id="audio" preload="auto" src={this.current.src} />
 
                 <div className="controls">
+                <div className="name">
+                    <span>{this.current.name}</span>
+                </div>
+                <div className='controlsWrapper'>
                     <Icon className="play" onClick={this.onPlayClick} />
 
-                    <div className="name">
-                        <span>{this.current.name}</span>
+                    <div className='timeDragWrapper'>
+                        <Drag
+                            id="time"
+                            ref={ref => this.refTime = ref}
+                            value={0}
+                            onStart={(e: any, v: number) => this.onTime(v)}
+                            onMove={(e: any, v: number) => this.onTime(v)}
+                            onEnd={(e: any, v: number) => this.onTimeEnd(v)}
+                        />
                     </div>
-
-                    <Drag
-                        id="time"
-                        ref={ref => this.refTime = ref}
-                        value={0}
-                        onStart={(e: any, v: number) => this.onTime(v)}
-                        onMove={(e: any, v: number) => this.onTime(v)}
-                        onEnd={(e: any, v: number) => this.onTimeEnd(v)}
-                    />
 
                     <div className="time">
                         <span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
@@ -67,6 +73,7 @@ class MediaAudio extends React.Component<Props> {
                         value={1}
                         onMove={(e: any, v: number) => this.onVolume(v)}
                     />
+                    </div>
                 </div>
             </div>
         );
@@ -79,6 +86,8 @@ class MediaAudio extends React.Component<Props> {
 			this.current = playlist[0];
 		};
 
+        this.resizeObserver.observe(this.node);
+
 		this.forceUpdate();
     };
 
@@ -89,6 +98,7 @@ class MediaAudio extends React.Component<Props> {
 
     componentWillUnmount () {
         this.unbind();
+        this.resizeObserver.disconnect();
     };
 
     rebind () {
@@ -124,6 +134,11 @@ class MediaAudio extends React.Component<Props> {
             this.refVolume.resize();
         };
     };
+
+    onResize () {
+        this.resize();
+        this.rebind();
+    }
 
     onPlayClick (e: React.MouseEvent) {
 		e.preventDefault();
