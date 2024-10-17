@@ -35,7 +35,7 @@ class UtilObject {
 		};
 
 		const id = String(object.id || '');
-		const spaceId = object.spaceId || S.Common.space;
+		const spaceId = object.spaceId || S.Common.space || '';
 		const action = this.actionByLayout(object.layout);
 
 		if (!action) {
@@ -256,13 +256,9 @@ class UtilObject {
 			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids }
 		];
 
-		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
-			if (message.error.code || !message.records.length) {
-				return;
-			};
-
+		U.Data.search({ filters }, (message: any) => {
 			if (callBack) {
-				callBack(message.records.map(it => S.Detail.mapper(it)).filter(it => !it._empty_));
+				callBack((message.records || []).filter(it => !it._empty_));
 			};
 		});
 	};

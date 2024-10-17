@@ -1,26 +1,27 @@
 export enum ProgressType {
-	File		 = 0,
-	Import		 = 1,
-	Export		 = 2,
-	Download	 = 3,
-	Recover		 = 4,
-	Migration	 = 5,
+	Drop		 = 'dropFiles',
+	Import		 = 'import',
+	Export		 = 'export',
+	Save		 = 'saveFile',
+	Migrate		 = 'migration',
+	Recover		 = 'recoverAccount',
+	Update		 = 'update',
+	UpdateCheck	 = 'updateCheck',
 };
 
 export enum ProgressState {
-	None	 = 0,
-	Running	 = 1,
-	Done	 = 2,
-	Canceled = 3,
-	Error	 = 4,
+	None		 = 0,
+	Running		 = 1,
+	Done		 = 2,
+	Canceled	 = 3,
+	Error		 = 4,
 };
 
 export interface Progress {
 	id?: string;
 	type?: ProgressType;
-	status?: string;
 	current?: number;
 	total?: number;
-	isUnlocked?: boolean;
+	state?: ProgressState;
 	canCancel?: boolean;
 };

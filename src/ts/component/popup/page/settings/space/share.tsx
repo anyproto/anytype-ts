@@ -331,16 +331,21 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onInitLink () {
-		this.refButton?.setLoading(true);
+		const btn = this.refButton;
+		if (!btn || btn.state.isLoading) {
+			return;
+		};
+
+		btn.setLoading(true);
 
 		C.SpaceMakeShareable(S.Common.space, (message: any) => {
 			if (this.setError(message.error)) {
-				this.refButton?.setLoading(false);
+				btn.setLoading(false);
 				return;
 			};
 
 			C.SpaceInviteGenerate(S.Common.space, (message: any) => {
-				this.refButton?.setLoading(false);
+				btn.setLoading(false);
 
 				if (!this.setError(message.error)) {
 					this.setInvite(message.inviteCid, message.inviteKey);

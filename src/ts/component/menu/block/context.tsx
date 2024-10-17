@@ -191,10 +191,10 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		let menuId = '';
 		let menuParam: any = {
 			element: `#${getId()} #button-${blockId}-${type}`,
+			className: 'fromContext',
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
-			className: 'fromContext',
 			data: {
 				rootId,
 				blockId,
