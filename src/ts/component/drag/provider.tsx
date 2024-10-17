@@ -200,7 +200,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const win = $(window);
 		const node = $(this.node);
 		const container = U.Common.getScrollContainer(isPopup);
-		const sidebar = $('#sidebar');
+		const sidebar = $('#sidebarLeft');
 		const layer = $('#dragLayer');
 		const body = $('body');
 		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey };
@@ -264,7 +264,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const isPopup = keyboard.isPopup();
 		const node = $(this.node);
 		const container = U.Common.getScrollContainer(isPopup);
-		const sidebar = $('#sidebar');
+		const sidebar = $('#sidebarLeft');
 		const body = $('body');
 
 		this.refLayer.hide();
