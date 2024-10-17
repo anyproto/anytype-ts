@@ -73,7 +73,7 @@ export default {
 		image:			 [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ],
 		video:			 [ 'mp4', 'm4v', 'mov' ],
 		cover:			 [ 'jpg', 'jpeg', 'png', 'gif', 'webp' ],
-		audio:			 [ 'mp3', 'm4a', 'flac', 'ogg', 'wav' ],
+		audio:			 [ 'mp3', 'm4a', 'flac', 'ogg', 'wav', 'wave', 'x-wav' ],
 		pdf:			 [ 'pdf' ],
 		import: {
 			1:			 [ 'zip', 'md' ],
@@ -93,7 +93,9 @@ export default {
 		profile:		 'profile',
 		deleted:		 'deleted',
 		type:			 'type',
+		typeStore:		 'typeStore',
 		relation:		 'relation',
+		relationStore:	 'relationStore',
 		option:			 'option',
 		store:			 'store',
 		archive:		 'archive',
@@ -101,7 +103,7 @@ export default {
 		space:			 'space',
 		fileManager:	 'fileManager',
 		participant:	 'participant',
-		myParticipant:	 'myParticipant',
+		subSpace:		 'subSpace',
 		allObject:		 'allObject',
 	},
 

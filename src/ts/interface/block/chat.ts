@@ -5,6 +5,7 @@ export enum ChatButton {
 	Text 		 = 1,
 	Emoji 		 = 2,
 	Mention 	 = 3,
+	Voice		 = 4,
 };
 
 export enum AttachmentType {

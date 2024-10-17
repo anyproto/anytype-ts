@@ -221,7 +221,6 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const layouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts()).concat(I.ObjectLayout.Chat);
 
 		const filters: any[] = [
-			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
 			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 			{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: layouts },
 			{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
@@ -231,32 +230,40 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		U.Data.search({
+		const param = {
 			filters,
 			sorts,
 			keys: U.Data.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
-			ignoreWorkspace: true,
-		}, (message: any) => {
-			if (!this._isMounted) {
-				return;
-			};
+		};
 
-			if (message.error.code) {
-				return;
-			};
+		if (clear) {
+			this.items = [];
+		};
+
+		this.loadRequest(param, () => {
+			this.loadRequest({ ...param, spaceId: J.Constant.storeSpaceId }, (message: any) => {
+				if (!this._isMounted) {
+					return;
+				};
+
+				if (callBack) {
+					callBack(message);
+				};
+
+				this.forceUpdate();
+			});
+		});
+	};
+
+	loadRequest (param: any, callBack?: (message: any) => void) {
+		U.Data.search(param, (message: any) => {
+			this.items = this.items.concat(message.records || []);
 
 			if (callBack) {
 				callBack(message);
 			};
-
-			if (clear) {
-				this.items = [];
-			};
-
-			this.items = this.items.concat(message.records || []);
-			this.forceUpdate();
 		});
 	};
 

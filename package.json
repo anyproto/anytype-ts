@@ -96,6 +96,7 @@
 		"@viz-js/viz": "^3.2.4",
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
+		"audio-react-recorder": "^1.0.5",
 		"blueimp-load-image": "^2.31.0",
 		"copy-webpack-plugin": "^12.0.2",
 		"d3": "^7.0.1",

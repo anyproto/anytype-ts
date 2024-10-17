@@ -64,12 +64,18 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			ret.unshift({ id: 'member', name: translate('commonMembers') });
 		};
 
+		if (space.spaceMainChatId) {
+			ret.push({ id: 'chat', name: translate('commonMainChat') });
+		};
+
 		return ret;
 	};
 
 	onClick (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
+
+		const space = U.Space.getSpaceview();
 
 		switch (item.id) {
 			case 'member': {
@@ -79,6 +85,11 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 
 			case 'all': {
 				sidebar.objectContainerToggle();
+				break;
+			};
+
+			case 'chat': {
+				U.Object.openAuto({ id: space.spaceMainChatId, layout: I.ObjectLayout.Chat });
 				break;
 			};
 		};
