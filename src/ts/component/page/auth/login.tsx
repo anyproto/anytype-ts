@@ -132,18 +132,20 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 			const spaceId = Storage.get('spaceId');
 			const shareTooltip = Storage.get('shareTooltip');
-
-			const cb = () => {
-				if (!shareTooltip) {
-					Preview.shareTooltipShow();
-				};
+			const routeParam = {
+				replace: true, 
+				onRouteChange: () => {
+					if (!shareTooltip) {
+						Preview.shareTooltipShow();
+					};
+				},
 			};
 
 			if (spaceId) {
-				U.Router.switchSpace(spaceId, '', false, { onRouteChange: cb });
+				U.Router.switchSpace(spaceId, '', false, routeParam);
 			} else {
 				Animation.from(() => {
-					U.Data.onAuthWithoutSpace({ replace: true, onRouteChange: cb });
+					U.Data.onAuthWithoutSpace(routeParam);
 					this.isSelecting = false;
 				});
 			};

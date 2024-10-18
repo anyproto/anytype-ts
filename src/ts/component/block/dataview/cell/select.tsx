@@ -247,17 +247,6 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	onClick (e: any, id: string) {
-		if (!this.props.canOpen) {
-			return;
-		};
-
-		const item = this.getItems().find(item => item.id == id);
-		if (!item) {
-			return;
-		};
-
-		e.stopPropagation();
-		//U.Object.openPopup(item);
 	};
 
 	placeholderCheck () {

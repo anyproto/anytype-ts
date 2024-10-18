@@ -558,12 +558,14 @@ class UtilMenu {
 				S.Detail.update(J.Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
-					S.Detail.update(J.Constant.subId.space, { id: object.id, details: object }, false);
+					S.Detail.update(U.Space.getSubSpaceSubId(space), { id: object.id, details: object }, false);
 				};
 
-				if (openRoute) {
-					U.Space.openDashboard('route');
-				};
+				U.Data.createSubSpaceSubscriptions([ space ], () => {
+					if (openRoute) {
+						U.Space.openDashboard('route');
+					};
+				});
 			});
 		};
 
