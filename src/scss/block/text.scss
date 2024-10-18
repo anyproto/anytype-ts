@@ -110,6 +110,14 @@
 
 	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
+	.block.blockText.textHeader1,
+	.block.blockText.textHeader2,
+	.block.blockText.textHeader3 {
+		markupmention {
+			.space { width: 6px; }
+		}
+	}
+
 	/* Header1 */
 
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }

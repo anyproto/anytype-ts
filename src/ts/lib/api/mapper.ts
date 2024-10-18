@@ -57,6 +57,20 @@ export const Mapper = {
 		return t;
 	},
 
+	ProcessType (v: Events.Model.Process.MessageCase) {
+		const V = Events.Model.Process.MessageCase;
+
+		let t = '';
+		if (v == V.DROPFILES)		 t = 'dropFiles';
+		if (v == V.IMPORT)			 t = 'import';
+		if (v == V.EXPORT)			 t = 'export';
+		if (v == V.SAVEFILE)		 t = 'saveFile';
+		if (v == V.MIGRATION)		 t = 'migration';
+		if (v == V.RECOVERACCOUNT)	 t = 'recoverAccount';
+
+		return t;
+	},
+
 	From: {
 
 		Account: (obj: Model.Account): I.Account => {
@@ -76,6 +90,7 @@ export const Mapper = {
 				deviceId: obj.getDeviceid(),
 				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
+				techSpaceId: obj.getTechspaceid(),
 				spaceViewId: obj.getSpaceviewid(),
 				widgetsId: obj.getWidgetsid(),
 				analyticsId: obj.getAnalyticsid(),
@@ -589,10 +604,12 @@ export const Mapper = {
 		},
 
 		Process: (obj: Events.Model.Process) => {
+			const type = Mapper.ProcessType(obj.getMessageCase());
+
 			return {
 				id: obj.getId(),
 				state: obj.getState() as number,
-				type: obj.getType() as number,
+				type,
 				progress: Mapper.From.Progress(obj.getProgress())
 			};
 		},

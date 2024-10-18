@@ -977,40 +977,35 @@ class Dispatcher {
 					break;
 				};
 
-				case 'ProcessNew':
-				case 'ProcessUpdate':
-				case 'ProcessDone': {
+				case 'ProcessNew': {
 					const { process } = mapped;
-					const { id, progress, state, type } = process;
+					const { progress, type } = process;
 
-					switch (state) {
-						case I.ProgressState.Running: {
-							let canCancel = true;
-							let isUnlocked = true;
+					let canCancel = true;
 
-							if ([ I.ProgressType.Recover, I.ProgressType.Migration ].includes(type)) {
-								canCancel = false;
-								isUnlocked = false;
-							};
-
-							S.Common.progressSet({
-								id,
-								status: translate(`progress${type}`),
-								current: progress.done,
-								total: progress.total,
-								isUnlocked,
-								canCancel,
-							});
-							break;
-						};
-
-						case I.ProgressState.Error:
-						case I.ProgressState.Done:
-						case I.ProgressState.Canceled: {
-							S.Common.progressClear();
-							break;
-						};
+					if ([ I.ProgressType.Recover, I.ProgressType.Migrate ].includes(type)) {
+						canCancel = false;
 					};
+
+					S.Progress.update({
+						...process,
+						current: progress.done,
+						total: progress.total,
+						canCancel,
+					});
+					break;
+				};
+
+				case 'ProcessUpdate': {
+					const { process } = mapped;
+					const { id, progress, state } = process;
+
+					S.Progress.update({ id, current: progress.done, total: progress.total, state });
+					break;
+				};
+
+				case 'ProcessDone': {
+					//S.Progress.delete(mapped.process.id);
 					break;
 				};
 
@@ -1055,7 +1050,7 @@ class Dispatcher {
 			const object = S.Detail.get(J.Constant.subId.space, id, [ 'layout', 'targetSpaceId' ], true);
 
 			if (U.Object.isSpaceViewLayout(object.layout) && object.targetSpaceId) {
-				U.Data.createMyParticipantSubscriptions([ object.targetSpaceId ]);
+				U.Data.createSubSpaceSubscriptions([ object.targetSpaceId ]);
 			};
 		};
 

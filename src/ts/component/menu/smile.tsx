@@ -1058,7 +1058,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onUpload () {
-		Action.openFileDialog(J.Constant.fileExtension.cover, paths => {
+		Action.openFileDialog({ extensions: J.Constant.fileExtension.cover }, paths => {
 			if (!paths.length) {
 				return;
 			};
