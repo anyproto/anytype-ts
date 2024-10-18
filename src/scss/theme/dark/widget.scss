@@ -4,8 +4,7 @@
 	.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
 	.icon.plus { background-image: url('#{$themePath}/icon/widget/plus.svg'); }
 
-	.icon.remove .inner { background-color: var(--color-shape-secondary); }
-	.icon.remove:hover .inner { background-color: var(--color-text-tertiary); }
+	.icon.remove .inner { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
 
 	.item {
 		.buttons {

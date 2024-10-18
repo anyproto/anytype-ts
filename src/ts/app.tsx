@@ -355,10 +355,12 @@ class App extends React.Component<object, State> {
 							S.Auth.accountSet(account);
 							S.Common.configSet(account.config, false);
 
+							const routeParam = { replace: true, animate: true, onFadeIn: cb };
+
 							if (spaceId) {
-								U.Router.switchSpace(spaceId, '', false, { onFadeIn: cb });
+								U.Router.switchSpace(spaceId, '', false, routeParam);
 							} else {
-								U.Data.onAuthWithoutSpace({ replace: true });
+								U.Data.onAuthWithoutSpace(routeParam);
 							};
 
 							U.Data.onInfo(account.info);
