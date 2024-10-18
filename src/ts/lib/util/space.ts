@@ -46,7 +46,7 @@ class UtilSpace {
 		};
 
 		if (spaces.length) {
-			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param.onRouteChange);
+			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param);
 		} else {
 			U.Router.go('/main/void', param);
 		};
@@ -221,6 +221,31 @@ class UtilSpace {
 		const length = items.length;
 
 		return length < J.Constant.limit.space;
+	};
+
+	initSpaceState () {
+		const { widgets } = S.Block;
+		const blocks = S.Block.getChildren(widgets, widgets);
+
+		Storage.initPinnedTypes();
+
+		if (!blocks.length) {
+			return;
+		};
+
+		blocks.forEach(block => Storage.setToggle('widget', block.id, true));
+
+		const first = blocks[0];
+		const children = S.Block.getChildren(widgets, first.id);
+
+		if (children.length) {
+			const object = S.Detail.get(widgets, children[0].getTargetObjectId());
+
+			if (!object._empty_) {
+				Storage.setLastOpened(U.Common.getCurrentElectronWindowId(), { id: object.id, layout: object.layout });
+				U.Space.openDashboard('route');
+			};
+		};
 	};
 
 };

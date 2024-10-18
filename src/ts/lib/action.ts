@@ -611,26 +611,7 @@ class Action {
 		};
 
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('settings', {
-				className: 'isSpaceCreate',
-				data: {
-					page: 'spaceCreate',
-					isSpace: true,
-					route,
-					onCreate: id => {
-						const cb = () => {
-							const { widgets } = S.Block;
-
-							Storage.initPinnedTypes();
-
-							const blocks = S.Block.getChildren(widgets, widgets);
-							blocks.forEach(block => Storage.setToggle('widget', block.id, true));
-						};
-
-						U.Router.switchSpace(id, '', true, { onRouteChange: cb });
-					},
-				},
-			});
+			S.Popup.open('spaceCreate', { data: { route } });
 		});
 	};
 

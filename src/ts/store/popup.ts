@@ -18,7 +18,8 @@ const SHOW_DIMMER = [
 	'usecase',
 	'membership',
 	'membershipFinalization',
-	'share'
+	'share',
+	'spaceCreate',
 ];
 
 class PopupStore {
