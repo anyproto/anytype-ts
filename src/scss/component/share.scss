@@ -8,7 +8,7 @@
 .shareTooltip {
     .icon.smile { width: 85px; height: 40px; background: url('~img/icon/share/smile.svg') }
     .label { @include text-common; }
-    .icon.close { background-image: url('~img/icon/notification/delete.svg'); }
+    .icon.close { background-color: var(--color-bg-primary); box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.20); background-image: url('~img/icon/notification/delete.svg'); }
 }
 
 .shareBanner { position: relative; border-radius: 12px; background: var(--color-bg-primary) linear-gradient(-90deg, #C5F3E5 0%, #F1FFC9 27.23%, rgba(255, 255, 255, 0.15) 54%); margin-top: 10px; }
@@ -16,14 +16,11 @@
     .bannerInner { position: relative; padding: 11.75px 100px 11.75px 16px; border-radius: 12px; overflow: hidden; }
     .label { @include text-common; max-width: 185px; }
     .icon.smile { position: absolute; right: 6px; top: 50%; margin-top: -37px; width: 82px; height: 74px; background: url('~img/icon/share/banner.svg'); }
-    .icon.close { background-image: url('~img/icon/widget/remove.svg'); z-index: 1; -webkit-app-region: no-drag; }
+    .icon.close { box-shadow: none; background-color: var(--color-shape-primary); background-image: url('~img/icon/widget/remove.svg'); z-index: 1; -webkit-app-region: no-drag; }
+    .icon.close:hover  { background-color: var(--color-text-tertiary); }
 }
 
 .shareTooltip,
 .shareBanner {
-    .icon.close {
-        width: 20px; height: 20px; border-radius: 50%; position: absolute; background-color: var(--color-bg-primary);
-        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.20); top: -8px; left: -8px;
-        background-size: 10px; transition: $transitionAllCommon;
-    }
+    .icon.close { width: 20px; height: 20px; border-radius: 50%; position: absolute; top: -8px; left: -8px; transition: $transitionAllCommon; }
 }
