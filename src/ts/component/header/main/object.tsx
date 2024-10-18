@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
-import { I, S, U, J, keyboard, translate } from 'Lib';
+import { I, S, U, J, keyboard, translate, sidebar } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
 interface State {

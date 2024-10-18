@@ -25,7 +25,13 @@ html.bodyIndex, html.bodyAuth {
 	--shadow: 0px 0px 0px 1px var(--color-button-stroke) !important;
 
 	body { background: var(--color-bg-primary); color: var(--color-text-secondary); overflow: hidden; }
-	#navigationPanel, #notifications, #sidebar, #vault, #sidebarToggle { display: none !important; }
+
+	#vault,
+	#navigationPanel,
+	#sidebarToggle,
+	#notifications,
+	.sidebar,
+	.sidebarDummy { display: none !important; }
 
 	.popup { 
 		.innerWrap { background: var(--color-popup) !important;; box-shadow: var(--shadow) !important; color: var(--color-text-primary) !important; }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, S, U, J, focus, Action, analytics, Relation, translate } from 'Lib';
+import { I, C, S, U, J, focus, Action, analytics, Relation, translate, sidebar } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -35,6 +35,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		this.onRelationAdd = this.onRelationAdd.bind(this);
 		this.onSetAdd = this.onSetAdd.bind(this);
 		this.onCreate = this.onCreate.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.onLayout = this.onLayout.bind(this);
 	};
 
@@ -141,6 +142,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						placeholder={translate('defaultNameType')} 
 						rootId={rootId} 
 						onCreate={this.onCreate} 
+						onEdit={this.onEdit}
 					/>
 
 					{showTemplates ? (
@@ -387,6 +389,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				},
 			},
 		});
+	};
+
+	onEdit () {
+		const rootId = this.getRootId();
+
+		S.Common.showSidebarRightSet(!S.Common.showSidebarRight);
+		S.Common.getRef('sidebarRight').setState({ page: 'type', rootId });
+
+		window.setTimeout(() => {
+			sidebar.resizePage(null, false);
+		}, 10);
 	};
 
 	onObjectAdd () {

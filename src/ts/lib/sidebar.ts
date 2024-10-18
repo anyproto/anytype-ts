@@ -12,12 +12,16 @@ class Sidebar {
 		width: 0,
 		isClosed: false,
 	};
-	obj: JQuery<HTMLElement> = null;
+
+	objLeft: JQuery<HTMLElement> = null;
+	objRight: JQuery<HTMLElement> = null;
+	dummyLeft: JQuery<HTMLElement> = null;
+	dummyRight: JQuery<HTMLElement> = null
+
 	page: JQuery<HTMLElement> = null;
 	header: JQuery<HTMLElement> = null;
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
-	dummy: JQuery<HTMLElement> = null;
 	toggleButton: JQuery<HTMLElement> = null;
 	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
@@ -46,22 +50,25 @@ class Sidebar {
 
 		if (this.data.isClosed) {
 			vault.addClass('isClosed');
-			this.obj.addClass('isClosed');
+			this.objLeft.addClass('isClosed');
 		} else {
 			vault.removeClass('isClosed');
-			this.obj.removeClass('isClosed');
+			this.objLeft.removeClass('isClosed');
 		};
 	};
 
 	initObjects () {
 		const vault = S.Common.getRef('vault');
 
-		this.obj = $('#sidebar');
+		this.objLeft = $('#sidebarLeft');
+		this.objRight = $('#sidebarRight');
+		this.dummyLeft = $('#sidebarDummyLeft');
+		this.dummyRight = $('#sidebarDummyRight');
+
 		this.page = $('#page.isFull');
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
-		this.dummy = $('#sidebarDummy');
 		this.toggleButton = $('#sidebarToggle');
 
 		if (vault) {
@@ -72,11 +79,11 @@ class Sidebar {
 	close (): void {
 		const { width, isClosed } = this.data;
 
-		if (!this.obj || !this.obj.length || this.isAnimating || isClosed) {
+		if (!this.objLeft || !this.objLeft.length || this.isAnimating || isClosed) {
 			return;
 		};
 
-		this.obj.addClass('anim');
+		this.objLeft.addClass('anim');
 		this.setElementsWidth(width);
 		this.setAnimating(true);
 		this.setStyle({ width: 0 });
@@ -85,7 +92,7 @@ class Sidebar {
 		this.vaultHide();
 
 		this.removeAnimation(() => {
-			this.obj.addClass('isClosed');
+			this.objLeft.addClass('isClosed');
 
 			window.clearTimeout(this.timeoutAnim);
 			this.timeoutAnim = window.setTimeout(() => {
@@ -97,7 +104,7 @@ class Sidebar {
 	};
 
 	open (width?: number): void {
-		if (!this.obj || !this.obj.length || this.isAnimating || !this.data.isClosed) {
+		if (!this.objLeft || !this.objLeft.length || this.isAnimating || !this.data.isClosed) {
 			return;
 		};
 
@@ -107,8 +114,8 @@ class Sidebar {
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
-			this.obj.removeClass('isClosed');
-			this.obj.addClass('anim');
+			this.objLeft.removeClass('isClosed');
+			this.objLeft.addClass('anim');
 
 			this.setStyle({ width });
 			this.set({ isClosed: false });
@@ -133,9 +140,9 @@ class Sidebar {
 	};
 
 	setElementsWidth (width: any): void {
-		this.obj.find('#head').css({ width });
-		this.obj.find('#body').css({ width });
-		this.obj.find('#shareBanner').css({ width: (width ? width - 24 : '') });
+		this.objLeft.find('#head').css({ width });
+		this.objLeft.find('#body').css({ width });
+		this.objLeft.find('#shareBanner').css({ width: (width ? width - 24 : '') });
 	};
 
 	setWidth (w: number): void {
@@ -146,13 +153,13 @@ class Sidebar {
 	};
 
 	private removeAnimation (callBack?: () => void): void {
-		if (!this.obj || !this.obj.length) {
+		if (!this.objLeft || !this.objLeft.length) {
 			return;
 		};
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
-			this.obj.removeClass('anim');
+			this.objLeft.removeClass('anim');
 			this.setElementsWidth('');
 
 			if (callBack) {
@@ -164,7 +171,7 @@ class Sidebar {
 	onMouseMove (): void {
 		const { showVault, hideSidebar } = S.Common;
 
-		if (!this.obj || !this.obj.length || keyboard.isDragging) {
+		if (!this.objLeft || !this.objLeft.length || keyboard.isDragging) {
 			return;
 		};
 
@@ -209,50 +216,60 @@ class Sidebar {
 		};
 	};
 
-	resizePage (width: number, animate: boolean): void {
+	resizePage (widthLeft: number, animate: boolean): void {
 		this.initObjects();
 
-		if ((width === null) && this.obj && this.obj.length) {
-			width = this.obj.outerWidth();
+		let widthRight = 0;
+		let toggleX = 16;
+
+		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
+			widthLeft = this.objLeft.outerWidth();
+		};
+
+		if (this.objRight && this.objRight.length) {
+			widthRight = this.objRight.outerWidth();
 		};
 
 		if (!keyboard.isMain() || keyboard.isMainVoid()) {
-			width = 0;
+			widthLeft = 0;
+			widthRight = 0;
 		};
 
 		const { isClosed } = this.data;
 		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
 		const vw = isClosed || !showVault || !keyboard.isMain() ? 0 : J.Size.vault.width;
-		const pageWidth = ww - width - vw;
+
+		widthLeft += vw;
+
+		const pageWidth = ww - widthLeft - widthRight;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
 
-		let toggleX = 16;
-		if ((width && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
+		if ((widthLeft && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
 			toggleX = 84;
 		};
 
-		this.header.css({ width: '' }).removeClass('withSidebar');
+		this.header.css({ width: '' });
 		this.footer.css({ width: '' });
-		this.dummy.css({ width: width + vw });
+		this.dummyLeft.css({ width: widthLeft });
 
 		if (animate) {
 			this.header.addClass('sidebarAnimation');
 			this.page.addClass('sidebarAnimation');
 			this.footer.addClass('sidebarAnimation');
-			this.dummy.addClass('sidebarAnimation');
+			this.dummyLeft.addClass('sidebarAnimation');
 			this.toggleButton.addClass('sidebarAnimation');
 		} else {
 			this.header.removeClass('sidebarAnimation');
 			this.page.removeClass('sidebarAnimation');
 			this.footer.removeClass('sidebarAnimation');
-			this.dummy.removeClass('sidebarAnimation');
+			this.dummyLeft.removeClass('sidebarAnimation');
 			this.toggleButton.removeClass('sidebarAnimation');
 		};
 
-		navigation?.position(width + vw, animate);
-		width ? this.header.addClass('withSidebar') : this.header.removeClass('withSidebar');
+		navigation?.position(widthLeft, animate);
+		widthLeft ? this.header.addClass('withSidebarLeft') : this.header.removeClass('withSidebarLeft');
 
 		this.page.css({ width: pageWidth });
 		this.loader.css({ width: pageWidth, right: 0 });
@@ -285,13 +302,13 @@ class Sidebar {
 	};
 
 	private setStyle (v: Partial<SidebarData>): void {
-		if (!this.obj || !this.obj.length) {
+		if (!this.objLeft || !this.objLeft.length) {
 			return;
 		};
 
 		const width = v.isClosed ? 0 : v.width;
 
-		this.obj.css({ width });
+		this.objLeft.css({ width });
 	};
 
 	/**

@@ -76,7 +76,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
 		const isMain = this.isMain();
-		const showSidebar = isMain;
 
 		if (account) {
 			const { status } = account || {};
@@ -103,13 +102,14 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		);
 
 		let content = null;
-		if (isPopup || !showSidebar) {
+		if (isPopup || !isMain) {
 			content = wrap;
 		} else {
 			content = (
 				<div id="pageFlex" className="pageFlex">
-					<div id="sidebarDummy" className="sidebarDummy" />
+					<div id="sidebarDummyLeft" className="sidebarDummy" />
 					{wrap}
+					<div id="sidebarDummyRight" className="sidebarDummy" />
 				</div>
 			);
 		};
