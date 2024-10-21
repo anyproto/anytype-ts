@@ -212,12 +212,20 @@ class Action {
 		analytics.event('DownloadMedia', { route });
 	};
 
-	openFileDialog (extensions: string[], callBack?: (paths: string[]) => void) {
+	openFileDialog (param: any, callBack?: (paths: string[]) => void) {
+		param = Object.assign({
+			extensions: [],
+			properties: [],
+		}, param);
+
+		const properties = param.properties || [];
+		const extensions = param.extensions || [];
+
 		const options: any = { 
-			properties: [ 'openFile' ], 
+			properties: [ 'openFile' ].concat(properties), 
 		};
 
-		if (extensions && extensions.length) {
+		if (extensions.length) {
 			options.filters = [ 
 				{ name: 'Filtered extensions', extensions },
 			];
@@ -400,7 +408,7 @@ class Action {
 		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
 
-		this.openFileDialog([ 'zip' ], paths => {
+		this.openFileDialog({ extensions: [ 'zip' ] }, paths => {
 			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.count.icon), (message: any) => {
 				if (onError(message.error)) {
 					return;
@@ -609,7 +617,6 @@ class Action {
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
 		const deleted = U.Space.getSpaceviewBySpaceId(id);
-		const list = U.Space.getList().filter(it => it.targetSpaceId != id);
 
 		if (!deleted) {
 			return;
@@ -648,16 +655,7 @@ class Action {
 					};
 
 					if (space == id) {
-						const routeParam = { 
-							replace: true, 
-							onRouteChange: cb,
-						};
-
-						if (list.length) {
-							U.Router.switchSpace(list[0].targetSpaceId, '', false, routeParam);
-						} else {
-							U.Router.go('/main/void', routeParam);
-						};
+						U.Space.openFirstSpaceOrVoid(it => it.targetSpaceId != id, { replace: true, onRouteChange: cb });
 					} else {
 						cb();
 					};
