@@ -322,8 +322,6 @@ class App extends React.Component<object, State> {
 			Storage.delete('redirect');
 		};
 
-		raf(() => anim.removeClass('from'));
-
 		if (css) {
 			U.Common.injectCss('anytype-custom-css', css);
 		};
@@ -336,6 +334,8 @@ class App extends React.Component<object, State> {
 		};
 
 		const cb = () => {
+			raf(() => anim.removeClass('from'));
+
 			window.setTimeout(() => {
 				anim.addClass('to');
 
