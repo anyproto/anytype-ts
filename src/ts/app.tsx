@@ -348,24 +348,26 @@ class App extends React.Component<object, State> {
 			if (isChild) {
 				Renderer.send('keytarGet', accountId).then((phrase: string) => {
 					U.Data.createSession(phrase, '', () => {
-						keyboard.setPinChecked(isPinChecked);
-						S.Common.redirectSet(route);
-
-						if (account) {
-							S.Auth.accountSet(account);
-							S.Common.configSet(account.config, false);
-
-							const routeParam = { replace: true, animate: true, onFadeIn: cb };
-
-							if (spaceId) {
-								U.Router.switchSpace(spaceId, '', false, routeParam);
-							} else {
-								U.Data.onAuthWithoutSpace(routeParam);
-							};
-
-							U.Data.onInfo(account.info);
-							U.Data.onAuthOnce(false);
+						if (!account) {
+							console.error('[App.onInit]: Account not found');
+							return;
 						};
+
+						keyboard.setPinChecked(isPinChecked);
+						S.Auth.accountSet(account);
+						S.Common.redirectSet(route);
+						S.Common.configSet(account.config, false);
+
+						const routeParam = { replace: true, onRouteChange: cb };
+
+						if (spaceId) {
+							U.Router.switchSpace(spaceId, '', false, routeParam);
+						} else {
+							U.Data.onAuthWithoutSpace(routeParam);
+						};
+
+						U.Data.onInfo(account.info);
+						U.Data.onAuthOnce(false);
 					});
 				});
 
