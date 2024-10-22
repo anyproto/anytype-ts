@@ -93,7 +93,9 @@ export default {
 		profile:		 'profile',
 		deleted:		 'deleted',
 		type:			 'type',
+		typeStore:		 'typeStore',
 		relation:		 'relation',
+		relationStore:	 'relationStore',
 		option:			 'option',
 		store:			 'store',
 		archive:		 'archive',
@@ -101,7 +103,7 @@ export default {
 		space:			 'space',
 		fileManager:	 'fileManager',
 		participant:	 'participant',
-		myParticipant:	 'myParticipant',
+		subSpace:		 'subSpace',
 		allObject:		 'allObject',
 	},
 
