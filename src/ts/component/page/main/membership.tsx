@@ -56,6 +56,8 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 			};
 
 			U.Space.openDashboard('route', {
+				replace: true,
+				animate: true,
 				onFadeIn: () => {
 					if (tier && (tier != I.TierType.None)) {
 						if (!membership.isNone && !membership.isExplorer) {

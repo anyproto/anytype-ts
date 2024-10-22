@@ -61,15 +61,16 @@ const Mermaid = observer(class Mermaid extends React.Component<Props> {
 
 		try {
 			const res = await mermaid.render('mermaid-chart', chart);
-			if (res) {
-				svg = res;
+
+			if (res.svg) {
+				svg = res.svg;
 			};
 		} catch (e) {
 			console.error('[Mermaid].drawDiagram', e);
 			node.find('.error').text(e.message);
 		};
 		
-		node.find('.chart').html(svg);
+		node.find('.mermaid').html(svg);
     };
 
 });

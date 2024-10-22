@@ -16,13 +16,9 @@
         .icons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
         .icons {
             .iconWrapper { display: flex; position: relative; align-items: center; justify-content: center; width: 28px; height: 28px; }
-            .iconWrapper::before { content: ''; width: 100%; height: 100%; position: absolute; z-index: 0; border-radius: 50%; background: var(--color-shape-tertiary); }
-            .iconWrapper.connected::before { background: #c5efa3; }
-            .iconWrapper.connectedSlow::before { background: #f4eb91; }
-            .iconWrapper.error::before { background: #fcd1c3; }
-            .iconWrapper:hover::before { opacity: 0.5; }
 
             .iconWrapper {
+                .iconBg { width: 100%; height: 100%; position: absolute; z-index: 0; border-radius: 50%; background: var(--color-shape-tertiary); }
                 .icon { width: 20px; height: 20px; }
                 .icon.network { background: url('~img/icon/menu/syncStatus/network/grey.svg'); }
                 .icon.self { background: url('~img/icon/menu/syncStatus/self/grey.svg'); }
@@ -30,17 +26,24 @@
                 .icon.localOnly { background: url('~img/icon/menu/syncStatus/localOnly.svg'); }
             }
             .iconWrapper.connected {
+                .iconBg { background: #c5efa3; }
                 .icon.network { background: url('~img/icon/menu/syncStatus/network/green.svg'); }
                 .icon.self { background: url('~img/icon/menu/syncStatus/self/green.svg'); }
                 .icon.p2p { background: url('~img/icon/menu/syncStatus/p2p/green.svg'); }
             }
             .iconWrapper.connectedSlow {
+                .iconBg { background: #f4eb91; }
                 .icon.network { background: url('~img/icon/menu/syncStatus/network/yellow.svg'); }
             }
             .iconWrapper.error {
+                .iconBg { background: #fcd1c3; }
                 .icon.network { background: url('~img/icon/menu/syncStatus/network/red.svg'); }
                 .icon.self { background: url('~img/icon/menu/syncStatus/self/red.svg'); }
                 .icon.p2p { background: url('~img/icon/menu/syncStatus/p2p/red.svg'); }
+            }
+
+            .iconWrapper:hover {
+                .iconBg { opacity: 0.5; }
             }
         }
 

@@ -72,7 +72,7 @@ class MenuHelp extends React.Component<I.Menu> {
 		return [
 			{ id: 'whatsNew', document: 'whatsNew', caption: btn },
 			{ id: 'shortcut', caption: 'Ctrl+Space' },
-			{ id: 'hints' },
+			// { id: 'hints' },
 			{ isDiv: true },
 			{ id: 'gallery' },
 			{ id: 'community' },
@@ -146,7 +146,7 @@ class MenuHelp extends React.Component<I.Menu> {
 					key = 'mainSet';
 				} else
 				if (isEditor) {
-					key = S.Block.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'editor';
+					key = S.Block.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'basics';
 				} else
 				if (isGraph) {
 					key = 'mainGraph';
