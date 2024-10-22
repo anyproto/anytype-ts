@@ -449,21 +449,26 @@ class MenuManager {
 
 	getTrayIcon () {
 		let icon = '';
+
 		if (is.windows) {
 			icon = 'icon32x32.png';
-		} else if (is.linux) {
-            // for GNOME shell env, including ubuntu -- the panel is always dark
-            const panelAlwaysDark = (process.env.ORIGINAL_XDG_CURRENT_DESKTOP.includes("GNOME") || process.env.XDG_CURRENT_DESKTOP == 'Unity')
+		} else 
+		if (is.linux) {
+			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP;
+			const panelAlwaysDark = env.includes('GNOME') || (env == 'Unity'); // for GNOME shell env, including ubuntu -- the panel is always dark
+
             if (panelAlwaysDark) {
                 icon = 'iconTrayWhite.png';
-            } else if ('dark' == Util.getTheme()) {
+            } else 
+			if (Util.getTheme() == 'dark') {
                 icon = 'iconTrayWhite.png';
             } else {
                 icon = 'iconTrayBlack.png';
-            }
+            };
 		} else {
 			icon = `iconTrayTemplate.png`;
 		};
+
 		return path.join(Util.imagePath(), icon);
 	};
 
