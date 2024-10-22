@@ -32,6 +32,8 @@
             
             .icon.volume { width: var(--icon-size); height: var(--icon-size);  min-width: var(--icon-size); min-height: var(--icon-size); background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
+
+            .icon.volume::before { position: absolute; content: ''; top: -10px; right: 0px; left: 0px; bottom: 0px; z-index: 100; }
     
             .time { @include text-small; text-align: right; line-height: 20px; text-wrap: nowrap; width: 86px; text-align: center; }
 
@@ -48,10 +50,12 @@
             }
         }
 
+        .volumeControls:hover {
+            #volume { opacity: 1; pointer-events: all;}
+        }
+
         #time { margin: 6px 0px; width: 100%; display: block; }
-        #volume { width: 40px; opacity: 0; transition: opacity $transitionCommon; }
-    }
-    .controls:hover {
-        #volume { opacity: 1; }
+
+        #volume { position: fixed; bottom: 36px; right: 12px; opacity: 0; pointer-events: none; transition: opacity $transitionCommon; }
     }
 }

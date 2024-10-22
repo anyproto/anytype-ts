@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 
 interface Props {
     id?: string;
@@ -7,25 +8,27 @@ interface Props {
     min?: number;
     max?: number;
     step?: number;
-    onStart?(e: React.MouseEvent<HTMLInputElement>, v: number): void;
     onChange?(e: React.ChangeEvent<HTMLInputElement>, v: number): void;
-    onEnd?(e: React.MouseEvent<HTMLInputElement>, v: number): void;
 }
 
-const VerticalDrag: React.FC<Props> = ({
+const VerticalDrag = React.forwardRef<HTMLInputElement, Props>(({
     id,
     className = '',
     value,
     min = 0,
     max = 1,
     step = 0.01,
-    onStart,
     onChange,
-    onEnd
-}) => {
-    const handleMouseDown = (e: React.MouseEvent<HTMLInputElement>) => {
-        if (onStart) {
-            onStart(e, Number(e.currentTarget.value));
+}, ref) => {
+
+    const setBackgroundSize = () => {
+        const el = (ref as React.RefObject<HTMLInputElement>)?.current;
+        if (el) {
+            const mn = min || 0;
+            const mx = max || 100;
+            const size = Math.round((value - mn) / (mx - mn) * 100);
+
+            el.style.setProperty('--background-size', `${size}%`);
         }
     };
 
@@ -35,28 +38,26 @@ const VerticalDrag: React.FC<Props> = ({
         }
     };
 
-    const handleMouseUp = (e: React.MouseEvent<HTMLInputElement>) => {
-        if (onEnd) {
-            onEnd(e, Number(e.currentTarget.value));
-        }
-    };
+    useEffect(()=>{
+        setBackgroundSize();
+    }, [value]);
 
     return (
-        <div className={`input-vertical-drag ${className}`}>
+        <div 
+        id={id}
+        className={`input-vertical-drag ${className}`}>
             <input
-                id={id}
+                ref={ref}
                 type="range"
                 value={value}
                 min={min}
                 max={max}
                 step={step}
-                orient="vertical"
-                onMouseDown={handleMouseDown}
                 onChange={handleChange}
-                onMouseUp={handleMouseUp}
-            />
+                data-selection="off"
+        />
         </div>
     );
-};
+});
 
 export default VerticalDrag;
