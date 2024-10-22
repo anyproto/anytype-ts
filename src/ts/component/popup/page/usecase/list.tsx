@@ -213,7 +213,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	onCategory (item: any) {
 		this.setState({ category: (item.id == this.state.category?.id ? null : item) });
 
-		analytics.event('ClickGalleryTab', { type: U.Common.toCamelCase(`-${item.name}`) });
+		analytics.event('ClickGalleryTab', { type: item.id });
 	};
 
 	onFilterChange (v: string) {
