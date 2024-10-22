@@ -206,7 +206,21 @@ class UtilSpace {
 	};
 
 	canCreateSpace (): boolean {
-		return !!S.Auth.account;
+		const { config } = S.Common;
+
+		if (config.sudo) {
+			return true;
+		};
+
+		const { account } = S.Auth;
+		if (!account) {
+			return false;
+		};
+
+		const items = U.Common.objectCopy(this.getList().filter(it => it.creator == this.getParticipantId(it.targetSpaceId, account.id)));
+		const length = items.length;
+
+		return length < J.Constant.limit.space;
 	};
 
 	initSpaceState () {
