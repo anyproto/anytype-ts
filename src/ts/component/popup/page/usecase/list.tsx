@@ -43,8 +43,8 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	render () {
 		const { getAuthor, onAuthor } = this.props;
 		const { isLoading, category } = this.state;
-		const items = this.getItems();
 		const { gallery } = S.Common;
+		const items = this.getItems();
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 
 		if (isLoading) {
@@ -85,9 +85,11 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 				<div className="item" onClick={e => this.onClick(e, item)}>
 					<div className="info">
 						<div className="name">{item.title}</div>
-						<div className="author" onClick={() => onAuthor(item.author)}>{U.Common.sprintf(translate('popupUsecaseAuthorShort'), getAuthor(item.author))}</div>
+						<div className="author" onClick={() => onAuthor(item.author)}>
+							{U.Common.sprintf(translate('popupUsecaseAuthorShort'), getAuthor(item.author))}
+						</div>
 					</div>					
-					<div className='pictureWrapper'>
+					<div className="pictureWrapper">
 						<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
 					</div>
 				</div>
@@ -178,21 +180,9 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	componentDidMount (): void {
-		if (S.Common.gallery.list.length) {
-			return;
+		if (!S.Common.gallery.list.length) {
+			this.load();
 		};
-
-		this.setState({ isLoading: true });
-
-		C.GalleryDownloadIndex((message: any) => {
-			S.Common.gallery = {
-				categories: (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
-				list: message.list || [],
-			};
-
-			Onboarding.start('collaboration', true, false);
-			this.setState({ isLoading: false });
-		});
 
 		analytics.event('ScreenGallery');
 	};
@@ -222,6 +212,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 	onCategory (item: any) {
 		this.setState({ category: (item.id == this.state.category?.id ? null : item) });
+		analytics.event('ClickGalleryTab', { type: item.id });
 	};
 
 	onFilterChange (v: string) {
@@ -231,6 +222,20 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 	onFilterClear () {
 		this.forceUpdate();
+	};
+
+	load () {
+		this.setState({ isLoading: true });
+
+		C.GalleryDownloadIndex((message: any) => {
+			S.Common.gallery = {
+				categories: (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
+				list: message.list || [],
+			};
+
+			Onboarding.start('collaboration', true, false);
+			this.setState({ isLoading: false });
+		});
 	};
 
 	getItems () {

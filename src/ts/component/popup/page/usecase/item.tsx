@@ -108,7 +108,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 	componentDidMount(): void {
 		const object = this.getObject();
 
-		analytics.event('ScreenGalleryInstall', { name: object.name });
+		analytics.event('ScreenGalleryInstall', { name: object.name, route: 'App' });
 	};
 
 	onSwiper (swiper) {
