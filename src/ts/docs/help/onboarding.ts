@@ -167,6 +167,7 @@ export default {
 			width: 288,
 			noClose: true,
 			highlightElements: [],
+			classNameWrap: 'fixed',
 		},
 		items: [
 			{
