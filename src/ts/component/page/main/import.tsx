@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, S, U, translate } from 'Lib';
+import { I, C, S, U, translate, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -48,8 +48,15 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				this.setState({ error: message.error.description });
 			} else {
 				U.Space.openDashboard('route');
+
 				window.setTimeout(() => {
-					S.Popup.open('usecase', { data: { page: 'item', object: message.info } });
+					S.Popup.open('usecase', { 
+						data: { 
+							page: 'item', 
+							object: message.info, 
+							route: analytics.route.usecaseSite,
+						},
+					});
 				}, S.Popup.getTimeout());
 			};
 		});

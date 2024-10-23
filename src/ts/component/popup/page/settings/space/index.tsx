@@ -43,7 +43,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { error, cid, key } = this.state;
 		const { spaceStorage, isOnline } = S.Common;
 		const { localUsage, bytesLimit } = spaceStorage;
-		const { account, accountSpaceId } = S.Auth;
+		const { account } = S.Auth;
 		const spaces = U.Space.getList();
 		const space = U.Space.getSpaceview();
 		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
@@ -58,7 +58,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const hasLink = cid && key;
 		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const canDelete = space.targetSpaceId != accountSpaceId;
+		const canDelete = !space.isPersonal && isOwner;
 		const isShareActive = U.Space.isShareActive();
 
 		let bytesUsed = 0;
@@ -102,7 +102,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<IconObject
 							id="spaceIcon"
 							size={96}
-							object={space}
+							object={{ ...space, spaceId: S.Common.space }}
 							canEdit={canWrite}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
 							onSelect={this.onSelect}

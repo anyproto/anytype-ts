@@ -34,8 +34,8 @@ export default {
 	limit: {
 		menuRecords:	 100,
 		widgets:		 20,
-		space:			 10,
 		notification:	 20,
+		space:			 50,
 		graphDepth:		 5,
 
 		chat: {

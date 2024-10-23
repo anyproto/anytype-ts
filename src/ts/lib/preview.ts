@@ -66,7 +66,7 @@ class Preview {
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
 			const { ww } = U.Common.getWindowDimensions();
-			const node = $(`<div class="tooltip anim"><div class="txt">${U.Common.lbBr(text)}</div></div>`);
+			const node = $(`<div class="tooltip anim"><div class="txt">${U.Common.sanitize(U.Common.lbBr(text))}</div></div>`);
 
 			if (param.className) {
 				node.addClass(param.className);
