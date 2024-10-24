@@ -42,6 +42,7 @@ class CommonStore {
 	public isOnlineValue = false;
 	public shareTooltipValue = false;
 	public showVaultValue = null;
+	public showSidebarRightValue = null;
 	public hideSidebarValue = null;
 	public showObjectValue = null;
 	public gallery = {
@@ -105,6 +106,7 @@ class CommonStore {
 			showObjectValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
+			showSidebarRightValue: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -118,6 +120,7 @@ class CommonStore {
 			isOnline: computed,
 			shareTooltip: computed,
 			showVault: computed,
+			showSidebarRight: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -138,6 +141,7 @@ class CommonStore {
 			membershipTiersListSet: action,
 			showVaultSet: action,
 			showObjectSet: action,
+			showSidebarRightSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -202,6 +206,10 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
+	};
+
+	get showSidebarRight (): boolean {
+		return Boolean(this.showSidebarRightValue);
 	};
 
 	get showObject (): boolean {
@@ -392,6 +400,10 @@ class CommonStore {
 
 	hideSidebarSet (v: boolean) {
 		this.boolSet('hideSidebar', v);
+	};
+
+	showSidebarRightSet (v: boolean) {
+		this.showSidebarRightValue = Boolean(v);
 	};
 
 	showObjectSet (v: boolean) {

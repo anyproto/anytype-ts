@@ -1,13 +1,13 @@
 @import "~scss/_mixins";
 
 .bodyMain.bodyMainOnboarding {
-    #vault,
-    #sidebar,
-    #sidebarToggle,
-    #navigationPanel,
-    #sidebarDummy { display: none; }
+	#vault,
+	#navigationPanel,
+	#sidebarToggle,
+	.sidebar,
+    .sidebarDummy { display: none; }
 
-    body { background: #000; }
+	body { background: #000; }	
 }
 
 $stepTransition: 1s $easeInQuint;

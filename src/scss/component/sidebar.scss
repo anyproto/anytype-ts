@@ -15,14 +15,18 @@
 #sidebarToggle.sidebarAnimation { transition: left $transitionSidebarTime linear; }
 #sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium) !important; background-image: url('~img/icon/widget/toggle1.svg'); }
 
-.sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; left: 0px; height: 100%; }
+.sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-tertiary); }
 .sidebar.anim { transition-property: width; transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
 .sidebar.withVault { left: $vaultWidthCollapsed; }
 .sidebar.isClosed { left: 0px !important; }
 
+.sidebar.left { left: 0px; }
+.sidebar.right { right: 0px; width: 348px; }
+
 .sidebar {
 	@import "./sidebar/widget";
 	@import "./sidebar/object";
+	@import "./sidebar/page";
 	
 	.resize-h { width: 10px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -5px; top: 0px; }
 	.resize-h {

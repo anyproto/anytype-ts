@@ -189,6 +189,10 @@ export interface ButtonComponent {
 	onMouseEnter?(e: any): void;
 };
 
+export interface SidebarPageComponent {
+	rootId?: string;
+};
+
 export enum SurveyType {
 	Register		 = 0,
 	Delete			 = 1,
