@@ -675,7 +675,10 @@ class UtilCommon {
 		
 		a.forEach((s) => {
 			const [ key, value ] = s.split('=');
-			param[key] = decodeURIComponent(value);
+
+			if (key) {
+				param[key] = decodeURIComponent(value);
+			};
 		});
 		return param;
 	};

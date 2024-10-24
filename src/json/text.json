@@ -63,7 +63,7 @@
 	"commonUnlinkFromType": "Unlink from Type",
 	"commonUnlinkFromObject": "Unlink from Object",
 	"commonUnlinkFromSet": "Unlink from Set",
-	"commonFromCollection": "Unlink from Collection",
+	"commonUnlinkFromCollection": "Unlink from Collection",
 	"commonDeletedObject": "Non-existent object",
 	"commonDeletedType": "Deleted type",
 	"commonDeletedRelation": "Deleted Relation",
@@ -807,10 +807,6 @@
 	"popupSettingsSpaceIndexCreatedByTitle": "Created by",
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
 
-	"popupSettingsSpaceCreateTitle": "Create a space",
-	"popupSettingsSpaceCreateUsecaseTitle": "How do you want to start?",
-	"popupSettingsSpaceCreateUsecaseLabel": "We can load some objects for you",
-
 	"popupSettingsSpaceStorageManagerTitle": "Synced files",
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
@@ -957,6 +953,10 @@
 	"popupSettingsImportNotionIntegrationList32": "Select document → ... → Add Connections → Confirm Integration",
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
+
+	"popupSpaceCreateLabel": "Encrypted & local-first",
+	"popupSpaceCreateCreate": "Create from scratch",
+	"popupSpaceCreateImport": "Import my data",
 
 	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
 	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
@@ -1833,13 +1833,6 @@
 	"onboardingMainGraph": "Onboarding",
 	"onboardingMainGraph11": "<b>Space is essentially a graph</b>, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.",
 
-	"onboardingMainSet": "Set & Collection",
-	"onboardingMainSet11": "<b>Anytype has two basic formats: Sets and Collections.</b> As in computer science, a Set is a data structure that contains only unique elements, while a Collection is any group of objects that are stored together. You can convert any set into a collection, but not the other way around.",
-	"onboardingMainSet21": "<b>Sets</b> contain no duplicates and can be used to filter specific objects or relation types, such as all my bookmarks. <b>Collections</b>, however, can contain duplicates and are used for more general-purpose data storage; they can store anything.",
-	"onboardingMainSet31": "<b>View sets or collections as an entire object, or place them inline in documents.</b> The first column will contain the collecting objects, and the others will show their relations.",
-	"onboardingMainSet32": "Filter and adjust objects by any relation, such as today's notes (filter by date) or project documents (filter by project).",
-	"onboardingMainSet3Button": "Great! I will try",
-
 	"onboardingStoreType": "Library",
 	"onboardingStoreType11": "<b>This Library contains all types of Objects and Relations.</b> It comes with preinstalled types, as well as types that can be uploaded to Anytype for different use cases.",
 	"onboardingStoreType21": "<b>You can create your own types with any object layout for your own purposes.</b> Additionally, you can save any existing object as a Library template if you need to use it frequently.",
@@ -1852,32 +1845,13 @@
 	"onboardingStoreRelation2Button": "Great!",
 
 	"onboardingObjectCreationStart": "Creating Objects",
-	"onboardingObjectCreationStart11": "<b>Let’s create an object from scratch.</b> The default object type is now ‘Note’, meaning that each new object is referred to as a Note unless you choose a different type. You can change the default object type anytime in the settings menu.",
-	"onboardingObjectCreationStart21": "<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu, which shows all object types installed from the Library.",
+	"onboardingObjectCreationStart11": "<b>Let’s create an object from scratch.</b> The default object type is now ‘Page’, meaning that each new object is referred to as a Note unless you choose a different type. You can change the default object type anytime in the settings menu.",
+	"onboardingObjectCreationStart21": "<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu.",
 	"onboardingObjectCreationStart2Button": "I got it!",
 
 	"onboardingObjectCreationFinish": "Creating Objects",
 	"onboardingObjectCreationFinish11": "<b>For the Object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.",
 	"onboardingObjectCreationFinish1Button": "Ok! I like it",
-
-	"onboardingDashboard": "Onboarding",
-	"onboardingDashboard1Title": "Let's start by quickly exploring Anytype's key features.",
-	"onboardingDashboard1Text": "Prefer to do it later?<br/>Just hit the <span class=\"highlight\">?</span> button and then Show hints when you feel ready.",
-
-	"onboardingDashboard2Title": "Widgets on the left provide quick access to objects in your space.",
-	"onboardingDashboard2Text": "Personalize them by clicking the Edit Widgets button.",
-
-	"onboardingDashboard31": "<b>Well done!</b> Jump to Sets or Library from the sidebar to explore more or continue by importing your data and making it your own.",
-	"onboardingDashboard32": "For help, press the <span class=\"highlight\">?</span> button.",
-
-	"onboardingEditor": "Editor",
-	"onboardingEditor1Title": "Connect your Objects",
-	"onboardingEditor1Description": "Use the <span class=\"highlight\">@</span> symbol to refer to other objects while writing, and the <span class=\"highlight\">/</span> symbol to create text styles, objects, and more.",
-	"onboardingEditor2Title": "Did you know?",
-	"onboardingEditor2Description": "Drag and drop files and images from your computer into the editor window, or copy and paste text to create new blocks. Try it out!",
-	"onboardingEditor3Description": "Click above to view the Relation menu, where you can find object links as properties.",
-	"onboardingEditor4Title": "See your Graph grow",
-	"onboardingEditor4Description": "Click below to see how new objects are connected in your own graph by links and relations!",
 
 	"onboardingTypeDeleted1Title": "This Type has been deleted",
 	"onboardingTypeDeleted1Description": "If you want to keep using this Object, change this Object Type.",
@@ -1898,14 +1872,8 @@
 	"onboardingDefaultTypeTitle": "Change Types Easily",
 	"onboardingDefaultTypeDescription": "You can change type and template of a new object in this menu.",
 
-	"onboardingCalendarTitle": "New Calendar View",
-	"onboardingCalendarDescription": "Display objects on a calendar based on selected date attributes.",
-
 	"onboardingTemplateSelectTitle": "New Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
-
-	"onboardingQuickCaptureTitle": "Use Different Object Types",
-	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
 
 	"onboardingSpacesTitle": "Spaces",
 	"onboardingSpacesText": "<b>This is your Space.</b> Click here to customize its name or icon, or to securely migrate and protect your data. ",
@@ -1916,7 +1884,7 @@
 	"onboardingMultipleSpacesTitle": "Multiple Spaces",
 	"onboardingMultipleSpacesText": "<b>Use the sidebar to create more spaces.</b> Spaces allow you to collaborate seamlessly. They also help you focus on specific projects, teams or areas of your life.",
 	"onboardingGalleryTitle": "Gallery",
-	"onboardingGalleryText": "<b>Find use cases that match your needs.</b> Import them from the Gallery: a library created by the Anytype Team and Community.",
+	"onboardingGalleryText": "<b>Find use cases that match your needs.</b> Import them from the Gallery created by the Anytype Team and Community.",
 
 	"onboardingMembershipTitle": "Membership",
 	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
@@ -1924,9 +1892,8 @@
 
 	"onboardingSyncStatusTitle": "Synchronisation",
 	"onboardingSyncStatusText": "<b>View your network and peer-to-peer connection status here,</b> along with a list of synced objects.",
-	"onboardingSyncStatusButton": "Perfect",
 	"onboardingMobileTitle": "Mobile Applications",
-	"onboardingMobileText": "<b>Sync to your mobile devices locally, without internet.</b> Scan the QR code to download the iOS or Android App and make use of peer-to-peer sync.",
+	"onboardingMobileText": "<b>Sync to your mobile devices locally.</b> Scan the QR code to download the iOS or Android App and make use of peer-to-peer sync.",
 	"onboardingMobileButton": "Great",
 
 	"onboardingSetsTitle": "Sets",

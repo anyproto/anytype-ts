@@ -698,13 +698,11 @@ class UtilMenu {
 	};
 
 	spaceContext (space: any, param: any) {
-		const { accountSpaceId } = S.Auth;
-		const { targetSpaceId } = space;
-
-		if (targetSpaceId == accountSpaceId) {
+		if (space.isPersonal) {
 			return;
 		};
 
+		const { targetSpaceId } = space;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const isLocalNetwork = U.Data.isLocalNetwork();
 		const { isOnline } = S.Common;

@@ -51,7 +51,7 @@ class Api {
 	};
 
 	setConfig (win, config) {
-		ConfigManager.set(config, (err) => Util.send(win, 'config', ConfigManager.config));
+		ConfigManager.set(config, () => Util.send(win, 'config', ConfigManager.config));
 	};
 
 	setAccount (win, account) {
@@ -179,7 +179,7 @@ class Api {
 	};
 
 	setInterfaceLang (win, lang) {
-		ConfigManager.set({ interfaceLang: lang }, (err) => {
+		ConfigManager.set({ interfaceLang: lang }, () => {
 			WindowManager.reloadAll();
 			MenuManager.initMenu();
 			MenuManager.initTray();
@@ -217,8 +217,16 @@ class Api {
 	};
 
 	systemInfo (win) {
-		si.getStaticData().then(data => {
-			Util.send(win, 'commandGlobal', 'systemInfo', data);
+		const { config } = ConfigManager;
+
+		if (config.systemInfo) {
+			return;
+		};
+
+		ConfigManager.set({ systemInfo: true }, () => {
+			si.getStaticData().then(data => {
+				Util.send(win, 'commandGlobal', 'systemInfo', data);
+			});
 		});
 	};
 
