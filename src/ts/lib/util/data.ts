@@ -875,6 +875,11 @@ class UtilData {
 			return;
 		};
 
+		if (!spaceId) {
+			console.error('[U.Data].searchSubscribe: spaceId is empty');
+			return;
+		};
+
 		if (!keys.includes(idField)) {
 			keys.push(idField);
 		};
@@ -907,6 +912,12 @@ class UtilData {
 			console.error('[U.Data].subscribeIds: subId is empty');
 			return;
 		};
+
+		if (!spaceId) {
+			console.error('[U.Data].subscribeIds: spaceId is empty');
+			return;
+		};
+
 		if (!ids.length) {
 			console.error('[U.Data].subscribeIds: ids list is empty');
 			return;
@@ -953,6 +964,11 @@ class UtilData {
 		const { spaceId, idField, sorts, offset, limit } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 		const filters = this.searchDefaultFilters(param);
+
+		if (!spaceId) {
+			console.error('[U.Data].search: spaceId is empty');
+			return;
+		};
 
 		if (!keys.includes(idField)) {
 			keys.push(idField);
