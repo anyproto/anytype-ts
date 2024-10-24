@@ -22,6 +22,7 @@ export enum ObjectLayout {
 	Pdf			 = 20,
 	Chat		 = 21,
 	ChatDerived	 = 22,
+	Tag	 		 = 23,
 
 	Empty		 = 100,
 	Navigation	 = 101,
