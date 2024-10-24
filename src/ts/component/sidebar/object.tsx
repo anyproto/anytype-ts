@@ -393,7 +393,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			ignoreDeleted: true,
 		}, (message: any) => {
 			this.setState({ isLoading: false });
-
 			if (callBack) {
 				callBack(message);
 			};

@@ -4,13 +4,16 @@ import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper, keyboard } from 
 
 const { Rpc, Empty } = Commands;
 
-export const MetricsSetParameters = (platform: I.Platform, version: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Metrics.SetParameters.Request();
+export const InitialSetParameters = (platform: I.Platform, version: string, workDir: string, logLevel: string, doNotSendLogs: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Initial.SetParameters.Request();
 
 	request.setPlatform(platform);
 	request.setVersion(version);
+	request.setWorkdir(workDir);
+	request.setLoglevel(logLevel);
+	request.setDonotsendlogs(doNotSendLogs);
 
-	dispatcher.request(MetricsSetParameters.name, request, callBack);
+	dispatcher.request(InitialSetParameters.name, request, callBack);
 };
 
 export const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
