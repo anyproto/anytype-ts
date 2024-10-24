@@ -811,35 +811,17 @@ class Action {
 	};
 
 	publish (objectId: string) {
-		const { gateway } = S.Common;
-
-		let data: any = {
-			_meta: {
-				gateway,
-			},
-		};
-
-		C.ObjectShow(objectId, 'publish', S.Common.space, (message: any) => {
+		C.ObjectPublish(S.Common.space, objectId, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			data = Object.assign(data, message.objectView);
+			const { key, cid } = message;
+			const url = `http://localhost:8787/?cid=${cid}&key=${key}`;
 
-			C.ObjectPublish(S.Common.space, JSON.stringify(data), (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				const { key, cid } = message;
-				const url = `http://localhost:8787/?cid=${cid}&key=${key}`;
-
-				U.Common.copyToast(translate('commonLink'), url);
-			});
+			U.Common.copyToast(translate('commonLink'), url);
 		});
-
 	};
-
 };
 
 export default new Action();
