@@ -3,6 +3,7 @@
 #anytypeWebclipper-iframe {
 	position: absolute; z-index: 1; width: 50%; height: 80%; background: #fff; left: 50%; top: 50%; transform: translate3d(-50%,-50%,0px);
 	border-radius: 16px; border: 1px solid rgba(172, 169, 152, 0.12); box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.10);
+	min-width: 600px;
 }
 
 #anytypeWebclipper-container .dimmer {

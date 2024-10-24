@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, IconObject, Header, Footer, Icon } from 'Component';
+import { ObjectName, Label, IconObject, Header, Footer, Icon } from 'Component';
 import { I, U, translate } from 'Lib';
 
 const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.PageComponent> {
@@ -31,7 +31,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 
 				<div className="wrapper">
 					<IconObject object={space} size={96} />
-					<Title text={space.name} />
+					<ObjectName className="title" object={space} />
 					<Label text={translate('pageMainEmptyDescription')} />
 							
 					<div className="row">

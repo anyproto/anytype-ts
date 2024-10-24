@@ -175,6 +175,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	nodeMapper (d: any) {
+		d = d || {};
 		d.layout = Number(d.layout) || 0;
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
