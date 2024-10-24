@@ -187,6 +187,10 @@ class Relation {
 	};
 
 	public formatValue (relation: any, value: any, maxCount: boolean) {
+		if (!relation) {
+			return value;
+		};
+
 		switch (relation.format) {
 			default: {
 				value = this.getStringValue(value);
