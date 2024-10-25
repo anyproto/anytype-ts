@@ -301,9 +301,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, dataChange, skipIds, keys, ignoreWorkspace } = data;
+		const { type, dataMapper, dataSort, dataChange, skipIds, keys } = data;
 		const filter = String(data.filter || '');
 		const templateType = S.Record.getTemplateType();
+		const spaceId = data.spaceId || S.Common.space;
 		
 		const filters: any[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
@@ -335,13 +336,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		U.Data.search({
+			spaceId,
 			filters,
 			sorts,
 			keys: keys || J.Relation.default,
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
-			ignoreWorkspace: (typeof ignoreWorkspace === 'undefined' ? false : ignoreWorkspace),
 		}, (message: any) => {
 			if (!this._isMounted) {
 				return;

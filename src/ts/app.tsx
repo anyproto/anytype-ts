@@ -322,24 +322,26 @@ class App extends React.Component<object, State> {
 			Storage.delete('redirect');
 		};
 
-		raf(() => anim.removeClass('from'));
-
 		if (css) {
 			U.Common.injectCss('anytype-custom-css', css);
 		};
 
 		body.addClass('over');
 
+		const hide = () => {
+			loader.remove(); 
+			body.removeClass('over');
+		};
+
 		const cb = () => {
+			raf(() => anim.removeClass('from'));
+
 			window.setTimeout(() => {
 				anim.addClass('to');
 
 				window.setTimeout(() => {
 					loader.css({ opacity: 0 });
-					window.setTimeout(() => { 
-						loader.remove(); 
-						body.removeClass('over');
-					}, 300);
+					window.setTimeout(() => hide(), 300);
 				}, 450);
 			}, 1000);
 		};
@@ -348,22 +350,29 @@ class App extends React.Component<object, State> {
 			if (isChild) {
 				Renderer.send('keytarGet', accountId).then((phrase: string) => {
 					U.Data.createSession(phrase, '', () => {
-						keyboard.setPinChecked(isPinChecked);
-						S.Common.redirectSet(route);
-
-						if (account) {
-							S.Auth.accountSet(account);
-							S.Common.configSet(account.config, false);
-
-							if (spaceId) {
-								U.Router.switchSpace(spaceId, '', false, { onFadeIn: cb });
-							} else {
-								U.Data.onAuthWithoutSpace({ replace: true });
-							};
-
-							U.Data.onInfo(account.info);
-							U.Data.onAuthOnce(false);
+						if (!account) {
+							console.error('[App.onInit]: Account not found');
+							return;
 						};
+
+						keyboard.setPinChecked(isPinChecked);
+						S.Auth.accountSet(account);
+						S.Common.redirectSet(route);
+						S.Common.configSet(account.config, false);
+
+						const routeParam = { 
+							replace: true, 
+							onRouteChange: hide,
+						};
+
+						if (spaceId) {
+							U.Router.switchSpace(spaceId, '', false, routeParam);
+						} else {
+							U.Data.onAuthWithoutSpace(routeParam);
+						};
+
+						U.Data.onInfo(account.info);
+						U.Data.onAuthOnce(false);
 					});
 				});
 

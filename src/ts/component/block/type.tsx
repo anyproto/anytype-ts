@@ -194,6 +194,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: items.map(it => it.id) },
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
 				],
 				onClick: (item: any) => {
 					this.onClick(e, item);
