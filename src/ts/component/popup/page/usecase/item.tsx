@@ -106,12 +106,9 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 	};
 
 	componentDidMount(): void {
-		const { param } = this.props;
-		const { data } = param;
-		const { route } = data;
 		const object = this.getObject();
 
-		analytics.event('ScreenGalleryInstall', { name: object.name, route });
+		analytics.event('ScreenGalleryInstall', { name: object.name, route: this.getRoute() });
 	};
 
 	onSwiper (swiper) {
@@ -141,11 +138,12 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 	onMenu () {
 		const { getId, close } = this.props;
 		const object = this.getObject();
+		const route = this.getRoute();
 
 		const cb = (spaceId: string, isNew: boolean) => {
 			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, isNew, (message: any) => {
 				if (!message.error.code) {
-					analytics.event('GalleryInstall', { name: object.name });
+					analytics.event('GalleryInstall', { name: object.name, route });
 				};
 			});
 			close();
@@ -163,7 +161,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 					const isNew = item.id == 'add';
 
 					this.setState({ isLoading: true });
-					analytics.event('ClickGalleryInstallSpace', { type: isNew ? 'New' : 'Existing' });
+					analytics.event('ClickGalleryInstallSpace', { type: isNew ? 'New' : 'Existing', route });
 
 					if (isNew) {
 						C.WorkspaceCreate({ name: object.title, iconOption: U.Common.rand(1, J.Constant.count.icon) }, I.Usecase.None, (message: any) => {
@@ -182,7 +180,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 			}
 		});
 
-		analytics.event('ClickGalleryInstall', { name: object.name });
+		analytics.event('ClickGalleryInstall', { name: object.name, route });
 	};
 
 	getSpaceOptions (): any[] {
@@ -202,10 +200,11 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 	};
 
 	getObject (): any {
-		const { param } = this.props;
-		const { data } = param;
+		return this.props.param.data.object || {};
+	};
 
-		return data.object || {};
+	getRoute (): string {
+		return String(this.props.param.data.route || '');
 	};
 
 };

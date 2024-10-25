@@ -128,12 +128,3 @@
 .iconObject.withImage { background-color: unset !important; }
 
 .iconObject.isHuman, .iconObject.isParticipant { border-radius: 100% !important; background-color: unset; }
-
-.iconObject.isSpaceView { border-radius: 2px !important; }
-.iconObject.isSpaceView.c64, 
-.iconObject.isSpaceView.c80, 
-.iconObject.isSpaceView.c96, 
-.iconObject.isSpaceView.c108, 
-.iconObject.isSpaceView.c112, 
-.iconObject.isSpaceView.c128,
-.iconObject.isSpaceView.c160 { border-radius: 4px !important; }
