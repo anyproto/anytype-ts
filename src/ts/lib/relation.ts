@@ -234,6 +234,10 @@ class Relation {
 	};
 
 	public checkRelationValue (relation: any, value: any): boolean {
+		if (!relation) {
+			return false;
+		};
+
 		value = this.formatValue(relation, value, false);
 
 		let ret = false;
