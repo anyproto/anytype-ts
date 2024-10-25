@@ -421,6 +421,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			offsetY,
 			data: {
 				value: (object.iconEmoji || object.iconImage || ''),
+				spaceId: object.spaceId,
 				noGallery,
 				noUpload,
 				noRemove,

@@ -223,13 +223,11 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { skipIds } = data;
 		const filter = String(data.filter || '');
 		const sorts = [
-			{ relationKey: 'spaceId', type: I.SortType.Desc },
 			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
 		let filters: any[] = [
-			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
 			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 		];
 		if (data.filters) {
@@ -242,40 +240,43 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		if (clear) {
 			this.setState({ isLoading: true });
+			this.items = [];
 		};
 
-		U.Data.search({
+		const requestParam = {
 			filters,
 			sorts,
 			keys: U.Data.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
-			ignoreWorkspace: true,
-		}, (message: any) => {
-			if (!this._isMounted) {
-				return;
-			};
+		};
 
-			if (message.error.code) {
-				this.setState({ isLoading: false });
-				return;
-			};
+		this.loadRequest(requestParam, () => {
+			this.loadRequest({ ...requestParam, spaceId: J.Constant.storeSpaceId }, (message: any) => {
+				if (!this._isMounted) {
+					return;
+				};
+
+				if (callBack) {
+					callBack(message);
+				};
+
+				if (clear) {
+					this.setState({ isLoading: false });
+				} else {
+					this.forceUpdate();
+				};
+			});
+		});
+	};
+
+	loadRequest (param: any, callBack?: (message: any) => void) {
+		U.Data.search(param, (message: any) => {
+			this.items = this.items.concat(message.records || []);
 
 			if (callBack) {
 				callBack(message);
-			};
-
-			if (clear) {
-				this.items = [];
-			};
-
-			this.items = this.items.concat(message.records || []);
-
-			if (clear) {
-				this.setState({ isLoading: false });
-			} else {
-				this.forceUpdate();
 			};
 		});
 	};
@@ -382,7 +383,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			noFlipY: true,
 			data: {
 				rebind: this.rebind,
-				ignoreWorkspace: true,
 			},
 		};
 
@@ -400,7 +400,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				menuParam.className = className.join(' ');
 
 				let filters: I.Filter[] = [
-					{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId },
 					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 				];
@@ -409,7 +408,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
-					ignoreWorkspace: true,
+					spaceId: J.Constant.storeSpaceId,
 					keys: U.Data.typeRelationKeys(),
 					filters,
 					sorts: [

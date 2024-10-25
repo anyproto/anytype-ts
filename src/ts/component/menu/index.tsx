@@ -538,7 +538,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			let y = oy;
 			let flipX = false;
 
-			if (stickToElementEdge) {
+			if (stickToElementEdge != I.MenuDirection.None) {
 				switch (stickToElementEdge) {
 					case I.MenuDirection.Top: offsetY = -eh; break;
 					case I.MenuDirection.Bottom: offsetY = eh; break;

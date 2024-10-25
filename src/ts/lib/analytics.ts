@@ -68,7 +68,10 @@ class Analytics {
 		addWidgetMain: 'Main',
 		addWidgetEditor: 'Editor',
 		addWidgetMenu: 'Menu',
-		addWidgetDnD: 'DnD'
+		addWidgetDnD: 'DnD',
+
+		usecaseApp: 'App',
+		usecaseSite: 'Site',
 	};
 
 	debug () {
