@@ -190,6 +190,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					id={block.id} 
 					dropType={I.DropType.Widget} 
 					canDropMiddle={false} 
+					onClick={onClick}
 				/>
 			);
 

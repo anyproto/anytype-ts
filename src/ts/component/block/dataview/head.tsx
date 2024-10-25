@@ -138,6 +138,10 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	onTitleOver (e: any, item: any) {
+		if (!this.menuContext) {
+			return;
+		};
+
 		const { rootId, block, loadData, isCollection } = this.props;
 		const { targetObjectId } = block.content;
 
@@ -155,6 +159,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			isSub: true,
 			data: {},
 		};
+
 		const onCreate = (message: any, isNew: boolean) => {
 			if (message.views && message.views.length) {
 				window.setTimeout(() => loadData(message.views[0].id, 0, true), 50);

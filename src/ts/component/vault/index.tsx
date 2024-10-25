@@ -207,7 +207,11 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			case 'gallery': {
-				S.Popup.open('usecase', {});
+				S.Popup.open('usecase', {
+					data: { 
+						route: analytics.route.usecaseApp,
+					},
+				});
 				break;
 			};
 
@@ -336,7 +340,7 @@ const Vault = observer(class Vault extends React.Component {
 		const element = node.find(`#item-${item.id}`);
 
 		Preview.tooltipShow({ 
-			text: item.name, 
+			text: U.Common.htmlSpecialChars(item.name), 
 			element, 
 			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,

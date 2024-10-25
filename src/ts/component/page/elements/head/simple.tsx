@@ -186,9 +186,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onKeyDown (e: any, item: any) {
 		if (item.id == 'title') {
-			keyboard.shortcut('enter', e, (pressed: string) => {
-				e.preventDefault();
-			});
+			keyboard.shortcut('enter', e, () => e.preventDefault());
 		};
 	};
 
@@ -214,11 +212,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	getRange (id: string): I.TextRange {
-		return this.refEditable[id] ? this.refEditable[id].getRange() : null;
+		return this.refEditable[id]?.getRange();
 	};
 
 	getValue (id: string): string {
-		return this.refEditable[id] ? this.refEditable[id].getTextValue() : null;
+		const value = String(this.refEditable[id]?.getTextValue() || '');
+		return U.Common.stripTags(value);
 	};
 
 	setValue () {
