@@ -20,6 +20,8 @@ class View implements I.View {
 	relations: any[] = [];
 	
 	constructor (props: I.View) {
+		console.log('constructor View', props);
+
 		this.id = String(props.id || '');
 		this.name = String(props.name || '');
 		this.type = Number(props.type) || I.ViewType.Grid;
@@ -59,6 +61,8 @@ class View implements I.View {
 			filters: observable,
 			relations: observable,
 		});
+
+		console.log(this);
 
 		intercept(this as any, change => U.Common.intercept(this, change));
 	};

@@ -338,15 +338,6 @@ class UtilMenu {
 							case 'edit': {
 								$(`#button-${blockId}-settings`).trigger('click');
 								S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
-
-								/*
-								window.setTimeout(() => {
-									console.log(JSON.stringify(view, null, 3));
-
-
-									S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
-								}, J.Constant.delay.menu);
-								*/
 								break;
 							};
 

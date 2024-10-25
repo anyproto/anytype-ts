@@ -316,9 +316,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				width: getSize().width,
 				data,
 				noAnimation: true,
-				onOpen: (context) => {
-					this.menuContext = context;
-				}
+				onOpen: context => this.menuContext = context,
 			};
 
 			if (item.data) {
