@@ -1118,9 +1118,6 @@ const Block = observer(class Block extends React.Component<Props> {
 	onMentionCheckbox (getValue: () => string, marks: I.Mark[], objectId: string, done: boolean) {
 		const { rootId, block } = this.props;
 
-		console.log(getValue);
-		console.log(getValue());
-
 		U.Data.blockSetText(rootId, block.id, getValue(), marks, true, () => {
 			U.Object.setDone(objectId, done);
 		});
