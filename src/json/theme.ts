@@ -23,6 +23,7 @@ export default {
 
 		color: {
 			default: '#252525',
+			grey: '#b6b6b6',
 			yellow: '#ecd91b',
 			orange: '#ffb522',
 			red: '#f55522',
@@ -65,6 +66,7 @@ export default {
 
 		color: {
 			default: '#f8f8f8',
+			grey: '#737373',
 			yellow: '#ecd91b',
 			orange: '#ffb522',
 			red: '#f55522',
