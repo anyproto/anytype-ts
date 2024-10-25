@@ -1,4 +1,4 @@
-import { S, U, J, dispatcher } from 'Lib';
+import { S, U, J, C, dispatcher } from 'Lib';
 
 const INDEX_POPUP = '/popup/index.html';
 const INDEX_IFRAME = '/iframe/index.html'
@@ -56,13 +56,17 @@ class Util {
 				return;
 			};
 
-			if (message.accountId) {
-				S.Auth.accountSet({ id: message.accountId });
-			};
-			
-			if (onSuccess) {
-				onSuccess();
-			};
+			C.AccountSelect(message.accountId, '', 0, '', (message: any) => {
+				S.Auth.accountSet(message.account);
+				S.Common.configSet(message.account.config, false);
+				S.Common.showVaultSet(false);
+
+				U.Data.onInfo(message.account.info);
+
+				if (onSuccess) {
+					onSuccess();
+				};
+			});
 		});
 	};
 
