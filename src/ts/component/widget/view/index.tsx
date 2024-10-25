@@ -162,9 +162,8 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { viewId } = parent.content;
 		const view = Dataview.getView(this.getRootId(), J.Constant.blockId.dataview);
 
-		this.refSelect?.setValue(viewId);
-
 		if (!isSystemTarget() && view && viewId && (viewId != view.id)) {
+			this.refSelect?.setValue(viewId);
 			this.load(viewId);
 		};
 	};

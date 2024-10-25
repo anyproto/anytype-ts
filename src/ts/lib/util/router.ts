@@ -1,14 +1,5 @@
 import $ from 'jquery';
-import { C, S, U, J, Preview, analytics, Storage } from 'Lib';
-
-type RouteParam = { 
-	replace: boolean;
-	animate: boolean;
-	delay: number;
-	onFadeOut: () => void;
-	onFadeIn?: () => void;
-	onRouteChange?: () => void;
-};
+import { I, C, S, U, J, Preview, analytics, Storage } from 'Lib';
 
 class UtilRouter {
 
@@ -44,8 +35,9 @@ class UtilRouter {
 	};
 
 	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; viewId: string; }>): string {
-		const { page, action, spaceId } = param;
+		const { page, action } = param;
 		const id = String(param.id || J.Constant.blankRouteId);
+		const spaceId = String(param.spaceId || J.Constant.blankRouteId);
 		const viewId = String(param.viewId || J.Constant.blankRouteId);
 
 		let route = [ page, action, id ];
@@ -55,7 +47,7 @@ class UtilRouter {
 		return route.join('/');
 	};
 
-	go (route: string, param: Partial<RouteParam>) {
+	go (route: string, param: Partial<I.RouteParam>) {
 		if (!route) {
 			return;
 		};
@@ -86,6 +78,18 @@ class UtilRouter {
 			};
 		};
 
+		const fadeOut = () => {
+			if (onFadeOut) {
+				onFadeOut();
+			};
+		};
+
+		const fadeIn = () => {
+			if (onFadeIn) {
+				onFadeIn();
+			};
+		};
+
 		const onTimeout = () => {
 			Preview.hideAll();
 
@@ -95,7 +99,9 @@ class UtilRouter {
 			};
 
 			if (!animate) {
+				fadeOut();
 				change();
+				fadeIn();
 				return;
 			};
 
@@ -108,18 +114,12 @@ class UtilRouter {
 			window.setTimeout(() => fade.addClass('show'), 15);
 
 			window.setTimeout(() => {
-				if (onFadeOut) {
-					onFadeOut();
-				};
-
+				fadeOut();
 				change();
 			}, t);
 
 			window.setTimeout(() => {
-				if (onFadeIn) {
-					onFadeIn();
-				};
-
+				fadeIn();
 				fade.removeClass('show');
 				window.setTimeout(() => fade.hide(), t);
 			}, wait + t);

@@ -81,7 +81,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 
 		C.ObjectImportNotionValidateToken(token, (message: any) => {
 			if (message.error.code) {
-				this.ref.setError(true);
+				this.ref?.setError(true);
 				this.setState({ error: message.error.description });
 				return;
 			};

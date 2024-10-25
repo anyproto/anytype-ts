@@ -58,6 +58,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					className={cn.join(' ')}
 					onClick={e => this.onPanelIconClick(e, item)}
 				>
+					<div className="iconBg" />
 					<Icon className={id} />
 				</div>
 			);

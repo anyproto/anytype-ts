@@ -72,7 +72,6 @@ class MenuHelp extends React.Component<I.Menu> {
 		return [
 			{ id: 'whatsNew', document: 'whatsNew', caption: btn },
 			{ id: 'shortcut', caption: 'Ctrl+Space' },
-			{ id: 'hints' },
 			{ isDiv: true },
 			{ id: 'gallery' },
 			{ id: 'community' },
@@ -128,37 +127,6 @@ class MenuHelp extends React.Component<I.Menu> {
 
 			case 'tech': {
 				keyboard.onTechInfo();
-				break;
-			};
-
-			case 'hints': {
-				const isPopup = keyboard.isPopup();
-				const rootId = keyboard.getRootId();
-				const isEditor = keyboard.isMainEditor();
-				const isSet = keyboard.isMainSet();
-
-				let key = '';
-
-				if (isEditor && home && (rootId == home.id)) {
-					key = 'basics';
-				} else 
-				if (isSet) {
-					key = 'mainSet';
-				} else
-				if (isEditor) {
-					key = S.Block.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'editor';
-				} else
-				if (isGraph) {
-					key = 'mainGraph';
-				} else {
-					const { page, action } = keyboard.getMatch().params;
-
-					key = U.Common.toCamelCase([ page, action ].join('-'));
-				};
-
-				if (key) {
-					Onboarding.start(key, isPopup, true);
-				};
 				break;
 			};
 

@@ -163,7 +163,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (account && (stage == Stage.Phrase)) {
-			Renderer.send('keytarGet', account.id).then(value => this.refPhrase.setValue(value));
+			Renderer.send('keytarGet', account.id).then(value => this.refPhrase?.setValue(value));
 		};
 
 		this.refFrame?.resize();
@@ -245,33 +245,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					const routeParam = {
 						replace: true, 
-						animate: true,
 						onRouteChange: () => {
-							const { widgets } = S.Block;
-
-							Storage.initPinnedTypes();
 							S.Common.fullscreenObjectSet(true);
 							S.Common.showRelativeDatesSet(true);
 
-							const blocks = S.Block.getChildren(widgets, widgets);
-
-							if (blocks.length) {
-								blocks.forEach(block => Storage.setToggle('widget', block.id, true));
-
-								const first = blocks[0];
-								const children = S.Block.getChildren(widgets, first.id);
-
-								if (children.length) {
-									const object = S.Detail.get(widgets, children[0].getTargetObjectId());
-
-									if (!object._empty_) {
-										Storage.setLastOpened(U.Common.getCurrentElectronWindowId(), { id: object.id, layout: object.layout });
-										U.Space.openDashboard('route');
-									};
-								};
-							};
-						},
-						onFadeIn: () => {
+							U.Space.initSpaceState();
 							Onboarding.start('basics', false);
 						},
 					};

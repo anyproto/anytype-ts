@@ -56,7 +56,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 							}}
 						/>
 
-						<div id="select" className="select" onMouseDown={this.onSelect}>
+						<div id="select-object" className="select" onMouseDown={this.onSelect}>
 							<div className="item">
 								{object ? <IconObject object={object} iconSize={16} /> : ''}
 								<div className="name">{object ? object.name : translate('commonSelectObject')}</div>
@@ -95,7 +95,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	componentDidUpdate (): void {
 		this.initBlocks();
-
 	};
 
 	init () {
@@ -159,7 +158,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		];
 
 		S.Menu.open('searchObject', {
-			element: node.find('#select'),
+			element: node.find('#select-object'),
 			data: {
 				value: object ? [ object.id ] : [],
 				canAdd: true,
