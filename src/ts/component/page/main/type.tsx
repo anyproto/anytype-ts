@@ -74,9 +74,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const subIdObject = this.getSubIdObject();
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
-		const filtersObject: I.Filter[] = [
-			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
-		];
 
 		if (!recommendedRelations.includes('rel-description')) {
 			recommendedRelations.push('rel-description');
@@ -219,10 +216,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 								<ListObject 
 									{...this.props} 
 									sources={[ rootId ]} 
+									spaceId={this.getSpaceId()}
 									subId={subIdObject} 
 									rootId={rootId} 
 									columns={columns} 
-									filters={filtersObject} 
 									relationKeys={recommendedKeys}
 								/>
 							</div>
@@ -283,16 +280,15 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 
 		U.Data.searchSubscribe({
+			spaceId: this.getSpaceId(),
 			subId: this.getSubIdTemplate(),
 			filters: [
-				{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
 				{ relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
 			],
 			sorts: [
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			],
 			keys: [ 'id' ],
-			ignoreWorkspace: true,
 			ignoreDeleted: true,
 		});
 	};

@@ -187,6 +187,10 @@ class Relation {
 	};
 
 	public formatValue (relation: any, value: any, maxCount: boolean) {
+		if (!relation) {
+			return value;
+		};
+
 		switch (relation.format) {
 			default: {
 				value = this.getStringValue(value);
@@ -230,6 +234,10 @@ class Relation {
 	};
 
 	public checkRelationValue (relation: any, value: any): boolean {
+		if (!relation) {
+			return false;
+		};
+
 		value = this.formatValue(relation, value, false);
 
 		let ret = false;

@@ -164,7 +164,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		);
 	};
 
-	componentDidMount(): void {
+	componentDidMount (): void {
 		U.Data.createAllSubscriptions(() => {
 			this.initSpace();
 			this.initName();
@@ -249,7 +249,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		return this.getObjects(J.Constant.subId.type).
 			map(Util.optionMapper).
 			filter(this.filter).
-			filter(it => layouts.includes(it.recommendedLayout) && (it.spaceId == S.Common.space)).
+			filter(it => layouts.includes(it.recommendedLayout) && (it.spaceId == S.Common.space) && (it.uniqueKey != J.Constant.typeKey.template)).
 			sort(U.Data.sortByName);
 	};
 

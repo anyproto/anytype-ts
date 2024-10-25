@@ -279,3 +279,12 @@ export interface FocusState {
 	focused: string;
 	range: I.TextRange;
 };
+
+export interface RouteParam { 
+	replace: boolean;
+	animate: boolean;
+	delay: number;
+	onFadeOut: () => void;
+	onFadeIn?: () => void;
+	onRouteChange?: () => void;
+};

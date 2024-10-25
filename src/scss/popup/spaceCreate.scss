@@ -1,0 +1,15 @@
+@import "~scss/_mixins";
+
+.popups {
+	.popup.popupSpaceCreate {
+		.innerWrap { width: 480px; padding: 20px 56px 24px 56px; text-align: center; }
+
+		.label { @include text-very-small; color: var(--color-text-secondary); text-transform: uppercase; margin: 0px 0px 36px 0px; }
+
+		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
+		.nameWrapper { margin: 0px 0px 28px 0px; }
+
+		.input { @include text-header1; height: auto; text-align: center; }
+		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+	}
+}

@@ -269,13 +269,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		$(window).on('keydown.sidebarObject', e => this.onKeyDown(e));
 		$(this.node).on('click', e => {
-			if (!this.refFilter.isFocused) {
-				const value = this.refFilter.getValue();
-				const length = value.length;
-
-				this.refFilter.focus();
-				this.refFilter.setRange({ from: length, to: length });
+			if (!this.refFilter || this.refFilter.isFocused) {
+				return;
 			};
+
+			const value = this.refFilter.getValue();
+			const length = value.length;
+
+			this.refFilter.focus();
+			this.refFilter.setRange({ from: length, to: length });
 		});
 	};
 

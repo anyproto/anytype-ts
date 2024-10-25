@@ -341,7 +341,7 @@ html.themeDark {
 	.shareBanner { background: var(--color-bg-primary); }
 	.shareBanner {
 		.icon.smile { background-image: url('#{$themePath}/icon/share/banner.svg'); }
-		.icon.close { background-color: var(--color-shape-secondary); }
+		.icon.close { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
 	}
 
 	@import "./menu";
