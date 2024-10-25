@@ -43,13 +43,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { error, cid, key } = this.state;
 		const { spaceStorage, isOnline } = S.Common;
 		const { localUsage, bytesLimit } = spaceStorage;
-		const { account, accountSpaceId } = S.Auth;
+		const { account } = S.Auth;
 		const spaces = U.Space.getList();
 		const space = U.Space.getSpaceview();
-		const creator = S.Detail.get(J.Constant.subId.space, space.creator);
+		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
-		const personalSpace = U.Space.getSpaceviewBySpaceId(accountSpaceId);
+		const profile = U.Space.getProfile();
 		const usageCn = [ 'item' ];
 
 		const requestCnt = this.getRequestCnt();
@@ -58,7 +58,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const hasLink = cid && key;
 		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const canDelete = space.targetSpaceId != accountSpaceId;
+		const canDelete = !space.isPersonal && isOwner;
 		const isShareActive = U.Space.isShareActive();
 
 		let bytesUsed = 0;
@@ -81,7 +81,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
-		if (personalSpace && (sharedCnt >= personalSpace.sharedSpacesLimit) && !space.isShared) {
+		if ((sharedCnt >= profile.sharedSpacesLimit) && !space.isShared) {
 			canShare = false;
 			canMembers = false;
 		};
@@ -102,7 +102,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<IconObject
 							id="spaceIcon"
 							size={96}
-							object={space}
+							object={{ ...space, spaceId: S.Common.space }}
 							canEdit={canWrite}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
 							onSelect={this.onSelect}

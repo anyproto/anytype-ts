@@ -513,7 +513,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
 				const relation = S.Record.getRelationByKey(v);
-				const conditions = Relation.filterConditionsByType(relation.format);
+				const conditions = Relation.filterConditionsByType(relation?.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 				item.quickOption = I.FilterQuickOption.ExactDate;

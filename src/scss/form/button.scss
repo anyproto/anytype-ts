@@ -4,7 +4,7 @@
 	display: inline-flex; border: 0px; font-weight: 500; text-decoration: none; text-align: center;
 	height: 40px; padding: 0px 16px; border-radius: 8px; transition: $transitionAllCommon;
 	vertical-align: middle; position: relative; overflow: hidden; align-items: center; justify-content: center; 
-	@include text-paragraph; cursor: default; -webkit-app-region: no-drag;
+	@include text-common; cursor: default; -webkit-app-region: no-drag;
 }
 
 .button > .loaderWrapper { position: absolute; z-index: 1; width: 100%; height: 100%; }

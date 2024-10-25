@@ -41,15 +41,13 @@ class Editable extends React.Component<Props> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
-		const { 
-			id, classNameWrap, classNameEditor, classNamePlaceholder, readonly, placeholder, spellcheck, onSelect, onPaste, 
-			onMouseDown, onMouseUp, onDragStart
-		} = this.props;
+		const { id, classNameWrap, classNameEditor, classNamePlaceholder, readonly, placeholder, spellcheck, onSelect, onMouseDown, onMouseUp, onDragStart } = this.props;
 		const cnw = [ 'editableWrap' ];
 		const cne = [ 'editable' ];
 		const cnp = [ 'placeholder' ];
@@ -95,7 +93,7 @@ class Editable extends React.Component<Props> {
 					onFocus={this.onFocus}
 					onBlur={this.onBlur}
 					onSelect={onSelect}
-					onPaste={onPaste}
+					onPaste={this.onPaste}
 					onMouseUp={onMouseUp}
 					onInput={this.onInput}
 					onDragStart={onDragStart}
@@ -176,9 +174,17 @@ class Editable extends React.Component<Props> {
 		setRange(el, { start: range.from, end: range.to });
 	};
 
+	onPaste (e: any) {
+		const { onPaste } = this.props;
+
+		if (onPaste) {
+			onPaste(e);
+		};
+	};
+
 	onInput (e: any) {
 		const { onInput } = this.props;
-
+		
 		this.placeholderCheck();
 
 		if (onInput) {

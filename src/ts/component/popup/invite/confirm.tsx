@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Button, Error, IconObject } from 'Component';
+import { Title, Button, Error, IconObject, Loader } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 
 interface State {
 	error: string;
+	isLoading: boolean;
 };
 
 const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Component<I.Popup, State> {
 
 	state = {
 		error: '',
+		isLoading: false,
 	};
 
+	buttonRefs: Map<string, any> = new Map();
 	participants = [];
 
 	constructor (props: I.Popup) {
@@ -24,7 +27,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	render() {
-		const { error } = this.state;
+		const { error, isLoading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { icon } = data;
@@ -38,22 +41,24 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 		let buttons = [];
 		if (!this.getReaderLimit() && membership.isExplorer) {
-			buttons.push({ text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => this.onMembership('members') });
+			buttons.push({ id: 'reader', text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => this.onMembership('members') });
 		} else 
 		if (!this.getWriterLimit()) {
 			buttons = buttons.concat([
-				{ text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
-				{ text: translate('popupInviteConfirmButtonWriterLimit'), onClick: () => this.onMembership('editors') },
+				{ id: 'reader', text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
+				{ id: 'writer', text: translate('popupInviteConfirmButtonWriterLimit'), onClick: () => this.onMembership('editors') },
 			]);
 		} else {
 			buttons = buttons.concat([
-				{ text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
-				{ text: translate('popupInviteConfirmButtonWriter'), onClick: () => this.onConfirm(I.ParticipantPermissions.Writer) },
+				{ id: 'reader', text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
+				{ id: 'writer', text: translate('popupInviteConfirmButtonWriter'), onClick: () => this.onConfirm(I.ParticipantPermissions.Writer) },
 			]);
 		};
 
 		return (
 			<React.Fragment>
+				{isLoading ? <Loader id="loader" /> : ''}
+
 				<div className="iconWrapper">
 					<IconObject object={{ name, iconImage: icon, layout: I.ObjectLayout.Participant }} size={48} />
 				</div>
@@ -62,7 +67,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 				<div className="buttons">
 					<div className="sides">
-						{buttons.map((item: any, i: number) => <Button key={i} {...item} className="c36" />)}
+						{buttons.map((item: any, i: number) => <Button ref={ref => this.buttonRefs.set(item.id, ref)} key={i} {...item} className="c36" />)}
 					</div>
 
 					<Button onClick={this.onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
@@ -91,43 +96,58 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	onConfirm (permissions: I.ParticipantPermissions) {
+		this.setLoading(true);
+
 		C.SpaceRequestApprove(this.getSpaceId(), this.getIdentity(), permissions, (message: any) => {
 			if (message.error.code) {
-				this.setState({ error: message.error.description });
+				this.setError(message.error.description);
 				return;
 			};
 
 			analytics.event('ApproveInviteRequest', { type: permissions });
+			this.setLoading(false);
 			this.props.close();
 		});
 	};
 
 	onReject () {
+		this.setLoading(true);
+
 		C.SpaceRequestDecline(this.getSpaceId(), this.getIdentity(), (message: any) => {
 			if (message.error.code) {
-				this.setState({ error: message.error.description });
+				this.setError(message.error.description);
 				return;
 			};
 
 			analytics.event('RejectInviteRequest');
+			this.setLoading(false);
 			this.props.close();
 		});
 	};
 
+	setLoading (isLoading: boolean) {
+		this.setState({ isLoading });
+	};
+
+	setError (error: string) {
+		this.setState({ error, isLoading: false });
+	};
+
 	load () {
+		this.setLoading(true);
+
 		U.Data.search({
+			spaceId: this.getSpaceId(),
 			keys: U.Data.participantRelationKeys(),
 			filters: [
 				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-				{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
 			],
 			ignoreHidden: false,
-			ignoreWorkspace: true,
 			ignoreDeleted: true,
 			noDeps: true,
 		}, (message: any) => {
 			this.participants = message.records || [];
-			this.forceUpdate();
+			this.setLoading(false);
 		});
 	};
 

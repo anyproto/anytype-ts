@@ -88,7 +88,7 @@ export default {
 			offsetX: -312,
 			noClose: true,
 			highlightElements: [],
-			hiddenElements: [ '#widget-buttons', '.widgetView', '.widgetTree', '#containerWidget #list .buttons' ],
+			hiddenElements: [ '#widget-buttons', '.widget', '#containerWidget #list .buttons' ],
 		},
 		items: [
 			{
@@ -110,7 +110,7 @@ export default {
 				description: translate('onboardingWidgetsText'),
 				param: {
 					element: '.widgetView',
-					highlightElements: [ '#containerWidget .widget.widgetView', '#containerWidget .widget.widgetTree' ]
+					highlightElements: [ '#containerWidget .widget.widgetView', '#containerWidget .widget.widgetTree', '#containerWidget .widget.widgetLink' ]
 				}
 			},
 			{
@@ -167,12 +167,12 @@ export default {
 			width: 288,
 			noClose: true,
 			highlightElements: [],
+			classNameWrap: 'fixed',
 		},
 		items: [
 			{
 				category: translate('onboardingSyncStatusTitle'),
 				description: translate('onboardingSyncStatusText'),
-				buttonText: translate('onboardingSyncStatusButton'),
 				cloneElementClassName: 'onboardingHeaderSync',
 				param: {
 					element: '#menuSyncStatus',
@@ -237,111 +237,6 @@ export default {
 			}
 		]
 	}),
-
-    dashboard: () => {
-		const canWrite = U.Space.canMyParticipantWrite();
-
-		return {
-			category: translate('onboardingDashboard'),
-			showConfetti: true,
-			showDimmer: true,
-			items: [
-				{
-					name: translate('onboardingDashboard1Title'),
-					description: translate('onboardingDashboard1Text'),
-					param: {
-						element: '#page.isFull #footer #button-help',
-						classNameWrap: 'fixed',
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Right,
-						offsetY: () => -($('#notifications').height() + 12),
-					}
-				},
-				{
-					name: translate('onboardingQuickCaptureTitle'),
-					description: translate('onboardingQuickCaptureDescription'),
-					param: {
-						element: '#navigationPanel #button-navigation-plus',
-						classNameWrap: 'fixed',
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Center,
-						offsetY: -24,
-					}
-				},
-				{
-					name: translate('onboardingDashboard2Title'),
-					description: translate('onboardingDashboard2Text'),
-					video: './img/help/onboarding/sidebar.mp4',
-					param: {
-						element: '#widget-space',
-						classNameWrap: 'fixed',
-						vertical: I.MenuDirection.Center,
-						horizontal: I.MenuDirection.Right,
-						width: 288,
-						offsetX: -298,
-					}
-				},
-				{
-					description: `
-						<p>${translate('onboardingDashboard31')}</p>
-						<p>${translate('onboardingDashboard32')}</p>
-					`,
-					buttons: [
-						canWrite ? { text: translate('commonImport'), action: 'import' } : null
-					],
-					param: {
-						element: '#page.isFull #footer #button-help',
-						classNameWrap: 'fixed',
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Right,
-						offsetY: () => -($('#notifications').height() + 12),
-					},
-				}
-			],
-		};
-	},
-
-    editor: () => ({
-        category: translate('onboardingEditor'),
-        items: [
-			{
-                name: translate('onboardingEditor1Title'),
-				description: translate('onboardingEditor1Description'),
-                param: {
-                    element: '#block-featuredRelations #onboardingAnchor',
-                    offsetY: 10,
-                }
-            },
-            {
-				name: translate('onboardingEditor2Title'),
-				description: translate('onboardingEditor2Description'),
-                param: {
-                    element: '#block-featuredRelations #onboardingAnchor',
-                    offsetY: 10,
-                }
-            },
-			{
-				description: translate('onboardingEditor3Description'),
-                param: {
-                    element: '#header #button-header-relation',
-                    offsetY: 10,
-                    classNameWrap: 'fixed fromHeader',
-					horizontal: I.MenuDirection.Right,
-                }
-            },
-            {
-				name: translate('onboardingEditor4Title'),
-				description: translate('onboardingEditor4Description'),
-                param: {
-                    element: '#navigationPanel #button-navigation-graph',
-                    offsetY: -10,
-                    classNameWrap: 'fixed fromHeader',
-					vertical: I.MenuDirection.Top,
-					horizontal: I.MenuDirection.Center,
-                }
-            },
-        ]
-    }),
 
     typeDeleted: () => ({
 		items: [
@@ -423,17 +318,6 @@ export default {
 					description: translate('onboardingDefaultTypeDescription'),
 					param: {
 						element: '#button-dataview-add-record-select',
-						horizontal: I.MenuDirection.Right,
-						offsetX: -4,
-						offsetY: 12,
-					},
-				},
-
-				{
-					name: translate('onboardingCalendarTitle'),
-					description: translate('onboardingCalendarDescription'),
-					param: {
-						element: '#button-dataview-settings',
 						horizontal: I.MenuDirection.Right,
 						offsetX: -4,
 						offsetY: 12,

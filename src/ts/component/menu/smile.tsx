@@ -1045,7 +1045,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		this.setLoading(true);
 		keyboard.disableCommonDrop(true);
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(this.getSpaceId(), '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
 			keyboard.disableCommonDrop(false);
 			
@@ -1058,14 +1058,14 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onUpload () {
-		Action.openFileDialog(J.Constant.fileExtension.cover, paths => {
+		Action.openFileDialog({ extensions: J.Constant.fileExtension.cover }, paths => {
 			if (!paths.length) {
 				return;
 			};
 
 			this.setLoading(true);
 
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
+			C.FileUpload(this.getSpaceId(), '', paths[0], I.FileType.Image, {}, (message: any) => {
 				this.setLoading(false);
 
 				if (!message.error.code) {
@@ -1075,6 +1075,10 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				this.props.close();
 			});
 		});
+	};
+
+	getSpaceId () {
+		return this.props.param.data.spaceId || S.Common.space;
 	};
 
 	getTabs () {
