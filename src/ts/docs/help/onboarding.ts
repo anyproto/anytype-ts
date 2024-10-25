@@ -88,7 +88,7 @@ export default {
 			offsetX: -312,
 			noClose: true,
 			highlightElements: [],
-			hiddenElements: [ '#widget-buttons', '.widgetView', '.widgetTree', '#containerWidget #list .buttons' ],
+			hiddenElements: [ '#widget-buttons', '.widget', '#containerWidget #list .buttons' ],
 		},
 		items: [
 			{
@@ -110,7 +110,7 @@ export default {
 				description: translate('onboardingWidgetsText'),
 				param: {
 					element: '.widgetView',
-					highlightElements: [ '#containerWidget .widget.widgetView', '#containerWidget .widget.widgetTree' ]
+					highlightElements: [ '#containerWidget .widget.widgetView', '#containerWidget .widget.widgetTree', '#containerWidget .widget.widgetLink' ]
 				}
 			},
 			{
@@ -167,6 +167,7 @@ export default {
 			width: 288,
 			noClose: true,
 			highlightElements: [],
+			classNameWrap: 'fixed',
 		},
 		items: [
 			{
