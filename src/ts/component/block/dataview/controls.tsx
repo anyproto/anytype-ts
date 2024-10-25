@@ -208,7 +208,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	onViewSwitch (view: any) {
 		this.onViewSet(view);
-		window.setTimeout(() => { $(`#button-${this.props.block.id}-settings`).trigger('click'); }, 50);
+
+		window.setTimeout(() => { 
+			$(`#button-${this.props.block.id}-settings`).trigger('click'); 
+		}, 50);
 	};
 
 	onViewCopy (view) {
@@ -284,9 +287,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
-			onBack: (id) => {
+			onBack: (id: string) => {
 				S.Menu.replace(id, component, { ...param, noAnimation: true });
-				window.setTimeout(() => S.Menu.update(component, { noAnimation: false }), 50);
+				window.setTimeout(() => S.Menu.update(component, { noAnimation: false }), J.Constant.delay.menu);
 			},
 			data: {
 				readonly,

@@ -83,6 +83,10 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+
+		this.param = U.Common.objectCopy(data.view.get());
 		this.setName();
 		this.resize();
 		this.focus();

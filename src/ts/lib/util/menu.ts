@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation, Storage, sidebar } from 'Lib';
+import { observable } from 'mobx';
+import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, Storage, sidebar } from 'Lib';
 
 class UtilMenu {
 
@@ -334,9 +335,30 @@ class UtilMenu {
 
 					window.setTimeout(() => {
 						switch (option.id) {
-							case 'edit': $(`#button-${blockId}-settings`).trigger('click'); break;
-							case 'copy': onCopy(view); break;
-							case 'remove': onRemove(view); break;
+							case 'edit': {
+								$(`#button-${blockId}-settings`).trigger('click');
+								S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
+
+								/*
+								window.setTimeout(() => {
+									console.log(JSON.stringify(view, null, 3));
+
+
+									S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
+								}, J.Constant.delay.menu);
+								*/
+								break;
+							};
+
+							case 'copy': {
+								onCopy(view); 
+								break;
+							};
+
+							case 'remove': {
+								onRemove(view); 
+								break;
+							};
 						};
 					}, S.Menu.getTimeout());
 				}
