@@ -27,7 +27,6 @@ import PageExportProtobuf from './page/settings/export/protobuf';
 import PageExportMarkdown from './page/settings/export/markdown';
 
 import PageSpaceIndex from './page/settings/space/index';
-import PageSpaceCreate from './page/settings/space/create';
 import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceShare from './page/settings/space/share';
 import PageSpaceMembers from './page/settings/space/members';
@@ -65,7 +64,6 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
-	spaceCreate:		 PageSpaceCreate,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceMembers:		 PageSpaceMembers,
@@ -274,12 +272,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 							id: 'spaceIndex',
 							name: translate('popupSettingsSpaceTitle'),
 							subPages: [
-								'spaceCreate', 'spaceStorageManager',
+								'spaceStorageManager',
 								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv',
 								'exportIndex', 'exportProtobuf', 'exportMarkdown',
 								'spaceShare', 'spaceMembers'
 							],
-							noHeader: [ 'spaceCreate' ],
+							noHeader: [],
 						},
 					]
 				},

@@ -100,12 +100,14 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	onTitle () {
-		const { rootId, block, onSourceSelect, isCollection } = this.props;
+		const { rootId, block, readonly, onSourceSelect, isCollection } = this.props;
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
 		const element = `#block-head-${block.id}`;
 		const object = S.Detail.get(rootId, targetObjectId);
 		const sourceName = isCollection ? 'collection' : 'set';
+		const canEdit = !readonly && !object.isDeleted;
+		const canSource = !readonly && !object.isDeleted;
 
 		if (isEditing) {
 			return;
@@ -116,23 +118,17 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			return;
 		};
 
-		let options: any[] = [
-			{ id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') },
-			{ id: 'sourceChange', icon: 'source', name: U.Common.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true },
+		const options: any[] = [
+			canEdit ? { id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') } : null,
+			canSource ? { id: 'sourceChange', icon: 'source', name: U.Common.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true } : null,
 			{ id: 'sourceOpen', icon: 'expand', name: U.Common.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
-		];
-
-		if (object.isDeleted) {
-			options = options.filter(it => it.id == 'sourceChange');
-		};
+		].filter(it => it);
 
 		S.Menu.open('select', {
 			element,
 			offsetY: 4,
 			width: 240,
-			onOpen: (context: any) => {
-				this.menuContext = context;
-			},
+			onOpen: context => this.menuContext = context,
 			data: {
 				options,
 				onOver: this.onTitleOver,
@@ -142,6 +138,10 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	onTitleOver (e: any, item: any) {
+		if (!this.menuContext) {
+			return;
+		};
+
 		const { rootId, block, loadData, isCollection } = this.props;
 		const { targetObjectId } = block.content;
 
@@ -159,6 +159,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			isSub: true,
 			data: {},
 		};
+
 		const onCreate = (message: any, isNew: boolean) => {
 			if (message.views && message.views.length) {
 				window.setTimeout(() => loadData(message.views[0].id, 0, true), 50);

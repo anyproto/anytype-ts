@@ -256,7 +256,7 @@ class UtilObject {
 			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids }
 		];
 
-		U.Data.search({ filters }, (message: any) => {
+		U.Data.search({ filters, keys: J.Relation.default.concat([ 'links', 'backlinks' ]) }, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
 			};

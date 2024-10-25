@@ -7,14 +7,12 @@ import { I, S, U, J, translate, analytics } from 'Lib';
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<I.PopupSettings> {
 
 	render () {
-		const { accountSpaceId } = S.Auth;
 		const spaces = this.getItems();
 
 		const Row = (space: any) => {
-			const { targetSpaceId } = space;
-			const participant = U.Space.getMyParticipant(targetSpaceId);
-			const creator = U.Space.getCreator(targetSpaceId, space.creator);
-			const hasMenu = targetSpaceId != accountSpaceId;
+			const participant = U.Space.getMyParticipant(space.targetSpaceId);
+			const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
+			const hasMenu = !space.isPersonal;
 
 			let creatorElement = null;
 			if (participant && !participant.isOwner && !creator._empty_) {

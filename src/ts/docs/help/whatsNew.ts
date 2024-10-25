@@ -39,7 +39,6 @@ export default [
 
 	h3(`More Views & Widgets`),
 	text(`..have been updated to improve visual usability.`),
-
 	bullet(`<b>Gallery</b> has a fresh appearance for widgets.`),
 	bullet(`<b>Kanban</b> supports displaying page covers on cards in a layout.`),
 	video('43/2.mp4'),
@@ -73,10 +72,12 @@ export default [
 	bullet(`Improved Code snippet readability when nested within a Callout block.`),
 	bullet(`Removed the three dots from the drag and drop handle for a cleaner interface.`),
 	bullet(`Added restrictions to prevent Templates from being created in multiple unintended locations.`),
+	text(``),
 
 	h2(`Performance`),
 	bullet(`Calendar has been greatly optimized (& is no longer freezable). Thanks, @${link('https://community.anytype.io/t/calendar-view-freezes/12323/5', 'C.c')}! `),
 	bullet(`Databases for different spaces have been separated to improve overall application performance.`),
+	text(``),
 
 	h2(`Bug Fixes`),
 	bullet(`Pin Code is now numeric for newly created PINs, allowing only number input. Thanks, @${link('https://community.anytype.io/t/pin-code-should-be-numeric/20435', 'isllll')}!`),
@@ -111,6 +112,10 @@ export default [
 	bullet(`Multiple file selection on import is fixed.`),
 	bullet(`When adding an object relation to Set, the selection popup correctly closes instantly.`),
 	bullet(`Fixed an issue on Linux where the menu visibility toggle was not working correctly through the window menu.`),
+	text(``),
+
+	h2(`Platform Updates`),
+	bullet(`Starting with the next release, we will <b>no longer support MacOS Catalina (10.15)</b>. This decision comes as Apple has officially dropped support for this version, and maintaining compatibility requires significant development effort on our end. We understand this change may affect some users, but it's a necessary step to ensure smoother updates.`),
 
 	div(),
 	// --------------------------------------------//

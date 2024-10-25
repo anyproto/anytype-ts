@@ -159,10 +159,9 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	onDoubleClick () {
-		if (!this.canCreate()) {
-			return;
+		if (this.canCreate()) {
+			this.onCreate();
 		};
-		this.onCreate();
 	};
 
 	onCreate () {
@@ -174,12 +173,17 @@ const Item = observer(class Item extends React.Component<Props> {
 		onCreate(details);
 	};
 
-	canCreate () {
+	canCreate (): boolean {
 		const { getView, isAllowedObject } = this.props;
 		const view = getView();
+
+		if (!view) {
+			return false;
+		};
+
 		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
 
-		return !groupRelation.isReadonlyValue && isAllowedObject();
+		return groupRelation && !groupRelation.isReadonlyValue && isAllowedObject();
 	};
 
 });

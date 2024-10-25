@@ -78,6 +78,18 @@ class UtilRouter {
 			};
 		};
 
+		const fadeOut = () => {
+			if (onFadeOut) {
+				onFadeOut();
+			};
+		};
+
+		const fadeIn = () => {
+			if (onFadeIn) {
+				onFadeIn();
+			};
+		};
+
 		const onTimeout = () => {
 			Preview.hideAll();
 
@@ -87,7 +99,9 @@ class UtilRouter {
 			};
 
 			if (!animate) {
+				fadeOut();
 				change();
+				fadeIn();
 				return;
 			};
 
@@ -100,18 +114,12 @@ class UtilRouter {
 			window.setTimeout(() => fade.addClass('show'), 15);
 
 			window.setTimeout(() => {
-				if (onFadeOut) {
-					onFadeOut();
-				};
-
+				fadeOut();
 				change();
 			}, t);
 
 			window.setTimeout(() => {
-				if (onFadeIn) {
-					onFadeIn();
-				};
-
+				fadeIn();
 				fade.removeClass('show');
 				window.setTimeout(() => fade.hide(), t);
 			}, wait + t);
