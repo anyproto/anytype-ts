@@ -1,4 +1,4 @@
-import { I, U, translate } from 'Lib';
+import { I, U, translate, S } from 'Lib';
 
 export default {
     mainGraph: () => ({
@@ -25,34 +25,28 @@ export default {
     }),
 
     objectCreationStart: () => ({
-        category: translate('onboardingObjectCreationStart'),
-        items: [
-            {
-                description: `
-					<p>${translate('onboardingObjectCreationStart11')}</p>
-				`,
-                video: './img/help/onboarding/object-1-default-object-type.mp4',
-            },
-            {
-                description: `
+		category: translate('onboardingObjectCreationStart'),
+		items: [
+			{
+				description: `
 					<p>${translate('onboardingObjectCreationStart21')}</p>
 				`,
-                video: './img/help/onboarding/object-2-type-menu.mp4',
-                buttonText: translate('onboardingObjectCreationStart2Button'),
-            },
-        ],
-        param: {
-            element: '#page.isFull #footer #button-help',
-            classNameWrap: 'fixed',
-            className: 'isWizard',
-            vertical: I.MenuDirection.Top,
-            horizontal: I.MenuDirection.Right,
-            noArrow: true,
-            noClose: true,
-            passThrough: true,
-            offsetY: -4,
-        },
-    }),
+				video: './img/help/onboarding/object-2-type-menu.mp4',
+				buttonText: translate('onboardingObjectCreationStart2Button'),
+			},
+		],
+		param: {
+			element: '#page.isFull #footer #button-help',
+			classNameWrap: 'fixed',
+			className: 'isWizard',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
+			noArrow: true,
+			noClose: true,
+			passThrough: true,
+			offsetY: -4,
+		},
+	}),
 
     objectCreationFinish: () => ({
         category: translate('onboardingObjectCreationFinish'),

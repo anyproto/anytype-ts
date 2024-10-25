@@ -1844,7 +1844,6 @@
 	"onboardingStoreRelation2Button": "Great!",
 
 	"onboardingObjectCreationStart": "Creating Objects",
-	"onboardingObjectCreationStart11": "<b>Let’s create an object from scratch.</b> The default object type is now ‘Page’, meaning that each new object is referred to as a Note unless you choose a different type. You can change the default object type anytime in the settings menu.",
 	"onboardingObjectCreationStart21": "<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu.",
 	"onboardingObjectCreationStart2Button": "I got it!",
 
