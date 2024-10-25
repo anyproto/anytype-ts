@@ -55,7 +55,7 @@ class Preview {
 		};
 
 		let text = String(param.text || '').replace(/\\n/g, '\n');
-		text = U.Common.lbBr(U.Common.htmlSpecialChars(text));
+		text = U.Common.lbBr(U.Common.sanitize(text));
 
 		this.delayTooltip = delay;
 

@@ -163,7 +163,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (account && (stage == Stage.Phrase)) {
-			Renderer.send('keytarGet', account.id).then(value => this.refPhrase.setValue(value));
+			Renderer.send('keytarGet', account.id).then(value => this.refPhrase?.setValue(value));
 		};
 
 		this.refFrame?.resize();
