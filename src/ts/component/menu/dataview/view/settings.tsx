@@ -203,7 +203,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
-		const view = data.view.get();
+		const view = data.view ? data.view.get() : null;
 
 		if (readonly || !block || !view) {
 			return;
