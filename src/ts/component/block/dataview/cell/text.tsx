@@ -383,7 +383,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				this.range = null;
 				this.setEditing(false);
 
-				if (pressed == 'enter+shift') {
+				if (onRecordAdd && (pressed == 'enter+shift')) {
 					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
 				};
 			});
