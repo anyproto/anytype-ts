@@ -25,3 +25,5 @@ licenses.json
 /darwin-amd*/
 /darwin-arm*/
 /windows/
+.aider*
+.env

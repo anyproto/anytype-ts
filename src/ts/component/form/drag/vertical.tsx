@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useImperativeHandle, useRef } from 'react';
-import Input from './input';
+import { Input } from 'Component';
 
 interface Props {
 	id?: string;

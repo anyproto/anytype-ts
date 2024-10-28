@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, DragHorizontal } from 'Component';
+import { Icon, DragHorizontal, DragVertical } from 'Component';
 import { U } from 'Lib';
-import DragVertical from 'Component/form/dragVertical';
-import { Floater } from '../floater';
+import { AnchorTo, Floater } from '../floater';
 import _ from 'lodash';
 
 interface PlaylistItem {
@@ -108,8 +107,8 @@ class MediaAudio extends React.Component<Props, State> {
 
 							<Floater 
 								anchorEl={this.volumeIcon?.node} 
-								anchorTo={'top'} 
-								offset={{ y: -2 }}
+								anchorTo={AnchorTo.Top} 
+								offset={{ top: -2 }}
 							>
 								<DragVertical
 									id="volume"

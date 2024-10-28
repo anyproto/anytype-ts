@@ -1,22 +1,28 @@
+import { H } from 'Lib';
 import React, { useState, useEffect, ReactNode, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import { useElementMovement } from './useMovementObserver';
+
 
 interface Props {
 	children: ReactNode;
 	anchorEl: HTMLElement | null;
-	anchorTo?: 'top' | 'bottom';
+	anchorTo?: AnchorTo;
 	offset?: {
-		x?: number;
-		y?: number;
+		left?: number;
+		top?: number;
 	};
+}
+
+export enum AnchorTo {
+	Top = 'top',
+	Bottom = 'bottom',
 }
 
 export const Floater: React.FC<Props> = ({ 
 	children, 
 	anchorEl, 
-	anchorTo = 'bottom',
-	offset = { x: 0, y: 0 },
+	anchorTo = AnchorTo.Bottom,
+	offset = { top: 0, left: 0 },
 }) => {
 	const ref = useRef<HTMLDivElement>(null);
 	const [ position, setPosition ] = useState({ top: 0, left: 0 });
@@ -24,44 +30,41 @@ export const Floater: React.FC<Props> = ({
 	const onMove = () => {
 		if (anchorEl && ref.current) {
 			const anchorElRect = anchorEl.getBoundingClientRect();
-			const floaterElRect = ref.current.getBoundingClientRect();
+			const elRect = ref.current.getBoundingClientRect();
 
-			const { top, left, bottom, width } = anchorElRect;
-			const fh = floaterElRect.height;
-			const fw = floaterElRect.width;
+			const { top: at, left: al, bottom: ab, width: aw } = anchorElRect;
+			const eh = elRect.height;
+			const ew = elRect.width;
 
-			const x = Number(offset.x) || 0;
-			const y = Number(offset.y) || 0;
+			const ot = Number(offset.top) || 0;
+			const ol = Number(offset.left) || 0;
 
-			let pt = 0;
-			let pl = 0;
+			let nt = 0;
+			let nl = 0;
 
-			if (anchorTo == 'top') {
-				pt = top - fh + y;
-				pl = left + width / 2 - fw / 2 + x;
-			} else {
-				pt = bottom + y;
-				pl = left + width / 2 - fw / 2 + x;
+			switch (anchorTo) {
+				case AnchorTo.Top:
+					nt = at - eh + ot;
+					nl = al + aw / 2 - ew / 2 + ol;
+					break;
+				case AnchorTo.Bottom:
+					nt = ab + ot;
+					nl = al + aw / 2 - ew / 2 + ol;
+					break;
 			};
 
-			setPosition({ top: pt, left: pl });
+			setPosition({ top: nt, left: nl });
 		};
 	};
 
-	useElementMovement(anchorEl, onMove);
+	H.useElementMovement(anchorEl, onMove);
 	useEffect(() => onMove(), [ anchorEl, ref.current ]);
 
 	return ReactDOM.createPortal(
-		<div 
+		<div className="floater"
 			ref={ref}
-			style={{
-				position: 'absolute',
-				pointerEvents: 'none',
-				// This is hopefully the highest z-index in the app
-				zIndex: 200,
-				top: `${position.top}px`,
-				left: `${position.left}px`,
-			}}>
+			style={{ transform: `translate3d(${position.top}px, ${-position.left}px, 0px)`}}
+		>
 			{children}
 		</div>,
 		document.body

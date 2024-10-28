@@ -52,5 +52,5 @@
     }
 }
 
-.volume.input-drag-vertical { opacity: 0; transition: opacity $transitionSmoothCommon; pointer-events: none; }
+.volume.input-drag-vertical { opacity: 0; transition: opacity 0.35s ease-in-out; pointer-events: none; }
 .volume.input-drag-vertical.visible { opacity: 1; pointer-events: auto; }
