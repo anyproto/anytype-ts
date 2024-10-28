@@ -21,6 +21,8 @@ interface State {
     volume: number;
     muted: boolean;
     showVolumeSlider: boolean;
+    startedPlaying: boolean;
+    timeMetric: string;
 };
 
 class MediaAudio extends React.Component<Props, State> {
@@ -43,6 +45,8 @@ class MediaAudio extends React.Component<Props, State> {
             volume: 1,
             muted: false,
             showVolumeSlider: false,
+            startedPlaying: false,
+            timeMetric: '',
         };
         this.onPlayClick = this.onPlayClick.bind(this);
         this.onMute = this.onMute.bind(this);
@@ -77,8 +81,7 @@ class MediaAudio extends React.Component<Props, State> {
                         </div>
 
                         <div className="time">
-                            <span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
-                            <span id="timeTotal" className="total">0:00</span>
+                            <span id="timeMetric" className="metric">{this.state.timeMetric}</span>
                         </div>
                         <div
                             onMouseLeave={this.volumeSliderFadeOut}
@@ -187,6 +190,8 @@ class MediaAudio extends React.Component<Props, State> {
     };
 
     onPlay () {
+        this.setState({ startedPlaying: true });
+
         const { onPlay } = this.props;
         const node = $(this.node);
         const icon = node.find('.icon.play');
@@ -252,16 +257,8 @@ class MediaAudio extends React.Component<Props, State> {
             return;
         };
 
-        const node = $(this.node);
-        const current = node.find('#timeCurrent');
-        const total = node.find('#timeTotal');
-
-        let t = this.getTime(el.currentTime);
-        current.text(`${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`);
-
-        t = this.getTime(el.duration);
-        total.text(`${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`);
-
+        const t = this.state.startedPlaying ? this.getTime(el.currentTime) : this.getTime(el.duration);
+        this.setState({ timeMetric: `${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`});
         this.timeDragRef.setValue(el.currentTime / el.duration);
     };
 

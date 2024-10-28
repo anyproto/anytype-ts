@@ -35,7 +35,7 @@
 
             .icon.volume::before { position: absolute; content: ''; top: -10px; right: 0px; left: 0px; bottom: 0px; z-index: 100; }
     
-            .time { @include text-small; text-align: right; line-height: 20px; text-wrap: nowrap; width: 86px; text-align: center; }
+            .time { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
 
             @container media-audio (max-width: 500px) {
                 .time { display: none; }
