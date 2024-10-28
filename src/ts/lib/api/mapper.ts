@@ -610,6 +610,7 @@ export const Mapper = {
 				id: obj.getId(),
 				state: obj.getState() as number,
 				type,
+				spaceId: obj.getSpaceid(),
 				progress: Mapper.From.Progress(obj.getProgress())
 			};
 		},

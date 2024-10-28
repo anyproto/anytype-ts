@@ -22,7 +22,8 @@ const Progress = observer(class Progress extends React.Component {
 	};
 	
 	render () {
-		const { list } = S.Progress;
+		const { space } = S.Common;
+		const list = S.Progress.list.filter(it => !it.spaceId || (it.spaceId == space));
 		const cn = [ 'progress' ];
 
 		if (!list.length) {

@@ -19,6 +19,7 @@ export enum ProgressState {
 
 export interface Progress {
 	id?: string;
+	spaceId?: string;
 	type?: ProgressType;
 	current?: number;
 	total?: number;
