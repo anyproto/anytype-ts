@@ -7,6 +7,7 @@ interface Props {
 	value: number;
 	snaps?: number[];
 	strictSnap?: boolean;
+	iconIsOutside?: boolean;
 	onStart?(e: any, v: number): void;
 	onMove?(e: any, v: number): void;
 	onEnd?(e: any, v: number): void;
@@ -21,6 +22,7 @@ class Drag extends React.Component<Props> {
 		min: 0,
 		max: 1,
 		className: '',
+		iconIsOutside: true,
 	};
 	
 	value = null;
@@ -118,11 +120,11 @@ class Drag extends React.Component<Props> {
 	};
 	
 	move (x: number) {
-		const { strictSnap } = this.props;
+		const { strictSnap, iconIsOutside } = this.props;
 		const snaps = this.props.snaps || [];
 		const node = $(this.node);
-		const nw = node.width();
-		const iw = this.icon.width() / 2;
+		const nw = node.outerWidth();
+		const iw = this.icon.outerWidth() / 2;
 		const ib = parseInt(this.icon.css('border-width'));
 		const mw = this.maxWidth();
 
@@ -148,11 +150,10 @@ class Drag extends React.Component<Props> {
 
 		x = this.value * mw;
 
-		const w = Math.min(nw, x + iw);
-
+		const w = Math.min(nw, x + (iconIsOutside ? iw : 0));
 		this.icon.css({ left: x });
 		this.back.css({ left: (w + iw + ib), width: (nw - w - iw - ib) });
-		this.fill.css({ width: (w - ib) });
+		this.fill.css({ width: (w + (iconIsOutside ? 0 : iw) - ib) });
 	};
 	
 	end (e) {

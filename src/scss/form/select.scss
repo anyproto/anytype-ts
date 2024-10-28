@@ -17,6 +17,7 @@
 
 	.item { display: flex; background: none !important; padding: 0px !important; overflow: hidden; }
 	.item {
+		.icon { width: 20px; height: 20px; }
 		.icon, .iconObject { transition: none; margin-right: 6px; flex-shrink: 0; }
 		.name { width: 100%; @include text-overflow-nw; }
 		.caption, .note { display: none; }
