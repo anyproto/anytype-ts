@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, translate } from 'Lib';
+import { I, S, translate, sidebar } from 'Lib';
 
 import SectionTitle from 'Component/sidebar/section/title';
 import SectionLayout from 'Component/sidebar/section/layout';
@@ -13,6 +13,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
 
+		this.onSave = this.onSave.bind(this);
+		this.onCancel = this.onCancel.bind(this);
 	};
 
     render () {
@@ -29,8 +31,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					</div>
 
 					<div className="side right">
-						<Button color="blank" text={translate('commonCancel')} className="c28" />
-						<Button text={translate('commonSave')} className="c28" />
+						<Button color="blank" text={translate('commonCancel')} className="c28" onClick={this.onCancel} />
+						<Button text={translate('commonSave')} className="c28" onClick={this.onSave} />
 					</div>
 				</div>
 
@@ -41,7 +43,15 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				</div>
 			</React.Fragment>
 		);
-    };
+	};
+
+	onSave () {
+		sidebar.rightPanelToggle(false);
+	};
+
+	onCancel () {
+		sidebar.rightPanelToggle(false);
+	};
 
 });
 

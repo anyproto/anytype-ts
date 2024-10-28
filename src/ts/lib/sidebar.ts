@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import raf from 'raf';
 import { U, S, J, Storage, keyboard } from 'Lib';
 
 interface SidebarData {
@@ -351,6 +352,11 @@ class Sidebar {
 
 	objectContainerToggle () {
 		S.Common.showObjectSet(!S.Common.showObject);
+	};
+
+	rightPanelToggle (v: boolean) {
+		S.Common.showSidebarRightSet(v);
+		raf(() => this.resizePage(null, false));
 	};
 
 };

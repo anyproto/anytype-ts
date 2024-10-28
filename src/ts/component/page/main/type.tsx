@@ -390,12 +390,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onEdit () {
 		const rootId = this.getRootId();
 
-		S.Common.showSidebarRightSet(!S.Common.showSidebarRight);
+		sidebar.rightPanelToggle(!S.Common.showSidebarRight);
 		S.Common.getRef('sidebarRight').setState({ page: 'type', rootId });
-
-		window.setTimeout(() => {
-			sidebar.resizePage(null, false);
-		}, 10);
 	};
 
 	onObjectAdd () {
