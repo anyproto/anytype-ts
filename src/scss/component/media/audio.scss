@@ -19,14 +19,14 @@
             .timeDragWrapper { flex: 1 0 auto; }
 
             .icon { vertical-align: top; transition: none; }
-            .icon.play { width: var(20px); height: var(20px); min-width: var(20px); min-height: var(20px); background-image: url('~img/icon/audio/play.svg'); }
+            .icon.play { width: 20px; height: 20px; min-width: 20px; min-height: 20px; background-image: url('~img/icon/audio/play.svg'); }
             .icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
             
             .input-drag-horizontal { 
                 .icon { cursor: default; }
             }
             
-            .icon.volume { width: var(20px); height: var(20px);  min-width: var(20px); min-height: var(20px); background-image: url('~img/icon/audio/volume.svg'); }
+            .icon.volume { width: 20px; height: 20px;  min-width: 20px; min-height: 20px; background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
 
             .icon.volume::before { position: absolute; content: ''; top: -10px; right: 0px; left: 0px; bottom: 0px; z-index: 100; }
