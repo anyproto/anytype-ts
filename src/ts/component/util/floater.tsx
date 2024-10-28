@@ -49,6 +49,7 @@ export const Floater: React.FC<Props> = ({
       ref={ref}
       style={{
         position: 'absolute',
+        pointerEvents: 'none',
         zIndex: 4,
         top: `${position.top}px`,
         left: `${position.left}px`,
