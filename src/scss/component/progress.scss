@@ -4,10 +4,9 @@
 
 .progress {
 	.inner { 
-		position: absolute; left: 50%; top: 50%; box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.2); cursor: grab; width: 384px;
-		border-radius: 12px; text-align: center; background: var(--color-bg-primary); overflow: hidden; margin: -36px 0px 0px -192px;
-		transition-property: opacity, transform; transition-duration: 0.05s; transition-timing-function: ease-in-out; pointer-events: all;
-		display: flex; flex-direction: column;
+		position: absolute; box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.2); cursor: grab; width: 288px; border-radius: 12px; text-align: center; 
+		background: var(--color-bg-primary); overflow: hidden; transition-property: opacity, transform; transition-duration: 0.05s; 
+		transition-timing-function: ease-in-out; pointer-events: all; display: flex; flex-direction: column; bottom: 56px; right: 56px;
 	}
 
 	.titleWrap { font-weight: 600; display: flex; gap: 0px 6px; padding: 11px 16px 3px 16px; }

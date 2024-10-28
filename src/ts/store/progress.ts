@@ -1,26 +1,34 @@
 import { observable, action, makeObservable, set, computed } from 'mobx';
-import { I } from 'Lib';
+import { I, S } from 'Lib';
 
 class ProgressStore {
 
+	public showValue = false;
     public listValue: I.Progress[] = [];
 
     constructor () {
         makeObservable(this, {
 			listValue: observable,
+			showValue: observable,
 			list: computed,
+			show: computed,
 			add: action,
 			update: action,
 			delete: action,
+			showSet: action,
         });
     };
 
+	get show (): boolean {
+		return this.showValue;
+	};
+
 	get list (): I.Progress[] {
-		return this.listValue;
+		return this.listValue || [];
 	};
 
 	add (item: Partial<I.Progress>): void {
-		this.list.unshift(item);
+		this.listValue.unshift(item);
 	};
 
 	update (param: Partial<I.Progress>): void {
@@ -37,12 +45,21 @@ class ProgressStore {
 		this.listValue = this.listValue.filter(it => it.id != id);
 	};
 
+	showSet (v: boolean): void {
+		this.showValue = Boolean(v);
+	};
+
+	getList () {
+		const { space } = S.Common;
+		return this.list.filter(it => !it.spaceId || (it.spaceId == space));
+	};
+
 	getItem (id: string): I.Progress {
-		return this.listValue.find(it => it.id == id);
+		return this.getList().find(it => it.id == id);
 	};
 
 	getField (field: string): number {
-		return this.list.reduce((acc, it) => acc + it[field], 0);
+		return this.getList().reduce((acc, it) => acc + (Number(it[field]) || 0), 0);
 	};
 
 	getCurrent (): number {

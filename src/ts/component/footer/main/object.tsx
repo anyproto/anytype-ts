@@ -8,6 +8,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<I.F
 	
 	render () {
 		const { onHelp } = this.props;
+		const { show } = S.Progress;
 		const current = S.Progress.getCurrent();
 		const total = S.Progress.getTotal();
 
@@ -17,6 +18,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<I.F
 					<div 
 						id="button-progress"
 						className="iconWrap"
+						onClick={() => S.Progress.showSet(!show)}
 					>
 						<div className="inner">{current}</div>
 						<PieChart

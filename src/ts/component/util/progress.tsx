@@ -22,11 +22,11 @@ const Progress = observer(class Progress extends React.Component {
 	};
 	
 	render () {
-		const { space } = S.Common;
-		const list = S.Progress.list.filter(it => !it.spaceId || (it.spaceId == space));
+		const { show } = S.Progress;
+		const list = S.Progress.getList();
 		const cn = [ 'progress' ];
 
-		if (!list.length) {
+		if (!show || !list.length) {
 			return null;
 		};
 
@@ -158,7 +158,7 @@ const Progress = observer(class Progress extends React.Component {
 	setStyle (x: number, y: number) {
 		const coords = this.checkCoords(x, y);
 
-		this.obj.css({ margin: 0, left: coords.x, top: coords.y });
+		this.obj.css({ margin: 0, left: coords.x, top: coords.y, bottom: 'auto' });
 	};
 	
 });
