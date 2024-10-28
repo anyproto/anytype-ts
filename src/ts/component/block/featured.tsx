@@ -744,7 +744,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 				C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value } ]);
 				analytics.changeRelationValue(relation, value, { type: 'featured', id: 'Single' });
-				break;
+				return;
 			};
 		};
 

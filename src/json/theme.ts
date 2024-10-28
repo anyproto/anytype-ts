@@ -2,27 +2,7 @@ export default {
 	iconSpace: {
 		text: '#fff',
 		bg: {
-			yellow: '#ecd91b',
-			orange: '#ffb522',
-			red: '#f55522',
-			pink: '#e51ca0',
-			purple: '#ab50cc',
-			blue: '#3e58eb',
-			ice: '#2aa7ee',
-			teal: '#0fc8ba',
-			green: '#57c600',
 			grey: '#949494',
-		},
-
-		list: [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime', 'green' ],
-	},
-
-	/* ----------------------------------------------------------- */
-
-	'': {
-
-		color: {
-			default: '#252525',
 			yellow: '#ecd91b',
 			orange: '#ffb522',
 			red: '#f55522',
@@ -32,7 +12,27 @@ export default {
 			ice: '#2aa7ee',
 			teal: '#0fc8ba',
 			lime: '#5dd400',
-			green: '#57c600',
+		},
+
+		list: [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
+	},
+
+	/* ----------------------------------------------------------- */
+
+	'': {
+
+		color: {
+			default: '#252525',
+			grey: '#b6b6b6',
+			yellow: '#ecd91b',
+			orange: '#ffb522',
+			red: '#f55522',
+			pink: '#e51ca0',
+			purple: '#ab50cc',
+			blue: '#3e58eb',
+			ice: '#2aa7ee',
+			teal: '#0fc8ba',
+			lime: '#5dd400',
 		},
 
 		graph: {
@@ -65,7 +65,8 @@ export default {
 	dark: {
 
 		color: {
-			default: '#ebebeb',
+			default: '#f8f8f8',
+			grey: '#737373',
 			yellow: '#ecd91b',
 			orange: '#ffb522',
 			red: '#f55522',
@@ -75,7 +76,6 @@ export default {
 			ice: '#2aa7ee',
 			teal: '#0fc8ba',
 			lime: '#5dd400',
-			green: '#57c600',
 		},
 
 		graph: {

@@ -48,7 +48,7 @@
 
                 .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 2px; color: var(--color-text-secondary);  }
                 .statusBar.error { color: var(--color-red); }
-                .statusBar.ok { color: var(--color-green); }
+                .statusBar.ok { color: var(--color-lime); }
 
                 .priceWrapper { margin-bottom: 14px; }
                 .priceWrapper {
@@ -157,7 +157,7 @@
 
             .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 4px; color: var(--color-text-secondary);  }
             .statusBar.error { color: var(--color-red); }
-            .statusBar.ok { color: var(--color-green); }
+            .statusBar.ok { color: var(--color-lime); }
 
             .button { width: 100%; }
         }
