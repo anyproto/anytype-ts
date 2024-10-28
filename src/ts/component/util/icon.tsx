@@ -29,7 +29,7 @@ class Icon extends React.Component<Props> {
 		tooltipY: I.MenuDirection.Bottom,
 	};
 
-	node: any = null;
+	node: HTMLDivElement = null;
 	
 	constructor (props: Props) {
 		super(props);

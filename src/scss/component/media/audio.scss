@@ -50,12 +50,15 @@
             }
         }
 
-        .volumeControls:hover {
+        .volumeWrapper:hover {
             #volume { opacity: 1; pointer-events: all;}
         }
 
         #time { margin: 6px 0px; width: 100%; display: block; }
 
-        #volume { position: fixed; bottom: 36px; right: 12px; opacity: 0; pointer-events: none; transition: opacity $transitionCommon; }
     }
+}
+#controlsContainer { position: relative; }
+#controlsContainer {
+    #volume { position: absolute; opacity: 0; pointer-events: none; transition: opacity $transitionCommon; }
 }

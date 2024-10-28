@@ -1,63 +1,70 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useImperativeHandle, useRef } from 'react';
+import Input from './input';
 
 interface Props {
-    id?: string;
-    className?: string;
-    value: number;
-    min?: number;
-    max?: number;
-    step?: number;
-    onChange?(e: React.ChangeEvent<HTMLInputElement>, v: number): void;
+	id?: string;
+	className?: string;
+	value: number;
+	min?: number;
+	max?: number;
+	step?: number;
+	onChange?(e: React.ChangeEvent<HTMLInputElement>, v: number): void;
 }
 
 const VerticalDrag = React.forwardRef<HTMLInputElement, Props>(({
-    id,
-    className = '',
-    value,
-    min = 0,
-    max = 1,
-    step = 0.01,
-    onChange,
-}, ref) => {
+	id,
+	className = '',
+	value,
+	min = 0,
+	max = 1,
+	step = 0.01,
+	onChange,
+}, forwardedRef) => {
+	const divRef = useRef(null);
+	useImperativeHandle(forwardedRef, () => divRef.current as HTMLInputElement);
+	
+	const inputRef = useRef(null);
 
-    const setBackgroundSize = () => {
-        const el = (ref as React.RefObject<HTMLInputElement>)?.current;
-        if (el) {
-            const mn = min || 0;
-            const mx = max || 100;
-            const size = Math.round((value - mn) / (mx - mn) * 100);
+	const setBackgroundSize = () => {
+		if (inputRef) {
+			const mn = min || 0;
+			const mx = max || 100;
+			const size = Math.round((value - mn) / (mx - mn) * 100);
 
-            el.style.setProperty('--background-size', `${size}%`);
-        }
-    };
+			console.log('size', size);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (onChange) {
-            onChange(e, Number(e.target.value));
-        }
-    };
+			inputRef.current?.style?.setProperty('--background-size', `${size}%`);
+		}
+	};
 
-    useEffect(()=>{
-        setBackgroundSize();
-    }, [value]);
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (onChange) {
+			onChange(e, Number(e.target.value));
+		}
+	};
 
-    return (
-        <div 
-        id={id}
-        className={`input-vertical-drag ${className}`}>
-            <input
-                ref={ref}
-                type="range"
-                value={value}
-                min={min}
-                max={max}
-                step={step}
-                onChange={handleChange}
-                data-selection="off"
-        />
-        </div>
-    );
+	useEffect(()=>{
+		setBackgroundSize();
+	}, [value]);
+
+	return (
+		<div 
+			id={id}
+			ref={divRef}
+			className={`input-vertical-drag ${className}`}
+		>
+			<Input
+				type="range"
+				ref={inputRef}
+				value={String(value)}
+				min={min}
+				max={max}
+				step={step}
+				onChange={handleChange}
+			/>
+		</div>
+	);
 });
 
 export default VerticalDrag;

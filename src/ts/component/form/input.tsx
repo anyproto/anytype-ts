@@ -20,6 +20,9 @@ interface Props {
 	pattern?: string;
 	inputMode?: any;
 	noValidate?: boolean;
+	min?: number;
+	max?: number;
+	step?: number;
 	onCompositionStart?(): void;
 	onCompositionEnd?(): void;
 	onInput?(e: any, value: string): void;
@@ -79,7 +82,7 @@ class Input extends React.Component<Props, State> {
 	render () {
 		const { 
 			id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, pattern, inputMode, noValidate,
-			onClick, onMouseEnter, onMouseLeave 
+			onClick, onMouseEnter, onMouseLeave, min, max, step
 		} = this.props;
 		const type = String(this.state.type || this.props.type || '');
 		const cn = [ 'input', 'input-' + type ];
@@ -123,6 +126,9 @@ class Input extends React.Component<Props, State> {
 				accept={accept ? accept : undefined}
 				multiple={multiple}
 				spellCheck={false}
+				min={min}
+				max={max}
+				step={step}
 			/>
 		);
 	};

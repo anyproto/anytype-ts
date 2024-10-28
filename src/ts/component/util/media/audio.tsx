@@ -3,6 +3,8 @@ import $ from 'jquery';
 import { Icon, Drag } from 'Component';
 import { U } from 'Lib';
 import VerticalDrag from 'Component/form/verticalDrag';
+import ReactDOM from 'react-dom';
+import { Floater } from '../floater';
 
 interface PlaylistItem {
     name: string;
@@ -15,30 +17,24 @@ interface Props {
     onPause?(): void;
 };
 
-interface State {
-    volume: number;
-}
+class MediaAudio extends React.Component<Props> {
+    node: HTMLDivElement = null;
+    timeDragRef: Drag = null;
+    audioNode: HTMLAudioElement = null;
+    volumeIconDiv: HTMLDivElement = null;
 
-class MediaAudio extends React.Component<Props, State> {
-    node: any = null;
     volume = 0;
     playOnSeek = false;
-    refTime: any = null;
-    refVolume = React.createRef<HTMLInputElement>();
     current: PlaylistItem = { name: '', src: '' };
-    audioNode: HTMLAudioElement;
-    resizeObserver: ResizeObserver;
+
+    nodeResizeObserver: ResizeObserver;
 
     constructor (props: Props) {
         super(props);
-        this.state = {
-            volume: 1,
-        };
-
         this.onPlayClick = this.onPlayClick.bind(this);
         this.onMute = this.onMute.bind(this);
         this.onResize = this.onResize.bind(this);
-        this.resizeObserver = new ResizeObserver(this.onResize);
+        this.nodeResizeObserver = new ResizeObserver(this.onResize);
     };
 
     render () {
@@ -59,7 +55,7 @@ class MediaAudio extends React.Component<Props, State> {
                         <div className="timeDragWrapper">
                             <Drag
                                 id="time"
-                                ref={ref => this.refTime = ref}
+                                ref={ref => this.timeDragRef = ref}
                                 value={0}
                                 onStart={(e: any, v: number) => this.onTime(v)}
                                 onMove={(e: any, v: number) => this.onTime(v)}
@@ -71,14 +67,22 @@ class MediaAudio extends React.Component<Props, State> {
                             <span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
                             <span id="timeTotal" className="total">0:00</span>
                         </div>
-                        <div className="volumeControls">
-                            <Icon className="volume" onClick={this.onMute} />
-                            <VerticalDrag
-                                id="volume"
-                                ref={this.refVolume}
-                                value={this.state.volume}
-                                onChange={(e: any, v: number) => this.onVolume(v)}
-                            />
+                        <div className="volumeWrapper">
+                                <Icon
+                                ref={el => {
+                                    if (el) {
+                                        this.volumeIconDiv = el.node;
+                                    }
+                                }} 
+                                className="volume" 
+                                onClick={this.onMute} />
+                            <Floater anchorEl={this.volumeIconDiv}>
+                                <VerticalDrag
+                                    id="volume"
+                                    value={0}
+                                    onChange={(e: any, v: number) => this.onVolume(v)}
+                                />
+                            </Floater>
                         </div>
                     </div>
                 </div>
@@ -93,7 +97,7 @@ class MediaAudio extends React.Component<Props, State> {
             this.current = playlist[0];
         };
 
-        this.resizeObserver.observe(this.node);
+        this.nodeResizeObserver.observe(this.node);
 
         this.forceUpdate();
     };
@@ -105,7 +109,7 @@ class MediaAudio extends React.Component<Props, State> {
 
     componentWillUnmount () {
         this.unbind();
-        this.resizeObserver.disconnect();
+        this.nodeResizeObserver.disconnect();
     };
 
     rebind () {
@@ -133,8 +137,8 @@ class MediaAudio extends React.Component<Props, State> {
     };
 
     resize () {
-        if (this.refTime) {
-            this.refTime.resize();
+        if (this.timeDragRef) {
+            this.timeDragRef.resize();
         };
     };
 
@@ -190,19 +194,15 @@ class MediaAudio extends React.Component<Props, State> {
         e.preventDefault();
         e.stopPropagation();
 
-        const newVolume = this.state.volume ? 0 : (this.volume || 1);
+        const newVolume = this.volume || 1;
         this.audioNode.volume = newVolume;
-        this.setState(s => ({...s, volume: newVolume}));
 
         this.setVolumeIcon();
     };
 
     onVolume (v: number) {
         const el = this.audioNode;
-
         this.volume = el.volume = v;
-
-        this.setState(s => ({...s, volume: v}));
 
         this.setVolumeIcon();
     };
@@ -222,7 +222,7 @@ class MediaAudio extends React.Component<Props, State> {
             this.playOnSeek = true;
         };
 
-        this.audioNode.currentTime = isNaN(this.audioNode.duration) ? 0 : v * this.audioNode.duration;
+        this.audioNode.currentTime = Number(v * this.audioNode.duration) || 0;
     };
 
     onTimeEnd (v: number) {
@@ -247,7 +247,7 @@ class MediaAudio extends React.Component<Props, State> {
         t = this.getTime(el.duration);
         total.text(`${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`);
 
-        this.refTime.setValue(el.currentTime / el.duration);
+        this.timeDragRef.setValue(el.currentTime / el.duration);
     };
 
     getTime (t: number): { m: number, s: number } {
