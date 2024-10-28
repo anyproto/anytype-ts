@@ -50,7 +50,8 @@ export const Floater: React.FC<Props> = ({
       style={{
         position: 'absolute',
         pointerEvents: 'none',
-        zIndex: 4,
+        // This is hopefully the highest z-index in the app
+        zIndex: 200,
         top: `${position.top}px`,
         left: `${position.left}px`,
       }}>

@@ -56,5 +56,5 @@
     }
 }
 
-.volume.input-vertical-drag { opacity: 0; transition: opacity $transitionSmoothCommon; pointer-events: none; z-index: 0; }
-.volume.input-vertical-drag.visible { opacity: 1; pointer-events: auto; z-index: 4; }
+.volume.input-vertical-drag { opacity: 0; transition: opacity $transitionSmoothCommon; pointer-events: none; }
+.volume.input-vertical-drag.visible { opacity: 1; pointer-events: auto; }

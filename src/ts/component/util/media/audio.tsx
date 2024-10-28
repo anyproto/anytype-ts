@@ -33,7 +33,7 @@ class MediaAudio extends React.Component<Props, State> {
     playOnSeek = false;
     current: PlaylistItem = { name: '', src: '' };
 
-    nodeResizeObserver: ResizeObserver;
+    resizeObserver: ResizeObserver;
 
     volumeSliderFadeOut = _.debounce(() => this.setState({ showVolumeSlider: false }), 1200);
 
@@ -47,7 +47,7 @@ class MediaAudio extends React.Component<Props, State> {
         this.onPlayClick = this.onPlayClick.bind(this);
         this.onMute = this.onMute.bind(this);
         this.onResize = this.onResize.bind(this);
-        this.nodeResizeObserver = new ResizeObserver(this.onResize);
+        this.resizeObserver = new ResizeObserver(this.onResize);
     };
 
     render () {
@@ -125,7 +125,7 @@ class MediaAudio extends React.Component<Props, State> {
             this.current = playlist[0];
         };
 
-        this.nodeResizeObserver.observe(this.node);
+        this.resizeObserver.observe(this.node);
 
         this.forceUpdate();
     };
@@ -137,7 +137,7 @@ class MediaAudio extends React.Component<Props, State> {
 
     componentWillUnmount () {
         this.unbind();
-        this.nodeResizeObserver.disconnect();
+        this.resizeObserver.unobserve(this.node);
     };
 
     rebind () {
