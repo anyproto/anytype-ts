@@ -19,6 +19,7 @@ interface Props {
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
+	onMouseMove?(e: any): void;
 	onDragStart?(e: any): void;
 	onContextMenu?(e: any): void;
 };
@@ -29,7 +30,7 @@ class Icon extends React.Component<Props> {
 		tooltipY: I.MenuDirection.Bottom,
 	};
 
-	node: any = null;
+	node: HTMLDivElement = null;
 	
 	constructor (props: Props) {
 		super(props);
@@ -62,6 +63,7 @@ class Icon extends React.Component<Props> {
 				onContextMenu={this.onContextMenu} 
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave} 
+				onMouseMove={this.props.onMouseMove}
 				onClick={onClick} 
 				onDragStart={onDragStart} 
 				className={cn.join(' ')} 

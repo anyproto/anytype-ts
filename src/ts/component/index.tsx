@@ -51,7 +51,8 @@ import Checkbox from './form/checkbox';
 import Textarea from './form/textarea';
 import Button from './form/button';
 import Select from './form/select';
-import Drag from './form/drag';
+import DragHorizontal from './form/dragHorizontal';
+import DragVertical from './form/dragVertical';
 import Pin from './form/pin';
 import Filter from './form/filter';
 import Phrase from './form/phrase';
@@ -132,7 +133,8 @@ export {
 	Button,
 	Select,
 	Toast,
-	Drag,
+	DragHorizontal,
+	DragVertical,
 	Marker,
 	Tag,
 	Loader,

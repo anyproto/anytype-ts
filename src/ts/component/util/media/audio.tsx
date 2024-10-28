@@ -1,8 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Drag } from 'Component';
+import { Icon, DragHorizontal } from 'Component';
 import { U } from 'Lib';
-import VerticalDrag from 'Component/form/verticalDrag';
+import DragVertical from 'Component/form/dragVertical';
+import { Floater } from '../floater';
+import _ from 'lodash';
 
 interface PlaylistItem {
     name: string;
@@ -17,24 +19,34 @@ interface Props {
 
 interface State {
     volume: number;
-}
+    muted: boolean;
+    showVolumeSlider: boolean;
+    startedPlaying: boolean;
+    timeMetric: string;
+};
 
 class MediaAudio extends React.Component<Props, State> {
-    node: any = null;
-    volume = 0;
+    node: HTMLDivElement = null;
+    timeDragRef: DragHorizontal = null;
+    audioNode: HTMLAudioElement = null;
+    volumeIcon: Icon = null;
+
     playOnSeek = false;
-    refTime: any = null;
-    refVolume = React.createRef<HTMLInputElement>();
     current: PlaylistItem = { name: '', src: '' };
-    audioNode: HTMLAudioElement;
+
     resizeObserver: ResizeObserver;
+
+    fadeOutVolumeSlider = _.debounce(() => this.setState({ showVolumeSlider: false }), 1200);
 
     constructor (props: Props) {
         super(props);
         this.state = {
             volume: 1,
+            muted: false,
+            showVolumeSlider: false,
+            startedPlaying: false,
+            timeMetric: '',
         };
-
         this.onPlayClick = this.onPlayClick.bind(this);
         this.onMute = this.onMute.bind(this);
         this.onResize = this.onResize.bind(this);
@@ -42,6 +54,8 @@ class MediaAudio extends React.Component<Props, State> {
     };
 
     render () {
+        const iconClasses = ['volume', this.state.volume === 0 || this.state.muted && 'active'];
+        const volumeSliderClasses = ['volume', this.state.showVolumeSlider && 'visible'];
         return (
             <div
                 ref={node => this.node = node}
@@ -57,9 +71,9 @@ class MediaAudio extends React.Component<Props, State> {
                         <Icon className="play" onClick={this.onPlayClick} />
 
                         <div className="timeDragWrapper">
-                            <Drag
+                            <DragHorizontal
                                 id="time"
-                                ref={ref => this.refTime = ref}
+                                ref={ref => this.timeDragRef = ref}
                                 value={0}
                                 onStart={(e: any, v: number) => this.onTime(v)}
                                 onMove={(e: any, v: number) => this.onTime(v)}
@@ -68,17 +82,30 @@ class MediaAudio extends React.Component<Props, State> {
                         </div>
 
                         <div className="time">
-                            <span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
-                            <span id="timeTotal" className="total">0:00</span>
+                            <span id="timeMetric" className="metric">{this.state.timeMetric}</span>
                         </div>
-                        <div className="volumeControls">
-                            <Icon className="volume" onClick={this.onMute} />
-                            <VerticalDrag
-                                id="volume"
-                                ref={this.refVolume}
-                                value={this.state.volume}
-                                onChange={(e: any, v: number) => this.onVolume(v)}
-                            />
+                        <div
+                            onMouseLeave={this.fadeOutVolumeSlider}
+                            >
+                            <Icon
+                                onMouseMove={() => this.setState({ showVolumeSlider: true })}
+                                ref={el => this.volumeIcon = el} 
+                                className={iconClasses.filter(Boolean).join(' ')} 
+                                
+                                onClick={this.onMute} 
+                                />
+                            <Floater 
+                                anchorEl={this.volumeIcon?.node} 
+                                anchorTo={'top'} 
+                                offset={{x: 0, y: -2}}>
+                                <DragVertical
+                                    id="volume"
+                                    className={volumeSliderClasses.filter(Boolean).join(' ')}
+                                    value={this.state.volume}
+                                    onMouseMove={() => this.setState({ showVolumeSlider: true })}
+                                    onChange={(e: any, v: number) => this.onVolume(v)}
+                                />
+                            </Floater>
                         </div>
                     </div>
                 </div>
@@ -105,7 +132,7 @@ class MediaAudio extends React.Component<Props, State> {
 
     componentWillUnmount () {
         this.unbind();
-        this.resizeObserver.disconnect();
+        this.resizeObserver.unobserve(this.node);
     };
 
     rebind () {
@@ -133,8 +160,8 @@ class MediaAudio extends React.Component<Props, State> {
     };
 
     resize () {
-        if (this.refTime) {
-            this.refTime.resize();
+        if (this.timeDragRef) {
+            this.timeDragRef.resize();
         };
     };
 
@@ -155,6 +182,8 @@ class MediaAudio extends React.Component<Props, State> {
     };
 
     onPlay () {
+        this.setState({ startedPlaying: true });
+
         const { onPlay } = this.props;
         const node = $(this.node);
         const icon = node.find('.icon.play');
@@ -187,31 +216,14 @@ class MediaAudio extends React.Component<Props, State> {
     };
 
     onMute (e: React.MouseEvent) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const newVolume = this.state.volume ? 0 : (this.volume || 1);
-        this.audioNode.volume = newVolume;
-        this.setState(s => ({...s, volume: newVolume}));
-
-        this.setVolumeIcon();
+        const muted = !this.state.muted;
+        this.setState({ muted });
+        this.audioNode.volume = this.state.volume * (muted ? 0 : 1);
     };
 
-    onVolume (v: number) {
-        const el = this.audioNode;
-
-        this.volume = el.volume = v;
-
-        this.setState(s => ({...s, volume: v}));
-
-        this.setVolumeIcon();
-    };
-
-    setVolumeIcon () {
-        const node = $(this.node);
-        const icon = node.find('.icon.volume');
-
-        this.audioNode.volume ? icon.removeClass('active') : icon.addClass('active');
+    onVolume (volume: number) {
+        this.setState({ volume });
+        this.audioNode.volume = volume * (this.state.muted ? 0 : 1);
     };
 
     onTime (v: number) {
@@ -222,7 +234,7 @@ class MediaAudio extends React.Component<Props, State> {
             this.playOnSeek = true;
         };
 
-        this.audioNode.currentTime = isNaN(this.audioNode.duration) ? 0 : v * this.audioNode.duration;
+        this.audioNode.currentTime = Number(v * this.audioNode.duration) || 0;
     };
 
     onTimeEnd (v: number) {
@@ -237,17 +249,9 @@ class MediaAudio extends React.Component<Props, State> {
             return;
         };
 
-        const node = $(this.node);
-        const current = node.find('#timeCurrent');
-        const total = node.find('#timeTotal');
-
-        let t = this.getTime(el.currentTime);
-        current.text(`${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`);
-
-        t = this.getTime(el.duration);
-        total.text(`${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`);
-
-        this.refTime.setValue(el.currentTime / el.duration);
+        const t = this.state.startedPlaying ? this.getTime(el.currentTime) : this.getTime(el.duration);
+        this.setState({ timeMetric: `${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`});
+        this.timeDragRef.setValue(el.currentTime / el.duration);
     };
 
     getTime (t: number): { m: number, s: number } {

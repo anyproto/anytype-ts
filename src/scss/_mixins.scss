@@ -1,5 +1,6 @@
 $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
 $transitionCommon: 0.1s $easeInQuint;
+$transitionSmoothCommon: 0.35s $easeInQuint;
 $transitionAllCommon: all $transitionCommon;
 $transitionSidebarTime: 0.18s;
 
@@ -44,7 +45,7 @@ $vaultWidthCollapsed: 72px;
 @mixin pos-abs-mid { position: absolute; left: 50%; top: 50%; }
 
 @mixin clamp { -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; }
-@mixin clamp1 { @include clamp; -webkit-line-clamp: 1;  } 
-@mixin clamp2 { @include clamp; -webkit-line-clamp: 2; } 
-@mixin clamp3 { @include clamp; -webkit-line-clamp: 3; } 
-@mixin clamp4 { @include clamp; -webkit-line-clamp: 4; } 
+@mixin clamp1 { @include clamp; -webkit-line-clamp: 1; }
+@mixin clamp2 { @include clamp; -webkit-line-clamp: 2; }
+@mixin clamp3 { @include clamp; -webkit-line-clamp: 3; }
+@mixin clamp4 { @include clamp; -webkit-line-clamp: 4; }
