@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { I } from 'Lib';
 
-const SidebarSectionTitle = observer(class SidebarSectionTitle extends React.Component<I.SidebarSectionComponent> {
+const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends React.Component<I.SidebarSectionComponent> {
 	
     render () {
 		const { object } = this.props;
@@ -26,4 +26,4 @@ const SidebarSectionTitle = observer(class SidebarSectionTitle extends React.Com
 
 });
 
-export default SidebarSectionTitle;
+export default SidebarSectionTypeTitle;

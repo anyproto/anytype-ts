@@ -1,7 +1,13 @@
 > .sidebarPage {
-	.section { background: var(--color-bg-primary); border-radius: 12px; }
+	.section { background: var(--color-bg-primary); border-radius: 12px; padding: 8px 0px; }
 
 	.section {
+		.titleWrap { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 8px 0px; padding: 0px 8px 0px 16px; }
+		.titleWrap {
+			.icon.withBackground { width: 24px !important; height: 24px !important; }
+			.icon.plus { background-image: url('~img/icon/widget/plus.svg'); }
+		}
+
 		.title { @include text-paragraph; font-weight: 600; }
 		.label { padding: 5px 16px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
 
@@ -28,11 +34,8 @@
 		}
 	}
 
-	.section.sectionTitle { 
-		display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; padding: 16px;
-	}
+	.section.sectionTitle { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; padding: 16px; }
 
-	.section.sectionLayout { padding: 8px 0px; }
 }
 
 @import "./page/type.scss";

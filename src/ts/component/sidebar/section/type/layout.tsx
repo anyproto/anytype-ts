@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Label, Select, Drag } from 'Component';
 import { I, U, translate } from 'Lib';
 
-const SidebarSectionLayout = observer(class SidebarSectionTitle extends React.Component<I.SidebarSectionComponent> {
+const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends React.Component<I.SidebarSectionComponent> {
 	
 	node = null;
 
@@ -89,4 +89,4 @@ const SidebarSectionLayout = observer(class SidebarSectionTitle extends React.Co
 
 });
 
-export default SidebarSectionLayout;
+export default SidebarSectionTypeLayout;

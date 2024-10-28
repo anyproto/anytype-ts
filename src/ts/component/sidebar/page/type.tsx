@@ -3,8 +3,9 @@ import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
 import { I, S, translate, sidebar } from 'Lib';
 
-import SectionTitle from 'Component/sidebar/section/title';
-import SectionLayout from 'Component/sidebar/section/layout';
+import SectionTitle from 'Component/sidebar/section/type/title';
+import SectionLayout from 'Component/sidebar/section/type/layout';
+import SectionRelation from 'Component/sidebar/section/type/relation';
 
 const SidebarPageType = observer(class SidebarPageType extends React.Component<I.SidebarPageComponent> {
 	
@@ -39,7 +40,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				<div className="body customScrollbar">
 					<SectionTitle {...this.props} object={type} />
 					<SectionLayout {...this.props} object={type} />
-					<div className="section"></div>
+					<SectionRelation {...this.props} object={type} />
 				</div>
 			</React.Fragment>
 		);

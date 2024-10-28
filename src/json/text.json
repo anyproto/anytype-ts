@@ -1826,6 +1826,9 @@
 	"sidebarSectionLayoutType": "Layout type",
 	"sidebarSectionLayoutAlign": "Header position",
 	"sidebarSectionLayoutWidth": "Layout width",
+	"sidebarTypeRelation": "Fields",
+	"sidebarTypeRelationHeader": "Header",
+	"sidebarTypeRelationSidebar": "Sidebar",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
