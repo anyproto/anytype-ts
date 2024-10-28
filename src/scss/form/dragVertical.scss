@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.input-drag-vertical { padding: 8px; width: 20px; height: 88px; border-radius: 8px; background-color: var(--color-control-bg); box-shadow: 0px 4px 16px var(--color-control-accent); visibility: visible; }
+.input-drag-vertical { padding: 8px; width: 20px; height: 88px; border-radius: 8px; background-color: var(--color-control-bg); box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); visibility: visible; }
 .input-drag-vertical.hidden { visibility: hidden; }
 .input-drag-vertical {
     input[type='range'] { position: absolute; width: 4px; height: 72px; cursor: pointer;  writing-mode: vertical-lr; padding: unset; }
