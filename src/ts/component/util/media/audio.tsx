@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Drag, Input } from 'Component';
+import { Icon, DragHorizontal } from 'Component';
 import { U } from 'Lib';
-import VerticalDrag from 'Component/form/verticalDrag';
+import DragVertical from 'Component/form/dragVertical';
 import { Floater } from '../floater';
 import _ from 'lodash';
 
@@ -27,17 +27,16 @@ interface State {
 
 class MediaAudio extends React.Component<Props, State> {
     node: HTMLDivElement = null;
-    timeDragRef: Drag = null;
+    timeDragRef: DragHorizontal = null;
     audioNode: HTMLAudioElement = null;
-    volumeIconDiv: HTMLDivElement = null;
-    volumeSliderRef: HTMLDivElement = null;
+    volumeIcon: Icon = null;
 
     playOnSeek = false;
     current: PlaylistItem = { name: '', src: '' };
 
     resizeObserver: ResizeObserver;
 
-    volumeSliderFadeOut = _.debounce(() => this.setState({ showVolumeSlider: false }), 1200);
+    fadeOutVolumeSlider = _.debounce(() => this.setState({ showVolumeSlider: false }), 1200);
 
     constructor (props: Props) {
         super(props);
@@ -55,6 +54,8 @@ class MediaAudio extends React.Component<Props, State> {
     };
 
     render () {
+        const iconClasses = ['volume', this.state.volume === 0 || this.state.muted && 'active'];
+        const volumeSliderClasses = ['volume', this.state.showVolumeSlider && 'visible'];
         return (
             <div
                 ref={node => this.node = node}
@@ -70,7 +71,7 @@ class MediaAudio extends React.Component<Props, State> {
                         <Icon className="play" onClick={this.onPlayClick} />
 
                         <div className="timeDragWrapper">
-                            <Drag
+                            <DragHorizontal
                                 id="time"
                                 ref={ref => this.timeDragRef = ref}
                                 value={0}
@@ -84,31 +85,22 @@ class MediaAudio extends React.Component<Props, State> {
                             <span id="timeMetric" className="metric">{this.state.timeMetric}</span>
                         </div>
                         <div
-                            onMouseLeave={this.volumeSliderFadeOut}
+                            onMouseLeave={this.fadeOutVolumeSlider}
                             >
                             <Icon
                                 onMouseMove={() => this.setState({ showVolumeSlider: true })}
-                                ref={el => {
-                                    this.volumeIconDiv = el?.node;
-                                }} 
-                                className={`volume ${this.state.volume === 0 || this.state.muted ? 'active' : ''}`} 
+                                ref={el => this.volumeIcon = el} 
+                                className={iconClasses.filter(Boolean).join(' ')} 
+                                
                                 onClick={this.onMute} 
                                 />
                             <Floater 
-                                anchorEl={this.volumeIconDiv} 
+                                anchorEl={this.volumeIcon?.node} 
                                 anchorTo={'top'} 
                                 offset={{x: 0, y: -2}}>
-                                <VerticalDrag
+                                <DragVertical
                                     id="volume"
-                                    ref={el => {
-                                        if (el) {
-                                            (el as unknown as HTMLDivElement).addEventListener('animationend', () => {
-                                                console.log('animationend');
-                                            }   
-                                        );
-                                        }
-                                    }}
-                                    className={`volume ${this.state.showVolumeSlider ? 'visible' : ''}`}
+                                    className={volumeSliderClasses.filter(Boolean).join(' ')}
                                     value={this.state.volume}
                                     onMouseMove={() => this.setState({ showVolumeSlider: true })}
                                     onChange={(e: any, v: number) => this.onVolume(v)}

@@ -14,7 +14,7 @@ interface Props {
 	onMouseMove?(e:any): void;
 }
 
-const VerticalDrag = React.forwardRef<Input, Props>(({
+const DragVertical = React.forwardRef<Input, Props>(({
 	id,
 	className = '',
 	value,
@@ -69,4 +69,4 @@ const VerticalDrag = React.forwardRef<Input, Props>(({
 	);
 });
 
-export default VerticalDrag;
+export default DragVertical;

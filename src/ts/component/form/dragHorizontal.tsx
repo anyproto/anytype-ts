@@ -14,7 +14,7 @@ interface Props {
 
 const SNAP = 0.025;
 
-class Drag extends React.Component<Props> {
+class DragHorizontal extends React.Component<Props> {
 
 	public static defaultProps = {
 		value: 0,
@@ -180,4 +180,4 @@ class Drag extends React.Component<Props> {
 	
 };
 
-export default Drag;
+export default DragHorizontal;
