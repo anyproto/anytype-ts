@@ -68,16 +68,14 @@ class ElementMovementObserver {
     // Start observing the element and its descendants
     this.observer.observe(this.element, config);
 
-    // Also observe the document body for layout changes
+    // Observe the document body for layout changes
     this.observer.observe(document.body, config);
 
-    // Optional: Add resize observer for size changes
     const resizeObserver = new ResizeObserver(() => {
       this.checkForMovement();
     });
     resizeObserver.observe(this.element);
 
-    // Optional: Add scroll listener
     window.addEventListener('scroll', () => {
       this.checkForMovement();
     });

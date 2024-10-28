@@ -13,5 +13,5 @@
         transform: scaleY(-1); /* Flips the background vertically */ background-size: 100% var(--background-size, 0%); background-repeat: no-repeat;
         border-radius: 2px; }
 
-    input[type='range']::-webkit-slider-thumb { width: 4px; height: 4px; cursor: pointer; background: transparent; border: none; border-radius: 50%; margin-top: -2px; }
+    input[type='range']::-webkit-slider-thumb { width: 4px; height: 4px; background: transparent; border: none; border-radius: 50%; margin-top: -2px; }
 }

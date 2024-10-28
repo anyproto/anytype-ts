@@ -10,9 +10,11 @@ interface Props {
 	max?: number;
 	step?: number;
 	onChange?(e: React.ChangeEvent<HTMLInputElement>, v: number): void;
+	onMouseLeave?(e:any): void;
+	onMouseMove?(e:any): void;
 }
 
-const VerticalDrag = React.forwardRef<HTMLInputElement, Props>(({
+const VerticalDrag = React.forwardRef<Input, Props>(({
 	id,
 	className = '',
 	value,
@@ -20,21 +22,19 @@ const VerticalDrag = React.forwardRef<HTMLInputElement, Props>(({
 	max = 1,
 	step = 0.01,
 	onChange,
+	onMouseLeave,
+	onMouseMove,
 }, forwardedRef) => {
-	const divRef = useRef(null);
-	useImperativeHandle(forwardedRef, () => divRef.current as HTMLInputElement);
-	
 	const inputRef = useRef(null);
+	const divRef = useRef(null);
+	useImperativeHandle(forwardedRef, () => divRef.current);
 
 	const setBackgroundSize = () => {
 		if (inputRef) {
 			const mn = min || 0;
 			const mx = max || 100;
 			const size = Math.round((value - mn) / (mx - mn) * 100);
-
-			console.log('size', size);
-
-			inputRef.current?.style?.setProperty('--background-size', `${size}%`);
+			inputRef.current?.node.style?.setProperty('--background-size', `${size}%`);
 		}
 	};
 
@@ -53,6 +53,8 @@ const VerticalDrag = React.forwardRef<HTMLInputElement, Props>(({
 			id={id}
 			ref={divRef}
 			className={`input-vertical-drag ${className}`}
+			onMouseLeave={onMouseLeave}
+			onMouseMove={onMouseMove}
 		>
 			<Input
 				type="range"

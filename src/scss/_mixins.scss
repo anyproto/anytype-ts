@@ -1,5 +1,6 @@
 $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
 $transitionCommon: 0.1s $easeInQuint;
+$transitionSmoothCommon: 0.35s $easeInQuint;
 $transitionAllCommon: all $transitionCommon;
 $transitionSidebarTime: 0.18s;
 

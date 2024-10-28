@@ -1,10 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Drag } from 'Component';
+import { Icon, Drag, Input } from 'Component';
 import { U } from 'Lib';
 import VerticalDrag from 'Component/form/verticalDrag';
-import ReactDOM from 'react-dom';
 import { Floater } from '../floater';
+import _ from 'lodash';
 
 interface PlaylistItem {
     name: string;
@@ -17,20 +17,33 @@ interface Props {
     onPause?(): void;
 };
 
-class MediaAudio extends React.Component<Props> {
+interface State {
+    volume: number;
+    muted: boolean;
+    showVolumeSlider: boolean;
+};
+
+class MediaAudio extends React.Component<Props, State> {
     node: HTMLDivElement = null;
     timeDragRef: Drag = null;
     audioNode: HTMLAudioElement = null;
     volumeIconDiv: HTMLDivElement = null;
+    volumeSliderRef: HTMLDivElement = null;
 
-    volume = 0;
     playOnSeek = false;
     current: PlaylistItem = { name: '', src: '' };
 
     nodeResizeObserver: ResizeObserver;
 
+    volumeSliderFadeOut = _.debounce(() => this.setState({ showVolumeSlider: false }), 1200);
+
     constructor (props: Props) {
         super(props);
+        this.state = {
+            volume: 1,
+            muted: false,
+            showVolumeSlider: false,
+        };
         this.onPlayClick = this.onPlayClick.bind(this);
         this.onMute = this.onMute.bind(this);
         this.onResize = this.onResize.bind(this);
@@ -67,21 +80,36 @@ class MediaAudio extends React.Component<Props> {
                             <span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
                             <span id="timeTotal" className="total">0:00</span>
                         </div>
-                        <div className="volumeWrapper">
-                                <Icon
+                        <div
+                            onMouseLeave={this.volumeSliderFadeOut}
+                            >
+                            <Icon
+                                onMouseMove={() => this.setState({ showVolumeSlider: true })}
                                 ref={el => {
-                                    if (el) {
-                                        this.volumeIconDiv = el.node;
-                                    }
+                                    this.volumeIconDiv = el?.node;
                                 }} 
-                                className="volume" 
-                                onClick={this.onMute} />
-                            <Floater anchorEl={this.volumeIconDiv}>
+                                className={`volume ${this.state.volume === 0 || this.state.muted ? 'active' : ''}`} 
+                                onClick={this.onMute} 
+                                />
+                            <Floater 
+                                anchorEl={this.volumeIconDiv} 
+                                anchorTo={'top'} 
+                                offset={{x: 0, y: -2}}>
                                 <VerticalDrag
                                     id="volume"
-                                    value={0}
+                                    ref={el => {
+                                        if (el) {
+                                            (el as unknown as HTMLDivElement).addEventListener('animationend', () => {
+                                                console.log('animationend');
+                                            }   
+                                        );
+                                        }
+                                    }}
+                                    className={`volume ${this.state.showVolumeSlider ? 'visible' : ''}`}
+                                    value={this.state.volume}
+                                    onMouseMove={() => this.setState({ showVolumeSlider: true })}
                                     onChange={(e: any, v: number) => this.onVolume(v)}
-                                />
+                                    />
                             </Floater>
                         </div>
                     </div>
@@ -191,27 +219,14 @@ class MediaAudio extends React.Component<Props> {
     };
 
     onMute (e: React.MouseEvent) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const newVolume = this.volume || 1;
-        this.audioNode.volume = newVolume;
-
-        this.setVolumeIcon();
+        const muted = !this.state.muted;
+        this.setState({ muted });
+        this.audioNode.volume = this.state.volume * (muted ? 0 : 1);
     };
 
-    onVolume (v: number) {
-        const el = this.audioNode;
-        this.volume = el.volume = v;
-
-        this.setVolumeIcon();
-    };
-
-    setVolumeIcon () {
-        const node = $(this.node);
-        const icon = node.find('.icon.volume');
-
-        this.audioNode.volume ? icon.removeClass('active') : icon.addClass('active');
+    onVolume (volume: number) {
+        this.setState({ volume });
+        this.audioNode.volume = volume * (this.state.muted ? 0 : 1);
     };
 
     onTime (v: number) {
