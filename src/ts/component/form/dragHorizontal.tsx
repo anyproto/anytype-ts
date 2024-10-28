@@ -40,7 +40,7 @@ class DragHorizontal extends React.Component<Props> {
 	
 	render () {
 		const { id, className } = this.props;
-		const cn = [ 'input-drag' ];
+		const cn = [ 'input-drag-horizontal' ];
 
 		if (className) {
 			cn.push(className);

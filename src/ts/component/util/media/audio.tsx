@@ -104,7 +104,7 @@ class MediaAudio extends React.Component<Props, State> {
                                     value={this.state.volume}
                                     onMouseMove={() => this.setState({ showVolumeSlider: true })}
                                     onChange={(e: any, v: number) => this.onVolume(v)}
-                                    />
+                                />
                             </Floater>
                         </div>
                     </div>

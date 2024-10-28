@@ -18,19 +18,15 @@
 
             .timeDragWrapper { flex: 1 0 auto; }
 
-            --icon-size: 20px;
-
             .icon { vertical-align: top; transition: none; }
-            .icon.play {
-                width: var(--icon-size); height: var(--icon-size); min-width: var(--icon-size); min-height: var(--icon-size); background-image: url('~img/icon/audio/play.svg');
-            }
+            .icon.play { width: var(20px); height: var(20px); min-width: var(20px); min-height: var(20px); background-image: url('~img/icon/audio/play.svg'); }
             .icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
             
-            .input-drag { 
+            .input-drag-horizontal { 
                 .icon { cursor: default; }
             }
             
-            .icon.volume { width: var(--icon-size); height: var(--icon-size);  min-width: var(--icon-size); min-height: var(--icon-size); background-image: url('~img/icon/audio/volume.svg'); }
+            .icon.volume { width: var(20px); height: var(20px);  min-width: var(20px); min-height: var(20px); background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
 
             .icon.volume::before { position: absolute; content: ''; top: -10px; right: 0px; left: 0px; bottom: 0px; z-index: 100; }
@@ -41,8 +37,8 @@
                 .time { display: none; }
             }
     
-            .input-drag { display: inline-block; vertical-align: top; height: 20px;}
-            .input-drag {
+            .input-drag-horizontal { display: inline-block; vertical-align: top; height: 20px;}
+            .input-drag-horizontal {
                 .icon { width: 6px; height: 6px; border: 0px; background: none; }
                 .bullet { width: 12px; height: 12px; border-radius: 6px; background: var(--color-control-accent); }
                 .fill { height: 4px; background: var(--color-control-accent); transform: translateY(-50%); margin-top: 0px; }
@@ -56,5 +52,5 @@
     }
 }
 
-.volume.input-vertical-drag { opacity: 0; transition: opacity $transitionSmoothCommon; pointer-events: none; }
-.volume.input-vertical-drag.visible { opacity: 1; pointer-events: auto; }
+.volume.input-drag-vertical { opacity: 0; transition: opacity $transitionSmoothCommon; pointer-events: none; }
+.volume.input-drag-vertical.visible { opacity: 1; pointer-events: auto; }

@@ -52,7 +52,7 @@ const DragVertical = React.forwardRef<Input, Props>(({
 		<div 
 			id={id}
 			ref={divRef}
-			className={`input-vertical-drag ${className}`}
+			className={`input-drag-vertical ${className}`}
 			onMouseLeave={onMouseLeave}
 			onMouseMove={onMouseMove}
 		>
