@@ -193,6 +193,10 @@ export interface SidebarPageComponent {
 	rootId?: string;
 };
 
+export interface SidebarSectionComponent extends SidebarPageComponent {
+	object: any;
+};
+
 export enum SurveyType {
 	Register		 = 0,
 	Delete			 = 1,

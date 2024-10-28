@@ -1,2 +1,21 @@
-> .sidebarPage { padding: 8px 16px; }
-> .sidebarPage {}
+> .sidebarPage {
+	.section { background: var(--color-bg-primary); border-radius: 12px; }
+
+	.section {
+		.title { @include text-paragraph; font-weight: 600; }
+		.label { padding: 5px 16px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
+	}
+
+	.section.sectionTitle { 
+		display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; padding: 16px;
+	}
+
+	.section.sectionLayout { padding: 8px 0px; }
+	.section.sectionLayout {
+		.label {  }
+
+		.item { padding: 3px 16px; display: flex; flex-direction: row; align-items: center; }
+	}
+}
+
+@import "./page/type.scss";

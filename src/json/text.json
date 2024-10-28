@@ -1821,6 +1821,12 @@
 	"sidebarObjectSortUpdated": "Date updated",
 	"sidebarObjectSortLastUsed": "Date last used",
 
+	"sidebarTypeTitle": "Editing type",
+	"sidebarSectionLayoutName": "Layout",
+	"sidebarSectionLayoutType": "Layout type",
+	"sidebarSectionLayoutAlign": "Header position",
+	"sidebarSectionLayoutWidth": "Layout width",
+
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
 

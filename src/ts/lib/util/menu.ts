@@ -1058,6 +1058,10 @@ class UtilMenu {
 		];
 	};
 
+	prepareForSelect (a: any[]) {
+		return a.map(it => ({ ...it, id: String(it.id) }))
+	};
+
 };
 
 export default new UtilMenu();

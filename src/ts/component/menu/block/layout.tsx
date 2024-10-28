@@ -159,6 +159,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: object.layoutAlign,
+					restricted: [ I.BlockHAlign.Justify ],
 					onSelect: (align: I.BlockHAlign) => {
 						U.Object.setAlign(rootId, align);
 
