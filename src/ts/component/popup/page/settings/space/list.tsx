@@ -12,7 +12,6 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const Row = (space: any) => {
 			const participant = U.Space.getMyParticipant(space.targetSpaceId);
 			const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
-			const hasMenu = !space.isPersonal;
 
 			let creatorElement = null;
 			if (participant && !participant.isOwner && !creator._empty_) {
@@ -36,7 +35,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 					<div className="col">{participant ? translate(`participantPermissions${participant.permissions}`) : ''}</div>
 					<div className="col">{translate(`spaceStatus${space.spaceAccountStatus}`)}</div>
 					<div className="col colMore">
-						{hasMenu ? <Icon id={`icon-more-${space.id}`} className="more withBackground" onClick={() => this.onMore(space)} /> : ''}
+						<Icon id={`icon-more-${space.id}`} className="more withBackground" onClick={() => this.onMore(space)} />
 					</div>
 				</div>
 			);

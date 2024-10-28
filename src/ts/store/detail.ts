@@ -296,7 +296,6 @@ class DetailStore {
 		};
 
 		// Access type
-		object.isPersonal = object.spaceAccessType == I.SpaceType.Personal;
 		object.isPrivate = object.spaceAccessType == I.SpaceType.Private;
 		object.isShared = object.spaceAccessType == I.SpaceType.Shared;
 

@@ -190,7 +190,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		let spaceId = S.Common.space || Storage.get('lastSpaceId');
 
 		if (!spaceId) {
-			spaceId = spaces.find(it => it.isPersonal)?.id;
+			spaceId = spaces[0].id;
 		};
 		if (spaceId) {
 			check = spaces.find(it => it.id == spaceId);

@@ -265,12 +265,6 @@
 								.side.right { display: flex; align-items: center; gap: 0px 8px; }
 							}
 
-							> .item.isDefault { background: var(--color-shape-highlight-light); }
-							> .item.isDefault {
-								.title, .label { color: var(--color-text-tertiary); }
-								.icon.arrow { opacity: 0.5; }
-							}
-
 							> .item.isInvite { display: flex; flex-direction: column; gap: 8px 0px; }
 							> .item.isInvite {
 								.inviteLinkWrapper { display: flex; align-items: center; height: 40px; gap: 0px 8px; }

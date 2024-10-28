@@ -58,13 +58,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const hasLink = cid && key;
 		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const canDelete = !space.isPersonal && isOwner;
+		const canDelete = isOwner;
 		const isShareActive = U.Space.isShareActive();
 
 		let bytesUsed = 0;
 		let buttonUpgrade = null;
 		let requestCaption = null;
-		let canShare = isOwner && !space.isPersonal;
+		let canShare = isOwner;
 		let canMembers = !isOwner && space.isShared;
 
 		const progressSegments = (spaces || []).map(space => {
@@ -145,21 +145,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={translate(`popupSettingsSpaceShareTitle`)} />
 
 						<div className="sectionContent">
-
-							{space.isPersonal ? (
-								<div className="item isDefault" onClick={this.onAdd}>
-									<div className="sides">
-										<div className="side left">
-											<Title text={translate('popupSettingsSpaceIndexShareShareTitle')} />
-											<Label text={translate('popupSettingsSpaceIndexShareDefaultText')} />
-										</div>
-										<div className="side right">
-											<Icon className="arrow" />
-										</div>
-									</div>
-								</div>
-							) : ''}
-
 							{canShare && !space.isShared ? (
 								<div 
 									className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
