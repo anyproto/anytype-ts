@@ -58,6 +58,7 @@ const DragVertical = React.forwardRef<Input, Props>(({
 		>
 			<Input
 				type="range"
+				className="vertical-range"
 				ref={inputRef}
 				value={String(value)}
 				min={min}

@@ -33,7 +33,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	playOnSeek = false;
 	current: PlaylistItem = { name: '', src: '' };
 	resizeObserver: ResizeObserver;
-	fadeOutVolumeSlider = _.debounce(() => this.setState({ showVolumeSlider: false }), 1200);
+	fadeOutVolumeSlider = _.debounce(() => this.setState({ showVolumeSlider: false }), 500);
 
 	startedPlaying = false;
 
@@ -54,10 +54,9 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	};
 
 	render () {
-		const { volume, muted, showVolumeSlider } = this.state;
+		const { volume, muted } = this.state;
 		const { src, name }	= this.current;
 		const iconClasses = [ 'volume'];
-		const volumeSliderClasses = [ 'volume' ];
 
 		if (!volume || muted) {
 			iconClasses.push('muted');
@@ -95,9 +94,12 @@ class MediaAudio extends React.PureComponent<Props, State> {
 							onMouseLeave={this.fadeOutVolumeSlider}
 						>
 							<Icon
-								onMouseMove={() => this.setState({ showVolumeSlider: true })}
+								onMouseEnter={() => {
+									this.fadeOutVolumeSlider.cancel();
+									return this.setState({ showVolumeSlider: true });
+								}}
 								ref={el => this.volumeIcon = el} 
-								className={iconClasses.filter(Boolean).join(' ')} 
+								className={iconClasses.join(' ')} 
 								onClick={this.onMute} 
 							/>
 
@@ -108,7 +110,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 							>
 								<DragVertical
 									id="volume"
-									className={volumeSliderClasses.filter(Boolean).join(' ')}
+									className="volume"
 									value={volume}
 									onChange={(e: any, v: number) => this.onVolume(v)}
 								/>
