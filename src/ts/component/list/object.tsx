@@ -22,10 +22,15 @@ interface Props {
 	relationKeys?: string[];
 };
 
+interface State {
+	sortId: string;
+	sortType: I.SortType;
+};
+
 const PREFIX = 'listObject';
 const LIMIT = 50;
 
-const ListObject = observer(class ListObject extends React.Component<Props> {
+const ListObject = observer(class ListObject extends React.Component<Props, State> {
 
 	public static defaultProps: Props = {
 		spaceId: '',
@@ -34,6 +39,11 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		columns: [],
 		sources: [],
 		filters: [],
+	};
+
+	state = {
+		sortId: 'lastModifiedDate',
+		sortType: I.SortType.Desc,
 	};
 
 	render () {
