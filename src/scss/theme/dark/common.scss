@@ -5,7 +5,7 @@ $themePath: '~img/theme/dark';
 html.themeDark {
 	/* Text */
 
-	--color-text-primary: #ebebeb;
+	--color-text-primary: #f8f8f8;
 	--color-text-secondary: #9a9a9a;
 	--color-text-tertiary: #656565;
 	--color-text-inversion: #171717;
@@ -31,14 +31,13 @@ html.themeDark {
 
 	--color-bg-primary: #171717;
 	--color-bg-secondary: #191919;
-	--color-bg-tertiary: #464646;
 	--color-bg-loader: rgba(0,0,0,0.7);
 
 	/* System */
 
 	--color-system-accent-125: #ffc83c;
 	--color-system-accent-50: #9f6b00;
-	--color-system-accent-25: #f09c0e;
+	--color-system-accent-25: #694500;
 	--color-system-selection: rgba(24, 163, 241, 0.15);
 
 	/* Common */
@@ -68,7 +67,7 @@ html.themeDark {
 	.isMultiSelect.tagColor-red { color: var(--color-red) !important; background: #74321e !important; }
 	.isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: #712055 !important; }
 	.isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: #542663 !important; }
-	.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #2b3368 !important; }
+	.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #20295c !important; }
 	.isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: #19465f !important; }
 	.isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: #16534e !important; }
 	.isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: #36551d !important; }

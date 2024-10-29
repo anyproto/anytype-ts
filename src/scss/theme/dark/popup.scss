@@ -13,7 +13,6 @@
     .popup.popupSettings, .popup.popupSettingsOnboarding {
 		
 		.mainSides {
-			> .side.left { background: var(--color-bg-secondary); }
 			> .side.left {
 				.item {
 					.icon.logout { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }

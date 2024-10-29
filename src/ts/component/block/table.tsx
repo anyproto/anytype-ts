@@ -1558,8 +1558,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
 		};
-
-		console.log('resize');
 	};
 
 });

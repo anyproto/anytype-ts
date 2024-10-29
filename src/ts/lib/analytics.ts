@@ -458,6 +458,11 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeLibraryType': {
+				data.type = data.type ? U.Common.toUpperCamelCase(`-${data.type}`) : '';
+				break;
+			};
+
 			case 'DeleteSpace': {
 				data.type = Number(data.type) || 0;
 				data.type = I.SpaceType[data.type];

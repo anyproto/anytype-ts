@@ -111,7 +111,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 				) : ''}
 			</div>
 		);
-    };
+	};
 
 	componentDidMount () {
 		this._isMounted = true;

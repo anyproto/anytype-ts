@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, Button, Filter } from 'Component';
-import { C, I, S, U, analytics, Relation, keyboard, translate, Dataview, sidebar, J } from 'Lib';
+import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, sidebar, J } from 'Lib';
 import Head from './head';
 
 interface Props extends I.ViewComponent {
@@ -208,7 +208,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	onViewSwitch (view: any) {
 		this.onViewSet(view);
-		window.setTimeout(() => { $(`#button-${this.props.block.id}-settings`).trigger('click'); }, 50);
+
+		window.setTimeout(() => { 
+			$(`#button-${this.props.block.id}-settings`).trigger('click'); 
+		}, 50);
 	};
 
 	onViewCopy (view) {
@@ -284,9 +287,16 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
-			onBack: (id) => {
+			onBack: (id: string) => {
+				const menu = S.Menu.get(id);
+
+				if (menu) {
+					const view = U.Common.objectCopy(menu.param.data.view.get());
+					param.data.view = observable.box(new M.View(view));
+				};
+
 				S.Menu.replace(id, component, { ...param, noAnimation: true });
-				window.setTimeout(() => S.Menu.update(component, { noAnimation: false }), 50);
+				window.setTimeout(() => S.Menu.update(component, { noAnimation: false }), J.Constant.delay.menu);
 			},
 			data: {
 				readonly,

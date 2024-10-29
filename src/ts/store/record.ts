@@ -8,12 +8,12 @@ enum KeyMapType {
 
 class RecordStore {
 
-    public relationMap: Map<string, any[]> = observable(new Map());
+	public relationMap: Map<string, any[]> = observable(new Map());
 	public relationKeyMap: Map<string, Map<string, string>> = new Map();
 	public typeKeyMap: Map<string, Map<string, string>> = new Map();
-    public viewMap: Map<string, I.View[]> = observable.map(new Map());
-    public recordMap: Map<string, string[]> = observable.map(new Map());
-    public metaMap: Map<string, any> = observable.map(new Map());
+	public viewMap: Map<string, I.View[]> = observable.map(new Map());
+	public recordMap: Map<string, string[]> = observable.map(new Map());
+	public metaMap: Map<string, any> = observable.map(new Map());
 	public groupMap: Map<string, any> = observable.map(new Map());
 
 	constructor() {
@@ -94,7 +94,7 @@ class RecordStore {
 		return ret;
 	};
 
-    relationsSet (rootId: string, blockId: string, list: any[]) {
+	relationsSet (rootId: string, blockId: string, list: any[]) {
 		const key = this.getId(rootId, blockId);
 		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).
 			concat(list.map(it => ({ relationKey: it.relationKey, format: it.format })));
@@ -320,7 +320,7 @@ class RecordStore {
 		return this.getObjectRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
 	};
 
-    getRelationByKey (relationKey: string): any {
+	getRelationByKey (relationKey: string): any {
 		const id = this.relationKeyMapGet(relationKey);
 		return id ? this.getRelationById(id) : null;
 	};

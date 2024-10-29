@@ -274,7 +274,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});

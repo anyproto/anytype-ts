@@ -923,7 +923,7 @@
 
 	"popupSettingsImportNotionHelpTitle": "How to import from Notion",
 	"popupSettingsImportNotionHelpStep": "Step %s",
-	"popupSettingsImportNotionHelpStep11": "Open Settings &amp; members.",
+	"popupSettingsImportNotionHelpStep11": "Open Settings.",
 	"popupSettingsImportNotionHelpStep12": "Open My Connections and then click Develop or manage integrations.",
 	"popupSettingsImportNotionHelpStep13": "Click New integration or Create new integration.",
 	"popupSettingsImportNotionHelpStep14": "Select your workspace and set Name for integration.",
@@ -931,7 +931,7 @@
 	"popupSettingsImportNotionHelpStep16": "Copy Internal Integration Secret for connecting and importing your data.",
 	"popupSettingsImportNotionHelpStep2Descr": "Add integration to the pages you want to import into Anytype. Page will be imported with all children documents. Select your root object to import all objects.",
 	"popupSettingsImportNotionHelpStep21": "Click on three dots on the upper right corner, then click Connect to (you need to scroll the menu). Select your Anytype integration.",
-	"popupSettingsImportNotionHelpStep22": "Press Confirm. Now you just need to paste your Internal Integration Token to Anytype.",
+	"popupSettingsImportNotionHelpStep22": "Press Confirm. Now you just need to paste your Internal Integration Token to Anytype. Hint: Newly created integrations may produce a 'page not found' error on the first import. If this happens, wait a few minutes and try running the import again.",
 
 	"popupSettingsImportNotionWarningTitle": "Some data formats will be imported as text",
 	"popupSettingsImportNotionWarningLi1": "All <b>@mentions</b> will be converted to text",
@@ -1844,7 +1844,6 @@
 	"onboardingStoreRelation2Button": "Great!",
 
 	"onboardingObjectCreationStart": "Creating Objects",
-	"onboardingObjectCreationStart11": "<b>Let’s create an object from scratch.</b> The default object type is now ‘Page’, meaning that each new object is referred to as a Note unless you choose a different type. You can change the default object type anytime in the settings menu.",
 	"onboardingObjectCreationStart21": "<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu.",
 	"onboardingObjectCreationStart2Button": "I got it!",
 

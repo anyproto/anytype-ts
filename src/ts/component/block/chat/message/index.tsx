@@ -248,9 +248,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const isSelf = creator == account.id;
 		const readonly = this.props.readonly || !isSelf;
 
-		renderMentions(rootId, this.node, marks, text);
-		renderObjects(rootId, this.node, marks, text, { readonly });
-		renderLinks(this.node, marks, text, { readonly });
+		renderMentions(rootId, this.node, marks, () => text);
+		renderObjects(rootId, this.node, marks, () => text, { readonly });
+		renderLinks(this.node, marks, () => text, { readonly });
 		renderEmoji(this.node);
 
 		this.checkLinesLimit();
