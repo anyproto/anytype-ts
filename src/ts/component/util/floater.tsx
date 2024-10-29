@@ -37,7 +37,7 @@ export const Floater: React.FC<Props> = ({
 			const { top: at, left: al, width: aw, height: ah } = anchorElRect;
 
 			const sh = document.body.scrollHeight;
-			const scrollY = window.scrollY;
+			const sy = window.scrollY;
 
 			const eh = elRect.height;
 			const ew = elRect.width;
@@ -50,10 +50,10 @@ export const Floater: React.FC<Props> = ({
 
 			switch (anchorTo) {
 				case AnchorTo.Top:
-					nt = -sh + at - eh + ot + scrollY;
+					nt = -sh + at - eh + ot + sy;
 					break;
 				case AnchorTo.Bottom:
-					nt = -sh + at + ah + ot + scrollY;
+					nt = -sh + at + ah + ot + sy;
 					break;
 			};
 			setPosition({ top: nt, left: nl });
