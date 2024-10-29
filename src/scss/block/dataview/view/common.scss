@@ -23,11 +23,8 @@
 			.card { white-space: normal; }
 			.card {
 				.cardContent > .inner { padding: 16px; }
-				.cardContent {
-					.coverAudio {
-						overflow: unset;
-					}
-				}
+
+				.cardContent .coverAudio .name { display: none; }
 
 				.cover { 
 					position: relative; aspect-ratio: 7/3; background-position: top center; display: flex; align-items: center;
