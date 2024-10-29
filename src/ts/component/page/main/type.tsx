@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObject, Deleted } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate, sidebar } from 'Lib';
 
-import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 import ListObjectPreview from 'Component/list/objectPreview';
 
@@ -21,7 +20,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	refHead: any = null;
 	refControls: any = null;
 	refListPreview: any = null;
-	timeout = 0;
 	page = 0;
 
 	state = {
@@ -36,6 +34,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		this.onObjectAdd = this.onObjectAdd.bind(this);
 		this.onSetAdd = this.onSetAdd.bind(this);
 		this.onCreate = this.onCreate.bind(this);
+		this.onMore = this.onMore.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 	};
 
@@ -48,29 +47,29 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		const rootId = this.getRootId();
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, J.Relation.type);
+		const type = this.getObject();
 
-		if (!object) {
+		if (!type) {
 			return null;
 		};
 
 		const subIdTemplate = this.getSubIdTemplate();
 		const templates = S.Record.getRecordIds(subIdTemplate, '');
 		const canWrite = U.Space.canMyParticipantWrite();
-		const isTemplate = object.uniqueKey == J.Constant.typeKey.template;
+		const isTemplate = type.uniqueKey == J.Constant.typeKey.template;
 
-		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
-		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(type.recommendedLayout) && !isTemplate;
+		const recommendedRelations = Relation.getArrayValue(type.recommendedRelations);
 		const recommendedKeys = recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
 
-		const allowedObject = object.isInstalled && U.Object.isInPageLayouts(object.recommendedLayout);
-		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite && !isTemplate;
+		const allowedObject = this.isAllowedObject();
+		const allowedTemplate = type.isInstalled && allowedObject && showTemplates && canWrite && !isTemplate;
 		
 		const subIdObject = this.getSubIdObject();
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 
-		const isFileType = U.Object.isInFileLayouts(object.recommendedLayout);
+		const isFileType = U.Object.isInFileLayouts(type.recommendedLayout);
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
@@ -94,13 +93,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
-					<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
 					<HeadSimple 
 						{...this.props} 
 						ref={ref => this.refHead = ref} 
 						placeholder={translate('defaultNameType')} 
 						rootId={rootId} 
-						onCreate={this.onCreate} 
 						onEdit={this.onEdit}
 					/>
 
@@ -135,7 +132,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 										onClick={(e: any, item: any) => this.templateOpen(item)}
 										withBlank={true}
 										blankId={J.Constant.templateId.blank}
-										defaultId={object.defaultTemplateId || J.Constant.templateId.blank}
+										defaultId={type.defaultTemplateId || J.Constant.templateId.blank}
 									/>
 								</div>
 							) : (
@@ -146,7 +143,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						</div>
 					) : ''}
 
-					{object.isInstalled && !object._empty_ ? (
+					{type.isInstalled ? (
 						<div className="section set">
 							<div className="title">
 								<div className="side left">
@@ -155,13 +152,26 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 								</div>
 
 								<div className="side right">
+									<Icon 
+										id="button-create"
+										className="more withBackground" 
+										onClick={this.onMore} 
+									/>
+
+									{allowedObject ? (
+										<Icon 
+											className="plus withBackground" 
+											tooltip={translate('commonCreateNewObject')} 
+											onClick={this.onCreate} 
+										/>
+									) : ''}
 								</div>
 							</div>
 							<div className="content">
 								<ListObject 
 									{...this.props} 
 									sources={[ rootId ]} 
-									spaceId={this.getSpaceId()}
+									spaceId={type.spaceId}
 									subId={subIdObject} 
 									rootId={rootId} 
 									columns={columns} 
@@ -221,23 +231,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
-	loadTemplates () {
-		const rootId = this.getRootId();
-
-		U.Data.searchSubscribe({
-			spaceId: this.getSpaceId(),
-			subId: this.getSubIdTemplate(),
-			filters: [
-				{ relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
-			],
-			sorts: [
-				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
-			],
-			keys: [ 'id' ],
-			ignoreDeleted: true,
-		});
-	};
-
 	close () {
 		if (!this.id) {
 			return;
@@ -255,21 +248,44 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 	};
 
-	onTemplateAdd () {
-		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId);
-		const details: any = { 
-			targetObjectType: rootId,
-			layout: object.recommendedLayout,
+	loadTemplates () {
+		const type = this.getObject();
+		if (!type) {
+			return;
 		};
 
-		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
+		U.Data.searchSubscribe({
+			spaceId: type.spaceId,
+			subId: this.getSubIdTemplate(),
+			filters: [
+				{ relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: type.id },
+			],
+			sorts: [
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			],
+			keys: [ 'id' ],
+			ignoreDeleted: true,
+		});
+	};
+
+	onTemplateAdd () {
+		const type = this.getObject();
+		if (!type) {
+			return;
+		};
+
+		const details: any = { 
+			targetObjectType: type.id,
+			layout: type.recommendedLayout,
+		};
+
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, message => {
 			if (message.error.code) {
 				return;
 			};
 
 			focus.clear(true);
-			analytics.event('CreateTemplate', { objectType: rootId, route: analytics.route.store });
+			analytics.event('CreateTemplate', { objectType: type.id, route: analytics.route.store });
 
 			this.templateOpen(message.details);
 		});
@@ -281,47 +297,55 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
+	isAllowedObject (): boolean {
+		const type = this.getObject();
+
+		if (!type || !type.isInstalled) {
+			return false;
+		};
+
+		const layout = type.recommendedLayout;
+
+		let ret = (
+			U.Object.isInPageLayouts(layout) || 
+			U.Object.isInSetLayouts(layout) || 
+			U.Object.isBookmarkLayout(layout) ||
+			U.Object.isChatLayout(layout)
+		);
+
+		if (type.uniqueKey == J.Constant.typeKey.template) {
+			ret = false;
+		};
+
+		return ret;
+	};
+
 	onCreate () {
-		const rootId = this.getRootId();
-		const type = S.Record.getTypeById(rootId);
+		const type = this.getObject();
 		if (!type) {
 			return;
 		};
 
-		const layout = type.recommendedLayout;
-		const options = [];
-		
-		let allowedObject = 
-			U.Object.isInPageLayouts(layout) || 
-			U.Object.isInSetLayouts(layout) || 
-			U.Object.isBookmarkLayout(layout) ||
-			U.Object.isChatLayout(layout);
-
-		if (type.uniqueKey == J.Constant.typeKey.template) {
-			allowedObject = false;
+		if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
+			this.onBookmarkAdd();
+		} else {
+			this.onObjectAdd();
 		};
+	};
 
-		if (allowedObject) {
-			options.push({ id: 'object', name: translate('commonNewObject') });
-		};
-
-		options.push({ id: 'set', name: translate('pageMainTypeNewSetOfObjects') });
+	onMore () {
+		const options = [
+			{ id: 'set', name: translate('pageMainTypeNewSetOfObjects') }
+		];
 
 		S.Menu.open('select', { 
 			element: `#button-create`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
 			data: {
-				options: options,
+				options,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'object':
-							if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
-								this.onBookmarkAdd();
-							} else {
-								this.onObjectAdd();
-							};
-							break;
 
 						case 'set':
 							this.onSetAdd();
@@ -340,9 +364,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onObjectAdd () {
-		const rootId = this.getRootId();
-		const type = S.Record.getTypeById(rootId);
-
+		const type = this.getObject();
 		if (!type) {
 			return;
 		};
@@ -377,14 +399,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onSetAdd () {
-		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId);
-		const details = { 
-			name: U.Common.sprintf(translate('commonSetName'), object.name),
-			iconEmoji: object.iconEmoji,
+		const type = this.getObject();
+		if (!type) {
+			return;
 		};
 
-		C.ObjectCreateSet([ rootId ], details, '', S.Common.space, (message: any) => {
+		const details = { 
+			name: U.Common.sprintf(translate('commonSetName'), type.name),
+			iconEmoji: type.iconEmoji,
+		};
+
+		C.ObjectCreateSet([ type.id ], details, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
 				U.Object.openConfig(message.details);
@@ -398,15 +423,18 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId);
-		const { defaultTemplateId } = object;
-		const template: any = { id: item.id, typeId: rootId };
+		const type = this.getObject();
+		if (!type) {
+			return;
+		};
+
+		const { defaultTemplateId } = type;
+		const template: any = { id: item.id, typeId: type.id };
 
 		if (template.id == J.Constant.templateId.blank) {
 			template.isBlank = true;
 
-			if (!object.defaultTemplateId) {
+			if (!defaultTemplateId) {
 				template.isDefault = true;
 			};
 		} else
@@ -424,18 +452,18 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				onClose: () => $(`#item-${item.id}`).removeClass('active'),
 				data: {
 					template,
-					typeId: rootId,
+					typeId: type.id,
 					templateId: defaultTemplateId,
 					route: analytics.route.type,
 					onSetDefault: () => {
-						U.Object.setDefaultTemplateId(rootId, template.id);
+						U.Object.setDefaultTemplateId(type.id, template.id);
 					},
 					onDuplicate: (object: any) => {
 						this.templateOpen(object);
 					},
 					onArchive: () => {
 						if (template.isDefault) {
-							U.Object.setDefaultTemplateId(rootId, J.Constant.templateId.blank);
+							U.Object.setDefaultTemplateId(type.id, J.Constant.templateId.blank);
 						};
 					}
 				}
@@ -448,11 +476,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		return rootId ? rootId : match.params.id;
 	};
 
-	getSpaceId () {
-		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, [ 'spaceId' ], true);
-
-		return object.spaceId;
+	getObject () {
+		return S.Record.getTypeById(this.getRootId());
 	};
 
 	getSubIdTemplate () {

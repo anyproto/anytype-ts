@@ -100,14 +100,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if (isTypeOrRelation) {
 			if (object.isInstalled) {
-				const text = isRelation ? translate('pageHeadSimpleCreateSet') : translate('commonCreate');
-				const arrow = !isRelation;
-
 				if (isType) {
 					buttonEdit = <Button id="button-edit" color="blank" className="c28" text={translate('commonEdit')} onClick={onEdit} />;
+				} else {
+					buttonCreate = <Button id="button-create" className="c36" text={translate('pageHeadSimpleCreateSet')} arrow={true} onClick={onCreate} />;
 				};
-
-				buttonCreate = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 			} else {
 				const cn = [ 'c36' ];
 				const isInstalled = this.isInstalled();

@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .pageMainType {
-	.wrapper { width: 704px; margin: 0px auto; padding: 0px 0px 90px 0px; user-select: none; }
+	.wrapper { width: 704px; margin: 0px auto; padding: 40px 0px 90px 0px; user-select: none; }
 
 	.wrapper.withIcon {
 		.editorControls {
@@ -28,9 +28,11 @@
 			}
 			.title {
 				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
-				.side.right { display: flex; justify-content: flex-end; }
+				.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; }
 
 				.icon.plus { background-image: url('~img/icon/plus/template.svg'); }
+				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+
 				.cnt { color: var(--color-text-secondary); }
 			}
 		}
