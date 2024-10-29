@@ -134,7 +134,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		let { offset } = S.Record.getMeta(subId, '');
 		const view = getView();
 
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			offset += getLimit();
 			loadData(view.id, offset, false, resolve);
 			S.Record.metaSet(subId, '', { offset });

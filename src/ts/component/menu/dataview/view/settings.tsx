@@ -83,6 +83,10 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+
+		this.param = U.Common.objectCopy(data.view.get());
 		this.setName();
 		this.resize();
 		this.focus();
@@ -199,7 +203,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
-		const view = data.view.get();
+		const view = data.view ? data.view.get() : null;
 
 		if (readonly || !block || !view) {
 			return;
@@ -312,9 +316,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				width: getSize().width,
 				data,
 				noAnimation: true,
-				onOpen: (context) => {
-					this.menuContext = context;
-				}
+				onOpen: context => this.menuContext = context,
 			};
 
 			if (item.data) {

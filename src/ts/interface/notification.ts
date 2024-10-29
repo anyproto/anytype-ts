@@ -14,14 +14,14 @@ export enum NotificationType {
 };
 
 export enum NotificationStatus {
-    Created	 = 0,
-    Shown	 = 1,
-    Read	 = 2,
-    Replied	 = 3,
+	Created	 = 0,
+	Shown	 = 1,
+	Read	 = 2,
+	Replied	 = 3,
 };
 
 export enum NotificationAction {
-    Close	 = 0,
+	Close	 = 0,
 };
 
 export interface Notification {

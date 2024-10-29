@@ -12,7 +12,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	
 	private _isMounted = false;
 	node = null;
-    ox = 0;
+	ox = 0;
 	oy = 0;
 	sx = 0;
 	frame = 0;
@@ -32,12 +32,12 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		this.onToggleContext = this.onToggleContext.bind(this);
 	};
 
-    render() {
+	render() {
 		const { showVault, showObject } = S.Common;
-        const cn = [ 'sidebar' ];
+		const cn = [ 'sidebar' ];
 		const cmd = keyboard.cmdSymbol();
 
-        return (
+		return (
 			<React.Fragment>
 				<Icon 
 					id="sidebarToggle"
@@ -60,7 +60,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 				</div>
 			</React.Fragment>
 		);
-    };
+	};
 
 	componentDidMount (): void {
 		this._isMounted = true;
