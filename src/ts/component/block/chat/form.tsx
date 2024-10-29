@@ -1006,9 +1006,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const node = this.refEditable.node;
 		const value = this.refEditable.getTextValue();
 
-		renderMentions(rootId, node, this.marks, value);
-		renderObjects(rootId, node, this.marks, value, this.props);
-		renderLinks(node, this.marks, value, this.props);
+		renderMentions(rootId, node, this.marks, () => value);
+		renderObjects(rootId, node, this.marks, () => value, this.props);
+		renderLinks(node, this.marks, () => value, this.props);
 		renderEmoji(node);
 	};
 

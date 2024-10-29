@@ -872,11 +872,19 @@ class UtilData {
 
 		if (!subId) {
 			console.error('[U.Data].searchSubscribe: subId is empty');
+
+			if (callBack) {
+				callBack({});
+			};
 			return;
 		};
 
 		if (!spaceId) {
 			console.error('[U.Data].searchSubscribe: spaceId is empty');
+
+			if (callBack) {
+				callBack({});
+			};
 			return;
 		};
 
@@ -910,16 +918,28 @@ class UtilData {
 
 		if (!subId) {
 			console.error('[U.Data].subscribeIds: subId is empty');
+
+			if (callBack) {
+				callBack({});
+			};
 			return;
 		};
 
 		if (!spaceId) {
 			console.error('[U.Data].subscribeIds: spaceId is empty');
+
+			if (callBack) {
+				callBack({});
+			};
 			return;
 		};
 
 		if (!ids.length) {
 			console.error('[U.Data].subscribeIds: ids list is empty');
+
+			if (callBack) {
+				callBack({});
+			};
 			return;
 		};
 
@@ -967,6 +987,10 @@ class UtilData {
 
 		if (!spaceId) {
 			console.error('[U.Data].search: spaceId is empty');
+
+			if (callBack) {
+				callBack({});
+			};
 			return;
 		};
 

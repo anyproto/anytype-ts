@@ -14,7 +14,7 @@ class PageAuthSelect extends React.Component<I.PageComponent, State> {
 	};
 
 	constructor (props: I.PageComponent) {
-        super(props);
+		super(props);
 
 		this.onLogin = this.onLogin.bind(this);
 		this.onRegister = this.onRegister.bind(this);
@@ -23,7 +23,7 @@ class PageAuthSelect extends React.Component<I.PageComponent, State> {
 	render () {
 		const { error } = this.state;
 
-        return (
+		return (
 			<div ref={ref => this.node = ref}>
 				<Header {...this.props} component="authIndex" />
 				<Frame>
