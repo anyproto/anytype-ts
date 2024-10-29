@@ -225,6 +225,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	};
 
 	onMute (e: React.MouseEvent) {
+		console.log('onMute');
 		const muted = !this.state.muted;
 		this.setState({ muted });
 		this.audioNode.volume = this.state.volume * (muted ? 0 : 1);

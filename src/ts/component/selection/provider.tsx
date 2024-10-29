@@ -122,11 +122,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseDown (e: any) {
-		// This is hackish but convenient. Add data-selection="off" to any DOM element to exclude it from selection mechanism.
-		if ( (e.target as HTMLElement).dataset['selection'] === 'off') {
-			return;
-		}
-
 		const isPopup = keyboard.isPopup();
 
 		if (
@@ -213,10 +208,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseMove (e: any) {
-		if ( (e.target as HTMLElement).dataset['selection'] === 'off') {
-			return;
-		}
-
 		if (!this._isMounted) {
 			return;
 		};
