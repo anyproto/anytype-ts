@@ -181,7 +181,7 @@ class MediaAudio extends React.Component<Props, State> {
 	onResize () {
 		this.resize();
 		this.rebind();
-	}
+	};
 
 	onPlayClick (e: React.MouseEvent) {
 		e.preventDefault();

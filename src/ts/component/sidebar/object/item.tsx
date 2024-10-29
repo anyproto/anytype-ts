@@ -19,7 +19,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 	
 	node = null;
 
-    render() {
+	render() {
 		const { item, style, compact, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
 		const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 		const type = S.Record.getTypeById(item.type);
@@ -97,7 +97,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 				{content}
 			</div>
 		);
-    };
+	};
 
 	componentDidMount () {
 		this.resize();

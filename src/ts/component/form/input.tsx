@@ -54,9 +54,9 @@ class Input extends React.Component<Props, State> {
 	composition = false;
 
 	public static defaultProps = {
-        type: 'text',
+		type: 'text',
 		value: ''
-    };
+	};
 
 	state = {
 		value: '',
@@ -64,7 +64,7 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	constructor (props: Props) {
-        super(props);
+		super(props);
 
 		this.onChange = this.onChange.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);

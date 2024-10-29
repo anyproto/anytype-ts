@@ -90,9 +90,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		);
 	};
 
-    onName () {
-        U.Object.setName(S.Block.profile, this.refName.getValue());
-    };
+	onName () {
+		U.Object.setName(S.Block.profile, this.refName.getValue());
+	};
 
 	onDescription (e) {
 		U.Object.setDescription(S.Block.profile, this.refDescription.getValue());

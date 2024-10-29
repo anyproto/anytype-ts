@@ -17,14 +17,14 @@ class Checkbox extends React.Component<Props, State> {
 	_isMounted = false;
 	public static defaultProps = {
 		value: false
-    };
+	};
 
 	state = {
 		value: false,
 	};
 	
 	constructor (props: Props) {
-        super(props);
+		super(props);
 
 		this.onChange = this.onChange.bind(this);
 	};
