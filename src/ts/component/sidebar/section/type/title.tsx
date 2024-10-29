@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Editable } from 'Component';
-import { I, translate } from 'Lib';
+import { I, keyboard, translate } from 'Lib';
 
 const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends React.Component<I.SidebarSectionComponent> {
 	
@@ -12,6 +12,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 		this.onSelect = this.onSelect.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 	};
 
     render () {
@@ -33,6 +34,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 				<Editable
 					ref={ref => this.refName = ref}
 					onBlur={this.onChange}
+					onKeyDown={this.onKeyDown}
 					placeholder={translate('defaultNameType')} 
 				/>
 			</div>
@@ -65,6 +67,13 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 	onChange () {
 		this.props.onChange('name', this.refName?.getTextValue());
+	};
+
+	onKeyDown (e: any) {
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			this.onChange();
+		});
 	};
 
 });

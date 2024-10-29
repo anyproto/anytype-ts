@@ -8,7 +8,8 @@ import Section from 'Component/sidebar/section';
 const SidebarPageType = observer(class SidebarPageType extends React.Component<I.SidebarPageComponent> {
 	
 	node = null;
-	details: any = {};
+	object: any = {};
+	update: any = {};
 	sectionRefs: Map<string, any> = new Map();
 
 	constructor (props: I.SidebarPageComponent) {
@@ -42,7 +43,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							ref={ref => this.sectionRefs.set(item.id, ref)}
 							key={item.id} 
 							component={item.component}
-							object={this.details} 
+							object={this.object} 
 							onChange={(key, value) => this.onChange(item.id, key, value)}
 						/>
 					))}
@@ -56,8 +57,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const type = S.Record.getTypeById(rootId);
 		const sections = this.getSections();
 
-		this.details = U.Common.objectCopy(type);
-		sections.forEach(it => this.update(it.id));
+		this.object = U.Common.objectCopy(type);
+		sections.forEach(it => this.updateObject(it.id));
 	};
 
 	getSections () {
@@ -71,20 +72,23 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	onChange (section: string, relationKey: string, value: any) {
 		const relation = S.Record.getRelationByKey(relationKey);
 
-		this.details[relationKey] = Relation.formatValue(relation, value, true);
-		this.update(section);
+		value = Relation.formatValue(relation, value, false);
+
+		this.object[relationKey] = value;
+		this.update[relationKey] = value;
+		this.updateObject(section);
 	};
 
 	onSave () {
 		const { rootId } = this.props;
 		const update = [];
 
-		for (const key in this.details) {
-			update.push({ key, value: this.details[key] });
+		for (const key in this.update) {
+			update.push({ key, value: this.object[key] });
 		};
-
 		C.ObjectListSetDetails([ rootId ], update);
 
+		this.update = {};
 		sidebar.rightPanelToggle(false);
 	};
 
@@ -92,8 +96,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		sidebar.rightPanelToggle(false);
 	};
 
-	update (id: string) {
-		this.sectionRefs.get(id)?.setObject(this.details);
+	updateObject (id: string) {
+		this.sectionRefs.get(id)?.setObject(this.object);
 	};
 
 });

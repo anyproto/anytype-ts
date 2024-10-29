@@ -21,6 +21,9 @@
 	}
 
 	.section.typeRelation {
+		.items { margin: 0px 0px 8px 0px; }
+		.items:last-child { margin: 0px; }
+
 		.item { padding-left: 4px; }
 		.item {
 			.icon { width: 20px; height: 20px; flex-shrink: 0; }
