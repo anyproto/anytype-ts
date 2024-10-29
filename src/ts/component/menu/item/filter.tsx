@@ -177,7 +177,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 		));
 
 		return <Element index={index} />;
-    };
+	};
 
 	componentDidMount () {
 		this._isMounted = true;

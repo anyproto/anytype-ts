@@ -77,7 +77,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				</Frame>
 			</div>
 		);
-    };
+	};
 
 	componentDidMount () {
 		const { match } = this.props;

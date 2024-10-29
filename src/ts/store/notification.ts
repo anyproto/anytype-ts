@@ -3,19 +3,19 @@ import { I, M, Renderer } from 'Lib';
 
 class NotificationStore {
 
-    public itemList: I.Notification[] = [];
+	public itemList: I.Notification[] = [];
 
-    constructor () {
-        makeObservable(this, {
-            itemList: observable,
-            list: computed,
+	constructor () {
+		makeObservable(this, {
+			itemList: observable,
+			list: computed,
 			add: action,
 			update: action,
 			delete: action,
-        });
-    };
+		});
+	};
 
-    get list (): I.Notification[] {
+	get list (): I.Notification[] {
 		return this.itemList || [];
 	};
 

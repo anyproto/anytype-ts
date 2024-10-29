@@ -34,7 +34,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const canDescription = !U.Object.isNoteLayout(object.layout);
 		const withIcon = content.iconSize != I.LinkIconSize.None;
 		const withType = relations.includes('type');
-        const withCover = relations.includes('cover') && coverId && coverType;
+		const withCover = relations.includes('cover') && coverId && coverType;
 
 		if (U.Object.isTaskLayout(layout) && done) {
 			cn.push('isDone');

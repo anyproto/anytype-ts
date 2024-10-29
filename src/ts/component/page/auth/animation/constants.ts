@@ -27,16 +27,16 @@ export enum OnboardStage {
 
 export const StatePropertyMap = {
   Void: {
-    zoom: 6.7,
+	zoom: 6.7,
   },
   Offline: {
-    zoom: 1,
+	zoom: 1,
   },
   SoulCreating: {
-    zoom: 6.7,
+	zoom: 6.7,
   },
   SpaceCreating: {
-    zoom: 35,
+	zoom: 35,
   },
 } as const;
 

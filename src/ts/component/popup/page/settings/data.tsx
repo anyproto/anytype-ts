@@ -4,43 +4,43 @@ import { I, C, S, U, translate, Renderer, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PopupSettings {
-    onPage: (id: string) => void;
-    setLoading: (v: boolean) => void;
+	onPage: (id: string) => void;
+	setLoading: (v: boolean) => void;
 };
 
 const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageIndex extends React.Component<Props, {}> {
 
-    constructor (props: Props) {
-        super(props);
+	constructor (props: Props) {
+		super(props);
 
-        this.onOffload = this.onOffload.bind(this);
-    };
+		this.onOffload = this.onOffload.bind(this);
+	};
 
-    render () {
-        const { onPage } = this.props;
+	render () {
+		const { onPage } = this.props;
 		const { dataPath, spaceStorage } = S.Common;
-        const { localUsage } = spaceStorage;
+		const { localUsage } = spaceStorage;
 		const suffix = this.getSuffix();
 
-        return (
-            <React.Fragment>
-                <Title text={translate('popupSettingsDataManagementTitle')} />
-                <Label className="description" text={translate(`popupSettingsDataManagementLocalStorageText${suffix}`)} />
+		return (
+			<React.Fragment>
+				<Title text={translate('popupSettingsDataManagementTitle')} />
+				<Label className="description" text={translate(`popupSettingsDataManagementLocalStorageText${suffix}`)} />
 
-                <div className="actionItems">
-                    <div className="item storageUsage">
-                        <div className="side left">
+				<div className="actionItems">
+					<div className="item storageUsage">
+						<div className="side left">
 							<IconObject object={{ iconEmoji: ':desktop_computer:' }} size={44} />
 
 							<div className="txt">
 								<div className="name">{translate('popupSettingsDataLocalFiles')}</div>
 								<div className="type">{U.Common.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), U.File.size(localUsage))}</div>
 							</div>
-                        </div>
+						</div>
 						<div className="side right">
 							<Button color="blank" className="c28" text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={this.onOffload} />
 						</div>
-                    </div>
+					</div>
 
 
 					<div className="item">
@@ -56,55 +56,55 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 							<Button color="blank" className="c28" text={translate(`commonOpen`)} onClick={this.onOpenDataLocation} />
 						</div>
 					</div>
-                </div>
+				</div>
 
-                <Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
-                <Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
-                <Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
-            </React.Fragment>
-        );
-    };
+				<Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
+				<Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
+				<Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
+			</React.Fragment>
+		);
+	};
 
-    onOffload (e: any) {
-        const { setLoading } = this.props;
+	onOffload (e: any) {
+		const { setLoading } = this.props;
 		const suffix = this.getSuffix();
 		const isLocalOnly = U.Data.isLocalOnly();
 
-        analytics.event('ScreenFileOffloadWarning');
+		analytics.event('ScreenFileOffloadWarning');
 
-        S.Popup.open('confirm',{
-            data: {
-                title: translate('commonAreYouSure'),
-                text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
-                textConfirm: isLocalOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
+		S.Popup.open('confirm',{
+			data: {
+				title: translate('commonAreYouSure'),
+				text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
+				textConfirm: isLocalOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
 				canCancel: isLocalOnly,
 				textCancel: translate('popupSettingsDataRemoveFiles'),
-                onConfirm: () => {
-                    setLoading(true);
-                    analytics.event('SettingsStorageOffload');
+				onConfirm: () => {
+					setLoading(true);
+					analytics.event('SettingsStorageOffload');
 
-                    C.FileListOffload([], false, (message: any) => {
-                        setLoading(false);
+					C.FileListOffload([], false, (message: any) => {
+						setLoading(false);
 
-                        if (message.error.code) {
-                            return;
-                        };
+						if (message.error.code) {
+							return;
+						};
 
-                        S.Popup.open('confirm',{
-                            data: {
-                                title: translate('popupSettingsDataFilesOffloaded'),
-                                //text: U.Common.sprintf('Files: %s, Size: %s', message.files, U.File.size(message.bytes)),
-                                textConfirm: translate('commonOk'),
-                                canCancel: false,
-                            }
-                        });
+						S.Popup.open('confirm',{
+							data: {
+								title: translate('popupSettingsDataFilesOffloaded'),
+								//text: U.Common.sprintf('Files: %s, Size: %s', message.files, U.File.size(message.bytes)),
+								textConfirm: translate('commonOk'),
+								canCancel: false,
+							}
+						});
 
-                        analytics.event('FileOffload', { middleTime: message.middleTime });
-                    });
-                },
-            }
-        });
-    };
+						analytics.event('FileOffload', { middleTime: message.middleTime });
+					});
+				},
+			}
+		});
+	};
 
 	onOpenDataLocation () {
 		Renderer.send('openPath', S.Common.dataPath);
