@@ -39,10 +39,17 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const cn = [ 'list' ];
-		const bodyCn = [ 'body' ];
+		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
+
+		if (isEditing) {
+			cn.push('isEditing');
+		};
+
+		if (U.Space.isShareBanner()) {
+			cn.push('withShareBanner');
+		};
 
 		let content = null;
 
@@ -98,10 +105,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			};
 
 			if (isEditing) {
-				cn.push('isEditing');
-			};
-
-			if (isEditing) {
 				if (blocks.length <= J.Constant.limit.widgets) {
 					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetEditor) });
 				};
@@ -113,10 +116,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					{ id: 'widget-list-add', className: 'grey c28', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
 					{ id: 'widget-list-edit', className: 'grey c28', text: translate('commonEdit'), onMouseDown: this.onEdit }
 				]);
-			};
-
-			if (U.Space.isShareBanner()) {
-				bodyCn.push('withShareBanner');
 			};
 
 			content = (
@@ -188,18 +187,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 				<div
 					id="body"
-					className={bodyCn.join(' ')}
+					className={cn.join(' ')}
 					onScroll={this.onScroll}
+					onDrop={this.onDrop}
+					onDragOver={e => e.preventDefault()}
+					onContextMenu={this.onContextMenu}
 				>
-					<div 
-						id="list"
-						className={cn.join(' ')}
-						onDrop={this.onDrop}
-						onDragOver={e => e.preventDefault()}
-						onContextMenu={this.onContextMenu}
-					>
-						{content}
-					</div>
+					{content}
 				</div>
 			</div>
 		);

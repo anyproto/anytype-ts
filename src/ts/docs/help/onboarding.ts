@@ -82,7 +82,7 @@ export default {
 			offsetX: -312,
 			noClose: true,
 			highlightElements: [],
-			hiddenElements: [ '#widget-buttons', '.widget', '#containerWidget #list .buttons' ],
+			hiddenElements: [ '#widget-buttons', '.widget', '#containerWidget #body .buttons' ],
 		},
 		items: [
 			{
