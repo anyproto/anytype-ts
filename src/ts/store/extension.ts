@@ -10,7 +10,7 @@ class ExtensionStore {
 	public htmlValue = '';
 
 	constructor() {
-        makeObservable(this, {
+		makeObservable(this, {
 			htmlValue: observable,
 			setHtml: action,
 		});

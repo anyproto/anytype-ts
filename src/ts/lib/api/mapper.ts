@@ -124,15 +124,15 @@ export const Mapper = {
 		},
 
 		PreviewLink: (obj: Model.LinkPreview) => {
-            return {
-                type: obj.getType(),
-                title: obj.getTitle(),
-                description: obj.getDescription(),
-                faviconUrl: obj.getFaviconurl(),
-                imageUrl: obj.getImageurl(),
-                url: obj.getUrl(),
-            };
-        },
+			return {
+				type: obj.getType(),
+				title: obj.getTitle(),
+				description: obj.getDescription(),
+				faviconUrl: obj.getFaviconurl(),
+				imageUrl: obj.getImageurl(),
+				url: obj.getUrl(),
+			};
+		},
 
 		Details: (obj: any): any => {
 			return {
@@ -334,15 +334,15 @@ export const Mapper = {
 		},
 
 		ViewRelation: (obj: Model.Block.Content.Dataview.Relation) => {
-            return {
-                relationKey: obj.getKey(),
-                isVisible: obj.getIsvisible(),
-                width: obj.getWidth(),
+			return {
+				relationKey: obj.getKey(),
+				isVisible: obj.getIsvisible(),
+				width: obj.getWidth(),
 				includeTime: obj.getDateincludetime(),
-                timeFormat: obj.getTimeformat(),
+				timeFormat: obj.getTimeformat(),
 				dateFormat: obj.getDateformat(),
-            };
-        },
+			};
+		},
 
 		Filter: (obj: Model.Block.Content.Dataview.Filter): I.Filter => {
 			return {
@@ -376,7 +376,7 @@ export const Mapper = {
 		},
 
 		GraphEdge: (obj: Rpc.Object.Graph.Edge) => {
-            return {
+			return {
 				type: obj.getType(),
 				source: obj.getSource(),
 				target: obj.getTarget(),
@@ -385,16 +385,16 @@ export const Mapper = {
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
 				isHidden: obj.getHidden(),
-            };
-        },
+			};
+		},
 
 		UnsplashPicture: (obj: Rpc.Unsplash.Search.Response.Picture) => {
 			return {
-                id: obj.getId(),
+				id: obj.getId(),
 				url: obj.getUrl(),
 				artist: obj.getArtist(),
 				artistUrl: obj.getArtisturl(),
-            };
+			};
 		},
 
 		ObjectView: (obj: Model.ObjectView) => {
@@ -665,7 +665,7 @@ export const Mapper = {
 			return reactions;
 		},
 
-    },
+	},
 
 	//------------------------------------------------------------
 

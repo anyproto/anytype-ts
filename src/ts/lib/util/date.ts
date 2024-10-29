@@ -162,7 +162,7 @@ class UtilDate {
 			},
 			N: () => {
 				return (f.w() + 6) % 7;
-            },
+			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {
 			let ret = null;

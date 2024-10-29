@@ -414,12 +414,12 @@ class UtilCommon {
 	};
 
 	mapToObject (list: any[], field: string) {
-        const obj: any = {};
-        for (let i = 0; i < list.length; i++) {
-            obj[list[i][field]] = list[i];
-        };
-        return obj;
-    };
+		const obj: any = {};
+		for (let i = 0; i < list.length; i++) {
+			obj[list[i][field]] = list[i];
+		};
+		return obj;
+	};
 	
 	unmap (map: any) {
 		let ret: any[] = [] as any[];
