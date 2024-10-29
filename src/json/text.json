@@ -1697,6 +1697,7 @@
 	"defaultNameRelation": "New Relation",
 	"defaultNameBookmark": "Paste Link",
 	"defaultNameView": "New View",
+	"defaultNameTag": "New Tag",
 
 	"placeholderBlock": "Type text or \/ for commands",
 	"placeholderBlockDescription": "Add a description",
