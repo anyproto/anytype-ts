@@ -26,7 +26,7 @@ const Vault = observer(class Vault extends React.Component {
 		this.onScroll = this.onScroll.bind(this);
 	};
 
-    render () {
+	render () {
 		const items = U.Menu.getVaultItems();
 
 		const Item = item => {
@@ -52,12 +52,12 @@ const Vault = observer(class Vault extends React.Component {
 			</div>
 		));
 
-        return (
-            <div 
+		return (
+			<div 
 				ref={node => this.node = node}
 				id="vault"
 				className="vault"
-            >
+			>
 				<div className="head" />
 				<div className="body">
 					<List 
@@ -76,9 +76,9 @@ const Vault = observer(class Vault extends React.Component {
 						<Item id="settings" isButton={true} name={translate('commonSettings')} />
 					</div>
 				</div>
-            </div>
+			</div>
 		);
-    };
+	};
 
 	componentDidMount (): void {
 		this.resize();

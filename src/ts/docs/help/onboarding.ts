@@ -1,15 +1,15 @@
 import { I, U, translate, S } from 'Lib';
 
 export default {
-    mainGraph: () => ({
-        category: translate('onboardingMainGraph'),
-        items: [
-            {
-                description: translate('onboardingMainGraph11'),
-                video: './img/help/onboarding/space.mp4',
+	mainGraph: () => ({
+		category: translate('onboardingMainGraph'),
+		items: [
+			{
+				description: translate('onboardingMainGraph11'),
+				video: './img/help/onboarding/space.mp4',
 				buttonText: translate('commonFinish'),
-            }
-        ],
+			}
+		],
 
 		param: {
 			element: '#page.isFull #footer #button-help',
@@ -22,9 +22,9 @@ export default {
 			passThrough: true,
 			offsetY: -4,
 		},
-    }),
+	}),
 
-    objectCreationStart: () => ({
+	objectCreationStart: () => ({
 		category: translate('onboardingObjectCreationStart'),
 		items: [
 			{
@@ -48,29 +48,29 @@ export default {
 		},
 	}),
 
-    objectCreationFinish: () => ({
-        category: translate('onboardingObjectCreationFinish'),
-        items: [
-            {
-                description: `
+	objectCreationFinish: () => ({
+		category: translate('onboardingObjectCreationFinish'),
+		items: [
+			{
+				description: `
 					<p>${translate('onboardingObjectCreationFinish11')}</p>
 				`,
-                video: './img/help/onboarding/object-layout.mp4',
-                buttonText: translate('onboardingObjectCreationFinish1Button'),
-            },
-        ],
-        param: {
-            element: '#page.isFull #footer #button-help',
-            classNameWrap: 'fixed',
-            className: 'isWizard',
-            vertical: I.MenuDirection.Top,
-            horizontal: I.MenuDirection.Right,
-            noArrow: true,
-            noClose: true,
-            passThrough: true,
-            offsetY: -4,
-        },
-    }),
+				video: './img/help/onboarding/object-layout.mp4',
+				buttonText: translate('onboardingObjectCreationFinish1Button'),
+			},
+		],
+		param: {
+			element: '#page.isFull #footer #button-help',
+			classNameWrap: 'fixed',
+			className: 'isWizard',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
+			noArrow: true,
+			noClose: true,
+			passThrough: true,
+			offsetY: -4,
+		},
+	}),
 
 	basics: () => ({
 		showDimmer: true,
@@ -232,7 +232,7 @@ export default {
 		]
 	}),
 
-    typeDeleted: () => ({
+	typeDeleted: () => ({
 		items: [
 			{
 				name: translate('onboardingTypeDeleted1Title'),
@@ -242,9 +242,9 @@ export default {
 					element: '#block-featuredRelations',
 					offsetY: 10,
 				},
-                buttons: [
-                    { text: translate('blockFeaturedTypeMenuChangeType'), action: 'changeType' },
-                ],
+				buttons: [
+					{ text: translate('blockFeaturedTypeMenuChangeType'), action: 'changeType' },
+				],
 			},
 		],
 	}),

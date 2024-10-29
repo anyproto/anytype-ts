@@ -6,14 +6,14 @@ import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
-    _isMounted = false;
+	_isMounted = false;
 	node: any = null;
-    n = -1;
+	n = -1;
 	target = null;
 	layout: I.WidgetLayout = null;
 	limit = 0;
 
-    constructor (props: I.Menu) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		const { param } = this.props;
@@ -31,11 +31,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 	};
 
-    render(): React.ReactNode {
+	render(): React.ReactNode {
 		const { param } = this.props;
 		const { data } = param;
 		const { isEditing } = data;
-        const sections = this.getSections();
+		const sections = this.getSections();
 
 		const Section = item => (
 			<div id={'section-' + item.id} className="section">
@@ -76,7 +76,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				) : ''}
 			</div>
 		);
-    }
+	}
 
 	componentDidMount () {
 		this._isMounted = true;
@@ -103,7 +103,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		$(window).trigger(`updateWidgetData.${blockId}`);
 	};
 
-    rebind (): void {
+	rebind (): void {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
@@ -121,7 +121,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		button.addClass((this.target !== null) && (this.layout !== null) ? 'black' : 'blank disabled');
 	};
 
-    getSections () {
+	getSections () {
 		this.checkState();
 
 		const { param } = this.props;
@@ -191,7 +191,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this.limit = limitOptions.includes(this.limit) ? this.limit : (limitOptions.length ? limitOptions[0] : null);
 	};
 
-    getItems () {
+	getItems () {
 		const sections = this.getSections();
 
 		let items = [];
@@ -201,7 +201,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		return items;
 	};
 
-    onMouseEnter (e: React.MouseEvent, item): void {
+	onMouseEnter (e: React.MouseEvent, item): void {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 			this.onOver(e, item);
@@ -358,13 +358,13 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		close();
 	};
 
-    save (): void {
+	save (): void {
 		const { close, param } = this.props;
 		const { data } = param;
 		const { isEditing, onSave } = data;
 		const { widgets } = S.Block;
 
-        if (!this.target || (this.layout === null)) {
+		if (!this.target || (this.layout === null)) {
 			return;
 		};
 
@@ -388,7 +388,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		});
 
 		close(); 
-    };
+	};
 
 	getTargetId (): string {
 		const { param } = this.props;

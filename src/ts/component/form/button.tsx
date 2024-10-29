@@ -19,7 +19,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 		color: 'black',
 		className: '',
 		tooltipY: I.MenuDirection.Bottom,
-    };
+	};
 
 	constructor (props: I.ButtonComponent) {
 		super(props);
