@@ -46,7 +46,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		const rootId = this.getRootId();
-		const check = U.Data.checkDetails(rootId);
 		const type = this.getObject();
 
 		if (!type) {
@@ -92,7 +91,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 				{isLoading ? <Loader id="loader" /> : ''}
 
-				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
+				<div className="blocks wrapper">
 					<HeadSimple 
 						{...this.props} 
 						ref={ref => this.refHead = ref} 

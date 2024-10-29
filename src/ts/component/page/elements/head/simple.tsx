@@ -46,7 +46,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 		const isType = U.Object.isTypeLayout(object.layout);
-		const isRelation = U.Object.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
 		const placeholder = {

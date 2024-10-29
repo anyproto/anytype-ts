@@ -636,6 +636,7 @@ class UtilData {
 
 			case I.ObjectLayout.Human:
 			case I.ObjectLayout.Participant:
+			case I.ObjectLayout.Type:
 			case I.ObjectLayout.Relation: {
 				ret.withIcon = true;
 				break;
