@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
-import { I, S, Relation, translate, keyboard } from 'Lib';
+import { I, C, S, Relation, translate, keyboard } from 'Lib';
 
 const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation extends React.Component<I.SidebarSectionComponent> {
 	
@@ -24,7 +24,11 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		));
 
 		const Item = SortableElement((item: any) => (
-			<div className="item">
+			<div 
+				id={`item-${item.id}`}
+				className="item" 
+				onClick={e => this.onEdit(e, item.container, item.id)}
+			>
 				<div className="side left">
 					<Handle />
 					<IconObject object={item} />
@@ -36,17 +40,34 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 			</div>
 		));
 
-		const ListFeatured = SortableContainer(() => (
-			<div id="section-relation-featured" className="items">
-				{featured.map((item, i) => <Item key={`sidebar-${item.relationKey}`} {...item} index={i} />)}
-			</div>
-		));
+		const List = (list: any) => {
+			const SortableList = SortableContainer(() => (
+				<div id={list.container} className="items">
+					{list.data.map((item, i) => (
+						<Item 
+							key={[ list.container, item.id ].join('-')} 
+							{...item} 
+							container={list.container}
+							index={i} 
+						/>
+					))}
+				</div>
+			));
 
-		const ListRecommended = SortableContainer(() => (
-			<div id="section-relation-recommended" className="items">
-				{recommended.map((item, i) => <Item key={`sidebar-${item.relationKey}`} {...item} index={i} />)}
-			</div>
-		));
+			return (
+				<SortableList
+					axis="y" 
+					transitionDuration={150}
+					distance={10}
+					useDragHandle={true}
+					onSortStart={this.onSortStart}
+					onSortEnd={result => this.onSortEnd('featuredRelations', result)}
+					helperClass="isDragging"
+					lockToContainerEdges={false}
+					helperContainer={() => $(`#sidebarRight #${list.container}`).get(0)}
+				/>
+			);
+		};
 
         return (
 			<div className="wrap">
@@ -56,30 +77,10 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				</div>
 
 				<Label text={translate('sidebarTypeRelationHeader')} />
-				<ListFeatured
-					axis="y" 
-					transitionDuration={150}
-					distance={10}
-					useDragHandle={true}
-					onSortStart={this.onSortStart}
-					onSortEnd={result => this.onSortEnd('featuredRelations', result)}
-					helperClass="isDragging"
-					lockToContainerEdges={false}
-					helperContainer={() => $(`#sidebarRight #section-relation-featured`).get(0)}
-				/>
+				<List data={featured} container="section-relation-featured" />
 
 				<Label text={translate('sidebarTypeRelationSidebar')} />
-				<ListRecommended 
-					axis="y" 
-					transitionDuration={150}
-					distance={10}
-					useDragHandle={true}
-					onSortStart={this.onSortStart}
-					onSortEnd={result => this.onSortEnd('recommendedRelations', result)}
-					helperClass="isDragging"
-					lockToContainerEdges={false}
-					helperContainer={() => $(`#sidebarRight #section-relation-recommended`).get(0)}
-				/>
+				<List data={recommended} container="section-relation-recommended" />
 			</div>
 		);
     };
@@ -95,6 +96,33 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 
 		onChange(relationKey, value);
 		keyboard.disableSelection(false);
+	};
+
+	onEdit (e: any, container: string, id: string) {
+		const { object } = this.props;
+		const allowed = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Relation ]);
+		const relation = S.Record.getRelationById(id);
+		
+		S.Menu.open('blockRelationEdit', { 
+			element: `#sidebarRight #${container} #item-${id}`,
+			offsetX: 32,
+			data: {
+				rootId: object.id,
+				relationId: id,
+				readonly: !allowed,
+				ref: 'type',
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], () => {
+						if (onChange) {
+							onChange(relation.relationKey);
+						};
+					});
+				},
+				deleteCommand: () => {
+					C.ObjectTypeRelationRemove(object.id, [ relation.relationKey ]);
+				},
+			}
+		});
 	};
 
 });
