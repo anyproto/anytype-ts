@@ -71,7 +71,7 @@ const Mermaid = observer(class Mermaid extends React.Component<Props> {
 		};
 		
 		node.find('.mermaid').html(svg);
-    };
+	};
 
 });
 

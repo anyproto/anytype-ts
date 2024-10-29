@@ -4,10 +4,10 @@ import { U } from 'Lib';
 import { Icon } from 'Component';
 
 interface Props {
-    src: string;
+	src: string;
 	canPlay?: boolean;
-    onPlay?(): void;
-    onPause?(): void;
+	onPlay?(): void;
+	onPause?(): void;
 	onClick?(e: any): void;
 };
 
@@ -18,54 +18,54 @@ class MediaVideo extends React.Component<Props> {
 		src: '',
 	};
 
-    node: any = null;
-    speed = 1;
+	node: any = null;
+	speed = 1;
 
-    constructor (props: Props) {
-        super(props);
+	constructor (props: Props) {
+		super(props);
 
-        this.onPlayClick = this.onPlayClick.bind(this);
-    };
+		this.onPlayClick = this.onPlayClick.bind(this);
+	};
 
-    render () {
-        const { src, onClick } = this.props;
+	render () {
+		const { src, onClick } = this.props;
 
-        return (
-            <div
-                ref={ref => this.node = ref}
-                className="mediaVideo"
+		return (
+			<div
+				ref={ref => this.node = ref}
+				className="mediaVideo"
 				onClick={onClick}
-            >
-                <video className="media" controls={false} preload="auto" src={src} />
+			>
+				<video className="media" controls={false} preload="auto" src={src} />
 
-                <div className="controls">
-                    <Icon className="play" onClick={this.onPlayClick} />
-                </div>
-            </div>
-        );
-    };
+				<div className="controls">
+					<Icon className="play" onClick={this.onPlayClick} />
+				</div>
+			</div>
+		);
+	};
 
-    componentDidMount () {
-        this.rebind();
-    };
+	componentDidMount () {
+		this.rebind();
+	};
 
-    rebind () {
-        this.unbind();
+	rebind () {
+		this.unbind();
 
-        const node = $(this.node);
-        const video = node.find('video');
+		const node = $(this.node);
+		const video = node.find('video');
 
-        video.on('play', () => this.onPlay());
-        video.on('pause', () => this.onPause());
-        video.on('ended', () => this.onEnded());
-    };
+		video.on('play', () => this.onPlay());
+		video.on('pause', () => this.onPause());
+		video.on('ended', () => this.onEnded());
+	};
 
-    unbind () {
-        const node = $(this.node);
-        const video = node.find('video');
+	unbind () {
+		const node = $(this.node);
+		const video = node.find('video');
 
-        video.off('canplay ended pause play');
-    };
+		video.off('canplay ended pause play');
+	};
 
 	onPlay () {
 		const { onPlay } = this.props;
@@ -77,7 +77,7 @@ class MediaVideo extends React.Component<Props> {
 		};
 
 		video.get(0).controls = true;
-        node.addClass('isPlaying');
+		node.addClass('isPlaying');
 
 		if (onPlay) {
 			onPlay();
@@ -87,7 +87,7 @@ class MediaVideo extends React.Component<Props> {
 	onPause () {
 		const { onPause } = this.props;
 
-        if (onPause) {
+		if (onPause) {
 			onPause();
 		};
 	};
@@ -106,7 +106,7 @@ class MediaVideo extends React.Component<Props> {
 		this.onPause();
 	};
 
-    onPlayClick (e: any) {
+	onPlayClick (e: any) {
 		if (!this.props.canPlay) {
 			return;
 		};
@@ -121,9 +121,9 @@ class MediaVideo extends React.Component<Props> {
 			return;
 		};
 
-        U.Common.pauseMedia();
+		U.Common.pauseMedia();
 		video.get(0).play();
-    };
+	};
 
 };
 

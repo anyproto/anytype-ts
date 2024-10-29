@@ -11,11 +11,11 @@ interface State {
 
 const Toast = observer(class Toast extends React.Component<object, State> {
 
-    state = {
-        object: null,
-        target: null,
-        origin: null,
-    };
+	state = {
+		object: null,
+		target: null,
+		origin: null,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -23,20 +23,20 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 		this.close = this.close.bind(this);
 	};
 
-    render () {
-        const { toast } = S.Common;
+	render () {
+		const { toast } = S.Common;
 		if (!toast) {
 			return null;
 		};
 
-        const { count, action, text, value, object, target, origin, ids } = toast;
+		const { count, action, text, value, object, target, origin, ids } = toast;
 
-        let buttons = [];
-        let textObject = null;
-        let textAction = null;
-        let textOrigin = null;
-        let textActionTo = null;
-        let textTarget = null;
+		let buttons = [];
+		let textObject = null;
+		let textAction = null;
+		let textOrigin = null;
+		let textActionTo = null;
+		let textTarget = null;
 
 		const Element = (item: any) => (
 			<div className="chunk">
@@ -45,24 +45,24 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			</div>
 		);
 
-        switch (action) {
+		switch (action) {
 			default: {
 				textAction = text;
 				break;
 			};
 
-            case I.ToastAction.Lock: {
-                if (!object) {
-                    break;
-                };
+			case I.ToastAction.Lock: {
+				if (!object) {
+					break;
+				};
 
-                textObject = <Element {...object} />;
-                textAction = translate(value ? 'toastIsLocked' : 'toastIsUnlocked');
-                break;
+				textObject = <Element {...object} />;
+				textAction = translate(value ? 'toastIsLocked' : 'toastIsUnlocked');
+				break;
 			};
 
-            case I.ToastAction.Move: {
-                if (!target) {
+			case I.ToastAction.Move: {
+				if (!target) {
 					break;
 				};
 
@@ -81,12 +81,12 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					{ action: 'open', label: translate('commonOpen') },
 					{ action: 'undo', label: translate('commonUndo') }
 				]);
-                break;
+				break;
 			};
 
 			case I.ToastAction.Collection:
-            case I.ToastAction.Link: {
-                if (!object || !target) {
+			case I.ToastAction.Link: {
+				if (!object || !target) {
 					break;
 				};
 
@@ -94,31 +94,31 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 				textObject = <Element {...object} />;
 				textTarget = <Element {...target} />;
 
-                if (target.id != keyboard.getRootId()) {
-                    buttons = buttons.concat([
-                        { action: 'open', label: translate('commonOpen') }
-                    ]);
-                };
-                break;
+				if (target.id != keyboard.getRootId()) {
+					buttons = buttons.concat([
+						{ action: 'open', label: translate('commonOpen') }
+					]);
+				};
+				break;
 			};
 
-            case I.ToastAction.StorageFull: {
-                textAction = translate('toastUploadLimitExceeded');
+			case I.ToastAction.StorageFull: {
+				textAction = translate('toastUploadLimitExceeded');
 
-                buttons = buttons.concat([ 
+				buttons = buttons.concat([ 
 					{ action: 'manageStorage', label: translate('toastManageFiles') }
 				]);
-            };
+			};
 
-            case I.ToastAction.TemplateCreate: {
-                if (!object) {
-                    break;
-                };
+			case I.ToastAction.TemplateCreate: {
+				if (!object) {
+					break;
+				};
 
-                textObject = <Element {...object} />;
-                textAction = translate('toastTemplateCreate');
-                break;
-            };
+				textObject = <Element {...object} />;
+				textAction = translate('toastTemplateCreate');
+				break;
+			};
 
 			case I.ToastAction.Archive: {
 				if (!ids) {
@@ -133,49 +133,49 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 				]);
 				break;
 			};
-        };
+		};
 
-        return (
-            <div id="toast" className="toast" onClick={this.close}>
-                <div className="inner">
-                    <div className="message">
-                        {textObject}
-                        {textAction ? <span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(textAction) }} /> : ''}
-                        {textOrigin}
+		return (
+			<div id="toast" className="toast" onClick={this.close}>
+				<div className="inner">
+					<div className="message">
+						{textObject}
+						{textAction ? <span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(textAction) }} /> : ''}
+						{textOrigin}
 						{textActionTo ? <span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(textActionTo) }} /> : ''}
-                        {textTarget}
-                    </div>
+						{textTarget}
+					</div>
 
-                    {buttons.length ? (
+					{buttons.length ? (
 						<div className="buttons">
 							{buttons.map((item: any, i: number) => (
 								<Button key={i} text={item.label} onClick={e => this.onClick(e, item)} />
 							))}
 						</div>
 					) : ''}
-                </div>
-            </div>
-        );
-    };
+				</div>
+			</div>
+		);
+	};
 
-    componentDidUpdate () {
-        Preview.toastPosition();
-    };
+	componentDidUpdate () {
+		Preview.toastPosition();
+	};
 
 	close () {
 		Preview.toastHide(true);
 	};
 
-    onClick (e: any, item: any) {
+	onClick (e: any, item: any) {
 		switch (item.action) {
-            case 'open': {
-                this.onOpen(e);
-                break;
+			case 'open': {
+				this.onOpen(e);
+				break;
 			};
 
-            case 'undo': {
-                keyboard.onUndo(S.Common.toast.originId, 'Toast');
-                break;
+			case 'undo': {
+				keyboard.onUndo(S.Common.toast.originId, 'Toast');
+				break;
 			};
 
 			case 'undoArchive': {
@@ -185,18 +185,18 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 				break;
 			};
 
-            case 'manageStorage': {
-                S.Popup.open('settings', { data: { page: 'storageManager' }});
-                S.Common.toastClear();
-            };
-        };
+			case 'manageStorage': {
+				S.Popup.open('settings', { data: { page: 'storageManager' }});
+				S.Common.toastClear();
+			};
+		};
 
 		this.close();
-    };
+	};
 
-    onOpen (e: any) {
-        U.Object.openEvent(e, S.Common.toast.target);
-    };
+	onOpen (e: any) {
+		U.Object.openEvent(e, S.Common.toast.target);
+	};
 
 });
 

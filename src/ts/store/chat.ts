@@ -3,17 +3,17 @@ import { I, M } from 'Lib';
 
 class ChatStore {
 
-    public messageMap: Map<string, any[]> = observable(new Map());
+	public messageMap: Map<string, any[]> = observable(new Map());
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 
-    constructor () {
-        makeObservable(this, {
+	constructor () {
+		makeObservable(this, {
 			add: action,
 			update: action,
 			delete: action,
 			setReply: action,
-        });
-    };
+		});
+	};
 
 	set (rootId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));

@@ -56,7 +56,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
-    render() {
+	render() {
 		const { isLoading } = this.state;
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
@@ -108,7 +108,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			);
 		};
 
-        return (
+		return (
 			<div 
 				id="containerObject"
 				ref={ref => this.node = ref}
@@ -226,7 +226,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				</div>
 			</div>
 		);
-    };
+	};
 
 	componentDidMount () {
 		this.refFilter.focus();
@@ -794,9 +794,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				this.selected = this.selected.filter(it => it != item.id);
 			};
 			this.renderSelection();
-        };
+		};
 
-        const selectPrevious = () => {
+		const selectPrevious = () => {
 			if (!this.selected) {
 				return;
 			};
@@ -814,7 +814,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				this.selected = this.selected.filter(it => it != item.id);
 			};
 			this.renderSelection();
-        };
+		};
 
 		const cb = () => {
 			let scrollTo = 0;
