@@ -143,7 +143,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		const value = this.ref.getValue();
+		const value = this.ref?.getValue();
 		if (value && (this.last == value)) {
 			return;
 		};

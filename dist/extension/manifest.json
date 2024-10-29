@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "Anytype Web Clipper",
 	"description": "Save web content to the Anytype — open, encrypted, and local-first application that connects everything as objects.",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"icons": {
 		"16": "img/icon16x16.png",
 		"128": "img/icon128x128.png"
