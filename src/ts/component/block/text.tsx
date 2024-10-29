@@ -278,9 +278,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			this.frame = raf(() => {
-				renderMentions(rootId, this.node, this.marks, html);
-				renderObjects(rootId, this.node, this.marks, html, this.props);
-				renderLinks(this.node, this.marks, html, this.props);
+				renderMentions(rootId, this.node, this.marks, () => this.getValue());
+				renderObjects(rootId, this.node, this.marks, () => this.getValue(), this.props);
+				renderLinks(this.node, this.marks, () => this.getValue(), this.props);
 				renderEmoji(this.node);
 			});
 		};
@@ -303,8 +303,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const tag = Mark.getTag(I.MarkType.Latex);
+		const code = Mark.getTag(I.MarkType.Code);
 		const value = this.refEditable.getHtmlValue();
-		const reg = /(^|[^\d])?\$((?:[^$<]|\.)*?)\$([^\d]|$)/gi;
+		const reg = /(^|[^\d<]+)?\$((?:[^$<]|\.)*?)\$([^\d]|$)/gi;
+		const regCode = new RegExp(`^${code}`, 'i');
 
 		if (!/\$((?:[^$<]|\.)*?)\$/.test(value)) {
 			return;
@@ -336,6 +338,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const m1 = String(m[1] || '');
 			const m2 = String(m[2] || '');
 			const m3 = String(m[3] || '');
+
+			// Skip inline code marks
+			if (regCode.test(m1)) {
+				return;
+			};
 
 			html = html.replace(m0, `${m1}<${tag}>${render(m2)}</${tag}>${m3}`);
 		});
@@ -810,8 +817,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
-		// When typing text adjust several markups to break it
-		if (!keyboard.isSpecial(e)) {
+		// When typing space adjust several markups to break it
+		keyboard.shortcut('space', e, () => {
 			const d = text.length - this.text.length;
 
 			if (d > 0) {
@@ -826,7 +833,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					};
 				};
 			};
-		};
+		});
 
 		if (!ret && (adjustMarks || (value != text))) {
 			this.setValue(text);

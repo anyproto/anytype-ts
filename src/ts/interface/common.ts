@@ -123,8 +123,8 @@ export enum Usecase {
 	None		 = 0,
 	GetStarted	 = 1,
 	Personal	 = 2,
-    Knowledge	 = 3,
-    Notes		 = 4,
+	Knowledge	 = 3,
+	Notes		 = 4,
 	Strategic 	 = 5,
 	Empty		 = 6,
 };
@@ -201,9 +201,9 @@ export enum SurveyType {
 export enum SliceOperation {
 	None			 = 0,
 	Add				 = 1,
-    Move			 = 2,
+	Move			 = 2,
 	Remove			 = 3,
-    Replace			 = 4,
+	Replace			 = 4,
 };
 
 export enum FileSyncStatus {

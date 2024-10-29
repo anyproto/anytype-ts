@@ -56,7 +56,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
-    render() {
+	render() {
 		const { isLoading } = this.state;
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
@@ -108,7 +108,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			);
 		};
 
-        return (
+		return (
 			<div 
 				id="containerObject"
 				ref={ref => this.node = ref}
@@ -226,17 +226,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				</div>
 			</div>
 		);
-    };
+	};
 
 	componentDidMount () {
-		const storage = this.storageGet() || {};
-
-		this.type = storage.type || I.ObjectContainerType.Object;
-		this.orphan = storage.orphan || false;
-		this.compact = storage.compact || false;
-		this.initSort();
-
 		this.refFilter.focus();
+		this.initStorage();
 		this.rebind();
 		this.load(true);
 
@@ -262,6 +256,20 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	componentWillUnmount(): void {
 		window.clearTimeout(this.timeoutFilter);
 		this.unbind();
+	};
+
+	initStorage () {
+		const storage = this.storageGet() || {};
+
+		this.type = storage.type || I.ObjectContainerType.Object;
+		this.orphan = storage.orphan || false;
+
+		if ([ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(this.type) && (undefined === storage.compact)) {
+			storage.compact = true;
+		};
+
+		this.compact = storage.compact || false;
+		this.initSort();
 	};
 
 	rebind () {
@@ -518,6 +526,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					};
 
 					this.storageSet(storage);
+					this.initStorage();
 					this.load(true);
 
 					const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
@@ -572,8 +581,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.type = id as I.ObjectContainerType;
 		storage.type = this.type;
 
-		this.initSort();
 		this.storageSet(storage);
+		this.initStorage();
 		this.load(true);
 
 		analytics.event('ChangeLibraryType', { type: id });
@@ -784,9 +793,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				this.selected = this.selected.filter(it => it != item.id);
 			};
 			this.renderSelection();
-        };
+		};
 
-        const selectPrevious = () => {
+		const selectPrevious = () => {
 			if (!this.selected) {
 				return;
 			};
@@ -804,7 +813,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				this.selected = this.selected.filter(it => it != item.id);
 			};
 			this.renderSelection();
-        };
+		};
 
 		const cb = () => {
 			let scrollTo = 0;
