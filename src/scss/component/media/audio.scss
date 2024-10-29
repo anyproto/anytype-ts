@@ -27,7 +27,7 @@
             }
             
             .icon.volume { width: 20px; height: 20px;  min-width: 20px; min-height: 20px; background-image: url('~img/icon/audio/volume.svg'); }
-            .icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
+            .icon.volume.muted { background-image: url('~img/icon/audio/mute.svg'); }
             .time { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
 
             @container media-audio (max-width: 500px) {
