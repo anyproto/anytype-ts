@@ -34,13 +34,13 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			</div>
 		);
 
-        return (
-            <div>
+		return (
+			<div>
 				{sections.map((section: any, i: number) => (
 					<Section key={i} {...section} />
 				))}
-            </div>
-        );
+			</div>
+		);
 	};
 	
 	componentDidMount () {
@@ -136,19 +136,19 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getContent () {
 		const { param } = this.props;
-        const { data } = param;
-        const { rootId, blockId } = data;
-        const block = S.Block.getLeaf(rootId, blockId);
-        const object = S.Detail.get(rootId, block.getTargetObjectId());
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const block = S.Block.getLeaf(rootId, blockId);
+		const object = S.Detail.get(rootId, block.getTargetObjectId());
 
-        return U.Data.checkLinkSettings(block.content, object.layout);
+		return U.Data.checkLinkSettings(block.content, object.layout);
 	};
 
 	getStyles () {
 		return [
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText'), icon: 'style-text' },
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard'), icon: 'style-card' },
-        ].map((it: any) => {
+		].map((it: any) => {
 			it.icon = 'linkStyle' + it.id;
 			return it;
 		});
@@ -176,40 +176,40 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getSections () {
 		const { param } = this.props;
-        const { data } = param;
-        const { rootId, blockId } = data;
-        const block = S.Block.getLeaf(rootId, blockId);
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return [];
 		};
 
-        const object = S.Detail.get(rootId, block.getTargetObjectId());
-        const content = this.getContent();
+		const object = S.Detail.get(rootId, block.getTargetObjectId());
+		const content = this.getContent();
 		const isCard = content.cardStyle == I.LinkCardStyle.Card;
 		const isText = content.cardStyle == I.LinkCardStyle.Text;
 		const isTask = U.Object.isTaskLayout(object.layout);
 		const isNote = U.Object.isNoteLayout(object.layout);
 
-        const canIcon = !isTask && !isNote;
+		const canIcon = !isTask && !isNote;
 		const canIconSize = canIcon && isCard;
 		const canIconSwitch = canIcon && isText;
-        const canCover = !isNote && isCard;
-        const canDescription = !isNote;
+		const canCover = !isNote && isCard;
+		const canDescription = !isNote;
 
-        const styles = this.getStyles();
+		const styles = this.getStyles();
 		const style = styles.find(it => it.id == content.cardStyle) || styles[0];
 
 		let icon: any = {};
-        let icons: any[] = [];
+		let icons: any[] = [];
 
 		let description: any = {};
 		let descriptions: any[] = [];
 
-        if (canIcon) {
+		if (canIcon) {
 			icons = this.getIcons();
 			icon = icons.find(it => it.id == content.iconSize) || icons[0];
-        };
+		};
 
 		if (canDescription) {
 			descriptions = this.getDescriptions();
@@ -275,20 +275,20 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 	};
 
 	save (id: string, v: any) {
-        const { param } = this.props;
-        const { data } = param;
-        const { rootId, blockId, blockIds } = data;
-        const block = S.Block.getLeaf(rootId, blockId);
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, blockIds } = data;
+		const block = S.Block.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return;
 		};
 
-        const content = U.Common.objectCopy(block.content || {});
+		const content = U.Common.objectCopy(block.content || {});
 
-        content[id] = v;
+		content[id] = v;
 		C.BlockLinkListSetAppearance(rootId, blockIds, content.iconSize, content.cardStyle, content.description, content.relations);
-    };
+	};
 
 	hasRelationKey (key: string) {
 		const content = this.getContent();

@@ -168,7 +168,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				{content}
 			</div>
 		);
-    };
+	};
 
 	componentDidMount () {
 		this.resize();

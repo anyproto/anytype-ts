@@ -19,7 +19,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 
 	constructor (props: I.PageComponent) {
-        super(props);
+		super(props);
 
 		this.onRemove = this.onRemove.bind(this);
 		this.onExport = this.onExport.bind(this);
@@ -67,7 +67,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 			};
 		};
 
-        return (
+		return (
 			<div>
 				<CanvasWorkerBridge state={OnboardStage.Void} />
 				

@@ -495,8 +495,8 @@ export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRan
 	const request = new Rpc.Block.Copy.Request();
 
 	request.setContextid(contextId);
-    request.setBlocksList(blocks.map(Mapper.To.Block));
-    request.setSelectedtextrange(Mapper.To.Range(range));
+	request.setBlocksList(blocks.map(Mapper.To.Block));
+	request.setSelectedtextrange(Mapper.To.Range(range));
 
 	dispatcher.request(BlockCopy.name, request, callBack);
 };
@@ -507,8 +507,8 @@ export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRang
 	const request = new Rpc.Block.Cut.Request();
 
 	request.setContextid(contextId);
-    request.setBlocksList(blocks.map(Mapper.To.Block));
-    request.setSelectedtextrange(Mapper.To.Range(range));
+	request.setBlocksList(blocks.map(Mapper.To.Block));
+	request.setSelectedtextrange(Mapper.To.Range(range));
 
 	dispatcher.request(BlockCut.name, request, callBack);
 };
@@ -519,11 +519,11 @@ export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRa
 	const request = new Rpc.Block.Paste.Request();
 
 	request.setContextid(contextId);
-    request.setFocusedblockid(focusedId);
-    request.setSelectedtextrange(Mapper.To.Range(range));
-    request.setIspartofblock(isPartOfBlock);
-    request.setSelectedblockidsList(blockIds);
-    request.setTextslot(data.text);
+	request.setFocusedblockid(focusedId);
+	request.setSelectedtextrange(Mapper.To.Range(range));
+	request.setIspartofblock(isPartOfBlock);
+	request.setSelectedblockidsList(blockIds);
+	request.setTextslot(data.text);
 	request.setHtmlslot(data.html);
 	request.setAnyslotList((data.anytype || []).map(Mapper.To.Block));
 	request.setFileslotList((data.files || []).map(Mapper.To.PasteFile));
@@ -536,10 +536,10 @@ export const BlockListMoveToExistingObject = (contextId: string, targetContextId
 	const request = new Rpc.Block.ListMoveToExistingObject.Request();
 
 	request.setContextid(contextId);
-    request.setTargetcontextid(targetContextId);
-    request.setBlockidsList(blockIds);
-    request.setDroptargetid(targetId);
-    request.setPosition(position as number);
+	request.setTargetcontextid(targetContextId);
+	request.setBlockidsList(blockIds);
+	request.setDroptargetid(targetId);
+	request.setPosition(position as number);
 
 	dispatcher.request(BlockListMoveToExistingObject.name, request, callBack);
 };
@@ -548,7 +548,7 @@ export const BlockListConvertToObjects = (contextId: string, blockIds: string[],
 	const request = new Rpc.Block.ListConvertToObjects.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
+	request.setBlockidsList(blockIds);
 	request.setObjecttypeuniquekey(typeKey);
 	request.setTemplateid(templateId);
 	request.setBlock(Mapper.To.Block(block));
@@ -561,9 +561,9 @@ export const BlockListDuplicate = (contextId: string, targetContextId: string, b
 
 	request.setContextid(contextId);
 	request.setTargetcontextid(targetContextId);
-    request.setBlockidsList(blockIds);
-    request.setTargetid(targetId);
-    request.setPosition(position as number);
+	request.setBlockidsList(blockIds);
+	request.setTargetid(targetId);
+	request.setPosition(position as number);
 
 	dispatcher.request(BlockListDuplicate.name, request, callBack);
 };
@@ -572,8 +572,8 @@ export const BlockListTurnInto = (contextId: string, blockIds: string[], style: 
 	const request = new Rpc.Block.ListTurnInto.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setStyle(style as number);
+	request.setBlockidsList(blockIds);
+	request.setStyle(style as number);
 
 	dispatcher.request(BlockListTurnInto.name, request, callBack);
 };
@@ -593,8 +593,8 @@ export const BlockDivListSetStyle = (contextId: string, blockIds: string[], styl
 	const request = new Rpc.BlockDiv.ListSetStyle.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setStyle(style as number);
+	request.setBlockidsList(blockIds);
+	request.setStyle(style as number);
 
 	dispatcher.request(BlockDivListSetStyle.name, request, callBack);
 };
@@ -797,8 +797,8 @@ export const BlockFileListSetStyle = (contextId: string, blockIds: string[], sty
 	const request = new Rpc.BlockFile.ListSetStyle.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setStyle(style as number);
+	request.setBlockidsList(blockIds);
+	request.setStyle(style as number);
 
 	dispatcher.request(BlockFileListSetStyle.name, request, callBack);
 };
@@ -807,8 +807,8 @@ export const BlockFileSetTargetObjectId = (contextId: string, blockId: string, o
 	const request = new Rpc.BlockFile.SetTargetObjectId.Request();
 
 	request.setContextid(contextId);
-    request.setBlockid(blockId);
-    request.setObjectid(objectId);
+	request.setBlockid(blockId);
+	request.setObjectid(objectId);
 
 	dispatcher.request(BlockFileSetTargetObjectId.name, request, callBack);
 };
@@ -819,8 +819,8 @@ export const BlockTextListSetColor = (contextId: string, blockIds: string[], col
 	const request = new Rpc.BlockText.ListSetColor.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setColor(color);
+	request.setBlockidsList(blockIds);
+	request.setColor(color);
 
 	dispatcher.request(BlockTextListSetColor.name, request, callBack);
 };
@@ -829,8 +829,8 @@ export const BlockTextListSetMark = (contextId: string, blockIds: string[], mark
 	const request = new Rpc.BlockText.ListSetMark.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setMark(Mapper.To.Mark(mark));
+	request.setBlockidsList(blockIds);
+	request.setMark(Mapper.To.Mark(mark));
 
 	dispatcher.request(BlockTextListSetMark.name, request, callBack);
 };
@@ -849,7 +849,7 @@ export const BlockTextListClearStyle = (contextId: string, blockIds: string[], c
 	const request = new Rpc.BlockText.ListClearStyle.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
+	request.setBlockidsList(blockIds);
 
 	dispatcher.request(BlockTextListClearStyle.name, request, callBack);
 };
@@ -858,7 +858,7 @@ export const BlockTextListClearContent = (contextId: string, blockIds: string[],
 	const request = new Rpc.BlockText.ListClearContent.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
+	request.setBlockidsList(blockIds);
 
 	dispatcher.request(BlockTextListClearContent.name, request, callBack);
 };
@@ -869,7 +869,7 @@ export const BlockListSetFields = (contextId: string, fields: any, callBack?: (m
 	const request = new Rpc.Block.ListSetFields.Request();
 
 	request.setContextid(contextId);
-    request.setBlockfieldsList(fields);
+	request.setBlockfieldsList(fields);
 
 	dispatcher.request(BlockListSetFields.name, request, callBack);
 };
@@ -878,8 +878,8 @@ export const BlockListSetBackgroundColor = (contextId: string, blockIds: string[
 	const request = new Rpc.Block.ListSetBackgroundColor.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setColor(color);
+	request.setBlockidsList(blockIds);
+	request.setColor(color);
 
 	dispatcher.request(BlockListSetBackgroundColor.name, request, callBack);
 };
@@ -888,8 +888,8 @@ export const BlockListSetAlign = (contextId: string, blockIds: string[], align: 
 	const request = new Rpc.Block.ListSetAlign.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setAlign(align as number);
+	request.setBlockidsList(blockIds);
+	request.setAlign(align as number);
 
 	dispatcher.request(BlockListSetAlign.name, request, callBack);
 };
@@ -898,8 +898,8 @@ export const BlockListSetVerticalAlign = (contextId: string, blockIds: string[],
 	const request = new Rpc.Block.ListSetVerticalAlign.Request();
 
 	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setVerticalalign(align as number);
+	request.setBlockidsList(blockIds);
+	request.setVerticalalign(align as number);
 
 	dispatcher.request(BlockListSetVerticalAlign.name, request, callBack);
 };
@@ -1664,7 +1664,7 @@ export const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callB
 	const request = new Rpc.Object.SetLayout.Request();
 
 	request.setContextid(contextId);
-    request.setLayout(layout as number);
+	request.setLayout(layout as number);
 
 	dispatcher.request(ObjectSetLayout.name, request, callBack);
 };
@@ -1673,7 +1673,7 @@ export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, call
 	const request = new Rpc.Object.SetIsFavorite.Request();
 
 	request.setContextid(contextId);
-    request.setIsfavorite(isFavorite);
+	request.setIsfavorite(isFavorite);
 
 	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
 };
@@ -1683,7 +1683,7 @@ export const ObjectGraph = (spaceId: string, filters: any[], limit: number, type
 
 	request.setSpaceid(spaceId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
-    request.setLimit(limit);
+	request.setLimit(limit);
 	request.setObjecttypefilterList(types);
 	request.setKeysList(keys);
 	request.setCollectionid(collectionId);
