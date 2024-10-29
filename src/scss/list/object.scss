@@ -5,9 +5,7 @@
 	.table {
 		.selectionTarget { display: grid; grid-template-columns: minmax(0, 1fr) 20% 20%; }
 		
-		.row.isHead { 
-			display: grid; grid-template-columns: minmax(0, 1fr) 20% 20%; color: var(--color-text-secondary);
-		}
+		.row.isHead { display: grid; grid-template-columns: minmax(0, 1fr) 20% 20%; color: var(--color-text-secondary); }
 		.row.isHead {
 			.cell { 
 				text-align: left; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
@@ -15,9 +13,12 @@
 			}
 			.cell {
 				.name { 
-					display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; @include text-overflow-nw; 
-					border-right: 1px solid var(--color-shape-secondary);
+					display: flex; flex-direction: row; align-items: center; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
+					@include text-overflow-nw; border-right: 1px solid var(--color-shape-secondary);
 				}
+
+				.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/sortArrow.svg'); }
+				.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 			}
 			.cell:last-child {
 				.name { border: 0px; }
