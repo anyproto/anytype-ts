@@ -11,8 +11,9 @@
 		.title { @include text-paragraph; font-weight: 600; }
 		.label { padding: 5px 16px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
 
+		.items { padding: 0px 8px; }
 		.items {
-			.item { padding: 3px 16px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; }
+			.item { padding: 3px 8px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; position: relative; }
 			.item {
 				.value.flex { flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 8px; }
 
