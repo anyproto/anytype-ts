@@ -21,6 +21,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
     render () {
+		const type = this.getObject();
 		const sections = this.getSections();
 
         return (
@@ -53,12 +54,23 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidMount (): void {
-		const { rootId } = this.props;
-		const type = S.Record.getTypeById(rootId);
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
+		const type = this.getObject();
 		const sections = this.getSections();
 
 		this.object = U.Common.objectCopy(type);
 		sections.forEach(it => this.updateObject(it.id));
+	};
+	
+	getObject () {
+		return S.Record.getTypeById(this.props.rootId);
 	};
 
 	getSections () {
