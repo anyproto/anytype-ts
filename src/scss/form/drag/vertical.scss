@@ -1,7 +1,6 @@
 @import "~scss/_mixins";
 
-.input-drag-vertical { padding: 8px; width: 20px; height: 88px; border-radius: 8px; background-color: var(--color-control-bg); box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); visibility: visible; }
-.input-drag-vertical.hidden { visibility: hidden; }
+.input-drag-vertical { padding: 8px; width: 20px; height: 88px; border-radius: 8px; background-color: var(--color-control-bg); box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); }
 .input-drag-vertical {
     input[type='range'] { position: absolute; width: 4px; height: 72px; cursor: pointer;  writing-mode: vertical-lr; padding: unset; }
 
@@ -9,9 +8,9 @@
     input[type='range']::-webkit-slider-runnable-track,
     input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; }
 
-    input[type='range']::-webkit-slider-runnable-track { height: 4px; background: linear-gradient(to left, var(--color-control-accent), var(--color-control-accent)), var(--color-control-inactive);
-        transform: scaleY(-1); /* Flips the background vertically */ background-size: 100% var(--background-size, 0%); background-repeat: no-repeat;
-        border-radius: 2px; }
+    input[type='range']::-webkit-slider-runnable-track { height: 4px; background: linear-gradient(to left, var(--color-control-accent),
+        var(--color-control-accent)), var(--color-control-inactive); transform: scaleY(-1); /* Flips the background vertically */
+        background-size: 100% var(--background-size, 0%); background-repeat: no-repeat; border-radius: 2px; }
 
     input[type='range']::-webkit-slider-thumb { width: 4px; height: 4px; background: transparent; border: none; border-radius: 50%; margin-top: -2px; }
 }

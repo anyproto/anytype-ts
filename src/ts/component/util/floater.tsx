@@ -11,6 +11,7 @@ interface Props {
 		left?: number;
 		top?: number;
 	};
+	isShown?: boolean;
 }
 
 export enum AnchorTo {
@@ -23,6 +24,7 @@ export const Floater: React.FC<Props> = ({
 	anchorEl, 
 	anchorTo = AnchorTo.Bottom,
 	offset = { top: 0, left: 0 },
+	isShown = true,
 }) => {
 	const ref = useRef<HTMLDivElement>(null);
 	const [ position, setPosition ] = useState({ top: 0, left: 0 });
@@ -32,7 +34,11 @@ export const Floater: React.FC<Props> = ({
 			const anchorElRect = anchorEl.getBoundingClientRect();
 			const elRect = ref.current.getBoundingClientRect();
 
-			const { top: at, left: al, bottom: ab, width: aw } = anchorElRect;
+			const { top: at, left: al, width: aw, height: ah } = anchorElRect;
+
+			const sh = document.body.scrollHeight;
+			const scrollY = window.scrollY;
+
 			const eh = elRect.height;
 			const ew = elRect.width;
 
@@ -40,30 +46,27 @@ export const Floater: React.FC<Props> = ({
 			const ol = Number(offset.left) || 0;
 
 			let nt = 0;
-			let nl = 0;
+			const nl = al + aw / 2 - ew / 2 + ol;
 
 			switch (anchorTo) {
 				case AnchorTo.Top:
-					nt = at - eh + ot;
-					nl = al + aw / 2 - ew / 2 + ol;
+					nt = -sh + at - eh + ot + scrollY;
 					break;
 				case AnchorTo.Bottom:
-					nt = ab + ot;
-					nl = al + aw / 2 - ew / 2 + ol;
+					nt = -sh + at + ah + ot + scrollY;
 					break;
 			};
-
 			setPosition({ top: nt, left: nl });
 		};
 	};
 
 	H.useElementMovement(anchorEl, onMove);
-	useEffect(() => onMove(), [ anchorEl, ref.current ]);
+	useEffect(() => onMove(), [ anchorEl, ref.current, isShown ]);
 
 	return ReactDOM.createPortal(
-		<div className="floater"
+		<div className={`floater ${isShown ? 'show' : 'hide'}`}
 			ref={ref}
-			style={{ transform: `translate3d(${position.top}px, ${-position.left}px, 0px)`}}
+			style={{ transform: `translate3d(${position.left}px, ${position.top}px, 0px)`}}
 		>
 			{children}
 		</div>,

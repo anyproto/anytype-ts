@@ -20,11 +20,10 @@ interface State {
 	volume: number;
 	muted: boolean;
 	showVolumeSlider: boolean;
-	startedPlaying: boolean;
 	timeMetric: string;
 };
 
-class MediaAudio extends React.Component<Props, State> {
+class MediaAudio extends React.PureComponent<Props, State> {
 
 	node: HTMLDivElement = null;
 	timeDragRef: DragHorizontal = null;
@@ -36,6 +35,8 @@ class MediaAudio extends React.Component<Props, State> {
 	resizeObserver: ResizeObserver;
 	fadeOutVolumeSlider = _.debounce(() => this.setState({ showVolumeSlider: false }), 1200);
 
+	startedPlaying = false;
+
 	constructor (props: Props) {
 		super(props);
 
@@ -43,7 +44,6 @@ class MediaAudio extends React.Component<Props, State> {
 			volume: 1,
 			muted: false,
 			showVolumeSlider: false,
-			startedPlaying: false,
 			timeMetric: '',
 		};
 
@@ -61,10 +61,6 @@ class MediaAudio extends React.Component<Props, State> {
 
 		if (!volume || muted) {
 			iconClasses.push('muted');
-		};
-
-		if (showVolumeSlider) {
-			volumeSliderClasses.push('visible');
 		};
 
 		return (
@@ -108,13 +104,12 @@ class MediaAudio extends React.Component<Props, State> {
 							<Floater 
 								anchorEl={this.volumeIcon?.node} 
 								anchorTo={AnchorTo.Top} 
-								offset={{ top: -2 }}
+								isShown={this.state.showVolumeSlider}
 							>
 								<DragVertical
 									id="volume"
 									className={volumeSliderClasses.filter(Boolean).join(' ')}
 									value={volume}
-									onMouseMove={() => this.setState({ showVolumeSlider: true })}
 									onChange={(e: any, v: number) => this.onVolume(v)}
 								/>
 							</Floater>
@@ -194,7 +189,7 @@ class MediaAudio extends React.Component<Props, State> {
 	};
 
 	onPlay () {
-		this.setState({ startedPlaying: true });
+		this.startedPlaying = true;
 
 		const { onPlay } = this.props;
 		const node = $(this.node);
@@ -261,7 +256,7 @@ class MediaAudio extends React.Component<Props, State> {
 			return;
 		};
 
-		const t = this.state.startedPlaying ? this.getTime(el.currentTime) : this.getTime(el.duration);
+		const t = this.startedPlaying ? this.getTime(el.currentTime) : this.getTime(el.duration);
 		this.setState({ timeMetric: `${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`});
 		this.timeDragRef.setValue(el.currentTime / el.duration);
 	};
