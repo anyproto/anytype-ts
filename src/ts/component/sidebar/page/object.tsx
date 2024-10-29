@@ -15,7 +15,7 @@ const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_DEFAULT = 64;
 const HEIGHT_ITEM_COMPACT = 36;
 
-const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
+const SidebarPageObject = observer(class SidebarPageObject extends React.Component<{}, State> {
 	
 	state = {
 		isLoading: false,
@@ -1111,4 +1111,4 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 });
 
-export default SidebarObject;
+export default SidebarPageObject;

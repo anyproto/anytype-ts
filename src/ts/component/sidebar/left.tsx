@@ -5,8 +5,8 @@ import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 
-import SidebarWidget from './widget';
-import SidebarObject from './object';
+import SidebarWidget from './page/widget';
+import SidebarObject from './page/object';
 
 const SidebarLeft = observer(class SidebarLeft extends React.Component {
 	

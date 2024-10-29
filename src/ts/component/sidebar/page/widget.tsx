@@ -9,7 +9,7 @@ type State = {
 	previewId: string;
 };
 
-const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, State> {
+const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<{}, State> {
 		
 	state: State = {
 		isEditing: false,
@@ -494,4 +494,4 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 });
 
-export default SidebarWidget;
+export default SidebarPageWidget;
