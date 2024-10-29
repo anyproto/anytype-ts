@@ -104,7 +104,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				const arrow = !isRelation;
 
 				if (isType) {
-					buttonEdit = <Button id="button-edit" color="blank" className="c36" text={translate('commonEdit')} onClick={onEdit} />;
+					buttonEdit = <Button id="button-edit" color="blank" className="c28" text={translate('commonEdit')} onClick={onEdit} />;
 				};
 
 				buttonCreate = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;

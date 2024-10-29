@@ -15,7 +15,6 @@ import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 import ListNotification from './list/notification';
 import ListChildren from './list/children';
-import ListObjectPreview from './list/previewObject';
 import ListObject from './list/object';
 import ListObjectManager from './list/objectManager';
 
@@ -111,7 +110,6 @@ export {
 	ListPopup,
 	ListMenu,
 	ListChildren,
-	ListObjectPreview,
 	ListObject,
 	ListObjectManager,
 	ListNotification,

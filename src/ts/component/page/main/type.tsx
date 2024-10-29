@@ -1,10 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
+import { Icon, Header, Footer, Loader, ListObject, Deleted } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate, sidebar } from 'Lib';
+
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
+import ListObjectPreview from 'Component/list/objectPreview';
 
 interface State {
 	isLoading: boolean;
@@ -105,13 +107,20 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{totalTemplate} {U.Common.plural(totalTemplate, translate('pluralTemplate'))}
+								<div className="side left">
+									{U.Common.plural(totalTemplate, translate('pluralTemplate'))}
+									<span className="cnt">{totalTemplate}</span>
+								</div>
 
-								{allowedTemplate ? (
-									<div className="btn" onClick={this.onTemplateAdd}>
-										<Icon className="plus" />{translate('commonNew')}
-									</div>
-								) : ''}
+								<div className="side right">
+									{allowedTemplate ? (
+										<Icon 
+											className="plus withBackground" 
+											tooltip={translate('commonCreateNewTemplate')} 
+											onClick={this.onTemplateAdd} 
+										/>
+									) : ''}
+								</div>
 							</div>
 
 							{totalTemplate ? (
@@ -139,7 +148,15 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 					{object.isInstalled && !object._empty_ ? (
 						<div className="section set">
-							<div className="title">{totalObject} {U.Common.plural(totalObject, translate('pluralObject'))}</div>
+							<div className="title">
+								<div className="side left">
+									{U.Common.plural(totalObject, translate('pluralObject'))}
+									<span className="cnt">{totalObject}</span>
+								</div>
+
+								<div className="side right">
+								</div>
+							</div>
 							<div className="content">
 								<ListObject 
 									{...this.props} 

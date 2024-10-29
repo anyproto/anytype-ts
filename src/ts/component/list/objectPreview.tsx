@@ -16,7 +16,7 @@ interface Props {
 	onMenu?: (e: any, item: any) => void;
 };
 
-const WIDTH = 344;
+const WIDTH = 224;
 
 class ListObjectPreview extends React.Component<Props> {
 
@@ -110,7 +110,7 @@ class ListObjectPreview extends React.Component<Props> {
 		return (
 			<div 
 				ref={node => this.node = node}
-				className="listPreviewObject"
+				className="listObjectPreview"
 			>
 				<div className="wrap">
 					<div id="scroll" className="scroll">

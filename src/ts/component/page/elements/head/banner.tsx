@@ -56,7 +56,7 @@ class HeaderBanner extends React.Component<Props> {
 				cn.push('withMenu');
 
 				if (count) {
-					label = U.Common.sprintf(translate('selectTemplateBannerWithNumber'), count, U.Common.plural(count, translate('pluralTemplate')));
+					label = U.Common.sprintf(translate('selectTemplateBannerWithNumber'), count, U.Common.plural(count, translate('pluralLCTemplate')));
 				} else {
 					label = translate('selectTemplateBanner');
 				};
