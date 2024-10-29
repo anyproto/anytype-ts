@@ -44,9 +44,7 @@ const DragVertical = React.forwardRef<Input, Props>(({
 		}
 	};
 
-	useEffect(()=>{
-		setBackgroundSize();
-	}, [value]);
+	useEffect(() => { setBackgroundSize(); }, [value]);
 
 	return (
 		<div 
