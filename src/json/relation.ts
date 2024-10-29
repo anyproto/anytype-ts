@@ -97,6 +97,7 @@ export default {
 		'sourceObject',
 		'uniqueKey',
 		'defaultTemplateId',
+		'layoutAlign',
 	],
 
 	graph: [

@@ -260,18 +260,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	placeholderCheck (id: string) {
 		if (this.refEditable[id]) {
 			this.refEditable[id].placeholderCheck();
-		};		
-	};
-
-	placeholderHide (id: string) {
-		if (this.refEditable[id]) {
-			this.refEditable[id].placeholderHide();
-		};
-	};
-	
-	placeholderShow (id: string) {
-		if (this.refEditable[id]) {
-			this.refEditable[id].placeholderShow();
 		};
 	};
 

@@ -9,7 +9,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		const { object } = this.props;
 
         return (
-			<div className="section sectionRelation">
+			<div className="wrap">
 				<div className="titleWrap">
 					<Title text={translate('sidebarTypeRelation')} />
 					<Icon className="plus withBackground" />

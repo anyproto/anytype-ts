@@ -34,7 +34,14 @@
 		}
 	}
 
-	.section.sectionTitle { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; padding: 16px; }
+	.section.typeTitle { padding: 16px; }
+	.section.typeTitle {
+		> .wrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }
+		> .wrap {
+			.iconObject { flex-shrink: 0; }
+			.editableWrap { flex-grow: 1; }
+		}
+	}
 
 }
 
