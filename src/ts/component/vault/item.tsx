@@ -14,7 +14,7 @@ interface Props {
 
 const VaultItem = observer(class Vault extends React.Component<Props> {
 	
-    render () {
+	render () {
 		const { id, isButton, onClick, onMouseEnter, onMouseLeave, onContextMenu } = this.props;
 		const cn = [ 'item' ];
 
@@ -27,8 +27,8 @@ const VaultItem = observer(class Vault extends React.Component<Props> {
 			cn.push(`isButton ${id}`);
 		};
 
-        return (
-            <div 
+		return (
+			<div 
 				id={`item-${id}`}
 				className={cn.join(' ')}
 				onClick={onClick}
@@ -41,7 +41,7 @@ const VaultItem = observer(class Vault extends React.Component<Props> {
 				</div>
 			</div>
 		);
-    };
+	};
 
 });
 

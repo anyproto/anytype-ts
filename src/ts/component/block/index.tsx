@@ -795,7 +795,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderLinks (node: any, marks: I.Mark[], value: string, props: any) {
+	renderLinks (node: any, marks: I.Mark[], getValue: () => string, props: any) {
 		node = $(node);
 
 		const { readonly, block } = props;
@@ -864,8 +864,7 @@ const Block = observer(class Block extends React.Component<Props> {
 							restricted.push(I.MarkType.Bold);
 						};
 
-						const parsed = Mark.fromHtml(value, restricted);
-
+						const parsed = Mark.fromHtml(getValue(), restricted);
 						this.setMarks(parsed.text, marks);
 					},
 					noUnlink: readonly,
@@ -877,7 +876,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderMentions (rootId: string, node: any, marks: I.Mark[], value: string) {
+	renderMentions (rootId: string, node: any, marks: I.Mark[], getValue: () => string) {
 		node = $(node);
 
 		const { block } = this.props;
@@ -920,9 +919,9 @@ const Block = observer(class Block extends React.Component<Props> {
 						iconSize={size}
 						object={object} 
 						canEdit={!isArchived && isTask} 
-						onSelect={icon => this.onMentionSelect(value, marks, id, icon)} 
-						onUpload={objectId => this.onMentionUpload(value, marks, id, objectId)} 
-						onCheckbox={() => this.onMentionCheckbox(value, marks, id, !done)}
+						onSelect={icon => this.onMentionSelect(getValue, marks, id, icon)} 
+						onUpload={objectId => this.onMentionUpload(getValue, marks, id, objectId)} 
+						onCheckbox={() => this.onMentionCheckbox(getValue, marks, id, !done)}
 					/>
 				);
 			};
@@ -968,7 +967,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					noUnlink: true,
 					marks,
 					onChange: marks => {
-						const parsed = Mark.fromHtml(value, []);
+						const parsed = Mark.fromHtml(getValue(), []);
 						this.setMarks(parsed.text, marks);
 					},
 				});
@@ -978,7 +977,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderObjects (rootId: string, node: any, marks: I.Mark[], value: string, props: any) {
+	renderObjects (rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any) {
 		node = $(node);
 
 		const { readonly } = props;
@@ -1035,7 +1034,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					noUnlink: readonly,
 					noEdit: readonly,
 					onChange: marks => {
-						const parsed = Mark.fromHtml(value, []);
+						const parsed = Mark.fromHtml(getValue(), []);
 						this.setMarks(parsed.text, marks);
 					},
 				});
@@ -1100,26 +1099,26 @@ const Block = observer(class Block extends React.Component<Props> {
 		return { value, marks: rM, save };
 	};
 
-	onMentionSelect (value: string, marks: I.Mark[], id: string, icon: string) {
+	onMentionSelect (getValue: () => string, marks: I.Mark[], id: string, icon: string) {
 		const { rootId, block } = this.props;
 
-		U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
+		U.Data.blockSetText(rootId, block.id, getValue(), marks, true, () => {
 			U.Object.setIcon(id, icon, '');
 		});
 	};
 
-	onMentionUpload (value: string, marks: I.Mark[], targetId: string, objectId: string) {
+	onMentionUpload (getValue: () => string, marks: I.Mark[], targetId: string, objectId: string) {
 		const { rootId, block } = this.props;
 
-		U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
+		U.Data.blockSetText(rootId, block.id, getValue(), marks, true, () => {
 			U.Object.setIcon(targetId, '', objectId);
 		});
 	};
 
-	onMentionCheckbox (value: string, marks: I.Mark[], objectId: string, done: boolean) {
+	onMentionCheckbox (getValue: () => string, marks: I.Mark[], objectId: string, done: boolean) {
 		const { rootId, block } = this.props;
 
-		U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
+		U.Data.blockSetText(rootId, block.id, getValue(), marks, true, () => {
 			U.Object.setDone(objectId, done);
 		});
 	};

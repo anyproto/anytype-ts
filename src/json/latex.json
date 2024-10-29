@@ -1,1667 +1,1667 @@
 [
-    {
-       "id": "templates",
-       "name": "Templates",
-       "children": [
-          {
-             "comment": "`\\begin{align*} a&=b+c \\\\ d+e&=f \\end{align*}`"
-          },
-          {
-             "comment": "`\\int_{-\\infty}^\\infty f(\\hat\\xi\\,)e^{2 \\pi i \\xi x}\\,d\\xi`"
-          },
-          {
-             "comment": "`\\cfrac{a}{1 + b}`"
-          },
-          {
-             "comment": "`\\dbinom{n}{k}`"
-          },
-          {
-             "comment": "`\\begin{matrix} a & b \\\\ c & d \\end{matrix}`"
-          },
-          {
-             "comment": "`\\begin{Bmatrix} 0 & -1 \\\\ -1 & 0 \\end{Bmatrix}`"
-          },
-          {
-             "comment": "`\\sum_{\\mathclap{1\\le i\\le j\\le n}} x_{ij} + \\sum_{\\begin{subarray}{l}i\\in\\Lambda\\\\0<j<n\\end{subarray}}`"
-          },
-          {
-             "comment": "`\\ce{C6H5-CHO}`"
-          }
-       ]
-    },
-    {
-       "name": "Symbols",
-       "children": [
-         {
-            "symbol": "\\",
-            "comment": ""
-         },
-          {
-             "symbol": "\\!",
-             "comment": "`a\\!b`"
-          },
-          {
-             "symbol": "\\#",
-             "comment": ""
-          },
-          {
-             "symbol": "\\%",
-             "comment": ""
-          },
-          {
-             "symbol": "\\&",
-             "comment": ""
-          },
-          {
-             "symbol": "\\'",
-             "comment": "`\\'{a}`"
-          },
-          {
-             "symbol": "\\(…\\)",
-             "comment": "`\\text{\\(\\frac a b\\)}`"
-          },
-          {
-             "symbol": "\\",
-             "comment": "`a\\ b`"
-          },
-          {
-             "symbol": "\\\"",
-             "comment": "\\text{\\\"{a}}"
-          },
-          {
-             "symbol": "\\$",
-             "comment": ""
-          },
-          {
-             "symbol": "\\,",
-             "comment": "`a\\,\\,{b}`"
-          },
-          {
-             "symbol": "\\.",
-             "comment": "`\\text{\\.{a}}`"
-          },
-          {
-             "symbol": "\\:",
-             "comment": "`a\\:\\:{b}`"
-          },
-          {
-             "symbol": "\\;",
-             "comment": "a`\\;\\;{b}`"
-          },
-          {
-             "symbol": "\\_",
-             "comment": ""
-          },
-          {
-             "symbol": "\\\\`",
-             "comment": "`\\text{\\\\`{a}}`"
-          },
-          {
-             "symbol": "\\=",
-             "comment": "`\\text{\\\\={a}}`"
-          },
-          {
-             "symbol": "\\>",
-             "comment": "`a\\>\\>{b}`"
-          },
-          {
-             "symbol": "\\{",
-             "comment": ""
-          },
-          {
-             "symbol": "\\}",
-             "comment": ""
-          },
-          {
-             "symbol": "\\|",
-             "comment": ""
-          },
-          {
-             "symbol": "\\~",
-             "comment": "`\\text{\\~{a}}`"
-          },
-          {
-             "symbol": "\\^",
-             "comment": "`\\text{\\^{a}}`"
-          }
-       ]
-    },
-    {
-       "name": "A",
-       "children": [
-          {
-             "symbol": "\\AA",
-             "comment": "`\\text{\\AA}`"
-          },
-          {
-             "symbol": "\\aa",
-             "comment": "`\\text{\\aa}`"
-          },
-          {
-             "symbol": "\\above",
-             "comment": "`{a \\above{2pt} b+1}`"
-          },
-          {
-             "symbol": "\\acute",
-             "comment": "`\\acute e`"
-          },
-          {
-             "symbol": "\\AE",
-             "comment": "`\\text{\\AE}`"
-          },
-          {
-             "symbol": "\\ae",
-             "comment": "`\\text{\\ae}`"
-          },
-          {
-             "symbol": "\\alef",
-             "comment": ""
-          },
-          {
-             "symbol": "\\alefsym",
-             "comment": ""
-          },
-          {
-             "symbol": "\\aleph",
-             "comment": ""
-          },
-          {
-             "symbol": "\\allowbreak",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Alpha",
-             "comment": ""
-          },
-          {
-             "symbol": "\\alpha",
-             "comment": ""
-          },
-          {
-             "symbol": "\\amalg",
-             "comment": ""
-          },
-          {
-             "symbol": "\\And",
-             "comment": ""
-          },
-          {
-             "symbol": "\\angln",
-             "comment": ""
-          },
-          {
-             "symbol": "\\angle",
-             "comment": ""
-          },
-          {
-             "symbol": "\\approx",
-             "comment": ""
-          },
-          {
-             "symbol": "\\approxeq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\approxcolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\approxcoloncolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\arccos",
-             "comment": ""
-          },
-          {
-             "symbol": "\\arcctg",
-             "comment": ""
-          },
-          {
-             "symbol": "\\arcsin",
-             "comment": ""
-          },
-          {
-             "symbol": "\\arctan",
-             "comment": ""
-          },
-          {
-             "symbol": "\\arctg",
-             "comment": ""
-          },
-          {
-             "symbol": "\\arg",
-             "comment": ""
-          },
-          {
-             "symbol": "\\argmax",
-             "comment": ""
-          },
-          {
-             "symbol": "\\argmin",
-             "comment": ""
-          },
-          {
-             "symbol": "\\arraystretch",
-             "comment": "`\\def\\arraystretch{1.5} \\begin{array}{cc} a & b \\\\ c & d \\end{array}`"
-          },
-          {
-             "symbol": "\\ast",
-             "comment": ""
-          },
-          {
-             "symbol": "\\asymp",
-             "comment": ""
-          },
-          {
-             "symbol": "\\atop",
-             "comment": "`{a \\atop b}`"
-          }
-       ]
-    },
-    {
-       "name": "B",
-       "children": [
-          {
-             "symbol": "\\backepsilon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\backprime",
-             "comment": ""
-          },
-          {
-             "symbol": "\\backsim",
-             "comment": ""
-          },
-          {
-             "symbol": "\\backsimeq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\backslash",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bar",
-             "comment": "`\\bar{y}`"
-          },
-          {
-             "symbol": "\\barwedge",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Bbb",
-             "comment": "`\\Bbb{ABC}`"
-          },
-          {
-             "symbol": "\\Bbbk",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bcancel",
-             "comment": "`\\bcancel{5}`"
-          },
-          {
-             "symbol": "\\because",
-             "comment": ""
-          },
-          {
-             "symbol": "\\begin",
-             "comment": "`\\begin{matrix}``a & b \\\\``c & d`'`\\end{matrix}`"
-          },
-          {
-             "symbol": "\\begingroup",
-             "comment": "`\\begingroup...\\endgroup`"
-          },
-          {
-             "symbol": "\\Beta",
-             "comment": ""
-          },
-          {
-             "symbol": "\\beta",
-             "comment": ""
-          },
-          {
-             "symbol": "\\beth",
-             "comment": ""
-          },
-          {
-             "symbol": "\\between",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bf",
-             "comment": "`\\bf AaBb12`"
-          },
-          {
-             "symbol": "\\big",
-             "comment": "`\\big(\\big)`"
-          },
-          {
-             "symbol": "\\Big",
-             "comment": "`\\Big(\\Big)`"
-          },
-          {
-             "symbol": "\\bigcap",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigcirc",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigcup",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigg",
-             "comment": "`\\bigg(\\bigg)`"
-          },
-          {
-             "symbol": "\\Bigg",
-             "comment": "`\\Bigg(\\Bigg)`"
-          },
-          {
-             "symbol": "\\biggl",
-             "comment": "`\\biggl(`"
-          },
-          {
-             "symbol": "\\Biggl",
-             "comment": "`\\Biggl(`"
-          },
-          {
-             "symbol": "\\biggm",
-             "comment": "`\\biggm\\vert`"
-          },
-          {
-             "symbol": "\\Biggm",
-             "comment": "`\\Biggm\\vert`"
-          },
-          {
-             "symbol": "\\biggr",
-             "comment": "`\\biggr)`"
-          },
-          {
-             "symbol": "\\Biggr",
-             "comment": "`\\Biggr)`"
-          },
-          {
-             "symbol": "\\bigl",
-             "comment": "`\\bigl(`"
-          },
-          {
-             "symbol": "\\Bigl",
-             "comment": "`\\Bigl(`"
-          },
-          {
-             "symbol": "\\bigm",
-             "comment": "`\\bigm\\vert`"
-          },
-          {
-             "symbol": "\\Bigm",
-             "comment": "`\\Bigm\\vert`"
-          },
-          {
-             "symbol": "\\bigodot",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigoplus",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigotimes",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigr",
-             "comment": "`\\bigr)`"
-          },
-          {
-             "symbol": "\\Bigr",
-             "comment": "`\\Bigr)`"
-          },
-          {
-             "symbol": "\\bigsqcup",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigstar",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigtriangledown",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigtriangleup",
-             "comment": ""
-          },
-          {
-             "symbol": "\\biguplus",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigvee",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bigwedge",
-             "comment": ""
-          },
-          {
-             "symbol": "\\binom",
-             "comment": "`\\binom n k`"
-          },
-          {
-             "symbol": "\\blacklozenge",
-             "comment": ""
-          },
-          {
-             "symbol": "\\blacksquare",
-             "comment": ""
-          },
-          {
-             "symbol": "\\blacktriangle",
-             "comment": ""
-          },
-          {
-             "symbol": "\\blacktriangledown",
-             "comment": ""
-          },
-          {
-             "symbol": "\\blacktriangleleft",
-             "comment": ""
-          },
-          {
-             "symbol": "\\blacktriangleright",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bm",
-             "comment": "`\\bm{AaBb}`"
-          },
-          {
-             "symbol": "\\bmod",
-             "comment": "`a \\bmod b`"
-          },
-          {
-             "symbol": "\\bold",
-             "comment": "`\\bold{AaBb123}`"
-          },
-          {
-             "symbol": "\\boldsymbol",
-             "comment": "`\\boldsymbol{AaBb}`"
-          },
-          {
-             "symbol": "\\bot",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bowtie",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Box",
-             "comment": ""
-          },
-          {
-             "symbol": "\\boxdot",
-             "comment": ""
-          },
-          {
-             "symbol": "\\boxed",
-             "comment": "`\\boxed{ab}`"
-          },
-          {
-             "symbol": "\\boxminus",
-             "comment": ""
-          },
-          {
-             "symbol": "\\boxplus",
-             "comment": ""
-          },
-          {
-             "symbol": "\\boxtimes",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Bra",
-             "comment": "`\\Bra{\\psi}`"
-          },
-          {
-             "symbol": "\\bra",
-             "comment": "`\\bra{\\psi}`"
-          },
-          {
-             "symbol": "\\braket",
-             "comment": "`\\braket{\\phi\\vert\\psi}`"
-          },
-          {
-             "symbol": "\\brace",
-             "comment": "`{n\\brace k}`"
-          },
-          {
-             "symbol": "\\brack",
-             "comment": "`{n\\brack k}`"
-          },
-          {
-             "symbol": "\\breve",
-             "comment": "`\\breve{eu}`"
-          },
-          {
-             "symbol": "\\bull",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bullet",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Bumpeq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\bumpeq",
-             "comment": ""
-          }
-       ]
-    },
-    {
-       "name": "C",
-       "children": [
-          {
-             "symbol": "\\cal",
-             "comment": "`\\cal AaBb123`"
-          },
-          {
-             "symbol": "\\cancel",
-             "comment": "`\\cancel{5}`"
-          },
-          {
-             "symbol": "\\Cap",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cap",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cdot",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cdotp",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cdots",
-             "comment": ""
-          },
-          {
-             "symbol": "\\ce",
-             "comment": "`\\ce{C6H5-CHO}`"
-          },
-          {
-             "symbol": "\\centerdot",
-             "comment": "`a\\centerdot b`"
-          },
-          {
-             "symbol": "\\cfrac",
-             "comment": "`\\cfrac{2}{1+\\cfrac{2}{1+\\cfrac{2}{1}}}`"
-          },
-          {
-             "symbol": "\\char",
-             "comment": "`\\char\"263a`"
-          },
-          {
-             "symbol": "\\check",
-             "comment": "`\\check{oe}`"
-          },
-          {
-             "symbol": "\\ch",
-             "comment": ""
-          },
-          {
-             "symbol": "\\checkmark",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Chi",
-             "comment": ""
-          },
-          {
-             "symbol": "\\chi",
-             "comment": ""
-          },
-          {
-             "symbol": "\\choose",
-             "comment": "`{n+1 \\choose k+2}`"
-          },
-          {
-             "symbol": "\\circ",
-             "comment": ""
-          },
-          {
-             "symbol": "\\circeq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\circlearrowleft",
-             "comment": ""
-          },
-          {
-             "symbol": "\\circlearrowright",
-             "comment": ""
-          },
-          {
-             "symbol": "\\circledast",
-             "comment": ""
-          },
-          {
-             "symbol": "\\circledcirc",
-             "comment": ""
-          },
-          {
-             "symbol": "\\circleddash",
-             "comment": ""
-          },
-          {
-             "symbol": "\\circledR",
-             "comment": ""
-          },
-          {
-             "symbol": "\\circledS",
-             "comment": ""
-          },
-          {
-             "symbol": "\\clubs",
-             "comment": ""
-          },
-          {
-             "symbol": "\\clubsuit",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cnums",
-             "comment": ""
-          },
-          {
-             "symbol": "\\colon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Colonapprox",
-             "comment": ""
-          },
-          {
-             "symbol": "\\colonapprox",
-             "comment": ""
-          },
-          {
-             "symbol": "\\coloncolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\coloncolonapprox",
-             "comment": ""
-          },
-          {
-             "symbol": "\\coloncolonequals",
-             "comment": ""
-          },
-          {
-             "symbol": "\\coloncolonminus",
-             "comment": ""
-          },
-          {
-             "symbol": "\\coloncolonsim",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Coloneq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\coloneq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\colonequals",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Coloneqq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\coloneqq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\colonminus",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Colonsim",
-             "comment": ""
-          },
-          {
-             "symbol": "\\colonsim",
-             "comment": ""
-          },
-          {
-             "symbol": "\\color",
-             "comment": "`\\color{#0000FF} AaBb123`"
-          },
-          {
-             "symbol": "\\colorbox",
-             "comment": "`\\colorbox{red}{Black on red}`"
-          },
-          {
-             "symbol": "\\complement",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Complex",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cong",
-             "comment": ""
-          },
-          {
-             "symbol": "\\coprod",
-             "comment": ""
-          },
-          {
-             "symbol": "\\copyright",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cos",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cosec",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cosh",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cot",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cotg",
-             "comment": ""
-          },
-          {
-             "symbol": "\\coth",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cr",
-             "comment": "`\\begin{matrix}``a & b \\cr ``c & d`'`\\end{matrix}`"
-          },
-          {
-             "symbol": "\\csc",
-             "comment": ""
-          },
-          {
-             "symbol": "\\ctg",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cth",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Cup",
-             "comment": ""
-          },
-          {
-             "symbol": "\\cup",
-             "comment": ""
-          },
-          {
-             "symbol": "\\curlyeqprec",
-             "comment": ""
-          },
-          {
-             "symbol": "\\curlyeqsucc",
-             "comment": ""
-          },
-          {
-             "symbol": "\\curlyvee",
-             "comment": ""
-          },
-          {
-             "symbol": "\\curlywedge",
-             "comment": ""
-          },
-          {
-             "symbol": "\\curvearrowleft",
-             "comment": ""
-          },
-          {
-             "symbol": "\\curvearrowright",
-             "comment": ""
-          }
-       ]
-    },
-    {
-       "name": "D",
-       "children": [
-          {
-             "symbol": "\\dag",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Dagger",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dagger",
-             "comment": ""
-          },
-          {
-             "symbol": "\\daleth",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Darr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dArr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\darr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dashleftarrow",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dashrightarrow",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dashv",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dbinom",
-             "comment": "`\\dbinom n k`"
-          },
-          {
-             "symbol": "\\dblcolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\ddag",
-             "comment": ""
-          },
-          {
-             "symbol": "\\ddagger",
-             "comment": ""
-          },
-          {
-             "symbol": "\\ddot",
-             "comment": "`\\ddot x`"
-          },
-          {
-             "symbol": "\\ddots",
-             "comment": ""
-          },
-          {
-             "symbol": "\\def",
-             "comment": "`\\def\\foo{x^2} \\foo + \\foo`"
-          },
-          {
-             "symbol": "\\deg",
-             "comment": ""
-          },
-          {
-             "symbol": "\\degree",
-             "comment": ""
-          },
-          {
-             "symbol": "\\delta",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Delta",
-             "comment": ""
-          },
-          {
-             "symbol": "\\det",
-             "comment": ""
-          },
-          {
-             "symbol": "\\digamma",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dfrac",
-             "comment": "`\\dfrac{a-1}{b-1}`"
-          },
-          {
-             "symbol": "\\diagdown",
-             "comment": ""
-          },
-          {
-             "symbol": "\\diagup",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Diamond",
-             "comment": ""
-          },
-          {
-             "symbol": "\\diamond",
-             "comment": ""
-          },
-          {
-             "symbol": "\\diamonds",
-             "comment": ""
-          },
-          {
-             "symbol": "\\diamondsuit",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dim",
-             "comment": ""
-          },
-          {
-             "symbol": "\\displaystyle",
-             "comment": "`\\displaystyle\\sum_0^n`"
-          },
-          {
-             "symbol": "\\div",
-             "comment": ""
-          },
-          {
-             "symbol": "\\divideontimes",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dot",
-             "comment": "`\\dot x`"
-          },
-          {
-             "symbol": "\\Doteq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\doteq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\doteqdot",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dotplus",
-             "comment": ""
-          },
-          {
-             "symbol": "\\dots",
-             "comment": "`x_1 + \\dots + x_n`"
-          },
-          {
-             "symbol": "\\dotsb",
-             "comment": "`x_1 +\\dotsb + x_n`"
-          },
-          {
-             "symbol": "\\dotsc",
-             "comment": "`x,\\dotsc,y`"
-          },
-          {
-             "symbol": "\\dotsi",
-             "comment": "`\\int_{A_1}\\int_{A_2}\\dotsi`"
-          },
-          {
-             "symbol": "\\dotsm",
-             "comment": "`x_1 x_2 \\dotsm x_n`"
-          },
-          {
-             "symbol": "\\dotso",
-             "comment": ""
-          },
-          {
-             "symbol": "\\doublebarwedge",
-             "comment": ""
-          },
-          {
-             "symbol": "\\doublecap",
-             "comment": ""
-          },
-          {
-             "symbol": "\\doublecup",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Downarrow",
-             "comment": ""
-          },
-          {
-             "symbol": "\\downarrow",
-             "comment": ""
-          },
-          {
-             "symbol": "\\downdownarrows",
-             "comment": ""
-          },
-          {
-             "symbol": "\\downharpoonleft",
-             "comment": ""
-          },
-          {
-             "symbol": "\\downharpoonright",
-             "comment": ""
-          }
-       ]
-    },
-    {
-       "name": "E",
-       "children": [
-          {
-             "symbol": "\\edef",
-             "comment": "`\\def\\foo{a}\\edef\\bar{\\foo}\\def\\foo{}\\bar`"
-          },
-          {
-             "symbol": "\\ell",
-             "comment": ""
-          },
-          {
-             "symbol": "\\empty",
-             "comment": ""
-          },
-          {
-             "symbol": "\\emptyset",
-             "comment": ""
-          },
-          {
-             "symbol": "\\end",
-             "comment": "`\\begin{matrix}``a & b \\\\``c & d`'`\\end{matrix}`"
-          },
-          {
-             "symbol": "\\endgroup",
-             "comment": "\\begingroup...\\endgroup"
-          },
-          {
-             "symbol": "\\enspace",
-             "comment": "`a\\enspace b`"
-          },
-          {
-             "symbol": "\\Epsilon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\epsilon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\eqcirc",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Eqcolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\eqcolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Eqqcolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\eqqcolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\eqsim",
-             "comment": ""
-          },
-          {
-             "symbol": "\\eqslantgtr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\eqslantless",
-             "comment": ""
-          },
-          {
-             "symbol": "\\equalscolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\equalscoloncolon",
-             "comment": ""
-          },
-          {
-             "symbol": "\\equiv",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Eta",
-             "comment": ""
-          },
-          {
-             "symbol": "\\eta",
-             "comment": ""
-          },
-          {
-             "symbol": "\\eth",
-             "comment": ""
-          },
-          {
-             "symbol": "\\exist",
-             "comment": ""
-          },
-          {
-             "symbol": "\\exists",
-             "comment": ""
-          },
-          {
-             "symbol": "\\exp",
-             "comment": ""
-          },
-          {
-             "symbol": "\\expandafter",
-             "comment": ""
-          }
-       ]
-    },
-    {
-       "name": "F",
-       "children": [
-          {
-             "symbol": "\\fallingdotseq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\fbox",
-             "comment": "`\\fbox{Hi there!}`"
-          },
-          {
-             "symbol": "\\fcolorbox",
-             "comment": "`\\fcolorbox{red}{aqua}{A}`"
-          },
-          {
-             "symbol": "\\Finv",
-             "comment": ""
-          },
-          {
-             "symbol": "\\flat",
-             "comment": ""
-          },
-          {
-             "symbol": "\\footnotesize",
-             "comment": "`\\footnotesize footnotesize`"
-          },
-          {
-             "symbol": "\\forall",
-             "comment": ""
-          },
-          {
-             "symbol": "\\frac",
-             "comment": "`\\frac a b`"
-          },
-          {
-             "symbol": "\\frak",
-             "comment": "`\\frak{AaBb}`"
-          },
-          {
-             "symbol": "\\frown",
-             "comment": ""
-          },
-          {
-             "symbol": "\\futurelet",
-             "comment": "\\futurelet\\cs<token1><token2>"
-          }
-       ]
-    },
-    {
-       "name": "G",
-       "children": [
-          {
-             "symbol": "\\Game",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Gamma",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gamma",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gcd",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gdef",
-             "comment": "`\\gdef\\bar#1{#1^2} \\bar{y} + \\bar{y}`"
-          },
-          {
-             "symbol": "\\ge",
-             "comment": ""
-          },
-          {
-             "symbol": "\\genfrac",
-             "comment": "`\\genfrac ( ] {2pt}{0}a{a+1}`"
-          },
-          {
-             "symbol": "\\geq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\geqq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\geqslant",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gets",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gg",
-             "comment": ""
-          },
-          {
-             "symbol": "\\ggg",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gggtr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gimel",
-             "comment": ""
-          },
-          {
-             "symbol": "\\global",
-             "comment": "`\\global\\def\\add#1#2{#1+#2} \\add 2 3`"
-          },
-          {
-             "symbol": "\\gnapprox",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gneq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gneqq",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gnsim",
-             "comment": ""
-          },
-          {
-             "symbol": "\\grave",
-             "comment": "`\\grave{eu}`"
-          },
-          {
-             "symbol": "\\gt",
-             "comment": "`a \\gt b`"
-          },
-          {
-             "symbol": "\\gtrdot",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gtrapprox",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gtreqless",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gtreqqless",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gtrless",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gtrsim",
-             "comment": ""
-          },
-          {
-             "symbol": "\\gvertneqq",
-             "comment": ""
-          }
-       ]
-    },
-    {
-       "name": "H",
-       "children": [
-          {
-             "symbol": "\\H",
-             "comment": "`\\text{\\H{a}}`"
-          },
-          {
-             "symbol": "\\Harr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\hArr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\harr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\hat",
-             "comment": "`\\hat{\\theta}`"
-          },
-          {
-             "symbol": "\\hbar",
-             "comment": ""
-          },
-          {
-             "symbol": "\\hbox",
-             "comment": "`\\hbox{$x^2$}`"
-          },
-          {
-             "symbol": "\\hdashline",
-             "comment": "`\\begin{matrix} a & b \\\\ \\hdashline c & d \\end{matrix}`"
-          },
-          {
-             "symbol": "\\hearts",
-             "comment": ""
-          },
-          {
-             "symbol": "\\heartsuit",
-             "comment": ""
-          },
-          {
-             "symbol": "\\hline",
-             "comment": "`\\begin{matrix}``a & b \\\\ \\hline`` c & d`'`\\end{matrix}`"
-          },
-          {
-             "symbol": "\\hom",
-             "comment": ""
-          },
-          {
-             "symbol": "\\hookleftarrow",
-             "comment": ""
-          },
-          {
-             "symbol": "\\hookrightarrow",
-             "comment": ""
-          },
-          {
-             "symbol": "\\hphantom",
-             "comment": "`a\\hphantom{bc}d`"
-          },
-          {
-             "symbol": "\\href",
-             "comment": "`\\href{https://www.anytype.io}{Anytype.io}`"
-          },
-          {
-             "symbol": "\\hskip",
-             "comment": "`w\\hskip1em i\\hskip2em d`"
-          },
-          {
-             "symbol": "\\hslash",
-             "comment": ""
-          },
-          {
-             "symbol": "\\hspace",
-             "comment": "`s\\hspace7ex k`"
-          },
-          {
-             "symbol": "\\huge",
-             "comment": "`\\huge huge`"
-          },
-          {
-             "symbol": "\\Huge",
-             "comment": "`\\Huge Huge`"
-          }
-       ]
-    },
-    {
-       "name": "I",
-       "children": [
-          {
-             "symbol": "\\i",
-             "comment": "`\\text{\\i}`"
-          },
-          {
-             "symbol": "\\iff",
-             "comment": "`A\\iff B`"
-          },
-          {
-             "symbol": "\\iiint",
-             "comment": ""
-          },
-          {
-             "symbol": "\\iint",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Im",
-             "comment": ""
-          },
-          {
-             "symbol": "\\image",
-             "comment": ""
-          },
-          {
-             "symbol": "\\imageof",
-             "comment": ""
-          },
-          {
-             "symbol": "\\imath",
-             "comment": ""
-          },
-          {
-             "symbol": "\\impliedby",
-             "comment": "`P\\impliedby Q`"
-          },
-          {
-             "symbol": "\\implies",
-             "comment": "`P\\implies Q`"
-          },
-          {
-             "symbol": "\\in",
-             "comment": ""
-          },
-          {
-             "symbol": "\\includegraphics",
-             "comment": "`\\includegraphics[height=0.8em, totalheight=0.9em, width=0.9em, alt=KA logo]{https://anytype.io/images/graph/avatar-10.png}"
-          },
-          {
-             "symbol": "\\inf",
-             "comment": ""
-          },
-          {
-             "symbol": "\\infin",
-             "comment": ""
-          },
-          {
-             "symbol": "\\infty",
-             "comment": ""
-          },
-          {
-             "symbol": "\\injlim",
-             "comment": "`\\injlim`"
-          },
-          {
-             "symbol": "\\int",
-             "comment": ""
-          },
-          {
-             "symbol": "\\intercal",
-             "comment": ""
-          },
-          {
-             "symbol": "\\intop",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Iota",
-             "comment": ""
-          },
-          {
-             "symbol": "\\iota",
-             "comment": ""
-          },
-          {
-             "symbol": "\\isin",
-             "comment": ""
-          },
-          {
-             "symbol": "\\it",
-             "comment": "`{\\it AaBb}`"
-          }
-       ]
-    },
-    {
-       "name": "JK",
-       "children": [
-          {
-             "symbol": "\\j",
-             "comment": "`\\text{\\j}`"
-          },
-          {
-             "symbol": "\\jmath",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Join",
-             "comment": ""
-          },
-          {
-             "symbol": "\\Kappa",
-             "comment": ""
-          },
-          {
-             "symbol": "\\kappa",
-             "comment": ""
-          },
-          {
-             "symbol": "\\KaTeX",
-             "comment": ""
-          },
-          {
-             "symbol": "\\ker",
-             "comment": ""
-          },
-          {
-             "symbol": "\\kern",
-             "comment": "`I\\kern-2.5pt R`"
-          },
-          {
-             "symbol": "\\Ket",
-             "comment": "`\\Ket{\\psi}`"
-          },
-          {
-             "symbol": "\\ket",
-             "comment": "`\\ket{\\psi}`"
-          }
-       ]
-    },
-    {
-       "name": "L",
-       "children": [
-          {
-             "symbol": "\\Lambda",
-             "comment": ""
-          },
-          {
-             "symbol": "\\lambda",
-             "comment": ""
-          },
-          {
-             "symbol": "\\land",
-             "comment": ""
-          },
-          {
-             "symbol": "\\lang",
-             "comment": "`\\lang A\\rangle`"
-          },
-          {
-             "symbol": "\\langle",
-             "comment": "`\\langle A\\rangle`"
-          },
-          {
-             "symbol": "\\Larr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\lArr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\larr",
-             "comment": ""
-          },
-          {
-             "symbol": "\\large",
-             "comment": "`\\large large`"
-          },
-          {
-             "symbol": "\\Large",
-             "comment": "`\\Large Large`"
-          },
-          {
-             "symbol": "\\LARGE",
-             "comment": "`\\LARGE LARGE`"
-          },
-          {
-             "symbol": "\\LaTeX",
-             "comment": ""
-          },
-          {
-             "symbol": "\\lBrace",
-             "comment": ""
-          },
-          {
-             "symbol": "\\lbrace",
-             "comment": ""
-          },
-          {
-             "symbol": "\\lbrack",
-             "comment": ""
-          },
-          {
-             "symbol": "\\lceil",
-             "comment": ""
-          },
-          {
-             "symbol": "\\ldotp",
-             "comment": ""
-          },
-          {
-             "symbol": "\\ldots",
-             "comment": ""
-          },
-          {
-             "symbol": "\\le",
-             "comment": ""
+	{
+	   "id": "templates",
+	   "name": "Templates",
+	   "children": [
+		  {
+			 "comment": "`\\begin{align*} a&=b+c \\\\ d+e&=f \\end{align*}`"
+		  },
+		  {
+			 "comment": "`\\int_{-\\infty}^\\infty f(\\hat\\xi\\,)e^{2 \\pi i \\xi x}\\,d\\xi`"
+		  },
+		  {
+			 "comment": "`\\cfrac{a}{1 + b}`"
+		  },
+		  {
+			 "comment": "`\\dbinom{n}{k}`"
+		  },
+		  {
+			 "comment": "`\\begin{matrix} a & b \\\\ c & d \\end{matrix}`"
+		  },
+		  {
+			 "comment": "`\\begin{Bmatrix} 0 & -1 \\\\ -1 & 0 \\end{Bmatrix}`"
+		  },
+		  {
+			 "comment": "`\\sum_{\\mathclap{1\\le i\\le j\\le n}} x_{ij} + \\sum_{\\begin{subarray}{l}i\\in\\Lambda\\\\0<j<n\\end{subarray}}`"
+		  },
+		  {
+			 "comment": "`\\ce{C6H5-CHO}`"
+		  }
+	   ]
+	},
+	{
+	   "name": "Symbols",
+	   "children": [
+		 {
+			"symbol": "\\",
+			"comment": ""
+		 },
+		  {
+			 "symbol": "\\!",
+			 "comment": "`a\\!b`"
+		  },
+		  {
+			 "symbol": "\\#",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\%",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\&",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\'",
+			 "comment": "`\\'{a}`"
+		  },
+		  {
+			 "symbol": "\\(…\\)",
+			 "comment": "`\\text{\\(\\frac a b\\)}`"
+		  },
+		  {
+			 "symbol": "\\",
+			 "comment": "`a\\ b`"
+		  },
+		  {
+			 "symbol": "\\\"",
+			 "comment": "\\text{\\\"{a}}"
+		  },
+		  {
+			 "symbol": "\\$",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\,",
+			 "comment": "`a\\,\\,{b}`"
+		  },
+		  {
+			 "symbol": "\\.",
+			 "comment": "`\\text{\\.{a}}`"
+		  },
+		  {
+			 "symbol": "\\:",
+			 "comment": "`a\\:\\:{b}`"
+		  },
+		  {
+			 "symbol": "\\;",
+			 "comment": "a`\\;\\;{b}`"
+		  },
+		  {
+			 "symbol": "\\_",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\\\`",
+			 "comment": "`\\text{\\\\`{a}}`"
+		  },
+		  {
+			 "symbol": "\\=",
+			 "comment": "`\\text{\\\\={a}}`"
+		  },
+		  {
+			 "symbol": "\\>",
+			 "comment": "`a\\>\\>{b}`"
+		  },
+		  {
+			 "symbol": "\\{",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\}",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\|",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\~",
+			 "comment": "`\\text{\\~{a}}`"
+		  },
+		  {
+			 "symbol": "\\^",
+			 "comment": "`\\text{\\^{a}}`"
+		  }
+	   ]
+	},
+	{
+	   "name": "A",
+	   "children": [
+		  {
+			 "symbol": "\\AA",
+			 "comment": "`\\text{\\AA}`"
+		  },
+		  {
+			 "symbol": "\\aa",
+			 "comment": "`\\text{\\aa}`"
+		  },
+		  {
+			 "symbol": "\\above",
+			 "comment": "`{a \\above{2pt} b+1}`"
+		  },
+		  {
+			 "symbol": "\\acute",
+			 "comment": "`\\acute e`"
+		  },
+		  {
+			 "symbol": "\\AE",
+			 "comment": "`\\text{\\AE}`"
+		  },
+		  {
+			 "symbol": "\\ae",
+			 "comment": "`\\text{\\ae}`"
+		  },
+		  {
+			 "symbol": "\\alef",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\alefsym",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\aleph",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\allowbreak",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Alpha",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\alpha",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\amalg",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\And",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\angln",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\angle",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\approx",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\approxeq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\approxcolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\approxcoloncolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\arccos",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\arcctg",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\arcsin",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\arctan",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\arctg",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\arg",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\argmax",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\argmin",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\arraystretch",
+			 "comment": "`\\def\\arraystretch{1.5} \\begin{array}{cc} a & b \\\\ c & d \\end{array}`"
+		  },
+		  {
+			 "symbol": "\\ast",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\asymp",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\atop",
+			 "comment": "`{a \\atop b}`"
+		  }
+	   ]
+	},
+	{
+	   "name": "B",
+	   "children": [
+		  {
+			 "symbol": "\\backepsilon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\backprime",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\backsim",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\backsimeq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\backslash",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bar",
+			 "comment": "`\\bar{y}`"
+		  },
+		  {
+			 "symbol": "\\barwedge",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Bbb",
+			 "comment": "`\\Bbb{ABC}`"
+		  },
+		  {
+			 "symbol": "\\Bbbk",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bcancel",
+			 "comment": "`\\bcancel{5}`"
+		  },
+		  {
+			 "symbol": "\\because",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\begin",
+			 "comment": "`\\begin{matrix}``a & b \\\\``c & d`'`\\end{matrix}`"
+		  },
+		  {
+			 "symbol": "\\begingroup",
+			 "comment": "`\\begingroup...\\endgroup`"
+		  },
+		  {
+			 "symbol": "\\Beta",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\beta",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\beth",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\between",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bf",
+			 "comment": "`\\bf AaBb12`"
+		  },
+		  {
+			 "symbol": "\\big",
+			 "comment": "`\\big(\\big)`"
+		  },
+		  {
+			 "symbol": "\\Big",
+			 "comment": "`\\Big(\\Big)`"
+		  },
+		  {
+			 "symbol": "\\bigcap",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigcirc",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigcup",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigg",
+			 "comment": "`\\bigg(\\bigg)`"
+		  },
+		  {
+			 "symbol": "\\Bigg",
+			 "comment": "`\\Bigg(\\Bigg)`"
+		  },
+		  {
+			 "symbol": "\\biggl",
+			 "comment": "`\\biggl(`"
+		  },
+		  {
+			 "symbol": "\\Biggl",
+			 "comment": "`\\Biggl(`"
+		  },
+		  {
+			 "symbol": "\\biggm",
+			 "comment": "`\\biggm\\vert`"
+		  },
+		  {
+			 "symbol": "\\Biggm",
+			 "comment": "`\\Biggm\\vert`"
+		  },
+		  {
+			 "symbol": "\\biggr",
+			 "comment": "`\\biggr)`"
+		  },
+		  {
+			 "symbol": "\\Biggr",
+			 "comment": "`\\Biggr)`"
+		  },
+		  {
+			 "symbol": "\\bigl",
+			 "comment": "`\\bigl(`"
+		  },
+		  {
+			 "symbol": "\\Bigl",
+			 "comment": "`\\Bigl(`"
+		  },
+		  {
+			 "symbol": "\\bigm",
+			 "comment": "`\\bigm\\vert`"
+		  },
+		  {
+			 "symbol": "\\Bigm",
+			 "comment": "`\\Bigm\\vert`"
+		  },
+		  {
+			 "symbol": "\\bigodot",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigoplus",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigotimes",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigr",
+			 "comment": "`\\bigr)`"
+		  },
+		  {
+			 "symbol": "\\Bigr",
+			 "comment": "`\\Bigr)`"
+		  },
+		  {
+			 "symbol": "\\bigsqcup",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigstar",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigtriangledown",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigtriangleup",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\biguplus",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigvee",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bigwedge",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\binom",
+			 "comment": "`\\binom n k`"
+		  },
+		  {
+			 "symbol": "\\blacklozenge",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\blacksquare",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\blacktriangle",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\blacktriangledown",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\blacktriangleleft",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\blacktriangleright",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bm",
+			 "comment": "`\\bm{AaBb}`"
+		  },
+		  {
+			 "symbol": "\\bmod",
+			 "comment": "`a \\bmod b`"
+		  },
+		  {
+			 "symbol": "\\bold",
+			 "comment": "`\\bold{AaBb123}`"
+		  },
+		  {
+			 "symbol": "\\boldsymbol",
+			 "comment": "`\\boldsymbol{AaBb}`"
+		  },
+		  {
+			 "symbol": "\\bot",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bowtie",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Box",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\boxdot",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\boxed",
+			 "comment": "`\\boxed{ab}`"
+		  },
+		  {
+			 "symbol": "\\boxminus",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\boxplus",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\boxtimes",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Bra",
+			 "comment": "`\\Bra{\\psi}`"
+		  },
+		  {
+			 "symbol": "\\bra",
+			 "comment": "`\\bra{\\psi}`"
+		  },
+		  {
+			 "symbol": "\\braket",
+			 "comment": "`\\braket{\\phi\\vert\\psi}`"
+		  },
+		  {
+			 "symbol": "\\brace",
+			 "comment": "`{n\\brace k}`"
+		  },
+		  {
+			 "symbol": "\\brack",
+			 "comment": "`{n\\brack k}`"
+		  },
+		  {
+			 "symbol": "\\breve",
+			 "comment": "`\\breve{eu}`"
+		  },
+		  {
+			 "symbol": "\\bull",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bullet",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Bumpeq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\bumpeq",
+			 "comment": ""
+		  }
+	   ]
+	},
+	{
+	   "name": "C",
+	   "children": [
+		  {
+			 "symbol": "\\cal",
+			 "comment": "`\\cal AaBb123`"
+		  },
+		  {
+			 "symbol": "\\cancel",
+			 "comment": "`\\cancel{5}`"
+		  },
+		  {
+			 "symbol": "\\Cap",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cap",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cdot",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cdotp",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cdots",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\ce",
+			 "comment": "`\\ce{C6H5-CHO}`"
+		  },
+		  {
+			 "symbol": "\\centerdot",
+			 "comment": "`a\\centerdot b`"
+		  },
+		  {
+			 "symbol": "\\cfrac",
+			 "comment": "`\\cfrac{2}{1+\\cfrac{2}{1+\\cfrac{2}{1}}}`"
+		  },
+		  {
+			 "symbol": "\\char",
+			 "comment": "`\\char\"263a`"
+		  },
+		  {
+			 "symbol": "\\check",
+			 "comment": "`\\check{oe}`"
+		  },
+		  {
+			 "symbol": "\\ch",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\checkmark",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Chi",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\chi",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\choose",
+			 "comment": "`{n+1 \\choose k+2}`"
+		  },
+		  {
+			 "symbol": "\\circ",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\circeq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\circlearrowleft",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\circlearrowright",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\circledast",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\circledcirc",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\circleddash",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\circledR",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\circledS",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\clubs",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\clubsuit",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cnums",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\colon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Colonapprox",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\colonapprox",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\coloncolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\coloncolonapprox",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\coloncolonequals",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\coloncolonminus",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\coloncolonsim",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Coloneq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\coloneq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\colonequals",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Coloneqq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\coloneqq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\colonminus",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Colonsim",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\colonsim",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\color",
+			 "comment": "`\\color{#0000FF} AaBb123`"
+		  },
+		  {
+			 "symbol": "\\colorbox",
+			 "comment": "`\\colorbox{red}{Black on red}`"
+		  },
+		  {
+			 "symbol": "\\complement",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Complex",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cong",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\coprod",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\copyright",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cos",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cosec",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cosh",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cot",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cotg",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\coth",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cr",
+			 "comment": "`\\begin{matrix}``a & b \\cr ``c & d`'`\\end{matrix}`"
+		  },
+		  {
+			 "symbol": "\\csc",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\ctg",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cth",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Cup",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\cup",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\curlyeqprec",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\curlyeqsucc",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\curlyvee",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\curlywedge",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\curvearrowleft",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\curvearrowright",
+			 "comment": ""
+		  }
+	   ]
+	},
+	{
+	   "name": "D",
+	   "children": [
+		  {
+			 "symbol": "\\dag",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Dagger",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dagger",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\daleth",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Darr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dArr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\darr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dashleftarrow",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dashrightarrow",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dashv",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dbinom",
+			 "comment": "`\\dbinom n k`"
+		  },
+		  {
+			 "symbol": "\\dblcolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\ddag",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\ddagger",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\ddot",
+			 "comment": "`\\ddot x`"
+		  },
+		  {
+			 "symbol": "\\ddots",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\def",
+			 "comment": "`\\def\\foo{x^2} \\foo + \\foo`"
+		  },
+		  {
+			 "symbol": "\\deg",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\degree",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\delta",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Delta",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\det",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\digamma",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dfrac",
+			 "comment": "`\\dfrac{a-1}{b-1}`"
+		  },
+		  {
+			 "symbol": "\\diagdown",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\diagup",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Diamond",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\diamond",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\diamonds",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\diamondsuit",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dim",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\displaystyle",
+			 "comment": "`\\displaystyle\\sum_0^n`"
+		  },
+		  {
+			 "symbol": "\\div",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\divideontimes",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dot",
+			 "comment": "`\\dot x`"
+		  },
+		  {
+			 "symbol": "\\Doteq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\doteq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\doteqdot",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dotplus",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\dots",
+			 "comment": "`x_1 + \\dots + x_n`"
+		  },
+		  {
+			 "symbol": "\\dotsb",
+			 "comment": "`x_1 +\\dotsb + x_n`"
+		  },
+		  {
+			 "symbol": "\\dotsc",
+			 "comment": "`x,\\dotsc,y`"
+		  },
+		  {
+			 "symbol": "\\dotsi",
+			 "comment": "`\\int_{A_1}\\int_{A_2}\\dotsi`"
+		  },
+		  {
+			 "symbol": "\\dotsm",
+			 "comment": "`x_1 x_2 \\dotsm x_n`"
+		  },
+		  {
+			 "symbol": "\\dotso",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\doublebarwedge",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\doublecap",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\doublecup",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Downarrow",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\downarrow",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\downdownarrows",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\downharpoonleft",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\downharpoonright",
+			 "comment": ""
+		  }
+	   ]
+	},
+	{
+	   "name": "E",
+	   "children": [
+		  {
+			 "symbol": "\\edef",
+			 "comment": "`\\def\\foo{a}\\edef\\bar{\\foo}\\def\\foo{}\\bar`"
+		  },
+		  {
+			 "symbol": "\\ell",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\empty",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\emptyset",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\end",
+			 "comment": "`\\begin{matrix}``a & b \\\\``c & d`'`\\end{matrix}`"
+		  },
+		  {
+			 "symbol": "\\endgroup",
+			 "comment": "\\begingroup...\\endgroup"
+		  },
+		  {
+			 "symbol": "\\enspace",
+			 "comment": "`a\\enspace b`"
+		  },
+		  {
+			 "symbol": "\\Epsilon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\epsilon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\eqcirc",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Eqcolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\eqcolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Eqqcolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\eqqcolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\eqsim",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\eqslantgtr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\eqslantless",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\equalscolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\equalscoloncolon",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\equiv",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Eta",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\eta",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\eth",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\exist",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\exists",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\exp",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\expandafter",
+			 "comment": ""
+		  }
+	   ]
+	},
+	{
+	   "name": "F",
+	   "children": [
+		  {
+			 "symbol": "\\fallingdotseq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\fbox",
+			 "comment": "`\\fbox{Hi there!}`"
+		  },
+		  {
+			 "symbol": "\\fcolorbox",
+			 "comment": "`\\fcolorbox{red}{aqua}{A}`"
+		  },
+		  {
+			 "symbol": "\\Finv",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\flat",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\footnotesize",
+			 "comment": "`\\footnotesize footnotesize`"
+		  },
+		  {
+			 "symbol": "\\forall",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\frac",
+			 "comment": "`\\frac a b`"
+		  },
+		  {
+			 "symbol": "\\frak",
+			 "comment": "`\\frak{AaBb}`"
+		  },
+		  {
+			 "symbol": "\\frown",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\futurelet",
+			 "comment": "\\futurelet\\cs<token1><token2>"
+		  }
+	   ]
+	},
+	{
+	   "name": "G",
+	   "children": [
+		  {
+			 "symbol": "\\Game",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Gamma",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gamma",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gcd",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gdef",
+			 "comment": "`\\gdef\\bar#1{#1^2} \\bar{y} + \\bar{y}`"
+		  },
+		  {
+			 "symbol": "\\ge",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\genfrac",
+			 "comment": "`\\genfrac ( ] {2pt}{0}a{a+1}`"
+		  },
+		  {
+			 "symbol": "\\geq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\geqq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\geqslant",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gets",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gg",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\ggg",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gggtr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gimel",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\global",
+			 "comment": "`\\global\\def\\add#1#2{#1+#2} \\add 2 3`"
+		  },
+		  {
+			 "symbol": "\\gnapprox",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gneq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gneqq",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gnsim",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\grave",
+			 "comment": "`\\grave{eu}`"
+		  },
+		  {
+			 "symbol": "\\gt",
+			 "comment": "`a \\gt b`"
+		  },
+		  {
+			 "symbol": "\\gtrdot",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gtrapprox",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gtreqless",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gtreqqless",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gtrless",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gtrsim",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\gvertneqq",
+			 "comment": ""
+		  }
+	   ]
+	},
+	{
+	   "name": "H",
+	   "children": [
+		  {
+			 "symbol": "\\H",
+			 "comment": "`\\text{\\H{a}}`"
+		  },
+		  {
+			 "symbol": "\\Harr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\hArr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\harr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\hat",
+			 "comment": "`\\hat{\\theta}`"
+		  },
+		  {
+			 "symbol": "\\hbar",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\hbox",
+			 "comment": "`\\hbox{$x^2$}`"
+		  },
+		  {
+			 "symbol": "\\hdashline",
+			 "comment": "`\\begin{matrix} a & b \\\\ \\hdashline c & d \\end{matrix}`"
+		  },
+		  {
+			 "symbol": "\\hearts",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\heartsuit",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\hline",
+			 "comment": "`\\begin{matrix}``a & b \\\\ \\hline`` c & d`'`\\end{matrix}`"
+		  },
+		  {
+			 "symbol": "\\hom",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\hookleftarrow",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\hookrightarrow",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\hphantom",
+			 "comment": "`a\\hphantom{bc}d`"
+		  },
+		  {
+			 "symbol": "\\href",
+			 "comment": "`\\href{https://www.anytype.io}{Anytype.io}`"
+		  },
+		  {
+			 "symbol": "\\hskip",
+			 "comment": "`w\\hskip1em i\\hskip2em d`"
+		  },
+		  {
+			 "symbol": "\\hslash",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\hspace",
+			 "comment": "`s\\hspace7ex k`"
+		  },
+		  {
+			 "symbol": "\\huge",
+			 "comment": "`\\huge huge`"
+		  },
+		  {
+			 "symbol": "\\Huge",
+			 "comment": "`\\Huge Huge`"
+		  }
+	   ]
+	},
+	{
+	   "name": "I",
+	   "children": [
+		  {
+			 "symbol": "\\i",
+			 "comment": "`\\text{\\i}`"
+		  },
+		  {
+			 "symbol": "\\iff",
+			 "comment": "`A\\iff B`"
+		  },
+		  {
+			 "symbol": "\\iiint",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\iint",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Im",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\image",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\imageof",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\imath",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\impliedby",
+			 "comment": "`P\\impliedby Q`"
+		  },
+		  {
+			 "symbol": "\\implies",
+			 "comment": "`P\\implies Q`"
+		  },
+		  {
+			 "symbol": "\\in",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\includegraphics",
+			 "comment": "`\\includegraphics[height=0.8em, totalheight=0.9em, width=0.9em, alt=KA logo]{https://anytype.io/images/graph/avatar-10.png}"
+		  },
+		  {
+			 "symbol": "\\inf",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\infin",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\infty",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\injlim",
+			 "comment": "`\\injlim`"
+		  },
+		  {
+			 "symbol": "\\int",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\intercal",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\intop",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Iota",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\iota",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\isin",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\it",
+			 "comment": "`{\\it AaBb}`"
+		  }
+	   ]
+	},
+	{
+	   "name": "JK",
+	   "children": [
+		  {
+			 "symbol": "\\j",
+			 "comment": "`\\text{\\j}`"
+		  },
+		  {
+			 "symbol": "\\jmath",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Join",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\Kappa",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\kappa",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\KaTeX",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\ker",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\kern",
+			 "comment": "`I\\kern-2.5pt R`"
+		  },
+		  {
+			 "symbol": "\\Ket",
+			 "comment": "`\\Ket{\\psi}`"
+		  },
+		  {
+			 "symbol": "\\ket",
+			 "comment": "`\\ket{\\psi}`"
+		  }
+	   ]
+	},
+	{
+	   "name": "L",
+	   "children": [
+		  {
+			 "symbol": "\\Lambda",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\lambda",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\land",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\lang",
+			 "comment": "`\\lang A\\rangle`"
+		  },
+		  {
+			 "symbol": "\\langle",
+			 "comment": "`\\langle A\\rangle`"
+		  },
+		  {
+			 "symbol": "\\Larr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\lArr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\larr",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\large",
+			 "comment": "`\\large large`"
+		  },
+		  {
+			 "symbol": "\\Large",
+			 "comment": "`\\Large Large`"
+		  },
+		  {
+			 "symbol": "\\LARGE",
+			 "comment": "`\\LARGE LARGE`"
+		  },
+		  {
+			 "symbol": "\\LaTeX",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\lBrace",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\lbrace",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\lbrack",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\lceil",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\ldotp",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\ldots",
+			 "comment": ""
+		  },
+		  {
+			 "symbol": "\\le",
+		     "comment": ""
           },
           {
              "symbol": "\\leadsto",

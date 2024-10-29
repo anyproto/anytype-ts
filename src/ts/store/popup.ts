@@ -24,27 +24,27 @@ const SHOW_DIMMER = [
 
 class PopupStore {
 
-    public popupList: I.Popup[] = [];
+	public popupList: I.Popup[] = [];
 
-    timeout = 0;
+	timeout = 0;
 
-    constructor () {
-        makeObservable(this, {
-            popupList: observable,
-            list: computed,
-            open: action,
-            update: action,
-            updateData: action,
-            close: action,
-            closeAll: action,
-        });
-    };
+	constructor () {
+		makeObservable(this, {
+			popupList: observable,
+			list: computed,
+			open: action,
+			update: action,
+			updateData: action,
+			close: action,
+			closeAll: action,
+		});
+	};
 
-    get list(): I.Popup[] {
+	get list(): I.Popup[] {
 		return this.popupList;
 	};
 
-    open (id: string, param: I.PopupParam) {
+	open (id: string, param: I.PopupParam) {
 		if (AUTH_IDS.includes(id) && !S.Auth.account) {
 			return;
 		};
@@ -78,11 +78,11 @@ class PopupStore {
 		};
 	};
 
-    get (id: string): I.Popup {
+	get (id: string): I.Popup {
 		return this.popupList.find(it => it.id == id);
 	};
 
-    update (id: string, param: any) {
+	update (id: string, param: any) {
 		const item = this.get(id);
 		if (!item) {
 			return;
@@ -92,7 +92,7 @@ class PopupStore {
 		set(item, { param: Object.assign(item.param, param) });
 	};
 
-    updateData (id: string, data: any) {
+	updateData (id: string, data: any) {
 		const item = this.get(id);
 		if (item) {
 			item.param.data = Object.assign(item.param.data, data);
@@ -100,7 +100,7 @@ class PopupStore {
 		};
 	};
 
-    isOpen (id?: string, filter?: string[]): boolean {
+	isOpen (id?: string, filter?: string[]): boolean {
 		if (!id) {
 			let length = 0;
 			if (filter) {
@@ -113,7 +113,7 @@ class PopupStore {
 		return this.get(id) ? true : false;
 	};
 
-    isOpenList (ids: string[]) {
+	isOpenList (ids: string[]) {
 		for (const id of ids) {
 			if (this.isOpen(id)) {
 				return true;
@@ -126,7 +126,7 @@ class PopupStore {
 		return this.isOpenList([ 'search', 'template' ]);
 	};
 
-    close (id: string, callBack?: () => void, force?: boolean) {
+	close (id: string, callBack?: () => void, force?: boolean) {
 		const item = this.get(id);
 		if (!item) {
 			if (callBack) {
@@ -170,7 +170,7 @@ class PopupStore {
 		};
 	};
 
-    closeAll (ids?: string[], callBack?: () => void) {
+	closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
 		const timeout = items.length ? J.Constant.delay.popup : 0;
 
@@ -202,7 +202,7 @@ class PopupStore {
 		};
 	};
 
-    clearTimeout () {
+	clearTimeout () {
 		window.clearTimeout(this.timeout);
 	};
 
