@@ -9,4 +9,29 @@
 	}
 
 	.body { padding: 0px 12px 12px 12px; overflow: scroll; display: flex; flex-direction: column; gap: 12px 0px; }
+
+
+	.section.typeTitle { padding: 16px; }
+	.section.typeTitle {
+		> .wrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }
+		> .wrap {
+			.iconObject { flex-shrink: 0; }
+			.editableWrap { flex-grow: 1; }
+		}
+	}
+
+	.section.typeRelation {
+		.item { padding-left: 10px; }
+		.item {
+			.icon { width: 20px; height: 20px; flex-shrink: 0; }
+			.icon.dnd { background-image: url('~img/icon/sidebar/dnd.svg'); cursor: grab; }
+			.icon.eye { background-image: url('~img/icon/sidebar/eye0.svg'); }
+			.icon.eye.active { background-image: url('~img/icon/sidebar/eye1.svg'); }
+
+			.iconObject { margin: 0px 6px 0px 0px; flex-shrink: 0; }
+
+			.side.left { display: flex; flex-direction: row; align-items: center; flex-grow: 1; }
+			.side.right { flex-shrink: 0; }
+		}
+	}
 }
