@@ -13,7 +13,12 @@
 
 		.items { padding: 0px 8px; }
 		.items {
-			.item { padding: 3px 8px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; position: relative; }
+			.item { 
+				padding: 3px 8px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; position: relative; 
+				background-color: var(--color-bg-primary); border-radius: 6px;
+			}
+			.item.isDragging { z-index: 2; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
+
 			.item {
 				.value.flex { flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 8px; }
 

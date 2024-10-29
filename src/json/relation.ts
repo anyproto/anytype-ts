@@ -92,6 +92,7 @@ export default {
 	],
 
 	type: [
+		'featuredRelations',
 		'recommendedRelations',
 		'recommendedLayout',
 		'sourceObject',

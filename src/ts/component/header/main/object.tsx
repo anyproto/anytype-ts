@@ -35,7 +35,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		const object = S.Detail.get(rootId, rootId, J.Relation.template);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = !U.Object.isTypeOrRelationLayout(object.layout);
+		const showMenu = true;
 		const canSync = showMenu && !object.templateIsBundled && !U.Object.isParticipantLayout(object.layout);
 		const cmd = keyboard.cmdSymbol();
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);

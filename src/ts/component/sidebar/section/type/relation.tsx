@@ -1,19 +1,31 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
-import { I, S, Relation, translate } from 'Lib';
+import { I, S, Relation, translate, keyboard } from 'Lib';
 
 const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation extends React.Component<I.SidebarSectionComponent> {
 	
+	constructor (props: I.SidebarSectionComponent) {
+		super(props);
+
+		this.onSortStart = this.onSortStart.bind(this);
+		this.onSortEnd = this.onSortEnd.bind(this);
+	};
+
     render () {
 		const { object } = this.props;
-		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-		const recommendedKeys = recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
+		const featured = Relation.getArrayValue(object.featuredRelations).map(key => S.Record.getRelationByKey(key));
+		const recommended = Relation.getArrayValue(object.recommendedRelations).map(id => S.Record.getRelationById(id));
 
-		const Item = (item: any) => (
+		const Handle = SortableHandle(() => (
+			<Icon className="dnd" />
+		));
+
+		const Item = SortableElement((item: any) => (
 			<div className="item">
 				<div className="side left">
-					<Icon className="dnd" />
+					<Handle />
 					<IconObject object={item} />
 					<ObjectName object={item} />
 				</div>
@@ -21,7 +33,19 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 					<Icon className="eye" />
 				</div>
 			</div>
-		);
+		));
+
+		const ListFeatured = SortableContainer(() => (
+			<div id="section-relation-featured" className="items">
+				{featured.map((item, i) => <Item key={`sidebar-${item.relationKey}`} {...item} index={i} />)}
+			</div>
+		));
+
+		const ListRecommended = SortableContainer(() => (
+			<div id="section-relation-recommended" className="items">
+				{recommended.map((item, i) => <Item key={`sidebar-${item.relationKey}`} {...item} index={i} />)}
+			</div>
+		));
 
         return (
 			<div className="wrap">
@@ -31,20 +55,41 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				</div>
 
 				<Label text={translate('sidebarTypeRelationHeader')} />
-				<div className="items">
-				</div>
+				<ListFeatured
+					axis="y" 
+					transitionDuration={150}
+					distance={10}
+					useDragHandle={true}
+					onSortStart={this.onSortStart}
+					onSortEnd={this.onSortEnd}
+					helperClass="isDragging"
+					lockToContainerEdges={false}
+					helperContainer={() => $(`#sidebarRight #section-relation-featured`).get(0)}
+				/>
 
 				<Label text={translate('sidebarTypeRelationSidebar')} />
-				<div className="items">
-					{recommendedKeys.map(key => {
-						const relation = S.Record.getRelationByKey(key);
-
-						return <Item key={`sidebar-${key}`} {...relation} />;
-					})}
-				</div>
+				<ListRecommended 
+					axis="y" 
+					transitionDuration={150}
+					distance={10}
+					useDragHandle={true}
+					onSortStart={this.onSortStart}
+					onSortEnd={this.onSortEnd}
+					helperClass="isDragging"
+					lockToContainerEdges={false}
+					helperContainer={() => $(`#sidebarRight #section-relation-recommended`).get(0)}
+				/>
 			</div>
 		);
     };
+
+	onSortStart () {
+		keyboard.disableSelection(true);
+	};
+	
+	onSortEnd (result: any) {
+		keyboard.disableSelection(false);
+	};
 
 });
 

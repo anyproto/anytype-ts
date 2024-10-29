@@ -36,7 +36,7 @@
 
 		.item::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
-			pointer-events: none; border-radius: 6px;
+			pointer-events: none; border-radius: inherit;
 		}
 		.item:hover::before { background: var(--color-shape-highlight-medium); }
 	}
