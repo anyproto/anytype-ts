@@ -27,10 +27,7 @@
             }
             
             .icon.volume { width: 20px; height: 20px;  min-width: 20px; min-height: 20px; background-image: url('~img/icon/audio/volume.svg'); }
-            .icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
-
-            .icon.volume::before { position: absolute; content: ''; top: -10px; right: 0px; left: 0px; bottom: 0px; z-index: 100; }
-    
+            .icon.volume.muted { background-image: url('~img/icon/audio/mute.svg'); }
             .time { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
 
             @container media-audio (max-width: 500px) {
@@ -52,5 +49,3 @@
     }
 }
 
-.volume.input-drag-vertical { opacity: 0; transition: opacity $transitionSmoothCommon; pointer-events: none; }
-.volume.input-drag-vertical.visible { opacity: 1; pointer-events: auto; }

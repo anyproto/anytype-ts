@@ -1,5 +1,4 @@
-import React, { useState, useEffect, ReactNode, useRef } from 'react';
-import ReactDOM from 'react-dom';
+import { useEffect } from 'react';
 
 interface Position {
 	x: number;
@@ -9,9 +8,13 @@ interface Position {
 }
 
 class ElementMovementObserver {
-	private observer: MutationObserver;
+
+	private movementObserver: MutationObserver;
+	private resizeObserver: ResizeObserver;
+	
 	private element: HTMLElement;
 	private lastPosition: Position;
+	
 	private onMove: (position: Position) => void;
 
 	constructor(element: HTMLElement, callback: (position: Position) => void) {
@@ -19,17 +22,31 @@ class ElementMovementObserver {
 		this.onMove = callback;
 		this.lastPosition = this.getPosition();
 
-		// Create observer instance
-		this.observer = new MutationObserver(() => {
+		this.movementObserver = new MutationObserver(() => {
+			this.checkForMovement();
+		});
+	
+		this.resizeObserver = new ResizeObserver(() => {
 			this.checkForMovement();
 		});
 
-		// Start observing
 		this.startObserving();
+
+		
 	}
 
-	private getPosition(): Position {
+	private checkForMovement = () => {
+		const currentPosition = this.getPosition();
+
+		if (this.hasPositionChanged(currentPosition)) {
+			this.lastPosition = currentPosition;
+			this.onMove(currentPosition);
+		}
+	};
+
+	private getPosition (): Position {
 		const rect = this.element.getBoundingClientRect();
+	
 		return {
 			x: rect.left + window.scrollX,
 			y: rect.top + window.scrollY,
@@ -38,16 +55,8 @@ class ElementMovementObserver {
 		};
 	}
 
-	private checkForMovement(): void {
-		const currentPosition = this.getPosition();
 
-		if (this.hasPositionChanged(currentPosition)) {
-			this.lastPosition = currentPosition;
-			this.onMove(currentPosition);
-		}
-	}
-
-	private hasPositionChanged(currentPosition: Position): boolean {
+	private hasPositionChanged (currentPosition: Position): boolean {
 		return (
 			currentPosition.x !== this.lastPosition.x ||
 			currentPosition.y !== this.lastPosition.y ||
@@ -56,8 +65,7 @@ class ElementMovementObserver {
 		);
 	}
 
-	private startObserving(): void {
-		// Configure observer options
+	private startObserving (): void {
 		const config: MutationObserverInit = {
 			attributes: true,
 			childList: true,
@@ -65,31 +73,27 @@ class ElementMovementObserver {
 			characterData: true
 		};
 
-		// Start observing the element and its descendants
-		this.observer.observe(this.element, config);
+		// Observe the element and its descendants for movement
+		this.movementObserver.observe(this.element, config);
 
 		// Observe the document body for layout changes
-		this.observer.observe(document.body, config);
+		this.movementObserver.observe(document.body, config);
 
-		const resizeObserver = new ResizeObserver(() => {
-			this.checkForMovement();
-		});
-		resizeObserver.observe(this.element);
+		// Observe the element for size changes
+		this.resizeObserver.observe(this.element);
 
-		window.addEventListener('scroll', () => {
-			this.checkForMovement();
-		});
+		// And handle scroll
+		window.addEventListener('scroll', this.checkForMovement);
 	}
 
-	public disconnect(): void {
-		this.observer.disconnect();
+	public disconnect (): void {
+		this.movementObserver.disconnect();
+		this.resizeObserver.disconnect();
+		window.removeEventListener('scroll', this.checkForMovement);
 	}
 }
 
-export function useElementMovement(
-	element: HTMLElement | null,
-	callback: (position: Position) => void
-) {
+export default function useElementMovement ( element: HTMLElement | null, callback: (position: Position) => void ) {
 	useEffect(() => {
 		if (!element) return;
 

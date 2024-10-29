@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useImperativeHandle, useRef } from 'react';
-import Input from './input';
+import { Input } from 'Component';
 
 interface Props {
 	id?: string;
@@ -44,9 +44,7 @@ const DragVertical = React.forwardRef<Input, Props>(({
 		}
 	};
 
-	useEffect(()=>{
-		setBackgroundSize();
-	}, [value]);
+	useEffect(() => { setBackgroundSize(); }, [value]);
 
 	return (
 		<div 
@@ -58,6 +56,7 @@ const DragVertical = React.forwardRef<Input, Props>(({
 		>
 			<Input
 				type="range"
+				className="vertical-range"
 				ref={inputRef}
 				value={String(value)}
 				min={min}
