@@ -305,10 +305,14 @@ class Mark {
 			};
 
 			const attr = this.paramToAttr(mark.type, param);
-			const data = [ `data-range="${mark.range.from}-${mark.range.to}"` ];
+			const data = [];
 
 			if (param) {
 				data.push(`data-param="${param}"`);
+			};
+
+			if ([ I.MarkType.Link, I.MarkType.Object, I.MarkType.Mention ].includes(mark.type)) {
+				data.push(`data-range="${mark.range.from}-${mark.range.to}"`);
 			};
 
 			let prefix = '';

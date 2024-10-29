@@ -169,7 +169,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			this.initSpace();
 			this.initName();
 			this.initType();
-
 			this.setState({ withContent: Boolean(Storage.get('withContent')) });
 		});
 	};
@@ -186,17 +185,9 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		let check = null;
 		let spaceId = S.Common.space || Storage.get('lastSpaceId');
 
 		if (!spaceId) {
-			spaceId = spaces.find(it => it.isPersonal)?.id;
-		};
-		if (spaceId) {
-			check = spaces.find(it => it.id == spaceId);
-		};
-
-		if (!spaceId || !check) {
 			spaceId = spaces[0].id;
 		};
 
@@ -362,6 +353,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			onClose: () => $(element).removeClass('isFocused'),
 			data: {
 				canAdd: true,
+				canEdit: true,
 				filter: '',
 				value: this.details.tag,
 				maxCount: relation.maxCount,
