@@ -35,7 +35,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 					<ObjectName object={item} />
 				</div>
 				<div className="side right">
-					<Icon className="eye" />
+					<Icon className="eye" onClick={e => this.onToggle(e, item.container, item.id)} />
 				</div>
 			</div>
 		));
@@ -96,6 +96,10 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 
 		onChange(relationKey, value);
 		keyboard.disableSelection(false);
+	};
+
+	onToggle (e: any, container: string, id: string) {
+		e.stopPropagation();
 	};
 
 	onEdit (e: any, container: string, id: string) {
