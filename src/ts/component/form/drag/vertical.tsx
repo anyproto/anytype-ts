@@ -39,6 +39,9 @@ const DragVertical = React.forwardRef<Input, Props>(({
 	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		e.preventDefault();
+		e.stopPropagation();
+		
 		if (onChange) {
 			onChange(e, Number(e.target.value));
 		}
@@ -63,6 +66,10 @@ const DragVertical = React.forwardRef<Input, Props>(({
 				max={max}
 				step={step}
 				onChange={handleChange}
+				onClick={e => {
+					e.preventDefault();
+					e.stopPropagation();
+				}}
 			/>
 		</div>
 	);
