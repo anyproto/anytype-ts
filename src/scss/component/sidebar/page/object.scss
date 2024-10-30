@@ -1,10 +1,11 @@
 > .sidebarPage.pageObjectRelation {
-	.section.objectRelation { padding: 12px 16px; display: flex; flex-direction: column; }
+	.section.objectRelation { padding: 12px 16px; }
 	.section.objectRelation {
+		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 0px 10px; }
 		> .wrap {
 			> .name { color: var(--color-text-secondary); }
 
-			.cell { border-radius: 4px; line-height: 22px; transition: background $transitionCommon; position: relative; }
+			.cell { line-height: 22px; transition: background $transitionCommon; position: relative; }
 			.cell.canEdit {
 				.cellContent {
 					.empty { display: block; }
@@ -35,38 +36,20 @@
 
 			.cell.isEditing { padding: 0px; }
 			.cell.isEditing {
-				.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 4px; }
+				.cellContent { position: relative; height: auto !important; box-shadow: 0px 0px; }
 				.cellContent.isName .input { height: 20px; line-height: 20px; }
 				.icon.clear { right: 8px; }
 			}
 
 			.cell.isEditing.c-select {
 				.empty { display: inline-block; }
-				.cellContent, .placeholder { padding: 5px 8px 1px 8px; }
 			}
 			.cell.isEditing.c-select.isSelect {
 				.over { width: calc(100% - 26px); }
 			}
 
-			.cell.isEditing.c-shortText, 
-			.cell.isEditing.c-number, 
-			.cell.isEditing.c-url, 
-			.cell.isEditing.c-phone, 
-			.cell.isEditing.c-email,
-			.cell.isEditing.c-date,
-			.cell.isEditing.c-longText, 
-			.cell.isEditing.c-file
-			{
-				.cellContent { padding: 5px 8px !important; }
-				.placeholder { padding: 5px 8px; }
-			}
-
-			.cell.isEditing.c-object {
-				.cellContent, .placeholder { padding: 5px 8px !important; }
-			}
-
 			.cell.isEditing.c-longText {
-				.cellContent { box-shadow: 0px 0px; visibility: hidden; }
+				.cellContent { visibility: hidden; }
 				.cellContent span:empty { height: 22px; }
 			}
 
