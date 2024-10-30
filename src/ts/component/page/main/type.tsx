@@ -380,7 +380,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 
 		sidebar.rightPanelToggle(!S.Common.showSidebarRight);
-		S.Common.getRef('sidebarRight').setState({ page: 'type', rootId });
+		sidebar.rightPanelSwitch('type', { rootId });
 	};
 
 	onObjectAdd () {

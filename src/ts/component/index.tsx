@@ -77,7 +77,7 @@ import PreviewDefault from './preview/default';
 
 import Graph from './util/graph';
 
-import Cell from './block/dataview/cell';
+import Cell from './cell';
 
 import ObjectName from './util/object/name';
 import ObjectDescription from './util/object/description';

@@ -1830,6 +1830,7 @@
 	"sidebarTypeRelation": "Fields",
 	"sidebarTypeRelationHeader": "Header",
 	"sidebarTypeRelationSidebar": "Sidebar",
+	"sidebarObjectRelationSetUp": "Set up",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

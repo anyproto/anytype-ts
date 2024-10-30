@@ -195,6 +195,7 @@ export interface SidebarPageComponent {
 
 export interface SidebarSectionComponent extends SidebarPageComponent {
 	object: any;
+	item?: any;
 	onChange?(key: string, value: any): void;
 };
 

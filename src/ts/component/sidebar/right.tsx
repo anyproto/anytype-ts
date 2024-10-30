@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { U, S } from 'Lib';
 
 import PageType from './page/type';
+import PageObjectRelation from './page/object/relation';
 
 interface State {
 	page: string;
@@ -10,7 +11,8 @@ interface State {
 };
 
 const Components = {
-	type: PageType,
+	'type': PageType,
+	'object/relation': PageObjectRelation,
 };
 
 const SidebarRight = observer(class SidebarRight extends React.Component<{}, State> {
@@ -31,7 +33,9 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 		};
 
 		const Component = Components[page];
-		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${page}`) ];
+		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
+
+		console.log(page, cn);
 
         return (
 			<div 

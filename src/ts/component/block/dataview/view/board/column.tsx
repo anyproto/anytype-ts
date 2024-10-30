@@ -1,10 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, LoadMore } from 'Component';
+import { Icon, LoadMore, Cell } from 'Component';
 import { I, S, U, translate, Dataview } from 'Lib';
 import Card from './card';
-import Cell from 'Component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
 	id: string;

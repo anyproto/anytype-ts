@@ -44,6 +44,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							key={item.id} 
 							component={item.component}
 							object={this.object} 
+							withState={true}
 							onChange={(key, value) => this.onChange(item.id, key, value)}
 						/>
 					))}

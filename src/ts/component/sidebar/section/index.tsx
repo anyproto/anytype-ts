@@ -6,14 +6,19 @@ import TypeTitle from './type/title';
 import TypeLayout from './type/layout';
 import TypeRelation from './type/relation';
 
+import ObjectRelation from './object/relation';
+
 const Components = {
 	'type/title': TypeTitle,
 	'type/layout': TypeLayout,
 	'type/relation': TypeRelation,
+
+	'object/relation': ObjectRelation,
 };
 
 interface Props extends I.SidebarSectionComponent {
 	component: string;
+	withState?: boolean;
 };
 
 interface State {
@@ -28,24 +33,34 @@ const SidebarSectionIndex = observer(class SidebarSectionIndex extends React.Com
 	ref = null;
 
     render () {
-		const { object } = this.state;
 		const { component } = this.props;
+		const object = this.state.object || this.props.object;
 		const Component = Components[component];
 		const cn = [ 'section', U.Common.toCamelCase(component.replace(/\//g, '-')) ];
 
-		if (!object || !Component) {
+		if (!object) {
 			return null;
 		};
 
         return (
 			<div className={cn.join(' ')}>
-				<Component ref={ref => this.ref = ref} {...this.props} object={object} />
+				{Component ? (
+					<Component 
+						ref={ref => this.ref = ref} 
+						{...this.props} 
+						object={object} 
+					/> 
+				): component}
 			</div>
 		);
     };
 
 	componentDidMount (): void {
-		this.setObject(this.props.object);
+		const { withState } = this.props;
+
+		if (withState) {
+			this.setObject(this.props.object);
+		};
 	};
 
 	setObject (object: any): void {

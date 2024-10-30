@@ -365,6 +365,10 @@ class Sidebar {
 		raf(() => this.resizePage(null, false));
 	};
 
+	rightPanelSwitch (page: string, param: any) {
+		S.Common.getRef('sidebarRight').setState({ page, ...param });
+	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();

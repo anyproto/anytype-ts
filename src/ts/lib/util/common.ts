@@ -666,6 +666,9 @@ class UtilCommon {
 
 			case 'popupRelation':
 				return `#${type}-innerWrap`;
+
+			case 'sidebarRight':
+				return `#sidebarRight`;
 		};
 	};
 
