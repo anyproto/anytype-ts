@@ -10,6 +10,7 @@ const TRACE = 'sidebarObjectRelation';
 const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent> {
 	
 	sectionRefs: Map<string, any> = new Map();
+	id = '';
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -57,13 +58,18 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
 	componentDidUpdate (): void {
-		console.log('UPDATE', this.getRootId(), this.getObject().name);
+		this.load();
 	};
 
 	load () {
 		const { space } = S.Common;
 		const { rootId } = this.props;
 
+		if (this.id == rootId) {
+			return;
+		};
+
+		this.id = rootId;
 		C.ObjectShow(rootId, TRACE, space, () => this.forceUpdate());
 	};
 

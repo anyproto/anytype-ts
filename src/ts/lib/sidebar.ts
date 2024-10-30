@@ -400,7 +400,7 @@ class Sidebar {
 	};
 
 	rightPanelSwitch (page: string, param: any) {
-		S.Common.getRef('sidebarRight').setState({ page, ...param });
+		S.Common.getRef('sidebarRight')?.setState({ page, ...param });
 	};
 
 };
