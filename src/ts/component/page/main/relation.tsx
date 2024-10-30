@@ -99,11 +99,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 							{object.isInstalled ? (
 								<div className="section set">
 									<div className="title">
-										{totalObject} 
-										{U.Common.sprintf(translate('pageMainRelationObjectsCreated'), U.Common.plural(totalObject, translate('pluralObject')))}
-									</div>
-
-									<div className="title">
 										<div className="side left">
 											{U.Common.plural(totalObject, translate('pluralObject'))}
 											<span className="cnt">{totalObject}</span>
