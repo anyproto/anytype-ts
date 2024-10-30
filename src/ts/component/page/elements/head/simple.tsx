@@ -101,8 +101,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			if (object.isInstalled) {
 				if (isType) {
 					buttonEdit = <Button id="button-edit" color="blank" className="c28" text={translate('commonEdit')} onClick={onEdit} />;
-				} else {
-					buttonCreate = <Button id="button-create" className="c36" text={translate('pageHeadSimpleCreateSet')} arrow={true} onClick={onCreate} />;
 				};
 			} else {
 				const cn = [ 'c36' ];

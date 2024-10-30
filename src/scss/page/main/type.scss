@@ -1,6 +1,7 @@
 @import "~scss/_mixins";
 
-.pageMainType {
+.pageMainType, 
+.pageMainRelation {
 	.wrapper { width: 704px; margin: 0px auto; padding: 40px 0px 90px 0px; user-select: none; }
 
 	.wrapper.withIcon {
