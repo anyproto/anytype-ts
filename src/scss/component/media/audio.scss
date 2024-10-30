@@ -28,9 +28,7 @@
             .icon.volume.muted { background-image: url('~img/icon/audio/mute.svg'); }
             .time { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
 
-            @container media-audio (max-width: 500px) {
-                .time { display: none; }
-            }
+            @container media-audio (max-width: 500px) { .time { display: none; }}
     
             .input-drag-horizontal { display: inline-block; vertical-align: top; height: 20px; }
             .input-drag-horizontal {
