@@ -111,7 +111,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 								<DragVertical
 									id="volume"
 									className="volume"
-									value={volume}
+									value={volume * (muted ? 0 : 1)}
 									onChange={(e: any, v: number) => this.onVolume(v)}
 								/>
 							</Floater>
