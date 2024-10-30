@@ -19,16 +19,25 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
     render () {
 		const { rootId, object, isPopup } = this.props;
 		const relation = this.props.item;
-		const block = S.Block.getLeaf(rootId, object.id);
+		const root = S.Block.getLeaf(rootId, object.id);
+		
+		if (!relation || !root) {
+			return null;
+		};
+
 		const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
 		const cn = [ 'cell', Relation.className(relation.format) ];
+		const readonly = this.props.readonly || root.isLocked();
 		const container = [ 
 			U.Common.getCellContainer('sidebarRight'), 
 			U.Common.getCellContainer(isPopup ? 'popup' : 'page') 
 		].join(', ');
 
-		const readonly = false;
-		const allowedValue = true;
+		let allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		if (readonly) {
+			allowedValue = false;
+		};
+
 		const canEdit = !readonly && allowedValue;
 
 		if (canEdit) {
@@ -48,7 +57,7 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 						ref={ref => this.refCell = ref}
 						rootId={rootId}
 						subId={rootId}
-						block={block}
+						block={root}
 						relationKey={relation.relationKey}
 						getRecord={() => object}
 						viewType={I.ViewType.Grid}

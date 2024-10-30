@@ -34,8 +34,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 
 		const sections = this.getSections();
-		const isLocked = root.isLocked();
-		const readonly = data.readonly || isLocked;
+		const readonly = data.readonly || root.isLocked();
 		const diffKeys = this.getDiffKeys();
 
 		let allowedBlock = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);

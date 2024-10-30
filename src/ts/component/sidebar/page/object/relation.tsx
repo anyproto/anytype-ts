@@ -56,6 +56,10 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		this.load();
 	};
 
+	componentDidUpdate (): void {
+		console.log('UPDATE', this.getRootId(), this.getObject().name);
+	};
+
 	load () {
 		const { space } = S.Common;
 		const { rootId } = this.props;

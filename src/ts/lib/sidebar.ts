@@ -385,14 +385,18 @@ class Sidebar {
 			this.objRight.css(cssStart);
 
 			raf(() => {
-				this.objRight.css(cssEnd);
+				this.objRight.addClass('anim').css(cssEnd);
 				this.resizePage(null, v ? null : 0, true);
 			});
 		});
 
-		if (!v) {
-			window.setTimeout(() => S.Common.showSidebarRightSet(v), J.Constant.delay.sidebar);
-		};
+		window.setTimeout(() => {
+			this.objRight.removeClass('anim');
+
+			if (!v) {
+				S.Common.showSidebarRightSet(v);
+			};
+		}, J.Constant.delay.sidebar);
 	};
 
 	rightPanelSwitch (page: string, param: any) {

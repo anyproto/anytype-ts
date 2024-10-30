@@ -192,6 +192,7 @@ export interface ButtonComponent {
 export interface SidebarPageComponent {
 	rootId?: string;
 	isPopup?: boolean;
+	readonly?: boolean;
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {
