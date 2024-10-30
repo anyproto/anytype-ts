@@ -4,7 +4,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Title, Filter, Icon, Button, Label, EmptySearch } from 'Component';
 import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action, Relation } from 'Lib';
 
-import Item from './object/item';
+import Item from './allObject/item';
 
 interface State {
 	isLoading: boolean;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, U, S } from 'Lib';
+import { U, S } from 'Lib';
 
 import PageType from './page/type';
 

@@ -44,7 +44,6 @@ class CommonStore {
 	public showVaultValue = null;
 	public showSidebarRightValue = null;
 	public hideSidebarValue = null;
-	public showObjectValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -103,7 +102,6 @@ class CommonStore {
 			shareTooltipValue: observable,
 			showVaultValue: observable,
 			hideSidebarValue: observable,
-			showObjectValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
 			showSidebarRightValue: observable,
@@ -140,7 +138,6 @@ class CommonStore {
 			shareTooltipSet: action,
 			membershipTiersListSet: action,
 			showVaultSet: action,
-			showObjectSet: action,
 			showSidebarRightSet: action,
 		});
 
@@ -210,10 +207,6 @@ class CommonStore {
 
 	get showSidebarRight (): boolean {
 		return Boolean(this.showSidebarRightValue);
-	};
-
-	get showObject (): boolean {
-		return this.showObjectValue;
 	};
 
 	get theme (): string {
@@ -404,10 +397,6 @@ class CommonStore {
 
 	showSidebarRightSet (v: boolean) {
 		this.showSidebarRightValue = Boolean(v);
-	};
-
-	showObjectSet (v: boolean) {
-		this.showObjectValue = v;
 	};
 
 	fullscreenSet (v: boolean) {

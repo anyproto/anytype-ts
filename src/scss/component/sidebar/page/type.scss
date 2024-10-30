@@ -1,16 +1,4 @@
 > .sidebarPage.pageType {
-	.head { 
-		display: flex; flex-direction: row; align-items: center; justify-content: space-between; -webkit-app-region: no-drag; 
-		padding: 12px 12px 16px 12px;
-	}
-	.head {
-		.side.left { flex-grow: 1; font-weight: 500; }
-		.side.right { flex-shrink: 0; display: flex; flex-direction: row; gap: 0px 8px; }
-	}
-
-	.body { padding: 0px 12px 12px 12px; overflow: scroll; display: flex; flex-direction: column; gap: 12px 0px; }
-
-
 	.section.typeTitle { padding: 16px; }
 	.section.typeTitle {
 		> .wrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }

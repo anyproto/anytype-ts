@@ -7,7 +7,6 @@ import Section from 'Component/sidebar/section';
 
 const SidebarPageType = observer(class SidebarPageType extends React.Component<I.SidebarPageComponent> {
 	
-	node = null;
 	object: any = {};
 	update: any = {};
 	sectionRefs: Map<string, any> = new Map();
@@ -24,7 +23,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const type = this.getObject();
 		const sections = this.getSections();
 
-        return (
+		return (
 			<React.Fragment>
 				<div className="head">
 					<div className="side left">

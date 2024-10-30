@@ -6,9 +6,18 @@ import { Icon } from 'Component';
 import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 
 import SidebarWidget from './page/widget';
-import SidebarObject from './page/object';
+import SidebarObject from './page/allObject';
 
-const SidebarLeft = observer(class SidebarLeft extends React.Component {
+interface State {
+	page: string;
+};
+
+const Components = {
+	object: SidebarObject,
+	widget: SidebarWidget,
+};
+
+const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State> {
 	
 	private _isMounted = false;
 	node = null;
@@ -18,8 +27,11 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component {
 	frame = 0;
 	width = 0;
 	movedX = false;
-	refWidget = null;
-	refObject = null;
+	refChild = null;
+
+	state = {
+		page: 'widget',
+	};
 
 	constructor (props) {
 		super(props);
@@ -33,9 +45,11 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component {
 	};
 
 	render() {
-		const { showVault, showObject } = S.Common;
+		const { showVault } = S.Common;
+		const page = this.state.page || 'widget';
 		const cn = [ 'sidebar' ];
 		const cmd = keyboard.cmdSymbol();
+		const Component = Components[page];
 
 		return (
 			<React.Fragment>
@@ -53,7 +67,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component {
 					id="sidebarLeft" 
 					className={cn.join(' ')} 
 				>
-					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : <SidebarWidget {...this.props} ref={ref => this.refWidget = ref} />}
+					<Component ref={ref => this.refChild = ref} {...this.props} />
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
@@ -172,7 +186,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component {
 			};
 
 			this.width = w;
-			this.refObject?.resize();
+			this.refChild.resize();
 		});
 	};
 

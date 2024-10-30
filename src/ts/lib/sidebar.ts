@@ -351,7 +351,13 @@ class Sidebar {
 	};
 
 	objectContainerToggle () {
-		S.Common.showObjectSet(!S.Common.showObject);
+		const ref = S.Common.getRef('sidebarLeft');
+		if (!ref) {
+			return;
+		};
+
+		const page = ref.state.page;
+		ref.setState({ page: (page == 'object' ? '' : 'object') });
 	};
 
 	rightPanelToggle (v: boolean) {
