@@ -396,6 +396,8 @@ class Sidebar {
 			if (!v) {
 				S.Common.showSidebarRightSet(v);
 			};
+
+			$(window).trigger('resize');
 		}, J.Constant.delay.sidebar);
 	};
 
