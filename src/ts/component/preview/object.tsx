@@ -336,11 +336,10 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 						<div onClick={onClick}>
 							<div className="scroller">
 								{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
-
-								{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+								{check.withCover ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 
 								<div className="heading">
-									<IconObject size={size} object={object} />
+									{check.withIcon ? <IconObject size={size} object={object} /> : ''}
 									<div className="name">{name}</div>
 									<div className="featured" />
 								</div>

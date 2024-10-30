@@ -52,21 +52,18 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return null;
 		};
 
-		const subIdTemplate = this.getSubIdTemplate();
-		const templates = S.Record.getRecordIds(subIdTemplate, '');
-		const canWrite = U.Space.canMyParticipantWrite();
-		const isTemplate = type.uniqueKey == J.Constant.typeKey.template;
+		const recommended = Relation.getArrayValue(type.recommendedRelations).map(id => S.Record.getRelationById(id)).filter(it => it).map(it => it.relationKey);
 
-		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(type.recommendedLayout) && !isTemplate;
-		const recommendedRelations = Relation.getArrayValue(type.recommendedRelations);
-		const recommendedKeys = recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
+		const subIdTemplate = this.getSubIdTemplate();
+		const subIdObject = this.getSubIdObject();
+
+		const showTemplates = this.showTemplates();
 
 		const allowedObject = this.isAllowedObject();
-		const allowedTemplate = type.isInstalled && allowedObject && showTemplates && canWrite && !isTemplate;
+		const allowedTemplate = this.isAllowedTemplate();
 		
-		const subIdObject = this.getSubIdObject();
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
-		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
+		const totalTemplate = S.Record.getMeta(subIdTemplate, '').total + (allowedTemplate ? 1 : 0);
 
 		const isFileType = U.Object.isInFileLayouts(type.recommendedLayout);
 		const columns: any[] = [
@@ -174,7 +171,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									subId={subIdObject} 
 									rootId={rootId} 
 									columns={columns} 
-									relationKeys={recommendedKeys}
+									relationKeys={recommended}
 								/>
 							</div>
 						</div>
@@ -296,10 +293,30 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
+	showTemplates (): boolean {
+		const type = this.getObject();
+		if (!type) {
+			return false;
+		};
+
+		return !U.Object.getLayoutsWithoutTemplates().includes(type.recommendedLayout) && (type.uniqueKey != J.Constant.typeKey.template);
+	};
+
+	isAllowedTemplate (): boolean {
+		const type = this.getObject();
+
+		return type?.isInstalled && this.isAllowedObject() && this.showTemplates();
+	};
+
 	isAllowedObject (): boolean {
 		const type = this.getObject();
 
 		if (!type || !type.isInstalled) {
+			return false;
+		};
+
+		const canWrite = U.Space.canMyParticipantWrite();
+		if (!canWrite) {
 			return false;
 		};
 
