@@ -449,6 +449,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	fixDateValue (v: any) {
+		v = String(v || '').replace(/_/g, '');
+
 		const { relation, getView } = this.props;
 
 		let view = null;
@@ -457,10 +459,13 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		if (getView) {
 			view = getView();
 			viewRelation = view.getRelation(relation.relationKey);
+
+			if (v && viewRelation) {
+				v = U.Date.parseDate(v, viewRelation.dateFormat);
+			};
 		};
 
-		v = String(v || '').replace(/_/g, '');
-		return v ? U.Date.parseDate(v, viewRelation.dateFormat) : null;
+		return v ? v : null;
 	};
 
 	onCompositionStart () {
