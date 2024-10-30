@@ -5,7 +5,7 @@
 		> .wrap {
 			> .name { color: var(--color-text-secondary); }
 
-			.cell { line-height: 22px; transition: background $transitionCommon; position: relative; }
+			.cell { line-height: 22px; transition: background $transitionCommon; position: relative; flex-grow: 1; }
 			.cell.canEdit {
 				.cellContent {
 					.empty { display: block; }
@@ -16,14 +16,6 @@
 			.cell.c-object, 
 			.cell.c-file {
 				.over { overflow: visible !important; width: 100%; flex-wrap: wrap; gap: 4px 6px; }
-			}
-
-			.cell.c-object {
-				.element { max-width: 150px; }
-			}
-
-			.cell.c-select {
-				.over { margin-top: 2px; }
 			}
 
 			.cell.c-shortText {

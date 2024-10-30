@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Cell } from 'Component';
-import { I, S, U, Relation } from 'Lib';
+import { I, S, U, C, Relation, analytics } from 'Lib';
 
 const PREFIX = 'sidebarObjectRelation';
 
@@ -13,6 +13,7 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 		super(props);
 
 		this.onCellClick = this.onCellClick.bind(this);
+		this.onCellChange = this.onCellChange.bind(this);
 	};
 
     render () {
@@ -47,7 +48,7 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 						relationKey={relation.relationKey}
 						getRecord={() => object}
 						viewType={I.ViewType.Grid}
-						readonly={false}
+						readonly={!canEdit}
 						idPrefix={PREFIX}
 						menuClassNameWrap="fromSidebar"
 						menuClassName="fixed"
@@ -63,7 +64,15 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 		this.refCell?.onClick(e);
 	};
 
-	onCellChange (key: string, value: any) {
+	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
+		const { object } = this.props;
+		const relation = S.Record.getRelationByKey(relationKey);
+
+		C.ObjectListSetDetails([ object.id ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
+
+		if ((undefined !== object[relationKey]) && !U.Common.compareJSON(object[relationKey], value)) {
+			analytics.changeRelationValue(relation, value, { type: 'menu', id: 'Single' });
+		};
 	};
 
 });
