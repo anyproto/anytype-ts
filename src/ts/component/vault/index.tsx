@@ -136,7 +136,7 @@ const Vault = observer(class Vault extends React.Component {
 			if (!sidebar.isAnimating) {
 				if (!showVault) {
 					S.Common.showVaultSet(true);
-					sidebar.resizePage(width, false);
+					sidebar.resizePage(width, null, false);
 					this.closeVault = true;
 				};
 
@@ -184,7 +184,7 @@ const Vault = observer(class Vault extends React.Component {
 		if (!sidebar.isAnimating) {
 			if (this.closeVault) {
 				S.Common.showVaultSet(false);
-				sidebar.resizePage(width, false);
+				sidebar.resizePage(width, null, false);
 				this.closeVault = false;
 			};
 

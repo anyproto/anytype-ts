@@ -975,7 +975,7 @@ class UtilMenu {
 								if (isClosed) {
 									sidebar.open(width);
 								} else {
-									sidebar.resizePage(width, false);
+									sidebar.resizePage(width, null, false);
 								};
 								break;
 							};

@@ -328,10 +328,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 
 		const cb = () => {
-			if (this.refDrag) {
-				this.refDrag.setValue(coverScale);
-			};
-
+			this.refDrag?.setValue(coverScale);
 			this.rect = (node.get(0) as Element).getBoundingClientRect();
 			this.onScaleMove($.Event('resize'), coverScale);
 			this.cover.css({ opacity: 1 });
@@ -505,7 +502,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const px = x / this.rect.cw * 100;
 		const py = y / this.rect.ch * 100;
 		const css: any = { transform: `translate3d(${px}%,${py}%,0px)` };
-		
+
 		if (this.rect.ch < this.rect.height) {
 			css.transform = 'translate3d(0px,0px,0px)';
 			css.height = this.rect.height;

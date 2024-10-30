@@ -72,11 +72,11 @@ class Header extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		sidebar.resizePage(null, false);
+		sidebar.resizePage(null, null, false);
 	};
 
 	componentDidUpdate () {
-		sidebar.resizePage(null, false);
+		sidebar.resizePage(null, null, false);
 		this.refChild.forceUpdate();
 	};
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { U, S } from 'Lib';
+import { U, S, keyboard } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
@@ -34,8 +34,7 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 
 		const Component = Components[page];
 		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
-
-		console.log(page, cn);
+		const isPopup = keyboard.isPopup();
 
         return (
 			<div 
@@ -48,7 +47,8 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 						<Component 
 							ref={ref => this.refChild = ref} 
 							{...this.props} 
-							rootId={rootId} 
+							rootId={rootId}
+							isPopup={isPopup}
 						/> 
 					</div>
 				): ''}

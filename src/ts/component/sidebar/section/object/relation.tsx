@@ -17,11 +17,15 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 	};
 
     render () {
-		const { rootId, object } = this.props;
+		const { rootId, object, isPopup } = this.props;
 		const relation = this.props.item;
 		const block = S.Block.getLeaf(rootId, object.id);
 		const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
 		const cn = [ 'cell', Relation.className(relation.format) ];
+		const container = [ 
+			U.Common.getCellContainer('sidebarRight'), 
+			U.Common.getCellContainer(isPopup ? 'popup' : 'page') 
+		].join(', ');
 
 		const readonly = false;
 		const allowedValue = true;
@@ -53,7 +57,7 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 						menuClassNameWrap="fromSidebar"
 						menuClassName="fixed"
 						onCellChange={this.onCellChange}
-						pageContainer={U.Common.getCellContainer('sidebarRight')}
+						pageContainer={container}
 					/>
 				</div>
 			</div>

@@ -46,7 +46,7 @@ class Sidebar {
 				isClosed: false,
 			});
 
-			this.resizePage(J.Size.sidebar.width.default, false);
+			this.resizePage(J.Size.sidebar.width.default, null, false);
 		};
 
 		if (this.data.isClosed) {
@@ -89,7 +89,7 @@ class Sidebar {
 		this.setAnimating(true);
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
-		this.resizePage(0, true);
+		this.resizePage(0, null, true);
 		this.vaultHide();
 
 		this.removeAnimation(() => {
@@ -120,7 +120,7 @@ class Sidebar {
 
 			this.setStyle({ width });
 			this.set({ isClosed: false });
-			this.resizePage(width, true);
+			this.resizePage(width, null, true);
 
 			this.removeAnimation(() => {
 				$(window).trigger('resize');
@@ -150,7 +150,7 @@ class Sidebar {
 		w = this.limitWidth(w);
 
 		this.set({ width: w, isClosed: false });
-		this.resizePage(w, false);
+		this.resizePage(w, null, false);
 	};
 
 	private removeAnimation (callBack?: () => void): void {
@@ -217,17 +217,16 @@ class Sidebar {
 		};
 	};
 
-	resizePage (widthLeft: number, animate: boolean): void {
+	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
 		this.initObjects();
 
-		let widthRight = 0;
 		let toggleX = 16;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
 		};
 
-		if (this.objRight && this.objRight.length) {
+		if ((widthRight === null) && this.objRight && this.objRight.length) {
 			widthRight = this.objRight.outerWidth();
 		};
 
@@ -360,9 +359,40 @@ class Sidebar {
 		ref.setState({ page: (page == 'object' ? '' : 'object') });
 	};
 
-	rightPanelToggle (v: boolean) {
-		S.Common.showSidebarRightSet(v);
-		raf(() => this.resizePage(null, false));
+	rightPanelToggle (v: boolean, page?: string, param?: any) {
+		if (v) {
+			S.Common.showSidebarRightSet(v);
+
+			if (page) {
+				this.rightPanelSwitch(page, param);
+			};
+		};
+
+		window.setTimeout(() => {
+			this.initObjects();
+
+			const cssStart: any = {};
+			const cssEnd: any = {};
+
+			if (v) {
+				cssStart.transform = 'translate3d(100%,0px,0px)';
+				cssEnd.transform = 'translate3d(0%,0px,0px)';
+			} else {
+				cssStart.transform = 'translate3d(0%,0px,0px)';
+				cssEnd.transform = 'translate3d(100%,0px,0px)';
+			};
+
+			this.objRight.css(cssStart);
+
+			raf(() => {
+				this.objRight.css(cssEnd);
+				this.resizePage(null, v ? null : 0, true);
+			});
+		});
+
+		if (!v) {
+			window.setTimeout(() => S.Common.showSidebarRightSet(v), J.Constant.delay.sidebar);
+		};
 	};
 
 	rightPanelSwitch (page: string, param: any) {
