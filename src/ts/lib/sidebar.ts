@@ -218,6 +218,11 @@ class Sidebar {
 	};
 
 	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
+		const isPopup = keyboard.isPopup();
+		const isMain = keyboard.isMain();
+		const isMainVoid = keyboard.isMainVoid();
+		const isMainHistory = keyboard.isMainHistory();
+
 		this.initObjects();
 
 		let toggleX = 16;
@@ -230,20 +235,24 @@ class Sidebar {
 			widthRight = this.objRight.outerWidth();
 		};
 
-		if (!keyboard.isMain() || keyboard.isMainVoid()) {
+		if (!isMain || isMainVoid) {
 			widthLeft = 0;
 			widthRight = 0;
+		};
+
+		if (isPopup) {
+			widthLeft = 0;
 		};
 
 		const { isClosed } = this.data;
 		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = isClosed || !showVault || !keyboard.isMain() ? 0 : J.Size.vault.width;
+		const vw = isClosed || !showVault || !isMain || isPopup ? 0 : J.Size.vault.width;
 
 		widthLeft += vw;
 
 		const pageWidth = ww - widthLeft - widthRight;
-		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
+		const ho = isMainHistory ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
 
 		if ((widthLeft && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {

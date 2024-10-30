@@ -4,6 +4,8 @@
 	.popup.popupPage {
 		.innerWrap { width: 1096px; height: calc(100% - 164px); padding: 0px; }
 
+		#sidebarRight { position: absolute; }
+
 		@media (max-width: 1128px) {
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
 		}
