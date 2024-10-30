@@ -61,9 +61,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		const allowedObject = this.isAllowedObject();
 		const allowedTemplate = this.isAllowedTemplate();
-		
+
+		const templates = S.Record.getRecordIds(subIdTemplate, '');		
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
-		const totalTemplate = S.Record.getMeta(subIdTemplate, '').total + (allowedTemplate ? 1 : 0);
+		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 
 		const isFileType = U.Object.isInFileLayouts(type.recommendedLayout);
 		const columns: any[] = [
@@ -250,11 +251,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
+		const template = S.Record.getTemplateType();
+
 		U.Data.searchSubscribe({
 			spaceId: type.spaceId,
 			subId: this.getSubIdTemplate(),
 			filters: [
 				{ relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: type.id },
+				{ relationKey: 'type', condition: I.FilterCondition.Equal, value: template.id },
 			],
 			sorts: [
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
