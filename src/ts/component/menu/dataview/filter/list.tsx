@@ -224,13 +224,16 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, loadData, isInline, isCollection, getTarget } = data;
+		const { rootId, blockId, getView, loadData, isInline, getTarget } = data;
 		const view = getView();
+
+		if (!view) {
+			return;
+		};
+
 		const object = getTarget();
 
-		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => {
-			loadData(view.id, 0);
-		});
+		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => loadData(view.id, 0));
 
 		S.Menu.close('select');
 		analytics.event('RemoveFilter', {
