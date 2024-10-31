@@ -309,15 +309,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const settings = S.Common.getGraph(storageKey);
 		const { id, data } = e.data;
 		const node = $(this.node);
-		const { left, top } = node.offset();
 
+		if (!node || !node.length) {
+			return;
+		};
+
+		const { left, top } = node.offset();
 		const menuParam = {
-			onOpen: () => {
-				this.isPreviewDisabled = true;
-			},
-			onClose: () => {
-				this.isPreviewDisabled = false;
-			},
+			onOpen: () => this.isPreviewDisabled = true,
+			onClose: () => this.isPreviewDisabled = false,
 			recalcRect: () => ({
 				width: 0,
 				height: 0,
