@@ -107,12 +107,18 @@ class MediaAudio extends React.PureComponent<Props, State> {
 								anchorEl={this.volumeIcon?.node} 
 								anchorTo={AnchorTo.Top} 
 								isShown={this.state.showVolumeSlider}
+								gap={8}
 							>
 								<DragVertical
 									id="volume"
 									className="volume"
 									value={volume * (muted ? 0 : 1)}
 									onChange={(e: any, v: number) => this.onVolume(v)}
+									onMouseEnter={() => {
+										this.fadeOutVolumeSlider.cancel();
+										return this.setState({ showVolumeSlider: true });
+									}}
+									
 								/>
 							</Floater>
 						</div>
