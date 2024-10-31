@@ -82,7 +82,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						readonly={readonly}
 						withSwitch={true}
 						switchValue={viewRelation?.includeTime}
-						onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
+						onSwitch={(e: any, v: boolean) => this.onChangeTime(v)}
 					/>
 
 					<MenuItemVertical 
@@ -557,7 +557,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const view = getView();
 		const relation = this.getViewRelation();
 
-		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relation.relationKey, { ...relation, includeTime: v });
+		if (view && relation) {
+			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relation.relationKey, { ...relation, includeTime: v });
+		};
 	};
 
 	onSubmit (e: any) {
