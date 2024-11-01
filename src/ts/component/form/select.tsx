@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, S, Relation } from 'Lib';
+import { I, S, U, Relation } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 
 interface Props {
@@ -208,7 +208,7 @@ class Select extends React.Component<Props, State> {
 			noFilter,
 			noClose: true,
 			value,
-			options,
+			options: U.Menu.prepareForSelect(options),
 			onSelect: (e: any, item: any) => {
 				let { value } = this.state;
 				
