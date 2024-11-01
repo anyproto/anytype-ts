@@ -92,7 +92,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 				/>
 
 				<div id="bodyWrapper" className="wrapper">
-					<div className={[ 'editorWrapper', check.className ].join(' ')}>
+					<div className="editorWrapper isChat">
 						{content}
 					</div>
 				</div>

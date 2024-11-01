@@ -184,8 +184,7 @@
 
 /* Chat */
 
-.editorWrapper.isChat,
-.editorWrapper.isSpace {
+.editorWrapper.isChat {
 	.blocks { max-width: 704px; width: calc(100% - 32px); margin: 0px auto; padding: 0px; user-select: none; }
 	.blocks {
 		.block {
@@ -202,8 +201,7 @@
 	}
 }
 
-.editorWrapper.isChat,
-.editorWrapper.isSpace {
+.editorWrapper.isChat {
 	&.withIcon {
 		.controlButtons { left: 0px; }
 	}
@@ -257,8 +255,7 @@
 
 .editorWrapper.isSet, 
 .editorWrapper.isCollection,
-.editorWrapper.isChat,
-.editorWrapper.isSpace {
+.editorWrapper.isChat {
 	&.withIconAndCover { padding-top: 356px; }
 	&.withIconAndCover {
 		.controlButtons { left: 0px !important; }
