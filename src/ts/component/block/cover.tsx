@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Drag, Cover, Loader, Label } from 'Component';
+import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
 import { I, C, S, U, J, focus, translate, keyboard } from 'Lib';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
 
@@ -97,7 +97,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 					</div>
 					
 					<div className="dragWrap">
-						<Drag 
+						<DragHorizontal 
 							ref={ref => this.refDrag = ref} 
 							onStart={this.onScaleStart} 
 							onMove={this.onScaleMove} 

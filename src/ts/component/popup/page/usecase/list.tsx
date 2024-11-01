@@ -43,8 +43,8 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	render () {
 		const { getAuthor, onAuthor } = this.props;
 		const { isLoading, category } = this.state;
-		const items = this.getItems();
 		const { gallery } = S.Common;
+		const items = this.getItems();
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 
 		if (isLoading) {

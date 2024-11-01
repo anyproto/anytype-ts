@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, J, keyboard, translate, analytics } from 'Lib';
-import { MenuItemVertical, Drag } from 'Component';
+import { MenuItemVertical, DragHorizontal } from 'Component';
 
 const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
 
@@ -38,7 +38,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 										<div id={`value-${item.id}`} className="value">{values[item.id]}</div>
 									</div>
 									<div className="drag">
-										<Drag 
+										<DragHorizontal 
 											value={values[item.id] / graphDepth} 
 											snaps={snaps}
 											strictSnap={true}

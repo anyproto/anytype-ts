@@ -27,6 +27,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		const { id, content } = block;
 		const { state, targetObjectId } = content;
 		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
+		const { name } = object;
 		
 		let element = null;
 
@@ -103,6 +104,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 
 	componentDidUpdate () {
 		this.rebind();
+		this.refPlayer?.forceUpdate();
 	};
 
 	componentWillUnmount () {
