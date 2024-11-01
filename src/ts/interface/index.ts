@@ -12,6 +12,7 @@ export * from './notification';
 export * from './payment';
 export * from './history';
 export * from './syncStatus';
+export * from './ai';
 
 export * from './block';
 export * from './block/dataview';

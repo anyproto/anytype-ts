@@ -581,3 +581,9 @@ export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 		messageId: response.getMessageid(),
 	};
 };
+
+export const AIWritingTools = (response: Rpc.AI.WritingTools.Response) => {
+	return {
+		text: response.getText(),
+	};
+};

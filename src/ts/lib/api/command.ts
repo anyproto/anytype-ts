@@ -2219,3 +2219,19 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 
 	dispatcher.request(ChatGetMessagesByIds.name, request, callBack);
 };
+
+// ---------------------- AI ---------------------- //
+
+export const AIWritingTools = (mode: I.AIMode, text: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.AI.WritingTools.Request();
+
+	request.setMode(mode as number);
+	request.setModel('llama3.2:3b');
+	request.setEndpoint('http://localhost:11434/v1/chat/completions');
+	request.setTemperature(0.1);
+	request.setLanguage(0);
+	request.setProvider(0);
+	request.setText(text);
+
+	dispatcher.request(AIWritingTools.name, request, callBack);
+};

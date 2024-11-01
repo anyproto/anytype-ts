@@ -3,7 +3,8 @@
 .menus {
 	.menu.menuBlockContext { padding: 0px; height: 44px; transform-origin: 50% 50% !important; }
 	.menu.menuBlockContext {
-		.section { padding: 6px 12px; }
+		.section { padding: 6px 12px; display: flex; flex-direction: row; align-items: center; }
+
 		.icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; }
 		.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 		.icon.blockStyle { width: 44px; background-position: 6px center; }

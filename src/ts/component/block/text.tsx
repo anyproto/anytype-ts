@@ -1168,6 +1168,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						marks: this.marks,
 						isInsideTable,
 						onChange,
+						onAi: (id: I.AIMode) => {
+							const value = this.getValue();
+
+							C.AIWritingTools(id, value.substring(currentFrom, currentTo), (message: any) => {
+								console.log('TEXT', message.text);
+							});
+						}
 					},
 				});
 
