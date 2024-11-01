@@ -49,7 +49,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 
 		let allowedLayout = !checkType && allowedDetails && !isInSets && !isChat && !isType;
 		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark;
-		let allowedCover = !checkType && allowedDetails && !isNote;
+		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
 
 		if (root.isLocked() || readonly) {
 			allowedIcon = false;
