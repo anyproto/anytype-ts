@@ -21,6 +21,7 @@ interface State {
 	muted: boolean;
 	showVolumeSlider: boolean;
 	timeMetric: string;
+	current: PlaylistItem;
 };
 
 class MediaAudio extends React.PureComponent<Props, State> {
@@ -45,6 +46,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 			muted: false,
 			showVolumeSlider: false,
 			timeMetric: '',
+			current: null,
 		};
 
 		this.onPlayClick = this.onPlayClick.bind(this);
@@ -54,8 +56,8 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	};
 
 	render () {
-		const { volume, muted } = this.state;
-		const { src, name }	= this.current;
+		const { volume, muted, current } = this.state;
+		const { src, name }	= current || {};
 		const iconClasses = [ 'volume'];
 
 		if (!volume || muted) {
@@ -129,15 +131,10 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	};
 
 	componentDidMount () {
-		const { playlist } = this.props;
+		const playlist = this.getPlaylist();
 
-		if (playlist.length) {
-			this.current = playlist[0];
-		};
-
+		this.setState({ current: playlist[0] });
 		this.resizeObserver.observe(this.node);
-
-		this.forceUpdate();
 	};
 
 	componentDidUpdate () {
@@ -172,6 +169,16 @@ class MediaAudio extends React.PureComponent<Props, State> {
 		if (el.length) {
 			el.off('canplay timeupdate play ended pause');
 		};
+	};
+
+	getPlaylist () {
+		return this.props.playlist || [];
+	};
+
+	updatePlaylist (playlist: PlaylistItem[]) {
+		playlist = playlist || [];
+
+		this.setState({ current: playlist[0] });
 	};
 
 	resize () {
