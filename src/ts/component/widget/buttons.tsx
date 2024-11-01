@@ -5,10 +5,11 @@ import { I, S, U, sidebar, translate } from 'Lib';
 
 const WidgetButtons = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
+	isSubcribed = false;
+
 	constructor (props: I.WidgetComponent) {
 		super(props);
 
-		this.onMore = this.onMore.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
@@ -31,12 +32,13 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 						};
 					};
 
-					if (item.id == 'all') {
-						button = <Icon className="more" onClick={this.onMore} />;
-					};
-
 					return (
-						<div key={i} id={`item-${item.id}`} className="item" onClick={e => this.onClick(e, item)}>
+						<div 
+							key={i} 
+							id={`item-${item.id}`} 
+							className="item" 
+							onClick={e => this.onClick(e, item)}
+						>
 							<div className="side left">
 								<Icon className={item.id} />
 								<div className="name">
@@ -95,26 +97,6 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 		};
 	};
 
-	onMore (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		S.Menu.open('select', {
-			element: '#widget-buttons #item-all .icon.more',
-			horizontal: I.MenuDirection.Center,
-			data: {
-				options: [
-					{ id: 'bin', icon: 'bin-black', name: translate('commonBin') },
-				],
-				onSelect: (e: any, item: any) => {
-					if (item.id == 'bin') {
-						U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
-					};
-				},
-			}
-		});
-	};
-	
 });
 
 export default WidgetButtons;
