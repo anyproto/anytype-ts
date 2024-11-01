@@ -106,6 +106,7 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 	};
 
 	onSubmit (withImport: boolean) {
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { isLoading, iconOption } = this.state;
 		const { data } = param;
@@ -124,7 +125,7 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 			spaceDashboardId: I.HomePredefinedId.Last,
 		};
 
-		C.WorkspaceCreate(details, I.Usecase.GetStarted, (message: any) => {
+		C.WorkspaceCreate(details, I.Usecase.GetStarted, config.experimental, (message: any) => {
 			this.setLoading(false);
 
 			if (message.error.code) {

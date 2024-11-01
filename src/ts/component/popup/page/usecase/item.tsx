@@ -136,6 +136,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 	};
 
 	onMenu () {
+		const { config } = S.Common;
 		const { getId, close } = this.props;
 		const object = this.getObject();
 		const route = this.getRoute();
@@ -164,7 +165,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 					analytics.event('ClickGalleryInstallSpace', { type: isNew ? 'New' : 'Existing', route });
 
 					if (isNew) {
-						C.WorkspaceCreate({ name: object.title, iconOption: U.Common.rand(1, J.Constant.count.icon) }, I.Usecase.None, (message: any) => {
+						C.WorkspaceCreate({ name: object.title, iconOption: U.Common.rand(1, J.Constant.count.icon) }, I.Usecase.None, config.experimental, (message: any) => {
 							if (!message.error.code) {
 								cb(message.objectId, true);
 

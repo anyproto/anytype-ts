@@ -282,10 +282,6 @@ class RecordStore {
 		return this.getTypeByKey(J.Constant.typeKey.chat);
 	};
 
-	getChatDerivedType () {
-		return this.getTypeByKey(J.Constant.typeKey.chatDerived);
-	};
-
 	getSpaceType () {
 		return this.getTypeByKey(J.Constant.typeKey.space);
 	};

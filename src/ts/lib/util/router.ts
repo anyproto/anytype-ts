@@ -134,13 +134,15 @@ class UtilRouter {
 			return;
 		};
 
+		const { config } = S.Common;
+
 		S.Menu.closeAllForced();
 
 		if (sendEvent) {
 			analytics.event('SwitchSpace');
 		};
 
-		C.WorkspaceOpen(id, (message: any) => {
+		C.WorkspaceOpen(id, config.experimental, (message: any) => {
 			if (message.error.code) {
 				U.Data.onAuthWithoutSpace();
 				return;
