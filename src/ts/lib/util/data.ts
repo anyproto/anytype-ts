@@ -160,6 +160,7 @@ class UtilData {
 		S.Block.widgetsSet(info.widgetsId);
 		S.Block.profileSet(info.profileObjectId);
 		S.Block.spaceviewSet(info.spaceViewId);
+		S.Block.workspaceSet(info.workspaceObjectId);
 
 		S.Common.gatewaySet(info.gatewayUrl);
 		S.Common.spaceSet(info.accountSpaceId);
