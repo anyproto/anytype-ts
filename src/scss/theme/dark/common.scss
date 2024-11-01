@@ -242,6 +242,15 @@ html.themeDark {
 			.icon.buttonAdd { background-image: url('#{$themePath}/icon/block/add0.svg'); }
 			.icon.buttonAdd:hover { background-image: url('#{$themePath}/icon/block/add1.svg'); }
 		}
+
+		.dragWrap {
+			.number { color: var(--color-text-primary); }
+			.input-drag-horizontal {
+				.back { background: rgba(255,255,255,0.5); }
+				.fill { background: var(--color-text-primary); }
+				.icon { border-color: var(--color-text-primary); }
+			}
+		}
 	}
 
 	/* EditorControls */

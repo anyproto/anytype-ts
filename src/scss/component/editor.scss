@@ -29,6 +29,14 @@
 	#editorSize { position: absolute; width: 400px; top: 48px; left: 50%; margin-left: -200px; z-index: 10; visibility: hidden; }
 
 	.dragEmpty { height: 40px; transition: $transitionAllCommon; }
+	.dragWrap {
+		.number { color: var(--color-bg-primary); }
+		.input-drag-horizontal {
+			.back { background: rgba(255,255,255,0.5); }
+			.fill { background: var(--color-bg-primary); }
+			.icon { border-color: var(--color-bg-primary); }
+		}
+	}
 }
 
 .editorControls { width: 100%; height: 72px; margin: 0px auto; z-index: 1; position: relative; line-height: 16px; opacity: 0; }
