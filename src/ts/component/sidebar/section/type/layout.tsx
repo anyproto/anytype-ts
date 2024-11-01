@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Select, Drag } from 'Component';
+import { Label, Select, DragHorizontal } from 'Component';
 import { I, U, translate } from 'Lib';
 
 const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends React.Component<I.SidebarSectionComponent> {
@@ -68,7 +68,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 
 						<div className="value flex">
 							<div id="percent">{percent}%</div>
-							<Drag 
+							<DragHorizontal 
 								ref={ref => this.refWidth = ref}
 								value={object.layoutWidth}
 								onMove={(e, v) => this.onWidthMove(v)}
