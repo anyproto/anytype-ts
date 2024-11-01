@@ -144,29 +144,22 @@
 
 /* Human */ 
 
-.editorWrapper.isHuman.withIcon,
-.editorWrapper.isParticipant.withIcon
-{
-	.blocks { margin-top: -94px; }
-	.editorControls { height: 164px; }
-}
+.editorWrapper.isHuman,
+.editorWrapper.isParticipant {
+	&.withIcon {
+		.blocks { margin-top: -94px; }
+		.editorControls { height: 164px; }
+	}
 
-.editorWrapper.isHuman.withIcon,
-.editorWrapper.isHuman.withIconAndCover,
-.editorWrapper.isParticipant.withIcon,
-.editorWrapper.isParticipant.withIconAndCover
-{
-	.controlButtons { left: 144px !important; }
-}
+	&.withIcon,
+	&.withIconAndCover {
+		.controlButtons { left: 144px !important; }
+	}
 
-.editorWrapper.isHuman.withIconAndCover,
-.editorWrapper.isParticipant.withIconAndCover
-{ padding-top: 214px; }
-
-.editorWrapper.isHuman.withIconAndCover,
-.editorWrapper.isParticipant.withIconAndCover 
-{
-	.controlButtons { bottom: 26px; }
+	&.withIconAndCover { padding-top: 214px; }
+	&.withIconAndCover {
+		.controlButtons { bottom: 26px; }
+	}
 }
 
 .editorWrapper.align1, 
@@ -243,9 +236,11 @@
 
 .editorWrapper.isSet, 
 .editorWrapper.isCollection {
-	&.withIcon { left: 14px; }
+	&.withIcon {
+		.controlButtons { left: 14px; }
+	}
 
-	&.withIcon, 
+	&.withIcon,
 	&.withIconAndCover {
 		.headSimple {
 			.side.left { width: 96px; }
@@ -254,7 +249,7 @@
 		#button-icon { display: none; }
 	}
 
-	&.withCover, 
+	&.withCover,
 	&.withIconAndCover {
 		.editorControls { display: none; }
 	}
