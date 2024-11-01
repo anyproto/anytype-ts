@@ -122,6 +122,8 @@ html.themeDark {
 
 			.icon.volume { background-image: url('#{$themePath}/icon/audio/volume.svg'); }
 			.icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
+			
+			.icon.volume.muted { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
 		}
 	}
 
