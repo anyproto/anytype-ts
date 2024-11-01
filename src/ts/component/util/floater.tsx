@@ -6,20 +6,13 @@ import ReactDOM from 'react-dom';
 interface Props {
 	children: ReactNode;
 	anchorEl: HTMLElement | null;
-	anchorTo?: AnchorTo;
 	gap?: number;
 	isShown?: boolean;
-}
-
-export enum AnchorTo {
-	Top = 'top',
-	Bottom = 'bottom',
 }
 
 export const Floater: React.FC<Props> = ({ 
 	children, 
 	anchorEl, 
-	anchorTo = AnchorTo.Bottom,
 	gap: offset = 0,
 	isShown = true,
 }) => {
@@ -38,17 +31,15 @@ export const Floater: React.FC<Props> = ({
 			const eh = elRect.height;
 			const ew = elRect.width;
 
-			let nt = 0;
 			const nl = al + aw / 2 - ew / 2;
 
-			switch (anchorTo) {
-				case AnchorTo.Top:
-					nt = at - eh - offset + sy;
-					break;
-				case AnchorTo.Bottom:
-					nt = at + ah + offset + sy;
-					break;
-			};
+			let nt = at - eh - offset + sy;
+			if (nt < 0) {
+				nt = at + ah + offset + sy;
+			} else {
+				nt = at - eh - offset + sy;
+			}
+
 			setPosition({ top: nt, left: nl });
 		};
 	};

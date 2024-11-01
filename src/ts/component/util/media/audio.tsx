@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Icon, DragHorizontal, DragVertical } from 'Component';
 import { U } from 'Lib';
-import { AnchorTo, Floater } from '../floater';
+import { Floater } from '../floater';
 import _ from 'lodash';
 
 interface PlaylistItem {
@@ -105,7 +105,6 @@ class MediaAudio extends React.PureComponent<Props, State> {
 
 							<Floater 
 								anchorEl={this.volumeIcon?.node} 
-								anchorTo={AnchorTo.Top} 
 								isShown={this.state.showVolumeSlider}
 								gap={8}
 							>
