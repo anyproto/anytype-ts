@@ -3,12 +3,15 @@ import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, S, U, sidebar, translate } from 'Lib';
 
+const SUB_ID = 'widgetButtons';
+
 const WidgetButtons = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
+
+	isSubcribed = false;
 
 	constructor (props: I.WidgetComponent) {
 		super(props);
 
-		this.onMore = this.onMore.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
@@ -31,12 +34,13 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 						};
 					};
 
-					if (item.id == 'all') {
-						button = <Icon className="more" onClick={this.onMore} />;
-					};
-
 					return (
-						<div key={i} id={`item-${item.id}`} className="item" onClick={e => this.onClick(e, item)}>
+						<div 
+							key={i} 
+							id={`item-${item.id}`} 
+							className="item" 
+							onClick={e => this.onClick(e, item)}
+						>
 							<div className="side left">
 								<Icon className={item.id} />
 								<div className="name">
@@ -54,8 +58,13 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 		);
 	};
 
+	componentDidUpdate	(): void {
+		this.subscribeArchive();
+	};
+
 	getItems () {
 		const space = U.Space.getSpaceview();
+		const archived = S.Record.getRecordIds(SUB_ID, '');
 		const ret = [
 			{ id: 'all', name: translate('commonAllContent') },
 		];
@@ -66,6 +75,10 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 
 		if (space.spaceMainChatId) {
 			ret.push({ id: 'chat', name: translate('commonMainChat') });
+		};
+
+		if (archived.length) {
+			ret.push({ id: 'bin', name: translate('commonBin') });
 		};
 
 		return ret;
@@ -92,27 +105,30 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 				U.Object.openAuto({ id: space.spaceMainChatId, layout: I.ObjectLayout.Chat });
 				break;
 			};
+
+			case 'bin': {
+				U.Object.openAuto({ layout: I.ObjectLayout.Archive });
+				break;
+			};
 		};
 	};
 
-	onMore (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
+	subscribeArchive () {
+		if (this.isSubcribed) {
+			return;
+		};
 
-		S.Menu.open('select', {
-			element: '#widget-buttons #item-all .icon.more',
-			horizontal: I.MenuDirection.Center,
-			data: {
-				options: [
-					{ id: 'bin', icon: 'bin-black', name: translate('commonBin') },
-				],
-				onSelect: (e: any, item: any) => {
-					if (item.id == 'bin') {
-						U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
-					};
-				},
-			}
-		});
+		this.isSubcribed = true;
+
+		U.Data.searchSubscribe({
+			subId: SUB_ID,
+			spaceId: S.Common.space,
+			withArchived: true,
+			filters: [
+				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
+			],
+			limit: 1,
+		}, () => {});
 	};
 	
 });

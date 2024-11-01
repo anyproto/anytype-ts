@@ -17,9 +17,6 @@
 			.side.left { gap: 0px 6px; }
 			.side.right { justify-content: flex-end; padding-left: 6px; overflow: hidden; }
 			.side.right {
-				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); opacity: 0; transition: $transitionAllCommon; }
-				.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); opacity: 1; }
-
 				.btn { background-image: linear-gradient(90deg, #2aa7ee, #27c941); background-clip: text; -webkit-text-fill-color: transparent; font-weight: 500; }
 			}
 
@@ -29,6 +26,7 @@
 			.icon.member { background-image: url('~img/icon/widget/button/member.svg'); }
 			.icon.all { background-image: url('~img/icon/widget/button/all.svg'); }
 			.icon.chat { background-image: url('~img/icon/widget/button/chat.svg'); }
+			.icon.bin { background-image: url('~img/icon/widget/button/bin.svg'); }
 
 			.cnt { color: var(--color-text-secondary); }
 		}
