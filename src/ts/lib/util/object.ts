@@ -443,7 +443,7 @@ class UtilObject {
 	};
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
-		return this.getPageLayouts().concat(I.ObjectLayout.Chat).includes(layout);
+		return this.getPageLayouts().includes(layout);
 	};
 
 };

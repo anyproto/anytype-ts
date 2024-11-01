@@ -22,7 +22,6 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	refControls: any = null;
 	loading = false;
 	timeout = 0;
-	blockRefs: any = {};
 
 	state = {
 		isLoading: false,
@@ -50,7 +49,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const children = S.Block.getChildren(rootId, rootId, it => it.isChat());
+			const chat = new M.Block({ id: J.Constant.blockId.chat, type: I.BlockType.Chat, childrenIds: [], fields: {}, content: {} });
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 
 			content = (
@@ -67,20 +66,17 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 							readonly={readonly}
 						/>
 
-						{children.map((block: I.Block, i: number) => (
-							<Block
-								{...this.props}
-								ref={ref => this.blockRefs[block.id] = ref}
-								key={block.id}
-								rootId={rootId}
-								iconSize={20}
-								block={block}
-								className="noPlus"
-								isSelectionDisabled={true}
-								isContextMenuDisabled={true}
-								readonly={readonly}
-							/>
-						))}
+						<Block
+							{...this.props}
+							key={chat.id}
+							rootId={rootId}
+							iconSize={20}
+							block={chat}
+							className="noPlus"
+							isSelectionDisabled={true}
+							isContextMenuDisabled={true}
+							readonly={readonly}
+						/>
 					</div>
 				</React.Fragment>
 			);
