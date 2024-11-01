@@ -24,6 +24,7 @@ class UtilObject {
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
+			case I.ObjectLayout.Space:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 		};
 		return r;
@@ -293,6 +294,10 @@ class UtilObject {
 
 	isSpaceViewLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.SpaceView;
+	};
+
+	isSpaceLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Space;
 	};
 
 	isSetLayout (layout: I.ObjectLayout): boolean {
