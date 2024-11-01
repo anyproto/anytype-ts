@@ -193,7 +193,9 @@ class App extends React.Component<object, State> {
 						) : ''}
 
 						{drag}
+						<div id="floaterContainer" />
 						<div id="tooltipContainer" />
+
 						<div id="globalFade">
 							<Loader id="loader" />
 						</div>

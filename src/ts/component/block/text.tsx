@@ -700,7 +700,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
 
-		
 		this.preventMenu = false;
 
 		let parsed: any = {};
