@@ -24,8 +24,6 @@
 			.card {
 				.cardContent > .inner { padding: 16px; }
 
-				.cardContent .cover .name { display: none; pointer-events: none;}
-
 				.cover { 
 					position: relative; aspect-ratio: 7/3; background-position: top center; display: flex; align-items: center;
 					background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 8px 8px 0px 0px; overflow: hidden;
@@ -41,8 +39,10 @@
 
 					.mediaAudio { padding: 8px 16px; border: unset; }
 					.mediaAudio {
-						.controls {
-							.controlsWrapper {				
+						.controlsWrapper {
+							.name { display: none; }
+
+							.controls {				
 								#volume { right: 16px; }
 							}
 						}

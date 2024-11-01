@@ -69,11 +69,12 @@ class MediaAudio extends React.PureComponent<Props, State> {
 			>
 				<audio id="audio" preload="auto" src={src} />
 
-				<div className="controls">
+				<div className="controlsWrapper">
 					<div className="name">
 						<span>{name}</span>
 					</div>
-					<div className="controlsWrapper">
+
+					<div className="controls">
 						<Icon className="play" onClick={this.onPlayClick} />
 
 						<div className="timeDragWrapper">
