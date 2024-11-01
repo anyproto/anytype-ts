@@ -263,10 +263,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseUp (e: any) {
-		if ( (e.target as HTMLElement)?.dataset?.['selection'] === 'off') {
-			return;
-		}
-
 		if (!this._isMounted) {
 			return;
 		};

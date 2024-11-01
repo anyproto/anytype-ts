@@ -81,7 +81,7 @@ class ElementMovementObserver {
 
 		// And handle scroll
 		window.addEventListener('scroll', this.checkForMovement);
-	}
+	};
 
 	public disconnect (): void {
 		this.movementObserver.disconnect();
