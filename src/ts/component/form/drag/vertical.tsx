@@ -11,7 +11,7 @@ interface Props {
 	step?: number;
 	onChange?(e: React.ChangeEvent<HTMLInputElement>, v: number): void;
 	onMouseLeave?(e:any): void;
-	onMouseMove?(e:any): void;
+	onMouseEnter?(e:any): void;
 }
 
 const DragVertical = React.forwardRef<Input, Props>(({
@@ -23,7 +23,7 @@ const DragVertical = React.forwardRef<Input, Props>(({
 	step = 0.01,
 	onChange,
 	onMouseLeave,
-	onMouseMove,
+	onMouseEnter,
 }, forwardedRef) => {
 	const inputRef = useRef(null);
 	const divRef = useRef(null);
@@ -39,6 +39,9 @@ const DragVertical = React.forwardRef<Input, Props>(({
 	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		e.preventDefault();
+		e.stopPropagation();
+		
 		if (onChange) {
 			onChange(e, Number(e.target.value));
 		}
@@ -52,7 +55,7 @@ const DragVertical = React.forwardRef<Input, Props>(({
 			ref={divRef}
 			className={`input-drag-vertical ${className}`}
 			onMouseLeave={onMouseLeave}
-			onMouseMove={onMouseMove}
+			onMouseEnter={onMouseEnter}
 		>
 			<Input
 				type="range"
@@ -63,6 +66,10 @@ const DragVertical = React.forwardRef<Input, Props>(({
 				max={max}
 				step={step}
 				onChange={handleChange}
+				onClick={e => {
+					e.preventDefault();
+					e.stopPropagation();
+				}}
 			/>
 		</div>
 	);

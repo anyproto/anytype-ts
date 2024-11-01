@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Icon, DragHorizontal, DragVertical } from 'Component';
 import { U } from 'Lib';
-import { AnchorTo, Floater } from '../floater';
+import { Floater } from '../floater';
 import _ from 'lodash';
 
 interface PlaylistItem {
@@ -105,14 +105,19 @@ class MediaAudio extends React.PureComponent<Props, State> {
 
 							<Floater 
 								anchorEl={this.volumeIcon?.node} 
-								anchorTo={AnchorTo.Top} 
 								isShown={this.state.showVolumeSlider}
+								gap={8}
 							>
 								<DragVertical
 									id="volume"
 									className="volume"
-									value={volume}
+									value={volume * (muted ? 0 : 1)}
 									onChange={(e: any, v: number) => this.onVolume(v)}
+									onMouseEnter={() => {
+										this.fadeOutVolumeSlider.cancel();
+										return this.setState({ showVolumeSlider: true });
+									}}
+									
 								/>
 							</Floater>
 						</div>
@@ -225,7 +230,9 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	};
 
 	onMute (e: React.MouseEvent) {
-		console.log('onMute');
+		e.preventDefault();
+		e.stopPropagation();
+		
 		const muted = !this.state.muted;
 		this.setState({ muted });
 		this.audioNode.volume = this.state.volume * (muted ? 0 : 1);

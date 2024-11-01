@@ -6,24 +6,14 @@ import ReactDOM from 'react-dom';
 interface Props {
 	children: ReactNode;
 	anchorEl: HTMLElement | null;
-	anchorTo?: AnchorTo;
-	offset?: {
-		left?: number;
-		top?: number;
-	};
+	gap?: number;
 	isShown?: boolean;
-}
-
-export enum AnchorTo {
-	Top = 'top',
-	Bottom = 'bottom',
 }
 
 export const Floater: React.FC<Props> = ({ 
 	children, 
 	anchorEl, 
-	anchorTo = AnchorTo.Bottom,
-	offset = { top: 0, left: 0 },
+	gap: offset = 0,
 	isShown = true,
 }) => {
 	const ref = useRef<HTMLDivElement>(null);
@@ -36,26 +26,20 @@ export const Floater: React.FC<Props> = ({
 
 			const { top: at, left: al, width: aw, height: ah } = anchorElRect;
 
-			const sh = document.body.scrollHeight;
 			const sy = window.scrollY;
 
 			const eh = elRect.height;
 			const ew = elRect.width;
 
-			const ot = Number(offset.top) || 0;
-			const ol = Number(offset.left) || 0;
+			const nl = al + aw / 2 - ew / 2;
 
-			let nt = 0;
-			const nl = al + aw / 2 - ew / 2 + ol;
+			let nt = at - eh - offset + sy;
+			if (nt < 0) {
+				nt = at + ah + offset + sy;
+			} else {
+				nt = at - eh - offset + sy;
+			}
 
-			switch (anchorTo) {
-				case AnchorTo.Top:
-					nt = -sh + at - eh + ot + sy;
-					break;
-				case AnchorTo.Bottom:
-					nt = -sh + at + ah + ot + sy;
-					break;
-			};
 			setPosition({ top: nt, left: nl });
 		};
 	};
@@ -70,6 +54,6 @@ export const Floater: React.FC<Props> = ({
 		>
 			{children}
 		</div>,
-		document.body
+		document.getElementById('floater-root')
 	);
 };

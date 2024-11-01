@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.mediaAudio { width: 100%; border: 1px solid var(--color-shape-secondary); container-type: inline-size; container-name: media-audio;}
+.mediaAudio { width: 100%; border: 1px solid var(--color-shape-secondary); container-type: inline-size; container-name: media-audio; }
 .mediaAudio {
     .controls { width: 100%; position: relative; text-align: left; color: var(--color-text-primary); }
     .controls {
@@ -14,7 +14,7 @@
         @container media-audio (max-width: 500px) { .controlsWrapper { column-gap: 5px; }; }
 
         .controlsWrapper {
-            div { flex: 0 1 auto;}
+            div { flex: 0 1 auto; }
 
             .timeDragWrapper { flex: 1 0 auto; }
 
@@ -22,17 +22,13 @@
             .icon.play { width: 20px; height: 20px; min-width: 20px; min-height: 20px; background-image: url('~img/icon/audio/play.svg'); }
             .icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
             
-            .input-drag-horizontal { 
-                .icon { cursor: default; }
-            }
+            .input-drag-horizontal .icon { cursor: default; }
             
             .icon.volume { width: 20px; height: 20px;  min-width: 20px; min-height: 20px; background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.muted { background-image: url('~img/icon/audio/mute.svg'); }
             .time { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
 
-            @container media-audio (max-width: 500px) {
-                .time { display: none; }
-            }
+            @container media-audio (max-width: 500px) { .time { display: none; }}
     
             .input-drag-horizontal { display: inline-block; vertical-align: top; height: 20px; }
             .input-drag-horizontal {
