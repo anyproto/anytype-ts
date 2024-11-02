@@ -343,8 +343,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		this.initCache();
 		this.setActive(items[this.n]);
-		this.refFilter.setValue(this.filter);
-		this.refFilter.setRange(this.range);
+		this.refFilter?.setValue(this.filter);
+		this.refFilter?.setRange(this.range);
 
 		if (this.refList) {
 			this.refList.recomputeRowHeights(0);
@@ -507,7 +507,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
+			this.range = this.refFilter?.getRange();
 			this.forceUpdate();
+
 			storageSet({ filter: v });
 			analytics.event('SearchInput', { route });
 		}, J.Constant.delay.keyboard);

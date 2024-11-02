@@ -147,10 +147,6 @@ class Filter extends React.Component<Props, State> {
 		this.ref.blur();
 	};
 
-	setRange (range: I.TextRange) {
-		this.ref.setRange(range);
-	};
-
 	onFocus (e: any) {
 		const { placeholderFocus, onFocus } = this.props;
 
@@ -269,6 +265,14 @@ class Filter extends React.Component<Props, State> {
 
 	getValue () {
 		return this.ref.getValue();
+	};
+
+	getRange () {
+		return this.ref.getRange();
+	};
+
+	setRange (range: I.TextRange) {
+		this.ref.setRange(range);
 	};
 
 	placeholderCheck () {
