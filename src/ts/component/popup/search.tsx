@@ -332,19 +332,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	componentDidUpdate () {
 		const items = this.getItems();
 		const filter = this.getFilter();
-		const length = filter.length;
 
 		if (filter != this.filter) {
 			this.filter = filter;
-			this.range = { from: length, to: length };
 			this.reload();
 			return;
 		};
 
 		this.initCache();
 		this.setActive(items[this.n]);
-		this.refFilter?.setValue(this.filter);
-		this.refFilter?.setRange(this.range);
+
+		if (this.refFilter) {
+			this.refFilter.setValue(this.filter);
+			this.refFilter.setRange(this.range);
+		};
 
 		if (this.refList) {
 			this.refList.recomputeRowHeights(0);
@@ -507,10 +508,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
+			storageSet({ filter: v });
+
 			this.range = this.refFilter?.getRange();
 			this.forceUpdate();
-
-			storageSet({ filter: v });
+			
 			analytics.event('SearchInput', { route });
 		}, J.Constant.delay.keyboard);
 	};
