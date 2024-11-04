@@ -36,7 +36,7 @@ mwv=`cat middleware.version`
 version=`curl -u "$user:$token" -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases/tags/v$mwv | jq .`
 
 tag=`echo $version | jq ".tag_name"`
-asset_id=`echo $version | jq ".assets | map(select(.name | match(\"js_v[0-9]+.[0-9]+.[0-9]+(-rc[0-9]+)?_$arch\";\"i\")))[0].id"`
+asset_id=`echo $version | jq ".assets | map(select(.name | match(\"js_v[0-9]+.[0-9]+.[0-9]+([^_]+)?_$arch\";\"i\")))[0].id"`
 
 if [ "$asset_id" = "" ]; then
   echo "ERROR: version not found"
