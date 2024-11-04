@@ -43,6 +43,8 @@ export interface MenuParam {
 	noFlipY?: boolean;
 	noClose?: boolean;
 	noAutoHover?: boolean;
+	noFilter?: boolean;
+	noRemove?: boolean;
 	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;

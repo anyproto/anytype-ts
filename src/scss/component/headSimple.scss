@@ -37,3 +37,25 @@
 	.side.left { width: 32px !important; padding-top: 2px; }
 	.side.center { line-height: 36px; }
 }
+
+.headSimple.withColorPicker {
+	.side.left {
+		.titleWrap { justify-content: space-between; align-items: center; }
+		.editableWrap { flex-grow: 0; font-weight: 400; padding: 0px 6px; border-radius: 8px; }
+		.placeholder { position: static; margin-top: -32px; }
+
+		.colorPicker { width: 18px; height: 18px; border-radius: 50%; }
+		.colorPicker.textColor-default { background-color: var(--color-text-primary) !important; }
+		.colorPicker.textColor-black { background-color: var(--color-text-primary) !important; }
+		.colorPicker.textColor-grey { background-color: var(--color-control-active) !important; }
+		.colorPicker.textColor-yellow { background-color: var(--color-yellow) !important; }
+		.colorPicker.textColor-orange { background-color: var(--color-orange) !important; }
+		.colorPicker.textColor-red { background-color: var(--color-red) !important; }
+		.colorPicker.textColor-pink { background-color: var(--color-pink) !important; }
+		.colorPicker.textColor-purple { background-color: var(--color-purple) !important; }
+		.colorPicker.textColor-blue { background-color: var(--color-blue) !important; }
+		.colorPicker.textColor-ice { background-color: var(--color-ice) !important; }
+		.colorPicker.textColor-teal { background-color: var(--color-teal) !important; }
+		.colorPicker.textColor-lime { background-color: var(--color-lime) !important; }
+	}
+}

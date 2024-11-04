@@ -9,7 +9,10 @@ interface Props {
 	isContextMenuDisabled?: boolean;
 	readonly?: boolean;
 	noIcon?: boolean;
+	withColorPicker?: boolean;
+	colorPickerTitle?: string;
 	onCreate?: () => void;
+	onColorChange?: (color: string) => void;
 };
 
 const EDITORS = [ 
@@ -32,12 +35,13 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		this.onInstall = this.onInstall.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onColorPicker = this.onColorPicker.bind(this);
 	};
 
 	render (): any {
-		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon } = this.props;
+		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon, withColorPicker } = this.props;
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'relationOptionColor' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -47,6 +51,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isRelation = U.Object.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
+		const titleCn = [ 'title' ];
 		const placeholder = {
 			title: this.props.placeholder,
 			description: translate('placeholderBlockDescription'),
@@ -118,6 +123,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			button = null;
 		};
 
+		if (withColorPicker) {
+			cn.push('withColorPicker');
+			titleCn.push(`bgColor-${object.relationOptionColor || 'default'}`);
+			titleCn.push(`textColor-${object.relationOptionColor || 'default'}`);
+		};
+
 		return (
 			<div ref={node => this.node = node} className={cn.join(' ')}>
 				<div className="side left">
@@ -131,7 +142,18 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								canEdit={canEditIcon} 
 							/>
 						) : ''}
-						<Editor className="title" id="title" />
+						<Editor className={titleCn.join(' ')} id="title" />
+
+						{withColorPicker ? (
+							<div
+								id="colorPicker"
+								className={[
+									'colorPicker',
+									`textColor-${object.relationOptionColor || 'default'}`
+								].join(' ')}
+								onClick={this.onColorPicker}
+							/>
+						) : ''}
 					</div>
 
 					{descr}
@@ -283,6 +305,27 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		return sources.includes(rootId);
+	};
+
+	onColorPicker () {
+		const { rootId, onColorChange, colorPickerTitle } = this.props;
+		const object = S.Detail.get(rootId, rootId, [ 'relationOptionColor' ]);
+
+		S.Menu.open('dataviewOptionEdit', {
+			element: `#colorPicker`,
+			offsetY: 4,
+			noFilter: true,
+			noRemove: true,
+			title: colorPickerTitle || translate('commonColor'),
+			data: {
+				option: { color: object.relationOptionColor },
+				onColorPick: (color) => {
+					if (onColorChange) {
+						onColorChange(color);
+					};
+				}
+			}
+		});
 	};
 
 });

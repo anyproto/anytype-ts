@@ -13,7 +13,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 	render () {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, noFilter, noRemove } = param;
 		const { option } = data;
 		const sections = this.getSections();
 
@@ -50,15 +50,17 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		);
 
 		return (
-			<div>
-				<Filter
-					ref={ref => this.refName = ref}
-					placeholder={translate('menuDataviewOptionEditPlaceholder')}
-					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
-					className={'outlined textColor-' + this.color}
-					value={option.name}
-					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
-				/>
+			<div className={noRemove ? 'noRemove' : ''}>
+				{!noFilter ? (
+					<Filter
+						ref={ref => this.refName = ref}
+						placeholder={translate('menuDataviewOptionEditPlaceholder')}
+						placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
+						className={'outlined textColor-' + this.color}
+						value={option.name}
+						onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
+					/>
+				) : ''}
 
 				{sections.map((item: any, i: number) => (
 					<Section key={i} {...item} />
@@ -104,16 +106,23 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	getSections () {
+		const { param } = this.props;
+		const { noRemove } = param;
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
+		const sections = [ { children: colors, className: 'colorPicker' } ];
 
-		return [
-			{ children: colors, className: 'colorPicker' },
-			{ 
-				children: [
-					{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
-				] 
-			},
-		];
+		if (noRemove) {
+			return sections;
+		};
+
+		sections.push({
+			className: '',
+			children: [
+				{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
+			]
+		})
+
+		return sections;
 	};
 
 	getItems () {
@@ -200,8 +209,13 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option } = data;
+		const { option, onColorPick } = data;
 		const value = this.refName ? this.refName.getValue() : '';
+
+		if (onColorPick) {
+			onColorPick(this.color);
+			return;
+		};
 
 		if (!value) {
 			return;
