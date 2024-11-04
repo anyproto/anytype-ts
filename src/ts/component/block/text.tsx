@@ -507,7 +507,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
 				pd = false;
 			};
-			if (block.isTextCallout()) {
+			if (block.isTextCallout() || block.isTextQuote()) {
 				pd = true;
 			};
 
