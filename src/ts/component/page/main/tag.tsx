@@ -157,7 +157,6 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 		C.ObjectListSetDetails([ object.id ], [
 			{ key: 'relationOptionColor', value: color },
 		], (message) => {
-			console.log('MESSAGE: ', message)
 			S.Detail.update(rootId, { id: object.id, details: { relationOptionColor: color } }, false);
 			this.forceUpdate();
 		});
