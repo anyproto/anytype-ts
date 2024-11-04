@@ -126,7 +126,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if (withColorPicker) {
 			cn.push('withColorPicker');
-			titleCn.push(`isTag`);
+			titleCn.push(`isMultiSelect`);
 			titleCn.push(`tagColor-${object.color || 'default'}`);
 		};
 

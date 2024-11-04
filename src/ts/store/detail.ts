@@ -280,11 +280,7 @@ class DetailStore {
 	};
 
 	private mapTag (object: any) {
-		object.color = Relation.getStringValue(object.color || object.relationOptionColor);
-
-		if (!object.color) {
-			object.color = 'default';
-		};
+		object.color = Relation.getStringValue(object.color || object.relationOptionColor || 'default');
 
 		delete(object.relationOptionColor);
 
