@@ -61,16 +61,26 @@ html.themeDark {
 	.bgColor-teal { background: #162827 !important; }
 	.bgColor-lime { background: #202919 !important; }
 
-	.isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: #3c3c3c !important; }
-	.isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: #55500d !important; }
-	.isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: #5f430a !important; }
-	.isMultiSelect.tagColor-red { color: var(--color-red) !important; background: #74321e !important; }
-	.isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: #712055 !important; }
-	.isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: #542663 !important; }
-	.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #20295c !important; }
-	.isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: #19465f !important; }
-	.isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: #16534e !important; }
-	.isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: #36551d !important; }
+	.isMultiSelect.tagColor-grey,
+	.isTag.tagColor-grey { color: var(--color-text-secondary) !important; background: #3c3c3c !important; }
+	.isMultiSelect.tagColor-yellow,
+	.isTag.tagColor-yellow { color: var(--color-yellow) !important; background: #55500d !important; }
+	.isMultiSelect.tagColor-orange,
+	.isTag.tagColor-orange { color: var(--color-orange) !important; background: #5f430a !important; }
+	.isMultiSelect.tagColor-red,
+	.isTag.tagColor-red { color: var(--color-red) !important; background: #74321e !important; }
+	.isMultiSelect.tagColor-pink,
+	.isTag.tagColor-pink { color: var(--color-pink) !important; background: #712055 !important; }
+	.isMultiSelect.tagColor-purple,
+	.isTag.tagColor-purple { color: var(--color-purple) !important; background: #542663 !important; }
+	.isMultiSelect.tagColor-blue,
+	.isTag.tagColor-blue { color: var(--color-blue) !important; background: #20295c !important; }
+	.isMultiSelect.tagColor-ice,
+	.isTag.tagColor-ice { color: var(--color-ice) !important; background: #19465f !important; }
+	.isMultiSelect.tagColor-teal,
+	.isTag.tagColor-teal { color: var(--color-teal) !important; background: #16534e !important; }
+	.isMultiSelect.tagColor-lime,
+	.isTag.tagColor-lime { color: var(--color-lime) !important; background: #36551d !important; }
 
 	.selectionTarget.isSelectionSelected::after, 
 	.block.isSelectionSelected > .wrapContent > .selectionTarget::after 

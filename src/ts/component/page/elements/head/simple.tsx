@@ -45,6 +45,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
+		const theme = S.Common.getThemeClass();
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
@@ -125,8 +126,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if (withColorPicker) {
 			cn.push('withColorPicker');
-			titleCn.push(`bgColor-${object.color || 'default'}`);
-			titleCn.push(`textColor-${object.color || 'default'}`);
+			titleCn.push(`isTag`);
+			titleCn.push(`tagColor-${object.color || 'default'}`);
 		};
 
 		return (
@@ -147,10 +148,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 						{withColorPicker ? (
 							<div
 								id="colorPicker"
-								className={[
-									'colorPicker',
-									`textColor-${object.color || 'default'}`
-								].join(' ')}
+								style={{ background: J.Theme[theme].color[object.color || 'default']}}
+								className="colorPicker"
 								onClick={this.onColorPicker}
 							/>
 						) : ''}

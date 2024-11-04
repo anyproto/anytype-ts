@@ -30,7 +30,7 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 
 	render () {
 		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, [ 'backlinks', 'relationOptionColor' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'backlinks' ]);
 
 		const subId = this.getSubId();
 		const total = S.Record.getMeta(subId, '').total;

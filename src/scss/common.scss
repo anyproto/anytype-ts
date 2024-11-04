@@ -169,16 +169,27 @@ a { color: var(--color-text-primary); }
 .bgColor-lime { background: #e5f8d6 !important; }
 
 .isMultiSelect.archive { color: var(--color-text-secondary); background: var(--color-shape-tertiary); }
+.isTag.tagColor-default,
 .isMultiSelect.tagColor-default { color: var(--color-text-primary) !important; background: var(--color-bg-primary) !important; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; }
+.isTag.tagColor-grey,
 .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: var(--color-shape-primary) !important; }
+.isTag.tagColor-yellow,
 .isMultiSelect.tagColor-yellow { color: #b2a616 !important; background: #f4eb91 !important; }
+.isTag.tagColor-orange,
 .isMultiSelect.tagColor-orange { color: #d3720d !important; background: #fcdc9c !important; }
+.isTag.tagColor-red,
 .isMultiSelect.tagColor-red { color: #e2400c !important; background: #fcd1c3 !important; }
+.isTag.tagColor-pink,
 .isMultiSelect.tagColor-pink { color: #ca1b8e !important; background: #f8c2e5 !important; }
+.isTag.tagColor-purple,
 .isMultiSelect.tagColor-purple { color: #9e30c4 !important; background: #e8d0f1 !important; }
+.isTag.tagColor-blue,
 .isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #cbd2fa !important; }
+.isTag.tagColor-ice,
 .isMultiSelect.tagColor-ice { color: #1c8bca !important; background: #b2dff9 !important; }
+.isTag.tagColor-teal,
 .isMultiSelect.tagColor-teal { color: #0caaa3 !important; background: #a9ebe6 !important; }
+.isTag.tagColor-lime,
 .isMultiSelect.tagColor-lime { color: #64b90f !important; background: #c5efa3 !important; }
 
 .isSelect.tagColor-default { color: var(--color-text-primary) !important; }
