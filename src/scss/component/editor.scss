@@ -152,29 +152,22 @@
 
 /* Human */ 
 
-.editorWrapper.isHuman.withIcon,
-.editorWrapper.isParticipant.withIcon
-{
-	.blocks { margin-top: -94px; }
-	.editorControls { height: 164px; }
-}
+.editorWrapper.isHuman,
+.editorWrapper.isParticipant {
+	&.withIcon {
+		.blocks { margin-top: -94px; }
+		.editorControls { height: 164px; }
+	}
 
-.editorWrapper.isHuman.withIcon,
-.editorWrapper.isHuman.withIconAndCover,
-.editorWrapper.isParticipant.withIcon,
-.editorWrapper.isParticipant.withIconAndCover
-{
-	.controlButtons { left: 144px !important; }
-}
+	&.withIcon,
+	&.withIconAndCover {
+		.controlButtons { left: 144px !important; }
+	}
 
-.editorWrapper.isHuman.withIconAndCover,
-.editorWrapper.isParticipant.withIconAndCover
-{ padding-top: 214px; }
-
-.editorWrapper.isHuman.withIconAndCover,
-.editorWrapper.isParticipant.withIconAndCover 
-{
-	.controlButtons { bottom: 26px; }
+	&.withIconAndCover { padding-top: 214px; }
+	&.withIconAndCover {
+		.controlButtons { bottom: 26px; }
+	}
 }
 
 .editorWrapper.align1, 
@@ -216,8 +209,10 @@
 	}
 }
 
-.editorWrapper.isChat.withIcon {
-	.controlButtons { left: 0px; }
+.editorWrapper.isChat {
+	&.withIcon {
+		.controlButtons { left: 0px; }
+	}
 }
 
 /* Set, Collection, Date */
@@ -245,35 +240,32 @@
 	}
 }
 
-.editorWrapper.isSet.withIcon, 
-.editorWrapper.isCollection.withIcon {
-	.controlButtons { left: 14px; }
-}
-
-.editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withIconAndCover,
-.editorWrapper.isChat.withIconAndCover { padding-top: 356px; }
-
-.editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withIconAndCover,
-.editorWrapper.isChat.withIconAndCover {
-	.controlButtons { left: 0px !important; }
-}
-
-.editorWrapper.isSet.withIcon, 
-.editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withIcon,
-.editorWrapper.isCollection.withIconAndCover {
-	.headSimple {
-		.side.left { width: 96px; }
-		.side.center { width: calc(100% - 128px); }
+.editorWrapper.isSet, 
+.editorWrapper.isCollection {
+	&.withIcon {
+		.controlButtons { left: 14px; }
 	}
-	#button-icon { display: none; }
+
+	&.withIcon,
+	&.withIconAndCover {
+		.headSimple {
+			.side.left { width: 96px; }
+			.side.center { width: calc(100% - 128px); }
+		}
+		#button-icon { display: none; }
+	}
+
+	&.withCover,
+	&.withIconAndCover {
+		.editorControls { display: none; }
+	}
 }
 
-.editorWrapper.isSet.withCover, 
-.editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withCover,
-.editorWrapper.isCollection.withIconAndCover {
-	.editorControls { display: none; }
+.editorWrapper.isSet, 
+.editorWrapper.isCollection,
+.editorWrapper.isChat {
+	&.withIconAndCover { padding-top: 356px; }
+	&.withIconAndCover {
+		.controlButtons { left: 0px !important; }
+	}
 }

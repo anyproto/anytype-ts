@@ -24,6 +24,7 @@ class UtilObject {
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
+			case I.ObjectLayout.Space:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 		};
 		return r;
@@ -295,6 +296,10 @@ class UtilObject {
 		return layout == I.ObjectLayout.SpaceView;
 	};
 
+	isSpaceLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Space;
+	};
+
 	isSetLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Set;
 	};
@@ -392,7 +397,6 @@ class UtilObject {
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
-			I.ObjectLayout.ChatDerived,
 		];
 	};
 
@@ -430,7 +434,6 @@ class UtilObject {
 			I.ObjectLayout.Option, 
 			I.ObjectLayout.SpaceView, 
 			I.ObjectLayout.Space,
-			I.ObjectLayout.ChatDerived,
 		];
 	};
 
@@ -445,7 +448,7 @@ class UtilObject {
 	};
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
-		return this.getPageLayouts().concat(I.ObjectLayout.Chat).includes(layout);
+		return this.getPageLayouts().includes(layout);
 	};
 
 };

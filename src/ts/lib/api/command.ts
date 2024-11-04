@@ -107,19 +107,21 @@ export const WalletCloseSession = (token: string, callBack?: (message: any) => v
 
 // ---------------------- WORKSPACE ---------------------- //
 
-export const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: any) => void) => {
+export const WorkspaceCreate = (details: any, usecase: I.Usecase, withChat: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
 
 	request.setDetails(Encode.struct(details));
 	request.setUsecase(usecase as number);
+	request.setWithchat(withChat);
 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
 };
 
-export const WorkspaceOpen = (spaceId: string, callBack?: (message: any) => void) => {
+export const WorkspaceOpen = (spaceId: string, withChat: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Open.Request();
 
 	request.setSpaceid(spaceId);
+	request.setWithchat(withChat);
 
 	dispatcher.request(WorkspaceOpen.name, request, callBack);
 };
