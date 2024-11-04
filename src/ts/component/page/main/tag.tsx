@@ -30,10 +30,12 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 
 	render () {
 		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, [ 'relationOptionColor' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'backlinks', 'relationOptionColor' ]);
 
 		const subId = this.getSubId();
 		const total = S.Record.getMeta(subId, '').total;
+
+		const filters: I.Filter[] = [ { relationKey: 'id', condition: I.FilterCondition.In, value: object.backlinks || [] } ];
 
 		const columns: any[] = [
 			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
@@ -72,12 +74,12 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 							<div className="content">
 								<ListObject
 									{...this.props}
-									sources={[ rootId ]}
 									spaceId={this.getSpaceId()}
 									subId={subId}
 									rootId={rootId}
 									columns={columns}
 									relationKeys={[ 'creator', 'createdDate' ]}
+									filters={filters}
 								/>
 							</div>
 						</div>
@@ -101,7 +103,6 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.close();
-		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 	};
 
 	open () {
@@ -129,26 +130,6 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
 			this.setState({ isLoading: false });
-			this.subscribe();
-			this.checkColor();
-		});
-	};
-
-	subscribe () {
-		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, [ 'backlinks' ]);
-
-		const filters: I.Filter[] = [
-			{ relationKey: 'tag', condition: I.FilterCondition.In, value: object.id },
-		];
-
-		U.Data.searchSubscribe({
-			subId: this.getSubId(),
-			filters,
-			offset: 0,
-			limit: 30,
-		}, () => {
-			this.forceUpdate();
 		});
 	};
 
@@ -169,24 +150,17 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 		};
 	};
 
-	checkColor () {
-		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, [ 'relationOptionColor' ]);
-
-		if (!object.relationOptionColor) {
-			const colors = U.Menu.getBgColors();
-
-			this.setColor(colors[U.Common.rand(1, colors.length - 1)].value);
-		};
-	};
-
 	setColor (color: string) {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 
-		object.relationOptionColor = color;
-		S.Detail.update(rootId, { id: object.id, details: object }, false);
-		this.refHead?.forceUpdate();
+		C.ObjectListSetDetails([ object.id ], [
+			{ key: 'relationOptionColor', value: color },
+		], (message) => {
+			console.log('MESSAGE: ', message)
+			S.Detail.update(rootId, { id: object.id, details: { relationOptionColor: color } }, false);
+			this.forceUpdate();
+		});
 	};
 
 	getSpaceId () {

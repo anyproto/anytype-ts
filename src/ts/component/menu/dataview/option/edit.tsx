@@ -13,8 +13,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 	render () {
 		const { param } = this.props;
-		const { data, noFilter, noRemove } = param;
-		const { option } = data;
+		const { data } = param;
+		const { option, noFilter, noRemove } = data;
 		const sections = this.getSections();
 
 		const Color = (item: any) => (
@@ -107,20 +107,19 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 	getSections () {
 		const { param } = this.props;
-		const { noRemove } = param;
+		const { data } = param;
+		const { noRemove } = data;
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
 		const sections = [ { children: colors, className: 'colorPicker' } ];
 
-		if (noRemove) {
-			return sections;
+		if (!noRemove) {
+			sections.push({
+				className: '',
+				children: [
+					{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
+				]
+			});
 		};
-
-		sections.push({
-			className: '',
-			children: [
-				{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
-			]
-		})
 
 		return sections;
 	};

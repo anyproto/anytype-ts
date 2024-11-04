@@ -41,7 +41,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	render (): any {
 		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon, withColorPicker } = this.props;
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'relationOptionColor' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -125,8 +125,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if (withColorPicker) {
 			cn.push('withColorPicker');
-			titleCn.push(`bgColor-${object.relationOptionColor || 'default'}`);
-			titleCn.push(`textColor-${object.relationOptionColor || 'default'}`);
+			titleCn.push(`bgColor-${object.color || 'default'}`);
+			titleCn.push(`textColor-${object.color || 'default'}`);
 		};
 
 		return (
@@ -149,7 +149,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								id="colorPicker"
 								className={[
 									'colorPicker',
-									`textColor-${object.relationOptionColor || 'default'}`
+									`textColor-${object.color || 'default'}`
 								].join(' ')}
 								onClick={this.onColorPicker}
 							/>
@@ -309,21 +309,21 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onColorPicker () {
 		const { rootId, onColorChange, colorPickerTitle } = this.props;
-		const object = S.Detail.get(rootId, rootId, [ 'relationOptionColor' ]);
+		const object = S.Detail.get(rootId, rootId);
 
 		S.Menu.open('dataviewOptionEdit', {
 			element: `#colorPicker`,
 			offsetY: 4,
-			noFilter: true,
-			noRemove: true,
 			title: colorPickerTitle || translate('commonColor'),
 			data: {
-				option: { color: object.relationOptionColor },
+				option: { color: object.color },
 				onColorPick: (color) => {
 					if (onColorChange) {
 						onColorChange(color);
 					};
-				}
+				},
+				noFilter: true,
+				noRemove: true
 			}
 		});
 	};

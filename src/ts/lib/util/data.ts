@@ -630,7 +630,8 @@ class UtilData {
 				break;
 
 			case I.ObjectLayout.Bookmark:
-			case I.ObjectLayout.Task: {
+			case I.ObjectLayout.Task:
+			case I.ObjectLayout.Tag: {
 				break;
 			};
 

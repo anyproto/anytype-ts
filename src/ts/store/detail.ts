@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, S, U, J, Relation, translate } from 'Lib';
+import { I, S, U, J, Relation, translate, C } from 'Lib';
 
 interface Detail {
 	relationKey: string;
@@ -277,6 +277,18 @@ class DetailStore {
 
 	private mapDate (object: any) {
 		return this.mapSet(object);
+	};
+
+	private mapTag (object: any) {
+		object.color = Relation.getStringValue(object.color || object.relationOptionColor);
+
+		if (!object.color) {
+			object.color = 'default';
+		};
+
+		delete(object.relationOptionColor);
+
+		return object;
 	};
 
 	private mapSpaceView (object: any) {

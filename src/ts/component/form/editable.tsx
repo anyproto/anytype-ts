@@ -142,7 +142,9 @@ class Editable extends React.Component<Props> {
 	};
 
 	placeholderShow () {
-		$(this.refPlaceholder).show();
+		const h = parseInt($(this.refEditable).css('line-height'));
+
+		$(this.refPlaceholder).css({ 'margin-top': -h, position: 'relative' }).show();
 	};
 
 	setValue (html: string) {
