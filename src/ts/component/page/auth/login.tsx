@@ -32,7 +32,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const { accounts } = S.Auth;
 		const length = accounts.length;
 		
-        return (
+		return (
 			<div ref={ref => this.node = ref}>
 				<Header {...this.props} component="authIndex" />
 				<Icon className="arrow back" onClick={this.onCancel} />
@@ -196,14 +196,14 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		S.Popup.open('confirm', {
 			className: 'lostPhrase isLeft',
-            data: {
+			data: {
 				title: translate('popupConfirmLostPhraseTitle'),
-                text: translate(`popupConfirmLostPhraseText${platform}`),
+				text: translate(`popupConfirmLostPhraseText${platform}`),
 				textConfirm: translate('commonOkay'),
 				canConfirm: true,
 				canCancel: false,
-            },
-        });
+			},
+		});
 	};
 
 });
