@@ -194,7 +194,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		};
 
 		const node = $(this.node);
-		const clone = node.find('#rowHead.isClone');
+		const clone = node.find('.rowHead.isClone');
 
 		if (clone.length) {
 			const scroll = node.find('#scroll');

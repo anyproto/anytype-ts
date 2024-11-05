@@ -6,8 +6,7 @@
 		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }
 		.rowHead.isClone { position: fixed !important; background: var(--color-bg-primary); z-index: 1; margin-left: 0px; }
 
-		.rowHead.isClone::after { content: ''; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; }
-		.rowHead.isClone::after { bottom: -1px; }
+		.rowHead.isClone::after { content: ''; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: -1px; }
 
 		.cellHead { 
 			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative; height: 38px;
