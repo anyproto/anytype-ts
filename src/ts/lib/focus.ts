@@ -99,11 +99,11 @@ class Focus {
 		const ch = container.height();
 		const no = node.offset().top;
 		const hh = J.Size.header;
-		const o = J.Size.lastBlock + ch / 2 + hh;
+		const o = J.Size.lastBlock + hh;
 		const st = container.scrollTop();
 		const y = isPopup ? (no - container.offset().top + st) : no;
 
-		if ((y >= st) && (y <= st + ch / 2 - o)) {
+		if ((y >= st) && (y <= st + ch - o)) {
 			return;
 		};
 
