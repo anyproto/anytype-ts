@@ -537,7 +537,7 @@ class Mark {
 			};
 
 			marks = this.adjust(marks, from, -length);
-			marks = this.adjust(marks, to, -length);
+			marks = this.adjust(marks, to, -length + 1);
 			marks.push({ type, range: { from, to }, param: '' });
 
 			text = U.Common.stringInsert(text, replace, o + p1l, o + p1l + p2l);

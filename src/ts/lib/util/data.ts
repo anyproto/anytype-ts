@@ -160,6 +160,7 @@ class UtilData {
 		S.Block.widgetsSet(info.widgetsId);
 		S.Block.profileSet(info.profileObjectId);
 		S.Block.spaceviewSet(info.spaceViewId);
+		S.Block.workspaceSet(info.workspaceObjectId);
 
 		S.Common.gatewaySet(info.gatewayUrl);
 		S.Common.spaceSet(info.accountSpaceId);
@@ -788,9 +789,8 @@ class UtilData {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, withArchived } = param;
 		const filters = param.filters || [];
-		const chatDerivedType = S.Record.getChatDerivedType();
 
-		filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chatDerived });
+		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Chat });
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
@@ -803,20 +803,6 @@ class UtilData {
 
 		if (!withArchived) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (!config.experimental) {
-			const chatType = S.Record.getChatType();
-
-			if (chatType) {
-				filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatType?.id });
-			};
-
-			filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chat });
-		};
-
-		if (chatDerivedType) {
-			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatDerivedType.id });
 		};
 
 		return filters;

@@ -4,6 +4,7 @@ import { Icon } from 'Component';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
+import HeaderMainChat from './main/chat';
 import HeaderMainHistory from './main/history';
 import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
@@ -17,6 +18,7 @@ interface Props extends I.HeaderComponent {
 const Components = {
 	authIndex:			 HeaderAuthIndex,
 	mainObject:			 HeaderMainObject,
+	mainChat:			 HeaderMainChat,
 	mainHistory:		 HeaderMainHistory,
 	mainGraph:			 HeaderMainGraph,
 	mainNavigation:		 HeaderMainNavigation,
@@ -56,17 +58,19 @@ class Header extends React.Component<Props> {
 
 		return (
 			<div id="header" className={cn.join(' ')} onDoubleClick={this.onDoubleClick}>
-				<Component 
-					ref={ref => this.refChild = ref} 
-					{...this.props} 
-					onSearch={this.onSearch}
-					onTooltipShow={this.onTooltipShow}
-					onTooltipHide={this.onTooltipHide}
-					menuOpen={this.menuOpen}
-					renderLeftIcons={this.renderLeftIcons}
-					renderTabs={this.renderTabs}
-					onRelation={this.onRelation}
-				/>
+				{Component ? (
+					<Component 
+						ref={ref => this.refChild = ref} 
+						{...this.props} 
+						onSearch={this.onSearch}
+						onTooltipShow={this.onTooltipShow}
+						onTooltipHide={this.onTooltipHide}
+						menuOpen={this.menuOpen}
+						renderLeftIcons={this.renderLeftIcons}
+						renderTabs={this.renderTabs}
+						onRelation={this.onRelation}
+					/>
+				) : ''}
 			</div>
 		);
 	};

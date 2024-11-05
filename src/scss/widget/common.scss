@@ -106,6 +106,15 @@
 	.head > .flex > .clickable { width: calc(100% - 36px); }
 }
 
+.button.widget { 
+	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; font-weight: 600; padding: 14px 16px;
+	display: flex; position: relative; gap: 0px 12px; justify-content: flex-start; text-align: left;
+}
+.button.widget {
+	.icon { height: 20px; width: 20px; margin: 0px; flex-shrink: 0; }
+	.icon.bin { background-image: url('~img/icon/widget/button/bin.svg'); }
+}
+
 @import "./space";
 @import "./buttons";
 @import "./tree";

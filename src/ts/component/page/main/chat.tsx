@@ -22,7 +22,6 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	refControls: any = null;
 	loading = false;
 	timeout = 0;
-	blockRefs: any = {};
 
 	state = {
 		isLoading: false,
@@ -38,8 +37,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	render () {
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const check = U.Data.checkDetails(rootId);
 		const readonly = this.isReadonly();
+		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -50,39 +49,22 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const children = S.Block.getChildren(rootId, rootId, it => it.isChat());
-			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
+			const chat = new M.Block({ id: J.Constant.blockId.chat, type: I.BlockType.Chat, childrenIds: [], fields: {}, content: {} });
 
 			content = (
-				<React.Fragment>
-					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
-
-					<div className="blocks">
-						<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-						<HeadSimple 
-							{...this.props} 
-							ref={ref => this.refHead = ref} 
-							placeholder={translate('defaultNamePage')} 
-							rootId={rootId} 
-							readonly={readonly}
-						/>
-
-						{children.map((block: I.Block, i: number) => (
-							<Block
-								{...this.props}
-								ref={ref => this.blockRefs[block.id] = ref}
-								key={block.id}
-								rootId={rootId}
-								iconSize={20}
-								block={block}
-								className="noPlus"
-								isSelectionDisabled={true}
-								isContextMenuDisabled={true}
-								readonly={readonly}
-							/>
-						))}
-					</div>
-				</React.Fragment>
+				<div className="blocks">
+					<Block
+						{...this.props}
+						key={chat.id}
+						rootId={rootId}
+						iconSize={20}
+						block={chat}
+						className="noPlus"
+						isSelectionDisabled={true}
+						isContextMenuDisabled={true}
+						readonly={readonly}
+					/>
+				</div>
 			);
 		};
 
@@ -90,13 +72,13 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			<div ref={node => this.node = node}>
 				<Header 
 					{...this.props} 
-					component="mainObject" 
+					component="mainChat" 
 					ref={ref => this.refHeader = ref} 
-					rootId={rootId} 
+					rootId={object.chatId} 
 				/>
 
 				<div id="bodyWrapper" className="wrapper">
-					<div className={[ 'editorWrapper', check.className ].join(' ')}>
+					<div className="editorWrapper isChat">
 						{content}
 					</div>
 				</div>

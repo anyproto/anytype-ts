@@ -218,7 +218,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const filter = String(this.filter || '');
-		const layouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts()).concat(I.ObjectLayout.Chat);
+		const layouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
 
 		const filters: any[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
