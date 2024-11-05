@@ -10,13 +10,7 @@ class Relation {
 	};
 
 	public className (v: I.RelationType): string {
-		let c = '';
-		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(v)) {
-			c = `select isSelect`;
-		} else {
-			c = this.typeName(v);
-		};
-		return `c-${c}`;
+		return `c-${this.typeName(v)}`;
 	};
 
 	public selectClassName (v: I.RelationType): string {
