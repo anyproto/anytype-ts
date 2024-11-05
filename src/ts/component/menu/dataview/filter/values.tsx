@@ -109,7 +109,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								<Tag
 									text={element.name}
 									color={element.color}
-									className={Relation.selectClassName(relation.format)} 
+									className="isSelect"
 								/>
 							</div>
 							<div className="buttons">

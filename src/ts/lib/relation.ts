@@ -12,7 +12,7 @@ class Relation {
 	public className (v: I.RelationType): string {
 		let c = '';
 		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(v)) {
-			c = `select ${this.selectClassName(v)}`;
+			c = `select isSelect`;
 		} else {
 			c = this.typeName(v);
 		};

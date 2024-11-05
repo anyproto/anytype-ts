@@ -87,7 +87,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 						onMouseEnter={e => this.onOver(e, item)}
 					>
 						<div className="clickable" onClick={e => this.onClick(e, item)}>
-							<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
+							<Tag text={item.name} color={item.color} className="isSelect" />
 						</div>
 						<div className="buttons">
 							{active ? <Icon className="chk" /> : ''}
