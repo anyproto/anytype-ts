@@ -85,7 +85,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			};
 		};
 
-		let text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+		let text = content.text.replace(/\r?\n$/, '');
+		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
 
 		if (modifiedAt) {
 			const cnl = [ 'label', 'small' ];

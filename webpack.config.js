@@ -44,6 +44,7 @@ module.exports = (env, argv) => {
 				Interface: path.resolve(__dirname, 'src/ts/interface'),
 				Model: path.resolve(__dirname, 'src/ts/model'),
 				Docs: path.resolve(__dirname, 'src/ts/docs'),
+				Hook: path.resolve(__dirname, 'src/ts/hook'),
 			},
 			modules: [
 				path.resolve('./src/'),
@@ -70,6 +71,15 @@ module.exports = (env, argv) => {
 			port,
 			client: {
 				progress: false,
+				overlay: {
+					runtimeErrors: (error) => {
+						if (error.message === 'ResizeObserver loop completed with undelivered notifications.') {
+						  return false;
+						}
+				
+						return true;
+					  },
+				},
 			},
 		},
 	

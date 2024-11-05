@@ -1,0 +1,2 @@
+.floater { position: absolute; pointer-events: none; z-index: 200; transition: opacity 0.2s ease-in-out; opacity: 0; }
+.floater.show { opacity: 1; pointer-events: auto; }
