@@ -74,7 +74,7 @@ class ProgressStore {
 		const current = this.getCurrent();
 		const total = this.getTotal();
 
-		return total > 0 ? Math.ceil(current / total * 100) : 0;
+		return total > 0 ? Math.min(100, Math.ceil(current / total * 100)) : 0;
 	};
 
 };

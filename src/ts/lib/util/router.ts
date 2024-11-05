@@ -137,6 +137,7 @@ class UtilRouter {
 		const { config } = S.Common;
 
 		S.Menu.closeAllForced();
+		S.Progress.showSet(false);
 
 		if (sendEvent) {
 			analytics.event('SwitchSpace');

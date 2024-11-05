@@ -31,7 +31,7 @@ const Progress = observer(class Progress extends React.Component {
 		};
 
 		const Item = (item: any) => {
-			const percent = item.total > 0 ? Math.ceil(item.current / item.total * 100) : 0;
+			const percent = item.total > 0 ? Math.min(100, Math.ceil(item.current / item.total * 100)) : 0;
 
 			return (
 				<div className="item">
