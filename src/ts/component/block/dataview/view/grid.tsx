@@ -194,7 +194,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		};
 
 		const node = $(this.node);
-		const clone = node.find('.rowHead.isClone');
+		const clone = node.find('#rowHeadClone');
 
 		if (clone.length) {
 			const scroll = node.find('#scroll');
@@ -217,21 +217,27 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			return;
 		};
 
+		const scroll = node.find('#scroll');
 		const hh = J.Size.header;
 		const st = container.scrollTop();
 		const { left, top } = rowHead.offset();
-		const y = top - st;
+		const sl = scroll.scrollLeft();
 
-		if (y <= hh) {
+		rowHead.removeClass('fixed');
+		node.find('.rowHead.isClone').remove();
+
+		if (top - st <= hh) {
 			const clone = rowHead.clone(true, true);
 
 			node.append(clone);
-			clone.addClass('isClone').attr({ id: '' }).css({ left, top: hh, width: rowHead.width() });
+			clone.addClass('isClone').attr({ id: 'rowHeadClone' }).css({ 
+				left: left + sl, 
+				top: hh, 
+				width: rowHead.width(),
+				transform: `translate3d(${-sl}px,0px,0px)`
+			});
 
 			rowHead.addClass('fixed');
-		} else {
-			rowHead.removeClass('fixed');
-			node.find('.rowHead.isClone').remove();
 		};
 	};
 
