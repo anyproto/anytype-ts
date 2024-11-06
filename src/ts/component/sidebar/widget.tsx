@@ -1,13 +1,15 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Widget, DropTarget, Icon, Label, ShareBanner } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, Storage } from 'Lib';
+import { Button, Widget, DropTarget, ShareBanner } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 type State = {
 	isEditing: boolean;
 	previewId: string;
 };
+
+const SUB_ID = 'widgetArchive';
 
 const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, State> {
 		
@@ -20,6 +22,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 	dropTargetId = '';
 	position: I.BlockPosition = null;
 	isDragging = false;
+	isSubcribed = false;
 	frame = 0;
 
 	constructor (props) {
@@ -34,6 +37,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		this.onScroll = this.onScroll.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
+		this.onArchive = this.onArchive.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -43,6 +47,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const bodyCn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const archived = S.Record.getRecordIds(SUB_ID, '');
 
 		let content = null;
 
@@ -168,6 +173,27 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						/>
 					))}
 
+					{archived.length ? (
+						<DropTarget 
+							{...this.props} 
+							isTargetBottom={true}
+							rootId={S.Block.widgets} 
+							id={last?.id}
+							dropType={I.DropType.Widget} 
+							canDropMiddle={false}
+							className="lastTarget"
+							cacheKey="lastTarget"
+						>
+							<Button
+								text={translate('commonBin')}
+								color=""
+								className="widget"
+								icon="bin"
+								onClick={this.onArchive}
+							/>
+						</DropTarget>
+					) : ''}
+
 					<div className="buttons">
 						{buttons.map(button => (
 							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
@@ -203,6 +229,10 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount(): void {
+		this.subscribeArchive();
 	};
 
 	onEdit (e: any): void {
@@ -267,6 +297,14 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				},
 			},
 		});
+	};
+
+	onArchive (e: any) {
+		const { isEditing } = this.state;
+
+		if (!isEditing && !e.button) {
+			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+		};
 	};
 
 	onDragStart (e: React.DragEvent, blockId: string): void {
@@ -490,6 +528,24 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				keyboard.shortcut('escape', e, () => close(e));
 			});
 		}, S.Menu.getTimeout());
+	};
+
+	subscribeArchive () {
+		if (this.isSubcribed) {
+			return;
+		};
+
+		this.isSubcribed = true;
+
+		U.Data.searchSubscribe({
+			subId: SUB_ID,
+			spaceId: S.Common.space,
+			withArchived: true,
+			filters: [
+				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
+			],
+			limit: 1,
+		}, () => {});
 	};
 
 });
