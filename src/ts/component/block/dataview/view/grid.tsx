@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Relation, sidebar } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
@@ -23,7 +23,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getColumnWidths = this.getColumnWidths.bind(this);
 	};
@@ -152,7 +151,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	componentDidUpdate () {
 		this.rebind();
 		this.resize();
-		this.onScroll();
+		this.onScrollHorizontal();
+		this.onScrollVertical();
 
 		U.Common.triggerResizeEditor(this.props.isPopup);
 	};
@@ -162,21 +162,83 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	rebind () {
+		const { isPopup, block } = this.props;
 		const node = $(this.node);
+		const scroll = node.find('#scroll');
+		const container = U.Common.getScrollContainer(isPopup);
 
 		this.unbind();
-		node.find('#scroll').on('scroll', () => this.onScroll());
+
+		scroll.on('scroll', () => this.onScrollHorizontal());
+		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => this.onScrollVertical());
 	};
 
 	unbind () {
+		const { isPopup, block } = this.props;
 		const node = $(this.node);
+		const scroll = node.find('#scroll');
+		const container = U.Common.getScrollContainer(isPopup);
 
-		node.find('#scroll').off('scroll');
+		scroll.off('scroll');
+		container.off(`scroll.${block.id}`);
 	};
 
-	onScroll () {
+	onScrollHorizontal () {
 		S.Menu.resizeAll();
 		this.resizeColumns('', 0);
+
+		const { isInline } = this.props;
+
+		if (isInline) {
+			return;
+		};
+
+		const node = $(this.node);
+		const clone = node.find('#rowHeadClone');
+
+		if (clone.length) {
+			const scroll = node.find('#scroll');
+
+			clone.css({ transform: `translate3d(${-scroll.scrollLeft()}px,0px,0px)` });
+		};
+	};
+
+	onScrollVertical () {
+		const { isPopup, isInline } = this.props;
+
+		if (isInline) {
+			return;
+		};
+
+		const container = U.Common.getScrollContainer(isPopup);
+		const node = $(this.node);
+		const rowHead = node.find('#rowHead');
+		if (!rowHead.length) {
+			return;
+		};
+
+		const scroll = node.find('#scroll');
+		const hh = J.Size.header;
+		const st = container.scrollTop();
+		const { left, top } = rowHead.offset();
+		const sl = scroll.scrollLeft();
+
+		rowHead.removeClass('fixed');
+		node.find('.rowHead.isClone').remove();
+
+		if (top - st <= hh) {
+			const clone = rowHead.clone(true, true);
+
+			node.append(clone);
+			clone.addClass('isClone').attr({ id: 'rowHeadClone' }).css({ 
+				left: left + sl, 
+				top: hh, 
+				width: rowHead.width(),
+				transform: `translate3d(${-sl}px,0px,0px)`
+			});
+
+			rowHead.addClass('fixed');
+		};
 	};
 
 	resizeColumns (relationKey: string, width: number) {

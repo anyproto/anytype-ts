@@ -54,6 +54,12 @@
             "Store": [
                 "ts/store",
             ],
+			"Hook/*": [
+                "ts/hook/*",
+            ],
+			"Hook": [
+                "ts/hook",
+            ],
 			"dist/*": [
                 "../dist/*"
             ],

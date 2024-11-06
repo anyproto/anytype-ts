@@ -56,21 +56,11 @@
 		video { width: 100%; display: block; object-fit: cover; }
 	}
 
-	.attachment.isAudio { min-width: calc(532px / 2); }
+	.attachment.isAudio { min-width: unset; }
 	.attachment.isAudio {
-		.mediaAudio { padding: 12px 16px; }
+		.mediaAudio { padding: 12px 16px; border: unset; }
 		.mediaAudio {
-			.controls { display: flex; align-items: center; gap: 0px 8px; }
-			.controls {
-				.icon { flex-shrink: 0; }
-				.icon.play { margin: 0px; }
-				.icon.volume { margin: 0px; }
-
-				.name { display: none; }
-				.time { position: static; flex-shrink: 0; }
-				#time { margin: 0px; }
-				#volume { opacity: 1; flex-shrink: 0; }
-			}
+			#volume { bottom: 40px; right: 16px; }
 		}
 	}
 

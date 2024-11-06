@@ -209,6 +209,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const rootId = this.getRootId();
 		const list = this.getMessages();
 
+		if (!rootId) {
+			return;
+		};
+
 		if (clear) {
 			C.ChatSubscribeLastMessages(rootId, J.Constant.limit.chat.messages, (message: any) => {
 				if (!message.error.code) {
@@ -328,7 +332,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
-		return object.chatId || rootId;
+		return object.chatId;
 	};
 
 	getBlockId () {

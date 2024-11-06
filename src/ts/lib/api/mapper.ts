@@ -81,6 +81,7 @@ export const Mapper = {
 				widgetsId: obj.getWidgetsid(),
 				analyticsId: obj.getAnalyticsid(),
 				networkId: obj.getNetworkid(),
+				workspaceObjectId: obj.getWorkspaceobjectid(),
 			};
 		},
 

@@ -162,28 +162,23 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		switch (layout) {
 			default:
+			case I.ObjectLayout.Chat:
 			case I.ObjectLayout.Page: {
 				if (iconImage) {
 					cn.push('withImage');
 				};
 
-				if (iconEmoji || iconImage || iconClass) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else {
-					defaultIcon('page');
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Chat: {
-				if (iconImage) {
-					cn.push('withImage');
+				let di = 'page';
+				switch (layout) {
+					case I.ObjectLayout.Chat: di = 'chat'; break;
+					case I.ObjectLayout.Collection: 
+					case I.ObjectLayout.Set: di = 'set'; break;
 				};
 
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else {
-					defaultIcon('chat');
+					defaultIcon(di);
 				};
 				break;
 			};
