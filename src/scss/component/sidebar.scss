@@ -23,8 +23,8 @@
 .sidebar.left { left: 0px; }
 .sidebar.left.anim { transition-property: width; }
 
-.sidebar.right { right: 0px; width: 348px; transform: translateX(100%); }
-.sidebar.right.anim { transition-property: transform; }
+.sidebar.right { right: -348px; width: 348px; }
+.sidebar.right.anim { transition-property: right; }
 
 .sidebar {
 	@import "./sidebar/widget";

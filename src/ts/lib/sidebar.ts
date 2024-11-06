@@ -380,15 +380,16 @@ class Sidebar {
 		window.setTimeout(() => {
 			this.initObjects();
 
+			const width = this.objRight.outerWidth();
 			const cssStart: any = {};
 			const cssEnd: any = {};
 
 			if (v) {
-				cssStart.transform = 'translate3d(100%,0px,0px)';
-				cssEnd.transform = 'translate3d(0%,0px,0px)';
+				cssStart.right = -width;
+				cssEnd.right = 0;
 			} else {
-				cssStart.transform = 'translate3d(0%,0px,0px)';
-				cssEnd.transform = 'translate3d(100%,0px,0px)';
+				cssStart.right = 0;
+				cssEnd.right = -width;
 			};
 
 			this.objRight.css(cssStart);
