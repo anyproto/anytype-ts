@@ -28,6 +28,7 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onIcon = this.onIcon.bind(this);
 	};
 
 	render () {
@@ -52,6 +53,7 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 						object={space}
 						canEdit={false}
 						menuParam={{ horizontal: I.MenuDirection.Center }}
+						onClick={this.onIcon}
 					/>
 				</div>
 
@@ -168,6 +170,17 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 	setLoading (isLoading: boolean) {
 		this.state.isLoading = isLoading;
 		this.setState({ isLoading });
+	};
+
+	onIcon () {
+		let { iconOption } = this.state;
+
+		iconOption++;
+		if (iconOption > J.Constant.count.icon) {
+			iconOption = 1;
+		};
+
+		this.setState({ iconOption });
 	};
 
 });
