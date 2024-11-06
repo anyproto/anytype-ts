@@ -60,6 +60,7 @@
 	.menu.menuDataviewOptionEdit {
 		.content { padding-top: 12px; overflow: visible; max-height: unset; }
 		.filter { margin-bottom: 8px; }
+		.noRemove { padding-bottom: 16px; }
 
 		.item:hover::before { background: var(--color-shape-highlight-medium); }
 		.item.active::before { z-index: 1; }

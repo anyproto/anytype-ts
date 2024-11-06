@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Action, C, I, S, translate, U } from 'Lib';
-import { Header, Footer } from 'Component';
-import HeadSimple from 'ts/component/page/elements/head/simple';
+import { Header, Footer, ListObject } from 'Component';
+import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isLoading: boolean;
@@ -24,13 +24,27 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 
 	constructor (props: I.PageComponent) {
 		super(props);
+
+		this.setColor = this.setColor.bind(this);
 	};
 
 	render () {
 		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, [ 'relationOptionColor' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'backlinks' ]);
 
-		console.log('TAG DETAILS: ', object)
+		const subId = this.getSubId();
+		const total = S.Record.getMeta(subId, '').total;
+
+		const filters: I.Filter[] = [ { relationKey: 'id', condition: I.FilterCondition.In, value: object.backlinks || [] } ];
+
+		const columns: any[] = [
+			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
+			{
+				relationKey: 'createdDate', name: translate('commonDateCreated'),
+				mapper: v => v ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v) : '',
+			},
+			{ relationKey: 'creator', name: translate('commonOwner'), isObject: true },
+		];
 
 		return (
 			<div ref={node => this.node = node}>
@@ -47,7 +61,29 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 						ref={ref => this.refHead = ref}
 						placeholder={translate('defaultNameTag')}
 						rootId={rootId}
+						isContextMenuDisabled={true}
+						noIcon={true}
+						withColorPicker={true}
+						onColorChange={this.setColor}
+						colorPickerTitle={translate('pageMainTagTagColor')}
 					/>
+
+					{!object._empty_ ? (
+						<div className="section set">
+							<div className="title">{total} {U.Common.plural(total, translate('pluralObject'))}</div>
+							<div className="content">
+								<ListObject
+									{...this.props}
+									spaceId={this.getSpaceId()}
+									subId={subId}
+									rootId={rootId}
+									columns={columns}
+									relationKeys={[ 'creator', 'createdDate' ]}
+									filters={filters}
+								/>
+							</div>
+						</div>
+					) : ''}
 				</div>
 
 				<Footer component="mainObject" {...this.props} />
@@ -114,9 +150,32 @@ const PageMainTag = observer(class PageMainTag extends React.Component<I.PageCom
 		};
 	};
 
+	setColor (color: string) {
+		const rootId = this.getRootId();
+		const object = S.Detail.get(rootId, rootId);
+
+		C.ObjectListSetDetails([ object.id ], [
+			{ key: 'relationOptionColor', value: color },
+		], (message) => {
+			S.Detail.update(rootId, { id: object.id, details: { relationOptionColor: color } }, false);
+			this.forceUpdate();
+		});
+	};
+
+	getSpaceId () {
+		const rootId = this.getRootId();
+		const object = S.Detail.get(rootId, rootId, [ 'spaceId' ], true);
+
+		return object.spaceId;
+	};
+
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	getSubId () {
+		return S.Record.getSubId(this.getRootId(), 'backlinks');
 	};
 });
 

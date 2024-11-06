@@ -170,6 +170,8 @@
 	"commonSystem": "System",
 	"commonMainChat": "Main сhat",
 	"commonMenu": "Menu",
+	"commonDateCreated": "Date created",
+	"commonDateUpdated": "Date updated",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -473,6 +475,8 @@
 	"pageMainVoidTitle": "You're all out of spaces",
 	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
 	"pageMainVoidCreateSpace": "Create space",
+
+	"pageMainTagTagColor": "Tag color",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 	"pageAuthLoginShortPhrase": "Key is too short",
@@ -1817,8 +1821,6 @@
 	"sidebarObjectOrphanLabel": "Unlinked objects that do not have a direct link or backlink with other objects in the graph.",
 	"sidebarObjectEmpty": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
 
-	"sidebarObjectSortCreated": "Date created",
-	"sidebarObjectSortUpdated": "Date updated",
 	"sidebarObjectSortLastUsed": "Date last used",
 
 	"unsplashString": "Photo by %s on %s",

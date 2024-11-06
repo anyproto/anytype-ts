@@ -37,3 +37,11 @@
 	.side.left { width: 32px !important; padding-top: 2px; }
 	.side.center { line-height: 36px; }
 }
+
+.headSimple.withColorPicker {
+	.side.left {
+		.titleWrap { justify-content: space-between; align-items: center; }
+		.editableWrap { flex-grow: 0; font-weight: 400; padding: 0px 6px; border-radius: 8px; }
+		.colorPicker { width: 18px; height: 18px; border-radius: 50%; }
+	}
+}
