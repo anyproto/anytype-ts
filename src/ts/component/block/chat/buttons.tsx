@@ -271,7 +271,6 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			if (menu == 'object') {
 				data.filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() });
 			} else
-
 			if ([ 'file', 'media' ].includes(menu)) {
 				const layouts = {
 					media: [ I.ObjectLayout.Image, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
