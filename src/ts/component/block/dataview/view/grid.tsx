@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
@@ -224,13 +225,26 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const sl = scroll.scrollLeft();
 
 		rowHead.removeClass('fixed');
-		node.find('.rowHead.isClone').remove();
+		node.find('#rowHeadClone').remove();
 
 		if (top - st <= hh) {
-			const clone = rowHead.clone(true, true);
+			const clone = $('<div id="rowHeadClone"></div>');
 
 			node.append(clone);
-			clone.addClass('isClone').attr({ id: 'rowHeadClone' }).css({ 
+
+			ReactDOM.render((
+				<HeadRow 
+					{...this.props} 
+					onCellAdd={this.onCellAdd} 
+					onSortStart={this.onSortStart} 
+					onSortEnd={this.onSortEnd} 
+					onResizeStart={this.onResizeStart}
+					getColumnWidths={this.getColumnWidths}
+				/>
+			), clone.get(0));
+
+			clone.find('.rowHead').attr({ id: '' });
+			clone.css({ 
 				left: left + sl, 
 				top: hh, 
 				width: rowHead.width(),
@@ -365,11 +379,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, loadData, getView, isInline, isCollection } = this.props;
+		const blockEl = `#block-${block.id}`;
+		const cellLast = $(`${blockEl} .cellHead.last`);
 
 		S.Menu.open('dataviewRelationList', { 
-			element: `#block-${block.id} #cell-add`,
+			element: `${blockEl} #cell-add`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
+			onOpen: () => cellLast.addClass('hover'),
+			onClose: () => cellLast.removeClass('hover'),
 			data: {
 				readonly,
 				loadData,

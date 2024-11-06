@@ -2,11 +2,16 @@
 
 .blocks {
 	.block.blockDataview {
-		.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 36px; }
+		.rowHead, #rowHeadClone { display: grid; white-space: nowrap; height: 36px; }
+
+		.rowHead { width: calc(100% - 4px); margin-left: 2px; }
 		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }
-		.rowHead.isClone { position: fixed !important; background: var(--color-bg-primary); z-index: 1; margin-left: 0px; }
-		.rowHead.isClone * { cursor: default; }
-		.rowHead.isClone::after { content: ''; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: -1px; }
+
+		#rowHeadClone { position: fixed !important; background: var(--color-bg-primary); z-index: 1; }
+		#rowHeadClone::after { content: ''; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: -1px; }
+		#rowHeadClone {
+			.rowHead { margin: 0px; width: 100%; }
+		}
 
 		.cellHead { 
 			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative; height: 38px;
@@ -51,13 +56,13 @@
 			.resize { display: none; }
 		}
 
-		.cellHead.cellKeyHover::after, .cellHead.active::after { 
+		.cellHead.cellKeyHover::after, .cellHead.hover::after { 
 			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
 			background-color: var(--color-shape-highlight-light);
 		}
 
-		.cellHead.last::after, .cellHead.active::after { background: none; }
-		.cellHead.last:hover, .cellHead.last.active {
+		.cellHead.last::after, .cellHead.hover::after { background: none; }
+		.cellHead.last:hover, .cellHead.last.hover {
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
