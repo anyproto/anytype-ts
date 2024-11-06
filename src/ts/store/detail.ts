@@ -232,6 +232,7 @@ class DetailStore {
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
+		object.layoutWidth = Number(object.layoutWidth) || 0;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');

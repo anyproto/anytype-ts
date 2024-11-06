@@ -359,7 +359,7 @@ class RecordStore {
 	};
 
 	getRecords (subId: string, keys?: string[], forceKeys?: boolean): any[] {
-		return this.getRecordIds(subId, '').map(id => S.Detail.get(subId, id, keys));
+		return this.getRecordIds(subId, '').map(id => S.Detail.get(subId, id, keys, forceKeys));
 	};
 
 	getGroups (rootId: string, blockId: string) {

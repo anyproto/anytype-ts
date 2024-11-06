@@ -496,7 +496,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	getObject () {
-		return S.Record.getTypeById(this.getRootId());
+		const rootId = this.getRootId();
+		return S.Detail.get(rootId, rootId, U.Data.typeRelationKeys());
 	};
 
 	getSubIdTemplate () {

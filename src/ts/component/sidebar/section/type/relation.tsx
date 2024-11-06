@@ -16,6 +16,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 	};
 
     render () {
+		const { readonly } = this.props;
 		const featured = this.getFeatured();
 		const recommended = this.getRecommended();
 
@@ -30,7 +31,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				onClick={e => this.onEdit(e, item.container, item.id)}
 			>
 				<div className="side left">
-					<Handle />
+					{!readonly ? <Handle /> : ''}
 					<IconObject object={item} />
 					<ObjectName object={item} />
 				</div>

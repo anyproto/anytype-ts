@@ -14,7 +14,6 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 		const { object, onChange } = this.props;
 		const layoutOptions = U.Menu.prepareForSelect(U.Menu.turnLayouts());
 		const alignOptions = U.Menu.prepareForSelect(U.Menu.getHAlign([ I.BlockHAlign.Justify ]));
-		const percent = (1 + object.layoutWidth) * 100;
 
         return (
 			<div ref={ref => this.node = ref} className="wrap">
@@ -67,7 +66,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 						</div>
 
 						<div className="value flex">
-							<div id="percent">{percent}%</div>
+							<div id="percent">{this.getPercent(object.layoutWidth)}%</div>
 							<DragHorizontal 
 								ref={ref => this.refWidth = ref}
 								value={object.layoutWidth}
@@ -99,11 +98,16 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 	};
 
 	onWidthMove (v: number) {
-		$(this.node).find('#percent').text(`${U.Common.sprintf('%0.2f', (1 + v) * 100)}%`);
+		$(this.node).find('#percent').text(`${this.getPercent(v)}%`);
 	};
 
 	onWidthEnd (v: number) {
 		this.props.onChange('layoutWidth', v);
+	};
+
+	getPercent (v: number): string {
+		v = Number(v) || 0;
+		return U.Common.sprintf('%0.2f', (1 + v) * 100);
 	};
 
 });

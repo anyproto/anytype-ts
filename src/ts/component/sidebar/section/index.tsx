@@ -34,9 +34,10 @@ const SidebarSectionIndex = observer(class SidebarSectionIndex extends React.Com
 
     render () {
 		const { component } = this.props;
-		const object = this.state.object || this.props.object;
+		const object = this.getObject();
 		const Component = Components[component];
 		const cn = [ 'section', U.Common.toCamelCase(component.replace(/\//g, '-')) ];
+		const readonly = this.isReadonly();
 
 		if (!object) {
 			return null;
@@ -49,6 +50,7 @@ const SidebarSectionIndex = observer(class SidebarSectionIndex extends React.Com
 						ref={ref => this.ref = ref} 
 						{...this.props} 
 						object={object} 
+						readonly={readonly}
 					/> 
 				): component}
 			</div>
@@ -63,8 +65,19 @@ const SidebarSectionIndex = observer(class SidebarSectionIndex extends React.Com
 		};
 	};
 
+	getObject (): any {
+		return this.state.object || this.props.object;
+	};
+
 	setObject (object: any): void {
 		this.setState({ object }, () => this.ref?.forceUpdate());
+	};
+
+	isReadonly (): boolean {
+		const { readonly } = this.props;
+		const object = this.getObject();
+
+		return readonly || object?.isArchived;
 	};
 
 });
