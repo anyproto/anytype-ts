@@ -494,7 +494,7 @@ class Relation {
 		value = String(value || '');
 
 		let ret = '';
-		if (type == I.RelationType.Url && !value.match(/:\/\//)) {
+		if (type == I.RelationType.Url) {
 			ret = 'http://';
 		};
 		if (type == I.RelationType.Email) {
@@ -504,6 +504,17 @@ class Relation {
 			ret = 'tel:';
 		};
 		return ret;
+	};
+
+	public checkUrlScheme (type: I.RelationType, value: string): string {
+		value = String(value || '');
+
+		if (!value) {
+			return '';
+		};
+		
+		const scheme = U.Common.getScheme(value);
+		return scheme ? value : this.getUrlScheme(type, value) + value;
 	};
 
 	public getSetOfObjects (rootId: string, objectId: string, layout: I.ObjectLayout): any[] {

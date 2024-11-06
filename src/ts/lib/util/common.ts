@@ -441,7 +441,7 @@ class UtilCommon {
 
 		const scheme = this.getScheme(url);
 		if (!scheme) {
-			url = 'http://' + url;
+			url = `http://${url}`;
 		};
 
 		return url;
@@ -636,7 +636,9 @@ class UtilCommon {
 
 	getScheme (url: string): string {
 		url = String(url || '');
-		return url.indexOf('://') >= 0 ? String(url.split('://')[0] || '') : '';
+
+		const m = url.match(/^([a-z]+):/);
+		return m ? m[1] : '';
 	};
 
 	intercept (obj: any, change: any) {
