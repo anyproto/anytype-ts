@@ -102,6 +102,7 @@ class UtilData {
 		switch (layout) {
 			default: c = U.Common.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
+			case I.ObjectLayout.Date:		 c = 'isDate'; break;
 		};
 		return c;
 	};

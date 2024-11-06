@@ -58,7 +58,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		const rowRenderer = (list: I.PageInfo[], cache: any, { index, key, style, parent, panel }) => {
 			const item: any = list[index];
-
 			item.index = index;
 			item.panel = panel;
 

@@ -26,6 +26,7 @@ class UtilObject {
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 			case I.ObjectLayout.Tag:		 r = 'tag'; break;
+			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
 		return r;
 	};
@@ -377,12 +378,11 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
-			I.ObjectLayout.Date,
 		];
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Tag ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Tag, I.ObjectLayout.Date ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
