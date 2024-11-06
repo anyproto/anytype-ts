@@ -401,7 +401,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			ignoreDeleted: true,
 		}, (message: any) => {
 			this.setState({ isLoading: false });
-
 			if (callBack) {
 				callBack(message);
 			};

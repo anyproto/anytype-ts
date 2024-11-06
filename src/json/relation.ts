@@ -139,7 +139,7 @@ export default {
 		'targetSpaceId',
 		'creator',
 		'createdDate',
-		'spaceMainChatId'
+		'chatId',
 	],
 
 	participant: [

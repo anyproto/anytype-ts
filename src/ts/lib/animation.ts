@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { I } from 'Lib';
 
 const Duration = {
-	Normal: 0.1,
+	Normal: 0.05,
 	Word: 0.01,
 };
 

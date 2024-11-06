@@ -1378,6 +1378,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		const isShift = !!pressed.match('shift');
 		const length = block.getLength();
 		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const replace = !range.to && (block.isTextList() || parent?.isTextToggle()) && !length;
@@ -1388,7 +1389,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!block.isText() && keyboard.isFocused) {
 			return;
 		};
-		if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
+		if (block.isText() && !(block.isTextCode() || block.isTextCallout() || block.isTextQuote()) && isShift) {
 			return;
 		};
 
@@ -1414,7 +1415,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				style: I.TextStyle.Paragraph,
 			});
 		} else {
-			this.blockSplit(block, range);
+			this.blockSplit(block, range, isShift);
 		};
 	};
 
@@ -2076,12 +2077,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 	};
 	
-	blockSplit (focused: I.Block, range: I.TextRange) {
+	blockSplit (focused: I.Block, range: I.TextRange, isShift: boolean) {
 		const { rootId } = this.props;
 		const { content } = focused;
 		const isTitle = focused.isTextTitle();
 		const isToggle = focused.isTextToggle();
 		const isCallout = focused.isTextCallout();
+		const isQuote = focused.isTextQuote();
 		const isList = focused.isTextList();
 		const isCode = focused.isTextCode();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
@@ -2107,7 +2109,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			mode = I.BlockSplitMode.Top;
 		};
 
-		if (isCallout) {
+		if ((isCallout || isQuote) && !isShift) {
 			mode = I.BlockSplitMode.Inner;
 			style = I.TextStyle.Paragraph;
 		};

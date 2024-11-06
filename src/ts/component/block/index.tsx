@@ -223,7 +223,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Chat: {
-				canDrop = canSelect = !U.Object.isChatLayout(root.layout);
+				canDrop = canSelect = false;
 				blockComponent = (
 					<BlockChat 
 						key={key} 
