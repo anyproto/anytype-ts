@@ -507,6 +507,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
 				pd = false;
 			};
+			if (block.isTextCallout() || block.isTextQuote()) {
+				pd = true;
+			};
+
 			if (pd) {
 				e.preventDefault();
 			};
@@ -700,7 +704,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
 
-		
 		this.preventMenu = false;
 
 		let parsed: any = {};

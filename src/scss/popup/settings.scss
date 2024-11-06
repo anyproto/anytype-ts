@@ -734,7 +734,7 @@
 					span { font-weight: 600; text-decoration: underline; }
 				}
 
-				.swiper { margin: 0px -31px 8px -31px; }
+				.swiper { margin: 0px -31px 8px -31px; flex-shrink: 0; }
 				.swiper {
 					.swiper-wrapper { margin-bottom: 10px; }
 					.swiper-slide { width: calc(100% - 64px); min-width: 396px; }

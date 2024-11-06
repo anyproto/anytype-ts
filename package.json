@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.43.2",
+	"version": "0.43.10-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -47,7 +47,7 @@
 	},
 	"homepage": "https://anytype.io",
 	"devDependencies": {
-		"@electron/notarize": "^2.1.0",
+		"@electron/notarize": "^2.5.0",
 		"@types/history": "^4.7.8",
 		"@types/jquery": "^3.5.14",
 		"@types/katex": "^0.14.0",
@@ -105,7 +105,7 @@
 		"dompurify": "^3.0.6",
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
-		"electron-log": "^3.0.9",
+		"electron-log": "^5.2.0",
 		"electron-updater": "^6.2.1",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",

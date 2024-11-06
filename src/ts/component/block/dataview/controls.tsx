@@ -559,11 +559,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const nw = node.outerWidth();
 
 		let add = false;
-		let close = false;
 
 		if (sideLeft.hasClass('small')) {
 			sideLeft.removeClass('small');
-			close = true;
 		};
 
 		const width = sideLeft.outerWidth() + sideRight.outerWidth();
@@ -578,10 +576,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		if (add) {
 			sideLeft.addClass('small');
-			close = true;
-		};
-
-		if (close) {
+		} else {
 			S.Menu.closeAll([ 'dataviewViewList' ]);
 		};
 	};
