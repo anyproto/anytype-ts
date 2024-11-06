@@ -88,7 +88,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 										text={item.name}
 										color={item.color}
 										canEdit={canEdit && !isSelect} 
-										className={Relation.selectClassName(relation.format)}
+										className="isSelect"
 										onClick={e => this.onClick(e, item.id)}
 										onRemove={() => this.onValueRemove(item.id)}
 									/>
@@ -131,7 +131,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 								key={item.id} 
 								text={item.name} 
 								color={item.color}
-								className={Relation.selectClassName(relation.format)}
+								className="isSelect"
 								onClick={e => this.onClick(e, item.id)}
 								onContextMenu={e => this.onContextMenu(e, item)}
 							/>
