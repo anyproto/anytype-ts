@@ -51,7 +51,9 @@ class ProgressStore {
 
 	getList () {
 		const { space } = S.Common;
-		return this.list.filter(it => (!it.spaceId || (it.spaceId == space)) && (it.state != I.ProgressState.Done));
+		const skip = [ I.ProgressState.Done, I.ProgressState.Canceled ];
+
+		return this.list.filter(it => (!it.spaceId || (it.spaceId == space)) && !skip.includes(it.state));
 	};
 
 	getItem (id: string): I.Progress {

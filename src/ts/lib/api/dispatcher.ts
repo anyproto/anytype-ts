@@ -991,6 +991,7 @@ class Dispatcher {
 						...process,
 						current: progress.done,
 						total: progress.total,
+						message: progress.message,
 						canCancel,
 					});
 					break;
@@ -1000,12 +1001,12 @@ class Dispatcher {
 					const { process } = mapped;
 					const { id, progress, state } = process;
 
-					S.Progress.update({ id, current: progress.done, total: progress.total, state });
+					S.Progress.update({ id, current: progress.done, total: progress.total, state, message: progress.message });
 					break;
 				};
 
 				case 'ProcessDone': {
-					//S.Progress.delete(mapped.process.id);
+					S.Progress.delete(mapped.process.id);
 					break;
 				};
 

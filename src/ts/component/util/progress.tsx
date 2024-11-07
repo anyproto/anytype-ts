@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Label } from 'Component';
-import { S, U, C, J, Storage, keyboard, translate } from 'Lib';
+import { Icon, Label, Error } from 'Component';
+import { I, S, U, C, J, Storage, keyboard, translate } from 'Lib';
 
 const Progress = observer(class Progress extends React.Component {
 	
@@ -32,17 +32,23 @@ const Progress = observer(class Progress extends React.Component {
 
 		const Item = (item: any) => {
 			const percent = item.total > 0 ? Math.min(100, Math.ceil(item.current / item.total * 100)) : 0;
+			const isError = item.state == I.ProgressState.Error;
+			const canCancel = item.canCancel && !isError;
 
 			return (
 				<div className="item">
 					<div className="nameWrap">
 						<Label text={translate(U.Common.toCamelCase(`progress-${item.type}`))} />
-						{item.canCancel ? <Icon className="close" onClick={() => this.onCancel(item.id)} /> : ''}
+						{canCancel ? <Icon className="close" onClick={() => this.onCancel(item.id)} /> : ''}
 					</div>
 
-					<div className="bar">
-						<div className="fill" style={{width: `${percent}%` }} />
-					</div>
+					{isError ? (
+						<Error text={translate('commonError')} />
+					) : (
+						<div className="bar">
+							<div className="fill" style={{width: `${percent}%` }} />
+						</div>
+					)}
 				</div>
 			);
 		};

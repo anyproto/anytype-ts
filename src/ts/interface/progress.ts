@@ -24,5 +24,6 @@ export interface Progress {
 	current?: number;
 	total?: number;
 	state?: ProgressState;
+	message?: string;
 	canCancel?: boolean;
 };
