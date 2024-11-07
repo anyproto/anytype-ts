@@ -83,14 +83,13 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 
 	onLogout () {
 		this.props.setPinConfirmed(false);
+		analytics.event('LogOut');
 
 		U.Router.go('/', { 
 			replace: true, 
 			animate: true,
 			onRouteChange: () => {
 				S.Auth.logout(true, false);
-
-				analytics.event('LogOut');
 			},
 		});
 	};

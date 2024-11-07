@@ -1076,8 +1076,8 @@
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
 	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?",
 
-	"popupConfirmChatDeleteMessageTitle": "Delete message",
-	"popupConfirmChatDeleteMessageText": "Are you sure you want to delete this message?",
+	"popupConfirmChatDeleteMessageTitle": "Delete this message?",
+	"popupConfirmChatDeleteMessageText": "It cannot be restored after confirmation",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
