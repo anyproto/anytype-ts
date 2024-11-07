@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useImperativeHandle, useRef } from 'react';
+import { useImperativeHandle, useRef } from 'react';
 import { Input } from 'Component';
 
 interface Props {
@@ -27,14 +27,16 @@ const DragVertical = React.forwardRef<Input, Props>(({
 }, forwardedRef) => {
 	const inputRef = useRef(null);
 	const divRef = useRef(null);
+
 	useImperativeHandle(forwardedRef, () => divRef.current);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
+
 		if (onChange) {
 			onChange(e, 1 - Number(e.target.value));
-		}
+		};
 	};
 
 	return (
@@ -60,7 +62,7 @@ const DragVertical = React.forwardRef<Input, Props>(({
 				}}
 			/>
 			<div className="slider-bg"></div>
-			<div className="slider-track" style={{height: `${Math.round(value*72)}px`}}></div>
+			<div className="slider-track" style={{ height: `${Math.round(value * 72)}px` }}></div>
 		</div>
 	);
 });

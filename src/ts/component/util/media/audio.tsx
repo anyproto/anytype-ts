@@ -93,9 +93,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 						<div className="time">
 							<span id="timeMetric" className="metric">{this.state.timeMetric}</span>
 						</div>
-						<div
-							onMouseLeave={this.fadeOutVolumeSlider}
-						>
+						<div onMouseLeave={this.fadeOutVolumeSlider}>
 							<Icon
 								onMouseEnter={() => {
 									this.fadeOutVolumeSlider.cancel();
@@ -275,6 +273,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 		};
 
 		const t = this.startedPlaying ? this.getTime(el.currentTime) : this.getTime(el.duration);
+
 		this.setState({ timeMetric: `${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`});
 		this.timeDragRef.setValue(el.currentTime / el.duration);
 	};

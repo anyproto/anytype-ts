@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.input-drag-vertical { padding: 8px 2px; width: 20px; height: 88px; border-radius: 8px; background-color: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 1px solid var(--color-shape-secondary); }
+.input-drag-vertical { padding: 8px 2px; width: 20px; height: 88px; border-radius: 8px; background-color: var(--color-bg-primary); box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 1px solid var(--color-shape-secondary); }
 .input-drag-vertical {
 	.vertical-range,
 	.vertical-range::-webkit-slider-runnable-track,
