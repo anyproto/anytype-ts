@@ -791,6 +791,7 @@ class UtilData {
 		const filters = param.filters || [];
 
 		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Chat });
+		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Chat });
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
