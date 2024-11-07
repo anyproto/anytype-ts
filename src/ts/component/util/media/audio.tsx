@@ -34,7 +34,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	playOnSeek = false;
 	current: PlaylistItem = { name: '', src: '' };
 	resizeObserver: ResizeObserver;
-	fadeOutVolumeSlider = _.debounce(() => this.setState({ showVolumeSlider: false }), 500);
+	fadeOutVolumeSlider = _.debounce(() => this.setState({ showVolumeSlider: false }), 250);
 
 	startedPlaying = false;
 
