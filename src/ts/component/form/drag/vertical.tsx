@@ -14,13 +14,6 @@ interface Props {
 	onMouseEnter?(e:any): void;
 }
 
-function calcSize(min: number, max: number, value: number) {
-	const mn = min || 0;
-	const mx = max || 100;
-	const size = Math.round((value - mn) / (mx - mn) * 100);
-	return size;
-}
-
 const DragVertical = React.forwardRef<Input, Props>(({
 	id,
 	className = '',
@@ -36,15 +29,6 @@ const DragVertical = React.forwardRef<Input, Props>(({
 	const divRef = useRef(null);
 	useImperativeHandle(forwardedRef, () => divRef.current);
 
-	const setBackgroundSize = () => {
-		if (inputRef) {
-			const size = calcSize(min, max, value);
-			inputRef.current?.node.style?.setProperty('--background-size', `${size}%`);
-		}
-
-
-	};
-
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -52,8 +36,6 @@ const DragVertical = React.forwardRef<Input, Props>(({
 			onChange(e, 1 - Number(e.target.value));
 		}
 	};
-
-	useEffect(() => { setBackgroundSize(); }, [value]);
 
 	return (
 		<div 
