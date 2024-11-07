@@ -742,7 +742,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				bgColor: 'red',
 				title: translate('popupConfirmChatDeleteMessageTitle'),
 				text: translate('popupConfirmChatDeleteMessageText'),
-				textConfirm: translate('commonYes'),
+				textConfirm: translate('commonDelete'),
 				onConfirm: () => {
 					C.ChatDeleteMessage(rootId, id, () => {
 						if (this.editingId == id) {
