@@ -1,8 +1,8 @@
 const path = require('path');
 const process = require('process');
 const rspack = require('@rspack/core');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const CopyWebpackPlugin = require('copy-webpack-plugin');
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
@@ -113,22 +113,33 @@ module.exports = (env, argv) => {
 				}
 			]
 		},
+
+		bail: true,
+		infrastructureLogging: {
+			appendOnly: true,
+			level: 'verbose',
+		},
+
+		stats: {
+			logging: 'verbose',
+		},
+
 		plugins: [
 			//new BundleAnalyzerPlugin(),
 
-			new rspack.IgnorePlugin({
-				resourceRegExp: /osx-temperature-sensor/,
-			}),
+			// new rspack.IgnorePlugin({
+			// 	resourceRegExp: /osx-temperature-sensor/,
+			// }),
 
-			new rspack.optimize.LimitChunkCountPlugin({
-				maxChunks: 1,
-			}),
+			// new rspack.optimize.LimitChunkCountPlugin({
+			// 	maxChunks: 1,
+			// }),
 
-			new CopyWebpackPlugin({
-				patterns: [
-					{ from: cMapsDir, to: './cmaps/' },
-				],
-			}),
+			// new CopyWebpackPlugin({
+			// 	patterns: [
+			// 		{ from: cMapsDir, to: './cmaps/' },
+			// 	],
+			// }),
 		],
 	};
 };

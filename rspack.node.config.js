@@ -27,5 +27,7 @@ module.exports = (env) => {
 				resourceRegExp: /osx-temperature-sensor/,
 			}),
 		],
+
+		stats: 'detailed',
 	};
 };
