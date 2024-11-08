@@ -116,6 +116,10 @@ module.exports = (env, argv) => {
 		plugins: [
 			//new BundleAnalyzerPlugin(),
 
+			new rspack.IgnorePlugin({
+				resourceRegExp: /osx-temperature-sensor/,
+			}),
+
 			new rspack.optimize.LimitChunkCountPlugin({
 				maxChunks: 1,
 			}),
