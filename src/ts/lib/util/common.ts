@@ -1019,7 +1019,9 @@ class UtilCommon {
 
 	isChatAllowed () {
 		const { config, space } = S.Common;
-		return config.experimental || (space == J.Constant.localLoversSpaceId);
+		return config.experimental;
+
+		//return config.experimental || (space == J.Constant.localLoversSpaceId);
 		//return this.isAlphaVersion() || this.isBetaVersion() || !this.getElectron().isPackaged;
 	};
 
