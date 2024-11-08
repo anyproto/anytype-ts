@@ -139,7 +139,6 @@ class UtilRouter {
 			return;
 		};
 
-		const { config } = S.Common;
 		const withChat = U.Common.isChatAllowed();
 
 		S.Menu.closeAllForced();
