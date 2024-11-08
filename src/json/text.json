@@ -168,7 +168,12 @@
 	"commonNothingFound": "Nothing found",
 	"commonEntrySpace": "My First Space",
 	"commonSystem": "System",
+<<<<<<< Updated upstream
 	"commonMainChat": "Main сhat",
+=======
+	"commonProgress": "Progress",
+	"commonMainChat": "Chat",
+>>>>>>> Stashed changes
 	"commonMenu": "Menu",
 
 	"pluralDay": "day|days",
