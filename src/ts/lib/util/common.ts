@@ -1018,7 +1018,9 @@ class UtilCommon {
 	};
 
 	isChatAllowed () {
-		return this.isAlphaVersion() || this.isBetaVersion() || !this.getElectron().isPackaged;
+		const { config, space } = S.Common;
+		return config.experimental || (space == J.Constant.localLoversSpaceId);
+		//return this.isAlphaVersion() || this.isBetaVersion() || !this.getElectron().isPackaged;
 	};
 
 };
