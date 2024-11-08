@@ -771,7 +771,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ret = true;
 		});
 
-		if (!ret && ids.length) {
+		if (!ret && ids.length && !keyboard.isSpecial(e)) {
 			this.blockCreate(ids[ids.length - 1] , I.BlockPosition.Bottom, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
