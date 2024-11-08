@@ -1009,6 +1009,18 @@ class UtilCommon {
 		};
 	};
 
+	isAlphaVersion (): boolean {
+		return !!this.getElectron().version.app.match(/alpha/);
+	};
+
+	isBetaVersion (): boolean {
+		return !!this.getElectron().version.app.match(/beta/);
+	};
+
+	isChatAllowed () {
+		return this.isAlphaVersion() || this.isBetaVersion() || !this.getElectron().isPackaged;
+	};
+
 };
 
 export default new UtilCommon();
