@@ -1,7 +1,6 @@
 const path = require('path');
 const process = require('process');
 const rspack = require('@rspack/core');
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
@@ -114,16 +113,6 @@ module.exports = (env, argv) => {
 			]
 		},
 
-		bail: true,
-		infrastructureLogging: {
-			appendOnly: true,
-			level: 'verbose',
-		},
-
-		stats: {
-			logging: 'verbose',
-		},
-
 		plugins: [
 			//new BundleAnalyzerPlugin(),
 
@@ -131,15 +120,15 @@ module.exports = (env, argv) => {
 			// 	resourceRegExp: /osx-temperature-sensor/,
 			// }),
 
-			// new rspack.optimize.LimitChunkCountPlugin({
-			// 	maxChunks: 1,
-			// }),
+			new rspack.optimize.LimitChunkCountPlugin({
+				maxChunks: 1,
+			}),
 
-			// new CopyWebpackPlugin({
-			// 	patterns: [
-			// 		{ from: cMapsDir, to: './cmaps/' },
-			// 	],
-			// }),
+			new rspack.CopyRspackPlugin({
+				patterns: [
+					{ from: cMapsDir, to: './cmaps/' },
+				],
+			}),
 		],
 	};
 };
