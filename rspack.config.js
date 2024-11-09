@@ -139,11 +139,11 @@ module.exports = (env, argv) => {
 				},
 				{
 					test: /\.(eot|ttf|otf|woff|woff2)$/,
-					loader: 'url-loader'
+					type: 'asset/inline'
 				},
 				{
 					test: /\.(jpe?g|png|gif|svg)$/,
-					loader: 'url-loader'
+					type: 'asset/inline'
 				},
 				{
 					test: /\.s?css/,
