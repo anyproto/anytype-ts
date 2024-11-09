@@ -98,7 +98,7 @@ module.exports = (env, argv) => {
 								react: {
 									runtime: 'automatic',
 									development: !prod,
-									refresh: !prod,
+									// refresh: !prod,
 								},
 							},
 						},
@@ -121,7 +121,7 @@ module.exports = (env, argv) => {
 								react: {
 									runtime: 'automatic',
 									development: !prod,
-									refresh: !prod,
+									// refresh: !prod,
 								},
 							},
 						},
