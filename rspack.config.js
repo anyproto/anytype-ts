@@ -1,6 +1,7 @@
 const path = require('path');
 const process = require('process');
 const rspack = require('@rspack/core');
+const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
@@ -98,7 +99,7 @@ module.exports = (env, argv) => {
 								react: {
 									runtime: 'automatic',
 									development: !prod,
-									// refresh: !prod,
+									refresh: !prod,
 								},
 							},
 						},
@@ -121,7 +122,7 @@ module.exports = (env, argv) => {
 								react: {
 									runtime: 'automatic',
 									development: !prod,
-									// refresh: !prod,
+									refresh: !prod,
 								},
 							},
 						},
@@ -155,6 +156,7 @@ module.exports = (env, argv) => {
 		},
 
 		plugins: [
+			!prod && new ReactRefreshPlugin(),
 			//new BundleAnalyzerPlugin(),
 
 			// new rspack.IgnorePlugin({
@@ -170,6 +172,6 @@ module.exports = (env, argv) => {
 					{ from: cMapsDir, to: './cmaps/' },
 				],
 			}),
-		],
+		].filter(Boolean),
 	};
 };

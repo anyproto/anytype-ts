@@ -52,6 +52,7 @@
 		"@rspack/cli": "^1.1.0",
 		"@rspack/core": "^1.1.0",
 		"@rspack/dev-server": "^1.0.9",
+		"@rspack/plugin-react-refresh": "^1.0.0",
 		"@types/history": "^4.7.8",
 		"@types/jquery": "^3.5.14",
 		"@types/katex": "^0.14.0",
@@ -77,6 +78,7 @@
 		"npm": "^10.5.0",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
+		"react-refresh": "^0.14.2",
 		"sass": "1.77.6",
 		"sass-loader": "^8.0.2",
 		"source-map-loader": "^0.2.4",
@@ -85,7 +87,8 @@
 		"typescript": "^5.3.3",
 		"typescript-eslint": "^0.0.1-alpha.0",
 		"url-loader": "^4.1.1",
-		"wait-for-localhost-cli": "^3.0.0"
+		"wait-for-localhost-cli": "^3.0.0",
+		"webpack-dev-server": "^5.1.0"
 	},
 	"dependencies": {
 		"@electron/remote": "^2.1.2",
