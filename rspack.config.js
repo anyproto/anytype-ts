@@ -8,6 +8,7 @@ const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
 
 module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
+	const prod = env === 'production';
 
 	return {
 		mode: 'development',
@@ -85,18 +86,51 @@ module.exports = (env, argv) => {
 		module: {
 			rules: [
 				{
-					// TODO: Check if tsx needs to be enabled through https://rspack.dev/guide/tech/typescript
-					test: /\.ts(x?)$/,
-					exclude: /node_modules/,
+					test: /\.(j|t)s$/,
+					exclude: [/[\\/]node_modules[\\/]/],
 					loader: 'builtin:swc-loader',
 					options: {
 						jsc: {
 							parser: {
 								syntax: 'typescript',
 							},
+							externalHelpers: true,
+							transform: {
+								react: {
+									runtime: 'automatic',
+									development: !prod,
+									refresh: !prod,
+								},
+							},
+						},
+						env: {
+							targets: 'Chrome >= 48',
 						},
 					},
-					type: 'javascript/auto',
+				},
+				{
+					test: /\.(j|t)sx$/,
+					loader: 'builtin:swc-loader',
+					exclude: [/[\\/]node_modules[\\/]/],
+					options: {
+						jsc: {
+							parser: {
+								syntax: 'typescript',
+								tsx: true,
+							},
+							transform: {
+								react: {
+									runtime: 'automatic',
+									development: !prod,
+									refresh: !prod,
+								},
+							},
+							externalHelpers: true,
+						},
+						env: {
+							targets: 'Chrome >= 48', // browser compatibility
+						},
+					},
 				},
 				{
 					enforce: 'pre',
