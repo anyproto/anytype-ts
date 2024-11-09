@@ -294,6 +294,270 @@
 			{
 				"from": "node_modules/mime-types",
 				"to": "node_modules/mime-types"
+			},
+			{
+				"from": "node_modules/@electron",
+				"to": "node_modules/@electron"
+			},
+			{
+				"from": "node_modules/async",
+				"to": "node_modules/async"
+			},
+			{
+				"from": "node_modules/balanced-match",
+				"to": "node_modules/balanced-match"
+			},
+			{
+				"from": "node_modules/brace-expansion",
+				"to": "node_modules/brace-expansion"
+			},
+			{
+				"from": "node_modules/builder-util-runtime",
+				"to": "node_modules/builder-util-runtime"
+			},
+			{
+				"from": "node_modules/concat-map",
+				"to": "node_modules/concat-map"
+			},
+			{
+				"from": "node_modules/core-util-is",
+				"to": "node_modules/core-util-is"
+			},
+			{
+				"from": "node_modules/debug",
+				"to": "node_modules/debug"
+			},
+			{
+				"from": "node_modules/electron-dl",
+				"to": "node_modules/electron-dl"
+			},
+			{
+				"from": "node_modules/electron-is-dev",
+				"to": "node_modules/electron-is-dev"
+			},
+			{
+				"from": "node_modules/electron-json-storage",
+				"to": "node_modules/electron-json-storage"
+			},
+			{
+				"from": "node_modules/electron-log",
+				"to": "node_modules/electron-log"
+			},
+			{
+				"from": "node_modules/electron-updater",
+				"to": "node_modules/electron-updater"
+			},
+			{
+				"from": "node_modules/electron-util",
+				"to": "node_modules/electron-util"
+			},
+			{
+				"from": "node_modules/electron-window-state",
+				"to": "node_modules/electron-window-state"
+			},
+			{
+				"from": "node_modules/ext-list",
+				"to": "node_modules/ext-list"
+			},
+			{
+				"from": "node_modules/ext-name",
+				"to": "node_modules/ext-name"
+			},
+			{
+				"from": "node_modules/fs-extra",
+				"to": "node_modules/fs-extra"
+			},
+			{
+				"from": "node_modules/fs.realpath",
+				"to": "node_modules/fs.realpath"
+			},
+			{
+				"from": "node_modules/glob",
+				"to": "node_modules/glob"
+			},
+			{
+				"from": "node_modules/graceful-fs",
+				"to": "node_modules/graceful-fs"
+			},
+			{
+				"from": "node_modules/has-flag",
+				"to": "node_modules/has-flag"
+			},
+			{
+				"from": "node_modules/if-async",
+				"to": "node_modules/if-async"
+			},
+			{
+				"from": "node_modules/imurmurhash",
+				"to": "node_modules/imurmurhash"
+			},
+			{
+				"from": "node_modules/inflight",
+				"to": "node_modules/inflight"
+			},
+			{
+				"from": "node_modules/inherits",
+				"to": "node_modules/inherits"
+			},
+			{
+				"from": "node_modules/is-plain-obj",
+				"to": "node_modules/is-plain-obj"
+			},
+			{
+				"from": "node_modules/isarray",
+				"to": "node_modules/isarray"
+			},
+			{
+				"from": "node_modules/js-yaml",
+				"to": "node_modules/js-yaml"
+			},
+			{
+				"from": "node_modules/jsonfile",
+				"to": "node_modules/jsonfile"
+			},
+			{
+				"from": "node_modules/keytar",
+				"to": "node_modules/keytar"
+			},
+			{
+				"from": "node_modules/lazy-val",
+				"to": "node_modules/lazy-val"
+			},
+			{
+				"from": "node_modules/lockfile",
+				"to": "node_modules/lockfile"
+			},
+			{
+				"from": "node_modules/lodash",
+				"to": "node_modules/lodash"
+			},
+			{
+				"from": "node_modules/lodash.escaperegexp",
+				"to": "node_modules/lodash.escaperegexp"
+			},
+			{
+				"from": "node_modules/lodash.isequal",
+				"to": "node_modules/lodash.isequal"
+			},
+			{
+				"from": "node_modules/mime-db",
+				"to": "node_modules/mime-db"
+			},
+			{
+				"from": "node_modules/minimatch",
+				"to": "node_modules/minimatch"
+			},
+			{
+				"from": "node_modules/mkdirp",
+				"to": "node_modules/mkdirp"
+			},
+			{
+				"from": "node_modules/modify-filename",
+				"to": "node_modules/modify-filename"
+			},
+			{
+				"from": "node_modules/ms",
+				"to": "node_modules/ms"
+			},
+			{
+				"from": "node_modules/new-github-issue-url",
+				"to": "node_modules/new-github-issue-url"
+			},
+			{
+				"from": "node_modules/once",
+				"to": "node_modules/once"
+			},
+			{
+				"from": "node_modules/path-exists",
+				"to": "node_modules/path-exists"
+			},
+			{
+				"from": "node_modules/path-is-absolute",
+				"to": "node_modules/path-is-absolute"
+			},
+			{
+				"from": "node_modules/pupa",
+				"to": "node_modules/pupa"
+			},
+			{
+				"from": "node_modules/readable-stream",
+				"to": "node_modules/readable-stream"
+			},
+			{
+				"from": "node_modules/regedit",
+				"to": "node_modules/regedit"
+			},
+			{
+				"from": "node_modules/rimraf",
+				"to": "node_modules/rimraf"
+			},
+			{
+				"from": "node_modules/sanitize-filename",
+				"to": "node_modules/sanitize-filename"
+			},
+			{
+				"from": "node_modules/sax",
+				"to": "node_modules/sax"
+			},
+			{
+				"from": "node_modules/semver",
+				"to": "node_modules/semver"
+			},
+			{
+				"from": "node_modules/signal-exit",
+				"to": "node_modules/signal-exit"
+			},
+			{
+				"from": "node_modules/sort-keys",
+				"to": "node_modules/sort-keys"
+			},
+			{
+				"from": "node_modules/sort-keys-length",
+				"to": "node_modules/sort-keys-length"
+			},
+			{
+				"from": "node_modules/stream-slicer",
+				"to": "node_modules/stream-slicer"
+			},
+			{
+				"from": "node_modules/string_decoder",
+				"to": "node_modules/string_decoder"
+			},
+			{
+				"from": "node_modules/supports-color",
+				"to": "node_modules/supports-color"
+			},
+			{
+				"from": "node_modules/systeminformation",
+				"to": "node_modules/systeminformation"
+			},
+			{
+				"from": "node_modules/through2",
+				"to": "node_modules/through2"
+			},
+			{
+				"from": "node_modules/truncate-utf8-bytes",
+				"to": "node_modules/truncate-utf8-bytes"
+			},
+			{
+				"from": "node_modules/universalify",
+				"to": "node_modules/universalify"
+			},
+			{
+				"from": "node_modules/unused-filename",
+				"to": "node_modules/unused-filename"
+			},
+			{
+				"from": "node_modules/wrappy",
+				"to": "node_modules/wrappy"
+			},
+			{
+				"from": "node_modules/write-file-atomic",
+				"to": "node_modules/write-file-atomic"
+			},
+			{
+				"from": "node_modules/xtend",
+				"to": "node_modules/xtend"
 			}
 		],
 		"dmg": {
