@@ -85,9 +85,18 @@ module.exports = (env, argv) => {
 		module: {
 			rules: [
 				{
+					// TODO: Check if tsx needs to be enabled through https://rspack.dev/guide/tech/typescript
 					test: /\.ts(x?)$/,
 					exclude: /node_modules/,
-					loader: 'ts-loader'
+					loader: 'builtin:swc-loader',
+					options: {
+						jsc: {
+							parser: {
+								syntax: 'typescript',
+							},
+						},
+					},
+					type: 'javascript/auto',
 				},
 				{
 					enforce: 'pre',
