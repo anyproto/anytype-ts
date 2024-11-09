@@ -94,7 +94,6 @@ module.exports = (env, argv) => {
 							parser: {
 								syntax: 'typescript',
 							},
-							externalHelpers: true,
 							transform: {
 								react: {
 									runtime: 'automatic',
@@ -125,7 +124,6 @@ module.exports = (env, argv) => {
 									refresh: !prod,
 								},
 							},
-							externalHelpers: true,
 						},
 						env: {
 							targets: 'Chrome >= 48', // browser compatibility
