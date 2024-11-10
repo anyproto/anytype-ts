@@ -17,7 +17,6 @@
 		"build": "rspack --mode=production --node-env=production --config rspack.config.js",
 		"build:dev": "rspack --mode=development --node-env=development --config rspack.config.js",
 		"build:deps": "rspack build --config rspack.node.config.js --json=compilation-stats.json && cat compilation-stats.json | grep -o '[^\"]\\+node_modules[^\"]\\+' | sed -E 's/.*(node_modules[\\/][^\\\\/[:space:]]{1,})[\\\\/].*/\\1/' | uniq | node save-node-deps.js",
-		"_build:deps_webpack": "webpack --config webpack.node.config.js --stats detailed | grep 'node_modules' | sed -E 's/.*(node_modules[\\/][^\\\\/[:space:]]{1,})[\\\\/].*/\\1/' | uniq | node save-node-deps.js",
 		"build:nmh": "go build -o dist/nativeMessagingHost ./go/nativeMessagingHost.go",
 		"build:nmh-win": "go build -o dist/nativeMessagingHost.exe ./go/nativeMessagingHost.go",
 		"dist:mac": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
