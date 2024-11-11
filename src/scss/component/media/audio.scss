@@ -9,9 +9,7 @@
 
         .controls { display: flex; align-items: center; column-gap: 10px; }
 
-        @container media-audio (max-width: 500px) { 
-			.controls { column-gap: 5px; }; 
-		}
+        @container media-audio (max-width: 208px) { .controls { column-gap: 5px; }}
 
         .controls {
             div { flex: 0 1 auto; }
@@ -28,7 +26,7 @@
             .icon.volume.muted { background-image: url('~img/icon/audio/mute.svg'); }
             .time { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
 
-            @container media-audio (max-width: 500px) { .time { display: none; }}
+            @container media-audio (max-width: 208px) { .time { display: none; }}
     
             .input-drag-horizontal { display: inline-block; vertical-align: top; height: 20px; }
             .input-drag-horizontal {

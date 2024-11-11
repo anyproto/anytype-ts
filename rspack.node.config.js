@@ -1,3 +1,5 @@
+const rspack = require('@rspack/core');
+
 module.exports = (env) => {
 	return {
 		target: 'node',
@@ -18,7 +20,14 @@ module.exports = (env) => {
 			rules: [
 				{ test: /\.node$/, loader: 'node-loader' },
 			]
-		}
-		
+		},
+
+		plugins: [
+			new rspack.IgnorePlugin({
+				resourceRegExp: /osx-temperature-sensor/,
+			}),
+		],
+
+		stats: 'detailed',
 	};
 };

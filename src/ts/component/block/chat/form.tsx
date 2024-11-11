@@ -712,6 +712,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.marks = [];
 		this.updateMarkup('', 0, 0);
 		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
+		this.refButtons.setButtons();
 	};
 
 	onReply (message: I.ChatMessage) {
@@ -741,7 +742,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				bgColor: 'red',
 				title: translate('popupConfirmChatDeleteMessageTitle'),
 				text: translate('popupConfirmChatDeleteMessageText'),
-				textConfirm: translate('commonYes'),
+				textConfirm: translate('commonDelete'),
 				onConfirm: () => {
 					C.ChatDeleteMessage(rootId, id, () => {
 						if (this.editingId == id) {

@@ -78,7 +78,11 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 			return;
 		};
 
-		const element = `#block-${block.id} #${Relation.cellId('head', relationKey, '')}`;
+		const blockEl =	`#block-${block.id}`;
+		const rowHead = $(`${blockEl} #rowHead`);
+		const isFixed = rowHead.hasClass('fixed');
+		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
+		const element = `${blockEl} ${headEl} #${Relation.cellId('head', relationKey, '')}`;
 		const obj = $(element);
 
 		window.setTimeout(() => {
@@ -88,6 +92,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				noFlipY: true,
 				onOpen: () => obj.addClass('active'),
 				onClose: () => obj.removeClass('active'),
+				className: isFixed ? 'fixed' : '',
 				data: {
 					...this.props,
 					blockId: block.id,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useImperativeHandle, useRef } from 'react';
+import { useImperativeHandle, useRef } from 'react';
 import { Input } from 'Component';
 
 interface Props {
@@ -27,27 +27,17 @@ const DragVertical = React.forwardRef<Input, Props>(({
 }, forwardedRef) => {
 	const inputRef = useRef(null);
 	const divRef = useRef(null);
-	useImperativeHandle(forwardedRef, () => divRef.current);
 
-	const setBackgroundSize = () => {
-		if (inputRef) {
-			const mn = min || 0;
-			const mx = max || 100;
-			const size = Math.round((value - mn) / (mx - mn) * 100);
-			inputRef.current?.node.style?.setProperty('--background-size', `${size}%`);
-		}
-	};
+	useImperativeHandle(forwardedRef, () => divRef.current);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		if (onChange) {
-			onChange(e, Number(e.target.value));
-		}
-	};
 
-	useEffect(() => { setBackgroundSize(); }, [value]);
+		if (onChange) {
+			onChange(e, 1 - Number(e.target.value));
+		};
+	};
 
 	return (
 		<div 
@@ -71,6 +61,8 @@ const DragVertical = React.forwardRef<Input, Props>(({
 					e.stopPropagation();
 				}}
 			/>
+			<div className="slider-bg"></div>
+			<div className="slider-track" style={{ height: `${Math.round(value * 72)}px` }}></div>
 		</div>
 	);
 });
