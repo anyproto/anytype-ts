@@ -39,7 +39,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	getGlobal: key => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
 
-	webFilePath: file => webUtils.getPathForFile(file),
+	webFilePath: file => webUtils && webUtils.getPathForFile(file),
 
 	fileWrite: (name, data, options) => {
 		name = String(name || 'temp');

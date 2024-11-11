@@ -127,7 +127,7 @@ class UtilFile {
 
 	iconImage (object: any): string {
 		const tp = S.Common.getThemePath();
-		return require(`img/${tp}icon/file/${this.icon(object)}.svg`).default;
+		return require(`img/${tp}icon/file/${this.icon(object)}.svg`);
 	};
 
 	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {

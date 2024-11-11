@@ -58,7 +58,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const hasLink = cid && key;
 		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const canDelete = !space.isPersonal && isOwner;
+		const canDelete = !space.isPersonal;
 		const isShareActive = U.Space.isShareActive();
 
 		let bytesUsed = 0;

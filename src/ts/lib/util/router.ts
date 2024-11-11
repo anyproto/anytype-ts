@@ -139,7 +139,7 @@ class UtilRouter {
 			return;
 		};
 
-		const { config } = S.Common;
+		const withChat = U.Common.isChatAllowed();
 
 		S.Menu.closeAllForced();
 
@@ -149,7 +149,7 @@ class UtilRouter {
 
 		this.isOpening = true;
 
-		C.WorkspaceOpen(id, config.experimental, (message: any) => {
+		C.WorkspaceOpen(id, withChat, (message: any) => {
 			this.isOpening = false;
 
 			if (message.error.code) {

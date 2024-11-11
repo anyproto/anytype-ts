@@ -109,7 +109,7 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
-		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true, withChat: true });
+		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }

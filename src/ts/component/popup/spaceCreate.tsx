@@ -108,7 +108,6 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 	};
 
 	onSubmit (withImport: boolean) {
-		const { config } = S.Common;
 		const { param } = this.props;
 		const { isLoading, iconOption } = this.state;
 		const { data } = param;
@@ -121,13 +120,14 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 
 		this.setLoading(true);
 
+		const withChat = U.Common.isChatAllowed();
 		const details = {
 			name,
 			iconOption,
 			spaceDashboardId: I.HomePredefinedId.Last,
 		};
 
-		C.WorkspaceCreate(details, I.Usecase.GetStarted, config.experimental, (message: any) => {
+		C.WorkspaceCreate(details, I.Usecase.GetStarted, withChat, (message: any) => {
 			this.setLoading(false);
 
 			if (message.error.code) {

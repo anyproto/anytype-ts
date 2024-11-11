@@ -550,7 +550,7 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, withChat, limit } = param || {};
+		const { withSet, withCollection, limit } = param || {};
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
@@ -570,10 +570,6 @@ class UtilData {
 
 		if (withSet) {
 			items.push(S.Record.getSetType());
-		};
-
-		if (withChat && config.experimental) {
-			items.push(S.Record.getChatType());
 		};
 
 		if (withCollection) {
