@@ -1,14 +1,15 @@
 const path = require('path');
 const process = require('process');
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const rspack = require('@rspack/core');
+const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
 
 module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
+	const prod = env === 'production';
 
 	return {
 		mode: 'development',
@@ -86,9 +87,49 @@ module.exports = (env, argv) => {
 		module: {
 			rules: [
 				{
-					test: /\.ts(x?)$/,
-					exclude: /node_modules/,
-					loader: 'ts-loader'
+					test: /\.(j|t)s$/,
+					exclude: [/[\\/]node_modules[\\/]/],
+					loader: 'builtin:swc-loader',
+					options: {
+						jsc: {
+							parser: {
+								syntax: 'typescript',
+							},
+							transform: {
+								react: {
+									runtime: 'automatic',
+									development: !prod,
+									refresh: !prod,
+								},
+							},
+						},
+						env: {
+							targets: 'Chrome >= 48',
+						},
+					},
+				},
+				{
+					test: /\.(j|t)sx$/,
+					loader: 'builtin:swc-loader',
+					exclude: [/[\\/]node_modules[\\/]/],
+					options: {
+						jsc: {
+							parser: {
+								syntax: 'typescript',
+								tsx: true,
+							},
+							transform: {
+								react: {
+									runtime: 'automatic',
+									development: !prod,
+									refresh: !prod,
+								},
+							},
+						},
+						env: {
+							targets: 'Chrome >= 48', // browser compatibility
+						},
+					},
 				},
 				{
 					enforce: 'pre',
@@ -97,11 +138,11 @@ module.exports = (env, argv) => {
 				},
 				{
 					test: /\.(eot|ttf|otf|woff|woff2)$/,
-					loader: 'url-loader'
+					type: 'asset/inline'
 				},
 				{
 					test: /\.(jpe?g|png|gif|svg)$/,
-					loader: 'url-loader'
+					type: 'asset/inline'
 				},
 				{
 					test: /\.s?css/,
@@ -113,18 +154,24 @@ module.exports = (env, argv) => {
 				}
 			]
 		},
+
 		plugins: [
+			!prod && new ReactRefreshPlugin(),
 			//new BundleAnalyzerPlugin(),
 
-			new webpack.optimize.LimitChunkCountPlugin({
+			// new rspack.IgnorePlugin({
+			// 	resourceRegExp: /osx-temperature-sensor/,
+			// }),
+
+			new rspack.optimize.LimitChunkCountPlugin({
 				maxChunks: 1,
 			}),
 
-			new CopyWebpackPlugin({
+			new rspack.CopyRspackPlugin({
 				patterns: [
 					{ from: cMapsDir, to: './cmaps/' },
 				],
 			}),
-		],
+		].filter(Boolean),
 	};
 };
