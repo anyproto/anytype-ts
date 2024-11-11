@@ -93,18 +93,18 @@ const FontSize = {
 };
 
 const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type' ];
-const Ghost = require('img/icon/ghost.svg').default;
+const Ghost = require('img/icon/ghost.svg');
 
 const CheckboxTask = {
 	'': {
-		0: require('img/icon/object/checkbox0.svg').default,
-		1: require('img/icon/object/checkbox1.svg').default,
-		2: require('img/icon/object/checkbox2.svg').default,
+		0: require('img/icon/object/checkbox0.svg'),
+		1: require('img/icon/object/checkbox1.svg'),
+		2: require('img/icon/object/checkbox2.svg'),
 	},
 	dark: {
-		0: require('img/icon/object/checkbox0.svg').default,
-		1: require('img/theme/dark/icon/object/checkbox1.svg').default,
-		2: require('img/icon/object/checkbox2.svg').default,
+		0: require('img/icon/object/checkbox0.svg'),
+		1: require('img/theme/dark/icon/object/checkbox1.svg'),
+		2: require('img/icon/object/checkbox2.svg'),
 	},
 };
 
@@ -239,7 +239,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					break;
 				};
 
-				const src = require(`img/icon/relation/${Relation.typeName(relationFormat)}.svg`).default;
+				const src = require(`img/icon/relation/${Relation.typeName(relationFormat)}.svg`);
 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={src} className={icn.join(' ')} />;
@@ -502,7 +502,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	defaultIcon (type: string) {
-		return require(`img/icon/default/${type}.svg`).default;
+		return require(`img/icon/default/${type}.svg`);
 	};
 
 });
