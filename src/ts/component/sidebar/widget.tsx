@@ -22,7 +22,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 	dropTargetId = '';
 	position: I.BlockPosition = null;
 	isDragging = false;
-	isSubcribed = false;
+	isSubcribed = '';
 	frame = 0;
 
 	constructor (props) {
@@ -231,7 +231,11 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		);
 	};
 
-	componentDidMount(): void {
+	componentDidMount (): void {
+		this.subscribeArchive();
+	};
+
+	componentDidUpdate (): void {
 		this.subscribeArchive();
 	};
 
@@ -531,21 +535,23 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 	};
 
 	subscribeArchive () {
-		if (this.isSubcribed) {
+		const { space } = S.Common
+
+		if (this.isSubcribed == space) {
 			return;
 		};
 
-		this.isSubcribed = true;
-
 		U.Data.searchSubscribe({
 			subId: SUB_ID,
-			spaceId: S.Common.space,
+			spaceId: space,
 			withArchived: true,
 			filters: [
 				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
 			],
 			limit: 1,
-		}, () => {});
+		}, () => {
+			this.isSubcribed = space;
+		});
 	};
 
 });
