@@ -43,7 +43,7 @@ const Progress = observer(class Progress extends React.Component {
 					</div>
 
 					{isError ? (
-						<Error text={translate('commonError')} />
+						<Error text={item.error} />
 					) : (
 						<div className="bar">
 							<div className="fill" style={{width: `${percent}%` }} />
