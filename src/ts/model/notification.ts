@@ -51,7 +51,7 @@ class Notification implements I.Notification {
 				];
 
 				if (codes.includes(errorCode)) {
-					this.title = translate(`notificationImportErrorTitle${errorCode}`);
+					this.title = translate('commonError');
 					this.text = translate(`notificationImportErrorText${errorCode}`);
 				};
 				break;
