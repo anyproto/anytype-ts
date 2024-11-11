@@ -4,7 +4,6 @@ export enum ProgressType {
 	Export		 = 'export',
 	Save		 = 'saveFile',
 	Migrate		 = 'migration',
-	Recover		 = 'recoverAccount',
 	Update		 = 'update',
 	UpdateCheck	 = 'updateCheck',
 };
@@ -25,4 +24,5 @@ export interface Progress {
 	total?: number;
 	state?: ProgressState;
 	canCancel?: boolean;
+	error?: string;
 };

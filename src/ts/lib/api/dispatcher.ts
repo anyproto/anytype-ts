@@ -979,26 +979,24 @@ class Dispatcher {
 					const { process } = mapped;
 					const { progress, type } = process;
 
-					let canCancel = true;
-
-					if ([ I.ProgressType.Recover, I.ProgressType.Migrate ].includes(type)) {
-						canCancel = false;
-					};
-
 					S.Progress.update({
 						...process,
 						current: progress.done,
 						total: progress.total,
-						canCancel,
+						canCancel: [ I.ProgressType.Migrate ].includes(type),
 					});
 					break;
 				};
 
 				case 'ProcessUpdate': {
 					const { process } = mapped;
-					const { id, progress, state } = process;
+					const { progress } = process;
 
-					S.Progress.update({ id, current: progress.done, total: progress.total, state });
+					S.Progress.update({
+						...process,
+						current: progress.done,
+						total: progress.total,
+					});
 					break;
 				};
 

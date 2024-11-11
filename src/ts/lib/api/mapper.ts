@@ -66,7 +66,6 @@ export const Mapper = {
 		if (v == V.EXPORT)			 t = 'export';
 		if (v == V.SAVEFILE)		 t = 'saveFile';
 		if (v == V.MIGRATION)		 t = 'migration';
-		if (v == V.RECOVERACCOUNT)	 t = 'recoverAccount';
 
 		return t;
 	},
@@ -612,7 +611,8 @@ export const Mapper = {
 				state: obj.getState() as number,
 				type,
 				spaceId: obj.getSpaceid(),
-				progress: Mapper.From.Progress(obj.getProgress())
+				progress: Mapper.From.Progress(obj.getProgress()),
+				error: obj.getError(),
 			};
 		},
 
