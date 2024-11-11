@@ -239,10 +239,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					break;
 				};
 
-				const src = require(`img/icon/relation/${Relation.typeName(relationFormat)}.svg`);
-
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-				icon = <img src={src} className={icn.join(' ')} />;
+				icon = <img src={`./img/icon/relation/${Relation.typeName(relationFormat)}.svg`} className={icn.join(' ')} />;
 				break;
 			};
 
@@ -263,7 +261,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <img src={S.Common.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={U.File.iconImage(object)} className={icn.join(' ')} />;
+					icon = <img src={U.File.iconPath(object)} className={icn.join(' ')} />;
 				};
 				break;
 			};
@@ -273,7 +271,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={U.File.iconImage(object)} className={icn.join(' ')} />;
+				icon = <img src={U.File.iconPath(object)} className={icn.join(' ')} />;
 				break;
 			};
 
