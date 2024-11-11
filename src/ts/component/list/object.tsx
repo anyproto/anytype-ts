@@ -174,6 +174,26 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		);
 	};
 
+	// load () {
+	// 	const { space } = S.Common;
+	// 	const object = S.Detail.get(this.props.rootId, this.props.rootId);
+
+	// 	const relation = S.Record.getRelationByKey(relationKey);
+
+	// 	const filters: I.Filter[] = [ { relationkey: relationkey, condition: I.FilterCondition.Equal, value: start, format: I.RelationType.Date } ];
+
+	// 	C.RelationListValue(space, object.timestamp, (message) => {
+	// 		const { error, list } = message;
+
+	// 		if (error.code) {
+	// 			console.error ('RelationListValue error', error);
+	// 			return error;
+	// 		}
+
+	// 		this.setState({ list });
+	// 	});
+	// }
+
 	componentDidMount () {
 		this.getData(1);
 	};

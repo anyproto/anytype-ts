@@ -581,3 +581,16 @@ export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 		messageId: response.getMessageid(),
 	};
 };
+
+export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response) => {
+	const { countersList, relationkeysList } = response.toObject();
+	const relationKeyWithCounterList = relationkeysList.map((relationKey: string, ndx: number) => {
+				return {
+					relationKey,
+					counter: countersList[ndx],
+				};
+			});
+	return {
+		relationKeyWithCounterList,
+	};
+};

@@ -1302,15 +1302,6 @@ export const ObjectCreateRelationOption = (details: any, spaceId: string, callBa
 	dispatcher.request(ObjectCreateRelationOption.name, request, callBack);
 };
 
-export const RelationListRemoveOption = (optionIds: string[], checkInObjects: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Relation.ListRemoveOption.Request();
-
-	request.setOptionidsList(optionIds);
-	request.setCheckinobjects(checkInObjects);
-
-	dispatcher.request(RelationListRemoveOption.name, request, callBack);
-};
-
 export const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.BookmarkFetch.Request();
 
@@ -1832,6 +1823,27 @@ export const ObjectListExport = (spaceId: string, path: string, objectIds: strin
 	request.setIsjson(isJson);
 
 	dispatcher.request(ObjectListExport.name, request, callBack);
+};
+
+
+// ---------------------- RELATION ---------------------- //
+
+export const RelationListRemoveOption = (optionIds: string[], checkInObjects: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Relation.ListRemoveOption.Request();
+
+	request.setOptionidsList(optionIds);
+	request.setCheckinobjects(checkInObjects);
+
+	dispatcher.request(RelationListRemoveOption.name, request, callBack);
+};
+
+export const RelationListWithValue = (spaceId: string, value: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Relation.ListWithValue.Request();
+
+	request.setSpaceid(spaceId);
+	request.setValue(Encode.value(value));
+
+	dispatcher.request(RelationListWithValue.name, request, callBack);
 };
 
 // ---------------------- TEMPLATE ---------------------- //
