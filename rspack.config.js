@@ -2,7 +2,7 @@ const path = require('path');
 const process = require('process');
 const rspack = require('@rspack/core');
 const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
@@ -159,7 +159,7 @@ module.exports = (env, argv) => {
 
 		plugins: [
 			!prod && new ReactRefreshPlugin(),
-			//new BundleAnalyzerPlugin(),
+			process.env.RSDOCTOR && new RsdoctorRspackPlugin({}),
 
 			// new rspack.IgnorePlugin({
 			// 	resourceRegExp: /osx-temperature-sensor/,

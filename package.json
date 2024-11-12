@@ -9,6 +9,8 @@
 		"lint": "eslint .",
 		"electron": "npx electron .",
 		"electron-win": "npx electron.cmd .",
+		"doctor:start:dev": "RSDOCTOR=true npm run start:dev",
+		"doctor:build:dev": "RSDOCTOR=true npm run build:dev",
 		"start:watch": "cross-env-shell rspack serve --mode=development --node-env=development  --env SERVER_PORT=$SERVER_PORT --env DATA_PATH=$DATA_PATH",
 		"start:electron-wait-rspack": "cross-env-shell wait-for-localhost $SERVER_PORT && npm run electron",
 		"start:electron-wait-rspack-win": "cross-env-shell wait-for-localhost $SERVER_PORT && npm run electron-win",
@@ -48,6 +50,7 @@
 	"homepage": "https://anytype.io",
 	"devDependencies": {
 		"@electron/notarize": "^2.5.0",
+		"@rsdoctor/rspack-plugin": "^0.4.8",
 		"@rspack/cli": "^1.1.0",
 		"@rspack/core": "^1.1.0",
 		"@rspack/plugin-react-refresh": "^1.0.0",
