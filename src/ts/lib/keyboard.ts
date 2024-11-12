@@ -607,7 +607,7 @@ class Keyboard {
 						className: 'isWide techInfo isLeft',
 						data: {
 							title: translate('menuHelpNet'),
-							text: U.Common.lbBr(message.result),
+							text: U.Common.lbBr(result),
 							textConfirm: translate('commonCopy'),
 							colorConfirm: 'blank',
 							canCancel: false,
