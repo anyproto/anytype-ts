@@ -271,9 +271,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const space = U.Space.getSpaceview();
 
 		if (space.isShared && !cid && !key) {
-			C.SpaceInviteGetCurrent(S.Common.space, (message: any) => {
-				if (!message.error.code) {
-					this.setInvite(message.inviteCid, message.inviteKey);
+			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
+				if (cid && key) {
+					this.setInvite(cid, key);
 				};
 			});
 		};
@@ -332,6 +332,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	onInitLink () {
 		const btn = this.refButton;
+		const space = U.Space.getSpaceview();
+
 		if (!btn || btn.state.isLoading) {
 			return;
 		};
@@ -348,9 +350,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				btn.setLoading(false);
 
 				if (!this.setError(message.error)) {
-					this.setInvite(message.inviteCid, message.inviteKey);
+					return;
+				};
 
-					Preview.toastShow({ text: translate('toastInviteGenerate') });
+				this.setInvite(message.inviteCid, message.inviteKey);
+				Preview.toastShow({ text: translate('toastInviteGenerate') });
+
+				if (!space.isShared) {
 					analytics.event('ShareSpace');
 				};
 			});

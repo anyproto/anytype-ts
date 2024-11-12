@@ -109,7 +109,7 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
-		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true, withChat: true });
+		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
@@ -426,7 +426,6 @@ class UtilMenu {
 			if ([ 
 				J.Constant.widgetId.set, 
 				J.Constant.widgetId.collection,
-				J.Constant.widgetId.chat,
 			].includes(id)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
@@ -855,7 +854,6 @@ class UtilMenu {
 		const { config } = S.Common;
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
-			config.experimental ? { id: J.Constant.widgetId.chat, name: translate('widgetChat'), iconEmoji: '💬' } : null,
 			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
 			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },

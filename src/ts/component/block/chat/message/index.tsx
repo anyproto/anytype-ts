@@ -56,6 +56,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		let reply = null;
 		if (replyToMessageId) {
 			const replyToMessage = S.Chat.getReply(rootId, replyToMessageId);
+
 			if (replyToMessage) {
 				const { text, attachment, isMultiple } = getReplyContent(replyToMessage);
 				const author = U.Space.getParticipant(U.Space.getParticipantId(space, replyToMessage.creator));
@@ -85,7 +86,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			};
 		};
 
-		let text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+		let text = content.text.replace(/\r?\n$/, '');
+		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
 
 		if (modifiedAt) {
 			const cnl = [ 'label', 'small' ];

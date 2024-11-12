@@ -418,12 +418,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					typeKey = J.Constant.typeKey.collection;
 					break;
 				};
-
-				case J.Constant.widgetId.chat: {
-					details.layout = I.ObjectLayout.Chat;
-					typeKey = J.Constant.typeKey.chat;
-					break;
-				};
 			};
 		};
 
@@ -625,11 +619,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			case J.Constant.widgetId.collection: {
 				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
-				break;
-			};
-
-			case J.Constant.widgetId.chat: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat });
 				break;
 			};
 		};

@@ -1389,7 +1389,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!block.isText() && keyboard.isFocused) {
 			return;
 		};
-		if (block.isText() && !(block.isTextCode() || block.isTextCallout()) && isShift) {
+		if (block.isText() && !(block.isTextCode() || block.isTextCallout() || block.isTextQuote()) && isShift) {
 			return;
 		};
 
@@ -2083,6 +2083,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const isTitle = focused.isTextTitle();
 		const isToggle = focused.isTextToggle();
 		const isCallout = focused.isTextCallout();
+		const isQuote = focused.isTextQuote();
 		const isList = focused.isTextList();
 		const isCode = focused.isTextCode();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
@@ -2108,7 +2109,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			mode = I.BlockSplitMode.Top;
 		};
 
-		if (isCallout && !isShift) {
+		if ((isCallout || isQuote) && !isShift) {
 			mode = I.BlockSplitMode.Inner;
 			style = I.TextStyle.Paragraph;
 		};

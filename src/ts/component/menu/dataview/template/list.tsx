@@ -324,7 +324,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { getId, param } = this.props;
 		const { data } = param;
 		const { onTypeChange } = data;
-		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts()).concat(I.ObjectLayout.Chat);
+		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
 
 		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
