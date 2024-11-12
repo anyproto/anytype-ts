@@ -813,6 +813,7 @@ class Action {
 	publish (objectId: string) {
 		C.ObjectPublish(S.Common.space, objectId, (message: any) => {
 			if (message.error.code) {
+				console.error(message);
 				return;
 			};
 
