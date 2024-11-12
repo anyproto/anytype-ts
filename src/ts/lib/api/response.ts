@@ -56,6 +56,12 @@ export const DebugStat = (response: Rpc.Debug.Stat.Response) => {
 	return res;
 };
 
+export const DebugNetCheck = (response: Rpc.Debug.NetCheck.Response) => {
+	return {
+		result: response.getResult(),
+	};
+};
+
 export const Export = (response: any) => {
 	return {
 		path: response.getPath(),

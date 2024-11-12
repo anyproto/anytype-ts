@@ -170,6 +170,8 @@ html.themeDark {
 	}
 
 	.inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
+	.input-drag-vertical { background-color: var(--color-bg-secondary); }
+
 	.input-drag-horizontal {
 		.fill { background: var(--color-text-primary); }
 		.icon { border-color: var(--color-text-secondary); }

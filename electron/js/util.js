@@ -8,7 +8,8 @@ const protocol = 'anytype';
 const ConfigManager = require('./config.js');
 const Constant = require('../json/constant.json');
 
-log.transports.rendererConsole.level = 'error';
+log.initialize();
+log.transports.console.level = 'error';
 
 class Util {
 

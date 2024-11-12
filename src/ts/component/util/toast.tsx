@@ -52,11 +52,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			};
 
 			case I.ToastAction.Lock: {
-				if (!object) {
-					break;
-				};
-
-				textObject = <Element {...object} />;
+				textObject = object ? <Element {...object} /> : translate('commonObject');
 				textAction = translate(value ? 'toastIsLocked' : 'toastIsUnlocked');
 				break;
 			};

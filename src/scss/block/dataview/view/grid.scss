@@ -2,6 +2,17 @@
 
 .blocks {
 	.block.blockDataview {
+		.rowHead, #rowHeadClone { display: grid; white-space: nowrap; height: 36px; }
+
+		.rowHead { width: calc(100% - 4px); margin-left: 2px; }
+		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }
+
+		#rowHeadClone { position: fixed !important; background: var(--color-bg-primary); z-index: 1; }
+		#rowHeadClone::after { content: ''; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: -1px; }
+		#rowHeadClone {
+			.rowHead { margin: 0px; width: 100%; }
+		}
+
 		.cellHead { 
 			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative; height: 38px;
 			display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
@@ -45,20 +56,18 @@
 			.resize { display: none; }
 		}
 
-		.cellHead.cellKeyHover::after, .cellHead.active::after { 
+		.cellHead.cellKeyHover::after, .cellHead.hover::after { 
 			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
 			background-color: var(--color-shape-highlight-light);
 		}
 
-		.cellHead.last::after, .cellHead.active::after { background: none; }
-		.cellHead.last:hover, .cellHead.last.active {
+		.cellHead.last::after, .cellHead.hover::after { background: none; }
+		.cellHead.last:hover, .cellHead.last.hover {
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
 		.viewContent.viewGrid { width: 100%; position: relative; padding: 0px 0px 80px 0px; }
 		.viewContent.viewGrid {
-			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 36px; }
-
 			.loadMore { padding: 10px 2px; box-shadow: 0px 1px var(--color-shape-secondary) inset; }
 
 			.icon.checkbox { vertical-align: top; }

@@ -160,6 +160,7 @@ class UtilData {
 		S.Block.widgetsSet(info.widgetsId);
 		S.Block.profileSet(info.profileObjectId);
 		S.Block.spaceviewSet(info.spaceViewId);
+		S.Block.workspaceSet(info.workspaceObjectId);
 
 		S.Common.gatewaySet(info.gatewayUrl);
 		S.Common.spaceSet(info.accountSpaceId);
@@ -548,7 +549,7 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, withChat, limit } = param || {};
+		const { withSet, withCollection, limit } = param || {};
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
@@ -568,10 +569,6 @@ class UtilData {
 
 		if (withSet) {
 			items.push(S.Record.getSetType());
-		};
-
-		if (withChat && config.experimental) {
-			items.push(S.Record.getChatType());
 		};
 
 		if (withCollection) {
@@ -788,9 +785,10 @@ class UtilData {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, withArchived } = param;
 		const filters = param.filters || [];
-		const chatDerivedType = S.Record.getChatDerivedType();
+		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
 
-		filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chatDerived });
+		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
@@ -803,20 +801,6 @@ class UtilData {
 
 		if (!withArchived) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (!config.experimental) {
-			const chatType = S.Record.getChatType();
-
-			if (chatType) {
-				filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatType?.id });
-			};
-
-			filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chat });
-		};
-
-		if (chatDerivedType) {
-			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatDerivedType.id });
 		};
 
 		return filters;

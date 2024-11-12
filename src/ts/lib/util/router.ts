@@ -4,6 +4,7 @@ import { I, C, S, U, J, Preview, analytics, Storage } from 'Lib';
 class UtilRouter {
 
 	history: any = null;
+	isOpening = false;
 
 	init (history: any) {
 		this.history = history;
@@ -129,18 +130,29 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any) {
+		if (this.isOpening) {
+			return;
+		};
+
 		if (!id) {
 			console.log('[UtilRouter].swithSpace: id is empty');
 			return;
 		};
 
+		const withChat = U.Common.isChatAllowed();
+
 		S.Menu.closeAllForced();
+		S.Progress.showSet(false);
 
 		if (sendEvent) {
 			analytics.event('SwitchSpace');
 		};
 
-		C.WorkspaceOpen(id, (message: any) => {
+		this.isOpening = true;
+
+		C.WorkspaceOpen(id, withChat, (message: any) => {
+			this.isOpening = false;
+
 			if (message.error.code) {
 				U.Data.onAuthWithoutSpace();
 				return;
