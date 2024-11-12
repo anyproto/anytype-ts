@@ -135,7 +135,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { theme } = S.Common;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, isDeleted } = object || {};
+		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, relationKey, isDeleted } = object || {};
 		const cn = [ 'iconObject', 'c' + size, U.Data.layoutClass(object.id, layout) ];
 		const iconSize = this.iconSize();
 		const tc = S.Common.getThemeClass();
@@ -239,8 +239,15 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					break;
 				};
 
+				let src = '';
+				if (relationKey == 'description') {
+					src = 'description';
+				} else {
+					src = Relation.typeName(relationFormat);
+				};
+
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-				icon = <img src={`./img/icon/relation/${Relation.typeName(relationFormat)}.svg`} className={icn.join(' ')} />;
+				icon = <img src={`./img/icon/relation/${src}.svg`} className={icn.join(' ')} />;
 				break;
 			};
 
