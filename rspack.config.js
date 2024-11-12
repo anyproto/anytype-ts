@@ -2,6 +2,7 @@ const path = require('path');
 const process = require('process');
 const rspack = require('@rspack/core');
 const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
@@ -160,6 +161,8 @@ module.exports = (env, argv) => {
 		plugins: [
 			!prod && new ReactRefreshPlugin(),
 			process.env.RSDOCTOR && new RsdoctorRspackPlugin({}),
+			
+			new ForkTsCheckerWebpackPlugin(),
 
 			// new rspack.IgnorePlugin({
 			// 	resourceRegExp: /osx-temperature-sensor/,

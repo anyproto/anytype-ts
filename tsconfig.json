@@ -13,6 +13,8 @@
         "allowJs": true,
         "baseUrl": "./src",
 		"lib": [ "es5", "dom" ],
+        "isolatedModules": true,
+        "incremental": true,
         "types": ["node", "@rspack/core/module"],
 
         "paths": {
