@@ -9,7 +9,11 @@ const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
 
 module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
-	const prod = env === 'production';
+	const prod = argv.mode === 'production';
+
+	console.log('Production:', prod);
+	console.log(env, argv);
+	console.log(process.env);
 
 	return {
 		mode: 'development',
