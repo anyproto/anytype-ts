@@ -15,7 +15,7 @@
 		"lib": [ "es5", "dom" ],
         "isolatedModules": true,
         "incremental": true,
-        "types": ["node", "@rspack/core/module"],
+        "types": [ "node", "@rspack/core/module" ],
 
         "paths": {
             "json": [

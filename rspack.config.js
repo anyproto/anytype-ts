@@ -12,10 +12,6 @@ module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
 	const prod = argv.mode === 'production';
 
-	console.log('Production:', prod);
-	console.log(env, argv);
-	console.log(process.env);
-
 	return {
 		mode: 'development',
 		devtool: 'source-map',
