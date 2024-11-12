@@ -248,6 +248,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						onRouteChange: () => {
 							S.Common.fullscreenObjectSet(true);
 							S.Common.showRelativeDatesSet(true);
+							S.Common.showObjectSet(false);
 
 							U.Space.initSpaceState();
 							Onboarding.start('basics', false);
