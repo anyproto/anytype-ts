@@ -13,6 +13,7 @@
         "allowJs": true,
         "baseUrl": "./src",
 		"lib": [ "es5", "dom" ],
+        "types": ["node", "@rspack/core/module"],
 
         "paths": {
             "json": [
