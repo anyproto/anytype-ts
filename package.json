@@ -50,7 +50,6 @@
 		"@electron/notarize": "^2.5.0",
 		"@rspack/cli": "^1.1.0",
 		"@rspack/core": "^1.1.0",
-		"@rspack/dev-server": "^1.0.9",
 		"@rspack/plugin-react-refresh": "^1.0.0",
 		"@types/history": "^4.7.8",
 		"@types/jquery": "^3.5.14",
@@ -84,9 +83,7 @@
 		"style-loader": "^1.2.1",
 		"typescript": "^5.3.3",
 		"typescript-eslint": "^0.0.1-alpha.0",
-		"url-loader": "^4.1.1",
-		"wait-for-localhost-cli": "^3.0.0",
-		"webpack-dev-server": "^5.1.0"
+		"wait-for-localhost-cli": "^3.0.0"
 	},
 	"dependencies": {
 		"@electron/remote": "^2.1.2",
