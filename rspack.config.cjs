@@ -1,66 +1,58 @@
 const path = require('path');
 const process = require('process');
 const rspack = require('@rspack/core');
-const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
+const ReactRefreshRspackPlugin = require('@rspack/plugin-react-refresh');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
 
-module.exports = (env, argv) => {
+const { defineConfig } = require('@rspack/cli');
+
+module.exports = defineConfig((env, argv) => {
 	const port = process.env.SERVER_PORT;
-	const prod = env === 'production';
+	const isDev = typeof env.production === 'undefined';
 
 	return {
 		mode: 'development',
 		devtool: 'source-map',
 
 		optimization: {
-			minimize: false,
+			moduleIds: 'deterministic',
 			removeAvailableModules: true,
 			removeEmptyChunks: true,
 			splitChunks: false,
+			mergeDuplicateChunks: true,
 		},
-		
+
 		entry: {
-			app: { 
-				import: './src/ts/entry.tsx', 
+			app: {
+				import: './src/ts/entry.tsx',
 				filename: 'js/main.js',
 			},
 			extension: {
-				import: './extension/entry.tsx', 
+				import: './extension/entry.tsx',
 				filename: 'extension/js/main.js',
 			},
 		},
 
 		resolve: {
-			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
-			alias: {
-				dist: path.resolve(__dirname, 'dist'),
-				protobuf: path.resolve(__dirname, 'dist/lib'),
-				json: path.resolve(__dirname, 'src/json'),
-				Lib: path.resolve(__dirname, 'src/ts/lib'),
-				Store: path.resolve(__dirname, 'src/ts/store'),
-				Component: path.resolve(__dirname, 'src/ts/component'),
-				Interface: path.resolve(__dirname, 'src/ts/interface'),
-				Model: path.resolve(__dirname, 'src/ts/model'),
-				Docs: path.resolve(__dirname, 'src/ts/docs'),
-				Hook: path.resolve(__dirname, 'src/ts/hook'),
-			},
+			tsConfig: path.resolve(__dirname, 'tsconfig.json'),
+			extensions: ['.ts', '.tsx', '.js', '.jsx'],
 			modules: [
 				path.resolve('./src/'),
 				path.resolve('./electron/'),
 				path.resolve('./dist/'),
-				path.resolve('./node_modules')
-			]
+				path.resolve('./node_modules'),
+			],
 		},
 
 		watchOptions: {
 			ignored: /node_modules/,
 			poll: false,
 		},
-		
+
 		devServer: {
 			hot: true,
 			static: ['dist'],
@@ -77,16 +69,19 @@ module.exports = (env, argv) => {
 				progress: false,
 				overlay: {
 					runtimeErrors: (error) => {
-						if (error.message === 'ResizeObserver loop completed with undelivered notifications.') {
-						  return false;
+						if (
+							error.message ===
+							'ResizeObserver loop completed with undelivered notifications.'
+						) {
+							return false;
 						}
-				
+
 						return true;
-					  },
+					},
 				},
 			},
 		},
-	
+
 		module: {
 			rules: [
 				{
@@ -101,13 +96,13 @@ module.exports = (env, argv) => {
 							transform: {
 								react: {
 									runtime: 'automatic',
-									development: !prod,
-									refresh: !prod,
+									development: isDev,
+									refresh: isDev,
 								},
 							},
 						},
 						env: {
-							targets: 'Chrome >= 48',
+							targets: 'Chrome >= 89',
 						},
 					},
 				},
@@ -124,44 +119,57 @@ module.exports = (env, argv) => {
 							transform: {
 								react: {
 									runtime: 'automatic',
-									development: !prod,
-									refresh: !prod,
+									development: isDev,
+									refresh: isDev,
 								},
 							},
 						},
 						env: {
-							targets: 'Chrome >= 48', // browser compatibility
+							targets: 'Chrome >= 89', // browser compatibility
 						},
 					},
 				},
 				{
 					enforce: 'pre',
 					test: /\.js$/,
-					loader: 'source-map-loader'
+					loader: 'source-map-loader',
 				},
 				{
 					test: /\.(eot|ttf|otf|woff|woff2)$/,
-					type: 'asset/inline'
+					type: 'asset/inline',
 				},
 				{
 					test: /\.(jpe?g|png|gif|svg)$/,
-					type: 'asset/inline'
+					type: 'asset/inline',
 				},
 				{
 					test: /\.s?css/,
 					use: [
 						{ loader: 'style-loader' },
 						{ loader: 'css-loader' },
-						{ loader: 'sass-loader' }
-					]
-				}
-			]
+						{ loader: 'sass-loader' },
+					],
+				},
+			],
 		},
 
 		plugins: [
-			!prod && new ReactRefreshPlugin(),
-			process.env.RSDOCTOR && new RsdoctorRspackPlugin({}),
-			
+			isDev && new ReactRefreshRspackPlugin(),
+
+			process.env.RSDOCTOR &&
+			new RsdoctorRspackPlugin({
+				linter: {
+					rules: {
+						'ecma-version-check': 'off',
+					},
+				},
+				supports: {
+					generateTileGraph: true,
+					parseBundle: true,
+				},
+				reportDir: path.resolve(__dirname, '.rsdoctor'),
+			}),
+
 			new ForkTsCheckerWebpackPlugin(),
 
 			// new rspack.IgnorePlugin({
@@ -173,10 +181,8 @@ module.exports = (env, argv) => {
 			}),
 
 			new rspack.CopyRspackPlugin({
-				patterns: [
-					{ from: cMapsDir, to: './cmaps/' },
-				],
+				patterns: [{ from: cMapsDir, to: './cmaps/' }],
 			}),
 		].filter(Boolean),
 	};
-};
+});

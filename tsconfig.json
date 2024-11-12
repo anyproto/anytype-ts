@@ -1,78 +1,46 @@
 {
-    "compilerOptions": {
-        "outDir": "./dist/",
+	"compilerOptions": {
+		"outDir": "./dist/",
         "sourceMap": true,
         "noImplicitAny": false,
-        "module": "esnext",
-        "target": "es2017",
+        "module": "Preserve",
+        "target": "ES2021",
         "jsx": "react",
-        "resolveJsonModule": true,
         "moduleResolution": "Node",
-        "experimentalDecorators": false,
-        "allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
         "allowJs": true,
-        "baseUrl": "./src",
-		"lib": [ "es5", "dom" ],
+        "lib": [ "es5", "dom" ],
         "isolatedModules": true,
         "incremental": true,
         "types": ["node", "@rspack/core/module"],
 
-        "paths": {
-            "json": [
-                "json"
-            ],
-            "Component/*": [
-                "ts/component/*"
-            ],
-            "Component": [
-                "ts/component"
-            ],
-            "Interface/*": [
-                "ts/interface/*"
-            ],
-            "Interface": [
-                "ts/interface"
-            ],
-            "Docs/*": [
-                "ts/docs/*"
-            ],
-            "Docs": [
-                "ts/docs"
-            ],
-            "Lib/*": [
-              "ts/lib/*"
-            ],
-            "Lib": [
-				"ts/lib"
-            ],
-            "Model/*": [
-              "ts/model/*"
-            ],
-            "Model": [
-				"ts/model"
-            ],
-            "Store/*": [
-                "ts/store/*",
-            ],
-            "Store": [
-                "ts/store",
-            ],
-			"Hook/*": [
-                "ts/hook/*",
-            ],
-			"Hook": [
-                "ts/hook",
-            ],
-			"dist/*": [
-                "../dist/*"
-            ],
-          }
-    },
-	"include": [
-		"src/**/*"
-	],
-    "exclude": [ 
-		"node_modules/**/*", 
-		"dist/**/*", 
-	]
+		"rootDirs": ["./src/"],
+		"baseUrl": "./",
+		"paths": {
+			"json": ["./src/json"],
+			"json/*": ["./src/json/*"],
+			"Component": ["./src/ts/component"],
+			"Component/*": ["./src/ts/component/*"],
+			"Interface": ["./src/ts/interface"],
+			"Interface/*": ["./src/ts/interface/*"],
+			"Docs": ["./src/ts/docs"],
+			"Docs/*": ["./src/ts/docs/*"],
+			"Lib": ["./src/ts/lib"],
+			"Lib/*": ["./src/ts/lib/*"],
+			"Model": ["./src/ts/model"],
+			"Model/*": ["./src/ts/model/*"],
+			"Store": ["./src/ts/store"],
+			"Store/*": ["./src/ts/store/*"],
+			"Hook": ["./src/ts/hook"],
+			"Hook/*": ["./src/ts/hook/*"],
+			"dist/*": ["./dist/*"]
+		},
+	},
+	
+	"isolatedModules": true,
+	"incremental": true,
+	"types": ["node", "@rspack/core/module"],
+
+	"include": ["src/**/*", "*.cjs", "*.js"],
+	"exclude": ["node_modules/**/*", "dist/**/*"]
 }
