@@ -2,7 +2,8 @@ const path = require('path');
 const process = require('process');
 const rspack = require('@rspack/core');
 const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
@@ -58,16 +59,18 @@ module.exports = (env, argv) => {
 				path.resolve('./node_modules')
 			]
 		},
+
+		watchOptions: {
+			ignored: /node_modules/,
+			poll: false,
+		},
 		
 		devServer: {
 			hot: true,
-			static: {
-				directory: path.join(__dirname, 'dist'),
-				watch: {
-					ignored: [
-						path.resolve(__dirname, 'dist'),
-						path.resolve(__dirname, 'node_modules')
-					],
+			static: ['dist'],
+			watchFiles: {
+				paths: ['src'],
+				options: {
 					usePolling: false,
 				},
 			},
@@ -161,7 +164,9 @@ module.exports = (env, argv) => {
 
 		plugins: [
 			!prod && new ReactRefreshPlugin(),
-			//new BundleAnalyzerPlugin(),
+			process.env.RSDOCTOR && new RsdoctorRspackPlugin({}),
+			
+			new ForkTsCheckerWebpackPlugin(),
 
 			// new rspack.IgnorePlugin({
 			// 	resourceRegExp: /osx-temperature-sensor/,
