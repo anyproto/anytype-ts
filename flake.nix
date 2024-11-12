@@ -57,6 +57,7 @@
         pkgs.xorg.libxcb
         pkgs.alsa-lib
         pkgs.libGL
+        pkgs.gdk-pixbuf
       ];
       XDG_ICONS_PATH = "${pkgs.hicolor-icon-theme}/share:${pkgs.adwaita-icon-theme}/share";
     in {
