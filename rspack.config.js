@@ -54,16 +54,18 @@ module.exports = (env, argv) => {
 				path.resolve('./node_modules')
 			]
 		},
+
+		watchOptions: {
+			ignored: /node_modules/,
+			poll: false,
+		},
 		
 		devServer: {
 			hot: true,
-			static: {
-				directory: path.join(__dirname, 'dist'),
-				watch: {
-					ignored: [
-						path.resolve(__dirname, 'dist'),
-						path.resolve(__dirname, 'node_modules')
-					],
+			static: ['dist'],
+			watchFiles: {
+				paths: ['src'],
+				options: {
 					usePolling: false,
 				},
 			},
