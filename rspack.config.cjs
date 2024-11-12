@@ -15,8 +15,14 @@ module.exports = defineConfig((env, argv) => {
 	const isDev = typeof env.production === 'undefined';
 
 	return {
-		mode: 'development',
-		devtool: 'source-map',
+		experiments: {
+			rspackFuture: {
+				disableTransformByDefault: true,
+			},
+		},
+
+		mode: isDev ? 'development' : 'production',
+		devtool: 'eval-source-map',
 
 		optimization: {
 			moduleIds: 'deterministic',
@@ -85,14 +91,34 @@ module.exports = defineConfig((env, argv) => {
 		module: {
 			rules: [
 				{
-					test: /\.(j|t)s$/,
+					test: /\.(js|ts)$/,
 					exclude: [/[\\/]node_modules[\\/]/],
 					loader: 'builtin:swc-loader',
 					options: {
+						sourceMap: true,
 						jsc: {
 							parser: {
 								syntax: 'typescript',
 							},
+							externalHelpers: true,
+						},
+						env: {
+							targets: 'Chrome >= 89',
+						},
+					},
+				},
+				{
+					test: /\.(jsx|tsx)$/,
+					exclude: [/[\\/]node_modules[\\/]/],
+					loader: 'builtin:swc-loader',
+					options: {
+						sourceMap: true,
+						jsc: {
+							parser: {
+								syntax: 'typescript',
+								tsx: true,
+							},
+							externalHelpers: true,
 							transform: {
 								react: {
 									runtime: 'automatic',
@@ -103,29 +129,6 @@ module.exports = defineConfig((env, argv) => {
 						},
 						env: {
 							targets: 'Chrome >= 89',
-						},
-					},
-				},
-				{
-					test: /\.(j|t)sx$/,
-					loader: 'builtin:swc-loader',
-					exclude: [/[\\/]node_modules[\\/]/],
-					options: {
-						jsc: {
-							parser: {
-								syntax: 'typescript',
-								tsx: true,
-							},
-							transform: {
-								react: {
-									runtime: 'automatic',
-									development: isDev,
-									refresh: isDev,
-								},
-							},
-						},
-						env: {
-							targets: 'Chrome >= 89', // browser compatibility
 						},
 					},
 				},
