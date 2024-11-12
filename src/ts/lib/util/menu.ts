@@ -1018,8 +1018,8 @@ class UtilMenu {
 
 			sort = [
 				{ name: translate('sidebarObjectSort'), isSection: true },
-				{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate', isSort: true, defaultType: I.SortType.Desc },
-				{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate', isSort: true, defaultType: I.SortType.Desc },
+				{ id: I.SortId.Updated, name: translate('commonDateUpdated'), relationKey: 'lastModifiedDate', isSort: true, defaultType: I.SortType.Desc },
+				{ id: I.SortId.Created, name: translate('commonDateCreated'), relationKey: 'createdDate', isSort: true, defaultType: I.SortType.Desc },
 				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true, defaultType: I.SortType.Asc },
 			];
 		};

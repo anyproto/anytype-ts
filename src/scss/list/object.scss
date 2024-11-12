@@ -3,10 +3,10 @@
 .listObject {
 	.table { display: grid; border-color: var(--color-shape-secondary); border-style: solid; border-top-width: 1px; margin: 0px 0px 10px 0px; }
 	.table {
-		.selectionTarget { display: grid; grid-template-columns: minmax(0, 1fr) 20% 20%; }
+		.selectionTarget { display: grid; grid-template-columns: minmax(0, 1fr) 20% 20% 20%; }
 		
 		.row.isHead { 
-			display: grid; grid-template-columns: minmax(0, 1fr) 20% 20%; color: var(--color-text-secondary);
+			display: grid; grid-template-columns: minmax(0, 1fr) 20% 20% 20%; color: var(--color-text-secondary);
 		}
 		.row.isHead {
 			.cell { 
