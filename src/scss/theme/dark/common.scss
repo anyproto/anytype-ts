@@ -122,6 +122,8 @@ html.themeDark {
 
 			.icon.volume { background-image: url('#{$themePath}/icon/audio/volume.svg'); }
 			.icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
+			
+			.icon.volume.muted { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
 		}
 	}
 
@@ -168,7 +170,7 @@ html.themeDark {
 	}
 
 	.inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
-	.input-drag {
+	.input-drag-horizontal {
 		.fill { background: var(--color-text-primary); }
 		.icon { border-color: var(--color-text-secondary); }
 	}
@@ -239,6 +241,15 @@ html.themeDark {
 		.editor {
 			.icon.buttonAdd { background-image: url('#{$themePath}/icon/block/add0.svg'); }
 			.icon.buttonAdd:hover { background-image: url('#{$themePath}/icon/block/add1.svg'); }
+		}
+
+		.dragWrap {
+			.number { color: var(--color-text-primary); }
+			.input-drag-horizontal {
+				.back { background: rgba(255,255,255,0.5); }
+				.fill { background: var(--color-text-primary); }
+				.icon { border-color: var(--color-text-primary); }
+			}
 		}
 	}
 
