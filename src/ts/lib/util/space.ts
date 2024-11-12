@@ -93,7 +93,7 @@ class UtilSpace {
 	};
 
 	getList () {
-		return S.Record.getRecords(J.Constant.subId.space, U.Data.spaceRelationKeys()).filter(it => it.isAccountActive && it.isLocalOk);
+		return S.Record.getRecords(J.Constant.subId.space, U.Data.spaceRelationKeys()).filter(it => it.isAccountActive);
 	};
 
 	getSpaceview (id?: string) {
