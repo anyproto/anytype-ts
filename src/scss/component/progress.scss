@@ -1,32 +1,52 @@
 @import "~scss/_mixins";
 
-.progress { 
-	position: fixed; left: 0px; top: 0px; z-index: 110; width: 100%; height: 100%; background: rgba(0,0,0,0.4);
-	transition: background 0.05s ease-in-out; user-select: none;
-}
-
-.progress.isUnlocked { background: none; pointer-events: none; }
-.progress.isUnlocked {
-	.inner { top: auto; left: 10px; top: 40px; margin: 0px; }
-}
+.progress { position: fixed; left: 0px; top: 0px; z-index: 110; width: 100%; height: 100%; pointer-events: none; user-select: none; }
 
 .progress {
 	.inner { 
-		position: absolute; left: 50%; top: 50%; box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.2); height: 72px; width: 384px; cursor: grab;
-		border-radius: 12px; text-align: center; background: var(--color-bg-primary); overflow: hidden; margin: -36px 0px 0px -192px; padding: 12px 16px;
-		transition-property: opacity, transform; transition-duration: 0.05s; transition-timing-function: ease-in-out; pointer-events: all;
+		position: absolute; box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.2); cursor: grab; width: 288px; border-radius: 12px; text-align: center; 
+		background: var(--color-bg-primary); overflow: hidden; transition-property: opacity, transform; transition-duration: 0.05s; 
+		transition-timing-function: ease-in-out; pointer-events: all; display: flex; flex-direction: column; bottom: 56px; right: 56px;
 	}
-	.inner {
-		.label { position: absolute; left: 16px; top: 12px; z-index: 1; color: var(--color-text-primary); white-space: nowrap; @include text-paragraph; }
-		.bar { width: calc(100% - 32px); height: 8px; background: var(--color-shape-tertiary); overflow: hidden; border-radius: 8px; position: absolute; bottom: 16px; left: 16px; }
-		.fill { position: absolute; left: 0px; top: 0px; height: 100%; background: var(--color-control-accent); transition: width 0.2s linear; }
+
+	.titleWrap { font-weight: 600; display: flex; gap: 0px 6px; padding: 11px 16px 3px 16px; }
+	.titleWrap {
+		.label.percent { font-weight: 400; color: var(--color-text-secondary); }
 	}
-	
-	.icon.close { 
-		width: 24px; height: 24px; position: absolute; top: 14px; right: 14px; background-image: url('~img/icon/progress/close.svg'); 
-		cursor: default; background-size: 20px; border-radius: 4px;
+
+	.item { 
+		padding: 8px 16px; position: relative; border-bottom: 1px solid var(--color-shape-secondary); gap: 4px 0px; display: flex; 
+		flex-direction: column; 
 	}
-	.icon.close:hover { background-color: var(--color-shape-highlight-medium); }
+	.item {
+		.nameWrap { display: flex; flex-direction: row; gap: 0px 6px; justify-content: space-between; align-items: center; }
+		.nameWrap {
+			.label { color: var(--color-text-primary); @include text-overflow-nw; @include text-common; line-height: 28px; }
+			.icon.close { width: 20px; height: 20px; background-image: url('~img/icon/progress/close.svg'); cursor: default; flex-shrink: 0; opacity: 0; }
+		}
+
+		.bar { width: 100%; height: 4px; background: var(--color-shape-secondary); overflow: hidden; border-radius: 8px; position: relative; }
+
+		.fill { position: absolute; left: 0px; top: 0px; height: 100%; background: var(--color-system-accent-25); transition: width 0.2s linear; }	
+		.fill::after {
+			content: ''; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;
+			background-image: linear-gradient(90deg, rgba(0,0,0,0) 0%, var(--color-system-accent-50) 50%, rgba(0,0,0,0) 100%);
+			animation: animateGradient 2s linear infinite;
+		}
+
+		@keyframes animateGradient {
+			0% { opacity: 1; transform: translateX(-100%); }
+			50% { transform: translateX(100%); }
+			50.01% { opacity: 0; }
+			100% { opacity: 0; }
+		}
+	}
+	.item:hover {
+		.nameWrap {
+			.icon.close { opacity: 1; }
+		}
+	}
+	.item:last-child { border-bottom: 0px; }
 }
 
 .progress.hide { background: rgba(0,0,0,0); }

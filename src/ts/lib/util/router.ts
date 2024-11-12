@@ -142,6 +142,7 @@ class UtilRouter {
 		const withChat = U.Common.isChatAllowed();
 
 		S.Menu.closeAllForced();
+		S.Progress.showSet(false);
 
 		if (sendEvent) {
 			analytics.event('SwitchSpace');

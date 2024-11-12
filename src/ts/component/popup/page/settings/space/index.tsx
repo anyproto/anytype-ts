@@ -446,9 +446,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const space = U.Space.getSpaceview();
 
 		if (space.isShared && !cid && !key) {
-			C.SpaceInviteGetCurrent(S.Common.space, (message: any) => {
-				if (!message.error.code) {
-					this.setInvite(message.inviteCid, message.inviteKey);
+			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
+				if (cid && key) {
+					this.setInvite(cid, key);
 				};
 			});
 		};

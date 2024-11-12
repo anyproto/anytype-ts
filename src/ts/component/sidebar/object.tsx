@@ -484,6 +484,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				subId: J.Constant.subId.allObject,
 				route: analytics.route.allObjects,
 				allowedLinkTo: true,
+				onSelect: id => {
+					switch (id) {
+						case 'archive': {
+							this.selected = [];
+							this.renderSelection();
+							break;
+						};
+					};
+				}
 			}
 		});
 	};

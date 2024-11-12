@@ -975,40 +975,33 @@ class Dispatcher {
 					break;
 				};
 
-				case 'ProcessNew':
-				case 'ProcessUpdate':
-				case 'ProcessDone': {
+				case 'ProcessNew': {
 					const { process } = mapped;
-					const { id, progress, state, type } = process;
+					const { progress, type } = process;
 
-					switch (state) {
-						case I.ProgressState.Running: {
-							let canCancel = true;
-							let isUnlocked = true;
+					S.Progress.update({
+						...process,
+						current: progress.done,
+						total: progress.total,
+						canCancel: [ I.ProgressType.Migrate ].includes(type),
+					});
+					break;
+				};
 
-							if ([ I.ProgressType.Recover, I.ProgressType.Migration ].includes(type)) {
-								canCancel = false;
-								isUnlocked = false;
-							};
+				case 'ProcessUpdate': {
+					const { process } = mapped;
+					const { progress } = process;
 
-							S.Common.progressSet({
-								id,
-								status: translate(`progress${type}`),
-								current: progress.done,
-								total: progress.total,
-								isUnlocked,
-								canCancel,
-							});
-							break;
-						};
+					S.Progress.update({
+						...process,
+						current: progress.done,
+						total: progress.total,
+					});
+					break;
+				};
 
-						case I.ProgressState.Error:
-						case I.ProgressState.Done:
-						case I.ProgressState.Canceled: {
-							S.Common.progressClear();
-							break;
-						};
-					};
+				case 'ProcessDone': {
+					S.Progress.delete(mapped.process.id);
 					break;
 				};
 
