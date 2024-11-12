@@ -3,7 +3,6 @@ const { is } = require('electron-util');
 const path = require('path');
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
-
 const Separator = { type: 'separator' };
 
 class MenuManager {
@@ -21,6 +20,7 @@ class MenuManager {
 		const Api = require('./api.js');
 		const WindowManager = require('./window.js');
 		const UpdateManager = require('./update.js');
+		const isAllowedUpdate = UpdateManager.isAllowed();
 
 		config.debug = config.debug || {};
 		config.flagsMw = config.flagsMw || {};
@@ -37,9 +37,8 @@ class MenuManager {
 					{ role: 'hideothers', label: Util.translate('electronMenuHideOthers') },
 					{ role: 'unhide', label: Util.translate('electronMenuUnhide') },
 
-					Separator,
-
-					{ label: Util.translate('electronMenuCheckUpdates'), click: () => Api.updateCheck(this.win) },
+					{ type: 'separator', visible: isAllowedUpdate },
+					{ label: Util.translate('electronMenuCheckUpdates'), click: () => Api.updateCheck(this.win), visible: isAllowedUpdate },
 
 					Separator,
 
@@ -308,6 +307,8 @@ class MenuManager {
 		const { config } = ConfigManager;
 		const WindowManager = require('./window.js');
 		const Api = require('./api.js');
+		const UpdateManager = require('./update.js');
+		const isAllowedUpdate = UpdateManager.isAllowed();
 
 		this.destroy();
 
@@ -326,7 +327,7 @@ class MenuManager {
 
 			Separator,
 
-			{ label: Util.translate('electronMenuCheckUpdates'), click: () => { this.winShow(); Api.updateCheck(this.win); } },
+			{ label: Util.translate('electronMenuCheckUpdates'), click: () => { this.winShow(); Api.updateCheck(this.win); }, visible: isAllowedUpdate },
 			{ label: Util.translate('commonSettings'), submenu: this.menuSettings() },
 			
 			Separator,
