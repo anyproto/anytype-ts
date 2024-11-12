@@ -495,10 +495,14 @@
 	"pageHeadSimpleCreateSet": "Create Set",
 	"pageHeadSimpleInstall": "Install",
 
-	"editorControlIcon": "Icon",
-	"editorControlCover": "Cover",
-	"editorControlLayout": "Layout",
+	"editorControlIcon0": "Add icon",
+	"editorControlIcon1": "Icon",
+	"editorControlCover0": "Add cover",
+	"editorControlCover1": "Cover",
+	"editorControlLayout": "Settings",
 	"editorControlRelation": "Relations",
+	"editorControlDescription0": "Add description",
+	"editorControlDescription1": "Hide description",
 
 	"editorPagePasteLink": "Paste as link",
 	"editorPageCreateBookmarkObject": "Create Bookmark Object",

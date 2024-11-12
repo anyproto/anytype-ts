@@ -197,25 +197,18 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		});
 	};
 	
-	onLayout (e: any) {
+	onLayout () {
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
-		const object = S.Detail.get(rootId, rootId, []);
 		
 		S.Menu.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
-			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				elements.addClass('hover');
-			},
-			onClose: () => {
-				elements.removeClass('hover');
-			},
+			onOpen: () => elements.addClass('hover'),
+			onClose: () => elements.removeClass('hover'),
 			subIds: J.Menu.layout,
 			data: {
 				rootId: rootId,
-				value: object.layout,
 			}
 		});
 	};
