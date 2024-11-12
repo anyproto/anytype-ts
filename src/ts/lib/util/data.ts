@@ -551,7 +551,7 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, withChat, limit } = param || {};
+		const { withSet, withCollection, limit } = param || {};
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
@@ -571,10 +571,6 @@ class UtilData {
 
 		if (withSet) {
 			items.push(S.Record.getSetType());
-		};
-
-		if (withChat && config.experimental) {
-			items.push(S.Record.getChatType());
 		};
 
 		if (withCollection) {
@@ -792,8 +788,10 @@ class UtilData {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, withArchived } = param;
 		const filters = param.filters || [];
+		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
 
-		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Chat });
+		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });

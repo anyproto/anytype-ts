@@ -187,7 +187,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 		if (!canEdit) {
 			if (Relation.isUrl(relation.format) && value) {
-				Action.openUrl(Relation.getUrlScheme(relation.format, value) + value);
+				Action.openUrl(Relation.checkUrlScheme(relation.format, value));
 				return;
 			};
 
@@ -380,8 +380,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				});
 
 				if (e.shiftKey && value) {
-					const scheme = Relation.getUrlScheme(relation.format, value);
-					Action.openUrl(scheme + value);
+					Action.openUrl(Relation.checkUrlScheme(relation.format, value));
 
 					ret = true;
 					break;
@@ -409,11 +408,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 							return;
 						};
 
-						const scheme = Relation.getUrlScheme(relation.format, value);
-
 						switch (item.id) {
 							case 'go': {
-								Action.openUrl(scheme + value);
+								Action.openUrl(Relation.checkUrlScheme(relation.format, value));
 								analytics.event('RelationUrlOpen');
 								break;
 							};

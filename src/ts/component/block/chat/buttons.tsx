@@ -216,8 +216,8 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: `${cmd} + U` },
 			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: `${cmd} + K` },
 			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: `${cmd} + L` },
-			{ type: I.MarkType.Color, icon: 'color', name: translate('commonColor'), caption: `${cmd} + Shift + C`, inner: color },
-			{ type: I.MarkType.BgColor, icon: 'color', name: translate('commonBackground'), caption: `${cmd} + Shift + H`, inner: background },
+			//{ type: I.MarkType.Color, icon: 'color', name: translate('commonColor'), caption: `${cmd} + Shift + C`, inner: color },
+			//{ type: I.MarkType.BgColor, icon: 'color', name: translate('commonBackground'), caption: `${cmd} + Shift + H`, inner: background },
 		].map((it: any) => {
 			it.isActive = false;
 			if (it.type == I.MarkType.Link) {
@@ -248,8 +248,8 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			});
 		};
 
-		let data;
-		let menuItem;
+		let menuId = '';
+		let data: any = {};
 
 		if (menu) {
 			if (menu == 'upload') {
@@ -257,7 +257,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				return;
 			};
 
-			menuItem = 'searchObject';
+			menuId = 'searchObject';
 			data = {
 				skipIds: attachments.map(it => it.id),
 				filters: [
@@ -268,6 +268,9 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				}
 			};
 
+			if (menu == 'object') {
+				data.filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() });
+			} else
 			if ([ 'file', 'media' ].includes(menu)) {
 				const layouts = {
 					media: [ I.ObjectLayout.Image, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
@@ -285,9 +288,9 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				});
 			};
 		} else {
-			menuItem = 'select';
+			menuId = 'select';
 			data = {
-				options: options,
+				options,
 				onSelect: (e: React.MouseEvent, option: any) => {
 					this.onAttachment(option.id);
 				}
@@ -295,7 +298,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		};
 
 		S.Menu.closeAll(null, () => {
-			S.Menu.open(menuItem, {
+			S.Menu.open(menuId, {
 				element: `#block-${blockId} #button-${blockId}-${I.ChatButton.Object}`,
 				className: 'chatAttachment',
 				offsetY: -8,

@@ -6,6 +6,7 @@ export default {
 	appName:			 'Anytype',
 	blankRouteId:		 '_blank_',
 	storeSpaceId:		 '_anytype_marketplace',
+	localLoversSpaceId:	 'bafyreigyfkt6rbv24sbv5aq2hko3bhmv5xxlf22b4bypdu6j7hnphm3psq.23me69r569oi1',
 	anytypeProfileId:	 '_anytype_profile',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],

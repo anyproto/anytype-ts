@@ -441,7 +441,7 @@ class UtilCommon {
 
 		const scheme = this.getScheme(url);
 		if (!scheme) {
-			url = 'http://' + url;
+			url = `http://${url}`;
 		};
 
 		return url;
@@ -636,7 +636,9 @@ class UtilCommon {
 
 	getScheme (url: string): string {
 		url = String(url || '');
-		return url.indexOf('://') >= 0 ? String(url.split('://')[0] || '') : '';
+
+		const m = url.match(/^([a-z]+):/);
+		return m ? m[1] : '';
 	};
 
 	intercept (obj: any, change: any) {
@@ -1008,6 +1010,22 @@ class UtilCommon {
 				onClick();
 			};
 		};
+	};
+
+	isAlphaVersion (): boolean {
+		return !!this.getElectron().version.app.match(/alpha/);
+	};
+
+	isBetaVersion (): boolean {
+		return !!this.getElectron().version.app.match(/beta/);
+	};
+
+	isChatAllowed () {
+		const { config, space } = S.Common;
+		return config.experimental;
+
+		//return config.experimental || (space == J.Constant.localLoversSpaceId);
+		//return this.isAlphaVersion() || this.isBetaVersion() || !this.getElectron().isPackaged;
 	};
 
 };

@@ -23,7 +23,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	position: I.BlockPosition = null;
 	isDragging = false;
 	frame = 0;
-	isSubcribed = false;
+	isSubcribed = '';
 
 	constructor (props) {
 		super(props);
@@ -225,7 +225,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		);
 	};
 
-	componentDidMount(): void {
+	componentDidMount (): void {
+		this.subscribeArchive();
+	};
+
+	componentDidUpdate (): void {
 		this.subscribeArchive();
 	};
 
@@ -525,21 +529,23 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	subscribeArchive () {
-		if (this.isSubcribed) {
+		const { space } = S.Common
+
+		if (this.isSubcribed == space) {
 			return;
 		};
 
-		this.isSubcribed = true;
-
 		U.Data.searchSubscribe({
 			subId: SUB_ID,
-			spaceId: S.Common.space,
+			spaceId: space,
 			withArchived: true,
 			filters: [
 				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
 			],
 			limit: 1,
-		}, () => {});
+		}, () => {
+			this.isSubcribed = space;
+		});
 	};
 
 });

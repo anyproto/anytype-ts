@@ -257,7 +257,7 @@ class App extends React.Component<object, State> {
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => S.Common.progressClear());
+		Renderer.on('update-downloaded', () => S.Progress.delete('update'));
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('spellcheck', this.onSpellcheck);
@@ -422,12 +422,12 @@ class App extends React.Component<object, State> {
 
 	onUpdateCheck (e: any, auto: boolean) {
 		if (!auto) {
-			S.Common.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
+			S.Progress.add({ id: I.ProgressType.UpdateCheck, type: I.ProgressType.UpdateCheck, current: 0, total: 1 });
 		};
 	};
 
 	onUpdateConfirm (e: any, auto: boolean) {
-		S.Common.progressClear();
+		S.Progress.delete(I.ProgressType.UpdateCheck);
 		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
@@ -453,7 +453,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateAvailable (e: any, auto: boolean) {
-		S.Common.progressClear();
+		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;
@@ -478,7 +478,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateUnavailable (e: any, auto: boolean) {
-		S.Common.progressClear();
+		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;
@@ -499,7 +499,7 @@ class App extends React.Component<object, State> {
 
 	onUpdateError (e: any, err: string, auto: boolean) {
 		console.error(err);
-		S.Common.progressClear();
+		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;
@@ -524,11 +524,11 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateProgress (e: any, progress: any) {
-		S.Common.progressSet({ 
-			status: U.Common.sprintf(translate('commonUpdateProgress'), U.File.size(progress.transferred), U.File.size(progress.total)), 
+		S.Progress.update({ 
+			id: I.ProgressType.Update,
+			type: I.ProgressType.Update,
 			current: progress.transferred, 
 			total: progress.total,
-			isUnlocked: true,
 		});
 	};
 

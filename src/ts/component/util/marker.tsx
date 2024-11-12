@@ -15,28 +15,28 @@ interface Props {
 
 const Icons = {
 	checkbox: {
-		0:		 require('img/icon/marker/checkbox0.svg').default,
-		1:		 require('img/icon/marker/checkbox1.svg').default,
-		2:		 require('img/icon/marker/checkbox2.svg').default,
+		0:		 require('img/icon/marker/checkbox0.svg'),
+		1:		 require('img/icon/marker/checkbox1.svg'),
+		2:		 require('img/icon/marker/checkbox2.svg'),
 	},
 	task: {
-		0:		 require('img/icon/object/checkbox0.svg').default,
-		1:		 require('img/icon/object/checkbox1.svg').default,
-		2:		 require('img/icon/object/checkbox2.svg').default,
+		0:		 require('img/icon/object/checkbox0.svg'),
+		1:		 require('img/icon/object/checkbox1.svg'),
+		2:		 require('img/icon/object/checkbox2.svg'),
 	},
 };
 
 const Theme = {
 	dark: {
 		checkbox: {
-			0:		 require('img/icon/marker/checkbox0.svg').default,
-			1:		 require('img/theme/dark/icon/marker/checkbox1.svg').default,
-			2:		 require('img/icon/marker/checkbox2.svg').default,
+			0:		 require('img/icon/marker/checkbox0.svg'),
+			1:		 require('img/theme/dark/icon/marker/checkbox1.svg'),
+			2:		 require('img/icon/marker/checkbox2.svg'),
 		},
 		task: {
-			0:		 require('img/icon/object/checkbox0.svg').default,
-			1:		 require('img/theme/dark/icon/object/checkbox1.svg').default,
-			2:		 require('img/icon/object/checkbox2.svg').default,
+			0:		 require('img/icon/object/checkbox0.svg'),
+			1:		 require('img/theme/dark/icon/object/checkbox1.svg'),
+			2:		 require('img/icon/object/checkbox2.svg'),
 		},
 	},
 };
