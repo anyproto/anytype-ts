@@ -1,12 +1,17 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { ObjectName, ObjectDescription, Label, IconObject } from 'Component';
-import { I, U } from 'Lib';
+import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch } from 'Component';
+import { I, U, translate } from 'Lib';
 
 const MenuParticipant = observer(class MenuParticipant extends React.Component<I.Menu> {
 
 	render () {
 		const object = this.getObject();
+
+		if (!object) {
+			return <EmptySearch text={translate('commonNotFound')} />;
+		};
+
 		const relationKey = object.globalName ? 'globalName': 'identity';
 
 		return (
@@ -29,9 +34,14 @@ const MenuParticipant = observer(class MenuParticipant extends React.Component<I
 
 	load () {
 		const object = this.getObject();
+		if (!object) {
+			return;
+		};
 
 		U.Object.getById(object.id, { keys: U.Data.participantRelationKeys() }, (object: any) => {
-			this.props.param.data.object = object;
+			if (object) {
+				this.props.param.data.object = object;
+			};
 		});
 	};
 
