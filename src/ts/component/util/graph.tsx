@@ -521,7 +521,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	addNewNode (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) {
-		U.Object.getById(id, (object: any) => {
+		U.Object.getById(id, {}, (object: any) => {
 			object = this.nodeMapper(object);
 
 			if (param) {

@@ -1,25 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding, Preview } from 'Lib';
 
-type SearchSubscribeParams = Partial<{
-	spaceId: string;
-	subId: string;
-	idField: string;
-	filters: I.Filter[];
-	sorts: I.Sort[];
-	keys: string[];
-	sources: string[];
-	collectionId: string;
-	afterId: string;
-	beforeId: string;
-	offset: number;
-	limit: number;
-	ignoreHidden: boolean;
-	ignoreDeleted: boolean;
-	withArchived: boolean;
-	noDeps: boolean;
-}>;
-
 const SYSTEM_DATE_RELATION_KEYS = [
 	'lastModifiedDate', 
 	'lastOpenedDate', 
@@ -828,7 +809,7 @@ class UtilData {
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
-	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
+	searchSubscribe (param: Partial<I.SearchSubscribeParam>, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
 		param = Object.assign({
@@ -948,7 +929,7 @@ class UtilData {
 		});
 	};
 
-	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
+	search (param: Partial<I.SearchSubscribeParam> & { fullText?: string }, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
 		param = Object.assign({

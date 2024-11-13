@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useImperativeHandle, useRef } from 'react';
+import React, { useRef, useImperativeHandle, forwardRef, ChangeEvent } from 'react';
 import { Input } from 'Component';
 
 interface Props {
@@ -9,12 +8,12 @@ interface Props {
 	min?: number;
 	max?: number;
 	step?: number;
-	onChange?(e: React.ChangeEvent<HTMLInputElement>, v: number): void;
+	onChange?(e: ChangeEvent<HTMLInputElement>, v: number): void;
 	onMouseLeave?(e:any): void;
 	onMouseEnter?(e:any): void;
-}
+};
 
-const DragVertical = React.forwardRef<Input, Props>(({
+const DragVertical = forwardRef<{}, Props>(({
 	id,
 	className = '',
 	value,
@@ -30,12 +29,12 @@ const DragVertical = React.forwardRef<Input, Props>(({
 
 	useImperativeHandle(forwardedRef, () => divRef.current);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (e: ChangeEvent<HTMLInputElement>, value: string) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		if (onChange) {
-			onChange(e, 1 - Number(e.target.value));
+			onChange(e, 1 - Number(value) || 0);
 		};
 	};
 
@@ -61,8 +60,8 @@ const DragVertical = React.forwardRef<Input, Props>(({
 					e.stopPropagation();
 				}}
 			/>
-			<div className="slider-bg"></div>
-			<div className="slider-track" style={{ height: `${Math.round(value * 72)}px` }}></div>
+			<div className="slider-bg" />
+			<div className="slider-track" style={{ height: `${Math.round(value * 72)}px` }} />
 		</div>
 	);
 });

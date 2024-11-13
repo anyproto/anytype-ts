@@ -170,6 +170,7 @@
 	"commonProgress": "Progress",
 	"commonMainChat": "Chat",
 	"commonMenu": "Menu",
+	"commonNotFound": "Not found",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
