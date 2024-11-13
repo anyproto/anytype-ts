@@ -32,6 +32,8 @@ import PageMainObject from './main/object';
 import PageMainOnboarding from './main/onboarding';
 import PageMainChat from './main/chat';
 import PageMainTag from './main/tag';
+import PageMainDate from './main/date';
+import { createRef } from 'react';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -62,13 +64,12 @@ const Components = {
 	'main/onboarding':		 PageMainOnboarding,
 	'main/chat':			 PageMainChat,
 	'main/void':			 PageMainVoid,
-	'main/tag':			 	 PageMainTag,
-};
-
+	'main/date':			 PageMainDate,
+} as const;
 const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	_isMounted = false;
-	refChild: any = null;
+	refChild: React.RefObject<unknown> = createRef();
 	frame = 0;
 
 	render () {
@@ -100,7 +101,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		const wrap = (
 			<div id="page" className={`page ${this.getClass('page')}`}>
-				<Component ref={ref => this.refChild = ref} {...this.props} />
+				<Component ref={this.refChild} {...this.props} />
 			</div>
 		);
 
@@ -355,8 +356,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				return;
 			};
 
-			if (this.refChild && this.refChild.resize) {
-				this.refChild.resize();			
+			if (this.refChild.current && this.refChild.current.resize) {
+				this.refChild.current.resize();			
 			};
 
 			sidebar.resizePage(null, false);

@@ -581,3 +581,9 @@ export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 		messageId: response.getMessageid(),
 	};
 };
+
+export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response) => {
+	return {
+		listList: response.getListList(),
+	};
+};
