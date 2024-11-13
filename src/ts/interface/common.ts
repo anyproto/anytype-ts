@@ -284,3 +284,22 @@ export interface RouteParam {
 	onFadeIn?: () => void;
 	onRouteChange?: () => void;
 };
+
+export interface SearchSubscribeParam {
+	spaceId: string;
+	subId: string;
+	idField: string;
+	filters: I.Filter[];
+	sorts: I.Sort[];
+	keys: string[];
+	sources: string[];
+	collectionId: string;
+	afterId: string;
+	beforeId: string;
+	offset: number;
+	limit: number;
+	ignoreHidden: boolean;
+	ignoreDeleted: boolean;
+	withArchived: boolean;
+	noDeps: boolean;
+};

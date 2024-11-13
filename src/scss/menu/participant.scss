@@ -1,0 +1,16 @@
+@import "~scss/_mixins";
+
+.menus {
+	.menu.menuParticipant { width: 312px; }
+	.menu.menuParticipant {
+		.content { display: flex; flex-direction: column; align-items: center; padding: 24px; }
+		.iconObject { margin: 0px 0px 12px 0px; }
+		.name { @include text-header2; }
+
+		.label { color: var(--color-text-secondary); @include text-overflow-nw; max-width: 100%; margin: 2px 0px 0px 0px; }
+		.label:empty { display: none; }
+
+		.descr { @include clamp4; margin: 8px 0px 0px 0px; }
+		.descr:empty { display: none; }
+	}
+}
