@@ -243,6 +243,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const { attachments } = this.state;
 
+		keyboard.disableSelection(false);
+
 		Storage.setChat(rootId, {
 			text: this.getTextValue(),
 			marks: this.marks,

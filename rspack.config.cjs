@@ -4,6 +4,9 @@ const rspack = require('@rspack/core');
 const ReactRefreshRspackPlugin = require('@rspack/plugin-react-refresh');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
+const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
@@ -12,7 +15,7 @@ const { defineConfig } = require('@rspack/cli');
 
 module.exports = defineConfig((env, argv) => {
 	const port = process.env.SERVER_PORT;
-	const isDev = typeof env.production === 'undefined';
+	const isDev = typeof argv.mode.production === 'undefined';
 
 	return {
 		experiments: {
@@ -59,6 +62,10 @@ module.exports = defineConfig((env, argv) => {
 
 		devServer: {
 			hot: true,
+			static: ['dist'],
+			watchFiles: {
+				paths: ['src'],
+				options: {
 			static: ['dist'],
 			watchFiles: {
 				paths: ['src'],
@@ -171,6 +178,10 @@ module.exports = defineConfig((env, argv) => {
 				reportDir: path.resolve(__dirname, '.rsdoctor'),
 			}),
 
+			new ForkTsCheckerWebpackPlugin(),
+			!prod && new ReactRefreshPlugin(),
+			process.env.RSDOCTOR && new RsdoctorRspackPlugin({}),
+			
 			new ForkTsCheckerWebpackPlugin(),
 
 			// new rspack.IgnorePlugin({

@@ -231,6 +231,7 @@
 	"electronMenuDebugTree": "Tree diagnostics",
 	"electronMenuDebugStat": "Statistics",
 	"electronMenuDebugReconcile": "Reconcile",
+	"electronMenuDebugNet": "Network",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -1519,6 +1520,7 @@
 	"menuHelpTutorial": "Help and Tutorials",
 	"menuHelpContact": "Contact Us",
 	"menuHelpTech": "Technical Information",
+	"menuHelpNet": "Network Information",
 	"menuHelpTerms": "Terms of Use",
 	"menuHelpPrivacy": "Privacy Policy",
 	"menuHelpGallery": "ANY Experience Gallery",
@@ -1920,6 +1922,7 @@
 	"libKeyboardAnalyticsId": "Analytics ID",
 	"libKeyboardDeviceId": "Device ID",
 	"libKeyboardTechInformation": "Tech information",
+	"libKeyboardNetInformation": "Network information",
 
 	"libRelationSmall": "Small",
 	"libRelationMedium": "Medium",

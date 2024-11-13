@@ -42,15 +42,7 @@ class Notification implements I.Notification {
 
 		switch (this.type) {
 			case I.NotificationType.Import: {
-				const codes = [
-					J.Error.Code.NO_OBJECTS_TO_IMPORT,
-					J.Error.Code.IMPORT_IS_CANCELED,
-					J.Error.Code.LIMIT_OF_ROWS_OR_RELATIONS_EXCEEDED,
-					J.Error.Code.FILE_LOAD_ERROR,
-					J.Error.Code.INSUFFICIENT_PERMISSIONS,
-				];
-
-				if (codes.includes(errorCode)) {
+				if (Object.values(J.Error.Code.Import).includes(errorCode)) {
 					this.title = translate('commonError');
 					this.text = translate(`notificationImportErrorText${errorCode}`);
 				};

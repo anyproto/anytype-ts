@@ -11,9 +11,8 @@
         "allowJs": true,
         "lib": [ "es5", "dom" ],
         "isolatedModules": true,
-        "incremental": false,
+        "incremental": true,
         "types": ["node", "@rspack/core/module"],
-
 		"rootDirs": ["./src/"],
 		"baseUrl": "./",
 		"paths": {
@@ -36,9 +35,6 @@
 			"dist/*": ["./dist/*"]
 		},
 	},
-	
-	"isolatedModules": true,
-	"incremental": true,
 	"types": ["node", "@rspack/core/module"],
 
 	"include": ["src/**/*", "*.cjs", "*.js"],

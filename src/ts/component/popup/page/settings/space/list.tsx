@@ -62,7 +62,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	getItems () {
 		const items = S.Record.getRecords(J.Constant.subId.space);
 
-		return items.filter(it => !it.isAccountDeleted && it.isLocalOk).map(it => {
+		return items.filter(it => it.isAccountActive).map(it => {
 			it.participant = U.Space.getMyParticipant(it.targetSpaceId) || {};
 			return it;
 		}).sort((c1, c2) => {

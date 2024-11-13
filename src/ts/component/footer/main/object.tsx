@@ -11,6 +11,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<I.F
 		const { show } = S.Progress;
 		const current = S.Progress.getCurrent();
 		const total = S.Progress.getTotal();
+		const percent = Math.round((current / total) * 100);
 
 		return (
 			<div className="buttons">
@@ -20,14 +21,14 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<I.F
 						className="iconWrap"
 						onClick={() => S.Progress.showSet(!show)}
 					>
-						<div className="inner">{current}</div>
+						<div className="inner">{percent}</div>
 						<PieChart
-							totalValue={total}
+							totalValue={100}
 							startAngle={270}
 							lengthAngle={-360}
 							data={[ 
-								{ title: '', value: 100 - current, color: '#ebebeb' },
-								{ title: '', value: current, color: '#ffd15b' },
+								{ title: '', value: 100 - percent, color: '#ebebeb' },
+								{ title: '', value: percent, color: '#ffd15b' },
 							]}
 						/>
 					</div>
