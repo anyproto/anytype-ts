@@ -1,9 +1,9 @@
 import { I } from 'Lib';
 
 export enum CardSize {
-	Small	 = 0,
-	Medium	 = 1,
-	Large	 = 2,
+	Small			 = 0,
+	Medium			 = 1,
+	Large			 = 2,
 };
 
 export enum DateFormat {
@@ -15,46 +15,35 @@ export enum DateFormat {
 };
 
 export enum TimeFormat {
-	H12		 = 0,
-	H24		 = 1,
+	H12				 = 0,
+	H24				 = 1,
 };
 
 export enum ViewType {
-	Grid	 = 0,
-	List	 = 1,
-	Gallery	 = 2,
-	Board	 = 3,
-	Calendar = 4,
-	Graph	 = 5,
-};
-
-export enum SortId {
-	All			 = 'all',
-	Orphan		 = 'orphan',
-	Updated		 = 'updated',
-	Created		 = 'created',
-	Name		 = 'name',
-	LastUsed	 = 'lastUsed',
-	List		 = 'list',
-	Compact		 = 'compact',
+	Grid			 = 0,
+	List			 = 1,
+	Gallery			 = 2,
+	Board			 = 3,
+	Calendar		 = 4,
+	Graph			 = 5,
 };
 
 export enum SortType { 
-	Asc		 = 0, 
-	Desc	 = 1,
-	Custom	 = 2,
+	Asc				 = 0, 
+	Desc			 = 1,
+	Custom			 = 2,
 };
 
 export enum EmptyType {
-	None	 = 0,
-	Start	 = 1,
-	End		 = 2,
+	None			 = 0,
+	Start			 = 1,
+	End				 = 2,
 };
 
 export enum FilterOperator { 
-	None	 = 0,
-	And		 = 1,
-	Or		 = 2,
+	None			 = 0,
+	And				 = 1,
+	Or				 = 2,
 };
 
 export enum FilterCondition { 
@@ -90,6 +79,21 @@ export enum FilterQuickOption {
 	NextMonth		 = 9,
 	NumberOfDaysAgo	 = 10,
 	NumberOfDaysNow	 = 11,
+};
+
+export enum FormulaType {
+	Count				 = 0,
+	CountDistinct		 = 1,
+	CountEmpty			 = 2,
+	CountNotEmpty		 = 3,
+	PercentEmpty		 = 4,
+	PercentNotEmpty		 = 5,
+	MathSum				 = 6,
+	MathAverage			 = 7,
+	MathMedian			 = 8,
+	MathMin				 = 9,
+	MathMax				 = 10,
+	Range				 = 11,
 };
 
 export interface Sort {

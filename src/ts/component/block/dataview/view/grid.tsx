@@ -8,6 +8,7 @@ import { Icon, LoadMore } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
+import FootRow from './grid/foot/row';
 
 const PADDING = 46;
 
@@ -133,6 +134,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 									</div>
 								</div>
 							) : null}
+
+							<FootRow
+								{...this.props} 
+								getColumnWidths={this.getColumnWidths}
+							/>
 
 							{isInline && (limit + offset < total) ? (
 								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
