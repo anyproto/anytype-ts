@@ -90,7 +90,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		U.Object.getById(rootId, (object) => {
+		U.Object.getById(rootId, {}, (object) => {
 			if (!this._isMounted) {
 				return;
 			};

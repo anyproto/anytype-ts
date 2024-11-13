@@ -171,6 +171,7 @@
 	"commonMainChat": "Chat",
 	"commonMenu": "Menu",
 	"commonSignUp": "Sign Up",
+	"commonNotFound": "Not found",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",

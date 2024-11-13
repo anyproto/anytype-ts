@@ -19,10 +19,10 @@ type State = {
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 
 	node: HTMLDivElement = null;
-	refFrame: Frame = null;
-	refPhrase: Phrase = null;
-	refNext: Button = null;
-	refName: Input = null;
+	refFrame: any = null;
+	refPhrase: any = null;
+	refNext: any = null;
+	refName: any = null;
 
 	state: State = {
 		stage: Stage.Vault,

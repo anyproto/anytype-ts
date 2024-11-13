@@ -321,7 +321,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		focus.clear(true);
 
 		if (backlink) {
-			U.Object.getById(backlink, item => this.setBacklink(item, 'Saved', () => setFilter()));
+			U.Object.getById(backlink, {}, item => this.setBacklink(item, 'Saved', () => setFilter()));
 		} else {
 			this.reload();
 		};
