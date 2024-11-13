@@ -1,12 +1,19 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Select } from 'Component';
+import { Icon, Select, Loader } from 'Component';
 import { I, C, S, U, J, Mark, focus, keyboard, Storage, translate, analytics } from 'Lib';
+
+interface State {
+	isLoading: boolean;
+};
 
 const MenuBlockContext = observer(class MenuBlockContext extends React.Component<I.Menu> {
 	
 	menuContext = null;
+	state = {
+		isLoading: false,
+	};
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -17,6 +24,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 	render () {
 		const { config } = S.Common;
 		const { param, getId } = this.props;
+		const { isLoading } = this.state;
 		const { data } = param;
 		const { range } = focus.state;
 		const { blockId, rootId, marks, isInsideTable, onAi } = data;
@@ -68,6 +76,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		return (
 			<div className="flex">
+				{isLoading ? <Loader /> : ''}
+
 				{canTurn ? (
 					<div className="section">
 						<Icon 
@@ -486,6 +496,10 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				S.Menu.open(menuId, menuParam);
 			});
 		};
+	};
+
+	setLoading (v: boolean) {
+		this.setState({ isLoading: v });
 	};
 	
 });

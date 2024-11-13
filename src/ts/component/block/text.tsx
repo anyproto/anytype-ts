@@ -1150,6 +1150,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			this.setText(this.marks, true, () => {
+				let menuContext = null;
+
 				S.Menu.open('blockContext', {
 					element: el,
 					recalcRect: () => { 
@@ -1161,9 +1163,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Center,
 					passThrough: true,
-					onClose: () => {
-						keyboard.disableContextClose(false);
-					},
+					onOpen: context => menuContext = context,
+					onClose: () => keyboard.disableContextClose(false),
 					data: {
 						blockId: block.id,
 						blockIds: [ block.id ],
@@ -1173,10 +1174,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						isInsideTable,
 						onChange,
 						onAi: (id: I.AIMode) => {
+							if (!id) {
+								return;
+							};
+
 							const value = this.getValue();
 
+							menuContext?.ref?.setLoading(true);
 							C.AIWritingTools(id, value.substring(currentFrom, currentTo), (message: any) => {
-								console.log('TEXT', message.text);
+								const newBlock: any = { 
+									...block,
+									content: {
+										...block.content,
+										text: message.text,
+									},
+								};
+
+								C.BlockCreate(rootId, block.id, I.BlockPosition.Bottom, newBlock, () => {
+									menuContext?.close();
+								});
 							});
 						}
 					},
@@ -1187,7 +1203,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
 						pageContainer.off('mousedown.context');
-						S.Menu.close('blockContext'); 
+						S.Menu.close('blockContext');
 					});
 				}, S.Menu.getTimeout());
 			});
