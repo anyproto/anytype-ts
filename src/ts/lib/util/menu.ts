@@ -1057,8 +1057,6 @@ class UtilMenu {
 	};
 
 	participant (object: any, param: Partial<I.MenuParam>) {
-		console.log('[UtilMenu].participant', object, param);
-
 		S.Menu.open('participant', {
 			className: 'fixed',
 			classNameWrap: 'fromPopup',
