@@ -1187,6 +1187,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 									content: {
 										...block.content,
 										text: message.text,
+										marks: [],
 									},
 								};
 
