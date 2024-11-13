@@ -26,6 +26,7 @@ class UtilObject {
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 			case I.ObjectLayout.Space:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
+			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
 		return r;
 	};
@@ -409,7 +410,6 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
-			I.ObjectLayout.Date,
 		];
 	};
 

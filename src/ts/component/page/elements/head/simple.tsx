@@ -45,6 +45,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
+		const isDate = U.Object.isDateLayout(object.layout);
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
 		const placeholder = {
@@ -112,6 +113,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 				button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 			};
+		};
+
+		if (isDate) {
+			button = (
+				<div id="head-calendar-button" onClick={() => this.onCalendar()}>123</div>
+			);
 		};
 
 		if (!canWrite) {
@@ -283,6 +290,26 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		return sources.includes(rootId);
+	};
+
+	onCalendar () {
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId);
+
+		S.Menu.open('dataviewCalendar', {
+			element: `#head-calendar-button`,
+			horizontal: I.MenuDirection.Center,
+			data: { 
+				value: object.timestamp, 
+				canEdit: true,
+				onChange: (value: number) => {
+					console.log('TIMESTAMP', value);
+
+					// TODO: Get date id from timestamp and route to new date object
+
+				},
+			},
+		});
 	};
 
 });
