@@ -16,13 +16,11 @@ module.exports = defineConfig((env, argv) => {
 
 	return {
 		experiments: {
-			rspackFuture: {
-				disableTransformByDefault: true,
-			},
+			incremental: false,
 		},
 
 		mode: isDev ? 'development' : 'production',
-		devtool: 'eval-source-map',
+		devtool: 'source-map',
 
 		optimization: {
 			moduleIds: 'deterministic',

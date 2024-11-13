@@ -582,10 +582,10 @@ export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 	};
 };
 
-type RelationWithCounter = Rpc.Relation.ListWithValue.Response.ResponseItem.AsObject;
-export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response): {relationList: RelationWithCounter[]} => {
+export type RelationWithCounter = Rpc.Relation.ListWithValue.Response.ResponseItem.AsObject;
+export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response): {relations: RelationWithCounter[]} => {
 	const { listList } = response.toObject();
 	return {
-		relationList: listList as RelationWithCounter[],
+		relations: listList as RelationWithCounter[],
 	};
 };
