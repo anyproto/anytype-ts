@@ -110,14 +110,14 @@ const Input = forwardRef<InputRef, Props>((props, ref) => {
 				keyboard.disableSelection(false);
 			};
 		};
-	}, [maskOptions, focusOnMount]);
+	}, [ maskOptions, focusOnMount ]);
 
 	useImperativeHandle(ref, () => ({
 		focus: () => inputRef.current?.focus({ preventScroll: true }),
 		blur: () => inputRef.current?.blur(),
 		select: () => inputRef.current?.select(),
-		setValue: (v: string) => setValue(v),
-		getValue: () => value,
+		setValue: (v: string) => setValue(String(v || '')),
+		getValue: () => String(value || ''),
 		setType: (v: string) => setInputType(v),
 		setError: (hasError: boolean) => {
 			const node = $(inputRef.current);
