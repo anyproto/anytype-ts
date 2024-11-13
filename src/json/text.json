@@ -1856,7 +1856,10 @@
 	"emailCollectionStep1Title": "Just a moment",
 	"emailCollectionStep1Description": "Enter the code we’ve sent you to your email",
 	"emailCollectionStep2Title": "You’re Subscribed!",
-	"emailCollectionStep2Description": "You are now set to receive the latest updates and perks. Enjoy exploring!",
+
+	"emailCollectionStep2News": "You are now set to receive the latest updates. Enjoy exploring!",
+	"emailCollectionStep2Tips": "You are now set to receive new insights. Enjoy exploring!",
+	"emailCollectionStep2NewsAndTips": "You are now set to receive the latest updates and perks. Enjoy exploring!",
 
 	"emailCollectionCheckboxTipsLabel": "Insider tips & tutorials on using Anytype",
 	"emailCollectionCheckboxNewsLabel": "Product updates & company news",

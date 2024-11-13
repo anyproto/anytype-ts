@@ -50,9 +50,11 @@ class EmailCollectionForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { status, statusText, countdown } = this.state;
+		const { status, statusText, countdown, subscribeNews, subscribeTips } = this.state;
+
 
 		let content = null;
+		let descriptionSuffix = 'Description'
 
 		switch (this.step) {
 			case 0: {
@@ -103,6 +105,14 @@ class EmailCollectionForm extends React.Component<Props, State> {
 			};
 
 			case 2: {
+				descriptionSuffix = 'News';
+				if (subscribeTips) {
+					descriptionSuffix = 'Tips';
+				};
+				if (subscribeTips && subscribeNews) {
+					descriptionSuffix = 'NewsAndTips';
+				};
+
 				content = (
 					<div className="step step2">
 						<Icon />
@@ -119,7 +129,7 @@ class EmailCollectionForm extends React.Component<Props, State> {
 		return (
 			<div className="emailCollectionForm">
 				<Label className="category" text={translate(`emailCollectionStep${this.step}Title`)} />
-				<Label className="descr" text={translate(`emailCollectionStep${this.step}Description`)} />
+				<Label className="descr" text={translate(`emailCollectionStep${this.step}${descriptionSuffix}`)} />
 
 				{content}
 			</div>
