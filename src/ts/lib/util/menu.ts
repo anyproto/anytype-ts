@@ -1062,7 +1062,12 @@ class UtilMenu {
 		S.Menu.open('participant', {
 			className: 'fixed',
 			classNameWrap: 'fromPopup',
-			rect: { x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 },
+			rect: { 
+				x: keyboard.mouse.page.x, 
+				y: keyboard.mouse.page.y + 4, 
+				width: 0, 
+				height: 0,
+			},
 			...param,
 			data: {
 				object,
