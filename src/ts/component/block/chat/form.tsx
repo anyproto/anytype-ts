@@ -838,7 +838,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 
 			case I.MarkType.Object: {
-				U.Object.getById(param, (object: any) => {
+				U.Object.getById(param, {}, (object: any) => {
 					object.isTmp = true;
 					object.timestamp = U.Date.now();
 

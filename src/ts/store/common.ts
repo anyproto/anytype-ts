@@ -315,7 +315,7 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			U.Object.getByIds(ids, (objects: any[]) => {
+			U.Object.getByIds(ids, {}, (objects: any[]) => {
 				const map = U.Common.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {
