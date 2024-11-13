@@ -24,6 +24,25 @@ export default {
 		},
 	}),
 
+	emailCollection: () => ({
+		items: [
+			{
+				noButton: true
+			},
+		],
+		param: {
+			element: '#page.isFull #footer #button-help',
+			classNameWrap: 'fixed',
+			className: 'invertedColor',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
+			noArrow: true,
+			noClose: true,
+			passThrough: true,
+			offsetY: -4,
+		},
+	}),
+
 	objectCreationStart: () => ({
 		category: translate('onboardingObjectCreationStart'),
 		items: [
