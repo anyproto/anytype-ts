@@ -14,6 +14,7 @@ interface State {
 	email: string,
 	subscribeNews: boolean,
 	subscribeTips: boolean,
+	pinDisabled: boolean,
 };
 
 class EmailCollectionForm extends React.Component<Props, State> {
@@ -25,6 +26,7 @@ class EmailCollectionForm extends React.Component<Props, State> {
 		email: '',
 		subscribeNews: false,
 		subscribeTips: false,
+		pinDisabled: false,
 	};
 
 	step = 0;
@@ -50,8 +52,7 @@ class EmailCollectionForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { status, statusText, countdown, subscribeNews, subscribeTips } = this.state;
-
+		const { status, statusText, countdown, subscribeNews, subscribeTips, pinDisabled } = this.state;
 
 		let content = null;
 		let descriptionSuffix = 'Description'
@@ -61,10 +62,10 @@ class EmailCollectionForm extends React.Component<Props, State> {
 				content = (
 					<div className="step step0">
 						<form onSubmit={this.onSubmitEmail}>
-							<div className="check" onClick={() => this.onCheck(this.refCheckboxTips)}>
+							<div className="check" onClick={() => this.onCheck(this.refCheckboxTips, 'Tips')}>
 								<Checkbox ref={ref => this.refCheckboxTips = ref} value={false} /> {translate('emailCollectionCheckboxTipsLabel')}
 							</div>
-							<div className="check" onClick={() => this.onCheck(this.refCheckboxNews)}>
+							<div className="check" onClick={() => this.onCheck(this.refCheckboxNews, 'Updates')}>
 								<Checkbox ref={ref => this.refCheckboxNews = ref} value={false} /> {translate('emailCollectionCheckboxNewsLabel')}
 							</div>
 
@@ -91,6 +92,7 @@ class EmailCollectionForm extends React.Component<Props, State> {
 							pinLength={4}
 							isVisible={true}
 							onSuccess={this.onConfirmEmailCode}
+							disabled={pinDisabled}
 						/>
 
 						{status ? <div className={[ 'statusBar', status ].join(' ')}>{statusText}</div> : ''}
@@ -138,10 +140,29 @@ class EmailCollectionForm extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.refButton?.setDisabled(true);
+
+		analytics.event('EmailCollection', { route: 'OnboardingTooltip', step: 1 });
 	};
 
-	onCheck (ref) {
+	onCheck (ref, type) {
+		const val = ref.getValue();
 		ref.toggle();
+
+		if (!val) {
+			analytics.event('ClickEmailCollection', { route: 'OnboardingTooltip', step: 1, type });
+		};
+	};
+
+	setStep (step: number) {
+		if (this.step == step) {
+			return;
+		};
+
+		this.step = step;
+		this.props.onStepChange();
+		this.forceUpdate();
+
+		analytics.event('EmailCollection', { route: 'OnboardingTooltip', step: step + 1 });
 	};
 
 	setStatus (status: string, statusText: string) {
@@ -180,6 +201,8 @@ class EmailCollectionForm extends React.Component<Props, State> {
 			return;
 		};
 
+		analytics.event('ClickEmailCollection', { route: 'OnboardingTooltip', step: 1, type: 'SignUp' });
+
 		this.setState({
 			email: this.refEmail.getValue(),
 			subscribeNews: this.refCheckboxNews?.getValue(),
@@ -203,33 +226,36 @@ class EmailCollectionForm extends React.Component<Props, State> {
 				return;
 			};
 
-			this.step = 1;
+			this.setStep(1);
 			this.startCountdown(60);
-			this.forceUpdate();
-			this.props.onStepChange();
 		});
 	};
 
 	onConfirmEmailCode () {
 		const code = this.refCode.getValue();
 
+		this.setState({ pinDisabled: true });
+
 		C.MembershipVerifyEmailCode(code, (message) => {
 			if (message.error.code) {
 				this.setStatus('error', message.error.description);
 				this.refCode.reset();
+				this.setState({ pinDisabled: false });
 				return;
 			};
 
-			this.step = 2;
-			this.forceUpdate();
-			this.props.onStepChange();
+			this.setStep(2);
 		});
 	};
 
 	onResend (e: any) {
-		if (!this.state.countdown) {
-			this.verifyEmail(e);
+		if (this.state.countdown) {
+			return;
 		};
+
+		this.verifyEmail(e);
+
+		analytics.event('ClickEmailCollection', { route: 'OnboardingTooltip', step: 2, type: 'Resend' });
 	};
 
 	startCountdown (seconds) {
