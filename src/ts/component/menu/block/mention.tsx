@@ -191,6 +191,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const filter = this.getFilter();
 		const sections: any[] = [];
 		const length = this.items.length;
+		const check = this.items.find(it => U.Object.isDateLayout(it.layout));
 
 		if (length) {
 			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: this.items });
@@ -327,6 +328,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.mention, (message: any) => {
 				cb(message.details);
 			});
+		} else 
+		if (item.id == 'selectDate') {
+			// TODO: Open calendar menu, call command that converts timestamp to date object and call callback
 		} else {
 			cb(item);
 		};
