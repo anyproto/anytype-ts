@@ -104,6 +104,7 @@ class InputWithFile extends React.Component<Props, State> {
 							<React.Fragment>
 								<Input 
 									id="url" 
+									value=""
 									ref={ref => this.refUrl = ref}
 									placeholder={placeholder}
 									onPaste={e => this.onChangeUrl(e, true)} 

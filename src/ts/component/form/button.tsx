@@ -15,11 +15,11 @@ interface ButtonProps {
 	tooltip?: string;
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Center | I.MenuDirection.Bottom;
-	onClick?: (e: MouseEvent<HTMLDivElement | HTMLInputElement>) => void;
-	onMouseEnter?: (e: MouseEvent<HTMLDivElement | HTMLInputElement>) => void;
-	onMouseLeave?: (e: MouseEvent<HTMLDivElement | HTMLInputElement>) => void;
-	onMouseDown?: (e: MouseEvent<HTMLDivElement | HTMLInputElement>) => void;
 	dataset?: Record<string, string>;
+	onClick?: (e: MouseEvent) => void;
+	onMouseEnter?: (e: MouseEvent) => void;
+	onMouseLeave?: (e: MouseEvent) => void;
+	onMouseDown?: (e: MouseEvent) => void;
 };
 
 export interface ButtonRef {
@@ -56,7 +56,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		cn.push('isLoading');
 	};
 
-	const handleMouseEnter = (e: MouseEvent<HTMLDivElement | HTMLInputElement>) => {
+	const handleMouseEnter = (e: MouseEvent) => {
 		if (tooltip) {
 			Preview.tooltipShow({ text: tooltip, element: $(nodeRef.current), typeX: tooltipX, typeY: tooltipY });
 		};
@@ -66,7 +66,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		};
 	};
 
-	const handleMouseLeave = (e: MouseEvent<HTMLDivElement | HTMLInputElement>) => {
+	const handleMouseLeave = (e: MouseEvent) => {
 		Preview.tooltipHide(false);
 
 		if (onMouseLeave) { 
@@ -74,13 +74,13 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		};
 	};
 
-	const handleClick = (e: MouseEvent<HTMLDivElement | HTMLInputElement>) => {
+	const handleClick = (e: MouseEvent) => {
 		if (!$(nodeRef.current).hasClass('disabled') && onClick) {
 			onClick(e);
 		};
 	};
 
-	const handleMouseDown = (e: MouseEvent<HTMLDivElement | HTMLInputElement>) => {
+	const handleMouseDown = (e: MouseEvent) => {
 		if (!$(nodeRef.current).hasClass('disabled') && onMouseDown) {
 			onMouseDown(e);
 		};
