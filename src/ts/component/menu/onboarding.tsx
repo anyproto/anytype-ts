@@ -250,10 +250,19 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	onClose () {
 		const { param, close } = this.props;
-		const { data } = param;
-		const { key, current } = data;
+		const { data, onClose } = param;
+		const { key, current, isPopup } = data;
+		const section = this.getSection();
+
+
+		let menuParam = Onboarding.getParam(section, {}, isPopup);
 
 		close();
+
+		if (menuParam.onClose) {
+			menuParam.onClose();
+		};
+
 		analytics.event('ClickOnboardingTooltip', { type: 'close', id: key, step: (current + 1) });
 	};
 

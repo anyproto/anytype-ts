@@ -1,4 +1,4 @@
-import { I, U, translate, S } from 'Lib';
+import { I, U, translate, S, Onboarding } from 'Lib';
 
 export default {
 	mainGraph: () => ({
@@ -106,6 +106,9 @@ export default {
 				'.widget', 
 				'#containerWidget #list .buttons',
 			],
+			onClose: () => {
+				Onboarding.start('emailCollection', false);
+			},
 		},
 		items: [
 			{

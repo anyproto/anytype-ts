@@ -7,7 +7,8 @@
 
     .buttonWrapper { padding-top: 8px; }
     .buttonWrapper {
-        .button { width: 100%; }
+        .button { width: 100%; overflow: hidden; }
+        .loaderWrapper { border-radius: 0px !important; }
     }
 
     .step0 { padding-top: 16px; }
