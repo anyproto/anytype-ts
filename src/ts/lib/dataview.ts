@@ -546,6 +546,7 @@ class Dataview {
 	};
 
 	getFormulaResult (rootId: string, blockId: string, relationKey: string, type: I.FormulaType) {
+		const relation = S.Record.getRelationByKey(relationKey);
 		const subId = S.Record.getSubId(rootId, blockId);
 		const { total } = S.Record.getMeta(subId, '');
 
@@ -558,6 +559,21 @@ class Dataview {
 
 		if (needRecords) {
 			records = S.Record.getRecords(subId);
+		};
+
+		const min = () => {
+			let ret: any = Math.max(...records.map(it => Number(it[relationKey] || 0)));
+			if (relation.format == I.RelationType.Date) {
+				ret = ret ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, ret) : '';
+			};
+			return ret;
+		};
+		const max = () => {
+			let ret: any = Math.min(...records.map(it => Number(it[relationKey] || 0)))
+			if (relation.format == I.RelationType.Date) {
+				ret = ret ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, ret) : '';
+			};
+			return ret;
 		};
 
 		let ret = null;
@@ -588,12 +604,12 @@ class Dataview {
 			};
 
 			case I.FormulaType.PercentEmpty: {
-				ret = (records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100) + '%';
+				ret = U.Common.sprintf('%0.2f%', records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100);
 				break;
 			};
 
 			case I.FormulaType.PercentNotEmpty: {
-				ret = (records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100) + '%';
+				ret = U.Common.sprintf('%0.2f%', records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100);
 				break;
 			};
 
@@ -603,6 +619,7 @@ class Dataview {
 			};
 
 			case I.FormulaType.MathAverage: {
+				ret = U.Common.sprintf('%0.4f%', records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total);
 				break;
 			};
 
@@ -611,14 +628,17 @@ class Dataview {
 			};
 
 			case I.FormulaType.MathMin: {
+				ret = min();
 				break;
 			};
 
 			case I.FormulaType.MathMax: {
+				ret = max();
 				break;
 			};
 
 			case I.FormulaType.Range: {
+				ret = [ min(), max() ].join(' - ');
 				break;
 			};
 		};
