@@ -56,10 +56,10 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 	};
 
 	onMouseEnter (): void {
-		const { block } = this.props;
+		const { block, relationKey } = this.props;
 
 		if (!keyboard.isDragging) {
-			$(`#block-${block.id} .cell-key-${this.props.relationKey}`).addClass('cellKeyHover');
+			$(`#block-${block.id} .cell-key-${relationKey}`).addClass('cellKeyHover');
 		};
 	};
 

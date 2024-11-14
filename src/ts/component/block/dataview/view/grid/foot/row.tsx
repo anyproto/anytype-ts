@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, S } from 'Lib';
-import { Icon } from 'Component';
+import { I } from 'Lib';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
@@ -23,12 +22,13 @@ const FootRow = observer(class FootRow extends React.Component<Props> {
 				style={{ gridTemplateColumns: str }}
 			>
 				{relations.map((relation: any, i: number) => (
-					<div className="cell">
-
-					</div>
+					<Cell
+						{...this.props}
+						key={`grid-foot-${relation.relationKey}`}
+						relationKey={relation.relationKey}
+					/>
 				))}
-				<div className="cellFoot last">
-				</div>
+				<div className="cellFoot last" />
 			</div>
 		);
 	};

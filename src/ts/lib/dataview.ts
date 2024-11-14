@@ -545,6 +545,89 @@ class Dataview {
 		return ret;
 	};
 
+	getFormulaResult (rootId: string, blockId: string, relationKey: string, type: I.FormulaType) {
+		const subId = S.Record.getSubId(rootId, blockId);
+		const { total } = S.Record.getMeta(subId, '');
+
+		let records = [];
+		let needRecords = false;
+
+		if (![ I.FormulaType.None, I.FormulaType.Count ].includes(type)) {
+			needRecords = true;
+		};
+
+		if (needRecords) {
+			records = S.Record.getRecords(subId);
+		};
+
+		let ret = null;
+
+		switch (type) {
+			case I.FormulaType.None: {
+				break;
+			};
+
+			case I.FormulaType.Count: {
+				ret = total;
+				break;
+			};
+
+			case I.FormulaType.CountDistinct: {
+				ret = U.Common.arrayUniqueObjects(records, relationKey).length;
+				break;
+			};
+
+			case I.FormulaType.CountEmpty: {
+				ret = records.filter(it => Relation.isEmpty(it[relationKey])).length;
+				break;
+			};
+
+			case I.FormulaType.CountNotEmpty: {
+				ret = records.filter(it => !Relation.isEmpty(it[relationKey])).length;
+				break;
+			};
+
+			case I.FormulaType.PercentEmpty: {
+				ret = (records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100) + '%';
+				break;
+			};
+
+			case I.FormulaType.PercentNotEmpty: {
+				ret = (records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100) + '%';
+				break;
+			};
+
+			case I.FormulaType.MathSum: {
+				ret = records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0);
+				break;
+			};
+
+			case I.FormulaType.MathAverage: {
+				break;
+			};
+
+			case I.FormulaType.MathMedian: {
+				break;
+			};
+
+			case I.FormulaType.MathMin: {
+				break;
+			};
+
+			case I.FormulaType.MathMax: {
+				break;
+			};
+
+			case I.FormulaType.Range: {
+				break;
+			};
+		};
+
+		console.log('[Dataview.getFormulaResult]', ret);
+
+		return ret;
+	};
+
 };
 
 export default new Dataview();

@@ -82,18 +82,19 @@ export enum FilterQuickOption {
 };
 
 export enum FormulaType {
-	Count				 = 0,
-	CountDistinct		 = 1,
-	CountEmpty			 = 2,
-	CountNotEmpty		 = 3,
-	PercentEmpty		 = 4,
-	PercentNotEmpty		 = 5,
-	MathSum				 = 6,
-	MathAverage			 = 7,
-	MathMedian			 = 8,
-	MathMin				 = 9,
-	MathMax				 = 10,
-	Range				 = 11,
+	None				 = 0,
+	Count				 = 1,
+	CountDistinct		 = 2,
+	CountEmpty			 = 3,
+	CountNotEmpty		 = 4,
+	PercentEmpty		 = 5,
+	PercentNotEmpty		 = 6,
+	MathSum				 = 7,
+	MathAverage			 = 8,
+	MathMedian			 = 9,
+	MathMin				 = 10,
+	MathMax				 = 11,
+	Range				 = 12,
 };
 
 export interface Sort {

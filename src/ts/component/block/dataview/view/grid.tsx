@@ -124,6 +124,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 							{content}
 
+							<FootRow
+								{...this.props} 
+								getColumnWidths={this.getColumnWidths}
+							/>
+
 							{isAllowedObject ? (
 								<div className="row add">
 									<div className="cell add">
@@ -134,11 +139,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 									</div>
 								</div>
 							) : null}
-
-							<FootRow
-								{...this.props} 
-								getColumnWidths={this.getColumnWidths}
-							/>
 
 							{isInline && (limit + offset < total) ? (
 								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
