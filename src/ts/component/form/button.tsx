@@ -92,7 +92,8 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 			const node = $(nodeRef.current);
 			v ? node.addClass('disabled') : node.removeClass('disabled');
 		},
-		isDisabled: () => $(nodeRef.current).hasClass('disabled')
+		isDisabled: () => $(nodeRef.current).hasClass('disabled'),
+		isLoading: () => isLoading,
 	}));
 
 	switch (type) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I } from 'Lib';
-import { observer } from 'mobx-react';
 
 const MenuButton = observer(class MenuButton extends React.Component<I.Menu> {
 
