@@ -48,6 +48,7 @@ class Pin extends React.Component<Props, State> {
 		const props: any = {
 			maxLength: 1,
 			onKeyUp: this.onInputKeyUp,
+			readonly,
 		};
 
 		if (isNumeric) {
@@ -64,7 +65,6 @@ class Pin extends React.Component<Props, State> {
 						onFocus={() => this.onInputFocus(i)} 
 						onKeyDown={e => this.onInputKeyDown(e, i)} 
 						onChange={(_, value) => this.onInputChange(i, value)}
-						className={readonly ? 'isReadonly' : ''}
 						{...props}
 					/>
 				))}
