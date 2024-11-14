@@ -132,7 +132,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 									options={aiModes}
 									value={''}
 									initial="Ask AI"
-									onChange={onAi}
+									onChange={id => onAi(id, range)}
 								/>
 							</div>
 						) : ''}

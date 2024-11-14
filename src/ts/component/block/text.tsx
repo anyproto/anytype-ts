@@ -4,7 +4,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics, Action } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
@@ -35,6 +35,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	clicks = 0;
 	preventMenu = false;
 	frame = 0;
+	menuContext = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -55,6 +56,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.onCopy = this.onCopy.bind(this);
 		this.onSelectIcon = this.onSelectIcon.bind(this);
 		this.onUploadIcon = this.onUploadIcon.bind(this);
+		this.onAi = this.onAi.bind(this);
 	};
 
 	render () {
@@ -1150,8 +1152,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			this.setText(this.marks, true, () => {
-				let menuContext = null;
-
 				S.Menu.open('blockContext', {
 					element: el,
 					recalcRect: () => { 
@@ -1163,7 +1163,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Center,
 					passThrough: true,
-					onOpen: context => menuContext = context,
+					onOpen: context => this.menuContext = context,
 					onClose: () => keyboard.disableContextClose(false),
 					data: {
 						blockId: block.id,
@@ -1173,29 +1173,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						marks: this.marks,
 						isInsideTable,
 						onChange,
-						onAi: (id: I.AIMode) => {
-							if (!id) {
-								return;
-							};
-
-							const value = this.getValue();
-
-							menuContext?.ref?.setLoading(true);
-							C.AIWritingTools(id, value.substring(currentFrom, currentTo), (message: any) => {
-								const newBlock: any = { 
-									...block,
-									content: {
-										...block.content,
-										text: message.text,
-										marks: [],
-									},
-								};
-
-								C.BlockCreate(rootId, block.id, I.BlockPosition.Bottom, newBlock, () => {
-									menuContext?.close();
-								});
-							});
-						}
+						onAi: this.onAi
 					},
 				});
 
@@ -1248,6 +1226,41 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { rootId, block } = this.props;
 
 		C.BlockTextSetIcon(rootId, block.id, '', objectId);
+	};
+
+	onAi (id: I.AIMode, range: I.TextRange) {
+		if (!id) {
+			return;
+		};
+
+		const { rootId, block } = this.props;
+		const value = this.getValue();
+		const { from, to } = range;
+
+		this.menuContext?.ref?.setLoading(true);
+		C.AIWritingTools(id, value.substring(from, to), (message: any) => {
+			this.menuContext?.ref?.setLoading(false);
+
+			if (message.error.code) {
+				return;
+			};
+
+			const { text } = message;
+			const newBlock: any = { 
+				...block,
+				content: {
+					...block.content,
+					text: '',
+					marks: [],
+				},
+			};
+
+			C.BlockCreate(rootId, block.id, I.BlockPosition.Bottom, newBlock, (message: any) => {
+				C.BlockPaste(rootId, message.blockId, { from: 0, to: 0 }, [], false, { html: text }, '', () => {
+					this.menuContext?.close();
+				});
+			});
+		});
 	};
 	
 	placeholderCheck () {
