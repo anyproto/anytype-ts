@@ -138,7 +138,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 		this.refButton.setLoading(true);
 
-		C.MembershipGetVerificationEmail(this.refEmail.getValue(), this.refCheckbox?.getValue(), (message) => {
+		C.MembershipGetVerificationEmail(this.refEmail.getValue(), this.refCheckbox?.getValue(), false, false, (message) => {
 			this.refButton.setLoading(false);
 
 			if (message.error.code) {

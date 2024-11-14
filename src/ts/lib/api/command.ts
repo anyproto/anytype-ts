@@ -1998,11 +1998,13 @@ export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) =>
 	dispatcher.request(MembershipGetPortalLinkUrl.name, request, callBack);
 };
 
-export const MembershipGetVerificationEmail = (email: string, isSubscribed: boolean, callBack?: (message: any) => void) => {
+export const MembershipGetVerificationEmail = (email: string, subscribeNews: boolean, subscribeTips: boolean, isOnboardingList: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Membership.GetVerificationEmail.Request();
 	
 	request.setEmail(email);
-	request.setSubscribetonewsletter(isSubscribed);
+	request.setSubscribetonewsletter(subscribeNews);
+	request.setInsidertipsandtutorials(subscribeTips);
+	request.setIsonboardinglist(isOnboardingList);
 	
 	dispatcher.request(MembershipGetVerificationEmail.name, request, callBack);
 };
