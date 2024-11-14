@@ -334,7 +334,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const btn = this.refButton;
 		const space = U.Space.getSpaceview();
 
-		if (!btn || btn.state.isLoading) {
+		if (!btn || btn.isLoading()) {
 			return;
 		};
 
