@@ -55,7 +55,7 @@ class EmailCollectionForm extends React.Component<Props, State> {
 		const { status, statusText, countdown, subscribeNews, subscribeTips, pinDisabled } = this.state;
 
 		let content = null;
-		let descriptionSuffix = 'Description'
+		let descriptionSuffix = 'Description';
 
 		switch (this.step) {
 			case 0: {
@@ -92,7 +92,7 @@ class EmailCollectionForm extends React.Component<Props, State> {
 							pinLength={4}
 							isVisible={true}
 							onSuccess={this.onConfirmEmailCode}
-							disabled={pinDisabled}
+							readonly={pinDisabled}
 						/>
 
 						{status ? <div className={[ 'statusBar', status ].join(' ')}>{statusText}</div> : ''}

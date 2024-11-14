@@ -29,7 +29,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, position, close } = this.props;
 		const { data } = param;
 		const { key, current } = data;
 		const section = Onboarding.getSection(key);
@@ -90,7 +90,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 					/>
 				) : ''}
 				{withEmailForm ? (
-					<EmailCollectionForm onStepChange={this.props.position} onComplete={() => this.props.close()} />
+					<EmailCollectionForm onStepChange={position} onComplete={() => close()} />
 				) : ''}
 
 				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>

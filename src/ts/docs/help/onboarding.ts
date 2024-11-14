@@ -25,11 +25,7 @@ export default {
 	}),
 
 	emailCollection: () => ({
-		items: [
-			{
-				noButton: true
-			},
-		],
+		items: [ { noButton: true } ],
 		param: {
 			element: '#page.isFull #footer #button-help',
 			classNameWrap: 'fixed',
