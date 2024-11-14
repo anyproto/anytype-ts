@@ -74,6 +74,8 @@
 			background-color: var(--color-shape-highlight-light);
 		}
 
+		.cellFoot.cellKeyHover::after, .cellFoot.hover::after { height: calc(100% - 1px); }
+
 		.cellHead.last::after, .cellHead.hover::after { background: none; }
 		.cellHead.last:hover, .cellHead.last.hover {
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
