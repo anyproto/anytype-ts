@@ -562,14 +562,14 @@ class Dataview {
 		};
 
 		const min = () => {
-			let ret: any = Math.max(...records.map(it => Number(it[relationKey] || 0)));
+			let ret: any = Math.min(...records.map(it => Number(it[relationKey] || 0)));
 			if (relation.format == I.RelationType.Date) {
 				ret = ret ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, ret) : '';
 			};
 			return ret;
 		};
 		const max = () => {
-			let ret: any = Math.min(...records.map(it => Number(it[relationKey] || 0)))
+			let ret: any = Math.max(...records.map(it => Number(it[relationKey] || 0)))
 			if (relation.format == I.RelationType.Date) {
 				ret = ret ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, ret) : '';
 			};

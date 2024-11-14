@@ -1060,9 +1060,10 @@ class UtilMenu {
 		S.Menu.open('participant', {
 			className: 'fixed',
 			classNameWrap: 'fromPopup',
+			horizontal: I.MenuDirection.Center,
 			rect: { 
 				x: keyboard.mouse.page.x, 
-				y: keyboard.mouse.page.y + 4, 
+				y: keyboard.mouse.page.y + 10, 
 				width: 0, 
 				height: 0,
 			},
