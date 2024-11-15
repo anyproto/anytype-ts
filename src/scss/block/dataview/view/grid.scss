@@ -55,6 +55,7 @@
 		.cellFoot {
 			.cellContent { height: 46px !important; }
 			.select { border: 0px; padding-left: 0px; padding-top: 0px; padding-bottom: 0px; }
+			.select:hover { background: none; }
 		}
 
 		.cellHead.isDragging { border: 0px; height: 38px; }
