@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select } from 'Component';
-import { I, S, C, keyboard, Relation, Dataview, translate } from 'Lib';
+import { I, S, C, J, keyboard, Relation, Dataview, translate } from 'Lib';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
@@ -15,6 +15,7 @@ interface State {
 
 const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
+	node = null;
 	state = {
 		isEditing: false,
 		result: null,
@@ -23,6 +24,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	constructor (props: Props) {
 		super(props);
 
+		this.onChange = this.onChange.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
@@ -53,6 +55,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 		return (
 			<div 
+				ref={ref => this.node = ref}
 				id={Relation.cellId('foot', relationKey, '')} 
 				className={cn.join(' ')}
 				onClick={() => this.setEditing(true)}
@@ -66,9 +69,15 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 								id={`grid-foot-select-${relationKey}-${block.id}`} 
 								value={viewRelation.formulaType} 
 								options={options}
-								onChange={id => this.onChange(id)}
+								onChange={this.onChange}
 								initial={translate('commonCalculate')}
 								arrowClassName="light"
+								menuParam={{
+									onOpen: () => {
+										window.setTimeout(() => $(`.cell-key-${relationKey}`).addClass('cellKeyHover'), 0);
+									},
+									onClose: () => $(`.cellKeyHover`).removeClass('cellKeyHover'),
+								}}
 							/>
 						) : result}
 					</div>

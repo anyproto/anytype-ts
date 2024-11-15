@@ -109,7 +109,7 @@ class Relation {
 		return ret;
 	};
 
-	public formulaByType (type: I.RelationType): { id: I.FormulaType, name: string}[] {
+	public formulaByType (type: I.RelationType): { id: string, name: string}[] {
 		const common = [
 			{ id: I.FormulaType.Count, name: translate('formulaCount') },
 			{ id: I.FormulaType.CountDistinct, name: translate('formulaDistinct') },
@@ -154,7 +154,7 @@ class Relation {
 
 		};
 
-		return ret;
+		return ret.map(it => ({ ...it, id: String(it.id)}));
 	};
 
 	public filterConditionsDictionary () {
