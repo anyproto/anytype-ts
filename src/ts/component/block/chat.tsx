@@ -81,7 +81,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onThread={this.onThread}
 							onContextMenu={e => this.onContextMenu(e, item)}
 							onMore={e => this.onContextMenu(e, item, true)}
-							onReply={e => this.onReply(e, item)}
+							onReplyEdit={e => this.onReplyEdit(e, item)}
+							onReplyClick={e => this.onReplyClick(e, item)}
 							getReplyContent={this.getReplyContent}
 						/>
 					))}
@@ -533,8 +534,28 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
-	onReply (e: React.MouseEvent, message: any) {
+	onReplyEdit (e: React.MouseEvent, message: any) {
 		this.refForm.onReply(message);
+	};
+
+	onReplyClick (e: React.MouseEvent, message: any) {
+		if (!S.Common.config.experimental) {
+			return;
+		};
+
+		const rootId = this.getRootId();
+		const reply = S.Chat.getReply(rootId, message.replyToMessageId);
+		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
+
+		let messages = [];
+
+		C.ChatGetMessages(rootId, reply.orderId, limit, (message: any) => {
+			if (!message.error.code && message.messages.length) {
+				messages = messages.concat(message.messages);
+			};
+
+			S.Chat.set(rootId, messages);
+		});
 	};
 
 	getReplyContent (message: any): any {
