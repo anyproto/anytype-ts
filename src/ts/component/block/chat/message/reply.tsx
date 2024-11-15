@@ -9,6 +9,7 @@ const ChatMessageReply = observer(class ChatMessageReply extends React.Component
 		const { space } = S.Common;
 		const { rootId, id, getReplyContent, onReplyClick } = this.props;
 		const message = S.Chat.getReply(rootId, id);
+		const cn = [ 'reply' ];
 
 		if (!message) {
 			return null;
@@ -28,8 +29,12 @@ const ChatMessageReply = observer(class ChatMessageReply extends React.Component
 			icon = <Icon className="isMultiple" />;
 		};
 
+		if (U.Common.checkRtl(text)) {
+			cn.push('isRtl');
+		};
+
 		return (
-			<div className="reply" onClick={onReplyClick}>
+			<div className={cn.join(' ')} onClick={onReplyClick}>
 				{icon}
 				<div className="textWrapper">
 					<ObjectName object={author} />
