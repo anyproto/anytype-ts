@@ -97,6 +97,7 @@
 			.row { white-space: nowrap; box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
 			.row:hover { background-color: var(--color-shape-highlight-light); }
+			.row.add { margin-top: -2px; }
 
 			.row > .selectionTarget,
 			.row > .dropTarget > .selectionTarget { display: grid; }
