@@ -30,7 +30,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		};
 
 		const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(relation.format) ];
+		const cn = [ 'cellHead', `cell-key-${relationKey}`, Relation.className(relation.format) ];
 
 		if (allowed) {
 			cn.push('canDrag');

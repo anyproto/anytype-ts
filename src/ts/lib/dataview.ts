@@ -545,7 +545,10 @@ class Dataview {
 		return ret;
 	};
 
-	getFormulaResult (rootId: string, blockId: string, relationKey: string, type: I.FormulaType) {
+	getFormulaResult (rootId: string, blockId: string, relationKey: string, viewRelation: I.ViewRelation): any {
+		console.log(viewRelation);
+
+		const { formulaType, includeTime, timeFormat, dateFormat } = viewRelation;
 		const relation = S.Record.getRelationByKey(relationKey);
 		const subId = S.Record.getSubId(rootId, blockId);
 		const { total } = S.Record.getMeta(subId, '');
@@ -553,7 +556,7 @@ class Dataview {
 		let records = [];
 		let needRecords = false;
 
-		if (![ I.FormulaType.None, I.FormulaType.Count ].includes(type)) {
+		if (![ I.FormulaType.None, I.FormulaType.Count ].includes(formulaType)) {
 			needRecords = true;
 		};
 
@@ -561,24 +564,31 @@ class Dataview {
 			records = S.Record.getRecords(subId);
 		};
 
+		const date = (t: number) => {
+			const date = U.Date.dateWithFormat(dateFormat, t);
+			const time = U.Date.timeWithFormat(timeFormat, t);
+
+			return includeTime ? [ date, time ].join(' ') : date;
+		};
+
 		const min = () => {
 			let ret: any = Math.min(...records.map(it => Number(it[relationKey] || 0)));
 			if (relation.format == I.RelationType.Date) {
-				ret = ret ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, ret) : '';
+				ret = ret ? date(ret) : '';
 			};
 			return ret;
 		};
 		const max = () => {
-			let ret: any = Math.max(...records.map(it => Number(it[relationKey] || 0)))
+			let ret: any = Math.max(...records.map(it => Number(it[relationKey] || 0)));
 			if (relation.format == I.RelationType.Date) {
-				ret = ret ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, ret) : '';
+				ret = ret ? date(ret) : '';
 			};
 			return ret;
 		};
 
 		let ret = null;
 
-		switch (type) {
+		switch (formulaType) {
 			case I.FormulaType.None: {
 				break;
 			};

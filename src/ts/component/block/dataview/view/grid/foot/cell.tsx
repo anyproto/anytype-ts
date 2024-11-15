@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select } from 'Component';
-import { I, S, keyboard, Relation, Dataview } from 'Lib';
+import { I, S, C, keyboard, Relation, Dataview } from 'Lib';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
@@ -36,7 +36,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			return null;
 		};
 
-		const cn = [ 'cellFoot', `cell-key-${this.props.relationKey}`, Relation.className(relation.format) ];
+		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
 		const options = Relation.formulaByType(relation.format);
 
 		return (
@@ -64,6 +64,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	componentDidMount (): void {
+		this.calculate();
 	};
 
 	componentDidUpdate (): void {
@@ -73,11 +74,35 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		this.setState({ isEditing });
 	};
 
-	onChange (id: string): void {
-		const { rootId, block, relationKey } = this.props;
-		const result = Dataview.getFormulaResult(rootId, block.id, relationKey, Number(id) || 0);
+	calculate () {
+		const { rootId, block, relationKey, getView } = this.props;
+		const view = getView();
+		const viewRelation = view.getRelation(relationKey);
+		const result = Dataview.getFormulaResult(rootId, block.id, relationKey, viewRelation);
 
-		this.setState({ isEditing: false, result });
+		this.setState({ result });
+	};
+
+	onChange (id: string): void {
+		const { rootId, block, relationKey, getView } = this.props;
+		const view = getView();
+		const relations = view.getRelations();
+		const idx = relations.findIndex(it => it.relationKey == relationKey);
+
+		console.log(view);
+
+		/*
+		
+		const item = view.getRelation(relationKey);
+
+		item.formulaType = Number(id) || I.FormulaType.None;
+
+		console.log(JSON.stringify(view, null, 3));
+
+		S.Record.viewUpdate(rootId, view.id, view);
+		//C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, item.relationKey, { ...item, formulaType: item.formulaType });
+		this.setState({ isEditing: false });
+		*/
 	};
 
 	onMouseEnter (): void {

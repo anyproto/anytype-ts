@@ -124,6 +124,7 @@ export interface ViewRelation {
 	includeTime?: boolean;
 	dateFormat?: I.DateFormat;
 	timeFormat?: I.TimeFormat;
+	formulaType?: I.FormulaType;
 };
 
 export interface ViewComponent {
@@ -202,6 +203,7 @@ export interface View {
 	defaultTemplateId?: string;
 	defaultTypeId?: string;
 	getVisibleRelations?: () => I.ViewRelation[];
+	getRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
 	isGrid?(): boolean;
 	isList?(): boolean;
