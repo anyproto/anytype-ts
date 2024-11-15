@@ -50,6 +50,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onBlurInput = this.onBlurInput.bind(this);
 		this.onKeyUpInput = this.onKeyUpInput.bind(this);
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
+		this.onInput = this.onInput.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onMention = this.onMention.bind(this);
 		this.onChatButtonSelect = this.onChatButtonSelect.bind(this);
@@ -155,6 +156,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						onBlur={this.onBlurInput}
 						onKeyUp={this.onKeyUpInput} 
 						onKeyDown={this.onKeyDownInput}
+						onInput={this.onInput}
 						onPaste={this.onPaste}
 						onMouseDown={this.onMouseDown}
 						onMouseUp={this.onMouseUp}
@@ -438,6 +440,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.removeBookmarks();
 	};
 
+	onInput () {
+		const value = this.getTextValue();
+		const checkRtl = U.Common.checkRtl(value);
+
+		$(this.refEditable?.node).toggleClass('isRtl', checkRtl);
+	};
+
 	onPaste (e: any) {
 		e.preventDefault();
 
@@ -484,6 +493,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		if (list.length) {
 			this.addAttachments(list);
 		};
+
+		this.onInput();
 	};
 
 	canDrop (e: any): boolean {
