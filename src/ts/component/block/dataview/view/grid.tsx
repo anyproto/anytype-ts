@@ -30,6 +30,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
+		const { config } = S.Common;
 		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
@@ -124,10 +125,12 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 							{content}
 
-							<FootRow
-								{...this.props} 
-								getColumnWidths={this.getColumnWidths}
-							/>
+							{config.experimental ? (
+								<FootRow
+									{...this.props} 
+									getColumnWidths={this.getColumnWidths}
+								/>
+							) : ''}
 
 							{isAllowedObject ? (
 								<div className="row add">
