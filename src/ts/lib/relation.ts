@@ -109,6 +109,54 @@ class Relation {
 		return ret;
 	};
 
+	public formulaByType (type: I.RelationType): { id: string, name: string}[] {
+		const common = [
+			{ id: I.FormulaType.Count, name: translate('formulaCount') },
+			{ id: I.FormulaType.CountDistinct, name: translate('formulaDistinct') },
+			{ id: I.FormulaType.CountEmpty, name: translate('formulaEmpty') },
+			{ id: I.FormulaType.CountNotEmpty, name: translate('formulaNotEmpty') },
+			{ id: I.FormulaType.PercentEmpty, name: translate('formulaPercentEmpty') },
+			{ id: I.FormulaType.PercentNotEmpty, name: translate('formulaPercentNotEmpty') },
+		];
+
+		let ret = [
+			{ id: I.FormulaType.None, name: translate('formulaNone') },
+		];
+
+		switch (type) {
+			case I.RelationType.Date: {
+				ret = ret.concat([
+					...common,
+					{ id: I.FormulaType.MathMin, name: translate('formulaMin') },
+					{ id: I.FormulaType.MathMax, name: translate('formulaMax') },
+					{ id: I.FormulaType.Range, name: translate('formulaRange') },
+				]);
+				break;
+			};
+
+			case I.RelationType.Number: {
+				ret = ret.concat([
+					...common,
+					{ id: I.FormulaType.MathSum, name: translate('formulaSum') },
+					{ id: I.FormulaType.MathAverage, name: translate('formulaAverage') },
+					{ id: I.FormulaType.MathMedian, name: translate('formulaMedian') },
+					{ id: I.FormulaType.MathMin, name: translate('formulaMin') },
+					{ id: I.FormulaType.MathMax, name: translate('formulaMax') },
+					{ id: I.FormulaType.Range, name: translate('formulaRange') },
+				]);
+				break;
+			};
+			
+			default: {
+				ret = ret.concat(common);
+				break;
+			};
+
+		};
+
+		return ret.map(it => ({ ...it, id: String(it.id)}));
+	};
+
 	public filterConditionsDictionary () {
 		return [ 
 			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
@@ -479,7 +527,7 @@ class Relation {
 	};
 
 	public isEmpty (v: any) {
-		return (v === null) || (v === undefined) || (v === '');
+		return (v === null) || (v === undefined) || (v === '') || (Array.isArray(v) && !v.length);
 	};
 
 	public isUrl (type: I.RelationType) {

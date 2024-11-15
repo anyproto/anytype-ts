@@ -545,6 +545,125 @@ class Dataview {
 		return ret;
 	};
 
+	getFormulaResult (rootId: string, blockId: string, relationKey: string, viewRelation: I.ViewRelation): any {
+		const { formulaType, includeTime, timeFormat, dateFormat } = viewRelation;
+		const relation = S.Record.getRelationByKey(relationKey);
+		const subId = S.Record.getSubId(rootId, blockId);
+		const { total } = S.Record.getMeta(subId, '');
+
+		let records = [];
+		let needRecords = false;
+
+		if (![ I.FormulaType.None, I.FormulaType.Count ].includes(formulaType)) {
+			needRecords = true;
+		};
+
+		if (needRecords) {
+			records = S.Record.getRecords(subId, [ relationKey ], true);
+		};
+
+		const date = (t: number) => {
+			const date = U.Date.dateWithFormat(dateFormat, t);
+			const time = U.Date.timeWithFormat(timeFormat, t);
+
+			return includeTime ? [ date, time ].join(' ') : date;
+		};
+
+		const min = () => {
+			let ret: any = Math.min(...records.map(it => Number(it[relationKey] || 0)));
+			if (relation.format == I.RelationType.Date) {
+				ret = ret ? date(ret) : '';
+			};
+			return ret;
+		};
+		const max = () => {
+			let ret: any = Math.max(...records.map(it => Number(it[relationKey] || 0)));
+			if (relation.format == I.RelationType.Date) {
+				ret = ret ? date(ret) : '';
+			};
+			return ret;
+		};
+
+		let ret = null;
+
+		switch (formulaType) {
+			case I.FormulaType.None: {
+				break;
+			};
+
+			case I.FormulaType.Count: {
+				ret = total;
+				break;
+			};
+
+			case I.FormulaType.CountDistinct: {
+				ret = U.Common.arrayUniqueObjects(records, relationKey).length;
+				break;
+			};
+
+			case I.FormulaType.CountEmpty: {
+				ret = records.filter(it => Relation.isEmpty(it[relationKey])).length;
+				break;
+			};
+
+			case I.FormulaType.CountNotEmpty: {
+				ret = records.filter(it => !Relation.isEmpty(it[relationKey])).length;
+				break;
+			};
+
+			case I.FormulaType.PercentEmpty: {
+				ret = U.Common.sprintf('%0.2f%', records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100);
+				break;
+			};
+
+			case I.FormulaType.PercentNotEmpty: {
+				ret = U.Common.sprintf('%0.2f%', records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100);
+				break;
+			};
+
+			case I.FormulaType.MathSum: {
+				ret = records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0);
+				break;
+			};
+
+			case I.FormulaType.MathAverage: {
+				ret = U.Common.sprintf('%0.4f%', records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total);
+				break;
+			};
+
+			case I.FormulaType.MathMedian: {
+				const data = records.map(it => Number(it[relationKey] || 0));
+				const n = data.length;
+
+				data.sort((a, b) => a - b);
+    
+				if (n % 2 == 1) {
+					ret = data[Math.floor(n / 2)];
+				} else {
+					ret = (data[n / 2 - 1] + data[n / 2]) / 2;
+				};
+				break;
+			};
+
+			case I.FormulaType.MathMin: {
+				ret = min();
+				break;
+			};
+
+			case I.FormulaType.MathMax: {
+				ret = max();
+				break;
+			};
+
+			case I.FormulaType.Range: {
+				ret = [ min(), max() ].join(' - ');
+				break;
+			};
+		};
+
+		return ret;
+	};
+
 };
 
 export default new Dataview();

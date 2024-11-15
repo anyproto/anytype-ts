@@ -303,3 +303,14 @@ export interface SearchSubscribeParam {
 	withArchived: boolean;
 	noDeps: boolean;
 };
+
+export enum SortId {
+	All			 = 'all',
+	Orphan		 = 'orphan',
+	Updated		 = 'updated',
+	Created		 = 'created',
+	Name		 = 'name',
+	LastUsed	 = 'lastUsed',
+	List		 = 'list',
+	Compact		 = 'compact',
+};

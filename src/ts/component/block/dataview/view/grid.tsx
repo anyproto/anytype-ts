@@ -8,6 +8,7 @@ import { Icon, LoadMore } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
+import FootRow from './grid/foot/row';
 
 const PADDING = 46;
 
@@ -29,6 +30,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
+		const { config } = S.Common;
 		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
@@ -122,6 +124,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 							/>
 
 							{content}
+
+							{config.experimental ? (
+								<FootRow
+									{...this.props} 
+									getColumnWidths={this.getColumnWidths}
+								/>
+							) : ''}
 
 							{isAllowedObject ? (
 								<div className="row add">
