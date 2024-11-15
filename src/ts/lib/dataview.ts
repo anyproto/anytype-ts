@@ -546,8 +546,6 @@ class Dataview {
 	};
 
 	getFormulaResult (rootId: string, blockId: string, relationKey: string, viewRelation: I.ViewRelation): any {
-		console.log(viewRelation);
-
 		const { formulaType, includeTime, timeFormat, dateFormat } = viewRelation;
 		const relation = S.Record.getRelationByKey(relationKey);
 		const subId = S.Record.getSubId(rootId, blockId);
@@ -652,8 +650,6 @@ class Dataview {
 				break;
 			};
 		};
-
-		console.log('[Dataview.getFormulaResult]', ret);
 
 		return ret;
 	};

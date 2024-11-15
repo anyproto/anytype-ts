@@ -68,6 +68,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate (): void {
+		this.calculate();
 	};
 
 	setEditing (isEditing: boolean): void {
@@ -80,7 +81,12 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		const viewRelation = view.getRelation(relationKey);
 		const result = Dataview.getFormulaResult(rootId, block.id, relationKey, viewRelation);
 
-		this.setState({ result });
+		console.log('[Calculate]', relationKey, result);
+
+		if (this.state.result !== result) {
+			this.state.result = result;
+			this.setState({ result });
+		};
 	};
 
 	onChange (id: string): void {
@@ -89,19 +95,13 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		const relations = view.getRelations();
 		const idx = relations.findIndex(it => it.relationKey == relationKey);
 
-		console.log(view);
-
-		/*
-		
-		const item = view.getRelation(relationKey);
-
-		item.formulaType = Number(id) || I.FormulaType.None;
-
-		console.log(JSON.stringify(view, null, 3));
+		view.relations[idx].formulaType = Number(id) || I.FormulaType.None;
 
 		S.Record.viewUpdate(rootId, view.id, view);
+		this.setEditing(false);
+
+		/*
 		//C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, item.relationKey, { ...item, formulaType: item.formulaType });
-		this.setState({ isEditing: false });
 		*/
 	};
 
