@@ -559,7 +559,7 @@ class Dataview {
 		};
 
 		if (needRecords) {
-			records = S.Record.getRecords(subId);
+			records = S.Record.getRecords(subId, [ relationKey ], true);
 		};
 
 		const date = (t: number) => {

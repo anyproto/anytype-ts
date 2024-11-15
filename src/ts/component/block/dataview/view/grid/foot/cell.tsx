@@ -28,12 +28,25 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { relationKey, block } = this.props;
+		const { relationKey, rootId, block, getView } = this.props;
 		const { isEditing, result } = this.state;
 		const relation = S.Record.getRelationByKey(relationKey);
+		const view = getView();
 		
-		if (!relation) {
+		if (!relation || !view) {
 			return null;
+		};
+
+		// Subscriptions
+		const viewRelation = view.getRelation(relationKey);
+		if (viewRelation.formulaType != I.FormulaType.None) {
+			const subId = S.Record.getSubId(rootId, block.id);
+			const records = S.Record.getRecords(subId, [ relationKey ], true);
+
+			records.forEach(record => {
+				const value = record[relationKey];
+			});
+
 		};
 
 		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
