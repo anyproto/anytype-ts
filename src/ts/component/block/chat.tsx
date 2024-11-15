@@ -539,6 +539,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onReplyClick (e: React.MouseEvent, message: any) {
+		if (!S.Common.config.experimental) {
+			return;
+		};
+
 		const rootId = this.getRootId();
 		const reply = S.Chat.getReply(rootId, message.replyToMessageId);
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
