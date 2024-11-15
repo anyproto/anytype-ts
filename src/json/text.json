@@ -172,6 +172,7 @@
 	"commonMenu": "Menu",
 	"commonSignUp": "Sign Up",
 	"commonNotFound": "Not found",
+	"commonCalculate": "Calculate",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",

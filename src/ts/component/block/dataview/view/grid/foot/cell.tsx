@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select } from 'Component';
-import { I, S, C, keyboard, Relation, Dataview } from 'Lib';
+import { I, S, C, keyboard, Relation, Dataview, translate } from 'Lib';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
@@ -62,12 +62,14 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			>
 				<div className="cellContent">
 					<div className="flex">
-						{isEditing ? (
+						{isEditing || (result === null) ? (
 							<Select 
 								id={`grid-foot-select-${relationKey}-${block.id}`} 
-								value="" 
-								options={options} 
+								value={viewRelation.formulaType} 
+								options={options}
 								onChange={id => this.onChange(id)}
+								initial={translate('commonCalculate')}
+								arrowClassName="light"
 							/>
 						) : result}
 					</div>

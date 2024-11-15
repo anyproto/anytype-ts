@@ -632,6 +632,16 @@ class Dataview {
 			};
 
 			case I.FormulaType.MathMedian: {
+				const data = records.map(it => Number(it[relationKey] || 0));
+				const n = data.length;
+
+				data.sort((a, b) => a - b);
+    
+				if (n % 2 == 1) {
+					ret = data[Math.floor(n / 2)];
+				} else {
+					ret = (data[n / 2 - 1] + data[n / 2]) / 2;
+				};
 				break;
 			};
 
