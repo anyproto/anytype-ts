@@ -32,13 +32,16 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		const { isEditing, result } = this.state;
 		const relation = S.Record.getRelationByKey(relationKey);
 		const view = getView();
-		
+
 		if (!relation || !view) {
 			return null;
 		};
 
 		// Subscriptions
 		const viewRelation = view.getRelation(relationKey);
+		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
+		const options = Relation.formulaByType(relation.format);
+
 		if (viewRelation.formulaType != I.FormulaType.None) {
 			const subId = S.Record.getSubId(rootId, block.id);
 			const records = S.Record.getRecords(subId, [ relationKey ], true);
@@ -46,11 +49,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			records.forEach(record => {
 				const value = record[relationKey];
 			});
-
 		};
-
-		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
-		const options = Relation.formulaByType(relation.format);
 
 		return (
 			<div 
@@ -96,8 +95,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		const viewRelation = view.getRelation(relationKey);
 		const result = Dataview.getFormulaResult(rootId, block.id, relationKey, viewRelation);
 
-		console.log('[Calculate]', relationKey, result);
-
 		if (this.state.result !== result) {
 			this.state.result = result;
 			this.setState({ result });
@@ -107,17 +104,12 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	onChange (id: string): void {
 		const { rootId, block, relationKey, getView } = this.props;
 		const view = getView();
-		const relations = view.getRelations();
-		const idx = relations.findIndex(it => it.relationKey == relationKey);
+		const item = view.getRelation(relationKey);
 
-		view.relations[idx].formulaType = Number(id) || I.FormulaType.None;
-
-		S.Record.viewUpdate(rootId, view.id, view);
-		this.setEditing(false);
-
-		/*
-		//C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, item.relationKey, { ...item, formulaType: item.formulaType });
-		*/
+		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, item.relationKey, { 
+			...item, 
+			formulaType: Number(id) || 0,
+		}, () => this.setEditing(false));
 	};
 
 	onMouseEnter (): void {
