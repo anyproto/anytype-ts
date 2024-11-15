@@ -41,6 +41,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const canAddReaction = this.canAddReaction();
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
+		const ct = [ 'textWrapper' ];
 
 		let text = content.text.replace(/\r?\n$/, '');
 		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
@@ -75,6 +76,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		};
 		if (this.isExpanded) {
 			cn.push('isExpanded');
+		};
+		if (U.Common.checkRtl(text)) {
+			ct.push('isRtl');
 		};
 
 		// Subscriptions
@@ -128,7 +132,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 						<Reply {...this.props} id={replyToMessageId} />
 
-						<div className="textWrapper">
+						<div className={ct.join(' ')}>
 							<div 
 								ref={ref => this.refText = ref} 
 								className="text" 
