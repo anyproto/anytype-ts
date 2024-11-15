@@ -276,7 +276,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			const width = widths[it.relationKey];
 			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
 
-			width <= size.icon ? el.addClass('small') : el.removeClass('small');
+			el.toggleClass('small', width <= size.icon);
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });

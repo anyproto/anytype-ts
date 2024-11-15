@@ -268,7 +268,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			const node = $(this.node);
 			const inner = node.find('.inner');
 
-			inner.width() <= getWrapperWidth() / 2 ? inner.addClass('isVertical') : inner.removeClass('isVertical');
+			inner.toggleClass('isVertical', inner.width() <= getWrapperWidth() / 2);
 		});
 	};
 

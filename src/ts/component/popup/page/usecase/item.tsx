@@ -131,8 +131,8 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 		const idx = this.swiper.activeIndex;
 		const length = (this.swiper.slides || []).length;
 
-		!idx ? arrowLeft.addClass('hide') : arrowLeft.removeClass('hide');
-		idx >= length - 1 ? arrowRight.addClass('hide') : arrowRight.removeClass('hide');
+		arrowLeft.toggleClass('hide', !idx);
+		arrowRight.toggleClass('hide', idx >= length - 1);
 	};
 
 	onMenu () {

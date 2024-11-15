@@ -449,10 +449,10 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			content.css({ height });
 		};
 
-		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
-		withAdd ? obj.addClass('withAdd') : obj.removeClass('withAdd');
-		noScroll ? obj.addClass('noScroll') : obj.removeClass('noScroll');
-		noVirtualisation ? obj.addClass('noVirtualisation') : obj.removeClass('noVirtualisation');
+		obj.toggleClass('withFilter', withFilter);
+		obj.toggleClass('withAdd', withAdd);
+		obj.toggleClass('noScroll', noScroll);
+		obj.toggleClass('noVirtualisation', noVirtualisation);
 
 		position();
 	};

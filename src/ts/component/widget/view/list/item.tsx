@@ -184,9 +184,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 		this.frame = raf(() => {
 			const node = $(this.node);
-			const icon = node.find('.iconObject');
 
-			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+			node.toggleClass('withIcon', !!node.find('.iconObject').length);
 		});
 	};
 
