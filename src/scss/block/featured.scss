@@ -8,11 +8,10 @@
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: middle; margin-top: -4px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-		.wrap { white-space: normal; }
+		.wrap { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-wrap: wrap; }
+		.bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-secondary); }
 
-		.bullet { width: 4px; height: 4px; border-radius: 100%; background: var(--color-text-secondary); display: inline-block; vertical-align: middle; margin: 0px 2px; }
-
-		.cell { white-space: nowrap; display: inline-block }
+		.cell { white-space: nowrap; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 2px; }
 		.cell.canEdit {
 			.cellContent {
 				.empty { display: inline; }
@@ -20,58 +19,40 @@
 		}
 		.cell:last-child .bullet { display: none; }
 
-		.cellContent { display: inline-block; border-radius: 4px; vertical-align: top; padding: 0px 6px; transition: background $transitionCommon; cursor: default; }
+		.cellContent { display: inline-block; border-radius: 4px; vertical-align: top; padding: 0px 6px; transition: background $transitionCommon; cursor: default !important; }
 		.cellContent.disabled { opacity: 1; }
 
 		.cellContent:not(.disabled):hover, .cellContent:not(.disabled).hover { background: var(--color-shape-highlight-medium); }
-		.cellContent > .wrap { display: inline; }
-		.cellContent.isName .name { display: inline; }
 		.cellContent {
-			.over { display: inline; }
-
-			.element { margin: -1px 6px 0px 0px; vertical-align: top; line-height: inherit; background: none !important; display: inline; }
-			.element:last-child { margin-right: 0px; }
-
-			.iconObject { display: none; }
+			.element { line-height: inherit; background: none !important; cursor: default !important; }
+			.iconObject { display: none; margin: 0px; }
 			.name { vertical-align: baseline; line-height: inherit; display: inline; word-break: break-word; white-space: normal; }
 
 			.empty { vertical-align: top; }
-			.flex { display: inline; }
+			.flex { display: inline-flex; flex-direction: row; align-items: center; }
 
-			.more { vertical-align: middle; margin-top: -2px; @include text-common; line-height: 18px; }
+			.more { @include text-common; line-height: 18px; }
 			.label { display: inline; vertical-align: middle; }
 		}
 
 		.cellContent.c-select {
-			.over { display: inline; }
-			.tagItem { margin: -1px 6px 0px 0px; vertical-align: middle; max-width: 400px; }
-			.tagItem:last-child { margin-right: 0px; }
-			.tagItem.isStatus { line-height: 16px; }
+			.over { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0px 6px; }
+			.tagItem { margin: 0px; max-width: 400px; }
 		}
 
 		.cellContent.c-file {
-			.wrap { white-space: nowrap; }
-
-			.element { margin-right: 2px; }
-			.element:last-child { margin-right: 0px; }
-			.iconObject { display: inline; margin: 0px; }
-			.iconObject * { position: static; vertical-align: middle; margin: 0px; }
+			.over { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; height: 28px; }
+			.element { flex-shrink: 0; display: flex; }
+			.iconObject { display: block; }
 			.name { display: none; }
 			.empty { padding: 0px 4px; }
-			.more { margin-left: 2px; }
-		}
-
-		.cellContent.c-object, .cellContent.c-file {
-			.element { cursor: default; }
 		}
 
 		.cellContent.c-object {
-			.iconObject { display: inline-block; vertical-align: middle; margin: -1px 6px 0px 0px !important; }
+			.iconObject { flex-shrink: 0; margin: 0px 6px 0px 0px !important; }
 		}
 
-		.cellContent.c-checkbox {
-			.icon { margin: 0px 4px 0px 0px; }
-		}
+		.cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; height: 28px; gap: 0px 4px; }
 
 		.cellContent.c-longText {
 			.name { display: inline-block; vertical-align: top; max-width: 220px; @include text-overflow-nw; }

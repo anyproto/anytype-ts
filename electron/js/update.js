@@ -100,6 +100,10 @@ class UpdateManager {
 			return false;
 		};
 
+		if (is.macos && (major <= 10)) {
+			return false;
+		};
+
 		return true;
 	};
 

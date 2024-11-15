@@ -1,0 +1,14 @@
+@import "~scss/_mixins";
+
+.input-drag-vertical { padding: 8px 2px; width: 20px; height: 88px; border-radius: 8px; background-color: var(--color-bg-primary); box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 1px solid var(--color-shape-secondary); }
+.input-drag-vertical {
+	.vertical-range,
+	.vertical-range::-webkit-slider-runnable-track,
+	.vertical-range::-webkit-slider-thumb { -webkit-appearance: none; }
+	
+	.vertical-range { position: absolute; width: 14px; height: 72px; cursor: pointer;  writing-mode: vertical-rl; padding: unset; cursor: auto; }
+	.vertical-range::-webkit-slider-runnable-track { height: 100%; width: 10px; }
+	.vertical-range::-webkit-slider-thumb { width: 0px; height: 0px; background: transparent; border: none; }
+	.slider-track { pointer-events: none; position: absolute; left: 8px; bottom: 8px; background-color: var(--color-control-accent); width: 4px; border-radius: 2px; }
+	.slider-bg { pointer-events: none; position: absolute; left: 8px; bottom: 8px; background-color: var(--color-shape-secondary); width: 4px; border-radius: 2px; height: 72px; }
+}

@@ -4,6 +4,7 @@ import * as M from 'Model';			 // Models
 import * as S from 'Store';			 // Stores
 import * as U from './util';		 // Utils
 import * as C from './api/command';	 // Commands
+import * as H from 'Hook';			 // React Hooks
 
 import Renderer from './renderer';
 import { dispatcher } from './api/dispatcher';
@@ -34,6 +35,7 @@ export {
 	S,
 	U,
 	J,
+	H,
 	keyboard,
 	sidebar,
 	focus,

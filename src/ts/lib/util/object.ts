@@ -24,6 +24,7 @@ class UtilObject {
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
+			case I.ObjectLayout.Space:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 		};
 		return r;
@@ -58,10 +59,19 @@ class UtilObject {
 		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
 	};
 
+	checkParam (param: any) {
+		param = param || {};
+		param.routeParam = param.routeParam || {};
+		param.menuParam = param.menuParam || {};
+		return param;
+	};
+
 	openEvent (e: any, object: any, param?: any) {
 		if (!object) {
 			return;
 		};
+
+		param = this.checkParam(param);
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -81,6 +91,13 @@ class UtilObject {
 			return;
 		};
 
+		param = this.checkParam(param);
+
+		if (this.isParticipantLayout(object.layout)) {
+			U.Menu.participant(object, param.menuParam);
+			return;
+		};
+
 		// Prevent opening object in popup from different space
 		if (object.spaceId && (object.spaceId != S.Common.space)) {
 			this.openRoute(object, param);
@@ -91,13 +108,15 @@ class UtilObject {
 	};
 	
 	openRoute (object: any, param?: any) {
+		param = this.checkParam(param);
+
 		const route = this.route(object);
 		if (!route) {
 			return;
 		};
 
 		keyboard.setSource(null);
-		U.Router.go(`/${route}`, param || {});
+		U.Router.go(`/${route}`, param);
 	};
 
 	openWindow (object: any) {
@@ -109,6 +128,13 @@ class UtilObject {
 
 	openPopup (object: any, param?: any) {
 		if (!object) {
+			return;
+		};
+
+		param = this.checkParam(param);
+
+		if (this.isParticipantLayout(object.layout)) {
+			U.Menu.participant(object, param.menuParam);
 			return;
 		};
 
@@ -138,6 +164,9 @@ class UtilObject {
 		window.setTimeout(() => S.Popup.open('page', param), S.Popup.getTimeout());
 	};
 
+	/**
+	Opens object based on user setting 'Open objects in fullscreen mode'
+	*/
 	openConfig (object: any, param?: any) {
 		S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
 	};
@@ -243,20 +272,24 @@ class UtilObject {
 		return name;
 	};
 
-	getById (id: string, callBack: (object: any) => void) {
-		this.getByIds([ id ], objects => {
+	getById (id: string, param: Partial<I.SearchSubscribeParam>, callBack: (object: any) => void) {
+		this.getByIds([ id ], param, objects => {
 			if (callBack) {
 				callBack(objects[0]);
 			};
 		});
 	};
 
-	getByIds (ids: string[], callBack: (objects: any[]) => void) {
+	getByIds (ids: string[], param: Partial<I.SearchSubscribeParam>, callBack: (objects: any[]) => void) {
 		const filters = [
 			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids }
 		];
 
-		U.Data.search({ filters, keys: J.Relation.default.concat([ 'links', 'backlinks' ]) }, (message: any) => {
+		param = param || {};
+		param.filters = (param.filters || []).concat(filters);
+		param.keys = (param.keys || []).concat(J.Relation.default).concat([ 'links', 'backlinks' ]);
+
+		U.Data.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
 			};
@@ -293,6 +326,10 @@ class UtilObject {
 
 	isSpaceViewLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.SpaceView;
+	};
+
+	isSpaceLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Space;
 	};
 
 	isSetLayout (layout: I.ObjectLayout): boolean {
@@ -392,7 +429,6 @@ class UtilObject {
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
-			I.ObjectLayout.ChatDerived,
 		];
 	};
 
@@ -430,7 +466,6 @@ class UtilObject {
 			I.ObjectLayout.Option, 
 			I.ObjectLayout.SpaceView, 
 			I.ObjectLayout.Space,
-			I.ObjectLayout.ChatDerived,
 		];
 	};
 
@@ -445,7 +480,7 @@ class UtilObject {
 	};
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
-		return this.getPageLayouts().concat(I.ObjectLayout.Chat).includes(layout);
+		return this.getPageLayouts().includes(layout);
 	};
 
 };

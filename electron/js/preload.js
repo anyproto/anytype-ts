@@ -20,8 +20,8 @@ contextBridge.exposeInMainWorld('Electron', {
 	userPath: () => app.getPath('userData'),
 	tmpPath,
 	logPath: () => path.join(app.getPath('userData'), 'logs'),
-	filePath: (...args) => path.join(...args),
 	dirName: fp => path.dirname(fp),
+	filePath: (...args) => path.join(...args),
 	fileName: fp => path.basename(fp),
 	fileMime: fp => mime.lookup(fp),
 	fileExt: fp => path.extname(fp).replace(/^./, ''),
@@ -39,7 +39,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	getGlobal: key => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
 
-	webFilePath: file => webUtils.getPathForFile(file),
+	webFilePath: file => webUtils && webUtils.getPathForFile(file),
 
 	fileWrite: (name, data, options) => {
 		name = String(name || 'temp');

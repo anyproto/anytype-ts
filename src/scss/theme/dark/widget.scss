@@ -75,3 +75,7 @@
 		}
 	}
 }
+
+.button.widget {
+	.icon.bin { background-image: url('#{$themePath}/icon/widget/button/bin.svg'); }
+}

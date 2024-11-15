@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-12
+          - macos-13
           - ubuntu-latest
           - windows-latest
 
@@ -95,7 +95,7 @@ jobs:
           CGO_ENABLED: 0
 
       - name: Build Front Mac OS
-        if: matrix.os == 'macos-12'
+        if: matrix.os == 'macos-13'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
@@ -114,7 +114,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
 
       - name: Build Front Other
-        if: matrix.os != 'macos-12'
+        if: matrix.os != 'macos-13'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}

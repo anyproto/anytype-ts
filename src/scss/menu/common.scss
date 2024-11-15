@@ -222,7 +222,7 @@
 		.section > .inputWrap { padding-bottom: 0px; }
 		.section.noLine::after { display: none; }
 
-		.input-drag {
+		.input-drag-horizontal {
 			.back { background-color: var(--color-shape-secondary); }
 			.icon { 
 				width: 12px; height: 12px; border-color: var(--color-shape-secondary); background-color: var(--color-bg-primary); 
@@ -272,6 +272,7 @@ html.platformWindows {
 @import "./quickCapture";
 @import "./syncStatus";
 @import "./graph";
+@import "./participant";
 
 @import "./search/object";
 @import "./search/text";

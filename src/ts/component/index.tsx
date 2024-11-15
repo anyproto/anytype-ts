@@ -51,7 +51,8 @@ import Checkbox from './form/checkbox';
 import Textarea from './form/textarea';
 import Button from './form/button';
 import Select from './form/select';
-import Drag from './form/drag';
+import DragHorizontal from './form/drag/horizontal';
+import DragVertical from './form/drag/vertical';
 import Pin from './form/pin';
 import Filter from './form/filter';
 import Phrase from './form/phrase';
@@ -93,6 +94,8 @@ import ShareTooltip from './util/share/tooltip';
 import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
+import EmailCollectionForm from './util/emailCollectionForm';
+
 export {
 	Page,
 	EditorPage,
@@ -132,7 +135,8 @@ export {
 	Button,
 	Select,
 	Toast,
-	Drag,
+	DragHorizontal,
+	DragVertical,
 	Marker,
 	Tag,
 	Loader,
@@ -182,5 +186,7 @@ export {
 	ProgressBar,
 	ShareTooltip,
 	ShareBanner,
-	FooterAuthDisclaimer
+	FooterAuthDisclaimer,
+
+	EmailCollectionForm,
 };
