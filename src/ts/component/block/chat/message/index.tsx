@@ -5,29 +5,18 @@ import { IconObject, Icon, ObjectName, Label } from 'Component';
 import { I, S, U, C, J, Mark, translate, Preview } from 'Lib';
 
 import Attachment from '../attachment';
-
-interface Props extends I.BlockComponent {
-	blockId: string;
-	id: string;
-	isThread: boolean;
-	isNew: boolean;
-	onThread: (id: string) => void;
-	onContextMenu: (e: any) => void;
-	onMore: (e: any) => void;
-	onReply: (e: any) => void;
-	getReplyContent: (message: any) => any;
-};
+import Reply from './reply';
 
 const LINES_LIMIT = 10;
 
-const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
+const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMessageComponent> {
 
 	node = null;
 	refText = null;
 	attachmentRefs: any = {};
 	isExpanded = false;
 
-	constructor (props: Props) {
+	constructor (props: I.ChatMessageComponent) {
 		super(props);
 
 		this.onExpand = this.onExpand.bind(this);
@@ -38,7 +27,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReply, getReplyContent } = this.props;
+		const { rootId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReplyEdit } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
@@ -52,39 +41,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const canAddReaction = this.canAddReaction();
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
-
-		let reply = null;
-		if (replyToMessageId) {
-			const replyToMessage = S.Chat.getReply(rootId, replyToMessageId);
-
-			if (replyToMessage) {
-				const { text, attachment, isMultiple } = getReplyContent(replyToMessage);
-				const author = U.Space.getParticipant(U.Space.getParticipantId(space, replyToMessage.creator));
-
-				let icon: any = null;
-				if (attachment) {
-					let iconSize = null;
-					if (U.Object.getFileLayouts().concat([ I.ObjectLayout.Human, I.ObjectLayout.Participant ]).includes(attachment.layout)) {
-						iconSize = 32;
-					};
-
-					icon = <IconObject className={iconSize ? 'noBg' : ''} object={attachment} size={32} iconSize={iconSize} />;
-				};
-				if (isMultiple) {
-					icon = <Icon className="isMultiple" />;
-				};
-
-				reply = (
-					<div className="reply">
-						{icon}
-						<div className="textWrapper">
-							<ObjectName object={author} />
-							<div className="text" dangerouslySetInnerHTML={{ __html: text }} />
-						</div>
-					</div>
-				);
-			};
-		};
+		const ct = [ 'textWrapper' ];
 
 		let text = content.text.replace(/\r?\n$/, '');
 		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
@@ -119,6 +76,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 		if (this.isExpanded) {
 			cn.push('isExpanded');
+		};
+		if (U.Common.checkRtl(text)) {
+			ct.push('isRtl');
 		};
 
 		// Subscriptions
@@ -170,9 +130,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 							<div className="time">{U.Date.date('H:i', createdAt)}</div>
 						</div>
 
-						{reply}
+						<Reply {...this.props} id={replyToMessageId} />
 
-						<div className="textWrapper">
+						<div className={ct.join(' ')}>
 							<div 
 								ref={ref => this.refText = ref} 
 								className="text" 
@@ -218,7 +178,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					{!readonly ? (
 						<div className="controls">
 							{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} /> : ''}
-							<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />
+							<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltip={translate('blockChatReply')} />
 							<Icon className="more" onClick={onMore} />
 						</div>
 					) : ''}
