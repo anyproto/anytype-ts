@@ -181,12 +181,9 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 	resize () {
 		const node = $(this.node);
 		
-		if (node.hasClass('withIcon')) {
-			return;
+		if (!node.hasClass('withIcon')) {
+			node.toggleClass('withIconObject', !!node.find('.iconObject').length);
 		};
-
-		const icon = node.find('.iconObject');
-		icon.length ? node.addClass('withIconObject') : node.removeClass('withIconObject');
 	};
 
 };

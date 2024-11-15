@@ -166,9 +166,8 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 
 		this.frame = raf(() => {
 			const node = $(this.node);
-			const icon = node.find('.iconObject');
 
-			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+			node.toggleClass('withIcon', !!node.find('.iconObject').length);
 		});
 	};
 

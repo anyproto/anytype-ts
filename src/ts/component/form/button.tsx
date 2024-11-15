@@ -88,10 +88,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 
 	useImperativeHandle(ref, () => ({
 		setLoading: (v: boolean) => setIsLoading(v),
-		setDisabled: (v: boolean) => {
-			const node = $(nodeRef.current);
-			v ? node.addClass('disabled') : node.removeClass('disabled');
-		},
+		setDisabled: (v: boolean) => $(nodeRef.current).toggleClass('disabled', v),
 		isDisabled: () => $(nodeRef.current).hasClass('disabled'),
 		isLoading: () => isLoading,
 	}));

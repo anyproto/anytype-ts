@@ -503,7 +503,7 @@ class BlockStore {
 	toggle (rootId: string, blockId: string, v: boolean) {
 		const element = $(`#block-${blockId}`);
 
-		v ? element.addClass('isToggled') : element.removeClass('isToggled');
+		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
 		
 		U.Common.triggerResizeEditor(keyboard.isPopup());
