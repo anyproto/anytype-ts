@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useImperativeHandle, useRef } from 'react';
+import React, { useRef, useImperativeHandle, forwardRef, ChangeEvent } from 'react';
 import { Input } from 'Component';
 
 interface Props {
@@ -9,12 +8,12 @@ interface Props {
 	min?: number;
 	max?: number;
 	step?: number;
-	onChange?(e: React.ChangeEvent<HTMLInputElement>, v: number): void;
+	onChange?(e: ChangeEvent<HTMLInputElement>, v: number): void;
 	onMouseLeave?(e:any): void;
 	onMouseEnter?(e:any): void;
-}
+};
 
-const DragVertical = React.forwardRef<Input, Props>(({
+const DragVertical = forwardRef<{}, Props>(({
 	id,
 	className = '',
 	value,
@@ -27,27 +26,17 @@ const DragVertical = React.forwardRef<Input, Props>(({
 }, forwardedRef) => {
 	const inputRef = useRef(null);
 	const divRef = useRef(null);
+
 	useImperativeHandle(forwardedRef, () => divRef.current);
 
-	const setBackgroundSize = () => {
-		if (inputRef) {
-			const mn = min || 0;
-			const mx = max || 100;
-			const size = Math.round((value - mn) / (mx - mn) * 100);
-			inputRef.current?.node.style?.setProperty('--background-size', `${size}%`);
-		}
-	};
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (e: ChangeEvent<HTMLInputElement>, value: string) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		if (onChange) {
-			onChange(e, Number(e.target.value));
-		}
-	};
 
-	useEffect(() => { setBackgroundSize(); }, [value]);
+		if (onChange) {
+			onChange(e, 1 - Number(value) || 0);
+		};
+	};
 
 	return (
 		<div 
@@ -71,6 +60,8 @@ const DragVertical = React.forwardRef<Input, Props>(({
 					e.stopPropagation();
 				}}
 			/>
+			<div className="slider-bg" />
+			<div className="slider-track" style={{ height: `${Math.round(value * 72)}px` }} />
 		</div>
 	);
 });

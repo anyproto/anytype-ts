@@ -1,4 +1,4 @@
-import { I, S, U, J, Storage, translate } from 'Lib';
+import { I, C, S, U, J, Storage, translate } from 'Lib';
 
 class UtilSpace {
 
@@ -93,7 +93,7 @@ class UtilSpace {
 	};
 
 	getList () {
-		return S.Record.getRecords(J.Constant.subId.space, U.Data.spaceRelationKeys()).filter(it => it.isAccountActive && it.isLocalOk);
+		return S.Record.getRecords(J.Constant.subId.space, U.Data.spaceRelationKeys()).filter(it => it.isAccountActive);
 	};
 
 	getSpaceview (id?: string) {
@@ -246,6 +246,12 @@ class UtilSpace {
 				U.Space.openDashboard('route');
 			};
 		};
+	};
+
+	getInvite (id: string, callBack: (cid: string, key: string) => void) {
+		C.SpaceInviteGetCurrent(id, (message: any) => {
+			callBack(message.inviteCid, message.inviteKey);
+		});
 	};
 
 };

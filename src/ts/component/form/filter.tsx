@@ -252,9 +252,7 @@ class Filter extends React.Component<Props, State> {
 	};
 
 	checkButton () {
-		const node = $(this.node);
-
-		this.getValue() ? node.addClass('active') : node.removeClass('active');
+		$(this.node).toggleClass('active', this.getValue());
 		this.placeholderCheck();
 	};
 

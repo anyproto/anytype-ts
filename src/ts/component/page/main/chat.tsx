@@ -277,9 +277,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			const head = node.find('.headSimple');
 
 			if (cover.length) {
-				cover.css({ top: headerHeight });
-
-				cover.width() <= J.Size.editor ? cover.addClass('isFull') : cover.removeClass('isFull');
+				cover.css({ top: headerHeight }).toggleClass('isFull', cover.width() <= J.Size.editor);
 			};
 
 			const fh = Number(formWrapper.outerHeight(true)) || 0;

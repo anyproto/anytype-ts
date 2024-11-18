@@ -72,10 +72,8 @@ class Switch extends React.Component<Props> {
 	};
 	
 	setValue (value: boolean) {
-		const node = $(this.node);
-
 		this.value = value;
-		value ? node.addClass('active') : node.removeClass('active');
+		$(this.node).toggleClass('active', value);
 	};
 	
 	getValue () {

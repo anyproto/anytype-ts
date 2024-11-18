@@ -70,11 +70,10 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 		const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
 		const isSpaceOwner = U.Space.isMyOwner();
-		const showCnt = isSpaceOwner && requestCnt;
+		const showCnt = isSpaceOwner && !!requestCnt;
 
 		showCnt ? cnt.show() : cnt.hide();
-		showCnt ? node.addClass('withCnt') : node.removeClass('withCnt');
-
+		node.toggleClass('withCnt', showCnt);
 		cnt.text(requestCnt);
 	};
 

@@ -31,7 +31,7 @@ const HeadRow = observer(class HeadRow extends React.Component<Props> {
 			>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={'grid-head-' + relation.relationKey} 
+						key={`grid-head-${relation.relationKey}`} 
 						{...this.props}
 						{...relation}
 						index={i} 

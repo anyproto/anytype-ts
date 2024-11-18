@@ -484,6 +484,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				subId: J.Constant.subId.allObject,
 				route: analytics.route.allObjects,
 				allowedLinkTo: true,
+				onSelect: id => {
+					switch (id) {
+						case 'archive': {
+							this.selected = [];
+							this.renderSelection();
+							break;
+						};
+					};
+				}
 			}
 		});
 	};
@@ -1072,8 +1081,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const max = this.getMaxWidth();
 		const sw = scroll.width();
 
-		this.x <= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
-		this.x >= max - sw - 1 ? sideRight.addClass('hide') : sideRight.removeClass('hide');
+		sideLeft.toggleClass('hide', this.x <= 0);
+		sideRight.toggleClass('hide', this.x >= max - sw - 1);
 	};
 
 	getMaxWidth () {

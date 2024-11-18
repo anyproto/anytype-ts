@@ -1,25 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding, Preview } from 'Lib';
 
-type SearchSubscribeParams = Partial<{
-	spaceId: string;
-	subId: string;
-	idField: string;
-	filters: I.Filter[];
-	sorts: I.Sort[];
-	keys: string[];
-	sources: string[];
-	collectionId: string;
-	afterId: string;
-	beforeId: string;
-	offset: number;
-	limit: number;
-	ignoreHidden: boolean;
-	ignoreDeleted: boolean;
-	withArchived: boolean;
-	noDeps: boolean;
-}>;
-
 const SYSTEM_DATE_RELATION_KEYS = [
 	'lastModifiedDate', 
 	'lastOpenedDate', 
@@ -549,7 +530,7 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, withChat, limit } = param || {};
+		const { withSet, withCollection, limit } = param || {};
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
@@ -569,10 +550,6 @@ class UtilData {
 
 		if (withSet) {
 			items.push(S.Record.getSetType());
-		};
-
-		if (withChat && config.experimental) {
-			items.push(S.Record.getChatType());
 		};
 
 		if (withCollection) {
@@ -790,8 +767,10 @@ class UtilData {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, withArchived } = param;
 		const filters = param.filters || [];
+		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
 
-		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Chat });
+		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
@@ -831,7 +810,7 @@ class UtilData {
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
-	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
+	searchSubscribe (param: Partial<I.SearchSubscribeParam>, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
 		param = Object.assign({
@@ -951,7 +930,7 @@ class UtilData {
 		});
 	};
 
-	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
+	search (param: Partial<I.SearchSubscribeParam> & { fullText?: string }, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
 		param = Object.assign({

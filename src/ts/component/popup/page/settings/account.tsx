@@ -64,6 +64,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						value={name}
 						onKeyUp={this.onName}
 						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
+						maxLength={160}
 					/>
 
 					<Input
@@ -71,6 +72,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						value={profile.description}
 						onKeyUp={this.onDescription}
 						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
+						maxLength={160}
 					/>
 				</div>
 
