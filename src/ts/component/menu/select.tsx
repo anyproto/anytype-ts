@@ -106,9 +106,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 
 		let content = null;
-
-		console.log('noVirtualisation', noVirtualisation);
-
 		if (noVirtualisation) {
 			content = (
 				<React.Fragment>
