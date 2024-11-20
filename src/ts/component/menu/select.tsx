@@ -106,6 +106,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 
 		let content = null;
+
+		console.log('noVirtualisation', noVirtualisation);
+
 		if (noVirtualisation) {
 			content = (
 				<React.Fragment>
@@ -449,10 +452,10 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			content.css({ height });
 		};
 
-		obj.toggleClass('withFilter', withFilter);
-		obj.toggleClass('withAdd', withAdd);
-		obj.toggleClass('noScroll', noScroll);
-		obj.toggleClass('noVirtualisation', noVirtualisation);
+		obj.toggleClass('withFilter', !!withFilter);
+		obj.toggleClass('withAdd', !!withAdd);
+		obj.toggleClass('noScroll', !!noScroll);
+		obj.toggleClass('noVirtualisation', !!noVirtualisation);
 
 		position();
 	};
