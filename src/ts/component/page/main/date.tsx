@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Deleted, ListObject } from 'Component';
+import { Header, Footer, Loader, Deleted, ListObject, Button, Icon } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard, translate } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
@@ -19,7 +19,7 @@ interface Item {
 	counter: number;
 }
 
-const SUB_ID = 'listObject';
+const SUB_ID = 'dateListObject';
 
 const PageMainDate = observer(class PageMainDate extends React.Component<I.PageComponent, State> {
 
@@ -29,6 +29,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	refHeader: any = null;
 	refHead: any = null;
 	refList: any = null;
+	refCalIcon: any = null;
 	refControls: any = null;
 	loading = false;
 	timeout = 0;
@@ -37,7 +38,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		isLoading: false,
 		isDeleted: false,
 		relations: [],
-		selectedRelation: '',
+		selectedRelation: 'createdDate',
 	};
 
 	constructor (props: I.PageComponent) {
@@ -65,11 +66,12 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				relationKey: creatorRelation.relationKey, name: creatorRelation.name, isObject: true,
 			},
 		];
-
-		// TODO: relationKey from state or use first one from relations
+		// TODO: add calendar 00:49:16
+		// TODO: dark theme
+		// TODO: create task for middle to return relations in the order corresponding to UI design
 		const filters: I.Filter[] = [
 			{ 
-				relationKey: relations[0]?.relationKey || 'lastModifiedDate', 
+				relationKey: selectedRelation, 
 				condition: I.FilterCondition.Equal, 
 				value: object.timestamp, 
 				format: I.RelationType.Date 
@@ -81,34 +83,47 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-
-
 			const isCollection = U.Object.isCollectionLayout(object.layout);
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
+			const calendarMenu = <><Icon className="arrow left"/><Icon className="arrow right"/><Icon ref={ref => this.refCalIcon = ref} className="calendar" onClick={this.onCalendar}/></>;
 
 			content = (
 				<div className="blocks wrapper">
 						<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
 						<HeadSimple 
 							{...this.props} 
+							noIcon={true}
 							ref={ref => this.refHead = ref} 
 							placeholder={placeholder} 
 							rootId={rootId} 
 							readonly={this.isReadonly()}
+							rightSideEnd={calendarMenu}
 						/>
 
 						<div className="categories">
+							
 							{relations.map((item, index) => {
 								const relation = S.Record.getRelationByKey(item.relationKey);
 
-								return (<div key={item.relationKey} className="category">{relation.name}</div>);
+								return (<Button 
+									key={relation.relationKey}
+									type="button"
+									color="blank"
+									className="category" 
+									onClick={() => {
+										this.setState({ selectedRelation: item.relationKey }, () => {
+											this.refList?.getData(1);
+										});
+									}}
+									text={relation.name}
+									/>
+								);
 							})}
 						</div>
 						<div className="list">
 							<ListObject 
 								ref={ref => this.refList = ref}
 								{...this.props}
-								// sources={[rootId]}
 								spaceId={space}
 								subId={SUB_ID} 
 								rootId={rootId}  
@@ -122,13 +137,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		return (
 			<div ref={node => this.node = node}>
-				<Header 
-					{...this.props} 
-					component="mainObject" 
-					ref={ref => this.refHeader = ref} 
-					rootId={rootId} 
-				/>
-
 				<div id="bodyWrapper" className="wrapper">
 					<div className={[ 'editorWrapper', check.className ].join(' ')}>
 						{content}
@@ -138,6 +146,25 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
+	};
+
+	onCalendar = () => {
+		const node = $(this.refCalIcon.node);
+		const rootId = this.getRootId();
+		const object = S.Detail.get(rootId, rootId, ['timestamp']);
+
+		S.Menu.open('dataviewCalendar', {
+			element: node,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				// rebind: this.rebind,
+				value: object.timestamp,
+				canEdit: true,
+				onChange: (value: number) => {
+					console.log('value', value);
+				},
+			},
+		});
 	};
 
 	componentDidMount () {
@@ -271,7 +298,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			container.css({ minHeight: isPopup ? '' : win.height() });
 		});
 	};
-
 });
 
 export default PageMainDate;
