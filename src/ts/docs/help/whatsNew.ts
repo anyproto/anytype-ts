@@ -27,7 +27,7 @@ export default [
 	h2(`Changelog `),
 	bullet(`Improved stabilization and overall app performance.`),
 	bullet(`Added support for Chinese language search.`),
-	bullet(`Headers in Sets and Collections are now fixed at the top when scrolling, and the ${hl('+ New')} button allows you to create objects without returning to the first column.`),
+	bullet(`Headers in Sets and Collections are now fixed at the top when scrolling in Grid view.`),
 	bullet(`Added an ${hl('Open as Object')} action for images and videos opened in fullscreen.`),
 	bullet(`Typing text with multiple selected blocks now deletes them and starts a new text block.`),
 	bullet(`Implemented a new progress bars system.`),
