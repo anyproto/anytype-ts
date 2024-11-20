@@ -1456,7 +1456,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		switch (id) {
 			case 'archive': {
-				Action.archive(ids);
+				Action.archive(ids, this.analyticsRoute());
 				break;
 			};
 

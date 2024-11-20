@@ -436,7 +436,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 				
 			case 'pageArchive': {
-				Action.archive([ object.id ], () => {
+				Action.archive([ object.id ], route, () => {
 					if (onArchive) {
 						onArchive();
 					} else {
@@ -447,7 +447,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageUnarchive': {
-				Action.restore([ object.id ]);
+				Action.restore([ object.id ], route);
 				break;
 			};
 

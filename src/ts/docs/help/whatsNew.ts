@@ -20,6 +20,23 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
+	h1(`Desktop 0.43.7 Released!`),
+	callout(`This follow-up update to the previous release brings improved performance and a few additional enhancements.`, '📃'),
+	text(''),
+
+	h2(`Changelog `),
+	bullet(`Improved stabilization and overall app performance.`),
+	bullet(`Added support for Chinese language search.`),
+	bullet(`Headers in Sets and Collections are now fixed at the top when scrolling in Grid view.`),
+	bullet(`Added an ${hl('Open as Object')} action for images and videos opened in fullscreen.`),
+	bullet(`Typing text with multiple selected blocks now deletes them and starts a new text block.`),
+	bullet(`Implemented a new progress bars system.`),
+	bullet(`Fixed an issue where pressing Enter or arrow keys didn’t create a new block below callouts. Thanks, @${link('https://community.anytype.io/t/24175', 'Daria_Sweet97')}!`),
+	text(''),
+
+	div(),
+	// --------------------------------------------//
+
 	title(`Desktop 0.43.0 Released!`),
 	callout(`A big thank you to our amazing Community for the valuable suggestions and reports that continue to help us along the way!`, '💌'),
 
