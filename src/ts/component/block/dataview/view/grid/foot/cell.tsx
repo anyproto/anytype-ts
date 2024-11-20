@@ -41,8 +41,13 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 		// Subscriptions
 		const viewRelation = view.getRelation(relationKey);
+		if (!viewRelation) {
+			return null;
+		};
+
 		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
 		const options = Relation.formulaByType(relation.format);
+		const option = options.find(it => it.id == String(viewRelation.formulaType));
 
 		if (viewRelation.formulaType != I.FormulaType.None) {
 			const subId = S.Record.getSubId(rootId, block.id);
@@ -79,7 +84,12 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 									data: { noScroll: true, noVirtualisation: true },
 								}}
 							/>
-						) : result}
+						) : (
+							<React.Fragment>
+								<span className="name">{option.name}</span>
+								{result}
+							</React.Fragment>
+						)}
 					</div>
 				</div>
 			</div>
