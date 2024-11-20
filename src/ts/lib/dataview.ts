@@ -97,6 +97,7 @@ class Dataview {
 		param = Object.assign({
 			rootId: '',
 			blockId: '',
+			subId: '',
 			newViewId: '',
 			keys: J.Relation.default,
 			offset: 0,
@@ -116,7 +117,7 @@ class Dataview {
 			return;
 		};
 
-		const subId = S.Record.getSubId(rootId, blockId);
+		const subId = param.subId || S.Record.getSubId(rootId, blockId);
 		const { viewId } = S.Record.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
@@ -545,10 +546,9 @@ class Dataview {
 		return ret;
 	};
 
-	getFormulaResult (rootId: string, blockId: string, relationKey: string, viewRelation: I.ViewRelation): any {
+	getFormulaResult (subId: string, relationKey: string, viewRelation: I.ViewRelation): any {
 		const { formulaType, includeTime, timeFormat, dateFormat } = viewRelation;
 		const relation = S.Record.getRelationByKey(relationKey);
-		const subId = S.Record.getSubId(rootId, blockId);
 		const { total } = S.Record.getMeta(subId, '');
 
 		let records = [];
