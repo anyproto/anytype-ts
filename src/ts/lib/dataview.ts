@@ -570,18 +570,10 @@ class Dataview {
 		};
 
 		const min = () => {
-			let ret: any = Math.min(...records.map(it => Number(it[relationKey] || 0)));
-			if (relation.format == I.RelationType.Date) {
-				ret = ret ? date(ret) : '';
-			};
-			return ret;
+			return Math.min(...records.map(it => Number(it[relationKey] || 0)));
 		};
 		const max = () => {
-			let ret: any = Math.max(...records.map(it => Number(it[relationKey] || 0)));
-			if (relation.format == I.RelationType.Date) {
-				ret = ret ? date(ret) : '';
-			};
-			return ret;
+			return Math.max(...records.map(it => Number(it[relationKey] || 0)));
 		};
 
 		let ret = null;
@@ -603,11 +595,16 @@ class Dataview {
 
 			case I.FormulaType.CountEmpty: {
 				ret = records.filter(it => Relation.isEmpty(it[relationKey])).length;
+				ret = records.filter(it => {
+					return relation.format == I.RelationType.Checkbox ? !it[relationKey] : Relation.isEmpty(it[relationKey]);
+				}).length;
 				break;
 			};
 
 			case I.FormulaType.CountNotEmpty: {
-				ret = records.filter(it => !Relation.isEmpty(it[relationKey])).length;
+				ret = records.filter(it => {
+					return relation.format == I.RelationType.Checkbox ? !!it[relationKey] : !Relation.isEmpty(it[relationKey]);
+				}).length;
 				break;
 			};
 
@@ -656,7 +653,11 @@ class Dataview {
 			};
 
 			case I.FormulaType.Range: {
-				ret = [ min(), max() ].join(' - ');
+				if (relation.format == I.RelationType.Date) {
+					ret = U.Date.duration(max() - min());
+				} else {
+					ret = [ min(), max() ].join(' - ');
+				};
 				break;
 			};
 		};

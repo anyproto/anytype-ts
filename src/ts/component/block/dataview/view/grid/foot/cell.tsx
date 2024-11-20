@@ -67,16 +67,16 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 						{isEditing || (result === null) ? (
 							<Select 
 								id={`grid-foot-select-${relationKey}-${block.id}`} 
-								value={viewRelation.formulaType} 
+								value={String(viewRelation.formulaType)} 
 								options={options}
 								onChange={this.onChange}
-								initial={translate('commonCalculate')}
 								arrowClassName="light"
 								menuParam={{
 									onOpen: () => {
 										window.setTimeout(() => $(`.cell-key-${relationKey}`).addClass('cellKeyHover'), 0);
 									},
 									onClose: () => $(`.cellKeyHover`).removeClass('cellKeyHover'),
+									data: { noScroll: true, noVirtualisation: true },
 								}}
 							/>
 						) : result}

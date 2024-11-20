@@ -127,9 +127,20 @@ class Relation {
 			case I.RelationType.Date: {
 				ret = ret.concat([
 					...common,
-					{ id: I.FormulaType.MathMin, name: translate('formulaMin') },
-					{ id: I.FormulaType.MathMax, name: translate('formulaMax') },
-					{ id: I.FormulaType.Range, name: translate('formulaRange') },
+					{ id: I.FormulaType.MathMin, name: translate('formulaDateMin') },
+					{ id: I.FormulaType.MathMax, name: translate('formulaDateMax') },
+					{ id: I.FormulaType.Range, name: translate('formulaDateRange') },
+				]);
+				break;
+			};
+
+			case I.RelationType.Checkbox: {
+				ret = ret.concat([
+					{ id: I.FormulaType.Count, name: translate('formulaCheckboxCount') },
+					{ id: I.FormulaType.CountNotEmpty, name: translate('formulaCheckboxNotEmpty') },
+					{ id: I.FormulaType.CountEmpty, name: translate('formulaCheckboxEmpty') },
+					{ id: I.FormulaType.PercentNotEmpty, name: translate('formulaCheckboxPercentNotEmpty') },
+					{ id: I.FormulaType.PercentEmpty, name: translate('formulaCheckboxPercentEmpty') },
 				]);
 				break;
 			};
