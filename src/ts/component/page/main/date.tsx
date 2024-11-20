@@ -57,12 +57,13 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			return <Deleted {...this.props} />;
 		};
 
+		const creatorRelation = S.Record.getRelationByKey('creator');
 		const columns: any[] = [
+
+			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
 			{ 
-				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: v => U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v),
+				relationKey: creatorRelation.relationKey, name: creatorRelation.name, isObject: true,
 			},
-			// { relationKey: object.relationKey, name: object.name, isCell: true }
 		];
 
 		// TODO: relationKey from state or use first one from relations
