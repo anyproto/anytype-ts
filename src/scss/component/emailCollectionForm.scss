@@ -11,6 +11,10 @@
         .loaderWrapper { border-radius: 0px !important; }
     }
 
+    .inputWrapper {
+        .input { border-color: var(--color-shape-primary) !important; }
+    }
+
     .step0 { padding-top: 16px; }
     .step0 {
         .check { @include text-small; }
