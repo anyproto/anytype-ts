@@ -47,6 +47,8 @@ class Analytics {
 		allObjects: 'AllObjects',
 		vault: 'Vault',
 		void: 'Void',
+		chat: 'Chat',
+		archive: 'Bin',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
