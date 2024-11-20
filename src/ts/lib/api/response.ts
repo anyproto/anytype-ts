@@ -587,3 +587,14 @@ export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 		messageId: response.getMessageid(),
 	};
 };
+
+export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response) => {
+	return {
+		relations: (response.getListList() || []).map(it => {
+			return {
+				relationKey: it.getRelationkey(),
+				counter: it.getCounter(),
+			};
+		}),
+	};
+};

@@ -2234,3 +2234,12 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 
 	dispatcher.request(ChatGetMessagesByIds.name, request, callBack);
 };
+
+export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Relation.ListWithValue.Request();
+
+	request.setSpaceid(spaceId);
+	request.setValue(Encode.value(value));
+
+	dispatcher.request(RelationListWithValue.name, request, callBack);
+};
