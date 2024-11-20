@@ -49,6 +49,7 @@ class Analytics {
 		void: 'Void',
 		chat: 'Chat',
 		archive: 'Bin',
+		toast: 'Toast',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
