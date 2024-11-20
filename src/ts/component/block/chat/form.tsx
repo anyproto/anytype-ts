@@ -786,7 +786,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	trim (value: string): string {
-		return value.trim().replace(/^\r?\n/gm, '').replace(/\r?\n$/gm, '');
+		return String(value || '').replace(/^(\r?\n)/gm, '').replace(/(\r?\n)$/gm, '');
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
