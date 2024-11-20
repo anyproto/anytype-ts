@@ -778,11 +778,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	getTextValue (): string {
-		return String(this.refEditable?.getTextValue() || '');
+		return this.trim(String(this.refEditable?.getTextValue() || '').replace(/^\r?\n/gm, ''));
 	};
 
 	getHtmlValue (): string {
-		return String(this.refEditable?.getHtmlValue() || '');
+		return this.trim(String(this.refEditable?.getHtmlValue() || ''));
+	};
+
+	trim (value: string): string {
+		return value.trim().replace(/^\r?\n/gm, '').replace(/\r?\n$/gm, '');
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
