@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select } from 'Component';
-import { I, S, C, J, keyboard, Relation, Dataview, translate } from 'Lib';
+import { I, S, C, J, keyboard, Relation, Dataview, analytics } from 'Lib';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
@@ -32,6 +32,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	render () {
 		const { relationKey, rootId, block, getView } = this.props;
 		const { isEditing, result } = this.state;
+		const object = S.Detail.get(rootId, rootId, []);
 		const relation = S.Record.getRelationByKey(relationKey);
 		const view = getView();
 
@@ -79,6 +80,8 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 								menuParam={{
 									onOpen: () => {
 										window.setTimeout(() => $(`.cell-key-${relationKey}`).addClass('cellKeyHover'), 0);
+
+										analytics.event('ClickGridFormula', { format: relation.format, objectType: object.type });
 									},
 									onClose: () => $(`.cellKeyHover`).removeClass('cellKeyHover'),
 									data: { noScroll: true, noVirtualisation: true },
@@ -125,11 +128,15 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		const { rootId, block, relationKey, getView } = this.props;
 		const view = getView();
 		const item = view.getRelation(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, item.relationKey, { 
 			...item, 
 			formulaType: Number(id) || 0,
 		}, () => this.setEditing(false));
+
+		analytics.event('ChangeGridFormula', { type: id, format: relation.format, objectType: object.type });
 	};
 
 	onMouseEnter (): void {

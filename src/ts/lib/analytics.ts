@@ -386,6 +386,15 @@ class Analytics {
 				break;
 			};
 
+			case 'ClickGridFormula':
+			case 'ChangeGridFormula': {
+				data.format = Number(data.format) || 0;
+				data.format = I.RelationType[data.format];
+				data.type = Number(data.type) || 0;
+				data.type = I.FormulaType[data.type];
+				break;
+			};
+
 			case 'OpenAsObject': {
 				if (data.type == I.BlockType.File) {
 					if (undefined !== data.params?.fileType) {
