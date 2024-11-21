@@ -1,18 +1,22 @@
 @import "~scss/_mixins";
 
-.pageMainDate .side.right {
-    .icon.calendar { width: 24px; height: 24px; background-size: 20px; background-image: url('~img/icon/relation/date.svg'); border-radius: 4px; }
-    .icon.arrow { 
-        width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/dateSelectLight.svg'); border-radius: 4px; 
-        transition: $transitionAllCommon;
-    }
-    .icon.arrow.left { transform: rotateZ(180deg); }
+.pageMainDate {
+	.wrapper { width: 704px; margin: 0px auto; padding: 40px 0px 80px 0px; user-select: none; }
+
+	.headSimple {
+		.side.right { gap: 0px; }
+		.side.right {
+			.icon.calendar { background-image: url('~img/icon/relation/date.svg'); }
+			.icon.arrow { background-image: url('~img/arrow/dateSelectLight.svg'); }
+			.icon.arrow.left { transform: rotateZ(180deg); }
+		}
+	}
+
+	.categories { 
+		display: flex; flex-direction: row; gap: 8px; margin: 0px 0px 12px 0px; align-items: center; justify-content: flex-start; flex-wrap: wrap; 
+	}
+	.categories {
+		.icon.mention { width: 20px; height: 20px; margin: 0px 6px 0px 0px; background-image: url('~img/icon/mention.svg'); }
+		.separator { content: ''; background-color:  var(--color-shape-secondary); width: 1px; height: 24px; }
+	}
 }
-
-.pageMainDate .categories { display: flex; flex-direction: row; gap: 8px 8px; align-items: center; justify-content: flex-start; flex-wrap: wrap; }
-.pageMainDate .separator { background-color:  var(--color-shape-secondary); width: 1px; height: 24px; }
-
-.pageMainDate .mentionsSign { padding-right: 8px; font-size: 16px; color: var(--color-control-active); }
-
-.dateList .table { border-top-width: 0px !important; }
-.dateList .table .isHead .cell > div { border-right-width: 0px !important; }

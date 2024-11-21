@@ -47,14 +47,13 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	onMouseLeave,
 	onMouseDown,
 	dataset,
-	content,
 	active,
 }, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
 	const cn = [ 'button', color, className ];
 
-	let innerContent = null;
+	let content = null;
 
 	if (isLoading) {
 		cn.push('isLoading');
@@ -103,7 +102,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 
 	switch (type) {
 		case 'input': {
-			innerContent = (
+			content = (
 				<input
 					ref={nodeRef}
 					id={id}
@@ -120,7 +119,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		};
 
 		default: {
-			innerContent = (
+			content = (
 				<div
 					ref={nodeRef}
 					id={id}
@@ -133,7 +132,6 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 				>
 					{isLoading && <Loader />}
 					{icon && <Icon className={icon} />}
-					{content}
 					<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
 					{arrow && <div className="arrow" />}
 				</div>
@@ -141,7 +139,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		};
 	};
 
-	return innerContent;
+	return content;
 });
 
 export default Button;

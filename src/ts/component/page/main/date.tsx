@@ -3,21 +3,16 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Deleted, ListObject, Button, Icon } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, translate } from 'Lib';
+import { I, C, S, U, Action, translate } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isLoading: boolean;
 	isDeleted: boolean;
-	relations: Item[];
+	relations: any[];
 	selectedRelation: string;
 };
-
-interface Item {
-	relationKey: string;
-	counter: number;
-}
 
 const SUB_ID = 'dateListObject';
 
@@ -30,7 +25,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	refHead: any = null;
 	refList: any = null;
 	refCalIcon: any = null;
-	refControls: any = null;
 	loading = false;
 	timeout = 0;
 
@@ -44,14 +38,12 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	constructor (props: I.PageComponent) {
 		super(props);
 		
-		this.resize = this.resize.bind(this);
 	};
 
 	render () {
 		const { space } = S.Common;
 		const { isLoading, isDeleted, relations, selectedRelation } = this.state;
 		const rootId = this.getRootId();
-		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, ['timestamp']);
 
 		if (isDeleted) {
@@ -83,63 +75,77 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const calendarMenu = <><Icon className="arrow left"/><Icon className="arrow right"/><Icon ref={ref => this.refCalIcon = ref} className="calendar" onClick={this.onCalendar}/></>;
+			const calendarMenu = (
+				<React.Fragment>
+					<Icon className="arrow left withBackground" />
+					<Icon className="arrow right withBackground" />
+					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
+				</React.Fragment>
+			);
 
 			content = (
 				<div className="blocks wrapper">
-						<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-						<HeadSimple 
-							{...this.props} 
-							noIcon={true}
-							ref={ref => this.refHead = ref} 
-							placeholder={''} 
-							rootId={rootId} 
-							readonly={this.isReadonly()}
-							rightSideEnd={calendarMenu}
-						/>
+					<HeadSimple 
+						{...this.props} 
+						noIcon={true}
+						ref={ref => this.refHead = ref} 
+						rootId={rootId} 
+						readonly={true}
+						rightSideEnd={calendarMenu}
+					/>
 
-						<div className="categories">
-							{relations.sort((a,b) => a.relationKey === 'mentions' ? -1 : 1).map((item, index) => {
-								const relation = S.Record.getRelationByKey(item.relationKey);
-								return (<><Button
-									active={selectedRelation === item.relationKey}
-									key={relation.relationKey}
-									type="button"
-									color="blank"
-									className="category" 
-									onClick={() => {
-										this.setState({ selectedRelation: item.relationKey }, () => {
-											this.refList?.getData(1);
-										});
-									}}
-									content={index === 0 && <div className="mentionsSign">@</div>}
-									text={index === 0 ? translate('relationMentions') : relation.name}
-									/>{index === 0 && <span className="separator"></span>}</>
-								);
-							})}
-						</div>
-						<div className="dateList">
-							<ListObject 
-								ref={ref => this.refList = ref}
-								{...this.props}
-								spaceId={space}
-								subId={SUB_ID} 
-								rootId={rootId}
-								columns={columns}
-								filters={filters}
-							/>
-						</div>
+					<div className="categories">
+						{relations.map((item) => {
+							const isMention = item.relationKey == 'mentions';
+							const icon = isMention ? 'mention' : '';
+							const separator = isMention ? <div className="separator" /> : '';
+
+							return (
+								<React.Fragment key={item.relationKey}>
+									<Button
+										id={`category-${item.relationKey}`}
+										active={selectedRelation === item.relationKey}
+										color="blank"
+										className="c36"
+										onClick={() => {
+											this.setState({ selectedRelation: item.relationKey }, () => {
+												this.refList?.getData(1);
+											});
+										}}
+										icon={icon}
+										text={item.name}
+									/>
+									{separator}
+								</React.Fragment>
+							);
+						})}
 					</div>
+
+					<div className="dateList">
+						<ListObject 
+							ref={ref => this.refList = ref}
+							{...this.props}
+							spaceId={space}
+							subId={SUB_ID} 
+							rootId={rootId}
+							columns={columns}
+							filters={filters}
+						/>
+					</div>
+				</div>
 			);
 		};
 
 		return (
 			<div ref={node => this.node = node}>
-				<div id="bodyWrapper" className="wrapper">
-					<div className={[ 'editorWrapper', check.className ].join(' ')}>
-						{content}
-					</div>
-				</div>
+				<Header 
+					{...this.props} 
+					component="mainChat" 
+					ref={ref => this.refHeader = ref} 
+					rootId={object.chatId} 
+				/>
+
+				{content}
 
 				<Footer component="mainObject" {...this.props} />
 			</div>
@@ -147,15 +153,13 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	onCalendar = () => {
-		const node = $(this.refCalIcon.node);
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, ['timestamp']);
 
 		S.Menu.open('dataviewCalendar', {
-			element: node,
+			element: '#calendar-icon',
 			horizontal: I.MenuDirection.Center,
 			data: {
-				// rebind: this.rebind,
 				value: object.timestamp,
 				canEdit: true,
 				onChange: (value: number) => {
@@ -168,26 +172,16 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	componentDidMount () {
 		this._isMounted = true;
 		this.open();
-		this.rebind();
 	};
 
 	componentDidUpdate () {
 		this.open();
-		this.resize();
 		this.checkDeleted();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.close();
-		this.unbind();
-	};
-
-	unbind () {
-	};
-
-	rebind () {
-		this.unbind();
 	};
 
 	checkDeleted () {
@@ -228,11 +222,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
-			this.refControls?.forceUpdate();
 
 			this.setState({ isLoading: false });
 			this.loadCategory();
-			this.resize();
 		});
 	};
 
@@ -253,15 +245,32 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	loadCategory() {
-		const { space } = S.Common;
+		const { space, config } = S.Common;
 		const rootId = this.getRootId();
 
-		const object = S.Detail.get(rootId, rootId);
+		C.RelationListWithValue(space, rootId, (message: any) => {
+			const relations = (message.relations || []).map(it => S.Record.getRelationByKey(it.relationKey)).filter(it => {
+				if ([ 'mentions' ].includes(it.relationKey)) {
+					return true;
+				};
 
-		console.log(object);
+				if ([ 'links', 'backlinks' ].includes(it.relationKey)) {
+					return false;
+				};
 
-		C.RelationListWithValue(space, object.id, (message: any) => {
-			this.setState({ relations: message.relations });
+				return config.debug.hidden ? true : !it.isHidden;
+			});
+
+			relations.sort((c1, c2) => {
+				const isMention1 = c1.relationKey == 'mentions';
+				const isMention2 = c2.relationKey == 'mentions';
+
+				if (isMention1 && !isMention2) return -1;
+				if (!isMention1 && isMention2) return 1;
+				return 0;
+			});
+
+			this.setState({ relations });
 		});
 	}
 
@@ -270,32 +279,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		return rootId ? rootId : match.params.id;
 	};
 
-	isReadonly () {
-		const rootId = this.getRootId();
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		if (root && root.isLocked()) {
-			return true;			
-		};
-
-		return !U.Space.canMyParticipantWrite();
-	};
-
-	resize () {
-		const { isLoading } = this.state;
-		const { isPopup } = this.props;
-
-		if (!this._isMounted || isLoading) {
-			return;
-		};
-
-		raf(() => {
-			const win = $(window);
-			const container = U.Common.getPageContainer(isPopup);
-			
-			container.css({ minHeight: isPopup ? '' : win.height() });
-		});
-	};
 });
 
 export default PageMainDate;
