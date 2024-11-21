@@ -47,6 +47,9 @@ class Analytics {
 		allObjects: 'AllObjects',
 		vault: 'Vault',
 		void: 'Void',
+		chat: 'Chat',
+		archive: 'Bin',
+		toast: 'Toast',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
@@ -380,6 +383,15 @@ class Analytics {
 			case 'AddExistingRelation': {
 				data.format = Number(data.format) || 0;
 				data.format = I.RelationType[data.format];
+				break;
+			};
+
+			case 'ClickGridFormula':
+			case 'ChangeGridFormula': {
+				data.format = Number(data.format) || 0;
+				data.format = I.RelationType[data.format];
+				data.type = Number(data.type) || 0;
+				data.type = I.FormulaType[data.type];
 				break;
 			};
 

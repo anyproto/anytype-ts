@@ -310,6 +310,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.filter = filter;
 			this.range = { from: 0, to: filter.length };
 			this.refFilter.setValue(filter);
+			this.reload();
 		};
 
 		setFilter();

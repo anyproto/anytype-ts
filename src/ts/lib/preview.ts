@@ -202,7 +202,7 @@ class Preview {
 			});
 		};
 
-		passThrough ? obj.addClass('passThrough') : obj.removeClass('passThrough');
+		obj.toggleClass('passThrough', passThrough);
 		obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
 
 		this.previewHide(true);

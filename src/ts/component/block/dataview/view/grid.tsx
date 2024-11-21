@@ -8,6 +8,7 @@ import { Icon, LoadMore } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
+import FootRow from './grid/foot/row';
 
 const PADDING = 46;
 
@@ -29,6 +30,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
+		const { config } = S.Common;
 		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
@@ -133,6 +135,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 									</div>
 								</div>
 							) : null}
+
+							{config.experimental ? (
+								<FootRow
+									{...this.props} 
+									getColumnWidths={this.getColumnWidths}
+								/>
+							) : ''}
 
 							{isInline && (limit + offset < total) ? (
 								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
@@ -267,7 +276,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			const width = widths[it.relationKey];
 			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
 
-			width <= size.icon ? el.addClass('small') : el.removeClass('small');
+			el.toggleClass('small', width <= size.icon);
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });

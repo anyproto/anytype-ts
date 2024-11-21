@@ -334,11 +334,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const btn = this.refButton;
 		const space = U.Space.getSpaceview();
 
-		if (!btn || btn.state.isLoading) {
+		if (!btn || btn.isLoading()) {
 			return;
 		};
 
 		btn.setLoading(true);
+		analytics.event('ClickShareSpaceNewLink');
 
 		C.SpaceMakeShareable(S.Common.space, (message: any) => {
 			if (this.setError(message.error)) {

@@ -69,7 +69,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 			return;
 		};
 
-		Action.restore(this.refManager.selected || []);
+		Action.restore(this.refManager.selected || [], analytics.route.archive);
 		this.selectionClear();
 	};
 

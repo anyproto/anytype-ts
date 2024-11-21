@@ -11,6 +11,7 @@ interface Props {
 	onSuccess?: (value: string) => void;
 	onError?: () => void;
 	isVisible?: boolean;
+	readonly?: boolean;
 };
 
 type State = {
@@ -43,10 +44,11 @@ class Pin extends React.Component<Props, State> {
 	timeout = 0;
 
 	render () {
-		const { pinLength, isNumeric } = this.props;
+		const { pinLength, isNumeric, readonly } = this.props;
 		const props: any = {
 			maxLength: 1,
 			onKeyUp: this.onInputKeyUp,
+			readonly,
 		};
 
 		if (isNumeric) {
@@ -62,7 +64,7 @@ class Pin extends React.Component<Props, State> {
 						onPaste={e => this.onPaste(e, i)}
 						onFocus={() => this.onInputFocus(i)} 
 						onKeyDown={e => this.onInputKeyDown(e, i)} 
-						onChange={(_, value) => this.onInputChange(i, value)} 
+						onChange={(_, value) => this.onInputChange(i, value)}
 						{...props}
 					/>
 				))}

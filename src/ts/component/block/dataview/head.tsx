@@ -314,12 +314,9 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	checkInput (isEmpty: boolean) {
-		if (!this.ref) {
-			return;
+		if (this.ref) {
+			$(this.ref.node).toggleClass('isEmpty', isEmpty)
 		};
-
-		const node = $(this.ref.node);
-		isEmpty ? node.addClass('isEmpty') : node.removeClass('isEmpty');
 	};
 
 	save () {

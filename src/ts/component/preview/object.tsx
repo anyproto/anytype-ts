@@ -480,10 +480,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	};
 
 	setActive (v: boolean) {
-		const node = $(this.node);
-
-		v ? node.addClass('active') : node.removeClass('active');
+		$(this.node).toggleClass('active', v);
 	};
+
 });
 
 export default PreviewObject;

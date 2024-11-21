@@ -384,11 +384,9 @@ class CommonStore {
 	};
 
 	fullscreenSet (v: boolean) {
-		const body = $('body');
-		
 		this.isFullScreen = v;
-		v ? body.addClass('isFullScreen') : body.removeClass('isFullScreen');
 
+		$('body').toggleClass('isFullScreen', v);
 		$(window).trigger('resize');
 	};
 
@@ -512,7 +510,7 @@ class CommonStore {
 		set(this.configObj, newConfig);
 
 		this.configObj.debug = this.configObj.debug || {};
-		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
+		html.toggleClass('debug', this.configObj.debug.ui);
 	};
 
 	spaceStorageSet (value: Partial<SpaceStorage>) {

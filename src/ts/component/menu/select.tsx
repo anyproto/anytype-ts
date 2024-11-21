@@ -34,7 +34,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, disabled, placeholder, noVirtualisation, withDefault, menuLabel } = data;
+		const { filter, value, disabled, placeholder, noVirtualisation, menuLabel } = data;
 		const items = this.getItems(true);
 		const withFilter = this.isWithFilter();
 
@@ -416,7 +416,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		return item.checkbox || value.includes(String(item.id));
+		if (undefined !== item.checkbox) {
+			return item.checkbox;
+		};
+
+		return value.includes(String(item.id));
 	};
 
 	resize () {
@@ -449,10 +453,10 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			content.css({ height });
 		};
 
-		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
-		withAdd ? obj.addClass('withAdd') : obj.removeClass('withAdd');
-		noScroll ? obj.addClass('noScroll') : obj.removeClass('noScroll');
-		noVirtualisation ? obj.addClass('noVirtualisation') : obj.removeClass('noVirtualisation');
+		obj.toggleClass('withFilter', !!withFilter);
+		obj.toggleClass('withAdd', !!withAdd);
+		obj.toggleClass('noScroll', !!noScroll);
+		obj.toggleClass('noVirtualisation', !!noVirtualisation);
 
 		position();
 	};

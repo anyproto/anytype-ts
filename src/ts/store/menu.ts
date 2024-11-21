@@ -131,7 +131,7 @@ class MenuStore {
 		};
 
 		if (el.length) {
-			noAnimation ? el.addClass('noAnimation') : el.removeClass('noAnimation');
+			el.toggleClass('noAnimation', noAnimation);
 			el.css({ transform: '' }).removeClass('show');
 		};
 

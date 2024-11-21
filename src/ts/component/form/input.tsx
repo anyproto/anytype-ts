@@ -119,10 +119,7 @@ const Input = forwardRef<InputRef, Props>((props, ref) => {
 		setValue: (v: string) => setValue(String(v || '')),
 		getValue: () => String(value || ''),
 		setType: (v: string) => setInputType(v),
-		setError: (hasError: boolean) => {
-			const node = $(inputRef.current);
-			hasError ? node.addClass('withError') : node.removeClass('withError');
-		},
+		setError: (hasError: boolean) => $(inputRef.current).toggleClass('withError', hasError),
 		getSelectionRect,
 		setPlaceholder: (placeholder: string) => $(inputRef.current).attr({ placeholder }),
 		setRange: (range: I.TextRange) => {
@@ -138,7 +135,19 @@ const Input = forwardRef<InputRef, Props>((props, ref) => {
 		handler: ((e: any, value: string) => void) | undefined,
 		e: React.SyntheticEvent<HTMLInputElement>
 	) => {
-		handler?.(e, e.currentTarget.value);
+		let val = null;
+		if (e.currentTarget) {
+			val = e.currentTarget.value;
+		} else
+		if (e.target) {
+			val = String($(e.target).val());
+		};
+
+		if (val === null) {
+			console.log('[Input Event] No value to handle!');
+			return;
+		};
+		handler?.(e, val);
 	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

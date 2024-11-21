@@ -59,9 +59,8 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 	componentDidUpdate () {
 		const { position } = this.props;
 		const { imageUrl } = this.state;
-		const node = $(this.node);
 
-		imageUrl ? node.addClass('withImage') : node.removeClass('withImage');
+		$(this.node).toggleClass('withImage', !!imageUrl);
 
 		this.load();
 

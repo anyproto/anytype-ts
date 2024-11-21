@@ -355,6 +355,7 @@ export const Mapper = {
 				includeTime: obj.getDateincludetime(),
 				timeFormat: obj.getTimeformat(),
 				dateFormat: obj.getDateformat(),
+				formulaType: obj.getFormula(),
 			};
 		},
 
@@ -906,6 +907,7 @@ export const Mapper = {
 			item.setDateincludetime(obj.includeTime);
 			item.setTimeformat(obj.timeFormat);
 			item.setDateformat(obj.dateFormat);
+			item.setFormula(obj.formulaType);
 
 			return item;
 		},
