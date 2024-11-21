@@ -53,7 +53,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		if (isDate) {
 			cn.push('isDate');
 		};
-		const titleCn = [ 'title' ];
 		const placeholder = {
 			title: this.props.placeholder,
 			description: translate('placeholderBlockDescription'),
