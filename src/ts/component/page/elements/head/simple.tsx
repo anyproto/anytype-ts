@@ -121,12 +121,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 		};
 
-		if (isDate) {
-			button = (
-				<div id="head-calendar-button" onClick={() => this.onCalendar()}>123</div>
-			);
-		};
-
 		if (!canWrite) {
 			button = null;
 		};
