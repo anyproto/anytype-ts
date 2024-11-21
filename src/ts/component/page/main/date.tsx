@@ -1,6 +1,5 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Deleted, ListObject, Button, Icon } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard, translate } from 'Lib';
@@ -47,10 +46,27 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		this.resize = this.resize.bind(this);
 	};
 
+	prevDate = () => {
+		const rootId = this.getRootId();		
+		const object = S.Detail.get(rootId, rootId, ['timestamp']);
+		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp - 24 * 60 * 60, (message: any) => {
+			U.Object.openAuto(message.details);
+		});
+	};
+
+	nextDate = () => {
+		const rootId = this.getRootId();		
+		const object = S.Detail.get(rootId, rootId, ['timestamp']);
+		console.log(object.timestamp);
+		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp + 24 * 60 * 60, (message: any) => {
+			U.Object.openAuto(message.details);
+		});
+	};
+
 	render () {
 		const { space } = S.Common;
 		const { isLoading, isDeleted, relations, selectedRelation } = this.state;
-		const rootId = this.getRootId();
+		const rootId = this.getRootId();		
 		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, ['timestamp']);
 
@@ -66,7 +82,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				relationKey: creatorRelation.relationKey, name: creatorRelation.name, isObject: true,
 			},
 		];
-		// TODO: dark theme
 		const filters: I.Filter[] = 
 		[
 			selectedRelation === 'mentions' ? {
@@ -86,7 +101,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const calendarMenu = <React.Fragment><Icon className="arrow left"/><Icon className="arrow right"/><Icon ref={ref => this.refCalIcon = ref} className="calendar" onClick={this.onCalendar}/></React.Fragment>;
+			const calendarMenu = <React.Fragment><Icon className="arrow left withBackground" onClick={this.prevDate}/><Icon className="arrow right withBackground" onClick={this.nextDate}/><Icon ref={ref => this.refCalIcon = ref} className="calendar withBackground" onClick={this.onCalendar}/></React.Fragment>;
 
 			content = (
 				<div className="blocks wrapper">
@@ -102,7 +117,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						/>
 
 						<div className="categories">
-							{/* TODO: remove sort when relations are returned in the order corresponding to UI design */}
 							{relations.filter(r => r.relationKey !== 'links').sort((a,b) => a.relationKey === 'mentions' ? -1 : 1).flatMap((item, index) => {
 								const relation = S.Record.getRelationByKey(item.relationKey);
 								return ([<Button
@@ -110,7 +124,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 									key={relation.relationKey}
 									type="button"
 									color="blank"
-									className="category" 
+									className="category"
 									onClick={() => {
 										this.setState({ selectedRelation: item.relationKey }, () => {
 											this.refList?.getData(1);
@@ -264,8 +278,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		const rootId = this.getRootId();
 
 		const object = S.Detail.get(rootId, rootId);
-
-		console.log(object);
 
 		C.RelationListWithValue(space, object.id, (message: any) => {
 			this.setState({ relations: message.relations });
