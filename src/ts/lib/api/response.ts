@@ -304,6 +304,12 @@ export const ObjectChatAdd = (response: Rpc.Object.ChatAdd.Response) => {
 	};
 };
 
+export const ObjectDateByTimestamp = (response: Rpc.Object.DateByTimestamp.Response) => {
+	return {
+		details: Decode.struct(response.getDetails()),
+	};
+};
+
 export const BlockCreate = (response: Rpc.Block.Create.Response) => {
 	return {
 		blockId: response.getBlockid(),
