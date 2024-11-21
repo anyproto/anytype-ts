@@ -70,8 +70,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		} else {
 			const calendarMenu = (
 				<React.Fragment>
-					<Icon className="arrow left withBackground" onClick={this.prevDate} />
-					<Icon className="arrow right withBackground" onClick={this.nextDate}/>
+					<Icon className="arrow left withBackground" onClick={() => this.changeDate(-1)} />
+					<Icon className="arrow right withBackground" onClick={() => this.changeDate(1)}/>
 					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
 				</React.Fragment>
 			);
@@ -270,19 +270,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
         });
     }
 
-	prevDate = () => {
-		const rootId = this.getRootId();		
+	changeDate = (dir: number) => {
+		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, ['timestamp']);
-		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp - 24 * 60 * 60, (message: any) => {
-			U.Object.openAuto(message.details);
-		});
-	};
-
-	nextDate = () => {
-		const rootId = this.getRootId();		
-		const object = S.Detail.get(rootId, rootId, ['timestamp']);
-		console.log(object.timestamp);
-		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp + 24 * 60 * 60, (message: any) => {
+		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp + dir * 24 * 60 * 60, (message: any) => {
 			U.Object.openAuto(message.details);
 		});
 	};
