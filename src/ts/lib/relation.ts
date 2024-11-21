@@ -127,9 +127,9 @@ class Relation {
 			case I.RelationType.Date: {
 				ret = ret.concat([
 					...common,
-					{ id: I.FormulaType.MathMin, name: translate('formulaDateMin'), section: I.FormulaSection.Date },
-					{ id: I.FormulaType.MathMax, name: translate('formulaDateMax'), section: I.FormulaSection.Date },
-					{ id: I.FormulaType.Range, name: translate('formulaDateRange'), section: I.FormulaSection.Date },
+					{ id: I.FormulaType.MathMin, name: translate('formulaDateMin'), short: translate('formulaDateMinShort'), section: I.FormulaSection.Date },
+					{ id: I.FormulaType.MathMax, name: translate('formulaDateMax'), short: translate('formulaDateMaxShort'), section: I.FormulaSection.Date },
+					{ id: I.FormulaType.Range, name: translate('formulaDateRange'), short: translate('formulaDateRangeShort'), section: I.FormulaSection.Date },
 				]);
 				break;
 			};

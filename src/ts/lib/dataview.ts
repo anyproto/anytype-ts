@@ -546,10 +546,20 @@ class Dataview {
 		return ret;
 	};
 
-	getFormulaResult (subId: string, relationKey: string, viewRelation: I.ViewRelation): any {
-		const { formulaType, includeTime, timeFormat, dateFormat } = viewRelation;
+	getFormulaResult (subId: string, viewRelation: I.ViewRelation): any {
+		if (!viewRelation) {
+			return null;
+		};
+
+		const { formulaType, includeTime, timeFormat, dateFormat, relationKey } = viewRelation;
 		const relation = S.Record.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return null;
+		};
+
 		const { total } = S.Record.getMeta(subId, '');
+		const isDate = relation.format == I.RelationType.Date;
 
 		let records = [];
 		let needRecords = false;
@@ -644,16 +654,22 @@ class Dataview {
 
 			case I.FormulaType.MathMin: {
 				ret = min();
+				if (isDate) {
+					ret = date(ret);
+				};
 				break;
 			};
 
 			case I.FormulaType.MathMax: {
 				ret = max();
+				if (isDate) {
+					ret = date(ret);
+				};
 				break;
 			};
 
 			case I.FormulaType.Range: {
-				if (relation.format == I.RelationType.Date) {
+				if (isDate) {
 					ret = U.Date.duration(max() - min());
 				} else {
 					ret = [ min(), max() ].join(' - ');
