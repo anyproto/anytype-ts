@@ -154,6 +154,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 										onRemove={() => this.onAttachmentRemove(item.id)}
 										onPreview={(preview) => this.onPreview(preview)}
 										showAsFile={!attachmentsLayout}
+										bookmarkAsDefault={attachments.length > 1}
 									/>
 								))}
 							</div>

@@ -173,7 +173,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							>
 								{attachments.map(item => (
 									<SwiperSlide key={item.id}>
-										<Attachment object={item} onRemove={this.onAttachmentRemove} />
+										<Attachment
+											object={item}
+											onRemove={this.onAttachmentRemove}
+											bookmarkAsDefault={true}
+										/>
 									</SwiperSlide>
 								))}
 							</Swiper>
