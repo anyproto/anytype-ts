@@ -297,7 +297,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			noDeps: true,
 			keys: U.Data.chatRelationKeys(),
 		}, (message: any) => {
-			if (!message.records) {
+			if (message.error.code) {
 				return;
 			};
 			message.records.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
