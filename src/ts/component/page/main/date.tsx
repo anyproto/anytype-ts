@@ -52,23 +52,17 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		const creatorRelation = S.Record.getRelationByKey('creator');
 		const columns: any[] = [
-
 			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
-			{ 
-				relationKey: creatorRelation.relationKey, name: creatorRelation.name, isObject: true,
-			},
+			{ relationKey: creatorRelation.relationKey, name: creatorRelation.name, isObject: true },
 		];
-		// TODO: add calendar 00:49:16
-		// TODO: dark theme
-		// TODO: create task for middle to return relations in the order corresponding to UI design
-		const filters: I.Filter[] = [
-			{ 
-				relationKey: selectedRelation, 
-				condition: I.FilterCondition.Equal, 
-				value: object.timestamp, 
-				format: I.RelationType.Date 
-			},
-		];
+
+		const filters: I.Filter[] = [];
+
+		if (selectedRelation === 'mentions') {
+			filters.push({ relationKey: 'mentions', condition: I.FilterCondition.In, value: [ object.id ] });
+		} else {
+			filters.push({ relationKey: selectedRelation, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
+		};
 
 		let content = null;
 
@@ -163,7 +157,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				value: object.timestamp,
 				canEdit: true,
 				onChange: (value: number) => {
-					console.log('value', value);
+					C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), value, (message: any) => {
+						U.Object.openAuto(message.details);
+					});
 				},
 			},
 		});
