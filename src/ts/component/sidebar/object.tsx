@@ -760,7 +760,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				e.preventDefault();
 
 				const ids = this.selected ? this.selected : [ next.id ];
-				Action.archive(ids);
+				Action.archive(ids, analytics.route.allObjects);
 			});
 		};
 	};

@@ -172,7 +172,6 @@
 	"commonMenu": "Menu",
 	"commonSignUp": "Sign Up",
 	"commonNotFound": "Not found",
-	"commonCalculate": "Calculate",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1865,6 +1864,7 @@
 	"emailCollectionCheckboxTipsLabel": "Insider tips & tutorials on using Anytype",
 	"emailCollectionCheckboxNewsLabel": "Product updates & company news",
 	"emailCollectionEnterEmail": "Enter email...",
+	"emailCollectionCodeSent": "Code sent!",
 	"emailCollectionGreat": "Great!",
 
 	"onboardingObjectCreationFinish": "Creating Objects",
@@ -2224,11 +2224,17 @@
 	"networkMode2Title": "Self-hosted",
 	"networkMode2Text": "Back up to your self-hosted network",
 
-	"formulaNone": "Select",
+	"formulaNone": "None",
 	"formulaCount": "Count",
+	"formulaPercentage": "Percentage",
+	"formulaMath": "Math",
+	"formulaDate": "Date",
 	"formulaDistinct": "Count unique values",
+	"formulaDistinctShort": "Unique",
 	"formulaEmpty": "Count empty",
+	"formulaEmptyShort": "Empty",
 	"formulaNotEmpty": "Count not empty",
+	"formulaNotEmptyShort": "Not empty",
 	"formulaPercentEmpty": "Percentage empty",
 	"formulaPercentNotEmpty": "Percentage not empty",
 	"formulaSum": "Sum",
@@ -2236,5 +2242,16 @@
 	"formulaMedian": "Median",
 	"formulaMin": "Minimum",
 	"formulaMax": "Maximum",
-	"formulaRange": "Range"
+	"formulaRange": "Range",
+	"formulaDateMin": "Earliest date",
+	"formulaDateMinShort": "Earliest",
+	"formulaDateMax": "Latest date",
+	"formulaDateMaxShort": "Latest",
+	"formulaDateRange": "Date range",
+	"formulaDateRangeShort": "Range",
+	"formulaCheckboxCount": "Count all",
+	"formulaCheckboxEmpty": "Count unchecked",
+	"formulaCheckboxNotEmpty": "Count checked",
+	"formulaCheckboxPercentEmpty": "Percentage unchecked",
+	"formulaCheckboxPercentNotEmpty": "Percentage checked"
 }

@@ -11,6 +11,10 @@
         .loaderWrapper { border-radius: 0px !important; }
     }
 
+    .inputWrapper {
+        .input { border-color: var(--color-shape-primary) !important; }
+    }
+
     .step0 { padding-top: 16px; }
     .step0 {
         .check { @include text-small; }
@@ -22,7 +26,7 @@
 
     .step1 { padding-top: 16px; text-align: center; }
     .step1 {
-        .pin { margin-bottom: 8px; }
+        .pin { margin-bottom: 12px; }
         .pin {
             .input { @include text-header1; width: 35px; height: 47px; border-radius: 6px; border-color: var(--color-shape-primary); }
         }

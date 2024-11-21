@@ -311,7 +311,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const subId = S.Record.getSubId(rootId, blockId);
 		const message = S.Chat.getMessage(rootId, id);
 
-		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
+		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
 	};
 
 	getAttachmentsClass (): string {

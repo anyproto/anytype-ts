@@ -416,13 +416,13 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'archive': {
-				Action.archive(objectIds, cb);
+				Action.archive(objectIds, route, cb);
 				win.trigger('removeGraphNode', { ids: objectIds });
 				break;
 			};
 
 			case 'unarchive': {
-				Action.restore(objectIds, cb);
+				Action.restore(objectIds, route, cb);
 				break;
 			};
 

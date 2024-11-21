@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, translate } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, translate, analytics } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -254,7 +254,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			if (count && !S.Menu.isOpen()) {
 				keyboard.shortcut('backspace, delete', e, () => {
 					e.preventDefault();
-					Action.archive(ids);
+					Action.archive(ids, analytics.route.set);
 					selection.clear();
 				});
 			};

@@ -15,6 +15,7 @@ interface State {
 	subscribeNews: boolean,
 	subscribeTips: boolean,
 	pinDisabled: boolean,
+	showCodeSent: boolean,
 };
 
 class EmailCollectionForm extends React.Component<Props, State> {
@@ -27,6 +28,7 @@ class EmailCollectionForm extends React.Component<Props, State> {
 		subscribeNews: false,
 		subscribeTips: false,
 		pinDisabled: false,
+		showCodeSent: false,
 	};
 
 	step = 0;
@@ -52,7 +54,7 @@ class EmailCollectionForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { status, statusText, countdown, subscribeNews, subscribeTips, pinDisabled } = this.state;
+		const { status, statusText, countdown, subscribeNews, subscribeTips, pinDisabled, showCodeSent } = this.state;
 
 		let content = null;
 		let descriptionSuffix = 'Description';
@@ -98,8 +100,8 @@ class EmailCollectionForm extends React.Component<Props, State> {
 						{status ? <div className={[ 'statusBar', status ].join(' ')}>{statusText}</div> : ''}
 
 						<div onClick={this.onResend} className={[ 'resend', (countdown ? 'countdown' : '') ].join(' ')}>
-							{translate('popupMembershipResend')}
-							{countdown ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
+							{showCodeSent ? translate('emailCollectionCodeSent') : translate('popupMembershipResend')}
+							{countdown && !showCodeSent ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
 						</div>
 					</div>
 				);
@@ -265,7 +267,12 @@ class EmailCollectionForm extends React.Component<Props, State> {
 			S.Common.emailConfirmationTimeSet(U.Date.now());
 		};
 
-		this.setState({ countdown: seconds });
+		this.setState({ countdown: seconds, showCodeSent: true });
+
+		window.setTimeout(() => {
+			this.setState({ showCodeSent: false });
+		}, 2000);
+
 		this.interval = window.setInterval(() => {
 			let { countdown } = this.state;
 

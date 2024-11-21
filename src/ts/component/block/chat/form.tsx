@@ -778,11 +778,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	getTextValue (): string {
-		return String(this.refEditable?.getTextValue() || '');
+		return this.trim(String(this.refEditable?.getTextValue() || '').replace(/^\r?\n/gm, ''));
 	};
 
 	getHtmlValue (): string {
-		return String(this.refEditable?.getHtmlValue() || '');
+		return this.trim(String(this.refEditable?.getHtmlValue() || ''));
+	};
+
+	trim (value: string): string {
+		return String(value || '').replace(/^(\r?\n)/gm, '').replace(/(\r?\n)$/gm, '');
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
@@ -829,7 +833,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				this.updateMarkup(value, to, to);
 				break;
 			};
-		}
+		};
 	};
 
 	onTextButtonToggle (type: I.MarkType, param: string) {
@@ -972,7 +976,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	canSend () {
-		return this.editingId || this.getTextValue() || this.state.attachments.length;
+		return this.editingId || this.getTextValue() || this.state.attachments.length || this.marks.length;
 	};
 
 	hasSelection (): boolean {
@@ -997,6 +1001,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.refEditable.setRange({ from, to });
 		this.refEditable.placeholderCheck();
 		this.renderMarkup();
+		this.checkSendButton();
 	};
 
 	renderMarkup () {
