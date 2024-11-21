@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Deleted, ListObject } from 'Component';
-import { I, C, S, U, J, Action, keyboard, translate } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, translate } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -11,12 +11,13 @@ interface State {
 	isLoading: boolean;
 	isDeleted: boolean;
 	relations: Item[];
+	selectedRelation: string;
 };
 
 interface Item {
 	relationKey: string;
 	counter: number;
-};
+}
 
 const SUB_ID = 'listObject';
 
@@ -32,10 +33,11 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	loading = false;
 	timeout = 0;
 
-	state = {
+	state:State = {
 		isLoading: false,
 		isDeleted: false,
 		relations: [],
+		selectedRelation: '',
 	};
 
 	constructor (props: I.PageComponent) {
@@ -46,29 +48,27 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 	render () {
 		const { space } = S.Common;
-		const { isLoading, isDeleted, relations } = this.state;
+		const { isLoading, isDeleted, relations, selectedRelation } = this.state;
 		const rootId = this.getRootId();
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'timestamp' ]);
+		const object = S.Detail.get(rootId, rootId, ['timestamp']);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		};
-
-		console.log(object);
 
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
 				mapper: v => U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v),
 			},
-			//{ relationKey: object.relationKey, name: object.name, isCell: true }
+			// { relationKey: object.relationKey, name: object.name, isCell: true }
 		];
 
-		// TODO: get relationKey from state or use first one from relations
+		// TODO: relationKey from state or use first one from relations
 		const filters: I.Filter[] = [
 			{ 
-				relationKey: 'dueDate', 
+				relationKey: relations[0]?.relationKey || 'lastModifiedDate', 
 				condition: I.FilterCondition.Equal, 
 				value: object.timestamp, 
 				format: I.RelationType.Date 
@@ -80,45 +80,42 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
+
+
 			const isCollection = U.Object.isCollectionLayout(object.layout);
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 
 			content = (
 				<div className="blocks wrapper">
-					<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-					<HeadSimple 
-						{...this.props} 
-						ref={ref => this.refHead = ref} 
-						placeholder={placeholder} 
-						rootId={rootId} 
-						readonly={this.isReadonly()}
-					/>
-
-					<div className="categories">
-						{relations.map(item => {
-							const relation = S.Record.getRelationByKey(item.relationKey);
-
-							return (
-								<div key={item.relationKey} className="category">
-									{relation.name}
-								</div>
-							);
-						})}
-					</div>
-
-					<div className="list">
-						<ListObject 
-							ref={ref => this.refList = ref}
+						<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
+						<HeadSimple 
 							{...this.props} 
-							spaceId={space}
-							subId={SUB_ID} 
+							ref={ref => this.refHead = ref} 
+							placeholder={placeholder} 
 							rootId={rootId} 
-							filters={filters}
-							columns={columns} 
+							readonly={this.isReadonly()}
 						/>
+
+						<div className="categories">
+							{relations.map((item, index) => {
+								const relation = S.Record.getRelationByKey(item.relationKey);
+
+								return (<div key={item.relationKey} className="category">{relation.name}</div>);
+							})}
+						</div>
+						<div className="list">
+							<ListObject 
+								ref={ref => this.refList = ref}
+								{...this.props}
+								// sources={[rootId]}
+								spaceId={space}
+								subId={SUB_ID} 
+								rootId={rootId}  
+								columns={columns}
+								filters={filters}
+							/>
+						</div>
 					</div>
-				</div>
 			);
 		};
 
@@ -229,9 +226,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 	};
 
-	loadCategory () {
+	loadCategory() {
 		const { space } = S.Common;
 		const rootId = this.getRootId();
+
 		const object = S.Detail.get(rootId, rootId);
 
 		console.log(object);
@@ -239,7 +237,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		C.RelationListWithValue(space, object.id, (message: any) => {
 			this.setState({ relations: message.relations });
 		});
-	};
+	}
 
 	getRootId () {
 		const { rootId, match } = this.props;
@@ -268,7 +266,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		raf(() => {
 			const win = $(window);
 			const container = U.Common.getPageContainer(isPopup);
-
+			
 			container.css({ minHeight: isPopup ? '' : win.height() });
 		});
 	};
