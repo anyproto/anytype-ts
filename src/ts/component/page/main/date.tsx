@@ -89,10 +89,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 					<div className="categories">
 						{relations.map((item) => {
+							const relation = S.Record.getRelationByKey(item.relationKey);
 							const isMention = item.relationKey == 'mentions';
 							const icon = isMention ? 'mention' : '';
 							const separator = isMention ? <div className="separator" /> : '';
-
 							return (
 								<React.Fragment key={item.relationKey}>
 									<Button
@@ -106,7 +106,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 											});
 										}}
 										icon={icon}
-										text={item.name}
+										text={relation.name}
 									/>
 									{separator}
 								</React.Fragment>
