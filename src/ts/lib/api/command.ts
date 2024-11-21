@@ -1773,6 +1773,15 @@ export const ObjectChatAdd = (objectId: string, callBack?: (message: any) => voi
 	dispatcher.request(ObjectChatAdd.name, request, callBack);
 };
 
+export const ObjectDateByTimestamp = (spaceId: string, timestamp: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.DateByTimestamp.Request();
+
+	request.setSpaceid(spaceId);
+	request.setTimestamp(timestamp);
+
+	dispatcher.request(ObjectDateByTimestamp.name, request, callBack);
+};
+
 // ---------------------- OBJECT LIST ---------------------- //
 
 export const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
