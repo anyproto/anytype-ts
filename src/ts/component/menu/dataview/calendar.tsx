@@ -12,7 +12,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { value, isEmpty, canEdit } = data;
+		const { value, isEmpty, canEdit, canClear = true } = data;
 		const items = this.getData();
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
@@ -115,7 +115,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 									<div className="btn" onClick={() => this.setValue(U.Date.mergeTimeWithDate(tomorrow, value), true, true)}>{translate('commonTomorrow')}</div>
 								</div>
 								<div className="side right">
-									<div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>
+									{canClear && <div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>}
 								</div>
 							</div>
 						</div>

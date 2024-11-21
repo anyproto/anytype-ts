@@ -1,6 +1,5 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Deleted, ListObject, Button, Icon } from 'Component';
 import { I, C, S, U, Action, translate } from 'Lib';
@@ -32,7 +31,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		isLoading: false,
 		isDeleted: false,
 		relations: [],
-		selectedRelation: 'createdDate',
+		selectedRelation: 'mentions',
 	};
 
 	constructor (props: I.PageComponent) {
@@ -71,8 +70,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		} else {
 			const calendarMenu = (
 				<React.Fragment>
-					<Icon className="arrow left withBackground" />
-					<Icon className="arrow right withBackground" />
+					<Icon className="arrow left withBackground" onClick={this.prevDate} />
+					<Icon className="arrow right withBackground" onClick={this.nextDate}/>
 					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
 				</React.Fragment>
 			);
@@ -90,10 +89,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 					<div className="categories">
 						{relations.map((item) => {
+							const relation = S.Record.getRelationByKey(item.relationKey);
 							const isMention = item.relationKey == 'mentions';
 							const icon = isMention ? 'mention' : '';
 							const separator = isMention ? <div className="separator" /> : '';
-
 							return (
 								<React.Fragment key={item.relationKey}>
 									<Button
@@ -107,7 +106,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 											});
 										}}
 										icon={icon}
-										text={item.name}
+										text={relation.name}
 									/>
 									{separator}
 								</React.Fragment>
@@ -156,6 +155,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			data: {
 				value: object.timestamp,
 				canEdit: true,
+				canClear: false,
 				onChange: (value: number) => {
 					C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), value, (message: any) => {
 						U.Object.openAuto(message.details);
@@ -244,31 +244,29 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		const { space, config } = S.Common;
 		const rootId = this.getRootId();
 
-		C.RelationListWithValue(space, rootId, (message: any) => {
-			const relations = (message.relations || []).map(it => S.Record.getRelationByKey(it.relationKey)).filter(it => {
-				if ([ 'mentions' ].includes(it.relationKey)) {
-					return true;
-				};
+		const object = S.Detail.get(rootId, rootId);
 
-				if ([ 'links', 'backlinks' ].includes(it.relationKey)) {
-					return false;
-				};
-
-				return config.debug.hidden ? true : !it.isHidden;
-			});
-
-			relations.sort((c1, c2) => {
-				const isMention1 = c1.relationKey == 'mentions';
-				const isMention2 = c2.relationKey == 'mentions';
-
-				if (isMention1 && !isMention2) return -1;
-				if (!isMention1 && isMention2) return 1;
-				return 0;
-			});
-
-			this.setState({ relations });
+		C.RelationListWithValue(space, object.id, (message: any) => {
+			this.setState({ relations: message.relations });
 		});
 	}
+
+	prevDate = () => {
+		const rootId = this.getRootId();		
+		const object = S.Detail.get(rootId, rootId, ['timestamp']);
+		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp - 24 * 60 * 60, (message: any) => {
+			U.Object.openAuto(message.details);
+		});
+	};
+
+	nextDate = () => {
+		const rootId = this.getRootId();		
+		const object = S.Detail.get(rootId, rootId, ['timestamp']);
+		console.log(object.timestamp);
+		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp + 24 * 60 * 60, (message: any) => {
+			U.Object.openAuto(message.details);
+		});
+	};
 
 	getRootId () {
 		const { rootId, match } = this.props;
