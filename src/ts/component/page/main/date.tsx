@@ -38,7 +38,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		isLoading: false,
 		isDeleted: false,
 		relations: [],
-		selectedRelation: 'createdDate',
+		selectedRelation: 'mentions',
 	};
 
 	constructor (props: I.PageComponent) {
@@ -86,7 +86,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const calendarMenu = <><Icon className="arrow left"/><Icon className="arrow right"/><Icon ref={ref => this.refCalIcon = ref} className="calendar" onClick={this.onCalendar}/></>;
+			const calendarMenu = <React.Fragment><Icon className="arrow left"/><Icon className="arrow right"/><Icon ref={ref => this.refCalIcon = ref} className="calendar" onClick={this.onCalendar}/></React.Fragment>;
 
 			content = (
 				<div className="blocks wrapper">
@@ -162,6 +162,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				// rebind: this.rebind,
 				value: object.timestamp,
 				canEdit: true,
+				canClear: false,
 				onChange: (value: number) => {
 					C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), value, (message: any) => {
 						U.Object.openAuto(message.details);
