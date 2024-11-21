@@ -66,9 +66,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				relationKey: creatorRelation.relationKey, name: creatorRelation.name, isObject: true,
 			},
 		];
-		// TODO: add calendar 00:49:16
 		// TODO: dark theme
-		// TODO: create task for middle to return relations in the order corresponding to UI design
 		const filters: I.Filter[] = 
 		[
 			selectedRelation === 'mentions' ? {
@@ -104,6 +102,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						/>
 
 						<div className="categories">
+							{/* TODO: remove sort when relations are returned in the order corresponding to UI design */}
 							{relations.filter(r => r.relationKey !== 'links').sort((a,b) => a.relationKey === 'mentions' ? -1 : 1).flatMap((item, index) => {
 								const relation = S.Record.getRelationByKey(item.relationKey);
 								return ([<Button
@@ -164,7 +163,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				value: object.timestamp,
 				canEdit: true,
 				onChange: (value: number) => {
-					console.log('value', value);
+					C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), value, (message: any) => {
+						U.Object.openAuto(message.details);
+					});
 				},
 			},
 		});
@@ -293,13 +294,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		if (!this._isMounted || isLoading) {
 			return;
 		};
-
-		raf(() => {
-			const win = $(window);
-			const container = U.Common.getPageContainer(isPopup);
-			
-			container.css({ minHeight: isPopup ? '' : win.height() });
-		});
 	};
 });
 

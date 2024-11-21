@@ -2243,3 +2243,12 @@ export const RelationListWithValue = (spaceId: string, value: any, callBack?: (m
 
 	dispatcher.request(RelationListWithValue.name, request, callBack);
 };
+
+export const ObjectDateByTimestamp = (spaceId: string, timestamp: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.DateByTimestamp.Request();
+
+	request.setSpaceid(spaceId);
+	request.setTimestamp(timestamp);
+
+	dispatcher.request(ObjectDateByTimestamp.name, request, callBack);
+};
