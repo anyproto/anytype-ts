@@ -68,14 +68,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const calendarMenu = (
-				<React.Fragment>
-					<Icon className="arrow left withBackground" onClick={() => this.changeDate(-1)} />
-					<Icon className="arrow right withBackground" onClick={() => this.changeDate(1)}/>
-					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
-				</React.Fragment>
-			);
-
 			content = (
 				<div className="blocks wrapper">
 					<HeadSimple 
@@ -84,7 +76,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						ref={ref => this.refHead = ref} 
 						rootId={rootId} 
 						readonly={true}
-						rightSideEnd={calendarMenu}
 					/>
 
 					<div className="categories">
@@ -143,26 +134,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
-	};
-
-	onCalendar = () => {
-		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, ['timestamp']);
-
-		S.Menu.open('dataviewCalendar', {
-			element: '#calendar-icon',
-			horizontal: I.MenuDirection.Center,
-			data: {
-				value: object.timestamp,
-				canEdit: true,
-				canClear: false,
-				onChange: (value: number) => {
-					C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), value, (message: any) => {
-						U.Object.openAuto(message.details);
-					});
-				},
-			},
-		});
 	};
 
 	componentDidMount () {
@@ -269,14 +240,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
             this.setState({ relations });
         });
     }
-
-	changeDate = (dir: number) => {
-		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, ['timestamp']);
-		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp + dir * 24 * 60 * 60, (message: any) => {
-			U.Object.openAuto(message.details);
-		});
-	};
 
 	getRootId () {
 		const { rootId, match } = this.props;

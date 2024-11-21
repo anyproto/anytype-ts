@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, S, U, J, Action, focus, keyboard, Relation, translate } from 'Lib';
+import { IconObject, Block, Button, Editable, Icon } from 'Component';
+import { I, M, S, U, J, Action, focus, keyboard, Relation, translate, C } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -10,8 +10,6 @@ interface Props {
 	readonly?: boolean;
 	noIcon?: boolean;
 	onCreate?: () => void;
-	rightSideStart?: React.ReactElement;
-	rightSideEnd?: React.ReactElement;
 };
 
 const EDITORS = [ 
@@ -37,7 +35,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon, rightSideStart, rightSideEnd } = this.props;
+		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon } = this.props;
 		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
@@ -120,6 +118,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 		};
 
+		if (isDate) {
+			button = (
+				<React.Fragment>
+					<Icon className="arrow left withBackground" onClick={() => this.changeDate(-1)} />
+					<Icon className="arrow right withBackground" onClick={() => this.changeDate(1)}/>
+					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
+				</React.Fragment>
+			);
+		}
+
 		if (!canWrite) {
 			button = null;
 		};
@@ -144,8 +152,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					{featured}
 				</div>
 
-				{button || rightSideStart || rightSideEnd ? (
-					<div className="side right">{rightSideStart}{button}{rightSideEnd}</div>
+				{button ? (
+					<div className="side right">{button}</div>
 				) : ''}
 			</div>
 		);
@@ -291,23 +299,31 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		return sources.includes(rootId);
 	};
 
-	onCalendar () {
+	onCalendar = () => {
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId, ['timestamp']);
 
 		S.Menu.open('dataviewCalendar', {
-			element: `#head-calendar-button`,
+			element: '#calendar-icon',
 			horizontal: I.MenuDirection.Center,
-			data: { 
-				value: object.timestamp, 
+			data: {
+				value: object.timestamp,
 				canEdit: true,
+				canClear: false,
 				onChange: (value: number) => {
-					console.log('TIMESTAMP', value);
-
-					// TODO: Get date id from timestamp and route to new date object
-
+					C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), value, (message: any) => {
+						U.Object.openAuto(message.details);
+					});
 				},
 			},
+		});
+	};
+
+	changeDate = (dir: number) => {
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId, ['timestamp']);
+		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp + dir * 24 * 60 * 60, (message: any) => {
+			U.Object.openAuto(message.details);
 		});
 	};
 
