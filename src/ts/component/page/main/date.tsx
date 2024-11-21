@@ -241,15 +241,34 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	loadCategory() {
-		const { space, config } = S.Common;
-		const rootId = this.getRootId();
+        const { space, config } = S.Common;
+        const rootId = this.getRootId();
 
-		const object = S.Detail.get(rootId, rootId);
+        C.RelationListWithValue(space, rootId, (message: any) => {
+            const relations = (message.relations || []).map(it => S.Record.getRelationByKey(it.relationKey)).filter(it => {
+                if ([ 'mentions' ].includes(it.relationKey)) {
+                    return true;
+                };
 
-		C.RelationListWithValue(space, object.id, (message: any) => {
-			this.setState({ relations: message.relations });
-		});
-	}
+                if ([ 'links', 'backlinks' ].includes(it.relationKey)) {
+                    return false;
+                };
+
+                return config.debug.hidden ? true : !it.isHidden;
+            });
+
+            relations.sort((c1, c2) => {
+                const isMention1 = c1.relationKey == 'mentions';
+                const isMention2 = c2.relationKey == 'mentions';
+
+                if (isMention1 && !isMention2) return -1;
+                if (!isMention1 && isMention2) return 1;
+                return 0;
+            });
+
+            this.setState({ relations });
+        });
+    }
 
 	prevDate = () => {
 		const rootId = this.getRootId();		
