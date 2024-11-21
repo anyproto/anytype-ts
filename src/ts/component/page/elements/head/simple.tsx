@@ -10,6 +10,8 @@ interface Props {
 	readonly?: boolean;
 	noIcon?: boolean;
 	onCreate?: () => void;
+	rightSideStart?: React.ReactElement;
+	rightSideEnd?: React.ReactElement;
 };
 
 const EDITORS = [ 
@@ -35,7 +37,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon } = this.props;
+		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon, rightSideStart, rightSideEnd } = this.props;
 		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
@@ -44,10 +46,14 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
-		const isRelation = U.Object.isRelationLayout(object.layout);
 		const isDate = U.Object.isDateLayout(object.layout);
+		const isRelation = U.Object.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
+		if (isDate) {
+			cn.push('isDate');
+		};
+		const titleCn = [ 'title' ];
 		const placeholder = {
 			title: this.props.placeholder,
 			description: translate('placeholderBlockDescription'),
@@ -71,11 +77,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			/>
 		);
 
-		let button = null;
+		let button: React.ReactElement = null;
 		let descr = null;
 		let featured = null;
 
-		if (!isTypeOrRelation) {
+		if (!isTypeOrRelation && !isDate) {
 			if (featuredRelations.includes('description')) {
 				descr = <Editor className="descr" id="description" />;
 			};
@@ -145,8 +151,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					{featured}
 				</div>
 
-				{button ? (
-					<div className="side right">{button}</div>
+				{button || rightSideStart || rightSideEnd ? (
+					<div className="side right">{rightSideStart}{button}{rightSideEnd}</div>
 				) : ''}
 			</div>
 		);
