@@ -188,11 +188,11 @@ class Select extends React.Component<Props, State> {
 		const menuParam = Object.assign({ 
 			element,
 			noFlipX: true,
-			onOpen: () => {
+			onOpen: (context: any) => {
 				window.setTimeout(() => $(element).addClass('isFocused'));
 
 				if (onOpen) {
-					onOpen();
+					onOpen(context);
 				};
 			},
 			onClose: () => { 

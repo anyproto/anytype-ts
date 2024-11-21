@@ -97,6 +97,14 @@ export enum FormulaType {
 	Range				 = 12,
 };
 
+export enum FormulaSection {
+	None				 = 0,
+	Count				 = 1,
+	Percent				 = 2,
+	Math				 = 3,
+	Date				 = 4,
+};
+
 export interface Sort {
 	id?: string;
 	relationKey: string;
