@@ -1,0 +1,18 @@
+@import "~scss/_mixins";
+
+.pageMainDate .side.right {
+    .icon.calendar { width: 24px; height: 24px; background-size: 20px; background-image: url('~img/icon/relation/date.svg'); border-radius: 4px; }
+    .icon.arrow { 
+        width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/dateSelectLight.svg'); border-radius: 4px; 
+        transition: $transitionAllCommon;
+    }
+    .icon.arrow.left { transform: rotateZ(180deg); }
+}
+
+.pageMainDate .categories { display: flex; flex-direction: row; gap: 8px 8px; align-items: center; justify-content: flex-start; flex-wrap: wrap; }
+.pageMainDate .separator { background-color:  var(--color-shape-secondary); width: 1px; height: 24px; }
+
+.pageMainDate .mentionsSign { padding-right: 8px; font-size: 16px; color: var(--color-control-active); }
+
+.dateList .table { border-top-width: 0px !important; }
+.dateList .table .isHead .cell > div { border-right-width: 0px !important; }
