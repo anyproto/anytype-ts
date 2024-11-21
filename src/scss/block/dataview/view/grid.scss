@@ -53,10 +53,12 @@
 
 		.cellFoot { height: 48px; @include text-common; color: var(--color-text-primary); }
 		.cellFoot {
-			.flex { justify-content: flex-end; gap: 0px 2px; }
+			.flex { justify-content: flex-end; }
+			.result { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
 			.name { width: auto !important; color: var(--color-text-secondary); }
 			.cellContent { height: 48px !important; }
-			.select { border: 0px; padding-left: 0px; padding-top: 0px; padding-bottom: 0px; opacity: 0; pointer-events: none; }
+
+			.select { border: 0px; padding-left: 0px; padding-top: 0px; padding-bottom: 0px; visibility: hidden; opacity: 0; pointer-events: none; }
 			.select:hover { background: none; }
 		}
 
@@ -79,7 +81,8 @@
 		}
 
 		.cellFoot.cellKeyHover, .cellFoot.hover {
-			.select { opacity: 1; pointer-events: all; }
+			.select { visibility: visible; opacity: 1; pointer-events: all; }
+			.result { display: none; }
 		}
 
 		.cellFoot.cellKeyHover::after, .cellFoot.hover::after { height: calc(100% - 1px); }

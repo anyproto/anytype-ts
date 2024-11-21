@@ -9,7 +9,6 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 };
 
 interface State {
-	isEditing: boolean;
 	result: any;
 };
 
@@ -17,14 +16,16 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 	node = null;
 	menuContext = null;
+	refSelect = null;
+
 	state = {
-		isEditing: false,
 		result: null,
 	};
 
 	constructor (props: Props) {
 		super(props);
 
+		this.onClick = this.onClick.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 		this.onClose = this.onClose.bind(this);
 		this.onOver = this.onOver.bind(this);
@@ -35,7 +36,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 	render () {
 		const { relationKey, rootId, block, getView } = this.props;
-		const { isEditing, result } = this.state;
+		const { result } = this.state;
 		const relation = S.Record.getRelationByKey(relationKey);
 		const view = getView();
 
@@ -67,34 +68,36 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				ref={ref => this.node = ref}
 				id={Relation.cellId('foot', relationKey, '')} 
 				className={cn.join(' ')}
-				onClick={() => this.setEditing(true)}
+				onClick={this.onClick}
 				onMouseEnter={this.onMouseEnter}
 				onMouseLeave={this.onMouseLeave}
 			>
 				<div className="cellContent">
 					<div className="flex">
-						{isEditing || (result === null) ? (
-							<Select 
-								id={`grid-foot-select-${relationKey}-${block.id}`} 
-								value="-"
-								options={sections}
-								arrowClassName="light"
-								menuParam={{
-									onOpen: this.onOpen,
-									onClose: this.onClose,
-									data: {
-										noScroll: true, 
-										noVirtualisation: true,
-										onOver: this.onOver,
-									},
-								}}
-							/>
-						) : (
-							<React.Fragment>
+						<Select 
+							ref={ref => this.refSelect = ref}
+							id={`grid-foot-select-${relationKey}-${block.id}`} 
+							value=""
+							onChange={() => this.refSelect.setValue('')}
+							options={sections}
+							arrowClassName="light"
+							menuParam={{
+								onOpen: this.onOpen,
+								onClose: this.onClose,
+								subIds: [ 'select2' ],
+								data: {
+									noScroll: true, 
+									noVirtualisation: true,
+									onOver: this.onOver,
+								},
+							}}
+						/>
+						{option && (result !== null) ? (
+							<div className="result">
 								<span className="name">{option.short || option.name}</span>
 								{result}
-							</React.Fragment>
-						)}
+							</div>
+						) : ''}
 					</div>
 				</div>
 			</div>
@@ -107,10 +110,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 	componentDidUpdate (): void {
 		this.calculate();
-	};
-
-	setEditing (isEditing: boolean): void {
-		this.setState({ isEditing });
 	};
 
 	calculate () {
@@ -126,23 +125,30 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		};
 	};
 
+	onClick (e: any) {
+		this.refSelect.show(e);
+	};
+
 	onOpen (context: any): void {
 		const { rootId, relationKey } = this.props;
 		const relation = S.Record.getRelationByKey(relationKey);
 		const object = S.Detail.get(rootId, rootId, []);
 
 		this.menuContext = context;
+		window.setTimeout(() => this.onMouseEnter(), 1);
 
-		window.setTimeout(() => $(`.cell-key-${relationKey}`).addClass('cellKeyHover'), 10);
 		analytics.event('ClickGridFormula', { format: relation.format, objectType: object.type });
 	};
 
 	onClose () {
 		$(`.cellKeyHover`).removeClass('cellKeyHover');
-		this.setEditing(false);
 	};
 
 	onOver (e: any, item: any) {
+		if (!this.menuContext) {
+			return;
+		};
+
 		if (!item.arrow) {
 			S.Menu.closeAll([ 'select2' ]);
 			return;
@@ -162,7 +168,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				data: {
 					rootId,
 					options,
-					rebind: this.menuContext.ref.rebind,
+					rebind: this.menuContext.ref?.rebind,
 					onSelect: (e: any, item: any) => {
 						this.onChange(item.id);
 						this.menuContext.close();
@@ -186,7 +192,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			{ id: I.FormulaSection.Date, name: translate('formulaDate'), arrow: true },
 		].filter(s => {
 			return options.filter(it => it.section == s.id).length;
-		})).map(it => ({ ...it, id: String(it.id) }));
+		})).map(it => ({ ...it, id: String(it.id), checkbox: false }));
 	};
 
 	onChange (id: string): void {
@@ -199,7 +205,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, item.relationKey, { 
 			...item, 
 			formulaType: Number(id) || 0,
-		}, () => this.setEditing(false));
+		});
 
 		analytics.event('ChangeGridFormula', { type: id, format: relation.format, objectType: object.type });
 	};
