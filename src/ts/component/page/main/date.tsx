@@ -104,9 +104,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						/>
 
 						<div className="categories">
-							{relations.sort((a,b) => a.relationKey === 'mentions' ? -1 : 1).map((item, index) => {
+							{relations.filter(r => r.relationKey !== 'links').sort((a,b) => a.relationKey === 'mentions' ? -1 : 1).flatMap((item, index) => {
 								const relation = S.Record.getRelationByKey(item.relationKey);
-								return (<><Button
+								return ([<Button
 									active={selectedRelation === item.relationKey}
 									key={relation.relationKey}
 									type="button"
@@ -119,7 +119,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 									}}
 									content={index === 0 && <div className="mentionsSign">@</div>}
 									text={index === 0 ? translate('relationMentions') : relation.name}
-									/>{index === 0 && <span className="separator"></span>}</>
+									/>, index === 0 && <span className="separator" key="separator"></span>]
 								);
 							})}
 						</div>
