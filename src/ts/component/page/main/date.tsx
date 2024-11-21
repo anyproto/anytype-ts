@@ -83,8 +83,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const isCollection = U.Object.isCollectionLayout(object.layout);
-			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 			const calendarMenu = <><Icon className="arrow left"/><Icon className="arrow right"/><Icon ref={ref => this.refCalIcon = ref} className="calendar" onClick={this.onCalendar}/></>;
 
 			content = (
@@ -94,18 +92,17 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 							{...this.props} 
 							noIcon={true}
 							ref={ref => this.refHead = ref} 
-							placeholder={placeholder} 
+							placeholder={''} 
 							rootId={rootId} 
 							readonly={this.isReadonly()}
 							rightSideEnd={calendarMenu}
 						/>
 
 						<div className="categories">
-							
-							{relations.map((item, index) => {
+							{relations.sort((a,b) => a.relationKey === 'mentions' ? -1 : 1).map((item, index) => {
 								const relation = S.Record.getRelationByKey(item.relationKey);
-
-								return (<Button 
+								return (<><Button
+									active={selectedRelation === item.relationKey}
 									key={relation.relationKey}
 									type="button"
 									color="blank"
@@ -115,18 +112,19 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 											this.refList?.getData(1);
 										});
 									}}
-									text={relation.name}
-									/>
+									content={index === 0 && <div className="mentionsSign">@</div>}
+									text={index === 0 ? translate('relationMentions') : relation.name}
+									/>{index === 0 && <span className="separator"></span>}</>
 								);
 							})}
 						</div>
-						<div className="list">
+						<div className="dateList">
 							<ListObject 
 								ref={ref => this.refList = ref}
 								{...this.props}
 								spaceId={space}
 								subId={SUB_ID} 
-								rootId={rootId}  
+								rootId={rootId}
 								columns={columns}
 								filters={filters}
 							/>

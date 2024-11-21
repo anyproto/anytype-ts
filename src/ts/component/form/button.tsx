@@ -10,6 +10,8 @@ interface ButtonProps {
 	icon?: string;
 	arrow?: boolean;
 	text?: string;
+	content?: React.ReactElement;
+	active?: boolean;
 	color?: string;
 	className?: string;
 	tooltip?: string;
@@ -44,16 +46,22 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	onMouseEnter,
 	onMouseLeave,
 	onMouseDown,
-	dataset
+	dataset,
+	content,
+	active,
 }, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
 	const cn = [ 'button', color, className ];
 
-	let content = null;
+	let innerContent = null;
 
 	if (isLoading) {
 		cn.push('isLoading');
+	};
+
+	if (active) {
+		cn.push('active');
 	};
 
 	const handleMouseEnter = (e: MouseEvent) => {
@@ -95,7 +103,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 
 	switch (type) {
 		case 'input': {
-			content = (
+			innerContent = (
 				<input
 					ref={nodeRef}
 					id={id}
@@ -112,7 +120,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		};
 
 		default: {
-			content = (
+			innerContent = (
 				<div
 					ref={nodeRef}
 					id={id}
@@ -125,6 +133,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 				>
 					{isLoading && <Loader />}
 					{icon && <Icon className={icon} />}
+					{content}
 					<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
 					{arrow && <div className="arrow" />}
 				</div>
@@ -132,7 +141,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		};
 	};
 
-	return content;
+	return innerContent;
 });
 
 export default Button;
