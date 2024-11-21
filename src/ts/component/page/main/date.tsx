@@ -69,12 +69,17 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		// TODO: add calendar 00:49:16
 		// TODO: dark theme
 		// TODO: create task for middle to return relations in the order corresponding to UI design
-		const filters: I.Filter[] = [
-			{ 
-				relationKey: selectedRelation, 
-				condition: I.FilterCondition.Equal, 
-				value: object.timestamp, 
-				format: I.RelationType.Date 
+		const filters: I.Filter[] = 
+		[
+			selectedRelation === 'mentions' ? {
+				relationKey: 'mentions',
+				condition: I.FilterCondition.In,
+				value: object.id,
+			} : {
+				relationKey: selectedRelation,
+				condition: I.FilterCondition.Equal,
+				value: object.timestamp,
+				format: I.RelationType.Date
 			},
 		];
 
