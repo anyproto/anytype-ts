@@ -712,6 +712,24 @@ class UtilCommon {
 		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 
+	getUrlsFromText (text: string): any[] {
+		const urls = [];
+		const words = text.split(/[\s\r?\n]+/);
+
+		let offset = 0;
+
+		for (const word of words) {
+			if (this.matchUrl(word) || this.matchLocalPath(word)) {
+				const from = text.substring(offset).indexOf(word) + offset;
+
+				offset = from + word.length;
+				urls.push({ value: word, from, to: offset, isLocal: !!this.matchLocalPath(word) });
+			};
+		};
+
+		return urls;
+	};
+
 	matchUrl (s: string): string {
 		const m = String(s || '').match(/^(?:[a-z]+:(?:\/\/)?)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		return (m && m.length) ? m[0] : '';

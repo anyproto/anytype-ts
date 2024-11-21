@@ -450,51 +450,48 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	onPaste (e: any) {
 		e.preventDefault();
 
-		const { from } = this.range;
+		const { from, to } = this.range;
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
 		const electron = U.Common.getElectron();
 		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
+		const value = U.Common.stringInsert(this.getTextValue(), text, from, to);
 
-		let value = this.getTextValue();
-		let url = U.Common.matchUrl(text);
-		let isLocal = false;
-		let to = this.range.to;
-
-		if (!url) {
-			url = U.Common.matchLocalPath(text);
-			isLocal = true;
-		};
-
-		if (url) {
-			const param = isLocal ? `file://${url}` : url;
-		
-			if (from == to) {
-				value = U.Common.stringInsert(value, url + ' ', from, from);
-				to = from + url.length;
-			};
-
-			this.marks = Mark.adjust(this.marks, from - 1, url.length + 1);
-			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
-			this.updateMarkup(value, to + 1, to + 1);
-			this.addBookmark(param);
-		} else {
-			value = U.Common.stringInsert(value, text, from, to);
-			
-			to = to + text.length;
-			this.range = { from: to, to };
-			this.refEditable.setValue(value);
-			this.refEditable.setRange(this.range);
-			this.refEditable.placeholderCheck();
-		};
+		this.range = { from: to, to: to + text.length };
+		this.refEditable.setValue(value);
+		this.refEditable.setRange(this.range);
+		this.refEditable.placeholderCheck();
 
 		if (list.length) {
 			this.addAttachments(list);
 		};
 
+		this.checkUrls();
 		this.onInput();
+	};
+
+	checkUrls () {
+		const text = this.getTextValue();
+		const urls = U.Common.getUrlsFromText(text);
+		if (!urls.length) {
+			return;
+		};
+
+		this.removeBookmarks();
+
+		window.setTimeout(() => {
+			for (const url of urls) {
+				const { from, to, isLocal, value } = url;
+				const param = isLocal ? `file://${value}` : value;
+
+				this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
+				this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
+				this.addBookmark(param, true);
+			};
+			this.updateMarkup(text, this.range.to + 1, this.range.to + 1);
+		}, 150);
 	};
 
 	canDrop (e: any): boolean {
@@ -551,7 +548,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.setState({ attachments: this.checkLimit('attachments', list) }, callBack);
 	};
 
-	addBookmark (url: string) {
+	addBookmark (url: string, fromText?: boolean) {
 		const add = (param: any) => {
 			const { title, description, url } = param;
 			const item = {
@@ -562,6 +559,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				source: url,
 				isTmp: true,
 				timestamp: U.Date.now(),
+				fromText
 			};
 			this.addAttachments([ item ]);
 		};
@@ -577,7 +575,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	removeBookmarks () {
 		const attachments = this.state.attachments || [];
-		const bookmarks = attachments.filter(it => it.layout == I.ObjectLayout.Bookmark);
+		const bookmarks = attachments.filter(it => (it.layout == I.ObjectLayout.Bookmark) && it.fromText);
 		
 		let filtered = attachments;
 		bookmarks.forEach(it => {
