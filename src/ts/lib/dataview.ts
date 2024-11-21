@@ -97,6 +97,7 @@ class Dataview {
 		param = Object.assign({
 			rootId: '',
 			blockId: '',
+			subId: '',
 			newViewId: '',
 			keys: J.Relation.default,
 			offset: 0,
@@ -116,7 +117,7 @@ class Dataview {
 			return;
 		};
 
-		const subId = S.Record.getSubId(rootId, blockId);
+		const subId = param.subId || S.Record.getSubId(rootId, blockId);
 		const { viewId } = S.Record.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
@@ -540,6 +541,141 @@ class Dataview {
 
 		if (!ret.coverId && !ret.coverType && !layouts.includes(ret.layout)) {
 			return null;
+		};
+
+		return ret;
+	};
+
+	getFormulaResult (subId: string, viewRelation: I.ViewRelation): any {
+		if (!viewRelation) {
+			return null;
+		};
+
+		const { formulaType, includeTime, timeFormat, dateFormat, relationKey } = viewRelation;
+		const relation = S.Record.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return null;
+		};
+
+		const { total } = S.Record.getMeta(subId, '');
+		const isDate = relation.format == I.RelationType.Date;
+
+		let records = [];
+		let needRecords = false;
+
+		if (![ I.FormulaType.None, I.FormulaType.Count ].includes(formulaType)) {
+			needRecords = true;
+		};
+
+		if (needRecords) {
+			records = S.Record.getRecords(subId, [ relationKey ], true);
+		};
+
+		const date = (t: number) => {
+			const date = U.Date.dateWithFormat(dateFormat, t);
+			const time = U.Date.timeWithFormat(timeFormat, t);
+
+			return includeTime ? [ date, time ].join(' ') : date;
+		};
+
+		const min = () => {
+			return Math.min(...records.map(it => Number(it[relationKey] || 0)));
+		};
+		const max = () => {
+			return Math.max(...records.map(it => Number(it[relationKey] || 0)));
+		};
+
+		let ret = null;
+
+		switch (formulaType) {
+			case I.FormulaType.None: {
+				break;
+			};
+
+			case I.FormulaType.Count: {
+				ret = total;
+				break;
+			};
+
+			case I.FormulaType.CountDistinct: {
+				ret = U.Common.arrayUniqueObjects(records, relationKey).length;
+				break;
+			};
+
+			case I.FormulaType.CountEmpty: {
+				ret = records.filter(it => Relation.isEmpty(it[relationKey])).length;
+				ret = records.filter(it => {
+					return relation.format == I.RelationType.Checkbox ? !it[relationKey] : Relation.isEmpty(it[relationKey]);
+				}).length;
+				break;
+			};
+
+			case I.FormulaType.CountNotEmpty: {
+				ret = records.filter(it => {
+					return relation.format == I.RelationType.Checkbox ? !!it[relationKey] : !Relation.isEmpty(it[relationKey]);
+				}).length;
+				break;
+			};
+
+			case I.FormulaType.PercentEmpty: {
+				ret = U.Common.sprintf('%0.2f%', records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100);
+				break;
+			};
+
+			case I.FormulaType.PercentNotEmpty: {
+				ret = U.Common.sprintf('%0.2f%', records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100);
+				break;
+			};
+
+			case I.FormulaType.MathSum: {
+				ret = records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0);
+				break;
+			};
+
+			case I.FormulaType.MathAverage: {
+				ret = U.Common.sprintf('%0.4f%', records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total);
+				break;
+			};
+
+			case I.FormulaType.MathMedian: {
+				const data = records.map(it => Number(it[relationKey] || 0));
+				const n = data.length;
+
+				data.sort((a, b) => a - b);
+    
+				if (n % 2 == 1) {
+					ret = data[Math.floor(n / 2)];
+				} else {
+					ret = (data[n / 2 - 1] + data[n / 2]) / 2;
+				};
+				break;
+			};
+
+			case I.FormulaType.MathMin: {
+				ret = min();
+				if (isDate) {
+					ret = date(ret);
+				};
+				break;
+			};
+
+			case I.FormulaType.MathMax: {
+				ret = max();
+				if (isDate) {
+					ret = date(ret);
+				};
+				break;
+			};
+
+			case I.FormulaType.Range: {
+				if (isDate) {
+					ret = U.Date.duration(max() - min());
+				} else {
+					ret = [ min(), max() ].join(' - ');
+				};
+				break;
+			};
 		};
 
 		return ret;

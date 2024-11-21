@@ -1,144 +1,138 @@
-import * as React from 'react';
+import React, { useState, useRef, forwardRef, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
 import { I, U, Preview } from 'Lib';
 import { Icon, Loader } from 'Component';
 
-interface State {
-	isLoading: boolean;
+interface ButtonProps {
+	id?: string;
+	type?: string;
+	subType?: string;
+	icon?: string;
+	arrow?: boolean;
+	text?: string;
+	color?: string;
+	className?: string;
+	tooltip?: string;
+	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
+	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Center | I.MenuDirection.Bottom;
+	dataset?: Record<string, string>;
+	onClick?: (e: MouseEvent) => void;
+	onMouseEnter?: (e: MouseEvent) => void;
+	onMouseLeave?: (e: MouseEvent) => void;
+	onMouseDown?: (e: MouseEvent) => void;
 };
 
-class Button extends React.Component<I.ButtonComponent, State> {
+export interface ButtonRef {
+	setLoading: (v: boolean) => void;
+	setDisabled: (v: boolean) => void;
+	isDisabled: () => boolean;
+};
 
-	node: any = null;
-	state: State = {
-		isLoading: false,
+const Button = forwardRef<ButtonRef, ButtonProps>(({
+	id,
+	type = 'button',
+	subType = 'submit',
+	icon,
+	arrow,
+	text = '',
+	color = 'black',
+	className = '',
+	tooltip,
+	tooltipX,
+	tooltipY = I.MenuDirection.Bottom,
+	onClick,
+	onMouseEnter,
+	onMouseLeave,
+	onMouseDown,
+	dataset
+}, ref) => {
+	const [ isLoading, setIsLoading ] = useState(false);
+	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
+	const cn = [ 'button', color, className ];
+
+	let content = null;
+
+	if (isLoading) {
+		cn.push('isLoading');
 	};
 
-	public static defaultProps = {
-		subType: 'submit',
-		color: 'black',
-		className: '',
-		tooltipY: I.MenuDirection.Bottom,
-	};
-
-	constructor (props: I.ButtonComponent) {
-		super(props);
-
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onMouseDown = this.onMouseDown.bind(this);
-	};
-
-	render () {
-		const { id, type, subType, icon, arrow, text, className, color, onClick, dataset } = this.props;
-		const cn = [ 'button', color, className ];
-		const { isLoading } = this.state;
-
-		if (isLoading) {
-			cn.push('isLoading');
-		};
-
-		let content = null;
-		
-		switch (type) {
-		
-			default:
-				content = (
-					<div 
-						ref={node => this.node = node}
-						id={id} 
-						className={cn.join(' ')} 
-						onClick={this.onClick}
-						onMouseDown={this.onMouseDown}
-						onMouseEnter={this.onMouseEnter} 
-						onMouseLeave={this.onMouseLeave}
-						{...U.Common.dataProps(dataset)}
-					>
-						{isLoading ? <Loader /> : ''}
-						{icon ? <Icon className={icon} /> : ''}
-						<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
-						{arrow ? <div className="arrow" /> : ''}
-					</div>
-				);
-				break;
-				
-			case 'input':
-				content = (
-					<input 
-						ref={node => this.node = node}
-						id={id} 
-						type={subType} 
-						value={text} 
-						className={cn.join(' ')} 
-						onMouseDown={onClick} 
-						onMouseEnter={this.onMouseEnter} 
-						onMouseLeave={this.onMouseLeave} 
-						{...U.Common.dataProps(dataset)}
-					/>
-				);
-				break;
-		};
-		
-		return content;
-	};
-
-	onMouseEnter (e: any) {
-		const { tooltip, tooltipX, tooltipY, onMouseEnter } = this.props;
-		const node = $(this.node);
-		
+	const handleMouseEnter = (e: MouseEvent) => {
 		if (tooltip) {
-			Preview.tooltipShow({ text: tooltip, element: node, typeX: tooltipX, typeY: tooltipY });
+			Preview.tooltipShow({ text: tooltip, element: $(nodeRef.current), typeX: tooltipX, typeY: tooltipY });
 		};
 
-		if (onMouseEnter) {
+		if (onMouseEnter) { 
 			onMouseEnter(e);
 		};
 	};
-	
-	onMouseLeave (e: any) {
+
+	const handleMouseLeave = (e: MouseEvent) => {
 		Preview.tooltipHide(false);
+
+		if (onMouseLeave) { 
+			onMouseLeave(e); 
+		};
 	};
 
-	onClick (e: any) {
-		const { onClick } = this.props;
-		const node = $(this.node);
-
-		if (node.hasClass('disabled')) {
-			return;
-		};
-
-		if (onClick) {
+	const handleClick = (e: MouseEvent) => {
+		if (!$(nodeRef.current).hasClass('disabled') && onClick) {
 			onClick(e);
 		};
 	};
 
-	onMouseDown (e: any) {
-		const { onMouseDown } = this.props;
-		const node = $(this.node);
-
-		if (node.hasClass('disabled')) {
-			return;
-		};
-
-		if (onMouseDown) {
+	const handleMouseDown = (e: MouseEvent) => {
+		if (!$(nodeRef.current).hasClass('disabled') && onMouseDown) {
 			onMouseDown(e);
 		};
 	};
 
-	setLoading (v: boolean) {
-		this.setState({ isLoading: v });
+	useImperativeHandle(ref, () => ({
+		setLoading: (v: boolean) => setIsLoading(v),
+		setDisabled: (v: boolean) => $(nodeRef.current).toggleClass('disabled', v),
+		isDisabled: () => $(nodeRef.current).hasClass('disabled'),
+		isLoading: () => isLoading,
+	}));
+
+	switch (type) {
+		case 'input': {
+			content = (
+				<input
+					ref={nodeRef}
+					id={id}
+					type={subType}
+					value={text}
+					className={cn.join(' ')}
+					onMouseDown={handleClick}
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
+					{...U.Common.dataProps(dataset)}
+				/>
+			);
+			break;
+		};
+
+		default: {
+			content = (
+				<div
+					ref={nodeRef}
+					id={id}
+					className={cn.join(' ')}
+					onClick={handleClick}
+					onMouseDown={handleMouseDown}
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
+					{...U.Common.dataProps(dataset)}
+				>
+					{isLoading && <Loader />}
+					{icon && <Icon className={icon} />}
+					<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
+					{arrow && <div className="arrow" />}
+				</div>
+			);
+		};
 	};
 
-	setDisabled (v: boolean) {
-		const node = $(this.node);
-		v ? node.addClass('disabled') : node.removeClass('disabled');
-	};
-
-	isDisabled () {
-		return $(this.node).hasClass('disabled');
-	};
-
-};
+	return content;
+});
 
 export default Button;

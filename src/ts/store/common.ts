@@ -316,7 +316,7 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			U.Object.getByIds(ids, (objects: any[]) => {
+			U.Object.getByIds(ids, {}, (objects: any[]) => {
 				const map = U.Common.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {
@@ -385,11 +385,9 @@ class CommonStore {
 	};
 
 	fullscreenSet (v: boolean) {
-		const body = $('body');
-		
 		this.isFullScreen = v;
-		v ? body.addClass('isFullScreen') : body.removeClass('isFullScreen');
 
+		$('body').toggleClass('isFullScreen', v);
 		$(window).trigger('resize');
 	};
 
@@ -513,7 +511,7 @@ class CommonStore {
 		set(this.configObj, newConfig);
 
 		this.configObj.debug = this.configObj.debug || {};
-		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
+		html.toggleClass('debug', this.configObj.debug.ui);
 	};
 
 	spaceStorageSet (value: Partial<SpaceStorage>) {

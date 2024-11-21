@@ -1,4 +1,4 @@
-import { I, U, translate, S } from 'Lib';
+import { I, U, translate, S, Onboarding } from 'Lib';
 
 export default {
 	mainGraph: () => ({
@@ -15,6 +15,21 @@ export default {
 			element: '#page.isFull #footer #button-help',
 			classNameWrap: 'fixed',
 			className: 'isWizard',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
+			noArrow: true,
+			noClose: true,
+			passThrough: true,
+			offsetY: -4,
+		},
+	}),
+
+	emailCollection: () => ({
+		items: [ { noButton: true } ],
+		param: {
+			element: '#page.isFull #footer #button-help',
+			classNameWrap: 'fixed',
+			className: 'invertedColor',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
@@ -82,7 +97,14 @@ export default {
 			offsetX: -312,
 			noClose: true,
 			highlightElements: [],
-			hiddenElements: [ '#widget-buttons', '.widget', '#containerWidget #body .buttons' ],
+			hiddenElements: [ 
+				'#widget-buttons', 
+				'.widget', 
+				'#containerWidget #list .buttons',
+			],
+			onClose: () => {
+				Onboarding.start('emailCollection', false);
+			},
 		},
 		items: [
 			{

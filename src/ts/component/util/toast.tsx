@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
-import { I, S, U, Preview, Action, translate, keyboard } from 'Lib';
+import { I, S, U, Preview, Action, translate, keyboard, analytics } from 'Lib';
 
 interface State {
 	object: any;
@@ -52,11 +52,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			};
 
 			case I.ToastAction.Lock: {
-				if (!object) {
-					break;
-				};
-
-				textObject = <Element {...object} />;
+				textObject = object ? <Element {...object} /> : translate('commonObject');
 				textAction = translate(value ? 'toastIsLocked' : 'toastIsUnlocked');
 				break;
 			};
@@ -180,7 +176,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 
 			case 'undoArchive': {
 				if (item.data) {
-					Action.restore(item.data);
+					Action.restore(item.data, analytics.route.toast);
 				};
 				break;
 			};

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
 import { I, keyboard } from 'Lib';
@@ -8,7 +8,7 @@ interface Props {
 	name?: string;
 	type?: string;
 	placeholder?: string;
-	value: string;
+	value?: string;
 	autoComplete?: string;
 	maxLength?: number;
 	className?: string;
@@ -39,339 +39,211 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-interface State {
-	value: string;
-	type: string;
+export interface InputRef {
+	setValue: (v: string) => void;
+	getValue: () => string;
+	setType: (v: string) => void;
+	setError: (v: boolean) => void;
+	focus: () => void;
+	blur: () => void;
+	select: () => void;
+	setRange: (range: I.TextRange) => void;
+	getRange: () => I.TextRange;
+	getSelectionRect: () => DOMRect | null;
 };
 
-class Input extends React.Component<Props, State> {
-	
-	_isMounted = false;
-	node: any = null;
-	mask: any = null;
-	isFocused = false;
-	range: I.TextRange = null;
-	composition = false;
+const Input = forwardRef<InputRef, Props>((props, ref) => {
+	const {
+		id,
+		name,
+		type = 'text',
+		placeholder,
+		autoComplete,
+		className,
+		readonly,
+		maxLength,
+		multiple,
+		accept,
+		pattern,
+		inputMode,
+		noValidate,
+		onClick,
+		onMouseEnter,
+		onMouseLeave,
+		min,
+		max,
+		step,
+		focusOnMount,
+		maskOptions,
+		onCompositionStart,
+		onCompositionEnd,
+		onInput,
+		onChange,
+		onPaste,
+		onCut,
+		onKeyUp,
+		onKeyDown,
+		onFocus,
+		onBlur,
+		onSelect,
+		value: initialValue = '',
+	} = props;
 
-	public static defaultProps = {
-		type: 'text',
-		value: ''
-	};
+	const [ value, setValue ] = useState(initialValue);
+	const [ inputType, setInputType ] = useState(type);
+	const inputRef = useRef<HTMLInputElement | null>(null);
+	const isFocused = useRef(false);
+	const rangeRef = useRef<I.TextRange | null>(null);
 
-	state = {
-		value: '',
-		type: ''
-	};
-	
-	constructor (props: Props) {
-		super(props);
-
-		this.onChange = this.onChange.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onInput = this.onInput.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onPaste = this.onPaste.bind(this);
-		this.onCut = this.onCut.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onCompositionStart = this.onCompositionStart.bind(this);
-		this.onCompositionEnd = this.onCompositionEnd.bind(this);
-	};
-
-	render () {
-		const { 
-			id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, pattern, inputMode, noValidate,
-			onClick, onMouseEnter, onMouseLeave, min, max, step
-		} = this.props;
-		const type = String(this.state.type || this.props.type || '');
-		const cn = [ 'input', 'input-' + type ];
-
-		if (className) {
-			cn.push(className);
+	useEffect(() => {
+		if (maskOptions && inputRef.current) {
+			new Inputmask(maskOptions.mask, maskOptions).mask($(inputRef.current).get(0));
 		};
-		if (readonly) {
-			cn.push('isReadonly');
+
+		if (focusOnMount && inputRef.current) {
+			inputRef.current.focus();
 		};
-		
-		return (
-			<input
-				ref={node => this.node = node}
-				type={type}
-				name={name}
-				id={id}
-				placeholder={placeholder}
-				value={this.state.value}
-				className={cn.join(' ')}
-				pattern={pattern}
-				inputMode={inputMode}
-				formNoValidate={noValidate}
-				autoComplete={autoComplete ? autoComplete : name}
-				readOnly={readonly}
-				onChange={this.onChange}
-				onKeyUp={this.onKeyUp}
-				onKeyDown={this.onKeyDown}
-				onMouseEnter={onMouseEnter}
-				onMouseLeave={onMouseLeave}
-				onFocus={this.onFocus}
-				onBlur={this.onBlur}
-				onPaste={this.onPaste}
-				onCut={this.onCut}
-				onSelect={this.onSelect}
-				onInput={this.onInput}
-				onClick={onClick}
-				onCompositionStart={this.onCompositionStart}
-				onCompositionEnd={this.onCompositionEnd}
-				maxLength={maxLength ? maxLength : undefined}
-				accept={accept ? accept : undefined}
-				multiple={multiple}
-				spellCheck={false}
-				min={min}
-				max={max}
-				step={step}
-			/>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
 
-		const { value, type, focusOnMount } = this.props;
-		
-		this.setValue(value);
-		this.setState({ type });
-		this.initMask();
-
-		if (focusOnMount) {
-			this.focus();
+		return () => {
+			if (isFocused.current) {
+				keyboard.setFocus(false);
+				keyboard.disableSelection(false);
+			};
 		};
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
+	}, [ maskOptions, focusOnMount ]);
 
-		if (this.isFocused) {
-			this.isFocused = false;
-			keyboard.setFocus(false);
-			keyboard.disableSelection(false);
+	useImperativeHandle(ref, () => ({
+		focus: () => inputRef.current?.focus({ preventScroll: true }),
+		blur: () => inputRef.current?.blur(),
+		select: () => inputRef.current?.select(),
+		setValue: (v: string) => setValue(String(v || '')),
+		getValue: () => String(value || ''),
+		setType: (v: string) => setInputType(v),
+		setError: (hasError: boolean) => $(inputRef.current).toggleClass('withError', hasError),
+		getSelectionRect,
+		setPlaceholder: (placeholder: string) => $(inputRef.current).attr({ placeholder }),
+		setRange: (range: I.TextRange) => {
+			callWithTimeout(() => {
+				inputRef.current?.focus();
+				inputRef.current?.setSelectionRange(range.from, range.to);
+			});
+		},
+		getRange: (): I.TextRange | null => rangeRef.current,
+	}));
+
+	const handleEvent = (
+		handler: ((e: any, value: string) => void) | undefined,
+		e: React.SyntheticEvent<HTMLInputElement>
+	) => {
+		let val = null;
+		if (e.currentTarget) {
+			val = e.currentTarget.value;
+		} else
+		if (e.target) {
+			val = String($(e.target).val());
 		};
-	};
 
-	initMask () {
-		let { maskOptions } = this.props;
-		if (!maskOptions || !this._isMounted) {
+		if (val === null) {
+			console.log('[Input Event] No value to handle!');
 			return;
 		};
-
-		maskOptions = maskOptions || {};
-		new Inputmask(maskOptions.mask, maskOptions).mask($(this.node).get(0));
+		handler?.(e, val);
 	};
 
-	onChange (e: any) {
-		this.setValue(e.target.value);
-		
-		if (this.props.onChange) {
-			this.props.onChange(e, e.target.value);
-		};
-	};
-	
-	onKeyUp (e: any) {
-		if ($(this.node).hasClass('disabled')) {
-			return;
-		};
-
-		this.setValue(e.target.value);
-		
-		if (this.props.onKeyUp) {
-			this.props.onKeyUp(e, this.state.value);
-		};
-	};
-	
-	onKeyDown (e: any) {
-		if ($(this.node).hasClass('disabled')) {
-			return;
-		};
-
-		if (this.props.onKeyDown) {
-			this.props.onKeyDown(e, this.state.value);
-		};
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setValue(e.target.value);
+		handleEvent(onChange, e);
 	};
 
-	onInput (e: any) {
-		if (this.props.onInput) {
-			this.props.onInput(e, this.state.value);
-		};
+	const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if ($(inputRef.current).hasClass('disabled')) return;
+		handleEvent(onKeyUp, e);
 	};
-	
-	onFocus (e: any) {
-		if (this.props.onFocus) {
-			this.props.onFocus(e, this.state.value);
-		};
-		
-		this.isFocused = true;
-		this.addClass('isFocused');
 
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if ($(inputRef.current).hasClass('disabled')) return;
+		handleEvent(onKeyDown, e);
+	};
+
+	const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+		handleEvent(onInput, e);
+	};
+
+	const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+		isFocused.current = true;
+		addClass('isFocused');
 		keyboard.setFocus(true);
 		keyboard.disableSelection(true);
+		handleEvent(onFocus, e);
 	};
-	
-	onBlur (e: any) {
-		if (this.props.onBlur) {
-			this.props.onBlur(e, this.state.value);
-		};
-		
-		this.isFocused = false;
-		this.removeClass('isFocused');
 
+	const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+		isFocused.current = false;
+		removeClass('isFocused');
 		keyboard.setFocus(false);
 		keyboard.disableSelection(false);
+		handleEvent(onBlur, e);
 	};
-	
-	onPaste (e: any) {
+
+	const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
 		e.persist();
-
-		this.callWithTimeout(() => {
-			this.updateRange(e);
-
-			if (this.props.onPaste) {
-				this.props.onPaste(e, this.state.value);
-			};
+		callWithTimeout(() => {
+			updateRange(e);
+			handleEvent(onPaste, e);
 		});
 	};
 
-	onCut (e: any) {
+	const handleCut = (e: React.ClipboardEvent<HTMLInputElement>) => {
 		e.persist();
-
-		this.callWithTimeout(() => {
-			this.updateRange(e);
-
-			if (this.props.onCut) {
-				this.props.onCut(e, this.state.value);
-			};
+		callWithTimeout(() => {
+			updateRange(e);
+			handleEvent(onCut, e);
 		});
 	};
-	
-	onSelect (e: any) {
-		if (this.props.onSelect) {
-			this.props.onSelect(e, this.state.value);
-		};
 
-		this.updateRange(e);
+	const handleSelect = (e: React.SyntheticEvent<HTMLInputElement>) => {
+		updateRange(e);
+		handleEvent(onSelect, e);
 	};
 
-	onCompositionStart () {
+	const handleCompositionStart = () => {
 		keyboard.setComposition(true);
-
-		if (this.props.onCompositionStart) {
-			this.props.onCompositionStart();
-		};
+		onCompositionStart?.();
 	};
 
-	onCompositionEnd () {
+	const handleCompositionEnd = () => {
 		keyboard.setComposition(false);
-
-		if (this.props.onCompositionEnd) {
-			this.props.onCompositionEnd();
-		};
+		onCompositionEnd?.();
 	};
 
-	getInputElement() {
-		return $(this.node).get(0) as HTMLInputElement;
-	};
-	
-	focus () {
-		this.callWithTimeout(() => this.getInputElement().focus({ preventScroll: true }));
-	};
-	
-	blur () {
-		this.callWithTimeout(() => $(this.node).trigger('blur'));
-	};
-	
-	select () {
-		this.callWithTimeout(() => this.getInputElement().select());
-	};
-	
-	setValue (v: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		this.state.value = String(v ?? '');
-		this.setState({ value: this.state.value });
-	};
-	
-	getValue () {
-		return this.state.value;
-	};
-	
-	setType (v: string) {
-		if (this._isMounted) {
-			this.setState({ type: v });
-		};
-	};
-	
-	setError (v: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		v ? node.addClass('withError') : node.removeClass('withError');
+	const addClass = (className: string) => {
+		$(inputRef.current).addClass(className);
 	};
 
-	updateRange (e: any) {
+	const removeClass = (className: string) => {
+		$(inputRef.current).removeClass(className);
+	};
+
+	const updateRange = (e: any) => {
 		const { selectionStart, selectionEnd } = e.target;
-		this.range = { from: selectionStart, to: selectionEnd };
+		rangeRef.current = { from: selectionStart, to: selectionEnd };
 	};
 
-	setRange (range: I.TextRange) {
-		this.callWithTimeout(() => {
-			const el = this.getInputElement();
-
-			el.focus({ preventScroll: true }); 
-			el.setSelectionRange(range.from, range.to); 
-		});
+	const callWithTimeout = (callback: () => void) => {
+		setTimeout(() => callback(), 0);
 	};
 
-	getRange (): I.TextRange {
-		return this.range;
-	};
-	
-	addClass (v: string) {
-		if (this._isMounted) {
-			$(this.node).addClass(v);
-		};
-	};
-	
-	removeClass (v: string) {
-		if (this._isMounted) {
-			$(this.node).removeClass(v);
-		};
-	};
+	const getSelectionRect = (): DOMRect | null => {
+		const { id } = props;
+		const node = $(inputRef.current);
+		const parent = node.parent();
+		const { left, top } = node.position();
+		const selectionRange = rangeRef.current;
 
-	setPlaceholder (v: string) {
-		$(this.node).attr({ placeholder: v });
-	};
-
-	callWithTimeout (callBack: () => void) {
-		window.setTimeout(() => {
-			if (this._isMounted) {
-				callBack(); 
-			};
-		});
-	};
-
-	getSelectionRect (): DOMRect {
-		if (!this._isMounted) {
+		if (!selectionRange) {
 			return null;
 		};
 
-		const { id } = this.props;
-		const node = $(this.node);
-		const parent = node.parent();
-		const { left, top } = node.position();
-		const value = this.getValue();
-		const range = this.getRange();
 		const elementId = `${id || 'input'}-clone`;
 
 		let clone = parent.find(`#${elementId}`);
@@ -386,16 +258,55 @@ class Input extends React.Component<Props, State> {
 			width: 'auto',
 			left,
 			top,
+			visibility: 'hidden',
+			whiteSpace: 'pre',
 			zIndex: 100,
 		});
-		clone.text(value.substring(0, range.to));
 
+		clone.text(value.substring(0, selectionRange.to));
 		const rect = clone.get(0).getBoundingClientRect() as DOMRect;
 
 		clone.remove();
 		return rect;
 	};
-	
-};
+
+	return (
+		<input
+			ref={inputRef}
+			type={inputType}
+			name={name}
+			id={id}
+			placeholder={placeholder}
+			value={value}
+			className={`input input-${inputType} ${className || ''} ${readonly ? 'isReadonly' : ''}`}
+			autoComplete={autoComplete ?? name}
+			readOnly={readonly}
+			maxLength={maxLength}
+			multiple={multiple}
+			accept={accept}
+			pattern={pattern}
+			inputMode={inputMode}
+			formNoValidate={noValidate}
+			onChange={handleChange}
+			onKeyUp={handleKeyUp}
+			onKeyDown={handleKeyDown}
+			onInput={handleInput}
+			onFocus={handleFocus}
+			onBlur={handleBlur}
+			onPaste={handlePaste}
+			onCut={handleCut}
+			onSelect={handleSelect}
+			onCompositionStart={handleCompositionStart}
+			onCompositionEnd={handleCompositionEnd}
+			onClick={onClick}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+			spellCheck={false}
+			min={min}
+			max={max}
+			step={step}
+		/>
+	);
+});
 
 export default Input;

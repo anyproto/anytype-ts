@@ -1028,6 +1028,10 @@ class UtilCommon {
 		//return this.isAlphaVersion() || this.isBetaVersion() || !this.getElectron().isPackaged;
 	};
 
+	checkRtl (s: string): boolean {
+		return /^[\u04c7-\u0591\u05D0-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
+	};
+
 };
 
 export default new UtilCommon();

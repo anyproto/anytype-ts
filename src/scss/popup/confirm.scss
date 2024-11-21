@@ -44,7 +44,7 @@
 	}
 
 	.popup.popupConfirm.isWide {
-		.innerWrap { width: 640px; }
+		.innerWrap { width: 640px; max-height: 640px; }
 	}
 
 	.popup.popupConfirm.shareMoreInfo {

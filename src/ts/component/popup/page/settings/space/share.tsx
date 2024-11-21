@@ -332,11 +332,14 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	onInitLink () {
 		const btn = this.refButton;
-		if (!btn || btn.state.isLoading) {
+		const space = U.Space.getSpaceview();
+
+		if (!btn || btn.isLoading()) {
 			return;
 		};
 
 		btn.setLoading(true);
+		analytics.event('ClickShareSpaceNewLink');
 
 		C.SpaceMakeShareable(S.Common.space, (message: any) => {
 			if (this.setError(message.error)) {
@@ -348,9 +351,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				btn.setLoading(false);
 
 				if (!this.setError(message.error)) {
-					this.setInvite(message.inviteCid, message.inviteKey);
+					return;
+				};
 
-					Preview.toastShow({ text: translate('toastInviteGenerate') });
+				this.setInvite(message.inviteCid, message.inviteKey);
+				Preview.toastShow({ text: translate('toastInviteGenerate') });
+
+				if (!space.isShared) {
 					analytics.event('ShareSpace');
 				};
 			});

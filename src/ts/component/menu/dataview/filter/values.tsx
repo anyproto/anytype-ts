@@ -728,14 +728,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	checkClear (v: any) {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).find('.icon.clear').toggleClass('active', v);
 		};
-
-		const node = $(this.node);
-		const clear = node.find('.icon.clear');
-
-		v ? clear.addClass('active') : clear.removeClass('active');
 	};
 
 	onClear (e: any) {

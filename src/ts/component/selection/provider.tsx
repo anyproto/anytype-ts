@@ -142,8 +142,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const win = $(window);
 		const container = U.Common.getScrollContainer(isPopup);
 
-		isPopup ? this.rect.addClass('fromPopup') : this.rect.removeClass('fromPopup');
-		
+		this.rect.toggleClass('fromPopup', isPopup);
 		this.rootId = keyboard.getRootId();
 		this.isPopup = isPopup;
 		this.x = e.pageX;
@@ -626,9 +625,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	setIsSelecting (v: boolean) {
 		this.isSelecting = v;
-
-		const html = $('html');
-		v ? html.addClass('isSelecting') : html.removeClass('isSelecting');
+		$('html').toggleClass('isSelecting', v);
 	};
 	
 });

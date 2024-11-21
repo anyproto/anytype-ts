@@ -394,7 +394,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			});
 
 			keyboard.shortcut('backspace, delete', e, () => {
-				Action.archive(this.ids, () => {
+				Action.archive(this.ids, analytics.route.graph, () => {
 					this.nodes = this.nodes.filter(d => !this.ids.includes(d.id));
 					this.send('onRemoveNode', { ids: this.ids });
 				});
@@ -521,7 +521,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	addNewNode (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) {
-		U.Object.getById(id, (object: any) => {
+		U.Object.getById(id, {}, (object: any) => {
 			object = this.nodeMapper(object);
 
 			if (param) {

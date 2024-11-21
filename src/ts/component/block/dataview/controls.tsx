@@ -536,11 +536,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	toggleHoverArea (v: boolean) {
-		const { block } = this.props;
-		const obj = $(`#block-${block.id}`);
-		const hoverArea = obj.find('.hoverArea');
-
-		v ? hoverArea.addClass('active') : hoverArea.removeClass('active');
+		$(`#block-${this.props.block.id} .hoverArea`).toggleClass('active', v);
 	};
 
 	resize () {

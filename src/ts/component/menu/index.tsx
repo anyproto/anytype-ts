@@ -7,6 +7,7 @@ import { I, S, U, J, keyboard, analytics, Storage, sidebar } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
+import MenuParticipant from './participant';
 
 import MenuSelect from './select';
 import MenuButton from './button';
@@ -86,6 +87,7 @@ const Components: any = {
 
 	help:					 MenuHelp,
 	onboarding:				 MenuOnboarding,
+	participant:			 MenuParticipant,
 
 	select:					 MenuSelect,
 	button:					 MenuButton,

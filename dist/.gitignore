@@ -28,3 +28,4 @@ extension.crx
 extension.pem
 extension.zip
 cmaps/*
+bundle-back.js.map

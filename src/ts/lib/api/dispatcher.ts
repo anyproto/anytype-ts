@@ -983,7 +983,12 @@ class Dispatcher {
 						...process,
 						current: progress.done,
 						total: progress.total,
-						canCancel: [ I.ProgressType.Migrate ].includes(type),
+						canCancel: [ 
+							I.ProgressType.Migrate, 
+							I.ProgressType.Import, 
+							I.ProgressType.Export, 
+							I.ProgressType.Drop,
+						].includes(type),
 					});
 					break;
 				};

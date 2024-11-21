@@ -183,7 +183,7 @@ class Textarea extends React.Component<Props, State> {
 	};
 	
 	setError (v: boolean) {
-		v ? this.addClass('withError') : this.removeClass('withError');
+		$(this.node).toggleClass('withError', v);
 	};
 
 	addClass (v: string) {

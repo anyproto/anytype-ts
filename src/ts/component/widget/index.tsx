@@ -488,8 +488,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const isClosed = Storage.checkToggle('widget', block.id);
 
 		if (!isPreview) {
-			isClosed ? node.addClass('isClosed') : node.removeClass('isClosed');
-			isClosed ? icon.addClass('isClosed') : node.removeClass('isClosed');
+			node.toggleClass('isClosed', isClosed);
+			icon.toggleClass('isClosed', isClosed);
+
 			isClosed ? innerWrap.hide() : innerWrap.show();
 		};
 	};

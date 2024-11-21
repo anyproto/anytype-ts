@@ -138,7 +138,9 @@ class Header extends React.Component<Props> {
 	};
 
 	onDoubleClick () {
-		Renderer.send('winCommand', 'maximize');
+		if (U.Common.isPlatformMac()) {
+			Renderer.send('winCommand', 'maximize');
+		};
 	};
 
 	menuOpen (id: string, elementId: string, param: Partial<I.MenuParam>) {

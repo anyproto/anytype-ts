@@ -49,13 +49,10 @@ class Sidebar {
 			this.resizePage(J.Size.sidebar.width.default, null, false);
 		};
 
-		if (this.data.isClosed) {
-			vault.addClass('isClosed');
-			this.objLeft.addClass('isClosed');
-		} else {
-			vault.removeClass('isClosed');
-			this.objLeft.removeClass('isClosed');
-		};
+		const { isClosed } = this.data;
+
+		vault.toggleClass('isClosed', isClosed);
+		this.objLeft.toggleClass('isClosed', isClosed);
 	};
 
 	initObjects () {
@@ -263,22 +260,14 @@ class Sidebar {
 		this.footer.css({ width: '' });
 		this.dummyLeft.css({ width: widthLeft });
 
-		if (animate) {
-			this.header.addClass('sidebarAnimation');
-			this.page.addClass('sidebarAnimation');
-			this.footer.addClass('sidebarAnimation');
-			this.dummyLeft.addClass('sidebarAnimation');
-			this.toggleButton.addClass('sidebarAnimation');
-		} else {
-			this.header.removeClass('sidebarAnimation');
-			this.page.removeClass('sidebarAnimation');
-			this.footer.removeClass('sidebarAnimation');
-			this.dummyLeft.removeClass('sidebarAnimation');
-			this.toggleButton.removeClass('sidebarAnimation');
-		};
+		this.header.toggleClass('sidebarAnimation', animate);
+		this.footer.toggleClass('sidebarAnimation', animate);
+		this.page.toggleClass('sidebarAnimation', animate);
+		this.dummyLeft.toggleClass('sidebarAnimation', animate);
+		this.toggleButton.toggleClass('sidebarAnimation', animate);
 
 		navigation?.position(widthLeft, animate);
-		widthLeft ? this.header.addClass('withSidebarLeft') : this.header.removeClass('withSidebarLeft');
+		this.header.toggleClass('withSidebarLeft', !!widthLeft);
 
 		this.page.css({ width: pageWidth });
 		this.loader.css({ width: pageWidth, right: 0 });

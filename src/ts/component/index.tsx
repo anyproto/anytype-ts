@@ -95,6 +95,8 @@ import ShareTooltip from './util/share/tooltip';
 import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
+import EmailCollectionForm from './util/emailCollectionForm';
+
 export {
 	Page,
 	EditorPage,
@@ -186,5 +188,7 @@ export {
 	ProgressBar,
 	ShareTooltip,
 	ShareBanner,
-	FooterAuthDisclaimer
+	FooterAuthDisclaimer,
+
+	EmailCollectionForm,
 };

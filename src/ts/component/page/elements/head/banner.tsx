@@ -32,7 +32,14 @@ class HeaderBanner extends React.Component<Props> {
 		switch (type) {
 			case I.BannerType.IsArchived: {
 				label = translate('deletedBanner');
-				action = <div className="action" onClick={e => Action.restore([ object.id ])}>{translate('deletedBannerRestore')}</div>;
+				action = (
+					<div 
+						className="action" 
+						onClick={() => Action.restore([ object.id ], analytics.route.banner)}
+					>
+						{translate('deletedBannerRestore')}
+					</div>
+				);
 				break;
 			};
 

@@ -246,10 +246,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 
 	checkFilter () {
+		const { getId } = this.props;
 		const { filter } = S.Common;
-		const obj = $('#menuBlockAdd');
-		
-		filter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
+
+		$(`#${getId()}`).toggleClass('withFilter', !!filter);
 	};
 	
 	rebind () {

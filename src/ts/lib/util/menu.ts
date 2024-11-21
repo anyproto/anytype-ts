@@ -1060,6 +1060,24 @@ class UtilMenu {
 		return a.map(it => ({ ...it, id: String(it.id) }))
 	};
 
+	participant (object: any, param: Partial<I.MenuParam>) {
+		S.Menu.open('participant', {
+			className: 'fixed',
+			classNameWrap: 'fromPopup',
+			horizontal: I.MenuDirection.Center,
+			rect: { 
+				x: keyboard.mouse.page.x, 
+				y: keyboard.mouse.page.y + 10, 
+				width: 0, 
+				height: 0,
+			},
+			...param,
+			data: {
+				object,
+			}
+		});
+	};
+
 };
 
 export default new UtilMenu();

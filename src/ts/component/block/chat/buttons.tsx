@@ -291,6 +291,8 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			menuId = 'select';
 			data = {
 				options,
+				noVirtualisation: true,
+				noScroll: true,
 				onSelect: (e: React.MouseEvent, option: any) => {
 					this.onAttachment(option.id);
 				}
@@ -300,7 +302,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		S.Menu.closeAll(null, () => {
 			S.Menu.open(menuId, {
 				element: `#block-${blockId} #button-${blockId}-${I.ChatButton.Object}`,
-				className: 'chatAttachment',
+				className: 'chatAttachment fixed',
 				offsetY: -8,
 				vertical: I.MenuDirection.Top,
 				noFlipX: true,

@@ -449,14 +449,14 @@ class Action {
 		});
 	};
 
-	archive (ids: string[], callBack?: () => void) {
+	archive (ids: string[], route: string, callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, true, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
 			Preview.toastShow({ action: I.ToastAction.Archive, ids });
-			analytics.event('MoveToBin', { count: ids.length });
+			analytics.event('MoveToBin', { route, count: ids.length });
 
 			if (callBack) {
 				callBack();
@@ -464,13 +464,13 @@ class Action {
 		});
 	};
 
-	restore (ids: string[], callBack?: () => void) {
+	restore (ids: string[], route: string, callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			analytics.event('RestoreFromBin', { count: ids.length });
+			analytics.event('RestoreFromBin', { route, count: ids.length });
 
 			if (callBack) {
 				callBack();

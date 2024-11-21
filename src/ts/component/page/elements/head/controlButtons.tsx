@@ -231,9 +231,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 
 	resize () {
 		const { ww } = U.Common.getWindowDimensions();
-		const node = $(this.node);
-
-		ww <= 900 ? node.addClass('small') : node.removeClass('small');
+		$(this.node).toggleClass('small', ww <= 900);
 	};
 	
 });
