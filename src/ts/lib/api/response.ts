@@ -604,9 +604,3 @@ export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Respo
 		}),
 	};
 };
-
-export const ObjectDateByTimestamp = (response: Rpc.Object.DateByTimestamp.Response) => {
-	return {
-		details: Decode.struct(response.getDetails()),
-	};
-};
