@@ -2196,6 +2196,8 @@
 	"participantPermissions2": "Owner",
 	"participantPermissions3": "No access",
 
+	"relationMentions": "Mentioned in",
+	
 	"spaceStatus0": "Active",
 	"spaceStatus1": "Loading",
 	"spaceStatus2": "Ok",
