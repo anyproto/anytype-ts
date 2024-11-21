@@ -19,4 +19,5 @@
 		.icon.mention { width: 20px; height: 20px; margin: 0px 6px 0px 0px; background-image: url('~img/icon/mention.svg'); }
 		.separator { content: ''; background-color:  var(--color-shape-secondary); width: 1px; height: 24px; }
 	}
+	.cell.c-type { .iconObject { display: none; } }
 }
