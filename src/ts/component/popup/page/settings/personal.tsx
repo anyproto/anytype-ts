@@ -7,7 +7,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	render () {
 		const { getId } = this.props;
-		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject, hideSidebar, showRelativeDates, showVault, dateFormat, } = S.Common;
+		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject, hideSidebar, showRelativeDates, showVault, dateFormat, timeFormat, } = S.Common;
 		const { hideTray, hideMenuBar, languages } = config;
 
 		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
@@ -168,7 +168,19 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="dateFormat"
 							value={String(dateFormat)}
 							options={U.Menu.dateFormatOptions()}
-							onChange={v => S.Common.dateFormatSet(v)}
+							onChange={v => S.Common.dateFormatSet(Number(v))}
+							arrowClassName="black"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalTimeFormat')} />
+						<Select
+							id="timeFormat"
+							value={String(timeFormat)}
+							options={U.Menu.timeFormatOptions()}
+							onChange={v => S.Common.timeFormatSet(v)}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>

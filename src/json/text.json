@@ -730,6 +730,7 @@
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
+	"popupSettingsPersonalTimeFormat": "Time format",
 
 	"popupSettingsColorMode": "Color mode",
 	"popupSettingsColorModeButtonLight": "Light",
