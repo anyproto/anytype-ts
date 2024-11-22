@@ -105,30 +105,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						/>
 					</div>
 
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalRelativeDates')} />
-						<Switch
-							className="big"
-							value={showRelativeDates}
-							onChange={(e: any, v: boolean) => {
-								S.Common.showRelativeDatesSet(v);
-								analytics.event('RelativeDates', { type: v });
-							}}
-						/>
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalDateFormat')} />
-						<Select
-							id="dateFormat"
-							value={String(dateFormat)}
-							options={U.Menu.dateFormatOptions()}
-							onChange={v => S.Common.dateFormatSet(v)}
-							arrowClassName="black"
-							menuParam={{ horizontal: I.MenuDirection.Right }}
-						/>
-					</div>
-
 				</div>
 
 				<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
@@ -168,6 +144,36 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)} />
 						</div>
 					) : ''}
+				</div>
+
+				<Label className="section" text={translate('popupSettingsPersonalSectionDateTime')} />
+
+				<div className="actionItems">
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalRelativeDates')} />
+						<Switch
+							className="big"
+							value={showRelativeDates}
+							onChange={(e: any, v: boolean) => {
+								S.Common.showRelativeDatesSet(v);
+								analytics.event('RelativeDates', { type: v });
+							}}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalDateFormat')} />
+						<Select
+							id="dateFormat"
+							value={String(dateFormat)}
+							options={U.Menu.dateFormatOptions()}
+							onChange={v => S.Common.dateFormatSet(v)}
+							arrowClassName="black"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
+						/>
+					</div>
+
 				</div>
 
 			</React.Fragment>
