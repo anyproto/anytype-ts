@@ -8,7 +8,6 @@ import { I, S, U, J, translate } from 'Lib';
 interface Props {
 	subId: string;
 	rowLength: number;
-	withArchived: boolean;
 	buttons: I.ButtonComponent[];
 	info?: I.ObjectManagerItemInfo,
 	iconSize: number;
@@ -18,9 +17,11 @@ interface Props {
 	rowHeight?: number;
 	sources?: string[];
 	collectionId?: string;
+	isReadonly?: boolean;
+	ignoreArchived: boolean;
+	ignoreHidden: boolean;
 	resize?: () => void;
 	onAfterLoad?: (message: any) => void;
-	isReadonly?: boolean;
 };
 
 interface State {
@@ -32,6 +33,12 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 	_isMounted = false;
 	state = {
 		isLoading: false,
+	};
+
+	public static defaultProps = {
+		ignoreArchived: true,
+		ignoreHidden: true,
+		isReadonly: false,
 	};
 
 	top = 0;
@@ -378,7 +385,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 	};
 
 	load () {
-		const { subId, sources, withArchived, collectionId, onAfterLoad } = this.props;
+		const { subId, sources, ignoreArchived, ignoreHidden, collectionId, onAfterLoad } = this.props;
 		const filter = this.getFilterValue();
 		const filters = [].concat(this.props.filters || []);
 		const sorts = [].concat(this.props.sorts || []);
@@ -393,7 +400,8 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 			subId,
 			sorts,
 			filters,
-			withArchived,
+			ignoreArchived,
+			ignoreHidden,
 			sources: sources || [],
 			collectionId: collectionId || ''
 		}, (message) => {

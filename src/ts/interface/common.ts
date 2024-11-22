@@ -300,7 +300,7 @@ export interface SearchSubscribeParam {
 	limit: number;
 	ignoreHidden: boolean;
 	ignoreDeleted: boolean;
-	withArchived: boolean;
+	ignoreArchived: boolean;
 	noDeps: boolean;
 };
 
