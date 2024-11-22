@@ -764,7 +764,7 @@ class UtilData {
 
 	searchDefaultFilters (param: any) {
 		const { config } = S.Common;
-		const { ignoreHidden, ignoreDeleted, withArchived } = param;
+		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = param.filters || [];
 		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
 
@@ -780,7 +780,7 @@ class UtilData {
 			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		if (!withArchived) {
+		if (ignoreArchived) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
@@ -824,7 +824,7 @@ class UtilData {
 			limit: 0,
 			ignoreHidden: true,
 			ignoreDeleted: true,
-			withArchived: false,
+			ignoreArchived: true,
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
@@ -943,7 +943,7 @@ class UtilData {
 			limit: 0,
 			ignoreHidden: true,
 			ignoreDeleted: true,
-			withArchived: false,
+			ignoreArchived: true,
 		}, param);
 
 		const { spaceId, idField, sorts, offset, limit } = param;

@@ -93,7 +93,6 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 						S.Popup.open('confirm',{
 							data: {
 								title: translate('popupSettingsDataFilesOffloaded'),
-								//text: U.Common.sprintf('Files: %s, Size: %s', message.files, U.File.size(message.bytes)),
 								textConfirm: translate('commonOk'),
 								canCancel: false,
 							}
