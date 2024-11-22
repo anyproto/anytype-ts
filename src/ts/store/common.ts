@@ -266,9 +266,9 @@ class CommonStore {
 			ret = Storage.get('timeFormat');
 		};
 		if (undefined === ret) {
-			ret = I.TimeFormat.H24;
+			ret = I.TimeFormat.H12;
 		};
-		return Number(ret) || I.TimeFormat.H24;
+		return Number(ret) || I.TimeFormat.H12;
 	};
 
 	get dataPath (): string {

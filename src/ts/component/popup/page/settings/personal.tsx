@@ -167,8 +167,8 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						<Select
 							id="dateFormat"
 							value={String(dateFormat)}
-							options={U.Menu.dateFormatOptions()}
-							onChange={v => S.Common.dateFormatSet(Number(v))}
+							options={U.Menu.dateFormatOptions().map(it => ({ ...it, id: String(it.id) }))}
+							onChange={v => S.Common.dateFormatSet(v)}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>
@@ -179,7 +179,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						<Select
 							id="timeFormat"
 							value={String(timeFormat)}
-							options={U.Menu.timeFormatOptions()}
+							options={U.Menu.timeFormatOptions().map(it => ({ ...it, id: String(it.id) }))}
 							onChange={v => S.Common.timeFormatSet(v)}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
