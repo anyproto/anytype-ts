@@ -43,16 +43,15 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		const { space } = S.Common;
 		const { isLoading, isDeleted, relations, selectedRelation } = this.state;
 		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, ['timestamp']);
+		const object = S.Detail.get(rootId, rootId, [ 'timestamp' ]);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
-		const creatorRelation = S.Record.getRelationByKey('creator');
 		const columns: any[] = [
 			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
-			{ relationKey: creatorRelation.relationKey, name: creatorRelation.name, isObject: true },
+			{ relationKey: 'creator', name: translate('creator'), isObject: true },
 		];
 
 		const filters: I.Filter[] = [];
@@ -84,6 +83,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 							const isMention = item.relationKey == 'mentions';
 							const icon = isMention ? 'mention' : '';
 							const separator = isMention ? <div className="separator" /> : '';
+
 							return (
 								<React.Fragment key={item.relationKey}>
 									<Button
@@ -124,9 +124,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			<div ref={node => this.node = node}>
 				<Header 
 					{...this.props} 
-					component="mainChat" 
+					component="mainObject" 
 					ref={ref => this.refHeader = ref} 
-					rootId={object.chatId} 
+					rootId={object.rootId} 
 				/>
 
 				{content}
@@ -239,7 +239,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
             this.setState({ relations });
         });
-    }
+    };
 
 	getRootId () {
 		const { rootId, match } = this.props;

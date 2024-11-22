@@ -37,10 +37,9 @@
 .button.dark:not(.disabled).hover { background: rgba(0,0,0,0.4); }
 
 .button.blank { background: none; border: solid 1px var(--color-shape-primary); font-weight: 400; }
-.button.blank:not(.disabled):hover,
-.button.blank:not(.disabled).hover { background: var(--color-shape-highlight-medium); }
-
-.pageMainDate .button.active { background: var(--color-shape-highlight-medium); }
+.button.blank:not(.disabled) {
+	&:hover, &.hover, &.active { background: var(--color-shape-highlight-medium); }
+}
 
 .button.c36 { @include text-common; height: 36px; border-radius: 6px; padding: 0px 12px; }
 .button.c32 { @include text-small; height: 32px; border-radius: 6px; padding: 0px 10px; }

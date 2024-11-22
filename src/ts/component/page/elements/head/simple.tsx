@@ -47,10 +47,13 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
+		
 		const cn = [ 'headSimple', check.className ];
+
 		if (isDate) {
 			cn.push('isDate');
 		};
+
 		const placeholder = {
 			title: this.props.placeholder,
 			description: translate('placeholderBlockDescription'),
@@ -301,7 +304,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onCalendar = () => {
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId, ['timestamp']);
+		const { space } = S.Common;
+		const object = S.Detail.get(rootId, rootId, [ 'timestamp' ]);
 
 		S.Menu.open('dataviewCalendar', {
 			element: '#calendar-icon',
@@ -311,7 +315,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				canEdit: true,
 				canClear: false,
 				onChange: (value: number) => {
-					C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), value, (message: any) => {
+					C.ObjectDateByTimestamp(space, value, (message: any) => {
 						U.Object.openAuto(message.details);
 					});
 				},

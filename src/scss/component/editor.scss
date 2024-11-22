@@ -236,15 +236,6 @@
 	}
 }
 
-.editorWrapper.isSet,
-.editorWrapper.isCollection {
-	.blocks {
-		.headSimple {
-			.side.right { display: none; }
-		}
-	}
-}
-
 .editorWrapper.isSet, 
 .editorWrapper.isCollection {
 	&.withIcon {
@@ -263,6 +254,12 @@
 	&.withCover,
 	&.withIconAndCover {
 		.editorControls { display: none; }
+	}
+
+	.blocks {
+		.headSimple {
+			.side.right { display: none; }
+		}
 	}
 }
 

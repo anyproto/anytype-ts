@@ -10,7 +10,6 @@ interface ButtonProps {
 	icon?: string;
 	arrow?: boolean;
 	text?: string;
-	content?: React.ReactElement;
 	active?: boolean;
 	color?: string;
 	className?: string;

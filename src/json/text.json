@@ -2256,5 +2256,7 @@
 	"formulaCheckboxEmpty": "Count unchecked",
 	"formulaCheckboxNotEmpty": "Count checked",
 	"formulaCheckboxPercentEmpty": "Percentage unchecked",
-	"formulaCheckboxPercentNotEmpty": "Percentage checked"
+	"formulaCheckboxPercentNotEmpty": "Percentage checked",
+
+	"creator": "Created by"
 }

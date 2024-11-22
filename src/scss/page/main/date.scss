@@ -6,6 +6,7 @@
 	.headSimple {
 		.side.right { gap: 0px; }
 		.side.right {
+			.icon { width: 24px !important; height: 24px !important; }
 			.icon.calendar { background-image: url('~img/icon/relation/date.svg'); }
 			.icon.arrow { background-image: url('~img/arrow/dateSelectLight.svg'); }
 			.icon.arrow.left { transform: rotateZ(180deg); }
@@ -19,5 +20,8 @@
 		.icon.mention { width: 20px; height: 20px; margin: 0px 6px 0px 0px; background-image: url('~img/icon/mention.svg'); }
 		.separator { content: ''; background-color:  var(--color-shape-secondary); width: 1px; height: 24px; }
 	}
-	.cell.c-type { .iconObject { display: none; } }
+
+	.cell.c-type {
+		.iconObject { display: none; }
+	}
 }
