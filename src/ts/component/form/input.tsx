@@ -94,6 +94,9 @@ const Input = forwardRef<InputRef, Props>((props, ref) => {
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const isFocused = useRef(false);
 	const rangeRef = useRef<I.TextRange | null>(null);
+	const focus = () => {
+		inputRef.current?.focus({ preventScroll: true })
+	};
 
 	useEffect(() => {
 		if (maskOptions && inputRef.current) {
@@ -101,7 +104,7 @@ const Input = forwardRef<InputRef, Props>((props, ref) => {
 		};
 
 		if (focusOnMount && inputRef.current) {
-			inputRef.current.focus();
+			focus();
 		};
 
 		return () => {
@@ -113,7 +116,7 @@ const Input = forwardRef<InputRef, Props>((props, ref) => {
 	}, [ maskOptions, focusOnMount ]);
 
 	useImperativeHandle(ref, () => ({
-		focus: () => inputRef.current?.focus({ preventScroll: true }),
+		focus,
 		blur: () => inputRef.current?.blur(),
 		select: () => inputRef.current?.select(),
 		setValue: (v: string) => setValue(String(v || '')),
@@ -124,7 +127,7 @@ const Input = forwardRef<InputRef, Props>((props, ref) => {
 		setPlaceholder: (placeholder: string) => $(inputRef.current).attr({ placeholder }),
 		setRange: (range: I.TextRange) => {
 			callWithTimeout(() => {
-				inputRef.current?.focus();
+				focus();
 				inputRef.current?.setSelectionRange(range.from, range.to);
 			});
 		},
