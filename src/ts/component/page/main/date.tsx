@@ -51,7 +51,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		const columns: any[] = [
 			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
-			{ relationKey: 'creator', name: translate('creator'), isObject: true },
+			{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
 		];
 
 		const filters: I.Filter[] = [];

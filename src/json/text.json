@@ -2198,6 +2198,7 @@
 	"participantPermissions3": "No access",
 
 	"relationMentions": "Mentioned in",
+	"relationCreator": "Created by",
 	
 	"spaceStatus0": "Active",
 	"spaceStatus1": "Loading",
@@ -2256,7 +2257,6 @@
 	"formulaCheckboxEmpty": "Count unchecked",
 	"formulaCheckboxNotEmpty": "Count checked",
 	"formulaCheckboxPercentEmpty": "Percentage unchecked",
-	"formulaCheckboxPercentNotEmpty": "Percentage checked",
+	"formulaCheckboxPercentNotEmpty": "Percentage checked"
 
-	"creator": "Created by"
 }
