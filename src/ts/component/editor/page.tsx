@@ -686,6 +686,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 				keyboard.shortcut(item.key, e, () => {
 					style = item.style;
+
+					ret = true;
 				});
 
 				if (style !== null) {
