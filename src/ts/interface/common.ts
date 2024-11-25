@@ -314,3 +314,8 @@ export enum SortId {
 	List		 = 'list',
 	Compact		 = 'compact',
 };
+
+export enum LoaderType {
+	Loader		 = 'loader',
+	Dots		 = 'dots',
+};

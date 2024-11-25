@@ -12,7 +12,7 @@ interface Props {
 	onMouseLeave?: (e: any) => void;
 	onMouseDown?: (e: any) => void;
 	onClick?: (e: any) => void;
-}
+};
 
 const Label: FC<Props> = ({
 	id = '',
@@ -54,6 +54,7 @@ const Label: FC<Props> = ({
 			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 		/>
 	);
+
 };
 
 export default Label;
