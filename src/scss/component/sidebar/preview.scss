@@ -3,11 +3,19 @@
 .layoutPreviewWrapper {
     .layoutPreview { width: 704px; margin: 0 auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary); }
     .layoutPreview {
-        .icon { width: 96px; height: 96px; border-radius: 20px; margin-bottom: 20px; background: var(--color-shape-tertiary) url('~img/icon/sidebar/preview/icon.svg') 50% 50% no-repeat; }
-        .title { @include text-title; margin-bottom: 8px; }
-        .description { @include text-header3; font-weight: 400; margin-bottom: 10px; }
+        .layoutHeader { margin-bottom: 44px; }
+        .layoutHeader {
+            .icon { width: 96px; height: 96px; border-radius: 20px; margin-bottom: 20px; background: var(--color-shape-tertiary) url('~img/icon/sidebar/preview/icon.svg') 50% 50% no-repeat; }
+            .title { @include text-title; margin-bottom: 8px; }
+            .description { @include text-header3; font-weight: 400; margin-bottom: 10px; }
 
-        .featured { display: flex; margin-bottom: 44px; }
+            .featured { display: flex; justify-content: flex-start; align-items: center; gap: 0px 8px; }
+            .featured {
+                .label { display: flex; align-items: center; gap: 0px 8px; }
+                .label::after { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-tertiary); }
+                .label:last-child::after { display: none; }
+            }
+        }
 
         .layout { display: flex; flex-direction: column; justify-content: flex-start; gap: 14px 0px; }
         .layout {

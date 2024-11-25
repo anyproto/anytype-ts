@@ -26,14 +26,20 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		return (
 			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
 				<div className="layoutPreview">
-					<div className="icon" />
+					<div className="layoutHeader">
+						<div className="icon" />
 
-					<Title text={name} />
+						<Title text={name} />
 
-					{ withDescription ? <Label text={'Description'} className="description" /> : '' }
+						{ withDescription ? <Label text={'Description'} className="description" /> : '' }
 
-					<div className="featured">
-						{featuredList.map((el, idx) => (<Label text={el} key={idx} />))}
+						<div className="featured">
+							{featuredList.map((el, idx) => {
+								const relation = S.Record.getRelationByKey(el);
+
+								return <Label text={relation?.name} key={idx} />;
+							})}
+						</div>
 					</div>
 
 					<div className="layout">
