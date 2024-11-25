@@ -1,5 +1,7 @@
 @import "~scss/_mixins";
 
+$sidebarRightW: 348px;
+
 .pageFlex { display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; transition: transform 0.2s $easeInQuint; }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
@@ -23,8 +25,20 @@
 .sidebar.left { left: 0px; }
 .sidebar.left.anim { transition-property: width; }
 
-.sidebar.right { right: -348px; width: 348px; }
+.sidebar.right { right: - $sidebarRightW; width: $sidebarRightW; }
 .sidebar.right.anim { transition-property: right; }
+
+.sidebar.withPreview { z-index: 31; }
+
+.sidebar.right {
+	.layoutPreviewWrapper {
+		position: absolute; z-index: 10; top: 0px; right: 100%; opacity: 0; transition: opacity $transitionSidebarTime linear;
+		height:100vh; width: calc(100vw - $sidebarRightW); background-color: var(--color-bg-primary); text-align: center;
+	}
+	.layoutPreviewWrapper.show { opacity: 1; }
+
+	@import "./sidebar/preview";
+}
 
 .sidebar {
 	@import "./sidebar/widget";

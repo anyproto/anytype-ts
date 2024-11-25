@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button } from 'Component';
+import { Title, Label, Button } from 'Component';
 import { I, S, C, U, Relation, translate, sidebar } from 'Lib';
 
 import Section from 'Component/sidebar/section';
+import SidebarLayoutPreview from 'Component/sidebar/preview';
 
 const SidebarPageType = observer(class SidebarPageType extends React.Component<I.SidebarPageComponent> {
 	
 	object: any = {};
 	update: any = {};
 	sectionRefs: Map<string, any> = new Map();
+	previewRef: any = null;
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -49,6 +51,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 						/>
 					))}
 				</div>
+
+				<SidebarLayoutPreview ref={ref => this.previewRef = ref} />
 			</React.Fragment>
 		);
 	};
@@ -84,6 +88,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	onChange (section: string, relationKey: string, value: any) {
 		const relation = S.Record.getRelationByKey(relationKey);
 
+		console.log('RELATION KEY: ', relationKey)
+		console.log('VALUE: ', value)
+
 		value = Relation.formatValue(relation, value, false);
 
 		this.object[relationKey] = value;
@@ -101,15 +108,21 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		C.ObjectListSetDetails([ rootId ], update);
 
 		this.update = {};
-		sidebar.rightPanelToggle(false);
+		this.close();
 	};
 
 	onCancel () {
+		this.close();
+	};
+
+	close () {
 		sidebar.rightPanelToggle(false);
+		this.previewRef.show(false);
 	};
 
 	updateObject (id: string) {
 		this.sectionRefs.get(id)?.setObject(this.object);
+		this.previewRef.update(this.object);
 	};
 
 });
