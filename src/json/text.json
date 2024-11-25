@@ -2225,7 +2225,7 @@
 	"networkMode2Title": "Self-hosted",
 	"networkMode2Text": "Back up to your self-hosted network",
 
-	"formulaNone": "None",
+	"formulaNone": "Calculate",
 	"formulaCount": "Count",
 	"formulaPercentage": "Percentage",
 	"formulaMath": "Math",
