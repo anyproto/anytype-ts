@@ -276,9 +276,11 @@ class DetailStore {
 	};
 
 	private mapDate (object: any) {
-		if (typeof object.timestamp !== 'undefined') {
+		object.timestamp = Number(object.timestamp) || 0;
+
+		if (object.timestamp) {
 			object.name = U.Date.dateWithFormat(S.Common.dateFormat, object.timestamp);
-		}
+		};
 
 		return this.mapSet(object);
 	};
