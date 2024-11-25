@@ -795,7 +795,13 @@ class UtilData {
 			S.Record.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
-		const mapper = it => ({ id: it[idField], details: it });
+		const mapper = it => {
+			if (it.id.startsWith('_date_')) {
+				const timestamp = U.Date.parseDate( it.id.substr(6, 17).replace(/-/g, '.'), I.DateFormat.ISO );
+				return ({ id: it[idField], details: {...it, name: U.Date.dateWithFormat(S.Common.dateFormat, timestamp)} });
+			}
+			return ({ id: it[idField], details: it });
+		};
 
 		let details = [];
 		if (message.dependencies && message.dependencies.length) {
