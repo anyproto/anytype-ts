@@ -60,7 +60,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 					{...this.props} 
 					component="mainObject" 
 					ref={ref => this.refHeader = ref} 
-					rootId={object.rootId} 
+					rootId={rootId} 
 				/>
 
 				<div className="blocks wrapper">
