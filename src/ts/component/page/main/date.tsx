@@ -85,11 +85,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 										active={selectedRelation === item.relationKey}
 										color="blank"
 										className="c36"
-										onClick={() => {
-											this.setState({ selectedRelation: item.relationKey }, () => {
-												this.refList?.getData(1);
-											});
-										}}
+										onClick={() => this.onCategory(item.relationKey)}
 										icon={icon}
 										text={item.name}
 									/>
@@ -218,10 +214,17 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
             });
 
 			if (relations.length) {
-				this.setState({ relations, selectedRelation: relations[0].relationKey });
+				this.setState({ relations });
+				this.onCategory(relations[0].relationKey);
 			};
         });
     };
+
+	onCategory (relationKey: string) {
+		this.setState({ selectedRelation: relationKey }, () => {
+			this.refList?.getData(1);
+		});
+	};
 
 	getRootId () {
 		const { rootId, match } = this.props;
