@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Deleted, ListObject, Button } from 'Component';
+import { Header, Footer, Deleted, ListObject, Button } from 'Component';
 import { I, C, S, U, Action, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
-	isLoading: boolean;
 	isDeleted: boolean;
 	relations: any[];
 	selectedRelation: string;
@@ -27,7 +26,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	timeout = 0;
 
 	state = {
-		isLoading: false,
 		isDeleted: false,
 		relations: [],
 		selectedRelation: RELATION_KEY_MENTION,
@@ -35,7 +33,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 	render () {
 		const { space } = S.Common;
-		const { isLoading, isDeleted, relations, selectedRelation } = this.state;
+		const { isDeleted, relations, selectedRelation } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, [ 'timestamp' ]);
 
@@ -56,12 +54,15 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			filters.push({ relationKey: selectedRelation, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
 		};
 
-		let content = null;
+		return (
+			<div ref={node => this.node = node}>
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={object.rootId} 
+				/>
 
-		if (isLoading) {
-			content = <Loader id="loader" />;
-		} else {
-			content = (
 				<div className="blocks wrapper">
 					<HeadSimple 
 						{...this.props} 
@@ -110,19 +111,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						/>
 					</div>
 				</div>
-			);
-		};
-
-		return (
-			<div ref={node => this.node = node}>
-				<Header 
-					{...this.props} 
-					component="mainObject" 
-					ref={ref => this.refHeader = ref} 
-					rootId={object.rootId} 
-				/>
-
-				{content}
 
 				<Footer component="mainObject" {...this.props} />
 			</div>
@@ -167,7 +155,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		this.close();
 		this.id = rootId;
-		this.setState({ isDeleted: false, isLoading: true });
+		this.setState({ isDeleted: false });
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -176,14 +164,13 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 			const object = S.Detail.get(rootId, rootId, []);
 			if (object.isDeleted) {
-				this.setState({ isDeleted: true, isLoading: false });
+				this.setState({ isDeleted: true });
 				return;
 			};
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
 
-			this.setState({ isLoading: false });
 			this.loadCategory();
 		});
 	};
@@ -230,7 +217,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
                 return 0;
             });
 
-            this.setState({ relations });
+			if (relations.length) {
+				this.setState({ relations, selectedRelation: relations[0].relationKey });
+			};
         });
     };
 

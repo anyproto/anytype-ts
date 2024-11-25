@@ -12,7 +12,7 @@
 
 		.editableWrap { flex-grow: 1; }
 		.editableWrap {
-			.editable { z-index: 1; position: relative;  word-break: break-word; cursor: text; }
+			.editable { z-index: 1; position: relative;  word-break: break-word; cursor: text; min-height: 32px; }
 		}
 		
 		> .descr { @include text-paragraph; }
