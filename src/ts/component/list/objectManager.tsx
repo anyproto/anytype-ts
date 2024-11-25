@@ -46,7 +46,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 	cache: any = null;
 	refList: List = null;
 	refFilter: Filter = null;
-	refCheckbox: Map<string, Checkbox> = new Map();
+	refCheckbox: Map<string, any> = new Map();
 	selected: string[] = [];
 	timeout = 0;
 

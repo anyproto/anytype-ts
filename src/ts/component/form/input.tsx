@@ -52,48 +52,53 @@ export interface InputRef {
 	getSelectionRect: () => DOMRect | null;
 };
 
-const Input = forwardRef<InputRef, Props>((props, ref) => {
-	const {
-		id,
-		name,
-		type = 'text',
-		placeholder,
-		autoComplete,
-		className,
-		readonly,
-		maxLength,
-		multiple,
-		accept,
-		pattern,
-		inputMode,
-		noValidate,
-		onClick,
-		onMouseEnter,
-		onMouseLeave,
-		min,
-		max,
-		step,
-		focusOnMount,
-		maskOptions,
-		onCompositionStart,
-		onCompositionEnd,
-		onInput,
-		onChange,
-		onPaste,
-		onCut,
-		onKeyUp,
-		onKeyDown,
-		onFocus,
-		onBlur,
-		onSelect,
-		value: initialValue = '',
-	} = props;
+const Input = forwardRef<InputRef, Props>(({
+	id = '',
+	name = '',
+	type = 'text',
+	value: initialValue = '',
+	placeholder = '',
+	autoComplete = '',
+	className = '',
+	readonly = false,
+	maxLength = null,
+	multiple = false,
+	accept = null,
+	pattern = null,
+	inputMode = null,
+	noValidate = true,
+	min = 0,
+	max = 0,
+	step = 0,
+	focusOnMount = false,
+	maskOptions = null,
+	onClick,
+	onMouseEnter,
+	onMouseLeave,
+	onCompositionStart,
+	onCompositionEnd,
+	onInput,
+	onChange,
+	onPaste,
+	onCut,
+	onKeyUp,
+	onKeyDown,
+	onFocus,
+	onBlur,
+	onSelect,
+}, ref) => {
 
 	const [ value, setValue ] = useState(initialValue);
 	const [ inputType, setInputType ] = useState(type);
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const isFocused = useRef(false);
 	const rangeRef = useRef<I.TextRange | null>(null);
+	const cn = [ 'input', `input-${inputType}`, className ];
+	
+	if (readonly) {
+		cn.push('isReadonly');
+	};
+
 	const focus = () => {
 		inputRef.current?.focus({ preventScroll: true })
 	};
@@ -237,7 +242,6 @@ const Input = forwardRef<InputRef, Props>((props, ref) => {
 	};
 
 	const getSelectionRect = (): DOMRect | null => {
-		const { id } = props;
 		const node = $(inputRef.current);
 		const parent = node.parent();
 		const { left, top } = node.position();
@@ -281,7 +285,7 @@ const Input = forwardRef<InputRef, Props>((props, ref) => {
 			id={id}
 			placeholder={placeholder}
 			value={value}
-			className={`input input-${inputType} ${className || ''} ${readonly ? 'isReadonly' : ''}`}
+			className={cn.join(' ')}
 			autoComplete={autoComplete ?? name}
 			readOnly={readonly}
 			maxLength={maxLength}
