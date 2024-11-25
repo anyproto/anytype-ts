@@ -313,7 +313,7 @@ export interface SearchSubscribeParam {
 	limit: number;
 	ignoreHidden: boolean;
 	ignoreDeleted: boolean;
-	withArchived: boolean;
+	ignoreArchived: boolean;
 	noDeps: boolean;
 };
 
@@ -326,4 +326,9 @@ export enum SortId {
 	LastUsed	 = 'lastUsed',
 	List		 = 'list',
 	Compact		 = 'compact',
+};
+
+export enum LoaderType {
+	Loader		 = 'loader',
+	Dots		 = 'dots',
 };

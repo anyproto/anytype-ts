@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { I, U } from 'Lib';
 
@@ -12,9 +12,9 @@ interface Props {
 	onMouseLeave?: (e: any) => void;
 	onMouseDown?: (e: any) => void;
 	onClick?: (e: any) => void;
-}
+};
 
-const Label: React.FC<Props> = ({
+const Label: FC<Props> = ({
 	id = '',
 	text = '',
 	color = '',
@@ -54,6 +54,7 @@ const Label: React.FC<Props> = ({
 			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 		/>
 	);
+
 };
 
 export default Label;

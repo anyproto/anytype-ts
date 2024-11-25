@@ -910,7 +910,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			let icon = null;
 			if (_empty_) {
-				icon = <Loader type="loader" className={[ 'c' + size, 'inline' ].join(' ')} />;
+				icon = <Loader type={I.LoaderType.Loader} className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {
 				icon = (
 					<IconObject 

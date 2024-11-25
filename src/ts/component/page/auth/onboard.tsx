@@ -30,9 +30,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		error: '',
 	};
 
-	isDelayed = false;
-	isCreating = false;
-
 	constructor (props: I.PageComponent) {
 		super(props);
 
@@ -122,12 +119,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		return (
 			<div 
-				ref={(ref) => (this.node = ref)} 
+				ref={ref => this.node = ref} 
 				className={`stage${Stage[stage]}`}
 			>
 				{this.canMoveBack() ? <Icon className="arrow back" onClick={this.onBack} /> : ''}
 
-				<Frame ref={(ref) => (this.refFrame = ref)}>
+				<Frame ref={ref => this.refFrame = ref}>
 					<DotIndicator className="animation" index={stage} count={3} />
 					<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
 					<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
@@ -194,7 +191,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Guard to prevent illegal state change */
 	canMoveForward (): boolean {
-		return !this.isDelayed && !!Stage[this.state.stage];
+		return !!Stage[this.state.stage] && !this.refNext?.isLoading();
 	};
 
 	/** Guard to prevent illegal state change */

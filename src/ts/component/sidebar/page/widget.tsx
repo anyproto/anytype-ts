@@ -538,7 +538,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		U.Data.searchSubscribe({
 			subId: SUB_ID,
 			spaceId: space,
-			withArchived: true,
+			ignoreArchived: false,
 			filters: [
 				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
 			],

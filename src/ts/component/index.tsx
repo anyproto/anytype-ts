@@ -11,6 +11,8 @@ import DropTarget from './drag/target';
 import SelectionProvider from './selection/provider';
 import SelectionTarget from './selection/target';
 
+import GraphProvider from './graph/provider';
+
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 import ListNotification from './list/notification';
@@ -76,8 +78,6 @@ import PreviewLink from './preview/link';
 import PreviewObject from './preview/object';
 import PreviewDefault from './preview/default';
 
-import Graph from './util/graph';
-
 import Cell from './cell';
 
 import ObjectName from './util/object/name';
@@ -109,6 +109,8 @@ export {
 
 	SelectionProvider,
 	SelectionTarget,
+
+	GraphProvider,
 
 	ListPopup,
 	ListMenu,
@@ -163,7 +165,6 @@ export {
 	PreviewObject,
 	PreviewDefault,
 
-	Graph,
 	Cell,
 
 	SidebarLeft,

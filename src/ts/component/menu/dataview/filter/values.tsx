@@ -383,6 +383,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const item = view.getFilter(itemId);
+		if (!item) {
+			return [];
+		};
+
 		const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};

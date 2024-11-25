@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { I, U } from 'Lib';
 import $ from 'jquery';
 
@@ -8,17 +8,12 @@ interface Props {
 	dataset?: any;
 };
 
-const Title: React.FC<Props> = ({ 
+const Title = forwardRef<{}, Props>(({ 
 	text = '',
 	className = '', 
 	dataset = {},
-}) => {
+}, ref) => {
 	const nodeRef = useRef<HTMLDivElement | null>(null);
-	const cn = [ 'title' ];
-
-	if (className) {
-		cn.push(className);
-	};
 
 	useEffect(() => {
 		if (nodeRef.current) {
@@ -29,11 +24,11 @@ const Title: React.FC<Props> = ({
 	return (
 		<div
 			ref={nodeRef}
-			className={cn.join(' ')}
+			className={[ 'title', className ].join(' ')}
 			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
 			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 		/>
 	);
-};
+});
 
 export default Title;

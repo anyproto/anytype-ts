@@ -203,6 +203,8 @@
 				.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('#{$themePath}/icon/chat/buttons/reply1.svg'); }
 				.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
 			}
+
+			.reply { color: var(--color-text-inversion); }
 		}
 		.message.isSelf {
 			.side.right { background: #162908; }

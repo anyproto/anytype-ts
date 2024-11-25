@@ -1,5 +1,5 @@
 import { H } from 'Lib';
-import React, { useState, useEffect, ReactNode, useRef } from 'react';
+import React, { FC, useState, useEffect, ReactNode, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 	isShown?: boolean;
 };
 
-export const Floater: React.FC<Props> = ({ 
+export const Floater: FC<Props> = ({ 
 	children, 
 	anchorEl, 
 	gap: offset = 0,
