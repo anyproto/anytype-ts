@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { useLocalObservable } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { I, S, J, analytics, translate } from 'Lib';
+import { I, S, U, analytics, translate } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -18,7 +18,7 @@ const Sync = forwardRef<HTMLDivElement, Props>(({
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const syncStatus = useLocalObservable(() => S.Auth.getSyncStatus());
 	const account = useLocalObservable(() => S.Auth.account);
-	const isStaging = account?.info?.networkId == J.Constant.networkId.development;
+	const isDevelopment = U.Data.isDevelopmentNetwork();
 	const cn = [ 'sync', className ];
 
 	if (syncStatus.error) {
@@ -50,7 +50,7 @@ const Sync = forwardRef<HTMLDivElement, Props>(({
 			onClick={onClickHandler}
 		>
 			<Icon className={getIcon()} />
-			{isStaging ? <Label className="badge" text={translate('syncButtonStaging')} /> : ''}
+			{isDevelopment ? <Label className="badge" text={translate('syncButtonStaging')} /> : ''}
 		</div>
 	);
 });

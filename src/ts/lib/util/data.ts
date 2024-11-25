@@ -1084,12 +1084,12 @@ class UtilData {
 		return Object.values(J.Constant.networkId).includes(S.Auth.account?.info?.networkId);
 	};
 
-	isLocalNetwork (): boolean {
-		return !S.Auth.account?.info?.networkId;
+	isDevelopmentNetwork (): boolean {
+		return S.Auth.account?.info?.networkId == J.Constant.networkId.development;
 	};
 
-	isLocalOnly (): boolean {
-		return S.Auth.account?.info?.networkId == '';
+	isLocalNetwork (): boolean {
+		return !S.Auth.account?.info?.networkId;
 	};
 
 	accountCreate (onError?: (text: string) => void, callBack?: () => void) {
