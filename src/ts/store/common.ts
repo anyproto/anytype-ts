@@ -254,9 +254,6 @@ class CommonStore {
 		if (ret === null) {
 			ret = Storage.get('dateFormat');
 		};
-		if (undefined === ret) {
-			ret = I.DateFormat.MonthAbbrBeforeDay;
-		};
 		return Number(ret) || I.DateFormat.MonthAbbrBeforeDay;
 	};
 
@@ -264,9 +261,6 @@ class CommonStore {
 		let ret = this.timeFormatValue;
 		if (ret === null) {
 			ret = Storage.get('timeFormat');
-		};
-		if (undefined === ret) {
-			ret = I.TimeFormat.H12;
 		};
 		return Number(ret) || I.TimeFormat.H12;
 	};
