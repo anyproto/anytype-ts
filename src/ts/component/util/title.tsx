@@ -14,7 +14,6 @@ const Title = forwardRef<{}, Props>(({
 	dataset = {},
 }, ref) => {
 	const nodeRef = useRef<HTMLDivElement | null>(null);
-	const cn = [ 'title', className ];
 
 	useEffect(() => {
 		if (nodeRef.current) {
@@ -25,7 +24,7 @@ const Title = forwardRef<{}, Props>(({
 	return (
 		<div
 			ref={nodeRef}
-			className={cn.join(' ')}
+			className={[ 'title', className ].join(' ')}
 			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
 			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 		/>

@@ -27,7 +27,7 @@ const HeaderMainChat = observer(class HeaderMainChat extends React.Component<I.H
 			<React.Fragment>
 				<div className="side left">
 					{renderLeftIcons(this.onOpen)}
-					<Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} />
+					<Sync id="button-header-sync" onClick={this.onSync} />
 				</div>
 
 				<div className="side center" />
