@@ -20,6 +20,7 @@ const IconEmoji = forwardRef<HTMLDivElement, Props>(({
 	className = '',
 	canEdit = false,
 }, ref) => {
+
 	const cn = [ 'iconEmoji', className ];
 	const css = { lineHeight: `${size}px` };
 
@@ -32,14 +33,26 @@ const IconEmoji = forwardRef<HTMLDivElement, Props>(({
 		const code = icon.match(':') ? icon : U.Smile.getCode(icon);
 		if (code) {
 			if (asImage) {
-				element = <img src={U.Smile.srcFromColons(code)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={e=> e.preventDefault()} />;
+				element = (
+					<img 
+						src={U.Smile.srcFromColons(code)}
+						className={[ 'smileImage', 'c' + size ].join(' ')}
+						onDragStart={e=> e.preventDefault()}
+					/>
+				);
 			} else {
 				element = <em-emoji shortcodes={code}></em-emoji>;
 			};
 		};
 	} else 
 	if (objectId) {
-		element = <img src={S.Common.imageUrl(objectId, J.Size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
+		element = (
+			<img 
+				src={S.Common.imageUrl(objectId, J.Size.iconPage)}
+				className={[ 'iconImage', 'c' + size ].join(' ')}
+				onDragStart={e => e.preventDefault()}
+			/>
+		);
 	};
 
 	return element ? (
