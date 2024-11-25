@@ -49,7 +49,8 @@ export default {
 		'restrictions',
 		'source',
 		'lastModifiedDate',
-		'lastOpenedDate'
+		'lastOpenedDate',
+		'timestamp'
 	],
 
 	relation: [
