@@ -1,13 +1,32 @@
-import * as React from 'react';
+import React, { forwardRef, useRef } from 'react';
 import $ from 'jquery';
 import mermaid from 'mermaid';
-import { observer } from 'mobx-react';
+import { observer, useLocalObservable } from 'mobx-react';
 import { J, S } from 'Lib';
 
 interface Props {
 	chart: string;
 };
 
+const Mermaid = forwardRef<HTMLDivElement, Props>(({
+	chart = '',
+}, ref) => {
+	const nodeRef = useRef(null);
+	const { theme } = useLocalObservable(() => S.Common);
+
+	console.log(theme);
+
+	return (
+		<div ref={nodeRef} className="mermaidWrapper">
+			<div className="error" />
+			<div className="mermaid">{chart}</div>
+		</div>
+	);
+});
+
+export default Mermaid;
+
+/*
 const Mermaid = observer(class Mermaid extends React.Component<Props> {
 
 	node = null;
@@ -76,3 +95,4 @@ const Mermaid = observer(class Mermaid extends React.Component<Props> {
 });
 
 export default Mermaid;
+*/
