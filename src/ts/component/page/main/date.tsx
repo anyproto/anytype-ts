@@ -1,9 +1,7 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Deleted, ListObject, Button, Icon } from 'Component';
+import { Header, Footer, Loader, Deleted, ListObject, Button } from 'Component';
 import { I, C, S, U, Action, translate } from 'Lib';
-import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -14,6 +12,7 @@ interface State {
 };
 
 const SUB_ID = 'dateListObject';
+const RELATION_KEY_MENTION = 'mentions';
 
 const PageMainDate = observer(class PageMainDate extends React.Component<I.PageComponent, State> {
 
@@ -27,16 +26,11 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	loading = false;
 	timeout = 0;
 
-	state:State = {
+	state = {
 		isLoading: false,
 		isDeleted: false,
 		relations: [],
-		selectedRelation: 'mentions',
-	};
-
-	constructor (props: I.PageComponent) {
-		super(props);
-		
+		selectedRelation: RELATION_KEY_MENTION,
 	};
 
 	render () {
@@ -56,8 +50,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		const filters: I.Filter[] = [];
 
-		if (selectedRelation === 'mentions') {
-			filters.push({ relationKey: 'mentions', condition: I.FilterCondition.In, value: [ object.id ] });
+		if (selectedRelation == RELATION_KEY_MENTION) {
+			filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
 		} else {
 			filters.push({ relationKey: selectedRelation, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
 		};
@@ -79,8 +73,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 					<div className="categories">
 						{relations.map((item) => {
-							const relation = S.Record.getRelationByKey(item.relationKey);
-							const isMention = item.relationKey == 'mentions';
+							const isMention = item.relationKey == RELATION_KEY_MENTION;
 							const icon = isMention ? 'mention' : '';
 							const separator = isMention ? <div className="separator" /> : '';
 
@@ -97,7 +90,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 											});
 										}}
 										icon={icon}
-										text={relation.name}
+										text={item.name}
 									/>
 									{separator}
 								</React.Fragment>
@@ -211,13 +204,13 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 	};
 
-	loadCategory() {
+	loadCategory () {
         const { space, config } = S.Common;
         const rootId = this.getRootId();
 
         C.RelationListWithValue(space, rootId, (message: any) => {
             const relations = (message.relations || []).map(it => S.Record.getRelationByKey(it.relationKey)).filter(it => {
-                if ([ 'mentions' ].includes(it.relationKey)) {
+                if ([ RELATION_KEY_MENTION ].includes(it.relationKey)) {
                     return true;
                 };
 
@@ -229,8 +222,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
             });
 
             relations.sort((c1, c2) => {
-                const isMention1 = c1.relationKey == 'mentions';
-                const isMention2 = c2.relationKey == 'mentions';
+                const isMention1 = c1.relationKey == RELATION_KEY_MENTION;
+                const isMention2 = c2.relationKey == RELATION_KEY_MENTION;
 
                 if (isMention1 && !isMention2) return -1;
                 if (!isMention1 && isMention2) return 1;

@@ -47,12 +47,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
-		
 		const cn = [ 'headSimple', check.className ];
-
-		if (isDate) {
-			cn.push('isDate');
-		};
 
 		const placeholder = {
 			title: this.props.placeholder,
@@ -129,7 +124,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
 				</React.Fragment>
 			);
-		}
+		};
 
 		if (!canWrite) {
 			button = null;
