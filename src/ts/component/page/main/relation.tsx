@@ -44,7 +44,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const columnsObject: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: v => U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v),
+				mapper: v => U.Date.dateWithFormat(S.Common.dateFormat, v),
 			},
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
 		];

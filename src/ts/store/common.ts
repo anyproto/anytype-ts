@@ -39,6 +39,8 @@ class CommonStore {
 	public fullscreenObjectValue = null;
 	public navigationMenuValue = null;
 	public linkStyleValue = null;
+	public dateFormatValue = null;
+	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public shareTooltipValue = false;
 	public showVaultValue = null;
@@ -130,6 +132,8 @@ class CommonStore {
 			spaceStorageSet: action,
 			navigationMenuSet: action,
 			linkStyleSet: action,
+			dateFormatSet: action,
+			timeFormatSet: action,
 			isOnlineSet: action,
 			shareTooltipSet: action,
 			membershipTiersListSet: action,
@@ -243,6 +247,28 @@ class CommonStore {
 			ret = I.LinkCardStyle.Card;
 		};
 		return Number(ret) || I.LinkCardStyle.Text;
+	};
+
+	get dateFormat (): I.DateFormat {
+		let ret = this.dateFormatValue;
+		if (ret === null) {
+			ret = Storage.get('dateFormat');
+		};
+		if (undefined === ret) {
+			ret = I.DateFormat.MonthAbbrBeforeDay;
+		};
+		return Number(ret) || I.DateFormat.MonthAbbrBeforeDay;
+	};
+
+	get timeFormat (): I.TimeFormat {
+		let ret = this.timeFormatValue;
+		if (ret === null) {
+			ret = Storage.get('timeFormat');
+		};
+		if (undefined === ret) {
+			ret = I.TimeFormat.H12;
+		};
+		return Number(ret) || I.TimeFormat.H12;
 	};
 
 	get dataPath (): string {
@@ -482,6 +508,18 @@ class CommonStore {
 		v = Number(v);
 		this.linkStyleValue = v;
 		Storage.set('linkStyle', v);
+	};
+
+	dateFormatSet (v: I.DateFormat) {
+		v = Number(v);
+		this.dateFormatValue = v;
+		Storage.set('dateFormat', v);
+	};
+
+	timeFormatSet (v: I.TimeFormat) {
+		v = Number(v);
+		this.timeFormatValue = v;
+		Storage.set('timeFormat', v);
 	};
 
 	isOnlineSet (v: boolean) {

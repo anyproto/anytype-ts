@@ -59,7 +59,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const Section = (item: any) => {
 			let date = U.Date.dayString(item.createdAt);
 			if (!date) {
-				date = U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, item.createdAt);
+				date = U.Date.dateWithFormat(S.Common.dateFormat, item.createdAt);
 			};
 
 			return (
