@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { I, U } from 'Lib';
 
@@ -14,7 +14,7 @@ interface Props {
 	onClick?: (e: any) => void;
 }
 
-const Label: React.FC<Props> = ({
+const Label: FC<Props> = ({
 	id = '',
 	text = '',
 	color = '',

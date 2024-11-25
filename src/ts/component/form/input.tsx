@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { FC, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
 import { I, keyboard } from 'Lib';

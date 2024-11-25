@@ -119,12 +119,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		return (
 			<div 
-				ref={(ref) => (this.node = ref)} 
+				ref={ref => this.node = ref} 
 				className={`stage${Stage[stage]}`}
 			>
 				{this.canMoveBack() ? <Icon className="arrow back" onClick={this.onBack} /> : ''}
 
-				<Frame ref={(ref) => (this.refFrame = ref)}>
+				<Frame ref={ref => this.refFrame = ref}>
 					<DotIndicator className="animation" index={stage} count={3} />
 					<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
 					<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
