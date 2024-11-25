@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { S, U, J } from 'Lib';
-import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
 	icon?: string;
-	iconClass?: string;
 	objectId?: string;
 	size?: number;
 	asImage?: boolean;
@@ -13,14 +11,9 @@ interface Props {
 	canEdit?: boolean;
 	offsetX?: number;
 	offsetY?: number;
-	menuId?: string;
-	onSelect?(id: string): void;
-	onUpload?(objectId: string): void;
 }
 
-const IconSrc = {};
-
-const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
+class IconEmoji extends React.Component<Props> {
 	
 	public static defaultProps = {
 		offsetX: 0,
@@ -31,7 +24,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 	};
 	
 	render () {
-		const { id, size, icon, objectId, asImage, className, canEdit, menuId, iconClass } = this.props;
+		const { id, size, icon, objectId, asImage, className, canEdit } = this.props;
 		const cn = [ 'iconEmoji' ];
 		const css = { lineHeight: size + 'px' };
 
@@ -40,9 +33,6 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 		};
 		if (canEdit) {
 			cn.push('canEdit');
-		};
-		if (menuId && S.Menu.isOpen(menuId)) {
-			cn.push('active');
 		};
 
 		let element = null;
@@ -58,9 +48,6 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 		} else 
 		if (objectId) {
 			element = <img src={S.Common.imageUrl(objectId, J.Size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
-		} else 
-		if (iconClass) {
-			element = <img src={IconSrc[iconClass]} className={[ 'iconCommon', iconClass, 'c' + size ].join(' ')} />;
 		};
 
 		if (!element) {
@@ -74,6 +61,6 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 		);
 	};
 
-});
+};
 
 export default IconEmoji;

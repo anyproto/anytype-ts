@@ -9,7 +9,6 @@ interface Props {
 	layout?: I.ObjectLayout;
 	object?: any;
 	className?: string;
-	iconClass?: string;
 	canEdit?: boolean;
 	native?: boolean;
 	asImage?: boolean;
@@ -135,7 +134,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { theme } = S.Common;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, isDeleted } = object || {};
+		const { id, name, iconEmoji, iconImage, iconOption, done, relationFormat, isDeleted } = object || {};
 		const cn = [ 'iconObject', 'c' + size, U.Data.layoutClass(object.id, layout) ];
 		const iconSize = this.iconSize();
 		const tc = S.Common.getThemeClass();
@@ -175,8 +174,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					case I.ObjectLayout.Set: di = 'set'; break;
 				};
 
-				if (iconEmoji || iconImage || iconClass) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+				if (iconEmoji || iconImage) {
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else {
 					defaultIcon(di);
 				};
@@ -190,7 +189,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				if (iconEmoji || iconImage) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else {
 					defaultIcon('set');
 				};
@@ -227,7 +226,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else {
 					defaultIcon('type');
 				};
