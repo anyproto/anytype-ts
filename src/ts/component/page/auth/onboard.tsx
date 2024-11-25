@@ -30,9 +30,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		error: '',
 	};
 
-	isDelayed = false;
-	isCreating = false;
-
 	constructor (props: I.PageComponent) {
 		super(props);
 
@@ -194,7 +191,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Guard to prevent illegal state change */
 	canMoveForward (): boolean {
-		return !this.isDelayed && !!Stage[this.state.stage];
+		return !!Stage[this.state.stage] && !this.refNext?.isLoading();
 	};
 
 	/** Guard to prevent illegal state change */
