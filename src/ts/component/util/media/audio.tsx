@@ -29,7 +29,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	node: HTMLDivElement = null;
 	timeDragRef: DragHorizontal = null;
 	audioNode: HTMLAudioElement = null;
-	volumeIcon: Icon = null;
+	volumeIcon = null;
 
 	playOnSeek = false;
 	current: PlaylistItem = { name: '', src: '' };

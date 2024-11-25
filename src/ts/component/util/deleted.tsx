@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
 import { S, U, translate } from 'Lib';
@@ -8,59 +8,53 @@ interface Props {
 	isPopup?: boolean;
 };
 
-class Deleted extends React.Component<Props> {
+const Deleted = forwardRef<HTMLDivElement, Props>(({
+	className = '',
+	isPopup = false,
+}, ref) => {
 
-	public static defaultProps = {
-		className: '',
-	};
-	node = null;
+	const nodeRef = useRef<HTMLDivElement>(null);
+	const onClick = isPopup ? () => S.Popup.close('page') : () => U.Space.openDashboard('route');
+	const textButton = isPopup ? translate('commonClose') : translate('utilDeletedBackToDashboard');
 
-	render () {
-		const { className, isPopup } = this.props;
-
-		let onClick = null;
-		let textButton = '';
-
-		if (isPopup) {
-			textButton = translate('commonClose');
-			onClick = () => S.Popup.close('page');
-		} else {
-			textButton = translate('utilDeletedBackToDashboard');
-			onClick = () => U.Space.openDashboard('route');
-		};
-
-		return (
-			<div 
-				ref={ref => this.node = ref}
-				id="deleteWrapper" 
-				className={[ 'deleteWrapper', className ].join(' ')}
-			>
-				<div className="mid">
-					<Icon className="ghost" />
-					<Label text={translate('utilDeletedObjectNotExist')} />
-					<Button color="blank" text={textButton} onClick={onClick} />
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		this.resize();
-		$(window).on('resize.deleted', () => this.resize());
-	};
-
-	componentWillUnmount (): void {
+	const unbind = () => {
 		$(window).off('resize.deleted');
 	};
 
-	resize () {
-		const { isPopup } = this.props;
-		const node = $(this.node);
+	const rebind = () => {
+		$(window).on('resize.deleted', () => resize());
+	};
+
+	const resize = () => {
+		const node = $(nodeRef.current);
 		const container = isPopup ? $('#popupPage-innerWrap') : $(window);
 
 		node.css({ height: container.height() });
 	};
-	
-};
+
+	useEffect(() => {
+		rebind();
+		resize();
+
+		return () => unbind();
+	});
+
+	useLayoutEffect(() => resize());
+
+	return (
+		<div 
+			ref={nodeRef}
+			id="deleteWrapper" 
+			className={[ 'deleteWrapper', className ].join(' ')}
+		>
+			<div className="mid">
+				<Icon className="ghost" />
+				<Label text={translate('utilDeletedObjectNotExist')} />
+				<Button color="blank" text={textButton} onClick={onClick} />
+			</div>
+		</div>
+	);
+
+});
 
 export default Deleted;

@@ -136,12 +136,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 								</div>
 							) : null}
 
-							{config.experimental ? (
-								<FootRow
-									{...this.props} 
-									getColumnWidths={this.getColumnWidths}
-								/>
-							) : ''}
+							<FootRow
+								{...this.props} 
+								getColumnWidths={this.getColumnWidths}
+							/>
 
 							{isInline && (limit + offset < total) ? (
 								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />

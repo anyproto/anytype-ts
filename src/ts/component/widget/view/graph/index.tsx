@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, Dataview } from 'Lib';
-import { Graph } from 'Component';
+import { GraphProvider } from 'Component';
 
 const WidgetViewGraph = observer(class WidgetViewGraph extends React.Component<I.WidgetViewComponent> {
 
@@ -23,7 +23,7 @@ const WidgetViewGraph = observer(class WidgetViewGraph extends React.Component<I
 				ref={node => this.node = node} 
 				className="wrap"
 			>
-				<Graph 
+				<GraphProvider 
 					key="graph"
 					{...this.props} 
 					ref={ref => this.refGraph = ref} 

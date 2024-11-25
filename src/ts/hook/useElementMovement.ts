@@ -90,7 +90,7 @@ class ElementMovementObserver {
 	};
 };
 
-export default function useElementMovement ( element: HTMLElement | null, callback: (position: Position) => void ) {
+export default function useElementMovement (element: HTMLElement | null, callback: (position: Position) => void ) {
 	useEffect(() => {
 		if (!element) {
 			return;
