@@ -82,7 +82,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 								<React.Fragment key={item.relationKey}>
 									<Button
 										id={`category-${item.relationKey}`}
-										active={selectedRelation === item.relationKey}
+										active={selectedRelation == item.relationKey}
 										color="blank"
 										className="c36"
 										onClick={() => this.onCategory(item.relationKey)}
