@@ -14,9 +14,9 @@
 			.cell {
 				.name { display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; @include text-overflow-nw; }
 			}
-			.cell:last-child {
-				.name { border: 0px; }
-			}
+
+			.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/sortArrow.svg'); }
+			.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 		}
 
 		.row { border-bottom: 1px solid var(--color-shape-secondary); }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, Relation, translate, keyboard } from 'Lib';
-import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
+import { Icon, IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
 
 interface Column {
 	relationKey: string;
@@ -22,10 +22,15 @@ interface Props {
 	relationKeys?: string[];
 };
 
+interface State {
+	sortId: string;
+	sortType: I.SortType;
+};
+
 const PREFIX = 'listObject';
 const LIMIT = 50;
 
-const ListObject = observer(class ListObject extends React.Component<Props> {
+const ListObject = observer(class ListObject extends React.Component<Props, State> {
 
 	public static defaultProps: Props = {
 		spaceId: '',
@@ -36,8 +41,15 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		filters: [],
 	};
 
+	state = {
+		sortId: '',
+		sortType: I.SortType.Desc,
+	};
+
 	render () {
-		const { subId, rootId, columns } = this.props;
+		const { sortId, sortType } = this.state;
+		const { subId, rootId } = this.props;
+		const columns = this.getColumns();
 		const items = this.getItems();
 		const { offset, total } = S.Record.getMeta(subId, '');
 
@@ -76,16 +88,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					className={cn.join(' ')}
 					onContextMenu={e => this.onContext(e, item.id)}
 				>
-					<div className="cell isName">
-						<div className="cellContent isName" onClick={() => U.Object.openConfig(item)}>
-							<div className="flex">
-								<IconObject object={item} />
-								<ObjectName object={item} />
-							</div>
-						</div>
-					</div>
-
 					{columns.map(column => {
+						const cn = [ 'cell', `c-${column.relationKey}` ];
 						const cnc = [ 'cellContent' ];
 						const value = item[column.relationKey];
 
@@ -98,7 +102,16 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 
 						if (value) {
 							if (column.isObject) {
-								const object = S.Detail.get(subId, value, []);
+								let object = null;
+
+								if (column.relationKey == 'name') {
+									object = item;
+									cn.push('isName');
+									cnc.push('isName');
+								} else {
+									object = S.Detail.get(subId, value, []);
+								};
+
 								if (!object._empty_) {
 									onClick = () => U.Object.openConfig(object);
 									content = (
@@ -132,7 +145,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 						};
 
 						return (
-							<div key={`cell-${column.relationKey}`} className={[ 'cell', `c-${column.relationKey}` ].join(' ')}>
+							<div key={`cell-${column.relationKey}`} className={cn.join(' ')}>
 								{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
 							</div>
 						);
@@ -145,15 +158,19 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			<div className="listObject">
 				<div className="table">
 					<div className="row isHead">
-						<div className="cell">
-							<div className="name">{translate('commonName')}</div>
-						</div>
+						{columns.map(column => {
+							let arrow = null;
 
-						{columns.map(column => (
-							<div key={`head-${column.relationKey}`} className="cell isHead">
-								<div className="name">{column.name}</div>
-							</div>
-						))}
+							if (sortId == column.relationKey) {
+								arrow = <Icon className={`sortArrow c${sortType}`} />;
+							};
+
+							return (
+								<div key={`head-${column.relationKey}`} className="cell isHead" onClick={() => this.onSort(column.relationKey)}>
+									<div className="name">{column.name}{arrow}</div>
+								</div>
+							);
+						})}
 					</div>
 
 					{!items.length ? (
@@ -175,7 +192,11 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		this.getData(1);
+		const columns = this.getColumns();
+
+		if (columns.length) {
+			this.setState({ sortId: columns[0].relationKey }, () => this.getData(1));
+		};
 	};
 
 	componentWillUnmount(): void {
@@ -190,7 +211,12 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		return J.Relation.default.concat(this.props.columns.map(it => it.relationKey));
 	};
 
+	getColumns (): Column[] {
+		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true } ] as any[]).concat(this.props.columns || []);
+	};
+
 	getData (page: number, callBack?: (message: any) => void) {
+		const { sortId, sortType } = this.state;
 		const { spaceId, subId, sources } = this.props;
 		const offset = (page - 1) * LIMIT;
 		const filters = [
@@ -202,9 +228,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		U.Data.searchSubscribe({
 			spaceId,
 			subId,
-			sorts: [
-				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
-			],
+			sorts: [ { relationKey: sortId, type: sortType } ],
 			keys: this.getKeys(),
 			sources,
 			filters,
@@ -240,6 +264,18 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 				allowedOpen: true,
 			}
 		});
+	};
+
+	onSort (relationKey: string): void {
+		const { sortId, sortType } = this.state;
+
+		let type = I.SortType.Asc;
+
+		if (sortId == relationKey) {
+			type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+		};
+
+		this.setState({ sortId: relationKey, sortType: type }, () => this.getData(1));
 	};
 
 });
