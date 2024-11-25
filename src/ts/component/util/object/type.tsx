@@ -8,6 +8,7 @@ interface Props {
 const ObjectType: FC<Props> = ({
 	object = {},
 }) => {
+	object = object || {};
 
 	return !object._empty_ && !object.isDeleted ? (
 		<>{U.Common.shorten(object.name, 32)}</>

@@ -18,10 +18,11 @@ const ObjectName: FC<Props> = ({
 	onMouseEnter,
 	onMouseLeave,
 }) => {
+	object = object || {};
+
 	const { layout, snippet, isDeleted } = object;
 
 	let name = String(object.name || '');
-
 	if (!isDeleted) {
 		if (U.Object.isNoteLayout(layout)) {
 			name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
