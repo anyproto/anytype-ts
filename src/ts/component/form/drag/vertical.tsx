@@ -1,4 +1,4 @@
-import React, { useRef, useImperativeHandle, forwardRef, ChangeEvent } from 'react';
+import React, { useRef, useImperativeHandle, forwardRef, ChangeEvent, MouseEvent } from 'react';
 import { Input } from 'Component';
 
 interface Props {
@@ -8,12 +8,12 @@ interface Props {
 	min?: number;
 	max?: number;
 	step?: number;
-	onChange?(e: ChangeEvent<HTMLInputElement>, v: number): void;
-	onMouseLeave?(e:any): void;
-	onMouseEnter?(e:any): void;
+	onChange? (e: ChangeEvent<HTMLInputElement>, v: number): void;
+	onMouseLeave? (e: MouseEvent): void;
+	onMouseEnter? (e: MouseEvent): void;
 };
 
-const DragVertical = forwardRef<{}, Props>(({
+const DragVertical = forwardRef<HTMLDivElement, Props>(({
 	id,
 	className = '',
 	value,
