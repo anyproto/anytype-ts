@@ -1,5 +1,13 @@
 import { I } from 'Lib';
 
+export enum MarkerType {
+	Bulleted	 = 0,
+	Numbered	 = 1,
+	Checkbox	 = 2,
+	Task		 = 3,
+	Toggle		 = 4,
+};
+
 export enum TextStyle {
 	Paragraph	 = 0,
 	Header1		 = 1,

@@ -35,22 +35,22 @@ class ContentText extends React.Component<Props> {
 			};
 				
 			case I.TextStyle.Bulleted: {
-				marker = { type: I.TextStyle.Bulleted, className: 'bullet', active: false };
+				marker = { type: I.MarkerType.Bulleted, className: 'bullet', active: false };
 				break;
 			};
 				
 			case I.TextStyle.Numbered: {
-				marker = { type: I.TextStyle.Numbered, className: 'number', active: false };
+				marker = { type: I.MarkerType.Numbered, className: 'number', active: false };
 				break;
 			};
 				
 			case I.TextStyle.Toggle: {
-				marker = { type: I.TextStyle.Toggle, className: 'toggle', active: false };
+				marker = { type: I.MarkerType.Toggle, className: 'toggle', active: false };
 				break;
 			};
 				
 			case I.TextStyle.Checkbox: {
-				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked };
+				marker = { type: I.MarkerType.Checkbox, className: 'check', active: checked };
 				break;
 			};
 		};

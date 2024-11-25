@@ -86,7 +86,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				placeholder = translate('defaultNamePage');
 
 				if (root && U.Object.isTaskLayout(root.layout)) {
-					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
+					marker = { type: I.MarkerType.Task, className: 'check', active: checked, onClick: this.onCheckbox };
 				};
 				break;
 			};
@@ -145,22 +145,22 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 				
 			case I.TextStyle.Bulleted: {
-				marker = { type: I.TextStyle.Bulleted, className: 'bullet' };
+				marker = { type: I.MarkerType.Bulleted, className: 'bullet' };
 				break;
 			};
 				
 			case I.TextStyle.Numbered: {
-				marker = { type: I.TextStyle.Numbered, className: 'number' };
+				marker = { type: I.MarkerType.Numbered, className: 'number' };
 				break;
 			};
 				
 			case I.TextStyle.Toggle: {
-				marker = { type: I.TextStyle.Toggle, className: 'toggle', onClick: this.onToggle };
+				marker = { type: I.MarkerType.Toggle, className: 'toggle', onClick: this.onToggle };
 				break;
 			};
 				
 			case I.TextStyle.Checkbox: {
-				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
+				marker = { type: I.MarkerType.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
 				break;
 			};
 		};

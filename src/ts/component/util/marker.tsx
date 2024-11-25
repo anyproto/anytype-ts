@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, { forwardRef, useRef } from 'react';
 import $ from 'jquery';
-import { I, S, U, J } from 'Lib';
-import { observer } from 'mobx-react';
+import { I, S, J } from 'Lib';
+import { useLocalObservable } from 'mobx-react';
 
 interface Props {
 	id: string;
-	type: any;
+	type: I.MarkerType;
 	color: string;
 	className?: string;
 	readonly?: boolean;
@@ -13,172 +13,81 @@ interface Props {
 	onClick?(): void;
 };
 
-const Icons = {
-	checkbox: {
-		0:		 require('img/icon/marker/checkbox0.svg'),
-		1:		 require('img/icon/marker/checkbox1.svg'),
-		2:		 require('img/icon/marker/checkbox2.svg'),
-	},
-	task: {
-		0:		 require('img/icon/object/checkbox0.svg'),
-		1:		 require('img/icon/object/checkbox1.svg'),
-		2:		 require('img/icon/object/checkbox2.svg'),
-	},
+const Icons: any = {};
+const Theme: any = { dark: {} };
+
+Icons[I.MarkerType.Checkbox] = {
+	0:		 require('img/icon/marker/checkbox0.svg'),
+	1:		 require('img/icon/marker/checkbox1.svg'),
+	2:		 require('img/icon/marker/checkbox2.svg'),
 };
 
-const Theme = {
-	dark: {
-		checkbox: {
-			0:		 require('img/icon/marker/checkbox0.svg'),
-			1:		 require('img/theme/dark/icon/marker/checkbox1.svg'),
-			2:		 require('img/icon/marker/checkbox2.svg'),
-		},
-		task: {
-			0:		 require('img/icon/object/checkbox0.svg'),
-			1:		 require('img/theme/dark/icon/object/checkbox1.svg'),
-			2:		 require('img/icon/object/checkbox2.svg'),
-		},
-	},
+Icons[I.MarkerType.Task] = {
+	0:		 require('img/icon/object/checkbox0.svg'),
+	1:		 require('img/icon/object/checkbox1.svg'),
+	2:		 require('img/icon/object/checkbox2.svg'),
 };
 
-const Marker = observer(class Marker extends React.Component<Props> {
+Theme.dark[I.MarkerType.Checkbox] = {
+	0:		 require('img/icon/marker/checkbox0.svg'),
+	1:		 require('img/theme/dark/icon/marker/checkbox1.svg'),
+	2:		 require('img/icon/marker/checkbox2.svg'),
+};
 
-	public static defaultProps = {
-		color: 'default',
+Theme.dark[I.MarkerType.Task] = {
+	0:		 require('img/icon/object/checkbox0.svg'),
+	1:		 require('img/theme/dark/icon/object/checkbox1.svg'),
+	2:		 require('img/icon/object/checkbox2.svg'),
+};
+
+const Marker = forwardRef<HTMLDivElement, Props>(({ 
+	id = '', 
+	type = I.MarkerType.Bulleted,
+	color = 'default', 
+	className = '', 
+	active = false, 
+	readonly = false,
+	onClick,
+}, ref) => {
+
+	const colorValue = color || 'default';
+	const refNode = useRef<HTMLDivElement>(null);
+	const cn = [ 'marker', className ];
+	const ci = [ 'markerInner', `c${type}`, `textColor textColor-${colorValue}` ];
+	const { theme, themeClass } = useLocalObservable(() => ({
+		theme: S.Common.theme,
+		themeClass: S.Common.getThemeClass(),
+	}));
+
+	if (active) {
+		cn.push('active');
 	};
-	node = null;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onCheckboxEnter = this.onCheckboxEnter.bind(this);
-		this.onCheckboxLeave = this.onCheckboxLeave.bind(this);
-	};
-
-	render () {
-		const { id, type, color, className, active, onClick } = this.props;
-		const { theme } = S.Common;
-		const cn = [ 'marker' ];
-		const ci = [ 'markerInner', 'c' + type ];
-
-		if (className) {
-			cn.push(className);
-		};
-		if (active) {
-			cn.push('active');
-		};
-		
-		if (color) {
-			ci.push('textColor textColor-' + color);
-		};
-
-		const props = {
-			id: `marker-${id}`,
-			key: `marker-${id}-${type}`,
-			className: ci.join(' '),
-		};
-
-		let inner: any = null;
-
-		switch (type) {
-			case I.TextStyle.Bulleted: {
-				inner = <span {...props} />;
-				break;
-			};
-				
-			case I.TextStyle.Numbered: {
-				inner = <span {...props} />;
-				break;
-			};
-				
-			case I.TextStyle.Checkbox: {
-				inner = (
-					<img 
-						src={this.getCheckbox(active ? 2 : 0)} 
-						onDragStart={e => e.preventDefault()} 
-						onMouseEnter={this.onCheckboxEnter} 
-						onMouseLeave={this.onCheckboxLeave} 
-					/>
-				);
-				break;
-			};
-
-			case 'checkboxTask': {
-				inner = (
-					<img 
-						src={this.getTask(active ? 2 : 0)} 
-						onDragStart={e => e.preventDefault()} 
-						onMouseEnter={this.onCheckboxEnter} 
-						onMouseLeave={this.onCheckboxLeave} 
-					/>
-				);
-				break;
-			};
-			
-			case I.TextStyle.Toggle: {
-				inner = <img src={this.getToggle()} onDragStart={e => e.preventDefault()} />;
-				break;
-			};
-		};
-		
-		return (
-			<div 
-				ref={ref => this.node = ref} 
-				className={cn.join(' ')} 
-				onClick={onClick}
-			>
-				{inner}
-			</div>
-		);
+	
+	const props = {
+		id: `marker-${id}`,
+		key: `marker-${id}-${type}`,
+		className: ci.join(' '),
 	};
 
-	onCheckboxEnter () {
-		const { active, readonly } = this.props;
-		const fn = U.Common.toCamelCase(`get-${this.getIconKey()}`);
-
-		if (!active && this[fn] && !readonly) {
-			$(this.node).find('img').attr({ src: this[fn](1) });
+	const onCheckboxEnterHandler = () => {
+		if (!active && !readonly) {
+			$(refNode.current).find('img').attr({ src: getIcon(type)[1] });
 		};
 	};
 
-	onCheckboxLeave () {
-		const { active, readonly } = this.props;
-		const fn = U.Common.toCamelCase(`get-${this.getIconKey()}`);
-
-		if (!active && this[fn] && !readonly) {
-			$(this.node).find('img').attr({ src: this[fn](0) });
+	const onCheckboxLeaveHandler = () => {
+		if (!active && !readonly) {
+			$(refNode.current).find('img').attr({ src: getIcon(type)[0] });
 		};
 	};
 
-	getIconKey () {
-		const { type } = this.props;
-
-		let key = '';
-		switch (type) {
-			case I.TextStyle.Checkbox: key = 'checkbox'; break;
-			case 'checkboxTask': key = 'task'; break;
-		};
-		return key;
-	};
-
-	getIcon (type: string) {
-		const cn = S.Common.getThemeClass();
-		const item = Theme[cn];
-
+	const getIcon = (type: I.MarkerType) => {
+		const item = Theme[themeClass];
 		return (item && item[type]) ? item[type] : Icons[type];
 	};
 
-	getCheckbox (state: number) {
-		return this.getIcon('checkbox')[state];
-	};
-
-	getTask (state: number) {
-		return this.getIcon('task')[state];
-	};
-
-	getToggle () {
-		const color = this.props.color || 'default';
-		const c = J.Theme[S.Common.getThemeClass()]?.color[color];
+	const getToggle = () => {
+		const c = J.Theme[themeClass]?.color[colorValue];
 
 		const svg = `
 			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -189,6 +98,47 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
+	let inner: any = null;
+
+	switch (type) {
+		case I.MarkerType.Bulleted: {
+			inner = <span {...props} />;
+			break;
+		};
+			
+		case I.MarkerType.Numbered: {
+			inner = <span {...props} />;
+			break;
+		};
+			
+		case I.MarkerType.Checkbox:
+		case I.MarkerType.Task: {
+			inner = (
+				<img 
+					src={getIcon(type)[active ? 2 : 0]} 
+					onDragStart={e => e.preventDefault()} 
+					onMouseEnter={onCheckboxEnterHandler} 
+					onMouseLeave={onCheckboxLeaveHandler} 
+				/>
+			);
+			break;
+		};
+		
+		case I.MarkerType.Toggle: {
+			inner = <img src={getToggle()} onDragStart={e => e.preventDefault()} />;
+			break;
+		};
+	};
+	
+	return (
+		<div 
+			ref={refNode} 
+			className={cn.join(' ')} 
+			onClick={onClick}
+		>
+			{inner}
+		</div>
+	);
 });
 
 export default Marker;
