@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Checkbox } from 'Component';
-import { I, S, C, U, Relation, translate, sidebar } from 'Lib';
-
-import Section from 'Component/sidebar/section';
+import { Title, Label, Checkbox, Icon } from 'Component';
+import { I, S, U, translate } from 'Lib';
 
 const SIDEBAR_WIDTH = 348;
 
@@ -29,9 +27,15 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		const { featuredRelations, recommendedLayout, layoutAlign, layoutFormat } = this.object;
 		const featuredList = this.object.featuredRelations.filter(it => it != 'description');
 		const withDescription = featuredRelations.indexOf('description') > -1;
-		const cn = [ 'layoutPreview', `layout${I.ObjectLayout[recommendedLayout]}`, `layoutAlign${I.BlockHAlign[layoutAlign]}` ];
+		const cn = [
+			'layoutPreview',
+			`layout${I.ObjectLayout[recommendedLayout]}`,
+			`layoutAlign${I.BlockHAlign[layoutAlign]}`,
+			U.Common.toCamelCase(`layoutFormat-${layoutFormat}`),
+		];
 		const isTask = recommendedLayout == I.ObjectLayout.Task;
 		const isNote = recommendedLayout == I.ObjectLayout.Note;
+		const isList = layoutFormat == 'list';
 
 		return (
 			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
@@ -40,11 +44,11 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 						{isNote ? '' : (
 							<div className="titleWrapper">
 								{!isTask ? <div className="icon" /> : <Checkbox readonly={true} value={false} />}
-								<Title text={`${translate('commonNew')} ${this.object.name || translate('defaultNamePage')}`} />
+								<Title text={this.object.name ? `${translate('commonNew')} ${this.object.name}` : translate('defaultNameType')} />
 							</div>
 						)}
 
-						{ withDescription ? <Label text={'Description'} className="description" /> : '' }
+						{withDescription ? <Label text={'Description'} className="description" /> : ''}
 
 						<div className="featured">
 							{featuredList.map((el, idx) => {
@@ -54,6 +58,23 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 							})}
 						</div>
 					</div>
+
+					{isList ? (
+						<div className="listHeader">
+							<div className="left">
+								<div className="view" />
+								<div className="view" />
+								<div className="view" />
+							</div>
+							<div className="right">
+								<Icon className="search" />
+								<Icon className="filter" />
+								<Icon className="sort" />
+								<Icon className="settings" />
+								<div className="buttonPlug" />
+							</div>
+						</div>
+					) : ''}
 
 					<div className="layout">
 						<div className="line" />

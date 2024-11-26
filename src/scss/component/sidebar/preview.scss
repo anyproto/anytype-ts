@@ -23,7 +23,7 @@
     }
 
     .layoutPreview:not(.layoutTask) {
-        .icon { width: 96px; height: 96px; border-radius: 20px; margin-bottom: 20px; background: var(--color-shape-tertiary) url('~img/icon/sidebar/preview/icon.svg') 50% 50% no-repeat; }
+        .titleWrapper > .icon { width: 96px; height: 96px; border-radius: 20px; margin-bottom: 20px; background: var(--color-shape-tertiary) url('~img/icon/sidebar/preview/icon.svg') 50% 50% no-repeat; }
     }
 
     .layoutPreview.layoutHuman {
@@ -32,7 +32,7 @@
 
     .layoutPreview.layoutTask {
         .titleWrapper { display: flex; align-items: center; justify-content: flex-start; gap: 0px 8px; }
-        .icon { width: 30px; height: 30px; }
+        .titleWrapper > .icon { width: 30px; height: 30px; }
         .title { @include text-header1; }
     }
 
@@ -49,5 +49,39 @@
         .layoutHeader { text-align: right; }
         .titleWrapper,
         .featured { justify-content: flex-end; }
+    }
+
+    .layoutPreview.layoutFormatList {
+        .layoutHeader { text-align: left; }
+        .titleWrapper,
+        .featured { justify-content: flex-start; }
+
+        .titleWrapper { display: flex; align-items: center; justify-content: flex-start; gap: 0px 8px; }
+        .titleWrapper > .icon { width: 32px; height: 32px; background: transparent url('~img/icon/sidebar/preview/iconList.svg'); margin-bottom: 0px; }
+        .title { @include text-header1; }
+
+        .layout { gap: 39px; }
+        .layout {
+            .line { height: 1px; }
+            .line:last-child { width: 100%; }
+        }
+
+        .listHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;  }
+        .listHeader {
+            .left { display: flex; align-items: center; gap: 0px 20px; }
+            .left {
+                .view { height: 12px; width: 64px; border-radius: 2px; background-color: var(--color-shape-secondary); }
+            }
+            .right { display: flex; align-items: center; gap: 0px 4px; }
+            .right {
+                .icon { width: 28px; height: 28px; background-size: 20px; background-position: 50% 50%; background-repeat: no-repeat; }
+                .icon.search { background-image: url('~img/icon/dataview/button/search.svg'); }
+                .icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+                .icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
+                .icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+
+                .buttonPlug { width: 70px; height: 28px; border-radius: 6px; margin-left: 12px; background-color: var(--color-shape-secondary); }
+            }
+        }
     }
 }

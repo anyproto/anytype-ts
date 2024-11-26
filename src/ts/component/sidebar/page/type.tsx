@@ -65,6 +65,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.init();
 	};
 
+	componentWillUnmount () {
+		sidebar.rightPanelClearDetails();
+	};
+
 	init () {
 		const { details } = this.props;
 		const type = this.getObject();
@@ -73,15 +77,20 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			recommendedLayout: I.ObjectLayout.Page,
 			layoutAlign: I.BlockHAlign.Left,
 			layoutWidth: 0,
-			featuredRelations: [ 'type' ]
+			layoutFormat: 'page',
+			featuredRelations: [ 'type' ],
 		}, (details || {}));
 
-		this.object = U.Common.objectCopy(type || newType);
+		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
 		sections.forEach(it => this.updateObject(it.id));
 	};
 	
 	getObject () {
 		const type = S.Record.getTypeById(this.props.rootId);
+		if (!type) {
+			return null;
+		};
+
 		const isList = U.Object.isInSetLayouts(type.recommendedLayout);
 
 		return Object.assign(type, { layoutFormat: isList ? 'list' : 'page' });
