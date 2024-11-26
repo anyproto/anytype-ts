@@ -8,6 +8,7 @@ import PageObjectRelation from './page/object/relation';
 interface State {
 	page: string;
 	rootId: string;
+	details: any;
 };
 
 const Components = {
@@ -22,11 +23,12 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 	state = {
 		page: '',
 		rootId: '',
+		details: {},
 	};
 
     render() {
 		const { showSidebarRight } = S.Common;
-		const { page, rootId } = this.state;
+		const { page, rootId, details } = this.state;
 
 		if (!showSidebarRight) {
 			return null;
@@ -49,6 +51,7 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 							{...this.props} 
 							rootId={rootId}
 							isPopup={isPopup}
+							details={details}
 						/> 
 					</div>
 				): ''}

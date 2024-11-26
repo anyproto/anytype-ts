@@ -105,6 +105,7 @@ class CommonStore {
 			spaceId: observable,
 			membershipTiersList: observable,
 			showSidebarRightValue: observable,
+			showRelativeDatesValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -118,6 +119,7 @@ class CommonStore {
 			shareTooltip: computed,
 			showVault: computed,
 			showSidebarRight: computed,
+			showRelativeDates: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -136,6 +138,7 @@ class CommonStore {
 			membershipTiersListSet: action,
 			showVaultSet: action,
 			showSidebarRightSet: action,
+			showRelativeDatesSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));

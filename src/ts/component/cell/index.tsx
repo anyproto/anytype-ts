@@ -54,6 +54,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 		const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const canEdit = this.canCellEdit(relation, record);
+		const placeholder = this.getPlaceholder(relation, record);
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
@@ -64,11 +65,6 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		];
 
 		let CellComponent: any = null;
-		let placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`); 
-
-		if (!canEdit) {
-			placeholder = translate(`placeholderCellCommon`);
-		};
 
 		const props = {
 			...this.props,
@@ -174,7 +170,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, cellPosition, placeholder, isInline } = this.props;
+		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, cellPosition, isInline } = this.props;
 		const record = getRecord(recordId);
 		const relation = this.getRelation();
 
@@ -184,6 +180,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 		const value = record[relation.relationKey] || '';
 		const canEdit = this.canCellEdit(relation, record);
+		const placeholder = this.getPlaceholder(relation, record);
 
 		if (!canEdit) {
 			if (Relation.isUrl(relation.format) && value) {
@@ -536,6 +533,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 	getRelation () {
 		return S.Record.getRelationByKey(this.props.relationKey);
+	};
+
+	getPlaceholder (relation: any, record: any): string {
+		const { placeholder } = this.props;
+		const canEdit = this.canCellEdit(relation, record);
+
+		return !canEdit ? translate(`placeholderCellCommon`) : (placeholder || translate(`placeholderCell${relation.format}`));
 	};
 
 	canCellEdit (relation: any, record: any): boolean {

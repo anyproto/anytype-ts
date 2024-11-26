@@ -66,10 +66,11 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	init () {
+		const { details } = this.props;
 		const type = this.getObject();
 		const sections = this.getSections();
 
-		this.object = U.Common.objectCopy(type);
+		this.object = U.Common.objectCopy(type || details || {});
 		sections.forEach(it => this.updateObject(it.id));
 	};
 	

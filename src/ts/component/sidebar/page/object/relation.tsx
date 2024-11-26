@@ -82,11 +82,9 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
 	getRelations () {
-		const { config } = S.Common;
+		const object = this.getObject();
 
-		return S.Record.getObjectRelations(this.getRootId(), this.props.rootId).filter((it: any) => {
-			return !config.debug.hiddenObject ? !it.isHidden : true;
-		});
+		return S.Record.getObjectRelations(this.getRootId(), object.type);
 	};
 
 	onSetUp () {

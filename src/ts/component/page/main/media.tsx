@@ -41,7 +41,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const allowedRelation = false; //S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const type = S.Record.getTypeById(object.type);
 		const recommended = Relation.getArrayValue(type?.recommendedRelations);
-		const system = Relation.systemKeys();
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -56,11 +55,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return null;
 		};
 
-		const relations = S.Record.getObjectRelations(rootId, rootId).filter(it => {
-			if (!it) {
-				return false;
-			};
-			if (!recommended.includes(it.id) || (it.relationKey == 'description')) {
+		const typeRelations = recommended.map(it => S.Record.getRelationById(it)).filter(it => it);
+		const objectRelations = S.Detail.getKeys(rootId, rootId).map(it => S.Record.getRelationByKey(it)).filter(it => it && !recommended.includes(it.id));
+
+		const relations = typeRelations.concat(objectRelations).filter(it => {
+			if (it.relationKey == 'description') {
 				return false;
 			};
 
@@ -308,7 +307,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: S.Record.getObjectRelationKeys(rootId, rootId),
+				skipKeys: S.Record.getObjectRelations(rootId, object.type).map(it => it.relationKey),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					if (type && !type.recommendedRelations.includes(relation.relationKey)) {
 						C.ObjectTypeRelationAdd(type.id, [ relation.relationKey ]);
