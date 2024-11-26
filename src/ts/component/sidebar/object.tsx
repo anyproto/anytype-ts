@@ -487,7 +487,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				onSelect: id => {
 					switch (id) {
 						case 'archive': {
-							this.selected = [];
+							this.selected = null;
 							this.renderSelection();
 							break;
 						};
