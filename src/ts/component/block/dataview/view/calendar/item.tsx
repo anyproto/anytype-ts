@@ -76,7 +76,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				onContextMenu={this.onContext}
 				onDoubleClick={this.onDoubleClick}
 			>
-				<div className="number" onClick={() => this.onOpenDate(false)}>
+				<div className="number" onClick={this.onOpenDate}>
 					<div className="inner">{d}</div>
 				</div>
 				<div className="items">
@@ -133,14 +133,10 @@ const Item = observer(class Item extends React.Component<Props> {
 		const node = $(this.node);
 		const options = [];
 
-		options.push({ id: 'open', name: translate('commonOpen') });
+		options.push({ id: 'open', icon: 'expand', name: translate('commonOpenObject') });
 
 		if (this.canCreate()) {
 			options.push({ id: 'add', name: translate('commonNewObject') });
-		};
-
-		if (!options.length) {
-			return;
 		};
 
 		S.Menu.open('select', {
@@ -155,12 +151,10 @@ const Item = observer(class Item extends React.Component<Props> {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					if (item.id == 'open') {
-						this.onOpenDate();
-					}
-					if (item.id == 'add') {
-						this.onCreate();
-					}
+					switch (item.id) {
+						case 'open': this.onOpenDate(); break;
+						case 'add': this.onCreate(); break;
+					};
 				},
 			}
 		});
@@ -181,10 +175,10 @@ const Item = observer(class Item extends React.Component<Props> {
 		onCreate(details);
 	};
 
-	onOpenDate (config = true) {
+	onOpenDate () {
 		const { d, m, y } = this.props;
 
-		U.Object.openDateByTimestamp(U.Date.timestamp(y, m, d, 12, 0, 0), config && 'config');
+		U.Object.openDateByTimestamp(U.Date.timestamp(y, m, d, 12, 0, 0), 'config');
 	};
 
 	canCreate (): boolean {
