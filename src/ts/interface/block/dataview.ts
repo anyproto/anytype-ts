@@ -130,8 +130,6 @@ export interface ViewRelation {
 	isVisible?: boolean;
 	width?: number;
 	includeTime?: boolean;
-	dateFormat?: I.DateFormat;
-	timeFormat?: I.TimeFormat;
 	formulaType?: I.FormulaType;
 };
 
