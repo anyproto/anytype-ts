@@ -11,12 +11,12 @@ interface Props {
 	onChange? (v: any): void;
 };
 
-interface SwitchProps {
+interface TabSwitchProps {
 	getValue: () => any;
 	setValue: (v: any) => void;
 };
 
-const TabSwitch = forwardRef<SwitchProps, Props>(({
+const TabSwitch = forwardRef<TabSwitchProps, Props>(({
 	id = '',
 	value: initialValue = '',
 	options= [],
@@ -53,16 +53,16 @@ const TabSwitch = forwardRef<SwitchProps, Props>(({
 
 	return (
 		<div id={id} className={cn.join(' ')}>
-			{options.map((option, idx) => {
-				return <div
+			{options.map((option, idx) => (
+				<div
 					key={idx}
-					className={[ 'option', option.id == value ? 'active' : '' ].join(' ')}
+					className={[ 'option', (option.id == value) ? 'active' : '' ].join(' ')}
 					onClick={e => onChangeHandler(e, option.id)}
 				>
 					{option.icon ? <Icon className={option.icon} /> : ''}
 					{option.name}
 				</div>
-			})}
+			))}
 			<div className="highlight" style={{ width: `${optionWidth}%`, left: `${optionWidth * activeIdx}%` }}></div>
 		</div>
 	);

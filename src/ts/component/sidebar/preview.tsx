@@ -82,13 +82,12 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 	getWidth () {
 		const { ww } = U.Common.getWindowDimensions();
-		const isList = this.object.isList;
 
 		let w = this.object.layoutWidth;
 		let mw = ww - SIDEBAR_WIDTH;
 		let width = 0;
 
-		if (isList) {
+		if (this.object.layoutFormat == 'list') {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;
