@@ -1,22 +1,39 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Select, DragHorizontal } from 'Component';
+import { Label, Select, DragHorizontal, TabSwitch } from 'Component';
 import { I, U, translate } from 'Lib';
 
 const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends React.Component<I.SidebarSectionComponent> {
 	
 	node = null;
+	refFormat = null;
 	refLayout = null;
 	refAlign = null;
 	refWidth = null;
 
     render () {
 		const { object, onChange } = this.props;
+		const formatOptions: I.Option[] = [
+			{ id: 'page', name: translate('sidebarSectionLayoutFormatPage') },
+			{ id: 'list', name: translate('sidebarSectionLayoutFormatList') },
+		];
 		const layoutOptions = U.Menu.prepareForSelect(U.Menu.turnLayouts());
 		const alignOptions = U.Menu.prepareForSelect(U.Menu.getHAlign([ I.BlockHAlign.Justify ]));
 
         return (
 			<div ref={ref => this.node = ref} className="wrap">
+				<Label text={translate('sidebarSectionLayoutFormat')} />
+				<div className="items">
+					<div className="item">
+						<TabSwitch
+							ref={ref => this.refFormat = ref}
+							options={formatOptions}
+							value={object.layoutFormat}
+							onChange={id => onChange('layoutFormat', id)}
+						/>
+					</div>
+				</div>
+
 				<Label text={translate('sidebarSectionLayoutName')} />
 
 				<div className="items">
@@ -92,6 +109,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 	setValue () {
 		const { object } = this.props;
 
+		this.refFormat.setValue(object.layoutFormat);
 		this.refLayout.setValue(object.recommendedLayout);
 		this.refAlign.setValue(object.layoutAlign);
 		this.refWidth.setValue(object.layoutWidth);

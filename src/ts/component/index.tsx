@@ -59,6 +59,7 @@ import DragVertical from './form/drag/vertical';
 import Pin from './form/pin';
 import Filter from './form/filter';
 import Phrase from './form/phrase';
+import TabSwitch from './form/tabSwitch';
 
 import Pager from './util/pager';
 import Dimmer from './util/dimmer';
@@ -146,6 +147,8 @@ export {
 	Progress,
 	DotIndicator,
 	Phrase,
+	TabSwitch,
+
 	EmptySearch,
 	Popup,
 	Frame,

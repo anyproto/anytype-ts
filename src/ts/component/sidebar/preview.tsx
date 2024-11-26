@@ -16,6 +16,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		recommendedLayout: I.ObjectLayout.Page,
 		layoutAlign: I.BlockHAlign.Left,
 		layoutWidth: 0,
+		layoutFormat: 'page'
 	};
 
 	constructor (props: I.SidebarPageComponent) {
@@ -25,7 +26,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	render () {
-		const { featuredRelations, recommendedLayout, layoutAlign, layoutWidth } = this.object;
+		const { featuredRelations, recommendedLayout, layoutAlign, layoutFormat } = this.object;
 		const featuredList = this.object.featuredRelations.filter(it => it != 'description');
 		const withDescription = featuredRelations.indexOf('description') > -1;
 		const cn = [ 'layoutPreview', `layout${I.ObjectLayout[recommendedLayout]}`, `layoutAlign${I.BlockHAlign[layoutAlign]}` ];

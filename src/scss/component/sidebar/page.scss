@@ -35,6 +35,8 @@
 			.item.isDragging { z-index: 2; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 
 			.item {
+				.tabSwitch { width: 100%; margin-bottom: 12px; }
+
 				.value.flex { flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 8px; }
 
 				.select { border: 0px; color: var(--color-text-secondary); }
