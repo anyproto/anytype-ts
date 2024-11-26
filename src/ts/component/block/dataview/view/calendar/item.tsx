@@ -177,15 +177,9 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	onOpenDate () {
-		const { space } = S.Common;
 		const { d, m, y } = this.props;
-		const ts = U.Date.timestamp(y, m, d, 12, 0, 0);
 
-		C.ObjectDateByTimestamp(space, ts, (message: any) => {
-			if (!message.error.code) {
-				U.Object.openConfig(message.details);
-			};
-		});
+		U.Object.openDateByTimestamp(U.Date.timestamp(y, m, d, 12, 0, 0), 'config');
 	};
 
 	canCreate (): boolean {

@@ -299,8 +299,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onCalendar = () => {
 		const { rootId } = this.props;
-		const { space } = S.Common;
-		const object = S.Detail.get(rootId, rootId, [ 'timestamp' ]);
+		const object = S.Detail.get(rootId, rootId);
 
 		S.Menu.open('dataviewCalendar', {
 			element: '#calendar-icon',
@@ -309,21 +308,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				value: object.timestamp,
 				canEdit: true,
 				canClear: false,
-				onChange: (value: number) => {
-					C.ObjectDateByTimestamp(space, value, (message: any) => {
-						U.Object.openAuto(message.details);
-					});
-				},
+				onChange: (value: number) => U.Object.openDateByTimestamp(value),
 			},
 		});
 	};
 
 	changeDate = (dir: number) => {
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId, ['timestamp']);
-		C.ObjectDateByTimestamp(U.Router.getRouteSpaceId(), object.timestamp + dir * 24 * 60 * 60, (message: any) => {
-			U.Object.openAuto(message.details);
-		});
+		const object = S.Detail.get(rootId, rootId);
+
+		U.Object.openDateByTimestamp(object.timestamp + dir * 86400);
 	};
 
 });

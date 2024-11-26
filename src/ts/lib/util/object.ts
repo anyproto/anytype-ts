@@ -483,6 +483,22 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	openDateByTimestamp (t: number, method?: string) {
+		method = method || 'auto';
+
+		const fn = U.Common.toCamelCase(`open-${method}`);
+
+		C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
+			if (!message.error.code) {
+				if (U.Object[fn]) {
+					U.Object[fn](message.details);
+				} else {
+					U.Object.openConfig(message.details);
+				};
+			};
+		});
+	};
+
 };
 
 export default new UtilObject();
