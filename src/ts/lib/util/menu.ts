@@ -1043,6 +1043,9 @@ class UtilMenu {
 			{ id: I.DateFormat.Short },
 			{ id: I.DateFormat.ShortUS },
 			{ id: I.DateFormat.ISO },
+			{ id: I.DateFormat.Long },
+			{ id: I.DateFormat.Nordic },
+			{ id: I.DateFormat.European },
 		] as any[]).map(it => {
 			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
 			return it;

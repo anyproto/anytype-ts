@@ -254,7 +254,7 @@ class CommonStore {
 		if (ret === null) {
 			ret = Storage.get('dateFormat');
 		};
-		return Number(ret) || I.DateFormat.MonthAbbrBeforeDay;
+		return Number(ret) || I.DateFormat.Long;
 	};
 
 	get timeFormat (): I.TimeFormat {
