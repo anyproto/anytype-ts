@@ -94,10 +94,26 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 						return (
 							<div 
 								key={i} 
+								id={`day-${item.y}-${item.m}-${item.d}`}
 								className={cn.join(' ')} 
 								onClick={(e: any) => { 
 									e.stopPropagation();
 									this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
+								}}
+								onContextMenu={(e: any) => {
+									e.preventDefault();
+									S.Menu.open('select', {
+										element: `#day-${item.y}-${item.m}-${item.d}`,
+										width: 360,
+										offsetY: 4,
+										noFlipY: true,
+										data: {
+											options: [{ id: 'open', name: translate('commonOpen') }],
+											onSelect: () => {
+												U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d), 'config');
+											}
+										}
+									});
 								}}
 							>
 								{item.d}

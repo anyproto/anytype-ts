@@ -76,7 +76,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				onContextMenu={this.onContext}
 				onDoubleClick={this.onDoubleClick}
 			>
-				<div className="number" onClick={this.onOpenDate}>
+				<div className="number" onClick={() => this.onOpenDate(false)}>
 					<div className="inner">{d}</div>
 				</div>
 				<div className="items">
@@ -133,6 +133,8 @@ const Item = observer(class Item extends React.Component<Props> {
 		const node = $(this.node);
 		const options = [];
 
+		options.push({ id: 'open', name: translate('commonOpen') });
+
 		if (this.canCreate()) {
 			options.push({ id: 'add', name: translate('commonNewObject') });
 		};
@@ -153,6 +155,9 @@ const Item = observer(class Item extends React.Component<Props> {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
+					if (item.id == 'open') {
+						this.onOpenDate();
+					}
 					if (item.id == 'add') {
 						this.onCreate();
 					}
@@ -176,10 +181,10 @@ const Item = observer(class Item extends React.Component<Props> {
 		onCreate(details);
 	};
 
-	onOpenDate () {
+	onOpenDate (config = true) {
 		const { d, m, y } = this.props;
 
-		U.Object.openDateByTimestamp(U.Date.timestamp(y, m, d, 12, 0, 0), 'config');
+		U.Object.openDateByTimestamp(U.Date.timestamp(y, m, d, 12, 0, 0), config && 'config');
 	};
 
 	canCreate (): boolean {
