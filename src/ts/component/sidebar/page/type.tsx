@@ -76,8 +76,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			featuredRelations: [ 'type' ]
 		}, (details || {}));
 
-		console.log('DETAILS: ', details)
-
 		this.object = U.Common.objectCopy(type || newType);
 		sections.forEach(it => this.updateObject(it.id));
 	};
@@ -96,9 +94,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	onChange (section: string, relationKey: string, value: any) {
 		const relation = S.Record.getRelationByKey(relationKey);
-
-		console.log('RELATION KEY: ', relationKey)
-		console.log('VALUE: ', value)
 
 		value = Relation.formatValue(relation, value, false);
 

@@ -32,8 +32,6 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		const isTask = recommendedLayout == I.ObjectLayout.Task;
 		const isNote = recommendedLayout == I.ObjectLayout.Note;
 
-		console.log('OBJECT: ', this.object)
-
 		return (
 			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
 				<div className={cn.join(' ')} style={{ width: this.getWidth()}}>
@@ -85,13 +83,9 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		const { ww } = U.Common.getWindowDimensions();
 		const isList = this.object.isList;
 
-		console.log('W: ', this.object.layoutWidth)
-
 		let w = this.object.layoutWidth;
 		let mw = ww - SIDEBAR_WIDTH;
 		let width = 0;
-
-		console.log('MW: ', mw)
 
 		if (isList) {
 			width = mw - 192;
