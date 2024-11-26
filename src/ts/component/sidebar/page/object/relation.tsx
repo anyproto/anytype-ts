@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, sidebar, translate, Relation } from 'Lib';
+import { I, S, C, sidebar, translate } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 

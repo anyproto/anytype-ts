@@ -193,6 +193,7 @@ export interface SidebarPageComponent {
 	rootId?: string;
 	isPopup?: boolean;
 	readonly?: boolean;
+	details?: any;
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {

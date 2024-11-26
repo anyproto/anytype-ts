@@ -22,8 +22,6 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		const { data } = param;
 		const { value, placeholder, canEdit } = data;
 
-		console.log('PLACEHOLDER', placeholder);
-
 		return (
 			<Editable
 				ref={node => this.node = node}

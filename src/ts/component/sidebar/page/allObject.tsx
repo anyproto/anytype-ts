@@ -564,7 +564,10 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		} else
 		if (this.type == I.ObjectContainerType.Relation) {
 			this.onRelationMenu(cb);
-		} else {
+		} else 
+		if (this.type == I.ObjectContainerType.Type) {
+			sidebar.rightPanelToggle(!S.Common.showSidebarRight, 'type', { details });
+		}else {
 			keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
 				cb(message.targetId);
 			});
