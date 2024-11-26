@@ -16,8 +16,10 @@ const Sync = forwardRef<HTMLDivElement, Props>(({
 }, ref) => {
 
 	const nodeRef = useRef<HTMLDivElement>(null);
-	const syncStatus = useLocalObservable(() => S.Auth.getSyncStatus());
-	const account = useLocalObservable(() => S.Auth.account);
+	const { account, syncStatus } = useLocalObservable(() => ({
+		syncStatus: S.Auth.getSyncStatus(),
+		account: S.Auth.account,
+	}));
 	const isDevelopment = U.Data.isDevelopmentNetwork();
 	const cn = [ 'sync', className ];
 
@@ -53,6 +55,7 @@ const Sync = forwardRef<HTMLDivElement, Props>(({
 			{isDevelopment ? <Label className="badge" text={translate('syncButtonStaging')} /> : ''}
 		</div>
 	);
+
 });
 
 export default Sync;

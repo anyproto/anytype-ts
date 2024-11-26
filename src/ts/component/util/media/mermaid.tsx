@@ -1,64 +1,39 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import mermaid from 'mermaid';
-import { observer } from 'mobx-react';
+import { useLocalObservable } from 'mobx-react';
 import { J, S } from 'Lib';
 
 interface Props {
 	chart: string;
 };
 
-const Mermaid = observer(class Mermaid extends React.Component<Props> {
+const MediaMermaid = forwardRef<HTMLDivElement, Props>(({
+	chart = '',
+}, ref) => {
 
-	node = null;
+	const nodeRef = useRef(null);
+	const { theme } = useLocalObservable(() => S.Common);
 
-	render () {
-		const { theme } = S.Common;
-		const { chart } = this.props;
-
-		return (
-			<div ref={ref => this.node = ref} className="mermaidWrapper">
-				<div className="error" />
-				<div className="mermaid">{chart}</div>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.init();
-		mermaid.contentLoaded();
-	};
-
-	async componentDidUpdate (prevProps: Props) {
-		const node = $(this.node);
-
-		this.init();
-		node.find('.chart').removeAttr('data-processed');
-		node.find('.error').text('');
-
-		await this.drawDiagram();
-	};
-
-	init () {
-		const theme = (J.Theme[S.Common.getThemeClass()] || {}).mermaid;
-
-		if (theme) {
-			for (const k in theme) {
-				if (!theme[k]) {
-					delete(theme[k]);
-				};
-			};
-
-			mermaid.initialize({ theme: 'base', themeVariables: theme });
+	const init = () => {
+		const themeVariables = (J.Theme[S.Common.getThemeClass()] || {}).mermaid;
+		if (!themeVariables) {
+			return;
 		};
+
+		for (const k in themeVariables) {
+			if (!themeVariables[k]) {
+				delete(themeVariables[k]);
+			};
+		};
+
+		mermaid.initialize({ theme: 'base', themeVariables });
 	};
 
-	async drawDiagram () {
-		const node = $(this.node);
-		const { chart } = this.props;
+	async function drawDiagram () {
+		const node = $(nodeRef.current);
 
 		let svg: any = '';
-
 		try {
 			const res = await mermaid.render('mermaid-chart', chart);
 
@@ -73,6 +48,28 @@ const Mermaid = observer(class Mermaid extends React.Component<Props> {
 		node.find('.mermaid').html(svg);
 	};
 
+	useEffect(() => {
+		init();
+		mermaid.contentLoaded();
+	});
+
+	useEffect(() => {
+		const node = $(nodeRef.current);
+
+		node.find('.chart').removeAttr('data-processed');
+		node.find('.error').text('');
+
+		init();
+		drawDiagram();
+	}, [ theme, chart ]);
+
+	return (
+		<div ref={nodeRef} className="mermaidWrapper">
+			<div className="error" />
+			<div className="mermaid">{chart}</div>
+		</div>
+	);
+
 });
 
-export default Mermaid;
+export default MediaMermaid;
