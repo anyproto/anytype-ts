@@ -167,6 +167,10 @@ class DetailStore {
 		return this.mapper(object);
 	};
 
+	public getKeys (rootId: string, id: string): string[] {
+		return (this.map.get(rootId)?.get(id) || []).map(it => it.relationKey);
+	};
+
 	/** Mutates object provided and also returns a new object. Sets defaults.
 	 * This Function contains domain logic which should be encapsulated in a model */
 	public mapper (object: any): any {

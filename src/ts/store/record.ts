@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { S, I, M, U, J, Dataview } from 'Lib';
+import { S, I, M, U, J, Dataview, Relation } from 'Lib';
 
 enum KeyMapType {
 	Relation = 'relation',
@@ -104,7 +104,7 @@ class RecordStore {
 
 	relationListDelete (rootId: string, blockId: string, keys: string[]) {
 		const key = this.getId(rootId, blockId);
-		const relations = this.getObjectRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
+		const relations = this.getDataviewRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
 		
 		this.relationMap.set(key, relations.map(it => ({ relationKey: it.relationKey, format: it.format })));
 	};
@@ -308,12 +308,22 @@ class RecordStore {
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
-	getObjectRelationKeys (rootId: string, blockId: string): any[] {
+	getDataviewRelationKeys (rootId: string, blockId: string): any[] {
 		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => it.relationKey);
 	};
 
-	getObjectRelations (rootId: string, blockId: string): any[] {
-		return this.getObjectRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
+	getDataviewRelations (rootId: string, blockId: string): any[] {
+		return this.getDataviewRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
+	};
+
+	getObjectRelations (rootId: string, typeId: string): any[] {
+		const { config } = S.Common;
+		const type = S.Record.getTypeById(typeId);
+		const recommended = Relation.getArrayValue(type?.recommendedRelations);
+		const typeRelations = recommended.map(it => this.getRelationById(it)).filter(it => it);
+		const objectRelations = S.Detail.getKeys(rootId, rootId).map(it => this.getRelationByKey(it)).filter(it => it && !recommended.includes(it.id));
+
+		return typeRelations.concat(objectRelations).filter(it => !config.debug.hiddenObject ? !it.isHidden : true);
 	};
 
 	getRelationByKey (relationKey: string): any {

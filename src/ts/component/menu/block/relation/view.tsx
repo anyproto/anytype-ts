@@ -165,7 +165,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
-		const relations = S.Record.getObjectRelations(rootId, rootId);
+		const relations = S.Record.getObjectRelations(rootId, type.id);
 		const relationKeys = relations.map(it => it.relationKey);
 		const readonly = this.isReadonly();
 		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => ({ 
@@ -258,7 +258,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: S.Record.getObjectRelationKeys(rootId, rootId),
+				skipKeys: S.Record.getDataviewRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
