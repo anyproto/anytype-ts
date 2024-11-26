@@ -94,6 +94,14 @@ class MenuObject extends React.Component<I.Menu> {
 		const object = this.getObject();
 		const cmd = keyboard.cmdSymbol();
 		const isTemplate = U.Object.isTemplate(object.type);
+		const isDate = U.Object.isDateLayout(object.layout);
+		const isChat = U.Object.isChatLayout(object.layout);
+		const isBookmark = U.Object.isBookmarkLayout(object.layout);
+		const isParticipant = U.Object.isParticipantLayout(object.layout);
+		const isInSetLayouts = U.Object.isInSetLayouts(object.layout);
+		const isInFileLayouts = U.Object.isInFileLayouts(object.layout);
+		const isInFileOrSystemLayouts = U.Object.isInFileOrSystemLayouts(object.layout);
+		const isTypeOrRelationLayout = U.Object.isTypeOrRelationLayout(object.layout);
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
@@ -157,31 +165,31 @@ class MenuObject extends React.Component<I.Menu> {
 		// Restrictions
 
 		const hasShortMenu = (
-			U.Object.isTypeOrRelationLayout(object.layout) ||
-			U.Object.isInFileLayouts(object.layout) ||
-			U.Object.isInSetLayouts(object.layout) ||
-			U.Object.isParticipantLayout(object.layout) ||
-			U.Object.isChatLayout(object.layout)
+			isTypeOrRelationLayout ||
+			isInFileLayouts ||
+			isInSetLayouts ||
+			isParticipant ||
+			isChat
 		);
 
 		const allowedArchive = canWrite && canDelete;
-		const allowedSearch = !isFilePreview && !U.Object.isInSetLayouts(object.layout);
-		const allowedHistory = !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !U.Object.isParticipantLayout(object.layout) && !object.templateIsBundled;
+		const allowedSearch = !isFilePreview && !isInSetLayouts;
+		const allowedHistory = !object.isArchived && !isInFileOrSystemLayouts && !isParticipant && !isDate && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite && !object.isArchived;
 		const allowedAddCollection = canWrite && !object.isArchived;
 		const allowedPageLink = !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
-		const allowedReload = canWrite && object.source && U.Object.isBookmarkLayout(object.layout);
-		const allowedInstall = canWrite && !object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout);
-		const allowedUninstall = canWrite && object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout) && canDelete;
+		const allowedReload = canWrite && object.source && isBookmark;
+		const allowedInstall = canWrite && !object.isInstalled && isTypeOrRelationLayout;
+		const allowedUninstall = canWrite && object.isInstalled && isTypeOrRelationLayout && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
-		const allowedExport = !isFilePreview && !U.Object.isChatLayout(object.layout);
+		const allowedExport = !isFilePreview && !isChat && !isDate;
 		const allowedPrint = !isFilePreview;
-		const allowedDownloadFile = U.Object.isInFileLayouts(object.layout);
-		const allowedOpenFile = U.Object.isInFileLayouts(object.layout);
+		const allowedDownloadFile = isInFileLayouts;
+		const allowedOpenFile = isInFileLayouts;
 		const allowedOpenObject = isFilePreview;
 
 		if (!allowedArchive)		 archive = null;
