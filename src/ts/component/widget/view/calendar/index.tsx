@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, J } from 'Lib';
+import { I, S, U, J, translate } from 'Lib';
 
 interface State {
 	value: number;
@@ -92,10 +92,15 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 							const check = this.checkItems(item.d, item.m, item.y, groupRelationKey);
 							return (
 								<div 
-									id={`day-${item.d}-${item.m}-${item.y}`} 
+									id={[ 'day', item.d, item.m, item.y ].join('-')}
 									key={i}
 									className={cn.join(' ')} 
 									onClick={() => this.onClick(item.d, item.m, item.y)}
+									onContextMenu={(e: any) => {
+										e.preventDefault();
+										e.stopPropagation();
+										this.openContextMenu(e, item);
+									}}
 								>
 									<div className="inner">
 										{item.d}
@@ -108,6 +113,20 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 				</div>
 			</div>
 		);
+	};
+
+	openContextMenu = (e: any, item: any) => {
+		S.Menu.open('select', {
+			element: '#' + [ 'day', item.d, item.m, item.y ].join('-'),
+			offsetY: 4,
+			noFlipY: true,
+			data: {
+				options: [{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }],
+				onSelect: () => {
+					U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d), 'auto');
+				}
+			}
+		});
 	};
 
 	componentDidMount(): void {

@@ -94,7 +94,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 						return (
 							<div 
 								key={i} 
-								id={[ 'day', item.y, item.m, item.d ].join('-')}
+								id={[ 'day', item.d, item.m, item.y ].join('-')}
 								className={cn.join(' ')} 
 								onClick={(e: any) => { 
 									e.stopPropagation();
@@ -152,8 +152,9 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 	};
 
 	openContextMenu = (e: any, item: any) => {
+		const { getId } = this.props;
 		S.Menu.open('select', {
-			element: '#' + [ 'day', item.y, item.m, item.d ].join('-'),
+			element: `#${getId()} #${[ 'day', item.d, item.m, item.y ].join('-')}`,
 			offsetY: 4,
 			noFlipY: true,
 			data: {
