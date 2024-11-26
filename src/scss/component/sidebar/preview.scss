@@ -1,7 +1,16 @@
 @import "~scss/_mixins";
 
 .layoutPreviewWrapper {
-    .layoutPreview { margin: 0 auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary); }
+    position: absolute; z-index: 10; top: 0px; right: 100%; opacity: 0; transition: opacity $transitionSidebarTime linear;
+    height:100vh; width: calc(100vw - $sidebarRightW); background-color: var(--color-bg-primary); text-align: center; overflow: hidden;
+}
+.layoutPreviewWrapper.show { opacity: 1; }
+.layoutPreviewWrapper.show {
+    .layoutPreview { transform: translateX(0px); opacity: 1; }
+}
+
+.layoutPreviewWrapper {
+    .layoutPreview { transform: translateX(200px); opacity: 0; transition: 0.37s ease-in-out;  margin: 0 auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary); }
     .layoutPreview {
         .layoutHeader { margin-bottom: 44px; }
         .titleWrapper { margin-bottom: 8px; }
@@ -27,7 +36,7 @@
     }
 
     .layoutPreview.layoutHuman {
-        .icon { border-radius: 50%; }
+        .titleWrapper > .icon { border-radius: 50%; }
     }
 
     .layoutPreview.layoutTask {

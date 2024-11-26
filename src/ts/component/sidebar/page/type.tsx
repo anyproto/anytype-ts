@@ -34,7 +34,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 					<div className="side right">
 						<Button color="blank" text={translate('commonCancel')} className="c28" onClick={this.onCancel} />
-						<Button text={translate('commonSave')} className="c28" onClick={this.onSave} />
+						<Button text={type ? translate('commonSave') : translate('commonCreate')} className="c28" onClick={this.onSave} />
 					</div>
 				</div>
 
