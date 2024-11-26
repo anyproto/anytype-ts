@@ -69,8 +69,16 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const { details } = this.props;
 		const type = this.getObject();
 		const sections = this.getSections();
+		const newType = Object.assign({
+			recommendedLayout: I.ObjectLayout.Page,
+			layoutAlign: I.BlockHAlign.Left,
+			layoutWidth: 0,
+			featuredRelations: [ 'type' ]
+		}, (details || {}));
 
-		this.object = U.Common.objectCopy(type || details || {});
+		console.log('DETAILS: ', details)
+
+		this.object = U.Common.objectCopy(type || newType);
 		sections.forEach(it => this.updateObject(it.id));
 	};
 	
