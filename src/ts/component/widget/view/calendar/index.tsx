@@ -236,8 +236,6 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 			};
 		});
 
-		console.log(ret);
-
 		return ret;
 	};
 
