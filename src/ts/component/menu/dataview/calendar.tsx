@@ -152,11 +152,14 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 	};
 
 	openContextMenu = (e: any, item: any) => {
-		const { getId } = this.props;
+		const { getId, param } = this.props;
+		const { className, classNameWrap } = param;
 		S.Menu.open('select', {
 			element: `#${getId()} #${[ 'day', item.d, item.m, item.y ].join('-')}`,
 			offsetY: 4,
 			noFlipY: true,
+			className,
+			classNameWrap,
 			data: {
 				options: [{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }],
 				onSelect: () => {
