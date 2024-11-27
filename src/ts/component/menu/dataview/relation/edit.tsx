@@ -312,6 +312,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { classNameWrap, data } = param;
 		const { rootId } = data;
 		const relation = this.getRelation();
+		const object = S.Detail.get(rootId, rootId);
 
 		if (!relation) {
 			return;
@@ -333,6 +334,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		switch (item.id) {
 			case 'calculate': {
+				const save = (id: any) => {
+					id = Number(id) || 0;
+
+					this.saveViewRelation('formulaType', id);
+					analytics.event('ChangeGridFormula', { type: id, format: relation.format, objectType: object.type });
+				};
+
 				menuId = 'select';
 				menuParam.subIds = [ 'select2' ];
 				menuParam.data = Object.assign(menuParam.data, {
@@ -357,7 +365,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 									options,
 									rebind: menuContext.ref?.rebind,
 									onSelect: (e: any, item: any) => {
-										this.saveViewRelation('formulaType', item.id);
+										save(item.id);
 										menuContext.close();
 									},
 								}
@@ -365,7 +373,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						});
 					},
 					onSelect: (e: any, item: any) => {
-						this.saveViewRelation('formulaType', item.id);
+						save(item.id);
 					},
 				});
 				break;
