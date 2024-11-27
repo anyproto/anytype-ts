@@ -119,6 +119,10 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	calculate () {
 		const { rootId, block, relationKey, getView, isInline } = this.props;
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const viewRelation = view.getRelation(relationKey);
 		const subId = isInline ? [ rootId, block.id, 'total' ].join('-') : S.Record.getSubId(rootId, block.id);
 		const result = Dataview.getFormulaResult(subId, viewRelation);

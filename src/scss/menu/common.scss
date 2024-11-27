@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 33; }
+	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 23; }
 	.menuWrap.fromPopup, 
 	.menuWrap.fromHeader, 
 	.menuWrap.fromSidebar,

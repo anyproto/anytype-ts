@@ -20,8 +20,6 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		const featured = this.getFeatured();
 		const recommended = this.getRecommended();
 
-		console.log('RENDER', recommended, JSON.stringify(object, null, 3));
-
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));

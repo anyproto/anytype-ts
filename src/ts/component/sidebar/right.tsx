@@ -42,7 +42,7 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 			<div 
 				ref={node => this.node = node}
 				id="sidebarRight"
-				className={[ 'sidebar', 'right', page == 'type' ? 'withPreview' : '' ].join(' ')}
+				className={[ 'sidebar', 'right', (page == 'type' ? 'withPreview' : '') ].join(' ')}
 			>
 				{Component ? (
 					<div className={cn.join(' ')}>

@@ -2,9 +2,7 @@ $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
 $transitionCommon: 0.1s $easeInQuint;
 $transitionAllCommon: all $transitionCommon;
 $transitionSidebarTime: 0.18s;
-$sidebarRightW: 348px;
-
-$historyPanelWidth: 336px;
+$sidebarRightWidth: 348px;
 $vaultWidthCollapsed: 72px;
 
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }

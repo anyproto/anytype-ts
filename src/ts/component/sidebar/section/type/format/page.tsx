@@ -26,12 +26,13 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 						<Select
 							ref={ref => this.refLayout = ref}
 							id={`sidebar-layout-type-${object.id}`}
-							className={'test'}
 							options={layoutOptions}
 							value={object.recommendedLayout}
 							arrowClassName="light"
 							onChange={id => onChange('recommendedLayout', id)}
 							menuParam={{
+								className: 'fixed',
+								classNameWrap: 'fromSidebar',
 								horizontal: I.MenuDirection.Right,
 							}}
 						/>
@@ -52,6 +53,8 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 							arrowClassName="light"
 							onChange={id => onChange('layoutAlign', id)}
 							menuParam={{
+								className: 'fixed',
+								classNameWrap: 'fromSidebar',
 								horizontal: I.MenuDirection.Right,
 							}}
 						/>

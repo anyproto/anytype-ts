@@ -30,6 +30,8 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 							arrowClassName="light"
 							onChange={id => onChange('defaultView', id)}
 							menuParam={{
+								className: 'fixed',
+								classNameWrap: 'fromSidebar',
 								horizontal: I.MenuDirection.Right,
 							}}
 						/>
@@ -50,6 +52,8 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 							arrowClassName="light"
 							onChange={id => onChange('defaultType', id)}
 							menuParam={{
+								className: 'fixed',
+								classNameWrap: 'fromSidebar',
 								horizontal: I.MenuDirection.Right,
 							}}
 						/>
