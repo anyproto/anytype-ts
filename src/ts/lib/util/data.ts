@@ -1002,7 +1002,6 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { space } = S.Common;
 		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },

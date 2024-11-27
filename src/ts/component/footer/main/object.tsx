@@ -2,16 +2,18 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { Icon } from 'Component';
-import { I, S, Preview, translate } from 'Lib';
+import { I, J, S, Preview, translate } from 'Lib';
 
 const FooterMainEdit = observer(class FooterMainEdit extends React.Component<I.FooterComponent> {
 	
 	render () {
 		const { onHelp } = this.props;
 		const { show } = S.Progress;
+		const theme = S.Common.getThemeClass();
 		const current = S.Progress.getCurrent();
 		const total = S.Progress.getTotal();
 		const percent = Math.round((current / total) * 100);
+		const color = J.Theme[theme].progress;
 
 		return (
 			<div className="buttons">
@@ -27,8 +29,8 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<I.F
 							startAngle={270}
 							lengthAngle={-360}
 							data={[ 
-								{ title: '', value: 100 - percent, color: '#ebebeb' },
-								{ title: '', value: percent, color: '#ffd15b' },
+								{ title: '', value: 100 - percent, color: color.bg },
+								{ title: '', value: percent, color: color.fg },
 							]}
 						/>
 					</div>

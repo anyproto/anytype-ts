@@ -551,7 +551,7 @@ class Dataview {
 			return null;
 		};
 
-		const { formulaType, includeTime, timeFormat, dateFormat, relationKey } = viewRelation;
+		const { formulaType, includeTime, relationKey } = viewRelation;
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation) {
@@ -573,8 +573,8 @@ class Dataview {
 		};
 
 		const date = (t: number) => {
-			const date = U.Date.dateWithFormat(dateFormat, t);
-			const time = U.Date.timeWithFormat(timeFormat, t);
+			const date = U.Date.dateWithFormat(S.Common.dateFormat, t);
+			const time = U.Date.timeWithFormat(S.Common.timeFormat, t);
 
 			return includeTime ? [ date, time ].join(' ') : date;
 		};

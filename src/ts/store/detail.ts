@@ -276,6 +276,15 @@ class DetailStore {
 	};
 
 	private mapDate (object: any) {
+		object.timestamp = Number(object.timestamp) || 0;
+
+		if (object.timestamp) {
+			const { showRelativeDates, dateFormat } = S.Common;
+			const day = showRelativeDates ? U.Date.dayString(object.timestamp) : null;
+
+			object.name = day ? day : U.Date.dateWithFormat(dateFormat, object.timestamp);
+		};
+
 		return this.mapSet(object);
 	};
 

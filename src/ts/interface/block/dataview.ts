@@ -12,6 +12,9 @@ export enum DateFormat {
 	Short				 = 2, // 30/07/2020
 	ShortUS				 = 3, // 07/30/2020
 	ISO					 = 4, // 2020-07-30
+	Long				 = 5, // July 15, 2020 
+	Nordic				 = 6, // 15. Jul 2020  
+	European			 = 7, // 15.07.2020
 };
 
 export enum TimeFormat {
@@ -130,8 +133,6 @@ export interface ViewRelation {
 	isVisible?: boolean;
 	width?: number;
 	includeTime?: boolean;
-	dateFormat?: I.DateFormat;
-	timeFormat?: I.TimeFormat;
 	formulaType?: I.FormulaType;
 };
 

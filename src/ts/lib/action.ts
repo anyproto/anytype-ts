@@ -732,7 +732,7 @@ class Action {
 		let layout = I.WidgetLayout.Link;
 
 		if (object && !object._empty_) {
-			if (U.Object.isInFileOrSystemLayouts(object.layout)) {
+			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
 				layout = I.WidgetLayout.Link;
 			} else 
 			if (U.Object.isInSetLayouts(object.layout)) {

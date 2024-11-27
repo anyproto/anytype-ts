@@ -89,6 +89,7 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
+	"commonDates": "Dates",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
@@ -725,9 +726,12 @@
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
 	"popupSettingsPersonalRelativeDates": "Display relative dates",
+	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionApp": "App Appearance",
+	"popupSettingsPersonalSectionDateTime": "Date & Time",
+	"popupSettingsPersonalTimeFormat": "Time format",
 
 	"popupSettingsColorMode": "Color mode",
 	"popupSettingsColorModeButtonLight": "Light",
@@ -2198,6 +2202,9 @@
 	"participantPermissions2": "Owner",
 	"participantPermissions3": "No access",
 
+	"relationMentions": "Mentioned in",
+	"relationCreator": "Created by",
+	
 	"spaceStatus0": "Active",
 	"spaceStatus1": "Loading",
 	"spaceStatus2": "Ok",
@@ -2258,4 +2265,5 @@
 	"formulaCheckboxNotEmptyShort": "Checked",
 	"formulaCheckboxPercentEmpty": "Percentage unchecked",
 	"formulaCheckboxPercentNotEmpty": "Percentage checked"
+
 }

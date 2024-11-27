@@ -409,7 +409,7 @@ class UtilMenu {
 			if (!isSystem) {
 				const isSet = U.Object.isInSetLayouts(layout);
 				const setLayouts = U.Object.getSetLayouts();
-				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
+				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 
 				// Sets can only become Link and List layouts, non-sets can't become List
 				if (treeSkipLayouts.includes(layout)) {
@@ -1043,6 +1043,9 @@ class UtilMenu {
 			{ id: I.DateFormat.Short },
 			{ id: I.DateFormat.ShortUS },
 			{ id: I.DateFormat.ISO },
+			{ id: I.DateFormat.Long },
+			{ id: I.DateFormat.Nordic },
+			{ id: I.DateFormat.European },
 		] as any[]).map(it => {
 			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
 			return it;

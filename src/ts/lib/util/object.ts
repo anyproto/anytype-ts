@@ -26,6 +26,7 @@ class UtilObject {
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 			case I.ObjectLayout.Space:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
+			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
 		return r;
 	};
@@ -409,7 +410,6 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
-			I.ObjectLayout.Date,
 		];
 	};
 
@@ -481,6 +481,22 @@ class UtilObject {
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
 		return this.getPageLayouts().includes(layout);
+	};
+
+	openDateByTimestamp (t: number, method?: string) {
+		method = method || 'auto';
+
+		const fn = U.Common.toCamelCase(`open-${method}`);
+
+		C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
+			if (!message.error.code) {
+				if (U.Object[fn]) {
+					U.Object[fn](message.details);
+				} else {
+					U.Object.openConfig(message.details);
+				};
+			};
+		});
 	};
 
 };

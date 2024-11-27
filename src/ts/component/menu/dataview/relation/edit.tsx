@@ -17,7 +17,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		
 		this.onRelationType = this.onRelationType.bind(this);
 		this.onObjectType = this.onObjectType.bind(this);
-		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onClick = this.onClick.bind(this);
@@ -83,15 +82,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						withSwitch={true}
 						switchValue={viewRelation?.includeTime}
 						onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
-					/>
-
-					<MenuItemVertical 
-						id="date-settings" 
-						icon="settings" 
-						name={translate('commonPreferences')}
-						arrow={true} 
-						onMouseEnter={this.onDateSettings} 
-						onClick={this.onDateSettings} 
 					/>
 				</div>
 			);
@@ -591,32 +581,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						callBack();
 					};
 				},
-			}
-		});
-	};
-
-	onDateSettings (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { readonly } = data;
-
-		if (readonly) {
-			return;
-		};
-
-		const relation = this.getRelation();
-
-		this.menuOpen('dataviewDate', { 
-			element: `#${getId()} #item-date-settings`,
-			onClose: () => {
-				S.Menu.close('select');
-			},
-			data: {
-				...data,
-				relationKey: relation.relationKey,
 			}
 		});
 	};

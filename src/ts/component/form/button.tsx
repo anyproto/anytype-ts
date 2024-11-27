@@ -10,6 +10,7 @@ interface ButtonProps {
 	icon?: string;
 	arrow?: boolean;
 	text?: string;
+	active?: boolean;
 	color?: string;
 	className?: string;
 	tooltip?: string;
@@ -44,7 +45,8 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	onMouseEnter,
 	onMouseLeave,
 	onMouseDown,
-	dataset
+	dataset,
+	active,
 }, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
@@ -54,6 +56,10 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 
 	if (isLoading) {
 		cn.push('isLoading');
+	};
+
+	if (active) {
+		cn.push('active');
 	};
 
 	const handleMouseEnter = (e: MouseEvent) => {

@@ -186,6 +186,9 @@ class UtilDate {
 			case I.DateFormat.Short:				 f = 'd.m.Y'; break;
 			case I.DateFormat.ShortUS:				 f = 'm.d.Y'; break;
 			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
+			case I.DateFormat.Long:					 f = 'F j, Y'; break;
+			case I.DateFormat.Nordic:				 f = 'j. M Y'; break;
+			case I.DateFormat.European:				 f = 'j.m.Y'; break;
 		};
 		return f;
 	};
