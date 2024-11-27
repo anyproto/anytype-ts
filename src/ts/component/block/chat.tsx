@@ -382,8 +382,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		sections.sort((c1, c2) => {
-			if (c1.time > c2.time) return 1;
-			if (c1.time < c2.time) return -1;
+			if (c1.createdAt > c2.createdAt) return 1;
+			if (c1.createdAt < c2.createdAt) return -1;
 			return 0;
 		});
 
