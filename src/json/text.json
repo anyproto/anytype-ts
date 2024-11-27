@@ -2267,7 +2267,9 @@
 	"formulaDateRangeShort": "Range",
 	"formulaCheckboxCount": "Count all",
 	"formulaCheckboxEmpty": "Count unchecked",
+	"formulaCheckboxEmptyShort": "Unchecked",
 	"formulaCheckboxNotEmpty": "Count checked",
+	"formulaCheckboxNotEmptyShort": "Checked",
 	"formulaCheckboxPercentEmpty": "Percentage unchecked",
 	"formulaCheckboxPercentNotEmpty": "Percentage checked"
 }

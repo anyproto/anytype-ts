@@ -487,7 +487,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 				onSelect: id => {
 					switch (id) {
 						case 'archive': {
-							this.selected = [];
+							this.selected = null;
 							this.renderSelection();
 							break;
 						};
