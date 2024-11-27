@@ -367,6 +367,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				data: { 
 					rebind: this.rebind,
 					canEdit: true,
+					canClear: false,
 					value: U.Date.now(),
 					onChange: (value: number) => {
 						C.ObjectDateByTimestamp(space, value, (message: any) => {
