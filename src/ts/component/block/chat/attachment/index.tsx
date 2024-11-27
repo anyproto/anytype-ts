@@ -6,6 +6,7 @@ import { I, U, S, J, Action } from 'Lib';
 interface Props {
 	object: any;
 	showAsFile?: boolean;
+	bookmarkAsDefault?: boolean;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
 };
@@ -27,7 +28,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	render () {
-		const { object, showAsFile } = this.props;
+		const { object, showAsFile, bookmarkAsDefault } = this.props;
 		const mime = String(object.mime || '');
 		const cn = [ 'attachment' ];
 
@@ -87,7 +88,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 
 			case I.ObjectLayout.Bookmark: {
-				content = this.renderBookmark();
+				content = bookmarkAsDefault ? this.renderDefault() : this.renderBookmark();
 				break;
 			};
 		};
