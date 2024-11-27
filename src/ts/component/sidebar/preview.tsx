@@ -26,15 +26,15 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	render () {
 		const { featuredRelations, recommendedLayout, layoutAlign, layoutFormat } = this.object;
 		const featuredList = this.object.featuredRelations.filter(it => it != 'description');
-		const withDescription = featuredRelations.indexOf('description') > -1;
+		const withDescription = featuredRelations.includes('description');
 		const cn = [
 			'layoutPreview',
-			`layout${I.ObjectLayout[recommendedLayout]}`,
+			U.Data.layoutClass('', recommendedLayout),
 			`layoutAlign${I.BlockHAlign[layoutAlign]}`,
 			U.Common.toCamelCase(`layoutFormat-${layoutFormat}`),
 		];
-		const isTask = recommendedLayout == I.ObjectLayout.Task;
-		const isNote = recommendedLayout == I.ObjectLayout.Note;
+		const isTask = U.Object.isTaskLayout(recommendedLayout);
+		const isNote = U.Object.isNoteLayout(recommendedLayout);
 		const isList = layoutFormat == 'list';
 
 		return (
