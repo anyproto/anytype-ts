@@ -612,8 +612,8 @@
 	"blockDataviewHeadMenuChange": "Change source %s",
 	"blockDataviewHeadMenuOpen": "Open source %s",
 
-	"blockDataviewBoardRelationDeletedTitle": "Relation has been deleted",
-	"blockDataviewBoardRelationDeletedDescription": "Choose another Relation to group your Kanban",
+	"blockDataviewBoardRelationDeletedTitle": "No Relation",
+	"blockDataviewBoardRelationDeletedDescription": "Choose Relation to group your Kanban",
 	"blockDataviewBoardOpenViewMenu": "Open View menu",
 
 	"blockDataviewBoardColumnSettings": "Column settings",
