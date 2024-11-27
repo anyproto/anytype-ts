@@ -199,7 +199,7 @@ class MenuManager {
 					config.debug[i] = !config.debug[i];
 					Api.setConfig(this.win, { debug: config.debug });
 					
-					if ([ 'ho' ].includes(i)) {
+					if ([ 'hiddenObject' ].includes(i)) {
 						this.win.reload();
 					};
 				}
