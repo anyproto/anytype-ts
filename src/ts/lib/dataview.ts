@@ -655,7 +655,7 @@ class Dataview {
 			case I.FormulaType.MathMin: {
 				ret = min();
 				if (isDate) {
-					ret = date(ret);
+					ret = ret ? date(ret) : '';
 				};
 				break;
 			};
@@ -663,7 +663,7 @@ class Dataview {
 			case I.FormulaType.MathMax: {
 				ret = max();
 				if (isDate) {
-					ret = date(ret);
+					ret = ret ? date(ret) : '';
 				};
 				break;
 			};

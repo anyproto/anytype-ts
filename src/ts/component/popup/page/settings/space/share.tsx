@@ -177,7 +177,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="icons">
 						<Icon className="question withBackground" onClick={this.onInfo} />
-						{space.isShared ? <Icon id="button-more-space" className="more withBackground" onClick={this.onMoreSpace} /> : ''}
+						{space.isShared && isSpaceOwner ? <Icon id="button-more-space" className="more withBackground" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 

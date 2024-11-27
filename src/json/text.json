@@ -1394,7 +1394,7 @@
 	"menuBlockRelationEditSelectRelationType": "Select Relation Type",
 	"menuBlockRelationEditAddObjectType": "Add Object Type",
 	"menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
-	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
+	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
 	"menuBlockRelationViewFeaturedRelations": "Featured Relations",
 	"menuBlockRelationViewInThisObject": "In this Object",
@@ -1467,7 +1467,7 @@
 	"menuDataviewRelationEditHideRelation": "Hide Relation",
 	"menuDataviewRelationEditAddObjectType": "Add Object type",
 	"menuDataviewRelationEditFilterObjectTypes": "Filter Object types...",
-	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
+	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
 	"menuDataviewSortNoSortsApplied": "No sorts applied to this View",
 	"menuDataviewSortNewSort": "New sort",
@@ -2232,7 +2232,7 @@
 	"networkMode2Title": "Self-hosted",
 	"networkMode2Text": "Back up to your self-hosted network",
 
-	"formulaNone": "None",
+	"formulaNone": "Calculate",
 	"formulaCount": "Count",
 	"formulaPercentage": "Percentage",
 	"formulaMath": "Math",
@@ -2259,7 +2259,9 @@
 	"formulaDateRangeShort": "Range",
 	"formulaCheckboxCount": "Count all",
 	"formulaCheckboxEmpty": "Count unchecked",
+	"formulaCheckboxEmptyShort": "Unchecked",
 	"formulaCheckboxNotEmpty": "Count checked",
+	"formulaCheckboxNotEmptyShort": "Checked",
 	"formulaCheckboxPercentEmpty": "Percentage unchecked",
 	"formulaCheckboxPercentNotEmpty": "Percentage checked"
 

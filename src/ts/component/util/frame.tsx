@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useLayoutEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { U } from 'Lib';
@@ -9,7 +9,11 @@ interface Props {
 	dataset?: any;
 };
 
-const Frame = forwardRef<HTMLDivElement, Props>(({ 
+interface FrameRefProps {
+	resize: () => void,
+};
+
+const Frame = forwardRef<FrameRefProps, Props>(({ 
 	children, 
 	className = '', 
 	dataset = {},
@@ -48,6 +52,10 @@ const Frame = forwardRef<HTMLDivElement, Props>(({
 	});
 
 	useLayoutEffect(() => resize());
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	return (
 		<div

@@ -202,7 +202,8 @@ class Editable extends React.Component<Props> {
 
 		if (maxLength) {
 			const text = this.getTextValue();
-			if ((text.length >= maxLength) && !keyboard.isSpecial(e)) {
+
+			if ((text.length >= maxLength) && !keyboard.isSpecial(e) && !keyboard.withCommand(e)) {
 				e.preventDefault();
 			};
 		};
