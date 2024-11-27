@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select } from 'Component';
-import { I, S, C, J, keyboard, Relation, Dataview, analytics, translate } from 'Lib';
+import { I, S, C, U, keyboard, Relation, Dataview, analytics } from 'Lib';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
@@ -43,27 +43,24 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		const view = getView();
 
 		if (!relation || !view) {
-			return null;
+			return <div />;
 		};
 
 		// Subscriptions
 		const viewRelation = view.getRelation(relationKey);
-		if (!viewRelation) {
-			return null;
+		if (!viewRelation || (viewRelation.formulaType == I.FormulaType.None)) {
+			return <div />;
 		};
 
 		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
-		const sections = this.getSections();
+		const sections = U.Menu.getFormulaSections(relationKey);
 		const option = Relation.formulaByType(relation.format).find(it => it.id == String(viewRelation.formulaType));
+		const subId = S.Record.getSubId(rootId, block.id);
+		const records = S.Record.getRecords(subId, [ relationKey ], true);
 
-		if (viewRelation.formulaType != I.FormulaType.None) {
-			const subId = S.Record.getSubId(rootId, block.id);
-			const records = S.Record.getRecords(subId, [ relationKey ], true);
-
-			records.forEach(record => {
-				const value = record[relationKey];
-			});
-		};
+		records.forEach(record => {
+			const value = record[relationKey];
+		});
 
 		return (
 			<div 
@@ -187,23 +184,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				}
 			});
 		});
-	};
-
-	getSections () {
-		const { relationKey } = this.props;
-		const relation = S.Record.getRelationByKey(relationKey);
-		const options = Relation.formulaByType(relation.format);
-
-		return [
-			{ id: I.FormulaSection.None, name: translate('formulaNone') },
-		].concat([
-			{ id: I.FormulaSection.Count, name: translate('formulaCount'), arrow: true },
-			{ id: I.FormulaSection.Percent, name: translate('formulaPercentage'), arrow: true },
-			{ id: I.FormulaSection.Math, name: translate('formulaMath'), arrow: true },
-			{ id: I.FormulaSection.Date, name: translate('formulaDate'), arrow: true },
-		].filter(s => {
-			return options.filter(it => it.section == s.id).length;
-		})).map(it => ({ ...it, id: String(it.id), checkbox: false }));
 	};
 
 	onChange (id: string): void {

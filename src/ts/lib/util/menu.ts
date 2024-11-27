@@ -1074,6 +1074,22 @@ class UtilMenu {
 		});
 	};
 
+	getFormulaSections (relationKey: string) {
+		const relation = S.Record.getRelationByKey(relationKey);
+		const options = Relation.formulaByType(relation.format);
+
+		return [
+			{ id: I.FormulaSection.None, name: translate('formulaNone') },
+		].concat([
+			{ id: I.FormulaSection.Count, name: translate('formulaCount'), arrow: true },
+			{ id: I.FormulaSection.Percent, name: translate('formulaPercentage'), arrow: true },
+			{ id: I.FormulaSection.Math, name: translate('formulaMath'), arrow: true },
+			{ id: I.FormulaSection.Date, name: translate('formulaDate'), arrow: true },
+		].filter(s => {
+			return options.filter(it => it.section == s.id).length;
+		})).map(it => ({ ...it, id: String(it.id), checkbox: false }));
+	};
+
 };
 
 export default new UtilMenu();
