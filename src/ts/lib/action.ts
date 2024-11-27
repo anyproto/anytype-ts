@@ -165,6 +165,10 @@ class Action {
 	};
 
 	openUrl (url: string) {
+		if (!url) {
+			return;
+		};
+
 		url = U.Common.urlFix(url);
 
 		const storageKey = 'openUrl';
@@ -186,6 +190,14 @@ class Action {
 		} else {
 			cb();
 		};
+	};
+
+	openPath (path: string) {
+		if (!path) {
+			return;
+		};
+
+		Renderer.send('openPath', path);
 	};
 
 	openFile (id: string, route: string) {

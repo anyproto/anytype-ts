@@ -346,7 +346,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			});
 
 			onChange(object, name + ' ', marks, from, to + 1);
-
 			analytics.event('ChangeTextStyle', { type: I.MarkType.Mention, count: 1, objectType: object.type });
 		};
 
