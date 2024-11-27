@@ -35,7 +35,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		const { space } = S.Common;
 		const { isDeleted, relations, selectedRelation } = this.state;
 		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId, [ 'timestamp' ]);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;

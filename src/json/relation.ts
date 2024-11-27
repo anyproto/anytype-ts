@@ -22,7 +22,8 @@ export default {
 		'sizeInBytes',
 		'restrictions',
 		'defaultTemplateId',
-		'createdDate'
+		'createdDate',
+		'timestamp',
 	],
 
 	sidebar: [
