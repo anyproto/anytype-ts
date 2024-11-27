@@ -545,7 +545,7 @@ class CommonStore {
 		set(this.configObj, newConfig);
 
 		this.configObj.debug = this.configObj.debug || {};
-		html.toggleClass('debug', !!this.configObj.debug.ui);
+		html.toggleClass('debug', Boolean(this.configObj.debug.ui));
 	};
 
 	spaceStorageSet (value: Partial<SpaceStorage>) {
