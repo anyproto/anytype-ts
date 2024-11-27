@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, J } from 'Lib';
+import { I, S, U, J, translate } from 'Lib';
 
 interface State {
 	value: number;
@@ -38,6 +38,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		const months = U.Date.getMonths();
 		const years = U.Date.getYears(0, 3000);
 		const { groupRelationKey } = view;
+		const dotMap = this.getDotMap(groupRelationKey);
 
 		return (
 			<div ref={ref => this.node = ref} className="body">
@@ -89,13 +90,14 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 								cn.push('first');
 							};
 
-							const check = this.checkItems(item.d, item.m, item.y, groupRelationKey);
+							const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
 							return (
 								<div 
-									id={`day-${item.d}-${item.m}-${item.y}`} 
+									id={[ 'day', item.d, item.m, item.y ].join('-')}
 									key={i}
 									className={cn.join(' ')} 
 									onClick={() => this.onClick(item.d, item.m, item.y)}
+									onContextMenu={(e: any) => this.openContextMenu(e, item)}
 								>
 									<div className="inner">
 										{item.d}
@@ -108,6 +110,23 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 				</div>
 			</div>
 		);
+	};
+
+	openContextMenu = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		S.Menu.open('select', {
+			element: '#' + [ 'day', item.d, item.m, item.y ].join('-'),
+			offsetY: 4,
+			noFlipY: true,
+			data: {
+				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
+				onSelect: () => {
+					U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d), 'auto');
+				}
+			}
+		});
 	};
 
 	componentDidMount(): void {
@@ -220,14 +239,23 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		];
 	};
 
-	checkItems (d: number, m: number, y: number, relationKey: string) {
+	getDotMap (relationKey: string): Map<string, boolean> {
+		const { value } = this.state;
 		const { rootId } = this.props;
+		const data = U.Date.getCalendarMonth(value);
 		const items = S.Record.getRecords(S.Record.getSubId(rootId, J.Constant.blockId.dataview), [ relationKey ]);
-		const current = [ d, m, y ].join('-');
+		const ret = new Map();
 
-		return !!items.find(it => U.Date.date('j-n-Y', it[relationKey]) == current);
+		data.forEach(it => {
+			const current = [ it.d, it.m, it.y ].join('-');
+
+			if (items.find(it => U.Date.date('j-n-Y', it[relationKey]) == current)) {
+				ret.set(current, true);
+			};
+		});
+
+		return ret;
 	};
-
 
 });
 
