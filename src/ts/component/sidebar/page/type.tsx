@@ -111,6 +111,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		this.object[relationKey] = value;
 		this.update[relationKey] = value;
+
+		console.log(section, relationKey, value, this.object[relationKey], this.update[relationKey]);
+
 		this.updateObject(section);
 	};
 
