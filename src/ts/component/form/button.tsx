@@ -22,7 +22,7 @@ interface ButtonProps {
 	onMouseDown?: (e: MouseEvent) => void;
 };
 
-export interface ButtonRef {
+interface ButtonRef {
 	setLoading: (v: boolean) => void;
 	setDisabled: (v: boolean) => void;
 	isDisabled: () => boolean;

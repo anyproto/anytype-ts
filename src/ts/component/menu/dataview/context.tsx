@@ -172,7 +172,7 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedCollection = false;
 		};
 
-		if (archiveCnt == length) {
+		if (archiveCnt && (archiveCnt == length)) {
 			allowedOpen = false;
 			allowedLinkTo = false;
 			allowedUnlink = false;

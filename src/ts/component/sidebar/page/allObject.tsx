@@ -487,7 +487,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 				onSelect: id => {
 					switch (id) {
 						case 'archive': {
-							this.selected = [];
+							this.selected = null;
 							this.renderSelection();
 							break;
 						};
@@ -617,15 +617,18 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		const details: any = {};
 
 		let type = null;
+		let layout = null;
 
 		switch (t) {
 			case I.ObjectContainerType.Bookmark: {
 				type = S.Record.getBookmarkType();
+				layout = I.ObjectLayout.Bookmark;
 				break;
 			};
 
 			case I.ObjectContainerType.Type: {
 				type = S.Record.getTypeType();
+				layout = I.ObjectLayout.Type;
 				break;
 			};
 
@@ -635,8 +638,12 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			};
 		};
 
-		if (type) {
+		if (type !== null) {
 			details.type = type.id;
+		};
+
+		if (layout !== null) {
+			details.layout = layout;
 		};
 
 		return details;

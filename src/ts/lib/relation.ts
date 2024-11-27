@@ -137,8 +137,8 @@ class Relation {
 			case I.RelationType.Checkbox: {
 				ret = ret.concat([
 					{ id: I.FormulaType.Count, name: translate('formulaCheckboxCount'), short: translate('formulaCount'), section: I.FormulaSection.Count },
-					{ id: I.FormulaType.CountNotEmpty, name: translate('formulaCheckboxNotEmpty'), short: translate('formulaNotEmptyShort'), section: I.FormulaSection.Count },
-					{ id: I.FormulaType.CountEmpty, name: translate('formulaCheckboxEmpty'), short: translate('formulaEmptyShort'), section: I.FormulaSection.Count },
+					{ id: I.FormulaType.CountNotEmpty, name: translate('formulaCheckboxNotEmpty'), short: translate('formulaCheckboxNotEmptyShort'), section: I.FormulaSection.Count },
+					{ id: I.FormulaType.CountEmpty, name: translate('formulaCheckboxEmpty'), short: translate('formulaCheckboxEmptyShort'), section: I.FormulaSection.Count },
 					{ id: I.FormulaType.PercentNotEmpty, name: translate('formulaCheckboxPercentNotEmpty'), short: translate('formulaNotEmptyShort'), section: I.FormulaSection.Percent },
 					{ id: I.FormulaType.PercentEmpty, name: translate('formulaCheckboxPercentEmpty'), short: translate('formulaEmptyShort'), section: I.FormulaSection.Percent },
 				]);

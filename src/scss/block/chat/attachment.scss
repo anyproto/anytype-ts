@@ -28,7 +28,7 @@
 		.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; color: var(--color-text-secondary); }
 	}
 
-	.attachment.isBookmark { width: unset !important; min-width: unset; height: unset; }
+	.attachment.isBookmark { min-width: unset; height: unset; }
 	.attachment.isBookmark {
 		.inner { display: flex; flex-direction: column; padding: 16px; gap: 8px 0px; width: 100%; max-width: 360px; }
 		.inner {
@@ -72,6 +72,10 @@
 .attachments.isSingle {
 	.attachment { width: 540px; }
 }
+
+.attachments.isSingle.isBookmark {
+	 .attachment { width: 360px; }
+ }
 
 /* Layouts */
 
