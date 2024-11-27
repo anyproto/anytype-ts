@@ -43,7 +43,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 					<div className="layoutHeader">
 						{isNote ? '' : (
 							<div className="titleWrapper">
-								{!isTask ? <div className="icon" /> : <Checkbox readonly={true} value={false} />}
+								{!isTask ? <div key={`sidebar-preview-icon-${layoutFormat}`} className="icon" /> : <Checkbox readonly={true} value={false} />}
 								<Title text={this.object.name ? `${translate('commonNew')} ${this.object.name}` : translate('defaultNameType')} />
 							</div>
 						)}
