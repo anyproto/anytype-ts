@@ -25,8 +25,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const type = this.getObject();
 		const sections = this.getSections();
 
-		console.log('ROOT: ', this.props.rootId)
-
 		return (
 			<React.Fragment>
 				<div className="head">
