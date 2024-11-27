@@ -41,6 +41,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			return <Deleted {...this.props} />;
 		};
 
+		const relation = S.Record.getRelationByKey(selectedRelation);
 		const columns: any[] = [
 			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
 			{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
@@ -48,7 +49,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		const filters: I.Filter[] = [];
 
-		if (selectedRelation == RELATION_KEY_MENTION) {
+		if (relation.format == I.RelationType.Object) {
 			filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
 		} else {
 			filters.push({ relationKey: selectedRelation, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
@@ -89,7 +90,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 										icon={icon}
 										text={item.name}
 									/>
-									{separator}
+									{relations.length > 1 ? separator : ''}
 								</React.Fragment>
 							);
 						})}
