@@ -26,12 +26,6 @@
             .label::after { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-tertiary); }
             .label:last-child::after { display: none; }
         }
-
-        .layout { display: flex; flex-direction: column; justify-content: flex-start; gap: 14px 0px; }
-        .layout {
-            .line { width: 100%; height: 10px; background: var(--color-shape-secondary); }
-            .line:last-child { width: 75%; }
-        }
     }
 
     .layoutPreview:not(.isTask) {
@@ -63,6 +57,14 @@
         .featured { justify-content: flex-end; }
     }
 
+    .layoutPreview.layoutFormatPage {
+        .layout { display: flex; flex-direction: column; justify-content: flex-start; gap: 14px 0px; }
+        .layout {
+            .line { width: 100%; height: 10px; background: var(--color-shape-secondary); }
+            .line:last-child { width: 75%; }
+        }
+    };
+
     .layoutPreview.layoutFormatList {
         .layoutHeader { text-align: left; }
         .titleWrapper,
@@ -72,13 +74,7 @@
         .titleWrapper > .icon { width: 32px; height: 32px; background: transparent url('~img/icon/sidebar/preview/iconList.svg'); margin-bottom: 0px; }
         .title { @include text-header1; }
 
-        .layout { gap: 39px; }
-        .layout {
-            .line { height: 1px; }
-            .line:last-child { width: 100%; }
-        }
-
-        .listHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;  }
+        .listHeader { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px;  }
         .listHeader {
             .left { display: flex; align-items: center; gap: 0px 20px; }
             .left {
@@ -94,6 +90,53 @@
 
                 .buttonPlug { width: 70px; height: 28px; border-radius: 6px; margin-left: 12px; background-color: var(--color-shape-secondary); }
             }
+        }
+    }
+
+    .layoutPreview.layoutFormatList.defaultViewGrid {
+        .listHeader { border-bottom: 1px solid var(--color-shape-secondary); margin-bottom: 39px; }
+        .layout { display: flex; flex-direction: column; justify-content: flex-start; gap: 39px 0px; }
+        .layout {
+            .line { width: 100%; height: 1px; background: var(--color-shape-secondary); }
+            .line:last-child { width: 100%; }
+        }
+    }
+
+    .layoutPreview.layoutFormatList.defaultViewList {
+        .listHeader { border-bottom: 1px solid var(--color-shape-secondary); margin-bottom: 22px; }
+        .layout { display: flex; flex-direction: column; justify-content: flex-start; gap: 22px 0px; }
+        .layout {
+            .line { width: 60%; height: 12px; background: var(--color-shape-secondary); }
+            .line:nth-child(2),
+            .line:nth-child(4) { width: 50%; }
+        }
+    }
+
+    .layoutPreview.layoutFormatList.defaultViewBoard {
+        .listHeader { border-bottom: 1px solid var(--color-shape-secondary); margin-bottom: 14px; }
+        .layout { display: flex; justify-content: flex-start; gap: 0px 24px; }
+        .layout {
+            .group { width: 25%; }
+            .group {
+                .headerPlug { height: 12px; width: 96px; border-radius: 2px; background-color: var(--color-shape-secondary); margin-bottom: 14px; }
+                .item { width: 100%; height: 96px; border: 1px solid var(--color-shape-secondary); opacity: 0.8; border-radius: 8px; margin-bottom: 8px; box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.05); }
+            }
+        }
+    }
+
+    .layoutPreview.layoutFormatList.defaultViewGallery {
+        .listHeader { margin-bottom: 2px; }
+        .layout { display: flex; gap: 16px; flex-wrap: wrap; }
+        .layout {
+            .line { width: calc(33% - 9px); height: 96px; border: 1px solid var(--color-shape-secondary); opacity: 0.8; border-radius: 8px; }
+        }
+    }
+
+    .layoutPreview.layoutFormatList.defaultViewCalendar {
+        .listHeader { margin-bottom: 8px; }
+        .layout { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-left: 1px solid var(--color-shape-secondary);  border-top: 1px solid var(--color-shape-secondary); }
+        .layout {
+            .day { height: 136px; border-right: 1px solid var(--color-shape-secondary); border-bottom: 1px solid var(--color-shape-secondary); }
         }
     }
 }

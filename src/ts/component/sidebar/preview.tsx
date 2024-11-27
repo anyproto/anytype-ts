@@ -14,7 +14,8 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		recommendedLayout: I.ObjectLayout.Page,
 		layoutAlign: I.BlockHAlign.Left,
 		layoutWidth: 0,
-		layoutFormat: 'page'
+		layoutFormat: 'page',
+		defaultView: I.ViewType.Grid,
 	};
 
 	constructor (props: I.SidebarPageComponent) {
@@ -24,7 +25,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	render () {
-		const { featuredRelations, recommendedLayout, layoutAlign, layoutFormat } = this.object;
+		const { featuredRelations, recommendedLayout, layoutAlign, layoutFormat, defaultView } = this.object;
 		const featuredList = this.object.featuredRelations.filter(it => it != 'description');
 		const withDescription = featuredRelations.includes('description');
 		const cn = [
@@ -32,6 +33,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 			U.Data.layoutClass('', recommendedLayout),
 			`layoutAlign${I.BlockHAlign[layoutAlign]}`,
 			U.Common.toCamelCase(`layoutFormat-${layoutFormat}`),
+			`defaultView${I.ViewType[defaultView]}`,
 		];
 		const isTask = U.Object.isTaskLayout(recommendedLayout);
 		const isNote = U.Object.isNoteLayout(recommendedLayout);
@@ -61,28 +63,18 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 					{isList ? (
 						<div className="listHeader">
-							<div className="left">
-								<div className="view" />
-								<div className="view" />
-								<div className="view" />
-							</div>
+							<div className="left">{this.insertEmtpyNodes('view', 3)}</div>
+
 							<div className="right">
-								<Icon className="search" />
-								<Icon className="filter" />
-								<Icon className="sort" />
-								<Icon className="settings" />
+								{[ 'search', 'filter', 'sort', 'settings' ].map((cn, i) => (
+									<Icon key={i} className={cn} />
+								))}
 								<div className="buttonPlug" />
 							</div>
 						</div>
 					) : ''}
 
-					<div className="layout">
-						<div className="line" />
-						<div className="line" />
-						<div className="line" />
-						<div className="line" />
-						<div className="line" />
-					</div>
+					{this.renderLayout()}
 				</div>
 			</div>
 		);
@@ -119,6 +111,52 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		};
 
 		return Math.max(300, width);
+	};
+
+	renderLayout () {
+		const { layoutFormat, defaultView } = this.object;
+
+		let content = null;
+
+		if (layoutFormat == 'page') {
+			content = this.insertEmtpyNodes('line', 5);
+		} else {
+			switch (Number(defaultView)) {
+				case I.ViewType.Board: {
+					content = (
+						<React.Fragment>
+							<div className="group">
+								<div className="headerPlug" />
+								{this.insertEmtpyNodes('item', 1)}
+							</div>
+							<div className="group">
+								<div className="headerPlug" />
+								{this.insertEmtpyNodes('item', 3)}
+							</div>
+							<div className="group">
+								<div className="headerPlug" />
+								{this.insertEmtpyNodes('item', 2)}
+							</div>
+						</React.Fragment>
+					);
+					break;
+				};
+				case I.ViewType.Calendar: {
+					content = this.insertEmtpyNodes('day', 28, { height: this.getWidth() / 7 });
+					break;
+				};
+				default: {
+					content = this.insertEmtpyNodes('line', 5);
+					break;
+				};
+			};
+		};
+
+		return <div key={`layout-${layoutFormat}-${defaultView}`} className="layout">{content}</div>;
+	};
+
+	insertEmtpyNodes (className, count, style?: any) {
+		return Array(count).fill(null).map((el, i) => <div style={style || {}} className={className} key={i} />);
 	};
 
 });

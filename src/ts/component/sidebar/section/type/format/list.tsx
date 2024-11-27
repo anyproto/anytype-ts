@@ -11,7 +11,7 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 	render () {
 		const { object, onChange } = this.props;
 
-		const defaultViewOptions = U.Menu.prepareForSelect(U.Menu.getViews());
+		const defaultViewOptions = U.Menu.prepareForSelect(U.Menu.getViews().filter(it => it.id != I.ViewType.Graph));
 		const defaultTypeOptions = U.Menu.prepareForSelect(U.Data.getObjectTypesForNewObject());
 
 		return (
