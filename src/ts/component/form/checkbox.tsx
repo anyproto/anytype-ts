@@ -46,10 +46,10 @@ const Checkbox = forwardRef<CheckboxRefProps, Props>(({
 	useImperativeHandle(ref, () => ({
 		getValue: () => value,
 		setValue,
-		toggle: () => setValue(!value),
+		toggle: () => setValue(!value)
 	}));
 	
-	useEffect(() => setValue(initialValue));
+	useEffect(() => setValue(initialValue), []);
 	
 	return (
 		<div
