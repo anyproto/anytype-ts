@@ -131,14 +131,12 @@ const Item = observer(class Item extends React.Component<Props> {
 
 	onContext () {
 		const node = $(this.node);
-		const options = [];
+		const options = [
+			{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }
+		] as I.Option[];
 
 		if (this.canCreate()) {
 			options.push({ id: 'add', name: translate('commonNewObject') });
-		};
-
-		if (!options.length) {
-			return;
 		};
 
 		S.Menu.open('select', {
@@ -153,9 +151,10 @@ const Item = observer(class Item extends React.Component<Props> {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					if (item.id == 'add') {
-						this.onCreate();
-					}
+					switch (item.id) {
+						case 'open': this.onOpenDate(); break;
+						case 'add': this.onCreate(); break;
+					};
 				},
 			}
 		});
