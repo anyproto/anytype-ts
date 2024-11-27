@@ -233,6 +233,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	setValue () {
+		const { dateFormat } = S.Common;
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
@@ -242,6 +243,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 
 			let text = String(object[item.relationKey] || '');
+
+			if (U.Object.isDateLayout(object.layout) && object.timestamp) {
+				text = U.Date.dateWithFormat(dateFormat, object.timestamp);
+			};
+
 			if (text == translate('defaultNamePage')) {
 				text = '';
 			};
