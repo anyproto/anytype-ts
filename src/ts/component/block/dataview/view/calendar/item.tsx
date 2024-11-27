@@ -40,8 +40,6 @@ const Item = observer(class Item extends React.Component<Props> {
 			cn.push(className);
 		};
 
-		console.log(cn);
-
 		let more = null;
 		if (length > LIMIT) {
 			more = (

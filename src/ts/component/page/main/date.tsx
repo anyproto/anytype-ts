@@ -42,6 +42,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 
 		const relation = S.Record.getRelationByKey(selectedRelation);
+		if (!relation) {
+			return null;
+		};
+
 		const columns: any[] = [
 			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
 			{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
