@@ -23,8 +23,14 @@
 .sidebar.left { left: 0px; }
 .sidebar.left.anim { transition-property: width; }
 
-.sidebar.right { right: -348px; width: 348px; }
+.sidebar.right { right: -$sidebarRightWidth; width: $sidebarRightWidth; }
 .sidebar.right.anim { transition-property: right; }
+
+.sidebar.withPreview { z-index: 31; }
+
+.sidebar.right {
+	@import "./sidebar/preview";
+}
 
 .sidebar {
 	@import "./sidebar/widget";

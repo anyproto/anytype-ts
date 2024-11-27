@@ -87,7 +87,7 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	}
 }
 
-.header.mainHistory { height: 52px; width: calc(100% - $historyPanelWidth); right: $historyPanelWidth; background: var(--color-bg-primary); }
+.header.mainHistory { height: 52px; width: calc(100% - $sidebarRightWidth); right: $sidebarRightWidth; background: var(--color-bg-primary); }
 .header.mainHistory {
 	.side.center { overflow: hidden; }
 	.side.center {

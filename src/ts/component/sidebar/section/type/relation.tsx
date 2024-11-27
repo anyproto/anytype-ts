@@ -16,7 +16,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 	};
 
     render () {
-		const { readonly } = this.props;
+		const { readonly, object } = this.props;
 		const featured = this.getFeatured();
 		const recommended = this.getRecommended();
 
@@ -112,9 +112,10 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 	};
 
 	onAdd (e: any) {
-		const { object } = this.props;
+		const { object, onChange } = this.props;
 		const skipSystemKeys = [ 'tag', 'description', 'source' ];
 		const recommendedKeys = this.getRecommended().map(it => it.relationKey);
+		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		const systemKeys = Relation.systemKeys().filter(it => !skipSystemKeys.includes(it));
 
 		S.Menu.open('relationSuggest', { 
@@ -126,22 +127,17 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: recommendedKeys.concat(systemKeys),
-				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
-						S.Menu.close('relationSuggest'); 
-
-						if (onChange) {
-							onChange(message);
-						};
-					});
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					onChange('recommendedRelations', recommendedRelations.concat(relation.id));
 				},
 			}
 		});
 	};
 
 	onEdit (e: any, container: string, id: string) {
-		const { object } = this.props;
+		const { object, onChange } = this.props;
 		const allowed = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Relation ]);
+		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		const relation = S.Record.getRelationById(id);
 		
 		S.Menu.open('blockRelationEdit', { 
@@ -152,15 +148,11 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				relationId: id,
 				readonly: !allowed,
 				ref: 'type',
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], () => {
-						if (onChange) {
-							onChange(relation.relationKey);
-						};
-					});
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					onChange('recommendedRelations', recommendedRelations.concat(relation.id));
 				},
 				deleteCommand: () => {
-					C.ObjectTypeRelationRemove(object.id, [ relation.relationKey ]);
+					onChange('recommendedRelations', recommendedRelations.filter(it => it != relation.id));
 				},
 			}
 		});
