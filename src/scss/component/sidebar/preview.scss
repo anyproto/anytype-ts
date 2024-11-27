@@ -11,7 +11,7 @@
 
 .layoutPreviewWrapper {
     .layoutPreview { 
-		transform: translateX(200px); opacity: 0; transition: 0.2s ease-in-out;  margin: 0 auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary); 
+		transform: translateX(200px); opacity: 0; transition: 0.3s $easeInQuint;  margin: 0 auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary);
 		transition-delay: $transitionSidebarTime;
 	}
     .layoutPreview {
