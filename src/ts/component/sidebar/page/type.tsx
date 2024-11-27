@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button } from 'Component';
+import { Label, Button } from 'Component';
 import { I, S, C, U, Relation, translate, sidebar } from 'Lib';
 
 import Section from 'Component/sidebar/section';
@@ -24,6 +24,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
     render () {
 		const type = this.getObject();
 		const sections = this.getSections();
+
+		console.log('ROOT: ', this.props.rootId)
 
 		return (
 			<React.Fragment>
@@ -66,7 +68,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentWillUnmount () {
-		sidebar.rightPanelClearDetails();
+		S.Common.getRef('sidebarRight')?.setState({ details: {}, rootId: ''});
 	};
 
 	init () {

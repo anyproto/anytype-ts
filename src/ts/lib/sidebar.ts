@@ -404,10 +404,6 @@ class Sidebar {
 		S.Common.getRef('sidebarRight')?.setState({ page, ...param });
 	};
 
-	rightPanelClearDetails (){
-		S.Common.getRef('sidebarRight')?.setState({ details: {}});
-	}
-
 };
 
 export const sidebar: Sidebar = new Sidebar();
