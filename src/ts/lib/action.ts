@@ -810,6 +810,19 @@ class Action {
 		analytics.event('ThemeSet', { id });
 	};
 
+	publish (objectId: string) {
+		C.ObjectPublish(S.Common.space, objectId, (message: any) => {
+			if (message.error.code) {
+				console.error(message);
+				return;
+			};
+
+			const { key, cid } = message;
+			const url = `http://localhost:8787/?cid=${cid}&key=${key}`;
+
+			U.Common.copyToast(translate('commonLink'), url);
+		});
+	};
 };
 
 export default new Action();
