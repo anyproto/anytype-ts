@@ -219,6 +219,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									rootId={rootId} 
 									columns={columns} 
 									relationKeys={recommendedKeys}
+									route={analytics.route.screenType}
 								/>
 							</div>
 						</div>

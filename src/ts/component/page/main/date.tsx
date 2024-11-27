@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button } from 'Component';
-import { I, C, S, U, Action, translate } from 'Lib';
+import { I, C, S, U, Action, translate, analytics } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -109,6 +109,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 							rootId={rootId}
 							columns={columns}
 							filters={filters}
+							route={analytics.route.screenDate}
 						/>
 					</div>
 				</div>
@@ -229,6 +230,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		this.setState({ selectedRelation: relationKey }, () => {
 			this.refList?.getData(1);
 		});
+
+		analytics.event('SwitchRelationDate', { relationKey });
 	};
 
 	getRootId () {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, Relation, translate, keyboard } from 'Lib';
+import { I, C, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
 import { Icon, IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
 
 interface Column {
@@ -20,6 +20,7 @@ interface Props {
 	sources?: string[];
 	filters?: I.Filter[];
 	relationKeys?: string[];
+	route: string;
 };
 
 interface State {
@@ -39,6 +40,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 		columns: [],
 		sources: [],
 		filters: [],
+		route: '',
 	};
 
 	state = {
@@ -267,6 +269,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 	};
 
 	onSort (relationKey: string): void {
+		const { route } = this.props;
 		const { sortId, sortType } = this.state;
 
 		let type = I.SortType.Asc;
@@ -276,6 +279,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 		};
 
 		this.setState({ sortId: relationKey, sortType: type }, () => this.getData(1));
+		analytics.event('ObjectListSort', { relationKey, route, type });
 	};
 
 });
