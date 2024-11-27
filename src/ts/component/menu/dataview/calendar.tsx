@@ -101,7 +101,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 									this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
 								}}
 								onContextMenu={(e: any) => {
-									e.preventDefault();
+
 									this.openContextMenu(e, item);
 								}}
 							>
@@ -152,6 +152,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 	};
 
 	openContextMenu = (e: any, item: any) => {
+		e.preventDefault();
 		const { getId, param } = this.props;
 		const { className, classNameWrap } = param;
 		S.Menu.open('select', {
@@ -161,7 +162,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 			className,
 			classNameWrap,
 			data: {
-				options: [{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }],
+				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
 				onSelect: () => {
 					U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d), 'auto');
 				}

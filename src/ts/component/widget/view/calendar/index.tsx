@@ -122,7 +122,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 			offsetY: 4,
 			noFlipY: true,
 			data: {
-				options: [{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }],
+				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
 				onSelect: () => {
 					U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d), 'auto');
 				}
