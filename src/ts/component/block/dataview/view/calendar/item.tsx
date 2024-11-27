@@ -133,10 +133,10 @@ const Item = observer(class Item extends React.Component<Props> {
 		const node = $(this.node);
 		const options = [
 			{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }
-		];
+		] as I.Option[];
 
 		if (this.canCreate()) {
-			options.push({ id: 'add', icon: undefined, name: translate('commonNewObject') });
+			options.push({ id: 'add', name: translate('commonNewObject') });
 		};
 
 		S.Menu.open('select', {

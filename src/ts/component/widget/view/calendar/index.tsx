@@ -97,11 +97,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 									key={i}
 									className={cn.join(' ')} 
 									onClick={() => this.onClick(item.d, item.m, item.y)}
-									onContextMenu={(e: any) => {
-										e.preventDefault();
-										e.stopPropagation();
-										this.openContextMenu(e, item);
-									}}
+									onContextMenu={(e: any) => this.openContextMenu(e, item)}
 								>
 									<div className="inner">
 										{item.d}
@@ -117,6 +113,9 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	};
 
 	openContextMenu = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		S.Menu.open('select', {
 			element: '#' + [ 'day', item.d, item.m, item.y ].join('-'),
 			offsetY: 4,
