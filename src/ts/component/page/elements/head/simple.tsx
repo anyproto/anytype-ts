@@ -10,6 +10,7 @@ interface Props {
 	readonly?: boolean;
 	noIcon?: boolean;
 	onCreate?: () => void;
+	getDotMap?: (data: {d: number, m: number, y: number}[], callback: (res: Map<string, boolean>) => void) => void;
 };
 
 const EDITORS = [ 
@@ -315,6 +316,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				canEdit: true,
 				canClear: false,
 				onChange: (value: number) => U.Object.openDateByTimestamp(value),
+				getDotMap: this.props.getDotMap,
 			},
 		});
 	};

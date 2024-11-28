@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button } from 'Component';
-import { I, C, S, U, Action, translate } from 'Lib';
+import { I, C, S, U, J, Action, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -71,6 +71,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						ref={ref => this.refHead = ref} 
 						rootId={rootId} 
 						readonly={true}
+						getDotMap={this.getDotMap}
 					/>
 
 					<div className="categories">
@@ -112,6 +113,59 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
+	};
+
+	getFilters = (first: {y: number, m: number, d: number}, last: {y: number, m: number, d: number}): I.Filter[] => {
+		const { selectedRelation } = this.state;
+
+		if (!selectedRelation) {
+			return [];
+		};
+
+		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
+		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
+
+		return [
+
+			{
+				relationKey: selectedRelation,
+				condition: I.FilterCondition.GreaterOrEqual,
+				value: start,
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: I.RelationType.Date,
+			},
+			{
+				relationKey: selectedRelation,
+				condition: I.FilterCondition.LessOrEqual,
+				value: end,
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: I.RelationType.Date,
+			}
+		];
+	};
+
+	getDotMap = (data: {d: number, m: number, y: number}[], callback: (res: Map<string, boolean>) => void): void => {
+		const { rootId } = this.props;
+		const { selectedRelation } = this.state;
+
+		const first = data[0];
+		const last = data[data.length - 1];
+
+		U.Data.search({
+			filters: this.getFilters(first, last),
+			keys: [ selectedRelation ],
+		}, (message: any) => {
+			const res = new Map();
+			data.forEach(date => {
+				if (message.records.find(rec => {
+					const recDate = U.Date.getCalendarDateParam(rec[selectedRelation]);
+					return recDate.y == date.y && recDate.m == date.m && recDate.d == date.d;
+				})) {
+					res.set([ date.d, date.m, date.y ].join('-'), true);
+				};
+			});
+			callback(res);
+		});
 	};
 
 	componentDidMount () {

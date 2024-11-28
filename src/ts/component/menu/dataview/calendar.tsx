@@ -1,19 +1,30 @@
 import * as React from 'react';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, J, translate } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 
-const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu> {
+const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, {dotMap: Map<string, boolean>}> {
 	
 	originalValue = 0;
 	refMonth: any = null;
 	refYear: any = null;
+
+	constructor(props: I.Menu) {
+		super(props);
+		this.state = {
+			dotMap: new Map(),
+		};
+	}
 	
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { value, isEmpty, canEdit, canClear = true } = data;
+		const { value, isEmpty, canEdit, canClear = true, getDotMap } = data;
+
+		const { dotMap } = this.state;
+
 		const items = this.getData();
+
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
 
@@ -91,9 +102,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 						if (!isEmpty && (todayParam.d == item.d) && (todayParam.m == item.m) && (todayParam.y == item.y)) {
 							cn.push('active');
 						};
+
+						const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
 						return (
 							<div 
-								key={i} 
+								key={i}
 								id={[ 'day', item.d, item.m, item.y ].join('-')}
 								className={cn.join(' ')} 
 								onClick={(e: any) => { 
@@ -102,7 +115,10 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 								}}
 								onContextMenu={e => this.onContextMenu(e, item)}
 							>
-								{item.d}
+								<div className="inner">
+									{item.d}
+									{check && <div className="bullet" /> }
+								</div>
 							</div>
 						);
 					})}
@@ -130,7 +146,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 	componentDidMount(): void {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const { value, getDotMap } = data;
+
+		const items = this.getData();
+
+		getDotMap(items, dotMap => this.setState({ dotMap }));
 
 		this.originalValue = value;
 		this.forceUpdate();
