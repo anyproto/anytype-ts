@@ -191,6 +191,11 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				return;
 			};
 
+			if (relation.format == I.RelationType.Date) {
+				U.Object.openDateByTimestamp(value, 'config');
+				return;
+			}
+
 			if (relation.format == I.RelationType.Checkbox) {
 				return;
 			};
