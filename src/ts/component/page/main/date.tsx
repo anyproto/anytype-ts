@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button } from 'Component';
-import { I, C, S, U, Action, translate, analytics } from 'Lib';
+import { I, C, S, U, J, Action, translate, analytics } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -50,6 +50,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
 			{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
 		];
+		const keys = relations.map(it => it.relationKey);
 
 		const filters: I.Filter[] = [];
 
@@ -57,6 +58,15 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
 		} else {
 			filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
+		};
+
+		if ([ 'createdDate' ].includes(relationKey)) {
+			const map = {
+				createdDate: 'creator',
+			};
+
+			filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+			keys.push(map[relationKey]);
 		};
 
 		return (
@@ -110,6 +120,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 							columns={columns}
 							filters={filters}
 							route={analytics.route.screenDate}
+							relationKeys={keys}
 						/>
 					</div>
 				</div>
