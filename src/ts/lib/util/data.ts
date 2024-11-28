@@ -276,6 +276,7 @@ class UtilData {
 					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
+					{ relationKey: 'spaceOrder', type: I.SortType.Asc },
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreHidden: false,

@@ -152,16 +152,6 @@ export const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (messa
 	dispatcher.request(WorkspaceSetInfo.name, request, callBack);
 };
 
-// ---------------------- SPACE ---------------------- //
-
-export const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Space.Delete.Request();
-
-	request.setSpaceid(spaceId);
-
-	dispatcher.request(SpaceDelete.name, request, callBack);
-};
-
 // ---------------------- ACCOUNT ---------------------- //
 
 export const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
@@ -2036,6 +2026,32 @@ export const MembershipFinalize = (name: string, callBack?: (message: any) => vo
 };
 
 // ---------------------- SPACE ---------------------- //
+
+export const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.Delete.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceDelete.name, request, callBack);
+};
+
+export const SpaceSetOrder = (id:string, previousIds: string[], afterId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.SetOrder.Request();
+
+	request.setSpaceviewid(id);
+	request.setPreviousidsList(previousIds);
+	request.setAfterid(afterId);
+
+	dispatcher.request(SpaceSetOrder.name, request, callBack);
+};
+
+export const SpaceUnsetOrder = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.UnsetOrder.Request();
+
+	request.setSpaceviewid(id);
+
+	dispatcher.request(SpaceUnsetOrder.name, request, callBack);
+};
 
 export const SpaceInviteGenerate = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.InviteGenerate.Request();

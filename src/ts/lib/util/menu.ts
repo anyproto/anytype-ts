@@ -827,24 +827,12 @@ class UtilMenu {
 	};
 
 	getVaultItems () {
-		const ids = Storage.get('spaceOrder') || [];
 		const items = U.Common.objectCopy(U.Space.getList());
 
 		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
 
 		if (U.Space.canCreateSpace()) {
 			items.push({ id: 'add', name: translate('commonCreateNew'), isButton: true });
-		};
-
-		if (ids && (ids.length > 0)) {
-			items.sort((c1, c2) => {
-				const i1 = ids.indexOf(c1.id);
-				const i2 = ids.indexOf(c2.id);
-
-				if (i1 > i2) return 1;
-				if (i1 < i2) return -1;
-				return 0;
-			});
 		};
 
 		return items;

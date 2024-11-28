@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
+import { I, U, S, C, Key, keyboard, translate, analytics, Preview, sidebar, Action } from 'Lib';
 
 import VaultItem from './item';
 
@@ -307,10 +306,17 @@ const Vault = observer(class Vault extends React.Component {
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
+		const items = U.Space.getList();
+		const item = items[oldIndex];
+		const ids = items.map(it => it.id);
 
-		let ids = U.Menu.getVaultItems().map(it => it.id);
-		ids = arrayMove(ids, oldIndex, newIndex);
-		Storage.set('spaceOrder', ids, true);
+		console.log('old', oldIndex, 'new', newIndex);
+
+		console.log(JSON.stringify(ids, null, 3));
+		console.log(JSON.stringify(ids.slice(0, oldIndex), null, 3));
+		console.log(ids[newIndex - 1]);
+
+		C.SpaceSetOrder(item.id, ids.slice(0, oldIndex), String(ids[newIndex - 1] || ''));
 
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
