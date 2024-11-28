@@ -691,6 +691,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					isEmpty = true;
 				};
 
+				if (!this.canEdit(relation)) {
+					U.Object.openDateByTimestamp(value, 'config');
+					break;
+				};
+
 				menuId = 'dataviewCalendar';
 				menuData = {
 					value,
