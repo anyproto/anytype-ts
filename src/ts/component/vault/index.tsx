@@ -314,10 +314,10 @@ const Vault = observer(class Vault extends React.Component {
 		console.log('old', oldIndex, 'new', newIndex);
 
 		console.log('IDS:', JSON.stringify(ids, null, 3));
-		console.log('PREVIOUS IDS:', JSON.stringify(ids.slice(0, newIndex - 1), null, 3));
-		console.log(ids[newIndex + 1]);
+		console.log('PREVIOUS IDS:', JSON.stringify(ids.slice(0, newIndex), null, 3));
+		console.log('AFTER_ID:', ids[newIndex]);
 
-		C.SpaceSetOrder(item.id, ids.slice(0, newIndex - 1), String(ids[newIndex + 1] || ''));
+		C.SpaceSetOrder(item.id, ids.slice(0, newIndex), String(ids[newIndex + 1] || ''));
 
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
