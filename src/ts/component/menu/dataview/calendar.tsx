@@ -96,10 +96,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 								key={i} 
 								id={[ 'day', item.d, item.m, item.y ].join('-')}
 								className={cn.join(' ')} 
-								onClick={(e: any) => { 
-									e.stopPropagation();
-									this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
-								}}
+								onClick={e => this.onClick(e, item)}
 								onContextMenu={e => this.onContextMenu(e, item)}
 							>
 								{item.d}
@@ -146,6 +143,20 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 		this.refYear.setValue(y);
 
 		this.props.position();
+	};
+
+	onClick (e: any, item: any) {
+		e.stopPropagation();
+
+		const { param } = this.props;
+		const { data } = param;
+		const { canEdit } = data;
+
+		if (canEdit) {
+			this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
+		} else {
+			U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d));
+		};
 	};
 
 	onContextMenu (e: any, item: any) {
