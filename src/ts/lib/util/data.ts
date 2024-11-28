@@ -947,9 +947,10 @@ class UtilData {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
+			skipLayoutFormat: null,
 		}, param);
 
-		const { spaceId, idField, sorts, offset, limit } = param;
+		const { spaceId, idField, sorts, offset, limit, skipLayoutFormat } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 		const filters = this.searchDefaultFilters(param);
 
@@ -968,7 +969,7 @@ class UtilData {
 
 		C.ObjectSearch(spaceId, filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
 			if (message.records) {
-				message.records = message.records.map(it => S.Detail.mapper(it));
+				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
 			};
 
 			if (callBack) {
@@ -1005,7 +1006,6 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { space } = S.Common;
 		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },

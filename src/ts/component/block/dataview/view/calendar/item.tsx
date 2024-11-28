@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, S, U, translate, Preview } from 'Lib';
+import { I, S, U, C, translate, Preview } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -21,6 +21,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		super(props);
 
 		this.onOpen = this.onOpen.bind(this);
+		this.onOpenDate = this.onOpenDate.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onContext = this.onContext.bind(this);
 		this.canCreate = this.canCreate.bind(this);
@@ -73,7 +74,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				onContextMenu={this.onContext}
 				onDoubleClick={this.onDoubleClick}
 			>
-				<div className="number">
+				<div className="number" onClick={this.onOpenDate}>
 					<div className="inner">{d}</div>
 				</div>
 				<div className="items">
@@ -128,14 +129,12 @@ const Item = observer(class Item extends React.Component<Props> {
 
 	onContext () {
 		const node = $(this.node);
-		const options = [];
+		const options = [
+			{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }
+		] as I.Option[];
 
 		if (this.canCreate()) {
 			options.push({ id: 'add', name: translate('commonNewObject') });
-		};
-
-		if (!options.length) {
-			return;
 		};
 
 		S.Menu.open('select', {
@@ -150,9 +149,10 @@ const Item = observer(class Item extends React.Component<Props> {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					if (item.id == 'add') {
-						this.onCreate();
-					}
+					switch (item.id) {
+						case 'open': this.onOpenDate(); break;
+						case 'add': this.onCreate(); break;
+					};
 				},
 			}
 		});
@@ -171,6 +171,12 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		details[view.groupRelationKey] = U.Date.timestamp(y, m, d, 12, 0, 0);
 		onCreate(details);
+	};
+
+	onOpenDate () {
+		const { d, m, y } = this.props;
+
+		U.Object.openDateByTimestamp(U.Date.timestamp(y, m, d, 12, 0, 0), 'config');
 	};
 
 	canCreate (): boolean {

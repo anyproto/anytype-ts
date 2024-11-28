@@ -9,8 +9,6 @@ type State = {
 	previewId: string;
 };
 
-const SUB_ID = 'widgetArchive';
-
 const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<{}, State> {
 		
 	state: State = {
@@ -46,7 +44,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const archived = S.Record.getRecordIds(SUB_ID, '');
 
 		if (isEditing) {
 			cn.push('isEditing');
@@ -172,26 +169,24 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						/>
 					))}
 
-					{archived.length ? (
-						<DropTarget 
-							{...this.props} 
-							isTargetBottom={true}
-							rootId={S.Block.widgets} 
-							id={last?.id}
-							dropType={I.DropType.Widget} 
-							canDropMiddle={false}
-							className="lastTarget"
-							cacheKey="lastTarget"
-						>
-							<Button
-								text={translate('commonBin')}
-								color=""
-								className="widget"
-								icon="bin"
-								onClick={this.onArchive}
-							/>
-						</DropTarget>
-					) : ''}
+					<DropTarget 
+						{...this.props} 
+						isTargetBottom={true}
+						rootId={S.Block.widgets} 
+						id={last?.id}
+						dropType={I.DropType.Widget} 
+						canDropMiddle={false}
+						className="lastTarget"
+						cacheKey="lastTarget"
+					>
+						<Button
+							text={translate('commonBin')}
+							color=""
+							className="widget"
+							icon="bin"
+							onClick={this.onArchive}
+						/>
+					</DropTarget>
 
 					<div className="buttons">
 						{buttons.map(button => (
@@ -223,14 +218,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 			</div>
 		);
-	};
-
-	componentDidMount (): void {
-		this.subscribeArchive();
-	};
-
-	componentDidUpdate (): void {
-		this.subscribeArchive();
 	};
 
 	onEdit (e: any): void {
@@ -526,26 +513,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				keyboard.shortcut('escape', e, () => close(e));
 			});
 		}, S.Menu.getTimeout());
-	};
-
-	subscribeArchive () {
-		const { space } = S.Common
-
-		if (this.isSubcribed == space) {
-			return;
-		};
-
-		U.Data.searchSubscribe({
-			subId: SUB_ID,
-			spaceId: space,
-			ignoreArchived: false,
-			filters: [
-				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
-			],
-			limit: 1,
-		}, () => {
-			this.isSubcribed = space;
-		});
 	};
 
 });

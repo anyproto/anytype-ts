@@ -91,7 +91,7 @@ const FontSize = {
 	96: 64,
 };
 
-const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type' ];
+const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type', 'date' ];
 const Ghost = require('img/icon/ghost.svg');
 
 const CheckboxTask = {
@@ -181,6 +181,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 				break;
 			};
+
+			case I.ObjectLayout.Date:
+				defaultIcon('date');
+				break;
 
 			case I.ObjectLayout.Collection:
 			case I.ObjectLayout.Set: {

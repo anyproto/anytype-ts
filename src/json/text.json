@@ -89,6 +89,7 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
+	"commonDates": "Dates",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
@@ -173,6 +174,7 @@
 	"commonMenu": "Menu",
 	"commonSignUp": "Sign Up",
 	"commonNotFound": "Not found",
+	"commonCalculate": "Calculate",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -616,8 +618,8 @@
 	"blockDataviewHeadMenuChange": "Change source %s",
 	"blockDataviewHeadMenuOpen": "Open source %s",
 
-	"blockDataviewBoardRelationDeletedTitle": "Relation has been deleted",
-	"blockDataviewBoardRelationDeletedDescription": "Choose another Relation to group your Kanban",
+	"blockDataviewBoardRelationDeletedTitle": "No Relation",
+	"blockDataviewBoardRelationDeletedDescription": "Choose Relation to group your Kanban",
 	"blockDataviewBoardOpenViewMenu": "Open View menu",
 
 	"blockDataviewBoardColumnSettings": "Column settings",
@@ -730,9 +732,12 @@
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
 	"popupSettingsPersonalRelativeDates": "Display relative dates",
+	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionApp": "App Appearance",
+	"popupSettingsPersonalSectionDateTime": "Date & Time",
+	"popupSettingsPersonalTimeFormat": "Time format",
 
 	"popupSettingsColorMode": "Color mode",
 	"popupSettingsColorModeButtonLight": "Light",
@@ -2217,6 +2222,9 @@
 	"participantPermissions2": "Owner",
 	"participantPermissions3": "No access",
 
+	"relationMentions": "Mentioned in",
+	"relationCreator": "Created by",
+	
 	"spaceStatus0": "Active",
 	"spaceStatus1": "Loading",
 	"spaceStatus2": "Ok",
@@ -2245,7 +2253,6 @@
 	"networkMode2Title": "Self-hosted",
 	"networkMode2Text": "Back up to your self-hosted network",
 
-	"formulaNone": "Calculate",
 	"formulaCount": "Count",
 	"formulaPercentage": "Percentage",
 	"formulaMath": "Math",
@@ -2277,4 +2284,5 @@
 	"formulaCheckboxNotEmptyShort": "Checked",
 	"formulaCheckboxPercentEmpty": "Percentage unchecked",
 	"formulaCheckboxPercentNotEmpty": "Percentage checked"
+
 }

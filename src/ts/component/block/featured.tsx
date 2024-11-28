@@ -486,6 +486,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = S.Detail.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
 
 		const menuParam = {
+			menuId: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -550,8 +551,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				});
 		};
 
-		if (menuId && !S.Menu.isOpen(menuId)) {
-			if (S.Menu.isOpen(menuId)) {
+		if (menuId) {
+			if (S.Menu.isOpen(menuId, item.id)) {
 				S.Menu.open(menuId, menuParam);
 			} else {
 				S.Menu.closeAll(J.Menu.featuredType, () => {
@@ -688,6 +689,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				} else {
 					value = Number(U.Date.now());
 					isEmpty = true;
+				};
+
+				if (!this.canEdit(relation)) {
+					U.Object.openDateByTimestamp(value, 'config');
+					break;
 				};
 
 				menuId = 'dataviewCalendar';

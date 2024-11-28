@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted, Icon } from 'Component';
-import { I, C, S, U, Action, translate } from 'Lib';
+import { I, C, S, U, Action, translate, analytics } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -44,7 +44,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const columnsObject: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: v => U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v),
+				mapper: v => U.Date.dateWithFormat(S.Common.dateFormat, v),
 			},
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
 		];
@@ -92,6 +92,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 										rootId={rootId} 
 										columns={[]} 
 										filters={filtersType} 
+										route={analytics.route.screenRelation}
 									/>
 								</div>
 							</div>
@@ -122,6 +123,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 											subId={subIdObject} 
 											rootId={rootId} 
 											columns={columnsObject} 
+											route={analytics.route.screenRelation}
 										/>
 									</div>
 								</div>

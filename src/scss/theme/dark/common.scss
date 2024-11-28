@@ -227,7 +227,7 @@ html.themeDark {
 	/* Progress */
 
 	.progress {
-		.inner { background: var(--color-bg-secondary); }
+		.inner { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px var(--color-shape-primary) inset; }
 	}
 
 	.tooltip { color: var(--color-text-primary); }

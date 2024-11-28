@@ -232,10 +232,6 @@
 		.block.blockDataview { padding: 0px; }
 
 		.editorControls { height: 52px; width: 100%; margin-bottom: 8px; padding: 0px 14px; }
-
-		.headSimple {
-			.side.right { display: none; }
-		}
 	}
 
 	.block.blockCover {
@@ -261,6 +257,12 @@
 	&.withCover,
 	&.withIconAndCover {
 		.editorControls { display: none; }
+	}
+
+	.blocks {
+		.headSimple {
+			.side.right { display: none; }
+		}
 	}
 }
 

@@ -12,7 +12,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { value, isEmpty, canEdit } = data;
+		const { value, isEmpty, canEdit, canClear = true } = data;
 		const items = this.getData();
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
@@ -94,11 +94,10 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 						return (
 							<div 
 								key={i} 
+								id={[ 'day', item.d, item.m, item.y ].join('-')}
 								className={cn.join(' ')} 
-								onClick={(e: any) => { 
-									e.stopPropagation();
-									this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
-								}}
+								onClick={e => this.onClick(e, item)}
+								onContextMenu={e => this.onContextMenu(e, item)}
 							>
 								{item.d}
 							</div>
@@ -115,7 +114,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 									<div className="btn" onClick={() => this.setValue(U.Date.mergeTimeWithDate(tomorrow, value), true, true)}>{translate('commonTomorrow')}</div>
 								</div>
 								<div className="side right">
-									<div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>
+									{canClear && <div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>}
 								</div>
 							</div>
 						</div>
@@ -144,6 +143,43 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 		this.refYear.setValue(y);
 
 		this.props.position();
+	};
+
+	onClick (e: any, item: any) {
+		e.stopPropagation();
+
+		const { param } = this.props;
+		const { data } = param;
+		const { canEdit } = data;
+
+		if (canEdit) {
+			this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
+		} else {
+			U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d));
+		};
+	};
+
+	onContextMenu (e: any, item: any) {
+		e.preventDefault();
+
+		const { getId, param } = this.props;
+		const { className, classNameWrap } = param;
+
+		S.Menu.open('select', {
+			element: `#${getId()} #${[ 'day', item.d, item.m, item.y ].join('-')}`,
+			offsetY: 4,
+			noFlipY: true,
+			className,
+			classNameWrap,
+			data: {
+				options: [ 
+					{ id: 'open', icon: 'expand', name: translate('commonOpenObject') },
+				],
+				onSelect: () => {
+					U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d));
+				}
+			}
+		});
 	};
 
 	setValue (value: number, save: boolean, close: boolean) {

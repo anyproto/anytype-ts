@@ -454,18 +454,11 @@ class UtilCommon {
 		links.on('auxclick', e => e.preventDefault());
 		links.click((e: any) => {
 			const el = $(e.currentTarget);
+			const href = el.attr('href') || el.attr('xlink:href');
 
 			e.preventDefault();
-			el.hasClass('path') ? this.onPath(el.attr('href')) : this.onUrl(el.attr('href'));
+			el.hasClass('path') ? Action.openPath(href) : Action.openUrl(href);
 		});
-	};
-	
-	onUrl (url: string) {
-		Action.openUrl(url);
-	};
-
-	onPath (path: string) {
-		Renderer.send('openPath', path);
 	};
 	
 	checkEmail (v: string) {

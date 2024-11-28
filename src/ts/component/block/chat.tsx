@@ -47,6 +47,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	render () {
+		const { showRelativeDates } = S.Common;
 		const { threadId } = this.state;
 		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
@@ -57,10 +58,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const lastId = Storage.getChat(rootId).lastId;
 
 		const Section = (item: any) => {
-			let date = U.Date.dayString(item.createdAt);
-			if (!date) {
-				date = U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, item.createdAt);
-			};
+			const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
+			const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, item.createdAt);
 
 			return (
 				<div className="section">
@@ -383,8 +382,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		sections.sort((c1, c2) => {
-			if (c1.time > c2.time) return 1;
-			if (c1.time < c2.time) return -1;
+			if (c1.createdAt > c2.createdAt) return 1;
+			if (c1.createdAt < c2.createdAt) return -1;
 			return 0;
 		});
 

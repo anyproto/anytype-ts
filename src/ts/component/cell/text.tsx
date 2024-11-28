@@ -170,8 +170,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					value = Number(value) || 0;
 
 					const day = showRelativeDates ? U.Date.dayString(value) : null;
-					const date = day ? day : U.Date.dateWithFormat(viewRelation.dateFormat, value);
-					const time = U.Date.timeWithFormat(viewRelation.timeFormat, value);
+					const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, value);
+					const time = U.Date.timeWithFormat(S.Common.timeFormat, value);
 					
 					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, S, U, J, keyboard, Mark, translate, analytics } from 'Lib';
+import { I, S, U, J, C, keyboard, Mark, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface State {
@@ -31,6 +31,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	constructor (props: I.Menu) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
@@ -67,10 +68,15 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					cn.push('isHidden');
 				};
 
+				let object = null;
+				if (![ 'add', 'selectDate' ].includes(item.id)) {
+					object = item;
+				};
+
 				content = (
 					<MenuItemVertical 
 						id={item.id}
-						object={item.id == 'add' ? undefined : item}
+						object={object}
 						icon={item.icon}
 						name={<ObjectName object={item} />}
 						onMouseEnter={e => this.onOver(e, item)} 
@@ -190,10 +196,30 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { canAdd } = data;
 		const filter = this.getFilter();
 		const sections: any[] = [];
-		const length = this.items.length;
+		
+
+		let items = U.Common.objectCopy(this.items);
+
+		const dates = items.filter(it => U.Object.isDateLayout(it.layout));
+
+		items = items.filter(it => !U.Object.isDateLayout(it.layout));
+		
+		const length = items.length;
+		
+		if (dates.length) {
+			sections.push({ 
+				id: 'date', 
+				name: translate('commonDates'), 
+				children: [
+					...dates,
+					{ id: 'selectDate', icon: 'relation c-date', name: translate(`placeholderCell${I.RelationType.Date}`) },
+					{ isDiv: true },
+				]
+			});
+		};
 
 		if (length) {
-			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: this.items });
+			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: items.filter(it => !U.Object.isDateLayout(it.layout)) });
 		};
 
 		if (filter && canAdd) {
@@ -255,6 +281,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
+			skipLayoutFormat: [ I.ObjectLayout.Date ],
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
@@ -301,7 +328,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			return;
 		};
 
-		const { param, close } = this.props;
+		const { space } = S.Common;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		const { from } = S.Common.filter;
@@ -319,7 +347,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			});
 
 			onChange(object, name + ' ', marks, from, to + 1);
+			analytics.event('ChangeTextStyle', { type: I.MarkType.Mention, count: 1, objectType: object.type });
 		};
+
+		let close = true;
 
 		if (item.id == 'add') {
 			const name = this.getFilter();
@@ -327,11 +358,36 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.mention, (message: any) => {
 				cb(message.details);
 			});
+		} else 
+		if (item.id == 'selectDate') {
+			close = false;
+
+			S.Menu.open('dataviewCalendar', {
+				element: `#${getId()} #item-${item.id}`,
+				horizontal: I.MenuDirection.Center,
+				data: { 
+					rebind: this.rebind,
+					canEdit: true,
+					canClear: false,
+					value: U.Date.now(),
+					onChange: (value: number) => {
+						C.ObjectDateByTimestamp(space, value, (message: any) => {
+							if (!message.error.code) {
+								cb(message.details);
+								this.props.close();
+							};
+						});
+					},
+				},
+			});
+
 		} else {
 			cb(item);
 		};
 
-		close();
+		if (close) {
+			this.props.close();
+		};
 	};
 
 	getRowHeight (item: any) {

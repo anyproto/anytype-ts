@@ -17,7 +17,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		
 		this.onRelationType = this.onRelationType.bind(this);
 		this.onObjectType = this.onObjectType.bind(this);
-		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onClick = this.onClick.bind(this);
@@ -84,15 +83,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						switchValue={viewRelation?.includeTime}
 						onSwitch={(e: any, v: boolean) => this.onChangeTime(v)}
 					/>
-
-					<MenuItemVertical 
-						id="date-settings" 
-						icon="settings" 
-						name={translate('commonPreferences')}
-						arrow={true} 
-						onMouseEnter={this.onDateSettings} 
-						onClick={this.onDateSettings} 
-					/>
 				</div>
 			);
 		};
@@ -152,7 +142,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 								key={c}
 								{...action}
 								onClick={e => this.onClick(e, action)} 
-								onMouseEnter={this.menuClose} 
+								onMouseEnter={e => this.onMouseEnter(e, action)}
 							/>
 						))}
 					</div>
@@ -220,6 +210,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const canFilter = !isFile;
 		const canSort = !isFile;
 		const canHide = relation && (relation.relationKey != 'name');
+		const canCalculate = relation;
 		
 		let unlinkText = translate('commonUnlink');
 		if (U.Object.isCollectionLayout(object.layout)) {
@@ -255,16 +246,25 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		];
 
 		if (extendedOptions && !readonly) {
-			sections.push({
-				children: [
-					canFilter ? { id: 'filter', icon: 'relation-filter', name: translate('menuDataviewRelationEditAddFilter') } : null,
-					canSort ? { id: 'sort0', icon: 'relation-sort0', name: translate('menuDataviewRelationEditSortAscending'), type: I.SortType.Asc } : null,
-					canSort ? { id: 'sort1', icon: 'relation-sort1', name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
-					{ id: 'insert-left', icon: 'relation-insert-left', name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
-					{ id: 'insert-right', icon: 'relation-insert-right', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
-					canHide ? { id: 'hide', icon: 'relation-hide', name: translate('menuDataviewRelationEditHideRelation') } : null,
-				]
-			});
+			sections = sections.concat([
+				{
+					children: [
+						canFilter ? { id: 'filter', icon: 'relation-filter', name: translate('menuDataviewRelationEditAddFilter') } : null,
+						canSort ? { id: 'sort0', icon: 'relation-sort0', name: translate('menuDataviewRelationEditSortAscending'), type: I.SortType.Asc } : null,
+						canSort ? { id: 'sort1', icon: 'relation-sort1', name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
+						{ id: 'insert-left', icon: 'relation-insert-left', name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
+						{ id: 'insert-right', icon: 'relation-insert-right', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
+						canHide ? { id: 'hide', icon: 'relation-hide', name: translate('menuDataviewRelationEditHideRelation') } : null,
+					]
+				},
+				{
+					children: [
+						canCalculate ? { id: 'calculate', icon: 'relation c-number', name: translate('commonCalculate'), arrow: true } : null,
+					]
+				},
+			]);
+
+
 		};
 
 		sections = sections.filter((s: any) => {
@@ -284,6 +284,97 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		return items;
+	};
+
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.onOver(e, item);
+		};
+	};
+
+	onOver (e: any, item: any) {
+		if (!item.arrow) {
+			this.menuClose();
+			return;
+		};
+
+		const { getId, getSize, param } = this.props;
+		const { classNameWrap, data } = param;
+		const { rootId } = data;
+		const relation = this.getRelation();
+		const object = S.Detail.get(rootId, rootId);
+
+		if (!relation) {
+			return;
+		};
+
+		let menuContext = null;
+		let menuId = '';
+
+		const menuParam: any = {
+			menuKey: item.id,
+			element: `#${getId()} #item-${item.id}`,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			offsetX: getSize().width,
+			classNameWrap,
+			onOpen: context => menuContext = context,
+			data: {},
+		};
+
+		switch (item.id) {
+			case 'calculate': {
+				const save = (id: any) => {
+					id = Number(id) || 0;
+
+					this.saveViewRelation('formulaType', id);
+					analytics.event('ChangeGridFormula', { type: id, format: relation.format, objectType: object.type });
+				};
+
+				menuId = 'select';
+				menuParam.subIds = [ 'select2' ];
+				menuParam.data = Object.assign(menuParam.data, {
+					options: U.Menu.getFormulaSections(relation.relationKey),
+					onOver: (e: any, item: any) => {
+						if (!item.arrow) {
+							S.Menu.closeAll([ 'select2' ]);
+							return;
+						};
+
+						const options = Relation.formulaByType(relation.format).filter(it => it.section == item.id);
+
+						S.Menu.closeAll([ 'select2' ], () => {
+							S.Menu.open('select2', {
+								component: 'select',
+								element: `#${menuContext.getId()} #item-${item.id}`,
+								offsetX: menuContext.getSize().width,
+								vertical: I.MenuDirection.Center,
+								isSub: true,
+								data: {
+									rootId,
+									options,
+									rebind: menuContext.ref?.rebind,
+									onSelect: (e: any, item: any) => {
+										save(item.id);
+										menuContext.close();
+									},
+								}
+							});
+						});
+					},
+					onSelect: (e: any, item: any) => {
+						save(item.id);
+					},
+				});
+				break;
+			};
+		};
+
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(J.Menu.relationEdit, () => {
+				S.Menu.open(menuId, menuParam);
+			});
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -402,10 +493,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			case 'hide': {
-				C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relation.relationKey, {
-					...view.getRelation(relation.relationKey),
-					isVisible: false,
-				});
+				this.saveViewRelation('isVisible', false);
 				break;
 			};
 		};
@@ -497,39 +585,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		});
 	};
 
-	onDateSettings (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { readonly } = data;
-
-		if (readonly) {
-			return;
-		};
-
-		const relation = this.getRelation();
-
-		this.menuOpen('dataviewDate', { 
-			element: `#${getId()} #item-date-settings`,
-			onClose: () => {
-				S.Menu.close('select');
-			},
-			data: {
-				...data,
-				relationKey: relation.relationKey,
-			}
-		});
-	};
-
 	menuOpen (id: string, options: I.MenuParam) {
 		const { getSize, param } = this.props;
 		const { classNameWrap } = param;
 
 		options = Object.assign(options, {
 			isSub: true,
-			passThrough: true,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			classNameWrap,
@@ -551,15 +612,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onChangeTime (v: boolean) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
-		const view = getView();
-		const relation = this.getViewRelation();
-
-		if (view && relation) {
-			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relation.relationKey, { ...relation, includeTime: v });
-		};
+		this.saveViewRelation('includeTime', v);
 	};
 
 	onSubmit (e: any) {
@@ -617,6 +670,18 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const isAllowed = this.isAllowed();
 
 		return readonly || !isAllowed || (relation && relation.isReadonlyRelation);
+	};
+
+	saveViewRelation (k: string, v: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const relation = this.getViewRelation();
+		const view = getView();
+
+		if (view && relation) {
+			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relation.relationKey, { ...relation, [k]: v });
+		};
 	};
 
 	save () {

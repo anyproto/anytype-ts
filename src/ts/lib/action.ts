@@ -165,6 +165,10 @@ class Action {
 	};
 
 	openUrl (url: string) {
+		if (!url) {
+			return;
+		};
+
 		url = U.Common.urlFix(url);
 
 		const storageKey = 'openUrl';
@@ -186,6 +190,14 @@ class Action {
 		} else {
 			cb();
 		};
+	};
+
+	openPath (path: string) {
+		if (!path) {
+			return;
+		};
+
+		Renderer.send('openPath', path);
 	};
 
 	openFile (id: string, route: string) {
@@ -732,7 +744,7 @@ class Action {
 		let layout = I.WidgetLayout.Link;
 
 		if (object && !object._empty_) {
-			if (U.Object.isInFileOrSystemLayouts(object.layout)) {
+			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
 				layout = I.WidgetLayout.Link;
 			} else 
 			if (U.Object.isInSetLayouts(object.layout)) {

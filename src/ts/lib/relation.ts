@@ -120,7 +120,7 @@ class Relation {
 		];
 
 		let ret: any[] = [
-			{ id: I.FormulaType.None, name: translate('formulaNone') },
+			{ id: I.FormulaType.None, name: translate('commonNone') },
 		];
 
 		switch (type) {

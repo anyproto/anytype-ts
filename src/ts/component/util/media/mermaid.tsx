@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import mermaid from 'mermaid';
 import { useLocalObservable } from 'mobx-react';
-import { J, S } from 'Lib';
+import { J, S, U } from 'Lib';
 
 interface Props {
 	chart: string;
@@ -46,11 +46,13 @@ const MediaMermaid = forwardRef<HTMLDivElement, Props>(({
 		};
 		
 		node.find('.mermaid').html(svg);
+		U.Common.renderLinks(node);
 	};
 
 	useEffect(() => {
 		init();
 		mermaid.contentLoaded();
+		U.Common.renderLinks($(nodeRef.current));
 	});
 
 	useEffect(() => {

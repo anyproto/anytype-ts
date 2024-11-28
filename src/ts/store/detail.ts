@@ -173,16 +173,18 @@ class DetailStore {
 
 	/** Mutates object provided and also returns a new object. Sets defaults.
 	 * This Function contains domain logic which should be encapsulated in a model */
-	public mapper (object: any): any {
+	public mapper (object: any, skipLayoutFormat?: I.ObjectLayout[]): any {
 		object = this.mapCommon(object || {});
 
-		const fn = `map${I.ObjectLayout[object.layout]}`;
-		if (this[fn]) {
-			object = this[fn](object);
-		};
+		if (!skipLayoutFormat || !skipLayoutFormat.includes(object.layout)) {
+			const fn = `map${I.ObjectLayout[object.layout]}`;
+			if (this[fn]) {
+				object = this[fn](object);
+			};
 
-		if (U.Object.isInFileLayouts(object.layout)) {
-			object = this.mapFile(object);
+			if (U.Object.isInFileLayouts(object.layout)) {
+				object = this.mapFile(object);
+			};
 		};
 
 		return object;
@@ -282,6 +284,15 @@ class DetailStore {
 	};
 
 	private mapDate (object: any) {
+		object.timestamp = Number(object.timestamp) || 0;
+
+		if (object.timestamp) {
+			const { showRelativeDates, dateFormat } = S.Common;
+			const day = showRelativeDates ? U.Date.dayString(object.timestamp) : null;
+
+			object.name = day ? day : U.Date.dateWithFormat(dateFormat, object.timestamp);
+		};
+
 		return this.mapSet(object);
 	};
 

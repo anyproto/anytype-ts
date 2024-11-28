@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon } from 'Component';
-import { I, C, S, U, J, Relation, translate, keyboard } from 'Lib';
+import { I, C, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
 
 interface Column {
 	relationKey: string;
@@ -20,6 +20,12 @@ interface Props {
 	sources?: string[];
 	filters?: I.Filter[];
 	relationKeys?: string[];
+	route: string;
+};
+
+interface State {
+	sortId: string;
+	sortType: I.SortType;
 };
 
 interface State {
@@ -39,19 +45,20 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 		columns: [],
 		sources: [],
 		filters: [],
+		route: '',
 	};
 
 	state = {
-		sortId: 'lastModifiedDate',
+		sortId: '',
 		sortType: I.SortType.Desc,
 	};
 
 	render () {
 		const { subId, rootId } = this.props;
 		const { sortId, sortType } = this.state;
+		const columns = this.getColumns();
 		const items = this.getItems();
 		const { offset, total } = S.Record.getMeta(subId, '');
-		const columns = this.getColumns();
 
 		let pager = null;
 		if (total && items.length) {
@@ -89,7 +96,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 					onContextMenu={e => this.onContext(e, item.id)}
 				>
 					{columns.map(column => {
-						const cn = [ 'cell' ];
+						const cn = [ 'cell', `c-${column.relationKey}` ];
 						const cnc = [ 'cellContent' ];
 						const value = item[column.relationKey];
 
@@ -192,15 +199,15 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 	};
 
 	componentDidMount () {
-		this.getData(1);
+		const columns = this.getColumns();
+
+		if (columns.length) {
+			this.setState({ sortId: columns[0].relationKey }, () => this.getData(1));
+		};
 	};
 
 	componentWillUnmount(): void {
 		C.ObjectSearchUnsubscribe([ this.props.subId ]);
-	};
-
-	getColumns (): Column[] {
-		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true } ] as any[]).concat(this.props.columns || []);
 	};
 
 	getItems () {
@@ -209,6 +216,10 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 
 	getKeys () {
 		return J.Relation.default.concat(this.props.columns.map(it => it.relationKey));
+	};
+
+	getColumns (): Column[] {
+		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true } ] as any[]).concat(this.props.columns || []);
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {
@@ -263,6 +274,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 	};
 
 	onSort (relationKey: string): void {
+		const { route } = this.props;
 		const { sortId, sortType } = this.state;
 
 		let type = I.SortType.Asc;
@@ -272,6 +284,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 		};
 
 		this.setState({ sortId: relationKey, sortType: type }, () => this.getData(1));
+		analytics.event('ObjectListSort', { relationKey, route, type });
 	};
 
 });

@@ -304,6 +304,12 @@ export const ObjectChatAdd = (response: Rpc.Object.ChatAdd.Response) => {
 	};
 };
 
+export const ObjectDateByTimestamp = (response: Rpc.Object.DateByTimestamp.Response) => {
+	return {
+		details: Decode.struct(response.getDetails()),
+	};
+};
+
 export const BlockCreate = (response: Rpc.Block.Create.Response) => {
 	return {
 		blockId: response.getBlockid(),
@@ -585,5 +591,16 @@ export const ChatSubscribeLastMessages = (response: Rpc.Chat.SubscribeLastMessag
 export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 	return {
 		messageId: response.getMessageid(),
+	};
+};
+
+export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response) => {
+	return {
+		relations: (response.getListList() || []).map(it => {
+			return {
+				relationKey: it.getRelationkey(),
+				counter: it.getCounter(),
+			};
+		}),
 	};
 };
