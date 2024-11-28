@@ -173,6 +173,7 @@
 	"commonMenu": "Menu",
 	"commonSignUp": "Sign Up",
 	"commonNotFound": "Not found",
+	"commonCalculate": "Calculate",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1465,7 +1466,6 @@
 	"menuDataviewRelationEditInsertLeft": "Insert left",
 	"menuDataviewRelationEditInsertRight": "Insert right",
 	"menuDataviewRelationEditHideRelation": "Hide Relation",
-	"menuDataviewRelationEditCalculate": "Calculate",
 	"menuDataviewRelationEditAddObjectType": "Add Object type",
 	"menuDataviewRelationEditFilterObjectTypes": "Filter Object types...",
 	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
@@ -2233,7 +2233,6 @@
 	"networkMode2Title": "Self-hosted",
 	"networkMode2Text": "Back up to your self-hosted network",
 
-	"formulaNone": "Calculate",
 	"formulaCount": "Count",
 	"formulaPercentage": "Percentage",
 	"formulaMath": "Math",

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Select } from 'Component';
-import { I, S, C, U, keyboard, Relation, Dataview, analytics } from 'Lib';
+import { Icon } from 'Component';
+import { I, S, C, U, keyboard, Relation, Dataview, analytics, translate } from 'Lib';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
@@ -17,7 +17,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 	node = null;
 	menuContext = null;
-	refSelect = null;
 
 	state = {
 		isEditing: false,
@@ -34,6 +33,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		this.onChange = this.onChange.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onSelect = this.onSelect.bind(this);
 	};
 
 	render () {
@@ -48,13 +48,13 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 		// Subscriptions
 		const viewRelation = view.getRelation(relationKey);
-		if (!viewRelation || (viewRelation.formulaType == I.FormulaType.None)) {
+		if (!viewRelation) {
 			return <div />;
 		};
 
 		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
-		const sections = U.Menu.getFormulaSections(relationKey);
 		const option = Relation.formulaByType(relation.format).find(it => it.id == String(viewRelation.formulaType));
+		const name = option.short || option.name;
 		const subId = S.Record.getSubId(rootId, block.id);
 		const records = S.Record.getRecords(subId, [ relationKey ], true);
 
@@ -74,28 +74,14 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				<div className="cellContent">
 					<div className="flex">
 						{isEditing || (result === null) ? (
-							<Select 
-								ref={ref => this.refSelect = ref}
-								id={`grid-foot-select-${relationKey}-${block.id}`} 
-								value=""
-								onChange={() => this.refSelect.setValue('')}
-								options={sections}
-								arrowClassName="light"
-								menuParam={{
-									onOpen: this.onOpen,
-									onClose: this.onClose,
-									subIds: [ 'select2' ],
-									data: {
-										noScroll: true, 
-										noVirtualisation: true,
-										onOver: this.onOver,
-									},
-								}}
-							/>
+							<div className="select" onClick={this.onSelect}>
+								<div className="name">{viewRelation.formulaType ? name : translate('commonCalculate')}</div>
+								<Icon className="arrow light" />
+							</div>
 						) : ''}
 						{!isEditing && option && (result !== null) ? (
 							<div className="result">
-								<span className="name">{option.short || option.name}</span>
+								<span className="name">{name}</span>
 								{result}
 							</div>
 						) : ''}
@@ -131,8 +117,32 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	onClick (e: any) {
-		this.setState({ isEditing: true }, () => {
-			window.setTimeout(() => this.refSelect.show(e), 10);
+		this.setState({ isEditing: true });
+	};
+
+	onSelect (e: any) {
+		const { relationKey } = this.props;
+		const id = Relation.cellId('foot', relationKey, '');
+		const options = U.Menu.getFormulaSections(relationKey);
+
+		S.Menu.closeAll([], () => {
+			S.Menu.open('select', {
+				element: `#${id} .select`,
+				horizontal: I.MenuDirection.Center,
+				onOpen: this.onOpen,
+				onClose: this.onClose,
+				subIds: [ 'select2' ],
+				data: {
+					options,
+					noScroll: true, 
+					noVirtualisation: true,
+					onOver: this.onOver,
+					onSelect: (e: any, item: any) => {
+						this.onChange(item.id);
+						this.setEditing(false);
+					},
+				}
+			});
 		});
 	};
 
@@ -202,15 +212,13 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	onMouseEnter (): void {
-		const { block, relationKey } = this.props;
-
 		if (!keyboard.isDragging) {
-			$(`#block-${block.id} .cell-key-${relationKey}`).addClass('cellKeyHover');
+			$(this.node).addClass('hover');
 		};
 	};
 
 	onMouseLeave () {
-		$('.cellKeyHover').removeClass('cellKeyHover');
+		$(this.node).removeClass('hover');
 	};
 
 });

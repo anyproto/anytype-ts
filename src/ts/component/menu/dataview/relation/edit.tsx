@@ -259,7 +259,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				},
 				{
 					children: [
-						canCalculate ? { id: 'calculate', icon: 'relation c-number', name: translate('menuDataviewRelationEditCalculate'), arrow: true } : null,
+						canCalculate ? { id: 'calculate', icon: 'relation c-number', name: translate('commonCalculate'), arrow: true } : null,
 					]
 				},
 			]);
