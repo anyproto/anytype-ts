@@ -2035,12 +2035,11 @@ export const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) =
 	dispatcher.request(SpaceDelete.name, request, callBack);
 };
 
-export const SpaceSetOrder = (id:string, previousIds: string[], afterId: string, callBack?: (message: any) => void) => {
+export const SpaceSetOrder = (id:string, ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.SetOrder.Request();
 
 	request.setSpaceviewid(id);
-	request.setPreviousidsList(previousIds);
-	request.setAfterid(afterId);
+	request.setSpacevieworderList(ids);
 
 	dispatcher.request(SpaceSetOrder.name, request, callBack);
 };
