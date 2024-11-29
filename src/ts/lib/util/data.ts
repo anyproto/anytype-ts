@@ -642,7 +642,7 @@ class UtilData {
 			className.push('noSystemBlocks');
 		};
 
-		if ((object.featuredRelations || []).includes('description')) {
+		if (object.featuredRelations.includes('description')) {
 			className.push('withDescription');
 		};
 

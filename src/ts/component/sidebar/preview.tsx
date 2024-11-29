@@ -10,7 +10,6 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 	node: any = null;
 	object: any = {
-		featuredRelations: [],
 		recommendedLayout: I.ObjectLayout.Page,
 		layoutAlign: I.BlockHAlign.Left,
 		layoutWidth: 0,

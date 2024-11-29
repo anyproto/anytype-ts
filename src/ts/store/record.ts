@@ -266,6 +266,16 @@ class RecordStore {
 		return id ? this.getTypeById(id) : null;
 	};
 
+	getTypeFeaturedRelations (id: string) {
+		const type = this.getTypeById(id);
+		return (type?.recommendedFeaturedRelations || []).map(it => this.getRelationById(it)).filter(it => it);
+	};
+
+	getTypeRecommendedRelations (id: string) {
+		const type = this.getTypeById(id);
+		return (type?.recommendedRelations || []).map(it => this.getRelationById(it)).filter(it => it);
+	};
+
 	getTemplateType () {
 		return this.getTypeByKey(J.Constant.typeKey.template);
 	};

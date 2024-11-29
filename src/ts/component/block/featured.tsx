@@ -44,12 +44,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	render () {
 		const { rootId, block, size, iconSize, isPopup } = this.props;
-		const storeId = this.getStoreId();
-		const short = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
-		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
-		const object = S.Detail.get(rootId, storeId, featuredRelations);
 		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
+		const keys = items.map(it => it.relationKey);
+		const hasType = keys.includes('type');
+		const hasSetOf = keys.includes('setOf');
+
+		const skipIds = [ 'type', 'description', 'setOf' ];
+		const list = items.filter(it => !skipIds.includes(it.relationKey));
+		const object = this.getObject();
 
 		return (
 			<div 
@@ -60,14 +63,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyUp={this.onKeyUp}
 			>
 
-				{this.renderType()}
-				{this.renderSetOf()}
+				{hasType ? this.renderType() : ''}
+				{hasSetOf ? this.renderSetOf() : ''}
 				{this.renderIdentity()}
 
-				{items.map((relationKey: any, i: any) => {
-					const id = Relation.cellId(PREFIX, relationKey, object.id);
-					const relation = S.Record.getRelationByKey(relationKey);
-					const value = object[relationKey];
+				{list.map((relation: any, i: any) => {
+					const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
+					const value = object[relation.relationKey];
 					const canEdit = allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
 
@@ -75,15 +77,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						cn.push('last');
 					};
 
-					if ([ 'links', 'backlinks' ].includes(relationKey)) {
-						return this.renderLinks(relationKey, i);
+					if ([ 'links', 'backlinks' ].includes(relation.relationKey)) {
+						return this.renderLinks(relation.relationKey, i);
 					};
 
 					return (
 						<span
 							key={i}
 							className={cn.join(' ')}
-							onClick={e => this.onRelation(e, relationKey)}
+							onClick={e => this.onRelation(e, relation.relationKey)}
 						>
 							<Cell
 								ref={ref => this.cellRefs.set(id, ref)}
@@ -92,7 +94,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								rootId={rootId}
 								subId={rootId}
 								block={block}
-								relationKey={relationKey}
+								relationKey={relation.relationKey}
 								getRecord={() => object}
 								viewType={I.ViewType.Grid}
 								pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
@@ -140,14 +142,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	init () {
-		const { rootId, block } = this.props;
-		const storeId = this.getStoreId();
-		const short = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
-		const featuredRelations = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
+		const { block } = this.props;
+		const items = this.getItems().filter(it => it.relationKey != 'description');
 		const node = $(this.node);
 		const obj = $(`#block-${block.id}`);
 
-		featuredRelations.length ? obj.removeClass('isHidden') : obj.addClass('isHidden');
+		obj.toggleClass('isHidden', !items.length);
 
 		if (node) {
 			node.find('.cell.first').removeClass('first');
@@ -157,12 +157,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	renderType () {
 		const { rootId } = this.props;
-		const featuredRelations = this.getRelationList();
-
-		if (!featuredRelations.includes('type')) {
-			return null;
-		};
-
 		const object = this.getObject();
 		const type = S.Detail.get(rootId, object.type, [ 'name', 'isDeleted' ]);
 		const name = (
@@ -203,12 +197,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	renderSetOf () {
 		const { rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
-		const featuredRelations = this.getRelationList();
-
-		if (!featuredRelations.includes('setOf')) {
-			return null;
-		};
-
 		const object = this.getObject();
 		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
 		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
@@ -260,7 +248,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'layout' ], true);
 
-		if (short.layout != I.ObjectLayout.Participant) {
+		if (!U.Object.isParticipantLayout(short.layout)) {
 			return null;
 		};
 
@@ -314,13 +302,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		);
 	};
 
-	getRelationList () {
-		const object = S.Detail.get(this.props.rootId, this.getStoreId(), [ 'featuredRelations' ], true);
-		return Relation.getArrayValue(object.featuredRelations);
-	};
-
 	getObject () {
-		return S.Detail.get(this.props.rootId, this.getStoreId(), this.getRelationList());
+		return S.Detail.get(this.props.rootId, this.getStoreId(), this.getItems().map(it => it.relationKey));
 	};
 
 	checkType () {
@@ -354,19 +337,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (setOf.length && (setOf.length > (types.length + relations.length))) {
 			Onboarding.start('sourceDeleted', isPopup, true);
 		};
-	};
-
-	getItems () {
-		const { rootId } = this.props;
-		const storeId = this.getStoreId();
-		const object = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
-		const skipIds = [
-			'type',
-			'description',
-			'setOf',
-		];
-
-		return (object.featuredRelations || []).filter(it => S.Record.getRelationByKey(it) && !skipIds.includes(it));
 	};
 
 	onFocus () {
@@ -900,6 +870,22 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	canEdit (relation: any) {
 		const { readonly } = this.props;
 		return !readonly && !relation.isReadonlyValue;
+	};
+
+	getItems (): any[] {
+		const { rootId } = this.props;
+		const storeId = this.getStoreId();
+		const short = S.Detail.get(rootId, storeId, [ 'type', 'layout', 'featuredRelations' ], true);
+
+		let ret = [];
+
+		if (U.Object.isInPageLayouts(short.layout)) {
+			ret = S.Record.getTypeFeaturedRelations(short.type);
+		} else {
+			ret = Relation.getArrayValue(short.featuredRelations).map(it => S.Record.getRelationByKey(it).relationKey);
+		};
+
+		return ret.filter(it => it);
 	};
 	
 });
