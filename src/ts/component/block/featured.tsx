@@ -882,7 +882,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (U.Object.isInPageLayouts(short.layout)) {
 			ret = S.Record.getTypeFeaturedRelations(short.type);
 		} else {
-			ret = Relation.getArrayValue(short.featuredRelations).map(it => S.Record.getRelationByKey(it).relationKey);
+			ret = Relation.getArrayValue(short.featuredRelations).map(it => S.Record.getRelationByKey(it));
 		};
 
 		return ret.filter(it => it);

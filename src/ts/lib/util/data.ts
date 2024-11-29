@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding, Preview } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Relation } from 'Lib';
 
 const SYSTEM_DATE_RELATION_KEYS = [
 	'lastModifiedDate', 
@@ -595,6 +595,7 @@ class UtilData {
 		].concat(J.Relation.cover), true);
 		const type = S.Record.getTypeById(object.type);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
+		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 
 		const ret = {
 			withCover: false,
@@ -642,7 +643,7 @@ class UtilData {
 			className.push('noSystemBlocks');
 		};
 
-		if (object.featuredRelations.includes('description')) {
+		if (featuredRelations.includes('description')) {
 			className.push('withDescription');
 		};
 

@@ -24,22 +24,31 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 			<Icon className="dnd" />
 		));
 
-		const Item = SortableElement((item: any) => (
-			<div 
-				id={`item-${item.id}`}
-				className="item" 
-				onClick={e => this.onEdit(e, item.container, item.id)}
-			>
-				<div className="side left">
-					{!readonly ? <Handle /> : ''}
-					<IconObject object={item} />
-					<ObjectName object={item} />
+		const Item = SortableElement((item: any) => {
+			const ce = [ 'eye' ];
+			const isActive = item.container == 'section-relation-featured';
+
+			if (isActive) {
+				ce.push('active');
+			};
+
+			return (
+				<div 
+					id={`item-${item.id}`}
+					className="item" 
+					onClick={e => this.onEdit(e, item.container, item.id)}
+				>
+					<div className="side left">
+						{!readonly ? <Handle /> : ''}
+						<IconObject object={item} />
+						<ObjectName object={item} />
+					</div>
+					<div className="side right">
+						<Icon className={ce.join(' ')} onClick={e => this.onToggle(e, item.container, item.id)} />
+					</div>
 				</div>
-				<div className="side right">
-					<Icon className="eye" onClick={e => this.onToggle(e, item.container, item.id)} />
-				</div>
-			</div>
-		));
+			);
+		});
 
 		const List = (list: any) => {
 			const SortableList = SortableContainer(() => (
