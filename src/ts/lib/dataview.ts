@@ -561,6 +561,7 @@ class Dataview {
 
 		const { total } = S.Record.getMeta(subId, '');
 		const isDate = relation.format == I.RelationType.Date;
+		const isArrayType = Relation.isArrayType(relation.format);
 
 		let records = [];
 		let needRecords = false;
@@ -592,6 +593,17 @@ class Dataview {
 		const float = (v: any): string => {
 			return U.Common.sprintf('%0.3f', U.Common.formatNumber(v)).replace(/\.?0+?$/, '');
 		};
+		const filtered = (isEmpty: boolean) => {
+			return records.filter(it => {
+				let ret = true;
+				if (relation.format == I.RelationType.Checkbox) {
+					ret = Boolean(it[relationKey]);
+				} else {
+					ret = Relation.isEmpty(it[relationKey]);
+				};
+				return ret == isEmpty;
+			});
+		};
 
 		let ret = null;
 
@@ -605,36 +617,59 @@ class Dataview {
 				break;
 			};
 
+			case I.FormulaType.CountValue: {
+				const items = filtered(false);
+
+				if (isArrayType) {
+					const values = new Set();
+
+					items.forEach(it => {
+						values.add(Relation.getArrayValue(it[relationKey]).join(', '));
+					});
+
+					ret = values.size;
+				} else {
+					ret = U.Common.arrayUniqueObjects(items, relationKey).length;
+				};
+				ret = float(ret);
+				break;
+			};
+
 			case I.FormulaType.CountDistinct: {
-				ret = U.Common.arrayUniqueObjects(records, relationKey).length;
+				const items = filtered(false);
+
+				if (isArrayType) {
+					const values = new Set();
+
+					items.forEach(it => {
+						Relation.getArrayValue(it[relationKey]).forEach(v => values.add(v));
+					});
+
+					ret = values.size;
+				} else {
+					ret = U.Common.arrayUniqueObjects(items, relationKey).length;
+				};
 				ret = float(ret);
 				break;
 			};
 
 			case I.FormulaType.CountEmpty: {
-				ret = records.filter(it => Relation.isEmpty(it[relationKey])).length;
-				ret = records.filter(it => {
-					return relation.format == I.RelationType.Checkbox ? !it[relationKey] : Relation.isEmpty(it[relationKey]);
-				}).length;
-				ret = float(ret);
+				ret = float(filtered(true).length);
 				break;
 			};
 
 			case I.FormulaType.CountNotEmpty: {
-				ret = records.filter(it => {
-					return relation.format == I.RelationType.Checkbox ? !!it[relationKey] : !Relation.isEmpty(it[relationKey]);
-				}).length;
-				ret = float(ret);
+				ret = float(filtered(false).length);
 				break;
 			};
 
 			case I.FormulaType.PercentEmpty: {
-				ret = float(records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100) + '%';
+				ret = float(filtered(true).length / total * 100) + '%';
 				break;
 			};
 
 			case I.FormulaType.PercentNotEmpty: {
-				ret = float(records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100) + '%';
+				ret = float(filtered(false).length / total * 100) + '%';
 				break;
 			};
 
