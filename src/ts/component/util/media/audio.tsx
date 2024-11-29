@@ -27,8 +27,8 @@ interface State {
 class MediaAudio extends React.PureComponent<Props, State> {
 
 	node: HTMLDivElement = null;
-	timeDragRef: DragHorizontal = null;
 	audioNode: HTMLAudioElement = null;
+	timeDragRef = null;
 	volumeIcon = null;
 
 	playOnSeek = false;
