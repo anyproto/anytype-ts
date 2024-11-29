@@ -62,11 +62,11 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
 	onSelect (icon: string) {
-		this.props.onChange('iconEmoji', icon);
+		this.props.onChange({ iconEmoji: icon });
 	};
 
 	onChange () {
-		this.props.onChange('name', this.refName?.getTextValue());
+		this.props.onChange({ name: this.refName?.getTextValue() });
 	};
 
 	onKeyDown (e: any) {

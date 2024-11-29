@@ -29,7 +29,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 							options={layoutOptions}
 							value={object.recommendedLayout}
 							arrowClassName="light"
-							onChange={id => onChange('recommendedLayout', id)}
+							onChange={id => onChange({ recommendedLayout: id })}
 							menuParam={{
 								className: 'fixed',
 								classNameWrap: 'fromSidebar',
@@ -51,7 +51,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 							options={alignOptions}
 							value={object.layoutAlign}
 							arrowClassName="light"
-							onChange={id => onChange('layoutAlign', id)}
+							onChange={id => onChange({ layoutAlign: id })}
 							menuParam={{
 								className: 'fixed',
 								classNameWrap: 'fromSidebar',
@@ -102,7 +102,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 	};
 
 	onWidthEnd (v: number) {
-		this.props.onChange('layoutWidth', v);
+		this.props.onChange({ layoutWidth: v });
 	};
 
 	getPercent (v: number): string {

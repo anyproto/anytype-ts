@@ -590,11 +590,11 @@ class UtilData {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = S.Detail.get(rootId, blockId, [ 'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover), true);
+		const object = S.Detail.get(rootId, blockId, [ 
+			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled', 'featuredRelations',
+		].concat(J.Relation.cover), true);
 		const type = S.Record.getTypeById(object.type);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
-		const root = S.Block.getLeaf(rootId, blockId);
-		const { iconEmoji, iconImage, coverType, coverId } = object;
 
 		const ret = {
 			withCover: false,
@@ -611,13 +611,13 @@ class UtilData {
 
 		let className = [];
 		if (!object._empty_) {
-			ret.withCover = Boolean((coverType != I.CoverType.None) && coverId);
+			ret.withCover = Boolean((object.coverType != I.CoverType.None) && object.coverId);
 			className = [ this.layoutClass(object.id, object.layout), `align${ret.layoutAlign}` ];
 		};
 
 		switch (object.layout) {
 			default:
-				ret.withIcon = iconEmoji || iconImage;
+				ret.withIcon = object.iconEmoji || object.iconImage;
 				break;
 
 			case I.ObjectLayout.Bookmark:

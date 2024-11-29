@@ -35,7 +35,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 									ref={ref => this.refFormat = ref}
 									options={formatOptions}
 									value={object.layoutFormat}
-									onChange={id => onChange('layoutFormat', id)}
+									onChange={id => onChange({ layoutFormat: id })}
 								/>
 							</div>
 						</div>

@@ -78,7 +78,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				</div>
 
 				<Label text={translate('sidebarTypeRelationHeader')} />
-				<List data={featured} container="section-relation-featured" relationKey="featuredRelations" />
+				<List data={featured} container="section-relation-featured" relationKey="recommendedFeaturedRelations" />
 
 				<Label text={translate('sidebarTypeRelationSidebar')} />
 				<List data={recommended} container="section-relation-recommended" relationKey="recommendedRelations" />
@@ -95,16 +95,35 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		const { object, onChange } = this.props;
 		const value = arrayMove(Relation.getArrayValue(object[relationKey]), oldIndex, newIndex);
 
-		onChange(relationKey, value);
+		onChange({ [relationKey]: value });
 		keyboard.disableSelection(false);
 	};
 
 	onToggle (e: any, container: string, id: string) {
 		e.stopPropagation();
+
+		const { object, onChange } = this.props;
+
+		let { recommendedFeaturedRelations, recommendedRelations } = object;
+
+		if (container == 'section-relation-featured') {
+			recommendedFeaturedRelations = recommendedFeaturedRelations.filter(it => it != id);
+			recommendedRelations = recommendedRelations.concat(id);
+		};
+
+		if (container == 'section-relation-recommended') {
+			recommendedRelations = recommendedRelations.filter(it => it != id);
+			recommendedFeaturedRelations = recommendedFeaturedRelations.concat(id);
+		};
+
+		onChange({
+			recommendedFeaturedRelations,
+			recommendedRelations,
+		});
 	};
 
 	getFeatured () {
-		return Relation.getArrayValue(this.props.object.featuredRelations).map(key => S.Record.getRelationByKey(key)).filter(it => it);
+		return Relation.getArrayValue(this.props.object.recommendedFeaturedRelations).map(key => S.Record.getRelationById(key)).filter(it => it);
 	};
 
 	getRecommended () {
@@ -121,6 +140,8 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		S.Menu.open('relationSuggest', { 
 			element: '#sidebarRight #section-relation-plus',
 			horizontal: I.MenuDirection.Right,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
 			data: {
 				filter: '',
 				rootId: object.id,
@@ -128,7 +149,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: recommendedKeys.concat(systemKeys),
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					onChange('recommendedRelations', recommendedRelations.concat(relation.id));
+					onChange({ recommendedRelations: recommendedRelations.concat(relation.id) });
 				},
 			}
 		});
@@ -149,10 +170,10 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				readonly: !allowed,
 				ref: 'type',
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					onChange('recommendedRelations', recommendedRelations.concat(relation.id));
+					onChange({ recommendedRelations: recommendedRelations.concat(relation.id) });
 				},
 				deleteCommand: () => {
-					onChange('recommendedRelations', recommendedRelations.filter(it => it != relation.id));
+					onChange({ recommendedRelations: recommendedRelations.filter(it => it != relation.id) });
 				},
 			}
 		});

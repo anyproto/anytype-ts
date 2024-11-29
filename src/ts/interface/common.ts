@@ -200,7 +200,7 @@ export interface SidebarSectionComponent extends SidebarPageComponent {
 	object: any;
 	item?: any;
 	readonly?: boolean;
-	onChange?(key: string, value: any): void;
+	onChange?(update: any): void;
 };
 
 export enum SurveyType {

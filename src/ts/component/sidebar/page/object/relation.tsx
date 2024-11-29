@@ -45,7 +45,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 							rootId={rootId}
 							object={object}
 							item={item} 
-							onChange={(key, value) => {}}
+							onChange={update => {}}
 						/>
 					))}
 				</div>

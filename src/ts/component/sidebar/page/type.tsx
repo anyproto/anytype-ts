@@ -47,7 +47,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							component={item.component}
 							object={this.object} 
 							withState={true}
-							onChange={(key, value) => this.onChange(item.id, key, value)}
+							onChange={update => this.onChange(item.id, update)}
 						/>
 					))}
 				</div>
@@ -78,7 +78,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			layoutAlign: I.BlockHAlign.Left,
 			layoutWidth: 0,
 			layoutFormat: 'page',
-			featuredRelations: [ 'type' ],
+			recommendedFeaturedRelations: [],
 			defaultView: I.ViewType.Grid,
 		}, details);
 
@@ -105,14 +105,15 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		];
 	};
 
-	onChange (section: string, relationKey: string, value: any) {
-		const relation = S.Record.getRelationByKey(relationKey);
+	onChange (section: string, update: any) {
+		for (const relationKey in update) {
+			const relation = S.Record.getRelationByKey(relationKey);
 
-		value = Relation.formatValue(relation, value, false);
+			update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
+		};
 
-		this.object[relationKey] = value;
-		this.update[relationKey] = value;
-
+		this.object = Object.assign(this.object, update);
+		this.update = Object.assign(this.update, update);
 		this.updateObject(section);
 	};
 

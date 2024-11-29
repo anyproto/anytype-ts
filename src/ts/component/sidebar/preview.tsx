@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Checkbox, Icon } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, Relation, translate } from 'Lib';
 
 const SIDEBAR_WIDTH = 348;
 
@@ -25,9 +25,14 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	render () {
-		const { featuredRelations, recommendedLayout, layoutAlign, layoutFormat, defaultView } = this.object;
-		const featuredList = this.object.featuredRelations.filter(it => it != 'description');
-		const withDescription = featuredRelations.includes('description');
+		const { recommendedLayout, layoutAlign, layoutFormat, defaultView } = this.object;
+		const featured = this.getFeatured();
+		const withDescription = featured.map(it => it.relationKey).includes('description');
+		const filtered = featured.filter(it => it.relationKey != 'description');
+		const isTask = U.Object.isTaskLayout(recommendedLayout);
+		const isNote = U.Object.isNoteLayout(recommendedLayout);
+		const isList = layoutFormat == 'list';
+
 		const cn = [
 			'layoutPreview',
 			`layoutAlign${I.BlockHAlign[layoutAlign]}`,
@@ -35,9 +40,6 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 			U.Data.layoutClass('', recommendedLayout),
 			U.Common.toCamelCase(`layoutFormat-${layoutFormat}`),
 		];
-		const isTask = U.Object.isTaskLayout(recommendedLayout);
-		const isNote = U.Object.isNoteLayout(recommendedLayout);
-		const isList = layoutFormat == 'list';
 
 		return (
 			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
@@ -53,11 +55,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 						{withDescription ? <Label text={'Description'} className="description" /> : ''}
 
 						<div className="featured">
-							{featuredList.map((el, idx) => {
-								const relation = S.Record.getRelationByKey(el);
-
-								return <Label text={relation?.name} key={idx} />;
-							})}
+							{filtered.map((item, idx) => <Label text={item.name} key={idx} />)}
 						</div>
 					</div>
 
@@ -153,6 +151,10 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		};
 
 		return <div key={`layout-${layoutFormat}-${defaultView}`} className="layout">{content}</div>;
+	};
+
+	getFeatured () {
+		return Relation.getArrayValue(this.object.recommendedFeaturedRelations).map(key => S.Record.getRelationById(key)).filter(it => it);
 	};
 
 	insertEmtpyNodes (className, count, style?: any) {
