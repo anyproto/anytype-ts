@@ -145,7 +145,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	getDotMap = (data: {d: number, m: number, y: number}[], callback: (res: Map<string, boolean>) => void): void => {
-		const { rootId } = this.props;
+		if (data.length < 2) {
+			return;
+		}
+
 		const { selectedRelation } = this.state;
 
 		const first = data[0];
@@ -159,7 +162,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			data.forEach(date => {
 				if (message.records.find(rec => {
 					const recDate = U.Date.getCalendarDateParam(rec[selectedRelation]);
-					return recDate.y == date.y && recDate.m == date.m && recDate.d == date.d;
+					return (recDate.y == date.y) && (recDate.m == date.m) && (recDate.d == date.d);
 				})) {
 					res.set([ date.d, date.m, date.y ].join('-'), true);
 				};

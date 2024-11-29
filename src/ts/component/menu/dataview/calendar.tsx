@@ -3,23 +3,24 @@ import { I, S, U, J, translate } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 
-const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, {dotMap: Map<string, boolean>}> {
+interface State {
+	dotMap: Map<string, boolean>;
+}
+
+const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
 	
 	originalValue = 0;
 	refMonth: any = null;
 	refYear: any = null;
 
-	constructor(props: I.Menu) {
-		super(props);
-		this.state = {
-			dotMap: new Map(),
-		};
+	state: Readonly<State> = {
+		dotMap: new Map(),
 	}
 	
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { value, isEmpty, canEdit, canClear = true, getDotMap } = data;
+		const { value, isEmpty, canEdit, canClear = true } = data;
 
 		const { dotMap } = this.state;
 
@@ -150,7 +151,9 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 		const items = this.getData();
 
-		getDotMap(items, dotMap => this.setState({ dotMap }));
+		if (getDotMap) {
+			getDotMap(items, dotMap => this.setState({ dotMap }));
+		};
 
 		this.originalValue = value;
 		this.forceUpdate();

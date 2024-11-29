@@ -305,7 +305,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	onCalendar = () => {
-		const { rootId } = this.props;
+		const { rootId, getDotMap } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
 		S.Menu.open('dataviewCalendar', {
@@ -316,7 +316,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				canEdit: true,
 				canClear: false,
 				onChange: (value: number) => U.Object.openDateByTimestamp(value),
-				getDotMap: this.props.getDotMap,
+				getDotMap,
 			},
 		});
 	};
