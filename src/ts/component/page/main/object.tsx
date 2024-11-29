@@ -13,7 +13,7 @@ class PageMainObject extends React.Component<I.PageComponent> {
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
 
 		// Redirect to invite page when invite parameters are present
-		if (!space && cid && key) {
+		if ((!space || !space.isAccountActive) && cid && key) {
 			U.Router.go(`/main/invite/?cid=${cid}&key=${key}`, { replace: true });
 			return;
 		};
