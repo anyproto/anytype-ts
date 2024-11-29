@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 interface State {
 	dotMap: Map<string, boolean>;
-}
+};
 
 const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
 	
@@ -15,7 +15,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 	state: Readonly<State> = {
 		dotMap: new Map(),
-	}
+	};
 	
 	render () {
 		const { param } = this.props;
@@ -118,7 +118,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 							>
 								<div className="inner">
 									{item.d}
-									{check && <div className="bullet" /> }
+									{check ? <div className="bullet" /> : ''}
 								</div>
 							</div>
 						);

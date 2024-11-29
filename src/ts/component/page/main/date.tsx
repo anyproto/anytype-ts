@@ -144,10 +144,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		];
 	};
 
-	getDotMap = (data: {d: number, m: number, y: number}[], callback: (res: Map<string, boolean>) => void): void => {
+	getDotMap = (data: {d: number, m: number, y: number}[], callBack: (res: Map<string, boolean>) => void): void => {
 		if (data.length < 2) {
 			return;
-		}
+		};
 
 		const { selectedRelation } = this.state;
 
@@ -167,7 +167,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 					res.set([ date.d, date.m, date.y ].join('-'), true);
 				};
 			});
-			callback(res);
+			callBack(res);
 		});
 	};
 
