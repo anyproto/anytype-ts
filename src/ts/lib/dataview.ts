@@ -634,7 +634,7 @@ class Dataview {
 			};
 
 			case I.FormulaType.MathAverage: {
-				ret = U.Common.sprintf('%0.4f%', records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total);
+				ret = U.Common.sprintf('%0.3f', records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total);
 				break;
 			};
 
