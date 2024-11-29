@@ -1,41 +1,45 @@
 import { H } from 'Lib';
-import React, { FC, useState, useEffect, ReactNode, useRef } from 'react';
+import $ from 'jquery';
+import React, { forwardRef, useState, useEffect, ReactNode, useRef, useImperativeHandle } from 'react';
 import ReactDOM from 'react-dom';
 
 interface Props {
 	children: ReactNode;
 	anchorEl: HTMLElement | null;
-	gap?: number;
+	offset?: number;
 	isShown?: boolean;
 };
 
-export const Floater: FC<Props> = ({ 
+interface FloaterRefProps {
+	show(): void;
+	hide(): void;
+};
+
+export const Floater = forwardRef<FloaterRefProps, Props>(({ 
 	children, 
 	anchorEl, 
-	gap: offset = 0,
-	isShown = true,
-}) => {
-	const ref = useRef<HTMLDivElement>(null);
+	offset = 0,
+}, ref) => {
+	const nodeRef = useRef<HTMLDivElement>(null);
 	const [ position, setPosition ] = useState({ top: 0, left: 0 });
 	const cn = [ 'floater' ];
 
-	if (isShown) {
-		cn.push('show');
-	};
+	useImperativeHandle(ref, () => ({
+		show: () => $(nodeRef.current).addClass('show'),
+		hide: () => $(nodeRef.current).removeClass('show'),
+	}));
 
 	const onMove = () => {
-		if (!anchorEl || !ref.current) {
+		if (!anchorEl || !nodeRef.current) {
 			return;
 		};
 
 		const anchorElRect = anchorEl.getBoundingClientRect();
-		const elRect = ref.current.getBoundingClientRect();
+		const elRect = nodeRef.current.getBoundingClientRect();
 
 		const { top: at, left: al, width: aw, height: ah } = anchorElRect;
+		const { height: eh, width: ew } = elRect;
 		const sy = window.scrollY;
-
-		const eh = elRect.height;
-		const ew = elRect.width;
 		const nl = al + aw / 2 - ew / 2;
 
 		let nt = at - eh - offset + sy;
@@ -49,13 +53,14 @@ export const Floater: FC<Props> = ({
 	};
 
 	H.useElementMovement(anchorEl, onMove);
-	useEffect(() => onMove(), [ anchorEl, ref.current, isShown ]);
+	useEffect(() => onMove(), []);
+	useEffect(() => onMove(), [ anchorEl, nodeRef.current ]);
 
 	return ReactDOM.createPortal(
 		(
 			<div
 				className={cn.join(' ')}
-				ref={ref}
+				ref={nodeRef}
 				style={{ transform: `translate3d(${position.left}px, ${position.top}px, 0px)`}}
 			>
 				{children}
@@ -63,4 +68,4 @@ export const Floater: FC<Props> = ({
 		),
 		document.getElementById('floaterContainer')
 	);
-};
+});

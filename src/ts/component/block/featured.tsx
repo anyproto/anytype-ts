@@ -83,10 +83,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						<span
 							key={i}
 							className={cn.join(' ')}
-							onClick={(e: any) => {
-								e.persist();
-								this.onRelation(e, relationKey);
-							}}
+							onClick={e => this.onRelation(e, relationKey)}
 						>
 							<Cell
 								ref={ref => this.cellRefs.set(id, ref)}
@@ -648,6 +645,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onRelation (e: any, relationKey: string) {
+		e.persist();
 		e.stopPropagation();
 
 		if (S.Menu.isOpen()) {
@@ -667,6 +665,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		let menuId = '';
 		let menuParam: any = {};
 		let menuData: any = {};
+		let ret = false;
 
 		switch (relation.format) {
 			case I.RelationType.Object: {
@@ -689,6 +688,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				} else {
 					value = Number(U.Date.now());
 					isEmpty = true;
+				};
+
+				if (!this.canEdit(relation)) {
+					U.Object.openDateByTimestamp(value, 'config');
+					ret = true;
+					break;
 				};
 
 				menuId = 'dataviewCalendar';
@@ -737,6 +742,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 			case I.RelationType.Checkbox: {
 				if (!this.canEdit(relation)) {
+					ret = true;
 					break;
 				};
 
@@ -747,6 +753,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				analytics.changeRelationValue(relation, value, { type: 'featured', id: 'Single' });
 				return;
 			};
+		};
+
+		if (ret) {
+			return;
 		};
 
 		if (menuId) {

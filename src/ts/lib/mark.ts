@@ -139,8 +139,7 @@ class Mark {
 		if (add) {
 			map[type].push(mark);
 		};
-
-		analytics.event('ChangeTextStyle', { type, count: 1 });
+		
 		return U.Common.unmap(map).sort(this.sort);
 	};
 	

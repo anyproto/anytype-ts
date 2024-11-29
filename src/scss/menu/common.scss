@@ -150,7 +150,7 @@
 			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: var(--color-text-secondary); }
 			.descr:empty { display: none; }
 
-			.info { line-height: 40px; width: calc(100% - 16px); }
+			.info { line-height: 40px; }
 			.txt { width: 100%; }
 		}
 
