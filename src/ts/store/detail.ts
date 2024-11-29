@@ -198,8 +198,6 @@ class DetailStore {
 		object.origin = Number(object.origin) || I.ObjectOrigin.None;
 		object.iconImage = Relation.getStringValue(object.iconImage);
 		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
-		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
-		object.layoutWidth = Number(object.layoutWidth) || 0;
 		object.coverX = Number(object.coverX) || 0;
 		object.coverY = Number(object.coverY) || 0;
 		object.coverScale = Number(object.coverScale) || 0;
@@ -238,6 +236,7 @@ class DetailStore {
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
+		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;
 
 		if (object.isDeleted) {

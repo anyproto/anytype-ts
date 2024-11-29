@@ -101,6 +101,7 @@ export default {
 		'uniqueKey',
 		'defaultTemplateId',
 		'layoutAlign',
+		'layoutWidth',
 	],
 
 	graph: [

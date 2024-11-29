@@ -70,9 +70,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	init () {
-		const { details } = this.props;
 		const type = this.getObject();
 		const sections = this.getSections();
+		const details: any = this.props.details || {};
 		const newType = Object.assign({
 			recommendedLayout: I.ObjectLayout.Page,
 			layoutAlign: I.BlockHAlign.Left,
@@ -80,7 +80,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			layoutFormat: 'page',
 			featuredRelations: [ 'type' ],
 			defaultView: I.ViewType.Grid,
-		}, (details || {}));
+		}, details);
 
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
 		sections.forEach(it => this.updateObject(it.id));

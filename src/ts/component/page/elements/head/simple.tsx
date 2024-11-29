@@ -36,7 +36,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, isContextMenuDisabled, readonly, noIcon, onCreate, onEdit } = this.props;
+		const { rootId, isContextMenuDisabled, readonly, noIcon, onEdit } = this.props;
 		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
@@ -48,7 +48,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isType = U.Object.isTypeLayout(object.layout);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
-		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
+		const canEditIcon = allowDetails && !isRelation;
 		const cn = [ 'headSimple', check.className ];
 
 		const placeholder = {

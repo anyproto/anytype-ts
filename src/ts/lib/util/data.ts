@@ -590,19 +590,27 @@ class UtilData {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover), true);
+		const object = S.Detail.get(rootId, blockId, [ 'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover), true);
+		const type = S.Record.getTypeById(object.type);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
+
 		const ret = {
 			withCover: false,
 			withIcon: false,
 			className: '',
+			layout: object.layout,
+			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
+		};
+
+		if (undefined !== object.layoutAlign) {
+			ret.layoutAlign = object.layoutAlign;
 		};
 
 		let className = [];
 		if (!object._empty_) {
 			ret.withCover = Boolean((coverType != I.CoverType.None) && coverId);
-			className = [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ];
+			className = [ this.layoutClass(object.id, object.layout), `align${ret.layoutAlign}` ];
 		};
 
 		switch (object.layout) {

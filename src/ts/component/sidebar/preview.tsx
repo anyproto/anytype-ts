@@ -30,10 +30,10 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		const withDescription = featuredRelations.includes('description');
 		const cn = [
 			'layoutPreview',
-			U.Data.layoutClass('', recommendedLayout),
 			`layoutAlign${I.BlockHAlign[layoutAlign]}`,
-			U.Common.toCamelCase(`layoutFormat-${layoutFormat}`),
 			`defaultView${I.ViewType[defaultView]}`,
+			U.Data.layoutClass('', recommendedLayout),
+			U.Common.toCamelCase(`layoutFormat-${layoutFormat}`),
 		];
 		const isTask = U.Object.isTaskLayout(recommendedLayout);
 		const isNote = U.Object.isNoteLayout(recommendedLayout);

@@ -35,6 +35,10 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 					onSelect={this.onSelect}
 					onUpload={this.onUpload}
 					size={128}
+					iconSize={128}
+					menuParam={{
+						horizontal: I.MenuDirection.Center,
+					}}
 				/>
 			</div>
 		);
