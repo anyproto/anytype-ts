@@ -109,7 +109,20 @@ class Relation {
 		return ret;
 	};
 
-	public formulaByType (type: I.RelationType): { id: string, name: string, short?: string, section: I.FormulaSection }[] {
+	public formulaByType (relationKey: string, type: I.RelationType): { id: string, name: string, short?: string, section: I.FormulaSection }[] {
+		const systemKeys = [
+			'type', 
+			'creator', 
+			'createdDate', 
+			'addedDate',
+		];
+		const skip = [ 
+			I.FormulaType.CountEmpty, 
+			I.FormulaType.CountNotEmpty,
+			I.FormulaType.PercentEmpty,
+			I.FormulaType.PercentNotEmpty,
+		];
+
 		const common = [
 			{ id: I.FormulaType.Count, name: translate('formulaCount'), section: I.FormulaSection.Count },
 			{ id: I.FormulaType.CountDistinct, name: translate('formulaDistinct'), short: translate('formulaDistinctShort'), section: I.FormulaSection.Count },
@@ -163,6 +176,10 @@ class Relation {
 				break;
 			};
 
+		};
+
+		if (systemKeys.includes(relationKey)) {
+			ret = ret.filter(it => !skip.includes(it.id));
 		};
 
 		return ret.map(it => ({ ...it, id: String(it.id)}));

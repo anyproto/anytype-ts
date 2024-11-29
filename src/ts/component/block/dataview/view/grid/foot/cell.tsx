@@ -53,8 +53,8 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		};
 
 		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
-		const option = Relation.formulaByType(relation.format).find(it => it.id == String(viewRelation.formulaType));
-		const name = option.short || option.name;
+		const option: any = Relation.formulaByType(relationKey, relation.format).find(it => it.id == String(viewRelation.formulaType)) || {};
+		const name = option.short || option.name || '';
 		const subId = S.Record.getSubId(rootId, block.id);
 		const records = S.Record.getRecords(subId, [ relationKey ], true);
 
@@ -173,7 +173,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 		const { rootId, relationKey } = this.props;
 		const relation = S.Record.getRelationByKey(relationKey);
-		const options = Relation.formulaByType(relation.format).filter(it => it.section == item.id);
+		const options = Relation.formulaByType(relationKey, relation.format).filter(it => it.section == item.id);
 
 		S.Menu.closeAll([ 'select2' ], () => {
 			S.Menu.open('select2', {

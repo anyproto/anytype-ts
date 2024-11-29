@@ -1079,7 +1079,7 @@ class UtilMenu {
 
 	getFormulaSections (relationKey: string) {
 		const relation = S.Record.getRelationByKey(relationKey);
-		const options = Relation.formulaByType(relation.format);
+		const options = Relation.formulaByType(relationKey, relation.format);
 
 		return [
 			{ id: I.FormulaSection.None, name: translate('commonNone') },
