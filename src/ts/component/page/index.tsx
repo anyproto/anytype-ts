@@ -144,6 +144,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			ret.params.action = 'object';
 			ret.params.id = data.objectId;
 			ret.params.spaceId = data.spaceId;
+			ret.params.cid = data.cid;
+			ret.params.key = data.key;
 		};
 
 		// Invite route

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button } from 'Component';
-import { I, C, S, U, Action, translate, analytics } from 'Lib';
+import { I, C, S, U, J, Action, translate, analytics } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isDeleted: boolean;
 	relations: any[];
-	selectedRelation: string;
+	relationKey: string;
 };
 
 const SUB_ID = 'dateListObject';
@@ -28,12 +28,12 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	state = {
 		isDeleted: false,
 		relations: [],
-		selectedRelation: RELATION_KEY_MENTION,
+		relationKey: RELATION_KEY_MENTION,
 	};
 
 	render () {
 		const { space } = S.Common;
-		const { isDeleted, relations, selectedRelation } = this.state;
+		const { isDeleted, relations, relationKey } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, []);
 
@@ -41,7 +41,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			return <Deleted {...this.props} />;
 		};
 
-		const relation = S.Record.getRelationByKey(selectedRelation);
+		const relation = S.Record.getRelationByKey(relationKey);
 		if (!relation) {
 			return null;
 		};
@@ -50,13 +50,23 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
 			{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
 		];
+		const keys = relations.map(it => it.relationKey);
 
 		const filters: I.Filter[] = [];
 
 		if (relation.format == I.RelationType.Object) {
 			filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
 		} else {
-			filters.push({ relationKey: selectedRelation, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
+			filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
+		};
+
+		if ([ 'createdDate' ].includes(relationKey)) {
+			const map = {
+				createdDate: 'creator',
+			};
+
+			filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+			keys.push(map[relationKey]);
 		};
 
 		return (
@@ -87,7 +97,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 								<React.Fragment key={item.relationKey}>
 									<Button
 										id={`category-${item.relationKey}`}
-										active={selectedRelation == item.relationKey}
+										active={relationKey == item.relationKey}
 										color="blank"
 										className="c36"
 										onClick={() => this.onCategory(item.relationKey)}
@@ -110,6 +120,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 							columns={columns}
 							filters={filters}
 							route={analytics.route.screenDate}
+							relationKeys={keys}
 						/>
 					</div>
 				</div>
@@ -195,6 +206,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 	loadCategory () {
         const { space, config } = S.Common;
+		const { relationKey } = this.state;
         const rootId = this.getRootId();
 
         C.RelationListWithValue(space, rootId, (message: any) => {
@@ -221,17 +233,25 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 			if (relations.length) {
 				this.setState({ relations });
-				this.onCategory(relations[0].relationKey);
+
+				if (!relationKey || !relations.find(it => it.relationKey == relationKey)) {
+					this.onCategory(relations[0].relationKey);
+				} else {
+					this.reload();
+				};
+			} else {
+				this.reload();
 			};
         });
     };
 
 	onCategory (relationKey: string) {
-		this.setState({ selectedRelation: relationKey }, () => {
-			this.refList?.getData(1);
-		});
-
+		this.setState({ relationKey }, () => this.reload());
 		analytics.event('SwitchRelationDate', { relationKey });
+	};
+
+	reload () {
+		this.refList?.getData(1);
 	};
 
 	getRootId () {

@@ -215,7 +215,8 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 	};
 
 	getKeys () {
-		return J.Relation.default.concat(this.props.columns.map(it => it.relationKey));
+		const { columns, relationKeys } = this.props;	
+		return J.Relation.default.concat(columns.map(it => it.relationKey)).concat(relationKeys || []);
 	};
 
 	getColumns (): Column[] {
@@ -250,7 +251,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, relationKeys } = this.props;
+		const { subId } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
 		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
@@ -266,7 +267,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 			data: {
 				objectIds,
 				subId,
-				relationKeys,
+				relationKeys: this.getKeys(),
 				allowedLinkTo: true,
 				allowedOpen: true,
 			}

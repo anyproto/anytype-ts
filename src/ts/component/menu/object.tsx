@@ -381,6 +381,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
 		const route = analytics.route.menuObject;
+		const space = U.Space.getSpaceview();
 		
 		if (item.arrow) {
 			return;
@@ -486,8 +487,24 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Common.copyToast(translate('commonLink'), `${J.Constant.protocol}://${U.Object.universalRoute(object)}`);
-				analytics.event('CopyLink', { route });
+				const link = `${J.Constant.protocol}://${U.Object.universalRoute(object)}`;
+				const cb = (link: string) => {
+					U.Common.copyToast(translate('commonLink'), link);
+					analytics.event('CopyLink', { route });
+				};
+
+				if (space.isShared) {
+					U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
+						if (cid && key) {
+							cb(link + `&cid=${cid}&key=${key}`);
+						} else {
+							cb(link);
+						};
+					});
+				} else {
+					cb(link);
+				};
+
 				break;
 			};
 

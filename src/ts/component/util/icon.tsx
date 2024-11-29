@@ -94,7 +94,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 
 	return (
 		<div 
-			ref={nodeRef}
+			ref={ref || nodeRef}
 			id={id} 
 			draggable={draggable} 
 			className={[ 'icon', className ].join(' ')} 

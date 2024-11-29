@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, U } from 'Lib';
+import { I, C, U, Storage } from 'Lib';
 
 class PageMainObject extends React.Component<I.PageComponent> {
 
@@ -9,7 +9,14 @@ class PageMainObject extends React.Component<I.PageComponent> {
 
 	componentDidMount (): void {
 		const { match } = this.props;
-		const { id, spaceId } = match.params || {};
+		const { id, spaceId, cid, key } = match.params || {};
+		const space = U.Space.getSpaceviewBySpaceId(spaceId);
+
+		// Redirect to invite page when invite parameters are present
+		if (!space && cid && key) {
+			U.Router.go(`/main/invite/?cid=${cid}&key=${key}`, { replace: true });
+			return;
+		};
 
 		C.ObjectShow(id, '', spaceId, (message: any) => {
 			if (message.error.code) {
