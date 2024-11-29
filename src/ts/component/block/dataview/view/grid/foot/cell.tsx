@@ -151,6 +151,8 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				}
 			});
 		});
+
+		Preview.tooltipHide();
 	};
 
 	onOpen (context: any): void {
@@ -227,7 +229,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		node.addClass('hover');
 
 		const { result } = this.state;
-		if (result === null) {
+		if ((result === null) || S.Menu.isOpen()) {
 			return;
 		};
 
