@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, U } from 'Lib';
+import { I, C, U, Storage } from 'Lib';
 
 class PageMainObject extends React.Component<I.PageComponent> {
 
