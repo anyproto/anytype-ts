@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, C, U, keyboard, Relation, Dataview, analytics, translate } from 'Lib';
+import { I, S, C, U, keyboard, Relation, Dataview, analytics, translate, Preview } from 'Lib';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
@@ -50,7 +50,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		};
 
 		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
-		const option: any = Relation.formulaByType(relationKey, relation.format).find(it => it.id == String(viewRelation.formulaType)) || {};
+		const option: any = this.getOption() || {};
 		const name = option.short || option.name || '';
 		const subId = S.Record.getSubId(rootId, block.id);
 		const records = S.Record.getRecords(subId, [ relationKey ], true);
@@ -71,7 +71,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 					<div className="flex">
 						{viewRelation.formulaType == I.FormulaType.None ? (
 							<div className="select">
-								<div className="name">{viewRelation.formulaType ? name : translate('commonCalculate')}</div>
+								<div className="name">{translate('commonCalculate')}</div>
 								<Icon className="arrow light" />
 							</div>
 						) : (
@@ -105,6 +105,27 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			this.state.result = result;
 			this.setState({ result });
 		};
+	};
+
+	getOption (): any {
+		const { relationKey, getView } = this.props;
+		const view = getView();
+
+		if (!view) {
+			return null;
+		};
+
+		const viewRelation = view.getRelation(relationKey);
+		if (!viewRelation) {
+			return null;
+		};
+
+		const relation = S.Record.getRelationByKey(relationKey);
+		if (!relation) {
+			return null;
+		};
+
+		return Relation.formulaByType(relationKey, relation.format).find(it => it.id == String(viewRelation.formulaType));
 	};
 
 	onSelect (e: any) {
@@ -197,15 +218,31 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	onMouseEnter (): void {
-		const { result } = this.state;
+		if (keyboard.isDragging) {
+			return;
+		};
 
-		if (!keyboard.isDragging) {
-			$(this.node).addClass('hover');
+		const node = $(this.node);
+
+		node.addClass('hover');
+
+		const { result } = this.state;
+		if (result === null) {
+			return;
+		};
+
+		const option: any = this.getOption() || {};
+		const name = option.short || option.name || '';
+
+		const t = Preview.tooltipCaption(name, result);
+		if (t) {
+			Preview.tooltipShow({ text: t, element: node, typeY: I.MenuDirection.Top });
 		};
 	};
 
 	onMouseLeave () {
 		$(this.node).removeClass('hover');
+		Preview.tooltipHide();
 	};
 
 });
