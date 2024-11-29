@@ -330,7 +330,8 @@ class UtilData {
 				],
 				noDeps: true,
 				ignoreDeleted: true,
-				ignoreHidden: false,
+				ignoreHidden: true,
+				ignoreArchived: true,
 			});
 		});
 
