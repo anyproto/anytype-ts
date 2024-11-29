@@ -580,10 +580,12 @@ class Dataview {
 		};
 
 		const min = () => {
-			return Math.min(...records.map(it => Number(it[relationKey] || 0)));
+			const map = records.map(it => it[relationKey]).filter(it => !Relation.isEmpty(it));
+			return Math.min(...map.map(it => Number(it || 0)));
 		};
 		const max = () => {
-			return Math.max(...records.map(it => Number(it[relationKey] || 0)));
+			const map = records.map(it => it[relationKey]).filter(it => !Relation.isEmpty(it));
+			return Math.max(...map.map(it => Number(it || 0)));
 		};
 
 		let ret = null;
@@ -619,12 +621,12 @@ class Dataview {
 			};
 
 			case I.FormulaType.PercentEmpty: {
-				ret = U.Common.sprintf('%0.2f%', records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100);
+				ret = U.Common.sprintf('%0.2f%', U.Common.formatNumber(records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100));
 				break;
 			};
 
 			case I.FormulaType.PercentNotEmpty: {
-				ret = U.Common.sprintf('%0.2f%', records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100);
+				ret = U.Common.sprintf('%0.2f%', U.Common.formatNumber(records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100));
 				break;
 			};
 
@@ -634,7 +636,7 @@ class Dataview {
 			};
 
 			case I.FormulaType.MathAverage: {
-				ret = U.Common.sprintf('%0.3f', records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total);
+				ret = U.Common.sprintf('%0.3f', U.Common.formatNumber(records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total));
 				break;
 			};
 
@@ -672,10 +674,14 @@ class Dataview {
 				if (isDate) {
 					ret = U.Date.duration(max() - min());
 				} else {
-					ret = [ min(), max() ].join(' - ');
+					ret = max() - min();
 				};
 				break;
 			};
+		};
+
+		if ('number' == typeof(ret)) {
+			ret = U.Common.formatNumber(ret);
 		};
 
 		return ret;
