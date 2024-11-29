@@ -9,7 +9,6 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 };
 
 interface State {
-	isEditing: boolean;
 	result: any;
 };
 
@@ -19,14 +18,12 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	menuContext = null;
 
 	state = {
-		isEditing: false,
 		result: null,
 	};
 
 	constructor (props: Props) {
 		super(props);
 
-		this.onClick = this.onClick.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 		this.onClose = this.onClose.bind(this);
 		this.onOver = this.onOver.bind(this);
@@ -38,7 +35,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 	render () {
 		const { relationKey, rootId, block, getView } = this.props;
-		const { isEditing, result } = this.state;
+		const { result } = this.state;
 		const relation = S.Record.getRelationByKey(relationKey);
 		const view = getView();
 
@@ -67,24 +64,22 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				ref={ref => this.node = ref}
 				id={Relation.cellId('foot', relationKey, '')} 
 				className={cn.join(' ')}
-				onClick={this.onClick}
 				onMouseEnter={this.onMouseEnter}
 				onMouseLeave={this.onMouseLeave}
 			>
-				<div className="cellContent">
+				<div className="cellContent" onClick={this.onSelect}>
 					<div className="flex">
-						{isEditing || (result === null) ? (
-							<div className="select" onClick={this.onSelect}>
+						{viewRelation.formulaType == I.FormulaType.None ? (
+							<div className="select">
 								<div className="name">{viewRelation.formulaType ? name : translate('commonCalculate')}</div>
 								<Icon className="arrow light" />
 							</div>
-						) : ''}
-						{!isEditing && option && (result !== null) ? (
+						) : (
 							<div className="result">
 								<span className="name">{name}</span>
-								{result}
+								<span className="value">{result}</span>
 							</div>
-						) : ''}
+						)}
 					</div>
 				</div>
 			</div>
@@ -112,14 +107,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		};
 	};
 
-	setEditing (v: boolean): void {
-		this.setState({ isEditing: v });
-	};
-
-	onClick (e: any) {
-		this.setState({ isEditing: true });
-	};
-
 	onSelect (e: any) {
 		const { relationKey } = this.props;
 		const id = Relation.cellId('foot', relationKey, '');
@@ -127,7 +114,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 
 		S.Menu.closeAll([], () => {
 			S.Menu.open('select', {
-				element: `#${id} .select`,
+				element: `#${id}`,
 				horizontal: I.MenuDirection.Center,
 				onOpen: this.onOpen,
 				onClose: this.onClose,
@@ -139,7 +126,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 					onOver: this.onOver,
 					onSelect: (e: any, item: any) => {
 						this.onChange(item.id);
-						this.setEditing(false);
 					},
 				}
 			});
@@ -189,7 +175,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 					onSelect: (e: any, item: any) => {
 						this.onChange(item.id);
 						this.menuContext.close();
-						this.setEditing(false);
 					},
 				}
 			});
@@ -212,6 +197,8 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	onMouseEnter (): void {
+		const { result } = this.state;
+
 		if (!keyboard.isDragging) {
 			$(this.node).addClass('hover');
 		};
