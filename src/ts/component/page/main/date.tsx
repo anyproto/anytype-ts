@@ -100,7 +100,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 										active={relationKey == item.relationKey}
 										color="blank"
 										className="c36"
-										onClick={() => this.onCategory(item.relationKey)}
+										onClick={() => this.onCategoryClick(item.relationKey)}
 										icon={icon}
 										text={item.name}
 									/>
@@ -247,6 +247,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 	onCategory (relationKey: string) {
 		this.setState({ relationKey }, () => this.reload());
+	};
+
+	onCategoryClick (relationKey: string) {
+		this.onCategory(relationKey);
 		analytics.event('SwitchRelationDate', { relationKey });
 	};
 
