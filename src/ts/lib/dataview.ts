@@ -587,6 +587,9 @@ class Dataview {
 			const map = records.map(it => it[relationKey]).filter(it => !Relation.isEmpty(it));
 			return Math.max(...map.map(it => Number(it || 0)));
 		};
+		const float = (v: any): string => {
+			return U.Common.sprintf('%0.3f', U.Common.formatNumber(v)).replace(/\.?0+?$/, '');
+		};
 
 		let ret = null;
 
@@ -596,12 +599,13 @@ class Dataview {
 			};
 
 			case I.FormulaType.Count: {
-				ret = total;
+				ret = float(total);
 				break;
 			};
 
 			case I.FormulaType.CountDistinct: {
 				ret = U.Common.arrayUniqueObjects(records, relationKey).length;
+				ret = float(ret);
 				break;
 			};
 
@@ -610,6 +614,7 @@ class Dataview {
 				ret = records.filter(it => {
 					return relation.format == I.RelationType.Checkbox ? !it[relationKey] : Relation.isEmpty(it[relationKey]);
 				}).length;
+				ret = float(ret);
 				break;
 			};
 
@@ -617,26 +622,27 @@ class Dataview {
 				ret = records.filter(it => {
 					return relation.format == I.RelationType.Checkbox ? !!it[relationKey] : !Relation.isEmpty(it[relationKey]);
 				}).length;
+				ret = float(ret);
 				break;
 			};
 
 			case I.FormulaType.PercentEmpty: {
-				ret = U.Common.sprintf('%0.2f%', U.Common.formatNumber(records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100));
+				ret = float(records.filter(it => Relation.isEmpty(it[relationKey])).length / total * 100) + '%';
 				break;
 			};
 
 			case I.FormulaType.PercentNotEmpty: {
-				ret = U.Common.sprintf('%0.2f%', U.Common.formatNumber(records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100));
+				ret = float(records.filter(it => !Relation.isEmpty(it[relationKey])).length / total * 100) + '%';
 				break;
 			};
 
 			case I.FormulaType.MathSum: {
-				ret = records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0);
+				ret = float(records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0));
 				break;
 			};
 
 			case I.FormulaType.MathAverage: {
-				ret = U.Common.sprintf('%0.3f', U.Common.formatNumber(records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total));
+				ret = float(records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total);
 				break;
 			};
 
@@ -651,6 +657,8 @@ class Dataview {
 				} else {
 					ret = (data[n / 2 - 1] + data[n / 2]) / 2;
 				};
+
+				ret = float(ret);
 				break;
 			};
 
@@ -658,6 +666,8 @@ class Dataview {
 				ret = min();
 				if (isDate) {
 					ret = ret ? date(ret) : '';
+				} else {
+					ret = float(ret);
 				};
 				break;
 			};
@@ -666,6 +676,8 @@ class Dataview {
 				ret = max();
 				if (isDate) {
 					ret = ret ? date(ret) : '';
+				} else {
+					ret = float(ret);
 				};
 				break;
 			};
@@ -674,14 +686,10 @@ class Dataview {
 				if (isDate) {
 					ret = U.Date.duration(max() - min());
 				} else {
-					ret = max() - min();
+					ret = float(max() - min());
 				};
 				break;
 			};
-		};
-
-		if ('number' == typeof(ret)) {
-			ret = U.Common.formatNumber(ret);
 		};
 
 		return ret;
