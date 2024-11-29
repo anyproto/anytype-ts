@@ -97,7 +97,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 							<Floater 
 								ref={ref => this.refFloater = ref}
 								anchorEl={this.refVolumeIcon}
-								offset={8}
+								offset={4}
 							>
 								<DragVertical
 									id="volume"
