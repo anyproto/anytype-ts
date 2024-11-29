@@ -89,7 +89,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return null;
 		};
 		
-		const width = root.fields?.width;
+		const width = U.Data.getLayoutWidth(rootId);
 		const readonly = this.isReadonly();
 
 		return (
@@ -201,10 +201,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	getWrapperWidth (): number {
-		const { rootId } = this.props;
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		return this.getWidth(root?.fields?.width);
+		return this.getWidth(U.Data.getLayoutWidth(this.props.rootId));
 	};
 
 	checkDeleted () {
@@ -2294,7 +2291,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const hh = isPopup ? header.height() : J.Size.header;
 
-			this.setLayoutWidth(root?.fields?.width);
+			this.setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
 			if (blocks.length && last.length && scrollContainer.length) {
 				const ct = isPopup ? scrollContainer.offset().top : 0;

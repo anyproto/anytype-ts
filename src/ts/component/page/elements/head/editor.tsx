@@ -46,7 +46,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 				<div id="editorSize" className="dragWrap">
 					<DragHorizontal 
 						ref={ref => this.refDrag = ref} 
-						value={root.fields.width}
+						value={check.layoutWidth}
 						snaps={[ 0.25, 0.5, 0.75 ]}
 						onStart={this.onScaleStart} 
 						onMove={this.onScaleMove} 

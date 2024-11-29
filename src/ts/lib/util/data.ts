@@ -593,6 +593,7 @@ class UtilData {
 		const object = S.Detail.get(rootId, blockId, [ 'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover), true);
 		const type = S.Record.getTypeById(object.type);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
+		const root = S.Block.getLeaf(rootId, blockId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 
 		const ret = {
@@ -601,6 +602,7 @@ class UtilData {
 			className: '',
 			layout: object.layout,
 			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
+			layoutWidth: this.getLayoutWidth(rootId),
 		};
 
 		if (undefined !== object.layoutAlign) {
@@ -1233,6 +1235,20 @@ class UtilData {
 			type: I.BlockType.Link,
 			content: { ...this.defaultLinkSettings(), targetBlockId: id },
 		};
+	};
+
+	getLayoutWidth (rootId: string): number {
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+		const type = S.Record.getTypeById(object.type);
+		const root = S.Block.getLeaf(rootId, rootId);
+
+		let ret = type?.layoutWidth;
+
+		if (undefined !== root?.fields?.width) {
+			ret = root?.fields?.width;
+		};
+
+		return Number(ret) || 0;
 	};
 
 };
