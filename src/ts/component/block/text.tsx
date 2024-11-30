@@ -305,10 +305,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const tag = Mark.getTag(I.MarkType.Latex);
 		const code = Mark.getTag(I.MarkType.Code);
 		const value = this.refEditable.getHtmlValue();
-		const reg = /(^|[^\d<\$R]+)?\$((?:[^$<]|\.)*?)[^R\\]\$([^\d>\$]+|$)/gi;
+		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
 		const regCode = new RegExp(`^${code}|${code}$`, 'i');
-
-		value.matchAll(reg).forEach((m: any) => console.log(JSON.stringify(m, null, 2)));
 
 		if (!/\$((?:[^$<]|\.)*?)\$/.test(value)) {
 			return;
@@ -342,6 +340,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			// Skip inline code marks
 			if (regCode.test(m1) || regCode.test(m3)) {
+				return;
+			};
+
+			// Skip Brazilian Real
+			if (/R$/.test(m1) || /R$/.test(m2)) {
+				return;
+			};
+
+			// Escaped $ sign
+			if (/\\$/.test(m1) || /\\$/.test(m2)) {
 				return;
 			};
 
