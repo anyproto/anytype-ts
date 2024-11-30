@@ -303,7 +303,8 @@ class Mark {
 				return;
 			};
 
-			const attr = this.paramToAttr(mark.type, param);
+			const fixedParam = param.replace(/([^\\])\$/gi, '$1\\$'); // Escape $ symbol for inline LaTeX
+			const attr = this.paramToAttr(mark.type, fixedParam);
 			const data = [];
 
 			if (param) {
