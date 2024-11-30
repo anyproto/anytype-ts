@@ -154,7 +154,7 @@ class UtilRouter {
 			this.isOpening = false;
 
 			if (message.error.code) {
-				U.Data.onAuthWithoutSpace();
+				U.Router.go('/main/void', routeParam);
 				return;
 			};
 
