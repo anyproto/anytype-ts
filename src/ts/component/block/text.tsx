@@ -305,8 +305,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const tag = Mark.getTag(I.MarkType.Latex);
 		const code = Mark.getTag(I.MarkType.Code);
 		const value = this.refEditable.getHtmlValue();
-		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
+		const reg = /(^|[^\d<\$R]+)?\$((?:[^$<]|\.)*?)[^R]\$([^\d>\$]+|$)/gi;
 		const regCode = new RegExp(`^${code}|${code}$`, 'i');
+
+		value.matchAll(reg).forEach((m: any) => console.log(JSON.stringify(m, null, 2)));
 
 		if (!/\$((?:[^$<]|\.)*?)\$/.test(value)) {
 			return;
