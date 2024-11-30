@@ -308,7 +308,7 @@ class Mark {
 			const data = [];
 
 			if (param) {
-				data.push(`data-param="${param}"`);
+				data.push(`data-param="${fixedParam}"`);
 			};
 
 			if ([ I.MarkType.Link, I.MarkType.Object, I.MarkType.Mention ].includes(mark.type)) {
