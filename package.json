@@ -124,7 +124,7 @@
 		"lazy-val": "^1.0.4",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
-		"mermaid": "^11.4.0",
+		"mermaid": "^11.4.1",
 		"mime-types": "^2.1.35",
 		"mobx": "^6.6.1",
 		"mobx-logger": "^0.7.1",
