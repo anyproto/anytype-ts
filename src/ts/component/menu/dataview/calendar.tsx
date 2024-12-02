@@ -1,19 +1,31 @@
 import * as React from 'react';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, J, translate } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 
-const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu> {
+interface State {
+	dotMap: Map<string, boolean>;
+};
+
+const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
 	
 	originalValue = 0;
 	refMonth: any = null;
 	refYear: any = null;
+
+	state: Readonly<State> = {
+		dotMap: new Map(),
+	};
 	
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { value, isEmpty, canEdit, canClear = true } = data;
+
+		const { dotMap } = this.state;
+
 		const items = this.getData();
+
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
 
@@ -91,15 +103,20 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 						if (!isEmpty && (todayParam.d == item.d) && (todayParam.m == item.m) && (todayParam.y == item.y)) {
 							cn.push('active');
 						};
+
+						const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
 						return (
 							<div 
-								key={i} 
+								key={i}
 								id={[ 'day', item.d, item.m, item.y ].join('-')}
 								className={cn.join(' ')} 
 								onClick={e => this.onClick(e, item)}
 								onContextMenu={e => this.onContextMenu(e, item)}
 							>
-								{item.d}
+								<div className="inner">
+									{item.d}
+									{check ? <div className="bullet" /> : ''}
+								</div>
 							</div>
 						);
 					})}
@@ -127,7 +144,17 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 	componentDidMount(): void {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const { value, getDotMap } = data;
+
+		const items = this.getData();
+		const first = items[0];
+		const last = items[items.length - 1];
+
+		if (getDotMap) {
+			const startTimestamp = U.Date.timestamp(first.y, first.m, first.d);
+			const endTimestamp = U.Date.timestamp(last.y, last.m, last.d);
+			getDotMap(startTimestamp, endTimestamp, dotMap => this.setState({ dotMap }));
+		};
 
 		this.originalValue = value;
 		this.forceUpdate();
