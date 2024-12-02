@@ -74,14 +74,15 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						readonly={true}
 						getDotMap={this.getDotMap}
 					/>
+					{!object._empty_ ?
+					(<React.Fragment>
+						<div className="categories">
+							{relations.map((item) => {
+								const isMention = item.relationKey == RELATION_KEY_MENTION;
+								const icon = isMention ? 'mention' : '';
+								const separator = isMention ? <div className="separator" /> : '';
 
-					<div className="categories">
-						{relations.map((item) => {
-							const isMention = item.relationKey == RELATION_KEY_MENTION;
-							const icon = isMention ? 'mention' : '';
-							const separator = isMention ? <div className="separator" /> : '';
-
-							return (
+								return (
 								<React.Fragment key={item.relationKey}>
 									<Button
 										id={`category-${item.relationKey}`}
@@ -94,21 +95,22 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 									/>
 									{relations.length > 1 ? separator : ''}
 								</React.Fragment>
-							);
-						})}
-					</div>
+								);
+							})}
+						</div>
 
-					<div className="dateList">
-						<ListObject 
-							ref={ref => this.refList = ref}
-							{...this.props}
-							spaceId={space}
-							subId={SUB_ID} 
-							rootId={rootId}
-							columns={columns}
-							filters={filters}
-						/>
-					</div>
+						<div className="dateList">
+							<ListObject
+								ref={ref => this.refList = ref}
+								{...this.props}
+								spaceId={space}
+								subId={SUB_ID}
+								rootId={rootId}
+								columns={columns}
+								filters={filters}
+							/>
+						</div>
+					</React.Fragment>): ''}
 				</div>
 
 				<Footer component="mainObject" {...this.props} />
