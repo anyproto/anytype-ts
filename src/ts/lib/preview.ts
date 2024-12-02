@@ -1,6 +1,5 @@
 import $ from 'jquery';
-import raf from 'raf';
-import { I, S, U, J, keyboard, sidebar, analytics } from 'Lib';
+import { I, S, U, J, keyboard } from 'Lib';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
