@@ -284,23 +284,6 @@ class Preview {
 	};
 
 	/**
-	 * This method is used by toast to position itself on the screen
-	 */
-	toastPosition () {
-		const obj = $('#toast');
-		const { ww } = U.Common.getWindowDimensions();
-		const y = 32;
-		const sw = sidebar.getDummyWidth();;
-		const x = (ww - sw) / 2 - obj.outerWidth() / 2 + sw;
-
-		obj.show().css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
-
-		raf(() => {
-			obj.css({ left: x, top: y, opacity: 1, transform: 'scale3d(1,1,1)' });
-		});
-	};
-
-	/**
 	 * Force hides all tooltips, previews, and toasts.
 	 */
 	hideAll () {
