@@ -109,9 +109,24 @@ class Relation {
 		return ret;
 	};
 
-	public formulaByType (type: I.RelationType): { id: string, name: string, short?: string, section: I.FormulaSection }[] {
+	public formulaByType (relationKey: string, type: I.RelationType): { id: string, name: string, short?: string, section: I.FormulaSection }[] {
+		const isArrayType = this.isArrayType(type);
+		const systemKeys = [
+			'type', 
+			'creator', 
+			'createdDate', 
+			'addedDate',
+		];
+		const skip = [ 
+			I.FormulaType.CountEmpty, 
+			I.FormulaType.CountNotEmpty,
+			I.FormulaType.PercentEmpty,
+			I.FormulaType.PercentNotEmpty,
+		];
+
 		const common = [
 			{ id: I.FormulaType.Count, name: translate('formulaCount'), section: I.FormulaSection.Count },
+			{ id: I.FormulaType.CountValue, name: translate('formulaValue'), short: translate('formulaValueShort'), section: I.FormulaSection.Count },
 			{ id: I.FormulaType.CountDistinct, name: translate('formulaDistinct'), short: translate('formulaDistinctShort'), section: I.FormulaSection.Count },
 			{ id: I.FormulaType.CountEmpty, name: translate('formulaEmpty'), short: translate('formulaEmptyShort'), section: I.FormulaSection.Count },
 			{ id: I.FormulaType.CountNotEmpty, name: translate('formulaNotEmpty'), short: translate('formulaNotEmptyShort'), section: I.FormulaSection.Count },
@@ -120,7 +135,7 @@ class Relation {
 		];
 
 		let ret: any[] = [
-			{ id: I.FormulaType.None, name: translate('formulaNone') },
+			{ id: I.FormulaType.None, name: translate('commonNone') },
 		];
 
 		switch (type) {
@@ -163,6 +178,13 @@ class Relation {
 				break;
 			};
 
+		};
+
+		if (systemKeys.includes(relationKey)) {
+			ret = ret.filter(it => !skip.includes(it.id));
+		};
+		if (!isArrayType) {
+			ret = ret.filter(it => ![ I.FormulaType.CountValue ].includes(it.id));
 		};
 
 		return ret.map(it => ({ ...it, id: String(it.id)}));

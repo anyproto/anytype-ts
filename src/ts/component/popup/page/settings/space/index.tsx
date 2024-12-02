@@ -139,7 +139,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				<div className="sections">
 					<div 
 						className="section sectionSpaceShare"
-						onMouseEnter={isShareActive ? () => {} : e => Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) })}
+						onMouseEnter={isShareActive ? () => {} : e => {
+							Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) })
+						}}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
 						<Title text={translate(`popupSettingsSpaceShareTitle`)} />

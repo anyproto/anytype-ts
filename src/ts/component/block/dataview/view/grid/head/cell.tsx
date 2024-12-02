@@ -58,13 +58,15 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 	onMouseEnter (): void {
 		const { block, relationKey } = this.props;
 
-		if (!keyboard.isDragging) {
+		if (!keyboard.isDragging && !keyboard.isResizing) {
 			$(`#block-${block.id} .cell-key-${relationKey}`).addClass('cellKeyHover');
 		};
 	};
 
 	onMouseLeave () {
-		$('.cellKeyHover').removeClass('cellKeyHover');
+		if (!keyboard.isDragging && !keyboard.isResizing) {
+			$('.cellKeyHover').removeClass('cellKeyHover');
+		};
 	};
 
 	onEdit (e: any) {

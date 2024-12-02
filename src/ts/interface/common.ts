@@ -301,6 +301,7 @@ export interface SearchSubscribeParam {
 	ignoreHidden: boolean;
 	ignoreDeleted: boolean;
 	ignoreArchived: boolean;
+	skipLayoutFormat: I.ObjectLayout[];
 	noDeps: boolean;
 };
 

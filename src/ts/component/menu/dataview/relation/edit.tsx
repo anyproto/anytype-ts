@@ -259,7 +259,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				},
 				{
 					children: [
-						canCalculate ? { id: 'calculate', icon: 'relation c-number', name: translate('menuDataviewRelationEditCalculate'), arrow: true } : null,
+						canCalculate ? { id: 'calculate', icon: 'relation c-number', name: translate('commonCalculate'), arrow: true } : null,
 					]
 				},
 			]);
@@ -341,7 +341,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 							return;
 						};
 
-						const options = Relation.formulaByType(relation.format).filter(it => it.section == item.id);
+						const options = Relation.formulaByType(relation.relationKey, relation.format).filter(it => it.section == item.id);
 
 						S.Menu.closeAll([ 'select2' ], () => {
 							S.Menu.open('select2', {

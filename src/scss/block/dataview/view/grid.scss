@@ -54,7 +54,10 @@
 		.cellFoot { height: 48px; @include text-common; color: var(--color-text-primary); }
 		.cellFoot {
 			.flex { justify-content: flex-end; }
-			.result { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; max-width: 100%; }
+			.result { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; max-width: 100%; }
+			.result {
+				.value { @include text-overflow-nw; }
+			}
 			.name { width: auto !important; color: var(--color-text-secondary); }
 			.cellContent { height: 48px !important; }
 

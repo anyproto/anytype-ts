@@ -28,6 +28,8 @@ class Analytics {
 		deleted: 'Deleted',
 		banner: 'Banner',
 		widget: 'Widget',
+		addWidget: 'AddWidget',
+		inWidget: 'InWidget',
 		graph: 'Graph',
 		store: 'Library',
 		type: 'Type',
@@ -50,6 +52,10 @@ class Analytics {
 		chat: 'Chat',
 		archive: 'Bin',
 		toast: 'Toast',
+
+		screenDate: 'ScreenDate',
+		screenRelation: 'ScreenRelation',
+		screenType: 'ScreenType',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
@@ -510,6 +516,11 @@ class Analytics {
 				break;
 			};
 
+			case 'ObjectListSort': {
+				data.type = I.SortType[Number(data.type)];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -575,6 +586,7 @@ class Analytics {
 			'main/relation':	 'ScreenRelation',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
+			'main/date':		 'ScreenDate',
 		};
 
 		return map[key] || '';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, Relation, translate, keyboard } from 'Lib';
+import { I, C, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
 import { Icon, IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
 
 interface Column {
@@ -20,6 +20,7 @@ interface Props {
 	sources?: string[];
 	filters?: I.Filter[];
 	relationKeys?: string[];
+	route: string;
 };
 
 interface State {
@@ -39,6 +40,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 		columns: [],
 		sources: [],
 		filters: [],
+		route: '',
 	};
 
 	state = {
@@ -208,7 +210,8 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 	};
 
 	getKeys () {
-		return J.Relation.default.concat(this.props.columns.map(it => it.relationKey));
+		const { columns, relationKeys } = this.props;	
+		return J.Relation.default.concat(columns.map(it => it.relationKey)).concat(relationKeys || []);
 	};
 
 	getColumns (): Column[] {
@@ -243,7 +246,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, relationKeys } = this.props;
+		const { subId } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
 		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
@@ -259,7 +262,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 			data: {
 				objectIds,
 				subId,
-				relationKeys,
+				relationKeys: this.getKeys(),
 				allowedLinkTo: true,
 				allowedOpen: true,
 			}
@@ -267,6 +270,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 	};
 
 	onSort (relationKey: string): void {
+		const { route } = this.props;
 		const { sortId, sortType } = this.state;
 
 		let type = I.SortType.Asc;
@@ -276,6 +280,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 		};
 
 		this.setState({ sortId: relationKey, sortType: type }, () => this.getData(1));
+		analytics.event('ObjectListSort', { relationKey, route, type });
 	};
 
 });

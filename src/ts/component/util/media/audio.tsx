@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { Icon, DragHorizontal, DragVertical } from 'Component';
 import { U } from 'Lib';
 import { Floater } from '../floater';
-import _ from 'lodash';
 
 interface PlaylistItem {
 	name: string;
@@ -17,24 +16,22 @@ interface Props {
 };
 
 interface State {
-	volume: number;
-	muted: boolean;
-	showVolumeSlider: boolean;
-	timeMetric: string;
 	current: PlaylistItem;
 };
 
 class MediaAudio extends React.PureComponent<Props, State> {
 
 	node: HTMLDivElement = null;
-	timeDragRef: DragHorizontal = null;
 	audioNode: HTMLAudioElement = null;
-	volumeIcon = null;
+	refTime = null;
+	refVolumeIcon = null;
+	refFloater = null;
+	isMuted = false;
+	volume = 1;
 
 	playOnSeek = false;
 	current: PlaylistItem = { name: '', src: '' };
 	resizeObserver: ResizeObserver;
-	fadeOutVolumeSlider = _.debounce(() => this.setState({ showVolumeSlider: false }), 250);
 
 	startedPlaying = false;
 
@@ -42,27 +39,22 @@ class MediaAudio extends React.PureComponent<Props, State> {
 		super(props);
 
 		this.state = {
-			volume: 1,
-			muted: false,
-			showVolumeSlider: false,
-			timeMetric: '',
 			current: null,
 		};
 
 		this.onPlayClick = this.onPlayClick.bind(this);
 		this.onMute = this.onMute.bind(this);
 		this.onResize = this.onResize.bind(this);
+		this.onVolume = this.onVolume.bind(this);
+		this.onVolumeEnter = this.onVolumeEnter.bind(this);
+		this.onVolumeLeave = this.onVolumeLeave.bind(this);
 		this.resizeObserver = new ResizeObserver(this.onResize);
 	};
 
 	render () {
-		const { volume, muted, current } = this.state;
+		const { current } = this.state;
 		const { src, name }	= current || {};
-		const iconClasses = [ 'volume'];
-
-		if (!volume || muted) {
-			iconClasses.push('muted');
-		};
+		const ci = [ 'volume' ];
 
 		return (
 			<div
@@ -81,8 +73,8 @@ class MediaAudio extends React.PureComponent<Props, State> {
 
 						<div className="timeDragWrapper">
 							<DragHorizontal
-								id="time"
-								ref={ref => this.timeDragRef = ref}
+								id="timeDrag"
+								ref={ref => this.refTime = ref}
 								value={0}
 								onStart={(e: any, v: number) => this.onTime(v)}
 								onMove={(e: any, v: number) => this.onTime(v)}
@@ -90,35 +82,29 @@ class MediaAudio extends React.PureComponent<Props, State> {
 							/>
 						</div>
 
-						<div className="time">
-							<span id="timeMetric" className="metric">{this.state.timeMetric}</span>
+						<div className="timeText">
+							<span id="time" />
 						</div>
-						<div onMouseLeave={this.fadeOutVolumeSlider}>
+
+						<div className="volumeWrap" onMouseLeave={this.onVolumeLeave}>
 							<Icon
-								onMouseEnter={() => {
-									this.fadeOutVolumeSlider.cancel();
-									return this.setState({ showVolumeSlider: true });
-								}}
-								ref={el => this.volumeIcon = el} 
-								className={iconClasses.join(' ')} 
+								ref={ref => this.refVolumeIcon = ref} 
+								className={ci.join(' ')} 
 								onClick={this.onMute} 
+								onMouseEnter={this.onVolumeEnter}
 							/>
 
 							<Floater 
-								anchorEl={this.volumeIcon?.node} 
-								isShown={this.state.showVolumeSlider}
-								gap={8}
+								ref={ref => this.refFloater = ref}
+								anchorEl={this.refVolumeIcon}
+								offset={4}
 							>
 								<DragVertical
 									id="volume"
 									className="volume"
-									value={volume * (muted ? 0 : 1)}
+									value={this.volume}
 									onChange={(e: any, v: number) => this.onVolume(v)}
-									onMouseEnter={() => {
-										this.fadeOutVolumeSlider.cancel();
-										return this.setState({ showVolumeSlider: true });
-									}}
-									
+									onMouseEnter={this.onVolumeEnter}
 								/>
 							</Floater>
 						</div>
@@ -151,9 +137,9 @@ class MediaAudio extends React.PureComponent<Props, State> {
 		const node = $(this.node);
 		const el = node.find('#audio');
 
-		this.audioNode = el.get(0) as HTMLAudioElement;
-
 		if (el.length) {
+			this.audioNode = el.get(0) as HTMLAudioElement;
+
 			el.on('canplay timeupdate', () => this.onTimeUpdate());
 			el.on('play', () => this.onPlay());
 			el.on('ended pause', () => this.onPause());
@@ -180,9 +166,7 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	};
 
 	resize () {
-		if (this.timeDragRef) {
-			this.timeDragRef.resize();
-		};
+		this.refTime?.resize();
 	};
 
 	onResize () {
@@ -228,25 +212,33 @@ class MediaAudio extends React.PureComponent<Props, State> {
 	};
 
 	play () {
-		this.audioNode.play();
+		this.audioNode?.play();
 	};
 
 	pause () {
-		this.audioNode.pause();
+		this.audioNode?.pause();
 	};
 
 	onMute (e: React.MouseEvent) {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		const muted = !this.state.muted;
-		this.setState({ muted });
-		this.audioNode.volume = this.state.volume * (muted ? 0 : 1);
+
+		this.isMuted = !this.isMuted;
+		this.audioNode.volume = this.volume * (this.isMuted ? 0 : 1);
+		this.checkVolumeClass();
 	};
 
-	onVolume (volume: number) {
-		this.setState({ volume });
-		this.audioNode.volume = volume * (this.state.muted ? 0 : 1);
+	onVolume (v: number) {
+		this.volume = v * (this.isMuted ? 0 : 1);
+		this.audioNode.volume = this.volume;
+		this.checkVolumeClass();
+	};
+
+	checkVolumeClass () {
+		const node = $(this.node);
+		const icon = node.find('.icon.volume');
+
+		icon.toggleClass('isMuted', this.isMuted || !this.volume);
 	};
 
 	onTime (v: number) {
@@ -266,16 +258,26 @@ class MediaAudio extends React.PureComponent<Props, State> {
 		};
 	};
 
+	onVolumeEnter () {
+		this.refFloater.show();
+	};
+
+	onVolumeLeave () {
+		this.refFloater.hide();
+	};
+
 	onTimeUpdate () {
 		const el = this.audioNode;
 		if (!el) {
 			return;
 		};
 
+		const node = $(this.node);
+		const time = node.find('#time');
 		const t = this.startedPlaying ? this.getTime(el.currentTime) : this.getTime(el.duration);
 
-		this.setState({ timeMetric: `${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`});
-		this.timeDragRef.setValue(el.currentTime / el.duration);
+		time.text(`${U.Common.sprintf('%02d', t.m)}:${U.Common.sprintf('%02d', t.s)}`);
+		this.refTime.setValue(el.currentTime / el.duration);
 	};
 
 	getTime (t: number): { m: number, s: number } {

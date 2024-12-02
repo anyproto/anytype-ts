@@ -563,6 +563,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		Preview.previewHide(true);
 		
 		const ids = selection.get(I.SelectType.Block);
+		const idsWithChildren = selection.get(I.SelectType.Block, true);
 		const cmd = keyboard.cmdKey();
 		const readonly = this.isReadonly();
 		const styleParam = this.getStyleParam();
@@ -623,15 +624,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ret = true;
 		});
 
-		if (ids.length) {
-			keyboard.shortcut('escape', e, () => {
-				if (!menuOpen) {
-					selection.clear();
-				};
-
-				ret = true;
-			});
-
+		if (idsWithChildren.length) {
 			// Mark-up
 
 			let type = null;
@@ -656,18 +649,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						data: {
 							filter: '',
 							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockTextListSetMark(rootId, ids, { type: newType, param, range: { from: 0, to: 0 } }, () => {
-									analytics.event('ChangeTextStyle', { type: newType, count: ids.length });
+								C.BlockTextListSetMark(rootId, idsWithChildren, { type: newType, param, range: { from: 0, to: 0 } }, () => {
+									analytics.event('ChangeTextStyle', { type: newType, count: idsWithChildren.length });
 								});
-							}
-						}
+							},
+						},
 					});
 				} else {
-					C.BlockTextListSetMark(rootId, ids, { type, param, range: { from: 0, to: 0 } }, () => {
-						analytics.event('ChangeTextStyle', { type, count: ids.length });
+					C.BlockTextListSetMark(rootId, idsWithChildren, { type, param, range: { from: 0, to: 0 } }, () => {
+						analytics.event('ChangeTextStyle', { type, count: idsWithChildren.length });
 					});
 				};
 			};
+		};
+
+		if (ids.length) {
+			keyboard.shortcut('escape', e, () => {
+				if (!menuOpen) {
+					selection.clear();
+				};
+
+				ret = true;
+			});
 
 			// Duplicate
 			keyboard.shortcut(`${cmd}+d`, e, () => {

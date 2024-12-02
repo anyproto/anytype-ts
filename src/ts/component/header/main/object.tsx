@@ -35,7 +35,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		const object = S.Detail.get(rootId, rootId, J.Relation.template);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = !U.Object.isTypeOrRelationLayout(object.layout);
+		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+		const isDate = U.Object.isDateLayout(object.layout);
+		const showRelations = !isTypeOrRelation && !isDate;
+		const showMenu = !isTypeOrRelation;
 		const canSync = showMenu && !object.templateIsBundled && !U.Object.isParticipantLayout(object.layout);
 		const cmd = keyboard.cmdSymbol();
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
@@ -95,7 +98,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				</div>
 
 				<div className="side right">
-					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" tooltipCaption={`${cmd} + Shift + R`} className="relation withBackground" onClick={this.onRelation} /> : ''}
+					{showRelations ? <Icon id="button-header-relation" tooltip="Relations" tooltipCaption={`${cmd} + Shift + R`} className="relation withBackground" onClick={this.onRelation} /> : ''}
 					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} /> : ''}
 				</div>
 			</React.Fragment>

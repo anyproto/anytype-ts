@@ -8,7 +8,7 @@ const DELAY_PREVIEW = 300;
 
 interface TooltipParam {
 	text: string;
-	element: JQuery<HTMLElement>;
+	element: any;
 	typeX: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	typeY: I.MenuDirection.Top | I.MenuDirection.Center | I.MenuDirection.Bottom;
 	offsetX: number;

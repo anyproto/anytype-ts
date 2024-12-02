@@ -9,8 +9,6 @@ type State = {
 	previewId: string;
 };
 
-const SUB_ID = 'widgetArchive';
-
 const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, State> {
 		
 	state: State = {
@@ -47,7 +45,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const bodyCn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const archived = S.Record.getRecordIds(SUB_ID, '');
+		const hasShareBanner = U.Space.hasShareBanner();
 
 		let content = null;
 
@@ -120,7 +118,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				]);
 			};
 
-			if (U.Space.isShareBanner()) {
+			if (U.Space.hasShareBanner()) {
 				bodyCn.push('withShareBanner');
 			};
 
@@ -128,7 +126,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				<React.Fragment>
 					{space && !space._empty_ ? (
 						<React.Fragment>
-							<ShareBanner onClose={() => this.forceUpdate()} />
+							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
 
 							<DropTarget 
 								{...this.props} 
@@ -173,26 +171,24 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						/>
 					))}
 
-					{archived.length ? (
-						<DropTarget 
-							{...this.props} 
-							isTargetBottom={true}
-							rootId={S.Block.widgets} 
-							id={last?.id}
-							dropType={I.DropType.Widget} 
-							canDropMiddle={false}
-							className="lastTarget"
-							cacheKey="lastTarget"
-						>
-							<Button
-								text={translate('commonBin')}
-								color=""
-								className="widget"
-								icon="bin"
-								onClick={this.onArchive}
-							/>
-						</DropTarget>
-					) : ''}
+					<DropTarget 
+						{...this.props} 
+						isTargetBottom={true}
+						rootId={S.Block.widgets} 
+						id={last?.id}
+						dropType={I.DropType.Widget} 
+						canDropMiddle={false}
+						className="lastTarget"
+						cacheKey="lastTarget"
+					>
+						<Button
+							text={translate('commonBin')}
+							color=""
+							className="widget"
+							icon="bin"
+							onClick={this.onArchive}
+						/>
+					</DropTarget>
 
 					<div className="buttons">
 						{buttons.map(button => (
@@ -229,14 +225,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				</div>
 			</div>
 		);
-	};
-
-	componentDidMount (): void {
-		this.subscribeArchive();
-	};
-
-	componentDidUpdate (): void {
-		this.subscribeArchive();
 	};
 
 	onEdit (e: any): void {
@@ -532,26 +520,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				keyboard.shortcut('escape', e, () => close(e));
 			});
 		}, S.Menu.getTimeout());
-	};
-
-	subscribeArchive () {
-		const { space } = S.Common
-
-		if (this.isSubcribed == space) {
-			return;
-		};
-
-		U.Data.searchSubscribe({
-			subId: SUB_ID,
-			spaceId: space,
-			ignoreArchived: false,
-			filters: [
-				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
-			],
-			limit: 1,
-		}, () => {
-			this.isSubcribed = space;
-		});
 	};
 
 });

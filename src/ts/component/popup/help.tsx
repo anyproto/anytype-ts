@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import * as Docs from 'Docs';
 import { Label, Icon, Cover, Button } from 'Component';
-import { I, U, J, translate } from 'Lib';
+import { I, U, J, translate, Action } from 'Lib';
 import Block from 'Component/block/help';
 
 interface State {
@@ -55,7 +55,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 					</div>
 					<div className="side right">
 						<Label text={translate('popupHelpLabel')} />
-						<Icon onClick={() => U.Common.onUrl(J.Url.mail)} className="mail" />
+						<Icon onClick={() => Action.openUrl(J.Url.mail)} className="mail" />
 					</div>
 				</div>
 				

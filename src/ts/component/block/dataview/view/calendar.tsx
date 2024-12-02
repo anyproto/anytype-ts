@@ -238,12 +238,11 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const objectId = getTarget().id;
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const type = S.Record.getTypeById(getTypeId());
-		const typeKey = type.uniqueKey;
 		const templateId = getTemplateId();
 
 		details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id), details);
 
-		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

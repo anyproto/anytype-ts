@@ -281,6 +281,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
+			skipLayoutFormat: [ I.ObjectLayout.Date ],
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
@@ -346,6 +347,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			});
 
 			onChange(object, name + ' ', marks, from, to + 1);
+			analytics.event('ChangeTextStyle', { type: I.MarkType.Mention, count: 1, objectType: object.type });
 		};
 
 		let close = true;
@@ -366,6 +368,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				data: { 
 					rebind: this.rebind,
 					canEdit: true,
+					canClear: false,
 					value: U.Date.now(),
 					onChange: (value: number) => {
 						C.ObjectDateByTimestamp(space, value, (message: any) => {

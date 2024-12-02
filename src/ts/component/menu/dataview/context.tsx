@@ -445,6 +445,10 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'createWidget': {
+				if (!first) {
+					break;
+				};
+
 				const firstBlock = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
 				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top, analytics.route.addWidgetMenu);

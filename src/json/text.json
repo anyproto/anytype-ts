@@ -173,6 +173,7 @@
 	"commonMenu": "Menu",
 	"commonSignUp": "Sign Up",
 	"commonNotFound": "Not found",
+	"commonCalculate": "Calculate",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -612,8 +613,8 @@
 	"blockDataviewHeadMenuChange": "Change source %s",
 	"blockDataviewHeadMenuOpen": "Open source %s",
 
-	"blockDataviewBoardRelationDeletedTitle": "Relation has been deleted",
-	"blockDataviewBoardRelationDeletedDescription": "Choose another Relation to group your Kanban",
+	"blockDataviewBoardRelationDeletedTitle": "No Relation",
+	"blockDataviewBoardRelationDeletedDescription": "Choose Relation to group your Kanban",
 	"blockDataviewBoardOpenViewMenu": "Open View menu",
 
 	"blockDataviewBoardColumnSettings": "Column settings",
@@ -1465,7 +1466,6 @@
 	"menuDataviewRelationEditInsertLeft": "Insert left",
 	"menuDataviewRelationEditInsertRight": "Insert right",
 	"menuDataviewRelationEditHideRelation": "Hide Relation",
-	"menuDataviewRelationEditCalculate": "Calculate",
 	"menuDataviewRelationEditAddObjectType": "Add Object type",
 	"menuDataviewRelationEditFilterObjectTypes": "Filter Object types...",
 	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
@@ -2233,11 +2233,12 @@
 	"networkMode2Title": "Self-hosted",
 	"networkMode2Text": "Back up to your self-hosted network",
 
-	"formulaNone": "Calculate",
 	"formulaCount": "Count",
 	"formulaPercentage": "Percentage",
 	"formulaMath": "Math",
 	"formulaDate": "Date",
+	"formulaValue": "Count values",
+	"formulaValueShort": "Values",
 	"formulaDistinct": "Count unique values",
 	"formulaDistinctShort": "Unique",
 	"formulaEmpty": "Count empty",

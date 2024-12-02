@@ -1079,10 +1079,10 @@ class UtilMenu {
 
 	getFormulaSections (relationKey: string) {
 		const relation = S.Record.getRelationByKey(relationKey);
-		const options = Relation.formulaByType(relation.format);
+		const options = Relation.formulaByType(relationKey, relation.format);
 
 		return [
-			{ id: I.FormulaSection.None, name: translate('formulaNone') },
+			{ id: I.FormulaSection.None, name: translate('commonNone') },
 		].concat([
 			{ id: I.FormulaSection.Count, name: translate('formulaCount'), arrow: true },
 			{ id: I.FormulaSection.Percent, name: translate('formulaPercentage'), arrow: true },

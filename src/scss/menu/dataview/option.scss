@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuDataviewOptionList { width: var(--menu-width-value);; }
 	.menu.menuDataviewOptionList {
-		.content { overflow: visible; transition: none; padding: 0px; max-height: unset; }
+		.content { overflow: hidden; transition: none; padding: 0px; max-height: unset; }
 		.content {
 			.wrap { height: 100%; display: flex; flex-direction: column; }
 			.wrap.noFilter {

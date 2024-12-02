@@ -589,6 +589,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			raf.cancel(this.frame);
 		};
 
+		const container = this.getPageContainer();
+
 		raf(() => {
 			$('.isSelectionSelected').removeClass('isSelectionSelected');
 
@@ -597,14 +599,16 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				const ids = this.get(type, true);
 
 				for (const id of ids) {
-					$(`#selectionTarget-${id}`).addClass('isSelectionSelected');
+					container.find(`#selectionTarget-${id}`).addClass('isSelectionSelected');
 
 					if (type == I.SelectType.Block) {
-						$(`#block-${id}`).addClass('isSelectionSelected');
+						container.find(`#block-${id}`).addClass('isSelectionSelected');
 
 						const childrenIds = this.getChildrenIds(id);
 						if (childrenIds.length) {
-							childrenIds.forEach(childId => $(`#block-${childId}`).addClass('isSelectionSelected'));
+							childrenIds.forEach(childId => {
+								container.find(`#block-${childId}`).addClass('isSelectionSelected');
+							});
 						};
 					};
 				};

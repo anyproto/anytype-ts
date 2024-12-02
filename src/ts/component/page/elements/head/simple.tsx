@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, Action, focus, keyboard, Relation, translate, C } from 'Lib';
+import { I, M, S, U, J, Action, focus, keyboard, Relation, translate, analytics } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -319,6 +319,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				getDotMap,
 			},
 		});
+
+		analytics.event('ClickDateCalendarView');
 	};
 
 	changeDate = (dir: number) => {
@@ -326,6 +328,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const object = S.Detail.get(rootId, rootId);
 
 		U.Object.openDateByTimestamp(object.timestamp + dir * 86400);
+		analytics.event(dir > 0 ? 'ClickDateForward' : 'ClickDateBack');
 	};
 
 });
