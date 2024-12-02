@@ -562,17 +562,8 @@ class Dataview {
 		const { total } = S.Record.getMeta(subId, '');
 		const isDate = relation.format == I.RelationType.Date;
 		const isArrayType = Relation.isArrayType(relation.format);
-
-		let records = [];
-		let needRecords = false;
-
-		if (![ I.FormulaType.None, I.FormulaType.Count ].includes(formulaType)) {
-			needRecords = true;
-		};
-
-		if (needRecords) {
-			records = S.Record.getRecords(subId, [ relationKey ], true);
-		};
+		const needRecords = ![ I.FormulaType.None, I.FormulaType.Count ].includes(formulaType);
+		const records = needRecords ? S.Record.getRecords(subId, [ relationKey ], true) : [];
 
 		const date = (t: number) => {
 			const day = showRelativeDates ? U.Date.dayString(t) : null;
@@ -595,13 +586,10 @@ class Dataview {
 		};
 		const filtered = (isEmpty: boolean) => {
 			return records.filter(it => {
-				let ret = true;
-				if (relation.format == I.RelationType.Checkbox) {
-					ret = Boolean(it[relationKey]);
-				} else {
-					ret = Relation.isEmpty(it[relationKey]);
-				};
-				return ret == isEmpty;
+				const ret = relation.format == I.RelationType.Checkbox ? 
+					Boolean(it[relationKey]) : 
+					Relation.isEmpty(it[relationKey]);
+				return isEmpty ? !ret : ret;
 			});
 		};
 
