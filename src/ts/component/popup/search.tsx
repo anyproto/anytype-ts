@@ -634,11 +634,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			this.items = this.items.concat(records);
 
-			U.Data.subscribeIds({
-				subId: J.Constant.subId.search,
-				ids: this.items.map(it => it.id),
-				noDeps: true,
-			});
+			if (this.items.length) {
+				U.Data.subscribeIds({
+					subId: J.Constant.subId.search,
+					ids: this.items.map(it => it.id),
+					noDeps: true,
+				});
+			};
 
 			if (clear) {
 				this.setState({ isLoading: false }, callBack);
