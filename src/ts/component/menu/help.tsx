@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button, ShareTooltip } from 'Component';
-import { I, S, U, J, Onboarding, keyboard, analytics, Action, Highlight, Storage, translate, Preview } from 'Lib';
+import { I, S, U, J, keyboard, analytics, Action, Highlight, translate, Preview } from 'Lib';
 
 class MenuHelp extends React.Component<I.Menu> {
 
@@ -41,14 +41,14 @@ class MenuHelp extends React.Component<I.Menu> {
 						return content;
 					})}
 				</div>
-				<ShareTooltip />
+				<ShareTooltip route={analytics.route.menuHelp} />
 			</React.Fragment>
 		);
 	};
 
 	componentDidMount () {
 		this.rebind();
-		Preview.shareTooltipHide();
+		S.Common.shareTooltipSet(true);
 		Highlight.showAll();
 	};
 
@@ -92,8 +92,6 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
-		const isGraph = keyboard.isMainGraph();
-		const home = U.Space.getDashboard();
 
 		close();
 		analytics.event(U.Common.toUpperCamelCase([ getId(), item.id ].join('-')), { route: analytics.route.menuHelp });
