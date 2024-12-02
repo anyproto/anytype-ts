@@ -320,7 +320,7 @@ const Vault = observer(class Vault extends React.Component {
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const items = this.getSortedItems();
+		const items = this.getSortedItems().filter(it => !it.isButton);
 		const item = items[oldIndex];
 		const ids: string[] = arrayMove(items.map(it => it.id), oldIndex, newIndex);
 
