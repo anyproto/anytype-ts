@@ -10,7 +10,7 @@ interface Props {
 	readonly?: boolean;
 	noIcon?: boolean;
 	onCreate?: () => void;
-	getDotMap?: (data: {d: number, m: number, y: number}[], callback: (res: Map<string, boolean>) => void) => void;
+	getDotMap?: (start: number, end: number, callback: (res: Map<string, boolean>) => void) => void;
 };
 
 const EDITORS = [ 

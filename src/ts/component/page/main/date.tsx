@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button } from 'Component';
 import { I, C, S, U, J, Action, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
+import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 interface State {
 	isDeleted: boolean;
@@ -115,15 +116,12 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		);
 	};
 
-	getFilters = (first: {y: number, m: number, d: number}, last: {y: number, m: number, d: number}): I.Filter[] => {
+	getFilters = (start: number, end: number): I.Filter[] => {
 		const { selectedRelation } = this.state;
 
 		if (!selectedRelation) {
 			return [];
 		};
-
-		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
-		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
 
 		return [
 
@@ -144,29 +142,27 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		];
 	};
 
-	getDotMap = (data: {d: number, m: number, y: number}[], callBack: (res: Map<string, boolean>) => void): void => {
-		if (data.length < 2) {
-			return;
-		};
-
+	getDotMap = (start: number, end: number, callBack: (res: Map<string, boolean>) => void): void => {
 		const { selectedRelation } = this.state;
 
-		const first = data[0];
-		const last = data[data.length - 1];
-
 		U.Data.search({
-			filters: this.getFilters(first, last),
+			filters: this.getFilters(start, end),
 			keys: [ selectedRelation ],
 		}, (message: any) => {
 			const res = new Map();
-			data.forEach(date => {
+
+			eachDayOfInterval({
+				start: fromUnixTime(start),
+				end: fromUnixTime(end)
+			}).forEach(date => {
 				if (message.records.find(rec => {
-					const recDate = U.Date.getCalendarDateParam(rec[selectedRelation]);
-					return (recDate.y == date.y) && (recDate.m == date.m) && (recDate.d == date.d);
+					const recDate = fromUnixTime(rec[selectedRelation]).setHours(0, 0, 0, 0);
+					return isEqual(date, recDate);
 				})) {
-					res.set([ date.d, date.m, date.y ].join('-'), true);
+					res.set(format(date, 'dd-MM-yyyy'), true);
 				};
 			});
+
 			callBack(res);
 		});
 	};

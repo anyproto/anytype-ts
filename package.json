@@ -102,6 +102,7 @@
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
 		"d3-force-cluster": "^0.1.2",
+		"date-fns": "^4.1.0",
 		"diff": "^5.2.0",
 		"dompurify": "3.1.6",
 		"electron-dl": "^1.14.0",

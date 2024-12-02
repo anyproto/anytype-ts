@@ -150,9 +150,13 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { value, getDotMap } = data;
 
 		const items = this.getData();
+		const first = items[0];
+		const last = items[items.length - 1];
 
 		if (getDotMap) {
-			getDotMap(items, dotMap => this.setState({ dotMap }));
+			const startTimestamp = U.Date.timestamp(first.y, first.m, first.d);
+			const endTimestamp = U.Date.timestamp(last.y, last.m, last.d);
+			getDotMap(startTimestamp, endTimestamp, dotMap => this.setState({ dotMap }));
 		};
 
 		this.originalValue = value;
