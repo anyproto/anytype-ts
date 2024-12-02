@@ -17,6 +17,7 @@ const Vault = observer(class Vault extends React.Component {
 	timeoutHover = 0;
 	pressed = new Set();
 	n = -1;
+	sortIds = [];
 
 	constructor (props) {
 		super(props);
@@ -27,7 +28,7 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	render () {
-		const items = U.Menu.getVaultItems();
+		const items = this.getSortedItems();
 
 		const Item = item => {
 			const onContextMenu = item.isButton ? null : e => this.onContextMenu(e, item);
@@ -109,6 +110,18 @@ const Vault = observer(class Vault extends React.Component {
 		win.on('resize.vault', () => this.resize());
 		win.on('keydown.vault', e => this.onKeyDown(e));
 		win.on('keyup.vault', e => this.onKeyUp(e));
+	};
+
+	getSortedItems () {
+		return U.Menu.getVaultItems().sort((c1, c2) => {
+			const i1 = this.sortIds.indexOf(c1.id);
+			const i2 = this.sortIds.indexOf(c2.id);
+
+			if (i1 > i2) return 1; 
+			if (i1 < i2) return -1;
+
+			return 0;
+		});
 	};
 
 	getSpaceItems () {
@@ -307,14 +320,17 @@ const Vault = observer(class Vault extends React.Component {
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const items = U.Space.getList();
+		const items = this.getSortedItems();
 		const item = items[oldIndex];
-		const ids = arrayMove(items.map(it => it.id), oldIndex, newIndex);
+		const ids: string[] = arrayMove(items.map(it => it.id), oldIndex, newIndex);
 
 		console.log('old', oldIndex, 'new', newIndex, item.id);
 		console.log('IDS:', JSON.stringify(ids, null, 3));
 
-		C.SpaceSetOrder(item.id, ids);
+		this.sortIds = ids;
+		this.forceUpdate();
+
+		C.SpaceSetOrder(item.id, ids, () => this.sortIds = []);
 
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
