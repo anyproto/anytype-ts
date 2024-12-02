@@ -1,22 +1,22 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import mermaid from 'mermaid';
-import { useLocalObservable } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { J, S, U } from 'Lib';
 
 interface Props {
 	chart: string;
 };
 
-const MediaMermaid = forwardRef<HTMLDivElement, Props>(({
+const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 	chart = '',
 }, ref) => {
 
 	const nodeRef = useRef(null);
-	const { theme } = useLocalObservable(() => S.Common);
+	const themeClass = S.Common.getThemeClass();
 
 	const init = () => {
-		const themeVariables = (J.Theme[S.Common.getThemeClass()] || {}).mermaid;
+		const themeVariables = (J.Theme[themeClass] || {}).mermaid;
 		if (!themeVariables) {
 			return;
 		};
@@ -63,7 +63,7 @@ const MediaMermaid = forwardRef<HTMLDivElement, Props>(({
 
 		init();
 		drawDiagram();
-	}, [ theme, chart ]);
+	}, [ themeClass, chart ]);
 
 	return (
 		<div ref={nodeRef} className="mermaidWrapper">
@@ -72,6 +72,6 @@ const MediaMermaid = forwardRef<HTMLDivElement, Props>(({
 		</div>
 	);
 
-});
+}));
 
 export default MediaMermaid;

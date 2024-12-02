@@ -42,7 +42,7 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
-	public shareTooltipValue = false;
+	public shareTooltipValue = null;
 	public showVaultValue = null;
 	public hideSidebarValue = null;
 	public showObjectValue = null;
@@ -277,7 +277,7 @@ class CommonStore {
 	};
 
 	get shareTooltip (): boolean {
-		return Boolean(this.shareTooltipValue);
+		return this.boolGet('shareTooltip');
 	};
 
 	get membershipTiers (): I.MembershipTier[] {
@@ -525,7 +525,7 @@ class CommonStore {
 	};
 
 	shareTooltipSet (v: boolean) {
-		this.shareTooltipValue = Boolean(v);
+		this.boolSet('shareTooltip', v);
 	};
 
 	configSet (config: any, force: boolean) {

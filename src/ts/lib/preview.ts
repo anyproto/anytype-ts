@@ -301,28 +301,12 @@ class Preview {
 	};
 
 	/**
-	 * Show the share app tooltip
-	 */
-	shareTooltipShow () {
-		S.Common.shareTooltipSet(true);
-		analytics.event('OnboardingTooltip', { id: 'ShareApp' });
-	};
-
-	/**
-	 * Hide the share app tooltip
-	 */
-	shareTooltipHide () {
-		S.Common.shareTooltipSet(false);
-	};
-
-	/**
 	 * Force hides all tooltips, previews, and toasts.
 	 */
 	hideAll () {
 		this.tooltipHide(true);
 		this.previewHide(true);
 		this.toastHide(true);
-		this.shareTooltipHide();
 	};
 
 };
