@@ -28,6 +28,8 @@ class Analytics {
 		deleted: 'Deleted',
 		banner: 'Banner',
 		widget: 'Widget',
+		addWidget: 'AddWidget',
+		inWidget: 'InWidget',
 		graph: 'Graph',
 		store: 'Library',
 		type: 'Type',
