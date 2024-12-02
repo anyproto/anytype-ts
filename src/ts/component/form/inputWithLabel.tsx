@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Input, Icon, Label } from 'Component';
-import { I, translate } from 'Lib';
+import { Input, Label } from 'Component';
+import { I } from 'Lib';
 
 interface Props {
 	label: string;
