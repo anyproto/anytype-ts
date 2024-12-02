@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button, ShareTooltip } from 'Component';
-import { I, S, U, J, keyboard, analytics, Action, Highlight, translate, Preview } from 'Lib';
+import { I, S, U, J, keyboard, analytics, Action, Highlight, translate } from 'Lib';
 
 class MenuHelp extends React.Component<I.Menu> {
 
