@@ -45,6 +45,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const bodyCn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const hasShareBanner = U.Space.hasShareBanner();
 
 		let content = null;
 
@@ -117,7 +118,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				]);
 			};
 
-			if (U.Space.isShareBanner()) {
+			if (U.Space.hasShareBanner()) {
 				bodyCn.push('withShareBanner');
 			};
 
@@ -125,7 +126,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				<React.Fragment>
 					{space && !space._empty_ ? (
 						<React.Fragment>
-							<ShareBanner onClose={() => this.forceUpdate()} />
+							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
 
 							<DropTarget 
 								{...this.props} 

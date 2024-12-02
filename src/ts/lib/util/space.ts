@@ -173,7 +173,7 @@ class UtilSpace {
 		return S.Common.isOnline && !U.Data.isLocalNetwork();
 	};
 
-	isShareBanner () {
+	hasShareBanner () {
 		const hasShared = !!this.getList().find(it => it.isShared && this.isMyOwner(it.targetSpaceId));
 		const space = this.getSpaceview();
 		const closed = Storage.get('shareBannerClosed');
