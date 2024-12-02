@@ -143,19 +143,7 @@ const Input = forwardRef<InputRef, Props>(({
 		handler: ((e: any, value: string) => void) | undefined,
 		e: React.SyntheticEvent<HTMLInputElement>
 	) => {
-		let val = null;
-		if (e.currentTarget) {
-			val = e.currentTarget.value;
-		} else
-		if (e.target) {
-			val = String($(e.target).val());
-		};
-
-		if (val === null) {
-			console.log('[Input Event] No value to handle!');
-			return;
-		};
-		handler?.(e, val);
+		handler?.(e, String($(e.target || e.currentTarget).val() || ''));
 	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
