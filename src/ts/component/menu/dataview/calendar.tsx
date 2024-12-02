@@ -21,11 +21,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { value, isEmpty, canEdit, canClear = true } = data;
-
 		const { dotMap } = this.state;
-
 		const items = this.getData();
-
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
 
@@ -144,19 +141,10 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 	componentDidMount(): void {
 		const { param } = this.props;
 		const { data } = param;
-		const { value, getDotMap } = data;
-
-		const items = this.getData();
-		const first = items[0];
-		const last = items[items.length - 1];
-
-		if (getDotMap) {
-			const startTimestamp = U.Date.timestamp(first.y, first.m, first.d);
-			const endTimestamp = U.Date.timestamp(last.y, last.m, last.d);
-			getDotMap(startTimestamp, endTimestamp, dotMap => this.setState({ dotMap }));
-		};
+		const { value } = data;
 
 		this.originalValue = value;
+		this.initDotMap();
 		this.forceUpdate();
 	};
 
@@ -170,6 +158,24 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		this.refYear.setValue(y);
 
 		this.props.position();
+	};
+
+	initDotMap () {
+		const { param } = this.props;
+		const { data } = param;
+		const { getDotMap } = data;
+		const items = this.getData();
+
+		if (!getDotMap || !items.length) {
+			return;
+		};
+
+		const first = items[0];
+		const last = items[items.length - 1];
+		const start = U.Date.timestamp(first.y, first.m, first.d);
+		const end = U.Date.timestamp(last.y, last.m, last.d);
+
+		getDotMap(start, end, dotMap => this.setState({ dotMap }));
 	};
 
 	onClick (e: any, item: any) {

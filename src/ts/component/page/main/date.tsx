@@ -88,45 +88,44 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						readonly={true}
 						getDotMap={this.getDotMap}
 					/>
-					{!object._empty_ ?
-					(<React.Fragment>
-						<div className="categories">
-							{relations.map((item) => {
-								const isMention = item.relationKey == RELATION_KEY_MENTION;
-								const icon = isMention ? 'mention' : '';
-								const separator = isMention ? <div className="separator" /> : '';
+					{!object._empty_ ? (
+						<React.Fragment>
+							<div className="categories">
+								{relations.map((item) => {
+									const isMention = item.relationKey == RELATION_KEY_MENTION;
+									const icon = isMention ? 'mention' : '';
+									const separator = isMention ? <div className="separator" /> : '';
 
-								return (
-								<React.Fragment key={item.relationKey}>
-									<Button
-										id={`category-${item.relationKey}`}
-										active={relationKey == item.relationKey}
-										color="blank"
-										className="c36"
-										onClick={() => this.onCategoryClick(item.relationKey)}
-										icon={icon}
-										text={item.name}
-									/>
-									{relations.length > 1 ? separator : ''}
-								</React.Fragment> 
-                );
-							})}
-						</div>
+									return (
+										<React.Fragment key={item.relationKey}>
+											<Button
+												id={`category-${item.relationKey}`}
+												active={relationKey == item.relationKey}
+												color="blank"
+												className="c36"
+												onClick={() => this.onCategoryClick(item.relationKey)}
+												icon={icon}
+												text={item.name}
+											/>
+											{relations.length > 1 ? separator : ''}
+										</React.Fragment> 
+									);
+								})}
+							</div>
 
-            <div className="dateList">
-						<ListObject 
-							ref={ref => this.refList = ref}
-							{...this.props}
-							spaceId={space}
-							subId={SUB_ID} 
-							rootId={rootId}
-							columns={columns}
-							filters={filters}
-							route={analytics.route.screenDate}
-							relationKeys={keys}
-						/>
-					</div>
-					</React.Fragment>): ''}
+							<ListObject 
+								ref={ref => this.refList = ref}
+								{...this.props}
+								spaceId={space}
+								subId={SUB_ID} 
+								rootId={rootId}
+								columns={columns}
+								filters={filters}
+								route={analytics.route.screenDate}
+								relationKeys={keys}
+							/>
+						</React.Fragment>
+					) : ''}
 				</div>
 
 				<Footer component="mainObject" {...this.props} />
@@ -135,23 +134,23 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	getFilters = (start: number, end: number): I.Filter[] => {
-		const { selectedRelation } = this.state;
+		const { relationKey } = this.state;
 
-		if (!selectedRelation) {
+		if (!relationKey) {
 			return [];
 		};
 
 		return [
 
 			{
-				relationKey: selectedRelation,
+				relationKey,
 				condition: I.FilterCondition.GreaterOrEqual,
 				value: start,
 				quickOption: I.FilterQuickOption.ExactDate,
 				format: I.RelationType.Date,
 			},
 			{
-				relationKey: selectedRelation,
+				relationKey,
 				condition: I.FilterCondition.LessOrEqual,
 				value: end,
 				quickOption: I.FilterQuickOption.ExactDate,
@@ -161,22 +160,23 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	getDotMap = (start: number, end: number, callBack: (res: Map<string, boolean>) => void): void => {
-		const { selectedRelation } = this.state;
+		const { relationKey } = this.state;
+		const res = new Map();
+
+		if (!relationKey) {
+			callBack(res);
+			return;
+		};
 
 		U.Data.search({
 			filters: this.getFilters(start, end),
-			keys: [ selectedRelation ],
+			keys: [ relationKey ],
 		}, (message: any) => {
-			const res = new Map();
-
 			eachDayOfInterval({
 				start: fromUnixTime(start),
 				end: fromUnixTime(end)
 			}).forEach(date => {
-				if (message.records.find(rec => {
-					const recDate = fromUnixTime(rec[selectedRelation]).setHours(0, 0, 0, 0);
-					return isEqual(date, recDate);
-				})) {
+				if (message.records.find(rec => isEqual(date, fromUnixTime(rec[relationKey]).setHours(0, 0, 0, 0)))) {
 					res.set(format(date, 'dd-MM-yyyy'), true);
 				};
 			});
