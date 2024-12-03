@@ -1,5 +1,6 @@
 const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
+const fs = require('fs');
 const path = require('path');
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
@@ -70,6 +71,21 @@ class MenuManager {
 							{ label: Util.translate('electronMenuConfigDirectory'), click: () => shell.openPath(Util.defaultUserDataPath()) },
 							{ label: Util.translate('electronMenuLogsDirectory'), click: () => shell.openPath(Util.logPath()) },
 						] 
+					},
+
+					Separator,
+
+					{ 
+						label: Util.translate('electronMenuCustomCss'),
+						click: () => {
+							const fp = path.join(Util.userPath(), 'custom.css');
+
+							if (!fs.existsSync(fp)) {
+								fs.writeFileSync(fp, '');
+							};
+
+							shell.openPath(fp);
+						},
 					},
 
 					Separator,
