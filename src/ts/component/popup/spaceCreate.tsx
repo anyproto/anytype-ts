@@ -120,7 +120,7 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 
 		this.setLoading(true);
 
-		const withChat = U.Common.isChatAllowed();
+		const withChat = U.Object.isAllowedChat();
 		const details = {
 			name,
 			iconOption,
