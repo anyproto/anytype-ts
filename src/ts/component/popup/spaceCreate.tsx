@@ -127,6 +127,8 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 			spaceDashboardId: I.HomePredefinedId.Last,
 		};
 
+		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
+
 		C.WorkspaceCreate(details, I.Usecase.GetStarted, withChat, (message: any) => {
 			this.setLoading(false);
 
