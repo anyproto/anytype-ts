@@ -1,7 +1,7 @@
 import React, { FC, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { S, translate, analytics, Preview } from 'Lib';
+import { S, translate, analytics, Preview, Storage } from 'Lib';
 
 interface Props {
 	route: string;
@@ -13,8 +13,9 @@ const ShareTooltip: FC<Props> = observer(({
 	showOnce = false,
 }) => {
 	const { shareTooltip } = S.Common;
+	const accountId = Storage.get('accountId');
 
-	if (showOnce && shareTooltip) {
+	if ((showOnce && shareTooltip) || !accountId) {
 		return null;
 	};
 
