@@ -561,7 +561,8 @@ class Dataview {
 
 		const { total } = S.Record.getMeta(subId, '');
 		const isDate = relation.format == I.RelationType.Date;
-		const isArrayType = Relation.isArrayType(relation.format);
+
+		const isArray = Relation.isArrayType(relation.format);
 		const needRecords = ![ I.FormulaType.None, I.FormulaType.Count ].includes(formulaType);
 		const records = needRecords ? S.Record.getRecords(subId, [ relationKey ], true) : [];
 
@@ -584,18 +585,15 @@ class Dataview {
 		const float = (v: any): string => {
 			return U.Common.sprintf('%0.3f', U.Common.formatNumber(v)).replace(/\.?0+?$/, '');
 		};
-		const filtered = (isEmpty: boolean) => {
+		const filtered = (filterEmpty: boolean) => {
 			return records.filter(it => {
-				let ret = false;
-
+				let isEmpty = false;
 				if (relationKey == 'name') {
-					ret = it[relationKey] != translate('defaultNamePage');
+					isEmpty = Relation.isEmpty(it[relationKey]) || (it[relationKey] == translate('defaultNamePage'));
 				} else {
-					ret = relation.format == I.RelationType.Checkbox ? 
-						Boolean(it[relationKey]) : 
-						Relation.isEmpty(it[relationKey]);
+					isEmpty = relation.format == I.RelationType.Checkbox ? !it[relationKey] : Relation.isEmpty(it[relationKey]);
 				};
-				return isEmpty ? !ret : ret;
+				return filterEmpty == isEmpty;
 			});
 		};
 
@@ -614,11 +612,14 @@ class Dataview {
 			case I.FormulaType.CountValue: {
 				const items = filtered(false);
 
-				if (isArrayType) {
+				if (isArray || isDate) {
 					const values = new Set();
 
 					items.forEach(it => {
-						values.add(Relation.getArrayValue(it[relationKey]).join(', '));
+						values.add(isDate ? 
+							date(it[relationKey]) : 
+							Relation.getArrayValue(it[relationKey]).sort().join(', ')
+						);
 					});
 
 					ret = values.size;
@@ -632,11 +633,15 @@ class Dataview {
 			case I.FormulaType.CountDistinct: {
 				const items = filtered(false);
 
-				if (isArrayType) {
+				if (isArray || isDate) {
 					const values = new Set();
 
 					items.forEach(it => {
-						Relation.getArrayValue(it[relationKey]).forEach(v => values.add(v));
+						if (isDate) {
+							values.add(date(it[relationKey]));
+						} else {
+							Relation.getArrayValue(it[relationKey]).forEach(v => values.add(v));
+						};
 					});
 
 					ret = values.size;
