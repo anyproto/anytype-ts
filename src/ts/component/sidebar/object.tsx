@@ -317,6 +317,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const template = S.Record.getTemplateType();
 		const limit = this.offset + J.Constant.limit.menuRecords;
 		const fileLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Pdf ];
+		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
 
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
@@ -378,7 +379,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 		};
 
-		if (this.orphan) {
+		if (this.orphan && options.find(it => it.id == I.SortId.Orphan)) {
 			filters = filters.concat([
 				{ relationKey: 'links', condition: I.FilterCondition.Empty, value: null },
 				{ relationKey: 'backlinks', condition: I.FilterCondition.Empty, value: null },
