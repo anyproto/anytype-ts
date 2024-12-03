@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Deleted, ListObject, Button } from 'Component';
+import { Header, Footer, Deleted, ListObject, Button, Icon, Label } from 'Component';
 import { I, C, S, U, J, Action, translate, analytics } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
@@ -66,9 +66,16 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				createdDate: 'creator',
 			};
 
-			filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+		filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
 			keys.push(map[relationKey]);
 		};
+
+		const empty = (<div className="container">
+			<div className="iconWrapper">
+				<Icon />
+			</div>
+			<Label text={translate('pageDateVoidText')} />
+		</div>);
 
 		return (
 			<div ref={node => this.node = node}>
@@ -125,7 +132,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 								relationKeys={keys}
 							/>
 						</React.Fragment>
-					) : ''}
+					) : empty}
 				</div>
 
 				<Footer component="mainObject" {...this.props} />
