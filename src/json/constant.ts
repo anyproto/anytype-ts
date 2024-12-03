@@ -26,7 +26,7 @@ export default {
 	},
 
 	chatSpaceId: [
-		'bafybeiggfewnwhn6tz24qfpauihcjfdiqlhtqep5t6tpk4n4wlocut6n7q',
+		'bafyreiezhzb4ggnhjwejmh67pd5grilk6jn3jt7y2rnfpbkjwekilreola.1t123w9f2lgn5',
 	],
 
 	platforms: {
