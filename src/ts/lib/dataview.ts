@@ -583,7 +583,7 @@ class Dataview {
 			return Math.max(...map.map(it => Number(it || 0)));
 		};
 		const float = (v: any): string => {
-			return U.Common.sprintf('%0.3f', U.Common.formatNumber(v)).replace(/\.?0+?$/, '');
+			return U.Common.formatNumber(U.Common.sprintf('%0.3f', v)).replace(/\.?0+?$/, '');
 		};
 		const filtered = (filterEmpty: boolean) => {
 			return records.filter(it => {
@@ -673,17 +673,17 @@ class Dataview {
 			};
 
 			case I.FormulaType.MathSum: {
-				ret = float(records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0));
+				ret = float(records.reduce((acc, it) => acc + (Number(it[relationKey]) || 0), 0));
 				break;
 			};
 
 			case I.FormulaType.MathAverage: {
-				ret = float(records.reduce((acc, it) => acc + Number(it[relationKey] || 0), 0) / total);
+				ret = float(records.reduce((acc, it) => acc + (Number(it[relationKey]) || 0), 0) / total);
 				break;
 			};
 
 			case I.FormulaType.MathMedian: {
-				const data = records.map(it => Number(it[relationKey] || 0));
+				const data = records.map(it => Number(it[relationKey]) || 0);
 				const n = data.length;
 
 				data.sort((a, b) => a - b);
