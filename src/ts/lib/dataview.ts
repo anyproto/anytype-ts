@@ -586,9 +586,15 @@ class Dataview {
 		};
 		const filtered = (isEmpty: boolean) => {
 			return records.filter(it => {
-				const ret = relation.format == I.RelationType.Checkbox ? 
-					Boolean(it[relationKey]) : 
-					Relation.isEmpty(it[relationKey]);
+				let ret = false;
+
+				if (relationKey == 'name') {
+					ret = it[relationKey] != translate('defaultNamePage');
+				} else {
+					ret = relation.format == I.RelationType.Checkbox ? 
+						Boolean(it[relationKey]) : 
+						Relation.isEmpty(it[relationKey]);
+				};
 				return isEmpty ? !ret : ret;
 			});
 		};
