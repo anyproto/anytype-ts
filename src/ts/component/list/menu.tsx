@@ -7,13 +7,13 @@ interface Props {
 	history: any;
 };
 
-const ListMenu: FC<Props> = observer(({ history }) => {
+const ListMenu: FC<Props> = observer(() => {
 	const { list } = S.Menu;
 
 	return (
 		<div className="menus">
 			{list.map((item: I.Menu) => (
-				<Menu history={history} key={item.id} {...item} />
+				<Menu key={item.id} {...item} />
 			))}
 			<div id="menu-polygon" />
 		</div>
