@@ -135,7 +135,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 			onSelect: (e: any, item: any) => {
 				if (item.id !== '') {
 					if (isMultiple) {
-						val = value.includes(item.id) ? value.filter(it => it != item.id) : [ ...value, item.id ];
+						val = val.includes(item.id) ? val.filter(it => it != item.id) : [ ...val, item.id ];
 					} else {
 						val = [ item.id ];
 					};
@@ -146,13 +146,13 @@ const Select = forwardRef<SelectRefProps, Props>(({
 				setValueHandler(val);
 
 				if (onChange) {
-					onChange(getValue());
+					onChange(val);
 				};
 
 				if (!isMultiple) {
 					hide();
 				} else {
-					S.Menu.updateData('select', { value });
+					S.Menu.updateData('select', { value: val });
 				};
 			},
 		}, mp.data || {});
