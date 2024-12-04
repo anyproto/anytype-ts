@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Label, EmailCollectionForm } from 'Component';
+import { Button, Icon, Label, EmailCollection } from 'Component';
 import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -90,7 +90,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 					/>
 				) : ''}
 				{withEmailForm ? (
-					<EmailCollectionForm onStepChange={position} onComplete={() => close()} />
+					<EmailCollection onStepChange={position} onComplete={() => close()} />
 				) : ''}
 
 				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
