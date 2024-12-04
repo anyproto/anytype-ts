@@ -25,7 +25,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		super(props);
 
 		this.onOpen = this.onOpen.bind(this);
-		this.onClose = this.onClose.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -42,7 +41,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			return <div />;
 		};
 
-		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
+		const cn = [ 'cellFoot' ];
 		const formulaType = this.getFormulaType();
 		const option: any = this.getOption() || {};
 		const name = option.short || option.name || '';
@@ -137,7 +136,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				element: `#${id}`,
 				horizontal: I.MenuDirection.Center,
 				onOpen: this.onOpen,
-				onClose: this.onClose,
 				subIds: [ 'select2' ],
 				data: {
 					options,
@@ -163,10 +161,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		window.setTimeout(() => this.onMouseEnter(), 10);
 
 		analytics.event('ClickGridFormula', { format: relation.format, objectType: object.type });
-	};
-
-	onClose () {
-		$(`.cellKeyHover`).removeClass('cellKeyHover');
 	};
 
 	onOver (e: any, item: any) {
