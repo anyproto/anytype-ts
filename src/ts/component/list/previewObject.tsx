@@ -53,7 +53,7 @@ class ListObjectPreview extends React.Component<Props> {
 
 				<div className="scroller">
 					<div className="heading">
-						<div className="name">Blank</div>
+						<div className="name">{translate('commonBlank')}</div>
 					</div>
 				</div>
 				<div className="border" />
