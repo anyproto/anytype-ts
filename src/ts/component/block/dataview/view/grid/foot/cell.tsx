@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, S, C, U, keyboard, Relation, Dataview, analytics, translate, Preview } from 'Lib';
+import { I, S, C, U, keyboard, Relation, Dataview, analytics, Preview } from 'Lib';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
