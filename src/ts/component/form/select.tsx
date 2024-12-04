@@ -209,12 +209,12 @@ const Select = forwardRef<SelectRefProps, Props>(({
 			onMouseEnter={onMouseEnter}
 		>
 			{current ? (
-				<React.Fragment>
+				<>
 					{current.map((item: any, i: number) => (
 						<MenuItemVertical key={i} {...item} />
 					))}
 					<Icon className={acn.join(' ')} />
-				</React.Fragment>
+				</>
 			) : ''}
 		</div>
 	);
