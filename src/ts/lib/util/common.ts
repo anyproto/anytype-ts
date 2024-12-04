@@ -578,7 +578,7 @@ class UtilCommon {
 					text: translate('popupConfirmObjectOpenErrorText'),
 					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
 					onConfirm: () => {
-						C.DebugTree(rootId, logPath, (message: any) => {
+						C.DebugTree(rootId, logPath, false, (message: any) => {
 							if (!message.error.code) {
 								Renderer.send('openPath', logPath);
 							};

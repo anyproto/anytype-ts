@@ -1883,11 +1883,12 @@ export const UnsplashDownload = (spaceId: string, id: string, callBack?: (messag
 
 // ---------------------- DEBUG ---------------------- //
 
-export const DebugTree = (objectId: string, path: string, callBack?: (message: any) => void) => {
+export const DebugTree = (objectId: string, path: string, unanonymized: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.Tree.Request();
 
 	request.setTreeid(objectId);
 	request.setPath(path);
+	request.setUnanonymized(unanonymized);
 
 	dispatcher.request(DebugTree.name, request, callBack);
 };
