@@ -65,6 +65,14 @@ export interface Menu {
 	close? (callBack?: () => void): void;
 };
 
+export interface MenuRef {
+	rebind: () => void,
+	unbind: () => void,
+	getItems: () => any[];
+	getIndex: () => number,
+	setIndex: (i: number) => void,
+};
+
 export interface MenuItem {
 	id?: string;
 	icon?: string;
@@ -85,6 +93,7 @@ export interface MenuItem {
 	options?: I.Option[];
 	selectMenuParam?: any;
 	isActive?: boolean;
+	isDiv?: boolean;
 	withDescription?: boolean;
 	withSwitch?: boolean;
 	withSelect?: boolean;
