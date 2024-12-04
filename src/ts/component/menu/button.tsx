@@ -1,59 +1,18 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I } from 'Lib';
 
-const MenuButton = observer(class MenuButton extends React.Component<I.Menu> {
+const MenuButton = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+	const { param, close } = props;
+	const { data } = param;
+	const { disabled, onSelect, noClose } = data;
 
-	_isMounted = false;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onSelect = this.onSelect.bind(this);
+	const getItems = () => {
+		return props.param.data.options || [];
 	};
 	
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { disabled } = data;
-		const items = this.getItems();
-
-		return (
-			<div className="items">
-				{items.map((item: any, i: number) => (
-					<MenuItemVertical 
-						key={i}
-						{...item} 
-						className={disabled ? 'disabled' : ''}
-						onClick={e => this.onSelect(e, item)} 
-					/>
-				))}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-	
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { options } = data;
-		
-		return options || [];
-	};
-	
-	onSelect (e: any, item: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { disabled, onSelect, noClose } = data;
-
+	const onClick = (e: any, item: any) => {
 		if (!noClose) {
 			close();
 		};
@@ -63,6 +22,20 @@ const MenuButton = observer(class MenuButton extends React.Component<I.Menu> {
 		};
 	};
 
-});
+	const items = getItems();
+
+	return (
+		<div className="items">
+			{items.map((item: any, i: number) => (
+				<MenuItemVertical 
+					key={i}
+					{...item} 
+					className={disabled ? 'disabled' : ''}
+					onClick={e => onClick(e, item)} 
+				/>
+			))}
+		</div>
+	);
+}));
 
 export default MenuButton;
