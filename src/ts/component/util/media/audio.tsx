@@ -119,6 +119,9 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 	const onTime = (v: number) => {
 		const ref = audioRef.current;
+		if (!ref) {
+			return;
+		};
 
 		if (!ref.paused) {
 			pause();
@@ -145,6 +148,11 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const onTimeUpdate = () => {
 		const audio = audioRef.current;
 		const ref = timeRef.current;
+
+		if (!ref || !audio) {
+			return;
+		};
+
 		const { m, s } = getTime(isPlaying.current ? audio.currentTime : audio.duration);
 
 		$(timeTextRef.current).text(`${U.Common.sprintf('%02d', m)}:${U.Common.sprintf('%02d', s)}`);
