@@ -95,6 +95,7 @@ import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 import EmailCollectionForm from './util/emailCollectionForm';
+import Floater from './util/floater';
 
 export {
 	Page,
@@ -190,4 +191,5 @@ export {
 	FooterAuthDisclaimer,
 
 	EmailCollectionForm,
+	Floater,
 };
