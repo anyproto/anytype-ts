@@ -56,7 +56,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	const resize = () => {
-		timeRef.current.resize();
+		timeRef.current?.resize();
 	};
 
 	const onResize = () => {
@@ -163,12 +163,16 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	useEffect(() => {
-		resizeObserver.observe(nodeRef.current);
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
 		setCurrent(playlist[0]);
 
 		return () => {
 			unbind();
-			resizeObserver.unobserve(nodeRef.current);
+			if (nodeRef.current) {
+				resizeObserver.unobserve(nodeRef.current)
+			};
 		};
 	});
 
