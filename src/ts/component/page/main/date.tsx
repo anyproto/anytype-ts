@@ -43,59 +43,51 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 
 		const relation = S.Record.getRelationByKey(relationKey);
-		if (!relation) {
-			return null;
-		};
 
-		const columns: any[] = [
-			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
-			{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
-		];
-		const keys = relations.map(it => it.relationKey);
+		const isEmpty = !relation || object._empty_;
 
-		const filters: I.Filter[] = [];
+		if (!isEmpty) {
+			const columns: any[] = [
+				{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
+				{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
+			];
 
-		if (relation.format == I.RelationType.Object) {
-			filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
-		} else {
-			filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
-		};
+			const keys = relations.map(it => it.relationKey);
 
-		if ([ 'createdDate' ].includes(relationKey)) {
-			const map = {
-				createdDate: 'creator',
+			const filters: I.Filter[] = [];
+
+			if (relation.format == I.RelationType.Object) {
+				filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
+			} else {
+				filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
 			};
 
-		filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
-			keys.push(map[relationKey]);
-		};
+			if ([ 'createdDate' ].includes(relationKey)) {
+				const map = {
+					createdDate: 'creator',
+				};
 
-		const empty = (<div className="container">
-			<div className="iconWrapper">
-				<Icon />
-			</div>
-			<Label text={translate('pageDateVoidText')} />
-		</div>);
-
-		return (
-			<div ref={node => this.node = node}>
-				<Header 
-					{...this.props} 
-					component="mainObject" 
-					ref={ref => this.refHeader = ref} 
-					rootId={rootId} 
-				/>
-
-				<div className="blocks wrapper">
-					<HeadSimple 
+			filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+				keys.push(map[relationKey]);
+			};
+			return (
+				<div ref={node => this.node = node}>
+					<Header
 						{...this.props} 
-						noIcon={true}
-						ref={ref => this.refHead = ref} 
+						component="mainObject"
+						ref={ref => this.refHeader = ref}
 						rootId={rootId} 
-						readonly={true}
-						getDotMap={this.getDotMap}
 					/>
-					{!object._empty_ ? (
+
+					<div className="blocks wrapper">
+						<HeadSimple
+							{...this.props}
+							noIcon={true}
+							ref={ref => this.refHead = ref}
+							rootId={rootId}
+							readonly={true}
+							getDotMap={this.getDotMap}
+						/>
 						<React.Fragment>
 							<div className="categories">
 								{relations.map((item) => {
@@ -115,16 +107,16 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 												text={item.name}
 											/>
 											{relations.length > 1 ? separator : ''}
-										</React.Fragment> 
+										</React.Fragment>
 									);
 								})}
 							</div>
 
-							<ListObject 
+							<ListObject
 								ref={ref => this.refList = ref}
 								{...this.props}
 								spaceId={space}
-								subId={SUB_ID} 
+								subId={SUB_ID}
 								rootId={rootId}
 								columns={columns}
 								filters={filters}
@@ -132,7 +124,38 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 								relationKeys={keys}
 							/>
 						</React.Fragment>
-					) : empty}
+					</div>
+
+					<Footer component="mainObject" {...this.props} />
+				</div>
+			);
+
+		}
+
+		return (
+			<div ref={node => this.node = node}>
+				<Header
+					{...this.props}
+					component="mainObject"
+					ref={ref => this.refHeader = ref}
+					rootId={rootId}
+				/>
+
+				<div className="blocks wrapper">
+					<HeadSimple
+						{...this.props}
+						noIcon={true}
+						ref={ref => this.refHead = ref}
+						rootId={rootId}
+						readonly={true}
+						getDotMap={this.getDotMap}
+					/>
+					<div className="container">
+						<div className="iconWrapper">
+							<Icon />
+						</div>
+						<Label text={translate('pageDateVoidText')} />
+					</div>
 				</div>
 
 				<Footer component="mainObject" {...this.props} />
