@@ -34,22 +34,16 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { relationKey, rootId, block, getView } = this.props;
+		const { relationKey, rootId, block } = this.props;
 		const { result } = this.state;
 		const relation = S.Record.getRelationByKey(relationKey);
-		const view = getView();
 
-		if (!relation || !view) {
-			return <div />;
-		};
-
-		// Subscriptions
-		const viewRelation = view.getRelation(relationKey);
-		if (!viewRelation) {
+		if (!relation) {
 			return <div />;
 		};
 
 		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
+		const formulaType = this.getFormulaType();
 		const option: any = this.getOption() || {};
 		const name = option.short || option.name || '';
 		const subId = S.Record.getSubId(rootId, block.id);
@@ -69,17 +63,12 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			>
 				<div className="cellContent" onClick={this.onSelect}>
 					<div className="flex">
-						{viewRelation.formulaType == I.FormulaType.None ? (
-							<div className="select">
-								<div className="name">{translate('commonCalculate')}</div>
-								<Icon className="arrow light" />
-							</div>
-						) : (
+						{formulaType != I.FormulaType.None ? (
 							<div className="result">
 								<span className="name">{name}</span>
 								<span className="value">{result}</span>
 							</div>
-						)}
+						) : ''}
 					</div>
 				</div>
 			</div>
@@ -123,23 +112,25 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			return null;
 		};
 
-		const viewRelation = view.getRelation(relationKey);
-		if (!viewRelation) {
-			return null;
-		};
-
+		const formulaType = this.getFormulaType();
 		const relation = S.Record.getRelationByKey(relationKey);
+
 		if (!relation) {
 			return null;
 		};
 
-		return Relation.formulaByType(relationKey, relation.format).find(it => it.id == String(viewRelation.formulaType));
+		return Relation.formulaByType(relationKey, relation.format).find(it => it.id == String(formulaType));
 	};
 
 	onSelect (e: any) {
-		const { relationKey } = this.props;
+		const { relationKey, getView } = this.props;
 		const id = Relation.cellId('foot', relationKey, '');
 		const options = U.Menu.getFormulaSections(relationKey);
+		const formulaType = this.getFormulaType();
+
+		if (formulaType == I.FormulaType.None) {
+			return;
+		};
 
 		S.Menu.closeAll([], () => {
 			S.Menu.open('select', {
@@ -232,6 +223,12 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			return;
 		};
 
+		const formulaType = this.getFormulaType();
+
+		if (formulaType == I.FormulaType.None) {
+			return;
+		};
+
 		const node = $(this.node);
 
 		node.addClass('hover');
@@ -253,6 +250,18 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	onMouseLeave () {
 		$(this.node).removeClass('hover');
 		Preview.tooltipHide();
+	};
+
+	getFormulaType (): I.FormulaType {
+		const { relationKey, getView } = this.props;
+		const view = getView();
+
+		if (!view) {
+			return I.FormulaType.None;
+		};
+
+		const viewRelation = view.getRelation(relationKey);
+		return viewRelation ? viewRelation.formulaType : I.FormulaType.None;
 	};
 
 });
