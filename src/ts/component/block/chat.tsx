@@ -512,22 +512,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToMessage (id: string) {
-		window.setTimeout(() => {
-			const container = U.Common.getScrollContainer(this.props.isPopup);
-			const top = this.getMessageScrollOffset(id);
+		const container = U.Common.getScrollContainer(this.props.isPopup);
+		const top = this.getMessageScrollOffset(id);
 
-			container.get(0).scrollTo({ top });
-		}, 50);
+		container.get(0).scrollTo({ top });
 	};
 
 	scrollToBottom () {
-		window.setTimeout(() => {
-			const { isPopup } = this.props;
-			const container = U.Common.getScrollContainer(isPopup);
-			const height = isPopup ? container.get(0).scrollHeight : document.body.scrollHeight;
+		const { isPopup } = this.props;
+		const container = U.Common.getScrollContainer(isPopup);
+		const height = isPopup ? container.get(0).scrollHeight : document.body.scrollHeight;
 
-			container.get(0).scrollTo({ top: height + 10000 });
-		}, 50);
+		container.get(0).scrollTo({ top: height + 10000 });
 	};
 
 	onThread (id: string) {

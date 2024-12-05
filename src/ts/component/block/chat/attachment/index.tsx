@@ -202,6 +202,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				src={this.src}
 				onClick={this.onPreview}
 				onDragStart={e => e.preventDefault()} 
+				style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
 			/>
 		);
 	};
