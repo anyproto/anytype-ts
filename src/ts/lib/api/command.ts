@@ -2214,7 +2214,7 @@ export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOr
 
 	request.setChatobjectid(objectId);
 	request.setBeforeorderid(beforeOrderId);
-	request.setAfterorderid(afterOrderId);
+	//request.setAfterorderid(afterOrderId);
 	request.setLimit(limit);
 
 	dispatcher.request(ChatGetMessages.name, request, callBack);
