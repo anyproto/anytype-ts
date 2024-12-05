@@ -1,7 +1,7 @@
 import React, { FC, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { S, translate, analytics, Preview } from 'Lib';
+import { S, translate, analytics } from 'Lib';
 
 interface Props {
 	route: string;

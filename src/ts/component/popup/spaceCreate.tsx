@@ -32,12 +32,8 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 	};
 
 	render () {
-		const { error, iconOption, isLoading } = this.state;
-		const space = {
-			name: this.refName?.getValue(),
-			layout: I.ObjectLayout.SpaceView,
-			iconOption,
-		};
+		const { error, isLoading } = this.state;
+		const object = this.getObject();
 
 		return (
 			<React.Fragment>
@@ -50,7 +46,7 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 					<IconObject
 						ref={ref => this.refIcon = ref}
 						size={96}
-						object={space}
+						object={object}
 						canEdit={false}
 						menuParam={{ horizontal: I.MenuDirection.Center }}
 						onClick={this.onIcon}
@@ -91,9 +87,19 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 	};
 
 	onChange (e: any, v: string) {
+		const object = this.getObject();
+
 		if (this.refIcon) {
-			this.refIcon.props.object.name = v;
-			this.refIcon.forceUpdate();
+			object.name = v;
+			this.refIcon.setObject(object);
+		};
+	};
+
+	getObject () {
+		return {
+			name: this.refName?.getValue(),
+			layout: I.ObjectLayout.SpaceView,
+			iconOption: this.state.iconOption,
 		};
 	};
 
