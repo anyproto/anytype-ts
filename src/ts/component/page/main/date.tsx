@@ -91,21 +91,17 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 								{relations.map((item) => {
 									const isMention = item.relationKey == RELATION_KEY_MENTION;
 									const icon = isMention ? 'mention' : '';
-									const separator = isMention ? <div className="separator" /> : '';
 
 									return (
-										<React.Fragment key={item.relationKey}>
-											<Button
-												id={`category-${item.relationKey}`}
-												active={relationKey == item.relationKey}
-												color="blank"
-												className="c36"
-												onClick={() => this.onCategoryClick(item.relationKey)}
-												icon={icon}
-												text={item.name}
-											/>
-											{relations.length > 1 ? separator : ''}
-										</React.Fragment>
+										<Button
+											id={`category-${item.relationKey}`}
+											active={relationKey == item.relationKey}
+											color="blank"
+											className="c36"
+											onClick={() => this.onCategoryClick(item.relationKey)}
+											icon={icon}
+											text={item.name}
+										/>
 									);
 								})}
 							</div>
