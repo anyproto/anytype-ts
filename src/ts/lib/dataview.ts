@@ -583,7 +583,7 @@ class Dataview {
 			return Math.max(...map.map(it => Number(it || 0)));
 		};
 		const float = (v: any): string => {
-			return U.Common.formatNumber(U.Common.sprintf('%0.3f', v)).replace(/\.?0+?$/, '');
+			return U.Common.formatNumber(U.Common.sprintf('%0.3f', v)).replace(/\.0+?$/, '');
 		};
 		const filtered = (filterEmpty: boolean) => {
 			return records.filter(it => {
