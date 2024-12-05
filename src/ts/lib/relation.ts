@@ -110,6 +110,11 @@ class Relation {
 	};
 
 	public formulaByType (relationKey: string, type: I.RelationType): { id: string, name: string, short?: string, section: I.FormulaSection }[] {
+		const relation = S.Record.getRelationByKey(relationKey);
+		if (!relation) {
+			return [];
+		};
+
 		const isArrayType = this.isArrayType(type);
 		const skipEmptyKeys = [
 			'type', 
@@ -122,9 +127,6 @@ class Relation {
 			I.FormulaType.CountNotEmpty,
 			I.FormulaType.PercentEmpty,
 			I.FormulaType.PercentNotEmpty,
-		];
-		const skipUniqueKeys = [
-			'type',
 		];
 		const skipUnique = [
 			I.FormulaType.CountValue,
@@ -189,7 +191,7 @@ class Relation {
 		if (skipEmptyKeys.includes(relationKey)) {
 			ret = ret.filter(it => !skipEmpty.includes(it.id));
 		};
-		if (skipUniqueKeys.includes(relationKey)) {
+		if (relation.maxCount == 1) {
 			ret = ret.filter(it => !skipUnique.includes(it.id));
 		};
 		if (!isArrayType) {
