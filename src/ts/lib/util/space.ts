@@ -64,6 +64,9 @@ class UtilSpace {
 		if (id == I.HomePredefinedId.Graph) {
 			ret = this.getGraph();
 		} else
+		if (id == I.HomePredefinedId.Chat) {
+			ret = this.getChat();
+		} else
 		if (id == I.HomePredefinedId.Last) {
 			ret = this.getLastOpened();
 		} else {
@@ -76,11 +79,14 @@ class UtilSpace {
 		return ret;
 	};
 
+	getSystemDashboardIds () {
+		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last ];
+	};
+
 	getGraph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
 			name: translate('commonGraph'), 
-			iconEmoji: ':earth_americas:',
 			layout: I.ObjectLayout.Graph,
 		};
 	};
@@ -89,6 +95,14 @@ class UtilSpace {
 		return { 
 			id: I.HomePredefinedId.Last,
 			name: translate('spaceLast'),
+		};
+	};
+
+	getChat () {
+		return { 
+			id: S.Block.workspace,
+			name: translate('commonChat'),
+			layout: I.ObjectLayout.Chat,
 		};
 	};
 

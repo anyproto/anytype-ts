@@ -594,8 +594,10 @@ class UtilMenu {
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
+					{ id: I.HomePredefinedId.Chat, name: translate('commonChat') },
 					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
 					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
+
 				],
 				onOver: (e: any, item: any) => {
 					if (!menuContext) {
@@ -639,6 +641,7 @@ class UtilMenu {
 
 					switch (item.id) {
 						case I.HomePredefinedId.Graph:
+						case I.HomePredefinedId.Chat:
 						case I.HomePredefinedId.Last: {
 							onSelect({ id: item.id }, false);
 

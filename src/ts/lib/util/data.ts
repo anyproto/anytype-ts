@@ -289,6 +289,7 @@ class UtilData {
 
 	createSubSpaceSubscriptions (ids: string[], callBack?: () => void) {
 		const { account } = S.Auth;
+		const skipIds = U.Space.getSystemDashboardIds();
 
 		if (!account) {
 			if (callBack) {
@@ -317,7 +318,7 @@ class UtilData {
 				U.Space.getParticipantId(space.targetSpaceId, account.id),
 			];
 
-			if (![ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId)) {
+			if (!skipIds.includes(space.spaceDashboardId)) {
 				ids.push(space.spaceDashboardId);
 			};
 
