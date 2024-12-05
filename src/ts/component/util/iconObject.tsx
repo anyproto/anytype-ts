@@ -136,7 +136,15 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	const theme = S.Common.getThemeClass();
 	const nodeRef = useRef(null);
 	const checkboxRef = useRef(null);
-	const [ object, setObject ] = useState({} as any);
+	
+	let object: any = getObject ? getObject() : props.object || {};
+
+	const [ stateObject, setStateObject ] = useState(null);
+
+	if (stateObject) {
+		object = Object.assign(object, stateObject || {});
+	};
+
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
 	const { id, name, iconEmoji, iconImage, iconOption, done, relationFormat, isDeleted } = object || {};
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
@@ -284,13 +292,12 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	const iconName = () => {
-		let name = String(object.name || translate('defaultNamePage'));
-		name = U.Smile.strip(name);
-		name = name.trim().substring(0, 1).toUpperCase();
-		name = U.Common.htmlSpecialChars(name);
-
-		return name;
+	const iconName = (): string => {
+		let ret = String(name || translate('defaultNamePage'));
+		ret = U.Smile.strip(ret);
+		ret = ret.trim().substring(0, 1).toUpperCase();
+		ret = U.Common.htmlSpecialChars(ret);
+		return ret;
 	};
 
 	const defaultIcon = (type: string) => {
@@ -443,12 +450,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		icon = <img src={Ghost} className={[ 'iconCommon', `c${iconSize}` ].join(' ')} />;
 	};
 
-	useEffect(() => {
-		setObject((getObject ? getObject() : props.object) || {});
-	}, []);
-
 	useImperativeHandle(ref, () => ({
-		setObject,
+		setObject: object => setStateObject(object),
 	}));
 
 	if (!icon) {
