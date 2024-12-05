@@ -277,7 +277,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup, match } = this.props;
 
 		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
+		if (isPopup && (match?.params?.id == this.id)) {
 			close = false;
 		};
 		if (keyboard.isCloseDisabled) {
