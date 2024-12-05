@@ -127,7 +127,7 @@ class Relation {
 			'type',
 		];
 		const skipUnique = [
-			I.FormulaType.CountDistinct,
+			I.FormulaType.CountValue,
 		];
 
 		const common = [
