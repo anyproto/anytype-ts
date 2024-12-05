@@ -28,6 +28,14 @@ class ChatStore {
 		this.set(rootId, list);
 	};
 
+	append (rootId: string, add: I.ChatMessage[]): void {
+		add = add.map(it => new M.ChatMessage(it));
+
+		const list = this.getList(rootId);
+		list.push(...add);
+		this.set(rootId, list);
+	};
+
 	add (rootId: string, idx: number, param: I.ChatMessage): void {
 		const list = this.getList(rootId);
 		const item = this.getMessage(rootId, param.id);
