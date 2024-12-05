@@ -198,7 +198,7 @@ class Relation {
 			ret = ret.filter(it => ![ I.FormulaType.CountValue ].includes(it.id));
 		};
 
-		return ret.map(it => ({ ...it, id: String(it.id)}));
+		return U.Menu.prepareForSelect(ret);
 	};
 
 	public filterConditionsDictionary () {

@@ -390,7 +390,7 @@ class UtilMenu {
 				break;
 			};
 		};
-		return options.map(id => ({ id: String(id), name: id }));
+		return this.prepareForSelect(options.map(id => ({ id, name: id })));
 	};
 
 	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
@@ -1087,7 +1087,11 @@ class UtilMenu {
 			{ id: I.FormulaSection.Date, name: translate('formulaDate'), arrow: true },
 		].filter(s => {
 			return options.filter(it => it.section == s.id).length;
-		})).map(it => ({ ...it, id: String(it.id), checkbox: false }));
+		})).map(it => ({ ...it, checkbox: false }));
+	};
+
+	prepareForSelect (a: any[]) {
+		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
 };

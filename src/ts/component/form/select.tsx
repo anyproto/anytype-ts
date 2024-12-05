@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
-import { I, S, Relation } from 'Lib';
+import { I, S, U, Relation } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 
 interface Props {
@@ -131,7 +131,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 			noFilter,
 			noClose: true,
 			value,
-			options,
+			options: U.Menu.prepareForSelect(options),
 			onSelect: (e: any, item: any) => {
 				if (item.id !== '') {
 					if (isMultiple) {
