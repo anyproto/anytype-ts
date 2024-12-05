@@ -665,7 +665,7 @@ class UtilCommon {
 	};
 
 	searchParam (url: string): any {
-		const a = url.replace(/^\?/, '').split('&');
+		const a = String(url || '').replace(/^\?/, '').split('&');
 		const param: any = {};
 		
 		a.forEach((s) => {
