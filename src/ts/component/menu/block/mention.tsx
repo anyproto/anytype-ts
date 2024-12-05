@@ -265,7 +265,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
-			skipLayoutFormat: [ I.ObjectLayout.Date ],
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });

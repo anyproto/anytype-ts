@@ -533,9 +533,9 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = S.Detail.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt' ], true);
+				const object = S.Detail.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt', 'timestamp' ], true);
 
-				if (object._empty_ || U.Object.isDateLayout(object.layout)) {
+				if (object._empty_) {
 					continue;
 				};
 

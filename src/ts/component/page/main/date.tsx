@@ -51,7 +51,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			];
 
 			const keys = relations.map(it => it.relationKey);
-
 			const filters: I.Filter[] = [];
 
 			if (relation.format == I.RelationType.Object) {
@@ -65,7 +64,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 					createdDate: 'creator',
 				};
 
-			filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+				filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
 				keys.push(map[relationKey]);
 			};
 			return (
