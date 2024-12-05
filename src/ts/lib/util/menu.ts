@@ -594,11 +594,10 @@ class UtilMenu {
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
-					{ id: I.HomePredefinedId.Chat, name: translate('commonChat') },
+					(U.Object.isAllowedChat() ? { id: I.HomePredefinedId.Chat, name: translate('commonChat') } : null),
 					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
 					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-
-				],
+				].filter(it => it),
 				onOver: (e: any, item: any) => {
 					if (!menuContext) {
 						return;
