@@ -23,15 +23,16 @@
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
 		.icon.options { background-image: url('~img/icon/widget/options.svg'); }
-		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
+		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); display: none; }
 		.icon.plus { background-image: url('~img/icon/widget/plus.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; position: relative; z-index: 2; }
-		.buttons.active { display: flex; } 
+		.buttons.active { display: flex; }
 	}
 	.head:hover {
 		.iconWrap.back { background-color: var(--color-shape-highlight-medium); }
+		.buttons { display: flex; }
 	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
@@ -79,8 +80,10 @@
 	.head { padding-right: 8px; }
 	.head {
 		.clickable { width: calc(100% - 60px); }
-		.buttons { display: flex; }
 		.iconWrap.options { background-color: var(--color-shape-highlight-medium); }
+
+		.iconObject.widgetHeadIcon { display: none; }
+		.icon.collapse { display: block; }
 	}
 }
 
@@ -100,7 +103,8 @@
 
 .widget.widgetLink {
 	.head { padding-bottom: 12px; }
-	.iconWrap.collapse { display: none; }
+	.icon.collapse { display: none !important; }
+	.iconObject.widgetHeadIcon { display: block !important; }
 }
 .widget.widgetLink:hover {
 	.head > .flex > .clickable { width: calc(100% - 36px); }

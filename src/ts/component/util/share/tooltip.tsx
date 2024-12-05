@@ -13,9 +13,9 @@ const ShareTooltip: FC<Props> = observer(({
 	showOnce = false,
 }) => {
 	const { shareTooltip } = S.Common;
-	const accountId = Storage.get('accountId');
+	const { account } = S.Auth;
 
-	if ((showOnce && shareTooltip) || !accountId) {
+	if ((showOnce && shareTooltip) || !account) {
 		return null;
 	};
 
