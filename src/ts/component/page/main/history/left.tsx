@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Block } from 'Component';
+import { Header, Block, HeadSimple } from 'Component';
 import { I, M, S, U, translate } from 'Lib';
-import HeadSimple from 'Component/page/elements/head/simple';
 
 interface Props extends I.PageComponent {
 	rootId: string;

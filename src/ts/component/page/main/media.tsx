@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted } from 'Component';
+import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
 import { I, C, S, M, U, Action, translate, Relation, analytics } from 'Lib';
-import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isLoading: boolean;

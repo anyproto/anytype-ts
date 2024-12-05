@@ -28,6 +28,8 @@
 
 	.container { text-align: center; align-content: center; height: calc(100vh - 228px); }
 
+	#loader { position: fixed; top: 50%; transform: translateY(-50%); }
+
 	.wrapper {
 		.iconWrapper {
 			display: flex; width: 320px; height: 104px; border-radius: 320px; margin: 0px auto 10px; align-items: center; justify-content: space-around;

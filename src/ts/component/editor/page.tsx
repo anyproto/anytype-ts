@@ -3,9 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { Icon, Loader, Deleted, DropTarget } from 'Component';
+import { Icon, Loader, Deleted, DropTarget, EditorControls } from 'Component';
 import { I, C, S, U, J, Key, Preview, Mark, focus, keyboard, Storage, Action, translate, analytics, Renderer, sidebar } from 'Lib';
-import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 
@@ -98,7 +97,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				id="editorWrapper"
 				className="editorWrapper"
 			>
-				<Controls 
+				<EditorControls 
 					ref={ref => this.refControls = ref} 
 					key="editorControls" 
 					{...this.props} 

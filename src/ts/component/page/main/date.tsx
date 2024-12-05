@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Deleted, ListObject, Button, Icon, Label } from 'Component';
+import { Header, Footer, Deleted, ListObject, Button, Icon, Label, Loader, HeadSimple } from 'Component';
 import { I, C, S, U, J, Action, translate, analytics } from 'Lib';
-import HeadSimple from 'Component/page/elements/head/simple';
 import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 interface State {
@@ -24,7 +23,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	refHead: any = null;
 	refList: any = null;
 	refCalIcon: any = null;
-	loading = false;
 	timeout = 0;
 
 	state = {
@@ -47,7 +45,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		let content = null;
-		if (!isLoading && !relations.length || !relation) {
+		if (isLoading) {
+			content = <Loader id="loader" />
+		} else
+		if (!relations.length || !relation) {
 			content = (
 				<div className="container">
 					<div className="iconWrapper">
@@ -280,6 +281,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
         const { space, config } = S.Common;
 		const { relationKey } = this.state;
         const rootId = this.getRootId();
+
+		this.setState({ isLoading: true });
 
         C.RelationListWithValue(space, rootId, (message: any) => {
             const relations = (message.relations || []).map(it => S.Record.getRelationByKey(it.relationKey)).filter(it => {

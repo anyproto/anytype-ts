@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
+import { Header, Footer, Loader, ListObject, Deleted, HeadSimple } from 'Component';
 import { I, C, S, U, Action, translate, analytics } from 'Lib';
-import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isDeleted: boolean;
