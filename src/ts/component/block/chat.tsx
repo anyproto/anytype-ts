@@ -22,6 +22,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	deps: string[] = null;
 	replies: string[] = null;
 	isLoaded = false;
+	isLoading = false;
 	messageRefs: any = {};
 	timeoutInterface = 0;
 	top = 0;
@@ -224,11 +225,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	loadMessages (dir: number, clear: boolean, callBack?: () => void) {
-		console.log('loadMessages', dir, clear);
-
 		const rootId = this.getRootId();
 
-		if (!rootId) {
+		if (!rootId || this.isLoading) {
 			return;
 		};
 
@@ -236,8 +235,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
+		this.isLoading = true;
+
 		if (clear) {
-			this.subscribeMessages(clear, callBack);
+			this.subscribeMessages(clear, () => {
+				this.isLoading = false;
+
+				if (callBack) {
+					callBack();
+				};
+			});
 		} else {
 			const list = this.getMessages();
 			if (!list.length) {
@@ -247,8 +254,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const before = dir < 0 ? list[0].orderId : '';
 			const after = dir > 0 ? list[list.length - 1].orderId : '';
 
+			if (!before && !after) {
+				return;
+			};
+
 			C.ChatGetMessages(rootId, before, after, J.Constant.limit.chat.messages, (message: any) => {
+				this.isLoading = false;
+
 				if (message.error.code) {
+					this.isLoaded = true;
+
 					if (callBack) {
 						callBack();
 					};
@@ -257,7 +272,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 				const messages = message.messages || [];
 
-				if (dir > 0 && !messages.length) {
+				if ((dir > 0) && !messages.length) {
 					this.isLoaded = true;
 					this.subscribeMessages(false);
 				};
@@ -511,7 +526,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.loadMessages(-1, false);
 		};
 		if (st >= wrapper.outerHeight() - ch) {
-			this.loadMessages(1, false);
+			//this.loadMessages(1, false);
 		};
 
 		dates.each((i, item: any) => {
