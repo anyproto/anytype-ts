@@ -712,10 +712,6 @@ class UtilMenu {
 	};
 
 	spaceContext (space: any, param: any) {
-		if (space.isPersonal) {
-			return;
-		};
-
 		const { targetSpaceId } = space;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const isLocalNetwork = U.Data.isLocalNetwork();
