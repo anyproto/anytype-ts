@@ -47,7 +47,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		let content = null;
-		if (!isLoading && !relations.length) {
+		if (!isLoading && !relations.length || !relation) {
 			content = (
 				<div className="container">
 					<div className="iconWrapper">
