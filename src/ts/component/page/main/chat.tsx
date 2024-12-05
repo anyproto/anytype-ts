@@ -174,11 +174,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
+
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
@@ -186,7 +183,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	onScroll () {

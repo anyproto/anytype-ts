@@ -38,18 +38,13 @@ const DragVertical = forwardRef<DragVerticalRefProps, Props>(({
 		$(trackRef.current).css({ height: `${Math.round(v * 72)}px` });
 	};
 
-	const setValue = (v: number) => {
-		inputRef.current.setValue(v);
-		setHeight(v);
-	};
-
 	const handleChange = (e: ChangeEvent<HTMLInputElement>, value: string) => {
 		const v = 1 - Number(value) || 0;
 
 		e.preventDefault();
 		e.stopPropagation();
 
-		setValue(v);
+		setHeight(v);
 
 		if (onChange) {
 			onChange(e, v);
@@ -57,8 +52,8 @@ const DragVertical = forwardRef<DragVerticalRefProps, Props>(({
 	};
 
 	useImperativeHandle(ref, () => ({
-		getValue: () => inputRef?.current.getValue(),
-		setValue,
+		getValue: () => inputRef.current?.getValue(),
+		setValue: (v: number) => inputRef.current?.setValue(v),
 	}));
 
 	useEffect(() => {

@@ -62,7 +62,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 	
 };

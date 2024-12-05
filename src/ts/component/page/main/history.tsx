@@ -448,7 +448,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	isSetOrCollection (): boolean {

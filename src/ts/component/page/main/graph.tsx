@@ -171,7 +171,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return this.rootId || (rootId ? rootId : match.params.id);
+		return this.rootId || (rootId ? rootId : match?.params?.id);
 	};
 
 	onTab (id: string) {

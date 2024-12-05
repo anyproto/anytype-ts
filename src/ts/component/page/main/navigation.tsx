@@ -466,7 +466,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	getRootId () {
 		const { rootId, match } = this.props;
 
-		let root = rootId ? rootId : match.params.id;
+		let root = rootId ? rootId : match?.params?.id;
 		if (root == I.HomePredefinedId.Graph) {
 			root = U.Space.getLastOpened()?.id;
 		};
