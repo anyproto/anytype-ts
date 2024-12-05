@@ -90,6 +90,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 							return (
 								<Button
 									id={`category-${item.relationKey}`}
+									key={item.relationKey}
 									active={relationKey == item.relationKey}
 									color="blank"
 									className="c36"
@@ -132,6 +133,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						ref={ref => this.refHead = ref}
 						rootId={rootId}
 						readonly={true}
+						relationKey={relationKey}
 						getDotMap={this.getDotMap}
 					/>
 
@@ -196,8 +198,16 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	componentDidMount () {
+		const { match } = this.props;
+		const { relationKey } = match?.params || {};
+
 		this._isMounted = true;
-		this.open();
+
+		if (relationKey) {
+			this.setState({ relationKey }, () => this.open());
+		} else {
+			this.open();
+		};
 	};
 
 	componentDidUpdate () {

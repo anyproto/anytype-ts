@@ -156,4 +156,8 @@ export default {
 	],
 
 	pageCover: 'pageCover',
+
+	key: {
+		mention: 'mentions',
+	}
 };

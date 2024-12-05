@@ -174,9 +174,10 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	onOpenDate () {
-		const { d, m, y } = this.props;
+		const { d, m, y, getView } = this.props;
+		const view = getView();
 
-		U.Object.openDateByTimestamp(U.Date.timestamp(y, m, d, 12, 0, 0), 'config');
+		U.Object.openDateByTimestamp(view.groupRelationKey, U.Date.timestamp(y, m, d, 12, 0, 0), 'config');
 	};
 
 	canCreate (): boolean {

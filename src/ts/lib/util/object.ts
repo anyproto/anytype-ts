@@ -488,18 +488,20 @@ class UtilObject {
 		return config.experimental || (J.Constant.chatSpaceId.includes(space));
 	};
 
-	openDateByTimestamp (t: number, method?: string) {
+	openDateByTimestamp (relationKey: string, t: number, method?: string) {
 		method = method || 'auto';
 
-		const fn = U.Common.toCamelCase(`open-${method}`);
+		let fn = U.Common.toCamelCase(`open-${method}`);
+		if (!this[fn]) {
+			fn = 'openAuto';
+		};
 
 		C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
 			if (!message.error.code) {
-				if (U.Object[fn]) {
-					U.Object[fn](message.details);
-				} else {
-					U.Object.openConfig(message.details);
-				};
+				const object = message.details;
+
+				object._routeParam_ = { relationKey };
+				this[fn](object);
 			};
 		});
 	};

@@ -353,6 +353,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					canEdit: true,
 					canClear: false,
 					value: U.Date.now(),
+					relationKey: J.Relation.key.mention,
 					onChange: (value: number) => {
 						C.ObjectDateByTimestamp(space, value, (message: any) => {
 							if (!message.error.code) {
