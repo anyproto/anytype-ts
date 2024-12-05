@@ -73,8 +73,8 @@
 	.attachment { width: 540px; }
 }
 
-.attachments.isSingle.isBookmark {
-	 .attachment { width: 360px; }
+.attachments.isSingle {
+	 .attachment.isBookmark { width: 360px; }
  }
 
 /* Layouts */

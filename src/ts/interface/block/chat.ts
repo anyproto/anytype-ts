@@ -43,9 +43,7 @@ export interface ChatMessageAttachment {
 export interface ChatMessageComponent extends I.BlockComponent {
 	blockId: string;
 	id: string;
-	isThread: boolean;
 	isNew: boolean;
-	onThread: (id: string) => void;
 	onContextMenu: (e: any) => void;
 	onMore: (e: any) => void;
 	onReplyEdit: (e: any) => void;

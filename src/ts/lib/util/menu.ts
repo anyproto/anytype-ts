@@ -390,7 +390,7 @@ class UtilMenu {
 				break;
 			};
 		};
-		return options.map(id => ({ id: String(id), name: id }));
+		return this.prepareForSelect(options.map(id => ({ id, name: id })));
 	};
 
 	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
@@ -594,9 +594,10 @@ class UtilMenu {
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
+					(U.Object.isAllowedChat() ? { id: I.HomePredefinedId.Chat, name: translate('commonChat') } : null),
 					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
 					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-				],
+				].filter(it => it),
 				onOver: (e: any, item: any) => {
 					if (!menuContext) {
 						return;
@@ -639,6 +640,7 @@ class UtilMenu {
 
 					switch (item.id) {
 						case I.HomePredefinedId.Graph:
+						case I.HomePredefinedId.Chat:
 						case I.HomePredefinedId.Last: {
 							onSelect({ id: item.id }, false);
 
@@ -710,10 +712,6 @@ class UtilMenu {
 	};
 
 	spaceContext (space: any, param: any) {
-		if (space.isPersonal) {
-			return;
-		};
-
 		const { targetSpaceId } = space;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const isLocalNetwork = U.Data.isLocalNetwork();
@@ -1089,7 +1087,11 @@ class UtilMenu {
 			{ id: I.FormulaSection.Date, name: translate('formulaDate'), arrow: true },
 		].filter(s => {
 			return options.filter(it => it.section == s.id).length;
-		})).map(it => ({ ...it, id: String(it.id), checkbox: false }));
+		})).map(it => ({ ...it, checkbox: false }));
+	};
+
+	prepareForSelect (a: any[]) {
+		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
 };

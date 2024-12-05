@@ -27,7 +27,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	render () {
-		const { rootId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReplyEdit } = this.props;
+		const { rootId, id, isNew, readonly, onContextMenu, onMore, onReplyEdit } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
@@ -121,10 +121,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 			>
 				<div className="flex">
 					<div className="side left">
-						<IconObject object={author} size={40} onClick={e => U.Object.openConfig(author)} />
+						<IconObject 
+							object={{ ...author, layout: I.ObjectLayout.Participant }} 
+							size={40} 
+							onClick={e => U.Object.openConfig(author)} 
+						/>
 					</div>
 					<div className="side right">
-
 						<div className="author" onClick={e => U.Object.openConfig(author)}>
 							<ObjectName object={author} />
 							<div className="time">{U.Date.date('H:i', createdAt)}</div>
@@ -170,10 +173,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 								) : ''}
 							</div>
 						) : ''}
-
-						<div className="sub" onClick={() => onThread(id)}>
-							{!isThread ? <div className="item">0 replies</div> : ''}
-						</div>
 					</div>
 
 					{!readonly ? (

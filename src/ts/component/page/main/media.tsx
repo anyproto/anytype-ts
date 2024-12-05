@@ -238,11 +238,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -322,7 +318,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	resize () {

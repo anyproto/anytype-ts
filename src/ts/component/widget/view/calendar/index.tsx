@@ -116,6 +116,10 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		e.preventDefault();
 		e.stopPropagation();
 
+		const { getView } = this.props;
+		const view = getView();
+		const { groupRelationKey } = view;
+
 		S.Menu.open('select', {
 			element: '#' + [ 'day', item.d, item.m, item.y ].join('-'),
 			offsetY: 4,
@@ -123,7 +127,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 			data: {
 				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
 				onSelect: () => {
-					U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d), 'auto');
+					U.Object.openDateByTimestamp(groupRelationKey, U.Date.timestamp(item.y, item.m, item.d), 'auto');
 				}
 			}
 		});

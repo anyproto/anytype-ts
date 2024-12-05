@@ -7,6 +7,7 @@ import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 interface State {
 	isDeleted: boolean;
+	isLoading: boolean;
 	relations: any[];
 	relationKey: string;
 };
@@ -28,13 +29,14 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 	state = {
 		isDeleted: false,
+		isLoading: false,
 		relations: [],
 		relationKey: RELATION_KEY_MENTION,
 	};
 
 	render () {
 		const { space } = S.Common;
-		const { isDeleted, relations, relationKey } = this.state;
+		const { isLoading, isDeleted, relations, relationKey } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, []);
 
@@ -42,40 +44,25 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			return <Deleted {...this.props} />;
 		};
 
-		const isDate = U.Object.isDateLayout(object.layout);
-
-		const header = isDate ? '' : (
-			<Header
-				{...this.props}
-				component="mainObject"
-				ref={ref => this.refHeader = ref}
-				rootId={rootId}
-			/>
-		);
-
-		const head = (
-				<HeadSimple
-					{...this.props}
-					noIcon={true}
-					ref={ref => this.refHead = ref}
-					rootId={rootId}
-					readonly={true}
-					getDotMap={this.getDotMap}
-				/>
-		);
-
-		const footer = <Footer component="mainObject" {...this.props} />;
-
 		const relation = S.Record.getRelationByKey(relationKey);
 
-		if (relations.length) {
+		let content = null;
+		if (!isLoading && !relations.length || !relation) {
+			content = (
+				<div className="container">
+					<div className="iconWrapper">
+						<Icon />
+					</div>
+					<Label text={translate('pageDateVoidText')} />
+				</div>
+			);
+		} else {
 			const columns: any[] = [
 				{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
 				{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
 			];
 
 			const keys = relations.map(it => it.relationKey);
-
 			const filters: I.Filter[] = [];
 
 			if (relation.format == I.RelationType.Object) {
@@ -89,74 +76,71 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 					createdDate: 'creator',
 				};
 
-			filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+				filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
 				keys.push(map[relationKey]);
 			};
-			return (
-				<div ref={node => this.node = node}>
-					{ header }
 
-					<div className="blocks wrapper">
-						{ head }
-						<React.Fragment>
-							<div className="categories">
-								{relations.map((item) => {
-									const isMention = item.relationKey == RELATION_KEY_MENTION;
-									const icon = isMention ? 'mention' : '';
+			content = (
+				<React.Fragment>
+					<div className="categories">
+						{relations.map((item) => {
+							const isMention = item.relationKey == RELATION_KEY_MENTION;
+							const icon = isMention ? 'mention' : '';
 
-									return (
-										<Button
-											id={`category-${item.relationKey}`}
-											active={relationKey == item.relationKey}
-											color="blank"
-											className="c36"
-											onClick={() => this.onCategoryClick(item.relationKey)}
-											icon={icon}
-											text={item.name}
-										/>
-									);
-								})}
-							</div>
-
-							<ListObject
-								ref={ref => this.refList = ref}
-								{...this.props}
-								spaceId={space}
-								subId={SUB_ID}
-								rootId={rootId}
-								columns={columns}
-								filters={filters}
-								route={analytics.route.screenDate}
-								relationKeys={keys}
-							/>
-						</React.Fragment>
+							return (
+								<Button
+									id={`category-${item.relationKey}`}
+									key={item.relationKey}
+									active={relationKey == item.relationKey}
+									color="blank"
+									className="c36"
+									onClick={() => this.onCategoryClick(item.relationKey)}
+									icon={icon}
+									text={item.name}
+								/>
+							);
+						})}
 					</div>
 
-					{ footer }
-				</div>
+					<ListObject
+						ref={ref => this.refList = ref}
+						{...this.props}
+						spaceId={space}
+						subId={SUB_ID}
+						rootId={rootId}
+						columns={columns}
+						filters={filters}
+						route={analytics.route.screenDate}
+						relationKeys={keys}
+					/>
+				</React.Fragment>
 			);
-
-		}
-
-		const empty = (
-			<div className="container">
-				<div className="iconWrapper">
-					<Icon />
-				</div>
-				<Label text={translate('pageDateVoidText')} />
-			</div>
-		);
+		};
 
 		return (
 			<div ref={node => this.node = node}>
-				{ header }
+				<Header
+					{...this.props}
+					component="mainObject"
+					ref={ref => this.refHeader = ref}
+					rootId={rootId}
+				/>
 
 				<div className="blocks wrapper">
-					{ head }
-					{ empty }
+					<HeadSimple
+						{...this.props}
+						noIcon={true}
+						ref={ref => this.refHead = ref}
+						rootId={rootId}
+						readonly={true}
+						relationKey={relationKey}
+						getDotMap={this.getDotMap}
+					/>
+
+					{content}
 				</div>
 
-				{ footer }
+				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};
@@ -214,8 +198,16 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	componentDidMount () {
+		const { match } = this.props;
+		const { relationKey } = match?.params || {};
+
 		this._isMounted = true;
-		this.open();
+
+		if (relationKey) {
+			this.setState({ relationKey }, () => this.open());
+		} else {
+			this.open();
+		};
 	};
 
 	componentDidUpdate () {
@@ -251,7 +243,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		this.close();
 		this.id = rootId;
-		this.setState({ isDeleted: false });
+		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -277,11 +269,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
+		const close = !(isPopup && (match?.params?.id == this.id));
 
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
@@ -314,7 +303,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
                 return 0;
             });
 
-			this.setState({ relations });
+			this.setState({ relations, isLoading: false });
 
 			if (relations.length) {
 				if (!relationKey || !relations.find(it => it.relationKey == relationKey)) {
@@ -343,7 +332,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 });

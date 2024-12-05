@@ -248,7 +248,7 @@ const Input = forwardRef<InputRef, Props>(({
 		};
 	}, [ maskOptions, focusOnMount ]);
 
-	useEffect(() => onChange?.(null, value), [ value ]);
+	useEffect(() => onChange?.($.Event('change'), value), [ value ]);
 
 	useImperativeHandle(ref, () => ({
 		focus,

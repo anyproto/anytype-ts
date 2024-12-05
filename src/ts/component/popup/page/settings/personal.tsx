@@ -21,7 +21,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		const linkStyles: I.Option[] = [
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
-		].map(it => ({ ...it, id: String(it.id) }));
+		];
 		const sidebarMode = showVault ? translate('sidebarMenuAll') : translate('sidebarMenuSidebar');
 
 		return (
@@ -167,7 +167,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						<Select
 							id="dateFormat"
 							value={String(dateFormat)}
-							options={U.Menu.dateFormatOptions().map(it => ({ ...it, id: String(it.id) }))}
+							options={U.Menu.dateFormatOptions()}
 							onChange={v => S.Common.dateFormatSet(v)}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
@@ -179,7 +179,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						<Select
 							id="timeFormat"
 							value={String(timeFormat)}
-							options={U.Menu.timeFormatOptions().map(it => ({ ...it, id: String(it.id) }))}
+							options={U.Menu.timeFormatOptions()}
 							onChange={v => S.Common.timeFormatSet(v)}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}

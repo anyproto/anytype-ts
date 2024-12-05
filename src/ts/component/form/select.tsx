@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
-import { I, S, Relation } from 'Lib';
+import { I, S, U, Relation } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 
 interface Props {
@@ -78,8 +78,8 @@ const Select = forwardRef<SelectRefProps, Props>(({
 		return ret;
 	};
 
-	const getValue = (): any => {
-		return isMultiple ? val : val[0];
+	const getValue = (val: any): any => {
+		return isMultiple ? val : (val.length ? val[0] : '');
 	};
 
 	const setValueHandler = (v: any) => {
@@ -131,7 +131,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 			noFilter,
 			noClose: true,
 			value,
-			options,
+			options: U.Menu.prepareForSelect(options),
 			onSelect: (e: any, item: any) => {
 				if (item.id !== '') {
 					if (isMultiple) {
@@ -146,7 +146,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 				setValueHandler(val);
 
 				if (onChange) {
-					onChange(val);
+					onChange(getValue(val));
 				};
 
 				if (!isMultiple) {
@@ -185,8 +185,8 @@ const Select = forwardRef<SelectRefProps, Props>(({
 	useEffect(() => {
 		const options = getOptions();
 		
-		let val = Relation.getArrayValue(value);
-		if (!value.length && options.length) {
+		let val = Relation.getArrayValue(initialValue);
+		if (!val.length && options.length) {
 			val = [ options[0].id ];
 		};
 
@@ -195,7 +195,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 	}, []);
 
 	useImperativeHandle(ref, () => ({
-		getValue,
+		getValue: () => getValue(val),
 		setValue: setValueHandler,
 		setOptions: (options: I.Option[]) => setOptions(options),
 	}));

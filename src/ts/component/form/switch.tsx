@@ -46,7 +46,7 @@ const Switch = forwardRef<SwitchRefProps, Props>(({
 		};
 	};
 
-	useEffect(() => setValue(initialValue));
+	useEffect(() => setValue(initialValue), []);
 
 	useImperativeHandle(ref, () => ({
 		getValue: () => value,

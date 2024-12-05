@@ -137,7 +137,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				onOpen: this.onOpen,
 				subIds: [ 'select2' ],
 				data: {
-					options,
+					options: U.Menu.prepareForSelect(options),
 					noScroll: true, 
 					noVirtualisation: true,
 					onOver: this.onOver,
