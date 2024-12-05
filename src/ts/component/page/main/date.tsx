@@ -44,9 +44,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		const relation = S.Record.getRelationByKey(relationKey);
 
-		const isEmpty = !relation || object._empty_;
-
-		if (!isEmpty) {
+		if (relations.length) {
 			const columns: any[] = [
 				{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
 				{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
@@ -316,9 +314,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
                 return 0;
             });
 
-			if (relations.length) {
-				this.setState({ relations });
+			this.setState({ relations });
 
+			if (relations.length) {
 				if (!relationKey || !relations.find(it => it.relationKey == relationKey)) {
 					this.onCategory(relations[0].relationKey);
 				} else {
