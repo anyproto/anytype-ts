@@ -19,25 +19,35 @@ const EDITORS = [
 	{ relationKey: 'description', blockId: 'description' },
 ];
 
-function formatDayName (timestamp: number): string {
+interface DayNameProps {
+	timestamp: number;
+};
+
+const DayName: React.FC<DayNameProps> = ({ timestamp }) => {
 	const dateDay = fromUnixTime(timestamp);
 
-	let dayName = '';
+	const dayName = [];
 	if (isYesterday(dateDay)) {
-		dayName = translate('commonYesterday');
+		dayName.push(<div>{translate('commonYesterday')}</div>);
 	} else
 	if (isToday(dateDay)) {
-		dayName = translate('commonToday');
+		dayName.push(<div>{translate('commonToday')}</div>);
 	} else
 	if (isTomorrow(dateDay)) {
-		dayName = translate('commonTomorrow');
-	} else {
-		const day = format(dateDay, 'EEEE');
-		dayName = translate(day);
+		dayName.push(<div>{translate('commonTomorrow')}</div>);
 	};
 
-	return dayName;
+	if (dayName.length > 0) {
+		dayName.push(<div className="bullet" />);
+	}
+
+	const day = format(dateDay, 'EEEE');
+	dayName.push(<div>{translate(day)}</div>);
+
+	return <div className="dayName">{dayName}</div>;
 };
+
+
 
 const HeadSimple = observer(class Controls extends React.Component<Props> {
 	
@@ -71,10 +81,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
 
-		let dayName = '';
-		if (isDate) {
-			dayName = formatDayName(object.timestamp);
-		};
+		const dayName = isDate ? <DayName timestamp={object.timestamp} /> : '';
 
 		const placeholder = {
 			title: this.props.placeholder,
@@ -159,7 +166,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		return (
 			<div className="headSimpleWrapper">
-				{isDate ? <div className="dayName">{dayName}</div> : ''}
+				{dayName}
 				<div ref={node => this.node = node} className={cn.join(' ')}>
 					<div className="side left">
 						<div className="titleWrap">
