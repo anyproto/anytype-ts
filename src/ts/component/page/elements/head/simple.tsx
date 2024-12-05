@@ -33,16 +33,7 @@ function formatDayName (timestamp: number): string {
 		dayName = translate('commonTomorrow');
 	} else {
 		const day = format(dateDay, 'EEEE');
-		const days = {
-			'Monday': 'day1',
-			'Tuesday': 'day2',
-			'Wednesday': 'day3',
-			'Thursday': 'day4',
-			'Friday': 'day5',
-			'Saturday': 'day6',
-			'Sunday': 'day7',
-		};
-		dayName = translate(days[day]);
+		dayName = translate(day);
 	};
 
 	return dayName;

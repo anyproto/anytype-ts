@@ -303,6 +303,14 @@
 	"day6": "Saturday",
 	"day7": "Sunday",
 
+	"Monday": "Monday",
+	"Tuesday": "Tuesday",
+	"Wednesday": "Wednesday",
+	"Thursday": "Thursday",
+	"Friday": "Friday",
+	"Saturday": "Saturday",
+	"Sunday": "Sunday",
+
 	"relationName0": "Text",
 	"relationName1": "Short text",
 	"relationName2": "Number",
