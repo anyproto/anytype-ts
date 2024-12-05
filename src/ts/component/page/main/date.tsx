@@ -121,7 +121,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			<div ref={node => this.node = node}>
 				<Header
 					{...this.props}
-					component="mainObject"
+					component="mainDate"
 					ref={ref => this.refHeader = ref}
 					rootId={rootId}
 				/>

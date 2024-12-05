@@ -26,7 +26,7 @@
 		.iconObject { display: none; }
 	}
 
-	.container { text-align: center; align-content: center; height: calc(100vh - 268px); }
+	.container { text-align: center; align-content: center; height: calc(100vh - 320px); }
 
 	.wrapper {
 		.iconWrapper {
@@ -37,4 +37,6 @@
 			.icon { width: 72px; height: 72px; background-image: url('~img/icon/popup/confirm/error.svg'); }
 		}
 	}
+
+	.blocks.wrapper { padding: 0px 16px; }
 }
