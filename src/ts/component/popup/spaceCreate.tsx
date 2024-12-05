@@ -120,12 +120,14 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 
 		this.setLoading(true);
 
-		const withChat = U.Common.isChatAllowed();
+		const withChat = U.Object.isAllowedChat();
 		const details = {
 			name,
 			iconOption,
 			spaceDashboardId: I.HomePredefinedId.Last,
 		};
+
+		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
 
 		C.WorkspaceCreate(details, I.Usecase.GetStarted, withChat, (message: any) => {
 			this.setLoading(false);

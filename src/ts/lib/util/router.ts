@@ -139,7 +139,7 @@ class UtilRouter {
 			return;
 		};
 
-		const withChat = U.Common.isChatAllowed();
+		const withChat = U.Object.isAllowedChat();
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);

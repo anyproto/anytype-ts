@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { U } from 'Lib';
 import { Icon } from 'Component';
@@ -11,120 +11,81 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-class MediaVideo extends React.Component<Props> {
+const MediaVideo = forwardRef<HTMLDivElement, Props>(({
+	src = '',
+	canPlay = true,
+	onPlay,
+	onPause,
+	onClick,
+}, ref: any) => {
 
-	public static defaultProps: Props = {
-		canPlay: true,
-		src: '',
+	const nodeRef = useRef(null);
+	const videoRef = useRef(null);
+
+	const rebind = () => {
+		unbind();
+
+		const video = $(videoRef.current);
+
+		video.on('play', () => onPlayHandler());
+		video.on('pause', () => onPause());
+		video.on('ended', () => onEnded());
 	};
 
-	node: any = null;
-	speed = 1;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onPlayClick = this.onPlayClick.bind(this);
+	const unbind = () => {
+		$(videoRef.current).off('canplay ended pause play');
 	};
 
-	render () {
-		const { src, onClick } = this.props;
-
-		return (
-			<div
-				ref={ref => this.node = ref}
-				className="mediaVideo"
-				onClick={onClick}
-			>
-				<video className="media" controls={false} preload="auto" src={src} />
-
-				<div className="controls">
-					<Icon className="play" onClick={this.onPlayClick} />
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.rebind();
-	};
-
-	rebind () {
-		this.unbind();
-
-		const node = $(this.node);
-		const video = node.find('video');
-
-		video.on('play', () => this.onPlay());
-		video.on('pause', () => this.onPause());
-		video.on('ended', () => this.onEnded());
-	};
-
-	unbind () {
-		const node = $(this.node);
-		const video = node.find('video');
-
-		video.off('canplay ended pause play');
-	};
-
-	onPlay () {
-		const { onPlay } = this.props;
-		const node = $(this.node);
-		const video = node.find('video');
-
-		if (!video.length) {
-			return;
+	const onPlayHandler = () => {
+		if (videoRef.current) {
+			videoRef.current.controls = true;
 		};
-
-		video.get(0).controls = true;
-		node.addClass('isPlaying');
+		$(nodeRef.current).addClass('isPlaying');
 
 		if (onPlay) {
 			onPlay();
 		};
 	};
 
-	onPause () {
-		const { onPause } = this.props;
-
-		if (onPause) {
-			onPause();
+	const onEnded = () => {
+		if (videoRef.current) {
+			videoRef.current.controls = false;
 		};
+		$(nodeRef.current).removeClass('isPlaying');
+
+		onPause();
 	};
 
-	onEnded () {
-		const node = $(this.node);
-		const video = node.find('video');
-
-		if (!video.length) {
-			return;
-		};
-
-		video.get(0).controls = false;
-		node.removeClass('isPlaying');
-
-		this.onPause();
-	};
-
-	onPlayClick (e: any) {
-		if (!this.props.canPlay) {
+	const onPlayClick = (e: any) => {
+		if (!canPlay) {
 			return;
 		};
 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(this.node);
-		const video = node.find('video');
-
-		if (!video.length) {
-			return;
-		};
-
 		U.Common.pauseMedia();
-		video.get(0).play();
+		videoRef.current?.play();
 	};
 
-};
+	useEffect(() => {
+		rebind();
+		return () => unbind();
+	});
+
+	return (
+		<div
+			ref={nodeRef}
+			className="mediaVideo"
+			onClick={onClick}
+		>
+			<video ref={videoRef} className="media" controls={false} preload="auto" src={src} />
+
+			<div className="controls">
+				<Icon className="play" onClick={onPlayClick} />
+			</div>
+		</div>
+	);
+});
 
 export default MediaVideo;

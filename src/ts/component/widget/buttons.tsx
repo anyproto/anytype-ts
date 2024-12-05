@@ -66,7 +66,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			ret.unshift({ id: 'member', name: translate('commonMembers') });
 		};
 
-		if (space.chatId && U.Common.isChatAllowed()) {
+		if (space.chatId && U.Object.isAllowedChat()) {
 			ret.push({ id: 'chat', name: translate('commonMainChat') });
 		};
 

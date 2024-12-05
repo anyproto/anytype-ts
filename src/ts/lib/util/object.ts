@@ -483,6 +483,11 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	isAllowedChat () {
+		const { config, space } = S.Common;
+		return config.experimental || (J.Constant.chatSpaceId.includes(space));
+	};
+
 	openDateByTimestamp (t: number, method?: string) {
 		method = method || 'auto';
 

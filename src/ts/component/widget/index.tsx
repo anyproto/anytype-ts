@@ -344,7 +344,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.onCreate({ route: analytics.route.addWidget });
+		this.onCreate({ route: analytics.route.widget });
 	};
 
 	onCreate (param?: any): void {

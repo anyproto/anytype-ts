@@ -91,7 +91,6 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 
 	const focus = () => {
 		inputRef.current.focus();
-		checkButton();
 	};
 
 	const blur = () => {
@@ -147,7 +146,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 			return;
 		};
 
-		checkButton();
+		resize();
 
 		if (onChange) {
 			onChange(v);
@@ -176,13 +175,13 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		};
 	};
 
-	const checkButton = () => {
+	const buttonCheck = () => {
 		$(nodeRef.current).toggleClass('active', Boolean(getValue()));
 		placeholderCheck();
 	};
 
 	const getValue = () => {
-		return inputRef.current.getValue();
+		return inputRef.current?.getValue();
 	};
 
 	const getRange = (): I.TextRange => {
@@ -214,26 +213,30 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		ref.css({ lineHeight: ref.height() + 'px' });
 	};
 
-	useEffect(() => {
-		inputRef.current.setValue(value);
-
-		placeholderCheck();
+	const init = () => {
+		buttonCheck();
 		resize();
-	}, []);
+	};
+
+	useEffect(() => init(), []);
+	useEffect(() => init(), [ value ]);
 
 	useImperativeHandle(ref, () => ({
 		focus,
 		blur,
 		setActive: v => setIsActive(v),
 		isFocused: () => isFocused,
-		setValue: (v: string) => {
-			inputRef.current.setValue(v);
-			checkButton();
-		},
+		setValue: (v: string) => inputRef.current.setValue(v),
 		getValue,
 		getRange,
 		setRange,
 	}));
+
+	const val = getValue();
+
+	if (val) {
+		cn.push('active');
+	};
 
 	return (
 		<div

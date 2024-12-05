@@ -442,8 +442,9 @@ class Keyboard {
 		};
 
 		const rootId = this.getRootId();
-		const logPath = U.Common.getElectron().logPath();
-		const tmpPath = U.Common.getElectron().tmpPath();
+		const electron = U.Common.getElectron();
+		const logPath = electron.logPath();
+		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
 
 		switch (cmd) {
@@ -561,7 +562,7 @@ class Keyboard {
 			};
 
 			case 'debugTree': {
-				C.DebugTree(rootId, logPath, (message: any) => {
+				C.DebugTree(rootId, logPath, false, (message: any) => {
 					if (!message.error.code) {
 						Renderer.send('openPath', logPath);
 					};

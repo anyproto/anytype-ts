@@ -6,7 +6,6 @@ export default {
 	appName:			 'Anytype',
 	blankRouteId:		 '_blank_',
 	storeSpaceId:		 '_anytype_marketplace',
-	localLoversSpaceId:	 'bafyreigyfkt6rbv24sbv5aq2hko3bhmv5xxlf22b4bypdu6j7hnphm3psq.23me69r569oi1',
 	anytypeProfileId:	 '_anytype_profile',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],
@@ -25,6 +24,10 @@ export default {
 		development:	 'N9DU6hLkTAbvcpji3TCKPPd3UQWKGyzUxGmgJEyvhByqAjfD',
 		testing:		 'N4N1wDHFpFpovXBqdbq2TDXE9tXdXbtV1eTJFpKJW4YeaJqR'
 	},
+
+	chatSpaceId: [
+		'bafyreiezhzb4ggnhjwejmh67pd5grilk6jn3jt7y2rnfpbkjwekilreola.1t123w9f2lgn5',
+	],
 
 	platforms: {
 		win32:			 'Windows',

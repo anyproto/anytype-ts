@@ -93,7 +93,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 								{relations.map((item) => {
 									const isMention = item.relationKey == RELATION_KEY_MENTION;
 									const icon = isMention ? 'mention' : '';
-									const separator = isMention ? <div className="separator" /> : '';
 
 									return (
 										<React.Fragment key={item.relationKey}>
