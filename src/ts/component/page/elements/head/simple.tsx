@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
 import { I, M, S, U, J, Action, focus, keyboard, Relation, translate, analytics } from 'Lib';
+import { fromUnixTime, isToday, isTomorrow, isYesterday, format } from 'date-fns';
 
 interface Props {
 	rootId: string;
@@ -18,6 +19,36 @@ const EDITORS = [
 	{ relationKey: 'name', blockId: 'title' }, 
 	{ relationKey: 'description', blockId: 'description' },
 ];
+
+interface DayNameProps {
+	timestamp: number;
+};
+
+const DayName: React.FC<DayNameProps> = ({ timestamp }) => {
+	const dateDay = fromUnixTime(timestamp);
+
+	const dayName = [];
+	if (isYesterday(dateDay)) {
+		dayName.push(<div>{translate('commonYesterday')}</div>);
+	} else
+	if (isToday(dateDay)) {
+		dayName.push(<div>{translate('commonToday')}</div>);
+	} else
+	if (isTomorrow(dateDay)) {
+		dayName.push(<div>{translate('commonTomorrow')}</div>);
+	};
+
+	if (dayName.length > 0) {
+		dayName.push(<div className="bullet" />);
+	}
+
+	const day = format(dateDay, 'EEEE');
+	dayName.push(<div>{translate(day)}</div>);
+
+	return <div className="dayName">{dayName}</div>;
+};
+
+
 
 const HeadSimple = observer(class Controls extends React.Component<Props> {
 	
@@ -50,6 +81,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isRelation = U.Object.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
+
+		const dayName = isDate ? <DayName timestamp={object.timestamp} /> : '';
 
 		const placeholder = {
 			title: this.props.placeholder,
@@ -133,29 +166,33 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		return (
-			<div ref={node => this.node = node} className={cn.join(' ')}>
-				<div className="side left">
-					<div className="titleWrap">
-						{!noIcon && check.withIcon ? (
-							<IconObject 
-								id={'block-icon-' + rootId} 
-								size={32} 
-								iconSize={32}
-								object={object} 
-								canEdit={canEditIcon} 
-							/>
-						) : ''}
-						<Editor className="title" id="title" />
+			<div className="headSimpleWrapper">
+				{dayName}
+				<div ref={node => this.node = node} className={cn.join(' ')}>
+					<div className="side left">
+						<div className="titleWrap">
+							{!noIcon && check.withIcon ? (
+								<IconObject 
+									id={'block-icon-' + rootId} 
+									size={32} 
+									iconSize={32}
+									object={object} 
+									canEdit={canEditIcon} 
+								/>
+							) : ''}
+								<Editor className="title" id="title" />
+						</div>
+
+						{descr}
+						{featured}
 					</div>
 
-					{descr}
-					{featured}
+					{button ? (
+						<div className="side right">{button}</div>
+					) : ''}
 				</div>
-
-				{button ? (
-					<div className="side right">{button}</div>
-				) : ''}
 			</div>
+
 		);
 	};
 	

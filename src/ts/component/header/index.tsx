@@ -9,6 +9,7 @@ import HeaderMainHistory from './main/history';
 import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
 import HeaderMainEmpty from './main/empty';
+import HeaderMainDate from './main/date';
 
 interface Props extends I.HeaderComponent {
 	component: string;
@@ -23,6 +24,7 @@ const Components = {
 	mainGraph:			 HeaderMainGraph,
 	mainNavigation:		 HeaderMainNavigation,
 	mainEmpty:			 HeaderMainEmpty,
+	mainDate:			 HeaderMainDate,
 };
 
 class Header extends React.Component<Props> {
