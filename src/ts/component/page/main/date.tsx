@@ -42,6 +42,30 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			return <Deleted {...this.props} />;
 		};
 
+		const isDate = U.Object.isDateLayout(object.layout);
+
+		const header = isDate ? '' : (
+			<Header
+				{...this.props}
+				component="mainObject"
+				ref={ref => this.refHeader = ref}
+				rootId={rootId}
+			/>
+		);
+
+		const head = (
+				<HeadSimple
+					{...this.props}
+					noIcon={true}
+					ref={ref => this.refHead = ref}
+					rootId={rootId}
+					readonly={true}
+					getDotMap={this.getDotMap}
+				/>
+		);
+
+		const footer = <Footer component="mainObject" {...this.props} />;
+
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (relations.length) {
@@ -70,22 +94,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			};
 			return (
 				<div ref={node => this.node = node}>
-					<Header
-						{...this.props} 
-						component="mainObject"
-						ref={ref => this.refHeader = ref}
-						rootId={rootId} 
-					/>
+					{ header }
 
 					<div className="blocks wrapper">
-						<HeadSimple
-							{...this.props}
-							noIcon={true}
-							ref={ref => this.refHead = ref}
-							rootId={rootId}
-							readonly={true}
-							getDotMap={this.getDotMap}
-						/>
+						{ head }
 						<React.Fragment>
 							<div className="categories">
 								{relations.map((item) => {
@@ -120,39 +132,31 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						</React.Fragment>
 					</div>
 
-					<Footer component="mainObject" {...this.props} />
+					{ footer }
 				</div>
 			);
 
 		}
 
+		const empty = (
+			<div className="container">
+				<div className="iconWrapper">
+					<Icon />
+				</div>
+				<Label text={translate('pageDateVoidText')} />
+			</div>
+		);
+
 		return (
 			<div ref={node => this.node = node}>
-				<Header
-					{...this.props}
-					component="mainObject"
-					ref={ref => this.refHeader = ref}
-					rootId={rootId}
-				/>
+				{ header }
 
 				<div className="blocks wrapper">
-					<HeadSimple
-						{...this.props}
-						noIcon={true}
-						ref={ref => this.refHead = ref}
-						rootId={rootId}
-						readonly={true}
-						getDotMap={this.getDotMap}
-					/>
-					<div className="container">
-						<div className="iconWrapper">
-							<Icon />
-						</div>
-						<Label text={translate('pageDateVoidText')} />
-					</div>
+					{ head }
+					{ empty }
 				</div>
 
-				<Footer component="mainObject" {...this.props} />
+				{ footer }
 			</div>
 		);
 	};
@@ -273,7 +277,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
-		
+
 		let close = true;
 		if (isPopup && (match.params.id == this.id)) {
 			close = false;
