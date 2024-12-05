@@ -2,22 +2,24 @@
 
 .inputWithFile {
 	padding: 11px 13px; border-radius: 8px; border: solid 1px var(--color-shape-secondary); color: var(--color-control-active); @include text-common; 
-	transition: background 0.05s ease-in-out, border $transitionCommon; white-space: nowrap; overflow: hidden; line-height: 20px; text-align: left;
+	transition: border $transitionCommon; overflow: hidden; line-height: 20px; text-align: left; display: flex; align-items: center; gap: 0px 6px;
+	white-space: nowrap;
 }
 .inputWithFile:hover { border-color: var(--color-shape-primary); }
 .inputWithFile {
-	.txt { line-height: 20px; height: 20px; overflow: hidden; width: calc(100% - 26px); vertical-align: top; }
+	.inputWithFile-inner { display: flex; align-items: center; flex-wrap: wrap; flex-grow: 1; width: calc(100% - 26px); }
+
 	.fileWrap { display: inline-block; vertical-align: top; }
 	.fileWrap .border { border-bottom: 0.05em solid var(--color-control-active); display: inline-block; line-height: 1; transition: $transitionAllCommon; }
 	.fileWrap:hover .border { color: var(--color-text-primary); }
 
+	.input-text { height: 20px; line-height: 20px; vertical-align: top; padding: 0px; border: 0px; color: var(--color-text-primary); }
 	.input::placeholder { color: var(--color-control-active); }
+
 	.urlToggle { cursor: text; display: inline-block; }
+	.form { display: inline-block; vertical-align: top; }
 
-	#form { display: inline-block; vertical-align: top; }
-	#url { height: 20px; line-height: 20px; vertical-align: top; padding: 0px; border: 0px; color: var(--color-text-primary); }
-
-	.icon { width: 20px; height: 20px; margin: 0px 6px 0px 0px; transition: none; vertical-align: top; }
+	.icon { width: 20px; height: 20px; transition: none; flex-shrink: 0; }
 	.icon.image { background-image: url('~img/icon/menu/action/block/media/image0.svg'); }
 	.icon.video { background-image: url('~img/icon/menu/action/block/media/video0.svg'); }
 	.icon.file { background-image: url('~img/icon/menu/action/block/media/file0.svg'); }
@@ -39,13 +41,13 @@
 
 .inputWithFile.noFile {
 	.urlToggle { width: 100%; }
-	#form { width: 100%; }
+	.form { width: 100%; }
 }
 .inputWithFile.noFile.isSmall .txt { height: 20px; }
 
 .inputWithFile.isFocused {
 	.fileWrap { display: none; }
-	#form { width: 100%; }
+	.form { width: 100%; }
 }
 
 .inputWithFile.isSmall.isFocused {
@@ -53,7 +55,6 @@
 	.fileWrap { display: block; }
 }
 
-.inputWithFile.isIcon { }
 .inputWithFile.isIcon {
-	#text { display: none; }
+	.inputWithFile-inner { display: none; }
 }
