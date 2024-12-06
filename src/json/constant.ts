@@ -43,7 +43,7 @@ export default {
 		graphDepth:		 5,
 
 		chat: {
-			messages:		 10,
+			messages:		 50,
 			attachments:	 10,
 			files:			 10,
 			mentions:		 10,

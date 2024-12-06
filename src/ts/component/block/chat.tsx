@@ -23,6 +23,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	replies: string[] = null;
 	isLoaded = false;
 	isLoading = false;
+	isBottom = true;
 	messageRefs: any = {};
 	timeoutInterface = 0;
 	top = 0;
@@ -40,6 +41,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
+		this.scrollToBottomCheck = this.scrollToBottomCheck.bind(this);
 		this.getMessages = this.getMessages.bind(this);
 		this.getReplyContent = this.getReplyContent.bind(this);
 	};
@@ -73,6 +75,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							rootId={rootId}
 							blockId={blockId}
 							isNew={item.id == lastId}
+							scrollToBottom={this.scrollToBottomCheck}
 							onContextMenu={e => this.onContextMenu(e, item)}
 							onMore={e => this.onContextMenu(e, item, true)}
 							onReplyEdit={e => this.onReplyEdit(e, item)}
@@ -575,9 +578,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	scrollToBottom () {
 		const { isPopup } = this.props;
 		const container = U.Common.getScrollContainer(isPopup);
-		const height = isPopup ? container.get(0).scrollHeight : document.body.scrollHeight;
+		const node = $(this.node);
+		const wrapper = node.find('#scrollWrapper');
 
-		container.get(0).scrollTo({ top: height + 10000 });
+		container.scrollTop(wrapper.outerHeight());
+	};
+
+	scrollToBottomCheck () {
+		if (this.isBottom) {
+			this.scrollToBottom();
+		};
 	};
 
 	onReplyEdit (e: React.MouseEvent, message: any) {

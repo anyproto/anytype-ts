@@ -44,6 +44,7 @@ export interface ChatMessageComponent extends I.BlockComponent {
 	blockId: string;
 	id: string;
 	isNew: boolean;
+	scrollToBottom?: () => void;
 	onContextMenu: (e: any) => void;
 	onMore: (e: any) => void;
 	onReplyEdit: (e: any) => void;
