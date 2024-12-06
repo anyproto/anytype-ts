@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon } from 'Component';
+import { Icon, Sync } from 'Component';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -41,6 +41,7 @@ class Header extends React.Component<Props> {
 		this.onDoubleClick = this.onDoubleClick.bind(this);
 		this.onExpand = this.onExpand.bind(this);
 		this.onRelation = this.onRelation.bind(this);
+		this.onSync = this.onSync.bind(this);
 	};
 	
 	render () {
@@ -88,6 +89,13 @@ class Header extends React.Component<Props> {
 	};
 
 	renderLeftIcons (onOpen?: () => void) {
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId, J.Relation.template);
+		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+		const isDate = U.Object.isDateLayout(object.layout);
+		const showMenu = !isTypeOrRelation;
+		const canSync = showMenu && !object.templateIsBundled && !U.Object.isParticipantLayout(object.layout);
+
 		return (
 			<React.Fragment>
 				<Icon 
@@ -95,6 +103,7 @@ class Header extends React.Component<Props> {
 					tooltip={translate('commonOpenObject')} 
 					onClick={onOpen || this.onExpand} 
 				/>
+				{canSync ? <Sync id="button-header-sync" onClick={this.onSync} /> : ''}
 			</React.Fragment>
 		);
 	};
@@ -186,6 +195,17 @@ class Header extends React.Component<Props> {
 				rootId,
 				...data,
 			},
+		});
+	};
+
+	onSync = () => {
+		const { rootId } = this.props;
+
+		this.menuOpen('syncStatus', '#button-header-sync', {
+			subIds: [ 'syncStatusInfo' ],
+			data: {
+				rootId,
+			}
 		});
 	};
 
