@@ -3,22 +3,7 @@ import { observer } from 'mobx-react';
 import { Sync } from 'Component';
 import { I, S, U, J, keyboard } from 'Lib';
 
-interface State {
-	templatesCnt: number;
-};
-
-const HeaderMainChat = observer(class HeaderMainChat extends React.Component<I.HeaderComponent, State> {
-
-	state = {
-		templatesCnt: 0
-	};
-
-	constructor (props: I.HeaderComponent) {
-		super(props);
-		
-		this.onSync = this.onSync.bind(this);
-		this.onOpen = this.onOpen.bind(this);
-	};
+const HeaderMainChat = observer(class HeaderMainChat extends React.Component<I.HeaderComponent> {
 
 	render () {
 		const { rootId, renderLeftIcons } = this.props;
@@ -36,7 +21,7 @@ const HeaderMainChat = observer(class HeaderMainChat extends React.Component<I.H
 		);
 	};
 
-	onOpen () {
+	onOpen = () => {
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, []);
 
@@ -44,7 +29,7 @@ const HeaderMainChat = observer(class HeaderMainChat extends React.Component<I.H
 		S.Popup.closeAll(null, () => U.Object.openRoute(object));
 	};
 
-	onSync () {
+	onSync = () => {
 		const { rootId, menuOpen } = this.props;
 
 		menuOpen('syncStatus', '#button-header-sync', {

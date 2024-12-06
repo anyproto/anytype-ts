@@ -27,7 +27,6 @@
 		.iconObject { display: none; }
 	}
 
-	.container { text-align: center; align-content: center; height: calc(100vh - 320px); }
 	.emptyContainer { text-align: center; align-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
 
 	#loader { position: fixed; top: 50% !important; transform: translateY(-50%); }

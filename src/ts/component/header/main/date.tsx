@@ -1,13 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Sync } from 'Component';
-import { I, S, U, J } from 'Lib';
+import { I, S } from 'Lib';
 
-interface State {
-	templatesCnt: number;
-};
-
-const HeaderMainDate = observer(class HeaderMainObject extends React.Component<I.HeaderComponent, State> {
+const HeaderMainDate = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
 	render () {
 		const { rootId } = this.props;
 		const root = S.Block.getLeaf(rootId, rootId);
@@ -16,21 +12,10 @@ const HeaderMainDate = observer(class HeaderMainObject extends React.Component<I
 			return null;
 		};
 
-		const object = S.Detail.get(rootId, rootId, J.Relation.template);
-		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
-		const showMenu = !isTypeOrRelation;
-		const canSync = showMenu && !object.templateIsBundled && !U.Object.isParticipantLayout(object.layout);
-
 		return (
 			<React.Fragment>
 				<div className="side left">
-                {canSync ? <Sync id="button-header-sync" onClick={this.onSync} /> : ''}
-				</div>
-
-				<div className="side center">
-				</div>
-
-				<div className="side right">
+					<Sync id="button-header-sync" onClick={this.onSync} />
 				</div>
 			</React.Fragment>
 		);

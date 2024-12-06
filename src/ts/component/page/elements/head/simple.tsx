@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
 import { I, M, S, U, J, Action, focus, keyboard, Relation, translate, analytics } from 'Lib';
-import { fromUnixTime, isToday, isTomorrow, isYesterday, format } from 'date-fns';
 
 interface Props {
 	rootId: string;

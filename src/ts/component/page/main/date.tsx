@@ -45,9 +45,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		let content = null;
-		if (isLoading) {
-			content = <Loader id="loader" />
-		} else
+
 		if (!relations.length || !relation) {
 			content = (
 				<div className="emptyContainer">
