@@ -10,7 +10,7 @@ const PopupShare: FC<I.Popup> = () => {
 	};
 
 	return (
-		<div>
+		<>
 			<Title text={translate('popupShareTitle')} />
 			<Label text={translate('popupShareLabel')} />
 
@@ -19,7 +19,7 @@ const PopupShare: FC<I.Popup> = () => {
 			</div>
 
 			<Button text={translate('commonCopyLink')} onClick={onClick} />
-		</div>
+		</>
 	);
 };
 
