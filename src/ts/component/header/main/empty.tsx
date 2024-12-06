@@ -1,17 +1,17 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import { I } from 'Lib';
 
-class HeaderMainEmpty extends React.Component<I.HeaderComponent> {
+const HeaderMainEmpty: FC<I.HeaderComponent> = (props) => {
+	
+	const { renderLeftIcons } = props;
 
-	render () {
-		return (
-			<React.Fragment>
-				<div className="side left">{this.props.renderLeftIcons()}</div>
-				<div className="side center" />
-				<div className="side right" />
-			</React.Fragment>
-		);
-	};
+	return (
+		<>
+			<div className="side left">{renderLeftIcons()}</div>
+			<div className="side center" />
+			<div className="side right" />
+		</>
+	);
 
 };
 
