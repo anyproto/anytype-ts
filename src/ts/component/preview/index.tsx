@@ -11,7 +11,7 @@ interface State {
 	object: any;
 };
 
-const PreviewComponent = observer(class PreviewComponent extends React.Component<object, State> {
+const PreviewIndex = observer(class PreviewIndex extends React.Component<{}, State> {
 
 	ref = null;
 	state = {
@@ -34,6 +34,8 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const { type, target, object, noUnlink, noEdit } = preview;
 		const cn = [ 'previewWrapper' ];
 
+		const unlink = <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div>;
+
 		let head = null;
 		let content = null;
 
@@ -43,7 +45,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					<div className="head">
 						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('commonCopyLink')}</div>
 						{!noEdit ? <div id="button-edit" className="item" onClick={this.onEdit}>{translate('previewEdit')}</div> : ''}
-						{!noUnlink ? <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div> : ''}
+						{!noUnlink ? unlink : ''}
 					</div>
 				);
 
@@ -55,7 +57,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				if (!noUnlink) {
 					head = (
 						<div className="head">
-							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div>
+							{unlink}
 						</div>
 					);
 				};
@@ -68,7 +70,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				if (!noUnlink) {
 					head = (
 						<div className="head">
-							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div>
+							{unlink}
 						</div>
 					);
 				};
@@ -244,4 +246,4 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 });
 
-export default PreviewComponent;
+export default PreviewIndex;

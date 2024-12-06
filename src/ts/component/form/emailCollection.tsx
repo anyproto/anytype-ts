@@ -12,7 +12,6 @@ const EmailCollection: FC<Props> = ({
 	onComplete, 
 }) => {
 
-	const nodeRef = useRef(null);
 	const checkboxTipsRef = useRef(null);
 	const checkboxNewsRef = useRef(null);
 	const emailRef = useRef(null);
