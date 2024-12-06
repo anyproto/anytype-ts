@@ -81,7 +81,10 @@ class Header extends React.Component<Props> {
 
 	componentDidUpdate () {
 		sidebar.resizePage(null, false);
-		this.refChild?.forceUpdate();
+
+		if (this.refChild && this.refChild.forceUpdate) {
+			this.refChild.forceUpdate();
+		};
 	};
 
 	renderLeftIcons (onOpen?: () => void) {
