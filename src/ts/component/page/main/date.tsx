@@ -283,6 +283,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
         C.RelationListWithValue(space, rootId, (message: any) => {
             const relations = (message.relations || []).map(it => S.Record.getRelationByKey(it.relationKey)).filter(it => {
+				if (!it) {
+					return false;
+				};
+
                 if ([ RELATION_KEY_MENTION ].includes(it.relationKey)) {
                     return true;
                 };
