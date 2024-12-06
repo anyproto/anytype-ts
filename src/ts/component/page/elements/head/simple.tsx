@@ -9,8 +9,10 @@ interface Props {
 	isContextMenuDisabled?: boolean;
 	readonly?: boolean;
 	noIcon?: boolean;
+	relationKey?: string;
 	onCreate?: () => void;
 	onEdit?: () => void;
+	getDotMap?: (start: number, end: number, callback: (res: Map<string, boolean>) => void) => void;
 };
 
 const EDITORS = [ 
@@ -305,7 +307,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	onCalendar = () => {
-		const { rootId } = this.props;
+		const { rootId, getDotMap, relationKey } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
 		S.Menu.open('dataviewCalendar', {
@@ -315,7 +317,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				value: object.timestamp,
 				canEdit: true,
 				canClear: false,
-				onChange: (value: number) => U.Object.openDateByTimestamp(value),
+				relationKey,
+				onChange: (value: number) => U.Object.openDateByTimestamp(relationKey, value),
+				getDotMap,
 			},
 		});
 
@@ -323,10 +327,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	changeDate = (dir: number) => {
-		const { rootId } = this.props;
+		const { rootId, relationKey } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
-		U.Object.openDateByTimestamp(object.timestamp + dir * 86400);
+		U.Object.openDateByTimestamp(relationKey, object.timestamp + dir * 86400);
 		analytics.event(dir > 0 ? 'ClickDateForward' : 'ClickDateBack');
 	};
 

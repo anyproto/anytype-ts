@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted } from 'Component';
+import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
 import { I, C, S, M, U, Action, translate, Relation, analytics } from 'Lib';
-import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isLoading: boolean;
@@ -237,11 +236,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -321,7 +316,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	resize () {

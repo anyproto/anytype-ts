@@ -578,7 +578,7 @@ class UtilCommon {
 					text: translate('popupConfirmObjectOpenErrorText'),
 					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
 					onConfirm: () => {
-						C.DebugTree(rootId, logPath, (message: any) => {
+						C.DebugTree(rootId, logPath, false, (message: any) => {
 							if (!message.error.code) {
 								Renderer.send('openPath', logPath);
 							};
@@ -668,7 +668,7 @@ class UtilCommon {
 	};
 
 	searchParam (url: string): any {
-		const a = url.replace(/^\?/, '').split('&');
+		const a = String(url || '').replace(/^\?/, '').split('&');
 		const param: any = {};
 		
 		a.forEach((s) => {
@@ -1029,14 +1029,6 @@ class UtilCommon {
 
 	isBetaVersion (): boolean {
 		return !!this.getElectron().version.app.match(/beta/);
-	};
-
-	isChatAllowed () {
-		const { config, space } = S.Common;
-		return config.experimental;
-
-		//return config.experimental || (space == J.Constant.localLoversSpaceId);
-		//return this.isAlphaVersion() || this.isBetaVersion() || !this.getElectron().isPackaged;
 	};
 
 	checkRtl (s: string): boolean {

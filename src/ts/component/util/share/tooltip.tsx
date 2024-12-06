@@ -1,60 +1,49 @@
-import * as React from 'react';
+import React, { FC, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { U, S, translate, analytics, Preview, Storage } from 'Lib';
+import { S, translate, analytics } from 'Lib';
 
 interface Props {
+	route: string;
 	showOnce?: boolean;
 };
 
-const ShareTooltip = observer(class ShareTooltip extends React.Component<Props, {}> {
+const ShareTooltip: FC<Props> = observer(({ 
+	route = '',
+	showOnce = false,
+}) => {
+	const { shareTooltip } = S.Common;
 
-	node: any = null;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onClick = this.onClick.bind(this);
+	if (showOnce && shareTooltip) {
+		return null;
 	};
 
-	render () {
-		const { showOnce } = this.props;
+	const hide = () => S.Common.shareTooltipSet(true);
 
-		if (showOnce && !S.Common.shareTooltip) {
-			return null;
-		};
-
-		return (
-			<div
-				ref={ref => this.node = ref}
-				id="shareTooltip"
-				className="shareTooltip"
-				onClick={this.onClick}
-			>
-				<Icon className="close" onClick={this.onClose} />
-				<Icon className="smile" />
-				<Label text={translate('shareTooltipLabel')} />
-			</div>
-		);
-	};
-
-	onClick () {
-		const { showOnce } = this.props;
-
+	const onClickHandler = () => {
 		S.Popup.open('share', {});
-		Preview.shareTooltipHide();
+		hide();
 
-		analytics.event('ClickShareApp', { route: showOnce ? 'Onboarding' : 'Help' });
+		analytics.event('ClickShareApp', { route });
 	};
 
-	onClose (e) {
+	const onCloseHandler = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		Preview.shareTooltipHide();
-		Storage.set('shareTooltip', true);
+		hide();
 	};
 
+	return (
+		<div
+			className="shareTooltip"
+			onClick={onClickHandler}
+		>
+			<Icon className="close" onClick={onCloseHandler} />
+			<Icon className="smile" />
+			<Label text={translate('shareTooltipLabel')} />
+		</div>
+	);
 });
 
 export default ShareTooltip;

@@ -44,12 +44,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const hasShareBanner = U.Space.hasShareBanner();
 
 		if (isEditing) {
 			cn.push('isEditing');
 		};
 
-		if (U.Space.isShareBanner()) {
+		if (U.Space.hasShareBanner()) {
 			cn.push('withShareBanner');
 		};
 
@@ -124,7 +125,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				<React.Fragment>
 					{space && !space._empty_ ? (
 						<React.Fragment>
-							<ShareBanner onClose={() => this.forceUpdate()} />
+							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
 
 							<DropTarget 
 								{...this.props} 
@@ -239,7 +240,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			offsetY: -4,
 			vertical: I.MenuDirection.Top,
 			data: {
-				route: analytics.route.widget,
+				route: analytics.route.addWidget,
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },

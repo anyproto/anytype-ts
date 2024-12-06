@@ -19,6 +19,7 @@ import ListNotification from './list/notification';
 import ListChildren from './list/children';
 import ListObject from './list/object';
 import ListObjectManager from './list/objectManager';
+import ListObjectPreview from './list/objectPreview';
 
 import Header from './header';
 import Footer from './footer';
@@ -60,6 +61,9 @@ import Pin from './form/pin';
 import Filter from './form/filter';
 import Phrase from './form/phrase';
 import TabSwitch from './form/tabSwitch';
+import EmailCollection from './form/emailCollection';
+import HeadSimple from './page/elements/head/simple';
+import EditorControls from './page/elements/head/controls';
 
 import Pager from './util/pager';
 import Dimmer from './util/dimmer';
@@ -96,7 +100,7 @@ import ShareTooltip from './util/share/tooltip';
 import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
-import EmailCollectionForm from './util/emailCollectionForm';
+import Floater from './util/floater';
 
 export {
 	Page,
@@ -118,6 +122,7 @@ export {
 	ListChildren,
 	ListObject,
 	ListObjectManager,
+	ListObjectPreview,
 	ListNotification,
 
 	Header,
@@ -194,5 +199,8 @@ export {
 	ShareBanner,
 	FooterAuthDisclaimer,
 
-	EmailCollectionForm,
+	EmailCollection,
+	Floater,
+	HeadSimple,
+	EditorControls,
 };

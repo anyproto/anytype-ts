@@ -303,11 +303,12 @@ class Mark {
 				return;
 			};
 
-			const attr = this.paramToAttr(mark.type, param);
+			const fixedParam = param.replace(/([^\\])\$/gi, '$1\\$'); // Escape $ symbol for inline LaTeX
+			const attr = this.paramToAttr(mark.type, fixedParam);
 			const data = [];
 
 			if (param) {
-				data.push(`data-param="${param}"`);
+				data.push(`data-param="${fixedParam}"`);
 			};
 
 			if ([ I.MarkType.Link, I.MarkType.Object, I.MarkType.Mention ].includes(mark.type)) {

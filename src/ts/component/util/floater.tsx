@@ -15,11 +15,12 @@ interface FloaterRefProps {
 	hide(): void;
 };
 
-export const Floater = forwardRef<FloaterRefProps, Props>(({ 
+const Floater = forwardRef<FloaterRefProps, Props>(({ 
 	children, 
 	anchorEl, 
 	offset = 0,
 }, ref) => {
+
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const [ position, setPosition ] = useState({ top: 0, left: 0 });
 	const cn = [ 'floater' ];
@@ -69,3 +70,5 @@ export const Floater = forwardRef<FloaterRefProps, Props>(({
 		document.getElementById('floaterContainer')
 	);
 });
+
+export default Floater;

@@ -101,9 +101,11 @@
 						.filterInputWrap { overflow: hidden; width: 0px; transition: width 0.2s $easeInQuint; }
 						.line { display: none !important; }
 						.icon.search { background-image: url('~img/icon/dataview/button/search.svg'); }
+						.icon.clear { display: none; }
 					}
 					.filter.isActive {
 						.icon:hover { background-color: unset; }
+						.icon.clear { display: block; }
 						.filterInputWrap { width: 120px; }
 					}
 

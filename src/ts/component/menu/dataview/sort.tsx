@@ -45,8 +45,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const sortCnt = items.length;
 		
 		const typeOptions = [
-			{ id: String(I.SortType.Asc), name: translate('commonAscending') },
-			{ id: String(I.SortType.Desc), name: translate('commonDescending') },
+			{ id: I.SortType.Asc, name: translate('commonAscending') },
+			{ id: I.SortType.Desc, name: translate('commonDescending') },
 		];
 
 		const Handle = SortableHandle(() => (

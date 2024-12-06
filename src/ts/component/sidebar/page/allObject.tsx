@@ -277,7 +277,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 		$(window).on('keydown.sidebarObject', e => this.onKeyDown(e));
 		$(this.node).on('click', e => {
-			if (!this.refFilter || this.refFilter.isFocused) {
+			if (!this.refFilter || this.refFilter.isFocused()) {
 				return;
 			};
 
@@ -317,6 +317,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		const template = S.Record.getTemplateType();
 		const limit = this.offset + J.Constant.limit.menuRecords;
 		const fileLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Pdf ];
+		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
 
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
@@ -378,7 +379,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			};
 		};
 
-		if (this.orphan) {
+		if (this.orphan && options.find(it => it.id == I.SortId.Orphan)) {
 			filters = filters.concat([
 				{ relationKey: 'links', condition: I.FilterCondition.Empty, value: null },
 				{ relationKey: 'backlinks', condition: I.FilterCondition.Empty, value: null },
@@ -724,7 +725,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	};
 
 	onKeyDown (e: any) {
-		if (!this.refFilter.isFocused) {
+		if (!this.refFilter.isFocused()) {
 			return;
 		};
 

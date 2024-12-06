@@ -173,6 +173,7 @@ class App extends React.Component<object, State> {
 	render () {
 		const { isLoading } = this.state;
 		const platform = U.Common.getPlatform();
+		const { shareTooltip } = S.Common
 
 		let drag = null;
 		if (platform == I.Platform.Mac) {
@@ -204,7 +205,7 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<ListNotification key="listNotification" />
-						<ShareTooltip showOnce={true} />
+						<ShareTooltip showOnce={true} route={analytics.route.onboarding} />
 						<Vault ref={ref => S.Common.refSet('vault', ref)} />
 
 						<Switch>

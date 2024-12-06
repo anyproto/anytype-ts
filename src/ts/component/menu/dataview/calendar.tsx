@@ -1,18 +1,27 @@
 import * as React from 'react';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, J, translate } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 
-const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu> {
+interface State {
+	dotMap: Map<string, boolean>;
+};
+
+const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
 	
 	originalValue = 0;
 	refMonth: any = null;
 	refYear: any = null;
+
+	state: Readonly<State> = {
+		dotMap: new Map(),
+	};
 	
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { value, isEmpty, canEdit, canClear = true } = data;
+		const { dotMap } = this.state;
 		const items = this.getData();
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
@@ -91,15 +100,20 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 						if (!isEmpty && (todayParam.d == item.d) && (todayParam.m == item.m) && (todayParam.y == item.y)) {
 							cn.push('active');
 						};
+
+						const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
 						return (
 							<div 
-								key={i} 
+								key={i}
 								id={[ 'day', item.d, item.m, item.y ].join('-')}
 								className={cn.join(' ')} 
 								onClick={e => this.onClick(e, item)}
 								onContextMenu={e => this.onContextMenu(e, item)}
 							>
-								{item.d}
+								<div className="inner">
+									{item.d}
+									{check ? <div className="bullet" /> : ''}
+								</div>
 							</div>
 						);
 					})}
@@ -130,6 +144,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 		const { value } = data;
 
 		this.originalValue = value;
+		this.initDotMap();
 		this.forceUpdate();
 	};
 
@@ -145,17 +160,35 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 		this.props.position();
 	};
 
+	initDotMap () {
+		const { param } = this.props;
+		const { data } = param;
+		const { getDotMap } = data;
+		const items = this.getData();
+
+		if (!getDotMap || !items.length) {
+			return;
+		};
+
+		const first = items[0];
+		const last = items[items.length - 1];
+		const start = U.Date.timestamp(first.y, first.m, first.d);
+		const end = U.Date.timestamp(last.y, last.m, last.d);
+
+		getDotMap(start, end, dotMap => this.setState({ dotMap }));
+	};
+
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
 		const { param } = this.props;
 		const { data } = param;
-		const { canEdit } = data;
+		const { canEdit, relationKey } = data;
 
 		if (canEdit) {
 			this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
 		} else {
-			U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d));
+			U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));
 		};
 	};
 
@@ -163,7 +196,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 		e.preventDefault();
 
 		const { getId, param } = this.props;
-		const { className, classNameWrap } = param;
+		const { className, classNameWrap, data } = param;
+		const { relationKey } = data;
 
 		S.Menu.open('select', {
 			element: `#${getId()} #${[ 'day', item.d, item.m, item.y ].join('-')}`,
@@ -176,7 +210,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 					{ id: 'open', icon: 'expand', name: translate('commonOpenObject') },
 				],
 				onSelect: () => {
-					U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d));
+					U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));
 				}
 			}
 		});

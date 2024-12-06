@@ -1,11 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Header, Footer, Loader, ListObject, Deleted } from 'Component';
+import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Deleted, HeadSimple } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate, sidebar } from 'Lib';
-
-import HeadSimple from 'Component/page/elements/head/simple';
-import ListObjectPreview from 'Component/list/objectPreview';
 
 interface State {
 	isLoading: boolean;
@@ -235,11 +232,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
-
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -493,7 +486,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	getObject () {

@@ -32,7 +32,8 @@ html.bodyIndex, html.bodyAuth {
 	#sidebarToggle,
 	#notifications,
 	.sidebar,
-	.sidebarDummy { display: none !important; }
+	.sidebarDummy,
+	.shareTooltip { display: none !important; }
 
 	.popup { 
 		.innerWrap { background: var(--color-popup) !important;; box-shadow: var(--shadow) !important; color: var(--color-text-primary) !important; }
@@ -89,7 +90,7 @@ html.bodyIndex, html.bodyAuth {
 		ul { list-style-position: inside; padding-left: 0.75em; }
 	}
 
-	.tooltip.menuNote { white-space: nowrap; background-color: var(--color-bg-secondary); color: var(--color-text-inversion); padding: 4px 8px; @include text-small; }
+	.tooltip.menuNote { white-space: nowrap; background-color: var(--color-bg-secondary); color: var(--color-text-primary); padding: 4px 8px; @include text-small; }
 	.tooltip.menuNote {
 		.txt { line-height: 18px; }
 	}

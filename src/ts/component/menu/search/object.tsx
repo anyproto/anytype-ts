@@ -70,13 +70,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			if (item.isSection) {
 				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
-			} else
-			if (item.isDiv) {
-				content = (
-					<div className="separator" style={param.style}>
-						<div className="inner" />
-					</div>
-				);
 			} else {
 				const props = {
 					...item,

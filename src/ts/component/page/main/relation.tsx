@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, ListObject, Deleted, Icon } from 'Component';
+import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple } from 'Component';
 import { I, C, S, U, Action, translate, analytics } from 'Lib';
-import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isDeleted: boolean;
@@ -183,11 +182,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
+
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
@@ -195,7 +191,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	getObject () {

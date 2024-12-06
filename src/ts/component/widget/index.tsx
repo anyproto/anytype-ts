@@ -344,7 +344,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.onCreate();
+		this.onCreate({ route: analytics.route.widget });
 	};
 
 	onCreate (param?: any): void {
@@ -353,6 +353,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const { viewId, layout } = block.content;
 		const object = this.getObject();
+		const route = param.route || analytics.route.widget;
 
 		if (!object) {
 			return;
@@ -440,8 +441,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
-			U.Object.openAuto(newObject);
-			analytics.createObject(newObject.type, newObject.layout, analytics.route.widget, message.middleTime);
+			U.Object.openConfig(newObject);
+			analytics.createObject(newObject.type, newObject.layout, param.route, message.middleTime);
 		});
 	};
 

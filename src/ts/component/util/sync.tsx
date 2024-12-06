@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
-import { useLocalObservable } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import { I, S, U, analytics, translate } from 'Lib';
 
@@ -9,17 +9,14 @@ interface Props {
 	onClick: (e: any) => void;
 };
 
-const Sync = forwardRef<HTMLDivElement, Props>(({
+const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	className = '',
 	onClick,
 }, ref) => {
 
 	const nodeRef = useRef<HTMLDivElement>(null);
-	const { account, syncStatus } = useLocalObservable(() => ({
-		syncStatus: S.Auth.getSyncStatus(),
-		account: S.Auth.account,
-	}));
+	const syncStatus = S.Auth.getSyncStatus();
 	const isDevelopment = U.Data.isDevelopmentNetwork();
 	const cn = [ 'sync', className ];
 
@@ -56,6 +53,6 @@ const Sync = forwardRef<HTMLDivElement, Props>(({
 		</div>
 	);
 
-});
+}));
 
 export default Sync;

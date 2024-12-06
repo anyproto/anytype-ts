@@ -147,7 +147,7 @@ class DetailStore {
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
-	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
+	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean, skipLayoutFormat?: I.ObjectLayout[]): any {
 		let list = this.map.get(rootId)?.get(id) || [];
 		if (!list.length) {
 			return { id, _empty_: true };
@@ -164,7 +164,7 @@ class DetailStore {
 			object[list[i].relationKey] = list[i].value;
 		};
 
-		return this.mapper(object);
+		return this.mapper(object, skipLayoutFormat);
 	};
 
 	public getKeys (rootId: string, id: string): string[] {

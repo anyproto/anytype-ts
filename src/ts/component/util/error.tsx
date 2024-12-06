@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { FC } from 'react';
 import { I, U } from 'Lib';
 
 interface Props {
@@ -8,18 +8,18 @@ interface Props {
 	dataset?: any;
 };
 
-const Error = forwardRef<{}, Props>(({
+const Error: FC<Props> = ({
 	id = '',
 	text = '',
 	className = '',
 	dataset = {},
-}, ref) => {
-
-	const cn = [ 'error', className ];
+}) => {
 
 	if (!text && !id) {
 		return null;
 	};
+
+	const cn = [ 'error', className ];
 
 	return (
 		<div 
@@ -30,6 +30,6 @@ const Error = forwardRef<{}, Props>(({
 		/>
 	);
 
-});
+};
 
 export default Error;

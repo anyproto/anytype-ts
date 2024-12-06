@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
@@ -33,6 +33,10 @@ interface Props {
 	onCheckbox?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
+};
+
+interface IconObjectRefProps {
+	setObject(object: any): void;
 };
 
 const LAYOUTS_WITH_EMOJI_GALLERY = [ 
@@ -89,6 +93,7 @@ const FontSize = {
 	64: 40,
 	80: 64,
 	96: 64,
+	108: 64,
 };
 
 const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type', 'date' ];
@@ -107,252 +112,65 @@ const CheckboxTask = {
 	},
 };
 
-const IconObject = observer(class IconObject extends React.Component<Props> {
+const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) => {
+	const {
+		className = '',
+		canEdit = false,
+		size = 20,
+		offsetX = 0,
+		offsetY = 0,
+		tooltip = '',
+		tooltipY = I.MenuDirection.Bottom,
+		noRemove = false,
+		noClick = false,
+		menuParam = {},
+		style = {},
+		getObject,
+		onSelect,
+		onUpload,
+		onClick,
+		onCheckbox,
+		onMouseEnter,
+		onMouseLeave,
+	} = props;
 
-	node: any = null;
-	public static defaultProps = {
-		size: 20,
-		offsetX: 0,
-		offsetY: 0,
-		tooltipY: I.MenuDirection.Bottom,
-		color: 'grey',
-		menuParam: {},
-		style: {},
+	const theme = S.Common.getThemeClass();
+	const nodeRef = useRef(null);
+	const checkboxRef = useRef(null);
+	
+	let object: any = getObject ? getObject() : props.object || {};
+
+	const [ stateObject, setStateObject ] = useState(null);
+
+	if (stateObject) {
+		object = Object.assign(object, stateObject || {});
 	};
 
-	constructor (props: Props) {
-		super(props);
+	const layout = Number(object.layout) || I.ObjectLayout.Page;
+	const { id, name, iconEmoji, iconImage, iconOption, done, relationFormat, isDeleted } = object || {};
+	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
+	const iconSize = props.iconSize || IconSize[size];
 
-		this.onClick = this.onClick.bind(this);
-		this.onMouseDown = this.onMouseDown.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
+	if (canEdit) {	
+		cn.push('canEdit');
 	};
 
-	render () {
-		const { className, size, canEdit, style } = this.props;
-		const { theme } = S.Common;
-		const object = this.getObject();
-		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const { id, name, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted } = object || {};
-		const cn = [ 'iconObject', 'c' + size, U.Data.layoutClass(object.id, layout) ];
-		const iconSize = this.iconSize();
-		const tc = S.Common.getThemeClass();
+	let icon = null;
+	let icn = [];
 
-		if (className) {
-			cn.push(className);
-		};
-		if (canEdit) {	
-			cn.push('canEdit');
-		};
-
-		let icon = null;
-		let icn = [];
-
-		const defaultIcon = (type: string) => {
-			if (!DefaultIcons.includes(type)) {
-				return;
-			};
-
-			cn.push('withDefault');
-			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-			icon = <img src={this.defaultIcon(type)} className={icn.join(' ')} />;
-		};
-
-		switch (layout) {
-			default:
-			case I.ObjectLayout.Chat:
-			case I.ObjectLayout.Page: {
-				if (iconImage) {
-					cn.push('withImage');
-				};
-
-				let di = 'page';
-				switch (layout) {
-					case I.ObjectLayout.Chat: di = 'chat'; break;
-					case I.ObjectLayout.Collection: 
-					case I.ObjectLayout.Set: di = 'set'; break;
-				};
-
-				if (iconEmoji || iconImage) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else {
-					defaultIcon(di);
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Date:
-				defaultIcon('date');
-				break;
-
-			case I.ObjectLayout.Collection:
-			case I.ObjectLayout.Set: {
-				if (iconImage) {
-					cn.push('withImage');
-				};
-
-				if (iconEmoji || iconImage) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else {
-					defaultIcon('set');
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Human: 
-			case I.ObjectLayout.Participant: {
-				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-
-				if (iconImage) {
-					cn.push('withImage');
-					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
-				} else {
-					icon = <img src={this.userSvg()} className={icn.join(' ')} />;
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Task: {
-				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
-				icon = <img id="checkbox" src={done ? CheckboxTask[tc][2] : CheckboxTask[tc][0]} className={icn.join(' ')} />;
-				break;
-			};
-
-			case I.ObjectLayout.Dashboard: {
-				break;
-			};
-
-			case I.ObjectLayout.Note: {
-				defaultIcon('page');
-				break;
-			};
-
-			case I.ObjectLayout.Type: {
-				if (iconEmoji) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else {
-					defaultIcon('type');
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Relation: {
-				if ([ I.RelationType.Icon, I.RelationType.Relations ].includes(relationFormat)) {
-					break;
-				};
-
-				let src = '';
-				if (relationKey == 'description') {
-					src = 'description';
-				} else {
-					src = Relation.typeName(relationFormat);
-				};
-
-				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-				icon = <img src={`./img/icon/relation/${src}.svg`} className={icn.join(' ')} />;
-				break;
-			};
-
-			case I.ObjectLayout.Bookmark: {
-				if (iconImage) {
-					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
-				} else {
-					defaultIcon('bookmark');
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Image: {
-				if (id) {
-					cn.push('withImage');
-					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-					icon = <img src={S.Common.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
-				} else {
-					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={U.File.iconPath(object)} className={icn.join(' ')} />;
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Video:
-			case I.ObjectLayout.Audio:
-			case I.ObjectLayout.Pdf:
-			case I.ObjectLayout.File: {
-				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={U.File.iconPath(object)} className={icn.join(' ')} />;
-				break;
-			};
-
-			case I.ObjectLayout.SpaceView: {
-				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-				cn.push('withImage');
-
-				if (iconImage) {
-					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
-				} else {
-					cn.push('withOption');
-					icon = <img src={this.spaceSvg(iconOption)} className={icn.join(' ')} />;
-				};
-				break;
-			};
-
-		};
-
-		if (isDeleted) {
-			icn = [ 'iconCommon', 'c' + iconSize ];
-			icon = <img src={Ghost} className={icn.join(' ')} />;
-		};
-
-		if (!icon) {
-			return null;
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				id={this.props.id} 
-				className={cn.join(' ')} 
-				onClick={this.onClick}
-				onMouseDown={this.onMouseDown} 
-				onMouseEnter={this.onMouseEnter} 
-				onMouseLeave={this.onMouseLeave}
-				draggable={true}
-				style={style}
-				onDragStart={(e: any) => { 
-					e.preventDefault(); 
-					e.stopPropagation(); 
-				}}
-			>
-				{icon}
-			</div>
-		);
-	};
-
-	getObject () {
-		const { getObject } = this.props;
-		return (getObject ? getObject() : this.props.object) || {};
-	};
-
-	onClick (e: any) {
-		if (this.props.noClick) {
+	const onClickHandler = (e: any) => {
+		if (noClick) {
 			e.stopPropagation();
 		};
 	};
 
-	onMouseEnter (e: any) {
-		const { canEdit, tooltip, tooltipY, onMouseEnter } = this.props;
-		const tc = S.Common.getThemeClass();
-		const node = $(this.node);
-		const object = this.getObject();
-
+	const onMouseEnterHandler = (e: any) => {
 		if (tooltip) {
-			Preview.tooltipShow({ text: tooltip, element: node, typeY: tooltipY });
+			Preview.tooltipShow({ text: tooltip, element: $(nodeRef.current), typeY: tooltipY });
 		};
 
 		if (canEdit && U.Object.isTaskLayout(object.layout)) {
-			node.find('#checkbox').attr({ src: object.done ? CheckboxTask[tc][2] : CheckboxTask[tc][1] });
+			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][1] });
 		};
 		
 		if (onMouseEnter) {
@@ -360,16 +178,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		};
 	};
 	
-	onMouseLeave (e: any) {
-		const { canEdit, onMouseLeave } = this.props;
-		const tc = S.Common.getThemeClass();
-		const node = $(this.node);
-		const object = this.getObject();
-		
+	const onMouseLeaveHandler = (e: any) => {
 		Preview.tooltipHide(false);
 
 		if (canEdit && U.Object.isTaskLayout(object.layout)) {
-			node.find('#checkbox').attr({ src: object.done ? CheckboxTask[tc][2] : CheckboxTask[tc][0] });
+			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][0] });
 		};
 		
 		if (onMouseLeave) {
@@ -377,9 +190,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		};
 	};
 
-	onMouseDown (e: any) {
-		const { canEdit, onClick, onCheckbox } = this.props;
-		const object = this.getObject();
+	const onMouseDown = (e: any) => {
 		const isTask = U.Object.isTaskLayout(object.layout);
 		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(object.layout);
 
@@ -404,22 +215,20 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			};
 		} else
 		if (isEmoji) {
-			this.onEmoji(e);
+			onEmoji(e);
 		};
 
-		this.onMouseLeave(e);
+		onMouseLeaveHandler(e);
 	};
 
-	onEmoji (e: any) {
+	const onEmoji = (e: any) => {
 		e.stopPropagation();
 
-		const { id, offsetX, offsetY, onSelect, onUpload, noRemove, menuParam } = this.props;
-		const object = this.getObject();
-		const noGallery = this.props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human ].includes(object.layout);
-		const noUpload = this.props.noUpload || [ I.ObjectLayout.Type ].includes(object.layout);
+		const noGallery = props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human ].includes(object.layout);
+		const noUpload = props.noUpload || [ I.ObjectLayout.Type ].includes(object.layout);
 
 		S.Menu.open('smile', { 
-			element: `#${id}`,
+			element: `#${props.id}`,
 			offsetX,
 			offsetY,
 			data: {
@@ -447,31 +256,18 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		});
 	};
 
-	iconSize () {
-		const { size, iconSize } = this.props;
-		return iconSize || IconSize[size];
+	const fontSize = (size: number): number => {
+		return Math.min(72, FontSize[size]);
 	};
 
-	fontSize (size: number) {
-		let s = FontSize[size];
-
-		if (size > 96) {
-			s = 72;
-		};
-
-		return s;
-	};
-
-	fontWeight (size: number) {
+	const fontWeight = (size: number): number => {
 		return size > 18 ? 600 : 500;
 	};
 
-	userSvg (): string {
-		const { size } = this.props;
-		const color = J.Theme[S.Common.getThemeClass()]?.iconUser;
-		
+	const userSvg = (): string => {
+		const color = J.Theme[theme]?.iconUser;
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${color.bg}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${this.fontWeight(size)}" font-size="${this.fontSize(size)}px">${this.iconName()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${iconName()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
 				${circle}
@@ -482,12 +278,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	spaceSvg (option: number): string {
+	const spaceSvg = (option: number): string => {
 		const { bg, list } = J.Theme.iconSpace;
-		const { size } = this.props;
 		const bgColor = bg[list[option - 1]];
 
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${this.fontWeight(size)}" font-size="${this.fontSize(size)}px">${this.iconName()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${iconName()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
 				<rect width="${size}" height="${size}" fill="${bgColor}"/>
@@ -498,21 +293,192 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	iconName () {
-		const object = this.getObject();
-
-		let name = String(object.name || translate('defaultNamePage'));
-		name = U.Smile.strip(name);
-		name = name.trim().substring(0, 1).toUpperCase();
-		name = U.Common.htmlSpecialChars(name);
-
-		return name;
+	const iconName = (): string => {
+		let ret = String(name || translate('defaultNamePage'));
+		ret = U.Smile.strip(ret);
+		ret = ret.trim().substring(0, 1).toUpperCase();
+		ret = U.Common.htmlSpecialChars(ret);
+		return ret;
 	};
 
-	defaultIcon (type: string) {
-		return require(`img/icon/default/${type}.svg`);
+	const defaultIcon = (type: string) => {
+		if (!DefaultIcons.includes(type)) {
+			return;
+		};
+
+		const src = require(`img/icon/default/${type}.svg`);
+
+		cn.push('withDefault');
+		icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+		icon = <img src={src} className={icn.join(' ')} />;
 	};
 
-});
+	switch (layout) {
+		default:
+		case I.ObjectLayout.Chat:
+		case I.ObjectLayout.Page: {
+			if (iconImage) {
+				cn.push('withImage');
+			};
+
+			let di = 'page';
+			switch (layout) {
+				case I.ObjectLayout.Chat: di = 'chat'; break;
+				case I.ObjectLayout.Collection: 
+				case I.ObjectLayout.Set: di = 'set'; break;
+			};
+
+			if (iconEmoji || iconImage) {
+				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+			} else {
+				defaultIcon(di);
+			};
+			break;
+		};
+
+		case I.ObjectLayout.Date:
+			defaultIcon('date');
+			break;
+
+		case I.ObjectLayout.Collection:
+		case I.ObjectLayout.Set: {
+			if (iconImage) {
+				cn.push('withImage');
+			};
+
+			if (iconEmoji || iconImage) {
+				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+			} else {
+				defaultIcon('set');
+			};
+			break;
+		};
+
+		case I.ObjectLayout.Human: 
+		case I.ObjectLayout.Participant: {
+			icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+
+			if (iconImage) {
+				cn.push('withImage');
+				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+			} else {
+				icon = <img src={userSvg()} className={icn.join(' ')} />;
+			};
+			break;
+		};
+
+		case I.ObjectLayout.Task: {
+			icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
+			icon = <img ref={checkboxRef} src={done ? CheckboxTask[theme][2] : CheckboxTask[theme][0]} className={icn.join(' ')} />;
+			break;
+		};
+
+		case I.ObjectLayout.Dashboard: {
+			break;
+		};
+
+		case I.ObjectLayout.Note: {
+			defaultIcon('page');
+			break;
+		};
+
+		case I.ObjectLayout.Type: {
+			if (iconEmoji) {
+				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+			} else {
+				defaultIcon('type');
+			};
+			break;
+		};
+
+		case I.ObjectLayout.Relation: {
+			if ([ I.RelationType.Icon, I.RelationType.Relations ].includes(relationFormat)) {
+				break;
+			};
+
+			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+			icon = <img src={`./img/icon/relation/${Relation.typeName(relationFormat)}.svg`} className={icn.join(' ')} />;
+			break;
+		};
+
+		case I.ObjectLayout.Bookmark: {
+			if (iconImage) {
+				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+			} else {
+				defaultIcon('bookmark');
+			};
+			break;
+		};
+
+		case I.ObjectLayout.Image: {
+			if (id) {
+				cn.push('withImage');
+				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+				icon = <img src={S.Common.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
+			} else {
+				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
+				icon = <img src={U.File.iconPath(object)} className={icn.join(' ')} />;
+			};
+			break;
+		};
+
+		case I.ObjectLayout.Video:
+		case I.ObjectLayout.Audio:
+		case I.ObjectLayout.Pdf:
+		case I.ObjectLayout.File: {
+			icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
+			icon = <img src={U.File.iconPath(object)} className={icn.join(' ')} />;
+			break;
+		};
+
+		case I.ObjectLayout.SpaceView: {
+			icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+			cn.push('withImage');
+
+			if (iconImage) {
+				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+			} else {
+				cn.push('withOption');
+				icon = <img src={spaceSvg(iconOption)} className={icn.join(' ')} />;
+			};
+			break;
+		};
+
+	};
+
+	if (isDeleted) {
+		icon = <img src={Ghost} className={[ 'iconCommon', `c${iconSize}` ].join(' ')} />;
+	};
+
+	useImperativeHandle(ref, () => ({
+		setObject: object => setStateObject(object),
+	}));
+
+	if (!icon) {
+		return null;
+	};
+
+	return (
+		<div 
+			ref={nodeRef}
+			id={props.id} 
+			className={cn.join(' ')} 
+			onClick={onClickHandler}
+			onMouseDown={onMouseDown} 
+			onMouseEnter={onMouseEnterHandler} 
+			onMouseLeave={onMouseLeaveHandler}
+			draggable={true}
+			style={style}
+			onDragStart={(e: any) => { 
+				e.preventDefault(); 
+				e.stopPropagation(); 
+			}}
+		>
+			{icon}
+		</div>
+	);
+
+}));
 
 export default IconObject;

@@ -42,7 +42,7 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
-	public shareTooltipValue = false;
+	public shareTooltipValue = null;
 	public showVaultValue = null;
 	public showSidebarRightValue = null;
 	public hideSidebarValue = null;
@@ -278,7 +278,7 @@ class CommonStore {
 	};
 
 	get shareTooltip (): boolean {
-		return Boolean(this.shareTooltipValue);
+		return this.boolGet('shareTooltip');
 	};
 
 	get membershipTiers (): I.MembershipTier[] {
@@ -479,8 +479,6 @@ class CommonStore {
 		if (c) {
 			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
 		};
-
-		$(window).trigger('updateTheme');
 	};
 
 	getThemePath () {
@@ -526,7 +524,7 @@ class CommonStore {
 	};
 
 	shareTooltipSet (v: boolean) {
-		this.shareTooltipValue = Boolean(v);
+		this.boolSet('shareTooltip', v);
 	};
 
 	configSet (config: any, force: boolean) {

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef } from 'react';
 import $ from 'jquery';
 import { I, S, J } from 'Lib';
-import { useLocalObservable } from 'mobx-react';
+import { observer } from 'mobx-react';
 
 interface Props {
 	id: string;
@@ -40,7 +40,7 @@ Theme.dark[I.MarkerType.Task] = {
 	2:		 require('img/icon/object/checkbox2.svg'),
 };
 
-const Marker = forwardRef<HTMLDivElement, Props>(({ 
+const Marker = observer(forwardRef<HTMLDivElement, Props>(({ 
 	id = '', 
 	type = I.MarkerType.Bulleted,
 	color = 'default', 
@@ -54,10 +54,7 @@ const Marker = forwardRef<HTMLDivElement, Props>(({
 	const refNode = useRef<HTMLDivElement>(null);
 	const cn = [ 'marker', className ];
 	const ci = [ 'markerInner', `c${type}`, `textColor textColor-${colorValue}` ];
-	const { theme, themeClass } = useLocalObservable(() => ({
-		theme: S.Common.theme,
-		themeClass: S.Common.getThemeClass(),
-	}));
+	const themeClass = S.Common.getThemeClass();
 
 	if (active) {
 		cn.push('active');
@@ -139,6 +136,6 @@ const Marker = forwardRef<HTMLDivElement, Props>(({
 			{inner}
 		</div>
 	);
-});
+}));
 
 export default Marker;

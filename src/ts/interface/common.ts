@@ -131,6 +131,7 @@ export enum Usecase {
 
 export enum HomePredefinedId {
 	Graph		 = 'graph',
+	Chat		 = 'chat',
 	Last		 = 'lastOpened',
 	Existing	 = 'existing',
 };
