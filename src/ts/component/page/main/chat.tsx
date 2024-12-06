@@ -105,7 +105,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	};
 
 	unbind () {
-		const namespace = this.getNamespace();
+		const { isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
 		const events = [ 'keydown', 'scroll' ];
 
 		$(window).off(events.map(it => `${it}.set${namespace}`).join(' '));
@@ -114,7 +115,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	rebind () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const namespace = this.getNamespace();
+		const namespace = U.Common.getEventNamespace(isPopup);
 		const container = U.Common.getScrollContainer(isPopup);
 
 		this.unbind();
@@ -135,10 +136,6 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
-	};
-
-	getNamespace () {
-		return this.props.isPopup ? '-popup' : '';
 	};
 
 	open () {
@@ -177,11 +174,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
+
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
@@ -189,7 +183,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	onScroll () {

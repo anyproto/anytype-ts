@@ -1,6 +1,15 @@
 import $ from 'jquery';
 import { I, C, S, U, J, Preview, analytics, Storage } from 'Lib';
 
+interface RouteParam {
+	page: string; 
+	action: string; 
+	id: string; 
+	spaceId: string; 
+	viewId: string; 
+	relationKey: string;
+};
+
 class UtilRouter {
 
 	history: any = null;
@@ -35,15 +44,17 @@ class UtilRouter {
 		return param;
 	};
 
-	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; viewId: string; }>): string {
+	build (param: Partial<RouteParam>): string {
 		const { page, action } = param;
 		const id = String(param.id || J.Constant.blankRouteId);
 		const spaceId = String(param.spaceId || J.Constant.blankRouteId);
 		const viewId = String(param.viewId || J.Constant.blankRouteId);
+		const relationKey = String(param.relationKey || J.Constant.blankRouteId);
 
 		let route = [ page, action, id ];
 		route = route.concat([ 'spaceId', spaceId ]);
 		route = route.concat([ 'viewId', viewId ]);
+		route = route.concat([ 'relationKey', relationKey ]);
 
 		return route.join('/');
 	};
@@ -139,7 +150,7 @@ class UtilRouter {
 			return;
 		};
 
-		const withChat = U.Common.isChatAllowed();
+		const withChat = U.Object.isAllowedChat();
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);

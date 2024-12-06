@@ -33,6 +33,7 @@
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
 	"commonGraph": "Graph",
+	"commonChat": "Chat",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
 	"commonAllContent": "All Objects",
@@ -174,6 +175,7 @@
 	"commonSignUp": "Sign Up",
 	"commonNotFound": "Not found",
 	"commonCalculate": "Calculate",
+	"commonRelations": "Relations",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -481,6 +483,8 @@
 	"pageMainVoidTitle": "You're all out of spaces",
 	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
 	"pageMainVoidCreateSpace": "Create space",
+
+	"pageMainDateEmptyText" : "There is nothing here for this date yet",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 	"pageAuthLoginShortPhrase": "Key is too short",
@@ -1932,7 +1936,6 @@
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
 	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
-	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
 

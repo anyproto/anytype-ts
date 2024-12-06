@@ -1,21 +1,29 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
+import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
 import { I, U, S, J, Action } from 'Lib';
 
 interface Props {
 	object: any;
 	showAsFile?: boolean;
 	bookmarkAsDefault?: boolean;
+	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
 };
 
-const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
+interface State {
+	isLoaded: boolean;	
+};
+
+const ChatAttachment = observer(class ChatAttachment extends React.Component<Props, State> {
 
 	node = null;
 	src = '';
 	previewItem: any = null;
+	state = {
+		isLoaded: false,
+	};
 
 	constructor (props: Props) {
 		super(props);
@@ -176,13 +184,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	renderImage () {
-		const { object } = this.props;
+		const { object, scrollToBottom } = this.props;
+		const { isLoaded } = this.state;
 
 		this.previewItem = { type: I.FileType.Image, object };
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
-				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string, param: any) => {
+				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string) => {
 					this.src = image;
 					this.previewItem.src = image;
 					$(this.node).find('#image').attr({ 'src': image });
@@ -195,15 +204,23 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		this.previewItem.src = this.src;
 
-		return (
+		if (!isLoaded) {
+			const img = new Image();
+			img.onload = () => this.setState({ isLoaded: true });
+			img.src = this.src;
+		};
+
+		return isLoaded ? (
 			<img 
 				id="image" 
 				className="image" 
 				src={this.src}
 				onClick={this.onPreview}
+				onLoad={scrollToBottom}
 				onDragStart={e => e.preventDefault()} 
+				style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
 			/>
-		);
+		) : <Loader />;
 	};
 
 	renderVideo () {
@@ -228,6 +245,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		];
 
 		return <MediaAudio playlist={playlist} />;
+	};
+
+	componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>): void {
+		const { scrollToBottom } = this.props;
+
+		if (!prevState.isLoaded && this.state.isLoaded && scrollToBottom) {
+			scrollToBottom();
+		};
 	};
 
 	onOpen () {

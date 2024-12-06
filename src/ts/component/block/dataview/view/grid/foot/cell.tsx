@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, S, C, U, keyboard, Relation, Dataview, analytics, translate, Preview } from 'Lib';
+import { I, S, C, U, keyboard, Relation, Dataview, analytics, Preview } from 'Lib';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
@@ -25,7 +24,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		super(props);
 
 		this.onOpen = this.onOpen.bind(this);
-		this.onClose = this.onClose.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -34,22 +32,16 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { relationKey, rootId, block, getView } = this.props;
+		const { relationKey, rootId, block } = this.props;
 		const { result } = this.state;
 		const relation = S.Record.getRelationByKey(relationKey);
-		const view = getView();
 
-		if (!relation || !view) {
+		if (!relation) {
 			return <div />;
 		};
 
-		// Subscriptions
-		const viewRelation = view.getRelation(relationKey);
-		if (!viewRelation) {
-			return <div />;
-		};
-
-		const cn = [ 'cellFoot', `cell-key-${relationKey}` ];
+		const cn = [ 'cellFoot' ];
+		const formulaType = this.getFormulaType();
 		const option: any = this.getOption() || {};
 		const name = option.short || option.name || '';
 		const subId = S.Record.getSubId(rootId, block.id);
@@ -69,17 +61,12 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			>
 				<div className="cellContent" onClick={this.onSelect}>
 					<div className="flex">
-						{viewRelation.formulaType == I.FormulaType.None ? (
-							<div className="select">
-								<div className="name">{translate('commonCalculate')}</div>
-								<Icon className="arrow light" />
-							</div>
-						) : (
+						{formulaType != I.FormulaType.None ? (
 							<div className="result">
 								<span className="name">{name}</span>
 								<span className="value">{result}</span>
 							</div>
-						)}
+						) : ''}
 					</div>
 				</div>
 			</div>
@@ -97,7 +84,15 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	calculate () {
 		const { rootId, block, relationKey, getView, isInline } = this.props;
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const viewRelation = view.getRelation(relationKey);
+		if (!viewRelation) {
+			return;
+		};
+
 		const subId = isInline ? [ rootId, block.id, 'total' ].join('-') : S.Record.getSubId(rootId, block.id);
 		const result = Dataview.getFormulaResult(subId, viewRelation);
 
@@ -115,33 +110,34 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			return null;
 		};
 
-		const viewRelation = view.getRelation(relationKey);
-		if (!viewRelation) {
-			return null;
-		};
-
+		const formulaType = this.getFormulaType();
 		const relation = S.Record.getRelationByKey(relationKey);
+
 		if (!relation) {
 			return null;
 		};
 
-		return Relation.formulaByType(relationKey, relation.format).find(it => it.id == String(viewRelation.formulaType));
+		return Relation.formulaByType(relationKey, relation.format).find(it => it.id == String(formulaType));
 	};
 
 	onSelect (e: any) {
-		const { relationKey } = this.props;
+		const { relationKey, getView } = this.props;
 		const id = Relation.cellId('foot', relationKey, '');
 		const options = U.Menu.getFormulaSections(relationKey);
+		const formulaType = this.getFormulaType();
+
+		if (formulaType == I.FormulaType.None) {
+			return;
+		};
 
 		S.Menu.closeAll([], () => {
 			S.Menu.open('select', {
 				element: `#${id}`,
 				horizontal: I.MenuDirection.Center,
 				onOpen: this.onOpen,
-				onClose: this.onClose,
 				subIds: [ 'select2' ],
 				data: {
-					options,
+					options: U.Menu.prepareForSelect(options),
 					noScroll: true, 
 					noVirtualisation: true,
 					onOver: this.onOver,
@@ -164,10 +160,6 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		window.setTimeout(() => this.onMouseEnter(), 10);
 
 		analytics.event('ClickGridFormula', { format: relation.format, objectType: object.type });
-	};
-
-	onClose () {
-		$(`.cellKeyHover`).removeClass('cellKeyHover');
 	};
 
 	onOver (e: any, item: any) {
@@ -224,6 +216,12 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			return;
 		};
 
+		const formulaType = this.getFormulaType();
+
+		if (formulaType == I.FormulaType.None) {
+			return;
+		};
+
 		const node = $(this.node);
 
 		node.addClass('hover');
@@ -245,6 +243,18 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	onMouseLeave () {
 		$(this.node).removeClass('hover');
 		Preview.tooltipHide();
+	};
+
+	getFormulaType (): I.FormulaType {
+		const { relationKey, getView } = this.props;
+		const view = getView();
+
+		if (!view) {
+			return I.FormulaType.None;
+		};
+
+		const viewRelation = view.getRelation(relationKey);
+		return viewRelation ? viewRelation.formulaType : I.FormulaType.None;
 	};
 
 });

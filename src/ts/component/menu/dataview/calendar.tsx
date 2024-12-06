@@ -183,12 +183,12 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 		const { param } = this.props;
 		const { data } = param;
-		const { canEdit } = data;
+		const { canEdit, relationKey } = data;
 
 		if (canEdit) {
 			this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
 		} else {
-			U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d));
+			U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));
 		};
 	};
 
@@ -196,7 +196,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		e.preventDefault();
 
 		const { getId, param } = this.props;
-		const { className, classNameWrap } = param;
+		const { className, classNameWrap, data } = param;
+		const { relationKey } = data;
 
 		S.Menu.open('select', {
 			element: `#${getId()} #${[ 'day', item.d, item.m, item.y ].join('-')}`,
@@ -209,7 +210,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 					{ id: 'open', icon: 'expand', name: translate('commonOpenObject') },
 				],
 				onSelect: () => {
-					U.Object.openDateByTimestamp(U.Date.timestamp(item.y, item.m, item.d));
+					U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));
 				}
 			}
 		});

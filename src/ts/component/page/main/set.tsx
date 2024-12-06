@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Block, Deleted } from 'Component';
+import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard, translate, analytics } from 'Lib';
-import Controls from 'Component/page/elements/head/controls';
-import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isLoading: boolean;
@@ -60,7 +58,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
 					<div className="blocks wrapper">
-						<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
+						<EditorControls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
 						<HeadSimple 
 							{...this.props} 
 							ref={ref => this.refHead = ref} 
@@ -195,11 +193,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
+
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
@@ -207,7 +202,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	onScroll () {

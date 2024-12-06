@@ -478,8 +478,6 @@ class CommonStore {
 		if (c) {
 			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
 		};
-
-		$(window).trigger('updateTheme');
 	};
 
 	getThemePath () {

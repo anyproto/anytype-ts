@@ -98,8 +98,24 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				</div>
 
 				<div className="side right">
-					{showRelations ? <Icon id="button-header-relation" tooltip="Relations" tooltipCaption={`${cmd} + Shift + R`} className="relation withBackground" onClick={this.onRelation} /> : ''}
-					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} /> : ''}
+					{showRelations ? (
+						<Icon 
+							id="button-header-relation" 
+							tooltip={translate('commonRelations')}
+							tooltipCaption={`${cmd} + Shift + R`}
+							className="relation withBackground"
+							onClick={this.onRelation} 
+						/> 
+					) : ''}
+
+					{showMenu ? (
+						<Icon 
+							id="button-header-more"
+							tooltip={translate('commonMenu')}
+							className="more withBackground"
+							onClick={this.onMore} 
+						/> 
+					) : ''}
 				</div>
 			</React.Fragment>
 		);

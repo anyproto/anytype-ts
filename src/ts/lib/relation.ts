@@ -110,18 +110,26 @@ class Relation {
 	};
 
 	public formulaByType (relationKey: string, type: I.RelationType): { id: string, name: string, short?: string, section: I.FormulaSection }[] {
+		const relation = S.Record.getRelationByKey(relationKey);
+		if (!relation) {
+			return [];
+		};
+
 		const isArrayType = this.isArrayType(type);
-		const systemKeys = [
+		const skipEmptyKeys = [
 			'type', 
 			'creator', 
 			'createdDate', 
 			'addedDate',
 		];
-		const skip = [ 
+		const skipEmpty = [ 
 			I.FormulaType.CountEmpty, 
 			I.FormulaType.CountNotEmpty,
 			I.FormulaType.PercentEmpty,
 			I.FormulaType.PercentNotEmpty,
+		];
+		const skipUnique = [
+			I.FormulaType.CountValue,
 		];
 
 		const common = [
@@ -180,14 +188,17 @@ class Relation {
 
 		};
 
-		if (systemKeys.includes(relationKey)) {
-			ret = ret.filter(it => !skip.includes(it.id));
+		if (skipEmptyKeys.includes(relationKey)) {
+			ret = ret.filter(it => !skipEmpty.includes(it.id));
+		};
+		if (relation.maxCount == 1) {
+			ret = ret.filter(it => !skipUnique.includes(it.id));
 		};
 		if (!isArrayType) {
 			ret = ret.filter(it => ![ I.FormulaType.CountValue ].includes(it.id));
 		};
 
-		return ret.map(it => ({ ...it, id: String(it.id)}));
+		return U.Menu.prepareForSelect(ret);
 	};
 
 	public filterConditionsDictionary () {
