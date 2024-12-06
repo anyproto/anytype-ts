@@ -216,7 +216,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				className="image" 
 				src={this.src}
 				onClick={this.onPreview}
-				onLoad={() => scrollToBottom()}
+				onLoad={scrollToBottom}
 				onDragStart={e => e.preventDefault()} 
 				style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
 			/>
@@ -247,7 +247,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		return <MediaAudio playlist={playlist} />;
 	};
 
-	componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+	componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>): void {
 		const { scrollToBottom } = this.props;
 
 		if (!prevState.isLoaded && this.state.isLoaded && scrollToBottom) {

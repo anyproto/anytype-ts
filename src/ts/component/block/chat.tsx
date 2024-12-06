@@ -26,6 +26,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	isBottom = true;
 	messageRefs: any = {};
 	timeoutInterface = 0;
+	timeoutScroll = 0;
 	top = 0;
 	state = {
 		isLoading: false,
@@ -538,8 +539,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			//this.loadMessages(1, false);
 		};
 
-		console.log('isBottom', this.isBottom);
-
 		dates.each((i, item: any) => {
 			item = $(item);
 
@@ -594,7 +593,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	scrollToBottomCheck () {
 		if (this.isBottom) {
-			this.scrollToBottom();
+			window.clearTimeout(this.timeoutScroll);
+			this.timeoutScroll = window.setTimeout(() => this.scrollToBottom(), 10);
 		};
 	};
 

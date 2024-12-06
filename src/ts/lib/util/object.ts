@@ -53,10 +53,6 @@ class UtilObject {
 	};
 
 	universalRoute (object: any): string {
-		if (!object) {
-			return;
-		};
-
 		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
 	};
 

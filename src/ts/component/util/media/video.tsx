@@ -9,14 +9,16 @@ interface Props {
 	onPlay?(): void;
 	onPause?(): void;
 	onClick?(e: any): void;
+	onLoad?(): void;
 };
 
 const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 	src = '',
 	canPlay = true,
 	onPlay,
-	onPause,
-	onClick,
+	onPause = () => {},
+	onClick = () => {},
+	onLoad = () => {},
 }, ref: any) => {
 
 	const nodeRef = useRef(null);
@@ -30,6 +32,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 		video.on('play', () => onPlayHandler());
 		video.on('pause', () => onPause());
 		video.on('ended', () => onEnded());
+		video.on('canplay', () => onLoad());
 	};
 
 	const unbind = () => {

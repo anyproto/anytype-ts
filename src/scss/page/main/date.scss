@@ -27,17 +27,9 @@
 		.iconObject { display: none; }
 	}
 
-	.emptyContainer { text-align: center; align-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+	.emptyContainer { 
+		text-align: center; align-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: var(--color-text-secondary); 
+	}
 
 	#loader { position: fixed; top: 50% !important; transform: translateY(-50%); }
-
-	.wrapper {
-		.iconWrapper {
-			display: flex; width: 320px; height: 104px; border-radius: 320px; margin: 0px auto 10px; align-items: center; justify-content: space-around;
-			background: radial-gradient(50% 50% at 50% 50%, #ffbcbc 26.04%, rgba(255, 230, 230, 0.00) 100%);
-		}
-		.iconWrapper {
-			.icon { width: 72px; height: 72px; background-image: url('~img/icon/popup/confirm/error.svg'); }
-		}
-	}
 }

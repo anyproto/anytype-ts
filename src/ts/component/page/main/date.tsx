@@ -51,9 +51,6 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		if (!relations.length || !relation) {
 			content = (
 				<div className="emptyContainer">
-					<div className="iconWrapper">
-						<Icon />
-					</div>
 					<Label text={translate('pageMainDateEmptyText')} />
 				</div>
 			);
