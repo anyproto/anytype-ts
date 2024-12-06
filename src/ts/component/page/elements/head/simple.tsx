@@ -20,36 +20,6 @@ const EDITORS = [
 	{ relationKey: 'description', blockId: 'description' },
 ];
 
-interface DayNameProps {
-	timestamp: number;
-};
-
-const DayName: React.FC<DayNameProps> = ({ timestamp }) => {
-	const dateDay = fromUnixTime(timestamp);
-
-	const dayName = [];
-	if (isYesterday(dateDay)) {
-		dayName.push(<div>{translate('commonYesterday')}</div>);
-	} else
-	if (isToday(dateDay)) {
-		dayName.push(<div>{translate('commonToday')}</div>);
-	} else
-	if (isTomorrow(dateDay)) {
-		dayName.push(<div>{translate('commonTomorrow')}</div>);
-	};
-
-	if (dayName.length > 0) {
-		dayName.push(<div className="bullet" />);
-	}
-
-	const day = format(dateDay, 'EEEE');
-	dayName.push(<div>{translate(day)}</div>);
-
-	return <div className="dayName">{dayName}</div>;
-};
-
-
-
 const HeadSimple = observer(class Controls extends React.Component<Props> {
 	
 	_isMounted = false;
@@ -82,7 +52,24 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
 
-		const dayName = isDate ? <DayName timestamp={object.timestamp} /> : '';
+		const dayName = [];
+		if (isDate) {
+			if (dayName.length > 0) {
+				dayName.push(<div className="bullet" />);
+			};
+
+			const dayString = U.Date.dayString(object.timestamp);
+
+			if (dayString) {
+				dayName.push(<div>{dayString}</div>);
+			};
+
+			if (dayName.length > 0) {
+				dayName.push(<div className="bullet" />);
+			};
+
+			dayName.push(<div>{translate(`day${Number(U.Date.date('N', object.timestamp)) + 1}`)}</div>);
+		};
 
 		const placeholder = {
 			title: this.props.placeholder,
@@ -167,7 +154,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		return (
 			<div className="headSimpleWrapper">
-				{dayName}
+				{isDate ? <div className="dayName">{dayName}</div> : ''}
 				<div ref={node => this.node = node} className={cn.join(' ')}>
 					<div className="side left">
 						<div className="titleWrap">
