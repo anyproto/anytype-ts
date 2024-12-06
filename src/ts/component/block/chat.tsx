@@ -496,14 +496,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onScroll (e: any) {
 		const { isPopup } = this.props;
 		const node = $(this.node);
-		const wrapper = node.find('#scrollWrapper');
+		const scrollWrapper = node.find('#scrollWrapper');
+		const formWrapper = node.find('#formWrapper');
 		const rootId = this.getRootId();
 		const container = U.Common.getScrollContainer(isPopup);
 		const st = container.scrollTop();
 		const co = isPopup ? container.offset().top : 0;
-		const ch = container.outerHeight();
 		const messages = this.getMessages();
 		const dates = node.find('.section > .date');
+		const fh = formWrapper.outerHeight();
+		const ch = container.outerHeight();
 		const hh = J.Size.header;
 		const lastId = Storage.getChat(rootId).lastId;
 
@@ -525,12 +527,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			});
 		};
 
+		this.isBottom = false;
+
 		if (st <= 0) {
 			this.loadMessages(-1, false);
 		};
-		if (st >= wrapper.outerHeight() - ch) {
+
+		if (st - fh >= scrollWrapper.outerHeight() - ch) {
+			this.isBottom = true;
 			//this.loadMessages(1, false);
 		};
+
+		console.log('isBottom', this.isBottom);
 
 		dates.each((i, item: any) => {
 			item = $(item);
