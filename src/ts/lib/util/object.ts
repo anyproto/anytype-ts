@@ -414,7 +414,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {

@@ -29,7 +29,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	constructor (props: I.PageComponent) {
 		super(props);
-		
+
 		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.onObjectAdd = this.onObjectAdd.bind(this);
 		this.onSetAdd = this.onSetAdd.bind(this);
@@ -62,13 +62,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedObject = this.isAllowedObject();
 		const allowedTemplate = this.isAllowedTemplate();
 
-		const templates = S.Record.getRecordIds(subIdTemplate, '');		
+		const templates = S.Record.getRecordIds(subIdTemplate, '');
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 
 		const isFileType = U.Object.isInFileLayouts(type.recommendedLayout);
 		const columns: any[] = [
-			{ 
+			{
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
 				mapper: v => v ? U.Date.dateWithFormat(S.Common.dateFormat, v) : '',
 			},
@@ -80,21 +80,21 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		return (
 			<div>
-				<Header 
-					{...this.props} 
-					component="mainObject" 
-					ref={ref => this.refHeader = ref} 
-					rootId={rootId} 
+				<Header
+					{...this.props}
+					component="mainObject"
+					ref={ref => this.refHeader = ref}
+					rootId={rootId}
 				/>
 
 				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className="blocks wrapper">
-					<HeadSimple 
-						{...this.props} 
-						ref={ref => this.refHead = ref} 
-						placeholder={translate('defaultNameType')} 
-						rootId={rootId} 
+					<HeadSimple
+						{...this.props}
+						ref={ref => this.refHead = ref}
+						placeholder={translate('defaultNameType')}
+						rootId={rootId}
 						onEdit={this.onEdit}
 					/>
 
@@ -108,10 +108,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 								<div className="side right">
 									{allowedTemplate ? (
-										<Icon 
-											className="plus withBackground" 
-											tooltip={translate('commonCreateNewTemplate')} 
-											onClick={this.onTemplateAdd} 
+										<Icon
+											className="plus withBackground"
+											tooltip={translate('commonCreateNewTemplate')}
+											onClick={this.onTemplateAdd}
 										/>
 									) : ''}
 								</div>
@@ -119,7 +119,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 							{totalTemplate ? (
 								<div className="content">
-									<ListObjectPreview 
+									<ListObjectPreview
 										key="listTemplate"
 										ref={ref => this.refListPreview = ref}
 										getItems={() => S.Record.getRecords(subIdTemplate, [])}
@@ -149,29 +149,29 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 								</div>
 
 								<div className="side right">
-									<Icon 
+									<Icon
 										id="button-create"
-										className="more withBackground" 
-										onClick={this.onMore} 
+										className="more withBackground"
+										onClick={this.onMore}
 									/>
 
 									{allowedObject ? (
-										<Icon 
-											className="plus withBackground" 
-											tooltip={translate('commonCreateNewObject')} 
-											onClick={this.onCreate} 
+										<Icon
+											className="plus withBackground"
+											tooltip={translate('commonCreateNewObject')}
+											onClick={this.onCreate}
 										/>
 									) : ''}
 								</div>
 							</div>
 							<div className="content">
-								<ListObject 
-									{...this.props} 
-									sources={[ rootId ]} 
+								<ListObject
+									{...this.props}
+									sources={[ rootId ]}
 									spaceId={type.spaceId}
-									subId={subIdObject} 
-									rootId={rootId} 
-									columns={columns} 
+									subId={subIdObject}
+									rootId={rootId}
+									columns={columns}
 									relationKeys={recommended}
 									route={analytics.route.screenType}
 								/>
@@ -223,7 +223,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
-			this.refControls?.forceUpdate();			
+			this.refControls?.forceUpdate();
 			this.setState({ isLoading: false });
 			this.loadTemplates();
 		});
@@ -235,7 +235,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
-		
+
 		let close = true;
 		if (isPopup && (match.params.id == this.id)) {
 			close = false;
@@ -275,7 +275,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const details: any = { 
+		const details: any = {
 			targetObjectType: type.id,
 			layout: type.recommendedLayout,
 		};
@@ -328,8 +328,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const layout = type.recommendedLayout;
 
 		let ret = (
-			U.Object.isInPageLayouts(layout) || 
-			U.Object.isInSetLayouts(layout) || 
+			U.Object.isInPageLayouts(layout) ||
+			U.Object.isInSetLayouts(layout) ||
 			U.Object.isBookmarkLayout(layout) ||
 			U.Object.isChatLayout(layout)
 		);
@@ -359,7 +359,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			{ id: 'set', name: translate('pageMainTypeNewSetOfObjects') }
 		];
 
-		S.Menu.open('select', { 
+		S.Menu.open('select', {
 			element: `#button-create`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
@@ -424,7 +424,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const details = { 
+		const details = {
 			name: U.Common.sprintf(translate('commonSetName'), type.name),
 			iconEmoji: type.iconEmoji,
 		};
