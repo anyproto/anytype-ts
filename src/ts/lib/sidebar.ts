@@ -318,7 +318,7 @@ class Sidebar {
 	};
 
 	getDummyWidth (): number {
-		return Number($('#sidebarDummy').outerWidth()) || 0;
+		return Number($('#sidebarDummyLeft').outerWidth()) || 0;
 	};
 
 	vaultHide () {
