@@ -115,14 +115,18 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 
 		let { recommendedFeaturedRelations, recommendedRelations } = object;
 
-		if (container == 'section-relation-featured') {
-			recommendedFeaturedRelations = recommendedFeaturedRelations.filter(it => it != id);
-			recommendedRelations = recommendedRelations.concat(id);
-		};
+		switch (container) {
+			case 'section-relation-featured': {
+				recommendedFeaturedRelations = recommendedFeaturedRelations.filter(it => it != id);
+				recommendedRelations = recommendedRelations.concat(id);
+				break;
+			};
 
-		if (container == 'section-relation-recommended') {
-			recommendedRelations = recommendedRelations.filter(it => it != id);
-			recommendedFeaturedRelations = recommendedFeaturedRelations.concat(id);
+			case 'section-relation-recommended': {
+				recommendedRelations = recommendedRelations.filter(it => it != id);
+				recommendedFeaturedRelations = recommendedFeaturedRelations.concat(id);
+				break;
+			};
 		};
 
 		onChange({
@@ -141,10 +145,8 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 
 	onAdd (e: any) {
 		const { object, onChange } = this.props;
-		const skipSystemKeys = [ 'tag', 'description', 'source' ];
 		const recommendedKeys = this.getRecommended().map(it => it.relationKey);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-		const systemKeys = Relation.systemKeys().filter(it => !skipSystemKeys.includes(it));
 
 		S.Menu.open('relationSuggest', { 
 			element: '#sidebarRight #section-relation-plus',
@@ -156,7 +158,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				rootId: object.id,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: recommendedKeys.concat(systemKeys),
+				skipKeys: recommendedKeys,
 				addCommand: (rootId: string, blockId: string, relation: any) => {
 					onChange({ recommendedRelations: recommendedRelations.concat(relation.id) });
 				},
