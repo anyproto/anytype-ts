@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
+import React, { forwardRef } from 'react';
 import { I } from 'Lib';
 
-const HeaderMainEmpty: FC<I.HeaderComponent> = (props) => {
+const HeaderMainEmpty = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	
 	const { renderLeftIcons } = props;
 
@@ -13,6 +13,6 @@ const HeaderMainEmpty: FC<I.HeaderComponent> = (props) => {
 		</>
 	);
 
-};
+});
 
 export default HeaderMainEmpty;
