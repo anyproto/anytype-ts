@@ -27,7 +27,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	render () {
-		const { rootId, id, isNew, readonly, onContextMenu, onMore, onReplyEdit } = this.props;
+		const { rootId, id, isNew, readonly, scrollToBottom, onContextMenu, onMore, onReplyEdit } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
@@ -154,6 +154,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 										ref={ref => this.attachmentRefs[item.id] = ref}
 										key={i}
 										object={item}
+										scrollToBottom={scrollToBottom}
 										onRemove={() => this.onAttachmentRemove(item.id)}
 										onPreview={(preview) => this.onPreview(preview)}
 										showAsFile={!attachmentsLayout}

@@ -1,5 +1,6 @@
 @import "~scss/_mixins";
 
+.pageMainDate { min-height: 100vh; }
 .pageMainDate {
 	.wrapper { width: 704px; margin: 0px auto; padding: 52px 0px 80px 0px; user-select: none; }
 
@@ -26,9 +27,9 @@
 		.iconObject { display: none; }
 	}
 
-	.container { text-align: center; align-content: center; height: calc(100vh - 228px); }
+	.emptyContainer { text-align: center; align-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
 
-	#loader { position: fixed; top: 50%; transform: translateY(-50%); }
+	#loader { position: fixed; top: 50% !important; transform: translateY(-50%); }
 
 	.wrapper {
 		.iconWrapper {
