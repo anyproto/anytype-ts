@@ -115,7 +115,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					rootId={rootId}
 					blockId={blockId}
 					subId={subId}
-					scrollToBottom={this.scrollToBottom}
+					scrollToBottom={this.scrollToBottomCheck}
 					scrollToMessage={this.scrollToMessage}
 					getMessages={this.getMessages}
 					getReplyContent={this.getReplyContent}
@@ -600,6 +600,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onReplyEdit (e: React.MouseEvent, message: any) {
 		this.refForm.onReply(message);
+		this.scrollToBottomCheck();
 	};
 
 	onReplyClick (e: React.MouseEvent, message: any) {

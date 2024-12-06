@@ -743,6 +743,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	onReplyClear () {
 		this.replyingId = '';
 		this.forceUpdate();
+		this.props.scrollToBottom();
 	};
 
 	onDelete (id: string) {
