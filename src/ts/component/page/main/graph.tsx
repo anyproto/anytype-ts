@@ -166,7 +166,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	initRootId (id: string) {
 		this.rootId = id; 
-		this.refHeader.refChild.setRootId(id);
+		this.refHeader.setRootId(id);
 	};
 
 	getRootId () {

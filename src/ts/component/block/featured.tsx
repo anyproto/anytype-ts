@@ -57,7 +57,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		return (
 			<div 
 				ref={node => this.node = node}
-				className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} 
+				className={[ 'wrap', 'focusable', `c${block.id}` ].join(' ')} 
 				tabIndex={0} 
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp}

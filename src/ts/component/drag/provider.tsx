@@ -218,6 +218,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		this.initData();
 		this.unbind();
 
+		console.log('SET LAYER');
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 		e.dataTransfer.setData('text/plain', JSON.stringify(dataTransfer));
 		e.dataTransfer.setData('data-' + JSON.stringify(dataTransfer), '1');
