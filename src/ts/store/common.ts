@@ -44,8 +44,8 @@ class CommonStore {
 	public isOnlineValue = false;
 	public shareTooltipValue = null;
 	public showVaultValue = null;
+	public showSidebarRightValue = null;
 	public hideSidebarValue = null;
-	public showObjectValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -104,9 +104,9 @@ class CommonStore {
 			shareTooltipValue: observable,
 			showVaultValue: observable,
 			hideSidebarValue: observable,
-			showObjectValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
+			showSidebarRightValue: observable,
 			showRelativeDatesValue: observable,
 			config: computed,
 			preview: computed,
@@ -120,6 +120,7 @@ class CommonStore {
 			isOnline: computed,
 			shareTooltip: computed,
 			showVault: computed,
+			showSidebarRight: computed,
 			showRelativeDates: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
@@ -140,7 +141,7 @@ class CommonStore {
 			shareTooltipSet: action,
 			membershipTiersListSet: action,
 			showVaultSet: action,
-			showObjectSet: action,
+			showSidebarRightSet: action,
 			showRelativeDatesSet: action,
 		});
 
@@ -204,8 +205,8 @@ class CommonStore {
 		return this.boolGet('hideSidebar');
 	};
 
-	get showObject (): boolean {
-		return this.showObjectValue;
+	get showSidebarRight (): boolean {
+		return Boolean(this.showSidebarRightValue);
 	};
 
 	get theme (): string {
@@ -402,8 +403,8 @@ class CommonStore {
 		this.boolSet('hideSidebar', v);
 	};
 
-	showObjectSet (v: boolean) {
-		this.showObjectValue = v;
+	showSidebarRightSet (v: boolean) {
+		this.showSidebarRightValue = Boolean(v);
 	};
 
 	fullscreenSet (v: boolean) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon } from 'Component';
 import { I, C, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
-import { Icon, IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
 
 interface Column {
 	relationKey: string;
@@ -21,6 +21,11 @@ interface Props {
 	filters?: I.Filter[];
 	relationKeys?: string[];
 	route: string;
+};
+
+interface State {
+	sortId: string;
+	sortType: I.SortType;
 };
 
 interface State {
@@ -49,8 +54,8 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { sortId, sortType } = this.state;
 		const { subId, rootId } = this.props;
+		const { sortId, sortType } = this.state;
 		const columns = this.getColumns();
 		const items = this.getItems();
 		const { offset, total } = S.Record.getMeta(subId, '');

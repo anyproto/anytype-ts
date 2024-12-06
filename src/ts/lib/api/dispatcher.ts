@@ -1125,7 +1125,6 @@ class Dispatcher {
 			analytics.removeContext();
 		};
 
-		S.Record.relationsSet(contextId, rootId, relationLinks);
 		S.Detail.set(contextId, details);
 		S.Block.restrictionsSet(contextId, restrictions);
 		S.Block.participantsSet(contextId, participants);
@@ -1152,16 +1151,6 @@ class Dispatcher {
 			id: J.Constant.blockId.type,
 			parentId: J.Constant.blockId.header,
 			type: I.BlockType.Type,
-			fields: {},
-			childrenIds: [],
-			content: {}
-		}));
-
-		// BlockChat
-		blocks.push(new M.Block({
-			id: J.Constant.blockId.chat,
-			parentId: rootId,
-			type: I.BlockType.Chat,
 			fields: {},
 			childrenIds: [],
 			content: {}

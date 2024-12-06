@@ -878,7 +878,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			if ((item.isDiv || item.isSection) && (items.length > 1)) {
+			if ((item.isDiv || item.isSection || item.isEmpty) && (items.length > 1)) {
 				onArrow(dir);
 				return;
 			};
@@ -985,7 +985,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if (next.isDiv || next.isSection) {
+		if (next.isDiv || next.isSection || next.isEmpty) {
 			index++;
 			if (items[index]) {
 				this.setActive(items[index], scroll);

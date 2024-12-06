@@ -413,10 +413,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	getWrapperWidth (): number {
-		const rootId = this.getRootId();
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		return this.getWidth(root?.fields?.width);
+		return this.getWidth(U.Data.getLayoutWidth(this.props.rootId));
 	};
 
 	getWidth (w: number) {

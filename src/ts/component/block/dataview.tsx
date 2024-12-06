@@ -1208,7 +1208,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return [];
 		};
 
-		const keys = S.Record.getObjectRelationKeys(rootId, block.id);
+		const keys = S.Record.getDataviewRelationKeys(rootId, block.id);
 		return view.getVisibleRelations().filter(it => keys.includes(it.relationKey));
 	};
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, J, Relation, analytics, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Relation, analytics, keyboard, translate, Action } from 'Lib';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -34,8 +34,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 
 		const sections = this.getSections();
-		const isLocked = root.isLocked();
-		const readonly = data.readonly || isLocked;
+		const readonly = data.readonly || root.isLocked();
 		const diffKeys = this.getDiffKeys();
 
 		let allowedBlock = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
@@ -166,7 +165,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
-		const relations = S.Record.getObjectRelations(rootId, rootId);
+		const relations = S.Record.getObjectRelations(rootId, type.id);
 		const relationKeys = relations.map(it => it.relationKey);
 		const readonly = this.isReadonly();
 		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => ({ 
@@ -229,14 +228,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const items = this.getItems();
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
 		const featured = U.Common.objectCopy(object.featuredRelations || []);
-		const idx = featured.findIndex(it => it == relationKey);
-		const relation = S.Record.getRelationByKey(relationKey);
 
-		if (idx < 0) {
+		if (!featured.includes(relationKey)) {
 			const item = items.find(it => it.relationKey == relationKey);
-			const cb = () => {
-				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation', { relationKey, format: relation.format }));
-			};
+			const cb = () => Action.toggleFeatureRelation(rootId, relationKey);
 
 			if (item.scope == I.RelationScope.Type) {
 				C.ObjectRelationAdd(rootId, [ relationKey ], cb);
@@ -244,7 +239,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				cb();
 			};
 		} else {
-			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey, format: relation.format }));
+			Action.toggleFeatureRelation(rootId, relationKey)
 		};
 	};
 
@@ -263,7 +258,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: S.Record.getObjectRelationKeys(rootId, rootId),
+				skipKeys: S.Record.getDataviewRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
