@@ -55,6 +55,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const favCnt = this.getFavoriteIds().length;
 		const limit = this.getLimit(block.content);
+		const hasIcon = U.Object.hasIcon(object);
 
 		let layout = block.content.layout;
 		if (object) {
@@ -151,7 +152,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const onClick = this.isSystemTarget() ? this.onSetPreview : this.onClick;
 
 			head = (
-				<div className="head" onClick={onClick}>
+				<div className={[ 'head', !hasIcon ? 'noIcon' : '' ].join(' ')} onClick={onClick}>
 					{back}
 					<div className="clickable">
 						<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={this.onToggle} />

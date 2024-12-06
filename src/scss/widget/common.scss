@@ -34,6 +34,10 @@
 		.iconWrap.back { background-color: var(--color-shape-highlight-medium); }
 		.buttons { display: flex; }
 	}
+	.head.noIcon {
+		.icon.collapse { display: block; }
+		.iconObject.widgetHeadIcon { display: none; }
+	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 

@@ -499,6 +499,10 @@ class UtilObject {
 		});
 	};
 
+	hasIcon (object: any): boolean {
+		return object && (object.iconEmoji || object.iconImage);
+	};
+
 };
 
 export default new UtilObject();
