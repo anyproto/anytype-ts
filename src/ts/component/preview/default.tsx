@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { ObjectName, ObjectDescription, ObjectType, IconObject, Loader } from 'Component';
 import { S, U } from 'Lib';
@@ -11,99 +11,65 @@ interface Props {
 	setObject?: (object: any) => void;
 };
 
-interface State {
-	object: any;
-	loading: boolean;
-};
+const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 
-const PreviewDefault = observer(class PreviewDefault extends React.Component<Props, State> {
+	const { 
+		rootId = '',
+		className = '',
+		object: initialObject,
+		position,
+		setObject: setParentObject,
+	} = props;
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ object, setObject ] = useState(initialObject);
+	const id = useRef(null);
 	
-	public static defaultProps = {
-		className: '',
+	const cn = [ 'previewDefault', className ];
+	const type = S.Record.getTypeById(object.type);
+
+	if (U.Object.isParticipantLayout(object.layout)) {
+		object.name = object.globalName || object.name;
 	};
 
-	_isMounted = false;
-	state = {
-		object: null,
-		loading: false,
-	};
-	id = '';
-
-	render () {
-		const { className } = this.props;
-		const { loading } = this.state;
-		const cn = [ 'previewDefault', className ];
-		const object = this.props.object || this.state.object || {};
-		const type = S.Record.getTypeById(object.type);
-
-		if (U.Object.isParticipantLayout(object.layout)) {
-			object.name = object.globalName || object.name;
-		};
-
-		return (
-			<div className={cn.join(' ')}>
-				{loading ? <Loader /> : (
-					<React.Fragment>
-						<div className="previewHeader">
-							<IconObject object={object} />
-							<ObjectName object={object} />
-						</div>
-						<ObjectDescription object={object} />
-						<div className="featured">
-							<ObjectType object={type} />
-						</div>
-					</React.Fragment>
-				)}
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		this._isMounted = true;
-		this.init();
-	};
-
-	componentDidUpdate (): void {
-		this.init();
-	};
-
-	init () {
-		const { position } = this.props;
-		const object = this.props.object || this.state.object;
-
-		object ? position && position() : this.load();
-	};
-
-	componentWillUnmount(): void {
-		this._isMounted = false;
-		this.id = '';
-	};
-
-	load () {
-		const { rootId, setObject } = this.props;
-		const { loading } = this.state;
-
-		if (loading || (this.id == rootId)) {
+	const load = () => {
+		if (isLoading || (id.current == rootId)) {
 			return;
 		};
 
-		this.id = rootId;
-		this.setState({ loading: true });
+		id.current = rootId;
+		setIsLoading(true);
 
 		U.Object.getById(rootId, {}, (object) => {
-			if (!this._isMounted) {
-				return;
-			};
+			setObject(object);
+			setIsLoading(false);
 
-			this.state.object = object;
-			this.setState({ object, loading: false });
-
-			if (setObject) {
-				setObject(object);
+			if (setParentObject) {
+				setParentObject(object);
 			};
 		});
 	};
 
-});
+	useEffect(() => {
+		initialObject ? position && position() : load();
+	});
+
+	return (
+		<div className={cn.join(' ')}>
+			{isLoading ? <Loader /> : (
+				<>
+					<div className="previewHeader">
+						<IconObject object={object} />
+						<ObjectName object={object} />
+					</div>
+					<ObjectDescription object={object} />
+					<div className="featured">
+						<ObjectType object={type} />
+					</div>
+				</>
+			)}
+		</div>
+	);
+
+}));
 
 export default PreviewDefault;
