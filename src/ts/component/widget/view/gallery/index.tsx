@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, J } from 'Lib';
+import { I, S, J } from 'Lib';
 import Item from './item';
 
 const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
