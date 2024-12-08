@@ -40,6 +40,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
 		const hasMore = U.Space.canMyParticipantWrite();
+		const hasIcon = U.Object.hasIcon(object);
 
 		let arrow = null;
 		let onArrowClick = null;
@@ -66,6 +67,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			arrow = <Icon className="set" />;
 		} else
 		if (numChildren > 0) {
+			cn.push('withArrow');
 			onArrowClick = this.onToggle;
 			arrow = <Icon className="arrow" />;
 		} else {
@@ -78,6 +80,10 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 
 		if (hasMore) {
 			more = <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />;
+		};
+
+		if (!hasIcon) {
+			cn.push('noIcon');
 		};
 
 		let inner = (
