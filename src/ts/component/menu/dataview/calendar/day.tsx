@@ -20,8 +20,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		let size = 16;
 
 		if (fromWidget) {
-			const w = Number(U.Date.date('N', timestamp)) + 1;
-			label = `${translate(`day${w}`)} ${d}`;
+			label = `${U.Date.weekday(timestamp)} ${d}`;
 			size = 18;
 		};
 
