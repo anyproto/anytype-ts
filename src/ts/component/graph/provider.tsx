@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
@@ -259,7 +259,9 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			body.find('#graphPreview').remove();
 			body.append(el);
 
-			ReactDOM.render(<PreviewDefault object={subject.current} className="previewGraph" />, el.get(0), position);
+			const root = createRoot(el.get(0));
+
+			root.render(<PreviewDefault object={subject.current} position={position} className="previewGraph" />);
 			analytics.event('SelectGraphNode', { objectType: subject.current.type, layout: subject.current.layout });
 		} else {
 			position();

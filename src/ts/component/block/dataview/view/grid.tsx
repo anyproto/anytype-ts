@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
@@ -239,7 +239,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 			node.append(clone);
 
-			ReactDOM.render((
+			const root = createRoot(clone.get(0));
+
+			root.render((
 				<HeadRow 
 					{...this.props} 
 					onCellAdd={this.onCellAdd} 
@@ -248,7 +250,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 					onResizeStart={this.onResizeStart}
 					getColumnWidths={this.getColumnWidths}
 				/>
-			), clone.get(0));
+			));
 
 			clone.find('.rowHead').attr({ id: '' });
 			clone.css({ 

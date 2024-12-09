@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
@@ -910,7 +910,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			let icon = null;
 			if (_empty_) {
-				icon = <Loader type={I.LoaderType.Loader} className={[ 'c' + size, 'inline' ].join(' ')} />;
+				icon = <Loader type={I.LoaderType.Loader} className={[ `c${size}`, 'inline' ].join(' ')} />;
 			} else {
 				icon = (
 					<IconObject 
@@ -926,7 +926,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				);
 			};
 
-			item.removeClass('disabled isDone withImage');
+			item.removeClass('disabled isDone');
 
 			if (_empty_ || isDeleted) {
 				item.addClass('disabled');
@@ -936,11 +936,11 @@ const Block = observer(class Block extends React.Component<Props> {
 				item.addClass('isDone');
 			};
 
-			ReactDOM.render(icon, smile.get(0), () => {
-				if (smile.html()) {
-					item.addClass('withImage c' + size);
-				};
-			});
+
+			const root = createRoot(smile.get(0));
+
+			root.render(icon);
+			item.addClass(`withImage c${size}`);
 
 			if (!param || item.hasClass('disabled')) {
 				return;
@@ -1062,7 +1062,8 @@ const Block = observer(class Block extends React.Component<Props> {
 			const smile = item.find('smile');
 
 			if (smile.length) {
-				ReactDOM.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: param }} />, smile.get(0));
+				const root = createRoot(smile.get(0));
+				root.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: param }} />);
 			};
 		});
 	};
