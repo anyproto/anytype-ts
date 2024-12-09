@@ -217,29 +217,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 	onArrow = (dir: ArrowDirection) => {
 		const { selectedItemIndex } = this.state;
 
-		let daysDelta: number;
-		switch (dir) {
-			case ArrowDirection.Up:
-			case ArrowDirection.Down:
-				daysDelta = 7;
-				break;
-			case ArrowDirection.Left:
-			case ArrowDirection.Right:
-				daysDelta = 1;
-				break;
-		};
+		const num = [ ArrowDirection.Up, ArrowDirection.Down ].includes(dir) ? 7 : 1;
+		const d = [ ArrowDirection.Up, ArrowDirection.Left ].includes(dir) ? -1 : 1;
+		const daysDelta = num * d;
 
-		let newItemIndex = selectedItemIndex;
-		switch (dir) {
-			case ArrowDirection.Up:
-			case ArrowDirection.Left:
-				newItemIndex -= daysDelta;
-				break;
-			case ArrowDirection.Down:
-			case ArrowDirection.Right:
-				newItemIndex += daysDelta;
-				break;
-		}
+		let newItemIndex = selectedItemIndex + daysDelta;
 
 		const isOutOfCurrentMonth = newItemIndex < this.firstDayIndex || newItemIndex > this.lastDayIndex;
 		if (isOutOfCurrentMonth) {
