@@ -1,178 +1,109 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
-
 import VaultItem from './item';
 
-const Vault = observer(class Vault extends React.Component {
-	
-	node = null;
-	isAnimating = false;
-	checkKeyUp = false;
-	closeSidebar = false;
-	closeVault = false;
-	top = 0;
-	timeoutHover = 0;
-	pressed = new Set();
-	n = -1;
+interface VaultRefProps {
+	toggleClass: (name: string, value: boolean) => void;
+	setActive: (id: string) => void;
+	getNode: () => HTMLElement;
+};
 
-	constructor (props) {
-		super(props);
+const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onScroll = this.onScroll.bind(this);
-	};
+	const nodeRef = useRef(null);
+	const checkKeyUp = useRef(false);
+	const closeSidebar = useRef(false);
+	const closeVault = useRef(false);
+	const top = useRef(0);
+	const timeoutHover = useRef(0);
+	const pressed = useRef(new Set());
+	const n = useRef(-1);
+	const [ dummy, setDummy ] = useState(0);
+	const items = U.Menu.getVaultItems();
 
-	render () {
-		const items = U.Menu.getVaultItems();
-
-		const Item = item => {
-			const onContextMenu = item.isButton ? null : e => this.onContextMenu(e, item);
-
-			return (
-				<VaultItem 
-					id={item.id}
-					isButton={item.isButton}
-					onClick={e => this.onClick(e, item)}
-					onMouseEnter={e => this.onMouseEnter(e, item)}
-					onMouseLeave={() => this.onMouseLeave()}
-					onContextMenu={onContextMenu}
-				/>
-			);
-		};
-
-		const ItemSortable = SortableElement(it => <Item {...it} index={it.index} />);
-
-		const List = SortableContainer(() => (
-			<div id="scroll" className="side top" onScroll={this.onScroll}>
-				{items.map((item, i) => <ItemSortable {...item} key={`item-space-${item.id}`} index={i} />)}
-			</div>
-		));
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				id="vault"
-				className="vault"
-			>
-				<div className="head" />
-				<div className="body">
-					<List 
-						axis="y" 
-						lockAxis="y"
-						lockToContainerEdges={true}
-						transitionDuration={150}
-						distance={10}
-						onSortStart={this.onSortStart}
-						onSortEnd={this.onSortEnd}
-						helperClass="isDragging"
-						helperContainer={() => $(`#vault .side.top`).get(0)}
-					/>
-
-					<div className="side bottom" onDragStart={e => e.preventDefault()}>
-						<Item id="settings" isButton={true} name={translate('commonSettings')} />
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		this.resize();
-		this.rebind();
-	};
-
-	componentDidUpdate (): void {
-		$(this.node).find('#scroll').scrollTop(this.top);
-		this.setActive(S.Block.spaceview);
-	};
-
-	componentWillUnmount (): void {
-		this.unbind();
-		window.clearTimeout(this.timeoutHover);
-	};
-
-	unbind () {
+	const unbind = () => {
 		const events = [ 'resize', 'keydown', 'keyup' ];
 		const ns = 'vault';
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
-	rebind () {
+	const rebind = () => {
 		const win = $(window);
 
-		this.unbind();
-		win.on('resize.vault', () => this.resize());
-		win.on('keydown.vault', e => this.onKeyDown(e));
-		win.on('keyup.vault', e => this.onKeyUp(e));
+		unbind();
+		win.on('resize.vault', () => resize());
+		win.on('keydown.vault', e => onKeyDown(e));
+		win.on('keyup.vault', e => onKeyUp(e));
 	};
 
-	getSpaceItems () {
+	const getSpaceItems = () => {
 		return U.Menu.getVaultItems().filter(it => !it.isButton);
 	};
 
-	onKeyDown (e: any) {
+	const onKeyDown = (e: any) => {
 		const key = e.key.toLowerCase();
 		const { isClosed, width } = sidebar.data;
 		const { showVault } = S.Common;
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
-			this.checkKeyUp = true;
-			this.pressed.add(key);
+			checkKeyUp.current = true;
+			pressed.current.add(key);
 		};
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
-			this.pressed.add(key);
+			pressed.current.add(key);
 		};
 
 		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => {
-			this.checkKeyUp = true;
-			this.onArrow(pressed.match('shift') ? -1 : 1);
+			checkKeyUp.current = true;
+			onArrow(pressed.match('shift') ? -1 : 1);
 
-			if (!sidebar.isAnimating) {
-				if (!showVault) {
-					S.Common.showVaultSet(true);
-					sidebar.resizePage(width, false);
-					this.closeVault = true;
-				};
+			if (sidebar.isAnimating) {
+				return;
+			};
 
-				if (isClosed) {
-					this.closeSidebar = true;
-					sidebar.open(width);
-				};
+			if (!showVault) {
+				S.Common.showVaultSet(true);
+				sidebar.resizePage(width, false);
+				closeVault.current = true;
+			};
+
+			if (isClosed) {
+				closeSidebar.current = true;
+				sidebar.open(width);
 			};
 		});
 	};
 
-	onKeyUp (e: any) {
+	const onKeyUp = (e: any) => {
 		const key = String(e.key || '').toLowerCase();
 		if (!key) {
 			return;
 		};
 
-		this.pressed.delete(key);
+		pressed.current.delete(key);
 
 		if (
-			(this.pressed.has(Key.ctrl) || 
-			this.pressed.has(Key.tab) || 
-			this.pressed.has(Key.shift)) ||
-			!this.checkKeyUp
+			(pressed.current.has(Key.ctrl) || 
+			pressed.current.has(Key.tab) || 
+			pressed.current.has(Key.shift)) ||
+			!checkKeyUp.current
 		) {
 			return;
 		};
 
-		this.checkKeyUp = false;
+		checkKeyUp.current = false;
 
 		const { width } = sidebar.data;
-		const node = $(this.node);
-		const items = this.getSpaceItems();
-		const item = items[this.n];
+		const node = $(nodeRef.current);
+		const items = getSpaceItems();
+		const item = items[n.current];
 
-		this.checkKeyUp = false;
+		checkKeyUp.current = false;
 
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
@@ -182,27 +113,27 @@ const Vault = observer(class Vault extends React.Component {
 		};
 
 		if (!sidebar.isAnimating) {
-			if (this.closeVault) {
+			if (closeVault.current) {
 				S.Common.showVaultSet(false);
 				sidebar.resizePage(width, false);
-				this.closeVault = false;
+				closeVault.current = false;
 			};
 
-			if (this.closeSidebar) {
+			if (closeSidebar.current) {
 				sidebar.close();
-				this.closeSidebar = false;
+				closeSidebar.current = false;
 			};
 		};
 
 		Preview.tooltipHide();
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
 		switch (item.id) {
 			case 'add': {
-				this.onAdd();
+				Action.createSpace(analytics.route.vault);
 				break;
 			};
 
@@ -227,42 +158,43 @@ const Vault = observer(class Vault extends React.Component {
 		};
 	};
 
-	onArrow (dir: number) {
-		const items = this.getSpaceItems();
+	const onArrow = (dir: number) => {
+		const items = getSpaceItems();
 
 		if (items.length == 1) {
 			return;
 		};
 		
-		this.n += dir;
-		if (this.n < 0) {
-			this.n = items.length - 1;
+		n.current += dir;
+		if (n.current < 0) {
+			n.current = items.length - 1;
 		};
-		if (this.n >= items.length) {
-			this.n = 0;
+		if (n.current >= items.length) {
+			n.current = 0;
 		};
 
-		const next = items[this.n];
+		const next = items[n.current];
+
 		if (next) {
-			this.setHover(next);
+			setHover(next);
 		};
 	};
 
-	setActive (id: string) {
-		const node = $(this.node);
+	const setActive = (id: string) => {
+		const node = $(nodeRef.current);
 
 		node.find('.item.isActive').removeClass('isActive');
 		node.find(`#item-${id}`).addClass('isActive');
 
-		this.n = this.getSpaceItems().findIndex(it => it.id == id);
+		n.current = getSpaceItems().findIndex(it => it.id == id);
 	};
 
-	setHover (item: any) {
-		const node = $(this.node);
+	const setHover = (item: any) => {
+		const node = $(nodeRef.current);
 		const head = node.find('.head');
 		const scroll = node.find('#scroll');
 		const el = node.find(`#item-${item.id}`);
-		const top = el.offset().top - scroll.position().top + this.top;
+		const t = el.offset().top - scroll.position().top + top.current;
 		const height = scroll.height();
 		const hh = head.height();
 		const ih = el.height() + 8;
@@ -271,26 +203,22 @@ const Vault = observer(class Vault extends React.Component {
 		el.addClass('hover');
 
 		let s = -1;
-		if (top < this.top) {
+		if (t < top.current) {
 			s = 0;
 		};
-		if (top + ih > height + this.top + hh) {
-			s = this.top + height;
+		if (t + ih > height + top.current + hh) {
+			s = top.current + height;
 		};
 
 		if (s >= 0) {
 			Preview.tooltipHide(true);
-			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => this.tooltipShow(item, 1));
+			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => tooltipShow(item, 1));
 		} else {
-			this.tooltipShow(item, 1);
+			tooltipShow(item, 1);
 		};
 	};
 
-	onAdd () {
-		Action.createSpace(analytics.route.vault);
-	};
-
-	onContextMenu (e: any, item: any) {
+	const onContextMenu = (e: any, item: any) => {
 		U.Menu.spaceContext(item, {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -300,12 +228,12 @@ const Vault = observer(class Vault extends React.Component {
 		});
 	};
 
-	onSortStart () {
+	const onSortStart = () => {
 		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
 	};
 
-	onSortEnd (result: any) {
+	const onSortEnd = (result: any) => {
 		const { oldIndex, newIndex } = result;
 
 		let ids = U.Menu.getVaultItems().map(it => it.id);
@@ -315,28 +243,24 @@ const Vault = observer(class Vault extends React.Component {
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
 
-		this.forceUpdate();
+		setDummy(dummy + 1);
 	};
 
-	onScroll () {
-		const node = $(this.node);
+	const onScroll = () => {
+		const node = $(nodeRef.current);
 		const scroll = node.find('#scroll');
 
-		this.top = scroll.scrollTop();
+		top.current = scroll.scrollTop();
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isDragging) {
-			this.tooltipShow(item, 300);
+			tooltipShow(item, 300);
 		};
 	};
 
-	onMouseLeave () {
-		Preview.tooltipHide();
-	};
-
-	tooltipShow (item: any, delay: number) {
-		const node = $(this.node);
+	const tooltipShow = (item: any, delay: number) => {
+		const node = $(nodeRef.current);
 		const element = node.find(`#item-${item.id}`);
 
 		Preview.tooltipShow({ 
@@ -350,10 +274,82 @@ const Vault = observer(class Vault extends React.Component {
 		});
 	};
 
-	resize () {
-		$(this.node).css({ height: U.Common.getWindowDimensions().wh });
+	const resize = () => {
+		$(nodeRef.current).css({ height: U.Common.getWindowDimensions().wh });
 	};
 
-});
+	const Item = item => {
+		const onContext = item.isButton ? null : e => onContextMenu(e, item);
+
+		return (
+			<VaultItem 
+				id={item.id}
+				isButton={item.isButton}
+				onClick={e => onClick(e, item)}
+				onMouseEnter={e => onMouseEnter(e, item)}
+				onMouseLeave={() => Preview.tooltipHide()}
+				onContextMenu={onContext}
+			/>
+		);
+	};
+
+	const ItemSortable = SortableElement(it => <Item {...it} index={it.index} />);
+
+	const List = SortableContainer(() => (
+		<div id="scroll" className="side top" onScroll={onScroll}>
+			{items.map((item, i) => <ItemSortable {...item} key={`item-space-${item.id}`} index={i} />)}
+		</div>
+	));
+
+	useEffect(() => {
+		resize();
+		rebind();
+
+		return () => {
+			unbind();
+			window.clearTimeout(timeoutHover.current);
+		};
+	}, []);
+
+	useEffect(() => {
+		$(nodeRef.current).find('#scroll').scrollTop(top.current);
+		setActive(S.Block.spaceview);
+	});
+
+	useImperativeHandle(ref, () => ({
+		toggleClass: (name, value) => {
+			$(nodeRef.current).toggleClass(name, value);
+		},
+		setActive,
+		getNode: () => nodeRef.current,
+	}));
+
+	return (
+		<div 
+			ref={nodeRef}
+			id="vault"
+			className="vault"
+		>
+			<div className="head" />
+			<div className="body">
+				<List 
+					axis="y" 
+					lockAxis="y"
+					lockToContainerEdges={true}
+					transitionDuration={150}
+					distance={10}
+					onSortStart={onSortStart}
+					onSortEnd={onSortEnd}
+					helperClass="isDragging"
+					helperContainer={() => $(`#vault .side.top`).get(0)}
+				/>
+
+				<div className="side bottom" onDragStart={e => e.preventDefault()}>
+					<Item id="settings" isButton={true} name={translate('commonSettings')} />
+				</div>
+			</div>
+		</div>
+	);
+}));
 
 export default Vault;

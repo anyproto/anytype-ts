@@ -27,7 +27,7 @@ class Sidebar {
 		this.initObjects();
 
 		const stored = Storage.get('sidebar');
-		const vault = $(S.Common.getRef('vault').node);
+		const vault = S.Common.getRef('vault');
 
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
@@ -62,7 +62,7 @@ class Sidebar {
 		this.toggleButton = $('#sidebarToggle');
 
 		if (vault) {
-			this.vault = $(vault.node);
+			this.vault = $(vault.getNode());
 		};
 	};
 
