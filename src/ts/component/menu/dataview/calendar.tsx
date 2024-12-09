@@ -221,38 +221,41 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 	onArrow = (dir: ArrowDirection) => {
 		const { selectedItemIndex } = this.state;
+
+		let daysDelta: number;
+		switch (dir) {
+			case ArrowDirection.Up:
+			case ArrowDirection.Down:
+				daysDelta = 7;
+				break;
+			case ArrowDirection.Left:
+			case ArrowDirection.Right:
+				daysDelta = 1;
+				break;
+		};
+
 		let newItemIndex = selectedItemIndex;
 		switch (dir) {
 			case ArrowDirection.Up:
-				newItemIndex -= 7;
+			case ArrowDirection.Left:
+				newItemIndex -= daysDelta;
 				break;
 			case ArrowDirection.Down:
-				newItemIndex += 7;
-				break;
-			case ArrowDirection.Left:
-				newItemIndex -= 1;
-				break;
 			case ArrowDirection.Right:
-				newItemIndex += 1;
+				newItemIndex += daysDelta;
 				break;
 		}
-		const month = this.stepMonths(this.originalValue, this.monthOffset);
 
-		if (newItemIndex < this.firstDayIndex || newItemIndex > this.lastDayIndex) {
+		const indexOutOfCurrentMonth = newItemIndex < this.firstDayIndex || newItemIndex > this.lastDayIndex;
+		if (indexOutOfCurrentMonth) {
 			let newIndexOffset = 0;
 			switch(dir) {
 				case ArrowDirection.Up:
-					newIndexOffset = this.firstDayIndex - newItemIndex - 1;
-					this.monthOffset -= 1;
-					break;
-				case ArrowDirection.Down:
-					newIndexOffset = newItemIndex - this.lastDayIndex - 1;
-					this.monthOffset += 1;
-					break;
 				case ArrowDirection.Left:
 					newIndexOffset = this.firstDayIndex - newItemIndex - 1;
 					this.monthOffset -= 1;
 					break;
+				case ArrowDirection.Down:
 				case ArrowDirection.Right:
 					newIndexOffset = newItemIndex - this.lastDayIndex - 1;
 					this.monthOffset += 1;
@@ -260,22 +263,20 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 			};
 
 			const newMonth = this.stepMonths(this.originalValue, this.monthOffset);
-			const items = U.Date.getCalendarMonth(newMonth);
+			this.setValue(newMonth, false, false);
+			
+			const items = this.getData();
 			const todayParam = U.Date.getCalendarDateParam(newMonth);
+
 			this.firstDayIndex = items.findIndex(item => item.m == todayParam.m);
 			this.lastDayIndex = items.findLastIndex(item => item.m == todayParam.m);
-			this.setValue(newMonth, false, false);
 			
 			switch(dir) {
 				case ArrowDirection.Up:
-					newItemIndex = this.lastDayIndex - newIndexOffset;
-					break;
 				case ArrowDirection.Left:
 					newItemIndex = this.lastDayIndex - newIndexOffset;
 					break;
 				case ArrowDirection.Down:
-					newItemIndex = this.firstDayIndex + newIndexOffset;
-					break;
 				case ArrowDirection.Right:
 					newItemIndex = this.firstDayIndex + newIndexOffset;
 					break;
