@@ -628,10 +628,8 @@ class UtilCommon {
 	};
 
 	getScheme (url: string): string {
-		url = String(url || '');
-
-		const m = url.match(/^([a-z]+):/);
-		return m ? m[1] : '';
+		const u = new URL(String(url || ''));
+		return u ? u.protocol.replace(/:$/, '') : '';
 	};
 
 	intercept (obj: any, change: any) {

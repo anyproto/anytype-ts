@@ -21,9 +21,8 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 		setObject: setParentObject,
 	} = props;
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ object, setObject ] = useState(initialObject);
-	const id = useRef(null);
-	
+	const [ object, setObject ] = useState(initialObject || {});
+	const idRef = useRef(null);
 	const cn = [ 'previewDefault', className ];
 	const type = S.Record.getTypeById(object.type);
 
@@ -32,11 +31,11 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const load = () => {
-		if (isLoading || (id.current == rootId)) {
+		if (isLoading || (idRef.current == rootId)) {
 			return;
 		};
 
-		id.current = rootId;
+		idRef.current = rootId;
 		setIsLoading(true);
 
 		U.Object.getById(rootId, {}, (object) => {
@@ -48,6 +47,12 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		});
 	};
+
+	useEffect(() => {
+		if (initialObject) {
+			setObject(initialObject);
+		};
+	});
 
 	useEffect(() => {
 		initialObject ? position && position() : load();
