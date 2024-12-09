@@ -137,11 +137,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	const theme = S.Common.getThemeClass();
 	const nodeRef = useRef(null);
 	const checkboxRef = useRef(null);
+	const [ stateObject, setStateObject ] = useState(null);
 	
 	let object: any = getObject ? getObject() : props.object || {};
-
-	const [ stateObject, setStateObject ] = useState(null);
-
 	if (stateObject) {
 		object = Object.assign(object, stateObject || {});
 	};

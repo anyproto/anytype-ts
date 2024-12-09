@@ -13,7 +13,6 @@ interface State {
 const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu, State> {
 
 	node: any = null;
-	confetti: any = null;
 	video: any = null;
 	state = {
 		error: null,
@@ -122,7 +121,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 					) : ''}
 				</div>
 
-				{showConfetti ? <ReactCanvasConfetti refConfetti={ins => this.confetti = ins} className="confettiCanvas" /> : ''}
+				{showConfetti ? <ReactCanvasConfetti onInit={ins => this.confettiShot(ins)} className="confettiCanvas" /> : ''}
 			</div>
 		);
 	};
@@ -139,9 +138,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	componentDidUpdate () {
 		const { param, position } = this.props;
 		const { data } = param;
-		const { current } = data;
 		const section = this.getSection();
-		const { items, showConfetti } = section;
+		const { items } = section;
 		const l = items.length;
 		const node = $(this.node);
 		
@@ -157,10 +155,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		this.event();
 
 		U.Common.renderLinks(node);
-
-		if (showConfetti && (current == l - 1)) {
-			this.confettiShot();
-		};
 	};
 
 	componentWillUnmount(): void {
@@ -466,8 +460,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		return true;
 	};
 
-	confettiShot () {
-		this.confetti({ particleCount: 150, spread: 60, origin: { x: 0.5, y: 1 } });
+	confettiShot (instance: any) {
+		instance.confetti({ particleCount: 150, spread: 60, origin: { x: 0.5, y: 1 } });
 	};
 
 	getSection () {

@@ -55,6 +55,7 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 	const cn = [ 'marker', className ];
 	const ci = [ 'markerInner', `c${type}`, `textColor textColor-${colorValue}` ];
 	const themeClass = S.Common.getThemeClass();
+	const key = `marker-${id}-${type}`;
 
 	if (active) {
 		cn.push('active');
@@ -62,7 +63,6 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 	
 	const props = {
 		id: `marker-${id}`,
-		key: `marker-${id}-${type}`,
 		className: ci.join(' '),
 	};
 
@@ -99,12 +99,12 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 
 	switch (type) {
 		case I.MarkerType.Bulleted: {
-			inner = <span {...props} />;
+			inner = <span key={key} {...props} />;
 			break;
 		};
 			
 		case I.MarkerType.Numbered: {
-			inner = <span {...props} />;
+			inner = <span key={key} {...props} />;
 			break;
 		};
 			
