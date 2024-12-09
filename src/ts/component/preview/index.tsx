@@ -13,7 +13,6 @@ interface State {
 
 const PreviewIndex = observer(class PreviewIndex extends React.Component<{}, State> {
 
-	ref = null;
 	state = {
 		object: null,
 	};
@@ -49,7 +48,7 @@ const PreviewIndex = observer(class PreviewIndex extends React.Component<{}, Sta
 					</div>
 				);
 
-				content = <PreviewLink ref={ref => this.ref = ref} url={target} position={this.position} />;
+				content = <PreviewLink url={target} position={this.position} />;
 				break;
 			};
 
@@ -62,7 +61,7 @@ const PreviewIndex = observer(class PreviewIndex extends React.Component<{}, Sta
 					);
 				};
 
-				content = <PreviewObject ref={ref => this.ref = ref} size={I.PreviewSize.Small} rootId={target} setObject={this.setObject} position={this.position} />;
+				content = <PreviewObject size={I.PreviewSize.Small} rootId={target} setObject={this.setObject} position={this.position} />;
 				break;
 			};
 
@@ -75,7 +74,7 @@ const PreviewIndex = observer(class PreviewIndex extends React.Component<{}, Sta
 					);
 				};
 
-				content = <PreviewDefault ref={ref => this.ref = ref} rootId={target} object={object} setObject={this.setObject} position={this.position} />;
+				content = <PreviewDefault rootId={target} object={object} setObject={this.setObject} position={this.position} />;
 				break;
 			};
 		};
