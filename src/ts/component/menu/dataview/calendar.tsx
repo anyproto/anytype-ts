@@ -245,8 +245,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				break;
 		}
 
-		const indexOutOfCurrentMonth = newItemIndex < this.firstDayIndex || newItemIndex > this.lastDayIndex;
-		if (indexOutOfCurrentMonth) {
+		const isOutOfCurrentMonth = newItemIndex < this.firstDayIndex || newItemIndex > this.lastDayIndex;
+		if (isOutOfCurrentMonth) {
 			let newIndexOffset = 0;
 			switch(dir) {
 				case ArrowDirection.Up:
