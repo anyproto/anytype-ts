@@ -859,12 +859,14 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSearchSubscribe(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
-			this.onSubscribe(subId, idField, keys, message);
+		C.ObjectSearchUnsubscribe([ subId ], () => {
+			C.ObjectSearchSubscribe(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
+				this.onSubscribe(subId, idField, keys, message);
 
-			if (callBack) {
-				callBack(message);
-			};
+				if (callBack) {
+					callBack(message);
+				};
+			});
 		});
 	};
 
