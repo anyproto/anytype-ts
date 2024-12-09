@@ -213,7 +213,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const currentMonth = U.Date.getCalendarDateParam(value).m;
 
 		const { selectedCalendarDate } = this.state;
-		const newDateValue = U.Date.timestamp(selectedCalendarDate.y, selectedCalendarDate.m, selectedCalendarDate.d) + daysDelta * 86400 + 86400 / 2;
+		const newDateValue = U.Date.timestamp(selectedCalendarDate.y, selectedCalendarDate.m, selectedCalendarDate.d, 12) + daysDelta * 86400;
 		const newCalendarDate = U.Date.getCalendarDateParam(newDateValue);
 
 		const hasAnotherMonth = newCalendarDate.m != currentMonth;
