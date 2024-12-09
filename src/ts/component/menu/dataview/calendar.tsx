@@ -21,7 +21,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 	monthOffset = 0;
 	firstDayIndex = 0;
 	lastDayIndex = 0;
-	refInner: any = null;
 	refMonth: any = null;
 	refYear: any = null;
 
@@ -58,7 +57,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		};
 
 		return (
-			<div className="inner" ref={ref => this.refInner = ref}>
+			<div className="inner">
 				<div className="head">
 					<div className="sides">
 						<div className="side left">
@@ -158,8 +157,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
-
-		this.refInner.focus();
 
 		const items = this.getData();
 		
