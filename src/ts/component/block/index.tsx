@@ -937,9 +937,12 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 
-			const root = createRoot(smile.get(0));
+			const container = smile.get(0);
+			const root = container._reactRoot || createRoot(container);
 
+			container._reactRoot = root;
 			root.render(icon);
+
 			item.addClass(`withImage c${size}`);
 
 			if (!param || item.hasClass('disabled')) {
@@ -1062,7 +1065,10 @@ const Block = observer(class Block extends React.Component<Props> {
 			const smile = item.find('smile');
 
 			if (smile.length) {
-				const root = createRoot(smile.get(0));
+				const container = smile.get(0);
+				const root = container._reactRoot || createRoot(container);
+
+				container._reactRoot = root;
 				root.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: param }} />);
 			};
 		});
