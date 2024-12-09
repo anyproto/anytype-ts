@@ -45,7 +45,7 @@ const VaultItem: FC<Props> = observer(({
 			className={cn.join(' ')}
 			onClick={onClick}
 			{...attributes}
-            {...listeners}
+			{...listeners}
 			style={style}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
