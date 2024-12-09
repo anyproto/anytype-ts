@@ -191,7 +191,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 	};
 
 	onKeyDown = (e: any) => {
-
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
