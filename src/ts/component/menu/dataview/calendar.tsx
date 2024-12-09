@@ -2,7 +2,6 @@ import * as React from 'react';
 import { I, S, U, J, translate, keyboard } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
-import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 interface State {
 	dotMap: Map<string, boolean>;
