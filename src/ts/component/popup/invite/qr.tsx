@@ -1,8 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Title, Button } from 'Component';
+import { Title, Button, QRCode } from 'Component';
 import { I, S, J, translate, Renderer, analytics } from 'Lib';
-import QRCode from 'qrcode.react';
 
 class PopupInviteQr extends React.Component<I.Popup> {
 
