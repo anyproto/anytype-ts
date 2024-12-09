@@ -10,7 +10,7 @@
 		align-items: center; justify-content: center; background: var(--color-shape-tertiary); opacity: 0; transition: $transitionAllCommon;
 	}
 	.moreWrapper {
-		.icon { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); margin: 0px; }
+		.icon { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); margin: 0px !important; }
 	}
 
 	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow: hidden; height: calc(100% - 1px); }
