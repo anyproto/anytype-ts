@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Deleted, ListObject, Button, Icon, Label, Loader, HeadSimple } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics } from 'Lib';
+import { Header, Footer, Deleted, ListObject, Button, Label, Loader, HeadSimple } from 'Component';
+import { I, C, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
 import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 interface State {
@@ -143,61 +143,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		);
 	};
 
-	getFilters = (start: number, end: number): I.Filter[] => {
-		const { relationKey } = this.state;
-
-		if (!relationKey) {
-			return [];
-		};
-
-		return [
-
-			{
-				relationKey,
-				condition: I.FilterCondition.GreaterOrEqual,
-				value: start,
-				quickOption: I.FilterQuickOption.ExactDate,
-				format: I.RelationType.Date,
-			},
-			{
-				relationKey,
-				condition: I.FilterCondition.LessOrEqual,
-				value: end,
-				quickOption: I.FilterQuickOption.ExactDate,
-				format: I.RelationType.Date,
-			}
-		];
-	};
-
-	getDotMap = (start: number, end: number, callBack: (res: Map<string, boolean>) => void): void => {
-		const { relationKey } = this.state;
-		const res = new Map();
-
-		if (!relationKey) {
-			callBack(res);
-			return;
-		};
-
-		U.Data.search({
-			filters: this.getFilters(start, end),
-			keys: [ relationKey ],
-		}, (message: any) => {
-			eachDayOfInterval({
-				start: fromUnixTime(start),
-				end: fromUnixTime(end)
-			}).forEach(date => {
-				if (message.records.find(rec => isEqual(date, fromUnixTime(rec[relationKey]).setHours(0, 0, 0, 0)))) {
-					res.set(format(date, 'dd-MM-yyyy'), true);
-				};
-			});
-
-			callBack(res);
-		});
-	};
-
 	componentDidMount () {
-		const { match } = this.props;
-		const { relationKey } = match?.params || {};
+		const match = keyboard.getMatch();
+		const { relationKey } = match.params;
 
 		this._isMounted = true;
 
@@ -283,6 +231,10 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
         C.RelationListWithValue(space, rootId, (message: any) => {
             const relations = (message.relations || []).map(it => S.Record.getRelationByKey(it.relationKey)).filter(it => {
+				if (!it) {
+					return false;
+				};
+
                 if ([ RELATION_KEY_MENTION ].includes(it.relationKey)) {
                     return true;
                 };
@@ -333,6 +285,58 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match?.params?.id;
+	};
+
+	getFilters = (start: number, end: number): I.Filter[] => {
+		const { relationKey } = this.state;
+
+		if (!relationKey) {
+			return [];
+		};
+
+		return [
+
+			{
+				relationKey,
+				condition: I.FilterCondition.GreaterOrEqual,
+				value: start,
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: I.RelationType.Date,
+			},
+			{
+				relationKey,
+				condition: I.FilterCondition.LessOrEqual,
+				value: end,
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: I.RelationType.Date,
+			}
+		];
+	};
+
+	getDotMap = (start: number, end: number, callBack: (res: Map<string, boolean>) => void): void => {
+		const { relationKey } = this.state;
+		const res = new Map();
+
+		if (!relationKey) {
+			callBack(res);
+			return;
+		};
+
+		U.Data.search({
+			filters: this.getFilters(start, end),
+			keys: [ relationKey ],
+		}, (message: any) => {
+			eachDayOfInterval({
+				start: fromUnixTime(start),
+				end: fromUnixTime(end)
+			}).forEach(date => {
+				if (message.records.find(rec => isEqual(date, fromUnixTime(rec[relationKey]).setHours(0, 0, 0, 0)))) {
+					res.set(format(date, 'dd-MM-yyyy'), true);
+				};
+			});
+
+			callBack(res);
+		});
 	};
 
 });

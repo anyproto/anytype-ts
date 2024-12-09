@@ -1,124 +1,32 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import { I, S, U, J, translate } from 'Lib';
 
-interface State {
-	value: number;
+interface WidgetViewCalendarRefProps {
+	getFilters: () => I.Filter[];
 };
 
-const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Component<I.WidgetViewComponent, State> {
+const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.WidgetViewComponent>((props, ref: any) => {
 
-	node = null;
-	refMonth = null;
-	refYear = null;
-	state = {
-		value: U.Date.now(),
+	const [ value, setValue ] = useState(U.Date.now());
+	const { rootId, block, canCreate, getView, reload, onCreate } = props;
+	const monthRef = useRef(null);
+	const yearRef = useRef(null);
+	const view = getView();
+	const { groupRelationKey } = view;
+	const data = U.Date.getCalendarMonth(value);
+
+	const getDateParam = (t: number) => {
+		const [ d, m, y ] = U.Date.date('j,n,Y', t).split(',').map(it => Number(it));
+		return { d, m, y };
 	};
 
-	constructor (props: I.WidgetViewComponent) {
-		super(props);
+	let { m, y } = getDateParam(value);
 
-		this.onArrow = this.onArrow.bind(this);
-	};
-
-	render (): React.ReactNode {
-		const { value } = this.state;
-		const { block, getView } = this.props;
-		const view = getView();
-
-		if (!view) {
-			return null;
-		};
-
-		const data = U.Date.getCalendarMonth(value);
-		const { m, y } = this.getDateParam(value);
-		const today = this.getDateParam(U.Date.now());
-		const days = U.Date.getWeekDays();
-		const months = U.Date.getMonths();
-		const years = U.Date.getYears(0, 3000);
-		const { groupRelationKey } = view;
-		const dotMap = this.getDotMap(groupRelationKey);
-
-		return (
-			<div ref={ref => this.node = ref} className="body">
-				<div id="dateSelect" className="dateSelect">
-					<div className="side left">
-						<Select 
-							ref={ref => this.refMonth = ref}
-							id={`widget-${block.id}-calendar-month`} 
-							value={m} 
-							options={months} 
-							className="month" 
-							onChange={m => this.setValue(U.Date.timestamp(y, m, 1))} 
-						/>
-						<Select 
-							ref={ref => this.refYear = ref}
-							id={`widget-${block.id}-calendar-year`} 
-							value={y} 
-							options={years} 
-							className="year" 
-							onChange={y => this.setValue(U.Date.timestamp(y, m, 1))} 
-						/>
-					</div>
-
-					<div className="side right">
-						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
-						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
-					</div>
-				</div>
-
-				<div className="table">
-					<div className="tableHead">
-						{days.map((item, i) => (
-							<div key={i} className="item">
-								<div className="inner">{item.name.substring(0, 2)}</div>
-							</div>
-						))}
-					</div>
-
-					<div className="tableBody">
-						{data.map((item, i) => {
-							const cn = [ 'day' ];
-							if (m != item.m) {
-								cn.push('other');
-							};
-							if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
-								cn.push('today');
-							};
-							if (i < 7) {
-								cn.push('first');
-							};
-
-							const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
-							return (
-								<div 
-									id={[ 'day', item.d, item.m, item.y ].join('-')}
-									key={i}
-									className={cn.join(' ')} 
-									onClick={() => this.onClick(item.d, item.m, item.y)}
-									onContextMenu={(e: any) => this.onContextMenu(e, item)}
-								>
-									<div className="inner">
-										{item.d}
-										{check ? <div className="bullet" /> : ''}
-									</div>
-								</div>	
-							);
-						})}
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	onContextMenu = (e: any, item: any) => {
+	const onContextMenu = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		const { getView } = this.props;
-		const view = getView();
-		const { groupRelationKey } = view;
 
 		S.Menu.open('select', {
 			element: '#' + [ 'day', item.d, item.m, item.y ].join('-'),
@@ -133,25 +41,12 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		});
 	};
 
-	componentDidMount(): void {
-		this.setSelectsValue(this.state.value);
+	const setSelectsValue = () => {
+		monthRef.current.setValue(m);
+		yearRef.current.setValue(y);
 	};
 
-	setSelectsValue (value: number) {
-		const { m, y } = this.getDateParam(value);
-
-		this.refMonth?.setValue(m);
-		this.refYear?.setValue(y);
-	};
-
-	getDateParam (t: number) {
-		const [ d, m, y ] = U.Date.date('j,n,Y', t).split(',').map(it => Number(it));
-		return { d, m, y };
-	};
-
-	onArrow (dir: number) {
-		let { m, y } = this.getDateParam(this.state.value);
-
+	const onArrow = (dir: number) => {
 		m += dir;
 		if (m < 0) {
 			m = 12;
@@ -162,18 +57,10 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 			y++;
 		};
 
-		this.setValue(U.Date.timestamp(y, m, 1));
+		setValue(U.Date.timestamp(y, m, 1));
 	};
 
-	setValue (value: number) {
-		this.state.value = value;
-		this.setState({ value }, () => this.props.reload());
-		this.setSelectsValue(value);
-	};
-
-	onClick (d: number, m: number, y: number) {
-		const { rootId, getView, canCreate, onCreate } = this.props;
-		const view = getView();
+	const onClick = (d: number, m: number, y: number) => {
 		const element = `#day-${d}-${m}-${y}`;
 
 		S.Menu.closeAll([ 'dataviewCalendarDay' ], () => {
@@ -206,16 +93,13 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		});
 	};
 
-	getFilters (): I.Filter[] {
-		const { getView } = this.props;
-		const view = getView();
+	const getFilters = (): I.Filter[] => {
 		const relation = S.Record.getRelationByKey(view.groupRelationKey);
-
 		if (!relation) {
 			return [];
 		};
 
-		const data = U.Date.getCalendarMonth(this.state.value);
+		const data = U.Date.getCalendarMonth(value);
 		if (!data.length) {
 			return;
 		};
@@ -243,9 +127,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		];
 	};
 
-	getDotMap (relationKey: string): Map<string, boolean> {
-		const { value } = this.state;
-		const { rootId } = this.props;
+	const getDotMap = (relationKey: string): Map<string, boolean> => {
 		const data = U.Date.getCalendarMonth(value);
 		const items = S.Record.getRecords(S.Record.getSubId(rootId, J.Constant.blockId.dataview), [ relationKey ]);
 		const ret = new Map();
@@ -261,6 +143,93 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		return ret;
 	};
 
-});
+	useEffect(() => setSelectsValue(), []);
+	useEffect(() => {
+		setSelectsValue();
+		reload();
+	}, [ value ]);
+
+	useImperativeHandle(ref, () => ({
+		getFilters,
+	}));
+
+	const today = getDateParam(U.Date.now());
+	const days = U.Date.getWeekDays();
+	const months = U.Date.getMonths();
+	const years = U.Date.getYears(0, 3000);
+	const dotMap = getDotMap(groupRelationKey);
+
+	return (
+		<div className="body">
+			<div id="dateSelect" className="dateSelect">
+				<div className="side left">
+					<Select 
+						ref={monthRef}
+						id={`widget-${block.id}-calendar-month`} 
+						value={m} 
+						options={months} 
+						className="month" 
+						onChange={m => setValue(U.Date.timestamp(y, m, 1))} 
+					/>
+					<Select 
+						ref={yearRef}
+						id={`widget-${block.id}-calendar-year`} 
+						value={y} 
+						options={years} 
+						className="year" 
+						onChange={y => setValue(U.Date.timestamp(y, m, 1))} 
+					/>
+				</div>
+
+				<div className="side right">
+					<Icon className="arrow left" onClick={() => onArrow(-1)} />
+					<Icon className="arrow right" onClick={() => onArrow(1)} />
+				</div>
+			</div>
+
+			<div className="table">
+				<div className="tableHead">
+					{days.map((item, i) => (
+						<div key={i} className="item">
+							<div className="inner">{item.name.substring(0, 2)}</div>
+						</div>
+					))}
+				</div>
+
+				<div className="tableBody">
+					{data.map((item, i) => {
+						const cn = [ 'day' ];
+						if (m != item.m) {
+							cn.push('other');
+						};
+						if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
+							cn.push('today');
+						};
+						if (i < 7) {
+							cn.push('first');
+						};
+
+						const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
+						return (
+							<div 
+								id={[ 'day', item.d, item.m, item.y ].join('-')}
+								key={i}
+								className={cn.join(' ')} 
+								onClick={() => onClick(item.d, item.m, item.y)}
+								onContextMenu={(e: any) => onContextMenu(e, item)}
+							>
+								<div className="inner">
+									{item.d}
+									{check ? <div className="bullet" /> : ''}
+								</div>
+							</div>	
+						);
+					})}
+				</div>
+			</div>
+		</div>
+	);
+
+}));
 
 export default WidgetViewCalendar;

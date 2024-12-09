@@ -9,7 +9,7 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar, Vault, ShareTooltip, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -75,6 +75,7 @@ if (!isPackaged) {
 			C,
 			S,
 			U,
+			M,
 			analytics,
 			dispatcher,
 			keyboard,

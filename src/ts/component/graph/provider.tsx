@@ -339,6 +339,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				break;
 			};
 
+			case 'setRootId': {
+				$(window).trigger('updateGraphRoot', { id: data.node });
+			};
+
 		};
 	};
 
