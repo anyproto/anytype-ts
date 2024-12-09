@@ -339,7 +339,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	const childBlocks = S.Block.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
 	const isTask = U.Object.isTaskLayout(object.layout);
 	const isBookmark = U.Object.isBookmarkLayout(object.layou);
-	const cn = [ 'previewObject' , check.className, className, cnPreviewSize ];
+	const cn = [ 'previewObject' , check.className, className ];
 
 	switch (size) {
 		case I.PreviewSize.Large: {
@@ -361,6 +361,8 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 			break;
 		};
 	};
+
+	cn.push(cnPreviewSize);
 
 	if (isTask || isBookmark) {
 		iconSize = 16;
