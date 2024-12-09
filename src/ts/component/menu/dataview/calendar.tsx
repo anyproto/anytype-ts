@@ -30,7 +30,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { value, isEmpty, canEdit, canClear = true } = data;
-		const { dotMap, selectedCalendarDate: selectedDay } = this.state;
+		const { dotMap, selectedCalendarDate } = this.state;
 		const items = this.getData();
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
@@ -109,7 +109,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 							cn.push('active');
 						};
 
-						if ((selectedDay.d == item.d) && (selectedDay.m == item.m) && (selectedDay.y == item.y)) {
+						if ((selectedCalendarDate.d == item.d) && (selectedCalendarDate.m == item.m) && (selectedCalendarDate.y == item.y)) {
 							cn.push('selected');
 						};
 
