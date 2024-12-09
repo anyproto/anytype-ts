@@ -49,6 +49,8 @@
 		.day.today { color: var(--color-system-accent-125); }
 		.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 		.day.other { color: var(--color-control-active); }
+		.day.selected { background: var(--color-shape-highlight-medium); }
+		.day.selected.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 		
 		.line { margin: 8px 16px 11px 16px; }
 		

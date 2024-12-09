@@ -1,27 +1,31 @@
 import * as React from 'react';
-import { I, S, U, J, translate } from 'Lib';
+import { I, S, U, J, translate, keyboard } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
+import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 interface State {
 	dotMap: Map<string, boolean>;
+	selectedItem: number;
 };
 
 const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
 	
 	originalValue = 0;
+	refInner: any = null;
 	refMonth: any = null;
 	refYear: any = null;
 
 	state: Readonly<State> = {
 		dotMap: new Map(),
+		selectedItem: 0,
 	};
 	
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { value, isEmpty, canEdit, canClear = true } = data;
-		const { dotMap } = this.state;
+		const { dotMap, selectedItem } = this.state;
 		const items = this.getData();
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
@@ -46,7 +50,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		};
 
 		return (
-			<div className="inner">
+			<div className="inner" ref={ref => this.refInner = ref}>
 				<div className="head">
 					<div className="sides">
 						<div className="side left">
@@ -101,6 +105,10 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 							cn.push('active');
 						};
 
+						if (selectedItem == i) {
+							cn.push('selected');
+						};
+
 						const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
 						return (
 							<div 
@@ -143,9 +151,116 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { data } = param;
 		const { value } = data;
 
+		const items = this.getData();
+		const todayParam = U.Date.getCalendarDateParam(U.Date.today());
+		console.log(todayParam, items);
+		const todayIndex = items.findIndex(item => item.d == todayParam.d && item.m == todayParam.m && item.y == todayParam.y);
+
+		this.setState({
+			selectedItem: todayIndex,
+		});
+
+		this.refInner.focus();
+		
 		this.originalValue = value;
 		this.initDotMap();
+		this.rebind();
 		this.forceUpdate();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+	};
+
+	unbind () {
+		$(window).off('keydown.menu');
+	};
+
+	onKeyDown = (e: any) => {
+
+		e.stopPropagation();
+		keyboard.disableMouse(true);
+
+		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
+			e.preventDefault();
+
+			this.onArrowVertical(pressed == 'arrowup' ? -1 : 1);
+		});
+
+		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+			e.preventDefault();
+			
+			this.onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
+		});
+
+		const { selectedItem } = this.state;
+
+		if (!selectedItem) {
+			return;
+		};
+
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+
+			const items = this.getData();
+			this.setOrOpenDate(items[selectedItem]);
+		});
+	};
+
+	fixOutOfBounds = (newItem: number) => {
+		const items = this.getData();
+		const currMonthLength = items.length;
+
+		if (newItem < 0) {
+			const { param } = this.props;
+			const { data } = param;
+			const { value } = data;
+			this.setValue(this.stepMonth(value, -1), false, false);
+
+			const items = this.getData();
+			const newMonthLength = items.length;
+
+			newItem = newMonthLength - (7 - newItem % 7) + 7;
+		};
+
+		if (newItem >= currMonthLength) {
+			const { param } = this.props;
+			const { data } = param;
+			const { value } = data;
+			this.setValue(this.stepMonth(value, 1), false, false);
+
+			const items = this.getData();
+			const newMonthLength = items.length;
+
+			newItem = (newItem % 7);
+		};
+
+		return newItem;
+	};
+
+	onArrowVertical = (dir: number) => {
+		const { selectedItem } = this.state;
+		const newItem = selectedItem + dir * 7;
+
+		this.setState({
+			selectedItem: this.fixOutOfBounds(newItem),
+		});
+	};
+
+	onArrowHorizontal = (dir: number) => {
+		const { selectedItem } = this.state;
+		const newItem = selectedItem + dir;
+
+		this.fixOutOfBounds(newItem);
+
+		this.setState({
+			selectedItem: this.fixOutOfBounds(newItem),
+		});
 	};
 
 	componentDidUpdate () {
@@ -178,9 +293,13 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		getDotMap(start, end, dotMap => this.setState({ dotMap }));
 	};
 
-	onClick (e: any, item: any) {
+	onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
+		this.setOrOpenDate(item);
+	};
+
+	setOrOpenDate = (item: any) => {
 		const { param } = this.props;
 		const { data } = param;
 		const { canEdit, relationKey } = data;
