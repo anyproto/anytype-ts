@@ -16,7 +16,7 @@ enum ArrowDirection {
 }
 
 const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
-	
+
 	originalValue = 0;
 	monthOffset = 0;
 	firstDayIndex = 0;
@@ -28,7 +28,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		dotMap: new Map(),
 		selectedItemIndex: 0,
 	};
-	
+
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
@@ -162,7 +162,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		
 		this.originalValue = value;
 
-		const todayParam = U.Date.getCalendarDateParam(this.stepMonths(this.originalValue, this.monthOffset));
+		const todayParam = U.Date.getCalendarDateParam(value);
 		
 		this.firstDayIndex = items.findIndex(item => item.m == todayParam.m);
 		this.lastDayIndex = items.findLastIndex(item => item.m == todayParam.m);
@@ -214,7 +214,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		});
 	};
 
-	onArrow = (dir: ArrowDirection) => {
+	onArrow = (dir: ArrowDirection) => {	
 		const { selectedItemIndex } = this.state;
 
 		const num = [ ArrowDirection.Up, ArrowDirection.Down ].includes(dir) ? 7 : 1;
@@ -239,25 +239,22 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 					break;
 			};
 
-			const newMonth = this.stepMonths(this.originalValue, this.monthOffset);
+			const { param } = this.props;
+			const { data } = param;
+			const { value } = data;
+
+			const newMonth = this.stepMonth(value, d);
 			this.setValue(newMonth, false, false);
 			
-			const items = this.getData();
+			const items = U.Date.getCalendarMonth(newMonth);
 			const todayParam = U.Date.getCalendarDateParam(newMonth);
-
+			
 			this.firstDayIndex = items.findIndex(item => item.m == todayParam.m);
 			this.lastDayIndex = items.findLastIndex(item => item.m == todayParam.m);
 			
-			switch(dir) {
-				case ArrowDirection.Up:
-				case ArrowDirection.Left:
-					newItemIndex = this.lastDayIndex - newIndexOffset;
-					break;
-				case ArrowDirection.Down:
-				case ArrowDirection.Right:
-					newItemIndex = this.firstDayIndex + newIndexOffset;
-					break;
-			};
+			newItemIndex = [ ArrowDirection.Up, ArrowDirection.Left ].includes(dir) ?
+				this.lastDayIndex - newIndexOffset :
+				this.firstDayIndex + newIndexOffset;
 		};
 
 		this.setState({
@@ -363,23 +360,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { value } = data;
 		
 		return U.Date.getCalendarMonth(value);
-	};
-
-	stepMonths = (value: number, steps: number) => {
-		if (steps == 0) {
-			return value;
-		};
-
-		const d = steps > 0 ? 1 : -1;	
-		let ret = value;
-
-		let counter = steps;
-		while (counter != 0) {
-			ret = this.stepMonth(ret, d);
-			counter -= d;
-		}
-
-		return ret;
 	};
 
 	stepMonth = (value: number, dir: number) => {
