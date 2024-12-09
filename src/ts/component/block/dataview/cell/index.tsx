@@ -74,7 +74,6 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			...this.props,
 			ref: ref => this.ref = ref,
 			id,
-			key: id,
 			canEdit,
 			relation,
 			placeholder,
@@ -123,7 +122,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
-				<CellComponent {...props} />
+				<CellComponent key={id} {...props} />
 			</div>
 		);
 	};
