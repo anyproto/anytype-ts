@@ -388,9 +388,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		if (steps == 0) {
 			return value;
 		};
+
 		const d = steps > 0 ? 1 : -1;	
-		let counter = steps;
 		let ret = value;
+
+		let counter = steps;
 		while (counter != 0) {
 			ret = this.stepMonth(ret, d);
 			counter -= d;
