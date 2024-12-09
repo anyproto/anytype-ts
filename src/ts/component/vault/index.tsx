@@ -1,9 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import arrayMove from 'array-move';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
 import VaultItem from './item';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 
 interface VaultRefProps {
 	toggleClass: (name: string, value: boolean) => void;
@@ -23,6 +24,10 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const n = useRef(-1);
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
+	const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    );
 
 	const unbind = () => {
 		const events = [ 'resize', 'keydown', 'keyup' ];
@@ -234,11 +239,12 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	};
 
 	const onSortEnd = (result: any) => {
-		const { oldIndex, newIndex } = result;
+		const { active, over } = result;
+		const ids = U.Menu.getVaultItems().map(it => it.id);
+		const oldIndex = ids.indexOf(active.id);
+		const newIndex = ids.indexOf(over.id);
 
-		let ids = U.Menu.getVaultItems().map(it => it.id);
-		ids = arrayMove(ids, oldIndex, newIndex);
-		Storage.set('spaceOrder', ids, true);
+		Storage.set('spaceOrder', arrayMove(ids, oldIndex, newIndex), true);
 
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
@@ -278,29 +284,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		$(nodeRef.current).css({ height: U.Common.getWindowDimensions().wh });
 	};
 
-	const Item = item => {
-		const onContext = item.isButton ? null : e => onContextMenu(e, item);
-
-		return (
-			<VaultItem 
-				id={item.id}
-				isButton={item.isButton}
-				onClick={e => onClick(e, item)}
-				onMouseEnter={e => onMouseEnter(e, item)}
-				onMouseLeave={() => Preview.tooltipHide()}
-				onContextMenu={onContext}
-			/>
-		);
-	};
-
-	const ItemSortable = SortableElement(it => <Item {...it} index={it.index} />);
-
-	const List = SortableContainer(() => (
-		<div id="scroll" className="side top" onScroll={onScroll}>
-			{items.map((item, i) => <ItemSortable {...item} key={`item-space-${item.id}`} index={i} />)}
-		</div>
-	));
-
 	useEffect(() => {
 		resize();
 		rebind();
@@ -324,6 +307,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		getNode: () => nodeRef.current,
 	}));
 
+	const itemSettings = { id: 'settings', name: translate('commonSettings'), isButton: true };	
+
 	return (
 		<div 
 			ref={nodeRef}
@@ -332,20 +317,42 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		>
 			<div className="head" />
 			<div className="body">
-				<List 
-					axis="y" 
-					lockAxis="y"
-					lockToContainerEdges={true}
-					transitionDuration={150}
-					distance={10}
-					onSortStart={onSortStart}
-					onSortEnd={onSortEnd}
-					helperClass="isDragging"
-					helperContainer={() => $(`#vault .side.top`).get(0)}
-				/>
+				<DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+					onDragStart={onSortStart}
+                    onDragEnd={onSortEnd}
+					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
+                >
+                    <SortableContext
+                        items={items.map((item) => item.id)}
+                        strategy={verticalListSortingStrategy}
+                    >
+						<div id="scroll" className="side top" onScroll={onScroll}>
+							{items.map((item, i) => (
+								<VaultItem 
+									key={`item-space-${item.id}`}
+									id={item.id}
+									object={item}
+									isButton={item.isButton}
+									onClick={e => onClick(e, item)}
+									onMouseEnter={e => onMouseEnter(e, item)}
+									onMouseLeave={() => Preview.tooltipHide()}
+									onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
+								/>
+							))}
+						</div>
+					</SortableContext>
+				</DndContext>
 
 				<div className="side bottom" onDragStart={e => e.preventDefault()}>
-					<Item id="settings" isButton={true} name={translate('commonSettings')} />
+					<VaultItem 
+						{...itemSettings}
+						onClick={e => onClick(e, itemSettings)}
+						onContextMenu={null}
+						onMouseEnter={e => onMouseEnter(e, itemSettings)}
+						onMouseLeave={() => Preview.tooltipHide()}
+					/>
 				</div>
 			</div>
 		</div>
