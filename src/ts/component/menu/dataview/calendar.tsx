@@ -6,30 +6,39 @@ import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 interface State {
 	dotMap: Map<string, boolean>;
-	selectedItem: number;
+	selectedItemIndex: number;
 };
+
+enum ArrowDirection {
+	Up = 'arrowup',
+	Down = 'arrowdown',
+	Left = 'arrowleft',
+	Right = 'arrowright',
+}
 
 const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
 	
 	originalValue = 0;
+	monthOffset = 0;
+	firstDayIndex = 0;
+	lastDayIndex = 0;
 	refInner: any = null;
 	refMonth: any = null;
 	refYear: any = null;
 
 	state: Readonly<State> = {
 		dotMap: new Map(),
-		selectedItem: 0,
+		selectedItemIndex: 0,
 	};
 	
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { value, isEmpty, canEdit, canClear = true } = data;
-		const { dotMap, selectedItem } = this.state;
+		const { dotMap, selectedItemIndex } = this.state;
 		const items = this.getData();
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
-
 		const now = U.Date.now();
 		const tomorrow = now + 86400;
 		const dayToday = U.Date.today();
@@ -105,7 +114,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 							cn.push('active');
 						};
 
-						if (selectedItem == i) {
+						if (selectedItemIndex == i) {
 							cn.push('selected');
 						};
 
@@ -151,18 +160,22 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { data } = param;
 		const { value } = data;
 
-		const items = this.getData();
-		const todayParam = U.Date.getCalendarDateParam(U.Date.today());
-		console.log(todayParam, items);
-		const todayIndex = items.findIndex(item => item.d == todayParam.d && item.m == todayParam.m && item.y == todayParam.y);
-
-		this.setState({
-			selectedItem: todayIndex,
-		});
-
 		this.refInner.focus();
+
+		const items = this.getData();
 		
 		this.originalValue = value;
+
+		const todayParam = U.Date.getCalendarDateParam(this.stepMonths(this.originalValue, this.monthOffset));
+		
+		this.firstDayIndex = items.findIndex(item => item.m == todayParam.m);
+		this.lastDayIndex = items.findLastIndex(item => item.m == todayParam.m);
+		
+		const todayIndex = items.findIndex(item => item.d == todayParam.d && item.m == todayParam.m && item.y == todayParam.y);
+		this.setState({
+			selectedItemIndex: todayIndex,
+		});
+
 		this.initDotMap();
 		this.rebind();
 		this.forceUpdate();
@@ -186,21 +199,15 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
+		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.onArrowVertical(pressed == 'arrowup' ? -1 : 1);
+			this.onArrow(pressed as ArrowDirection);
 		});
 
-		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
-			e.preventDefault();
-			
-			this.onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
-		});
+		const { selectedItemIndex } = this.state;
 
-		const { selectedItem } = this.state;
-
-		if (!selectedItem) {
+		if (!selectedItemIndex) {
 			return;
 		};
 
@@ -208,58 +215,75 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 			e.preventDefault();
 
 			const items = this.getData();
-			this.setOrOpenDate(items[selectedItem]);
+			this.setOrOpenDate(items[selectedItemIndex]);
 		});
 	};
 
-	fixOutOfBounds = (newItem: number) => {
-		const items = this.getData();
-		const currMonthLength = items.length;
+	onArrow = (dir: ArrowDirection) => {
+		const { selectedItemIndex } = this.state;
+		let newItemIndex = selectedItemIndex;
+		switch (dir) {
+			case ArrowDirection.Up:
+				newItemIndex -= 7;
+				break;
+			case ArrowDirection.Down:
+				newItemIndex += 7;
+				break;
+			case ArrowDirection.Left:
+				newItemIndex -= 1;
+				break;
+			case ArrowDirection.Right:
+				newItemIndex += 1;
+				break;
+		}
+		const month = this.stepMonths(this.originalValue, this.monthOffset);
 
-		if (newItem < 0) {
-			const { param } = this.props;
-			const { data } = param;
-			const { value } = data;
-			this.setValue(this.stepMonth(value, -1), false, false);
+		if (newItemIndex < this.firstDayIndex || newItemIndex > this.lastDayIndex) {
+			let newIndexOffset = 0;
+			switch(dir) {
+				case ArrowDirection.Up:
+					newIndexOffset = this.firstDayIndex - newItemIndex - 1;
+					this.monthOffset -= 1;
+					break;
+				case ArrowDirection.Down:
+					newIndexOffset = newItemIndex - this.lastDayIndex - 1;
+					this.monthOffset += 1;
+					break;
+				case ArrowDirection.Left:
+					newIndexOffset = this.firstDayIndex - newItemIndex - 1;
+					this.monthOffset -= 1;
+					break;
+				case ArrowDirection.Right:
+					newIndexOffset = newItemIndex - this.lastDayIndex - 1;
+					this.monthOffset += 1;
+					break;
+			};
 
-			const items = this.getData();
-			const newMonthLength = items.length;
-
-			newItem = newMonthLength - (7 - newItem % 7) + 7;
+			const newMonth = this.stepMonths(this.originalValue, this.monthOffset);
+			const items = U.Date.getCalendarMonth(newMonth);
+			const todayParam = U.Date.getCalendarDateParam(newMonth);
+			this.firstDayIndex = items.findIndex(item => item.m == todayParam.m);
+			this.lastDayIndex = items.findLastIndex(item => item.m == todayParam.m);
+			this.setValue(newMonth, false, false);
+			
+			switch(dir) {
+				case ArrowDirection.Up:
+					newItemIndex = this.lastDayIndex - newIndexOffset;
+					break;
+				case ArrowDirection.Left:
+					newItemIndex = this.lastDayIndex - newIndexOffset;
+					break;
+				case ArrowDirection.Down:
+					newItemIndex = this.firstDayIndex + newIndexOffset;
+					break;
+				case ArrowDirection.Right:
+					newItemIndex = this.firstDayIndex + newIndexOffset;
+					break;
+			};
 		};
 
-		if (newItem >= currMonthLength) {
-			const { param } = this.props;
-			const { data } = param;
-			const { value } = data;
-			this.setValue(this.stepMonth(value, 1), false, false);
-
-			const items = this.getData();
-			const newMonthLength = items.length;
-
-			newItem = (newItem % 7);
-		};
-
-		return newItem;
-	};
-
-	onArrowVertical = (dir: number) => {
-		const { selectedItem } = this.state;
-		const newItem = selectedItem + dir * 7;
-
 		this.setState({
-			selectedItem: this.fixOutOfBounds(newItem),
-		});
-	};
-
-	onArrowHorizontal = (dir: number) => {
-		const { selectedItem } = this.state;
-		const newItem = selectedItem + dir;
-
-		this.fixOutOfBounds(newItem);
-
-		this.setState({
-			selectedItem: this.fixOutOfBounds(newItem),
+			selectedItemIndex: newItemIndex,
 		});
 	};
 
@@ -363,7 +387,22 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		return U.Date.getCalendarMonth(value);
 	};
 
-	stepMonth (value: number, dir: number) {
+	stepMonths = (value: number, steps: number) => {
+		if (steps == 0) {
+			return value;
+		};
+		const d = steps > 0 ? 1 : -1;	
+		let counter = steps;
+		let ret = value;
+		while (counter != 0) {
+			ret = this.stepMonth(ret, d);
+			counter -= d;
+		}
+
+		return ret;
+	};
+
+	stepMonth = (value: number, dir: number) => {
 		const { m, y } = U.Date.getCalendarDateParam(value);
 
 		let nY = y;
