@@ -101,6 +101,7 @@ export default {
 				'#widget-buttons', 
 				'.widget', 
 				'#containerWidget #list .buttons',
+				'.shareBanner',
 			],
 			onClose: () => {
 				Onboarding.start('emailCollection', false);
