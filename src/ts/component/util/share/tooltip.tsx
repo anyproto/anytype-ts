@@ -13,8 +13,9 @@ const ShareTooltip: FC<Props> = observer(({
 	showOnce = false,
 }) => {
 	const { shareTooltip } = S.Common;
+	const { account } = S.Auth;
 
-	if (showOnce && shareTooltip) {
+	if ((showOnce && shareTooltip) || !account) {
 		return null;
 	};
 
