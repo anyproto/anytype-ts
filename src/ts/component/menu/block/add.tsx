@@ -413,7 +413,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		switch (item.itemId) {	
-			case 'move':
+			case 'move': {
 				menuId = 'searchObject';
 				menuParam.offsetY = -36;
 
@@ -424,27 +424,60 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					],
 				});
 				break;
+			};
 
-			case 'existingPage':
-				menuId = 'searchObject';
-				menuParam.data.canAdd = true;
+			case 'date': {
+				menuId = 'dataviewCalendar';
 				menuParam.data = Object.assign(menuParam.data, {
+					canEdit: true,
+					value: U.Date.now(),
+					onChange: (t: number) => {
+						C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
+							if (message.error.code) {
+								return;
+							};
+
+							const target = message.details;
+
+							C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, target.layout, true), (message: any) => {
+								if (message.error.code) {
+									return;
+								};
+
+								focus.set(message.blockId, { from: 0, to: 0 });
+								focus.apply();
+
+								analytics.event('CreateLink');
+								close();
+							});
+						});
+					}
+				});
+				break;
+			};
+
+			case 'existingPage': {
+				menuId = 'searchObject';
+				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					type: I.NavigationType.Link,
 				});
 				break;
+			};
 
-			case 'existingFile':
+			case 'existingFile': {
 				menuId = 'searchObject';
-				menuParam.data.canAdd = true;
 				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					type: I.NavigationType.Link,
 					filters: [
 						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 				});
 				break;
+			};
 
-			case 'turnObject':
+			case 'turnObject': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
@@ -459,6 +492,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					},
 				});
 				break;
+			};
 
 		};
 

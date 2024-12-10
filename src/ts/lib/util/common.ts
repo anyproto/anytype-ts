@@ -627,11 +627,13 @@ class UtilCommon {
 		});
 	};
 
-	getScheme (url: string): string {
-		url = String(url || '');
-
-		const m = url.match(/^([a-z]+):/);
-		return m ? m[1] : '';
+	getScheme(url: string): string {
+		try {
+			const u = new URL(String(url || ''));
+			return u.protocol.replace(/:$/, '');
+		} catch {
+			return '';
+		}
 	};
 
 	intercept (obj: any, change: any) {

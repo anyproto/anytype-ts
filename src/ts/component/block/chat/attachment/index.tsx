@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
-import { I, U, S, J, Action } from 'Lib';
+import { I, U, S, J, Action, analytics, keyboard } from 'Lib';
 
 interface Props {
 	object: any;
 	showAsFile?: boolean;
 	bookmarkAsDefault?: boolean;
+	subId?: string;
 	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
@@ -29,6 +30,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		super(props);
 
 		this.onOpen = this.onOpen.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onOpenBookmark = this.onOpenBookmark.bind(this);
 		this.onPreview = this.onPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
@@ -113,6 +115,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			<div 
 				ref={node => this.node = node}
 				className={cn.join(' ')}
+				onContextMenu={this.onContextMenu}
 			>
 				{content}
 				<Icon className="remove" onClick={this.onRemove} />
@@ -187,13 +190,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		const { object, scrollToBottom } = this.props;
 		const { isLoaded } = this.state;
 
-		this.previewItem = { type: I.FileType.Image, object };
-
 		if (!this.src) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string) => {
 					this.src = image;
-					this.previewItem.src = image;
 					$(this.node).find('#image').attr({ 'src': image });
 				});
 				this.src = './img/space.svg';
@@ -201,8 +201,6 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				this.src = S.Common.imageUrl(object.id, J.Size.image);
 			};
 		};
-
-		this.previewItem.src = this.src;
 
 		if (!isLoaded) {
 			const img = new Image();
@@ -227,8 +225,6 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		const { object } = this.props;
 		const src = S.Common.fileUrl(object.id);
 
-		this.previewItem = { type: I.FileType.Video, src, object };
-
 		return (
 			<MediaVideo 
 				src={src} 
@@ -247,7 +243,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		return <MediaAudio playlist={playlist} />;
 	};
 
-	componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>): void {
+	componentDidUpdate (prevProps: Readonly<Props>, prevState: Readonly<State>): void {
 		const { scrollToBottom } = this.props;
 
 		if (!prevState.isLoaded && this.state.isLoaded && scrollToBottom) {
@@ -258,29 +254,65 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	onOpen () {
 		const { object } = this.props;
 
-		if (!object.isTmp) {
-			U.Object.openPopup(object);
+		switch (object.layout) {
+			case I.ObjectLayout.Bookmark: {
+				this.onOpenBookmark();
+				break;
+			};
+
+			case I.ObjectLayout.Video:
+			case I.ObjectLayout.Image: {
+				this.onPreview();
+				break;
+			};
+
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Pdf:
+			case I.ObjectLayout.Audio: {
+				Action.openFile(object.id, analytics.route.chat);
+				break;
+			};
+
+			default: {
+				if (!object.isTmp) {
+					U.Object.openPopup(object);
+				};
+				break;
+			};
 		};
 	};
 
-	onOpenBookmark () {
-		const { object } = this.props;
-		const { source } = object;
+	onContextMenu (e: any) {
+		e.stopPropagation();
 
-		Action.openUrl(source);
+		const { object, subId } = this.props;
+
+		S.Menu.open('dataviewContext', {
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				objectIds: [ object.id ],
+				subId,
+				allowedLinkTo: true,
+				allowedOpen: true,
+			}
+		});
+	};
+
+	onOpenBookmark () {
+		Action.openUrl(this.props.object.source);
 	};
 
 	onPreview () {
 		const { onPreview } = this.props;
-
-		if (!this.previewItem) {
-			return;
-		};
+		const item = this.getPreviewItem();
 
 		if (onPreview) {
-			onPreview(this.previewItem);
+			onPreview(item);
 		} else {
-			S.Popup.open('preview', { data: { gallery: [ this.previewItem ] } });
+			S.Popup.open('preview', { data: { gallery: [ item ] } });
 		};
 	};
 
@@ -292,7 +324,24 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	getPreviewItem () {
-		return this.previewItem;
+		const { object } = this.props;
+		const ret: any = { object };
+
+		switch (object.layout) {
+			case I.ObjectLayout.Image: {
+				ret.type = I.FileType.Image;
+				ret.src = this.src || S.Common.imageUrl(object.id, J.Size.image);
+				break;
+			};
+
+			case I.ObjectLayout.Video: {
+				ret.type = I.FileType.Video;
+				ret.src = S.Common.fileUrl(object.id);
+				break;
+			};
+
+		};
+		return ret;
 	};
 
 });

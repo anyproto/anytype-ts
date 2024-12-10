@@ -27,7 +27,7 @@ export default {
 	survey: {
 		register:		 'https://community.anytype.io/survey0',
 		delete:			 'https://community.anytype.io/survey1',
-		pmf:			 'https://community.anytype.io/survey2#anytypeid=%s',
+		pmf:			 'https://anytype.typeform.com/to/JKotDI5b#anytypeid=%s',
 		object:			 'https://community.anytype.io/survey3',
 		shared:			 'https://community.anytype.io/survey4',
 		multiplayer:	 'https://community.anytype.io/survey5'

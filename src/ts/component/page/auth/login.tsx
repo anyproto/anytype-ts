@@ -117,7 +117,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		const { mode, path } = networkConfig;
 		const account = accounts[0];
-		const { shareTooltip } = S.Common;
 
 		S.Auth.accountSet(account);
 		Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
@@ -132,15 +131,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			S.Common.configSet(message.account.config, false);
 
 			const spaceId = Storage.get('spaceId');
-			const routeParam = {
-				replace: true, 
-				onRouteChange: () => {
-					if (!shareTooltip) {
-						S.Common.shareTooltipSet(false);
-						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
-					};
-				},
-			};
+			const routeParam = { replace: true };
 
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam);

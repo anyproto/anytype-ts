@@ -184,11 +184,12 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data } = param;
 		const { canEdit, relationKey } = data;
+		const ts = U.Date.timestamp(item.y, item.m, item.d);
 
 		if (canEdit) {
-			this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
+			this.setValue(ts, true, true); 
 		} else {
-			U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));
+			U.Object.openDateByTimestamp(relationKey, ts);
 		};
 	};
 
@@ -227,7 +228,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 		S.Menu.updateData(id, { value });
 
-		if (save) {
+		if (save && onChange) {
 			onChange(value);
 		};
 

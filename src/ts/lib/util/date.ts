@@ -409,6 +409,10 @@ class UtilDate {
 		return ret;
 	};
 
+	weekday (t: number): string {
+		return translate(`day${Number(U.Date.date('N', t)) + 1}`);
+	};
+
 };
 
 export default new UtilDate();

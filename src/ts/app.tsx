@@ -8,8 +8,8 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, SidebarLeft, SidebarRight, Vault, ShareTooltip, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, SidebarLeft, Vault, Loader } from 'Component';
+import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -75,6 +75,7 @@ if (!isPackaged) {
 			C,
 			S,
 			U,
+			M,
 			analytics,
 			dispatcher,
 			keyboard,
@@ -173,7 +174,6 @@ class App extends React.Component<object, State> {
 	render () {
 		const { isLoading } = this.state;
 		const platform = U.Common.getPlatform();
-		const { shareTooltip } = S.Common
 
 		let drag = null;
 		if (platform == I.Platform.Mac) {
@@ -205,7 +205,6 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<ListNotification key="listNotification" />
-						<ShareTooltip showOnce={true} route={analytics.route.onboarding} />
 						<Vault ref={ref => S.Common.refSet('vault', ref)} />
 
 						<Switch>
@@ -238,16 +237,6 @@ class App extends React.Component<object, State> {
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
-	};
-
-	initStorage () {
-		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-
-		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', U.Date.now());
-		};
-
-		Storage.delete('lastSurveyCanceled');
 	};
 
 	registerIpcEvents () {
@@ -319,7 +308,6 @@ class App extends React.Component<object, State> {
 		S.Common.dataPathSet(dataPath);
 
 		analytics.init();
-		this.initStorage();
 
 		if (redirect) {
 			Storage.delete('redirect');

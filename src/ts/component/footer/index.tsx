@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { I, S, sidebar } from 'Lib';
+import React, { forwardRef, useRef } from 'react';
+import { I, S } from 'Lib';
 
 import FooterAuthIndex from './auth';
 import FooterAuthDisclaimer from './auth/disclaimer';
@@ -16,42 +16,14 @@ const Components = {
 	mainObject:			 FooterMainObject,
 };
 
-class Footer extends React.Component<Props> {
-
-	refChild: any = null;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onHelp = this.onHelp.bind(this);
-	};
+const Footer = forwardRef<{}, Props>((props, ref) => {
 	
-	render () {
-		const { component, className } = this.props;
-		const Component = Components[component] || null;
-		const cn = [ 'footer', component, className ];
+	const childRef = useRef(null);
+	const { component, className = '' } = props;
+	const Component = Components[component] || null;
+	const cn = [ 'footer', component, className ];
 
-		return (
-			<div id="footer" className={cn.join(' ')}>
-				<Component 
-					ref={ref => this.refChild = ref} 
-					{...this.props} 
-					onHelp={this.onHelp}
-				/>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		sidebar.resizePage(null, null, false);
-	};
-
-	componentDidUpdate () {
-		sidebar.resizePage(null, null, false);	
-		this.refChild.forceUpdate();
-	};
-
-	onHelp () {
+	const onHelp = () => {
 		S.Menu.open('help', {
 			element: '#footer #button-help',
 			classNameWrap: 'fixed',
@@ -61,6 +33,18 @@ class Footer extends React.Component<Props> {
 		});
 	};
 
-};
+	return (
+		<div id="footer" className={cn.join(' ')}>
+			{Component ? (
+				<Component 
+					ref={childRef} 
+					{...props} 
+					onHelp={onHelp}
+				/>
+			) : ''}
+		</div>
+	);
+
+});
 
 export default Footer;
