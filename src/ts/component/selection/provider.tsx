@@ -18,6 +18,7 @@ interface SelectionRefProps {
 	renderSelection(): void;
 	isSelecting(): boolean;
 	setIsSelecting(v: boolean): void;
+	hide(): void;
 };
 
 const THRESHOLD = 10;
@@ -612,6 +613,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		renderSelection,
 		isSelecting: () => isSelecting.current,
 		setIsSelecting,
+		hide,
 	}));
 
 	return (
