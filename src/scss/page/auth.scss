@@ -59,6 +59,7 @@ html.bodyIndex, html.bodyAuth {
 		.menu.vertical { background: var(--color-popup) !important; box-shadow: var(--shadow) !important; }
 		.menu.vertical {
 			.item { background: var(--color-popup) !important; }
+			.item.hover::before { background: rgba(255, 255, 255, 0.05) !important; }
 		}
 		.menu.menuAccountPath {
 			.label { color: var(--color-text-secondary) !important; }

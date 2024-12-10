@@ -42,7 +42,6 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
-	public shareTooltipValue = null;
 	public showVaultValue = null;
 	public hideSidebarValue = null;
 	public showObjectValue = null;
@@ -101,7 +100,6 @@ class CommonStore {
 			navigationMenuValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
-			shareTooltipValue: observable,
 			showVaultValue: observable,
 			hideSidebarValue: observable,
 			showObjectValue: observable,
@@ -118,7 +116,6 @@ class CommonStore {
 			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
-			shareTooltip: computed,
 			showVault: computed,
 			showRelativeDates: computed,
 			gatewaySet: action,
@@ -137,7 +134,6 @@ class CommonStore {
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
-			shareTooltipSet: action,
 			membershipTiersListSet: action,
 			showVaultSet: action,
 			showObjectSet: action,
@@ -274,10 +270,6 @@ class CommonStore {
 
 	get isOnline (): boolean {
 		return Boolean(this.isOnlineValue);
-	};
-
-	get shareTooltip (): boolean {
-		return this.boolGet('shareTooltip');
 	};
 
 	get membershipTiers (): I.MembershipTier[] {
@@ -520,10 +512,6 @@ class CommonStore {
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
 		console.log('[Online status]:', v);
-	};
-
-	shareTooltipSet (v: boolean) {
-		this.boolSet('shareTooltip', v);
 	};
 
 	configSet (config: any, force: boolean) {
