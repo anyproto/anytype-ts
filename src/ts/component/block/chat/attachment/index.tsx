@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
-import { I, U, S, J, Action } from 'Lib';
+import { I, U, S, J, Action, analytics, keyboard } from 'Lib';
 
 interface Props {
 	object: any;
 	showAsFile?: boolean;
 	bookmarkAsDefault?: boolean;
+	subId?: string;
 	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
@@ -29,6 +30,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		super(props);
 
 		this.onOpen = this.onOpen.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onOpenBookmark = this.onOpenBookmark.bind(this);
 		this.onPreview = this.onPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
@@ -113,6 +115,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			<div 
 				ref={node => this.node = node}
 				className={cn.join(' ')}
+				onContextMenu={this.onContextMenu}
 			>
 				{content}
 				<Icon className="remove" onClick={this.onRemove} />
@@ -263,6 +266,13 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				break;
 			};
 
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Pdf:
+			case I.ObjectLayout.Audio: {
+				Action.openFile(object.id, analytics.route.chat);
+				break;
+			};
+
 			default: {
 				if (!object.isTmp) {
 					U.Object.openPopup(object);
@@ -270,6 +280,25 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				break;
 			};
 		};
+	};
+
+	onContextMenu (e: any) {
+		e.stopPropagation();
+
+		const { object, subId } = this.props;
+
+		S.Menu.open('dataviewContext', {
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				objectIds: [ object.id ],
+				subId,
+				allowedLinkTo: true,
+				allowedOpen: true,
+			}
+		});
 	};
 
 	onOpenBookmark () {
