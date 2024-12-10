@@ -49,7 +49,7 @@
 		.day.today { color: var(--color-system-accent-125); }
 		.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 		.day.other { color: var(--color-control-active); }
-		.day.selected { border: solid 1px var(--color-system-accent-125); }
+		.day.selected { background-color: var(--color-shape-highlight-medium); }
 		
 		.line { margin: 8px 16px 11px 16px; }
 		
