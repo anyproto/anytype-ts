@@ -75,6 +75,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							id={item.id}
 							rootId={rootId}
 							blockId={blockId}
+							subId={subId}
 							isNew={item.id == lastId}
 							scrollToBottom={this.scrollToBottomCheck}
 							onContextMenu={e => this.onContextMenu(e, item)}

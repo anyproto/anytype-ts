@@ -356,11 +356,11 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		case I.ObjectLayout.Human: 
 		case I.ObjectLayout.Participant: {
-			icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+			icn = icn.concat([ 'iconImage', 'c' + size ]);
 
 			if (iconImage) {
 				cn.push('withImage');
-				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+				icon = <img src={S.Common.imageUrl(iconImage, size * 2)} className={icn.join(' ')} />;
 			} else {
 				icon = <img src={userSvg()} className={icn.join(' ')} />;
 			};
