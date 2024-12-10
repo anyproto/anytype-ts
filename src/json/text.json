@@ -548,6 +548,7 @@
 	"blockNameTableOfContents": "Table of Contents",
 	"blockNameSet": "Inline set",
 	"blockNameCollection": "Inline Collection",
+	"blockNameDate": "Date",
 
 	"blockTextParagraph": "Write a plain text",
 	"blockTextHeader1": "Big headline of a chapter, paragraph or section",
@@ -582,6 +583,7 @@
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
 	"blockTextPlain": "Plain Text",
+	"blockTextDate": "Mention a date in editor",
 
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
