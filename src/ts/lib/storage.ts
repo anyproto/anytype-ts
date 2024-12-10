@@ -2,7 +2,6 @@ import { I, S, U, J } from 'Lib';
 
 const ACCOUNT_KEYS = [
 	'spaceId',
-	'spaceOrder',
 ];
 
 const SPACE_KEYS = [
