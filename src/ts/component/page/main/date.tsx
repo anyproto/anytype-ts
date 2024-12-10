@@ -12,7 +12,6 @@ interface State {
 };
 
 const SUB_ID = 'dateListObject';
-const RELATION_KEY_MENTION = 'mentions';
 
 const PageMainDate = observer(class PageMainDate extends React.Component<I.PageComponent, State> {
 
@@ -29,7 +28,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		isDeleted: false,
 		isLoading: false,
 		relations: [],
-		relationKey: RELATION_KEY_MENTION,
+		relationKey: J.Relation.key.mention,
 	};
 
 	render () {
@@ -64,7 +63,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			const filters: I.Filter[] = [];
 
 			if (relation.format == I.RelationType.Object) {
-				filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
+				filters.push({ relationKey: J.Relation.key.mention, condition: I.FilterCondition.In, value: [ object.id ] });
 			} else {
 				filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
 			};
@@ -82,7 +81,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				<React.Fragment>
 					<div className="categories">
 						{relations.map((item) => {
-							const isMention = item.relationKey == RELATION_KEY_MENTION;
+							const isMention = item.relationKey == J.Relation.key.mention;
 							const icon = isMention ? 'mention' : '';
 
 							return (
@@ -235,7 +234,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 					return false;
 				};
 
-                if ([ RELATION_KEY_MENTION ].includes(it.relationKey)) {
+                if ([ J.Relation.key.mention ].includes(it.relationKey)) {
                     return true;
                 };
 
@@ -247,8 +246,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
             });
 
             relations.sort((c1, c2) => {
-                const isMention1 = c1.relationKey == RELATION_KEY_MENTION;
-                const isMention2 = c2.relationKey == RELATION_KEY_MENTION;
+                const isMention1 = c1.relationKey == J.Relation.key.mention;
+                const isMention2 = c2.relationKey == J.Relation.key.mention;
 
                 if (isMention1 && !isMention2) return -1;
                 if (!isMention1 && isMention2) return 1;
