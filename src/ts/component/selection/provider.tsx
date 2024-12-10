@@ -16,6 +16,8 @@ interface SelectionRefProps {
 	clear(): void;
 	scrollToElement(id: string, dir: number): void;
 	renderSelection(): void;
+	isSelecting(): boolean;
+	setIsSelecting(v: boolean): void;
 };
 
 const THRESHOLD = 10;
@@ -608,6 +610,8 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		clear,
 		scrollToElement,
 		renderSelection,
+		isSelecting: () => isSelecting.current,
+		setIsSelecting,
 	}));
 
 	return (

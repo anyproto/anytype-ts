@@ -249,7 +249,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, Stat
 		const { subId } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
-		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
+		let objectIds = selection?.get(I.SelectType.Record) || [];
 		if (!objectIds.length) {
 			objectIds = [ id ];
 		};
