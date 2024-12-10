@@ -135,7 +135,7 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
 
-		C.WorkspaceCreate(details, I.Usecase.GetStarted, withChat, (message: any) => {
+		C.WorkspaceCreate(details, I.Usecase.Empty, withChat, (message: any) => {
 			this.setLoading(false);
 
 			if (message.error.code) {

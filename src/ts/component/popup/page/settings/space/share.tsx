@@ -350,7 +350,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			C.SpaceInviteGenerate(S.Common.space, (message: any) => {
 				btn.setLoading(false);
 
-				if (!this.setError(message.error)) {
+				if (this.setError(message.error)) {
 					return;
 				};
 
