@@ -295,25 +295,19 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			return;
 		};
 
-		const ref = $(rectRef.current);
+		let ox = 0;
+		let oy = 0;
 
-		if (U.Common.getSelectionRange()) {
-			ref.hide();
-		} else {
-			let ox = 0;
-			let oy = 0;
-
-			if (containerOffset.current) {
-				ox = containerOffset.current.left;
-				oy = containerOffset.current.top - top.current;
-			};
-
-			const x1 = x.current + ox;
-			const y1 = y.current + oy;
-			const rect = getRect(x1, y1, dx, dy);
-
-			ref.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
+		if (containerOffset.current) {
+			ox = containerOffset.current.left;
+			oy = containerOffset.current.top - top.current;
 		};
+
+		const x1 = x.current + ox;
+		const y1 = y.current + oy;
+		const rect = getRect(x1, y1, dx, dy);
+
+		$(rectRef.current).show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
 	};
 	
 	const getRect = (x1: number, y1: number, x2: number, y2: number) => {
