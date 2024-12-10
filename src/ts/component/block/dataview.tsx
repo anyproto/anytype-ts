@@ -649,6 +649,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!typeId) {
 			typeId = this.getTypeId();
 		};
+
 		if (!templateId) {
 			templateId = this.getDefaultTemplateId(typeId);
 		};

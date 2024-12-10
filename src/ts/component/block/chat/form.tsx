@@ -603,8 +603,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onSend () {
-		console.log('CAN SEND', this.canSend());
-
 		if (!this.canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};
