@@ -30,6 +30,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	node = null;
 	refEditable = null;
 	refButtons = null;
+	isLoading = [];
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
@@ -485,17 +486,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		this.removeBookmarks();
 
-		window.setTimeout(() => {
-			for (const url of urls) {
-				const { from, to, isLocal, value } = url;
-				const param = isLocal ? `file://${value}` : value;
+		for (const url of urls) {
+			const { from, to, isLocal, value } = url;
+			const param = isLocal ? `file://${value}` : value;
 
-				this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
-				this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
-				this.addBookmark(param, true);
-			};
-			this.updateMarkup(text, this.range.to + 1, this.range.to + 1);
-		}, 150);
+			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
+			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
+			this.addBookmark(param, true);
+		};
+
+		this.updateMarkup(text, this.range.to + 1, this.range.to + 1);
 	};
 
 	canDrop (e: any): boolean {
@@ -568,7 +568,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.addAttachments([ item ]);
 		};
 
+		this.isLoading.push(url);
+
 		C.LinkPreview(url, (message: any) => {
+			this.isLoading = this.isLoading.filter(it => it != url);
+
 			if (message.error.code) {
 				add({ title: url, url });
 			} else {
@@ -599,6 +603,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onSend () {
+		console.log('CAN SEND', this.canSend());
+
 		if (!this.canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};
@@ -978,8 +984,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 	};
 
-	canSend () {
-		return this.editingId || this.getTextValue() || this.state.attachments.length || this.marks.length;
+	canSend (): boolean {
+		return !this.isLoading.length && Boolean(this.editingId || this.getTextValue() || this.state.attachments.length || this.marks.length);
 	};
 
 	hasSelection (): boolean {
