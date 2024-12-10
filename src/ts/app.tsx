@@ -239,16 +239,6 @@ class App extends React.Component<object, State> {
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
 	};
 
-	initStorage () {
-		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-
-		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', U.Date.now());
-		};
-
-		Storage.delete('lastSurveyCanceled');
-	};
-
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('route', (e: any, route: string) => this.onRoute(route));
@@ -318,7 +308,6 @@ class App extends React.Component<object, State> {
 		S.Common.dataPathSet(dataPath);
 
 		analytics.init();
-		this.initStorage();
 
 		if (redirect) {
 			Storage.delete('redirect');
