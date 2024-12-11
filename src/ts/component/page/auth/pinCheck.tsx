@@ -46,7 +46,6 @@ const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
 			<Title text={translate('authPinCheckTitle')} />
 			<Pin 
 				ref={pinRef}
-				focusOnMount={true}
 				expectedPin={Storage.getPin()} 
 				onSuccess={onSuccess} 
 				onError={onError} 
