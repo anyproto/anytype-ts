@@ -517,7 +517,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		this.menuOpen({
 			horizontal: I.MenuDirection.Right,
 			offsetX: element.outerWidth(),
-			recalcRect: () => {
+			rect: () => {
 				const offset = element.offset();
 				return { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
 			},
