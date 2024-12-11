@@ -129,7 +129,11 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			};
 			C.ObjectListSetDetails([ rootId ], update);
 		} else {
-			C.ObjectCreate(this.object, [], '', type.uniqueKey, space);
+			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
+				if (!message.error.code) {
+					U.Object.openRoute({ id: message.objectId });
+				};
+			});
 		};
 
 		this.update = {};
