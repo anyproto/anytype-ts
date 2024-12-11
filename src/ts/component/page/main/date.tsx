@@ -83,7 +83,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 					lastModifiedDate: 'createdDate',
 				};
 
-				filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: {'type': 'valueFromRelation', 'relationKey': 'lastModifiedDate'} });
+				filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: { type: 'valueFromRelation', relationKey: 'lastModifiedDate' } });
 				keys.push(map[relationKey]);
 			}
 
