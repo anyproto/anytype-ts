@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import { C, U, J, S } from 'Lib'; 
 import Popup from './popup';
@@ -59,12 +60,13 @@ if (!rootId) {
 } else {
 	const html = $('html');
 	const body = $('body');
-	const root = $(`<div id="${rootId}"></div>`);
+	const rootEl = $(`<div id="${rootId}"></div>`);
 
 	if (!$(`#${rootId}`).length) {
-		body.append(root);
+		body.append(rootEl);
 		html.addClass(rootId);
 	};
 
-	ReactDOM.render(component, root.get(0));
+	const root = createRoot(rootEl.get(0));
+	root.render(component);
 };

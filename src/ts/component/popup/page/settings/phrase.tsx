@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import QRCode from 'qrcode.react';
-import { Title, Label, Phrase } from 'Component';
+import { Title, Label, Phrase, QRCode } from 'Component';
 import { I, C, S, U, J, translate, analytics, Storage, Renderer } from 'Lib';
 
 interface State {

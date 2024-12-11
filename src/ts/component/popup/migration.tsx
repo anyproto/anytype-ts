@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button } from 'Component';
+import { Title, Label, Button, QRCode } from 'Component';
 import { I, S, U, J, Onboarding, translate, analytics } from 'Lib';
-import QRCode from 'qrcode.react';
 
 interface State {
 	step: number;
