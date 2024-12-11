@@ -1363,13 +1363,14 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 	});
 };
 
-export const ObjectPublish = (spaceId: string, objectId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.Publish.Request();
+export const PublishingCreate = (spaceId: string, objectId: string, uri: string,  callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.Create.Request();
 
 	request.setObjectid(objectId);
 	request.setSpaceid(spaceId);
+	request.setUri(uri);
 
-	dispatcher.request(ObjectPublish.name, request, callBack);
+	dispatcher.request(PublishingCreate.name, request, callBack);
 };
 
 

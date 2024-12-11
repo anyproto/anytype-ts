@@ -124,7 +124,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
-		let pagePublish = { id: 'pagePublish', icon: 'publish', name: translate('menuObjectPublish') };
+		let pagePublish = { id: 'pagePublish', icon: 'publish', name: translate('menuPublishingCreate') };
 		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
@@ -449,7 +449,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pagePublish': {
-				Action.publish(object.id);
+				Action.publish(object.id, object.id + "-fake-uri");
 				break;
 			};
 				

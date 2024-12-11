@@ -198,11 +198,8 @@ export const ObjectShow = (response: Rpc.Object.Show.Response) => {
 	};
 };
 
-export const ObjectPublish = (response: Rpc.Object.Publish.Response) => {
-	return {
-		cid: response.getPublishcid(),
-		key: response.getPublishfilekey(),
-	};
+export const PublishingCreate = (response: Rpc.Publishing.Create.Response) => {
+	return { uri: response.getUri() };
 };
 
 export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
