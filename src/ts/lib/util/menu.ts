@@ -1036,6 +1036,7 @@ class UtilMenu {
 
 	dateFormatOptions () {
 		return ([
+			{ id: I.DateFormat.Default },
 			{ id: I.DateFormat.MonthAbbrBeforeDay },
 			{ id: I.DateFormat.MonthAbbrAfterDay },
 			{ id: I.DateFormat.Short },

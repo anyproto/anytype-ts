@@ -50,7 +50,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			dayName.push(<div>{dayString}</div>);
 		};
 
-		dayName.push(<div>{translate(`day${Number(U.Date.date('N', object.timestamp)) + 1}`)}</div>);
+		dayName.push(<div>{U.Date.date('l', object.timestamp)}</div>);
 
 		let content = null;
 		if (isLoading) {
