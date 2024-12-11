@@ -78,12 +78,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			};
 
 			if ([ 'createdDate' ].includes(relationKey)) {
-				const map = {
-					createdDate: 'creator',
-				};
-
-				filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
-				keys.push(map[relationKey]);
+				filters.push({ relationKey: 'creator', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+				keys.push('creator');
 			};
 
 			content = (
