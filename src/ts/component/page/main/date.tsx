@@ -72,7 +72,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			const filters: I.Filter[] = [];
 
 			if (relation.format == I.RelationType.Object) {
-				filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
+				filters.push({ relationKey: relationKey, condition: I.FilterCondition.In, value: [ object.id ] });
 			} else {
 				filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
 			};
