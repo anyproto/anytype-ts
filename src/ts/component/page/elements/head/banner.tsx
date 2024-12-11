@@ -10,10 +10,16 @@ interface Props {
 	isPopup?: boolean;
 };
 
-const HeaderBanner: FC<Props> = ({ type, object, count, isPopup }) => {
+const HeaderBanner: FC<Props> = ({ 
+	type, 
+	object, 
+	count = 0, 
+	isPopup,
+}) => {
 
 	const nodeRef = useRef(null);
 	const cn = [ 'headerBanner' ];
+	const canWrite = U.Space.canMyParticipantWrite();
 
 	const onTemplateMenu = () => {
 		const { sourceObject } = object;
@@ -70,14 +76,16 @@ const HeaderBanner: FC<Props> = ({ type, object, count, isPopup }) => {
 	switch (type) {
 		case I.BannerType.IsArchived: {
 			label = translate('deletedBanner');
-			action = (
-				<div 
-					className="action" 
-					onClick={() => Action.restore([ object.id ], analytics.route.banner)}
-				>
-					{translate('deletedBannerRestore')}
-				</div>
-			);
+			if (canWrite) {
+				action = (
+					<div 
+						className="action" 
+						onClick={() => Action.restore([ object.id ], analytics.route.banner)}
+					>
+						{translate('deletedBannerRestore')}
+					</div>
+				);
+			};
 			break;
 		};
 
