@@ -118,13 +118,19 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onSave () {
+		const { space } = S.Common;
 		const { rootId } = this.props;
-		const update = [];
+		const type = S.Record.getTypeType();
 
-		for (const key in this.update) {
-			update.push({ key, value: this.object[key] });
+		if (rootId) {
+			const update = [];
+			for (const key in this.update) {
+				update.push({ key, value: this.object[key] });
+			};
+			C.ObjectListSetDetails([ rootId ], update);
+		} else {
+			C.ObjectCreate(this.object, [], '', type.uniqueKey, space);
 		};
-		C.ObjectListSetDetails([ rootId ], update);
 
 		this.update = {};
 		this.close();
