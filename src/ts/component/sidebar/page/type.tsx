@@ -131,7 +131,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		} else {
 			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
 				if (!message.error.code) {
-					U.Object.openRoute({ id: message.objectId, ...message.details });
+					U.Object.openRoute(message.details);
 					S.Common.getRef('sidebarLeft')?.refChild?.refFilter?.setValue('');
 				};
 			});
