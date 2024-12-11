@@ -78,6 +78,15 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				keys.push(map[relationKey]);
 			};
 
+			if ([ 'lastModifiedDate' ].includes(relationKey)) {
+				const map = {
+					lastModifiedDate: 'createdDate',
+				};
+
+				filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: {'type': 'valueFromRelation', 'relationKey': 'lastModifiedDate'} });
+				keys.push(map[relationKey]);
+			}
+
 			content = (
 				<React.Fragment>
 					<div className="categories">
