@@ -196,7 +196,7 @@ const PreviewIndex = observer(forwardRef(() => {
 		position();
 	});
 
-	return (
+	return content ? (
 		<div id="preview" className={cn.join(' ')}>
 			<div className="polygon" onClick={onClick} />
 			<div className="content">
@@ -205,7 +205,7 @@ const PreviewIndex = observer(forwardRef(() => {
 				<div onClick={onClick}>{content}</div>
 			</div>
 		</div>
-	);
+	) : null;
 
 }));
 

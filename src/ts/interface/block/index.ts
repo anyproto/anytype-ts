@@ -134,6 +134,7 @@ export interface Block {
 	canTurnObject?(): boolean;
 	canCreateBlock?(): boolean;
 	canBecomeWidget?(): boolean;
+	canContextMenu?(): boolean;
 
 	isIndentable?(): boolean;
 	isFocusable?(): boolean;
@@ -147,6 +148,7 @@ export interface Block {
 	isRelation?(): boolean;
 	isType?(): boolean;
 	isChat?(): boolean;
+	isCover?(): boolean;
 
 	isWidget?(): boolean;
 	isWidgetLink?(): boolean;

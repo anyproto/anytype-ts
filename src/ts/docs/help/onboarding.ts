@@ -103,9 +103,11 @@ export default {
 				'#containerWidget #list .buttons',
 				'.shareBanner',
 			],
+			/*
 			onClose: () => {
 				Onboarding.start('emailCollection', false);
 			},
+			*/
 		},
 		items: [
 			{

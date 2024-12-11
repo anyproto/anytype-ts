@@ -14,7 +14,8 @@ export enum DateFormat {
 	ISO					 = 4, // 2020-07-30
 	Long				 = 5, // July 15, 2020 
 	Nordic				 = 6, // 15. Jul 2020  
-	European			 = 7, // 15.07.2020
+	European			 = 7, // 15.07.2020,
+	Default				 = 8, // Sat, Dec 14, 2024
 };
 
 export enum TimeFormat {
