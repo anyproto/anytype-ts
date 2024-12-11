@@ -649,12 +649,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!typeId) {
 			typeId = this.getTypeId();
 		};
+
 		if (!templateId) {
 			templateId = this.getDefaultTemplateId(typeId);
 		};
 
 		const type = S.Record.getTypeById(typeId);
 		if (!type) {
+			console.error('[BlockDataview.recordCreate] No type');
 			return;
 		};
 

@@ -201,9 +201,10 @@ class UtilData {
 						Storage.set('bgColor', 'orange');
 					};
 
-					[ 
+					[
 						I.SurveyType.Register, 
-						I.SurveyType.Object, 
+						I.SurveyType.Object,
+						I.SurveyType.Pmf,
 					].forEach(it => Survey.check(it));
 
 					Storage.clearDeletedSpaces();

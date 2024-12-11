@@ -178,8 +178,9 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 		return () => {
 			unbind();
+
 			if (nodeRef.current) {
-				resizeObserver.unobserve(nodeRef.current)
+				resizeObserver.unobserve(nodeRef.current);
 			};
 		};
 	});
