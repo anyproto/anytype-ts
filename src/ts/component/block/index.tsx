@@ -512,15 +512,14 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
+		const offset = element.offset();
+
 		selection.set(I.SelectType.Block, this.ids);
 
 		this.menuOpen({
 			horizontal: I.MenuDirection.Right,
 			offsetX: element.outerWidth(),
-			rect: () => {
-				const offset = element.offset();
-				return { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
-			},
+			rect: { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 },
 		});
 	};
 
