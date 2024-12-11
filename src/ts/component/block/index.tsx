@@ -484,7 +484,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		keyboard.disableSelection(true);
 
 		if (selection) {
-			if (selection.isSelecting) {
+			if (selection.isSelecting()) {
 				selection.setIsSelecting(false);
 			};
 

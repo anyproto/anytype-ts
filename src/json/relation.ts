@@ -73,7 +73,7 @@ export default {
 		'relationDefaultValue',
 		'relationFormatObjectTypes',
 		'sourceObject',
-		'restrictions'
+		'restrictions',
 	],
 
 	cover: [

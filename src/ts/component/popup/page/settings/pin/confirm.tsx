@@ -18,14 +18,18 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 	render () {
 		const { onPage, prevPage } = this.props;
 		const { error } = this.state;
-		const pin = Storage.getPin();
 
 		return (
 			<React.Fragment>
 				<Head onPage={() => onPage(prevPage)} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinVerify')} />
-				<Pin ref={ref => this.ref = ref} expectedPin={pin} onSuccess={this.onCheckPin} onError={this.onError} />
+				<Pin 
+					ref={ref => this.ref = ref} 
+					expectedPin={Storage.getPin()} 
+					onSuccess={this.onCheckPin} 
+					onError={this.onError} 
+				/>
 				<Error text={error} />
 			</React.Fragment>
 		);

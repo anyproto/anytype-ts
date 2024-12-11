@@ -477,6 +477,8 @@ class Action {
 	};
 
 	restore (ids: string[], route: string, callBack?: () => void) {
+		ids = ids || [];
+
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
 			if (message.error.code) {
 				return;

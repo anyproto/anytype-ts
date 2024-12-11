@@ -17,9 +17,9 @@ import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 import ListNotification from './list/notification';
 import ListChildren from './list/children';
-import ListObjectPreview from './list/previewObject';
+import ListPreviewObject from './list/previewObject';
 import ListObject from './list/object';
-import ListObjectManager from './list/objectManager';
+import ListManager from './list/objectManager';
 
 import Header from './header';
 import Footer from './footer';
@@ -117,9 +117,9 @@ export {
 	ListPopup,
 	ListMenu,
 	ListChildren,
-	ListObjectPreview,
+	ListPreviewObject,
 	ListObject,
-	ListObjectManager,
+	ListManager,
 	ListNotification,
 
 	Header,

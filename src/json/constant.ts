@@ -41,6 +41,7 @@ export default {
 		notification:	 20,
 		space:			 50,
 		graphDepth:		 5,
+		listObject:		 50,
 
 		chat: {
 			messages:		 50,
