@@ -116,7 +116,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			};
 
 			this.data.edges = message.edges;
-			this.data.nodes = message.nodes;
+			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 			this.forceUpdate();
 
 			if (this.refGraph) {
