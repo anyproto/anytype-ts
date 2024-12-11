@@ -358,7 +358,7 @@ class CommonStore {
 	};
 
 	previewClear () {
-		this.previewObj = { type: null, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
+		this.previewObj = { type: I.PreviewType.None, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
 
 	toastClear () {

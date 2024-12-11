@@ -250,12 +250,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	onClose () {
 		const { param, close } = this.props;
-		const { data, onClose } = param;
+		const { data } = param;
 		const { key, current, isPopup } = data;
 		const section = this.getSection();
-
-
-		let menuParam = Onboarding.getParam(section, {}, isPopup);
+		const menuParam = Onboarding.getParam(section, {}, isPopup);
 
 		close();
 

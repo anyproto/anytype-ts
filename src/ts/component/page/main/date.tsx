@@ -46,7 +46,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		let content = null;
 		if (isLoading) {
-			content = <Loader id="loader" />
+			content = <Loader id="loader" />;
 		} else
 		if (!relations.length || !relation) {
 			content = (

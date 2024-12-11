@@ -120,7 +120,7 @@ const Progress: FC = observer(() => {
 
 		return () => {
 			if (nodeRef.current) {
-				resizeObserver.unobserve(nodeRef.current)
+				resizeObserver.unobserve(nodeRef.current);
 			};
 		};
 	});

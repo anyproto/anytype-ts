@@ -372,9 +372,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				textConfirm: translate('popupConfirmStopSharingSpaceConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
-					C.SpaceStopSharing(S.Common.space);
-					this.setInvite('', '');
-
+					C.SpaceStopSharing(S.Common.space, () => this.setInvite('', ''));
 					analytics.event('StopSpaceShare');
 				},
 			},
