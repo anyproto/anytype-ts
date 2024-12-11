@@ -351,7 +351,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			rebind: this.rebind,
 		});
 
-		if (!S.Menu.isOpen(id)) {
+		if (!S.Menu.isOpen(id) && !S.Menu.isAnimating(id)) {
 			S.Menu.closeAll(J.Menu.relationEdit, () => {
 				S.Menu.open(id, options);
 			});
