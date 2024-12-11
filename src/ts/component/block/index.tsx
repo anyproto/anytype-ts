@@ -558,7 +558,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			this.menuOpen({
-				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
+				rect: { x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 },
 			});
 		});
 	};
