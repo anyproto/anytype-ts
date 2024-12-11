@@ -267,17 +267,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = S.Common;
-		const object = S.Detail.get(rootId, rootId, [ 'targetObjectType' ]);
+		const object = S.Detail.get(rootId, rootId);
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
+		const relationKeys = S.Detail.getKeys(rootId, rootId);
+		const relations = relationKeys.map(it => S.Record.getRelationByKey(it)).filter(it => it);
 
-		const relations = S.Record.getObjectRelations(rootId, rootId);
-		const relationKeys = relations.map(it => it.relationKey);
 		const typeRelations = (type ? type.recommendedRelations || [] : []).
 			map(it => S.Record.getRelationById(it)).
 			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
-		const ret = relations.concat(typeRelations).filter(it => !config.debug.hiddenObject && it.isHidden ? false : it.isInstalled).sort(U.Data.sortByName);
+		const ret = relations.concat(typeRelations).
+			filter(it => !config.debug.hiddenObject && it.isHidden ? false : it.isInstalled).
+			sort(U.Data.sortByName);
 
 		ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
 

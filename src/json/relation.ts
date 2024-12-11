@@ -94,11 +94,15 @@ export default {
 	],
 
 	type: [
+		'featuredRelations',
 		'recommendedRelations',
+		'recommendedFeaturedRelations',
 		'recommendedLayout',
 		'sourceObject',
 		'uniqueKey',
 		'defaultTemplateId',
+		'layoutAlign',
+		'layoutWidth',
 	],
 
 	graph: [
