@@ -533,8 +533,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			isContextMenuDisabled || 
 			readonly || 
 			(block.isText() && (focused == block.id)) || 
-			block.isTable() || 
-			block.isDataview()
+			!block.canContextMenu()
 		) {
 			return;
 		};
