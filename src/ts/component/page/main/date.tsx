@@ -43,6 +43,14 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 
 		const relation = S.Record.getRelationByKey(relationKey);
+		const dayString = U.Date.dayString(object.timestamp);
+		const dayName = [];
+
+		if (dayString) {
+			dayName.push(<div>{dayString}</div>);
+		};
+
+		dayName.push(<div>{translate(`day${Number(U.Date.date('N', object.timestamp)) + 1}`)}</div>);
 
 		let content = null;
 		if (isLoading) {
@@ -119,12 +127,13 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			<div ref={node => this.node = node}>
 				<Header
 					{...this.props}
-					component="mainObject"
+					component="mainChat"
 					ref={ref => this.refHeader = ref}
 					rootId={rootId}
 				/>
 
 				<div className="blocks wrapper">
+					<div className="dayName">{dayName}</div>
 					<HeadSimple
 						{...this.props}
 						noIcon={true}
