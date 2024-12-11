@@ -135,6 +135,7 @@ export default {
 		'spaceAccountStatus',
 		'spaceLocalStatus',
 		'spaceAccessType',
+		'spaceOrder',
 		'readersLimit',
 		'writersLimit',
 		'targetSpaceId',
