@@ -253,6 +253,10 @@ class UtilObject {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
+	setLastUsedDate (rootId: string, timestamp: number, callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'lastUsedDate', value: timestamp } ], callBack);
+	};
+
 	name (object: any) {
 		const { layout, snippet } = object;
 
