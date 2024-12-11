@@ -112,7 +112,8 @@ class UtilMenu {
 		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
 		];
 
 		items.sort((c1, c2) => U.Data.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
@@ -390,7 +391,7 @@ class UtilMenu {
 				break;
 			};
 		};
-		return options.map(id => ({ id: String(id), name: id }));
+		return this.prepareForSelect(options.map(id => ({ id, name: id })));
 	};
 
 	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
@@ -409,7 +410,7 @@ class UtilMenu {
 			if (!isSystem) {
 				const isSet = U.Object.isInSetLayouts(layout);
 				const setLayouts = U.Object.getSetLayouts();
-				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
+				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 
 				// Sets can only become Link and List layouts, non-sets can't become List
 				if (treeSkipLayouts.includes(layout)) {
@@ -594,9 +595,10 @@ class UtilMenu {
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
+					(U.Object.isAllowedChat() ? { id: I.HomePredefinedId.Chat, name: translate('commonChat') } : null),
 					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
 					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-				],
+				].filter(it => it),
 				onOver: (e: any, item: any) => {
 					if (!menuContext) {
 						return;
@@ -639,6 +641,7 @@ class UtilMenu {
 
 					switch (item.id) {
 						case I.HomePredefinedId.Graph:
+						case I.HomePredefinedId.Chat:
 						case I.HomePredefinedId.Last: {
 							onSelect({ id: item.id }, false);
 
@@ -710,10 +713,6 @@ class UtilMenu {
 	};
 
 	spaceContext (space: any, param: any) {
-		if (space.isPersonal) {
-			return;
-		};
-
 		const { targetSpaceId } = space;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const isLocalNetwork = U.Data.isLocalNetwork();
@@ -851,7 +850,6 @@ class UtilMenu {
 	};
 
 	getFixedWidgets () {
-		const { config } = S.Common;
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
 			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
@@ -1043,6 +1041,9 @@ class UtilMenu {
 			{ id: I.DateFormat.Short },
 			{ id: I.DateFormat.ShortUS },
 			{ id: I.DateFormat.ISO },
+			{ id: I.DateFormat.Long },
+			{ id: I.DateFormat.Nordic },
+			{ id: I.DateFormat.European },
 		] as any[]).map(it => {
 			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
 			return it;
@@ -1054,6 +1055,44 @@ class UtilMenu {
 			{ id: I.TimeFormat.H12, name: translate('menuDataviewDate12Hour') },
 			{ id: I.TimeFormat.H24, name: translate('menuDataviewDate24Hour') },
 		];
+	};
+
+	participant (object: any, param: Partial<I.MenuParam>) {
+		S.Menu.open('participant', {
+			className: 'fixed',
+			classNameWrap: 'fromPopup',
+			horizontal: I.MenuDirection.Center,
+			rect: { 
+				x: keyboard.mouse.page.x, 
+				y: keyboard.mouse.page.y + 10, 
+				width: 0, 
+				height: 0,
+			},
+			...param,
+			data: {
+				object,
+			}
+		});
+	};
+
+	getFormulaSections (relationKey: string) {
+		const relation = S.Record.getRelationByKey(relationKey);
+		const options = Relation.formulaByType(relationKey, relation.format);
+
+		return [
+			{ id: I.FormulaSection.None, name: translate('commonNone') },
+		].concat([
+			{ id: I.FormulaSection.Count, name: translate('formulaCount'), arrow: true },
+			{ id: I.FormulaSection.Percent, name: translate('formulaPercentage'), arrow: true },
+			{ id: I.FormulaSection.Math, name: translate('formulaMath'), arrow: true },
+			{ id: I.FormulaSection.Date, name: translate('formulaDate'), arrow: true },
+		].filter(s => {
+			return options.filter(it => it.section == s.id).length;
+		})).map(it => ({ ...it, checkbox: false }));
+	};
+
+	prepareForSelect (a: any[]) {
+		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
 };

@@ -31,6 +31,7 @@ import PageMainMembership from './main/membership';
 import PageMainObject from './main/object';
 import PageMainOnboarding from './main/onboarding';
 import PageMainChat from './main/chat';
+import PageMainDate from './main/date';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -61,6 +62,7 @@ const Components = {
 	'main/onboarding':		 PageMainOnboarding,
 	'main/chat':			 PageMainChat,
 	'main/void':			 PageMainVoid,
+	'main/date':			 PageMainDate,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
@@ -153,6 +155,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			ret.params.action = 'object';
 			ret.params.id = data.objectId;
 			ret.params.spaceId = data.spaceId;
+			ret.params.cid = data.cid;
+			ret.params.key = data.key;
 		};
 
 		// Invite route

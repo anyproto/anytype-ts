@@ -1783,6 +1783,15 @@ export const ObjectChatAdd = (objectId: string, callBack?: (message: any) => voi
 	dispatcher.request(ObjectChatAdd.name, request, callBack);
 };
 
+export const ObjectDateByTimestamp = (spaceId: string, timestamp: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.DateByTimestamp.Request();
+
+	request.setSpaceid(spaceId);
+	request.setTimestamp(timestamp);
+
+	dispatcher.request(ObjectDateByTimestamp.name, request, callBack);
+};
+
 // ---------------------- OBJECT LIST ---------------------- //
 
 export const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
@@ -1884,11 +1893,12 @@ export const UnsplashDownload = (spaceId: string, id: string, callBack?: (messag
 
 // ---------------------- DEBUG ---------------------- //
 
-export const DebugTree = (objectId: string, path: string, callBack?: (message: any) => void) => {
+export const DebugTree = (objectId: string, path: string, unanonymized: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.Tree.Request();
 
 	request.setTreeid(objectId);
 	request.setPath(path);
+	request.setUnanonymized(unanonymized);
 
 	dispatcher.request(DebugTree.name, request, callBack);
 };
@@ -2008,11 +2018,13 @@ export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) =>
 	dispatcher.request(MembershipGetPortalLinkUrl.name, request, callBack);
 };
 
-export const MembershipGetVerificationEmail = (email: string, isSubscribed: boolean, callBack?: (message: any) => void) => {
+export const MembershipGetVerificationEmail = (email: string, subscribeNews: boolean, subscribeTips: boolean, isOnboardingList: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Membership.GetVerificationEmail.Request();
 	
 	request.setEmail(email);
-	request.setSubscribetonewsletter(isSubscribed);
+	request.setSubscribetonewsletter(subscribeNews);
+	request.setInsidertipsandtutorials(subscribeTips);
+	request.setIsonboardinglist(isOnboardingList);
 	
 	dispatcher.request(MembershipGetVerificationEmail.name, request, callBack);
 };
@@ -2207,11 +2219,12 @@ export const ChatDeleteMessage = (objectId: string, messageId: string, callBack?
 
 };
 
-export const ChatGetMessages = (objectId: string, beforeOrderId: string, limit: number, callBack?: (message: any) => void) => {
+export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOrderId: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.GetMessages.Request();
 
 	request.setChatobjectid(objectId);
 	request.setBeforeorderid(beforeOrderId);
+	//request.setAfterorderid(afterOrderId);
 	request.setLimit(limit);
 
 	dispatcher.request(ChatGetMessages.name, request, callBack);
@@ -2241,4 +2254,13 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 	request.setMessageidsList(ids);
 
 	dispatcher.request(ChatGetMessagesByIds.name, request, callBack);
+};
+
+export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Relation.ListWithValue.Request();
+
+	request.setSpaceid(spaceId);
+	request.setValue(Encode.value(value));
+
+	dispatcher.request(RelationListWithValue.name, request, callBack);
 };

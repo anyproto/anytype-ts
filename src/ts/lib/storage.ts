@@ -15,6 +15,7 @@ const SPACE_KEYS = [
 	'popupSearch',
 	'focus',
 	'openUrl',
+	'redirectInvite',
 ];
 
 class Storage {
@@ -92,31 +93,39 @@ class Storage {
 		return SPACE_KEYS.includes(key);
 	};
 
-	setSpaceKey (key: string, value: any) {
-		const obj = this.getSpace();
+	setSpaceKey (key: string, value: any, spaceId?: string) {
+		spaceId = spaceId || S.Common.space;
 
-		obj[S.Common.space][key] = value;
+		const obj = this.getSpace(spaceId);
 
-		this.setSpace(obj);
-	};
-
-	getSpaceKey (key: string) {
-		const obj = this.getSpace();
-		return obj[S.Common.space][key];
-	};
-
-	deleteSpaceKey (key: string) {
-		const obj = this.getSpace();
-
-		delete(obj[S.Common.space][key]);
+		obj[spaceId][key] = value;
 
 		this.setSpace(obj);
 	};
 
-	getSpace () {
+	getSpaceKey (key: string, spaceId?: string) {
+		spaceId = spaceId || S.Common.space;
+
+		const obj = this.getSpace(spaceId);
+		return obj[spaceId][key];
+	};
+
+	deleteSpaceKey (key: string, spaceId?: string) {
+		spaceId = spaceId || S.Common.space;
+
+		const obj = this.getSpace(spaceId);
+
+		delete(obj[spaceId][key]);
+
+		this.setSpace(obj);
+	};
+
+	getSpace (spaceId?: string) {
+		spaceId = spaceId || S.Common.space;
+
 		const obj = this.get('space') || {};
 
-		obj[S.Common.space] = obj[S.Common.space] || {};
+		obj[spaceId] = obj[spaceId] || {};
 
 		return obj;
 	};
@@ -224,7 +233,7 @@ class Storage {
 		this.deleteLastOpenedByWindowId(windowIds);
 	};
 
-	deleteLastOpenedByWindowId (windowIds: string[],) {
+	deleteLastOpenedByWindowId (windowIds: string[]) {
 		windowIds = windowIds.filter(id => id != '1');
 
 		if (!windowIds.length) {

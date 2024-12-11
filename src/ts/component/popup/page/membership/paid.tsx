@@ -196,7 +196,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				};
 
 				if (message.url) {
-					U.Common.onUrl(message.url);
+					Action.openUrl(message.url);
 				};
 
 				analytics.event('ClickMembership', { params: { tier, method }});

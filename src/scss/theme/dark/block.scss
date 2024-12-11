@@ -206,6 +206,7 @@
 		}
 		.message.isSelf {
 			.side.right { background: #162908; }
+			.reply { color: var(--color-text-inversion); }
 		}
 
 		.form {

@@ -503,7 +503,7 @@ class BlockStore {
 	toggle (rootId: string, blockId: string, v: boolean) {
 		const element = $(`#block-${blockId}`);
 
-		v ? element.addClass('isToggled') : element.removeClass('isToggled');
+		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
 		
 		U.Common.triggerResizeEditor(keyboard.isPopup());
@@ -533,7 +533,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = S.Detail.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt' ], true);
+				const object = S.Detail.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt', 'timestamp' ], true);
 
 				if (object._empty_) {
 					continue;

@@ -22,7 +22,8 @@ export default {
 		'sizeInBytes',
 		'restrictions',
 		'defaultTemplateId',
-		'createdDate'
+		'createdDate',
+		'timestamp',
 	],
 
 	sidebar: [
@@ -49,7 +50,8 @@ export default {
 		'restrictions',
 		'source',
 		'lastModifiedDate',
-		'lastOpenedDate'
+		'lastOpenedDate',
+		'timestamp'
 	],
 
 	relation: [
@@ -116,7 +118,8 @@ export default {
 		'isDeleted',
 		'isArchived',
 		'isFavorite',
-		'restrictions'
+		'restrictions',
+		'timestamp',
 	],
 
 	template: [
@@ -154,4 +157,8 @@ export default {
 	],
 
 	pageCover: 'pageCover',
+
+	key: {
+		mention: 'mentions',
+	}
 };

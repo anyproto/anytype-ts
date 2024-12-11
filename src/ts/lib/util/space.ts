@@ -64,6 +64,9 @@ class UtilSpace {
 		if (id == I.HomePredefinedId.Graph) {
 			ret = this.getGraph();
 		} else
+		if (id == I.HomePredefinedId.Chat) {
+			ret = this.getChat();
+		} else
 		if (id == I.HomePredefinedId.Last) {
 			ret = this.getLastOpened();
 		} else {
@@ -76,11 +79,14 @@ class UtilSpace {
 		return ret;
 	};
 
+	getSystemDashboardIds () {
+		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last ];
+	};
+
 	getGraph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
 			name: translate('commonGraph'), 
-			iconEmoji: ':earth_americas:',
 			layout: I.ObjectLayout.Graph,
 		};
 	};
@@ -92,8 +98,16 @@ class UtilSpace {
 		};
 	};
 
+	getChat () {
+		return { 
+			id: S.Block.workspace,
+			name: translate('commonChat'),
+			layout: I.ObjectLayout.Chat,
+		};
+	};
+
 	getList () {
-		return S.Record.getRecords(J.Constant.subId.space, U.Data.spaceRelationKeys()).filter(it => it.isAccountActive && it.isLocalOk);
+		return S.Record.getRecords(J.Constant.subId.space, U.Data.spaceRelationKeys()).filter(it => it.isAccountActive);
 	};
 
 	getSpaceview (id?: string) {
@@ -173,7 +187,7 @@ class UtilSpace {
 		return S.Common.isOnline && !U.Data.isLocalNetwork();
 	};
 
-	isShareBanner () {
+	hasShareBanner () {
 		const hasShared = !!this.getList().find(it => it.isShared && this.isMyOwner(it.targetSpaceId));
 		const space = this.getSpaceview();
 		const closed = Storage.get('shareBannerClosed');

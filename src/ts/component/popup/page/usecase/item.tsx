@@ -97,7 +97,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 								<Tag key={i} text={name} />
 							))}
 						</div>
-						<Label text={U.Common.sprintf(translate('popupUsecaseUpdated'), U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, U.Date.now()))} />
+						<Label text={U.Common.sprintf(translate('popupUsecaseUpdated'), U.Date.dateWithFormat(S.Common.dateFormat, U.Date.now()))} />
 						<Label text={U.File.size(object.size)} />
 					</div>
 				</div>
@@ -131,12 +131,11 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 		const idx = this.swiper.activeIndex;
 		const length = (this.swiper.slides || []).length;
 
-		!idx ? arrowLeft.addClass('hide') : arrowLeft.removeClass('hide');
-		idx >= length - 1 ? arrowRight.addClass('hide') : arrowRight.removeClass('hide');
+		arrowLeft.toggleClass('hide', !idx);
+		arrowRight.toggleClass('hide', idx >= length - 1);
 	};
 
 	onMenu () {
-		const { config } = S.Common;
 		const { getId, close } = this.props;
 		const object = this.getObject();
 		const route = this.getRoute();
@@ -160,7 +159,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 				noVirtualisation: true, 
 				onSelect: (e: any, item: any) => {
 					const isNew = item.id == 'add';
-					const withChat = U.Common.isChatAllowed();
+					const withChat = U.Object.isAllowedChat();
 
 					this.setState({ isLoading: true });
 					analytics.event('ClickGalleryInstallSpace', { type: isNew ? 'New' : 'Existing', route });

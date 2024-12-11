@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, Dataview } from 'Lib';
-import { Graph } from 'Component';
+import { GraphProvider } from 'Component';
 
 const PADDING = 46;
 
@@ -28,7 +28,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 				className="wrap"
 			>
 				<div className={cn.join(' ')}>
-					<Graph 
+					<GraphProvider 
 						key="graph"
 						{...this.props} 
 						ref={ref => this.refGraph = ref} 

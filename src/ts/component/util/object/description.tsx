@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import { U } from 'Lib';
 
 interface Props {
@@ -6,28 +6,23 @@ interface Props {
 	className?: string;
 };
 
-class Description extends React.Component<Props> {
+const ObjectDescription: FC<Props> = ({ 
+	object = {}, 
+	className = 'descr',
+}) => {
+	object = object || {};
 
-	public static defaultProps = {
-		className: 'descr',
+	let { description } = object;
+	if (U.Object.isNoteLayout(object.layout)) {
+		description = '';
 	};
 
-	render () {
-		const { className } = this.props;
-		const object = this.props.object || {};
-
-		let { description } = object;
-		if (U.Object.isNoteLayout(object.layout)) {
-			description = '';
-		};
-
-		if (!description) {
-			return null;
-		};
-
-		return <div className={className} dangerouslySetInnerHTML={{ __html: U.Common.sanitize(description) }} />;
+	if (!description) {
+		return null;
 	};
-	
+
+	return <div className={className} dangerouslySetInnerHTML={{ __html: U.Common.sanitize(description) }} />;
+
 };
 
-export default Description;
+export default ObjectDescription;

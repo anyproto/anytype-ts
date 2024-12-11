@@ -165,6 +165,10 @@ class Action {
 	};
 
 	openUrl (url: string) {
+		if (!url) {
+			return;
+		};
+
 		url = U.Common.urlFix(url);
 
 		const storageKey = 'openUrl';
@@ -186,6 +190,14 @@ class Action {
 		} else {
 			cb();
 		};
+	};
+
+	openPath (path: string) {
+		if (!path) {
+			return;
+		};
+
+		Renderer.send('openPath', path);
 	};
 
 	openFile (id: string, route: string) {
@@ -449,14 +461,14 @@ class Action {
 		});
 	};
 
-	archive (ids: string[], callBack?: () => void) {
+	archive (ids: string[], route: string, callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, true, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
 			Preview.toastShow({ action: I.ToastAction.Archive, ids });
-			analytics.event('MoveToBin', { count: ids.length });
+			analytics.event('MoveToBin', { route, count: ids.length });
 
 			if (callBack) {
 				callBack();
@@ -464,13 +476,13 @@ class Action {
 		});
 	};
 
-	restore (ids: string[], callBack?: () => void) {
+	restore (ids: string[], route: string, callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			analytics.event('RestoreFromBin', { count: ids.length });
+			analytics.event('RestoreFromBin', { route, count: ids.length });
 
 			if (callBack) {
 				callBack();
@@ -732,7 +744,7 @@ class Action {
 		let layout = I.WidgetLayout.Link;
 
 		if (object && !object._empty_) {
-			if (U.Object.isInFileOrSystemLayouts(object.layout)) {
+			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
 				layout = I.WidgetLayout.Link;
 			} else 
 			if (U.Object.isInSetLayouts(object.layout)) {
@@ -775,13 +787,20 @@ class Action {
 				text: translate('popupConfirmRevokeLinkText'),
 				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
 				colorConfirm: 'red',
+				noCloseOnConfirm: true,
 				onConfirm: () => {
-					C.SpaceInviteRevoke(spaceId, () => {
+					C.SpaceInviteRevoke(spaceId, (message: any) => {
+						if (message.error.code) {
+							S.Popup.updateData('confirm', { error: message.error.description });
+							return;
+						};
+
 						if (callBack) {
 							callBack();
 						};
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
+						S.Popup.close('confirm');
 						analytics.event('RevokeShareLink');
 					});
 				},

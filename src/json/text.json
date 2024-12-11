@@ -33,6 +33,7 @@
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
 	"commonGraph": "Graph",
+	"commonChat": "Chat",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
 	"commonAllContent": "All Objects",
@@ -89,6 +90,7 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
+	"commonDates": "Dates",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
@@ -170,6 +172,10 @@
 	"commonProgress": "Progress",
 	"commonMainChat": "Chat",
 	"commonMenu": "Menu",
+	"commonSignUp": "Sign Up",
+	"commonNotFound": "Not found",
+	"commonCalculate": "Calculate",
+	"commonRelations": "Relations",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -215,6 +221,7 @@
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
 	"electronMenuDirectory": "Show Directory",
+	"electronMenuCustomCss": "Apply custom CSS",
 	"electronMenuWorkDirectory": "Work",
 	"electronMenuDataDirectory": "Data",
 	"electronMenuConfigDirectory": "Config",
@@ -330,6 +337,7 @@
 	"progressSaveFile": "Download in progress...",
 	"progressMigration": "Recovering vault...",
 	"progressRecoverAccount": "Migration in progress...",
+	"progressUpdate": "Update...",
 	"progressUpdateCheck": "Checking for update...",
 
 	"spellcheckAdd": "Add to dictionary",
@@ -476,6 +484,8 @@
 	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
 	"pageMainVoidCreateSpace": "Create space",
 
+	"pageMainDateEmptyText" : "There is nothing here for this date yet",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 	"pageAuthLoginShortPhrase": "Key is too short",
 
@@ -538,6 +548,7 @@
 	"blockNameTableOfContents": "Table of Contents",
 	"blockNameSet": "Inline set",
 	"blockNameCollection": "Inline Collection",
+	"blockNameDate": "Date",
 
 	"blockTextParagraph": "Write a plain text",
 	"blockTextHeader1": "Big headline of a chapter, paragraph or section",
@@ -572,6 +583,7 @@
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
 	"blockTextPlain": "Plain Text",
+	"blockTextDate": "Mention a date in editor",
 
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
@@ -608,8 +620,8 @@
 	"blockDataviewHeadMenuChange": "Change source %s",
 	"blockDataviewHeadMenuOpen": "Open source %s",
 
-	"blockDataviewBoardRelationDeletedTitle": "Relation has been deleted",
-	"blockDataviewBoardRelationDeletedDescription": "Choose another Relation to group your Kanban",
+	"blockDataviewBoardRelationDeletedTitle": "No Relation",
+	"blockDataviewBoardRelationDeletedDescription": "Choose Relation to group your Kanban",
 	"blockDataviewBoardOpenViewMenu": "Open View menu",
 
 	"blockDataviewBoardColumnSettings": "Column settings",
@@ -722,9 +734,12 @@
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
 	"popupSettingsPersonalRelativeDates": "Display relative dates",
+	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionApp": "App Appearance",
+	"popupSettingsPersonalSectionDateTime": "Date & Time",
+	"popupSettingsPersonalTimeFormat": "Time format",
 
 	"popupSettingsColorMode": "Color mode",
 	"popupSettingsColorModeButtonLight": "Light",
@@ -1387,7 +1402,7 @@
 	"menuBlockRelationEditSelectRelationType": "Select Relation Type",
 	"menuBlockRelationEditAddObjectType": "Add Object Type",
 	"menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
-	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
+	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
 	"menuBlockRelationViewFeaturedRelations": "Featured Relations",
 	"menuBlockRelationViewInThisObject": "In this Object",
@@ -1460,7 +1475,7 @@
 	"menuDataviewRelationEditHideRelation": "Hide Relation",
 	"menuDataviewRelationEditAddObjectType": "Add Object type",
 	"menuDataviewRelationEditFilterObjectTypes": "Filter Object types...",
-	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
+	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
 	"menuDataviewSortNoSortsApplied": "No sorts applied to this View",
 	"menuDataviewSortNewSort": "New sort",
@@ -1850,6 +1865,22 @@
 	"onboardingObjectCreationStart21": "<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu.",
 	"onboardingObjectCreationStart2Button": "I got it!",
 
+	"emailCollectionStep0Title": "Want to stay in touch?",
+	"emailCollectionStep0Description": "Enter your email to receive tips and updates. We do not link your account with your email, ever. Cancel anytime.",
+	"emailCollectionStep1Title": "Just a moment",
+	"emailCollectionStep1Description": "Enter the code we’ve sent you to your email",
+	"emailCollectionStep2Title": "You’re Subscribed!",
+
+	"emailCollectionStep2News": "You are now set to receive the latest updates. Enjoy exploring!",
+	"emailCollectionStep2Tips": "You are now set to receive new insights. Enjoy exploring!",
+	"emailCollectionStep2NewsAndTips": "You are now set to receive the latest updates and perks. Enjoy exploring!",
+
+	"emailCollectionCheckboxTipsLabel": "Insider tips & tutorials on using Anytype",
+	"emailCollectionCheckboxNewsLabel": "Product updates & company news",
+	"emailCollectionEnterEmail": "Enter email...",
+	"emailCollectionCodeSent": "Code sent!",
+	"emailCollectionGreat": "Great!",
+
 	"onboardingObjectCreationFinish": "Creating Objects",
 	"onboardingObjectCreationFinish11": "<b>For the Object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.",
 	"onboardingObjectCreationFinish1Button": "Ok! I like it",
@@ -1877,7 +1908,7 @@
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
 	"onboardingSpacesTitle": "Spaces",
-	"onboardingSpacesText": "<b>This is your Space.</b> Click here to customize its name or icon, or to securely migrate and protect your data. ",
+	"onboardingSpacesText": "<b>This is your Space.</b>Click here to share it with others, customize its name and icon, or securely migrate from other apps to protect your data.",
 	"onboardingAllObjectTitle": "All Objects",
 	"onboardingAllObjectText": "<b>Everything in Anytype is an Object.</b> All objects is where all your content lives.",
 	"onboardingWidgetsTitle": "Widgets",
@@ -1908,7 +1939,6 @@
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
 	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
-	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
 
@@ -1937,7 +1967,7 @@
 	"libMenuCopyUrl": "Copy URL",
 
 	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
-	"libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
+	"libActionUninstallTypeText": "This Type will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
 	"libActionUninstallRelationTitle": "Do you want to remove Relation \"%s\"?",
 	"libActionUninstallRelationText": "This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.",
 
@@ -2179,6 +2209,9 @@
 	"participantPermissions2": "Owner",
 	"participantPermissions3": "No access",
 
+	"relationMentions": "Mentioned in",
+	"relationCreator": "Created by",
+	
 	"spaceStatus0": "Active",
 	"spaceStatus1": "Loading",
 	"spaceStatus2": "Ok",
@@ -2205,6 +2238,40 @@
 	"networkMode1Title": "Local-only",
 	"networkMode1Text": "Don't back up; sync within local network",
 	"networkMode2Title": "Self-hosted",
-	"networkMode2Text": "Back up to your self-hosted network"
+	"networkMode2Text": "Back up to your self-hosted network",
+
+	"formulaCount": "Count",
+	"formulaPercentage": "Percentage",
+	"formulaMath": "Math",
+	"formulaDate": "Date",
+	"formulaValue": "Count values",
+	"formulaValueShort": "Values",
+	"formulaDistinct": "Count unique values",
+	"formulaDistinctShort": "Unique",
+	"formulaEmpty": "Count empty",
+	"formulaEmptyShort": "Empty",
+	"formulaNotEmpty": "Count not empty",
+	"formulaNotEmptyShort": "Not empty",
+	"formulaPercentEmpty": "Percentage empty",
+	"formulaPercentNotEmpty": "Percentage not empty",
+	"formulaSum": "Sum",
+	"formulaAverage": "Average",
+	"formulaMedian": "Median",
+	"formulaMin": "Minimum",
+	"formulaMax": "Maximum",
+	"formulaRange": "Range",
+	"formulaDateMin": "Earliest date",
+	"formulaDateMinShort": "Earliest",
+	"formulaDateMax": "Latest date",
+	"formulaDateMaxShort": "Latest",
+	"formulaDateRange": "Date range",
+	"formulaDateRangeShort": "Range",
+	"formulaCheckboxCount": "Count all",
+	"formulaCheckboxEmpty": "Count unchecked",
+	"formulaCheckboxEmptyShort": "Unchecked",
+	"formulaCheckboxNotEmpty": "Count checked",
+	"formulaCheckboxNotEmptyShort": "Checked",
+	"formulaCheckboxPercentEmpty": "Percentage unchecked",
+	"formulaCheckboxPercentNotEmpty": "Percentage checked"
 
 }

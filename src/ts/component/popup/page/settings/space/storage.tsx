@@ -35,12 +35,13 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 					ref={ref => this.ref = ref}
 					subId={J.Constant.subId.fileManager}
 					rowLength={2}
-					withArchived={true}
 					buttons={buttons}
 					info={I.ObjectManagerItemInfo.FileSize}
 					iconSize={18}
 					sorts={sorts}
 					filters={filters}
+					ignoreHidden={false}
+					ignoreArchived={false}
 					textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
 				/>
 			</div>

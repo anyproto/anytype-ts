@@ -3,9 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, translate, sidebar } from 'Lib';
-import Controls from 'Component/page/elements/head/controls';
-import HeadSimple from 'Component/page/elements/head/simple';
+import { I, M, C, S, U, J, Action, keyboard, analytics } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -107,7 +105,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	};
 
 	unbind () {
-		const namespace = this.getNamespace();
+		const { isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
 		const events = [ 'keydown', 'scroll' ];
 
 		$(window).off(events.map(it => `${it}.set${namespace}`).join(' '));
@@ -116,7 +115,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	rebind () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const namespace = this.getNamespace();
+		const namespace = U.Common.getEventNamespace(isPopup);
 		const container = U.Common.getScrollContainer(isPopup);
 
 		this.unbind();
@@ -137,10 +136,6 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
-	};
-
-	getNamespace () {
-		return this.props.isPopup ? '-popup' : '';
 	};
 
 	open () {
@@ -179,11 +174,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
+
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
@@ -191,7 +183,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	onScroll () {
@@ -238,7 +230,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			if (count && !S.Menu.isOpen()) {
 				keyboard.shortcut('backspace, delete', e, () => {
 					e.preventDefault();
-					Action.archive(ids);
+					Action.archive(ids, analytics.route.chat);
 					selection.clear();
 				});
 			};
@@ -277,9 +269,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			const head = node.find('.headSimple');
 
 			if (cover.length) {
-				cover.css({ top: headerHeight });
-
-				cover.width() <= J.Size.editor ? cover.addClass('isFull') : cover.removeClass('isFull');
+				cover.css({ top: headerHeight }).toggleClass('isFull', cover.width() <= J.Size.editor);
 			};
 
 			const fh = Number(formWrapper.outerHeight(true)) || 0;

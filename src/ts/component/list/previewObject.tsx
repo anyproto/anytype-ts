@@ -53,7 +53,7 @@ class ListObjectPreview extends React.Component<Props> {
 
 				<div className="scroller">
 					<div className="heading">
-						<div className="name">Blank</div>
+						<div className="name">{translate('commonBlank')}</div>
 					</div>
 				</div>
 				<div className="border" />
@@ -256,8 +256,8 @@ class ListObjectPreview extends React.Component<Props> {
 		const isFirst = this.page == 0;
 		const isLast = this.page == this.getMaxPage();
 
-		isFirst ? arrowLeft.addClass('dn') : arrowRight.removeClass('dn');
-		isLast ? arrowRight.addClass('dn') : arrowRight.removeClass('dn');
+		arrowLeft.toggleClass('dn', isFirst);
+		arrowRight.toggleClass('dn', isLast);
 	};
 	
 };

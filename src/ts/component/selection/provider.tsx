@@ -142,8 +142,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const win = $(window);
 		const container = U.Common.getScrollContainer(isPopup);
 
-		isPopup ? this.rect.addClass('fromPopup') : this.rect.removeClass('fromPopup');
-		
+		this.rect.toggleClass('fromPopup', isPopup);
 		this.rootId = keyboard.getRootId();
 		this.isPopup = isPopup;
 		this.x = e.pageX;
@@ -590,6 +589,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			raf.cancel(this.frame);
 		};
 
+		const container = this.getPageContainer();
+
 		raf(() => {
 			$('.isSelectionSelected').removeClass('isSelectionSelected');
 
@@ -598,14 +599,16 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				const ids = this.get(type, true);
 
 				for (const id of ids) {
-					$(`#selectionTarget-${id}`).addClass('isSelectionSelected');
+					container.find(`#selectionTarget-${id}`).addClass('isSelectionSelected');
 
 					if (type == I.SelectType.Block) {
-						$(`#block-${id}`).addClass('isSelectionSelected');
+						container.find(`#block-${id}`).addClass('isSelectionSelected');
 
 						const childrenIds = this.getChildrenIds(id);
 						if (childrenIds.length) {
-							childrenIds.forEach(childId => $(`#block-${childId}`).addClass('isSelectionSelected'));
+							childrenIds.forEach(childId => {
+								container.find(`#block-${childId}`).addClass('isSelectionSelected');
+							});
 						};
 					};
 				};
@@ -626,9 +629,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	setIsSelecting (v: boolean) {
 		this.isSelecting = v;
-
-		const html = $('html');
-		v ? html.addClass('isSelecting') : html.removeClass('isSelecting');
+		$('html').toggleClass('isSelecting', v);
 	};
 	
 });

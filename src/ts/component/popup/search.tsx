@@ -27,6 +27,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	refList: any = null;
 	refRows: any[] = [];
 	timeout = 0;
+	delay = 0;
 	cache: any = {};
 	items: any[] = [];
 	n = 0;
@@ -53,7 +54,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	
 	render () {
 		const { isLoading } = this.state;
-		const filter = this.getFilter();
 		const items = this.getItems();
 
 		const Context = (meta: any): any => {
@@ -247,17 +247,18 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				<div className="head">
 					<Filter 
 						icon="search"
-						value={filter}
+						value={this.filter}
 						ref={ref => this.refFilter = ref} 
 						placeholder={translate('popupSearchPlaceholder')}
 						onSelect={this.onFilterSelect}
-						onKeyUp={this.onFilterChange}
+						onChange={v => this.onFilterChange(v)}
+						onKeyUp={(e, v) => this.onFilterChange(v)}
 						onClear={this.onFilterClear}
 					/>
 				</div>
 
 				{!items.length && !isLoading ? (
-					<EmptySearch filter={filter} />
+					<EmptySearch filter={this.filter} />
 				) : ''}
 				
 				{this.cache && items.length && !isLoading ? (
@@ -303,16 +304,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const filter = String(storage.filter || '');
 
 		const setFilter = () => {
-			if (!filter || !this.refFilter) {
+			if (!this.refFilter) {
 				return;
 			};
 
-			this.filter = filter;
 			this.range = { from: 0, to: filter.length };
 			this.refFilter.setValue(filter);
+			this.refFilter.setRange(this.range);
 		};
-
-		setFilter();
 
 		this._isMounted = true;
 		this.initCache();
@@ -321,9 +320,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		focus.clear(true);
 
 		if (backlink) {
-			U.Object.getById(backlink, item => this.setBacklink(item, 'Saved', () => setFilter()));
+			U.Object.getById(backlink, {}, item => this.setBacklink(item, 'Saved', () => setFilter()));
 		} else {
-			this.reload();
+			setFilter();
 		};
 
 		analytics.event('ScreenSearch', { route, type: (filter ? 'Saved' : 'Empty') });
@@ -331,21 +330,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	
 	componentDidUpdate () {
 		const items = this.getItems();
-		const filter = this.getFilter();
-
-		if (filter != this.filter) {
-			this.filter = filter;
-			this.reload();
-			return;
-		};
 
 		this.initCache();
 		this.setActive(items[this.n]);
-
-		if (this.refFilter) {
-			this.refFilter.setValue(this.filter);
-			this.refFilter.setRange(this.range);
-		};
 
 		if (this.refList) {
 			this.refList.recomputeRowHeights(0);
@@ -497,24 +484,30 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		node.find('.item.active').removeClass('active');
 	};
 
-	onFilterChange (e: any, v: string) {
+	onFilterChange (v: string) {
 		const { storageSet, param } = this.props;
 		const { data } = param;
 		const { route } = data;
 
-		if (this.filter == v) {
+		window.clearTimeout(this.timeout);
+
+		if (v && (this.filter == v)) {
 			return;
 		};
 
-		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			storageSet({ filter: v });
 
+			this.filter = v;
 			this.range = this.refFilter?.getRange();
-			this.forceUpdate();
+			this.reload();
+
+			if (!this.delay) {
+				this.delay = J.Constant.delay.keyboard;
+			};
 			
 			analytics.event('SearchInput', { route });
-		}, J.Constant.delay.keyboard);
+		}, this.delay);
 	};
 
 	onFilterSelect (e: any) {
@@ -522,13 +515,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onFilterClear () {
-		const { param } = this.props;
+		const { param, storageSet } = this.props;
 		const { data } = param;
 		const { route } = data;
 
-		this.props.storageSet({ filter: '' });
-		this.reload();
-
+		storageSet({ filter: '' });
 		analytics.event('SearchInput', { route });
 	};
 
@@ -588,7 +579,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	load (clear: boolean, callBack?: () => void) {
 		const { space } = S.Common;
 		const { backlink } = this.state;
-		const filter = this.getFilter();
+		const filter = this.filter;
 		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
@@ -633,11 +624,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			this.items = this.items.concat(records);
 
-			U.Data.subscribeIds({
-				subId: J.Constant.subId.search,
-				ids: this.items.map(it => it.id),
-				noDeps: true,
-			});
+			if (this.items.length) {
+				U.Data.subscribeIds({
+					subId: J.Constant.subId.search,
+					ids: this.items.map(it => it.id),
+					noDeps: true,
+				});
+			};
 
 			if (clear) {
 				this.setState({ isLoading: false }, callBack);

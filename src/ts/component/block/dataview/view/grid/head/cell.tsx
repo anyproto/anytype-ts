@@ -30,7 +30,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		};
 
 		const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(relation.format) ];
+		const cn = [ 'cellHead', `cell-key-${relationKey}`, Relation.className(relation.format) ];
 
 		if (allowed) {
 			cn.push('canDrag');
@@ -56,15 +56,17 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 	};
 
 	onMouseEnter (): void {
-		const { block } = this.props;
+		const { block, relationKey } = this.props;
 
-		if (!keyboard.isDragging) {
-			$(`#block-${block.id} .cell-key-${this.props.relationKey}`).addClass('cellKeyHover');
+		if (!keyboard.isDragging && !keyboard.isResizing) {
+			$(`#block-${block.id} .cell-key-${relationKey}`).addClass('cellKeyHover');
 		};
 	};
 
 	onMouseLeave () {
-		$('.cellKeyHover').removeClass('cellKeyHover');
+		if (!keyboard.isDragging && !keyboard.isResizing) {
+			$('.cellKeyHover').removeClass('cellKeyHover');
+		};
 	};
 
 	onEdit (e: any) {

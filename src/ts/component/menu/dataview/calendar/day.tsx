@@ -10,7 +10,8 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { y, m, d, hideIcon, className, fromWidget, readonly, onCreate } = data;
+		const { y, m, d, hideIcon, className, fromWidget, relationKey, readonly, onCreate } = data;
+		const timestamp = U.Date.timestamp(y, m, d);
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const menuId = getId();
@@ -19,8 +20,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		let size = 16;
 
 		if (fromWidget) {
-			const w = Number(U.Date.date('N', U.Date.timestamp(y, m, d))) + 1;
-			label = `${translate(`day${w}`)} ${d}`;
+			label = `${U.Date.weekday(timestamp)} ${d}`;
 			size = 18;
 		};
 
@@ -60,7 +60,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 
 		return (
 			<div className={cn.join(' ')}>
-				<div className="number">
+				<div className="number" onClick={() => U.Object.openDateByTimestamp(relationKey, timestamp, 'config')}>
 					<div className="inner">{label}</div>
 				</div>
 				<div className="items">

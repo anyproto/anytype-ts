@@ -81,14 +81,13 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 							<div className="body">
 								{data.map((item, i) => {
-									const { d, m, y } = item;
 									const cn = [];
-									const current = [ d, m, y ].join('-');
+									const current = [ item.d, item.m, item.y ].join('-');
 
 									if (m != item.m) {
 										cn.push('other');
 									};
-									if ((today.d == d) && (today.m == m) && (today.y == y)) {
+									if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
 										cn.push('active');
 									};
 									if (i < 7) {
@@ -239,12 +238,11 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const objectId = getTarget().id;
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const type = S.Record.getTypeById(getTypeId());
-		const typeKey = type.uniqueKey;
 		const templateId = getTemplateId();
 
 		details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id), details);
 
-		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

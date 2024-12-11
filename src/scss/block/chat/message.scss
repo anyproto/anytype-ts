@@ -34,10 +34,8 @@
 		content: ''; display: block; position: absolute; top: 0px; left: 0px; width: 4px; height: 100%;	background-color: var(--color-text-secondary); 
 	}
 	.reply {
-		.icon,
-		.iconObject { flex-shrink: 0; width: 32px; height: 32px; }
-
-		.iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
+		> .icon, > .iconObject { flex-shrink: 0; width: 32px; height: 32px; }
+		> .iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
 
 		.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
 

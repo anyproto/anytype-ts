@@ -15,16 +15,19 @@
 			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
 		}
 
-		.side.right { flex-shrink: 0; }
+		.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 		.side.right {
 			.cnt { 
 				@include text-very-small; background-color: var(--color-control-accent); color: var(--color-control-bg); border-radius: 50%; min-width: 18px; 
-				text-align: center; font-weight: 500; height: 18px; line-height: 18px;
+				text-align: center; font-weight: 500; height: 18px; line-height: 18px; display: none; padding: 0px 2px;
 			}
 		}
 	}
 
 	.body.withCnt {
 		.side.left { width: calc(100% - 30px); }
+		.side.right {
+			.cnt { display: block; }
+		}
 	}
 }

@@ -19,19 +19,16 @@ type State = {
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 
 	node: HTMLDivElement = null;
-	refFrame: Frame = null;
-	refPhrase: Phrase = null;
-	refNext: Button = null;
-	refName: Input = null;
+	refFrame: any = null;
+	refPhrase: any = null;
+	refNext: any = null;
+	refName: any = null;
 
 	state: State = {
 		stage: Stage.Vault,
 		phraseVisible: false,
 		error: '',
 	};
-
-	isDelayed = false;
-	isCreating = false;
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -122,12 +119,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		return (
 			<div 
-				ref={(ref) => (this.node = ref)} 
+				ref={ref => this.node = ref} 
 				className={`stage${Stage[stage]}`}
 			>
 				{this.canMoveBack() ? <Icon className="arrow back" onClick={this.onBack} /> : ''}
 
-				<Frame ref={(ref) => (this.refFrame = ref)}>
+				<Frame ref={ref => this.refFrame = ref}>
 					<DotIndicator className="animation" index={stage} count={3} />
 					<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
 					<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
@@ -194,7 +191,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Guard to prevent illegal state change */
 	canMoveForward (): boolean {
-		return !this.isDelayed && !!Stage[this.state.stage];
+		return !!Stage[this.state.stage] && !this.refNext?.isLoading();
 	};
 
 	/** Guard to prevent illegal state change */
@@ -214,8 +211,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (stage == Stage.Vault) {
 			const cb = () => {
 				Animation.from(() => {
-					this.setState({ stage: stage + 1 });
 					this.refNext?.setLoading(false);
+					this.setState({ stage: stage + 1 });
 				});
 			};
 
@@ -248,6 +245,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						onRouteChange: () => {
 							S.Common.fullscreenObjectSet(true);
 							S.Common.showRelativeDatesSet(true);
+							S.Common.showObjectSet(false);
 
 							U.Space.initSpaceState();
 							Onboarding.start('basics', false);

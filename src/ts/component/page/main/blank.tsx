@@ -1,12 +1,12 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { I } from 'Lib';
 
-class PageMainBlank extends React.Component<I.PageComponent> {
+const PageMainBlank = forwardRef<{}, I.PageComponent>(() => {
 
-	render () {
-		return <div />;
-	};
+	return (
+		<div />
+	);
 
-};
+});
 
 export default PageMainBlank;

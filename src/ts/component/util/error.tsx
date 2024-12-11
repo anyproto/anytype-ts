@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import { I, U } from 'Lib';
 
 interface Props {
@@ -8,35 +8,28 @@ interface Props {
 	dataset?: any;
 };
 
-class Error extends React.Component<Props> {
+const Error: FC<Props> = ({
+	id = '',
+	text = '',
+	className = '',
+	dataset = {},
+}) => {
 
-	public static defaultProps = {
-		text: '',
-		className: '',
+	if (!text && !id) {
+		return null;
 	};
 
-	render () {
-		const { id, text, className, dataset } = this.props;
-		const cn = [ 'error' ];
+	const cn = [ 'error', className ];
 
-		if (!text && !id) {
-			return null;
-		};
+	return (
+		<div 
+			id={id}
+			className={cn.join(' ')}
+			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} 
+			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
+		/>
+	);
 
-		if (className) {
-			cn.push(className);
-		};
-		
-		return (
-			<div 
-				id={id}
-				className={cn.join(' ')}
-				dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} 
-				{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
-			/>
-		);
-	};
-	
 };
 
 export default Error;

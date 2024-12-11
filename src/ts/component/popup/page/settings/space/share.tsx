@@ -177,7 +177,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="icons">
 						<Icon className="question withBackground" onClick={this.onInfo} />
-						{space.isShared ? <Icon id="button-more-space" className="more withBackground" onClick={this.onMoreSpace} /> : ''}
+						{space.isShared && isSpaceOwner ? <Icon id="button-more-space" className="more withBackground" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 
@@ -334,11 +334,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const btn = this.refButton;
 		const space = U.Space.getSpaceview();
 
-		if (!btn || btn.state.isLoading) {
+		if (!btn || btn.isLoading()) {
 			return;
 		};
 
 		btn.setLoading(true);
+		analytics.event('ClickShareSpaceNewLink');
 
 		C.SpaceMakeShareable(S.Common.space, (message: any) => {
 			if (this.setError(message.error)) {
@@ -349,7 +350,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			C.SpaceInviteGenerate(S.Common.space, (message: any) => {
 				btn.setLoading(false);
 
-				if (!this.setError(message.error)) {
+				if (this.setError(message.error)) {
 					return;
 				};
 
@@ -371,9 +372,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				textConfirm: translate('popupConfirmStopSharingSpaceConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
-					C.SpaceStopSharing(S.Common.space);
-					this.setInvite('', '');
-
+					C.SpaceStopSharing(S.Common.space, () => this.setInvite('', ''));
 					analytics.event('StopSpaceShare');
 				},
 			},

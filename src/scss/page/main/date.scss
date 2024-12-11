@@ -1,0 +1,40 @@
+@import "~scss/_mixins";
+
+.pageMainDate { min-height: 100vh; }
+.pageMainDate {
+	.wrapper { width: 704px; margin: 0px auto; padding: 52px 0px 80px 0px; user-select: none; }
+
+	.dayName { @include text-common; color: var(--color-text-secondary); margin: 0px 0px 8px 0px; display: flex; flex-direction: row; gap: 8px; align-items: center; }
+	.dayName {
+		div { display: flex; flex-direction: row; gap: 8px; align-items: center; }
+		div::after { content: ''; width: 3px; height: 3px; border-radius: 50%; background: var(--color-control-active); }
+		div:last-child::after { display: none; }
+	}
+
+	.headSimple { align-items: center; height: 32px; margin-bottom: 20px; }
+	.headSimple {
+		.side.right { gap: 0px; }
+		.side.right {
+			.icon { width: 24px !important; height: 24px !important; }
+			.icon.calendar { background-image: url('~img/icon/relation/date.svg'); }
+			.icon.arrow { background-image: url('~img/arrow/dateSelectLight.svg'); }
+			.icon.arrow.left { transform: rotateZ(180deg); }
+		}
+	}
+
+	.categories { display: flex; flex-direction: row; gap: 8px; margin: 0px 0px 12px 0px; align-items: center; justify-content: flex-start; flex-wrap: wrap; }
+	.categories {
+		.button { border-radius: 8px; }
+		.icon.mention { width: 20px; height: 20px; margin: 0px 6px 0px 0px; background-image: url('~img/icon/mention.svg'); }
+	}
+
+	.cell.c-type {
+		.iconObject { display: none; }
+	}
+
+	.emptyContainer { 
+		text-align: center; align-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: var(--color-text-secondary); 
+	}
+
+	#loader { position: fixed; top: 50% !important; transform: translateY(-50%); }
+}

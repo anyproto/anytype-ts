@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Label } from 'Component';
+import { Button, Icon, Label, EmailCollection } from 'Component';
 import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -29,7 +29,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, position, close } = this.props;
 		const { data } = param;
 		const { key, current } = data;
 		const section = Onboarding.getSection(key);
@@ -37,6 +37,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const item = items[current];
 		const l = items.length;
 		const withSteps = l > 1;
+		const withEmailForm = key == 'emailCollection';
 
 		let buttons = [];
 		let category = '';
@@ -87,6 +88,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 						autoPlay={true} 
 						loop={true} 
 					/>
+				) : ''}
+				{withEmailForm ? (
+					<EmailCollection onStepChange={position} onComplete={() => close()} />
 				) : ''}
 
 				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
@@ -247,9 +251,16 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	onClose () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { key, current } = data;
+		const { key, current, isPopup } = data;
+		const section = this.getSection();
+		const menuParam = Onboarding.getParam(section, {}, isPopup);
 
 		close();
+
+		if (menuParam.onClose) {
+			menuParam.onClose();
+		};
+
 		analytics.event('ClickOnboardingTooltip', { type: 'close', id: key, step: (current + 1) });
 	};
 

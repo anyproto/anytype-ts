@@ -11,13 +11,11 @@ class ElementMovementObserver {
 
 	private movementObserver: MutationObserver;
 	private resizeObserver: ResizeObserver;
-	
 	private element: HTMLElement;
 	private lastPosition: Position;
-	
 	private onMove: (position: Position) => void;
 
-	constructor(element: HTMLElement, callback: (position: Position) => void) {
+	constructor (element: HTMLElement, callback: (position: Position) => void) {
 		this.element = element;
 		this.onMove = callback;
 		this.lastPosition = this.getPosition();
@@ -86,18 +84,19 @@ class ElementMovementObserver {
 	public disconnect (): void {
 		this.movementObserver.disconnect();
 		this.resizeObserver.disconnect();
+
 		window.removeEventListener('scroll', this.checkForMovement);
 	};
 };
 
-export default function useElementMovement ( element: HTMLElement | null, callback: (position: Position) => void ) {
+export default function useElementMovement (element: HTMLElement | null, callBack: (position: Position) => void ) {
 	useEffect(() => {
 		if (!element) {
 			return;
 		};
 
-		const movementObserver = new ElementMovementObserver(element, callback);
+		const movementObserver = new ElementMovementObserver(element, callBack);
 
 		return () => movementObserver.disconnect();
-	}, [ element, callback ]);
+	}, [ element, callBack ]);
 };

@@ -39,7 +39,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 					ref={ref => this.refManager = ref}
 					subId={subId}
 					rowLength={2}
-					withArchived={true}
+					ignoreArchived={false}
 					buttons={[]}
 					iconSize={48}
 					collectionId={collectionId}

@@ -1,18 +1,27 @@
 import * as React from 'react';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, J, translate } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 
-const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu> {
+interface State {
+	dotMap: Map<string, boolean>;
+};
+
+const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
 	
 	originalValue = 0;
 	refMonth: any = null;
 	refYear: any = null;
+
+	state: Readonly<State> = {
+		dotMap: new Map(),
+	};
 	
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { value, isEmpty, canEdit } = data;
+		const { value, isEmpty, canEdit, canClear = true } = data;
+		const { dotMap } = this.state;
 		const items = this.getData();
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
@@ -91,16 +100,20 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 						if (!isEmpty && (todayParam.d == item.d) && (todayParam.m == item.m) && (todayParam.y == item.y)) {
 							cn.push('active');
 						};
+
+						const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
 						return (
 							<div 
-								key={i} 
+								key={i}
+								id={[ 'day', item.d, item.m, item.y ].join('-')}
 								className={cn.join(' ')} 
-								onClick={(e: any) => { 
-									e.stopPropagation();
-									this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
-								}}
+								onClick={e => this.onClick(e, item)}
+								onContextMenu={e => this.onContextMenu(e, item)}
 							>
-								{item.d}
+								<div className="inner">
+									{item.d}
+									{check ? <div className="bullet" /> : ''}
+								</div>
 							</div>
 						);
 					})}
@@ -115,7 +128,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 									<div className="btn" onClick={() => this.setValue(U.Date.mergeTimeWithDate(tomorrow, value), true, true)}>{translate('commonTomorrow')}</div>
 								</div>
 								<div className="side right">
-									<div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>
+									{canClear && <div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>}
 								</div>
 							</div>
 						</div>
@@ -131,6 +144,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 		const { value } = data;
 
 		this.originalValue = value;
+		this.initDotMap();
 		this.forceUpdate();
 	};
 
@@ -146,6 +160,63 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 		this.props.position();
 	};
 
+	initDotMap () {
+		const { param } = this.props;
+		const { data } = param;
+		const { getDotMap } = data;
+		const items = this.getData();
+
+		if (!getDotMap || !items.length) {
+			return;
+		};
+
+		const first = items[0];
+		const last = items[items.length - 1];
+		const start = U.Date.timestamp(first.y, first.m, first.d);
+		const end = U.Date.timestamp(last.y, last.m, last.d);
+
+		getDotMap(start, end, dotMap => this.setState({ dotMap }));
+	};
+
+	onClick (e: any, item: any) {
+		e.stopPropagation();
+
+		const { param } = this.props;
+		const { data } = param;
+		const { canEdit, relationKey } = data;
+		const ts = U.Date.timestamp(item.y, item.m, item.d);
+
+		if (canEdit) {
+			this.setValue(ts, true, true); 
+		} else {
+			U.Object.openDateByTimestamp(relationKey, ts);
+		};
+	};
+
+	onContextMenu (e: any, item: any) {
+		e.preventDefault();
+
+		const { getId, param } = this.props;
+		const { className, classNameWrap, data } = param;
+		const { relationKey } = data;
+
+		S.Menu.open('select', {
+			element: `#${getId()} #${[ 'day', item.d, item.m, item.y ].join('-')}`,
+			offsetY: 4,
+			noFlipY: true,
+			className,
+			classNameWrap,
+			data: {
+				options: [ 
+					{ id: 'open', icon: 'expand', name: translate('commonOpenObject') },
+				],
+				onSelect: () => {
+					U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));
+				}
+			}
+		});
+	};
+
 	setValue (value: number, save: boolean, close: boolean) {
 		const { param, id } = this.props;
 		const { data } = param;
@@ -157,7 +228,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 
 		S.Menu.updateData(id, { value });
 
-		if (save) {
+		if (save && onChange) {
 			onChange(value);
 		};
 

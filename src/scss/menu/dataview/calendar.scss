@@ -40,6 +40,11 @@
 
 		.day.th { color: var(--color-control-active); @include text-small; }
 
+		.day {
+			.inner { width: 100%; max-width: 28px; height: 28px; border-radius: 4px; transition: $transitionAllCommon; position: relative; }
+			.bullet { width: 3px; height: 3px; border-radius: 50%; position: absolute; bottom: 2px; left: 50%; margin-left: -1.5px; background: var(--color-control-active); }
+		}
+
 		.day.today, .day.active { font-weight: 600; }
 		.day.today { color: var(--color-system-accent-125); }
 		.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }

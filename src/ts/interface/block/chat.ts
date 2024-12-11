@@ -40,4 +40,17 @@ export interface ChatMessageAttachment {
 	type: AttachmentType;
 };
 
+export interface ChatMessageComponent extends I.BlockComponent {
+	blockId: string;
+	id: string;
+	isNew: boolean;
+	subId: string
+	scrollToBottom?: () => void;
+	onContextMenu: (e: any) => void;
+	onMore: (e: any) => void;
+	onReplyEdit: (e: any) => void;
+	onReplyClick: (e: any) => void;
+	getReplyContent: (message: any) => any;
+};
+
 export interface BlockChat extends I.Block {};

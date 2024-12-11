@@ -1,20 +1,18 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { I } from 'Lib';
 
-class HeaderMainNavigation extends React.Component<I.HeaderComponent> {
+const HeaderMainNavigation = forwardRef<{}, I.HeaderComponent>((props, ref) => {
+	
+	const { renderLeftIcons, renderTabs } = props;
 
-	render () {
-		const { renderLeftIcons, renderTabs } = this.props;
+	return (
+		<>
+			<div className="side left">{renderLeftIcons()}</div>
+			<div className="side center">{renderTabs()}</div>
+			<div className="side right" />
+		</>
+	);
 
-		return (
-			<React.Fragment>
-				<div className="side left">{renderLeftIcons()}</div>
-				<div className="side center">{renderTabs()}</div>
-				<div className="side right" />
-			</React.Fragment>
-		);
-	};
-
-};
+});
 
 export default HeaderMainNavigation;

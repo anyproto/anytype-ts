@@ -186,6 +186,9 @@ class UtilDate {
 			case I.DateFormat.Short:				 f = 'd.m.Y'; break;
 			case I.DateFormat.ShortUS:				 f = 'm.d.Y'; break;
 			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
+			case I.DateFormat.Long:					 f = 'F j, Y'; break;
+			case I.DateFormat.Nordic:				 f = 'j. M Y'; break;
+			case I.DateFormat.European:				 f = 'j.m.Y'; break;
 		};
 		return f;
 	};
@@ -265,9 +268,14 @@ class UtilDate {
 			return '';
 		};
 
-		const d = Math.floor(t / 86400);
+		const DAY_IN_SECONDS = 86400;
+		const y = Math.floor(t / (DAY_IN_SECONDS * 365));
 
-		t -= d * 86400;
+		t -= y * (DAY_IN_SECONDS * 365);
+
+		const d = Math.floor(t / DAY_IN_SECONDS);
+
+		t -= d * DAY_IN_SECONDS;
 		const h = Math.floor(t / 3600);
 
 		t -= h * 3600;
@@ -277,6 +285,9 @@ class UtilDate {
 		const s = t;
 
 		let ret = '';
+		if (y > 0) {
+			ret = U.Common.sprintf('%dy', y);
+		} else
 		if (d > 0) {
 			ret = U.Common.sprintf('%dd', d);
 		} else
@@ -396,6 +407,10 @@ class UtilDate {
 			ret.push({ id: i, name: i });
 		};
 		return ret;
+	};
+
+	weekday (t: number): string {
+		return translate(`day${Number(U.Date.date('N', t)) + 1}`);
 	};
 
 };

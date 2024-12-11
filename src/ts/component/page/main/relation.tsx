@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, S, U, Action, translate } from 'Lib';
-import HeadSimple from 'Component/page/elements/head/simple';
+import { Header, Footer, Loader, ListObject, Deleted, HeadSimple } from 'Component';
+import { I, C, S, U, Action, translate, analytics } from 'Lib';
 
 interface State {
 	isDeleted: boolean;
@@ -44,7 +43,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const columnsObject: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: v => U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v),
+				mapper: v => U.Date.dateWithFormat(S.Common.dateFormat, v),
 			},
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
 		];
@@ -86,6 +85,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 										rootId={rootId} 
 										columns={[]} 
 										filters={filtersType} 
+										route={analytics.route.screenRelation}
 									/>
 								</div>
 							</div>
@@ -102,6 +102,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 											subId={subIdObject} 
 											rootId={rootId} 
 											columns={columnsObject} 
+											route={analytics.route.screenRelation}
 										/>
 									</div>
 								</div>
@@ -161,11 +162,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
+
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
@@ -173,7 +171,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	onCreate () {

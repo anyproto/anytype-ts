@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 
 interface Props {
 	id?: string;
@@ -9,79 +9,61 @@ interface Props {
 	onChange?(e: any, value: boolean): void;
 };
 
-class Switch extends React.Component<Props> {
+interface SwitchRefProps {
+	getValue (): boolean;
+	setValue (value: boolean): void;
+};
 
-	public static defaultProps = {
-		value: false,
-		color: 'orange',
-	};
-
-	node: any = null;
-	value = false;
-
-	constructor (props: Props) {
-		super(props);
-		
-		this.onChange = this.onChange.bind(this);
-	};
+const Switch = forwardRef<SwitchRefProps, Props>(({
+	id = '',
+	value: initialValue = false,
+	color = 'orange',
+	className = '',
+	readonly = false,
+	onChange,
+}, ref: any) => {
 	
-	render () {
-		const { id, color, className, readonly } = this.props;
-		const cn = [ 'switch', color ];
+	const nodeRef = useRef(null);
+	const [ value, setValue ] = useState(initialValue);
+	const cn = [ 'switch', color, className ];
 
-		if (className) {
-			cn.push(className);
-		};
-		if (readonly) {
-			cn.push('isReadonly');
-		};
-		
-		return (
-			<div 
-				ref={node => this.node = node}
-				id={id} 
-				className={cn.join(' ')} 
-				onClick={this.onChange}
-			>
-				<div className="inner" />
-			</div>
-		);
+	if (value) {
+		cn.push('active');
 	};
-	
-	componentDidMount () {
-		this.setValue(this.props.value);
+	if (readonly) {
+		cn.push('isReadonly');
 	};
 
-	componentDidUpdate () {
-		this.setValue(this.props.value);
-	};
-	
-	onChange (e: any) {
-		const { onChange, readonly } = this.props;
-
+	const onChangeHandler = (e: any) => {
 		if (readonly) {
 			return;
 		};
 
-		const value = !this.value;
+		setValue(!value);
 
-		this.setValue(value);
 		if (onChange) {
-			onChange(e, value);
+			onChange(e, !value);
 		};
 	};
-	
-	setValue (value: boolean) {
-		const node = $(this.node);
 
-		this.value = value;
-		value ? node.addClass('active') : node.removeClass('active');
-	};
+	useEffect(() => setValue(initialValue), []);
+
+	useImperativeHandle(ref, () => ({
+		getValue: () => value,
+		setValue: (value: boolean) => setValue(value),
+	}));
 	
-	getValue () {
-		return this.value;
-	};
-	
-};
+	return (
+		<div 
+			ref={nodeRef}
+			id={id} 
+			className={cn.join(' ')} 
+			onClick={onChangeHandler}
+		>
+			<div className="inner" />
+		</div>
+	);
+
+});
 
 export default Switch;

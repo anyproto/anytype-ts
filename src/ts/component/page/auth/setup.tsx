@@ -100,8 +100,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	componentDidUpdate (): void {
-		this.refFrame.resize();
-
 		Animation.to();
 	};
 	

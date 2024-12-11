@@ -125,7 +125,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 			};
 
 			case 'remove': {
-				Action.archive([ template.id ], onArchive);
+				Action.archive([ template.id ], route, onArchive);
 				break;
 			};
 		};

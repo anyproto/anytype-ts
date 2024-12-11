@@ -46,7 +46,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 						filters={filters}
 						sorts={sorts}
 						rowLength={this.getRowLength()}
-						withArchived={true}
+						ignoreArchived={false}
 						buttons={buttons}
 						iconSize={48}
 						resize={this.resize}
@@ -69,7 +69,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 			return;
 		};
 
-		Action.restore(this.refManager.selected || []);
+		Action.restore(this.refManager.selected || [], analytics.route.archive);
 		this.selectionClear();
 	};
 

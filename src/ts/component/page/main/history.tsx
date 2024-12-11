@@ -448,7 +448,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	isSetOrCollection (): boolean {
@@ -460,7 +460,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	setVersion (version: I.HistoryVersion) {
 		this.refSideLeft?.forceUpdate();
-		this.refSideLeft?.refHeader?.refChild.setVersion(version);
+		this.refSideLeft?.refHeader?.setVersion(version);
 		this.refSideLeft?.refHead?.forceUpdate();
 
 		$(window).trigger('updateDataviewData');

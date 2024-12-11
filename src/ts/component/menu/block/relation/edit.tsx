@@ -93,31 +93,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				</div>
 			);
 		};
-		/*
-		const opts = (
-			<React.Fragment>
-
-				{isDate && relation ? (
-					<div className="section">
-						<div className="item" onMouseEnter={this.menuClose}>
-							<Icon className="clock" />
-							<div className="name">{translate('menuBlockRelationEditIncludeTime')}</div>
-							<Switch value={relation ? relation.includeTime : false} onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
-						</div>
-
-						<MenuItemVertical 
-							id="date-settings" 
-							icon="settings" 
-							name={translate('commonPreferences')}
-							arrow={!isReadonly} 
-							readonly={isReadonly}
-							onMouseEnter={this.onDateSettings} 
-						/>
-					</div>
-				) : ''}
-			</React.Fragment>
-		);
-		*/
 
 		return (
 			<form 
@@ -376,7 +351,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			rebind: this.rebind,
 		});
 
-		if (!S.Menu.isOpen(id)) {
+		if (!S.Menu.isOpen(id) && !S.Menu.isAnimating(id)) {
 			S.Menu.closeAll(J.Menu.relationEdit, () => {
 				S.Menu.open(id, options);
 			});

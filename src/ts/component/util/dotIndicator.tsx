@@ -1,31 +1,32 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
-interface DotIndicatorProps {
+interface Props {
 	index: number;
 	count: number;
 	className?: string;
 };
-	
-class DotIndicator extends React.Component<DotIndicatorProps> {
 
-	render () {
-		const { index, count, className } = this.props;
-		const dots = [];
+const DotIndicator = forwardRef<HTMLDivElement, Props>(({
+	index = 0,
+	count = 0,
+	className = '',
+}, ref) => {
 
-		for (let i = 0; i < count; i++) {
-			const isActive = i === index;
-			const cn = ['dot'];
+	const dots = [];
+	const cn = [ 'dotIndicator', className ];
 
-			if (isActive) {
-				cn.push('active');
-			};
+	for (let i = 0; i < count; i++) {
+		const isActive = i == index;
+		const cn = [ 'dot' ];
 
-			dots.push(<span	key={i} className={cn.join(' ')} />);
+		if (isActive) {
+			cn.push('active');
 		};
 
-		return <div className={['dotIndicator', className].join(' ')}>{dots}</div>;
+		dots.push(<span	key={i} className={cn.join(' ')} />);
 	};
 
-};
+	return <div className={cn.join(' ')}>{dots}</div>;
+});
 
 export default DotIndicator;
