@@ -1,0 +1,16 @@
+@import "~scss/_mixins";
+
+.menus {
+	.menu.menuPublish { width: var(--menu-width-large); }
+	.menu.menuPublish {
+		.content { padding: 16px; display: flex; flex-direction: column; gap: 8px 0px; }
+		.title { padding: 0px; @include text-paragraph; font-weight: 600; margin: 0px 0px 8px 0px; color: var(--color-text-primary); }
+		.input { padding: 7px 9px; height: auto; border-radius: 7px; border: 1px solid var(--color-shape-secondary); }
+		.label.small { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
+
+		.flex { padding: 3px 0px; align-items: center; gap: 0px 16px; justify-content: space-between; }
+		.flex {
+			.value { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; flex-shrink: 0; }
+		}
+	}
+}

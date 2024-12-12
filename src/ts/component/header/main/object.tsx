@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, ObjectName, Label } from 'Component';
+import { Button, Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, S, U, J, keyboard, translate } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
@@ -14,6 +14,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const isLocked = root ? root.isLocked() : false;
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
+	const showShare = !isTypeOrRelation && !isDate;
 	const showRelations = !isTypeOrRelation && !isDate;
 	const showMenu = !isTypeOrRelation;
 	const cmd = keyboard.cmdSymbol();
@@ -83,6 +84,15 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		});
 	};
 
+	const onShare = () => {
+		menuOpen('publish', '#button-header-share', {
+			horizontal: I.MenuDirection.Right,
+			data: {
+				rootId,
+			}
+		});
+	};
+
 	const onRelationHandler = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'isArchived' ]);
 
@@ -127,6 +137,16 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 			</div>
 
 			<div className="side right">
+				{showShare ? (
+					<Button 
+						id="button-header-share" 
+						text="Share" 
+						color="blank" 
+						className="c28" 
+						onClick={onShare}
+					/> 
+				) : ''}
+
 				{showRelations ? (
 					<Icon 
 						id="button-header-relation" 

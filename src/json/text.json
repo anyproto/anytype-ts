@@ -1623,6 +1623,10 @@
 	"menuSyncStatusEmptyLocal": "Your Vault is currently in local-only mode, so your data isn't being synced to Anytype nodes.",
 	"menuSyncStatusEmpty": "There are no objects to show",
 
+	"menuPublishTitle": "Publish to web",
+	"menuPublishLabel": "Join Space Button",
+	"menuPublishButton": "Publish",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
