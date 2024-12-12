@@ -118,7 +118,8 @@ export default {
 		'isDeleted',
 		'isArchived',
 		'isFavorite',
-		'restrictions'
+		'restrictions',
+		'timestamp',
 	],
 
 	template: [

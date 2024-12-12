@@ -627,9 +627,13 @@ class UtilCommon {
 		});
 	};
 
-	getScheme (url: string): string {
-		const u = new URL(String(url || ''));
-		return u ? u.protocol.replace(/:$/, '') : '';
+	getScheme(url: string): string {
+		try {
+			const u = new URL(String(url || ''));
+			return u.protocol.replace(/:$/, '');
+		} catch {
+			return '';
+		}
 	};
 
 	intercept (obj: any, change: any) {

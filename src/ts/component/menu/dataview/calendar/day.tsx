@@ -10,7 +10,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { y, m, d, hideIcon, className, fromWidget, relationKey, readonly, onCreate } = data;
+		const { y, m, d, hideIcon, className, fromWidget, relationKey } = data;
 		const timestamp = U.Date.timestamp(y, m, d);
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
@@ -20,7 +20,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		let size = 16;
 
 		if (fromWidget) {
-			label = `${U.Date.weekday(timestamp)} ${d}`;
+			label = `${U.Date.date('l, M j', timestamp)}`;
 			size = 18;
 		};
 

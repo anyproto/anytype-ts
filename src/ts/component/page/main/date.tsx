@@ -43,10 +43,16 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 
 		const relation = S.Record.getRelationByKey(relationKey);
+		const dayString = U.Date.dayString(object.timestamp);
+		const dayName = [ U.Date.date('l', object.timestamp) ];
+
+		if (dayString) {
+			dayName.unshift(dayString);
+		};
 
 		let content = null;
 		if (isLoading) {
-			content = <Loader id="loader" />
+			content = <Loader id="loader" />;
 		} else
 		if (!relations.length || !relation) {
 			content = (
@@ -64,31 +70,31 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			const filters: I.Filter[] = [];
 
 			if (relation.format == I.RelationType.Object) {
-				filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
+				filters.push({ relationKey: relationKey, condition: I.FilterCondition.In, value: [ object.id ] });
 			} else {
 				filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
 			};
 
 			if ([ 'createdDate' ].includes(relationKey)) {
-				const map = {
-					createdDate: 'creator',
-				};
+				filters.push({ relationKey: 'creator', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+				keys.push('creator');
+			};
 
-				filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
-				keys.push(map[relationKey]);
+			if ([ 'lastModifiedDate' ].includes(relationKey)) {
+				filters.push({ relationKey: 'createdDate', condition: I.FilterCondition.NotEqual, value: { type: 'valueFromRelation', relationKey: 'lastModifiedDate' } });
 			};
 
 			content = (
 				<React.Fragment>
 					<div className="categories">
-						{relations.map((item) => {
+						{relations.map((item, i: number) => {
 							const isMention = item.relationKey == RELATION_KEY_MENTION;
 							const icon = isMention ? 'mention' : '';
 
 							return (
 								<Button
 									id={`category-${item.relationKey}`}
-									key={item.relationKey}
+									key={i}
 									active={relationKey == item.relationKey}
 									color="blank"
 									className="c36"
@@ -119,12 +125,15 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			<div ref={node => this.node = node}>
 				<Header
 					{...this.props}
-					component="mainObject"
+					component="mainChat"
 					ref={ref => this.refHeader = ref}
 					rootId={rootId}
 				/>
 
 				<div className="blocks wrapper">
+					<div className="dayName">
+						{dayName.map((item, i) => <div key={i}>{item}</div>)}
+					</div>
 					<HeadSimple
 						{...this.props}
 						noIcon={true}

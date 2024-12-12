@@ -76,8 +76,8 @@
 				}
 			}
 
-			.item:hover, .item.hover { background: var(--color-shape-highlight-medium); }
 			.item:hover, .item.hover {
+				&::before { background: var(--color-shape-highlight-medium); }
 				.side.right {
 					.icon:not(.more) { display: none; }
 					.icon.more { opacity: 1; }

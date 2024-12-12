@@ -22,7 +22,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	render() {
 		const { rootId, block } = this.props;
-		const object = S.Detail.get(rootId, block.getTargetObjectId(), J.Relation.cover, false, [ I.ObjectLayout.Date ]);
+		const object = S.Detail.get(rootId, block.getTargetObjectId(), J.Relation.cover);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
 		const content = U.Data.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);

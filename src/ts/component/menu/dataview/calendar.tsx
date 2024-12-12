@@ -23,7 +23,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 	state: Readonly<State> = {
 		dotMap: new Map(),
-		selectedDate: U.Date.getCalendarDateParam(U.Date.today()),
+		selectedDate: null,
 	};
 
 	render () {
@@ -109,7 +109,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 							cn.push('active');
 						};
 
-						if ((selectedDate.d == item.d) && (selectedDate.m == item.m) && (selectedDate.y == item.y)) {
+						if (selectedDate && (selectedDate.d == item.d) && (selectedDate.m == item.m) && (selectedDate.y == item.y)) {
 							cn.push('selected');
 						};
 
@@ -120,6 +120,12 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								id={[ 'day', item.d, item.m, item.y ].join('-')}
 								className={cn.join(' ')}
 								onClick={e => this.onClick(e, item)}
+								onMouseEnter={() => {
+									if (!keyboard.isMouseDisabled) {
+										this.setState({ selectedDate: item });
+									};
+								}}
+								onMouseLeave={() => this.setState({ selectedDate: null })}
 								onContextMenu={e => this.onContextMenu(e, item)}
 							>
 								<div className="inner">
@@ -261,11 +267,12 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data } = param;
 		const { canEdit, relationKey } = data;
+		const ts = U.Date.timestamp(item.y, item.m, item.d);
 
 		if (canEdit) {
-			this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true);
+			this.setValue(ts, true, true); 
 		} else {
-			U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));
+			U.Object.openDateByTimestamp(relationKey, ts);
 		};
 	};
 
@@ -304,7 +311,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 		S.Menu.updateData(id, { value });
 
-		if (save) {
+		if (save && onChange) {
 			onChange(value);
 		};
 

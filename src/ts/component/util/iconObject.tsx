@@ -94,6 +94,7 @@ const FontSize = {
 	80: 64,
 	96: 64,
 	108: 64,
+	128: 64,
 };
 
 const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type', 'date' ];

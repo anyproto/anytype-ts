@@ -163,6 +163,9 @@ class UtilDate {
 			N: () => {
 				return (f.w() + 6) % 7;
 			},
+			l: () => {
+				return translate(`day${f.N() + 1}`);
+			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {
 			let ret = null;
@@ -189,6 +192,7 @@ class UtilDate {
 			case I.DateFormat.Long:					 f = 'F j, Y'; break;
 			case I.DateFormat.Nordic:				 f = 'j. M Y'; break;
 			case I.DateFormat.European:				 f = 'j.m.Y'; break;
+			case I.DateFormat.Default:				 f = 'D, M d, Y'; break;
 		};
 		return f;
 	};
@@ -407,10 +411,6 @@ class UtilDate {
 			ret.push({ id: i, name: i });
 		};
 		return ret;
-	};
-
-	weekday (t: number): string {
-		return translate(`day${Number(U.Date.date('N', t)) + 1}`);
 	};
 
 };
