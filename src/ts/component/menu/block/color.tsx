@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, U, keyboard } from 'Lib';
 
-const MenuBlockColor = forwardRef<{}, I.Menu>((props, ref) => {
+const MenuBlockColor = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, onKeyDown, setActive, close } = props;
 	const { data } = param;
@@ -49,6 +49,8 @@ const MenuBlockColor = forwardRef<{}, I.Menu>((props, ref) => {
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
 	}), []);
 
 	const items = getItems();
