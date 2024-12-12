@@ -264,6 +264,7 @@ export interface Cell {
 
 export interface CellRef {
 	onClick?(): void;
+	setEditing?(v: boolean): void;
 };
 
 export interface BoardGroup {

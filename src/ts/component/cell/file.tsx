@@ -1,100 +1,74 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { I, S, Relation } from 'Lib';
 
-interface State { 
-	isEditing: boolean; 
-};
+const CellFile = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
-const CellFile = observer(class CellFile extends React.Component<I.Cell, State> {
-
-	state = {
-		isEditing: false,
+	const [ isEditing, setIsEditing ] = useState(false);
+	const { id, subId, relation, recordId, size, iconSize, placeholder, arrayLimit, canEdit, getRecord, elementMapper } = props;
+	const record = getRecord(recordId) || {};
+	
+	let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
+	value = value.map(it => S.Detail.get(subId, it, []));
+	value = value.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+	
+	if (elementMapper) {
+		value = value.map(it => elementMapper(relation, it));
 	};
 
-	constructor (props: I.Cell) {
-		super(props);
+	const cn = [ 'wrap' ];
+	const length = value.length;
 
-		this.onClick = this.onClick.bind(this);
+	if (arrayLimit) {
+		value = value.slice(0, arrayLimit);
+		if (length > arrayLimit) {
+			cn.push('overLimit');
+		};
 	};
 
-	render () {
-		const { subId, relation, recordId, size, iconSize, placeholder, arrayLimit, getRecord, elementMapper } = this.props;
-		const record = getRecord(recordId);
-		
-		if (!record) {
-			return null;
-		};
-
-		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map(it => S.Detail.get(subId, it, []));
-		value = value.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
-		
-		if (elementMapper) {
-			value = value.map(it => elementMapper(relation, it));
-		};
-
-		const cn = [ 'wrap' ];
-		const length = value.length;
-
-		if (arrayLimit) {
-			value = value.slice(0, arrayLimit);
-			if (length > arrayLimit) {
-				cn.push('overLimit');
-			};
-		};
-
-		const Item = (item: any) => (
-			<div className="element" onClick={e => this.onClick(e, item)}>
-				<div className="flex">
-					<IconObject object={item} size={size} iconSize={iconSize} />
-					<ObjectName object={item} />
-				</div>
+	const Item = (item: any) => (
+		<div className="element" onClick={e => onClick(e, item)}>
+			<div className="flex">
+				<IconObject object={item} size={size} iconSize={iconSize} />
+				<ObjectName object={item} />
 			</div>
-		);
+		</div>
+	);
 
-		return (
-			<div className={cn.join(' ')}>
-				{value.length ? (
-					<span className="over">
-						{value.map((item: any, i: number) => (
-							<Item key={i} {...item} />
-						))}
-						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
-					</span>
-				) : (
-					<div className="empty">{placeholder}</div>
-				)}
-			</div>
-		);
-	};
-
-	componentDidUpdate () {
-		const { isEditing } = this.state;
-		const { id } = this.props;
-		const cell = $('#' + id);
-
-		if (isEditing) {
-			cell.addClass('isEditing');
-		} else {
-			cell.removeClass('isEditing');
-		};
-	};
-
-	setEditing (v: boolean) {
-		const { canEdit } = this.props;
-		const { isEditing } = this.state;
-
+	const setEditing = (v: boolean) => {
 		if (canEdit && (v != isEditing)) {
-			this.setState({ isEditing: v });
+			setIsEditing(v);
 		};
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 	};
 
-});
+	useEffect(() => {
+		$(`#${id}`).toggleClass('isEditing', isEditing);
+	}, [ isEditing ]);
+
+	useImperativeHandle(ref, () => ({
+		setEditing,
+	}));
+
+	return (
+		<div className={cn.join(' ')}>
+			{value.length ? (
+				<span className="over">
+					{value.map((item: any, i: number) => (
+						<Item key={i} {...item} />
+					))}
+					{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
+				</span>
+			) : (
+				<div className="empty">{placeholder}</div>
+			)}
+		</div>
+	);
+
+}));
 
 export default CellFile;
