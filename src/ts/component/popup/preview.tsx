@@ -265,7 +265,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const { getId } = this.props;
 		const node = $(`#${getId()}-innerWrap`);
 		const element = node.find(`#itemPreview-${idx}`);
-		const loader = element.find('.loader')
+		const loader = element.find('.loader');
 		const obj = this.galleryMap.get(idx);
 		const { src, type, isLoaded, width, height } = obj;
 

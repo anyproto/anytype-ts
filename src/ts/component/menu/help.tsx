@@ -84,7 +84,6 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		S.Common.shareTooltipSet(true);
 		Highlight.showAll();
 		return () => unbind();
 	}, []);
@@ -95,6 +94,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
+		onClick,
 	}), []);
 
 	return (

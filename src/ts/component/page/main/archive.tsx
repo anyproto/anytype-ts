@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Footer, Icon, ListObjectManager } from 'Component';
+import { Title, Footer, Icon, ListManager } from 'Component';
 import { I, U, J, translate, Action, analytics } from 'Lib';
 
 const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
@@ -40,7 +40,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 						<Title text={translate('commonBin')} />
 					</div>
 
-					<ListObjectManager
+					<ListManager
 						ref={ref => this.refManager = ref}
 						subId={J.Constant.subId.archive}
 						filters={filters}
@@ -65,16 +65,12 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 	};
 
 	onRestore () {
-		if (!this.refManager) {
-			return;
-		};
-
-		Action.restore(this.refManager.selected || [], analytics.route.archive);
+		Action.restore(this.refManager?.getSelected(), analytics.route.archive);
 		this.selectionClear();
 	};
 
 	onRemove () {
-		Action.delete(this.refManager?.selected || [], 'Bin', () => this.selectionClear());
+		Action.delete(this.refManager?.getSelected(), 'Bin', () => this.selectionClear());
 	};
 
 	selectionClear () {

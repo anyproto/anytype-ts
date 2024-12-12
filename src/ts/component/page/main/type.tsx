@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted, HeadSimple, EditorControls } from 'Component';
+import { Icon, Header, Footer, Loader, ListPreviewObject, ListObject, Select, Deleted, HeadSimple, EditorControls } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate } from 'Lib';
 
 interface State {
@@ -16,7 +16,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	refHeader: any = null;
 	refHead: any = null;
 	refControls: any = null;
-	refListPreview: any = null;
 	timeout = 0;
 	page = 0;
 
@@ -152,9 +151,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 							{totalTemplate ? (
 								<div className="content">
-									<ListObjectPreview 
+									<ListPreviewObject 
 										key="listTemplate"
-										ref={ref => this.refListPreview = ref}
 										getItems={() => S.Record.getRecords(subIdTemplate, [])}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}

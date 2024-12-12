@@ -4,6 +4,13 @@
 .pageMainDate {
 	.wrapper { width: 704px; margin: 0px auto; padding: 52px 0px 80px 0px; user-select: none; }
 
+	.dayName { @include text-common; color: var(--color-text-secondary); margin: 0px 0px 8px 0px; display: flex; flex-direction: row; gap: 8px; align-items: center; }
+	.dayName {
+		div { display: flex; flex-direction: row; gap: 8px; align-items: center; }
+		div::after { content: ''; width: 3px; height: 3px; border-radius: 50%; background: var(--color-control-active); }
+		div:last-child::after { display: none; }
+	}
+
 	.headSimple { align-items: center; height: 32px; margin-bottom: 20px; }
 	.headSimple {
 		.side.right { gap: 0px; }
@@ -15,9 +22,7 @@
 		}
 	}
 
-	.categories { 
-		display: flex; flex-direction: row; gap: 8px; margin: 0px 0px 12px 0px; align-items: center; justify-content: flex-start; flex-wrap: wrap; 
-	}
+	.categories { display: flex; flex-direction: row; gap: 8px; margin: 0px 0px 12px 0px; align-items: center; justify-content: flex-start; flex-wrap: wrap; }
 	.categories {
 		.button { border-radius: 8px; }
 		.icon.mention { width: 20px; height: 20px; margin: 0px 6px 0px 0px; background-image: url('~img/icon/mention.svg'); }

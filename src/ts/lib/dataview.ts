@@ -459,12 +459,11 @@ class Dataview {
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
 
-		if (view && view.defaultTypeId && isAllowedDefaultType) {
-			return view.defaultTypeId;
-		};
-
 		let typeId = '';
 
+		if (view && view.defaultTypeId && isAllowedDefaultType) {
+			typeId = view.defaultTypeId;
+		} else
 		if (types.length) {
 			typeId = types[0].id;
 		} else
@@ -482,7 +481,13 @@ class Dataview {
 			};
 		};
 
-		return typeId || S.Common.type;
+		const type = S.Record.getTypeById(typeId);
+
+		if (!type) {
+			typeId = S.Common.type;
+		};
+
+		return typeId;
 	};
 
 	getCreateTooltip (rootId: string, blockId: string, objectId: string, viewId: string): string {

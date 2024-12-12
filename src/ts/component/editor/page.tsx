@@ -452,7 +452,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			readonly || 
 			keyboard.isResizing || 
 			keyboard.isDragging || 
-			(selection && selection.isSelecting) || 
+			selection?.isSelecting() || 
 			menuOpen || 
 			popupOpen ||
 			isLoading

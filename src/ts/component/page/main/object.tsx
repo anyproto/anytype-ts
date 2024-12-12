@@ -1,14 +1,11 @@
-import * as React from 'react';
-import { I, C, U, Storage } from 'Lib';
+import React, { forwardRef, useEffect } from 'react';
+import { I, C, U } from 'Lib';
 
-class PageMainObject extends React.Component<I.PageComponent> {
+const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	render () {
-		return <div />;
-	};
+	const { match } = props;
 
-	componentDidMount (): void {
-		const { match } = this.props;
+	useEffect(() => {
 		const { id, spaceId, cid, key } = match.params || {};
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
 
@@ -34,8 +31,11 @@ class PageMainObject extends React.Component<I.PageComponent> {
 
 			U.Object.openRoute(item.details);
 		});
-	};
 
-};
+	}, []);
+
+	return <div />;
+
+});
 
 export default PageMainObject;

@@ -158,7 +158,7 @@ class Keyboard {
 						canClose = false;
 					} else
 					if (selection) {
-						const ids = selection.get(I.SelectType.Block);
+						const ids = selection?.get(I.SelectType.Block) || [];
 						if (ids.length) {
 							canClose = false;
 						};
@@ -283,8 +283,9 @@ class Keyboard {
 	checkSelection () {
 		const range = U.Common.getSelectionRange();
 		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
 
-		if ((range && !range.collapsed) || (selection && selection.get(I.SelectType.Block).length)) {
+		if ((range && !range.collapsed) || ids.length) {
 			return true;
 		};
 

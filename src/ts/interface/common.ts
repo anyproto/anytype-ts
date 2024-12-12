@@ -122,11 +122,7 @@ export enum EdgeType {
 export enum Usecase {
 	None		 = 0,
 	GetStarted	 = 1,
-	Personal	 = 2,
-	Knowledge	 = 3,
-	Notes		 = 4,
-	Strategic 	 = 5,
-	Empty		 = 6,
+	Empty		 = 2,
 };
 
 export enum HomePredefinedId {
@@ -320,4 +316,9 @@ export enum SortId {
 export enum LoaderType {
 	Loader		 = 'loader',
 	Dots		 = 'dots',
+};
+
+export interface Error {
+	code: number;
+	description: string;
 };
