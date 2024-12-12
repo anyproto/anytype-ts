@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
@@ -7,231 +7,60 @@ import { DragBox } from 'Component';
 import { I, S, U, J, Relation, keyboard, analytics } from 'Lib';
 import ItemObject from './item/object';
 
-interface State { 
-	isEditing: boolean; 
-};
-
 const MAX_LENGTH = 320;
 
-const CellObject = observer(class CellObject extends React.Component<I.Cell, State> {
+const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
-	_isMounted = false;
-	node: any = null;
-	state = {
-		isEditing: false,
-	};
-	timeoutFilter = 0;
+	const nodeRef = useRef(null);
+	const listRef = useRef(null);
+	const entryRef = useRef(null);
+	const placeholderRef = useRef(null);
+	const timeout = useRef(0);
+	const [ isEditing, setIsEditing ] = useState(false);
+	const { id, recordId, relation, size, iconSize, arrayLimit, canEdit, placeholder, subId, onChange, getRecord, elementMapper } = props;
+	const record = getRecord(recordId) || {};
+	const cn = [ 'wrap' ];
 
-	constructor (props: I.Cell) {
-		super(props);
-	
-		this.onClick = this.onClick.bind(this);
-		this.onKeyPress = this.onKeyPress.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onInput = this.onInput.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onDragEnd = this.onDragEnd.bind(this);
-		this.focus = this.focus.bind(this);
-	};
-
-	render () {
-		const { isEditing } = this.state;
-		const { id, recordId, relation, size, iconSize, arrayLimit, canEdit, placeholder, getRecord, elementMapper } = this.props;
-		const record = getRecord(recordId);
-		const cn = [ 'wrap' ];
-
-		if (!relation || !record) {
-			return null;
-		};
-
-		let value = this.getItems();
-		let content = null;
-
-		if (isEditing) {
-			content = (
-				<div id="value" onClick={this.focus}>
-					<div id="placeholder" className="placeholder">{placeholder}</div>
-
-					<span id="list">
-						<DragBox onDragEnd={this.onDragEnd}>
-							{value.map((item: any, i: number) => (
-								<span 
-									key={i}
-									id={`item-${item.id}`}
-									className="itemWrap isDraggable"
-									draggable={canEdit}
-									{...U.Common.dataProps({ id: item.id, index: i })}
-								>
-									<ItemObject 
-										key={item.id} 
-										cellId={id}
-										getObject={() => item}
-										size={size}
-										iconSize={iconSize} 
-										relation={relation} 
-										elementMapper={elementMapper}
-										canEdit={canEdit}
-										onClick={(e, item) => this.onClick(e, item)}
-										onRemove={(e: any, id: string) => this.onValueRemove(id)}
-									/>
-								</span>
-							))}
-						</DragBox>
-					</span>
-					
-					{canEdit ? (
-						<span 
-							id="entry" 
-							contentEditable={true}
-							suppressContentEditableWarning={true} 
-							onFocus={this.onFocus}
-							onBlur={this.onBlur}
-							onInput={this.onInput}
-							onKeyPress={this.onKeyPress}
-							onKeyDown={this.onKeyDown}
-							onKeyUp={this.onKeyUp}
-							onCompositionStart={() => keyboard.setComposition(true)}
-							onCompositionEnd={() => keyboard.setComposition(false)}
-							onClick={e => e.stopPropagation()}
-						>
-							{'\n'}
-						</span>
-					) : ''}
-				</div>
-			);
-		} else {
-			const length = value.length;
-
-			if (arrayLimit) {
-				value = value.slice(0, arrayLimit);
-				if (length > arrayLimit) {
-					cn.push('overLimit');
-				};
-			};
-
-			if (!length) {
-				content = <div className="empty">{placeholder}</div>;
-			} else {
-				content = (
-					<span className="over">
-						{value.map((item: any, i: number) => (
-							<ItemObject 
-								key={item.id} 
-								cellId={id}
-								getObject={() => item}
-								size={size}
-								iconSize={iconSize} 
-								relation={relation} 
-								elementMapper={elementMapper} 
-								canEdit={canEdit}
-								onClick={e => this.onClick(e, item)}
-							/>
-						))}
-						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
-					</span>
-				);
-			};
-		};
-
-		return (
-			<div
-				ref={node => this.node = node}
-				className={cn.join(' ')}
-			>
-				{content}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentDidUpdate () {
-		const { isEditing } = this.state;
-		const { id } = this.props;
-		const cell = $(`#${id}`);
-
-		if (isEditing) {
-			cell.addClass('isEditing');
-
-			this.placeholderCheck();
-			this.focus();
-			this.resize();
-		} else {
-			cell.removeClass('isEditing');
-		};
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		window.clearTimeout(this.timeoutFilter);
-	};
-
-	setEditing (v: boolean) {
-		const { canEdit } = this.props;
-		const { isEditing } = this.state;
-
+	const setEditing = (v: boolean) => {
 		if (canEdit && (v != isEditing)) {
-			this.setState({ isEditing: v });
+			setIsEditing(v);
 
 			if (v) {
-				window.setTimeout(() => this.focus(), 15);
+				window.setTimeout(() => focus(), 15);
 			};
 		};
 	};
 
-	onClick (e: any, item: any) {
-		const { isEditing } = this.state;
+	const onClick = (e: any, item: any) => {
 		if (isEditing) {
 			e.stopPropagation();
-
 			U.Object.openConfig(item);
 		};
 	};
 
-	placeholderCheck () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		const value = this.getValue();
-		const list = node.find('#list');
-		const placeholder = node.find('#placeholder');
+	const placeholderCheck = () => {
+		const value = getValue();
+		const list = $(listRef.current);
+		const placeholder = $(placeholderRef.current);
 
 		value.existing.length ? list.show() : list.hide();
 		value.new || value.existing.length ? placeholder.hide() : placeholder.show();
 	};
 
-	getItems (): any[] {
-		const { relation, recordId, getRecord, subId } = this.props;
-		const record = getRecord(recordId);
-
-		if (!relation || !record) {
-			return [];
-		};
-
+	const getItems = (): any[] => {
 		return Relation.getArrayValue(record[relation.relationKey]).
 			map(id => S.Detail.get(subId, id, [])).
 			filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 
-	getItemIds (): string[] {
-		return this.getItems().map(it => it.id);
+	const getItemIds = (): string[] => {
+		return getItems().map(it => it.id);
 	};
 
-	getValue () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		const list = node.find('#list');
+	const getValue = () => {
+		const list = $(listRef.current);
 		const items = list.find('.itemWrap');
-		const entry = node.find('#entry');
+		const entry = $(entryRef.current);
 		const existing = [];
 
 		items.each((i: number, item: any) => {
@@ -245,10 +74,9 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 	};
 
-	setValue (value: string[]) {
+	const setValue = (value: string[]) => {
 		value = U.Common.arrayUnique(value);
 
-		const { onChange, relation } = this.props;
 		const { maxCount } = relation;
 		const length = value.length;
 
@@ -257,7 +85,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 
 		const cb = () => {
-			this.clear();
+			clear();
 
 			S.Menu.updateData('dataviewObjectValues', { value });
 			S.Menu.updateData('dataviewObjectList', { value });
@@ -270,140 +98,124 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 	};
 
-	focus () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		const entry = node.find('#entry');
+	const focus = () => {
+		const entry = $(entryRef.current);
 		
 		if (entry.length) {
 			window.setTimeout(() => {
 				entry.focus();
 				setRange(entry.get(0), { start: 0, end: 0 });
 
-				this.scrollToBottom();
+				scrollToBottom();
 			});
 		};
 	};
 
-	onKeyPress (e: any) {
-		if (!this._isMounted || keyboard.isComposition) {
+	const onKeyPress = (e: any) => {
+		if (keyboard.isComposition) {
 			return;
 		};
 
-		const node = $(this.node);
-		const entry = node.find('#entry');
+		const entry = $(entryRef.current);
 
 		if (entry.length && (entry.text().length >= MAX_LENGTH)) {
 			e.preventDefault();
 		};
 	};
 
-	onKeyDown (e: any) {
-		if (!this._isMounted || keyboard.isComposition) {
+	const onKeyDown = (e: any) => {
+		if (keyboard.isComposition) {
 			return;
 		};
 
-		const node = $(this.node);
+		const entry = $(entryRef.current);
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			const value = this.getValue();
+			const value = getValue();
 			if (value.new) {
-				this.onOptionAdd(value.new);
+				onOptionAdd(value.new);
 			};
 		});
 		
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
-			const range = getRange(node.find('#entry').get(0));
+			const range = getRange(entry.get(0));
 			if (range.start || range.end) {
 				return;
 			};
 
 			e.preventDefault();
 			
-			const value = this.getValue();
+			const value = getValue();
 			value.existing.pop();
-			this.setValue(value.existing);
+			setValue(value.existing);
 		});
 	};
 
-	onKeyUp (e: any) {
-		if (!this._isMounted || keyboard.isComposition) {
+	const onKeyUp = (e: any) => {
+		if (keyboard.isComposition) {
 			return;
 		};
 
-		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			S.Menu.updateData('dataviewObjectList', { filter: this.getValue().new });
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => {
+			S.Menu.updateData('dataviewObjectList', { filter: getValue().new });
 		}, J.Constant.delay.keyboard);
 
-		this.placeholderCheck();
-		this.resize();
-		this.scrollToBottom();
+		placeholderCheck();
+		resize();
+		scrollToBottom();
 	};
 
-	onInput () {
-		this.placeholderCheck();
+	const onInput = () => {
+		placeholderCheck();
 	};
 
-	onValueAdd (id: string) {
-		this.setValue(this.getItemIds().concat([ id ]));
+	const onValueAdd = (id: string) => {
+		setValue(getItemIds().concat([ id ]));
 	};
 
-	onValueRemove (id: string) {
-		this.setValue(this.getItemIds().filter(it => it != id));
+	const onValueRemove = (id: string) => {
+		setValue(getItemIds().filter(it => it != id));
 	};
 
-	onDragEnd (oldIndex: number, newIndex: number) {
-		this.setValue(arrayMove(this.getItemIds(), oldIndex, newIndex));
+	const onDragEnd = (oldIndex: number, newIndex: number) => {
+		setValue(arrayMove(getItemIds(), oldIndex, newIndex));
 	};
 
-	onOptionAdd (text: string) {
+	const onOptionAdd = (text: string) => {
 		if (!text) {
 			return;
 		};
 
-		const { relation } = this.props;
 		const { details, flags } = Relation.getParamForNewObject(text, relation);
-
-		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.relation, message => this.onValueAdd(message.targetId));
+		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.relation, message => onValueAdd(message.targetId));
 	};
 
-	onFocus () {
+	const onFocus = () => {
 		keyboard.setFocus(true);
 	};
 
-	onBlur () {
+	const onBlur = () => {
 		keyboard.setFocus(false);
 	};
 
-	clear () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		node.find('#entry').text(' ');
+	const clear = () => {
+		$(entryRef.current).text(' ');
 
 		S.Menu.updateData('dataviewObjectList', { filter: '' });
-		this.focus();
+		focus();
 	};
 
-	blur () {
-		if (this._isMounted) {
-			$(this.node).find('#entry').trigger('blur');
-		};
+	const blur = () => {
+		$(entryRef.current).trigger('blur');
 	};
 
-	scrollToBottom () {
-		const { id } = this.props;
+	const scrollToBottom = () => {
 		const cell = $(`#${id}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
@@ -412,10 +224,132 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 	};
 
-	resize () {
+	const resize = () => {
 		$(window).trigger('resize.menuDataviewObjectList');
 	};
 
-});
+	let value = getItems();
+	let content = null;
+
+	if (isEditing) {
+		content = (
+			<div id="value" onClick={focus}>
+				<div ref={placeholderRef} id="placeholder" className="placeholder">{placeholder}</div>
+
+				<span ref={listRef} id="list">
+					<DragBox onDragEnd={onDragEnd}>
+						{value.map((item: any, i: number) => (
+							<span 
+								key={i}
+								id={`item-${item.id}`}
+								className="itemWrap isDraggable"
+								draggable={canEdit}
+								{...U.Common.dataProps({ id: item.id, index: i })}
+							>
+								<ItemObject 
+									key={item.id} 
+									cellId={id}
+									getObject={() => item}
+									size={size}
+									iconSize={iconSize} 
+									relation={relation} 
+									elementMapper={elementMapper}
+									canEdit={canEdit}
+									onClick={(e, item) => onClick(e, item)}
+									onRemove={(e: any, id: string) => onValueRemove(id)}
+								/>
+							</span>
+						))}
+					</DragBox>
+				</span>
+				
+				{canEdit ? (
+					<span
+						ref={entryRef}
+						id="entry" 
+						contentEditable={true}
+						suppressContentEditableWarning={true} 
+						onFocus={onFocus}
+						onBlur={onBlur}
+						onInput={onInput}
+						onKeyPress={onKeyPress}
+						onKeyDown={onKeyDown}
+						onKeyUp={onKeyUp}
+						onCompositionStart={() => keyboard.setComposition(true)}
+						onCompositionEnd={() => keyboard.setComposition(false)}
+						onClick={e => e.stopPropagation()}
+					>
+						{'\n'}
+					</span>
+				) : ''}
+			</div>
+		);
+	} else {
+		const length = value.length;
+
+		if (arrayLimit) {
+			value = value.slice(0, arrayLimit);
+			if (length > arrayLimit) {
+				cn.push('overLimit');
+			};
+		};
+
+		if (!length) {
+			content = <div className="empty">{placeholder}</div>;
+		} else {
+			content = (
+				<span className="over">
+					{value.map((item: any, i: number) => (
+						<ItemObject 
+							key={item.id} 
+							cellId={id}
+							getObject={() => item}
+							size={size}
+							iconSize={iconSize} 
+							relation={relation} 
+							elementMapper={elementMapper} 
+							canEdit={canEdit}
+							onClick={e => onClick(e, item)}
+						/>
+					))}
+					{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
+				</span>
+			);
+		};
+	};
+
+	useEffect(() => {
+		return () => {
+			window.clearTimeout(timeout.current);
+		};
+	}, []);
+
+	useEffect(() => {
+		const cell = $(`#${id}`);
+
+		if (isEditing) {
+			cell.addClass('isEditing');
+
+			placeholderCheck();
+			focus();
+			resize();
+		} else {
+			cell.removeClass('isEditing');
+		};
+	});
+
+	useImperativeHandle(ref, () => ({
+		clear,
+		blur,
+		setEditing,
+	}));
+
+	return (
+		<div ref={nodeRef} className={cn.join(' ')}>
+			{content}
+		</div>
+	);
+
+}));
 
 export default CellObject;
