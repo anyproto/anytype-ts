@@ -26,3 +26,7 @@ export * from './block/embed';
 export * from './block/table';
 export * from './block/widget';
 export * from './block/chat';
+
+export function CommonError(CommonError: any): [any, any] {
+	throw new Error('Function not implemented.');
+}

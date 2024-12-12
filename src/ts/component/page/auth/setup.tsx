@@ -1,109 +1,21 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
 import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer } from 'Lib';
 
-interface State {
-	index: number;
-	error: { description: string, code: number };
+interface Error {
+	code: number;
+	description: string;
 };
 
-const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.PageComponent, State> {
+const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	node = null;
-	refFrame = null;
-	i = 0;
-	state = {
-		index: 0,
-		error: null,
-	};
+	const [ error, setError ] = useState<Error>({ code: 0, description: '' });
+	const cn = [ 'animation' ];
+	const { match } = props;
+	const { account } = S.Auth;
 
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onCancel = this.onCancel.bind(this);
-		this.onBackup = this.onBackup.bind(this);
-		this.setError = this.setError.bind(this);
-	};
-
-	render () {
-		const error = this.state.error || {};
-		const back = <Icon className="arrow back" onClick={this.onCancel} />;
-		const cn = [ 'animation' ];
-
-		let loader = null;
-		let title = '';
-		let label = '';
-		let buttonText = translate('commonBack');
-		let buttonClick = this.onCancel;
-
-		if (error.code) {
-			if (error.code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
-				title = translate('pageAuthSetupImportTitle');
-				label = translate('pageAuthSetupImportText');
-				buttonText = translate('pageAuthSetupImportBackup');
-				buttonClick = this.onBackup;
-				cn.push('fromBackup');
-			} else {
-				title = translate('commonError');
-				label = error.description;
-				buttonText = translate('commonBack');
-				buttonClick = this.onCancel;
-			};
-		} else {
-			title = translate('pageAuthSetupEntering');
-			loader = <Loader className="animation" />;
-		};
-		
-		return (
-			<div 
-				ref={node => this.node = node} 
-				className="wrapper"
-			>
-				<Footer {...this.props} component="authIndex" />
-				
-				<Frame ref={ref => this.refFrame = ref}>
-					{back}
-
-					{title ? <Title className={cn.join(' ')} text={title} /> : ''}
-					{label ? <Label className={cn.join(' ')} text={label} /> : ''}
-					{loader}
-
-					<div className="buttons">
-						<div className="animation">
-							<Button text={buttonText} className="c28" onClick={buttonClick} />
-						</div>
-					</div>
-				</Frame>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const { match } = this.props;
-		const { account } = S.Auth;
-
-		switch (match?.params?.id) {
-			case 'init': {
-				this.init(); 
-				break;
-			};
-
-			case 'select': {
-				this.select(account.id, true);
-				break;
-			};
-
-		};
-
-		Animation.to();
-	};
-
-	componentDidUpdate (): void {
-		Animation.to();
-	};
-	
-	init () {
+	const init = () => {
 		const { dataPath } = S.Common;  
 		const accountId = Storage.get('accountId');
 
@@ -114,17 +26,17 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 		Renderer.send('keytarGet', accountId).then((phrase: string) => {
 			C.WalletRecover(dataPath, phrase, (message: any) => {
-				if (this.setError(message.error)) {
+				if (setErrorHandler(message.error)) {
 					return;
 				};
 
 				if (phrase) {
 					U.Data.createSession(phrase, '' ,(message: any) => {
-						if (this.setError(message.error)) {
+						if (setErrorHandler(message.error)) {
 							return;
 						};
 
-						this.select(accountId, false);
+						select(accountId, false);
 					});
 				} else {
 					U.Router.go('/auth/select', { replace: true });
@@ -133,7 +45,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		});
 	};
 
-	select (accountId: string, animate: boolean) {
+	const select = (accountId: string, animate: boolean) => {
 		const { networkConfig } = S.Auth;
 		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
@@ -141,7 +53,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
 			const { account } = message;
 
-			if (this.setError(message.error) || !account) {
+			if (setErrorHandler(message.error) || !account) {
 				return;
 			};
 
@@ -161,24 +73,90 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		});
 	};
 
-	setError (error: { description: string, code: number}) {
+	const setErrorHandler = (error: Error) => {
 		if (!error.code) {
 			return false;
 		};
 
-		this.setState({ error });
+		setError(error);
 		return U.Common.checkErrorCommon(error.code);
 	};
 
-	onBackup () {
-		Action.restoreFromBackup(this.setError);
+	const onBackup = () => {
+		Action.restoreFromBackup(setErrorHandler);
 	};
 
-	onCancel () {
+	const onCancel = () => {
 		S.Auth.logout(true, false);
 		Animation.from(() => U.Router.go('/', { replace: true }));
 	};
 
-});
+	const back = <Icon className="arrow back" onClick={onCancel} />;
+
+	let loader = null;
+	let title = '';
+	let label = '';
+	let buttonText = translate('commonBack');
+	let buttonClick = onCancel;
+
+	if (error.code) {
+		if (error.code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
+			title = translate('pageAuthSetupImportTitle');
+			label = translate('pageAuthSetupImportText');
+			buttonText = translate('pageAuthSetupImportBackup');
+			buttonClick = onBackup;
+			cn.push('fromBackup');
+		} else {
+			title = translate('commonError');
+			label = error.description;
+			buttonText = translate('commonBack');
+			buttonClick = onCancel;
+		};
+	} else {
+		title = translate('pageAuthSetupEntering');
+		loader = <Loader className="animation" />;
+	};
+
+	useEffect(() => {
+		switch (match?.params?.id) {
+			case 'init': {
+				init(); 
+				break;
+			};
+
+			case 'select': {
+				select(account.id, true);
+				break;
+			};
+		};
+	}, []);
+
+	useEffect(() => {
+		Animation.to();
+	});
+	
+	return (
+		<div 
+			className="wrapper"
+		>
+			<Frame>
+				{back}
+
+				{title ? <Title className={cn.join(' ')} text={title} /> : ''}
+				{label ? <Label className={cn.join(' ')} text={label} /> : ''}
+				{loader}
+
+				<div className="buttons">
+					<div className="animation">
+						<Button text={buttonText} className="c28" onClick={buttonClick} />
+					</div>
+				</div>
+			</Frame>
+
+			<Footer {...props} component="authIndex" />
+		</div>
+	);
+
+}));
 
 export default PageAuthSetup;
