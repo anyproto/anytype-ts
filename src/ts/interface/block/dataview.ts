@@ -262,6 +262,10 @@ export interface Cell {
 	elementMapper?(relation: any, item: any): any;
 };
 
+export interface CellRef {
+	onClick?(): void;
+};
+
 export interface BoardGroup {
 	id: string;
 	value: any;
