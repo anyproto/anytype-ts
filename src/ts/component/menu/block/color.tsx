@@ -55,20 +55,17 @@ const MenuBlockColor = forwardRef<{}, I.Menu>((props, ref) => {
 
 	return (
 		<div>
-			{items.map((action: any, i: number) => {
-				const inner = <div className={'inner textColor textColor-' + action.className} />;
-				return (
-					<MenuItemVertical 
-						{...action} 
-						key={i} 
-						icon="color" 
-						inner={inner} 
-						checkbox={action.value == value} 
-						onClick={e => onClick(e, action)} 
-						onMouseEnter={e => onOver(e, action)} 
-					/>
-				);
-			})}
+			{items.map((action: any, i: number) => (
+				<MenuItemVertical 
+					{...action} 
+					key={i} 
+					icon="color" 
+					inner={<div className={`inner textColor textColor-${action.className}`} />} 
+					checkbox={action.value == value} 
+					onClick={e => onClick(e, action)} 
+					onMouseEnter={e => onOver(e, action)} 
+				/>
+			))}
 		</div>
 	);
 
