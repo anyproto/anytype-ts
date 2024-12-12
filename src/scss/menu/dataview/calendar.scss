@@ -18,7 +18,10 @@
 			.sides { margin-bottom: 10px; }
 			.side.right { display: flex; gap: 0px 2px; justify-content: flex-end; }
 			.side.right {
-				.btn { width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/calendarNav.svg'); background-position: 50% 50%; border-radius: 4px; }
+				.btn { 
+					width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/calendarNav.svg'); background-position: 50% 50%; 
+					border-radius: 4px; 
+				}
 				.btn:hover { background-color: var(--color-shape-highlight-medium); }
 				.btn.prevMonth { transform: rotateZ(180deg); }
 			}
@@ -35,8 +38,10 @@
 			.btn:hover { color: var(--color-system-accent-100); }
 		}
 
-		.day { display: flex; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 4px; align-items: center; justify-content: center; }
-		.day:not(.th):not(.active):hover { background: var(--color-shape-highlight-medium); }
+		.day { 
+			display: flex; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 4px; align-items: center; justify-content: center; 
+			position: relative;
+		}
 
 		.day.th { color: var(--color-control-active); @include text-small; }
 
@@ -49,6 +54,9 @@
 		.day.today { color: var(--color-system-accent-125); }
 		.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 		.day.other { color: var(--color-control-active); }
+		.day.selected::before { 
+			content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border-radius: inherit; background-color: var(--color-shape-highlight-medium); 
+		}
 		
 		.line { margin: 8px 16px 11px 16px; }
 		

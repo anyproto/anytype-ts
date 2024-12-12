@@ -43,13 +43,11 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		const relation = S.Record.getRelationByKey(relationKey);
 		const dayString = U.Date.dayString(object.timestamp);
-		const dayName = [];
+		const dayName = [ U.Date.date('l', object.timestamp) ];
 
 		if (dayString) {
-			dayName.push(<div>{dayString}</div>);
+			dayName.unshift(dayString);
 		};
-
-		dayName.push(<div>{U.Date.date('l', object.timestamp)}</div>);
 
 		let content = null;
 		if (isLoading) {
@@ -95,7 +93,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 							return (
 								<Button
 									id={`category-${item.relationKey}`}
-									key={item.relationKey}
+									key={i}
 									active={relationKey == item.relationKey}
 									color="blank"
 									className="c36"
@@ -132,7 +130,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 				/>
 
 				<div className="blocks wrapper">
-					<div className="dayName">{dayName}</div>
+					<div className="dayName">
+						{dayName.map((item, i) => <div key={i}>{item}</div>)}
+					</div>
 					<HeadSimple
 						{...this.props}
 						noIcon={true}

@@ -29,6 +29,7 @@
 			.cell { padding: 9px 14px; vertical-align: top; position: relative; word-break: break-word; }
 			.cell:first-child { padding-left: 0px; }
 			.cell:last-child { padding-right: 0px; }
+			.cell.empty { line-height: 20px; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {

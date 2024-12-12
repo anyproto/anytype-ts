@@ -581,7 +581,7 @@ class Dataview {
 
 		const min = () => {
 			const map = records.map(it => it[relationKey]).filter(it => !Relation.isEmpty(it));
-			return Math.min(...map.map(it => Number(it || 0)));
+			return map.length ? Math.min(...map.map(it => Number(it || 0))) : null;
 		};
 		const max = () => {
 			const map = records.map(it => it[relationKey]).filter(it => !Relation.isEmpty(it));
