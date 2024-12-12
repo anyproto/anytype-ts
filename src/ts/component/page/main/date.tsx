@@ -86,14 +86,14 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			content = (
 				<React.Fragment>
 					<div className="categories">
-						{relations.map((item) => {
+						{relations.map(item => {
 							const isMention = item.relationKey == J.Relation.key.mention;
 							const icon = isMention ? 'mention' : '';
 
 							return (
 								<Button
 									id={`category-${item.relationKey}`}
-									key={i}
+									key={item.relationKey}
 									active={relationKey == item.relationKey}
 									color="blank"
 									className="c36"
