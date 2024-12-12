@@ -8,7 +8,7 @@ import { OnboardStage } from './animation/constants';
 
 const DAYS = 30;
 
-const PageAuthDeleted = observer(forwardRef((props: I.PageComponent, ref) => {
+const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	const { account } = S.Auth;
 
