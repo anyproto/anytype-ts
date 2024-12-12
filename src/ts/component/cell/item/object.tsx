@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
 import { I, S, U } from 'Lib';
@@ -15,85 +15,66 @@ interface Props {
 	onRemove?: (e: any, id: string) => void;
 };
 
-const ItemObject = observer(class ItemObject extends React.Component<Props> {
+const CellItemObject = observer(forwardRef<{}, Props>((props, ref: any) => {
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onClick = this.onClick.bind(this);
-		this.onRemove = this.onRemove.bind(this);
+	const { cellId, size, iconSize, relation, canEdit, elementMapper, onClick, onRemove, getObject } = props;
+	const cn = [ 'element' ];
+	
+	const onClickHandler = (e: any) => {
+		if (onClick) {
+			onClick(e, getObjectHandler());
+		};
 	};
 
-	render () {
-		const { cellId, size, iconSize, relation, canEdit } = this.props;
-		const cn = [ 'element' ];
-		const object = this.getObject();
-		const { done, isReadonly, isArchived, layout } = object;
-		const allowedDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+	const onRemoveHandler = (e: any) => {
+		e.stopPropagation();
 
-		let iconObject = null;
-		let iconRemove = null;
-		
-		if (object.isHidden) {
-			cn.push('isHidden');
+		if (canEdit && onRemove) {
+			onRemove(e, getObjectHandler().id);
 		};
-		if (canEdit) {
-			cn.push('canEdit');
-			iconRemove = <Icon className="objectRemove" onClick={this.onRemove} />;
-		};
-		if (relation.relationKey != 'type') {
-			iconObject = (
-				<IconObject 
-					id={`${cellId}-icon`}
-					object={object} 
-					size={size} 
-					iconSize={iconSize}
-					canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(layout)} 
-				/>
-			);
-		};
+	};
 
-		return (
-			<div className={cn.join(' ')}>
-				<div className="flex">
-					{iconObject}
-					<ObjectName object={object} onClick={this.onClick} />
-					{iconRemove}
-				</div>
-			</div>
+	const getObjectHandler = () => {
+		const object = getObject();
+		return elementMapper ? elementMapper(relation, object) : object;
+	};
+
+	const object = getObject();
+	const { done, isReadonly, isArchived, layout } = object;
+	const allowedDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+
+	let iconObject = null;
+	let iconRemove = null;
+	
+	if (object.isHidden) {
+		cn.push('isHidden');
+	};
+	if (canEdit) {
+		cn.push('canEdit');
+		iconRemove = <Icon className="objectRemove" onClick={onRemoveHandler} />;
+	};
+	if (relation.relationKey != 'type') {
+		iconObject = (
+			<IconObject 
+				id={`${cellId}-icon`}
+				object={object} 
+				size={size} 
+				iconSize={iconSize}
+				canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(layout)} 
+			/>
 		);
 	};
 
-	onClick (e: any) {
-		const { onClick } = this.props;
-		const object = this.getObject();
+	return (
+		<div className={cn.join(' ')}>
+			<div className="flex">
+				{iconObject}
+				<ObjectName object={object} onClick={onClickHandler} />
+				{iconRemove}
+			</div>
+		</div>
+	);
 
-		if (onClick) {
-			onClick(e, object);
-		};
-	};
+}));
 
-	onRemove (e: any) {
-		e.stopPropagation();
-
-		const { canEdit, onRemove } = this.props;
-		const object = this.getObject();
-
-		if (canEdit && onRemove) {
-			onRemove(e, object.id);
-		};
-	};
-
-	getObject () {
-		const { relation, elementMapper, getObject } = this.props;
-
-		let object = getObject();
-		if (elementMapper) {
-			object = elementMapper(relation, object);
-		};
-		return object;
-	};
-
-});
-
-export default ItemObject;
+export default CellItemObject;
