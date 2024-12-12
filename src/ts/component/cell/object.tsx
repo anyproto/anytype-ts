@@ -7,8 +7,6 @@ import { DragBox } from 'Component';
 import { I, S, U, J, Relation, keyboard, analytics } from 'Lib';
 import ItemObject from './item/object';
 
-const MAX_LENGTH = 320;
-
 const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const nodeRef = useRef(null);
@@ -118,7 +116,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 		const entry = $(entryRef.current);
 
-		if (entry.length && (entry.text().length >= MAX_LENGTH)) {
+		if (entry.length && (entry.text().length >= J.Constant.limit.cellEntry)) {
 			e.preventDefault();
 		};
 	};

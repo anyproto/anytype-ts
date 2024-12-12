@@ -4,13 +4,11 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { Tag, Icon, DragBox } from 'Component';
-import { I, S, U, Relation, translate, keyboard } from 'Lib';
+import { I, S, U, J, Relation, keyboard } from 'Lib';
 
 interface State { 
 	isEditing: boolean; 
 };
-
-const MAX_LENGTH = 320;
 
 const CellSelect = observer(class CellSelect extends React.Component<I.Cell, State> {
 
@@ -197,7 +195,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const node = $(this.node);
 		const entry = node.find('#entry');
 
-		if (entry.length && (entry.text().length >= MAX_LENGTH)) {
+		if (entry.length && (entry.text().length >= J.Constant.limit.cellEntry)) {
 			e.preventDefault();
 		};
 	};
