@@ -3,14 +3,9 @@ import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
 import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer } from 'Lib';
 
-interface Error {
-	code: number;
-	description: string;
-};
-
 const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	const [ error, setError ] = useState<Error>({ code: 0, description: '' });
+	const [ error, setError ] = useState<I.Error>({ code: 0, description: '' });
 	const cn = [ 'animation' ];
 	const { match } = props;
 	const { account } = S.Auth;
@@ -73,7 +68,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		});
 	};
 
-	const setErrorHandler = (error: Error) => {
+	const setErrorHandler = (error: I.Error) => {
 		if (!error.code) {
 			return false;
 		};
