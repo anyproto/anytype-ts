@@ -43,6 +43,14 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 
 		const relation = S.Record.getRelationByKey(relationKey);
+		const dayString = U.Date.dayString(object.timestamp);
+		const dayName = [];
+
+		if (dayString) {
+			dayName.push(<div>{dayString}</div>);
+		};
+
+		dayName.push(<div>{U.Date.date('l', object.timestamp)}</div>);
 
 		let content = null;
 		if (isLoading) {
@@ -64,18 +72,18 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			const filters: I.Filter[] = [];
 
 			if (relation.format == I.RelationType.Object) {
-				filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
+				filters.push({ relationKey: relationKey, condition: I.FilterCondition.In, value: [ object.id ] });
 			} else {
 				filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
 			};
 
 			if ([ 'createdDate' ].includes(relationKey)) {
-				const map = {
-					createdDate: 'creator',
-				};
+				filters.push({ relationKey: 'creator', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+				keys.push('creator');
+			};
 
-				filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
-				keys.push(map[relationKey]);
+			if ([ 'lastModifiedDate' ].includes(relationKey)) {
+				filters.push({ relationKey: 'createdDate', condition: I.FilterCondition.NotEqual, value: { type: 'valueFromRelation', relationKey: 'lastModifiedDate' } });
 			};
 
 			content = (
@@ -119,12 +127,13 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			<div ref={node => this.node = node}>
 				<Header
 					{...this.props}
-					component="mainObject"
+					component="mainChat"
 					ref={ref => this.refHeader = ref}
 					rootId={rootId}
 				/>
 
 				<div className="blocks wrapper">
+					<div className="dayName">{dayName}</div>
 					<HeadSimple
 						{...this.props}
 						noIcon={true}

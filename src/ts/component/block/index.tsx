@@ -521,15 +521,14 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
+		const offset = element.offset();
+
 		selection.set(I.SelectType.Block, this.ids);
 
 		this.menuOpen({
 			horizontal: I.MenuDirection.Right,
 			offsetX: element.outerWidth(),
-			recalcRect: () => {
-				const offset = element.offset();
-				return { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
-			},
+			rect: { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 },
 		});
 	};
 
@@ -542,8 +541,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			isContextMenuDisabled || 
 			readonly || 
 			(block.isText() && (focused == block.id)) || 
-			block.isTable() || 
-			block.isDataview()
+			!block.canContextMenu()
 		) {
 			return;
 		};
@@ -568,7 +566,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			this.menuOpen({
-				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
+				rect: { x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 },
 			});
 		});
 	};
