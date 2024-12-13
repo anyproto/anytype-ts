@@ -29,12 +29,12 @@ export default [
 	h3(`Date as an Object`),
 	text(`You can now open any date as a separate object and view the entire context related to that date. This includes mentions ${hl('@date')}, automatically created dates and custom date relations.`),
 	text(`Date is also accessible from relations, layouts, graph, calendar view and more. Regarding ${hl('@today')}, we now support ${hl('@date')} ${hl('/date')}, allowing to choose any date from the calendar view.`),
-	//img(`44/1.png`),
+	img(`44/1.png`),
 	text(``),
 
 	h3(`Simple Formulas`),
 	text(`The long-requested functionality is now available for Sets and Collections. You can count objects in the Grid view and perform simple math and aggregation functions with all types of relations.`),
-	//img(`44/2.png`),
+	img(`44/2.png`),
 	text(``),
 
 	h2(`Quality-of-Life`),
