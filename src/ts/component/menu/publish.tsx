@@ -1,12 +1,15 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef } from 'react';
 import { Title, Input, Label, Switch, Button, Icon } from 'Component';
-import { I, S, Action, translate } from 'Lib';
+import { J, U, I, S, Action, translate } from 'Lib';
 
 const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
 	const { rootId } = data;
+	const object = S.Detail.get(rootId, rootId, []);
+	const participant = U.Space.getMyParticipant();
+	const domain = U.Common.sprintf(J.Url.publish, participant.resolvedName);
 	const items = [
 		{ 
 			id: 'space', name: translate('popupSettingsSpaceIndexShareShareTitle'), onClick: () => {
@@ -26,14 +29,11 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		Action.publish(rootId, `${rootId}-fake-uri`);
 	};
 
-	useEffect(() => {
-	}, []);
-
 	return (
 		<>
 			<Title text={translate('menuPublishTitle')} />
-			<Input value="fuksman.any.coop" readonly={true} />
-			<Input value="/rem-koolhaas-architects" focusOnMount={true} />
+			<Input value={domain} readonly={true} />
+			<Input value={U.Common.slug(object.name)} focusOnMount={true} />
 			<Label className="small" text="https:/any.copp/kjshdfkjahsjdkhAJDH*78/rem-koolhaas-architects" />
 
 			<div className="flex">
