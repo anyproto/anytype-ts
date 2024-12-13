@@ -430,7 +430,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			if (withFilter) {
 				height += 52;
 			};
-			if (!withFilter || noScroll) {
+			if (!withFilter) {
 				height += 16;
 			};
 

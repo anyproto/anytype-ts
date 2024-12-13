@@ -198,6 +198,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			);
 		};
 
+		if (hasShareBanner) {
+			bodyCn.push('withShareBanner');
+		};
+
 		return (
 			<div 
 				id="containerWidget"

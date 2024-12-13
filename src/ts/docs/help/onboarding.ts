@@ -101,6 +101,7 @@ export default {
 				'#widget-buttons', 
 				'.widget', 
 				'#containerWidget #list .buttons',
+				'#containerWidget #body',
 				'.shareBanner',
 			],
 			/*

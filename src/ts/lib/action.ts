@@ -174,8 +174,10 @@ class Action {
 		const storageKey = 'openUrl';
 		const scheme = U.Common.getScheme(url);
 		const cb = () => Renderer.send('openUrl', url);
+		const allowedSchemes = J.Constant.allowedSchemes.concat(J.Constant.protocol);
+		const isAllowed = scheme.match(new RegExp(`^(${allowedSchemes.join('|')})$`));
 
-		if (!Storage.get(storageKey) && !scheme.match(new RegExp(`^(${J.Constant.allowedSchemes.join('|')})$`))) {
+		if (!Storage.get(storageKey) && !isAllowed) {
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
@@ -653,24 +655,16 @@ class Action {
 				onConfirm: () => {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
-					const cb = () => {
-						C.SpaceDelete(id, (message: any) => {
-							if (callBack) {
-								callBack(message);
-							};
+					C.SpaceDelete(id, (message: any) => {
+						if (callBack) {
+							callBack(message);
+						};
 
-							if (!message.error.code) {
-								Preview.toastShow({ text: toast });
-								analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
-							};
-						});
-					};
-
-					if (space == id) {
-						U.Space.openFirstSpaceOrVoid(it => it.targetSpaceId != id, { replace: true, onRouteChange: cb });
-					} else {
-						cb();
-					};
+						if (!message.error.code) {
+							Preview.toastShow({ text: toast });
+							analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
+						};
+					});
 				},
 				onCancel: () => {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: 'Cancel', route });

@@ -70,8 +70,6 @@
 		.widget.isEditable.isOver.bottom::before { bottom: -7px; }
 	}
 
-	> .body.withShareBanner { margin-top: -10px; }
-
 	> .body.isEditing {
 		> .buttons { position: sticky; bottom: 0px; left: 0px; padding: 0px 16px; }
 		
@@ -105,4 +103,6 @@
 	}
 
 	> .body.isListPreview { overflow: hidden; height: 100%; }
+	> .body.isOnboardingHidden { visibility: visible; }
+	> .body.withShareBanner:not(.isOnboardingHidden) { margin-top: -10px; }
 }

@@ -108,6 +108,7 @@ html.platformWindows, html.platformLinux {
 .isBlurred { filter: blur(7px); }
 .animationWord { display: inline-block; }
 .isRtl { direction: rtl; text-align: right; }
+.isOnboardingHidden { visibility: hidden; }
 
 .fileWrap { position: relative; overflow: hidden; }
 .fileWrap { 

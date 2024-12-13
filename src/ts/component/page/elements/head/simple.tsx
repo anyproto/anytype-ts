@@ -120,6 +120,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 				buttonCreate = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 			};
+
+			if (!canWrite) {
+				buttonCreate = null;
+				buttonEdit = null;
+			};
 		};
 
 		if (isDate) {
@@ -130,10 +135,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
 				</React.Fragment>
 			);
-		};
-
-		if (!canWrite) {
-			buttonCreate = null;
 		};
 
 		if (buttonEdit) {

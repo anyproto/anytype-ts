@@ -1043,15 +1043,20 @@ class Dispatcher {
 		subIds = this.getUniqueSubIds(subIds);
 		subIds.forEach(subId => S.Detail.update(subId, { id, details }, clear));
 
+		const { space } = S.Common;
 		const keys = Object.keys(details);
 		const check = [ 'creator', 'spaceDashboardId', 'spaceAccountStatus' ];
 		const intersection = check.filter(k => keys.includes(k));
 
-		if (intersection.length && subIds.length && subIds.includes(J.Constant.subId.space)) {
-			const object = S.Detail.get(J.Constant.subId.space, id, [ 'layout', 'targetSpaceId' ], true);
+		if (subIds.length && subIds.includes(J.Constant.subId.space)) {
+			const object = U.Space.getSpaceview(id);
 
-			if (U.Object.isSpaceViewLayout(object.layout) && object.targetSpaceId) {
+			if (intersection.length && object.targetSpaceId) {
 				U.Data.createSubSpaceSubscriptions([ object.targetSpaceId ]);
+			};
+
+			if (object.isAccountDeleted && (object.targetSpaceId == space)) {
+				U.Space.openFirstSpaceOrVoid(null, { replace: true });
 			};
 		};
 

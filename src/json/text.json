@@ -1927,7 +1927,7 @@
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
 	"onboardingSpacesTitle": "Spaces",
-	"onboardingSpacesText": "<b>This is your Space.</b>Click here to share it with others, customize its name and icon, or securely migrate from other apps to protect your data.",
+	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
 	"onboardingAllObjectTitle": "All Objects",
 	"onboardingAllObjectText": "<b>Everything in Anytype is an Object.</b> All objects is where all your content lives.",
 	"onboardingWidgetsTitle": "Widgets",
