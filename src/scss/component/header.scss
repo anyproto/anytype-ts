@@ -12,7 +12,7 @@
 	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
 	.side.right { padding: 0px 12px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
 	.side.right {
-		.button.blank { font-weight: 500; border: 0px; padding: 0px 6px; color: var(--color-text-secondary); }
+		.button.blank { font-weight: 500; border: 0px; padding: 0px 6px; color: var(--color-text-secondary); flex-shrink: 0; }
 	}
 
 	.path { 

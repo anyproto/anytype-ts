@@ -124,7 +124,6 @@ class MenuObject extends React.Component<I.Menu> {
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
-		let pagePublish = { id: 'pagePublish', icon: 'publish', name: translate('menuPublishingCreate') };
 		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
@@ -190,7 +189,6 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
 		const allowedPrint = !isFilePreview;
-		const allowedPublish = config.experimental;
 		const allowedDownloadFile = isInFileLayouts;
 		const allowedOpenFile = isInFileLayouts;
 		const allowedOpenObject = isFilePreview;
@@ -209,7 +207,6 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedLinkTo)			 linkTo = null;
 		if (!allowedPageLink)		 pageLink = null;
 		if (!allowedAddCollection)	 addCollection = null;
-		if (!allowedPublish)	 pagePublish = null;
 		if (!allowedExport)			 pageExport = null;
 		if (!allowedPrint)			 print = null;
 		if (!allowedDownloadFile)	 downloadFile = null;
@@ -257,7 +254,7 @@ class MenuObject extends React.Component<I.Menu> {
 					{ children: [ linkTo, addCollection, template ] },
 					{ children: [ search, history, pageCopy, archive ] },
 					{ children: [ pageLink, pageReload ] },
-					{ children: [ print, pageExport, pagePublish ] },
+					{ children: [ print, pageExport ] },
 				]);
 			};
 
@@ -448,11 +445,6 @@ class MenuObject extends React.Component<I.Menu> {
 				break;
 			};
 
-			case 'pagePublish': {
-				Action.publish(object.id, object.id + "-fake-uri");
-				break;
-			};
-				
 			case 'pageArchive': {
 				Action.archive([ object.id ], route, () => {
 					if (onArchive) {

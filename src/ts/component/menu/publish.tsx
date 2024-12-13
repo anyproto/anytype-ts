@@ -1,8 +1,30 @@
 import React, { forwardRef, useEffect } from 'react';
-import { Title, Input, Label, Switch, Button } from 'Component';
-import { I, translate } from 'Lib';
+import { Title, Input, Label, Switch, Button, Icon } from 'Component';
+import { I, S, Action, translate } from 'Lib';
 
 const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+
+	const { param, close } = props;
+	const { data } = param;
+	const { rootId } = data;
+	const items = [
+		{ 
+			id: 'space', name: translate('popupSettingsSpaceIndexShareShareTitle'), onClick: () => {
+				S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
+				close();
+			},
+		},
+		{ 
+			id: 'export', name: translate('popupExportTitle'), onClick: () => {
+				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
+				close();
+			},
+		},
+	];
+
+	const onPublish = () => {
+		Action.publish(rootId, `${rootId}-fake-uri`);
+	};
 
 	useEffect(() => {
 	}, []);
@@ -10,8 +32,8 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	return (
 		<>
 			<Title text={translate('menuPublishTitle')} />
-			<Input value="fuksman.any.coop" />
-			<Input value="/rem-koolhaas-architects" />
+			<Input value="fuksman.any.coop" readonly={true} />
+			<Input value="/rem-koolhaas-architects" focusOnMount={true} />
 			<Label className="small" text="https:/any.copp/kjshdfkjahsjdkhAJDH*78/rem-koolhaas-architects" />
 
 			<div className="flex">
@@ -21,7 +43,17 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 			</div>
 
-			<Button text={translate('menuPublishButton')} className="c36" />
+			<Button text={translate('menuPublishButton')} className="c36" onClick={onPublish} />
+
+			<div className="outer">
+				{items.map((item, index) => (
+					<div key={index} className="item" onClick={item.onClick}>
+						<Icon className={item.id} />
+						<div className="name">{item.name}</div>
+						<Icon className="arrow" />
+					</div>
+				))}
+			</div>
 		</>
 	);
 
