@@ -12,7 +12,7 @@ export default {
 	textColor:			 [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
 	namespace:			 { 0: '.any' },
 
-	allowedSchemes:		 [ 'https?', 'mailto', 'tel', 'anytype' ],
+	allowedSchemes:		 [ 'https?', 'mailto', 'tel' ],
 
 	count: {
 		icon:			 10,
