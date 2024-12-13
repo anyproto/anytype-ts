@@ -821,6 +821,16 @@ class Action {
 		analytics.event('ThemeSet', { id });
 	};
 
+	publish (objectId: string, uri: string) {
+		C.PublishingCreate(S.Common.space, objectId, uri, (message: any) => {
+			if (message.error.code) {
+				console.error(message);
+				return;
+			};
+			console.log("PublishingCreate:",message)
+			U.Common.copyToast(translate('commonLink'), uri);
+		});
+	};
 };
 
 export default new Action();
