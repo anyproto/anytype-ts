@@ -327,18 +327,15 @@ class RecordStore {
 	};
 
 	getObjectRelations (rootId: string, typeId: string): any[] {
-		const { config } = S.Common;
 		const type = S.Record.getTypeById(typeId);
 		const recommended = Relation.getArrayValue(type?.recommendedRelations);
 		const typeRelations = recommended.map(it => this.getRelationById(it)).filter(it => it);
 		const objectRelations = S.Detail.getKeys(rootId, rootId).map(it => this.getRelationByKey(it)).filter(it => it && !recommended.includes(it.id));
 
-		return typeRelations.concat(objectRelations).filter(it => !config.debug.hiddenObject ? !it.isHidden : true);
+		return this.checkHiddenObjects(typeRelations.concat(objectRelations));
 	};
 
 	getConflictRelations (rootId: string, typeId: string): any[] {
-		const { config } = S.Common;
-		const object = S.Detail.get(rootId, rootId, []);
 		const type = S.Record.getTypeById(typeId);
 		const relationKeys = S.Detail.getKeys(rootId, rootId);
 
@@ -360,9 +357,7 @@ class RecordStore {
 			};
 		};
 
-		conflicts = conflicts.filter(it => !config.debug.hiddenObject ? !it.isHidden : true);
-
-		return conflicts;
+		return this.checkHiddenObjects(conflicts);
 	};
 
 	getRelationByKey (relationKey: string): any {
@@ -431,6 +426,11 @@ class RecordStore {
 		return [ rootId, blockId, groupId ].join('-');
 	};
 
+	checkHiddenObjects (records: any[]): any[] {
+		const { config } = S.Common;
+
+		return records.filter(it => config.debug.hiddenObject ? true : !it.isHidden);
+	};
 };
 
  export const Record: RecordStore = new RecordStore();
