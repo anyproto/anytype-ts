@@ -173,6 +173,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			scope: I.RelationScope.Type,
 		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
+		const conflictingKeys = this.getConflictingKeys();
+		const conflicts = conflictingKeys.map(it => S.Record.getRelationByKey(it))
+
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
 		items = items.sort(U.Data.sortByName).sort(U.Data.sortByHidden).filter((it: any) => {
@@ -186,6 +189,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 			return !config.debug.hiddenObject ? !it.isHidden : true;
 		});
+		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
 		const sections = [ 
 			{ 
@@ -196,6 +200,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				id: 'object', name: translate('menuBlockRelationViewInThisObject'),
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
 			},
+			{
+				id: 'conflicts', name: translate('menuBlockRelationViewConflictingRelations'),
+				children: conflicts,
+			}
 		];
 
 		if (type) {
@@ -217,6 +225,39 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 		
 		return items;
+	};
+
+	getConflictingKeys () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const object = S.Detail.get(rootId, rootId, []);
+		const isTemplate = U.Object.isTemplate(object.type);
+		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
+
+		const relationKeys = S.Record.getObjectRelations(rootId, type.id)
+			.filter(it => !Relation.systemKeys().includes(it.relationKey))
+			.map(it => it.relationKey);
+
+		let typeRelationIds = [];
+		if (type) {
+			typeRelationIds = type.recommendedRelations.concat(type.recommendedFeaturedRelations);
+		};
+
+		const typeRelationKeys = typeRelationIds
+			.map(it => ({...S.Record.getRelationById(it)}))
+			.filter(it => it && it.relationKey)
+			.map(it => it.relationKey);
+
+		let conflictingKeys = [];
+
+		relationKeys.forEach((key) => {
+			if (!typeRelationKeys.includes(key)) {
+				conflictingKeys.push(key);
+			};
+		});
+
+		return conflictingKeys;
 	};
 
 	onFav (e: any, relationKey: string) {
