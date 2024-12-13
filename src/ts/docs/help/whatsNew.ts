@@ -23,6 +23,7 @@ export default [
 
 	title(`Desktop 0.44.0 Released!`),
 	text(`Before we say goodbye to the year, we're happy to share this final update packed with some nice improvements. In addition to bug fixes and reliability/performance enhancements, we would like to introduce two long-anticipated features. We hope you enjoy this update and wish you a joyful holiday season!`),
+	text(``),
 
 	h2(`Highlights`),
 
