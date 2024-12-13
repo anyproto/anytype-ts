@@ -173,8 +173,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			scope: I.RelationScope.Type,
 		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
-		const conflictingKeys = this.getConflictingKeys();
-		const conflicts = conflictingKeys.map(it => S.Record.getRelationByKey(it))
+		const conflicts = this.getConflictingKeys();
+		const conflictingKeys = conflicts.map(it => it.relationKey)
 
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
@@ -235,7 +235,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const relationKeys = S.Detail.getKeys(rootId, rootId);
-		const conflictingKeys = [];
+
+		let conflicts = [];
 
 		let typeRelationKeys = [];
 		if (type) {
@@ -247,13 +248,15 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			if (typeRelationKeys.length) {
 				relationKeys.forEach((key) => {
 					if (!typeRelationKeys.includes(key)) {
-						conflictingKeys.push(key);
+						conflicts.push(S.Record.getRelationByKey(key));
 					};
 				});
 			};
 		};
 
-		return conflictingKeys;
+		conflicts = conflicts.filter(it => !it.isHidden)
+
+		return conflicts;
 	};
 
 	onFav (e: any, relationKey: string) {
