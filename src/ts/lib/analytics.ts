@@ -157,7 +157,7 @@ class Analytics {
 			ret.push(config.channel);
 		};
 
-		C.InitialSetParameters(platform, ret.join('-'), userPath(), '', false);
+		C.InitialSetParameters(platform, ret.join('-'), userPath(), '', false, false);
 	};
 
 	profile (id: string, networkId: string) {
