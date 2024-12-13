@@ -336,6 +336,35 @@ class RecordStore {
 		return typeRelations.concat(objectRelations).filter(it => !config.debug.hiddenObject ? !it.isHidden : true);
 	};
 
+	getConflictRelations (rootId: string, typeId: string): any[] {
+		const { config } = S.Common;
+		const object = S.Detail.get(rootId, rootId, []);
+		const type = S.Record.getTypeById(typeId);
+		const relationKeys = S.Detail.getKeys(rootId, rootId);
+
+		let conflicts = [];
+
+		let typeRelationKeys = [];
+		if (type) {
+			typeRelationKeys = type.recommendedRelations.concat(type.recommendedFeaturedRelations)
+				.map(it => S.Record.getRelationById(it))
+				.filter(it => it && it.relationKey)
+				.map(it => it.relationKey);
+
+			if (typeRelationKeys.length) {
+				relationKeys.forEach((key) => {
+					if (!typeRelationKeys.includes(key)) {
+						conflicts.push(S.Record.getRelationByKey(key));
+					};
+				});
+			};
+		};
+
+		conflicts = conflicts.filter(it => !config.debug.hiddenObject ? !it.isHidden : true);
+
+		return conflicts;
+	};
+
 	getRelationByKey (relationKey: string): any {
 		const id = this.relationKeyMapGet(relationKey);
 		return id ? this.getRelationById(id) : null;

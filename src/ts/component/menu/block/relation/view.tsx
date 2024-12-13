@@ -173,7 +173,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			scope: I.RelationScope.Type,
 		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
-		const conflicts = this.getConflictingKeys();
+		const conflicts = S.Record.getConflictRelations(rootId, type.id);
 		const conflictingKeys = conflicts.map(it => it.relationKey)
 
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
@@ -225,38 +225,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 		
 		return items;
-	};
-
-	getConflictingKeys () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const object = S.Detail.get(rootId, rootId, []);
-		const isTemplate = U.Object.isTemplate(object.type);
-		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
-		const relationKeys = S.Detail.getKeys(rootId, rootId);
-
-		let conflicts = [];
-
-		let typeRelationKeys = [];
-		if (type) {
-			typeRelationKeys = type.recommendedRelations.concat(type.recommendedFeaturedRelations)
-				.map(it => S.Record.getRelationById(it))
-				.filter(it => it && it.relationKey)
-				.map(it => it.relationKey);
-
-			if (typeRelationKeys.length) {
-				relationKeys.forEach((key) => {
-					if (!typeRelationKeys.includes(key)) {
-						conflicts.push(S.Record.getRelationByKey(key));
-					};
-				});
-			};
-		};
-
-		conflicts = conflicts.filter(it => !it.isHidden)
-
-		return conflicts;
 	};
 
 	onFav (e: any, relationKey: string) {
