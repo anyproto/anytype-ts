@@ -313,7 +313,7 @@ class App extends React.Component<object, State> {
 			Storage.delete('redirect');
 		};
 
-		if (css) {
+		if (css && !config.disableCss) {
 			U.Common.injectCss('anytype-custom-css', css);
 		};
 
