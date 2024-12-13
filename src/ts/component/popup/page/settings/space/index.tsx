@@ -58,7 +58,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const hasLink = cid && key;
 		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const canDelete = !space.isPersonal;
 		const isShareActive = U.Space.isShareActive();
 
 		let bytesUsed = 0;
@@ -139,7 +138,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				<div className="sections">
 					<div 
 						className="section sectionSpaceShare"
-						onMouseEnter={isShareActive ? () => {} : e => Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) })}
+						onMouseEnter={isShareActive ? () => {} : e => {
+							Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) });
+						}}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
 						<Title text={translate(`popupSettingsSpaceShareTitle`)} />
@@ -416,11 +417,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						</div>
 					</div>
 
-					{canDelete ? (
-						<div className="buttons">
-							<Button text={isOwner ? translate('commonDelete') : translate('commonLeaveSpace')} color="red" onClick={this.onDelete} />
-						</div>
-					) : ''}
+					<div className="buttons">
+						<Button text={isOwner ? translate('commonDelete') : translate('commonLeaveSpace')} color="red" onClick={this.onDelete} />
+					</div>
 
 					<Error text={error} />
 				</div>

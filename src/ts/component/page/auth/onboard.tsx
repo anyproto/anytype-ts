@@ -211,8 +211,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (stage == Stage.Vault) {
 			const cb = () => {
 				Animation.from(() => {
-					this.setState({ stage: stage + 1 });
 					this.refNext?.setLoading(false);
+					this.setState({ stage: stage + 1 });
 				});
 			};
 

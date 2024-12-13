@@ -33,6 +33,7 @@
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
 	"commonGraph": "Graph",
+	"commonChat": "Chat",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
 	"commonAllContent": "All Objects",
@@ -174,6 +175,7 @@
 	"commonSignUp": "Sign Up",
 	"commonNotFound": "Not found",
 	"commonCalculate": "Calculate",
+	"commonRelations": "Relations",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -218,11 +220,13 @@
 	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
-	"electronMenuDirectory": "Show Directory",
-	"electronMenuWorkDirectory": "Work",
-	"electronMenuDataDirectory": "Data",
-	"electronMenuConfigDirectory": "Config",
-	"electronMenuLogsDirectory": "Logs",
+	"electronMenuOpen": "Open",
+	"electronMenuApplyCustomCss": "Apply custom CSS",
+	"electronMenuWorkDirectory": "Work directory",
+	"electronMenuDataDirectory": "Data directory",
+	"electronMenuConfigDirectory": "Config directory",
+	"electronMenuLogsDirectory": "Logs directory",
+	"electronMenuCustomCss": "Custom CSS",
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
 	"electronMenuSaveAs": "Export Object",
@@ -269,7 +273,7 @@
 	"electronMenuFlags": "Flags",
 	"electronMenuDevTools": "Dev Tools",
 	"electronMenuVersion": "Version",
-	"electronMenuOpen": "Open Anytype",
+	"electronMenuOpenApp": "Open Anytype",
 	"electronMenuLanguage": "Interface Language",
 	"electronMenuFlagAnalytics": "Analytics",
 	"electronMenuFlagMw": "Middleware",
@@ -334,7 +338,7 @@
 	"progressSaveFile": "Download in progress...",
 	"progressMigration": "Recovering vault...",
 	"progressRecoverAccount": "Migration in progress...",
-	"progressUpdateCheck": "Update...",
+	"progressUpdate": "Update...",
 	"progressUpdateCheck": "Checking for update...",
 
 	"spellcheckAdd": "Add to dictionary",
@@ -481,6 +485,8 @@
 	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
 	"pageMainVoidCreateSpace": "Create space",
 
+	"pageMainDateEmptyText" : "There is nothing here for this date yet",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 	"pageAuthLoginShortPhrase": "Key is too short",
 
@@ -543,6 +549,7 @@
 	"blockNameTableOfContents": "Table of Contents",
 	"blockNameSet": "Inline set",
 	"blockNameCollection": "Inline Collection",
+	"blockNameDate": "Date",
 
 	"blockTextParagraph": "Write a plain text",
 	"blockTextHeader1": "Big headline of a chapter, paragraph or section",
@@ -577,6 +584,7 @@
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
 	"blockTextPlain": "Plain Text",
+	"blockTextDate": "Mention a date in editor",
 
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
@@ -1900,7 +1908,7 @@
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
 	"onboardingSpacesTitle": "Spaces",
-	"onboardingSpacesText": "<b>This is your Space.</b> Click here to customize its name or icon, or to securely migrate and protect your data. ",
+	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
 	"onboardingAllObjectTitle": "All Objects",
 	"onboardingAllObjectText": "<b>Everything in Anytype is an Object.</b> All objects is where all your content lives.",
 	"onboardingWidgetsTitle": "Widgets",
@@ -1931,7 +1939,6 @@
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
 	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
-	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
 
@@ -1960,7 +1967,7 @@
 	"libMenuCopyUrl": "Copy URL",
 
 	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
-	"libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
+	"libActionUninstallTypeText": "This Type will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
 	"libActionUninstallRelationTitle": "Do you want to remove Relation \"%s\"?",
 	"libActionUninstallRelationText": "This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.",
 
@@ -2237,6 +2244,8 @@
 	"formulaPercentage": "Percentage",
 	"formulaMath": "Math",
 	"formulaDate": "Date",
+	"formulaValue": "Count values",
+	"formulaValueShort": "Values",
 	"formulaDistinct": "Count unique values",
 	"formulaDistinctShort": "Unique",
 	"formulaEmpty": "Count empty",

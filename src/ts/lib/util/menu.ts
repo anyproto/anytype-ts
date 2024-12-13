@@ -112,7 +112,8 @@ class UtilMenu {
 		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
 		];
 
 		items.sort((c1, c2) => U.Data.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
@@ -390,7 +391,7 @@ class UtilMenu {
 				break;
 			};
 		};
-		return options.map(id => ({ id: String(id), name: id }));
+		return this.prepareForSelect(options.map(id => ({ id, name: id })));
 	};
 
 	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
@@ -594,9 +595,10 @@ class UtilMenu {
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
+					(U.Object.isAllowedChat() ? { id: I.HomePredefinedId.Chat, name: translate('commonChat') } : null),
 					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
 					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-				],
+				].filter(it => it),
 				onOver: (e: any, item: any) => {
 					if (!menuContext) {
 						return;
@@ -639,6 +641,7 @@ class UtilMenu {
 
 					switch (item.id) {
 						case I.HomePredefinedId.Graph:
+						case I.HomePredefinedId.Chat:
 						case I.HomePredefinedId.Last: {
 							onSelect({ id: item.id }, false);
 
@@ -710,10 +713,6 @@ class UtilMenu {
 	};
 
 	spaceContext (space: any, param: any) {
-		if (space.isPersonal) {
-			return;
-		};
-
 		const { targetSpaceId } = space;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const isLocalNetwork = U.Data.isLocalNetwork();
@@ -839,7 +838,6 @@ class UtilMenu {
 	};
 
 	getFixedWidgets () {
-		const { config } = S.Common;
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
 			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
@@ -1026,6 +1024,7 @@ class UtilMenu {
 
 	dateFormatOptions () {
 		return ([
+			{ id: I.DateFormat.Default },
 			{ id: I.DateFormat.MonthAbbrBeforeDay },
 			{ id: I.DateFormat.MonthAbbrAfterDay },
 			{ id: I.DateFormat.Short },
@@ -1067,7 +1066,7 @@ class UtilMenu {
 
 	getFormulaSections (relationKey: string) {
 		const relation = S.Record.getRelationByKey(relationKey);
-		const options = Relation.formulaByType(relation.format);
+		const options = Relation.formulaByType(relationKey, relation.format);
 
 		return [
 			{ id: I.FormulaSection.None, name: translate('commonNone') },
@@ -1078,7 +1077,11 @@ class UtilMenu {
 			{ id: I.FormulaSection.Date, name: translate('formulaDate'), arrow: true },
 		].filter(s => {
 			return options.filter(it => it.section == s.id).length;
-		})).map(it => ({ ...it, id: String(it.id), checkbox: false }));
+		})).map(it => ({ ...it, checkbox: false }));
+	};
+
+	prepareForSelect (a: any[]) {
+		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
 };

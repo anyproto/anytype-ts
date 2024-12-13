@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
@@ -7,103 +7,18 @@ import { I, S, U, Preview, Mark, translate, Action } from 'Lib';
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-interface State {
-	object: any;
-};
-
-const PreviewComponent = observer(class PreviewComponent extends React.Component<object, State> {
-
-	ref = null;
-	state = {
-		object: null,
-	};
+const PreviewIndex = observer(forwardRef(() => {
 	
-	constructor (props) {
-		super(props);
+	const { preview } = S.Common;
+	const { type, target, object: initialObject, marks, range, noUnlink, noEdit, x, y, width, height, onChange } = preview;
+	const [ object, setObject ] = useState(initialObject || {});
+	const cn = [ 'previewWrapper' ];
+	const win = $(window);
 
-		this.onClick = this.onClick.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onEdit = this.onEdit.bind(this);
-		this.onUnlink = this.onUnlink.bind(this);
-		this.position = this.position.bind(this);
-		this.setObject = this.setObject.bind(this);
-	};
-	
-	render () {
-		const { preview } = S.Common;
-		const { type, target, object, noUnlink, noEdit } = preview;
-		const cn = [ 'previewWrapper' ];
-
-		let head = null;
-		let content = null;
-
-		switch (type) {
-			case I.PreviewType.Link: {
-				head = (
-					<div className="head">
-						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('commonCopyLink')}</div>
-						{!noEdit ? <div id="button-edit" className="item" onClick={this.onEdit}>{translate('previewEdit')}</div> : ''}
-						{!noUnlink ? <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div> : ''}
-					</div>
-				);
-
-				content = <PreviewLink ref={ref => this.ref = ref} url={target} position={this.position} />;
-				break;
-			};
-
-			case I.PreviewType.Object: {
-				if (!noUnlink) {
-					head = (
-						<div className="head">
-							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div>
-						</div>
-					);
-				};
-
-				content = <PreviewObject ref={ref => this.ref = ref} size={I.PreviewSize.Small} rootId={target} setObject={this.setObject} position={this.position} />;
-				break;
-			};
-
-			case I.PreviewType.Default: {
-				if (!noUnlink) {
-					head = (
-						<div className="head">
-							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div>
-						</div>
-					);
-				};
-
-				content = <PreviewDefault ref={ref => this.ref = ref} rootId={target} object={object} setObject={this.setObject} position={this.position} />;
-				break;
-			};
-		};
-
-		if (head) {
-			cn.push('withHead');
-		};
-
-		return (
-			<div id="preview" className={cn.join(' ')}>
-				<div className="polygon" onClick={this.onClick} />
-				<div className="content">
-					{head}
-
-					<div onClick={this.onClick}>
-						{content}
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	onClick (e: React.MouseEvent) {
+	const onClick = (e: MouseEvent) => {
 		if (e.button) {
 			return;
 		};
-
-		const { preview } = S.Common;
-		const { type, target } = preview;
-		const object = preview.object || this.state.object;
 
 		switch (type) {
 			case I.PreviewType.Link: {
@@ -119,22 +34,16 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		};
 	};
 	
-	onCopy () {
-		const { preview } = S.Common;
-		const { target } = preview;
-		
-		U.Common.clipboardCopy({ text: target });
+	const onCopy = () => {
+		U.Common.copyToast(translate('commonLink'), target);
 		Preview.previewHide(true);
 	};
 	
-	onEdit (e) {
+	const onEdit = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { preview } = S.Common;
-		const { marks, range, onChange } = preview;
 		const mark = Mark.getInRange(marks, I.MarkType.Link, range);
-		const win = $(window);
 		const rect = U.Common.objectCopy($('#preview').get(0).getBoundingClientRect());
 
 		S.Menu.open('blockLink', {
@@ -151,18 +60,12 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		});
 	};
 	
-	onUnlink () {
-		const { preview } = S.Common;
-		const { range, onChange } = preview;
-
-		onChange(Mark.toggleLink({ type: this.getMarkType(), param: '', range }, preview.marks));
+	const onUnlink = () => {
+		onChange(Mark.toggleLink({ type: getMarkType(), param: '', range }, preview.marks));
 		Preview.previewHide(true);
 	};
 
-	getMarkType () {
-		const { preview } = S.Common;
-		const { type } = preview;
-
+	const getMarkType = () => {
 		switch (type) {
 			case I.PreviewType.Link: {
 				return I.MarkType.Link;
@@ -175,14 +78,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		};
 	};
 
-	setObject (object) {
-		this.setState({ object });
-	};
-
-	position () {
-		const { preview } = S.Common;
-		const { x, y, width, height } = preview;
-		const win = $(window);
+	const position = () => {
 		const obj = $('#preview');
 		const poly = obj.find('.polygon');
 		const { ww, wh } = U.Common.getWindowDimensions();
@@ -242,6 +138,75 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		window.setTimeout(() => { obj.css({ opacity: 1, transform: 'translateY(0%)' }); }, 15);
 	};
 
-});
+	let head = null;
+	let content = null;
 
-export default PreviewComponent;
+	const unlink = <div id="button-unlink" className="item" onClick={onUnlink}>{translate('commonUnlink')}</div>;
+	const props = {
+		rootId: target,
+		url: target,
+		object,
+		size: I.PreviewSize.Small,
+		setObject,
+		position,
+	};
+
+	switch (type) {
+		case I.PreviewType.Link: {
+			head = (
+				<div className="head">
+					<div id="button-copy" className="item" onClick={onCopy}>{translate('commonCopyLink')}</div>
+					{!noEdit ? <div id="button-edit" className="item" onClick={onEdit}>{translate('previewEdit')}</div> : ''}
+					{!noUnlink ? unlink : ''}
+				</div>
+			);
+
+			content = <PreviewLink {...props} />;
+			break;
+		};
+
+		case I.PreviewType.Object: {
+			if (!noUnlink) {
+				head = <div className="head">{unlink}</div>;
+			};
+
+			content = <PreviewObject {...props} />;
+			break;
+		};
+
+		case I.PreviewType.Default: {
+			if (!noUnlink) {
+				head = <div className="head">{unlink}</div>;
+			};
+
+			content = <PreviewDefault {...props} />;
+			break;
+		};
+	};
+
+	if (head) {
+		cn.push('withHead');
+	};
+
+	useEffect(() => {
+		if (initialObject) {
+			setObject(initialObject);
+		};
+
+		position();
+	});
+
+	return content ? (
+		<div id="preview" className={cn.join(' ')}>
+			<div className="polygon" onClick={onClick} />
+			<div className="content">
+				{head}
+
+				<div onClick={onClick}>{content}</div>
+			</div>
+		</div>
+	) : null;
+
+}));
+
+export default PreviewIndex;

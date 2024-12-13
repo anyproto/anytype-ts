@@ -131,15 +131,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			S.Common.configSet(message.account.config, false);
 
 			const spaceId = Storage.get('spaceId');
-			const shareTooltip = Storage.get('shareTooltip');
-			const routeParam = {
-				replace: true, 
-				onRouteChange: () => {
-					if (!shareTooltip) {
-						Preview.shareTooltipShow();
-					};
-				},
-			};
+			const routeParam = { replace: true };
 
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam);

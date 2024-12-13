@@ -45,6 +45,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const bodyCn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const hasShareBanner = U.Space.hasShareBanner();
 
 		let content = null;
 
@@ -117,15 +118,11 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				]);
 			};
 
-			if (U.Space.isShareBanner()) {
-				bodyCn.push('withShareBanner');
-			};
-
 			content = (
 				<React.Fragment>
 					{space && !space._empty_ ? (
 						<React.Fragment>
-							<ShareBanner onClose={() => this.forceUpdate()} />
+							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
 
 							<DropTarget 
 								{...this.props} 
@@ -198,6 +195,10 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			);
 		};
 
+		if (hasShareBanner) {
+			bodyCn.push('withShareBanner');
+		};
+
 		return (
 			<div 
 				id="containerWidget"
@@ -245,7 +246,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			offsetY: -4,
 			vertical: I.MenuDirection.Top,
 			data: {
-				route: analytics.route.widget,
+				route: analytics.route.addWidget,
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
@@ -382,11 +383,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const body = node.find('#body');
 		const top = body.scrollTop();
 
-		head.removeClass('show');
-
-		if (showVault && (top > 32)) {
-			head.addClass('show')
-		};
+		head.toggleClass('show', showVault && (top > 32));
 	};
 
 	onContextMenu () {

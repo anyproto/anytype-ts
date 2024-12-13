@@ -1,7 +1,6 @@
-import * as React from 'react';
-import $ from 'jquery';
-import { Input, Icon, Label } from 'Component';
-import { I, translate } from 'Lib';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
+import { Input, Label } from 'Component';
+import { I } from 'Lib';
 
 interface Props {
 	label: string;
@@ -16,76 +15,56 @@ interface Props {
 	onMouseLeave?(e: any): void;
 };
 
-class InputWithLabel extends React.Component<Props> {
-	
-	node: any = null;
-	isFocused = false;
-	placeholder: any = null;
-	ref = null;
+interface InputWithLabelRefProps {
+	focus(): void;
+	blur(): void;
+	setValue(v: string): void;
+	getValue(): string;
+	setRange(range: I.TextRange): void;
+	isFocused(): boolean;
+};
 
-	constructor (props: Props) {
-		super(props);
+const InputWithLabel = forwardRef<InputWithLabelRefProps, Props>((props, ref) => {
+	const {
+		label = '',
+		value = '',
+		readonly = false,
+		onFocus,
+		onBlur,
+	} = props;
 
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-	};
-	
-	render () {
-		const { label } = this.props;
+	const nodeRef = useRef(null);
+	const inputRef = useRef(null);
+	const [ isFocused, setIsFocused ] = useState(false);
+	const cn = [ 'inputWithLabel' ];
 
-		return (
-			<div
-				ref={node => this.node = node}
-				onClick={() => this.ref.focus()}
-				className="inputWithLabel"
-			>
-				<div className="inner">
-					<Label text={label} />
-
-					<Input
-						ref={ref => this.ref = ref}
-						{...this.props}
-						onFocus={this.onFocus}
-						onBlur={this.onBlur}
-					/>
-
-				</div>
-			</div>
-		);
+	if (isFocused) {
+		cn.push('isFocused');
 	};
 
-	componentDidMount() {
-		const node = $(this.node);
-
-		this.ref.setValue(this.props.value);
+	const focus = () => {
+		inputRef.current?.focus();
 	};
 
-	focus () {
-		this.ref.focus();
+	const blur = () => {
+		inputRef.current?.blur();
 	};
 
-	blur () {
-		this.ref.blur();
+	const setValue = (v: string) => {
+		inputRef.current?.setValue(v);
 	};
 
-	setValue (v: string) {
-		this.ref.setValue(v);
+	const getValue = () => {
+		return inputRef.current?.getValue();
 	};
 
-	getValue () {
-		return this.ref.getValue();
+	const setRange = (range: I.TextRange) => {
+		inputRef.current?.setRange(range);
 	};
 
-	setRange (range: I.TextRange) {
-		this.ref.setRange(range);
-	};
-
-	onFocus (e: any) {
-		const { onFocus, readonly } = this.props;
-
+	const onFocusHandler = (e: any) => {
 		if (!readonly) {
-			this.isFocused = true;
-			this.addFocusedClass();
+			setIsFocused(true);
 		};
 
 		if (onFocus) { 
@@ -93,12 +72,9 @@ class InputWithLabel extends React.Component<Props> {
 		};
 	};
 	
-	onBlur (e: any) {
-		const { onBlur, readonly } = this.props;
-
+	const onBlurHandler = (e: any) => {
 		if (!readonly) {
-			this.isFocused = false;
-			this.removeFocusedClass();
+			setIsFocused(false);
 		};
 
 		if (onBlur) {
@@ -106,16 +82,37 @@ class InputWithLabel extends React.Component<Props> {
 		};
 	};
 
-	addFocusedClass () {
-		const node = $(this.node);
-		node.addClass('isFocused');
-	};
+	useEffect(() => inputRef.current.setValue(value), []);
 
-	removeFocusedClass () {
-		const node = $(this.node);
-		node.removeClass('isFocused');
-	};
+	useImperativeHandle(ref, () => ({
+		focus,
+		blur,
+		setValue,
+		getValue,
+		setRange,
+		isFocused: () => isFocused,
+	}));
 
-};
+	return (
+		<div
+			ref={nodeRef}
+			onClick={focus}
+			className={cn.join(' ')}
+		>
+			<div className="inner">
+				<Label text={label} />
+
+				<Input
+					ref={inputRef}
+					{...props}
+					onFocus={onFocusHandler}
+					onBlur={onBlurHandler}
+				/>
+
+			</div>
+		</div>
+	);
+
+});
 
 export default InputWithLabel;

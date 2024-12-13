@@ -17,9 +17,9 @@
 		.iconObject { margin-bottom: 12px; }
 
 		.iconWrapper { display: flex; width: 320px; height: 104px; border-radius: 320px; margin: -16px auto 10px; align-items: center; justify-content: space-around; }
-		.iconWrapper.green { background: radial-gradient(50% 50% at 50% 50%, #A9F496 26.04%, rgba(188, 242, 175, 0.00) 100%); }
-		.iconWrapper.red { background: radial-gradient(50% 50% at 50% 50%, #FFBCBC 26.04%, rgba(255, 230, 230, 0.00) 100%); }
-		.iconWrapper.yellow { background: radial-gradient(50% 50% at 50% 50%, #FFF0C8 0%, rgba(255, 240, 200, 0.00) 100%); }
+		.iconWrapper.green { background: radial-gradient(50% 50% at 50% 50%, #a9f496 26.04%, rgba(188, 242, 175, 0.00) 100%); }
+		.iconWrapper.red { background: radial-gradient(50% 50% at 50% 50%, #ffbcbc 26.04%, rgba(255, 230, 230, 0.00) 100%); }
+		.iconWrapper.yellow { background: radial-gradient(50% 50% at 50% 50%, #fff0c8 0%, rgba(255, 240, 200, 0.00) 100%); }
 		.iconWrapper.blue { background: radial-gradient(50% 50% at 50% 50%, #80d1ff 0%, rgba(187, 231, 255, 0.00) 100%); }
 
 		.iconWrapper {
@@ -41,6 +41,8 @@
 		}
 
 		ul { padding-left: 1.25em; }
+
+		.error { margin-bottom: 0px; }
 	}
 
 	.popup.popupConfirm.isWide {

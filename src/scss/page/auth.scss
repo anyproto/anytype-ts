@@ -25,7 +25,7 @@ html.bodyIndex, html.bodyAuth {
 	--shadow: 0px 0px 0px 1px var(--color-button-stroke) !important;
 
 	body { background: var(--color-bg-primary); color: var(--color-text-secondary); overflow: hidden; }
-	#navigationPanel, #notifications, #sidebar, #vault, #sidebarToggle { display: none !important; }
+	#navigationPanel, #notifications, #sidebar, #vault, #sidebarToggle, .shareTooltip { display: none !important; }
 
 	.popup { 
 		.innerWrap { background: var(--color-popup) !important;; box-shadow: var(--shadow) !important; color: var(--color-text-primary) !important; }
@@ -59,6 +59,7 @@ html.bodyIndex, html.bodyAuth {
 		.menu.vertical { background: var(--color-popup) !important; box-shadow: var(--shadow) !important; }
 		.menu.vertical {
 			.item { background: var(--color-popup) !important; }
+			.item.hover::before { background: rgba(255, 255, 255, 0.05) !important; }
 		}
 		.menu.menuAccountPath {
 			.label { color: var(--color-text-secondary) !important; }

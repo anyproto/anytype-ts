@@ -53,7 +53,6 @@ export interface MenuParam {
 export interface Menu {
 	id: string;
 	param: MenuParam;
-	history?: any;
 	setActive?(item?: any, scroll?: boolean): void;
 	setHover?(item?: any, scroll?: boolean): void;
 	onKeyDown?(e: any): void;
@@ -64,6 +63,14 @@ export interface Menu {
 	getPosition?(): DOMRect;
 	position? (): void;
 	close? (callBack?: () => void): void;
+};
+
+export interface MenuRef {
+	rebind: () => void,
+	unbind: () => void,
+	getItems: () => any[];
+	getIndex: () => number,
+	setIndex: (i: number) => void,
 };
 
 export interface MenuItem {
@@ -86,6 +93,7 @@ export interface MenuItem {
 	options?: I.Option[];
 	selectMenuParam?: any;
 	isActive?: boolean;
+	isDiv?: boolean;
 	withDescription?: boolean;
 	withSwitch?: boolean;
 	withSelect?: boolean;

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Deleted, ListObject, Button } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics } from 'Lib';
-import HeadSimple from 'Component/page/elements/head/simple';
+import { Header, Footer, Deleted, ListObject, Button, Label, Loader, HeadSimple } from 'Component';
+import { I, C, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
+import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 interface State {
 	isDeleted: boolean;
+	isLoading: boolean;
 	relations: any[];
 	relationKey: string;
 };
@@ -22,18 +23,18 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	refHead: any = null;
 	refList: any = null;
 	refCalIcon: any = null;
-	loading = false;
 	timeout = 0;
 
 	state = {
 		isDeleted: false,
+		isLoading: false,
 		relations: [],
 		relationKey: RELATION_KEY_MENTION,
 	};
 
 	render () {
 		const { space } = S.Common;
-		const { isDeleted, relations, relationKey } = this.state;
+		const { isLoading, isDeleted, relations, relationKey } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, []);
 
@@ -42,87 +43,108 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 
 		const relation = S.Record.getRelationByKey(relationKey);
-		if (!relation) {
-			return null;
+		const dayString = U.Date.dayString(object.timestamp);
+		const dayName = [ U.Date.date('l', object.timestamp) ];
+
+		if (dayString) {
+			dayName.unshift(dayString);
 		};
 
-		const columns: any[] = [
-			{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
-			{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
-		];
-		const keys = relations.map(it => it.relationKey);
-
-		const filters: I.Filter[] = [];
-
-		if (relation.format == I.RelationType.Object) {
-			filters.push({ relationKey: RELATION_KEY_MENTION, condition: I.FilterCondition.In, value: [ object.id ] });
+		let content = null;
+		if (isLoading) {
+			content = <Loader id="loader" />;
+		} else
+		if (!relations.length || !relation) {
+			content = (
+				<div className="emptyContainer">
+					<Label text={translate('pageMainDateEmptyText')} />
+				</div>
+			);
 		} else {
-			filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
-		};
+			const columns: any[] = [
+				{ relationKey: 'type', name: translate('commonObjectType'), isObject: true },
+				{ relationKey: 'creator', name: translate('relationCreator'), isObject: true },
+			];
 
-		if ([ 'createdDate' ].includes(relationKey)) {
-			const map = {
-				createdDate: 'creator',
+			const keys = relations.map(it => it.relationKey);
+			const filters: I.Filter[] = [];
+
+			if (relation.format == I.RelationType.Object) {
+				filters.push({ relationKey: relationKey, condition: I.FilterCondition.In, value: [ object.id ] });
+			} else {
+				filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
 			};
 
-			filters.push({ relationKey: map[relationKey], condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
-			keys.push(map[relationKey]);
-		};
+			if ([ 'createdDate' ].includes(relationKey)) {
+				filters.push({ relationKey: 'creator', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
+				keys.push('creator');
+			};
 
-		return (
-			<div ref={node => this.node = node}>
-				<Header 
-					{...this.props} 
-					component="mainObject" 
-					ref={ref => this.refHeader = ref} 
-					rootId={rootId} 
-				/>
+			if ([ 'lastModifiedDate' ].includes(relationKey)) {
+				filters.push({ relationKey: 'createdDate', condition: I.FilterCondition.NotEqual, value: { type: 'valueFromRelation', relationKey: 'lastModifiedDate' } });
+			};
 
-				<div className="blocks wrapper">
-					<HeadSimple 
-						{...this.props} 
-						noIcon={true}
-						ref={ref => this.refHead = ref} 
-						rootId={rootId} 
-						readonly={true}
-					/>
-
+			content = (
+				<React.Fragment>
 					<div className="categories">
-						{relations.map((item) => {
+						{relations.map((item, i: number) => {
 							const isMention = item.relationKey == RELATION_KEY_MENTION;
 							const icon = isMention ? 'mention' : '';
-							const separator = isMention ? <div className="separator" /> : '';
 
 							return (
-								<React.Fragment key={item.relationKey}>
-									<Button
-										id={`category-${item.relationKey}`}
-										active={relationKey == item.relationKey}
-										color="blank"
-										className="c36"
-										onClick={() => this.onCategoryClick(item.relationKey)}
-										icon={icon}
-										text={item.name}
-									/>
-									{relations.length > 1 ? separator : ''}
-								</React.Fragment>
+								<Button
+									id={`category-${item.relationKey}`}
+									key={i}
+									active={relationKey == item.relationKey}
+									color="blank"
+									className="c36"
+									onClick={() => this.onCategoryClick(item.relationKey)}
+									icon={icon}
+									text={item.name}
+								/>
 							);
 						})}
 					</div>
 
-					<div className="dateList">
-						<ListObject 
-							ref={ref => this.refList = ref}
-							{...this.props}
-							spaceId={space}
-							subId={SUB_ID} 
-							rootId={rootId}
-							columns={columns}
-							filters={filters}
-							route={analytics.route.screenDate}
-							relationKeys={keys}
-						/>
+					<ListObject
+						ref={ref => this.refList = ref}
+						{...this.props}
+						spaceId={space}
+						subId={SUB_ID}
+						rootId={rootId}
+						columns={columns}
+						filters={filters}
+						route={analytics.route.screenDate}
+						relationKeys={keys}
+					/>
+				</React.Fragment>
+			);
+		};
+
+		return (
+			<div ref={node => this.node = node}>
+				<Header
+					{...this.props}
+					component="mainChat"
+					ref={ref => this.refHeader = ref}
+					rootId={rootId}
+				/>
+
+				<div className="blocks wrapper">
+					<div className="dayName">
+						{dayName.map((item, i) => <div key={i}>{item}</div>)}
 					</div>
+					<HeadSimple
+						{...this.props}
+						noIcon={true}
+						ref={ref => this.refHead = ref}
+						rootId={rootId}
+						readonly={true}
+						relationKey={relationKey}
+						getDotMap={this.getDotMap}
+					/>
+
+					{content}
 				</div>
 
 				<Footer component="mainObject" {...this.props} />
@@ -131,8 +153,16 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	componentDidMount () {
+		const match = keyboard.getMatch();
+		const { relationKey } = match.params;
+
 		this._isMounted = true;
-		this.open();
+
+		if (relationKey) {
+			this.setState({ relationKey }, () => this.open());
+		} else {
+			this.open();
+		};
 	};
 
 	componentDidUpdate () {
@@ -168,7 +198,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 		this.close();
 		this.id = rootId;
-		this.setState({ isDeleted: false });
+		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -194,11 +224,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
+
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
@@ -209,8 +236,14 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 		const { relationKey } = this.state;
         const rootId = this.getRootId();
 
+		this.setState({ isLoading: true });
+
         C.RelationListWithValue(space, rootId, (message: any) => {
             const relations = (message.relations || []).map(it => S.Record.getRelationByKey(it.relationKey)).filter(it => {
+				if (!it) {
+					return false;
+				};
+
                 if ([ RELATION_KEY_MENTION ].includes(it.relationKey)) {
                     return true;
                 };
@@ -231,9 +264,9 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
                 return 0;
             });
 
-			if (relations.length) {
-				this.setState({ relations });
+			this.setState({ relations, isLoading: false });
 
+			if (relations.length) {
 				if (!relationKey || !relations.find(it => it.relationKey == relationKey)) {
 					this.onCategory(relations[0].relationKey);
 				} else {
@@ -260,7 +293,59 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
+	};
+
+	getFilters = (start: number, end: number): I.Filter[] => {
+		const { relationKey } = this.state;
+
+		if (!relationKey) {
+			return [];
+		};
+
+		return [
+
+			{
+				relationKey,
+				condition: I.FilterCondition.GreaterOrEqual,
+				value: start,
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: I.RelationType.Date,
+			},
+			{
+				relationKey,
+				condition: I.FilterCondition.LessOrEqual,
+				value: end,
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: I.RelationType.Date,
+			}
+		];
+	};
+
+	getDotMap = (start: number, end: number, callBack: (res: Map<string, boolean>) => void): void => {
+		const { relationKey } = this.state;
+		const res = new Map();
+
+		if (!relationKey) {
+			callBack(res);
+			return;
+		};
+
+		U.Data.search({
+			filters: this.getFilters(start, end),
+			keys: [ relationKey ],
+		}, (message: any) => {
+			eachDayOfInterval({
+				start: fromUnixTime(start),
+				end: fromUnixTime(end)
+			}).forEach(date => {
+				if (message.records.find(rec => isEqual(date, fromUnixTime(rec[relationKey]).setHours(0, 0, 0, 0)))) {
+					res.set(format(date, 'dd-MM-yyyy'), true);
+				};
+			});
+
+			callBack(res);
+		});
 	};
 
 });

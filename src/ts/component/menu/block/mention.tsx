@@ -51,41 +51,14 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			};			
 
 			const type = S.Record.getTypeById(item.type);
+			const object = ![ 'add', 'selectDate' ].includes(item.id) ? item : null;
 			const cn = [];
 
-			let content = null;
-			if (item.isDiv) {
-				content = (
-					<div className="separator" style={param.style}>
-						<div className="inner" />
-					</div>
-				);
-			} else {
-				if (item.id == 'add') {
-					cn.push('add');
-				};
-				if (item.isHidden) {
-					cn.push('isHidden');
-				};
-
-				let object = null;
-				if (![ 'add', 'selectDate' ].includes(item.id)) {
-					object = item;
-				};
-
-				content = (
-					<MenuItemVertical 
-						id={item.id}
-						object={object}
-						icon={item.icon}
-						name={<ObjectName object={item} />}
-						onMouseEnter={e => this.onOver(e, item)} 
-						onClick={e => this.onClick(e, item)}
-						caption={type ? type.name : undefined}
-						style={param.style}
-						className={cn.join(' ')}
-					/>
-				);
+			if (item.id == 'add') {
+				cn.push('add');
+			};
+			if (item.isHidden) {
+				cn.push('isHidden');
 			};
 
 			return (
@@ -96,7 +69,18 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					{content}
+					<MenuItemVertical 
+						id={item.id}
+						object={object}
+						icon={item.icon}
+						name={<ObjectName object={item} />}
+						onMouseEnter={e => this.onOver(e, item)} 
+						onClick={e => this.onClick(e, item)}
+						caption={type?.name}
+						style={param.style}
+						isDiv={item.isDiv}
+						className={cn.join(' ')}
+					/>
 				</CellMeasurer>
 			);
 		};
@@ -281,7 +265,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
-			skipLayoutFormat: [ I.ObjectLayout.Date ],
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
@@ -370,6 +353,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					canEdit: true,
 					canClear: false,
 					value: U.Date.now(),
+					relationKey: J.Relation.key.mention,
 					onChange: (value: number) => {
 						C.ObjectDateByTimestamp(space, value, (message: any) => {
 							if (!message.error.code) {

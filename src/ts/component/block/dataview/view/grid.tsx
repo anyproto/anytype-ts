@@ -278,6 +278,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });
+		node.find('.rowFoot').css({ gridTemplateColumns: str });
 		node.find('.row .selectionTarget').css({ gridTemplateColumns: str });
 	};
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Label, EmailCollectionForm } from 'Component';
+import { Button, Icon, Label, EmailCollection } from 'Component';
 import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -90,7 +90,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 					/>
 				) : ''}
 				{withEmailForm ? (
-					<EmailCollectionForm onStepChange={position} onComplete={() => close()} />
+					<EmailCollection onStepChange={position} onComplete={() => close()} />
 				) : ''}
 
 				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
@@ -170,11 +170,11 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	showElements () {
-		this.props.param.hiddenElements.forEach(el => $(el).css({ visibility: 'visible' }));
+		this.props.param.hiddenElements.forEach(el => $(el).removeClass('isOnboardingHidden'));
 	};
 
 	hideElements () {
-		this.props.param.hiddenElements.forEach(el => $(el).css({ visibility: 'hidden' }));
+		this.props.param.hiddenElements.forEach(el => $(el).addClass('isOnboardingHidden'));
 	};
 
 	initDimmer () {
@@ -250,12 +250,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	onClose () {
 		const { param, close } = this.props;
-		const { data, onClose } = param;
+		const { data } = param;
 		const { key, current, isPopup } = data;
 		const section = this.getSection();
-
-
-		let menuParam = Onboarding.getParam(section, {}, isPopup);
+		const menuParam = Onboarding.getParam(section, {}, isPopup);
 
 		close();
 

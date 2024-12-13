@@ -691,7 +691,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				};
 
 				if (!this.canEdit(relation)) {
-					U.Object.openDateByTimestamp(value, 'config');
+					U.Object.openDateByTimestamp(relationKey, value, 'config');
 					ret = true;
 					break;
 				};

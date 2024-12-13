@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
-import { I, S, Relation } from 'Lib';
+import { I, S, U, Relation } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 	element?: string;
 	value: any;
 	options: I.Option[];
-	noFilter: boolean;
+	noFilter?: boolean;
 	isMultiple?: boolean;
 	showOn?: string;
 	readonly?: boolean;
@@ -19,159 +19,82 @@ interface Props {
 	onChange? (id: any): void;
 };
 
-interface State {
-	value: string[];
-	options: I.Option[];
+interface SelectRefProps {
+	getValue: () => any;
+	setValue: (v: any) => void;
+	setOptions: (options: I.Option[]) => void;
 };
 
-class Select extends React.Component<Props, State> {
-	
-	public static defaultProps = {
-		initial: '',
-		noFilter: true,
-		showOn: 'click',
-	};
-	
-	_isMounted = false;
-	state = {
-		value: [],
-		options: [] as I.Option[]
-	};
-	
-	constructor (props: Props) {
-		super(props);
-		
-		this.show = this.show.bind(this);
-		this.hide = this.hide.bind(this);
-	};
-	
-	render () {
-		const { id, className, arrowClassName, readonly, showOn } = this.props;
-		const { options } = this.state;
-		const cn = [ 'select' ];
-		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
-		const value = Relation.getArrayValue(this.state.value);
-		const current: any[] = [];
+const Select = forwardRef<SelectRefProps, Props>(({
+	id = '',
+	initial = '',
+	className = '',
+	arrowClassName = '',
+	element = '',
+	value: initialValue = [],
+	options: initialOptions = [],
+	noFilter = true,
+	isMultiple = false,
+	showOn = 'click',
+	readonly = false,
+	menuParam = {},
+	onChange,	
+}, ref) => {
+	const [ value, setValue ] = useState(initialValue);
+	const [ options, setOptions ] = useState(initialOptions);
+	const cn = [ 'select', className ];
+	const acn = [ 'arrow', arrowClassName ];
+	const current: any[] = [];
 
-		if (className) {
-			cn.push(className);
-		};
-
-		if (readonly) {
-			cn.push('isReadonly');
-		};
-
-		value.forEach((id: string) => {
-			const option = options.find(item => item.id == id);
-			if (option) {
-				current.push(option);
-			};
-		});
-
-		if (!current.length && options.length) {
-			current.push(options[0]);
-		};
-
-		let onClick = null;
-		let onMouseDown = null;
-		let onMouseEnter = null;
-
-		if (showOn == 'mouseDown') {
-			onMouseDown = this.show;
-		};
-
-		if (showOn == 'click') {
-			onClick = this.show;
-		};
-
-		if (showOn == 'mouseEnter') {
-			onMouseEnter = this.show;
-		};
-
-		return (
-			<div 
-				id={`select-${id}`} 
-				className={cn.join(' ')} 
-				onClick={onClick} 
-				onMouseDown={onMouseDown}
-				onMouseEnter={onMouseEnter}
-			>
-				{current ? (
-					<React.Fragment>
-						{current.map((item: any, i: number) => (
-							<MenuItemVertical key={i} {...item} />
-						))}
-						<Icon className={acn.join(' ')} />
-					</React.Fragment>
-				) : ''}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-
-		const options = this.getOptions();
-		
-		let value = Relation.getArrayValue(this.props.value);
-		if (!value.length && options.length) {
-			value = [ options[0].id ];
-		};
-
-		this.setState({ value, options });
+	if (className) {
+		cn.push(className);
 	};
 
-	componentWillUnmount () {
-		this._isMounted = false;
+	if (readonly) {
+		cn.push('isReadonly');
 	};
 
-	getOptions () {
-		const { initial } = this.props;
-		const options = [];
+	let val = Relation.getArrayValue(value);
+	val.forEach((id: string) => {
+		const option = options.find(item => item.id == id);
+		if (option) {
+			current.push(option);
+		};
+	});
+
+	if (!current.length && options.length) {
+		current.push(options[0]);
+	};
+
+	const getOptions = () => {
+		const ret = [];
 		
 		if (initial) {
-			options.push({ id: '', name: initial, isInitial: true });			
+			ret.push({ id: '', name: initial, isInitial: true });			
 		};
-		for (const option of this.props.options) {
-			options.push(option);
+		for (const option of initialOptions) {
+			ret.push(option);
 		};
-
-		return options;
+		return ret;
 	};
 
-	setOptions (options: any[]) {
-		this.setState({ options });
+	const getValue = (val: any): any => {
+		return isMultiple ? val : (val.length ? val[0] : '');
 	};
 
-	getValue (): any {
-		const { isMultiple } = this.props;
-		const value = Relation.getArrayValue(this.state.value);
-
-		return isMultiple ? value : value[0];
+	const setValueHandler = (v: any) => {
+		setValue(Relation.getArrayValue(v));
 	};
 	
-	setValue (v: any) {
-		const value = Relation.getArrayValue(v);
-
-		if (this._isMounted) {
-			this.state.value = value;
-			this.setState({ value });
-		};
-	};
-	
-	show (e: React.MouseEvent) {
+	const show = (e: MouseEvent) => {
 		e.stopPropagation();
-
-		const { id, onChange, noFilter, isMultiple, readonly } = this.props;
-		const { value, options } = this.state;
-		const elementId = `#select-${id}`;
-		const element = this.props.element || elementId;
 
 		if (readonly) {
 			return;
 		};
 
-		const mp = this.props.menuParam || {};
+		const el = element || `#select-${id}`;
+		const mp = menuParam || {};
 
 		let onOpen = null;
 		let onClose = null;
@@ -185,18 +108,18 @@ class Select extends React.Component<Props, State> {
 			delete(mp.onClose);
 		};
 
-		const menuParam = Object.assign({ 
-			element,
+		const param = Object.assign({ 
+			element: el,
 			noFlipX: true,
 			onOpen: (context: any) => {
-				window.setTimeout(() => $(element).addClass('isFocused'));
+				window.setTimeout(() => $(el).addClass('isFocused'));
 
 				if (onOpen) {
 					onOpen(context);
 				};
 			},
 			onClose: () => { 
-				window.setTimeout(() => $(element).removeClass('isFocused'));
+				window.setTimeout(() => $(el).removeClass('isFocused'));
 
 				if (onClose) {
 					onClose();
@@ -204,47 +127,97 @@ class Select extends React.Component<Props, State> {
 			},
 		}, mp);
 
-		menuParam.data = Object.assign({
+		param.data = Object.assign({
 			noFilter,
 			noClose: true,
 			value,
-			options,
+			options: U.Menu.prepareForSelect(options),
 			onSelect: (e: any, item: any) => {
-				let { value } = this.state;
-				
 				if (item.id !== '') {
 					if (isMultiple) {
-						value = value.includes(item.id) ? value.filter(it => it != item.id) : [ ...value, item.id ];
+						val = val.includes(item.id) ? val.filter(it => it != item.id) : [ ...val, item.id ];
 					} else {
-						value = [ item.id ];
+						val = [ item.id ];
 					};
 				} else {
-					value = [];
+					val = [];
 				};
 
-				this.setValue(value);
+				setValueHandler(val);
 
 				if (onChange) {
-					onChange(this.getValue());
+					onChange(getValue(val));
 				};
 
 				if (!isMultiple) {
-					this.hide();
+					hide();
 				} else {
-					S.Menu.updateData('select', { value });
+					S.Menu.updateData('select', { value: val });
 				};
 			},
 		}, mp.data || {});
 
 		S.Menu.closeAll([ 'select' ], () => {
-			S.Menu.open('select', menuParam);
+			S.Menu.open('select', param);
 		});
 	};
 	
-	hide () {
+	const hide = () => {
 		S.Menu.close('select');
 	};
-	
-};
+
+	let onClick = null;
+	let onMouseDown = null;
+	let onMouseEnter = null;
+
+	if (showOn == 'mouseDown') {
+		onMouseDown = show;
+	};
+
+	if (showOn == 'click') {
+		onClick = show;
+	};
+
+	if (showOn == 'mouseEnter') {
+		onMouseEnter = show;
+	};
+
+	useEffect(() => {
+		const options = getOptions();
+		
+		let val = Relation.getArrayValue(initialValue);
+		if (!val.length && options.length) {
+			val = [ options[0].id ];
+		};
+
+		setValue(val);
+		setOptions(options);
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		getValue: () => getValue(val),
+		setValue: setValueHandler,
+		setOptions: (options: I.Option[]) => setOptions(options),
+	}));
+
+	return (
+		<div 
+			id={`select-${id}`} 
+			className={cn.join(' ')} 
+			onClick={onClick} 
+			onMouseDown={onMouseDown}
+			onMouseEnter={onMouseEnter}
+		>
+			{current ? (
+				<>
+					{current.map((item: any, i: number) => (
+						<MenuItemVertical key={i} {...item} />
+					))}
+					<Icon className={acn.join(' ')} />
+				</>
+			) : ''}
+		</div>
+	);
+});
 
 export default Select;

@@ -201,9 +201,10 @@ class UtilData {
 						Storage.set('bgColor', 'orange');
 					};
 
-					[ 
+					[
 						I.SurveyType.Register, 
-						I.SurveyType.Object, 
+						I.SurveyType.Object,
+						I.SurveyType.Pmf,
 					].forEach(it => Survey.check(it));
 
 					Storage.clearDeletedSpaces();
@@ -290,6 +291,7 @@ class UtilData {
 
 	createSubSpaceSubscriptions (ids: string[], callBack?: () => void) {
 		const { account } = S.Auth;
+		const skipIds = U.Space.getSystemDashboardIds();
 
 		if (!account) {
 			if (callBack) {
@@ -318,7 +320,7 @@ class UtilData {
 				U.Space.getParticipantId(space.targetSpaceId, account.id),
 			];
 
-			if (![ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId)) {
+			if (!skipIds.includes(space.spaceDashboardId)) {
 				ids.push(space.spaceDashboardId);
 			};
 
@@ -483,7 +485,7 @@ class UtilData {
 	};
 
 	chatRelationKeys () {
-		return J.Relation.default.concat([ 'source', 'picture' ]);
+		return J.Relation.default.concat([ 'source', 'picture', 'widthInPixels', 'heightInPixels' ]);
 	};
 
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {

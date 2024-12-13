@@ -101,10 +101,14 @@ export default {
 				'#widget-buttons', 
 				'.widget', 
 				'#containerWidget #list .buttons',
+				'#containerWidget #body',
+				'.shareBanner',
 			],
+			/*
 			onClose: () => {
 				Onboarding.start('emailCollection', false);
 			},
+			*/
 		},
 		items: [
 			{

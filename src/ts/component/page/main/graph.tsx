@@ -116,7 +116,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			};
 
 			this.data.edges = message.edges;
-			this.data.nodes = message.nodes;
+			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 			this.forceUpdate();
 
 			if (this.refGraph) {
@@ -166,12 +166,12 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	initRootId (id: string) {
 		this.rootId = id; 
-		this.refHeader.refChild.setRootId(id);
+		this.refHeader.setRootId(id);
 	};
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return this.rootId || (rootId ? rootId : match.params.id);
+		return this.rootId || (rootId ? rootId : match?.params?.id);
 	};
 
 	onTab (id: string) {

@@ -3,9 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { Icon, Loader, Deleted, DropTarget } from 'Component';
+import { Icon, Loader, Deleted, DropTarget, EditorControls } from 'Component';
 import { I, C, S, U, J, Key, Preview, Mark, focus, keyboard, Storage, Action, translate, analytics, Renderer, sidebar } from 'Lib';
-import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 
@@ -98,7 +97,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				id="editorWrapper"
 				className="editorWrapper"
 			>
-				<Controls 
+				<EditorControls 
 					ref={ref => this.refControls = ref} 
 					key="editorControls" 
 					{...this.props} 
@@ -277,7 +276,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup, match } = this.props;
 
 		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
+		if (isPopup && (match?.params?.id == this.id)) {
 			close = false;
 		};
 		if (keyboard.isCloseDisabled) {
@@ -563,6 +562,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		Preview.previewHide(true);
 		
 		const ids = selection.get(I.SelectType.Block);
+		const idsWithChildren = selection.get(I.SelectType.Block, true);
 		const cmd = keyboard.cmdKey();
 		const readonly = this.isReadonly();
 		const styleParam = this.getStyleParam();
@@ -623,15 +623,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ret = true;
 		});
 
-		if (ids.length) {
-			keyboard.shortcut('escape', e, () => {
-				if (!menuOpen) {
-					selection.clear();
-				};
-
-				ret = true;
-			});
-
+		if (idsWithChildren.length) {
 			// Mark-up
 
 			let type = null;
@@ -656,18 +648,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						data: {
 							filter: '',
 							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockTextListSetMark(rootId, ids, { type: newType, param, range: { from: 0, to: 0 } }, () => {
-									analytics.event('ChangeTextStyle', { type: newType, count: ids.length });
+								C.BlockTextListSetMark(rootId, idsWithChildren, { type: newType, param, range: { from: 0, to: 0 } }, () => {
+									analytics.event('ChangeTextStyle', { type: newType, count: idsWithChildren.length });
 								});
-							}
-						}
+							},
+						},
 					});
 				} else {
-					C.BlockTextListSetMark(rootId, ids, { type, param, range: { from: 0, to: 0 } }, () => {
-						analytics.event('ChangeTextStyle', { type, count: ids.length });
+					C.BlockTextListSetMark(rootId, idsWithChildren, { type, param, range: { from: 0, to: 0 } }, () => {
+						analytics.event('ChangeTextStyle', { type, count: idsWithChildren.length });
 					});
 				};
 			};
+		};
+
+		if (ids.length) {
+			keyboard.shortcut('escape', e, () => {
+				if (!menuOpen) {
+					selection.clear();
+				};
+
+				ret = true;
+			});
 
 			// Duplicate
 			keyboard.shortcut(`${cmd}+d`, e, () => {

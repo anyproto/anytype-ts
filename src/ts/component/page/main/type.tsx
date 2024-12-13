@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
+import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted, HeadSimple, EditorControls } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate } from 'Lib';
-import Controls from 'Component/page/elements/head/controls';
-import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isLoading: boolean;
@@ -131,7 +129,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
-					<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
+					<EditorControls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
 					<HeadSimple 
 						{...this.props} 
 						ref={ref => this.refHead = ref} 
@@ -298,11 +296,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -557,7 +551,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	getSpaceId () {

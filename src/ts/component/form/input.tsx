@@ -1,4 +1,6 @@
-import React, { FC, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { 
+	useEffect, useRef, useState, forwardRef, useImperativeHandle, ChangeEvent, SyntheticEvent, KeyboardEvent, FormEvent, FocusEvent, ClipboardEvent
+} from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
 import { I, keyboard } from 'Lib';
@@ -100,84 +102,36 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const focus = () => {
-		inputRef.current?.focus({ preventScroll: true })
+		inputRef.current?.focus({ preventScroll: true });
 	};
-
-	useEffect(() => {
-		if (maskOptions && inputRef.current) {
-			new Inputmask(maskOptions.mask, maskOptions).mask($(inputRef.current).get(0));
-		};
-
-		if (focusOnMount && inputRef.current) {
-			focus();
-		};
-
-		return () => {
-			if (isFocused.current) {
-				keyboard.setFocus(false);
-				keyboard.disableSelection(false);
-			};
-		};
-	}, [ maskOptions, focusOnMount ]);
-
-	useImperativeHandle(ref, () => ({
-		focus,
-		blur: () => inputRef.current?.blur(),
-		select: () => inputRef.current?.select(),
-		setValue: (v: string) => setValue(String(v || '')),
-		getValue: () => String(value || ''),
-		setType: (v: string) => setInputType(v),
-		setError: (hasError: boolean) => $(inputRef.current).toggleClass('withError', hasError),
-		getSelectionRect,
-		setPlaceholder: (placeholder: string) => $(inputRef.current).attr({ placeholder }),
-		setRange: (range: I.TextRange) => {
-			callWithTimeout(() => {
-				focus();
-				inputRef.current?.setSelectionRange(range.from, range.to);
-			});
-		},
-		getRange: (): I.TextRange | null => rangeRef.current,
-	}));
 
 	const handleEvent = (
 		handler: ((e: any, value: string) => void) | undefined,
-		e: React.SyntheticEvent<HTMLInputElement>
+		e: SyntheticEvent<HTMLInputElement>
 	) => {
-		let val = null;
-		if (e.currentTarget) {
-			val = e.currentTarget.value;
-		} else
-		if (e.target) {
-			val = String($(e.target).val());
-		};
-
-		if (val === null) {
-			console.log('[Input Event] No value to handle!');
-			return;
-		};
-		handler?.(e, val);
+		handler?.(e, String($(e.target || e.currentTarget).val() || ''));
 	};
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setValue(e.target.value);
 		handleEvent(onChange, e);
 	};
 
-	const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
 		if ($(inputRef.current).hasClass('disabled')) return;
 		handleEvent(onKeyUp, e);
 	};
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
 		if ($(inputRef.current).hasClass('disabled')) return;
 		handleEvent(onKeyDown, e);
 	};
 
-	const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+	const handleInput = (e: FormEvent<HTMLInputElement>) => {
 		handleEvent(onInput, e);
 	};
 
-	const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+	const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
 		isFocused.current = true;
 		addClass('isFocused');
 		keyboard.setFocus(true);
@@ -185,7 +139,7 @@ const Input = forwardRef<InputRef, Props>(({
 		handleEvent(onFocus, e);
 	};
 
-	const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+	const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
 		isFocused.current = false;
 		removeClass('isFocused');
 		keyboard.setFocus(false);
@@ -193,7 +147,7 @@ const Input = forwardRef<InputRef, Props>(({
 		handleEvent(onBlur, e);
 	};
 
-	const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+	const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
 		e.persist();
 		callWithTimeout(() => {
 			updateRange(e);
@@ -201,7 +155,7 @@ const Input = forwardRef<InputRef, Props>(({
 		});
 	};
 
-	const handleCut = (e: React.ClipboardEvent<HTMLInputElement>) => {
+	const handleCut = (e: ClipboardEvent<HTMLInputElement>) => {
 		e.persist();
 		callWithTimeout(() => {
 			updateRange(e);
@@ -209,7 +163,7 @@ const Input = forwardRef<InputRef, Props>(({
 		});
 	};
 
-	const handleSelect = (e: React.SyntheticEvent<HTMLInputElement>) => {
+	const handleSelect = (e: SyntheticEvent<HTMLInputElement>) => {
 		updateRange(e);
 		handleEvent(onSelect, e);
 	};
@@ -276,6 +230,44 @@ const Input = forwardRef<InputRef, Props>(({
 		clone.remove();
 		return rect;
 	};
+
+	useEffect(() => {
+		if (maskOptions && inputRef.current) {
+			new Inputmask(maskOptions.mask, maskOptions).mask($(inputRef.current).get(0));
+		};
+
+		if (focusOnMount && inputRef.current) {
+			focus();
+		};
+
+		return () => {
+			if (isFocused.current) {
+				keyboard.setFocus(false);
+				keyboard.disableSelection(false);
+			};
+		};
+	}, [ maskOptions, focusOnMount ]);
+
+	useEffect(() => onChange?.($.Event('change'), value), [ value ]);
+
+	useImperativeHandle(ref, () => ({
+		focus,
+		blur: () => inputRef.current?.blur(),
+		select: () => inputRef.current?.select(),
+		setValue: (v: string) => setValue(String(v || '')),
+		getValue: () => String(value || ''),
+		setType: (v: string) => setInputType(v),
+		setError: (hasError: boolean) => $(inputRef.current).toggleClass('withError', hasError),
+		getSelectionRect,
+		setPlaceholder: (placeholder: string) => $(inputRef.current).attr({ placeholder }),
+		setRange: (range: I.TextRange) => {
+			callWithTimeout(() => {
+				focus();
+				inputRef.current?.setSelectionRange(range.from, range.to);
+			});
+		},
+		getRange: (): I.TextRange | null => rangeRef.current,
+	}));
 
 	return (
 		<input

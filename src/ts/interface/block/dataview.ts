@@ -14,7 +14,8 @@ export enum DateFormat {
 	ISO					 = 4, // 2020-07-30
 	Long				 = 5, // July 15, 2020 
 	Nordic				 = 6, // 15. Jul 2020  
-	European			 = 7, // 15.07.2020
+	European			 = 7, // 15.07.2020,
+	Default				 = 8, // Sat, Dec 14, 2024
 };
 
 export enum TimeFormat {
@@ -87,17 +88,18 @@ export enum FilterQuickOption {
 export enum FormulaType {
 	None				 = 0,
 	Count				 = 1,
-	CountDistinct		 = 2,
-	CountEmpty			 = 3,
-	CountNotEmpty		 = 4,
-	PercentEmpty		 = 5,
-	PercentNotEmpty		 = 6,
-	MathSum				 = 7,
-	MathAverage			 = 8,
-	MathMedian			 = 9,
-	MathMin				 = 10,
-	MathMax				 = 11,
-	Range				 = 12,
+	CountValue 			 = 2,
+	CountDistinct		 = 3,
+	CountEmpty			 = 4,
+	CountNotEmpty		 = 5,
+	PercentEmpty		 = 6,
+	PercentNotEmpty		 = 7,
+	MathSum				 = 8,
+	MathAverage			 = 9,
+	MathMedian			 = 10,
+	MathMin				 = 11,
+	MathMax				 = 12,
+	Range				 = 13,
 };
 
 export enum FormulaSection {

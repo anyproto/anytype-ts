@@ -10,6 +10,7 @@
 			.titleWrap {
 				.side { height: 32px; }
 				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+				.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 
 				.title { @include text-paragraph; font-weight: 600; flex-grow: 1; }
 				.icon.back { flex-shrink: 0; background-image: url('~img/icon/widget/back.svg'); }

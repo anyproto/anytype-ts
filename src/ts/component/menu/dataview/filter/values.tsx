@@ -629,7 +629,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onCalendar (value: number) {
-		const { getId } = this.props;
+		const { getId, param } = this.props;
+		const { data } = param;
+		const { getView, itemId } = data;
+		const item = getView().getFilter(itemId);
 
 		S.Menu.open('dataviewCalendar', {
 			element: `#${getId()} #value`,
@@ -638,6 +641,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				rebind: this.rebind,
 				value, 
 				canEdit: true,
+				relationKey: item.relationKey,
 				onChange: (value: number) => {
 					this.onChange('value', value);
 				},

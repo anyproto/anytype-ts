@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.43.7",
+	"version": "0.43.34-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -102,6 +102,7 @@
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
 		"d3-force-cluster": "^0.1.2",
+		"date-fns": "^4.1.0",
 		"diff": "^5.2.0",
 		"dompurify": "3.1.6",
 		"electron-dl": "^1.14.0",
@@ -124,7 +125,7 @@
 		"lazy-val": "^1.0.4",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
-		"mermaid": "^11.4.0",
+		"mermaid": "^11.4.1",
 		"mime-types": "^2.1.35",
 		"mobx": "^6.6.1",
 		"mobx-logger": "^0.7.1",

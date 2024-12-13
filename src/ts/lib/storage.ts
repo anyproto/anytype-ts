@@ -232,7 +232,7 @@ class Storage {
 		this.deleteLastOpenedByWindowId(windowIds);
 	};
 
-	deleteLastOpenedByWindowId (windowIds: string[],) {
+	deleteLastOpenedByWindowId (windowIds: string[]) {
 		windowIds = windowIds.filter(id => id != '1');
 
 		if (!windowIds.length) {

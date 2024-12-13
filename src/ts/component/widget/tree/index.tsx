@@ -64,7 +64,14 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			content = (
 				<div className="emptyWrap">
 					<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-					{canCreate ? <Button text={translate('commonCreateObject')} color="blank" className="c28" onClick={onCreate} /> : ''}
+					{canCreate ? (
+						<Button 
+							text={translate('commonCreateObject')} 
+							color="blank" 
+							className="c28" 
+							onClick={() => onCreate({ route: analytics.route.inWidget })} 
+						/> 
+					) : ''}
 				</div>
 			);
 		} else 

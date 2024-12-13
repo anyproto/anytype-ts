@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import * as d3 from 'd3';
@@ -14,116 +14,82 @@ interface Props {
 	storageKey: string;
 };
 
-const Graph = observer(class Graph extends React.Component<Props> {
+interface GraphRefProps {
+	init: () => void;
+	resize: () => void;
+};
 
-	node: any = null;
-	canvas: any = null;
-	edges: any[] = [];
-	nodes: any[] = [];
-	worker: any = null;
-	images: any = {};
-	subject: any = null;
-	isDragging = false;
-	isPreviewDisabled = false;
-	ids: string[] = [];
-	timeoutPreview = 0;
-	zoom: any = null;
-	previewId = '';
+const Graph = observer(forwardRef<GraphRefProps, Props>(({
+	id = '',
+	isPopup = false,
+	rootId = '',
+	data = {},
+	storageKey = '',
+}, ref) => {
 
-	constructor (props: Props) {
-		super(props);
+	const nodeRef = useRef(null);
+	const worker = useRef(null);
+	const theme = S.Common.getThemeClass();
+	const elementId = [ 'graph', id ].join('-') + U.Common.getEventNamespace(isPopup);
+	const previewId = useRef('');
+	const canvas = useRef(null);
+	const edges = useRef([]);
+	const nodes = useRef([]);
+	const images = useRef({});
+	const subject = useRef(null);
+	const isDragging = useRef(false);
+	const isPreviewDisabled = useRef(false);
+	const ids = useRef([]);
+	const zoom = useRef(null);
 
-		this.onMessage = this.onMessage.bind(this);
-		this.nodeMapper = this.nodeMapper.bind(this);
-		this.setRootId = this.setRootId.bind(this);
-	};
-
-	render () {
-		return (
-			<div 
-				ref={node => this.node = node} 
-				id="graphWrapper"
-			>
-				<div id={this.getId()} />
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.rebind();
-	};
-
-	componentWillUnmount () {
-		if (this.worker) {
-			this.worker.terminate();
+	const send = (id: string, param: any, transfer?: any[]) => {
+		if (worker.current) {
+			worker.current.postMessage({ id, ...param }, transfer);
 		};
-
-		this.unbind();
-		this.onPreviewHide();
 	};
 
-	rebind () {
+	const rebind = () => {
 		const win = $(window);
 
-		this.unbind();
-		win.on('updateGraphSettings.graph', () => this.updateSettings());
-		win.on('updateGraphRoot.graph', (e: any, data: any) => this.setRootId(data.id));
-		win.on('removeGraphNode.graph', (e: any, data: any) => this.send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
-		win.on(`keydown.graph`, e => this.onKeyDown(e));
-		win.on('updateTheme.graph', () => {
-			const theme = S.Common.getThemeClass();
-			this.send('updateTheme', { theme, colors: J.Theme[theme].graph || {} });
-		});
+		unbind();
+		win.on('updateGraphSettings.graph', () => updateSettings());
+		win.on('updateGraphRoot.graph', (e: any, data: any) => setRootId(data.id));
+		win.on('removeGraphNode.graph', (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
+		win.on(`keydown.graph`, e => onKeyDown(e));
 	};
 
-	unbind () {
-		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateTheme', 'removeGraphNode', 'keydown' ];
+	const unbind = () => {
+		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'removeGraphNode', 'keydown' ];
 
 		$(window).off(events.map(it => `${it}.graph`).join(' '));
 	};
 
-	getId (): string {
-		const { id, isPopup } = this.props;
-		const ret = [ 'graph' ];
-
-		if (id) {
-			ret.push(id);
-		};
-		if (isPopup) {
-			ret.push('popup');
-		};
-		return ret.join('-');
-	};
-
-	init () {
-		const { data, rootId, storageKey } = this.props;
-		const node = $(this.node);
+	const init = () => {
+		const node = $(nodeRef.current);
 		const density = window.devicePixelRatio;
-		const elementId = `#${this.getId()}`;
 		const width = node.width();
 		const height = node.height();
-		const theme = S.Common.getThemeClass();
 		const settings = S.Common.getGraph(storageKey);
 
-		this.images = {};
-		this.zoom = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => this.onZoom(e));
-		this.edges = (data.edges || []).map(this.edgeMapper);
-		this.nodes = (data.nodes || []).map(this.nodeMapper);
+		images.current = {};
+		zoom.current = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => onZoom(e));
+		edges.current = (data.edges || []).map(edgeMapper);
+		nodes.current = (data.nodes || []).map(nodeMapper);
 
 		node.find('canvas').remove();
 
-		this.canvas = d3.select(elementId).append('canvas')
+		canvas.current = d3.select(`#${elementId}`).append('canvas')
 		.attr('width', (width * density) + 'px')
 		.attr('height', (height * density) + 'px')
 		.node();
 
-		const transfer = node.find('canvas').get(0).transferControlToOffscreen();
+		const transfer = canvas.current.transferControlToOffscreen();
 
-		this.worker = new Worker('workers/graph.js');
-		this.worker.onerror = (e: any) => console.log(e);
-		this.worker.addEventListener('message', this.onMessage);
+		worker.current = new Worker('workers/graph.js');
+		worker.current.onerror = (e: any) => console.log(e);
+		worker.current.addEventListener('message', onMessage);
 
-		this.send('init', { 
+		send('init', { 
 			canvas: transfer, 
 			width,
 			height,
@@ -131,20 +97,20 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			theme,
 			settings,
 			rootId,
-			nodes: this.nodes,
-			edges: this.edges,
+			nodes: nodes.current,
+			edges: edges.current,
 			colors: J.Theme[theme].graph || {},
 		}, [ transfer ]);
 
-		d3.select(this.canvas)
+		d3.select(canvas.current)
 		.call(d3.drag().
-			subject(() => this.subject).
-			on('start', (e: any, d: any) => this.onDragStart(e)).
-			on('drag', (e: any, d: any) => this.onDragMove(e)).
-			on('end', (e: any, d: any) => this.onDragEnd(e))
+			subject(() => subject.current).
+			on('start', (e: any, d: any) => onDragStart(e)).
+			on('drag', (e: any, d: any) => onDragMove(e)).
+			on('end', (e: any, d: any) => onDragEnd(e))
 		)
-		.call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
+		.call(zoom.current)
+		.call(zoom.current.transform, d3.zoomIdentity.translate(0, 0).scale(1))
 		.on('click', (e: any) => {
 			const { local } = S.Common.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
@@ -156,25 +122,25 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				event = e.shiftKey ? 'onSelect' : 'onClick';
 			};
 
-			this.send(event, { x, y });
+			send(event, { x, y });
 		})
 		.on('dblclick', (e: any) => {
 			if (e.shiftKey) {
 				const [ x, y ] = d3.pointer(e);
-				this.send('onSelect', { x, y, selectRelated: true });
+				send('onSelect', { x, y, selectRelated: true });
 			};
 		})
 		.on('contextmenu', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
-			this.send('onContextMenu', { x, y });
+			send('onContextMenu', { x, y });
 		})
 		.on('mousemove', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
-			this.send('onMouseMove', { x, y });
+			send('onMouseMove', { x, y });
 		});
 	};
 
-	nodeMapper (d: any) {
+	const nodeMapper = (d: any) => {
 		d = d || {};
 		d.layout = Number(d.layout) || 0;
 		d.radius = 4;
@@ -197,21 +163,21 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			d.iconEmoji = '';
 		};
 
-		if (!this.images[d.src]) {
+		if (!images.current[d.src]) {
 			const img = new Image();
 
 			img.onload = () => {
-				if (this.images[d.src]) {
+				if (images.current[d.src]) {
 					return;
 				};
 
 				createImageBitmap(img, { resizeWidth: 160, resizeQuality: 'high' }).then((res: any) => {
-					if (this.images[d.src]) {
+					if (images.current[d.src]) {
 						return;
 					};
 
-					this.images[d.src] = true;
-					this.send('image', { src: d.src, bitmap: res });
+					images.current[d.src] = true;
+					send('image', { src: d.src, bitmap: res });
 				});
 			};
 			img.crossOrigin = '';
@@ -221,24 +187,24 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		return d;
 	};
 
-	edgeMapper (d: any) {
+	const edgeMapper = (d: any) => {
 		d.type = Number(d.type) || 0;
 		d.typeName = translate('edgeType' + d.type);
 		return d;
 	};
 
-	updateSettings () {
-		this.send('updateSettings', S.Common.getGraph(this.props.storageKey));
+	const updateSettings = () => {
+		send('updateSettings', S.Common.getGraph(storageKey));
 	};
 
-	onDragStart (e: any) {
-		this.isDragging = true;
-		this.send('onDragStart', { active: e.active });
+	const onDragStart = (e: any) => {
+		isDragging.current = true;
+		send('onDragStart', { active: e.active });
 	};
 
-	onDragMove (e: any) {
-		const p = d3.pointer(e, d3.select(this.canvas));
-		const node = $(this.node);
+	const onDragMove = (e: any) => {
+		const p = d3.pointer(e, d3.select(canvas.current));
+		const node = $(nodeRef.current);
 
 		if (!node || !node.length) {
 			return;
@@ -246,36 +212,36 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		const { left, top } = node.offset();
 
-		this.send('onDragMove', { 
-			subjectId: this.subject.id, 
+		send('onDragMove', { 
+			subjectId: subject.current?.id, 
 			active: e.active, 
 			x: p[0] - left, 
 			y: p[1] - top,
 		});
 	};
 
-	onDragEnd (e: any) {
-		this.isDragging = false;
-		this.subject = null;
-		this.send('onDragEnd', { active: e.active });
+	const onDragEnd = (e: any) => {
+		isDragging.current = false;
+		subject.current = null;
+		send('onDragEnd', { active: e.active });
 	};
 
-	onZoom ({ transform }) {
-		this.send('onZoom', { transform });
+	const onZoom = ({ transform }) => {
+		send('onZoom', { transform });
 	};
 
-	onPreviewShow (data: any) {
-		if (this.isPreviewDisabled || !this.subject) {
+	const onPreviewShow = (data: any) => {
+		if (isPreviewDisabled.current || !subject.current) {
 			return;
 		};
 
 		const win = $(window);
 		const body = $('body');
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const { left, top } = node.offset();
-		const render = this.previewId != this.subject.id;
+		const render = previewId != subject.current.id;
 
-		this.previewId = this.subject.id;
+		previewId.current = subject.current.id;
 
 		let el = $('#graphPreview');
 
@@ -293,31 +259,26 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			body.find('#graphPreview').remove();
 			body.append(el);
 
-			ReactDOM.render(<PreviewDefault object={this.subject} className="previewGraph" />, el.get(0), position);
-			analytics.event('SelectGraphNode', { objectType: this.subject.type, layout: this.subject.layout });
+			ReactDOM.render(<PreviewDefault object={subject.current} className="previewGraph" />, el.get(0), position);
+			analytics.event('SelectGraphNode', { objectType: subject.current.type, layout: subject.current.layout });
 		} else {
 			position();
 		};
 	};
 
-	onPreviewHide () {
+	const onPreviewHide = () => {
 		$('#graphPreview').remove();
 	};
 
-	onMessage (e) {
-		const { storageKey } = this.props;
+	const onMessage = (e) => {
 		const settings = S.Common.getGraph(storageKey);
 		const { id, data } = e.data;
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const { left, top } = node.offset();
 
 		const menuParam = {
-			onOpen: () => {
-				this.isPreviewDisabled = true;
-			},
-			onClose: () => {
-				this.isPreviewDisabled = false;
-			},
+			onOpen: () => isPreviewDisabled.current = true,
+			onClose: () => isPreviewDisabled.current = false,
 			recalcRect: () => ({
 				width: 0,
 				height: 0,
@@ -328,30 +289,30 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		switch (id) {
 			case 'onClick': {
-				this.onClickObject(data.node);
+				onClickObject(data.node);
 				break;
 			};
 
 			case 'onSelect': {
-				this.onSelect(data.node, data.related);
+				onSelect(data.node, data.related);
 				break;
 			};
 
 			case 'onMouseMove': {
-				if (this.isDragging) {
+				if (isDragging.current) {
 					break;
 				};
 
-				this.subject = this.nodes.find(d => d.id == data.node);
+				subject.current = getNode(data.node);
 
 				if (settings.preview) {
-					this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+					subject.current ? onPreviewShow(data) : onPreviewHide();
 				};
 				break;
 			};
 
 			case 'onDragMove': {
-				this.onPreviewHide();
+				onPreviewHide();
 				break;
 			};
 
@@ -360,91 +321,94 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					break;
 				};
 
-				this.onPreviewHide();
-				this.onContextMenu(data.node.id, menuParam);
+				onPreviewHide();
+				onContextMenu(data.node.id, menuParam);
 				break;
 			};
 
 			case 'onContextSpaceClick': {
-				this.onPreviewHide();
-				this.onContextSpaceClick(menuParam, data);
+				onPreviewHide();
+				onContextSpaceClick(menuParam, data);
 				break;
 			};
 
 			case 'onTransform': {
-				d3.select(this.canvas)
-				.call(this.zoom)
-				.call(this.zoom.transform, d3.zoomIdentity.translate(data.x, data.y).scale(data.k));
+				d3.select(canvas.current)
+				.call(zoom.current)
+				.call(zoom.current.transform, d3.zoomIdentity.translate(data.x, data.y).scale(data.k));
 				break;
+			};
+
+			case 'setRootId': {
+				$(window).trigger('updateGraphRoot', { id: data.node });
 			};
 
 		};
 	};
 
-	onKeyDown (e: any) {
+	const onKeyDown = (e: any) => {
 		const cmd = keyboard.cmdKey();
-		const length = this.ids.length;
+		const length = ids.current.length;
 
 		keyboard.shortcut(`${cmd}+f`, e, () => $('#button-header-search').trigger('click'));
 
-		if (length) {
-			keyboard.shortcut('escape', e, () => {
-				this.ids = [];
-				this.send('onSetSelected', { ids: [] });
-			});
-
-			keyboard.shortcut('backspace, delete', e, () => {
-				Action.archive(this.ids, analytics.route.graph, () => {
-					this.nodes = this.nodes.filter(d => !this.ids.includes(d.id));
-					this.send('onRemoveNode', { ids: this.ids });
-				});
-			});
+		if (!length) {
+			return;
 		};
+
+		keyboard.shortcut('escape', e, () => setSelected([]));
+
+		keyboard.shortcut('backspace, delete', e, () => {
+			Action.archive(ids.current, analytics.route.graph, () => {
+				nodes.current = nodes.current.filter(d => !ids.current.includes(d.id));
+				send('onRemoveNode', { ids: ids });
+			});
+		});
 	};
 
-	onContextMenu (id: string, param: any) {
-		const ids = this.ids.length ? this.ids : [ id ];
+	const onContextMenu = (id: string, param: any) => {
+		const selected = ids.current.length ? ids.current : [ id ];
 
 		S.Menu.open('dataviewContext', {
 			...param,
 			data: {
 				route: analytics.route.graph,
-				objectIds: ids,
-				getObject: id => this.getNode(id),
+				objectIds: selected,
+				getObject: id => getNode(id),
 				allowedLinkTo: true,
 				allowedOpen: true,
 				onLinkTo: (sourceId: string, targetId: string) => {
-					const target = this.getNode(targetId);
+					const target = getNode(targetId);
 					if (target) {
-						this.edges.push(this.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
-						this.send('onSetEdges', { edges: this.edges });
+						edges.current.push(edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
+						send('onSetEdges', { edges: edges.current });
 					} else {
-						this.addNewNode(targetId, sourceId, null);
+						addNewNode(targetId, sourceId, null);
 					};
 				},
 				onSelect: (itemId: string) => {
 					switch (itemId) {
 						case 'archive': {
-							this.nodes = this.nodes.filter(d => !ids.includes(d.id));
-							this.send('onRemoveNode', { ids });
+							nodes.current = nodes.current.filter(d => !selected.includes(d.id));
+							send('onRemoveNode', { ids: selected });
 							break;
 						};
 
 						case 'fav': {
-							ids.forEach((id: string) => {
-								const node = this.getNode(id);
+							selected.forEach(id => {
+								const node = getNode(id);
 								
 								if (node) {
 									node.isFavorite = true;
 								};
 							});
-							this.send('onSetEdges', { edges: this.edges });
+							send('onSetEdges', { edges: edges.current });
 							break;
 						};
 
 						case 'unfav': {
-							ids.forEach((id: string) => {
-								const node = this.getNode(id);
+							selected.forEach(id => {
+								const node = getNode(id);
 								
 								if (node) {
 									node.isFavorite = false;
@@ -454,14 +418,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						};
 					};
 
-					this.ids = [];
-					this.send('onSetSelected', { ids: this.ids });
+					setSelected(ids.current);
 				},
 			}
 		});
 	};
 
-	onContextSpaceClick (param: any, data: any) {
+	const onContextSpaceClick = (param: any, data: any) => {
 		if (!U.Space.canMyParticipantWrite()) {
 			return;
 		};
@@ -478,7 +441,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
 							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, analytics.route.graph, (message: any) => {
-								U.Object.openConfig(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
+								U.Object.openConfig(message.details, { onClose: () => addNewNode(message.targetId, '', data) });
 							});
 							break;
 						};
@@ -488,48 +451,46 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		});
 	};
 
-	onSelect (id: string, related?: string[]) {
-		const isSelected = this.ids.includes(id);
+	const onSelect = (id: string, related?: string[]) => {
+		const isSelected = ids.current.includes(id);
 
-		let ids = [ id ];
+		let ret = [ id ];
 
 		if (related && related.length) {
 			if (!isSelected) {
-				this.ids = [];
+				ret = [];
 			};
 
-			ids = ids.concat(related);
+			ret = ret.concat(related);
 		};
 
-		ids.forEach((id) => {
+		ret.forEach(id => {
 			if (isSelected) {
-				this.ids = this.ids.filter(it => it != id);
+				ids.current = ids.current.filter(it => it != id);
 				return;
 			};
 
-			this.ids = this.ids.includes(id) ? this.ids.filter(it => it != id) : this.ids.concat([ id ]);
+			ids.current = ids.current.includes(id) ? ids.current.filter(it => it != id) : ids.current.concat([ id ]);
 		});
 
-		this.send('onSetSelected', { ids: this.ids });
+		setSelected(ids.current);
 	};
 
-	onClickObject (id: string) {
-		this.ids = [];
-		this.send('onSetSelected', { ids: [] });
-		
-		U.Object.openAuto(this.nodes.find(d => d.id == id));
+	const onClickObject = (id: string) => {
+		setSelected([]);
+		U.Object.openAuto(getNode(id));
 	};
 
-	addNewNode (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) {
+	const addNewNode = (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => {
 		U.Object.getById(id, {}, (object: any) => {
-			object = this.nodeMapper(object);
+			object = nodeMapper(object);
 
 			if (param) {
 				object = Object.assign(object, param);
 			};
 
-			this.nodes.push(object);
-			this.send('onAddNode', { target: object, sourceId });
+			nodes.current.push(object);
+			send('onAddNode', { target: object, sourceId });
 
 			if (callBack) {
 				callBack(object);
@@ -537,30 +498,59 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		});
 	};
 
-	getNode (id: string) {
-		return this.nodes.find(d => d.id == id);
+	const getNode = (id: string) => {
+		return nodes.current.find(d => d.id == id);
 	};
 
-	setRootId (id: string) {
-		this.send('setRootId', { rootId: id });
+	const setRootId = (id: string) => {
+		send('setRootId', { rootId: id });
 	};
 
-	send (id: string, param: any, transfer?: any[]) {
-		if (this.worker) {
-			this.worker.postMessage({ id, ...param }, transfer);
-		};
+	const setSelected = (selected: string[]) => {
+		ids.current = selected;
+		send('onSetSelected', { ids: ids.current });
 	};
 
-	resize () {
-		const node = $(this.node);
+	const resize = () => {
+		const node = $(nodeRef.current);
 
-		this.send('resize', { 
+		send('resize', { 
 			width: node.width(), 
-			height: node.height(), 
+			height: node.height(),
 			density: window.devicePixelRatio,
 		});
 	};
 
-});
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+			onPreviewHide();
+
+			if (worker.current) {
+				worker.current.terminate();
+			};
+		};
+	}, []);
+
+	useEffect(() => {
+		send('updateTheme', { theme, colors: J.Theme[theme].graph || {} });
+	}, [ theme ]);
+
+	useImperativeHandle(ref, () => ({
+		init,
+		resize,
+	}));
+
+	return (
+		<div 
+			ref={nodeRef} 
+			className="graphWrapper"
+		>
+			<div id={elementId} />
+		</div>
+	);
+}));
 
 export default Graph;
