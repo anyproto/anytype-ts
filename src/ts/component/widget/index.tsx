@@ -350,15 +350,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	onCreate (param?: any): void {
 		param = param || {};
 
-		const { block } = this.props;
-		const { viewId, layout } = block.content;
 		const object = this.getObject();
-		const route = param.route || analytics.route.widget;
 
 		if (!object) {
 			return;
 		};
 
+		const { block } = this.props;
+		const { viewId, layout } = block.content;
+		const route = param.route || analytics.route.widget;
 		const isSetOrCollection = U.Object.isInSetLayouts(object.layout);
 		const isFavorite = object.id == J.Constant.widgetId.favorite;
 
@@ -410,12 +410,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 				case J.Constant.widgetId.set: {
 					details.layout = I.ObjectLayout.Set;
+					flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 					typeKey = J.Constant.typeKey.set;
 					break;
 				};
 
 				case J.Constant.widgetId.collection: {
 					details.layout = I.ObjectLayout.Collection;
+					flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 					typeKey = J.Constant.typeKey.collection;
 					break;
 				};
@@ -442,7 +444,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			U.Object.openConfig(newObject);
-			analytics.createObject(newObject.type, newObject.layout, param.route, message.middleTime);
+			analytics.createObject(newObject.type, newObject.layout, route, message.middleTime);
 		});
 	};
 

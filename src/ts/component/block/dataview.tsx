@@ -631,12 +631,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const details = this.getDetails(groupId);
-		const flags: I.ObjectFlag[] = [];
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		
 		let typeId = '';
 		let templateId = '';
-
-		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
 			templateId = template.id;
