@@ -427,9 +427,13 @@ class RecordStore {
 	};
 
 	checkHiddenObjects (records: any[]): any[] {
-		const { config } = S.Common;
+		const isHidden = S.Common.config.debug.hiddenObject;
 
-		return records.filter(it => config.debug.hiddenObject ? true : !it.isHidden);
+		if (!Array.isArray(records)) {
+			return;
+		};
+
+		return records.filter(it => isHidden ? true : !it.isHidden);
 	};
 };
 

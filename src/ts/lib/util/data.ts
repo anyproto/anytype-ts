@@ -562,10 +562,8 @@ class UtilData {
 		};
 
 		items = items.filter(it => it);
-		if (!config.debug.hiddenObject) {
-			items = items.filter(it => !it.isHidden);
-		};
-
+		items = S.Record.checkHiddenObjects(items);
+		
 		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
 		return items;
 	};

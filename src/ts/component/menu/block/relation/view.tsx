@@ -187,8 +187,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				return false;
 			};
 
-			return !config.debug.hiddenObject ? !it.isHidden : true;
+			return true;
 		});
+		items = S.Record.checkHiddenObjects(items);
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
 		const sections = [ 
