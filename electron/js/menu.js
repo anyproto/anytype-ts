@@ -65,7 +65,7 @@ class MenuManager {
 					Separator,
 
 					{ 
-						label: Util.translate('electronMenuDirectory'), submenu: [
+						label: Util.translate('electronMenuOpen'), submenu: [
 							{ label: Util.translate('electronMenuWorkDirectory'), click: () => shell.openPath(Util.userPath()) },
 							{ label: Util.translate('electronMenuDataDirectory'), click: () => shell.openPath(Util.dataPath()) },
 							{ label: Util.translate('electronMenuConfigDirectory'), click: () => shell.openPath(Util.defaultUserDataPath()) },
@@ -344,7 +344,7 @@ class MenuManager {
 		this.tray = new Tray (this.getTrayIcon());
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
-			{ label: Util.translate('electronMenuOpen'), click: () => this.winShow() },
+			{ label: Util.translate('electronMenuOpenApp'), click: () => this.winShow() },
 
 			Separator,
 
