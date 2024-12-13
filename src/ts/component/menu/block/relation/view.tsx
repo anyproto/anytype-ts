@@ -234,28 +234,24 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const object = S.Detail.get(rootId, rootId, []);
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
+		const relationKeys = S.Detail.getKeys(rootId, rootId);
+		const conflictingKeys = [];
 
-		const relationKeys = S.Record.getObjectRelations(rootId, type.id)
-			.filter(it => !Relation.systemKeys().includes(it.relationKey))
-			.map(it => it.relationKey);
-
-		let typeRelationIds = [];
+		let typeRelationKeys = [];
 		if (type) {
-			typeRelationIds = type.recommendedRelations.concat(type.recommendedFeaturedRelations);
-		};
+			typeRelationKeys = type.recommendedRelations.concat(type.recommendedFeaturedRelations)
+				.map(it => S.Record.getRelationById(it))
+				.filter(it => it && it.relationKey)
+				.map(it => it.relationKey);
 
-		const typeRelationKeys = typeRelationIds
-			.map(it => ({...S.Record.getRelationById(it)}))
-			.filter(it => it && it.relationKey)
-			.map(it => it.relationKey);
-
-		let conflictingKeys = [];
-
-		relationKeys.forEach((key) => {
-			if (!typeRelationKeys.includes(key)) {
-				conflictingKeys.push(key);
+			if (typeRelationKeys.length) {
+				relationKeys.forEach((key) => {
+					if (!typeRelationKeys.includes(key)) {
+						conflictingKeys.push(key);
+					};
+				});
 			};
-		});
+		};
 
 		return conflictingKeys;
 	};
