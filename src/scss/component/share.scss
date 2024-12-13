@@ -19,6 +19,7 @@
     .icon.close { box-shadow: none; background-color: var(--color-shape-primary); background-image: url('~img/icon/widget/remove.svg'); z-index: 1; -webkit-app-region: no-drag; }
     .icon.close:hover  { background-color: var(--color-text-tertiary); }
 }
+.shareBanner.isOnboardingHidden { display: none; }
 
 .shareTooltip,
 .shareBanner {
