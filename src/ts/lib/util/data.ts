@@ -563,7 +563,7 @@ class UtilData {
 
 		items = items.filter(it => it);
 		items = S.Record.checkHiddenObjects(items);
-		
+
 		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
 		return items;
 	};

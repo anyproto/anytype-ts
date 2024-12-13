@@ -430,7 +430,7 @@ class RecordStore {
 		const isHidden = S.Common.config.debug.hiddenObject;
 
 		if (!Array.isArray(records)) {
-			return;
+			return [];
 		};
 
 		return records.filter(it => isHidden ? true : !it.isHidden);
