@@ -173,6 +173,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			scope: I.RelationScope.Type,
 		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
+		const conflicts = S.Record.getConflictRelations(rootId, type.id);
+		const conflictingKeys = conflicts.map(it => it.relationKey)
+
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
 		items = items.sort(U.Data.sortByName).sort(U.Data.sortByHidden).filter((it: any) => {
@@ -184,8 +187,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				return false;
 			};
 
-			return !config.debug.hiddenObject ? !it.isHidden : true;
+			return true;
 		});
+		items = S.Record.checkHiddenObjects(items);
+		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
 		const sections = [ 
 			{ 
@@ -196,6 +201,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				id: 'object', name: translate('menuBlockRelationViewInThisObject'),
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
 			},
+			{
+				id: 'conflicts', name: translate('menuBlockRelationViewConflictingRelations'),
+				children: conflicts,
+			}
 		];
 
 		if (type) {
