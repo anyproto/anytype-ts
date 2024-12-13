@@ -50,7 +50,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			cn.push('isEditing');
 		};
 
-		if (U.Space.hasShareBanner()) {
+		if (hasShareBanner) {
 			cn.push('withShareBanner');
 		};
 
@@ -196,10 +196,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					</div>
 				</React.Fragment>
 			);
-		};
-
-		if (hasShareBanner) {
-			bodyCn.push('withShareBanner');
 		};
 
 		return (
