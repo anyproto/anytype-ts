@@ -622,6 +622,15 @@ class Keyboard {
 				break;
 			};
 
+			case 'debugLog': {
+				C.DebugExportLog(tmpPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('openPath', tmpPath);
+					};
+				});
+				break;
+			};
+
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
 				break;

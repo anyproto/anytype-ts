@@ -238,6 +238,7 @@
 	"electronMenuDebugStat": "Statistics",
 	"electronMenuDebugReconcile": "Reconcile",
 	"electronMenuDebugNet": "Network",
+	"electronMenuDebugLog": "Export log",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",

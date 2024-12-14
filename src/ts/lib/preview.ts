@@ -163,7 +163,12 @@ class Preview {
 	 * Display a preview
 	 */
 	previewShow (param: I.Preview) {
-		if (keyboard.isPreviewDisabled) {
+		if (
+			keyboard.isPreviewDisabled || 
+			keyboard.isResizing || 
+			keyboard.isDragging
+		) {
+			window.clearTimeout(this.timeout.preview);
 			return;
 		};
 
@@ -201,9 +206,7 @@ class Preview {
 			});
 		};
 
-		obj.toggleClass('passThrough', passThrough);
-		obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
-
+		obj.toggleClass('passThrough', Boolean(passThrough));
 		this.previewHide(true);
 
 		if (param.delay) {

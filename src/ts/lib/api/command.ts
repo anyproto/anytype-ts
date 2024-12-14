@@ -4,7 +4,7 @@ import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper, keyboard } from 
 
 const { Rpc, Empty } = Commands;
 
-export const InitialSetParameters = (platform: I.Platform, version: string, workDir: string, logLevel: string, doNotSendLogs: boolean, callBack?: (message: any) => void) => {
+export const InitialSetParameters = (platform: I.Platform, version: string, workDir: string, logLevel: string, doNotSendLogs: boolean, doNotSaveLogs: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Initial.SetParameters.Request();
 
 	request.setPlatform(platform);
@@ -12,6 +12,7 @@ export const InitialSetParameters = (platform: I.Platform, version: string, work
 	request.setWorkdir(workDir);
 	request.setLoglevel(logLevel);
 	request.setDonotsendlogs(doNotSendLogs);
+	request.setDonotsavelogs(doNotSaveLogs);
 
 	dispatcher.request(InitialSetParameters.name, request, callBack);
 };
@@ -1931,6 +1932,14 @@ export const DebugNetCheck = (config: string, callBack?: (message: any) => void)
 
 	dispatcher.request(DebugNetCheck.name, request, callBack);
 };
+
+export const DebugExportLog = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.ExportLog.Request();
+
+	request.setDir(path);
+
+	dispatcher.request(DebugExportLog.name, request, callBack);
+}
 
 // ---------------------- NOTIFICATION ---------------------- //
 
