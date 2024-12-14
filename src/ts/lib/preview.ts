@@ -163,7 +163,12 @@ class Preview {
 	 * Display a preview
 	 */
 	previewShow (param: I.Preview) {
-		if (keyboard.isPreviewDisabled) {
+		if (
+			keyboard.isPreviewDisabled || 
+			keyboard.isResizing || 
+			keyboard.isDragging
+		) {
+			window.clearTimeout(this.timeout.preview);
 			return;
 		};
 

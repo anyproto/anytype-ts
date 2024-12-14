@@ -468,7 +468,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	onDragStart (e: any) {
 		e.stopPropagation();
 
-		if (!this._isMounted) {
+		if (!this._isMounted || keyboard.isResizing) {
 			return;
 		};
 		
