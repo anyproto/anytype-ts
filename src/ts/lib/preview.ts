@@ -206,9 +206,7 @@ class Preview {
 			});
 		};
 
-		obj.toggleClass('passThrough', passThrough);
-		obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
-
+		obj.toggleClass('passThrough', Boolean(passThrough));
 		this.previewHide(true);
 
 		if (param.delay) {
