@@ -18,10 +18,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 		const home = U.Space.getDashboard();
 
 		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrapper"
-			>
+			<div>
 				<Header 
 					{...this.props} 
 					component="mainEmpty" 
@@ -29,24 +26,29 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 					layout={I.ObjectLayout.SpaceView}
 				/>
 
-				<div className="wrapper">
-					<IconObject object={space} size={96} />
-					<ObjectName className="title" object={space} />
-					<Label text={translate('pageMainEmptyDescription')} />
-							
-					<div className="row">
-						<div className="side left">
-							<Label text={translate('commonHomepage')} />
-						</div>
+				<div 
+					ref={node => this.node = node}
+					className="wrapper"
+				>
+					<div className="wrapper">
+						<IconObject object={space} size={96} />
+						<ObjectName className="title" object={space} />
+						<Label text={translate('pageMainEmptyDescription')} />
+								
+						<div className="row">
+							<div className="side left">
+								<Label text={translate('commonHomepage')} />
+							</div>
 
-						<div className="side right">
-							<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
-								<div className="item">
-									<div className="name">
-										{home ? home.name : translate('commonSelect')}
+							<div className="side right">
+								<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
+									<div className="item">
+										<div className="name">
+											{home ? home.name : translate('commonSelect')}
+										</div>
 									</div>
+									<Icon className="arrow light" />
 								</div>
-								<Icon className="arrow light" />
 							</div>
 						</div>
 					</div>
