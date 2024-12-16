@@ -134,7 +134,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		};
 	};
 
-	getContent () {
+	getContent (): any {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
