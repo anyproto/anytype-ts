@@ -159,25 +159,18 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { config } = S.Common;
 
 		const object = S.Detail.get(rootId, rootId);
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
-		const featured = Relation.getArrayValue(object.featuredRelations);
-		const relations = S.Record.getObjectRelations(rootId, type.id);
-		const relationKeys = relations.map(it => it.relationKey);
 		const readonly = this.isReadonly();
-		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => ({ 
-			...S.Record.getRelationById(it), 
-			scope: I.RelationScope.Type,
-		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
 		const conflicts = S.Record.getConflictRelations(rootId, type.id);
-		const conflictingKeys = conflicts.map(it => it.relationKey)
+		const conflictingKeys = conflicts.map(it => it.relationKey);
 
-		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
-		items = items.concat(typeRelations);
+		let items = (type ? type.recommendedRelations || [] : []).map(it => ({
+			...S.Record.getRelationById(it),
+		})).filter(it => it && it.relationKey);
 		items = items.sort(U.Data.sortByName).sort(U.Data.sortByHidden).filter((it: any) => {
 			if (!it) {
 				return false;
@@ -192,27 +185,16 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		items = S.Record.checkHiddenObjects(items);
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
-		const sections = [ 
-			{ 
-				id: 'featured', name: translate('menuBlockRelationViewFeaturedRelations'),
-				children: items.filter(it => featured.includes(it.relationKey)),
-			},
+		const sections = [
 			{ 
 				id: 'object', name: translate('menuBlockRelationViewInThisObject'),
-				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
+				children: items,
 			},
 			{
 				id: 'conflicts', name: translate('menuBlockRelationViewConflictingRelations'),
 				children: conflicts,
 			}
 		];
-
-		if (type) {
-			sections.push({ 
-				id: 'type', name: U.Common.sprintf(translate('menuBlockRelationViewFromType'), type.name),
-				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
-			});
-		};
 
 		return sections.filter(it => it.children.length);
 	};
