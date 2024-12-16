@@ -164,11 +164,11 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	showElements () {
-		this.props.param.hiddenElements.forEach(el => $(el).css({ visibility: 'visible' }));
+		this.props.param.hiddenElements.forEach(el => $(el).removeClass('isOnboardingHidden'));
 	};
 
 	hideElements () {
-		this.props.param.hiddenElements.forEach(el => $(el).css({ visibility: 'hidden' }));
+		this.props.param.hiddenElements.forEach(el => $(el).addClass('isOnboardingHidden'));
 	};
 
 	initDimmer () {

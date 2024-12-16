@@ -192,7 +192,8 @@ class UtilSpace {
 		const space = this.getSpaceview();
 		const closed = Storage.get('shareBannerClosed');
 
-		return !space.isPersonal && !space.isShared && !closed && this.isMyOwner() && !hasShared;
+		// return !space.isPersonal && !space.isShared && !closed && this.isMyOwner() && !hasShared;
+		return false;
 	};
 
 	getReaderLimit () {
@@ -247,7 +248,7 @@ class UtilSpace {
 			return;
 		};
 
-		blocks.forEach(block => Storage.setToggle('widget', block.id, true));
+		blocks.forEach(block => Storage.setToggle('widget', block.id, false));
 
 		const first = blocks[0];
 		const children = S.Block.getChildren(widgets, first.id);

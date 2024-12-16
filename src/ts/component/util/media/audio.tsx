@@ -186,6 +186,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	});
 
 	useEffect(() => {
+		onVolume(1);
 		resize();
 		rebind();
 	}, []);
@@ -213,7 +214,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 				</div>
 
 				<div className="controls">
-					<Icon ref={playIconRef} className="play" onClick={onPlayClick} />
+					<Icon ref={playIconRef} className="play" onMouseDown={onPlayClick} />
 
 					<div className="timeDragWrapper">
 						<DragHorizontal
@@ -234,7 +235,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 						<Icon
 							ref={volumeIconRef} 
 							className={ci.join(' ')} 
-							onClick={onMute} 
+							onMouseDown={onMute} 
 							onMouseEnter={onVolumeEnter}
 						/>
 

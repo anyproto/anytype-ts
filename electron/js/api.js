@@ -50,8 +50,14 @@ class Api {
 		WindowManager.sendToAll('pin-check');
 	};
 
-	setConfig (win, config) {
-		ConfigManager.set(config, () => Util.send(win, 'config', ConfigManager.config));
+	setConfig (win, config, callBack) {
+		ConfigManager.set(config, () => {
+			Util.send(win, 'config', ConfigManager.config);
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	setAccount (win, account) {

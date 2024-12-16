@@ -190,7 +190,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 		];
 
 		if (U.Space.canCreateSpace()) {
-			list.push({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
+			list.push({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate'), isBig: true });
 		};
 
 		list = list.concat(U.Space.getList()

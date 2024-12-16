@@ -157,7 +157,7 @@ class Analytics {
 			ret.push(config.channel);
 		};
 
-		C.InitialSetParameters(platform, ret.join('-'), userPath(), '', false);
+		C.InitialSetParameters(platform, ret.join('-'), userPath(), '', false, false);
 	};
 
 	profile (id: string, networkId: string) {
@@ -587,6 +587,7 @@ class Analytics {
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 			'main/date':		 'ScreenDate',
+			'main/archive':		 'ScreenBin',
 		};
 
 		return map[key] || '';
