@@ -469,11 +469,13 @@ class Dataview {
 		} else
 		if (relations.length) {
 			for (const item of relations) {
-				if (!item.objectTypes.length) {
+				const objectTypes = Relation.getArrayValue(item.objectTypes);
+
+				if (!objectTypes.length) {
 					continue;
 				};
 
-				const first = S.Record.getTypeById(item.objectTypes[0]);
+				const first = S.Record.getTypeById(objectTypes[0]);
 				if (first && !U.Object.isInFileOrSystemLayouts(first.recommendedLayout)) {
 					typeId = first.id;
 					break;
