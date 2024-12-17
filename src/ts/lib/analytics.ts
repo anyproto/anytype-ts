@@ -190,6 +190,10 @@ class Analytics {
 	};
 
 	setProperty (props: any) {
+		if (!this.instance || !this.isAllowed()) {
+			return;
+		};
+
 		this.instance.setUserProperties(props);
 		this.log(`[Analytics].setProperty: ${JSON.stringify(props, null, 3)}`);
 	};
