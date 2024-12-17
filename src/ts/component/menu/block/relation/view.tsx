@@ -161,13 +161,13 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const readonly = this.isReadonly();
 
-		const conflicts = S.Record.getConflictRelations(rootId, type.id);
+		const conflicts = S.Record.getConflictRelations(rootId, type.id).sort(U.Data.sortByName);
 		const conflictingKeys = conflicts.map(it => it.relationKey);
 
 		let items = (type ? type.recommendedRelations || [] : []).map(it => ({
 			...S.Record.getRelationById(it),
 		})).filter(it => it && it.relationKey);
-		items = items.sort(U.Data.sortByName).sort(U.Data.sortByHidden).filter((it: any) => {
+		items = items.sort(U.Data.sortByHidden).filter((it: any) => {
 			if (!it) {
 				return false;
 			};
