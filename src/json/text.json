@@ -1411,7 +1411,6 @@
 	"menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
 	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
-	"menuBlockRelationViewFeaturedRelations": "Featured Relations",
 	"menuBlockRelationViewInThisObject": "In this Object",
 	"menuBlockRelationViewFromType": "From Type %s",
 	"menuBlockRelationViewConflictingRelations": "Conflicting Relations",
@@ -1555,9 +1554,6 @@
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
-
-	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
-	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",

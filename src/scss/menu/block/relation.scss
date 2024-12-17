@@ -45,20 +45,10 @@
 		.section:last-child::after { display: none; }
 		.section::after { margin: 16px 32px; }
 
-		#section-featured::after { display: block; }
-		#section-featured {
-			.item {
-				.icon.fav { opacity: 1; }
-			}
-		}
-
 		.scrollWrap { padding: 22px 0px 16px 0px; overflow-x: hidden; overflow-y: auto; flex-grow: 1; }
 		.bottom { flex-shrink: 0; }
 
 		.item { padding: 0px 26px; cursor: default; }
-		.item:hover {
-			.icon.fav { opacity: 1; }
-		}
 
 		.item {
 			.icon { margin: 0px; }
@@ -68,11 +58,6 @@
 				background-image: url('~img/icon/block/menu.svg'); border: 1px solid var(--color-shape-secondary); border-radius: 6px;
 			}
 			.icon.dnd:hover { background-color: var(--color-shape-tertiary); border-color: var(--color-shape-tertiary); }
-
-			.icon.fav {
-				width: 32px; height: 32px; background-size: 20px; background-image: url('~img/icon/fav0.svg'); flex-shrink: 0; border-radius: 4px; opacity: 0;
-			}
-			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 
 			.info { 
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; 
