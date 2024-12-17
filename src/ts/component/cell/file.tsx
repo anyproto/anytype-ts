@@ -52,6 +52,7 @@ const CellFile = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		setEditing,
+		isEditing: () => isEditing,
 	}));
 
 	return (

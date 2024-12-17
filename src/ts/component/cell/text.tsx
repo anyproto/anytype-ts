@@ -42,26 +42,26 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		setValue(v);
 	};
 
-	const onPaste = (e: any, value: any) => {
+	const onPaste = (e: any, v: any) => {
 		if (relation.format == I.RelationType.Date) {
-			value = fixDateValue(value);
+			v = fixDateValue(v);
 		};
 
 		range.current = inputRef.current.getRange();
-		setValue(value);
-		save(value);
+		setValue(v);
+		save(v);
 	};
 
-	const onKeyUp = (e: any, value: string) => {
+	const onKeyUp = (e: any, v: string) => {
 		if (relation.format == I.RelationType.LongText) {
 			return;
 		};
 
 		if ([ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email ].includes(relation.format)) {
-			S.Menu.updateData('select', { disabled: !value });
+			S.Menu.updateData('select', { disabled: !v });
 		};
 
-		setValue(value);
+		setValue(v);
 
 		if (keyboard.isComposition) {
 			return;
@@ -71,7 +71,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			e.preventDefault();
 			e.persist();
 
-			save(value, () => {
+			save(v, () => {
 				S.Menu.closeAll(J.Menu.cell);
 
 				range.current = null;
@@ -84,11 +84,11 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		});
 	};
 
-	const onKeyUpDate = (e: any, value: any) => {
-		setValue(fixDateValue(value));
+	const onKeyUpDate = (e: any, v: any) => {
+		setValue(fixDateValue(v));
 
-		if (value.current) {
-			S.Menu.updateData(MENU_ID, { value: value.current });
+		if (v) {
+			S.Menu.updateData(MENU_ID, { value: v });
 		};
 
 		if (keyboard.isComposition) {
@@ -97,7 +97,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
-			save(value.current, () => S.Menu.close(MENU_ID));
+			save(v, () => S.Menu.close(MENU_ID));
 		});
 	};
 
@@ -131,9 +131,9 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		value.current = v;
 	};
 
-	const save = (value: any, callBack?: () => void) => {
+	const save = (v: any, callBack?: () => void) => {
 		if (onChange) {
-			onChange(value, callBack);
+			onChange(v, callBack);
 		};
 	};
 
@@ -168,14 +168,15 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	let Name = null;
 	let EditorComponent = null;
 	let val = record[relation.relationKey];
+	let icon = null;
 
 	if (isDate || isNumber) {
-		val = Relation.formatValue(relation, value, true);
+		val = Relation.formatValue(relation, val, true);
 		if (isNumber) {
-			val = value === null ? null : String(value);
+			val = val !== null ? String(val) : null;
 		};
 	} else {
-		val = String(value || '');
+		val = String(val || '');
 	};
 
 	if (isLongText && !isEditing && isInline) {
@@ -301,7 +302,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 	};
 
-	let icon = null;
 	if (isName) {
 		if (!view || (view && !view.hideIcon)) {
 			icon = (
@@ -356,11 +356,11 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					format.push('H:i');
 				};
 
-				val = val !== null ? U.Date.date(format.join(' ').trim(), value.current) : '';
+				val = val !== null ? U.Date.date(format.join(' ').trim(), val) : '';
 			} else
 			if (relation.format == I.RelationType.Number) {
 				val = Relation.formatValue(relation, val, true);
-				val = value !== null ? String(value) : null;
+				val = val !== null ? String(val) : null;
 			};
 
 			if (inputRef.current) {
@@ -391,13 +391,14 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 	useImperativeHandle(ref, () => ({
 		setEditing: (v: boolean) => setEditingHandler(v),
+		isEditing: () => isEditing,
 		onChange: (v: any) => onChangeHandler(v),
 	}));
 
 	return (
 		<>
 			{icon}
-			<Name name={value} />
+			<Name name={val} />
 		</>
 	);
 

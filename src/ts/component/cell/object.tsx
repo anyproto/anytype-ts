@@ -340,6 +340,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		clear,
 		blur,
 		setEditing,
+		isEditing: () => isEditing,
 	}));
 
 	return (

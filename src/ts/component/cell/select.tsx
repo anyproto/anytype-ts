@@ -321,6 +321,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		clear,
 		setEditing: setEditingHandler,
+		isEditing: () => isEditing,
 		getValue,
 		setValue,
 	}));
