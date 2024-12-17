@@ -9,7 +9,6 @@ import { I, S, U, J, Relation, keyboard } from 'Lib';
 const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const { id, relation, recordId, getRecord, elementMapper, onChange, arrayLimit, canEdit, placeholder, menuClassName, menuClassNameWrap } = props;
-	const nodeRef = useRef(null);
 	const entryRef = useRef(null);
 	const listRef = useRef(null);
 	const placeholderRef = useRef(null);
@@ -327,10 +326,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	}));
 
 	return (
-		<div 
-			ref={nodeRef} 
-			className={cn.join(' ')}
-		>
+		<div className={cn.join(' ')}>
 			{content}
 		</div>
 	);
