@@ -28,8 +28,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	} = props;
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
-	const relation = S.Record.getRelationByKey(relationKey);
+	const relation = S.Record.getRelationByKey(relationKey) || {};
 	const isName = relationKey == 'name';
+	const nodeRef = useRef(null);
+	const childRef = useRef<I.CellRef>(null);
 
 	const checkIcon = () => {
 		
@@ -445,8 +447,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const { hideIcon } = view;
 	};
 
-	const nodeRef = useRef(null);
-	const childRef = useRef<I.CellRef>(null);
 	const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 	const canEdit = canCellEdit(relation, record);
 	const placeholder = getPlaceholder(relation, record);
