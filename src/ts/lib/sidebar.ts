@@ -357,12 +357,12 @@ class Sidebar {
 		ref.setState({ page: (page == 'object' ? '' : 'object') });
 	};
 
-	rightPanelToggle (v: boolean, page?: string, param?: any) {
+	rightPanelToggle (v: boolean, isPopup?: boolean, page?: string, param?: any) {
 		if (v) {
 			S.Common.showSidebarRightSet(v);
 
 			if (page) {
-				this.rightPanelSwitch(page, param);
+				this.rightPanelSwitch(isPopup, page, param);
 			};
 		};
 
@@ -400,8 +400,8 @@ class Sidebar {
 		}, J.Constant.delay.sidebar);
 	};
 
-	rightPanelSwitch (page: string, param: any) {
-		S.Common.getRef('sidebarRight')?.setState({ page, ...param });
+	rightPanelSwitch (isPopup: boolean, page: string, param: any) {
+		S.Common.getRef('sidebarRight')?.setState({ isPopup, page, ...param });
 	};
 
 };

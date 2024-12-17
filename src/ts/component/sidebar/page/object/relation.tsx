@@ -90,7 +90,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	onSetUp () {
 		const object = this.getObject();
 
-		sidebar.rightPanelSwitch('type', { rootId: object.type });
+		sidebar.rightPanelSwitch(this.props.isPopup, 'type', { rootId: object.type });
 	};
 
 });

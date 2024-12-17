@@ -156,7 +156,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	close () {
-		sidebar.rightPanelToggle(false);
+		const { isPopup } = this.props;
+
+		sidebar.rightPanelToggle(false, isPopup);
 		this.previewRef.show(false);
 	};
 
