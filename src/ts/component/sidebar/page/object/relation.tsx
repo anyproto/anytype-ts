@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, sidebar, translate } from 'Lib';
+import { I, S, C, sidebar, translate, keyboard } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 
@@ -90,7 +90,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	onSetUp () {
 		const object = this.getObject();
 
-		sidebar.rightPanelSwitch('type', { rootId: object.type });
+		sidebar.rightPanelSwitch(keyboard.isPopup(), 'type', { rootId: object.type });
 	};
 
 });

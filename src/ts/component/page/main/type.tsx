@@ -371,9 +371,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onEdit () {
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
-		sidebar.rightPanelToggle(!S.Common.showSidebarRight, 'type', { rootId });
+		sidebar.rightPanelToggle(!S.Common.showSidebarRight, isPopup, 'type', { rootId });
 	};
 
 	onObjectAdd () {

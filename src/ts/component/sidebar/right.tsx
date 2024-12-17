@@ -6,13 +6,14 @@ import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
 
 interface Props {
-	isPopup: boolean;
+	isPopup?: boolean;
 };
 
 interface State {
 	page: string;
 	rootId: string;
 	details: any;
+	isPopup: boolean;
 };
 
 const Components = {
@@ -20,7 +21,7 @@ const Components = {
 	'object/relation': PageObjectRelation,
 };
 
-const SidebarRight = observer(class SidebarRight extends React.Component<{}, State> {
+const SidebarRight = observer(class SidebarRight extends React.Component<Props, State> {
 	
 	node = null;
 	refChild = null;
@@ -28,13 +29,14 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 		page: '',
 		rootId: '',
 		details: {},
+		isPopup: false,
 	};
 
     render() {
 		const { showSidebarRight } = S.Common;
 		const { page, rootId, details } = this.state;
 
-		if (!showSidebarRight) {
+		if (!showSidebarRight || !this.isPopup()) {
 			return null;
 		};
 
@@ -60,6 +62,10 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 			</div>
 		);
     };
+
+	isPopup () {
+		return this.props.isPopup == this.state.isPopup;
+	};
 
 });
 
