@@ -17,7 +17,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		this.scrollTo = this.scrollTo.bind(this);
 		this.onAdd = this.onAdd.bind(this);
-		this.onFav = this.onFav.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -64,13 +63,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								block={root}
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => this.cellRefs.set(id, ref)}
-								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
 								canEdit={allowedRelation && !item.isReadonlyRelation}
 								canDrag={allowedBlock}
-								canFav={allowedValue}
 								diffType={diffKeys.includes(item.relationKey) ? I.DiffType.Change : I.DiffType.None}
-								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
 								onCellChange={this.onCellChange}
@@ -208,30 +204,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 		
 		return items;
-	};
-
-	onFav (e: any, relationKey: string) {
-		e.stopPropagation();
-
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const items = this.getItems();
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
-		const featured = U.Common.objectCopy(object.featuredRelations || []);
-
-		if (!featured.includes(relationKey)) {
-			const item = items.find(it => it.relationKey == relationKey);
-			const cb = () => Action.toggleFeatureRelation(rootId, relationKey);
-
-			if (item.scope == I.RelationScope.Type) {
-				C.ObjectRelationAdd(rootId, [ relationKey ], cb);
-			} else {
-				cb();
-			};
-		} else {
-			Action.toggleFeatureRelation(rootId, relationKey)
-		};
 	};
 
 	onAdd (e: any) {
