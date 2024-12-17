@@ -1,17 +1,14 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { IconObject } from 'Component';
 
 interface Props {
 	icon?: string;
 };
 
-class ContentIcon extends React.Component<Props> {
+const ContentIcon = forwardRef<HTMLDivElement, Props>(({ icon = '' }, ref) => {
 
-	render () {
-		const { icon } = this.props;
-		return <IconObject size={96} object={{ iconEmoji: icon }} />;
-	};
-	
-};
+	return <IconObject size={96} object={{ iconEmoji: icon }} />;
+
+});
 
 export default ContentIcon;

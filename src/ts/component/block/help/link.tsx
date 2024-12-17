@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { IconObject } from 'Component';
 import { U } from 'Lib';
 
@@ -8,29 +8,17 @@ interface Props {
 	contentId?: string;
 };
 
-class ContentLink extends React.Component<Props> {
+const ContentLink = forwardRef<HTMLDivElement, Props>(({ icon = '', name = '', contentId = '' }, ref) => {
 
-	constructor (props: Props) {
-		super(props);
-		
-		this.onClick = this.onClick.bind(this);
-	};
+	return (
+		<>
+			<IconObject object={{ iconEmoji: icon }} />
+			<div className="name" onClick={() => U.Router.go(`/help/${contentId}`, {})}>
+				{name}
+			</div>
+		</>
+	);
 
-	render () {
-		const { icon, name } = this.props;
-		
-		return (
-			<React.Fragment>
-				<IconObject object={{ iconEmoji: icon }} />
-				<div className="name" onClick={this.onClick}>{name}</div>
-			</React.Fragment>
-		);
-	};
-	
-	onClick (e: any) {
-		U.Router.go(`/help/${this.props.contentId}`, {});
-	};
-	
-};
+});
 
 export default ContentLink;
