@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Label, Button, Header, Footer, Error } from 'Component';
-import { I, U, translate, Animation, analytics } from 'Lib';
+import { I, U, S, translate, Animation, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -46,6 +46,8 @@ class PageAuthSelect extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
+		S.Auth.clearAll();
+
 		Animation.to(() => {
 			U.Common.renderLinks($(this.node));
 

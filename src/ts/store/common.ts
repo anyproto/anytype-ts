@@ -251,10 +251,16 @@ class CommonStore {
 
 	get dateFormat (): I.DateFormat {
 		let ret = this.dateFormatValue;
+		
 		if (ret === null) {
 			ret = Storage.get('dateFormat');
+
+			if (undefined === ret) {
+				ret = I.DateFormat.Long;
+			};
 		};
-		return Number(ret) || I.DateFormat.Long;
+
+		return Number(ret);
 	};
 
 	get timeFormat (): I.TimeFormat {

@@ -18,7 +18,69 @@ const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/$
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
-	{ type: I.BlockType.IconPage, icon: '👋' },
+	//{ type: I.BlockType.IconPage, icon: '👋' },
+	{ type: I.BlockType.IconPage, icon: '🎄' },
+
+	title(`Desktop 0.44.0 Released!`),
+	text(`Before we say goodbye to the year, we're happy to share this final update packed with some nice improvements. In addition to bug fixes and reliability/performance enhancements, we would like to introduce two long-anticipated features. We hope you enjoy this update and wish you a joyful holiday season!`),
+	text(``),
+
+	h2(`Highlights`),
+
+	h3(`Date as an Object`),
+	text(`You can now open any date as a separate object to view the entire context related to that date, including mentions (@date), automatically created dates and custom date relations. Dates are accessible from relations, layouts, graph, calendar view and more.`),
+	text(`In addition, there are new Date and Time settings, and @date supports relative date formats such as @today or @tomorrow.`),
+	img(`44/1.png`),
+	text(``),
+
+	h3(`Simple Formulas`),
+	text(`The long-requested functionality is now available for Sets and Collections. You can count objects in the Grid view and perform simple math and aggregation functions with all types of relations.`),
+	img(`44/2.png`),
+	text(``),
+
+	h2(`Quality-of-Life`),
+	bullet(`Files and markups from the HTML and bookmarks are no longer created as objects when you place them in the app. This enhances the functionality of the Web Clipper and clipboard, resulting in a cleaner app without unnecessary file clutter.`),
+	bullet(`The Entry space can now be deleted if it’s no longer needed or if you prefer to use only shared spaces. You can export and import it into any other spaces (better to use the any-block format).`),
+	bullet(`Deeplinks to Objects include an invitation to the shared space when using the ${hl('Copy Link')} option, making collaboration and access more seamless.`),
+	bullet(`Added the ability to import data during the creation of a second space, simplifying the setup process.`),
+	bullet(`The Audio Player has been slightly restyled, with a background with a subtle shadow, slightly repositioned controls and updated icons.`),
+	bullet(`Some colour updates for both light and dark modes.`),
+	bullet(`The ${hl('Add Relation')} option has been removed from the File layout.`),
+	bullet(`Added an option to enable or disable custom CSS. Thanks, @${link('https://community.anytype.io/t/custom-css-in-anytype-directly/24498', 'Shampra')}!`),
+	text(``),
+
+	h2(`Bug Fixes`),
+	bullet(`Resolved an issue where the Link option in the widget settings menu could not be selected.`),
+	bullet(`Fixed an issue in global search where the cursor would jump from its position when entering or deleting text, particularly after switching apps. Thanks, @${link('https://community.anytype.io/t/cursor-jumping-in-global-search/25012', 'dzlg')}!`),
+	bullet(`Re-fixed an issue where local links with "$" in their path would cause the super link text to appear in some source text.`),
+	bullet(`Search queries retain entered symbols, resolving an issue with missing characters.`),
+	bullet(`Search results remain consistent when reopening the search panel.`),
+	bullet(`Mermaid diagrams remain visible simultaneously. Thanks, @${link('https://community.anytype.io/t/only-one-mermaid-diagram-at-the-time-0-43-21-beta/25619', 'langtind')}!`),
+	bullet(`The checkbox ticks as expected when attempting to delete a Vault.`),
+	bullet(`The Brazilian currency symbols (R$) are displayed correctly. Thanks, @${link('https://community.anytype.io/t/bug-when-inserting-reference-to-values-in-brl-reais/24380', 'perereco')}!`),
+	bullet(`Inline LaTeX with multiple standalone backslash commands now renders correctly. Thanks, @${link('https://community.anytype.io/t/inline-latex-for-multiple-standalone-backslash-commands-not-rendering/25537', 'zewwo')}!`),
+	bullet(`Applying formatting via keyboard shortcuts affects all selected text across multiple levels of indentation. Thanks, @${link('https://community.anytype.io/t/formatting-shortcuts-only-apply-to-the-top-indent-level/24745', 'ferdzso')}!`),
+	bullet(`The ${hl('Local Only')} tooltip in Network Mode is now clearly visible when the operating system is set to dark mode. Thanks, @${link('https://community.anytype.io/t/tooltip-local-only-in-network-mode-barely-visible-when-the-os-is-in-dark-mode/25317', 'krst')}!`),
+	bullet(`${hl(`${cmd} + A`)} in an overlay now selects only the content within the overlay, without affecting the object underneath. Thanks, @${link('https://community.anytype.io/t/ctrl-cmd-a-in-an-overlay-also-selects-in-the-object-underneath/23642', 'krst')}!`),
+	bullet(`${hl('Click')} handlers in Mermaid embed blocks open external links in a browser. Unfortunately, internal resource links within Anytype can't be fixed as they're purified by Mermaid. Thanks, @${link('https://community.anytype.io/t/mermaid-embed-block-mermaid-click-not-working-as-expected/24948', 'francodgstn')}!`),
+	bullet(`Converting multiple blocks using shortcuts works correctly. Thanks, @${link('https://community.anytype.io/t/converting-multiple-blocks-with-shortcuts-not-working-anymore/25523', 'siousu')}!`),
+	bullet(`Fixed an issue where element outlines would become visible. Thanks, @${link('https://community.anytype.io/t/outlines-visible-when-zooming-in-and-out/25500', 'zma17')}!`),
+	bullet(`The right-click menu is correctly updated after an object or type is removed from the All Objects. Thanks, @${link('https://community.anytype.io/t/after-deleting-one-type-under-all-objects-the-right-click-menu-does-not-refresh-its-content-correctly/25295', 'Facility6384')} and @${link('https://community.anytype.io/t/after-deleting-one-type-under-all-objects-the-right-click-menu-does-not-refresh-its-content-correctly/25295', 'endlessblink')}!`),
+	bullet(`Frequently clicking on the ${hl('Get My Key')} button does not result in an error.`),
+	bullet(`Long space names no longer overlap with the sidebar button.`),
+	bullet(`Links starting with tel: are not prepended with https:// anymore. Thanks, @${link('https://community.anytype.io/t/tel-urls-work-incorrectly-on-desktop/25178', 'fieldnote')}!`),
+	bullet(`Formatting text as monospace using backticks ${hl('\`\`')} is applied without shifting the formatting of subsequent words in a paragraph. Thanks, @${link('https://community.anytype.io/t/monospace-formatting-with-backticks-shifts-following-formatting-left/24584', 'yuritem')}!`),
+	bullet(`Reordering views in Sets and Collections is consistent and the drop-down list remains open after reordering for additional adjustments.`),
+	bullet(`Resolved a crash caused by an ENOENT error.`),
+	bullet(`The search icon in Sets and Collections displays correctly.`),
+	bullet(`Fixed an issue where an Object name might not be saved when entering it for a new Object in a Set.`),
+	bullet(`Fixed unexpected behaviour of the context menu when it could follow the mouse cursor and lose the context of the element it refers to. Thanks, @${link('https://community.anytype.io/t/actions-popup-follows-mouse-and-loses-context-to-element/25705', 'krst')}!`),
+	text(``),
+
+	callout(`Please be reminded that we no longer support macOS Catalina.`, '⚠️'),
+
+	div(),
+	// --------------------------------------------//
 
 	h1(`Desktop 0.43.7 Released!`),
 	callout(`This follow-up update to the previous release brings improved performance and a few additional enhancements.`, '📃'),
@@ -37,7 +99,7 @@ export default [
 	div(),
 	// --------------------------------------------//
 
-	title(`Desktop 0.43.0 Released!`),
+	h1(`Desktop 0.43.0 Released!`),
 	callout(`A big thank you to our amazing Community for the valuable suggestions and reports that continue to help us along the way!`, '💌'),
 
 	h2(`Highlights on this release`),
