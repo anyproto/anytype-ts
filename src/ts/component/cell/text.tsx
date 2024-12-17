@@ -67,8 +67,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			return;
 		};
 
-		let ret = false;
-
 		keyboard.shortcut('escape, enter, enter+shift', e, (pressed) => {
 			e.preventDefault();
 			e.persist();
@@ -83,8 +81,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
 				};
 			});
-
-			ret = true;
 		});
 	};
 
@@ -219,19 +215,17 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				ph.push('hh:mm');
 			};
 
-			const maskOptions = {
-				mask: mask.join(' '),
-				separator: '.',
-				hourFormat: 12,
-				alias: 'datetime',
-			};
-
 			EditorComponent = (item: any) => (
 				<Input 
 					ref={inputRef} 
 					id="input" 
 					{...item} 
-					maskOptions={maskOptions} 
+					maskOptions={{
+						mask: mask.join(' '),
+						separator: '.',
+						hourFormat: 12,
+						alias: 'datetime',
+					}} 
 					placeholder={ph.join(' ')} 
 					onKeyUp={onKeyUpDate} 
 				/>
@@ -353,57 +347,41 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				const format = [];
 
 				switch (viewRelation.dateFormat) {
-					case I.DateFormat.ISO: {
-						format.push('Y.m.d');
-						break;
-					};
-
-					case I.DateFormat.ShortUS: {
-						format.push('m.d.Y');
-						break;
-					};
-
-					default: {
-						format.push('d.m.Y');
-						break;
-					};
+					case I.DateFormat.ISO: format.push('Y.m.d'); break;
+					case I.DateFormat.ShortUS: format.push('m.d.Y'); break;
+					default: format.push('d.m.Y'); break;
 				};
 
 				if (viewRelation.includeTime) {
 					format.push('H:i');
 				};
 
-				val = value.current !== null ? U.Date.date(format.join(' ').trim(), value.current) : '';
+				val = val !== null ? U.Date.date(format.join(' ').trim(), value.current) : '';
 			} else
 			if (relation.format == I.RelationType.Number) {
-				val = Relation.formatValue(relation, value.current, true);
-				val = value === null ? null : String(value);
+				val = Relation.formatValue(relation, val, true);
+				val = value !== null ? String(value) : null;
 			};
 
 			if (inputRef.current) {
-				inputRef.current.setValue(value);
+				inputRef.current.setValue(val);
 
 				if (inputRef.current.setRange) {
-					const length = String(value || '').length;
+					const length = String(val || '').length;
 					inputRef.current.setRange(range.current || { from: length, to: length });
 				};
-			};
-
-			cell.addClass('isEditing');
-			if (card && card.length) {
-				card.addClass('isEditing');
 			};
 
 			if (cellPosition) {
 				cellPosition(id);
 			};
 		} else {
-			cell.removeClass('isEditing');
 			cell.find('.cellContent').css({ left: '', right: '' });
+		};
 
-			if (card && card.length) {
-				card.removeClass('isEditing');
-			};
+		cell.toggleClass('isEditing', isEditing);
+		if (card && card.length) {
+			card.toggleClass('isEditing', isEditing);
 		};
 
 		if (S.Common.cellId) {
