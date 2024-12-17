@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, Relation, translate, sidebar } from 'Lib';
+import { I, S, C, U, Relation, translate, sidebar, keyboard } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
@@ -59,6 +59,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	componentDidMount (): void {
 		this.init();
+
+		this.previewRef.show(true);
 	};
 
 	componentDidUpdate (): void {
@@ -66,10 +68,16 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentWillUnmount () {
+		const { isPopup } = this.props;
+		const container = U.Common.getPageContainer(isPopup);
+
 		S.Common.getRef('sidebarRight')?.setState({ details: {}, rootId: ''});
+		container.removeClass('overPopup');
 	};
 
 	init () {
+		const { isPopup } = this.props;
+		const container = U.Common.getPageContainer(isPopup);
 		const type = this.getObject();
 		const sections = this.getSections();
 		const details: any = this.props.details || {};
@@ -84,6 +92,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
 		sections.forEach(it => this.updateObject(it.id));
+
+		container.addClass('overPopup');
 	};
 	
 	getObject () {

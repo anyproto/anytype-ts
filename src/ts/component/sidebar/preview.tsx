@@ -1,14 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Title, Label, Checkbox, Icon } from 'Component';
-import { I, S, U, Relation, translate } from 'Lib';
-
-const SIDEBAR_WIDTH = 348;
+import { I, S, U, J, Relation, translate, keyboard } from 'Lib';
 
 const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.Component<I.SidebarPageComponent> {
 
 	node: any = null;
+	frame = 0;
 	object: any = {
 		recommendedLayout: I.ObjectLayout.Page,
 		layoutAlign: I.BlockHAlign.Left,
@@ -78,7 +78,13 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	componentDidMount (): void {
-		this.show(true);
+		this.resize();
+
+		$(window).off('resize.sidebarPreview').on('resize.sidebarPreview', () => this.resize());
+	};
+
+	componentWillUnmount (): void {
+		$(window).off('resize.sidebarPreview');
 	};
 
 	update (object: any) {
@@ -91,20 +97,18 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	getWidth () {
-		const { ww } = U.Common.getWindowDimensions();
+		const { layoutWidth, layoutFormat } = this.object;
 
-		let w = this.object.layoutWidth;
-		let mw = ww - SIDEBAR_WIDTH;
+		let mw = this.getNodeWidth();
 		let width = 0;
 
-		if (this.object.layoutFormat == 'list') {
+		if (layoutFormat == 'list') {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;
 
 			mw -= 96;
-			w = (mw - size) * w;
-			width = Math.max(size, Math.min(mw, size + w));
+			width = Math.max(size, Math.min(mw, size + (mw - size) * layoutWidth));
 		};
 
 		return Math.max(300, width);
@@ -126,10 +130,12 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 								<div className="headerPlug" />
 								{this.insertEmtpyNodes('item', 1)}
 							</div>
+
 							<div className="group">
 								<div className="headerPlug" />
 								{this.insertEmtpyNodes('item', 3)}
 							</div>
+
 							<div className="group">
 								<div className="headerPlug" />
 								{this.insertEmtpyNodes('item', 2)}
@@ -138,10 +144,12 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 					);
 					break;
 				};
+
 				case I.ViewType.Calendar: {
 					content = this.insertEmtpyNodes('day', 28, { height: this.getWidth() / 7 });
 					break;
 				};
+
 				default: {
 					content = this.insertEmtpyNodes('line', 5);
 					break;
@@ -158,6 +166,23 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 	insertEmtpyNodes (className, count, style?: any) {
 		return Array(count).fill(null).map((el, i) => <div style={style || {}} className={className} key={i} />);
+	};
+
+	getNodeWidth (): number {
+		const isPopup = keyboard.isPopup();
+		const container = U.Common.getPageContainer(isPopup);
+
+		return container.width() - (isPopup ? J.Size.sidebar.right : 0);
+	};
+
+	resize () {
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			$(this.node).css({ width: this.getNodeWidth() });
+		});
 	};
 
 });

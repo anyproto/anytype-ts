@@ -2,7 +2,7 @@
 
 .layoutPreviewWrapper {
     position: absolute; z-index: 10; top: 0px; right: 100%; opacity: 0; transition: opacity $transitionSidebarTime linear;
-    height: 100vh; width: calc(100vw - $sidebarRightWidth); background-color: var(--color-bg-primary); text-align: center; overflow: hidden;
+    height: 100vh; width: calc(100% - $sidebarRightWidth); background-color: var(--color-bg-primary); text-align: center; overflow: hidden;
 }
 .layoutPreviewWrapper.show { opacity: 1; }
 .layoutPreviewWrapper.show {
@@ -20,7 +20,7 @@
         .title { @include text-title; }
         .description { @include text-header3; font-weight: 400; margin-bottom: 10px; }
 
-        .featured { display: flex; align-items: center; gap: 0px 8px; }
+        .featured { display: flex; align-items: center; gap: 0px 8px; flex-wrap: wrap; }
         .featured {
             .label { display: flex; align-items: center; gap: 0px 8px; }
             .label::after { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-tertiary); }

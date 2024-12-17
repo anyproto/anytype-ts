@@ -102,7 +102,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 					)}
 				</div>
 				<div id="sidebarDummyRight" className="sidebarDummy" />
-				<SidebarRight ref={ref => S.Common.refSet('sidebarRight', ref)} key="sidebarRight" {...this.props} />
+				<SidebarRight 
+					ref={ref => S.Common.refSet('sidebarRight', ref)} 
+					key="sidebarRight" 
+					{...this.props} 
+				/>
 			</div>
 		);;
 	};

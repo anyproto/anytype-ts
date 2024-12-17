@@ -5,6 +5,10 @@ import { U, S, keyboard } from 'Lib';
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
 
+interface Props {
+	isPopup: boolean;
+};
+
 interface State {
 	page: string;
 	rootId: string;
@@ -36,7 +40,6 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 
 		const Component = Components[page];
 		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
-		const isPopup = keyboard.isPopup();
 
         return (
 			<div 
@@ -50,7 +53,6 @@ const SidebarRight = observer(class SidebarRight extends React.Component<{}, Sta
 							ref={ref => this.refChild = ref} 
 							{...this.props} 
 							rootId={rootId}
-							isPopup={isPopup}
 							details={details}
 						/> 
 					</div>
