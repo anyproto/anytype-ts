@@ -24,7 +24,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const { 
 		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
 		isInline, menuClassName = '', menuClassNameWrap = '', block, subId, rootId, onCellChange,
-		onMouseEnter, onMouseLeave, maxWidth, cellPosition, showTooltip, withName, readonly, tooltipX, tooltipY,
+		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, showTooltip, withName, readonly, tooltipX, tooltipY,
 	} = props;
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
@@ -508,6 +508,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		onClick: onClickHandler,
+		isEditing: () => childRef.current.isEditing(),
 	}));
 
 	return (
@@ -515,7 +516,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			ref={nodeRef} 
 			id={elementId} 
 			className={cn.join(' ')} 
-			onClick={onClickHandler} 
+			onClick={onClick} 
 			onMouseEnter={onMouseEnterHandler} 
 			onMouseLeave={onMouseLeaveHandler}
 		>

@@ -927,7 +927,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if ((relationKey == 'name') && ref.ref.isEditing && !ref.ref.isEditing()) {
+		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing()) {
 			const ids = selection?.get(I.SelectType.Record) || [];
 
 			if (keyboard.withCommand(e)) {
