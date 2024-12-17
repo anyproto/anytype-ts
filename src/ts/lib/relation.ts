@@ -426,7 +426,7 @@ class Relation {
 
 	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
-		const options: any[] = U.Common.objectCopy(S.Record.getObjectRelations(rootId, blockId)).filter(it => {
+		const options: any[] = U.Common.objectCopy(S.Record.getDataviewRelations(rootId, blockId)).filter(it => {
 			if (it.isInstalled && (it.relationKey == 'picture')) {
 				return true;
 			};

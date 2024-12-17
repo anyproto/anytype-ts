@@ -175,6 +175,8 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		S.Menu.open('blockRelationEdit', { 
 			element: `#sidebarRight #${container} #item-${id}`,
 			horizontal: I.MenuDirection.Center,
+			classNameWrap: 'fromSidebar',
+			className: 'fixed',
 			data: {
 				rootId: object.id,
 				relationId: id,

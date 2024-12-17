@@ -1414,6 +1414,7 @@
 	"menuBlockRelationViewFeaturedRelations": "Featured Relations",
 	"menuBlockRelationViewInThisObject": "In this Object",
 	"menuBlockRelationViewFromType": "From Type %s",
+	"menuBlockRelationViewConflictingRelations": "Conflicting Relations",
 
 	"menuBlockStyleTurnText": "Turn into text",
 	"menuBlockStyleTurnList": "Turn into list",
