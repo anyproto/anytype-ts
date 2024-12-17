@@ -166,6 +166,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	useEffect(() => {
+		onVolume(1);
 		resize();
 		rebind();
 
