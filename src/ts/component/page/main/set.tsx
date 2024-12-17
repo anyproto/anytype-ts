@@ -270,6 +270,11 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			return true;			
 		};
 
+		const object = S.Detail.get(rootId, rootId, [ 'isArchived' ], true);
+		if (object.isArchived) {
+			return true;
+		};
+
 		return !U.Space.canMyParticipantWrite();
 	};
 
