@@ -39,12 +39,12 @@ const DragVertical = forwardRef<DragVerticalRefProps, Props>(({
 	};
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>, value: string) => {
-		const v = 1 - Number(value) || 0;
+		const v = Number(value) || 0;
 
 		e.preventDefault();
 		e.stopPropagation();
 
-		setHeight(v);
+		setHeight(1 - v);
 
 		if (onChange) {
 			onChange(e, v);
