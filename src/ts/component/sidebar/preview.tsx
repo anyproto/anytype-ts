@@ -8,6 +8,7 @@ import { I, S, U, J, Relation, translate, keyboard } from 'Lib';
 const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.Component<I.SidebarPageComponent> {
 
 	node: any = null;
+	refPreview = null;
 	frame = 0;
 	object: any = {
 		recommendedLayout: I.ObjectLayout.Page,
@@ -42,7 +43,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 		return (
 			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
-				<div className={cn.join(' ')} style={{ width: this.getWidth()}}>
+				<div ref={ref => this.refPreview = ref} className={cn.join(' ')}>
 					<div className="layoutHeader">
 						{isNote ? '' : (
 							<div className="titleWrapper">
@@ -81,6 +82,10 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		this.resize();
 
 		$(window).off('resize.sidebarPreview').on('resize.sidebarPreview', () => this.resize());
+	};
+
+	componentDidUpdate (): void {
+		this.resize();	
 	};
 
 	componentWillUnmount (): void {
@@ -182,6 +187,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 		this.frame = raf(() => {
 			$(this.node).css({ width: this.getNodeWidth() });
+			$(this.refPreview).css({ width: this.getWidth() });
 		});
 	};
 
