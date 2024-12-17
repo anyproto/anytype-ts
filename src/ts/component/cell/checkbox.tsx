@@ -35,6 +35,7 @@ const CellCheckbox = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		onClick,
+		getValue: () => value,
 	}));
 
 	return (

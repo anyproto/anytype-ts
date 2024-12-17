@@ -263,9 +263,12 @@ export interface Cell {
 };
 
 export interface CellRef {
-	onClick?(): void;
+	onClick?(e: any): void;
+	onBlur?(): void;
 	setEditing?(v: boolean): void;
 	isEditing?(): boolean;
+	onChange?(value: any): void;
+	getValue?(): any;
 };
 
 export interface BoardGroup {

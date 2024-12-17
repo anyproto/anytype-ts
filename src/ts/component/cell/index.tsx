@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -19,123 +19,22 @@ interface Props extends I.Cell {
 	recordIdx?: number;
 };
 
-const Cell = observer(class Cell extends React.Component<Props> {
+const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
-	node: any = null;
-	public static defaultProps = {
-		canOpen: true,
-	};
+	const { 
+		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
+		isInline, menuClassName = '', menuClassNameWrap = '', block, subId, rootId, onCellChange,
+		onMouseEnter, onMouseLeave, maxWidth, cellPosition, showTooltip, withName, readonly, tooltipX, tooltipY,
+	} = props;
+	const view = getView ? getView() : null;
+	const record = getRecord(recordId);
+	const relation = S.Record.getRelationByKey(relationKey);
+	const isName = relationKey == 'name';
 
-	ref = null;
-	timeout = 0;
-	
-	constructor (props: Props) {
-		super(props);
+	const checkIcon = () => {
 		
-		this.onClick = this.onClick.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
-	};
-
-	render () {
-		const { elementId, relationKey, recordId, getRecord, getView, onClick, idPrefix } = this.props;
-		const record = getRecord(recordId);
-		const relation = this.getRelation();
-		const view = getView ? getView() : null;
-
-		if (!relation || !record) {
-			return null;
-		};
-
-		if (view) {
-			const { hideIcon } = view;
-		};
-
-		const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
-		const canEdit = this.canCellEdit(relation, record);
-		const placeholder = this.getPlaceholder(relation, record);
-		const cn = [ 
-			'cellContent', 
-			'c-' + relation.relationKey,
-			Relation.className(relation.format), 
-			(canEdit ? 'canEdit' : ''), 
-			(relationKey == 'name' ? 'isName' : ''),
-			(!this.checkValue() ? 'isEmpty' : ''),
-		];
-
-		let CellComponent: any = null;
-
-		const props = {
-			...this.props,
-			ref: ref => this.ref = ref,
-			id,
-			key: id,
-			canEdit,
-			relation,
-			placeholder,
-			onChange: this.onChange,
-		};
-
-		switch (relation.format) {
-			default:
-			case I.RelationType.ShortText:
-			case I.RelationType.Number:
-			case I.RelationType.LongText:
-			case I.RelationType.Date:
-				CellComponent = CellText;
-				break;
-
-			case I.RelationType.Select:	
-			case I.RelationType.MultiSelect:
-				CellComponent = CellSelect;
-				break;
-				
-			case I.RelationType.Checkbox:
-				CellComponent = CellCheckbox;
-				break;
-
-			case I.RelationType.File:
-				CellComponent = CellFile;
-				break;
-				
-			case I.RelationType.Object:
-				CellComponent = CellObject;
-				break;
-				
-			case I.RelationType.Url:
-			case I.RelationType.Email:
-			case I.RelationType.Phone:
-				CellComponent = CellText;
-				break;
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node} 
-				id={elementId} 
-				className={cn.join(' ')} 
-				onClick={onClick} 
-				onMouseEnter={this.onMouseEnter} 
-				onMouseLeave={this.onMouseLeave}
-			>
-				<CellComponent {...props} />
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.checkIcon();
-	};
-
-	componentDidUpdate () {
-		this.checkIcon();
-	};
-
-	checkIcon () {
-		const { getView } = this.props;
-		const view = getView ? getView() : null;
-		const node = $(this.node);
+		const node = $(nodeRef.current);
+		const icon = node.find('.iconObject');
 
 		node.removeClass('withIcon');
 
@@ -143,44 +42,29 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			return;
 		};
 
-		const relation = this.getRelation();
-		if (!relation || (relation.relationKey != 'name')) {
+		if (!relation || !isName) {
 			return;
 		};
-
-		const icon = node.find('.iconObject');
 
 		if (icon.length) {
 			node.addClass('withIcon');
 		};
 	};
 
-	checkValue (): boolean {
-		const { recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
-		const relation = this.getRelation();
-
-		if (relation.relationKey == 'name') {
-			return true;
-		};
-
-		return Relation.checkRelationValue(relation, record[relation.relationKey]);
+	const checkValue = (): boolean => {
+		return isName ? true : Relation.checkRelationValue(relation, record[relation.relationKey]);
 	};
 
-	onClick (e: any) {
+	const onClickHandler = (e: any) => {
 		e.stopPropagation();
-
-		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, cellPosition, isInline } = this.props;
-		const record = getRecord(recordId);
-		const relation = this.getRelation();
 
 		if (!relation || !record) {
 			return;
 		};
 
 		const value = record[relation.relationKey] || '';
-		const canEdit = this.canCellEdit(relation, record);
-		const placeholder = this.getPlaceholder(relation, record);
+		const canEdit = canCellEdit(relation, record);
+		const placeholder = getPlaceholder(relation, record);
 
 		if (!canEdit) {
 			if (value) {
@@ -205,7 +89,6 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 		const className = [];
-		const pageContainer = $(this.props.pageContainer);
 
 		if (menuClassName) {
 			className.push(menuClassName);
@@ -234,11 +117,14 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				keyboard.disableBlur(true);
 			};
 
-			if (this.ref && this.ref.setEditing) {
-				this.ref.setEditing(true);
-			};
-			if (this.ref && this.ref.onClick) {
-				this.ref.onClick();
+			if (childRef.current) {
+				if (childRef.current.setEditing) {
+					childRef.current.setEditing(true);
+				};
+
+				if (childRef.current && childRef.current.onClick) {
+					childRef.current.onClick(e);
+				};
 			};
 
 			keyboard.disableSelection(true);
@@ -249,11 +135,14 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			keyboard.disableBlur(false);
 			keyboard.disableSelection(false);
 
-			if (this.ref && this.ref.onBlur) {
-				this.ref.onBlur();
-			};
-			if (this.ref && this.ref.setEditing) {
-				this.ref.setEditing(false);
+			if (childRef.current) {
+				if (childRef.current && childRef.current.onBlur) {
+					childRef.current.onBlur();
+				};
+
+				if (childRef.current.setEditing) {
+					childRef.current.setEditing(false);
+				};
 			};
 
 			$(`#${cellId}`).removeClass('isEditing');
@@ -273,7 +162,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			onClose: () => setOff(),
 			data: { 
 				cellId,
-				cellRef: this.ref,
+				cellRef: childRef.current,
 				rootId,
 				subId,
 				blockId: block.id,
@@ -284,10 +173,11 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				placeholder,
 				canEdit,
 				onChange: (value: any, callBack?: (message: any) => void) => {
-					if (this.ref && this.ref.onChange) {
-						this.ref.onChange(value);
+					if (childRef.current && childRef.current.onChange) {
+						childRef.current.onChange(value);
 					};
-					this.onChange(value, callBack);
+
+					onChange(value, callBack);
 				},
 			},
 		};
@@ -408,7 +298,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					noFilter: true,
 					options,
 					onSelect: (event: any, item: any) => {
-						const value = this.ref?.ref?.getValue();
+						const value = childRef.current.getValue();
 						if (!value) {
 							return;
 						};
@@ -440,8 +330,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			};
 					
 			case I.RelationType.Checkbox: {
-				if (this.ref.onClick) {
-					this.ref.onClick();
+				if (childRef.current.onClick) {
+					childRef.current.onClick(e);
 				};
 				ret = true;
 				break; 
@@ -454,12 +344,14 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 
 		const bindContainerClick = () => {
-			pageContainer.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => { 
+			const pc = $(pageContainer);
+
+			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => { 
 				if (!$(e.target).parents(`#${cellId}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
 
-					pageContainer.off(`mousedown.cell${cellId}`);
+					pc.off(`mousedown.cell${cellId}`);
 				};
 			});
 		};
@@ -486,7 +378,6 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			if (closeIfOpen) {
 				setOff();
 				S.Menu.closeAll(J.Menu.cell);
-				window.clearTimeout(this.timeout);
 			};
 		} else {
 			setOn();
@@ -497,11 +388,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 	};
 
-	onChange (value: any, callBack?: (message: any) => void) {
-		const { onCellChange, recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
-		const relation = this.getRelation();
-
+	const onChange = (value: any, callBack?: (message: any) => void) => {
 		if (!relation) {
 			return null;
 		};
@@ -512,10 +399,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 	};
 
-	onMouseEnter (e: any) {
-		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, recordId, withName, getRecord } = this.props;
-		const record = getRecord(recordId);
-		const relation = this.getRelation();
+	const onMouseEnterHandler = (e: any) => {
 		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, record.id)}`);
 
 		if (onMouseEnter) {
@@ -523,15 +407,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 
 		if (showTooltip) {
-			const text = !this.checkValue() && withName ? translate(`placeholderCell${relation.format}`) : relation.name;
+			const text = !checkValue() && withName ? translate(`placeholderCell${relation.format}`) : relation.name;
 
 			Preview.tooltipShow({ text, element: cell, typeX: tooltipX, typeY: tooltipY, delay: 1000 });
 		};
 	};
 	
-	onMouseLeave (e: any) {
-		const { onMouseLeave } = this.props;
-
+	const onMouseLeaveHandler = (e: any) => {
 		if (onMouseLeave) {
 			onMouseLeave(e);
 		};
@@ -539,19 +421,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		Preview.tooltipHide(false);
 	};
 
-	getRelation () {
-		return S.Record.getRelationByKey(this.props.relationKey);
-	};
-
-	getPlaceholder (relation: any, record: any): string {
-		const { placeholder } = this.props;
-		const canEdit = this.canCellEdit(relation, record);
+	const getPlaceholder = (relation: any, record: any): string => {
+		const canEdit = canCellEdit(relation, record);
 
 		return !canEdit ? translate(`placeholderCellCommon`) : (placeholder || translate(`placeholderCell${relation.format}`));
 	};
 
-	canCellEdit (relation: any, record: any): boolean {
-		const { readonly } = this.props;
+	const canCellEdit = (relation: any, record: any): boolean => {
 		if (readonly) {
 			return false;
 		};
@@ -565,6 +441,88 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		return true;
 	};
 
-});
+	if (view) {
+		const { hideIcon } = view;
+	};
+
+	const nodeRef = useRef(null);
+	const childRef = useRef<I.CellRef>(null);
+	const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+	const canEdit = canCellEdit(relation, record);
+	const placeholder = getPlaceholder(relation, record);
+	const cn = [ 
+		'cellContent', 
+		'c-' + relation.relationKey,
+		Relation.className(relation.format), 
+		(canEdit ? 'canEdit' : ''), 
+		(relationKey == 'name' ? 'isName' : ''),
+		(!checkValue() ? 'isEmpty' : ''),
+	];
+
+	let CellComponent: any = null;
+
+	const childProps = {
+		...props,
+		id,
+		key: id,
+		canEdit,
+		relation,
+		placeholder,
+		onChange,
+	};
+
+	switch (relation.format) {
+		default:
+		case I.RelationType.ShortText:
+		case I.RelationType.Number:
+		case I.RelationType.LongText:
+		case I.RelationType.Date:
+			CellComponent = CellText;
+			break;
+
+		case I.RelationType.Select:	
+		case I.RelationType.MultiSelect:
+			CellComponent = CellSelect;
+			break;
+			
+		case I.RelationType.Checkbox:
+			CellComponent = CellCheckbox;
+			break;
+
+		case I.RelationType.File:
+			CellComponent = CellFile;
+			break;
+			
+		case I.RelationType.Object:
+			CellComponent = CellObject;
+			break;
+			
+		case I.RelationType.Url:
+		case I.RelationType.Email:
+		case I.RelationType.Phone:
+			CellComponent = CellText;
+			break;
+	};
+
+	useEffect(() => checkIcon());
+
+	useImperativeHandle(ref, () => ({
+		onClick: onClickHandler,
+	}));
+
+	return (
+		<div 
+			ref={nodeRef} 
+			id={elementId} 
+			className={cn.join(' ')} 
+			onClick={onClickHandler} 
+			onMouseEnter={onMouseEnterHandler} 
+			onMouseLeave={onMouseLeaveHandler}
+		>
+			<CellComponent ref={childRef} {...childProps} />
+		</div> 
+	);
+
+}));
 
 export default Cell;

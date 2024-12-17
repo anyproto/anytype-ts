@@ -393,6 +393,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		setEditing: (v: boolean) => setEditingHandler(v),
 		isEditing: () => isEditing,
 		onChange: (v: any) => onChangeHandler(v),
+		getValue: () => val,
+		onBlur,
 	}));
 
 	return (
