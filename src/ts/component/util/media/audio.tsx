@@ -31,7 +31,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const volumeIconRef = useRef(null);
 	const playIconRef = useRef(null);
 	const floaterRef = useRef(null);
-	const resizeObserver = new ResizeObserver(() => onResize());
+	const resizeObserver = new ResizeObserver(() => resize());
 	const [ current, setCurrent ] = useState<PlaylistItem>(null);
 	const { src, name }	= current || {};
 	const ci = [ 'volume' ];
@@ -57,11 +57,6 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 	const resize = () => {
 		timeRef.current?.resize();
-	};
-
-	const onResize = () => {
-		resize();
-		rebind();
 	};
 
 	const onPlayClick = (e: React.MouseEvent) => {
@@ -171,10 +166,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	useEffect(() => {
-		if (nodeRef.current) {
-			resizeObserver.observe(nodeRef.current);
-		};
-		setCurrent(playlist[0]);
+		onVolume(1);
 
 		return () => {
 			unbind();
@@ -183,13 +175,17 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 				resizeObserver.unobserve(nodeRef.current);
 			};
 		};
-	});
+	}, []);
 
 	useEffect(() => {
-		onVolume(1);
 		resize();
 		rebind();
-	}, []);
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+		setCurrent(playlist[0]);
+	});
 
 	useImperativeHandle(ref, () => ({
 		updatePlaylist: (playlist: PlaylistItem[]) => {

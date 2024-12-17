@@ -582,6 +582,10 @@ class Relation {
 		return this.isUrl(type) || [ I.RelationType.Number, I.RelationType.ShortText ].includes(type);
 	};
 
+	public isDate (type: I.RelationType) {
+		return type == I.RelationType.Date;
+	};
+
 	public getUrlScheme (type: I.RelationType, value: string): string {
 		value = String(value || '');
 

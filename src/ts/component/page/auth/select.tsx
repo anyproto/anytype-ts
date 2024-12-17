@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Frame, Label, Button, Header, Footer } from 'Component';
-import { I, U, translate, Animation, analytics } from 'Lib';
+import { I, U, S, translate, Animation, analytics } from 'Lib';
 
 const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -15,6 +15,8 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
+		S.Auth.clearAll();
+
 		Animation.to(() => {
 			U.Common.renderLinks($(nodeRef.current));
 

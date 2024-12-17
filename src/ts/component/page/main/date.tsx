@@ -69,14 +69,14 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			const filters: I.Filter[] = [];
 
 			if (relation.format == I.RelationType.Object) {
-				filters.push({ relationKey: relationKey, condition: I.FilterCondition.In, value: [ object.id ] });
+				filters.push({ relationKey, condition: I.FilterCondition.In, value: [ object.id ] });
 			} else {
-				filters.push({ relationKey: relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
+				filters.push({ relationKey, condition: I.FilterCondition.Equal, value: object.timestamp, format: I.RelationType.Date });
 			};
 
 			if ([ 'createdDate' ].includes(relationKey)) {
-				filters.push({ relationKey: 'creator', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId });
-				keys.push('creator');
+				filters.push({ relationKey: 'origin', condition: I.FilterCondition.NotEqual, value: I.ObjectOrigin.Builtin });
+				keys.push('origin');
 			};
 
 			if ([ 'lastModifiedDate' ].includes(relationKey)) {
