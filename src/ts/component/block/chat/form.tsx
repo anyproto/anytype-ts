@@ -371,7 +371,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onKeyUpInput (e: any) {
-		this.range = this.refEditable.getRange();
+		this.range = this.refEditable.getRange() || { from: 0, to: 0 };
 
 		const { attachments } = this.state;
 		const { to } = this.range;
