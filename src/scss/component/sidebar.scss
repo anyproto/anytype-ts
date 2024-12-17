@@ -9,8 +9,8 @@
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
 #sidebarToggle { 
-	position: fixed; left: 84px; top: 12px; backdrop-filter: blur(20px);
-	background-image: url('~img/icon/widget/toggle0.svg'); z-index: 22; -webkit-app-region: no-drag; transition: none;
+	position: fixed; left: 84px; top: 12px; backdrop-filter: blur(20px); background-image: url('~img/icon/widget/toggle0.svg'); z-index: 22; 
+	-webkit-app-region: no-drag; transition: none;
 }
 #sidebarToggle.sidebarAnimation { transition: left $transitionSidebarTime linear; }
 #sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium) !important; background-image: url('~img/icon/widget/toggle1.svg'); }

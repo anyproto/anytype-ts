@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Title, Label, Checkbox, Icon } from 'Component';
-import { I, S, U, J, Relation, translate, keyboard } from 'Lib';
+import { I, S, U, J, Relation, translate } from 'Lib';
 
 const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.Component<I.SidebarPageComponent> {
 
@@ -174,10 +174,17 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	getNodeWidth (): number {
-		const isPopup = keyboard.isPopup();
+		const { isPopup } = this.props;
 		const container = U.Common.getPageContainer(isPopup);
 
-		return container.width() - (isPopup ? J.Size.sidebar.right : 0);
+		let width = container.width();
+		if (isPopup) {
+			width -= J.Size.sidebar.right;
+		} else {
+			const refSidebar = S.Common.getRef('sidebarRight');
+			width += $(refSidebar?.node).width();
+		};
+		return width;
 	};
 
 	resize () {

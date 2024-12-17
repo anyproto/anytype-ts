@@ -548,6 +548,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	};
 
 	onAdd () {
+		const isPopup = keyboard.isPopup();
 		const details = {
 			...this.getDetailsByType(this.type),
 			name: this.filter,
@@ -568,7 +569,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			this.onRelationMenu(cb);
 		} else 
 		if (this.type == I.ObjectContainerType.Type) {
-			sidebar.rightPanelToggle(!S.Common.showSidebarRight, keyboard.isPopup(), 'type', { details  });
+			sidebar.rightPanelToggle(true, isPopup, 'type', { details });
 		}else {
 			keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
 				cb(message.targetId);

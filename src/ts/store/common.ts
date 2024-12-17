@@ -43,7 +43,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public showVaultValue = null;
-	public showSidebarRightValue = null;
+	public showSidebarRightValue = { full: false, popup: false };
 	public hideSidebarValue = null;
 	public gallery = {
 		categories: [],
@@ -117,7 +117,6 @@ class CommonStore {
 			space: computed,
 			isOnline: computed,
 			showVault: computed,
-			showSidebarRight: computed,
 			showRelativeDates: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
@@ -199,10 +198,6 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
-	};
-
-	get showSidebarRight (): boolean {
-		return Boolean(this.showSidebarRightValue);
 	};
 
 	get theme (): string {
@@ -401,8 +396,8 @@ class CommonStore {
 		this.boolSet('hideSidebar', v);
 	};
 
-	showSidebarRightSet (v: boolean) {
-		this.showSidebarRightValue = Boolean(v);
+	showSidebarRightSet (isPopup: boolean, v: boolean) {
+		set(this.showSidebarRightValue, { [isPopup ? 'popup' : 'full'] : v });
 	};
 
 	fullscreenSet (v: boolean) {
@@ -566,6 +561,10 @@ class CommonStore {
 
 	getRef (id: string) {
 		return this.refs.get(id);
+	};
+
+	getShowSidebarRight (isPopup: boolean): boolean {
+		return Boolean(this.showSidebarRightValue[isPopup ? 'popup' : 'full']);
 	};
 
 };

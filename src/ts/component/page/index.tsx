@@ -187,7 +187,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	init () {
 		const { account } = S.Auth;
 		const { isPopup } = this.props;
-		const { showSidebarRight } = S.Common;
+		const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
 		const match = this.getMatch();
 		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();

@@ -186,7 +186,9 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 			};
 
 			this.width = w;
-			this.refChild.resize();
+			if (this.refChild.resize) {
+				this.refChild.resize();
+			};
 		});
 	};
 

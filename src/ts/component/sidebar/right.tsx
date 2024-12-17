@@ -13,7 +13,6 @@ interface State {
 	page: string;
 	rootId: string;
 	details: any;
-	isPopup: boolean;
 };
 
 const Components = {
@@ -29,14 +28,14 @@ const SidebarRight = observer(class SidebarRight extends React.Component<Props, 
 		page: '',
 		rootId: '',
 		details: {},
-		isPopup: false,
 	};
 
     render() {
-		const { showSidebarRight } = S.Common;
+		const { isPopup } = this.props;
+		const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
 		const { page, rootId, details } = this.state;
 
-		if (!showSidebarRight || !this.isPopup()) {
+		if (!showSidebarRight) {
 			return null;
 		};
 
@@ -62,10 +61,6 @@ const SidebarRight = observer(class SidebarRight extends React.Component<Props, 
 			</div>
 		);
     };
-
-	isPopup () {
-		return this.props.isPopup == this.state.isPopup;
-	};
 
 });
 

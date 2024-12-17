@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { U, S, J, Storage, keyboard } from 'Lib';
+import { I, U, S, J, Storage, keyboard } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -61,13 +61,13 @@ class Sidebar {
 		this.objLeft = $('#sidebarLeft');
 		this.objRight = $('#sidebarRight');
 		this.dummyLeft = $('#sidebarDummyLeft');
-		this.dummyRight = $('#sidebarDummyRight');
+		this.toggleButton = $('#sidebarToggle');
 
-		this.page = $('#page.isFull');
+		this.page = U.Common.getPageContainer(keyboard.isPopup());
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
-		this.toggleButton = $('#sidebarToggle');
+		this.dummyRight = this.page.find('#sidebarDummyRight');
 
 		if (vault) {
 			this.vault = $(vault.node);
@@ -232,15 +232,6 @@ class Sidebar {
 			widthRight = this.objRight.outerWidth();
 		};
 
-		if (!isMain || isMainVoid) {
-			widthLeft = 0;
-			widthRight = 0;
-		};
-
-		if (isPopup) {
-			widthLeft = 0;
-		};
-
 		const { isClosed } = this.data;
 		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
@@ -248,7 +239,17 @@ class Sidebar {
 
 		widthLeft += vw;
 
-		const pageWidth = ww - widthLeft - widthRight;
+		if (isPopup) {
+			widthLeft = 0;
+		};
+
+		if (!isMain || isMainVoid) {
+			widthLeft = 0;
+			widthRight = 0;
+		};
+
+
+		const pageWidth = (!isPopup ? ww : this.page.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
 
@@ -258,22 +259,28 @@ class Sidebar {
 
 		this.header.css({ width: '' });
 		this.footer.css({ width: '' });
-		this.dummyLeft.css({ width: widthLeft });
 
 		this.header.toggleClass('sidebarAnimation', animate);
 		this.footer.toggleClass('sidebarAnimation', animate);
 		this.page.toggleClass('sidebarAnimation', animate);
-		this.dummyLeft.toggleClass('sidebarAnimation', animate);
-		this.toggleButton.toggleClass('sidebarAnimation', animate);
 
-		navigation?.position(widthLeft, animate);
-		this.header.toggleClass('withSidebarLeft', !!widthLeft);
-
-		this.page.css({ width: pageWidth });
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: pageWidth - ho });
 		this.footer.css({ width: pageWidth - ho });
-		this.toggleButton.css({ left: toggleX });
+		
+		if (!isPopup) {
+			this.dummyLeft.css({ width: widthLeft });
+
+			this.dummyLeft.toggleClass('sidebarAnimation', animate);
+			this.toggleButton.toggleClass('sidebarAnimation', animate);
+
+			navigation?.position(widthLeft, animate);
+
+			this.header.toggleClass('withSidebarLeft', !!widthLeft);
+
+			this.page.css({ width: pageWidth });
+			this.toggleButton.css({ left: toggleX });
+		};
 
 		$(window).trigger('sidebarResize');
 	};
@@ -357,12 +364,12 @@ class Sidebar {
 		ref.setState({ page: (page == 'object' ? '' : 'object') });
 	};
 
-	rightPanelToggle (v: boolean, isPopup?: boolean, page?: string, param?: any) {
+	rightPanelToggle (v: boolean, isPopup: boolean, page?: string, param?: any) {
 		if (v) {
-			S.Common.showSidebarRightSet(v);
+			S.Common.showSidebarRightSet(isPopup, v);
 
 			if (page) {
-				this.rightPanelSwitch(isPopup, page, param);
+				this.rightPanelSwitch(page, param);
 			};
 		};
 
@@ -393,15 +400,15 @@ class Sidebar {
 			this.objRight.removeClass('anim');
 
 			if (!v) {
-				S.Common.showSidebarRightSet(v);
+				S.Common.showSidebarRightSet(isPopup, v);
 			};
 
 			$(window).trigger('resize');
 		}, J.Constant.delay.sidebar);
 	};
 
-	rightPanelSwitch (isPopup: boolean, page: string, param: any) {
-		S.Common.getRef('sidebarRight')?.setState({ isPopup, page, ...param });
+	rightPanelSwitch (page: string, param: any) {
+		S.Common.getRef('sidebarRight')?.setState({ page, ...param });
 	};
 
 };

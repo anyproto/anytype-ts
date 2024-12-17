@@ -1,8 +1,8 @@
 @import "~scss/_mixins";
 
 .layoutPreviewWrapper {
-    position: absolute; z-index: 10; top: 0px; right: 100%; opacity: 0; transition: opacity $transitionSidebarTime linear;
-    height: 100vh; width: calc(100% - $sidebarRightWidth); background-color: var(--color-bg-primary); text-align: center; overflow: hidden;
+    position: absolute; z-index: 10; top: 0px; right: 100%; opacity: 0; transition: opacity 0.3s linear;
+    height: 100vh; background-color: var(--color-bg-primary); text-align: center; overflow: hidden;
 }
 .layoutPreviewWrapper.show { opacity: 1; }
 .layoutPreviewWrapper.show {

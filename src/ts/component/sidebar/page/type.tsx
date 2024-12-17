@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, Relation, translate, sidebar, keyboard } from 'Lib';
+import { I, S, C, U, J, Relation, translate, sidebar } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
@@ -52,15 +52,14 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					))}
 				</div>
 
-				<SidebarLayoutPreview ref={ref => this.previewRef = ref} />
+				<SidebarLayoutPreview {...this.props} ref={ref => this.previewRef = ref} />
 			</React.Fragment>
 		);
 	};
 
 	componentDidMount (): void {
 		this.init();
-
-		this.previewRef.show(true);
+		window.setTimeout(() => this.previewRef.show(true), 180);
 	};
 
 	componentDidUpdate (): void {
@@ -156,9 +155,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	close () {
-		const { isPopup } = this.props;
-
-		sidebar.rightPanelToggle(false, isPopup);
+		sidebar.rightPanelToggle(false, this.props.isPopup);
 		this.previewRef.show(false);
 	};
 
