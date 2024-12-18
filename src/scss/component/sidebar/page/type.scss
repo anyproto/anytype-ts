@@ -21,7 +21,8 @@
 
 			.iconObject { margin: 0px 6px 0px 0px; flex-shrink: 0; }
 
-			.side.left { display: flex; flex-direction: row; align-items: center; flex-grow: 1; }
+			.side { display: flex; flex-direction: row; align-items: center; }
+			.side.left { flex-grow: 1; }
 			.side.right { flex-shrink: 0; }
 		}
 

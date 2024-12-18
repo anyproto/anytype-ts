@@ -27,32 +27,31 @@
 		.label { padding: 5px 16px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
 
 		.items { padding: 0px 8px; }
-		.items {
-			.item { 
-				padding: 3px 8px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; position: relative; 
-				background-color: var(--color-bg-primary); border-radius: 6px;
+
+		.item { 
+			padding: 3px 8px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; position: relative; 
+			background-color: var(--color-bg-primary); border-radius: 6px;
+		}
+		.item.isDragging { z-index: 2; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
+
+		.item {
+			.tabSwitch { width: 100%; margin-bottom: 12px; }
+
+			.value.flex { flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 8px; }
+
+			.select { border: 0px; color: var(--color-text-secondary); }
+			.select {
+				.item {
+					.icon { display: none; }
+				}
 			}
-			.item.isDragging { z-index: 2; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 
-			.item {
-				.tabSwitch { width: 100%; margin-bottom: 12px; }
-
-				.value.flex { flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 8px; }
-
-				.select { border: 0px; color: var(--color-text-secondary); }
-				.select {
-					.item {
-						.icon { display: none; }
-					}
-				}
-
-				.input-drag-horizontal { width: 96px; height: 16px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary) inset; border-radius: 8px; overflow: hidden; }
-				.input-drag-horizontal {
-					.back { height: calc(100% - 2px); margin: 0px 0px 0px -1px; top: 1px; background: var(--color-shape-tertiary); border-radius: 0px 8px 8px 0px; }
-					.fill { height: calc(100% - 2px); margin: 0px 0px 0px 1px; top: 1px; border-radius: 8px 0px 0px 8px; background: var(--color-bg-primary); }
-					.icon { width: 16px; height: 16px; border-radius: 0px; border: 0px; }
-					.bullet { width: 100%; height: 100%; border-radius: 50%; background: var(--color-bg-primary); border: 1px solid var(--color-shape-primary); }
-				}
+			.input-drag-horizontal { width: 96px; height: 16px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary) inset; border-radius: 8px; overflow: hidden; }
+			.input-drag-horizontal {
+				.back { height: calc(100% - 2px); margin: 0px 0px 0px -1px; top: 1px; background: var(--color-shape-tertiary); border-radius: 0px 8px 8px 0px; }
+				.fill { height: calc(100% - 2px); margin: 0px 0px 0px 1px; top: 1px; border-radius: 8px 0px 0px 8px; background: var(--color-bg-primary); }
+				.icon { width: 16px; height: 16px; border-radius: 0px; border: 0px; }
+				.bullet { width: 100%; height: 100%; border-radius: 50%; background: var(--color-bg-primary); border: 1px solid var(--color-shape-primary); }
 			}
 		}
 	}
