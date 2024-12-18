@@ -25,15 +25,20 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		},
 	];
 
+    let refInput = null
 	const onPublish = () => {
-		Action.publish(rootId, `${rootId}-fake-uri`);
+        const uri = refInput.getValue()
+		Action.publish(rootId, uri);
 	};
 
 	return (
 		<>
 			<Title text={translate('menuPublishTitle')} />
 			<Input value={domain} readonly={true} />
-			<Input value={U.Common.slug(object.name)} focusOnMount={true} />
+			<Input
+                ref={ref => refInput = ref}
+                value={U.Common.slug(object.name)}
+                focusOnMount={true} />
 			<Label className="small" text="https:/any.copp/kjshdfkjahsjdkhAJDH*78/rem-koolhaas-architects" />
 
 			<div className="flex">

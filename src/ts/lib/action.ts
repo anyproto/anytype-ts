@@ -822,13 +822,14 @@ class Action {
 	};
 
 	publish (objectId: string, uri: string) {
+		console.log("Publish Uri", uri)
 		C.PublishingCreate(S.Common.space, objectId, uri, (message: any) => {
 			if (message.error.code) {
 				console.error(message);
 				return;
 			};
 			console.log("PublishingCreate:",message)
-			U.Common.copyToast(translate('commonLink'), uri);
+			U.Common.copyToast(translate('commonLink'), message.uri);
 		});
 	};
 };
