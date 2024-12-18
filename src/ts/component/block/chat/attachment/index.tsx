@@ -179,9 +179,12 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 					<ObjectName object={object} />
 					<ObjectDescription object={object} />
 				</div>
-				<div className="side right">
-					{picture ? <img src={S.Common.imageUrl(picture, 500)} className="img" /> : ''}
-				</div>
+
+				{picture ? (
+					<div className="side right">
+						<img src={S.Common.imageUrl(picture, 500)} className="img" />
+					</div>
+				) : ''}
 			</div>
 		);
 	};
