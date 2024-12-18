@@ -148,7 +148,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
-	const { id, name, iconEmoji, iconImage, iconOption, done, relationFormat, isDeleted } = object || {};
+	const { id, name, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted } = object || {};
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
 
@@ -398,7 +398,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			};
 
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-			icon = <img src={`./img/icon/relation/${Relation.typeName(relationFormat)}.svg`} className={icn.join(' ')} />;
+			icon = <img src={`./img/icon/relation/${Relation.iconName(relationKey, relationFormat)}.svg`} className={icn.join(' ')} />;
 			break;
 		};
 

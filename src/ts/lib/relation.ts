@@ -19,6 +19,10 @@ class Relation {
 		return `c-${c}`;
 	};
 
+	public iconName (key: string, v: I.RelationType): string {
+		return key == 'description' ? 'description' : this.typeName(v);
+	};
+
 	public selectClassName (v: I.RelationType): string {
 		return `is${I.RelationType[v]}`;
 	};
