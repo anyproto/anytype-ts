@@ -52,19 +52,28 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
+			const readonly = this.isReadonly();
 
 			content = (
 				<React.Fragment>
-					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
+					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} readonly={readonly} /> : ''}
 
 					<div className="blocks wrapper">
-						<EditorControls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
+						<EditorControls 
+							ref={ref => this.refControls = ref} 
+							key="editorControls" 
+							{...this.props} 
+							rootId={rootId} 
+							resize={this.resize} 
+							readonly={readonly}
+						/>
+
 						<HeadSimple 
 							{...this.props} 
 							ref={ref => this.refHead = ref} 
 							placeholder={placeholder} 
 							rootId={rootId} 
-							readonly={this.isReadonly()}
+							readonly={readonly}
 						/>
 
 						{children.map((block: I.Block, i: number) => (
@@ -77,7 +86,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 								block={block}
 								className="noPlus"
 								isSelectionDisabled={true}
-								readonly={this.isReadonly()}
+								readonly={readonly}
 							/>
 						))}
 					</div>
