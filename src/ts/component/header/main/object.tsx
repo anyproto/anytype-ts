@@ -84,15 +84,10 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	};
 
 	const onRelationHandler = () => {
-		const object = S.Detail.get(rootId, rootId, [ 'isArchived' ]);
-
 		onRelation({}, { readonly: object.isArchived });
 	};
 
 	const updateTemplatesCnt = () => {
-		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
-		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
-
 		if (!allowedTemplateSelect || !object.type) {
 			return;
 		};
@@ -108,9 +103,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		});
 	};
 
-	useEffect(() => {
-		updateTemplatesCnt();
-	});
+	useEffect(() => updateTemplatesCnt());
 
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),

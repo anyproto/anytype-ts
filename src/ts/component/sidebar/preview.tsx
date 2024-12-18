@@ -25,7 +25,8 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	render () {
-		const { recommendedLayout, layoutAlign, layoutFormat, defaultView } = this.object;
+		const { recommendedLayout, layoutAlign, layoutFormat } = this.object;
+		const viewType = this.getViewType();
 		const featured = this.getFeatured();
 		const withDescription = featured.map(it => it.relationKey).includes('description');
 		const filtered = featured.filter(it => it.relationKey != 'description');
@@ -36,7 +37,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		const cn = [
 			'layoutPreview',
 			`layoutAlign${I.BlockHAlign[layoutAlign]}`,
-			`defaultView${I.ViewType[defaultView]}`,
+			`defaultView${I.ViewType[viewType]}`,
 			U.Data.layoutClass('', recommendedLayout),
 			U.Common.toCamelCase(`layoutFormat-${layoutFormat}`),
 		];
@@ -120,14 +121,15 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	renderLayout () {
-		const { layoutFormat, defaultView } = this.object;
+		const { layoutFormat } = this.object;
+		const viewType = this.getViewType();
 
 		let content = null;
 
 		if (layoutFormat == 'page') {
 			content = this.insertEmtpyNodes('line', 5);
 		} else {
-			switch (Number(defaultView)) {
+			switch (Number(viewType)) {
 				case I.ViewType.Board: {
 					content = (
 						<React.Fragment>
@@ -162,7 +164,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 			};
 		};
 
-		return <div key={`layout-${layoutFormat}-${defaultView}`} className="layout">{content}</div>;
+		return <div key={`layout-${layoutFormat}-${viewType}`} className="layout">{content}</div>;
 	};
 
 	getFeatured () {
@@ -173,6 +175,10 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		return Array(count).fill(null).map((el, i) => <div style={style || {}} className={className} key={i} />);
 	};
 
+	getViewType () {
+		return Number(this.object.defaultView) || I.ViewType.Grid;
+	};
+
 	getNodeWidth (): number {
 		const { isPopup } = this.props;
 		const container = U.Common.getPageContainer(isPopup);
@@ -181,7 +187,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		if (isPopup) {
 			width -= J.Size.sidebar.right;
 		} else {
-			const refSidebar = S.Common.getRef('sidebarRight');
+			const refSidebar = S.Common.getRef('sidebarLeft');
 			width += $(refSidebar?.node).width();
 		};
 		return width;
