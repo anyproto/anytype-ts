@@ -79,7 +79,7 @@ class Storage {
 			this.setAccountKey(key, o);
 		} else {
 			U.Common.getElectron().storeSet(key, o);
-			delete(this.storage[key]);
+			//delete(this.storage[key]);
 		};
 	};
 	
@@ -90,6 +90,7 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			this.deleteAccountKey(key);
 		} else {
+			U.Common.getElectron().storeDelete(key);
 			delete(this.storage[key]);
 		};
 	};

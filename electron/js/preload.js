@@ -20,6 +20,7 @@ contextBridge.exposeInMainWorld('Electron', {
 
 	storeSet: (key, value) => store.set(key, value),
 	storeGet: key => store.get(key),
+	storeDelete: key => store.delete(key),
 
 	isPackaged: app.isPackaged,
 	userPath: () => app.getPath('userData'),
