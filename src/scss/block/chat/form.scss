@@ -31,7 +31,7 @@
 		.name { @include text-overflow-nw; font-weight: 500; }
 		.descr { @include text-overflow-nw; }
 		.descr:empty { display: none; }
-		.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/chat/buttons/clear.svg'); }
+		.icon.clear { width: 20px; height: 20px; border-radius: 50%; background: var(--color-control-active) url('~img/icon/chat/buttons/clear.svg'); }
 	}
 
 	.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: transparent; }
@@ -62,8 +62,10 @@
 		.swiper-button-next::after { z-index: 2; margin: -10px 0px 0px -9px; width: 20px; height: 20px; background-image: url('~img/arrow/chatFormAttachment.svg'); }
 		.swiper-button-prev::after { transform: rotateZ(180deg); margin-left: -10px; }
 
-
 		.swiper-button-disabled { display: none; }
+
+		.attachment { margin-top: 6px; }
+		.swiper-slide:last-child .attachment { margin-right: 6px; }
 	}
 
 	.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }
