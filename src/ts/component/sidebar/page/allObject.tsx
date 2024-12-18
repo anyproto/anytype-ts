@@ -632,11 +632,12 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 				type = S.Record.getTypeType();
 				layout = I.ObjectLayout.Type;
 
-				const relationType = S.Record.getRelationByKey('type');
+				const featured = [ 'type' ];
+				const recommended = [];
+				const mapper = it => S.Record.getRelationByKey(it)?.id;
 
-				if (relationType) {
-					details.recommendedRelations = [ relationType.id ];
-				};
+				details.recommendedFeaturedRelations = featured.map(mapper).filter(it => it);
+				details.recommendedRelations = recommended.map(mapper).filter(it => it);
 				break;
 			};
 
