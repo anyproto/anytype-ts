@@ -25,7 +25,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	render () {
-		const { recommendedLayout, layoutAlign, layoutFormat } = this.object;
+		const { name, recommendedLayout, layoutAlign, layoutFormat } = this.object;
 		const viewType = this.getViewType();
 		const featured = this.getFeatured();
 		const withDescription = featured.map(it => it.relationKey).includes('description');
@@ -49,7 +49,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 						{isNote ? '' : (
 							<div className="titleWrapper">
 								{!isTask ? <div key={`sidebar-preview-icon-${layoutFormat}`} className="icon" /> : <Checkbox readonly={true} value={false} />}
-								<Title text={this.object.name ? `${translate('commonNew')} ${this.object.name}` : translate('defaultNameType')} />
+								<Title text={name ? `${translate('commonNew')} ${name}` : translate('defaultNameType')} />
 							</div>
 						)}
 
