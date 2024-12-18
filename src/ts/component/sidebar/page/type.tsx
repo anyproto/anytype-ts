@@ -59,7 +59,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	componentDidMount (): void {
 		this.init();
-		window.setTimeout(() => this.previewRef.show(true), 180);
+		window.setTimeout(() => this.previewRef.show(true), J.Constant.delay.sidebar);
 	};
 
 	componentDidUpdate (): void {
@@ -155,8 +155,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	close () {
-		sidebar.rightPanelToggle(false, this.props.isPopup);
 		this.previewRef.show(false);
+		window.setTimeout(() => sidebar.rightPanelToggle(false, this.props.isPopup), J.Constant.delay.sidebar);
 	};
 
 	updateObject (id: string) {

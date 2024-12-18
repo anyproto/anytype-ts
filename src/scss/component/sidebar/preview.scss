@@ -1,18 +1,18 @@
 @import "~scss/_mixins";
 
 .layoutPreviewWrapper {
-    position: absolute; z-index: 10; top: 0px; right: 100%; opacity: 0; transition: opacity 0.3s linear;
-    height: 100vh; background-color: var(--color-bg-primary); text-align: center; overflow: hidden;
+    position: absolute; top: 0px; right: 100%; opacity: 0; transition-property: opacity; transition-duration: 0.3s;
+	transition-timing-function: linear; height: 100vh; background-color: var(--color-bg-primary); text-align: center; overflow: hidden;
 }
 .layoutPreviewWrapper.show { opacity: 1; }
 .layoutPreviewWrapper.show {
-    .layoutPreview { transform: translateX(0px); opacity: 1; }
+    .layoutPreview { transform: scale3d(1, 1); opacity: 1; }
 }
 
 .layoutPreviewWrapper {
     .layoutPreview { 
-		transform: translateX(200px); opacity: 0; transition: 0.3s $easeInQuint;  margin: 0 auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary);
-		transition-delay: $transitionSidebarTime;
+		transform: scale3d(0.8, 08); opacity: 0; transition: 0.3s $easeInQuint;  margin: 0 auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary);
+		transform-origin: 50% 50%;
 	}
     .layoutPreview {
         .layoutHeader { margin-bottom: 44px; }
