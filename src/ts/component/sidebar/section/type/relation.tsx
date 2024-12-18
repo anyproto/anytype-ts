@@ -118,13 +118,13 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		switch (container) {
 			case 'section-relation-featured': {
 				recommendedFeaturedRelations = recommendedFeaturedRelations.filter(it => it != id);
-				recommendedRelations = recommendedRelations.concat(id);
+				recommendedRelations.unshift(id);
 				break;
 			};
 
 			case 'section-relation-recommended': {
 				recommendedRelations = recommendedRelations.filter(it => it != id);
-				recommendedFeaturedRelations = recommendedFeaturedRelations.concat(id);
+				recommendedFeaturedRelations.unshift(id);
 				break;
 			};
 		};
@@ -160,7 +160,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: recommendedKeys,
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					onChange({ recommendedRelations: recommendedRelations.concat(relation.id) });
+					onChange({ recommendedRelations: [ relation.id ].concat(recommendedRelations) });
 				},
 			}
 		});
@@ -183,7 +183,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				readonly: !allowed,
 				ref: 'type',
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					onChange({ recommendedRelations: recommendedRelations.concat(relation.id) });
+					onChange({ recommendedRelations: [ relation.id ].concat(recommendedRelations) });
 				},
 				deleteCommand: () => {
 					onChange({ recommendedRelations: recommendedRelations.filter(it => it != relation.id) });
