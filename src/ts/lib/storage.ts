@@ -446,6 +446,10 @@ class Storage {
 	};
 
 	setChat (id: string, obj: any) {
+		if (!id) {
+			return;
+		};
+
 		const map = this.get('chat') || {};
 
 		map[id] = Object.assign(map[id] || {}, obj);
