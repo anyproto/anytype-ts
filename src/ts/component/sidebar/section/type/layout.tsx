@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, TabSwitch } from 'Component';
-import { I, U, translate } from 'Lib';
+import { I, translate } from 'Lib';
 
 import FormatPage from './format/page';
 import FormatList from './format/list';
@@ -16,8 +16,14 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 	node = null;
 	refFormat = null;
 
+	constructor (props: I.SidebarSectionComponent) {
+		super(props);
+
+		this.onLayout = this.onLayout.bind(this);
+	};
+
     render () {
-		const { object, onChange } = this.props;
+		const { object } = this.props;
 		const formatOptions: I.Option[] = [
 			{ id: 'page', name: translate('sidebarSectionLayoutFormatPage') },
 			{ id: 'list', name: translate('sidebarSectionLayoutFormatList') },
@@ -35,7 +41,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 									ref={ref => this.refFormat = ref}
 									options={formatOptions}
 									value={object.layoutFormat}
-									onChange={id => onChange({ layoutFormat: id })}
+									onChange={this.onLayout}
 								/>
 							</div>
 						</div>
@@ -61,6 +67,13 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 		const { object } = this.props;
 
 		this.refFormat?.setValue(object.layoutFormat);
+	};
+
+	onLayout (id: string): void {
+		this.props.onChange({ 
+			layoutFormat: id, 
+			recommendedLayout: id == 'list' ? I.ObjectLayout.Collection : I.ObjectLayout.Page,
+		});
 	};
 
 });
