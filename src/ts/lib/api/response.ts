@@ -199,7 +199,9 @@ export const ObjectShow = (response: Rpc.Object.Show.Response) => {
 };
 
 export const PublishingCreate = (response: Rpc.Publishing.Create.Response) => {
-	return { uri: response.getUri() };
+	return { 
+		url: response.getUri(),
+	};
 };
 
 export const ObjectSearch = (response: Rpc.Object.Search.Response) => {

@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { Title, Input, Label, Switch, Button, Icon } from 'Component';
 import { J, U, I, S, Action, translate } from 'Lib';
 
@@ -7,6 +7,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { param, close } = props;
 	const { data } = param;
 	const { rootId } = data;
+	const inputRef = useRef(null);
 	const object = S.Detail.get(rootId, rootId, []);
 	const participant = U.Space.getMyParticipant();
 	const domain = U.Common.sprintf(J.Url.publish, participant.resolvedName);
@@ -25,10 +26,8 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		},
 	];
 
-    let refInput = null
 	const onPublish = () => {
-        const uri = refInput.getValue()
-		Action.publish(rootId, uri);
+		Action.publish(rootId, inputRef.current.getValue());
 	};
 
 	return (
@@ -36,9 +35,10 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<Title text={translate('menuPublishTitle')} />
 			<Input value={domain} readonly={true} />
 			<Input
-                ref={ref => refInput = ref}
+                ref={inputRef}
                 value={U.Common.slug(object.name)}
-                focusOnMount={true} />
+                focusOnMount={true} 
+			/>
 			<Label className="small" text="https:/any.copp/kjshdfkjahsjdkhAJDH*78/rem-koolhaas-architects" />
 
 			<div className="flex">

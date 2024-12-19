@@ -821,15 +821,17 @@ class Action {
 		analytics.event('ThemeSet', { id });
 	};
 
-	publish (objectId: string, uri: string) {
-		console.log("Publish Uri", uri)
-		C.PublishingCreate(S.Common.space, objectId, uri, (message: any) => {
-			if (message.error.code) {
-				console.error(message);
-				return;
+	publish (objectId: string, url: string) {
+		if (!url) {
+			return;
+		};
+
+		console.log('[Action].publish', url);
+
+		C.PublishingCreate(S.Common.space, objectId, url, (message: any) => {
+			if (!message.error.code) {
+				this.openUrl(message.url);
 			};
-			console.log("PublishingCreate:",message)
-			U.Common.copyToast(translate('commonLink'), message.uri);
 		});
 	};
 };
