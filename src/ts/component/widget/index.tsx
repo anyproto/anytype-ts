@@ -84,7 +84,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const props = {
 			...this.props,
 			ref: ref => this.ref = ref,
-			key: childKey,
 			parent: block,
 			block: child,
 			canCreate,
@@ -209,7 +208,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		switch (layout) {
 			case I.WidgetLayout.Space: {
 				cn.push('widgetSpace');
-				content = <WidgetSpace {...props} />;
+				content = <WidgetSpace key={childKey} {...props} />;
 
 				isDraggable = false;
 				break;
@@ -217,7 +216,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			case I.WidgetLayout.Buttons: {
 				cn.push('widgetButtons');
-				content = <WidgetButtons {...props} />;
+				content = <WidgetButtons key={childKey} {...props} />;
 
 				isDraggable = false;
 				break;
@@ -230,7 +229,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			case I.WidgetLayout.Tree: {
 				cn.push('widgetTree');
-				content = <WidgetTree {...props} />;
+				content = <WidgetTree key={childKey} {...props} />;
 				break;
 			};
 
@@ -238,7 +237,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			case I.WidgetLayout.Compact:
 			case I.WidgetLayout.View: {
 				cn.push('widgetView');
-				content = <WidgetView {...props} />;
+				content = <WidgetView key={childKey} {...props} />;
 				break;
 			};
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
@@ -752,7 +752,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				ReactDOM.render(<MediaMermaid chart={this.text} />, value.get(0));
+				const root = createRoot(value.get(0));
+				root.render(<MediaMermaid chart={this.text} />);
 				break;
 			};
 
