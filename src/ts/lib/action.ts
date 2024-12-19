@@ -821,16 +821,18 @@ class Action {
 		analytics.event('ThemeSet', { id });
 	};
 
-	publish (objectId: string, url: string) {
+	publish (objectId: string, url: string, callBack?: (message: any) => void) {
 		if (!url) {
 			return;
 		};
 
-		console.log('[Action].publish', url);
-
 		C.PublishingCreate(S.Common.space, objectId, url, (message: any) => {
 			if (!message.error.code) {
 				this.openUrl(message.url);
+			};
+
+			if (callBack) {
+				callBack(message);
 			};
 		});
 	};

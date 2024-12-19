@@ -1,5 +1,5 @@
-import React, { forwardRef, useRef } from 'react';
-import { Title, Input, Label, Switch, Button, Icon } from 'Component';
+import React, { forwardRef, useRef, useState } from 'react';
+import { Title, Input, Label, Switch, Button, Icon, Loader } from 'Component';
 import { J, U, I, S, Action, translate } from 'Lib';
 
 const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -9,6 +9,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { rootId } = data;
 	const inputRef = useRef(null);
 	const object = S.Detail.get(rootId, rootId, []);
+	const [ isLoading, setIsLoading ] = useState(false);
 	const participant = U.Space.getMyParticipant();
 	const domain = U.Common.sprintf(J.Url.publish, participant.resolvedName);
 	const items = [
@@ -27,11 +28,13 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	];
 
 	const onPublish = () => {
-		Action.publish(rootId, inputRef.current.getValue());
+		setIsLoading(true);
+		Action.publish(rootId, inputRef.current.getValue(), () => setIsLoading(false));
 	};
 
 	return (
 		<>
+			{isLoading ? <Loader /> : ''}
 			<Title text={translate('menuPublishTitle')} />
 			<Input value={domain} readonly={true} />
 			<Input
