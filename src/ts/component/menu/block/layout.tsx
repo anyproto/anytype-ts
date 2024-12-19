@@ -70,7 +70,6 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const allowedLayout = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ]);
 		
@@ -84,17 +83,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			resize = null;
 		};
 
-		let sections = [];
-		if (allowedLayout) {
-			sections.push({ name: translate('menuBlockLayoutChooseLayoutType'), children: U.Menu.turnLayouts() });
-		};
-
-		sections.push({ 
-			children: [ 
-				resize,
-				align,
-			]
-		});
+		let sections = [ { children: [ resize, align ] } ];
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -159,6 +148,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: object.layoutAlign,
+					restricted: [ I.BlockHAlign.Justify ],
 					onSelect: (align: I.BlockHAlign) => {
 						U.Object.setAlign(rootId, align);
 
@@ -177,10 +167,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { rootId, onLayoutSelect } = data;
-		const object = S.Detail.get(rootId, rootId, []);
+		const { close } = this.props;
 
 		if (item.arrow) {
 			return;
@@ -192,14 +179,6 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			this.onResize(e);
 
 			analytics.event('SetLayoutWidth');
-		} else {
-			U.Object.setLayout(rootId, item.id, (message: any) => {
-				if (onLayoutSelect) {
-					onLayoutSelect(item.id);
-				};
-			});
-
-			analytics.event('ChangeLayout', { objectType: object.type, layout: item.id });
 		};
 	};
 

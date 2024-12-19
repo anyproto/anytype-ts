@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, Cell } from 'Component';
 import { I, S, U, J, translate, Dataview, Storage } from 'Lib';
-import Cell from 'Component/block/dataview/cell';
 import Item from './item';
 
 const ANIMATION = 200;

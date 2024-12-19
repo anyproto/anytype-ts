@@ -137,24 +137,17 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		U.Object.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 
-	onLayout (e: any) {
+	onLayout () {
 		const { rootId, onLayoutSelect } = this.props;
 		const node = $(this.node);
-		const object = S.Detail.get(rootId, rootId, []);
 		
 		S.Menu.open('blockLayout', { 
 			element: '.editorControls #button-layout',
-			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				node.addClass('hover');
-			},
-			onClose: () => {
-				node.removeClass('hover');
-			},
+			onOpen: () => node.addClass('hover'),
+			onClose: () => node.removeClass('hover'),
 			subIds: J.Menu.layout,
 			data: {
 				rootId,
-				value: object.layout,
 				onLayoutSelect,
 			}
 		});

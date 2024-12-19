@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, ListManager } from 'Component';
+import { Title, ListObjectManager } from 'Component';
 import { I, J, translate, Action, analytics } from 'Lib';
 import Head from '../head';
 
@@ -31,7 +31,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 				<Head onPage={this.onBack} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsSpaceStorageManagerTitle')} />
 
-				<ListManager
+				<ListObjectManager
 					ref={ref => this.refManager = ref}
 					subId={J.Constant.subId.fileManager}
 					rowLength={2}

@@ -167,6 +167,10 @@ class DetailStore {
 		return this.mapper(object, skipLayoutFormat);
 	};
 
+	public getKeys (rootId: string, id: string): string[] {
+		return (this.map.get(rootId)?.get(id) || []).map(it => it.relationKey);
+	};
+
 	/** Mutates object provided and also returns a new object. Sets defaults.
 	 * This Function contains domain logic which should be encapsulated in a model */
 	public mapper (object: any, skipLayoutFormat?: I.ObjectLayout[]): any {
@@ -194,7 +198,6 @@ class DetailStore {
 		object.origin = Number(object.origin) || I.ObjectOrigin.None;
 		object.iconImage = Relation.getStringValue(object.iconImage);
 		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
-		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.coverX = Number(object.coverX) || 0;
 		object.coverY = Number(object.coverY) || 0;
 		object.coverScale = Number(object.coverScale) || 0;
@@ -229,10 +232,13 @@ class DetailStore {
 	private mapType (object: any) {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		object.recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
 		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
+		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
+		object.layoutWidth = Number(object.layoutWidth) || 0;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');

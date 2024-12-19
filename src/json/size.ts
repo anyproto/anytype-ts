@@ -19,6 +19,7 @@ export default {
 
 	sidebar: {
 		width: { min: 240, max: 500, default: 336, close: 180 },
+		right: 348,
 	},
 
 	table: {

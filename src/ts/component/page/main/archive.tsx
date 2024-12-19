@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Footer, Icon, ListManager } from 'Component';
+import { Title, Footer, Icon, ListObjectManager } from 'Component';
 import { I, U, J, translate, Action, analytics } from 'Lib';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
@@ -77,7 +77,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					<Title text={translate('commonBin')} />
 				</div>
 
-				<ListManager
+				<ListObjectManager
 					ref={managerRef}
 					subId={J.Constant.subId.archive}
 					filters={filters}
