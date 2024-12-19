@@ -18,6 +18,8 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
     render () {
 		const { object } = this.props;
 
+		console.log('object', object);
+
         return (
 			<div className="wrap">
 				<IconObject 
@@ -28,6 +30,8 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 					onSelect={this.onSelect}
 					menuParam={{
 						horizontal: I.MenuDirection.Center,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
 					}}
 				/>
 
