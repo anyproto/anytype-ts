@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
+import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
@@ -1000,6 +1000,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		if (list.length > limit[type]) {
 			list = list.slice(0, limit[type]);
+
+			if (type == 'attachments') {
+				Preview.toastShow({ text: U.Common.sprintf(translate('toastChatAttachmentsLimitReached'), limit[type], U.Common.plural(limit[type], translate('pluralFile')).toLowerCase()) });
+			};
 		};
 
 		return list;

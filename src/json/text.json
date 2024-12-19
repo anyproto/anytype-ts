@@ -1677,6 +1677,8 @@
 
 	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
 
+	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
+
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
 	"textColor-orange": "Amber",
