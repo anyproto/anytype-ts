@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
+import { Label, Frame, SidebarRight } from 'Component';
 import { I, S, U, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
-import { Label, Frame } from 'Component';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -78,7 +78,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
 		const isMain = this.isMain();
-		const showSidebar = isMain;
+		const Component = Components[path];
 
 		if (account) {
 			const { status } = account || {};
@@ -89,33 +89,26 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return null;
 		};
 
-		const Component = Components[path];
-		if (!Component) {
-			return (
-				<Frame>
-					<Label text={U.Common.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
-				</Frame>
-			);
-		};
-
-		const wrap = (
-			<div id="page" className={`page ${this.getClass('page')}`}>
-				<Component ref={ref => this.refChild = ref} {...this.props} />
-			</div>
-		);
-
-		let content = null;
-		if (isPopup || !showSidebar) {
-			content = wrap;
-		} else {
-			content = (
-				<div id="pageFlex" className="pageFlex">
-					<div id="sidebarDummy" className="sidebarDummy" />
-					{wrap}
+		return (
+			<div id="pageFlex" className="pageFlex">
+				<div id="sidebarDummyLeft" className="sidebarDummy" />
+				<div id="page" className={`page ${this.getClass('page')}`}>
+					{Component ? (
+						<Component ref={ref => this.refChild = ref} {...this.props} />
+					) : (
+						<Frame>
+							<Label text={U.Common.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
+						</Frame>
+					)}
 				</div>
-			);
-		};
-		return content;
+				<div id="sidebarDummyRight" className="sidebarDummy" />
+				<SidebarRight 
+					ref={ref => S.Common.refSet('sidebarRight', ref)} 
+					key="sidebarRight" 
+					{...this.props} 
+				/>
+			</div>
+		);;
 	};
 	
 	componentDidMount () {
@@ -194,6 +187,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	init () {
 		const { account } = S.Auth;
 		const { isPopup } = this.props;
+		const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
 		const match = this.getMatch();
 		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();
@@ -205,6 +199,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
 		const routeParam = { replace: true };
+		const refSidebar = S.Common.getRef('sidebarRight');
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
@@ -227,6 +222,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (isMain && (S.Auth.accountIsDeleted() || S.Auth.accountIsPending())) {
 			U.Router.go('/auth/deleted', routeParam);
 			return;
+		};
+
+		if (refSidebar && showSidebarRight) {
+			refSidebar.setState({ rootId: this.getRootId() });
 		};
 
 		this.setBodyClass();
@@ -361,7 +360,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				this.refChild.resize();			
 			};
 
-			sidebar.resizePage(null, false);
+			sidebar.resizePage(null, null, false);
 		});
 	};
 	

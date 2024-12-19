@@ -450,9 +450,9 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				analytics.event('TypeSearchResult');
 			};
 
-			let flags: I.ObjectFlag[] = [];
+			let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 			if (!U.Object.isInSetLayouts(type.recommendedLayout)) {
-				flags = flags.concat([ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+				flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 			};
 
 			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {

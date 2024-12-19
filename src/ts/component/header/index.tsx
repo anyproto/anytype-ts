@@ -167,7 +167,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	useEffect(() => {
-		sidebar.resizePage(null, false);
+		sidebar.resizePage(null, null, false);
 	});
 
 	useImperativeHandle(ref, () => ({

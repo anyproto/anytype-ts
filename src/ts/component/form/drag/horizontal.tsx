@@ -7,6 +7,7 @@ interface Props {
 	value?: number;
 	snaps?: number[];
 	strictSnap?: boolean;
+	iconIsOutside?: boolean;
 	onStart?(e: any, v: number): void;
 	onMove?(e: any, v: number): void;
 	onEnd?(e: any, v: number): void;
@@ -26,6 +27,7 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 	value: initalValue = 0,
 	snaps = [],
 	strictSnap = false,
+	iconIsOutside = false,
 	onStart,
 	onMove,
 	onEnd,
@@ -68,7 +70,7 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		const win = $(window);
 		const node = $(nodeRef.current);
 		const icon = $(iconRef.current);
-		const iw = icon.width();
+		const iw = icon.outerWidth();
 		const ox = node.offset().left;
 		
 		move(e.pageX - ox - iw / 2);
@@ -100,8 +102,8 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		const icon = $(iconRef.current);
 		const back = $(backRef.current);
 		const fill = $(fillRef.current);
-		const nw = node.width();
-		const iw = icon.width() / 2;
+		const nw = node.outerWidth();
+		const iw = icon.outerWidth() / 2;
 		const ib = parseInt(icon.css('border-width'));
 		const mw = maxWidth();
 
@@ -127,11 +129,11 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 
 		x = value * mw;
 
-		const w = Math.min(nw, x + iw);
+		const w = Math.min(nw, x + (iconIsOutside ? iw : 0));
 
 		icon.css({ left: x });
-		back.css({ left: (w + iw + ib), width: (nw - w - iw - ib) });
-		fill.css({ width: (w - ib) });
+		back.css({ left: (w + iw + ib * 2), width: (nw - w - iw - ib * 2) });
+		fill.css({ width: (w + (iconIsOutside ? 0 : iw) - ib * 2) });
 	};
 
 	const end = (e) => {

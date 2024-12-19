@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, J, Relation, analytics, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Relation, analytics, keyboard, translate, Action } from 'Lib';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -17,7 +17,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		this.scrollTo = this.scrollTo.bind(this);
 		this.onAdd = this.onAdd.bind(this);
-		this.onFav = this.onFav.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -34,8 +33,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 
 		const sections = this.getSections();
-		const isLocked = root.isLocked();
-		const readonly = data.readonly || isLocked;
+		const readonly = data.readonly || root.isLocked();
 		const diffKeys = this.getDiffKeys();
 
 		let allowedBlock = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
@@ -65,13 +63,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								block={root}
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => this.cellRefs.set(id, ref)}
-								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
 								canEdit={allowedRelation && !item.isReadonlyRelation}
 								canDrag={allowedBlock}
-								canFav={allowedValue}
 								diffType={diffKeys.includes(item.relationKey) ? I.DiffType.Change : I.DiffType.None}
-								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
 								onCellChange={this.onCellChange}
@@ -160,23 +155,19 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { config } = S.Common;
 
 		const object = S.Detail.get(rootId, rootId);
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
-		const featured = Relation.getArrayValue(object.featuredRelations);
-		const relations = S.Record.getObjectRelations(rootId, rootId);
-		const relationKeys = relations.map(it => it.relationKey);
 		const readonly = this.isReadonly();
-		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => ({ 
-			...S.Record.getRelationById(it), 
-			scope: I.RelationScope.Type,
-		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
-		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
-		items = items.concat(typeRelations);
-		items = items.sort(U.Data.sortByName).sort(U.Data.sortByHidden).filter((it: any) => {
+		const conflicts = S.Record.getConflictRelations(rootId, type.id).sort(U.Data.sortByName);
+		const conflictingKeys = conflicts.map(it => it.relationKey);
+
+		let items = (type ? type.recommendedRelations || [] : []).map(it => ({
+			...S.Record.getRelationById(it),
+		})).filter(it => it && it.relationKey);
+		items = items.sort(U.Data.sortByHidden).filter((it: any) => {
 			if (!it) {
 				return false;
 			};
@@ -185,26 +176,21 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				return false;
 			};
 
-			return !config.debug.hiddenObject ? !it.isHidden : true;
+			return true;
 		});
+		items = S.Record.checkHiddenObjects(items);
+		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
-		const sections = [ 
-			{ 
-				id: 'featured', name: translate('menuBlockRelationViewFeaturedRelations'),
-				children: items.filter(it => featured.includes(it.relationKey)),
-			},
+		const sections = [
 			{ 
 				id: 'object', name: translate('menuBlockRelationViewInThisObject'),
-				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
+				children: items,
 			},
+			{
+				id: 'conflicts', name: translate('menuBlockRelationViewConflictingRelations'),
+				children: conflicts,
+			}
 		];
-
-		if (type) {
-			sections.push({ 
-				id: 'type', name: U.Common.sprintf(translate('menuBlockRelationViewFromType'), type.name),
-				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
-			});
-		};
 
 		return sections.filter(it => it.children.length);
 	};
@@ -218,34 +204,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 		
 		return items;
-	};
-
-	onFav (e: any, relationKey: string) {
-		e.stopPropagation();
-
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const items = this.getItems();
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
-		const featured = U.Common.objectCopy(object.featuredRelations || []);
-		const idx = featured.findIndex(it => it == relationKey);
-		const relation = S.Record.getRelationByKey(relationKey);
-
-		if (idx < 0) {
-			const item = items.find(it => it.relationKey == relationKey);
-			const cb = () => {
-				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation', { relationKey, format: relation.format }));
-			};
-
-			if (item.scope == I.RelationScope.Type) {
-				C.ObjectRelationAdd(rootId, [ relationKey ], cb);
-			} else {
-				cb();
-			};
-		} else {
-			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey, format: relation.format }));
-		};
 	};
 
 	onAdd (e: any) {
@@ -263,7 +221,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: S.Record.getObjectRelationKeys(rootId, rootId),
+				skipKeys: S.Record.getDataviewRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},

@@ -53,7 +53,12 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 		const { data } = param;
 		const { rootId } = data;
 		const blockIds = data.blockIds || [];
-		const restricted = [];
+
+		let restricted = [];
+
+		if (data.restricted) {
+			restricted = restricted.concat(data.restricted || []);
+		};
 		
 		for (const id of blockIds) {
 			const block = S.Block.getLeaf(rootId, id);

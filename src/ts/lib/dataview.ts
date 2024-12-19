@@ -12,7 +12,7 @@ class Dataview {
 
 		const order: any = {};
 
-		let relations = U.Common.objectCopy(S.Record.getObjectRelations(rootId, blockId)).filter(it => it);
+		let relations = U.Common.objectCopy(S.Record.getDataviewRelations(rootId, blockId)).filter(it => it);
 		let o = 0;
 
 		if (!config.debug.hiddenObject) {
