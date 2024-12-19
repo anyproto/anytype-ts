@@ -263,7 +263,7 @@ class Preview {
 
 		const obj = $('#toast');
 
-		setTimeout();
+		// setTimeout();
 		obj.off('mouseenter.toast mouseleave.toast');
 		obj.on('mouseenter.toast', () => window.clearTimeout(this.timeout.toast));
 		obj.on('mouseleave.toast', () => setTimeout());

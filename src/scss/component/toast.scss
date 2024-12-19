@@ -7,10 +7,13 @@
 }
 
 .toast {
-	.inner { display: flex; justify-content: space-between; }
+	.inner { display: flex; justify-content: space-between; gap: 0px 8px; }
 }
 .toast {
 	.inner {
+		.icon { width: 20px; height: 20px; }
+		.icon.notice { background: url('~img/icon/toast/notice.svg'); }
+
 		.message { display: flex; gap: 0px 4px; }
 		.message {
 			.chunk { @include text-overflow-nw; display: flex; align-items: center; gap: 0px 4px; }

@@ -1002,7 +1002,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			list = list.slice(0, limit[type]);
 
 			if (type == 'attachments') {
-				Preview.toastShow({ text: U.Common.sprintf(translate('toastChatAttachmentsLimitReached'), limit[type], U.Common.plural(limit[type], translate('pluralFile')).toLowerCase()) });
+				Preview.toastShow({
+					icon: 'notice',
+					text: U.Common.sprintf(translate('toastChatAttachmentsLimitReached'), limit[type], U.Common.plural(limit[type], translate('pluralFile')).toLowerCase())
+				});
 			};
 		};
 
