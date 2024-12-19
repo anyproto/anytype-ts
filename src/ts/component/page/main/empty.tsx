@@ -13,7 +13,7 @@ const PageMainEmpty = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	return (
-		<div className="wrapper">
+		<>
 			<Header 
 				{...props} 
 				component="mainEmpty" 
@@ -45,7 +45,7 @@ const PageMainEmpty = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			</div>
 
 			<Footer component="mainObject" />
-		</div>
+		</>
 	);
 
 }));

@@ -35,6 +35,7 @@ interface EditableRefProps {
 	getHtmlValue: () => string;
 	getRange: () => I.TextRange;
 	setRange: (range: I.TextRange) => void;
+	getNode: () => JQuery;
 };
 
 const Editable = forwardRef<EditableRefProps, Props>(({
@@ -239,6 +240,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		getHtmlValue,
 		getRange: getRangeHandler,
 		setRange: setRangeHandler,
+		getNode: () => $(nodeRef.current),
 	}), []);
 
 	return (

@@ -190,6 +190,10 @@ class Analytics {
 	};
 
 	setProperty (props: any) {
+		if (!this.instance || !this.isAllowed()) {
+			return;
+		};
+
 		this.instance.setUserProperties(props);
 		this.log(`[Analytics].setProperty: ${JSON.stringify(props, null, 3)}`);
 	};
@@ -513,6 +517,16 @@ class Analytics {
 
 			case 'ChangeSpaceDashboard': {
 				data.type = U.Common.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
+				break;
+			};
+
+			case 'ChangeDateFormat': {
+				data.type = I.DateFormat[Number(data.type)];
+				break;
+			};
+
+			case 'ChangeTimeFormat': {
+				data.type = I.TimeFormat[Number(data.type)];
 				break;
 			};
 

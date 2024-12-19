@@ -14,7 +14,7 @@ const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const caption = (t: string) => block(I.TextStyle.Paragraph, `<i>${t}</i>`, I.BlockHAlign.Center);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
 const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}" loop autoplay class="full ${c || ''}" />`);
-const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}" class="c70 ${c || ''}" />`);
+const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}" class="full ${c || ''}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
@@ -28,8 +28,8 @@ export default [
 	h2(`Highlights`),
 
 	h3(`Date as an Object`),
-	text(`You can now open any date as a separate object and view the entire context related to that date. This includes mentions ${hl('@date')}, automatically created dates and custom date relations.`),
-	text(`Date is also accessible from relations, layouts, graph, calendar view and more. Regarding ${hl('@today')}, we now support ${hl('@date')} ${hl('/date')}, allowing to choose any date from the calendar view.`),
+	text(`You can now open any date as a separate object to view the entire context related to that date, including mentions (@date), automatically created dates and custom date relations. Dates are accessible from relations, layouts, graph, calendar view and more.`),
+	text(`In addition, there are new Date and Time settings, and @date supports relative date formats such as @today or @tomorrow.`),
 	img(`44/1.png`),
 	text(``),
 
@@ -40,7 +40,7 @@ export default [
 
 	h2(`Quality-of-Life`),
 	bullet(`Files and markups from the HTML and bookmarks are no longer created as objects when you place them in the app. This enhances the functionality of the Web Clipper and clipboard, resulting in a cleaner app without unnecessary file clutter.`),
-	bullet(`The Entry space can now be deleted if it’s no longer needed or if you prefer to use only shared spaces.`),
+	bullet(`The Entry space can now be deleted if it’s no longer needed or if you prefer to use only shared spaces. You can export and import it into any other spaces (better to use the any-block format).`),
 	bullet(`Deeplinks to Objects include an invitation to the shared space when using the ${hl('Copy Link')} option, making collaboration and access more seamless.`),
 	bullet(`Added the ability to import data during the creation of a second space, simplifying the setup process.`),
 	bullet(`The Audio Player has been slightly restyled, with a background with a subtle shadow, slightly repositioned controls and updated icons.`),

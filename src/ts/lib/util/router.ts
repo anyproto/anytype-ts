@@ -165,7 +165,13 @@ class UtilRouter {
 			this.isOpening = false;
 
 			if (message.error.code) {
-				U.Router.go('/main/void', routeParam);
+				const spaces = U.Space.getList().filter(it => it.targetSpaceId != id);
+
+				if (spaces.length) {
+					this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam);
+				} else {
+					U.Router.go('/main/void', routeParam);
+				};
 				return;
 			};
 

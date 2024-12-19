@@ -332,13 +332,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	focusInit () {
-		const { rootId, isPopup } = this.props;
-		const isReadonly = this.isReadonly();
-		const storage = Storage.getFocus(rootId);
-
-		if (isReadonly) {
+		if (this.isReadonly()) {
 			return;
 		};
+
+		const { rootId, isPopup } = this.props;
+		const storage = Storage.getFocus(rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		let block = null;
 		let from = 0;
@@ -351,7 +351,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (!block) {
-			block = S.Block.getLeaf(rootId, J.Constant.blockId.title);
+			if (U.Object.isNoteLayout(root.layout)) {
+				block = S.Block.getFirstBlock(rootId, -1, it => it.isFocusable());
+			} else {
+				block = S.Block.getLeaf(rootId, J.Constant.blockId.title);
+			};
+
 			if (block && block.getLength()) {
 				block = null;
 			};
