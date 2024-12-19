@@ -110,8 +110,8 @@ class Dispatcher {
 
 		const rootId = ctx.join('-');
 		const messages = event.getMessagesList() || [];
-		const log = (rootId: string, type: string, data: any, valueCase: any) => {
-			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId);
+		const log = (rootId: string, type: string, spaceId: string, data: any, valueCase: any) => {
+			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId, spaceId);
 			if (!type) {
 				console.error('Event not found for valueCase', valueCase);
 			};
@@ -130,7 +130,7 @@ class Dispatcher {
 
 		for (const message of messages) {
 			const type = Mapper.Event.Type(message.getValueCase());
-			const data = Mapper.Event.Data(message);
+			const { spaceId, data } = Mapper.Event.Data(message);
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : {};
 			const needLog = this.checkLog(type) && !skipDebug;
 
@@ -948,7 +948,18 @@ class Dispatcher {
 					S.Chat.add(rootId, idx, message);
 
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
-						U.Common.notification({ title: author?.name, text: message.content.text });
+						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
+							const { space } = S.Common;
+							const open = () => {
+								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+							};
+
+							if (spaceId != space) {
+								U.Router.switchSpace(spaceId, '', false, { onRouteChange: open });
+							} else {
+								open();
+							};
+						});
 					};
 
 					$(window).trigger('messageAdd', [ message ]);
@@ -1018,7 +1029,7 @@ class Dispatcher {
 			};
 
 			if (needLog) {
-				log(rootId, type, data, message.getValueCase());
+				log(rootId, type, spaceId, data, message.getValueCase());
 			};
 		};
 

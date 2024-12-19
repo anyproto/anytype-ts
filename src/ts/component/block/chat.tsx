@@ -577,7 +577,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const node = $(this.node);
 		const container = U.Common.getScrollContainer(this.props.isPopup);
 		const top = this.getMessageScrollOffset(id);
 

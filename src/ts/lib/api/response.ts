@@ -422,7 +422,7 @@ export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response)
 	return {
 		events: (response.getHistoryeventsList() || []).map(it => {
 			const type = Mapper.Event.Type(it.getValueCase());
-			const data = Mapper.Event[type](Mapper.Event.Data(it));
+			const { data } = Mapper.Event[type](Mapper.Event.Data(it));
 
 			return { type, data };
 		}),
