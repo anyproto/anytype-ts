@@ -116,7 +116,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 					icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
 				};
-				if (reply.isMultiple) {
+				if (reply.isMultiple && !reply.attachment) {
 					icon = <Icon className="isMultiple" />;
 				};
 				onClear = this.onReplyClear;
