@@ -471,7 +471,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.renderMarkup();
 
 		if (list.length) {
-			this.addAttachments(list);
+			U.Common.saveClipboardFiles(list, {}, data => {
+				this.addAttachments(data.files);
+			});
 		};
 
 		this.checkUrls();
