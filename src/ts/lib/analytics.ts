@@ -520,6 +520,16 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeDateFormat': {
+				data.type = I.DateFormat[Number(data.type)];
+				break;
+			};
+
+			case 'ChangeTimeFormat': {
+				data.type = I.TimeFormat[Number(data.type)];
+				break;
+			};
+
 			case 'ObjectListSort': {
 				data.type = I.SortType[Number(data.type)];
 				break;
@@ -591,6 +601,7 @@ class Analytics {
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 			'main/date':		 'ScreenDate',
+			'main/archive':		 'ScreenBin',
 		};
 
 		return map[key] || '';

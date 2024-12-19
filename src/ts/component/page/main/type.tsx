@@ -17,6 +17,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	refHead: any = null;
 	refControls: any = null;
 	refListPreview: any = null;
+	timeout = 0;
 	page = 0;
 
 	state = {
@@ -118,7 +119,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 								<div className="content">
 									<ListObjectPreview
 										key="listTemplate"
-										ref={ref => this.refListPreview = ref}
 										getItems={() => S.Record.getRecords(subIdTemplate, [])}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}

@@ -1437,9 +1437,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	setSelected (ids: string[]) {
-		if (this.refSelect) {
-			this.refSelect.setIds(ids);
-		};
+		this.refSelect?.setIds(ids);
 	};
 
 	multiSelectAction (id: string) {

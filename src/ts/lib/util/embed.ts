@@ -24,9 +24,13 @@ class UtilEmbed {
 	};
 
 	getYoutubeHtml (content: string): string {
-		const url = new URL(content);
+		let url = '';
 
-		url.search += '&enablejsapi=1&rel=0';
+		try {
+			const a = new URL(content);
+			a.search += '&enablejsapi=1&rel=0';
+			url = a.toString();
+		} catch (e) {};
 		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>`;
 	};
 

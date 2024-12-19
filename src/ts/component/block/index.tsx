@@ -493,7 +493,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		keyboard.disableSelection(true);
 
 		if (selection) {
-			if (selection.isSelecting) {
+			if (selection.isSelecting()) {
 				selection.setIsSelecting(false);
 			};
 
@@ -1055,12 +1055,12 @@ const Block = observer(class Block extends React.Component<Props> {
 		node = $(node);
 
 		const items = node.find(Mark.getTag(I.MarkType.Emoji));
-		const { block } = this.props;
-		const size = U.Data.emojiParam(block.content.style);
-
 		if (!items.length) {
 			return;
 		};
+
+		const { block } = this.props;
+		const size = U.Data.emojiParam(block.content.style);
 
 		items.each((i: number, item: any) => {
 			item = $(item);

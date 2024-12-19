@@ -6,7 +6,7 @@ import Head from '../head';
 
 const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageManager extends React.Component<I.PopupSettings, {}> {
 
-	ref = null;
+	refManager = null;
 
 	constructor (props: I.PopupSettings) {
 		super(props);
@@ -32,7 +32,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 				<Title text={translate('popupSettingsSpaceStorageManagerTitle')} />
 
 				<ListObjectManager
-					ref={ref => this.ref = ref}
+					ref={ref => this.refManager = ref}
 					subId={J.Constant.subId.fileManager}
 					rowLength={2}
 					buttons={buttons}
@@ -49,9 +49,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 	};
 
 	onRemove () {
-		if (this.ref) {
-			Action.delete(this.ref.selected || [], analytics.route.settings, () => this.ref.selectionClear());
-		};
+		Action.delete(this.refManager.getSelected(), analytics.route.settings, () => this.refManager?.selectionClear());
 	};
 
 	onBack () {

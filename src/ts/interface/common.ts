@@ -331,3 +331,12 @@ export enum LoaderType {
 	Loader		 = 'loader',
 	Dots		 = 'dots',
 };
+
+export interface Error {
+	code: number;
+	description: string;
+};
+
+export interface PageRef {
+	resize: () => void;
+};

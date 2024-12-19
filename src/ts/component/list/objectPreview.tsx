@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
 import { I, U, keyboard, translate } from 'Lib';
 
 interface Props {
-	offsetX: number;
+	offsetX?: number;
 	canAdd?: boolean;
 	withBlank?: boolean;
 	blankId?: string;
@@ -16,126 +16,32 @@ interface Props {
 	onMenu?: (e: any, item: any) => void;
 };
 
+interface ListPreviewObjectRefProps {
+	updateItem: (id: string) => void;
+	onKeyUp: (e: any) => void;
+};
+
 const WIDTH = 224;
 
-class ListObjectPreview extends React.Component<Props> {
+const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
+	offsetX = 0,
+	canAdd = false,
+	withBlank = false,
+	blankId = '',
+	defaultId = '',
+	getItems,
+	onClick,
+	onAdd,
+	onBlank,
+	onMenu,
+}, ref) => {
 
-	public static defaultProps = {
-		offsetX: 0,
-		canAdd: false,
-	};
-	
-	node: any = null;
-	n = 0;
-	page = 0;
-	maxPage = 0;
-	timeout = 0;
-	refObj: any = {};
+	const nodeRef = useRef(null);
+	const page = useRef(0);
+	const n = useRef(0);
+	const objectRef = useRef(new Map());
 
-	render () {
-		const { onAdd, onBlank, onMenu, defaultId, blankId } = this.props;
-		const items = this.getItems();
-
-		const ItemAdd = () => (
-			<div id="item-add" className="item add" onClick={onAdd}>
-				<Icon className="plus" />
-				<div className="hoverArea" />
-			</div>
-		);
-
-		const ItemBlank = (item: any) => (
-			<div id={`item-${item.id}`} className="previewObject blank" onClick={onBlank}>
-				{onMenu ? (
-					<div id={`item-more-${item.id}`} className="moreWrapper" onClick={e => onMenu(e, item)}>
-						<Icon className="more" />
-					</div>
-				) : ''}
-
-				<div className="scroller">
-					<div className="heading">
-						<div className="name">{translate('commonBlank')}</div>
-					</div>
-				</div>
-				<div className="border" />
-			</div>
-		);
-
-		const Item = (item: any) => {
-			if (item.id == 'add') {
-				return <ItemAdd />;
-			};
-
-			const cn = [ 'item' ];
-
-			let label = null;
-			let content = null;
-
-			if (onMenu) {
-				cn.push('withMenu');
-			};
-
-			if (defaultId == item.id) {
-				label = <div className="defaultLabel">{translate('commonDefault')}</div>;
-			};
-
-			if (item.id == blankId) {
-				content = <ItemBlank {...item} />;
-			} else {
-				content = (
-					<PreviewObject
-						ref={ref => this.refObj[item.id] = ref}
-						size={I.PreviewSize.Medium}
-						rootId={item.id}
-						onClick={e => this.onClick(e, item)}
-						onMore={onMenu ? e => onMenu(e, item) : null}
-					/>
-				);
-			};
-
-			return (
-				<div id={`item-${item.id}`} className={cn.join(' ')}>
-					{label}
-
-					<div
-						className="hoverArea"
-						onMouseEnter={e => this.onMouseEnter(e, item)}
-						onMouseLeave={e => this.onMouseLeave(e, item)}
-					>
-						{content}
-					</div>
-				</div>
-			);
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="listObjectPreview"
-			>
-				<div className="wrap">
-					<div id="scroll" className="scroll">
-						{items.map((item: any, i: number) => (
-							<Item key={i} {...item} index={i} />
-						))}
-					</div>
-				</div>
-
-				<Icon id="arrowLeft" className="arrow left" onClick={() => this.onArrow(-1)} />
-				<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />	
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.resize();
-	};
-
-	componentDidUpdate () {
-		this.resize();
-	};
-
-	getItems () {
-		const { getItems, canAdd, withBlank, blankId } = this.props;
+	const getItemsHandler = () => {
 		const items = U.Common.objectCopy(getItems());
 
 		if (withBlank) {
@@ -147,44 +53,37 @@ class ListObjectPreview extends React.Component<Props> {
 		return items;
 	};
 
-	getMaxPage () {
-		const node = $(this.node);
-		const items = this.getItems();
+	const getMaxPage = () => {
+		const node = $(nodeRef.current);
+		const items = getItemsHandler();
 		const cnt = Math.floor(node.width() / WIDTH);
 
 		return Math.max(0, Math.ceil(items.length / cnt) - 1);
 	};
 
-	onMouseEnter (e: any, item: any) {
-		const items = this.getItems();
+	const onMouseEnter = (e: any, item: any) => {
+		const items = getItemsHandler();
 
-		this.n = items.findIndex(it => it.id == item.id);
-		this.setActive();
+		n.current = items.findIndex(it => it.id == item.id);
+		setActive();
 	};
 
-	onMouseLeave (e: any, item: any) {
-		const node = $(this.node);
+	const onMouseLeave = (e: any, item: any) => {
+		const node = $(nodeRef.current);
+
 		node.find('.item.hover').removeClass('hover');
 		node.find('.hoverArea.hover').removeClass('hover');
 	};
 
-	onClick (e: any, item: any) {
-		const { onClick } = this.props;
-
-		if (onClick) {
-			onClick(e, item);
-		};
-	};
-
-	setActive () {
-		const items = this.getItems();
-		const item = items[this.n];
+	const setActive = () => {
+		const items = getItemsHandler();
+		const item = items[n.current];
 
 		if (!item) {
 			return;
 		};
 
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 
 		node.find('.item.hover').removeClass('hover');
 		node.find('.hoverArea.hover').removeClass('hover');
@@ -192,74 +91,167 @@ class ListObjectPreview extends React.Component<Props> {
 		node.find(`#item-${item.id} .hoverArea`).addClass('hover');
 	};
 
-	onKeyUp (e: any) {
-		const items = this.getItems();
+	const onKeyUp = (e: any) => {
+		const items = getItemsHandler();
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			const dir = pressed == 'arrowleft' ? -1 : 1;
-			this.n += dir;
+			n.current += dir;
 
-			if (this.n < 0) {
-				this.n = items.length - 1;
+			if (n.current < 0) {
+				n.current = items.length - 1;
 			};
-			if (this.n > items.length - 1) {
-				this.n = 0;
+			if (n.current > items.length - 1) {
+				n.current = 0;
 			};
 
-			this.page = Math.floor(this.n / 2);
-			this.onArrow(0);
-			this.setActive();
+			page.current = Math.floor(n.current / 2);
+			onArrow(0);
+			setActive();
 		});
 
-		keyboard.shortcut('enter, space', e, () => {
-			this.onClick(e, items[this.n]);
-		});
+		keyboard.shortcut('enter, space', e, () => onClick(e, items[n.current]));
 	};
 
-	onArrow (dir: number) {
-		const { offsetX } = this.props;
-		const node = $(this.node);
+	const onArrow = (dir: number) => {
+		const node = $(nodeRef.current);
 		const scroll = node.find('#scroll');
 		const arrowLeft = node.find('#arrowLeft');
 		const arrowRight = node.find('#arrowRight');
 		const w = node.width();
-		const max = this.getMaxPage();
+		const max = getMaxPage();
 
-		this.page += dir;
-		this.page = Math.min(max, Math.max(0, this.page));
+		page.current += dir;
+		page.current = Math.min(max, Math.max(0, page.current));
 
-		const x = -this.page * (w + 16 + offsetX);
+		const x = -page.current * (w + 16 + offsetX);
 
 		arrowLeft.removeClass('dn');
 		arrowRight.removeClass('dn');
 
-		if (this.page == 0) {
+		if (page.current == 0) {
 			arrowLeft.addClass('dn');
 		};
-		if (this.page == max) {
+		if (page.current == max) {
 			arrowRight.addClass('dn');
 		};
 
 		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
 	};
 
-	updateItem (id: string) {
-		if (this.refObj[id]) {
-			this.refObj[id].update();
-		};
+	const updateItem = (id: string) => {
+		objectRef.current.get(id)?.update();
 	};
 
-	resize () {
-		const node = $(this.node);
+	const resize = () => {
+		const node = $(nodeRef.current);
 		const arrowLeft = node.find('#arrowLeft');
 		const arrowRight = node.find('#arrowRight');
-		const isFirst = this.page == 0;
-		const isLast = this.page == this.getMaxPage();
+		const isFirst = page.current == 0;
+		const isLast = page.current == getMaxPage();
 
 		arrowLeft.toggleClass('dn', isFirst);
 		arrowRight.toggleClass('dn', isLast);
 	};
-	
-};
 
-export default ListObjectPreview;
+	const items = getItemsHandler();
+
+	const ItemAdd = () => (
+		<div id="item-add" className="item add" onClick={onAdd}>
+			<Icon className="plus" />
+			<div className="hoverArea" />
+		</div>
+	);
+
+	const ItemBlank = (item: any) => (
+		<div id={`item-${item.id}`} className="previewObject blank" onClick={onBlank}>
+			{onMenu ? (
+				<div id={`item-more-${item.id}`} className="moreWrapper" onClick={e => onMenu(e, item)}>
+					<Icon className="more" />
+				</div>
+			) : ''}
+
+			<div className="scroller">
+				<div className="heading">
+					<div className="name">{translate('commonBlank')}</div>
+				</div>
+			</div>
+			<div className="border" />
+		</div>
+	);
+
+	const Item = (item: any) => {
+		if (item.id == 'add') {
+			return <ItemAdd />;
+		};
+
+		const cn = [ 'item' ];
+
+		let label = null;
+		let content = null;
+
+		if (onMenu) {
+			cn.push('withMenu');
+		};
+
+		if (defaultId == item.id) {
+			label = <div className="defaultLabel">{translate('commonDefault')}</div>;
+		};
+
+		if (item.id == blankId) {
+			content = <ItemBlank {...item} />;
+		} else {
+			content = (
+				<PreviewObject
+					ref={ref => objectRef.current.set(item.id, ref)}
+					size={I.PreviewSize.Medium}
+					rootId={item.id}
+					onClick={e => onClick(e, item)}
+					onMore={onMenu ? e => onMenu(e, item) : null}
+				/>
+			);
+		};
+
+		return (
+			<div id={`item-${item.id}`} className={cn.join(' ')}>
+				{label}
+
+				<div
+					className="hoverArea"
+					onMouseEnter={e => onMouseEnter(e, item)}
+					onMouseLeave={e => onMouseLeave(e, item)}
+				>
+					{content}
+				</div>
+			</div>
+		);
+	};
+
+	useEffect(() => resize());
+
+	useImperativeHandle(ref, () => ({
+		updateItem,
+		onKeyUp
+	}));
+
+	return (
+		<div 
+			ref={nodeRef}
+			className="listObjectPreview"
+		>
+			<div className="wrap">
+				<div id="scroll" className="scroll">
+					{items.map((item: any, i: number) => (
+						<Item key={i} {...item} index={i} />
+					))}
+				</div>
+			</div>
+
+			<Icon id="arrowLeft" className="arrow left" onClick={() => onArrow(-1)} />
+			<Icon id="arrowRight" className="arrow right" onClick={() => onArrow(1)} />	
+		</div>
+	);
+
+});
+
+export default ListPreviewObject;

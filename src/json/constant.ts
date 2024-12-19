@@ -42,6 +42,7 @@ export default {
 		space:			 50,
 		graphDepth:		 5,
 		cellEntry:		 320,
+		listObject:		 50,
 
 		chat: {
 			messages:		 50,

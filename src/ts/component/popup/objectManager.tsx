@@ -89,7 +89,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 
 		switch (type) {
 			case I.ObjectManagerPopup.Favorites: {
-				C.ObjectListSetIsFavorite(this.refManager.selected, true);
+				C.ObjectListSetIsFavorite(this.refManager.getSelected(), true);
 				break;
 			};
 		};

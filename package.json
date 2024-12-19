@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.43.40-beta",
+	"version": "0.44.0",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -108,6 +108,7 @@
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^5.2.0",
+		"electron-store": "^8.2.0",
 		"electron-updater": "^6.2.1",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",

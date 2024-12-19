@@ -1,51 +1,28 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
+import $ from 'jquery';
 import { Loader, Title, Error, Frame, Button } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 
-interface State {
-	error: string;
-};
+const PageMainImport = forwardRef<{}, I.PageComponent>((props, ref) => {
 
-class PageMainImport extends React.Component<I.PageComponent, State> {
+	const nodeRef = useRef(null);
+	const { isPopup } = props;
+	const [ error, setError ] = useState('');
 
-	state = {
-		error: '',
-	};
-	node = null;
+	const resize = () => {
+		const win = $(window);
+		const obj = U.Common.getPageContainer(isPopup);
+		const wh = isPopup ? obj.height() : win.height();
 
-	render () {
-		const { error } = this.state;
-
-		return (
-			<div 
-				ref={ref => this.node = ref}
-				className="wrapper"
-			>
-				<Frame>
-					<Title text={error ? translate('commonError') : translate('pageMainImportTitle')} />
-					<Error text={error} />
-
-					{error ? (
-						<div className="buttons">
-							<Button 
-								text={translate('commonBack')} 
-								color="blank" 
-								className="c36" 
-								onClick={() => U.Space.openDashboard('route')} 
-							/>
-						</div>
-					) : <Loader />}
-				</Frame>
-			</div>
-		);
+		$(nodeRef.current).css({ height: wh });
 	};
 
-	componentDidMount (): void {
-		const search = this.getSearch();
+	useEffect(() => {
+		const search = U.Common.searchParam(U.Router.history.location.search);
 
 		C.GalleryDownloadManifest(search.source, (message: any) => {
 			if (message.error.code) {
-				this.setState({ error: message.error.description });
+				setError(message.error.description);
 			} else {
 				U.Space.openDashboard('route');
 
@@ -60,32 +37,30 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				}, S.Popup.getTimeout());
 			};
 		});
+	}, []);
 
-		this.resize();
-	};
+	useEffect(() => resize());
 
-	componentDidUpdate (): void {
-		this.resize();
-	};
+	return (
+		<div ref={nodeRef} className="wrapper" >
+			<Frame>
+				<Title text={error ? translate('commonError') : translate('pageMainImportTitle')} />
+				<Error text={error} />
 
-	getSearch () {
-		return U.Common.searchParam(U.Router.history.location.search);
-	};
+				{error ? (
+					<div className="buttons">
+						<Button 
+							text={translate('commonBack')} 
+							color="blank" 
+							className="c36" 
+							onClick={() => U.Space.openDashboard('route')} 
+						/>
+					</div>
+				) : <Loader />}
+			</Frame>
+		</div>
+	);
 
-	resize () {
-		const { isPopup } = this.props;
-		const win = $(window);
-		const obj = U.Common.getPageContainer(isPopup);
-		const node = $(this.node);
-		const wrapper = obj.find('.wrapper');
-		const oh = obj.height();
-		const header = node.find('#header');
-		const hh = header.height();
-		const wh = isPopup ? oh - hh : win.height();
-
-		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
-	};
-
-};
+});
 
 export default PageMainImport;
