@@ -810,8 +810,9 @@ class UtilCommon {
 			return;
 		};
 
-		const ret: any[] = [];
 		let n = 0;
+
+		const ret: any[] = [];
 		const cb = () => {
 			n++;
 			if (n == items.length) {
@@ -821,19 +822,19 @@ class UtilCommon {
 
 		for (const item of items) {
 			if (item.path) {
-				ret.push({ name: item.name, path: item.path });
+				ret.push(item);
 				cb();
 			} else {
 				const reader = new FileReader();
 				reader.onload = () => {
-					ret.push({ 
-						name: item.name, 
+					ret.push({
+						...item,
 						path: this.getElectron().fileWrite(item.name, reader.result, { encoding: 'binary' }),
 					});
 					cb();
 				};
 				reader.onerror = cb;
-				reader.readAsBinaryString(item);
+				reader.readAsBinaryString(item.file ? item.file : item);
 			};
 		};
 	};
@@ -843,7 +844,7 @@ class UtilCommon {
 
 		const ret: any = {};
 		for (const k in data) {
-			ret['data-' + k] = data[k];
+			ret[`data-${k}`] = data[k];
 		};
 		return ret;
 	};
