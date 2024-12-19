@@ -3,7 +3,7 @@
 .toast {
     position: fixed; left: 0px; top: 0px; border-radius: 8px; background: var(--color-control-accent); padding: 11px 16px; text-transform: none;
     @include text-common; color: var(--color-bg-primary); display: none; z-index: 1000; white-space: nowrap; transition-duration: 0.25s;
-	transition-property: opacity, transform; transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); 
+	transition-property: opacity, transform; transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 50%;
 }
 
 .toast {
@@ -14,12 +14,14 @@
 		.icon { width: 20px; height: 20px; }
 		.icon.notice { background: url('~img/icon/toast/notice.svg'); }
 
-		.message { display: flex; gap: 0px 4px; }
+		.message { display: flex; gap: 0px 4px; @include text-overflow-nw; }
 		.message {
 			.chunk { @include text-overflow-nw; display: flex; align-items: center; gap: 0px 4px; }
 			.chunk {
 				.name { max-width: 140px; @include text-overflow-nw; }
 			}
+
+			span { @include text-overflow-nw; }
 
 			b { font-weight: 500; }
 		}
