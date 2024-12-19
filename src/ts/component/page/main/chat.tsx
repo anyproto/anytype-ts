@@ -209,7 +209,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		const node = $(this.node);
 		const selection = S.Common.getRef('selectionProvider');
 		const cmd = keyboard.cmdKey();
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
 		const rootId = this.getRootId();
 

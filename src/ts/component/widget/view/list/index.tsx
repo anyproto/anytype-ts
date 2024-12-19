@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
@@ -11,166 +11,32 @@ const LIMIT = 30;
 const HEIGHT_COMPACT = 28;
 const HEIGHT_LIST = 64;
 
-const WidgetViewList = observer(class WidgetViewList extends React.Component<I.WidgetViewComponent> {
+const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
 
-	node = null;
-	refList = null;
-	cache: any = null;
-	top = 0;
+	const { parent, block, isPreview, subId, getRecordIds, addGroupLabels } = props;
+	const cache = useRef({});
+	const nodeRef =	useRef(null);
+	const listRef = useRef(null);
+	const top = useRef(0);
+	const { total } = S.Record.getMeta(subId, '');
+	const isCompact = [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(parent.content.layout);
 
-	constructor (props: I.WidgetViewComponent) {
-		super(props);
-		
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onScroll = this.onScroll.bind(this);
-	};
+	const initCache = () => {
+		const items = getItems();
 
-	render (): React.ReactNode {
-		const { parent, block, isPreview, subId } = this.props;
-		const { total } = S.Record.getMeta(subId, '');
-		const items = this.getItems();
-		const length = items.length;
-		const isCompact = this.isCompact();
-		const cn = [ 'body' ];
-
-		if (!this.cache) {
-			return null;
-		};
-
-		if (isCompact) {
-			cn.push('isCompact');
-		};
-
-		let content = null;
-
-		if (isPreview) {
-			const rowRenderer = ({ index, key, parent, style }) => (
-				<CellMeasurer
-					key={key}
-					parent={parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={index}
-					fixedWidth
-				>
-					<WidgetListItem 
-						{...this.props}
-						{...items[index]}
-						subId={subId} 
-						id={items[index].id}
-						style={style} 
-						index={index}
-						isCompact={isCompact}
-					/>
-				</CellMeasurer>
-			);
-
-			const List = SortableContainer(() => (
-				<div className="items">
-					<InfiniteLoader
-						rowCount={total}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => true}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<VList
-										ref={ref => this.refList = ref}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={length}
-										rowHeight={({ index }) => this.getRowHeight(items[index], index, isCompact)}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										scrollToAlignment="center"
-										onScroll={this.onScroll}
-									/>
-							)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
-			));
-
-			content = (
-				<List 
-					axis="y" 
-					lockAxis="y"
-					lockToContainerEdges={true}
-					transitionDuration={150}
-					distance={10}
-					onSortStart={this.onSortStart}
-					onSortEnd={this.onSortEnd}
-					useDragHandle={true}
-					helperClass="isDragging"
-					helperContainer={() => $(`#widget-${parent.id} .items`).get(0)}
-				/>
-			);
-		} else {
-			content = (
-				<React.Fragment>
-					{items.map((item: any) => (
-						<WidgetListItem 
-							key={`widget-${block.id}-${item.id}`} 
-							{...this.props} 
-							{...item} 
-							subId={subId} 
-							id={item.id} 
-							isCompact={isCompact}
-						/>
-					))}
-				</React.Fragment>
-			);
-		};
-
-		return (
-			<div ref={ref => this.node = ref} className={cn.join(' ')}>
-				{content}
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		this.initCache();
-		this.forceUpdate();
-	};
-
-	componentDidUpdate (): void {
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
-
-		this.initCache();
-		this.resize();
-	};
-
-	initCache () {
-		if (this.cache) {
-			return;
-		};
-
-		const items = this.getItems();
-		const isCompact = this.isCompact();
-
-		this.cache = new CellMeasurerCache({
+		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: i => this.getRowHeight(items[i], i, isCompact),
+			defaultHeight: i => getRowHeight(items[i], i, isCompact),
 			keyMapper: i => items[i],
 		});
 	};
 
-	onSortStart () {
+	const onSortStart = () => {
 		keyboard.disableSelection(true);
 	};
 
-	onSortEnd (result: any) {
+	const onSortEnd = (result: any) => {
 		const { oldIndex, newIndex } = result;
-		const { block, getRecordIds } = this.props;
 		const { targetBlockId } = block.content;
 
 		keyboard.disableSelection(false);
@@ -195,8 +61,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		Action.move(root, root, target.id, [ current.id ], position);
 	};
 
-	getItems () {
-		const { block, addGroupLabels, isPreview, getRecordIds, subId } = this.props;
+	const getItems = () => {
 		const { targetBlockId } = block.content;
 		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
@@ -210,19 +75,17 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		return items;
 	};
 
-	resize () {
-		const { parent, isPreview } = this.props;
-		const length = this.getItems().length;
+	const resize = () => {
+		const length = getItems().length;
 
 		raf(() => {
 			const container = $('#sidebar #containerWidget #list');
 			const obj = $(`#widget-${parent.id}`);
-			const node = $(this.node);
+			const node = $(nodeRef.current);
 			const head = obj.find('.head');
 			const viewSelect = obj.find('#viewSelect');
-			const offset = isPreview ? 12 : 0;
 
-			let height = this.getTotalHeight() + offset;
+			let height = getTotalHeight() + (isPreview ? 12 : 0);
 
 			if (isPreview) {
 				let maxHeight = container.height() - head.outerHeight(true);
@@ -245,37 +108,131 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		});
 	};
 
-	getTotalHeight () {
-		const items = this.getItems();
-		const isCompact = this.isCompact();
-
-		let height = 0;
-
-		items.forEach((item, index) => {
-			height += this.getRowHeight(item, index, isCompact);
-		});
-
-		return height;
+	const getTotalHeight = () => {
+		return getItems().reduce((r, c) => r + getRowHeight(c, 0, isCompact), 0);
 	};
 
-	getRowHeight (item: any, index: number, isCompact: boolean) {
+	const getRowHeight = (item: any, index: number, isCompact: boolean) => {
 		if (item && item.isSection) {
 			return index ? HEIGHT_COMPACT + 12 : HEIGHT_COMPACT;
 		};
 		return isCompact ? HEIGHT_COMPACT : HEIGHT_LIST;
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			top.current = scrollTop;
 		};
 	};
 
-	isCompact () {
-		const { parent } = this.props;
-		return [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(parent.content.layout);
+	const items = getItems();
+	const length = items.length;
+	const cn = [ 'body' ];
+
+	if (isCompact) {
+		cn.push('isCompact');
 	};
 
-});
+	let content = null;
+
+	if (isPreview) {
+		const rowRenderer = ({ index, key, parent, style }) => (
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={index}
+				fixedWidth
+			>
+				<WidgetListItem 
+					{...props}
+					{...items[index]}
+					subId={subId} 
+					id={items[index].id}
+					style={style} 
+					index={index}
+					isCompact={isCompact}
+				/>
+			</CellMeasurer>
+		);
+
+		const List = SortableContainer(() => (
+			<div className="items">
+				<InfiniteLoader
+					rowCount={total}
+					loadMoreRows={() => {}}
+					isRowLoaded={() => true}
+					threshold={LIMIT}
+				>
+					{({ onRowsRendered }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<VList
+									ref={listRef}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={cache.current}
+									rowCount={length}
+									rowHeight={({ index }) => getRowHeight(items[index], index, isCompact)}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={LIMIT}
+									scrollToAlignment="center"
+									onScroll={onScroll}
+								/>
+						)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			</div>
+		));
+
+		content = (
+			<List 
+				axis="y" 
+				lockAxis="y"
+				lockToContainerEdges={true}
+				transitionDuration={150}
+				distance={10}
+				onSortStart={onSortStart}
+				onSortEnd={onSortEnd}
+				useDragHandle={true}
+				helperClass="isDragging"
+				helperContainer={() => $(`#widget-${parent.id} .items`).get(0)}
+			/>
+		);
+	} else {
+		content = (
+			<React.Fragment>
+				{items.map((item: any) => (
+					<WidgetListItem 
+						key={`widget-${block.id}-${item.id}`} 
+						{...props} 
+						{...item} 
+						subId={subId} 
+						id={item.id} 
+						isCompact={isCompact}
+					/>
+				))}
+			</React.Fragment>
+		);
+	};
+
+	useEffect(() => {
+		listRef.current?.scrollToPosition(top.current);
+
+		initCache();
+		resize();
+	});
+
+
+	return (
+		<div ref={nodeRef} className={cn.join(' ')}>
+			{content}
+		</div>
+	);
+
+}));
 
 export default WidgetViewList;

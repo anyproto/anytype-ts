@@ -132,6 +132,11 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 
 		clear();
 		phrase.current = checkValue(phrase.current.concat(text.split(' ')));
+		
+		if (text) {
+			placeholderHide();
+		};
+
 		setDummy(dummy + 1);
 	};
 

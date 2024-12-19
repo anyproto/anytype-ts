@@ -1,135 +1,57 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, keyboard } from 'Lib';
 import { Header, Footer, GraphProvider, Loader } from 'Component';
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
+const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
-	_isMounted = false;
-	node: any = null;
-	data: any = {
-		nodes: [],
-		edges: [],
-	};
-	ids: string[] = [];
-	refHeader: any = null;
-	refGraph: any = null;
-	loading = false;
-	timeoutLoading = 0;
-	rootId = '';
+	const { isPopup } = props;
+	const [ data, setData ] = useState({ edges: [], nodes: [] });
+	const nodeRef = useRef(null);
+	const headerRef = useRef(null);
+	const graphRef = useRef(null);
+	const rootIdRef = useRef('');
 
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onTab = this.onTab.bind(this);
-	};
-
-	render () {
-		const rootId = this.getRootId();
-
-		return (
-			<div 
-				ref={node => this.node = node} 
-				className="body"
-			>
-				<Header 
-					{...this.props} 
-					ref={ref => this.refHeader = ref} 
-					component="mainGraph" 
-					rootId={rootId} 
-					tabs={U.Menu.getGraphTabs()} 
-					tab="graph" 
-					onTab={this.onTab} 
-					layout={I.ObjectLayout.Graph}
-				/>
-
-				<Loader id="loader" />
-
-				<div className="wrapper">
-					<GraphProvider 
-						key="graph"
-						{...this.props} 
-						ref={ref => this.refGraph = ref} 
-						id="global"
-						rootId={rootId} 
-						data={this.data}
-						storageKey={J.Constant.graphId.global}
-					/>
-				</div>
-
-				<Footer component="mainObject" />
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-
-		this.rebind();
-		this.resize();
-		this.load();
-		this.initRootId(this.getRootId());
-	};
-
-	componentDidUpdate () {
-		this.resize();
-
-		if (this.loading) {
-			window.clearTimeout(this.timeoutLoading);
-			this.timeoutLoading = window.setTimeout(() => this.setLoading(false), 100);
-		};
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		this.unbind();
-		window.clearTimeout(this.timeoutLoading);
-	};
-
-	unbind () {
+	const unbind = () => {
 		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage sidebarResize.graphPage`);
 	};
 
-	rebind () {
+	const rebind = () => {
 		const win = $(window);
 
-		this.unbind();
-		win.on(`keydown.graphPage`, e => this.onKeyDown(e));
-		win.on('updateGraphRoot.graphPage', (e: any, data: any) => this.initRootId(data.id));
-		win.on('sidebarResize.graphPage', () => this.resize());
+		unbind();
+		win.on(`keydown.graphPage`, e => onKeyDown(e));
+		win.on('updateGraphRoot.graphPage', (e: any, data: any) => initRootId(data.id));
+		win.on('sidebarResize.graphPage', () => resize());
 	};
 
-	onKeyDown (e: any) {
+	const onKeyDown = (e: any) => {
 		const cmd = keyboard.cmdKey();
 
 		keyboard.shortcut(`${cmd}+f`, e, () => $('#button-header-search').trigger('click'));
 	};
 
-	load () {
-		this.setLoading(true);
+	const load = () => {
+		setLoading(true);
 
 		C.ObjectGraph(S.Common.space, U.Data.graphFilters(), 0, [], J.Relation.graph, '', [], (message: any) => {
-			if (!this._isMounted || message.error.code) {
+			if (message.error.code) {
 				return;
 			};
 
-			this.data.edges = message.edges;
-			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
-			this.forceUpdate();
+			setData({
+				edges: message.edges,
+				nodes: message.nodes.map(it => S.Detail.mapper(it))
+			});
 
-			if (this.refGraph) {
-				this.refGraph.init();
-			};
+			graphRef.current?.init();
 		});
 	};
 
-	setLoading (v: boolean) {
-		const node = $(this.node);
+	const setLoading = (v: boolean) => {
+		const node = $(nodeRef.current);
 		const loader = node.find('#loader');
-
-		this.loading = v;
 
 		if (v) {
 			loader.show().css({ opacity: 1 });
@@ -139,11 +61,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		};
 	};
 
-	resize () {
-		const { isPopup } = this.props;
+	const resize = () => {
 		const win = $(window);
 		const obj = U.Common.getPageContainer(isPopup);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const wrapper = obj.find('.wrapper');
 		const oh = obj.height();
 		const header = node.find('#header');
@@ -159,29 +80,76 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			};
 		};
 
-		if (this.refGraph) {
-			this.refGraph.resize();
-		};
+		graphRef.current?.resize();
 	};
 
-	initRootId (id: string) {
-		this.rootId = id; 
-		this.refHeader.setRootId(id);
+	const initRootId = (id: string) => {
+		rootIdRef.current = id; 
+		headerRef.current?.setRootId(id);
 	};
 
-	getRootId () {
-		const { rootId, match } = this.props;
-		return this.rootId || (rootId ? rootId : match?.params?.id);
+	const getRootId = () => {
+		const { rootId, match } = props;
+		return rootIdRef.current || (rootId ? rootId : match?.params?.id);
 	};
 
-	onTab (id: string) {
+	const rootId = getRootId();
+
+	const onTab = (id: string) => {
 		const tab = U.Menu.getGraphTabs().find(it => it.id == id);
 
 		if (tab) {
-			U.Object.openAuto({ id: this.getRootId(), layout: tab.layout });
+			U.Object.openAuto({ id: getRootId(), layout: tab.layout });
 		};
 	};
 
-});
+	useEffect(() => {
+		rebind();
+		load();
+		initRootId(getRootId());
+
+		return () => unbind();
+	}, []);
+
+	useEffect(() => {
+		resize();
+		setLoading(false);
+	}, [ data ]);
+
+	return (
+		<div 
+			ref={nodeRef} 
+			className="body"
+		>
+			<Header 
+				{...props} 
+				ref={headerRef} 
+				component="mainGraph" 
+				rootId={rootId} 
+				tabs={U.Menu.getGraphTabs()} 
+				tab="graph" 
+				onTab={onTab} 
+				layout={I.ObjectLayout.Graph}
+			/>
+
+			<Loader id="loader" />
+
+			<div className="wrapper">
+				<GraphProvider 
+					key="graph"
+					{...props} 
+					ref={graphRef} 
+					id="global"
+					rootId={rootId} 
+					data={data}
+					storageKey={J.Constant.graphId.global}
+				/>
+			</div>
+
+			<Footer component="mainObject" />
+		</div>
+	);
+
+}));
 
 export default PageMainGraph;

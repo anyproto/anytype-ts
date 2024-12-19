@@ -1,48 +1,19 @@
-import * as React from 'react';
+import React, { forwardRef, useRef } from 'react';
+import { observer } from 'mobx-react';
 import { Header, Footer, EditorPage } from 'Component';
 import { I, S, U, Onboarding, analytics } from 'Lib';
 
-class PageMainEdit extends React.Component<I.PageComponent> {
-	
-	refHeader: any = null;
+const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
-	constructor (props: I.PageComponent) {
-		super(props);
-		
-		this.onOpen = this.onOpen.bind(this);
-	};
+	const { isPopup } = props;
+	const headerRef = useRef(null);
 
-	render () {
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-
-		return (
-			<React.Fragment>
-				<Header 
-					component="mainObject" 
-					ref={ref => this.refHeader = ref} 
-					{...this.props} 
-					rootId={rootId} 
-				/>
-
-				<div id="bodyWrapper" className="wrapper">
-					<EditorPage key="editorPage" {...this.props} isPopup={isPopup} rootId={rootId} onOpen={this.onOpen} />
-				</div>
-				
-				<Footer component="mainObject" {...this.props} />
-			</React.Fragment>
-		);
-	};
-
-	onOpen () {
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
+	const onOpen = () => {
+		const rootId = getRootId();
 		const home = U.Space.getDashboard();
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
-		if (this.refHeader) {
-			this.refHeader.forceUpdate();
-		};
+		headerRef.current?.forceUpdate();
 
 		if (home && (rootId != home.id)) {
 			let key = '';
@@ -60,11 +31,38 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 		analytics.event('ScreenObject', { objectType: object.type });
 	};
 
-	getRootId () {
-		const { rootId, match } = this.props;
+	const getRootId = () => {
+		const { rootId, match } = props;
 		return rootId ? rootId : match?.params?.id;
 	};
-	
-};
+
+	const rootId = getRootId();
+
+	return (
+		<>
+			<Header 
+				component="mainObject" 
+				ref={headerRef} 
+				{...props} 
+				rootId={rootId} 
+			/>
+
+			<div id="bodyWrapper" className="wrapper">
+				<EditorPage 
+					key="editorPage" {...props} 
+					isPopup={isPopup} 
+					rootId={rootId} 
+					onOpen={onOpen} 
+				/>
+			</div>
+			
+			<Footer 
+				component="mainObject"
+				{...props} 
+			/>
+		</>
+	);
+
+}));
 
 export default PageMainEdit;

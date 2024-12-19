@@ -94,6 +94,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
+		onClick,
 	}), []);
 
 	return (
