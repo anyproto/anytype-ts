@@ -38,7 +38,7 @@
 				.descr { @include text-small; line-height: 16px; color: var(--color-text-secondary); @include clamp3; }
 
 				.link {
-					.iconObject { background: none; }
+					.iconObject { background: none; border-radius: 2px; }
 				}
 			}
 			.side.right { position: relative; display: flex; align-items: center; border-radius: 4px; overflow: hidden; }

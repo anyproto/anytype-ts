@@ -14,7 +14,7 @@
 		.icon { width: 20px; height: 20px; }
 		.icon.notice { background: url('~img/icon/toast/notice.svg'); }
 
-		.message { display: flex; gap: 0px 4px; @include text-overflow-nw; }
+		.message { display: flex; gap: 0px 4px; max-width: 100%; }
 		.message {
 			.chunk { @include text-overflow-nw; display: flex; align-items: center; gap: 0px 4px; }
 			.chunk {
