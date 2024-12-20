@@ -17,28 +17,23 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 	};
 
     render () {
-		const { rootId, object, isPopup } = this.props;
+		const { rootId, isPopup } = this.props;
 		const relation = this.props.item;
-		const root = S.Block.getLeaf(rootId, object.id);
+		const root = S.Block.getLeaf(rootId, rootId);
 		
 		if (!relation || !root) {
 			return null;
 		};
 
-		const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
+		const object = S.Detail.get(rootId, rootId, [ relation.relationKey ]);
+		const id = Relation.cellId(PREFIX, relation.relationKey, rootId);
 		const cn = [ 'cell', Relation.className(relation.format) ];
 		const readonly = this.props.readonly || root.isLocked();
+		const canEdit = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const container = [ 
 			U.Common.getCellContainer('sidebarRight'), 
 			U.Common.getCellContainer(isPopup ? 'popup' : 'page') 
 		].join(', ');
-
-		let allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		if (readonly) {
-			allowedValue = false;
-		};
-
-		const canEdit = !readonly && allowedValue;
 
 		if (canEdit) {
 			cn.push('canEdit');
@@ -78,10 +73,12 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 	};
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
-		const { object } = this.props;
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId);
 		const relation = S.Record.getRelationByKey(relationKey);
+		const val = Relation.formatValue(relation, value, true);
 
-		C.ObjectListSetDetails([ object.id ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
+		C.ObjectListSetDetails([ object.id ], [ { key: relationKey, value: val } ], callBack);
 
 		if ((undefined !== object[relationKey]) && !U.Common.compareJSON(object[relationKey], value)) {
 			analytics.changeRelationValue(relation, value, { type: 'menu', id: 'Single' });

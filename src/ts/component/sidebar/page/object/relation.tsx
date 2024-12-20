@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, sidebar, translate, Relation } from 'Lib';
+import { I, S, C, U, sidebar, translate, Action } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 
@@ -19,11 +19,9 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
     render () {
-		const rootId = this.getRootId();
+		const { rootId } = this.props;
 		const object = this.getObject();
 		const sections = this.getSections();
-
-		console.log(sections);
 
         return (
 			<React.Fragment>
@@ -53,7 +51,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 									rootId={rootId}
 									object={object}
 									item={item} 
-									onChange={update => {}}
+									onChange={() => this.updateObject(item.id)}
 								/>
 							))}
 						</React.Fragment>
@@ -63,41 +61,17 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		);
 	};
 
-	componentDidMount (): void {
-		this.load();
-	};
-
-	componentDidUpdate (): void {
-		this.load();
-	};
-
-	load () {
-		const { space } = S.Common;
-		const { rootId } = this.props;
-
-		if (this.id == rootId) {
-			return;
-		};
-
-		this.id = rootId;
-		C.ObjectShow(rootId, TRACE, space, () => this.forceUpdate());
-	};
-
-	getRootId () {
-		return [ this.props.rootId, TRACE ].join('-');
-	};
-
 	getObject () {
-		return S.Detail.get(this.getRootId(), this.props.rootId);
+		const { rootId } = this.props;
+		return S.Detail.get(rootId, rootId);
 	};
 
 	getSections () {
 		const { rootId } = this.props;
-		const contextId = this.getRootId();
 		const object = this.getObject();
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type) || {};
-		const conflicts = S.Record.getConflictRelations(contextId, rootId, type.id).sort(U.Data.sortByName);
+		const conflicts = S.Record.getConflictRelations(rootId, rootId, type.id).sort(U.Data.sortByName);
 		const conflictingKeys = conflicts.map(it => it.relationKey);
 
 		let items = (type.recommendedRelations || []).map(it => S.Record.getRelationById(it)).filter(it => it && it.relationKey);
@@ -119,15 +93,22 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
 	getRelations () {
+		const { rootId } = this.props;
 		const object = this.getObject();
 
-		return S.Record.getObjectRelations(this.getRootId(), object.type);
+		return S.Record.getObjectRelations(rootId, object.type);
 	};
 
 	onSetUp () {
 		const object = this.getObject();
 
 		sidebar.rightPanelSwitch('type', { rootId: object.type });
+	};
+
+	updateObject (id: string) {
+		console.log('Update object', id);
+
+		this.sectionRefs.get(id)?.setObject(this.getObject());
 	};
 
 });
