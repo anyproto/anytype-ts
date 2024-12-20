@@ -873,7 +873,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			this.setIndex(index);
 
 			const item = items[index];
-
 			if (!item) {
 				return;
 			};
@@ -883,7 +882,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			this.setActive(null, true);
+			this.setActive(null, true, dir);
 
 			if (!item.arrow && this.ref.onOver) {
 				this.ref.onOver(e, item);
@@ -956,7 +955,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		this.setIndex(index);
 	};
 
-	setActive (item?: any, scroll?: boolean) {
+	setActive (item?: any, scroll?: boolean, dir?: number) {
+		dir = dir || 1;
+
 		if (!this.ref || !this.ref.getItems) {
 			return;
 		};
@@ -986,7 +987,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		if (next.isDiv || next.isSection) {
-			index++;
+			index += dir;
+			this.setIndex(index);
 			if (items[index]) {
 				this.setActive(items[index], scroll);
 			};
