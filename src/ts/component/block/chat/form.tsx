@@ -246,17 +246,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		window.clearTimeout(this.timeoutFilter);
-
-		const { rootId } = this.props;
-		const { attachments } = this.state;
-
 		keyboard.disableSelection(false);
-
-		Storage.setChat(rootId, {
-			text: this.getTextValue(),
-			marks: this.marks,
-			attachments,
-		});
 	};
 
 	checkSendButton () {
@@ -286,8 +276,17 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onBlurInput () {
+		const { rootId } = this.props;
+		const { attachments } = this.state;
+
 		keyboard.disableSelection(false);
 		this.refEditable?.placeholderCheck();
+
+		Storage.setChat(rootId, {
+			text: this.getTextValue(),
+			marks: this.marks,
+			attachments,
+		});
 	};
 
 	onKeyDownInput (e: any) {
