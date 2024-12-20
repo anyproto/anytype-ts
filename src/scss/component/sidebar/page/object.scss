@@ -46,12 +46,11 @@
 				.cellContent span:empty { height: 22px; }
 			}
 
-			.cellContent { min-height: 22px; }
+			.cellContent { min-height: 22px; display: flex; align-items: center; }
 			.cellContent {
-				.name { line-height: 22px; }
-				.more { line-height: 22px; }
+				.name, .more { line-height: 22px; }
+				.wrap { display: flex; align-items: center; }
 			}
-			.cellContent.isName { display: flex; align-items: center; }
 		}
 	}
 }

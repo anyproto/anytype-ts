@@ -221,6 +221,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
 			this.refControls?.forceUpdate();
+			sidebar.rightPanelSetState({ rootId });
 			this.setState({ isLoading: false });
 			this.loadTemplates();
 		});

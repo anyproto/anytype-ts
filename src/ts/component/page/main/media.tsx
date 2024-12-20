@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation, analytics } from 'Lib';
+import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -226,6 +226,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
+			sidebar.rightPanelSetState({ rootId });
 			this.setState({ isLoading: false });
 		});
 	};

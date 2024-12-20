@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button, Label, Loader, HeadSimple } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
+import { I, C, S, U, J, Action, translate, analytics, keyboard, sidebar } from 'Lib';
 import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 interface State {
@@ -212,6 +212,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
+			sidebar.rightPanelSetState({ rootId });
 
 			this.loadCategory();
 		});
