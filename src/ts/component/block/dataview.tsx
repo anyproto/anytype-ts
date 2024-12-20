@@ -631,12 +631,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const details = this.getDetails(groupId);
-		const flags: I.ObjectFlag[] = [];
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		
 		let typeId = '';
 		let templateId = '';
-
-		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
 			templateId = template.id;
@@ -929,7 +927,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if ((relationKey == 'name') && (!ref.ref.state.isEditing)) {
+		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing()) {
 			const ids = selection?.get(I.SelectType.Record) || [];
 
 			if (keyboard.withCommand(e)) {
@@ -1210,7 +1208,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return [];
 		};
 
-		const keys = S.Record.getObjectRelationKeys(rootId, block.id);
+		const keys = S.Record.getDataviewRelationKeys(rootId, block.id);
 		return view.getVisibleRelations().filter(it => keys.includes(it.relationKey));
 	};
 

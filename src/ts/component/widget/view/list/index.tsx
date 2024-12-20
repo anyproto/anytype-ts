@@ -79,7 +79,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		const length = getItems().length;
 
 		raf(() => {
-			const container = $('#sidebar #containerWidget #list');
+			const container = $('#sidebarLeft #containerWidget #body');
 			const obj = $(`#widget-${parent.id}`);
 			const node = $(nodeRef.current);
 			const head = obj.find('.head');

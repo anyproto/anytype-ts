@@ -4,7 +4,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Title, Filter, Icon, Button, Label, EmptySearch } from 'Component';
 import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action, Relation } from 'Lib';
 
-import Item from './object/item';
+import Item from './allObject/item';
 
 interface State {
 	isLoading: boolean;
@@ -15,7 +15,7 @@ const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_DEFAULT = 64;
 const HEIGHT_ITEM_COMPACT = 36;
 
-const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
+const SidebarPageObject = observer(class SidebarPageObject extends React.Component<{}, State> {
 	
 	state = {
 		isLoading: false,
@@ -478,7 +478,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const { x, y } = keyboard.mouse.page;
 
 		S.Menu.open('dataviewContext', {
-			element: `#sidebar #containerObject #item-${item.id}`,
+			element: `#sidebarLeft #containerObject #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
 			data: {
 				objectIds,
@@ -506,7 +506,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		let menuContext = null;
 
 		S.Menu.open('select', {
-			element: '#sidebar #containerObject #button-object-more',
+			element: '#sidebarLeft #containerObject #button-object-more',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			className: 'fixed',
@@ -548,9 +548,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onAdd () {
+		const isPopup = keyboard.isPopup();
 		const details = {
 			...this.getDetailsByType(this.type),
 			name: this.filter,
+			isNew: true,
 		};
 
 		const cb = (id: string) => {
@@ -565,7 +567,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		} else
 		if (this.type == I.ObjectContainerType.Relation) {
 			this.onRelationMenu(cb);
-		} else {
+		} else 
+		if (this.type == I.ObjectContainerType.Type) {
+			sidebar.rightPanelToggle(true, isPopup, 'type', { details });
+		}else {
 			keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
 				cb(message.targetId);
 			});
@@ -614,15 +619,25 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const details: any = {};
 
 		let type = null;
+		let layout = null;
 
 		switch (t) {
 			case I.ObjectContainerType.Bookmark: {
 				type = S.Record.getBookmarkType();
+				layout = I.ObjectLayout.Bookmark;
 				break;
 			};
 
 			case I.ObjectContainerType.Type: {
 				type = S.Record.getTypeType();
+				layout = I.ObjectLayout.Type;
+
+				const featured = [ 'type' ];
+				const recommended = [];
+				const mapper = it => S.Record.getRelationByKey(it)?.id;
+
+				details.recommendedFeaturedRelations = featured.map(mapper).filter(it => it);
+				details.recommendedRelations = recommended.map(mapper).filter(it => it);
 				break;
 			};
 
@@ -632,8 +647,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 		};
 
-		if (type) {
+		if (type !== null) {
 			details.type = type.id;
+		};
+
+		if (layout !== null) {
+			details.layout = layout;
 		};
 
 		return details;
@@ -665,7 +684,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const width = node.width() - 32;
 
 		S.Menu.open('dataviewCreateBookmark', {
-			element: '#sidebar #containerObject #button-object-create',
+			element: '#sidebarLeft #containerObject #button-object-create',
 			offsetY: 4,
 			width,
 			className: 'fixed',
@@ -684,7 +703,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const width = node.width() - 32;
 
 		S.Menu.open('blockRelationEdit', { 
-			element: '#sidebar #containerObject #button-object-create',
+			element: '#sidebarLeft #containerObject #button-object-create',
 			offsetY: 4,
 			width,
 			className: 'fixed',
@@ -1120,4 +1139,4 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 });
 
-export default SidebarObject;
+export default SidebarPageObject;

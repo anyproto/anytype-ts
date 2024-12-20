@@ -90,7 +90,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 						onRouteChange: () => {
 							S.Common.fullscreenObjectSet(true);
 							S.Common.showRelativeDatesSet(true);
-							S.Common.showObjectSet(false);
 
 							U.Space.initSpaceState();
 							Onboarding.start('basics', false);

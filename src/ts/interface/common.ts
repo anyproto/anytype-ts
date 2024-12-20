@@ -187,6 +187,20 @@ export interface ButtonComponent {
 	onMouseEnter?(e: any): void;
 };
 
+export interface SidebarPageComponent {
+	rootId?: string;
+	isPopup?: boolean;
+	readonly?: boolean;
+	details?: any;
+};
+
+export interface SidebarSectionComponent extends SidebarPageComponent {
+	object: any;
+	item?: any;
+	readonly?: boolean;
+	onChange?(update: any): void;
+};
+
 export enum SurveyType {
 	Register		 = 0,
 	Delete			 = 1,

@@ -167,10 +167,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 					<Label className="menuLabel" text={menuLabel} />
 				) : ''}
 				
-				{!items.length ? (
-					<div className="item empty">{translate('menuSelectEmpty')}</div>
-				) : ''}
-
 				<div className="items">
 					{content}
 				</div>
@@ -298,6 +294,10 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
 
 			items = items.filter(it => String(it.name || '').match(filter));
+		};
+
+		if (!items.length) {
+			items.push({ id: 'empty', name: translate('menuSelectEmpty'), className: 'empty', isEmpty: true });
 		};
 
 		if (withAdd) {
@@ -428,7 +428,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		if (!noScroll) {
 			let height = 0;
 			if (withFilter) {
-				height += 60;
+				height += 52;
 			};
 			if (!withFilter) {
 				height += 16;

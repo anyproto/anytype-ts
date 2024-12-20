@@ -21,7 +21,7 @@ interface ListPreviewObjectRefProps {
 	onKeyUp: (e: any) => void;
 };
 
-const WIDTH = 344;
+const WIDTH = 224;
 
 const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 	offsetX = 0,
@@ -204,7 +204,7 @@ const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 			content = (
 				<PreviewObject
 					ref={ref => objectRef.current.set(item.id, ref)}
-					size={I.PreviewSize.Large}
+					size={I.PreviewSize.Medium}
 					rootId={item.id}
 					onClick={e => onClick(e, item)}
 					onMore={onMenu ? e => onMenu(e, item) : null}
@@ -237,7 +237,7 @@ const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 	return (
 		<div 
 			ref={nodeRef}
-			className="listPreviewObject"
+			className="listObjectPreview"
 		>
 			<div className="wrap">
 				<div id="scroll" className="scroll">

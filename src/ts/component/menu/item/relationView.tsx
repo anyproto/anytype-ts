@@ -12,16 +12,13 @@ interface Props {
 	isHidden: boolean;
 	rootId: string;
 	block?: I.Block;
-	isFeatured?: boolean;
 	classNameWrap?: string;
 	readonly?: boolean;
 	canEdit?: boolean;
 	canDrag?: boolean;
-	canFav?: boolean;
 	diffType?: I.DiffType;
 	onEdit(e: any, item: any): void;
 	onRef(id: string, ref: any): void;
-	onFav(e: any, item: any): void;
 	onCellClick(e: any, relationKey: string, id: string): void;
 	onCellChange(id: string, relationKey: string, value: any, callBack?: (message: any) => void): void;
 };
@@ -33,8 +30,6 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 	public static defaultProps = {
 		readonly: true,
 		canEdit: false,
-		canFav: false,
-		isFeatured: false,
 		classNameWrap: '',
 	};
 
@@ -47,25 +42,16 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 	};
 
 	render () {
-		const { rootId, block, id, scope, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, diffType, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
-		const tooltip = translate(isFeatured ? 'menuItemRelationViewFeaturedRemove' : 'menuItemRelationViewFeaturedAdd');
+		const { rootId, block, id, scope, relationKey, canEdit, canDrag, readonly, format, name, isHidden, classNameWrap, diffType, onEdit, onRef, onCellClick, onCellChange } = this.props;
 		const object = S.Detail.get(rootId, rootId, [ relationKey ]);
 		const cellId = Relation.cellId(PREFIX, relationKey, object.id);
-		const value = object[relationKey];
 
 		const cn = [ 'item', 'sides' ];
-		const fcn = [ 'fav' ];
 		const icn = [ 'info' ];
 		const ccn = [ 'cell', Relation.className(format) ];
 
 		if (isHidden) {
 			cn.push('isHidden');
-		};
-		if (canFav) {
-			cn.push('canFav');
-		};
-		if (isFeatured) {
-			fcn.push('active');
 		};
 		if (canEdit) {
 			icn.push('canEdit');
@@ -106,9 +92,6 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						arrayLimit={10}
 					/>
 				</div>
-				{canFav ? (
-					<Icon className={fcn.join(' ')} tooltip={tooltip} onClick={e => onFav(e, relationKey)} />
-				) : ''}
 			</div>
 		);
 	};

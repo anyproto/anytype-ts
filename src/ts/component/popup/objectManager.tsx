@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Button, ListManager } from 'Component';
+import { Title, Button, ListObjectManager } from 'Component';
 import { C, I, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -35,7 +35,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 			<React.Fragment>
 				<Title text={title} />
 
-				<ListManager
+				<ListObjectManager
 					ref={ref => this.refManager = ref}
 					subId={subId}
 					rowLength={2}

@@ -159,6 +159,7 @@
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObjectTypeWithName": "Create Object Type \"%s\"",
 	"commonCreateObject": "Create Object",
+	"commonCreateNewTemplate": "Create new Template",
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
 	"commonShare": "Share",
@@ -181,7 +182,8 @@
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
 	"pluralLCObject": "object|objects",
-	"pluralTemplate": "template|templates",
+	"pluralTemplate": "Template|Templates",
+	"pluralLCTemplate": "template|templates",
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
 	"pluralObjectType": "Object Type|Object Types",
@@ -459,7 +461,6 @@
 
 	"pageMainNavigationItemEmptyTitle": "Object can not be shown",
 
-	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
 
@@ -508,10 +509,14 @@
 	"pageHeadSimpleCreateSet": "Create Set",
 	"pageHeadSimpleInstall": "Install",
 
-	"editorControlIcon": "Icon",
-	"editorControlCover": "Cover",
-	"editorControlLayout": "Layout",
+	"editorControlIcon0": "Add icon",
+	"editorControlIcon1": "Icon",
+	"editorControlCover0": "Add cover",
+	"editorControlCover1": "Cover",
+	"editorControlLayout": "Settings",
 	"editorControlRelation": "Relations",
+	"editorControlDescription0": "Add description",
+	"editorControlDescription1": "Hide description",
 
 	"editorPagePasteLink": "Paste as link",
 	"editorPageCreateBookmarkObject": "Create Bookmark Object",
@@ -1407,9 +1412,9 @@
 	"menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
 	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
-	"menuBlockRelationViewFeaturedRelations": "Featured Relations",
 	"menuBlockRelationViewInThisObject": "In this Object",
 	"menuBlockRelationViewFromType": "From Type %s",
+	"menuBlockRelationViewConflictingRelations": "Conflicting Relations",
 
 	"menuBlockStyleTurnText": "Turn into text",
 	"menuBlockStyleTurnList": "Turn into list",
@@ -1550,9 +1555,6 @@
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
-
-	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
-	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",
@@ -1842,6 +1844,21 @@
 	"sidebarObjectSortCreated": "Date created",
 	"sidebarObjectSortUpdated": "Date updated",
 	"sidebarObjectSortLastUsed": "Date last used",
+
+	"sidebarTypeTitle": "Editing type",
+	"sidebarSectionLayoutName": "Layout",
+	"sidebarSectionLayoutFormat": "Format",
+	"sidebarSectionLayoutFormatPage": "Page",
+	"sidebarSectionLayoutFormatList": "List",
+	"sidebarSectionLayoutType": "Layout type",
+	"sidebarSectionLayoutAlign": "Header position",
+	"sidebarSectionLayoutWidth": "Layout width",
+	"sidebarSectionLayoutDefaultView": "Default view",
+	"sidebarSectionLayoutDefaultType": "Default type",
+	"sidebarTypeRelation": "Fields",
+	"sidebarTypeRelationHeader": "Header",
+	"sidebarTypeRelationSidebar": "Sidebar",
+	"sidebarObjectRelationSetUp": "Set up",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

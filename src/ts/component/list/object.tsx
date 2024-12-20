@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
+import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon } from 'Component';
 import { I, C, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
-import { Icon, IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
 
 interface Column {
 	relationKey: string;
@@ -25,6 +25,11 @@ interface Props {
 
 interface ListObjectRefProps {
 	getData: (page: number, callBack?: (message: any) => void) => void;
+};
+
+interface State {
+	sortId: string;
+	sortType: I.SortType;
 };
 
 const PREFIX = 'listObject';

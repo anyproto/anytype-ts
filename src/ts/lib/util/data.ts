@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding, Preview } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Relation } from 'Lib';
 
 const SYSTEM_DATE_RELATION_KEYS = [
 	'lastModifiedDate', 
@@ -359,6 +359,7 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
+				withArchived: true,
 				onSubscribe: () => {
 					S.Record.getTypes().forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
@@ -387,6 +388,7 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
+				withArchived: true,
 				onSubscribe: () => {
 					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
@@ -554,9 +556,7 @@ class UtilData {
 		};
 
 		items = items.filter(it => it);
-		if (!config.debug.hiddenObject) {
-			items = items.filter(it => !it.isHidden);
-		};
+		items = S.Record.checkHiddenObjects(items);
 
 		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
 		return items;
@@ -584,24 +584,35 @@ class UtilData {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover), true);
+		const object = S.Detail.get(rootId, blockId, [ 
+			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled', 'featuredRelations',
+		].concat(J.Relation.cover), true);
+		const type = S.Record.getTypeById(object.type);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
-		const { iconEmoji, iconImage, coverType, coverId } = object;
+		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
+
 		const ret = {
 			withCover: false,
 			withIcon: false,
 			className: '',
+			layout: object.layout,
+			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
+			layoutWidth: this.getLayoutWidth(rootId),
+		};
+
+		if (undefined !== object.layoutAlign) {
+			ret.layoutAlign = object.layoutAlign;
 		};
 
 		let className = [];
 		if (!object._empty_) {
-			ret.withCover = Boolean((coverType != I.CoverType.None) && coverId);
-			className = [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ];
+			ret.withCover = Boolean((object.coverType != I.CoverType.None) && object.coverId);
+			className = [ this.layoutClass(object.id, object.layout), `align${ret.layoutAlign}` ];
 		};
 
 		switch (object.layout) {
 			default:
-				ret.withIcon = iconEmoji || iconImage;
+				ret.withIcon = object.iconEmoji || object.iconImage;
 				break;
 
 			case I.ObjectLayout.Bookmark:
@@ -611,6 +622,7 @@ class UtilData {
 
 			case I.ObjectLayout.Human:
 			case I.ObjectLayout.Participant:
+			case I.ObjectLayout.Type:
 			case I.ObjectLayout.Relation: {
 				ret.withIcon = true;
 				break;
@@ -625,7 +637,7 @@ class UtilData {
 			className.push('noSystemBlocks');
 		};
 
-		if ((object.featuredRelations || []).includes('description')) {
+		if (featuredRelations.includes('description')) {
 			className.push('withDescription');
 		};
 
@@ -1218,6 +1230,20 @@ class UtilData {
 			type: I.BlockType.Link,
 			content: { ...this.defaultLinkSettings(), targetBlockId: id },
 		};
+	};
+
+	getLayoutWidth (rootId: string): number {
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+		const type = S.Record.getTypeById(object.type);
+		const root = S.Block.getLeaf(rootId, rootId);
+
+		let ret = type?.layoutWidth;
+
+		if (undefined !== root?.fields?.width) {
+			ret = root?.fields?.width;
+		};
+
+		return Number(ret) || 0;
 	};
 
 };

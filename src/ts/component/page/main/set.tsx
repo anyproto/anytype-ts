@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, translate, analytics } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, translate, analytics, sidebar } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -191,6 +191,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
 			this.refControls?.forceUpdate();
+			sidebar.rightPanelSetState({ rootId });
 			this.setState({ isLoading: false });
 			this.resize();
 		});
