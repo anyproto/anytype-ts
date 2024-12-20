@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, sidebar, translate, Action } from 'Lib';
+import { I, S, U, sidebar, translate } from 'Lib';
 
 import Section from 'Component/sidebar/section';
-
-const TRACE = 'sidebarObjectRelation';
 
 const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent> {
 	
@@ -51,7 +49,6 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 									rootId={rootId}
 									object={object}
 									item={item} 
-									onChange={() => this.updateObject(item.id)}
 								/>
 							))}
 						</React.Fragment>
@@ -101,14 +98,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 	onSetUp () {
 		const object = this.getObject();
-
-		sidebar.rightPanelSwitch('type', { rootId: object.type });
-	};
-
-	updateObject (id: string) {
-		console.log('Update object', id);
-
-		this.sectionRefs.get(id)?.setObject(this.getObject());
+		sidebar.rightPanelSetState({ page: 'type', rootId: object.type });
 	};
 
 });

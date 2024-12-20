@@ -369,7 +369,7 @@ class Sidebar {
 			S.Common.showSidebarRightSet(isPopup, v);
 
 			if (page) {
-				this.rightPanelSwitch(page, param);
+				this.rightPanelSetState({ page, ...param });
 			};
 		};
 
@@ -407,8 +407,8 @@ class Sidebar {
 		}, J.Constant.delay.sidebar);
 	};
 
-	rightPanelSwitch (page: string, param: any) {
-		S.Common.getRef('sidebarRight')?.setState({ page, ...param });
+	rightPanelSetState (v: any) {
+		S.Common.getRef('sidebarRight')?.setState(v);
 	};
 
 };

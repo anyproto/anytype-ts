@@ -30,15 +30,15 @@ const SidebarRight = observer(class SidebarRight extends React.Component<Props, 
 		details: {},
 	};
 
-    render() {
+    render () {
 		const { isPopup } = this.props;
 		const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
-		const { page, rootId, details } = this.state;
 
 		if (!showSidebarRight) {
 			return null;
 		};
 
+		const { page, rootId, details } = this.state;
 		const Component = Components[page];
 		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 
@@ -61,6 +61,10 @@ const SidebarRight = observer(class SidebarRight extends React.Component<Props, 
 			</div>
 		);
     };
+
+	componentDidUpdate (): void {
+		this.refChild?.forceUpdate();	
+	};
 
 });
 
