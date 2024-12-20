@@ -16,7 +16,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 	};
 
     render () {
-		const { readonly, object } = this.props;
+		const { readonly } = this.props;
 		const featured = this.getFeatured();
 		const recommended = this.getRecommended();
 
@@ -27,6 +27,8 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		const Item = SortableElement((item: any) => {
 			const ce = [ 'eye' ];
 			const isActive = item.container == 'section-relation-featured';
+			const canDrag = !readonly && ![ 'type' ].includes(item.relationKey);
+			const canHide = canDrag;
 
 			if (isActive) {
 				ce.push('active');
@@ -39,12 +41,12 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 					onClick={e => this.onEdit(e, item.container, item.id)}
 				>
 					<div className="side left">
-						{!readonly ? <Handle /> : ''}
+						{canDrag ? <Handle /> : ''}
 						<IconObject object={item} />
 						<ObjectName object={item} />
 					</div>
 					<div className="side right">
-						<Icon className={ce.join(' ')} onClick={e => this.onToggle(e, item.container, item.id)} />
+						{canHide ? <Icon className={ce.join(' ')} onClick={e => this.onToggle(e, item.container, item.id)} /> : ''}
 					</div>
 				</div>
 			);
