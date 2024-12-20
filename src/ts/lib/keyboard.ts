@@ -827,9 +827,9 @@ class Keyboard {
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat();
 		} else {
-			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
+			isDisabled = [ 'set', 'store', 'graph', 'chat' ].includes(popupMatch.params.action);
 		};
 
 		if (isDisabled) {
@@ -981,6 +981,10 @@ class Keyboard {
 
 	isMainGraph () {
 		return this.isMain() && (this.match?.params?.action == 'graph');
+	};
+
+	isMainChat () {
+		return this.isMain() && (this.match?.params?.action == 'chat');
 	};
 
 	isMainIndex () {

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, analytics } from 'Lib';
+import { I, M, C, S, U, J, Action } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -89,7 +89,6 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	componentDidMount () {
 		this._isMounted = true;
 		this.open();
-		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -101,27 +100,6 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.close();
-		this.unbind();
-	};
-
-	unbind () {
-		const { isPopup } = this.props;
-		const namespace = U.Common.getEventNamespace(isPopup);
-		const events = [ 'keydown', 'scroll' ];
-
-		$(window).off(events.map(it => `${it}.set${namespace}`).join(' '));
-	};
-
-	rebind () {
-		const { isPopup } = this.props;
-		const win = $(window);
-		const namespace = U.Common.getEventNamespace(isPopup);
-		const container = U.Common.getScrollContainer(isPopup);
-
-		this.unbind();
-
-		win.on(`keydown.set${namespace}`, e => this.onKeyDown(e));
-		container.on(`scroll.set${namespace}`, () => this.onScroll());
 	};
 
 	checkDeleted () {
@@ -184,57 +162,6 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match?.params?.id;
-	};
-
-	onScroll () {
-		const { isPopup } = this.props;
-
-		if (!isPopup && keyboard.isPopup()) {
-			return;
-		};
-
-		const selection = S.Common.getRef('selectionProvider');
-		if (selection) {
-			selection.renderSelection();
-		};
-	};
-
-	onKeyDown (e: any): void {
-		const { isPopup } = this.props;
-
-		if (!isPopup && keyboard.isPopup()) {
-			return;
-		};
-
-		const node = $(this.node);
-		const selection = S.Common.getRef('selectionProvider');
-		const cmd = keyboard.cmdKey();
-		const ids = selection?.get(I.SelectType.Record) || [];
-		const count = ids.length;
-		const rootId = this.getRootId();
-
-		keyboard.shortcut(`${cmd}+f`, e, () => {
-			e.preventDefault();
-
-			node.find('#dataviewControls .filter .icon.search').trigger('click');
-		});
-
-		if (!keyboard.isFocused) {
-			keyboard.shortcut(`${cmd}+a`, e, () => {
-				e.preventDefault();
-
-				const records = S.Record.getRecordIds(S.Record.getSubId(rootId, J.Constant.blockId.dataview), '');
-				selection.set(I.SelectType.Record, records);
-			});
-
-			if (count && !S.Menu.isOpen()) {
-				keyboard.shortcut('backspace, delete', e, () => {
-					e.preventDefault();
-					Action.archive(ids, analytics.route.chat);
-					selection.clear();
-				});
-			};
-		};
 	};
 
 	isReadonly () {
