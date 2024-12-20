@@ -975,9 +975,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		if (this.ref.refList && scroll) {
-			if (this.ref.recalcIndex) {
-				index = this.ref.recalcIndex();
-			};
 			this.ref.refList.scrollToRow(Math.max(0, index));
 		};
 
