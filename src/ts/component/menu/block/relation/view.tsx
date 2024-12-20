@@ -159,25 +159,11 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const object = S.Detail.get(rootId, rootId);
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
-		const readonly = this.isReadonly();
-
-		const conflicts = S.Record.getConflictRelations(rootId, type.id).sort(U.Data.sortByName);
+		const conflicts = S.Record.getConflictRelations(rootId, rootId, type.id).sort(U.Data.sortByName);
 		const conflictingKeys = conflicts.map(it => it.relationKey);
 
-		let items = (type ? type.recommendedRelations || [] : []).map(it => ({
-			...S.Record.getRelationById(it),
-		})).filter(it => it && it.relationKey);
-		items = items.sort(U.Data.sortByHidden).filter((it: any) => {
-			if (!it) {
-				return false;
-			};
-
-			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey]) && (it.scope === I.RelationScope.Type)) {
-				return false;
-			};
-
-			return true;
-		});
+		let items = (type ? type.recommendedRelations || [] : []).map(it => S.Record.getRelationById(it)).filter(it => it && it.relationKey);
+		items = items.sort(U.Data.sortByHidden);
 		items = S.Record.checkHiddenObjects(items);
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 

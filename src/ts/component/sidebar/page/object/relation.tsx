@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, sidebar, translate } from 'Lib';
+import { I, S, C, U, sidebar, translate, Relation } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 
@@ -21,7 +21,9 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
     render () {
 		const rootId = this.getRootId();
 		const object = this.getObject();
-		const relations = this.getRelations();
+		const sections = this.getSections();
+
+		console.log(sections);
 
         return (
 			<React.Fragment>
@@ -36,17 +38,25 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				</div>
 
 				<div className="body customScrollbar">
-					{relations.map((item, i) => (
-						<Section 
-							{...this.props} 
-							ref={ref => this.sectionRefs.set(item.id, ref)}
-							key={item.id} 
-							component="object/relation"
-							rootId={rootId}
-							object={object}
-							item={item} 
-							onChange={update => {}}
-						/>
+					{sections.map((section, i) => (
+						<React.Fragment key={section.id}>
+							<div key={section.id} className="sectionName">
+								{section.name}
+							</div>
+
+							{section.children.map((item, i) => (
+								<Section 
+									{...this.props} 
+									ref={ref => this.sectionRefs.set(item.id, ref)}
+									key={item.id} 
+									component="object/relation"
+									rootId={rootId}
+									object={object}
+									item={item} 
+									onChange={update => {}}
+								/>
+							))}
+						</React.Fragment>
 					))}
 				</div>
 			</React.Fragment>
@@ -79,6 +89,33 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 	getObject () {
 		return S.Detail.get(this.getRootId(), this.props.rootId);
+	};
+
+	getSections () {
+		const { rootId } = this.props;
+		const contextId = this.getRootId();
+		const object = this.getObject();
+		const isTemplate = U.Object.isTemplate(object.type);
+		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type) || {};
+		const conflicts = S.Record.getConflictRelations(contextId, rootId, type.id).sort(U.Data.sortByName);
+		const conflictingKeys = conflicts.map(it => it.relationKey);
+
+		let items = (type.recommendedRelations || []).map(it => S.Record.getRelationById(it)).filter(it => it && it.relationKey);
+		items = S.Record.checkHiddenObjects(items);
+		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
+
+		const sections = [
+			{ 
+				id: 'object', name: translate('menuBlockRelationViewInThisObject'),
+				children: items,
+			},
+			{
+				id: 'conflicts', name: translate('menuBlockRelationViewConflictingRelations'),
+				children: conflicts,
+			}
+		];
+
+		return sections.filter(it => it.children.length);
 	};
 
 	getRelations () {

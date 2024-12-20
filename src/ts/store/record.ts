@@ -335,28 +335,32 @@ class RecordStore {
 		return this.checkHiddenObjects(typeRelations.concat(objectRelations));
 	};
 
-	getConflictRelations (rootId: string, typeId: string): any[] {
+	getConflictRelations (rootId: string, blockId: string, typeId: string): any[] {
 		const type = S.Record.getTypeById(typeId);
-		const relationKeys = S.Detail.getKeys(rootId, rootId);
+
+		if (!type) {
+			return [];
+		};
+
+		const relationKeys = S.Detail.getKeys(rootId, blockId);
+		const typeRelationKeys = type.recommendedRelations.concat(type.recommendedFeaturedRelations)
+			.map(it => S.Record.getRelationById(it))
+			.filter(it => it && it.relationKey)
+			.map(it => it.relationKey);
 
 		let conflicts = [];
 
-		let typeRelationKeys = [];
-		if (type) {
-			typeRelationKeys = type.recommendedRelations.concat(type.recommendedFeaturedRelations)
-				.map(it => S.Record.getRelationById(it))
-				.filter(it => it && it.relationKey)
-				.map(it => it.relationKey);
-
-			if (typeRelationKeys.length) {
-				relationKeys.forEach((key) => {
-					if (!typeRelationKeys.includes(key)) {
-						conflicts.push(S.Record.getRelationByKey(key));
-					};
-				});
-			};
+		if (typeRelationKeys.length) {
+			relationKeys.forEach((key) => {
+				if (!typeRelationKeys.includes(key)) {
+					conflicts.push(key);
+				};
+			});
+		} else {
+			conflicts = relationKeys;
 		};
 
+		conflicts = conflicts.map(it => this.getRelationByKey(it)).filter(it => it);
 		return this.checkHiddenObjects(conflicts);
 	};
 

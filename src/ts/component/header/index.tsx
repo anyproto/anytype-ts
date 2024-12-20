@@ -129,6 +129,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onRelation = (param?: Partial<I.MenuParam>, data?: any) => {
+		/*
 		param = param || {};
 		data = data || {};
 
@@ -151,6 +152,9 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 				...data,
 			},
 		});
+		*/
+
+		sidebar.rightPanelToggle(!S.Common.getShowSidebarRight(isPopup), isPopup, 'object/relation', { rootId });
 	};
 
 	const onSync = () => {
