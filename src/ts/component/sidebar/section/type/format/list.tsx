@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Select } from 'Component';
-import { I, U, translate } from 'Lib';
+import { Icon, Select } from 'Component';
+import { I, U, translate, S, J, analytics } from 'Lib';
 
 interface Props extends I.SidebarSectionComponent {
 	layoutOptions?: any[];
@@ -10,13 +10,20 @@ interface Props extends I.SidebarSectionComponent {
 const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayoutFormatList extends React.Component<Props> {
 
 	refDefaultView = null;
-	refDefaultType = null;
+
+	constructor (props: Props) {
+		super(props);
+
+		this.onType = this.onType.bind(this);
+	};
 
 	render () {
 		const { object, onChange } = this.props;
 
 		const defaultViewOptions = U.Menu.prepareForSelect(U.Menu.getViews().filter(it => it.id != I.ViewType.Graph));
-		const defaultTypeOptions = U.Menu.prepareForSelect(U.Data.getObjectTypesForNewObject());
+		const typeId = object.defaultType;
+		const type = S.Record.getTypeById(typeId);
+
 
 		return (
 			<div className="items">
@@ -48,19 +55,24 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 					</div>
 
 					<div className="value">
-						<Select
-							ref={ref => this.refDefaultType = ref}
-							id={`sidebar-layout-default-type-${object.id}`}
-							options={defaultTypeOptions}
-							value={object.defaultType}
-							arrowClassName="light"
-							onChange={id => onChange({ defaultType: id })}
-							menuParam={{
-								className: 'fixed',
-								classNameWrap: 'fromSidebar',
-								horizontal: I.MenuDirection.Right,
-							}}
-						/>
+						<div id={`sidebar-layout-default-type-${object.id}`} className="select" onClick={this.onType}>
+							<div className="item">
+								<div className="name">{type?.name || translate('commonSelect')}</div>
+							</div>
+							<Icon className="arrow black" />
+						</div>
+						{/*<Select*/}
+						{/*	*/}
+						{/*	options={defaultTypeOptions}*/}
+						{/*	value={object.defaultType}*/}
+						{/*	arrowClassName="light"*/}
+						{/*	onChange={id => onChange({ defaultType: id })}*/}
+						{/*	menuParam={{*/}
+						{/*		className: 'fixed',*/}
+						{/*		classNameWrap: 'fromSidebar',*/}
+						{/*		horizontal: I.MenuDirection.Right,*/}
+						{/*	}}*/}
+						{/*/>*/}
 					</div>
 				</div>
 			</div>
@@ -75,11 +87,32 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 		this.setValue();
 	};
 
+	onType () {
+		const { object, onChange } = this.props;
+
+		S.Menu.open('typeSuggest', {
+			element: `#sidebar-layout-default-type-${object.id}`,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			data: {
+				filter: '',
+				filters: [
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+				],
+				onClick: (item: any) => {
+					onChange({ defaultType: item.id })
+				},
+			}
+		});
+	};
+
+
 	setValue () {
 		const { object } = this.props;
 
 		this.refDefaultView.setValue(object.defaultView);
-		this.refDefaultType.setValue(object.defaultType);
 	};
 });
 
