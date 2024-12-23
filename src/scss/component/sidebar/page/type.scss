@@ -4,7 +4,7 @@
 		> .wrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }
 		> .wrap {
 			.iconObject { flex-shrink: 0; }
-			.editableWrap { flex-grow: 1; }
+			.editableWrap { flex-grow: 1; @include text-overflow-nw; }
 		}
 	}
 
@@ -22,8 +22,12 @@
 			.iconObject { margin: 0px 6px 0px 0px; flex-shrink: 0; }
 
 			.side { display: flex; flex-direction: row; align-items: center; }
-			.side.left { flex-grow: 1; }
+			.side.left { flex-grow: 1; overflow: hidden; }
 			.side.right { flex-shrink: 0; }
+
+			.side.left {
+				.name { @include text-overflow-nw; }
+			}
 		}
 
 		.item::before {

@@ -17,14 +17,19 @@
     .layoutPreview {
         .layoutHeader { margin-bottom: 44px; }
         .titleWrapper { margin-bottom: 8px; }
-        .title { @include text-title; }
+        .title { @include text-title; @include text-overflow-nw; }
         .description { @include text-header3; font-weight: 400; margin-bottom: 10px; }
 
         .featured { display: flex; align-items: center; gap: 0px 8px; flex-wrap: wrap; }
         .featured {
-            .label { display: flex; align-items: center; gap: 0px 8px; }
-            .label::after { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-tertiary); }
-            .label:last-child::after { display: none; }
+            .featuredItem { display: flex; align-items: center; gap: 0px 8px; max-width: 220px; }
+            .featuredItem {
+                .label { @include text-overflow-nw; }
+                .bullet { flex-shrink: 0; width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-tertiary); }
+            }
+            .featuredItem:last-child {
+                .bullet { display: none; }
+            }
         }
     }
 

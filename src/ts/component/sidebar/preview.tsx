@@ -56,7 +56,12 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 						{withDescription ? <Label text={'Description'} className="description" /> : ''}
 
 						<div className="featured">
-							{filtered.map((item, idx) => <Label text={item.name} key={idx} />)}
+							{filtered.map((item, idx) => (
+								<div className="featuredItem">
+									<Label text={item.name} key={idx} />
+									<div className="bullet" />
+								</div>
+							))}
 						</div>
 					</div>
 
