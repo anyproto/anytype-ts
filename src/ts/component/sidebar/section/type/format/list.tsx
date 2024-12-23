@@ -3,7 +3,11 @@ import { observer } from 'mobx-react';
 import { Select } from 'Component';
 import { I, U, translate } from 'Lib';
 
-const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayoutFormatList extends React.Component<I.SidebarSectionComponent> {
+interface Props extends I.SidebarSectionComponent {
+	layoutOptions?: any[];
+};
+
+const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayoutFormatList extends React.Component<Props> {
 
 	refDefaultView = null;
 	refDefaultType = null;
