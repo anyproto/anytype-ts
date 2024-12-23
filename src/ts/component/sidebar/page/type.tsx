@@ -84,7 +84,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			recommendedLayout: I.ObjectLayout.Page,
 			layoutAlign: I.BlockHAlign.Left,
 			layoutWidth: 0,
-			layoutFormat: 'page',
+			layoutFormat: I.LayoutFormat.Page,
 			recommendedFeaturedRelations: [],
 			defaultView: I.ViewType.Grid,
 		}, details);
@@ -103,7 +103,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		const isList = U.Object.isInSetLayouts(type.recommendedLayout);
 
-		return Object.assign(type, { layoutFormat: isList ? 'list' : 'page' });
+		return Object.assign(type, { layoutFormat: isList ? I.LayoutFormat.List : I.LayoutFormat.Page });
 	};
 
 	getSections () {

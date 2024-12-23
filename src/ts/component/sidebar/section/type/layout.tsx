@@ -7,8 +7,8 @@ import FormatPage from './format/page';
 import FormatList from './format/list';
 
 const Components = {
-	'page': FormatPage,
-	'list': FormatList,
+	0: FormatPage,
+	1: FormatList,
 };
 
 const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends React.Component<I.SidebarSectionComponent> {
@@ -25,8 +25,8 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
     render () {
 		const { object } = this.props;
 		const formatOptions: I.Option[] = [
-			{ id: 'page', name: translate('sidebarSectionLayoutFormatPage') },
-			{ id: 'list', name: translate('sidebarSectionLayoutFormatList') },
+			{ id: I.LayoutFormat.Page, name: translate('sidebarSectionLayoutFormatPage') },
+			{ id: I.LayoutFormat.List, name: translate('sidebarSectionLayoutFormatList') },
 		];
 		const Component = Components[object.layoutFormat];
 

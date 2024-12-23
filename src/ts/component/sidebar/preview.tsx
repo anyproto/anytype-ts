@@ -32,14 +32,14 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		const filtered = featured.filter(it => it.relationKey != 'description');
 		const isTask = U.Object.isTaskLayout(recommendedLayout);
 		const isNote = U.Object.isNoteLayout(recommendedLayout);
-		const isList = layoutFormat == 'list';
+		const isList = layoutFormat == I.LayoutFormat.List;
 
 		const cn = [
 			'layoutPreview',
 			`layoutAlign${I.BlockHAlign[layoutAlign]}`,
 			`defaultView${I.ViewType[viewType]}`,
 			U.Data.layoutClass('', recommendedLayout),
-			U.Common.toCamelCase(`layoutFormat-${layoutFormat}`),
+			U.Common.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
 		];
 
 		return (
@@ -57,8 +57,8 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 						<div className="featured">
 							{filtered.map((item, idx) => (
-								<div className="featuredItem">
-									<Label text={item.name} key={idx} />
+								<div key={idx} className="featuredItem">
+									<Label text={item.name} />
 									<div className="bullet" />
 								</div>
 							))}
@@ -113,7 +113,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		let mw = this.getNodeWidth();
 		let width = 0;
 
-		if (layoutFormat == 'list') {
+		if (layoutFormat == I.LayoutFormat.List) {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;
@@ -131,7 +131,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 		let content = null;
 
-		if (layoutFormat == 'page') {
+		if (layoutFormat == I.LayoutFormat.Page) {
 			content = this.insertEmtpyNodes('line', 5);
 		} else {
 			switch (Number(viewType)) {
@@ -169,7 +169,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 			};
 		};
 
-		return <div key={`layout-${layoutFormat}-${viewType}`} className="layout">{content}</div>;
+		return <div key={`layout-${I.LayoutFormat[layoutFormat]}-${viewType}`} className="layout">{content}</div>;
 	};
 
 	getFeatured () {

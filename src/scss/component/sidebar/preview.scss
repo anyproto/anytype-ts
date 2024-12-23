@@ -43,7 +43,7 @@
 
     .layoutPreview.isTask {
         .titleWrapper { display: flex; align-items: center; justify-content: flex-start; gap: 0px 8px; }
-        .titleWrapper > .icon { width: 30px; height: 30px; }
+        .titleWrapper > .icon { width: 30px; height: 30px; flex-shrink: 0; }
         .title { @include text-header1; }
     }
 
