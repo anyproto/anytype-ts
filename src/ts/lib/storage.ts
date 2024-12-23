@@ -54,6 +54,8 @@ class Storage {
 	};
 
 	set (key: string, obj: any, del?: boolean): void {
+		obj = U.Common.objectCopy(obj);
+
 		if (!key) {
 			console.log('[Storage].set: key not specified');
 			return;
