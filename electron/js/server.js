@@ -120,7 +120,7 @@ class Server {
 					this.cp.stdin.write(winShutdownStdinMessage);
 				} else {
 					this.cp.kill(signal);
-				}
+				};
 			} else {
 				resolve();
 			};
