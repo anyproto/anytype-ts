@@ -35,12 +35,15 @@
 		.item.isDragging { z-index: 2; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 
 		.item {
+			.name { flex-shrink: 0; }
 			.tabSwitch { width: 100%; margin-bottom: 12px; }
 
+			.value { overflow: hidden; }
 			.value.flex { flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 8px; }
 
-			.select { border: 0px; color: var(--color-text-secondary); }
+			.select { border: 0px; color: var(--color-text-secondary); display: flex; }
 			.select {
+				.item { @include text-overflow-nw; }
 				.item {
 					.icon { display: none; }
 				}

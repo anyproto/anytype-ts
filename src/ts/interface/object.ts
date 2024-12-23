@@ -73,3 +73,8 @@ export enum ObjectOrigin {
 	Builtin			 = 7,
 	Bookmark		 = 8,
 };
+
+export enum LayoutFormat {
+	Page = 0,
+	List = 1,
+};

@@ -3,7 +3,11 @@ import { observer } from 'mobx-react';
 import { Select, DragHorizontal } from 'Component';
 import { I, U, translate } from 'Lib';
 
-const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayoutFormatPage extends React.Component<I.SidebarSectionComponent> {
+interface Props extends I.SidebarSectionComponent {
+	layoutOptions?: any[];
+};
+
+const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayoutFormatPage extends React.Component<Props> {
 
 	node = null;
 	refLayout = null;
@@ -11,9 +15,8 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 	refWidth = null;
 
 	render () {
-		const { object, onChange } = this.props;
+		const { object, onChange, layoutOptions } = this.props;
 		const alignOptions = U.Menu.prepareForSelect(U.Menu.getHAlign([ I.BlockHAlign.Justify ]));
-		const layoutOptions = U.Menu.prepareForSelect(U.Menu.turnLayouts());
 
 		return (
 			<div ref={node => this.node = node} className="items">

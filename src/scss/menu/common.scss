@@ -73,7 +73,7 @@
 		.titleWrapper { display: flex; gap: 0 6px; padding: 8px 14px 0px; align-items: center; }
 		.titleWrapper {
 			.icon.back { width: 20px; height: 20px; background-image: url('~img/arrow/menu.svg'); transform: rotateZ(180deg); }
-			.title { @include text-common; font-weight: 600; color: var(--color-text-primary); padding: 0; }
+			.title { @include text-common; @include text-overflow-nw; font-weight: 600; color: var(--color-text-primary); padding: 0; }
 		}
 		
 		.inputWrap { padding: 0px 14px 8px 14px; }

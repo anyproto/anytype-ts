@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, TabSwitch } from 'Component';
-import { I, translate } from 'Lib';
+import { I, U, translate } from 'Lib';
 
 import FormatPage from './format/page';
 import FormatList from './format/list';
 
-const Components = {
-	'page': FormatPage,
-	'list': FormatList,
-};
+const Components = [
+	FormatPage,
+	FormatList,
+];
 
 const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends React.Component<I.SidebarSectionComponent> {
 	
@@ -25,8 +25,8 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
     render () {
 		const { object } = this.props;
 		const formatOptions: I.Option[] = [
-			{ id: 'page', name: translate('sidebarSectionLayoutFormatPage') },
-			{ id: 'list', name: translate('sidebarSectionLayoutFormatList') },
+			{ id: I.LayoutFormat.Page, name: translate('sidebarSectionLayoutFormatPage') },
+			{ id: I.LayoutFormat.List, name: translate('sidebarSectionLayoutFormatList') },
 		];
 		const Component = Components[object.layoutFormat];
 
@@ -50,7 +50,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 
 				<Label text={translate('sidebarSectionLayoutName')} />
 
-				{Component ? <Component {...this.props} /> : ''}
+				{Component ? <Component {...this.props} layoutOptions={this.getLayoutOptions(object.layoutFormat)} /> : ''}
 			</div>
 		);
     };
@@ -69,11 +69,37 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 		this.refFormat?.setValue(object.layoutFormat);
 	};
 
-	onLayout (id: string): void {
+	onLayout (id: I.LayoutFormat): void {
+		const layoutOptions = this.getLayoutOptions(id);
+
 		this.props.onChange({ 
 			layoutFormat: id, 
-			recommendedLayout: id == 'list' ? I.ObjectLayout.Collection : I.ObjectLayout.Page,
+			recommendedLayout: layoutOptions[0].id,
 		});
+	};
+
+	getLayoutOptions (format: I.LayoutFormat): any[] {
+		if (format == I.LayoutFormat.List) {
+			const id = I.ObjectLayout.Collection;
+
+			return U.Menu.prepareForSelect([
+				{
+					id,
+					icon: `layout c-${I.ObjectLayout[id].toLowerCase()}`,
+					name: translate(`layout${id}`),
+				}
+			]);
+		};
+
+		const allowed = [
+			I.ObjectLayout.Page,
+			I.ObjectLayout.Human,
+			I.ObjectLayout.Task,
+			I.ObjectLayout.Note
+		];
+		const layouts = U.Menu.getLayouts().filter(it => allowed.includes(it.id));
+
+		return U.Menu.prepareForSelect(layouts);
 	};
 
 });
