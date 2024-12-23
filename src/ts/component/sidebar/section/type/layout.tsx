@@ -6,10 +6,10 @@ import { I, U, translate } from 'Lib';
 import FormatPage from './format/page';
 import FormatList from './format/list';
 
-const Components = {
-	0: FormatPage,
-	1: FormatList,
-};
+const Components = [
+	FormatPage,
+	FormatList,
+];
 
 const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends React.Component<I.SidebarSectionComponent> {
 	

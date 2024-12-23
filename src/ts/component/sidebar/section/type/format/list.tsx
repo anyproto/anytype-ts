@@ -61,18 +61,6 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 							</div>
 							<Icon className="arrow black" />
 						</div>
-						{/*<Select*/}
-						{/*	*/}
-						{/*	options={defaultTypeOptions}*/}
-						{/*	value={object.defaultType}*/}
-						{/*	arrowClassName="light"*/}
-						{/*	onChange={id => onChange({ defaultType: id })}*/}
-						{/*	menuParam={{*/}
-						{/*		className: 'fixed',*/}
-						{/*		classNameWrap: 'fromSidebar',*/}
-						{/*		horizontal: I.MenuDirection.Right,*/}
-						{/*	}}*/}
-						{/*/>*/}
 					</div>
 				</div>
 			</div>
