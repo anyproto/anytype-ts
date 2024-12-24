@@ -187,8 +187,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
 		window.clearTimeout(this.timeoutMove);
-
-		Renderer.remove('commandEditor');
 	};
 
 	initNodes () {
@@ -380,7 +378,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 		container.off(`scroll.${ns}`);
-		Renderer.remove('commandEditor');
+		Renderer.remove(`commandEditor.${ns}`);
 	};
 
 	rebind () {
@@ -420,7 +418,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		win.on(`resize.${ns}`, () => this.resizePage());
 		container.on(`scroll.${ns}`, e => this.onScroll());
 
-		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
+		Renderer.on(`commandEditor.${ns}`, (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
 	onMouseMove (e: any) {
