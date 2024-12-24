@@ -118,12 +118,10 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-		if ($(inputRef.current).hasClass('disabled')) return;
 		handleEvent(onKeyUp, e);
 	};
 
 	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-		if ($(inputRef.current).hasClass('disabled')) return;
 		handleEvent(onKeyDown, e);
 	};
 
@@ -132,6 +130,10 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
+		if (readonly) {
+			return;
+		};
+
 		isFocused.current = true;
 		addClass('isFocused');
 		keyboard.setFocus(true);
@@ -140,6 +142,10 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+		if (readonly) {
+			return;
+		};
+
 		isFocused.current = false;
 		removeClass('isFocused');
 		keyboard.setFocus(false);
