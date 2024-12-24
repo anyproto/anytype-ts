@@ -972,6 +972,8 @@ class Dispatcher {
 
 				case 'ChatUpdate': {
 					S.Chat.update(rootId, mapped.message);
+
+					$(window).trigger('messageUpdate', [ mapped.message ]);
 					break;
 				};
 
@@ -986,7 +988,7 @@ class Dispatcher {
 						set(message, { reactions: mapped.reactions });
 					};
 
-					$(window).trigger('updateReactions', [ message ]);
+					$(window).trigger('reactionUpdate', [ message ]);
 					break;
 				};
 
