@@ -131,8 +131,12 @@ class Dispatcher {
 		for (const message of messages) {
 			const type = Mapper.Event.Type(message.getValueCase());
 			const { spaceId, data } = Mapper.Event.Data(message);
-			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : {};
+			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 			const needLog = this.checkLog(type) && !skipDebug;
+
+			if (!mapped) {
+				continue;
+			};
 
 			switch (type) {
 

@@ -1167,7 +1167,7 @@ export const Mapper = {
 
 			return {
 				spaceId: e.getSpaceid(),
-				data: e[fn] ? e[fn]() : {}
+				data,
 			};
 		},
 
