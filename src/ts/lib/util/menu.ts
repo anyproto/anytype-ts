@@ -359,7 +359,7 @@ class UtilMenu {
 	};
 
 	getRelationTypes () {
-		return [
+		return this.prepareForSelect([
 			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
 			{ id: I.RelationType.Number },
@@ -375,7 +375,7 @@ class UtilMenu {
 			it.name = translate(`relationName${it.id}`);
 			it.icon = `relation ${Relation.className(it.id)}`;
 			return it;
-		});
+		}));
 	};
 
 	getWidgetLimitOptions (layout: I.WidgetLayout) {
