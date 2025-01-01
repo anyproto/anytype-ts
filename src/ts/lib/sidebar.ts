@@ -19,6 +19,7 @@ class Sidebar {
 	loader: JQuery<HTMLElement> = null;
 	dummy: JQuery<HTMLElement> = null;
 	toggleButton: JQuery<HTMLElement> = null;
+	syncButton: JQuery<HTMLElement> = null;
 	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutAnim = 0;
@@ -60,6 +61,7 @@ class Sidebar {
 		this.loader = this.page.find('#loader');
 		this.dummy = $('#sidebarDummy');
 		this.toggleButton = $('#sidebarToggle');
+		this.syncButton = $('#sidebarSync');
 
 		if (vault) {
 			this.vault = $(vault.node);
@@ -226,8 +228,15 @@ class Sidebar {
 		const navigation = S.Common.getRef('navigation');
 
 		let toggleX = 16;
+		let syncX = 52;
+
 		if ((width && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
 			toggleX = 84;
+			syncX = 120;
+
+			if (width) {
+				syncX = J.Size.vault.width + width - 40;
+			};
 		};
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
@@ -239,6 +248,7 @@ class Sidebar {
 		this.page.toggleClass('sidebarAnimation', animate);
 		this.dummy.toggleClass('sidebarAnimation', animate);
 		this.toggleButton.toggleClass('sidebarAnimation', animate);
+		this.syncButton.toggleClass('sidebarAnimation', animate);
 
 		navigation?.position(width + vw, animate);
 		this.header.toggleClass('withSidebar', !!width);
@@ -248,6 +258,7 @@ class Sidebar {
 		this.header.css({ width: pageWidth - ho });
 		this.footer.css({ width: pageWidth - ho });
 		this.toggleButton.css({ left: toggleX });
+		this.syncButton.css({ left: syncX });
 
 		$(window).trigger('sidebarResize');
 	};

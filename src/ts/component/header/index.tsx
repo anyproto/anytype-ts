@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon, Sync } from 'Component';
+import { Icon } from 'Component';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -52,11 +52,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const renderLeftIcons = (onOpen?: () => void) => {
-		const object = S.Detail.get(rootId, rootId, J.Relation.template);
-		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
-		const showMenu = !isTypeOrRelation;
-		const canSync = showMenu && !object.templateIsBundled && !U.Object.isParticipantLayout(object.layout);
-
 		return (
 			<>
 				<Icon 
@@ -64,7 +59,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 					tooltip={translate('commonOpenObject')} 
 					onClick={onOpen || onExpand} 
 				/>
-				{canSync ? <Sync id="button-header-sync" onClick={onSync} /> : ''}
 			</>
 		);
 	};
@@ -150,15 +144,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 				rootId,
 				...data,
 			},
-		});
-	};
-
-	const onSync = () => {
-		menuOpen('syncStatus', '#button-header-sync', {
-			subIds: [ 'syncStatusInfo' ],
-			data: {
-				rootId,
-			}
 		});
 	};
 
