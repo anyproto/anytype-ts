@@ -1438,12 +1438,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		const isEnter = pressed == 'enter';
 		const isShift = !!pressed.match('shift');
 		const length = block.getLength();
 		const parent = S.Block.getParentLeaf(rootId, block.id);
-		const replace = !range.to && (block.isTextList() || parent?.isTextToggle()) && !length;
+		const replace = !range.to && block.isTextList() && !length;
 
-		if (block.isTextCode() && (pressed == 'enter')) {
+		if (block.isTextCode() && isEnter) {
 			return;
 		};
 		if (!block.isText() && keyboard.isFocused) {
