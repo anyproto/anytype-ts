@@ -218,11 +218,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { id, param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getRelation();
 		
-		if (relation || S.Menu.isAnimating('select')) {
+		if (relation || S.Menu.isAnimating(id)) {
 			return;
 		};
 
