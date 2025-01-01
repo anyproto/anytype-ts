@@ -151,7 +151,7 @@ class WindowManager {
 			width: 424, 
 			height: 232,
 			x: Math.floor(width / 2 - 212),
-			y: 100,
+			y: 50,
 			titleBarStyle: 'hidden',
 		});
 
