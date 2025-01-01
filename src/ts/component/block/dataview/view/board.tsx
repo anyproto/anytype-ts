@@ -36,6 +36,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 		const cn = [ 'viewContent', className ];
 
+		console.log(this.props);
+
 		if (!relation || !relation.isInstalled) {
 			return (
 				<Empty
@@ -252,6 +254,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onDragStartColumn (e: any, groupId: string) {
+		const { readonly } = this.props;
+		if (readonly) {
+			return;
+		};
+
 		const win = $(window);
 		const node = $(this.node);
 
@@ -335,6 +342,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onDragStartCard (e: any, groupId: any, record: any) {
+		const { readonly } = this.props;
+		if (readonly) {
+			e.preventDefault();
+			e.stopPropagation();
+			return;
+		};
+
 		const win = $(window);
 
 		this.onDragStartCommon(e, $(e.currentTarget));
