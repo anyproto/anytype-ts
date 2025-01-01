@@ -95,6 +95,8 @@ html.printMedia {
 		}
 		.block.blockText.textCode > .wrapContent > .selectionTarget > .dropTarget #value { white-space: pre-wrap; overflow-x: visible; }
 
+		.block.blockMedia.isAudio > .wrapContent { box-shadow: 0px 0px; }
+
 		.block.blockDataview.isInline {
 			.content {
 				.scroll { width: 100% !important; margin: 0px !important; padding-left: 0px !important; }
@@ -115,6 +117,10 @@ html.printMedia {
 
 		.block.blockLink.card {
 			.linkCard { box-shadow: 0px 0px; }
+		}
+
+		.block.blockBookmark {
+			.inner { box-shadow: 0px 0px; }
 		}
 
 		.block.blockBookmark {
