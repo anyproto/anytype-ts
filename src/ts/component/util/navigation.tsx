@@ -14,19 +14,7 @@ const Navigation = observer(forwardRef<NavigationRefProps>((_, ref) => {
 	const { navigationMenu } = S.Common;
 	const cmd = keyboard.cmdSymbol();
 	const alt = keyboard.altSymbol();
-	const isWin = U.Common.isPlatformWindows();
-	const isLinux = U.Common.isPlatformLinux();
-	const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
-	const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
 	const canWrite = U.Space.canMyParticipantWrite();
-
-	const onBack = () => {
-		keyboard.onBack();
-	};
-
-	const onForward = () => {
-		keyboard.onForward();
-	};
 
 	const onAdd = (e: any) => {
 		e.altKey ? keyboard.onQuickCapture(false) : keyboard.pageCreate({}, analytics.route.navigation);
@@ -96,8 +84,6 @@ const Navigation = observer(forwardRef<NavigationRefProps>((_, ref) => {
 	};
 
 	const buttons: any[] = [
-		{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: onBack, disabled: !keyboard.checkBack() },
-		{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: onForward, disabled: !keyboard.checkForward() },
 		buttonPlus,
 		{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: onGraph },
 		{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: onSearch },

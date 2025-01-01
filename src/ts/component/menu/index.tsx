@@ -450,14 +450,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 	
 	getBorderBottom () {
-		const { id } = this.props;
-		
-		let ret = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
-		if ([ 'help', 'onboarding', 'searchObjectWidgetAdd' ].includes(id)) {
-			ret = 16;
-		};
-
-		return ret;
+		return Number(window.AnytypeGlobalConfig?.menuBorderBottom) || J.Size.menuBorder;
 	};
 
 	getBorderLeft () {

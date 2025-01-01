@@ -52,13 +52,32 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const renderLeftIcons = (onOpen?: () => void) => {
+		const cmd = keyboard.cmdSymbol();
+		const alt = keyboard.altSymbol();
+		const isWin = U.Common.isPlatformWindows();
+		const isLinux = U.Common.isPlatformLinux();
+		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
+		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
+
+		const buttons: any[] = [
+			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
+			{ id: 'back', name: translate('commonBack'), caption: cb, onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
+			{ id: 'forward', name: translate('commonForward'), caption: cf, onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
+		];
+
 		return (
 			<>
-				<Icon 
-					className="expand withBackground" 
-					tooltip={translate('commonOpenObject')} 
-					onClick={onOpen || onExpand} 
-				/>
+				{buttons.map(item => {
+					const cn = [ item.id, 'withBackground' ];
+
+					if (item.disabled) {
+						cn.push('disabled');
+					};
+
+					return (
+						<Icon key={item.id} className={cn.join(' ')} onClick={e => item.onClick(e)} />
+					);
+				})}
 			</>
 		);
 	};
