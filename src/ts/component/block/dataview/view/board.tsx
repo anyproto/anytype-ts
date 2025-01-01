@@ -256,6 +256,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	onDragStartColumn (e: any, groupId: string) {
 		const { readonly } = this.props;
 		if (readonly) {
+			e.preventDefault();
+			e.stopPropagation();
 			return;
 		};
 
