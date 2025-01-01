@@ -89,8 +89,6 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 					return;
 				};
 
-				S.Extension.challengeId = message.challengeId;
-
 				const data = {
 					serverPort,
 					gatewayPort,

@@ -41,8 +41,6 @@ class WindowManager {
 			sandbox: false,
 		}, param.webPreferences);
 
-		console.log(param);
-
 		let win = new BrowserWindow(param);
 
 		remote.enable(win.webContents);
