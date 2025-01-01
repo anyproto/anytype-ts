@@ -1,5 +1,7 @@
 import { I, S, U, J } from 'Lib';
 
+const electron = U.Common.getElectron();
+
 const ACCOUNT_KEYS = [
 	'spaceId',
 	'spaceOrder',
@@ -18,6 +20,32 @@ const SPACE_KEYS = [
 	'redirectInvite',
 ];
 
+const Api = {
+	get: (key: string) => {
+		if (electron.storeGet) {
+			return electron.storeGet(key);
+		} else {
+			localStorage.getItem(key);
+		};
+	},
+
+	set: (key: string, obj: any) => {
+		if (electron.storeSet) {
+			electron.storeSet(key, obj);
+		} else {
+			localStorage.setItem(key, JSON.stringify(obj));
+		};
+	},
+
+	delete: (key: string) => {
+		if (electron.storeDelete) {
+			electron.storeDelete(key);
+		} else {
+			localStorage.removeItem(key);
+		};
+	},
+};
+
 class Storage {
 	
 	storage: any = null;
@@ -28,7 +56,7 @@ class Storage {
 	};
 
 	get (key: string): any {
-		let o = U.Common.getElectron().storeGet(key);
+		let o = Api.get(key);
 		if (!o) {
 			o = this.parse(String(this.storage[key] || ''));
 		};
@@ -80,7 +108,7 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			this.setAccountKey(key, o);
 		} else {
-			U.Common.getElectron().storeSet(key, o);
+			Api.set(key, o);
 			//delete(this.storage[key]);
 		};
 	};
@@ -93,6 +121,7 @@ class Storage {
 			this.deleteAccountKey(key);
 		} else {
 			U.Common.getElectron().storeDelete(key);
+			Api.delete(key);
 			delete(this.storage[key]);
 		};
 	};

@@ -41,6 +41,8 @@ class WindowManager {
 			sandbox: false,
 		}, param.webPreferences);
 
+		console.log(param);
+
 		let win = new BrowserWindow(param);
 
 		remote.enable(win.webContents);
@@ -142,10 +144,16 @@ class WindowManager {
 	};
 
 	createChallenge (options) {
+		const { screen } = require('electron');
+		const primaryDisplay = screen.getPrimaryDisplay();
+		const { width } = primaryDisplay.workAreaSize;
+
 		const win = this.create({}, {
 			backgroundColor: '',
 			width: 424, 
 			height: 232,
+			x: Math.floor(width / 2 - 212),
+			y: 100,
 			titleBarStyle: 'hidden',
 		});
 
@@ -153,6 +161,7 @@ class WindowManager {
 		win.setMenu(null);
 
 		is.windows || is.linux ? win.showInactive() : win.show();
+		win.focus();
 
 		win.webContents.once('did-finish-load', () => {
 			win.webContents.postMessage('challenge', options);

@@ -81,6 +81,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 		} else {
 			/* @ts-ignore */
 			const manifest = chrome.runtime.getManifest();
+			const { serverPort, gatewayPort } = S.Extension;
 
 			C.AccountLocalLinkNewChallenge(manifest.name, (message: any) => {
 				if (message.error.code) {
@@ -89,7 +90,15 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 				};
 
 				S.Extension.challengeId = message.challengeId;
-				U.Router.go('/challenge', {});
+
+				const data = {
+					serverPort,
+					gatewayPort,
+					challengeId: message.challengeId,
+				};
+
+				/* @ts-ignore */
+				chrome.tabs.create({ url: chrome.runtime.getURL('auth/index.html') + `?data=${btoa(JSON.stringify(data))}` });
 			});
 		};
 	};
