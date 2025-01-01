@@ -221,7 +221,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { id, param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getRelation();
-		
+
 		if (relation || S.Menu.isAnimating(id)) {
 			return;
 		};
@@ -246,13 +246,13 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, getSize } = this.props;
+		const { id ,param, getSize } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const { getId } = this.props;
 		const type = S.Record.getTypeType();
 
-		if (!type) {
+		if (!type || S.Menu.isAnimating(id)) {
 			return;
 		};
 		
