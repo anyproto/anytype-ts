@@ -6,35 +6,23 @@ import { I, U, translate } from 'Lib';
 const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 	useEffect(() => load(), []);
 
-	const getObject = () => {
-		return props.param.data.object;
-	};
-
-	const setObject = (object: any) => {
-		props.param.data.object = object;
-	};
+	const { param } = props;
+	const { data } = param;
+	const { object } = data;
 
 	const load = () => {
-		const object = getObject();
-		if (!object) {
-			return;
-		};
-
 		U.Object.getById(object.id, { keys: U.Data.participantRelationKeys() }, (object: any) => {
 			if (object) {
-				setObject(object);
+				props.param.data.object = object;
 			};
 		});
 	};
-
-	const object = getObject();
-	const relationKey = object.globalName ? 'globalName': 'identity';
 
 	return object ? (
 		<>
 			<IconObject object={object} size={96} />
 			<ObjectName object={object} />
-			<Label text={U.Common.shorten(object[relationKey], 150)} />
+			<Label text={U.Common.shorten(object.resolvedName, 150)} />
 			<ObjectDescription object={object} />
 		</>
 	) : <EmptySearch text={translate('commonNotFound')} />;
