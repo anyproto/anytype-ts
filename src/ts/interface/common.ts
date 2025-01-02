@@ -242,13 +242,6 @@ export enum NetworkMode {
 	Custom			 = 2,
 };
 
-export enum NavigationMenuMode {
-	None			 = 0,
-	Context			 = 1,
-	Click			 = 2,
-	Hover			 = 3,
-};
-
 export enum InterfaceStatus {
 	Ok				 = 'ok',
 	Error			 = 'error',

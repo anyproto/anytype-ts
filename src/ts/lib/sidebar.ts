@@ -225,7 +225,6 @@ class Sidebar {
 		const vw = isClosed || !showVault || !keyboard.isMain() ? 0 : J.Size.vault.width;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
-		const navigation = S.Common.getRef('navigation');
 
 		let toggleX = 16;
 		let syncX = 52;
@@ -250,7 +249,6 @@ class Sidebar {
 		this.toggleButton.toggleClass('sidebarAnimation', animate);
 		this.syncButton.toggleClass('sidebarAnimation', animate);
 
-		navigation?.position(width + vw, animate);
 		this.header.toggleClass('withSidebar', !!width);
 
 		this.page.css({ width: pageWidth });
