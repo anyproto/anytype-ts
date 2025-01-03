@@ -15,6 +15,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { subId, id, block, isEditing, hideIcon, onContext, getView } = props;
 	const nodeRef = useRef(null);
+	const moreRef = useRef(null);
 	const rootId = keyboard.getRootId();
 	const view = getView();
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
@@ -23,7 +24,6 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const iconKey = `widget-icon-${block.id}-${id}`;
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const hasMore = U.Space.canMyParticipantWrite();
-	const more = hasMore ? <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => onContextHandler(e, true)} /> : null;
 
 	const onClick = (e: MouseEvent) => {
 		if (e.button) {
@@ -57,6 +57,19 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	let icon = null;
+	let more = null;
+
+	if (hasMore) {
+		more = (
+			<Icon 
+				ref={moreRef} 
+				className="more" 
+				tooltip={translate('widgetOptions')} 
+				onMouseDown={e => onContextHandler(e, true)} 
+			/>
+		);
+	};
+
 	if (!hideIcon) {
 		icon = (
 			<IconObject 
