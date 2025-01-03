@@ -23,7 +23,6 @@ import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
-import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
@@ -53,7 +52,6 @@ const Components = {
 	'main/relation':		 PageMainRelation,
 	'main/graph':			 PageMainGraph,
 	'main/navigation':		 PageMainNavigation,
-	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
 	'main/import':			 PageMainImport,
 	'main/invite':			 PageMainInvite,
