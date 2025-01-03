@@ -62,18 +62,18 @@
 }
 
 .header:not(.withSidebar) {
-	.side.left { padding-left: 120px; }
+	.side.left { padding-left: 156px; }
 }
 
 html:not(.platformMac) {
 	.header:not(.withSidebar) {
-		.side.left { padding-left: 52px; }
+		.side.left { padding-left: 88px; }
 	}
 }
 
 body.isFullScreen {
 	.header:not(.withSidebar) {
-		.side.left { padding-left: 52px; }
+		.side.left { padding-left: 88px; }
 	}
 }
 
