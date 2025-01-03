@@ -13,8 +13,10 @@
 			.items { height: calc(100% - 38px); }
 		}
 
-		.item { display: flex; align-items: center; padding-right: 10px; gap: 0px 4px; }
+		.item { display: flex; align-items: center; padding: 0px 10px 0px 0px; gap: 0px 4px; }
 		.item {
+			.clickable { padding: 4px 14px; }
+
 			.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-shrink: 0; }
 			.buttons {
 				.icon.more { display: none; }

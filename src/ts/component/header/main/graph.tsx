@@ -2,14 +2,21 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import { Icon } from 'Component';
 import { I, S, U, J, translate } from 'Lib';
 
-interface HeaderComponentRefProps {
-	setRootId: (id: string) => void;
-};
-
-const HeaderMainGraph = forwardRef<HeaderComponentRefProps, I.HeaderComponent>((props, ref) => {
+const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { renderLeftIcons, renderTabs, menuOpen, rootId } = props;
 	const rootIdRef = useRef('');
+
+	const unbind = () => {
+		$(window).off(`updateGraphRoot.header`);
+	};
+
+	const rebind = () => {
+		const win = $(window);
+
+		unbind();
+		win.on('updateGraphRoot.header', (e: any, data: any) => initRootId(data.id));
+	};
 
 	const onSearch = () => {
 		const rootId = rootIdRef.current;
@@ -17,7 +24,7 @@ const HeaderMainGraph = forwardRef<HeaderComponentRefProps, I.HeaderComponent>((
 		menuOpen('searchObject', '#button-header-search', {
 			horizontal: I.MenuDirection.Right,
 			data: {
-				rootId: rootId,
+				rootId,
 				blockId: rootId,
 				blockIds: [ rootId ],
 				filters: U.Data.graphFilters(),
@@ -46,12 +53,15 @@ const HeaderMainGraph = forwardRef<HeaderComponentRefProps, I.HeaderComponent>((
 		});
 	};
 
-	useImperativeHandle(ref, () => ({
-		setRootId: (id: string) => rootIdRef.current = id,
-	}));
+	const initRootId = (id: string) => {
+		rootIdRef.current = id;
+	};
 
 	useEffect(() => {
-		rootIdRef.current = rootId;
+		initRootId(rootId)
+		rebind();
+
+		return () => unbind();
 	}, []);
 
 	return (

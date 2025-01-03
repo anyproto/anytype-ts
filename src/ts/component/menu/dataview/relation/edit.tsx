@@ -508,11 +508,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { id, param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getViewRelation();
 		
-		if (relation) {
+		if (relation || S.Menu.isAnimating(id)) {
 			return;
 		};
 
@@ -536,11 +536,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, getSize } = this.props;
+		const { id, param, getSize } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 
-		if (this.isReadonly()) {
+		if (this.isReadonly() || S.Menu.isAnimating(id)) {
 			return;
 		};
 

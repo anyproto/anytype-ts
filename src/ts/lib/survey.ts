@@ -84,7 +84,6 @@ class Survey {
 		const lastTime = Number(obj.time) || 0;
 		const week = 86400 * 7;
 		const month = 86400 * 30;
-
 		const registerTime = timeRegister <= time - week;
 		const cancelTime = obj.cancel && registerTime && (lastTime <= time - (month * 2));
 
@@ -122,6 +121,7 @@ class Survey {
 	};
 
 	checkObject (type: I.SurveyType) {
+		const { space } = S.Common;
 		const timeRegister = this.getTimeRegister();
 		const isComplete = this.isComplete(type);
 
@@ -130,6 +130,7 @@ class Survey {
 		};
 
 		U.Data.search({
+			spaceId: space,
 			filters: [
 				{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 				{ relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }

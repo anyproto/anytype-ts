@@ -230,9 +230,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		S.Record.viewsClear(rootId, J.Constant.blockId.dataview);
 		S.Record.viewsSet(rootId, J.Constant.blockId.dataview, views);
 
-		if (this.refSelect) {
-			this.refSelect.setOptions(views);
-		};
+		this.refSelect?.setOptions(views);
 	};
 
 	getSubId () {

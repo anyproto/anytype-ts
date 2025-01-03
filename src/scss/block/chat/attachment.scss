@@ -12,8 +12,7 @@
 
 		.icon.remove {
 			opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 8px;
-			background-image: url('~img/icon/chat/buttons/remove.svg'); background-color: var(--color-bg-primary); border-radius: 50%;
-			box-shadow: 0px 1px 4px rgba(0,0,0,0.2);
+			background-image: url('~img/icon/chat/buttons/remove.svg'); background-color: var(--color-shape-primary); border-radius: 50%;
 		}
 
 		.name { line-height: 20px; font-weight: 500; @include clamp1; }
@@ -36,7 +35,11 @@
 			.side.left {
 				.link { @include text-small; color: var(--color-text-secondary); display: flex; justify-content: flex-start; align-items: center; gap: 0px 6px; }
 				.name { @include text-common; line-height: 20px; font-weight: 500; @include clamp2; }
-				.descr { @include text-small; line-height: 16px; color: var(--color-text-secondary); @include clamp3; }
+				.descr { @include text-small; line-height: 16px; color: var(--color-text-primary); @include clamp3; }
+
+				.link {
+					.iconObject { background: none; border-radius: 2px; }
+				}
 			}
 			.side.right { position: relative; display: flex; align-items: center; border-radius: 4px; overflow: hidden; }
 			.side.right {
