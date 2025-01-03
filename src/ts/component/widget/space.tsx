@@ -14,16 +14,10 @@ const WidgetSpace = observer(forwardRef<I.WidgetComponent>(() => {
 	const cmd = keyboard.cmdSymbol();
 	const alt = keyboard.altSymbol();
 	const buttons = [
+		U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
+		space.isShared ? { id: 'member', name: translate('commonMembers') } : null,
 		{ id: 'all', name: translate('commonAllContent') },
-	];
-
-	if (space.isShared) {
-		buttons.unshift({ id: 'member', name: translate('commonMembers') });
-	};
-
-	if (space.chatId && U.Object.isAllowedChat()) {
-		buttons.push({ id: 'chat', name: translate('commonMainChat') });
-	};
+	].filter(it => it);
 
 	if (isSpaceOwner && requestCnt) {
 		cn.push('withCnt');
