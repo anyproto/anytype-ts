@@ -17,7 +17,6 @@ class Analytics {
 
 	public route = {
 		block: 'Block',
-		navigation: 'Navigation',
 		onboarding: 'Onboarding',
 		collection: 'Collection',
 		set: 'Set',
@@ -422,11 +421,6 @@ class Analytics {
 
 			case 'AddWidget': {
 				data.type = I.WidgetLayout[data.type];
-				break;
-			};
-
-			case 'ChangeShowQuickCapture': {
-				data.type = I.NavigationMenuMode[data.type];
 				break;
 			};
 

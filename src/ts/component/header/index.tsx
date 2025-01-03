@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon, Sync } from 'Component';
+import { Icon } from 'Component';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -52,19 +52,32 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const renderLeftIcons = (onOpen?: () => void) => {
-		const object = S.Detail.get(rootId, rootId, J.Relation.template);
-		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
-		const showMenu = !isTypeOrRelation;
-		const canSync = showMenu && !object.templateIsBundled && !U.Object.isParticipantLayout(object.layout);
+		const cmd = keyboard.cmdSymbol();
+		const alt = keyboard.altSymbol();
+		const isWin = U.Common.isPlatformWindows();
+		const isLinux = U.Common.isPlatformLinux();
+		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
+		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
+
+		const buttons: any[] = [
+			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
+			{ id: 'back', name: translate('commonBack'), caption: cb, onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
+			{ id: 'forward', name: translate('commonForward'), caption: cf, onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
+		];
 
 		return (
 			<>
-				<Icon 
-					className="expand withBackground" 
-					tooltip={translate('commonOpenObject')} 
-					onClick={onOpen || onExpand} 
-				/>
-				{canSync ? <Sync id="button-header-sync" onClick={onSync} /> : ''}
+				{buttons.map(item => {
+					const cn = [ item.id, 'withBackground' ];
+
+					if (item.disabled) {
+						cn.push('disabled');
+					};
+
+					return (
+						<Icon key={item.id} className={cn.join(' ')} onClick={e => item.onClick(e)} />
+					);
+				})}
 			</>
 		);
 	};
@@ -150,15 +163,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 				rootId,
 				...data,
 			},
-		});
-	};
-
-	const onSync = () => {
-		menuOpen('syncStatus', '#button-header-sync', {
-			subIds: [ 'syncStatusInfo' ],
-			data: {
-				rootId,
-			}
 		});
 	};
 

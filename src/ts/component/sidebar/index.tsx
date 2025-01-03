@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, Sync } from 'Component';
 import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 
 import SidebarWidget from './widget';
@@ -34,7 +34,6 @@ const Sidebar = observer(class Sidebar extends React.Component {
 
 	render() {
 		const { showVault, showObject } = S.Common;
-		const cn = [ 'sidebar' ];
 		const cmd = keyboard.cmdSymbol();
 
 		return (
@@ -48,10 +47,12 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					onContextMenu={this.onToggleContext}
 				/>
 
+				<Sync id="sidebarSync" onClick={this.onSync} />
+
 				<div 
 					ref={node => this.node = node}
 					id="sidebar" 
-					className={cn.join(' ')} 
+					className="sidebar"
 				>
 					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : <SidebarWidget {...this.props} ref={ref => this.refWidget = ref} />}
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
@@ -199,6 +200,17 @@ const Sidebar = observer(class Sidebar extends React.Component {
 
 	onToggleContext () {
 		U.Menu.sidebarContext('#sidebarToggle');
+	};
+
+	onSync = () => {
+		S.Menu.closeAllForced(null, () => S.Menu.open('syncStatus', {
+			element: '#sidebarSync',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			data: {
+				rootId: keyboard.getRootId(),
+			},
+		}));
 	};
 
 });

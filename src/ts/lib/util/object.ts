@@ -485,7 +485,8 @@ class UtilObject {
 
 	isAllowedChat () {
 		const { config, space } = S.Common;
-		return config.experimental || (J.Constant.chatSpaceId.includes(space));
+		const spaceview = U.Space.getSpaceview();
+		return spaceview.chatId && (config.experimental || J.Constant.chatSpaceId.includes(space));
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {

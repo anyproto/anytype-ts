@@ -142,14 +142,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 									isEditing={isEditing}
 								/>
 							</DropTarget>
-
-							<Widget 
-								block={new M.Block({ id: 'buttons', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Buttons } })} 
-								disableContextMenu={true} 
-								onDragStart={this.onDragStart}
-								onDragOver={this.onDragOver}
-								isEditing={isEditing}
-							/>
 						</React.Fragment>
 					) : ''}
 

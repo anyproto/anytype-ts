@@ -37,7 +37,6 @@ class CommonStore {
 	public notionToken = '';
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
-	public navigationMenuValue = null;
 	public linkStyleValue = null;
 	public dateFormatValue = null;
 	public timeFormatValue = null;
@@ -97,7 +96,6 @@ class CommonStore {
 			defaultType: observable,
 			isFullScreen: observable,
 			fullscreenObjectValue: observable,
-			navigationMenuValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
 			showVaultValue: observable,
@@ -133,7 +131,6 @@ class CommonStore {
 			nativeThemeSet: action,
 			spaceSet: action,
 			spaceStorageSet: action,
-			navigationMenuSet: action,
 			linkStyleSet: action,
 			dateFormatSet: action,
 			timeFormatSet: action,
@@ -231,14 +228,6 @@ class CommonStore {
 
 	get showRelativeDates (): boolean {
 		return this.boolGet('showRelativeDates');
-	};
-
-	get navigationMenu (): I.NavigationMenuMode {
-		let ret = this.navigationMenuValue;
-		if (ret === null) {
-			ret = Storage.get('navigationMenu');
-		};
-		return Number(ret) || I.NavigationMenuMode.Hover;
 	};
 
 	get linkStyle (): I.LinkCardStyle {
@@ -495,13 +484,7 @@ class CommonStore {
 		this.languages = v;
 	};
 
-	navigationMenuSet (v: I.NavigationMenuMode) {
-		v = Number(v);
-		this.navigationMenuValue = v;
-		Storage.set('navigationMenu', v);
-	};
-
-	linkStyleSet (v: I.NavigationMenuMode) {
+	linkStyleSet (v: I.LinkCardStyle) {
 		v = Number(v);
 		this.linkStyleValue = v;
 		Storage.set('linkStyle', v);

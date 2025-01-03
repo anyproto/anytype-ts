@@ -69,7 +69,6 @@ import Toast from './util/toast';
 import Marker from './util/marker';
 import Sync from './util/sync';
 import LoadMore from './util/loadMore';
-import Navigation from './util/navigation';
 
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
@@ -156,7 +155,6 @@ export {
 	Title,
 	Label,
 	Error,
-	Navigation,
 	Notification,
 
 	Icon,

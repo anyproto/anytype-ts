@@ -8,7 +8,6 @@ export enum WidgetLayout {
 	View		 = 4,
 
 	Space	 	 = 100,
-	Buttons		 = 101,
 };
 
 export interface WidgetComponent {
