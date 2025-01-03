@@ -108,15 +108,10 @@ const WidgetSpace = observer(forwardRef<I.WidgetComponent>(() => {
 
 			<div className="buttons">
 				{buttons.map((item, i) => {
-					let button = null;
 					let cnt = null;
 
 					if (item.id == 'member') {
-						if (space.isShared) {
-							cnt = <div className="cnt">{members.length}</div>;
-						} else {
-							button = <div className="btn">{translate('commonShare')}</div>;
-						};
+						cnt = <div className="cnt">{members.length}</div>;
 					};
 
 					return (
@@ -133,9 +128,7 @@ const WidgetSpace = observer(forwardRef<I.WidgetComponent>(() => {
 									{cnt}
 								</div>
 							</div>
-							<div className="side right">
-								{button}
-							</div>
+							<div className="side right" />
 						</div>
 					);
 				})}

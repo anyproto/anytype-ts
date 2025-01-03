@@ -41,10 +41,6 @@
 			.item {
 				.side { display: flex; flex-direction: row; align-items: center; }
 				.side.left { gap: 0px 6px; }
-				.side.right { justify-content: flex-end; padding-left: 6px; overflow: hidden; }
-				.side.right {
-					.btn { background-image: linear-gradient(90deg, #2aa7ee, #27c941); background-clip: text; -webkit-text-fill-color: transparent; font-weight: 500; }
-				}
 
 				.name { display: flex; gap: 0px 8px; @include text-overflow-nw; }
 
