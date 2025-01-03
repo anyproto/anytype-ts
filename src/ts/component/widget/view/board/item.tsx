@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, MouseEvent, SyntheticEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
@@ -11,86 +11,21 @@ interface Props extends I.WidgetViewComponent {
 	hideIcon?: boolean;
 };
 
-const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<Props> {
+const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	node = null;
-	frame = 0;
+	const { subId, id, block, isEditing, hideIcon, onContext, getView } = props;
+	const nodeRef = useRef(null);
+	const rootId = keyboard.getRootId();
+	const view = getView();
+	const object = S.Detail.get(subId, id, J.Relation.sidebar);
+	const { isReadonly, isArchived, restrictions } = object;
+	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+	const iconKey = `widget-icon-${block.id}-${id}`;
+	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const hasMore = U.Space.canMyParticipantWrite();
+	const more = hasMore ? <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => onContextHandler(e, true)} /> : null;
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onClick = this.onClick.bind(this);
-		this.onContext = this.onContext.bind(this);
-	};
-
-	render () {
-		const { subId, id, block, isEditing, hideIcon } = this.props;
-		const rootId = keyboard.getRootId();
-		const object = S.Detail.get(subId, id, J.Relation.sidebar);
-		const { isReadonly, isArchived, restrictions } = object;
-		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
-		const iconKey = `widget-icon-${block.id}-${id}`;
-		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-		const hasMore = U.Space.canMyParticipantWrite();
-		const more = hasMore ? <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} /> : null;
-
-		let icon = null;
-		if (!hideIcon) {
-			icon = (
-				<IconObject 
-					id={iconKey}
-					key={iconKey}
-					object={object} 
-					size={18} 
-					iconSize={18}
-					canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
-					menuParam={{ 
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-					}}
-				/>
-			);
-		};
-
-		let inner = (
-			<div className="inner" onMouseDown={this.onClick}>
-				{icon}
-				<ObjectName object={object} />
-
-				<div className="buttons">
-					{more}
-				</div>
-			</div>
-		);
-
-		if (canDrop) {
-			inner = (
-				<DropTarget
-					cacheKey={[ block.id, object.id ].join('-')}
-					id={object.id}
-					rootId={rootId}
-					targetContextId={object.id}
-					dropType={I.DropType.Menu}
-					canDropMiddle={true}
-				>
-					{inner}
-				</DropTarget>
-			);
-		};
-
-		return (
-			<div
-				ref={node => this.node = node}
-				className="item"
-				key={object.id}
-				onContextMenu={e => this.onContext(e, false)}
-			>
-				{inner}
-			</div>
-		);
-	};
-
-	onClick (e: React.MouseEvent) {
+	const onClick = (e: MouseEvent) => {
 		if (e.button) {
 			return;
 		};
@@ -98,24 +33,15 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, id, } = this.props;
-		const object = S.Detail.get(subId, id, J.Relation.sidebar);
-
 		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 
-	onContext (e: React.SyntheticEvent, withElement: boolean) {
+	const onContextHandler = (e: SyntheticEvent, withElement: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, id, getView, onContext } = this.props;
-		const view = getView();
-		if (!view) {
-			return;
-		};
-
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const element = node.find('.icon.more');
 
 		onContext({ 
@@ -130,6 +56,61 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		});
 	};
 
-});
+	let icon = null;
+	if (!hideIcon) {
+		icon = (
+			<IconObject 
+				id={iconKey}
+				key={iconKey}
+				object={object} 
+				size={18} 
+				iconSize={18}
+				canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
+				menuParam={{ 
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+				}}
+			/>
+		);
+	};
+
+	let inner = (
+		<div className="inner" onMouseDown={onClick}>
+			{icon}
+			<ObjectName object={object} />
+
+			<div className="buttons">
+				{more}
+			</div>
+		</div>
+	);
+
+	if (canDrop) {
+		inner = (
+			<DropTarget
+				cacheKey={[ block.id, object.id ].join('-')}
+				id={object.id}
+				rootId={rootId}
+				targetContextId={object.id}
+				dropType={I.DropType.Menu}
+				canDropMiddle={true}
+			>
+				{inner}
+			</DropTarget>
+		);
+	};
+
+	return (
+		<div
+			ref={nodeRef}
+			className="item"
+			key={object.id}
+			onContextMenu={e => onContextHandler(e, false)}
+		>
+			{inner}
+		</div>
+	);
+
+}));
 
 export default WidgetBoardItem;
