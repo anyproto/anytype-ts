@@ -1,7 +1,8 @@
 import { S, U, J, C, dispatcher } from 'Lib';
 
 const INDEX_POPUP = '/popup/index.html';
-const INDEX_IFRAME = '/iframe/index.html'
+const INDEX_IFRAME = '/iframe/index.html';
+const INDEX_AUTH = '/auth/index.html';
 
 class Util {
 
@@ -18,6 +19,10 @@ class Util {
 
 	isIframe () {
 		return this.isExtension() && (location.pathname == INDEX_IFRAME);
+	};
+
+	isAuth () {
+		return this.isExtension() && (location.pathname == INDEX_AUTH);
 	};
 
 	fromPopup (url: string) {
