@@ -13,7 +13,8 @@
 			.items { height: calc(100% - 38px); }
 		}
 
-		.item { display: flex; align-items: center; padding: 0px 10px 0px 0px; gap: 0px 4px; }
+		.item { display: flex; align-items: center; }
+		.item:not(.add, .empty) { padding: 0px 10px 0px 0px; gap: 0px 4px; }
 		.item {
 			.clickable { padding: 4px 14px; }
 
