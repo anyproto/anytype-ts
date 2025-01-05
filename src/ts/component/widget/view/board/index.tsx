@@ -1,43 +1,18 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, J, Dataview } from 'Lib';
 import Group from './group';
 
-const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I.WidgetViewComponent> {
+const WidgetViewBoard = observer(forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
 
-	node = null;
+	const { rootId, block, getView, getObject } = props;
+	const view = getView();
+	const object = getObject();
+	const groups = Dataview.getGroups(rootId, J.Constant.blockId.dataview, view.id, false);
+	const [ dummy, setDummy ] = useState(0);
 
-	constructor (props: I.WidgetViewComponent) {
-		super(props);
-	};
-
-	render (): React.ReactNode {
-		const { block, getView } = this.props;
-		const view = getView();
-		const groups = this.getGroups(false);
-
-		return (
-			<div ref={ref => this.node = ref} className="body">
-				{groups.map(group => (
-					<Group 
-						key={`widget-${view.id}-group-${block.id}-${group.id}`} 
-						{...this.props}
-						{...group}
-					/>
-				))}
-			</div>
-		);
-	};
-
-	componentDidMount(): void {
-		this.load();
-	};
-
-	load () {
-		const { rootId, getView, getObject } = this.props;
-		const view = getView();
+	const load = () => {
 		const blockId = J.Constant.blockId.dataview;
-		const object = getObject();
 
 		if (!view) {
 			return;
@@ -45,25 +20,27 @@ const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I
 
 		S.Record.groupsClear(rootId, blockId);
 
-		if (!view.groupRelationKey) {
-			this.forceUpdate();
-			return;
+		if (view.groupRelationKey) {
+			Dataview.loadGroupList(rootId, blockId, view.id, object);
+		} else {
+			setDummy(dummy + 1);
 		};
-
-		Dataview.loadGroupList(rootId, blockId, view.id, object);
 	};
 
-	getGroups (withHidden: boolean) {
-		const { rootId, getView } = this.props;
-		const view = getView();
+	useEffect(() => load(), []);
 
-		if (!view) {
-			return [];
-		};
+	return (
+		<div className="body">
+			{groups.map(group => (
+				<Group 
+					key={`widget-${view.id}-group-${block.id}-${group.id}`} 
+					{...props}
+					{...group}
+				/>
+			))}
+		</div>
+	);
 
-		return Dataview.getGroups(rootId, J.Constant.blockId.dataview, view.id, withHidden);
-	};
-
-});
+}));
 
 export default WidgetViewBoard;
