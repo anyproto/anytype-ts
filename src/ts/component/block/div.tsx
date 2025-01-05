@@ -9,8 +9,6 @@ const BlockDiv = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const { style } = content;
 	const cn = [ 'wrap', 'focusable', `c${id}` ];
 
-	let inner: any = null;
-
 	const onKeyDownHandler = (e: KeyboardEvent) => {
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
@@ -26,23 +24,22 @@ const BlockDiv = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const onFocus = () => {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
-		
-	switch (content.style) {
-		case I.DivStyle.Line:
-			inner = (
-				<div className="line" />
-			);
-			break;
 
-		case I.DivStyle.Dot:
+	let inner: any = null;	
+	switch (style) {
+		case I.DivStyle.Line: {
+			inner = <div className="line" />;
+			break;
+		};
+
+		case I.DivStyle.Dot: {
 			inner = (
 				<div className="dots">
-					<div className="dot" />
-					<div className="dot" />
-					<div className="dot" />
+					{Array(3).fill(null).map((_, i) => <div key={i} className="dot" />)}
 				</div>
 			);
 			break;
+		};
 	};
 
 	return (
