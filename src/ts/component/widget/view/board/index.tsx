@@ -8,12 +8,11 @@ const WidgetViewBoard = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 	const { rootId, block, getView, getObject } = props;
 	const view = getView();
 	const object = getObject();
-	const groups = Dataview.getGroups(rootId, J.Constant.blockId.dataview, view.id, false);
+	const blockId = J.Constant.blockId.dataview;
+	const groups = Dataview.getGroups(rootId, blockId, view.id, false);
 	const [ dummy, setDummy ] = useState(0);
 
 	const load = () => {
-		const blockId = J.Constant.blockId.dataview;
-
 		if (!view) {
 			return;
 		};
