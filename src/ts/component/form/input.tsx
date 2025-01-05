@@ -118,12 +118,18 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-		if ($(inputRef.current).hasClass('disabled')) return;
+		if ($(inputRef.current).hasClass('disabled')) {
+			return;
+		};
+
 		handleEvent(onKeyUp, e);
 	};
 
 	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-		if ($(inputRef.current).hasClass('disabled')) return;
+		if ($(inputRef.current).hasClass('disabled')) {
+			return;
+		};
+
 		handleEvent(onKeyDown, e);
 	};
 
