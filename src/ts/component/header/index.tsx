@@ -175,12 +175,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	});
 
 	useImperativeHandle(ref, () => ({
-		setRootId: (rootId: string) => {
-			if (childRef.current && childRef.current.setRootId) {
-				childRef.current.setRootId(rootId);
-			};
-		},
-
 		setVersion: (version: string) => {
 			if (childRef.current && childRef.current.setVersion) {
 				childRef.current.setVersion(version);

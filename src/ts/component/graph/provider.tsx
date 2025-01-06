@@ -17,6 +17,7 @@ interface Props {
 interface GraphRefProps {
 	init: () => void;
 	resize: () => void;
+	addNewNode: (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => void;
 };
 
 const Graph = observer(forwardRef<GraphRefProps, Props>(({
@@ -545,6 +546,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	useImperativeHandle(ref, () => ({
 		init,
 		resize,
+		addNewNode,
 	}));
 
 	return (

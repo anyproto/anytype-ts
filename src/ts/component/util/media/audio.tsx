@@ -210,7 +210,12 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 				</div>
 
 				<div className="controls">
-					<Icon ref={playIconRef} className="play" onMouseDown={onPlayClick} />
+					<Icon 
+						ref={playIconRef} 
+						className="play" 
+						onMouseDown={onPlayClick} 
+						onClick={e => e.stopPropagation()}
+					/>
 
 					<div className="timeDragWrapper">
 						<DragHorizontal
@@ -231,8 +236,9 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 						<Icon
 							ref={volumeIconRef} 
 							className={ci.join(' ')} 
-							onMouseDown={onMute} 
+							onMouseDown={onMute}
 							onMouseEnter={onVolumeEnter}
+							onClick={e => e.stopPropagation()}
 						/>
 
 						<Floater 

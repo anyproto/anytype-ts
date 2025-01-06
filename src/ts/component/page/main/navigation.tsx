@@ -293,6 +293,10 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 	
 	onKeyDown (e: any) {
+		if (S.Popup.isOpen('search')) {
+			return;
+		};
+
 		const items = this.getItems();
 		const l = items.length;
 

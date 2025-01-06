@@ -177,7 +177,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={20}
-											scrollToAlignment="center"
+											scrollToAlignment="start"
 										/>
 									)}
 								</AutoSizer>
@@ -341,7 +341,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			
 			sections = U.Menu.sectionsFilter(sections, filter.text);
 		};
-		
+
 		return U.Menu.sectionsMap(sections);
 	};
 	
@@ -732,24 +732,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 
 	getRowHeight (item: any, index: number) {
-		if (item.isRelation || item.isRelationAdd) {
-			return HEIGHT_RELATION;
-		};
-		if (item.isSection && index > 0) {
-			return HEIGHT_SECTION;
-		};
-		if (item.isBlock) {
-			return HEIGHT_DESCRIPTION;
-		};
-		return HEIGHT_ITEM;
-	};
-
-	recalcIndex () {
-		const itemsWithSection = this.getItems(true);
-		const itemsWithoutSection = itemsWithSection.filter(it => !it.isSection);
-		const active: any = itemsWithoutSection[this.n] || {};
-
-		return itemsWithSection.findIndex(it => it.id == active.id);
+		let h = HEIGHT_ITEM
+		if (item.isRelation || item.isRelationAdd) h = HEIGHT_RELATION;
+		else if (item.isSection && (index > 0)) h = HEIGHT_SECTION;
+		else if (item.isBlock) h = HEIGHT_DESCRIPTION;
+		return h;
 	};
 
 });

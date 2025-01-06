@@ -51,6 +51,7 @@ export interface Toast {
 	count?: number;
 	value?: boolean;
 	ids?: string[];
+	icon?: string;
 };
 
 export enum ToastAction {

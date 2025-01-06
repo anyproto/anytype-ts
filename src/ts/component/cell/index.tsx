@@ -189,6 +189,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
 					value: param.data.value || U.Date.now(),
+					noKeyboard: true,
 				});
 					
 				menuId = 'dataviewCalendar';

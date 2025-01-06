@@ -182,6 +182,10 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	};
 
 	const focus = () => {
+		if (readonly) {
+			return;
+		};
+
 		const entry = $(entryRef.current);
 
 		entry.trigger('focus');

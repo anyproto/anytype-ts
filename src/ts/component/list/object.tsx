@@ -48,6 +48,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	const [ sortId, setSortId ] = React.useState('');
 	const [ sortType, setSortType ] = React.useState(I.SortType.Asc);
 	const { offset, total } = S.Record.getMeta(subId, '');
+	const { dateFormat } = S.Common;
 
 	const getColumns = (): Column[] => {
 		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true } ] as any[]).concat(columns || []);

@@ -201,12 +201,6 @@ class UtilData {
 						Storage.set('bgColor', 'orange');
 					};
 
-					[
-						I.SurveyType.Register, 
-						I.SurveyType.Object,
-						I.SurveyType.Pmf,
-					].forEach(it => Survey.check(it));
-
 					Storage.clearDeletedSpaces();
 
 					if (callBack) {
@@ -854,7 +848,7 @@ class UtilData {
 			console.error('[U.Data].searchSubscribe: subId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'subId is empty' } });
 			};
 			return;
 		};
@@ -863,7 +857,7 @@ class UtilData {
 			console.error('[U.Data].searchSubscribe: spaceId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'spaceId is empty' } });
 			};
 			return;
 		};
@@ -900,7 +894,7 @@ class UtilData {
 			console.error('[U.Data].subscribeIds: subId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'subId is empty' } });
 			};
 			return;
 		};
@@ -909,7 +903,7 @@ class UtilData {
 			console.error('[U.Data].subscribeIds: spaceId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'spaceId is empty' } });
 			};
 			return;
 		};
@@ -918,7 +912,7 @@ class UtilData {
 			console.error('[U.Data].subscribeIds: ids list is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'ids list is empty' } });
 			};
 			return;
 		};
@@ -970,7 +964,7 @@ class UtilData {
 			console.error('[U.Data].search: spaceId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'spaceId is empty' } });
 			};
 			return;
 		};

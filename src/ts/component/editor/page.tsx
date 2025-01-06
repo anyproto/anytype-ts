@@ -187,8 +187,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
 		window.clearTimeout(this.timeoutMove);
-
-		Renderer.remove('commandEditor');
 	};
 
 	initNodes () {
@@ -288,10 +286,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onCommand (cmd: string, arg: any) {
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const { focused, range } = focus.state;
 		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 		const menuOpen = this.menuCheck();
+
+		if (isPopup !== keyboard.isPopup()) {
+			return;
+		};
 
 		switch (cmd) {
 			case 'selectAll': {
@@ -377,7 +379,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 		container.off(`scroll.${ns}`);
-		Renderer.remove('commandEditor');
+		Renderer.remove(`commandEditor`);
 	};
 
 	rebind () {
@@ -417,7 +419,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		win.on(`resize.${ns}`, () => this.resizePage());
 		container.on(`scroll.${ns}`, e => this.onScroll());
 
-		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
+		Renderer.on(`commandEditor`, (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
 	onMouseMove (e: any) {
@@ -548,7 +550,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onKeyDownEditor (e: any) {
 		const { rootId, isPopup } = this.props;
 
-		if (!isPopup && keyboard.isPopup()) {
+		if (isPopup !== keyboard.isPopup()) {
 			return;
 		};
 
@@ -1433,12 +1435,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		const isEnter = pressed == 'enter';
 		const isShift = !!pressed.match('shift');
 		const length = block.getLength();
 		const parent = S.Block.getParentLeaf(rootId, block.id);
-		const replace = !range.to && (block.isTextList() || parent?.isTextToggle()) && !length;
+		const replace = !range.to && block.isTextList() && !length;
 
-		if (block.isTextCode() && (pressed == 'enter')) {
+		if (block.isTextCode() && isEnter) {
 			return;
 		};
 		if (!block.isText() && keyboard.isFocused) {
@@ -1803,6 +1806,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onPasteEvent (e: any, props: any, data?: any) {
+		const { isPopup } = props;
+
+		if (isPopup !== keyboard.isPopup()) {
+			return;
+		};
+
 		if (keyboard.isPasteDisabled || this.isReadonly()) {
 			return;
 		};

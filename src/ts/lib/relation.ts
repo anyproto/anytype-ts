@@ -10,6 +10,8 @@ class Relation {
 	};
 
 	public className (v: I.RelationType): string {
+		v = Number(v);
+
 		let c = '';
 		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(v)) {
 			c = `select ${this.selectClassName(v)}`;

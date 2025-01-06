@@ -10,13 +10,7 @@ enum Stage {
 	Soul	 = 2,
 };
 
-type State = {
-	stage: Stage;
-	phraseVisible: boolean;
-	error: string;
-};
-
-const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	const { account } = S.Auth;
 	const nodeRef = useRef(null);
@@ -42,8 +36,11 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		tooltipPhrase.off('click').on('click', () => onPhraseTooltip());
 	};
 
-	const onKeyDown = (e) => {
-		keyboard.shortcut('enter', e, onForward);
+	const onKeyDown = e => {
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			onForward();
+		});
 	};
 
 	// Guard to prevent illegal state change
@@ -62,8 +59,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			return;
 		};
 
-		const { account } = S.Auth;
-
 		if (stage == Stage.Vault) {
 			const cb = () => {
 				Animation.from(() => {
@@ -78,10 +73,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 				nextRef.current?.setLoading(true);
 				U.Data.accountCreate(setErrorHandler, cb);
 			};
-		};
-
-		if (!account) {
-			return;
 		};
 
 		if (stage == Stage.Phrase) {
@@ -241,28 +232,28 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		};
 	};
 
-	useEffect(() => {
+	const init = () => {
 		Animation.to();
+		frameRef.current.resize();
 		rebind();
+	};
 
-		analytics.event('ScreenOnboarding', { step: Stage[stage] });
+	useEffect(() => {
+		init();
 		return () => unbind();
 	}, []);
 
 	useEffect(() => {
-		Animation.to();
-		analytics.event('ScreenOnboarding', { step: Stage[stage] });
+		init();
 
 		if (account && (stage == Stage.Phrase)) {
 			Renderer.send('keytarGet', account.id).then(value => phraseRef.current?.setValue(value));
 		};
-
 	}, [ stage ]);
 
 	useEffect(() => {
-		frameRef.current.resize();
-		rebind();
-	}, []);
+		analytics.event('ScreenOnboarding', { step: Stage[stage] });
+	});
 
 	return (
 		<div 

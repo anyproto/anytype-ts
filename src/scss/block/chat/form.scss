@@ -29,7 +29,7 @@
 		.side.right { flex-shrink: 0; }
 
 		.name { @include text-overflow-nw; font-weight: 500; }
-		.descr { @include text-overflow-nw; }
+		.descr { @include clamp1; }
 		.descr:empty { display: none; }
 		.icon.clear { width: 20px; height: 20px; border-radius: 50%; background: var(--color-control-active) url('~img/icon/chat/buttons/clear.svg'); }
 	}

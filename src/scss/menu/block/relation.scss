@@ -152,13 +152,6 @@
 			.info { width: 100%; transition: $transitionAllCommon; }
 		}
 	}
-
-}
-
-body.isDragging {
-	.menus {
-		.menu.menuBlockRelationView { opacity: 0.5; }
-	}
 }
 
 html.platformWindows {

@@ -85,7 +85,6 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 	const initRootId = (id: string) => {
 		rootIdRef.current = id; 
-		headerRef.current?.setRootId(id);
 	};
 
 	const getRootId = () => {

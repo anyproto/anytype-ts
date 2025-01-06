@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Cell } from 'Component';
 import { I, S, U, J, translate, Dataview, Storage } from 'Lib';
@@ -11,95 +11,18 @@ interface Props extends I.WidgetViewComponent {
 	value: any;
 };
 
-const Group = observer(class Group extends React.Component<Props> {
+const Group = observer(forwardRef<{}, Props>((props, ref) => {
 
-	node = null;
+	const nodeRef = useRef(null);
+	const { rootId, block, parent, id, value, canCreate, getView, getViewLimit, getObject } = props;
+	const view = getView();
+	const subId = S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id);
+	const object = getObject();
+	const limit = getViewLimit();
+	const { total } = S.Record.getMeta(subId, '');
+	const head = { [view.groupRelationKey]: value };
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onAll = this.onAll.bind(this);
-		this.onToggle = this.onToggle.bind(this);
-		this.onCreate = this.onCreate.bind(this);
-	};
-
-	render () {
-		const { rootId, block, id, getView, value, getViewLimit, canCreate } = this.props;
-		const view = getView();
-		const subId = this.getSubId();
-		const items = this.getItems();
-		const limit = getViewLimit();
-		const { total } = S.Record.getMeta(subId, '');
-		const head = {};
-
-		head[view.groupRelationKey] = value;
-
-		// Subscriptions
-		items.forEach((item: any) => {
-			const object = S.Detail.get(subId, item.id, [ view.groupRelationKey ]);
-		});
-
-		return (
-			<div 
-				ref={node => this.node = node} 
-				className="group"
-			>
-				<div id={`item-${id}`} className="clickable" onClick={this.onToggle}>
-					<Icon className="arrow" />
-					<Cell 
-						id={`board-head-${id}`} 
-						rootId={rootId}
-						subId={subId}
-						block={S.Block.getLeaf(rootId, J.Constant.blockId.dataview)}
-						relationKey={view.groupRelationKey} 
-						viewType={I.ViewType.Board}
-						getRecord={() => head}
-						readonly={true} 
-						arrayLimit={2}
-						withName={true}
-						placeholder={translate('commonUncategorized')}
-					/>
-					{canCreate ? <Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={this.onCreate} /> : ''}
-				</div>
-
-				<div id={`item-${id}-children`} className="items">
-					{!items.length ? (
-						<div className="item empty">{translate('commonNoObjects')}</div>
-					) : (
-						<React.Fragment>
-							{items.map(item => (
-								<Item 
-									{...this.props}
-									key={`widget-${block.id}-item-${item.id}`} 
-									subId={subId}
-									id={item.id} 
-									hideIcon={view.hideIcon}
-								/>
-							))}
-							{total > limit ? <div className="item more" onClick={this.onAll}>{translate('widgetShowAll')}</div> : ''}
-						</React.Fragment>
-					)}
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.load();
-		this.initToggle();
-	};
-
-	componentWillUnmount () {
-		this.clear();
-	};
-
-	load () {
-		const { id, getView, getObject, getViewLimit, value } = this.props;
-		const subId = this.getSubId(); 
-		const object = getObject();
-		const view = getView();
-		const isCollection = U.Object.isCollectionLayout(object.layout);
-
+	const load = () => {
 		if (!view || !object) {
 			return;
 		};
@@ -109,12 +32,12 @@ const Group = observer(class Group extends React.Component<Props> {
 			return;
 		};
 
+		const isCollection = U.Object.isCollectionLayout(object.layout);
 		const filters: I.Filter[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
-		const limit = getViewLimit();
 
 		U.Data.searchSubscribe({
 			subId,
@@ -127,47 +50,30 @@ const Group = observer(class Group extends React.Component<Props> {
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			S.Record.recordsSet(subId, '', this.applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
+			S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
 		});
 	};
 
-	clear () {
-		S.Record.recordsClear(this.getSubId(), '');
+	const getItems = () => {
+		return applyObjectOrder(id, U.Common.objectCopy(S.Record.getRecordIds(subId, '')));
 	};
 
-	getSubId () {
-		const { rootId, id } = this.props;
-
-		return S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id);
-	};
-
-	getItems () {
-		const { id } = this.props;
-		const subId = this.getSubId();
-		const records = U.Common.objectCopy(S.Record.getRecordIds(subId, ''));
-
-		return this.applyObjectOrder(id, records).map(id => ({ id }));
-	};
-
-	applyObjectOrder (groupId: string, ids: string[]): any[] {
-		const { rootId, parent } = this.props;
-
+	const applyObjectOrder = (groupId: string, ids: string[]): any[] => {
 		return Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, parent.content.viewId, groupId, ids);
 	};
 
-	getToggleKey () {
-		return `widget${this.props.block.id}`;
+	const getToggleKey = () => {
+		return `widget${block.id}`;
 	};
 
-	initToggle () {
-		const { id } = this.props;
-		const isOpen = Storage.checkToggle(this.getToggleKey(), id);
+	const initToggle = () => {
+		const isOpen = Storage.checkToggle(getToggleKey(), id);
 
 		if (!isOpen) {
 			return;
 		};
 
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const item = node.find(`#item-${id}`);
 		const children = node.find(`#item-${id}-children`);
 
@@ -175,11 +81,10 @@ const Group = observer(class Group extends React.Component<Props> {
 		children.show();
 	};
 
-	onToggle () {
-		const { id } = this.props;
-		const subKey = this.getToggleKey();
+	const onToggle = () => {
+		const subKey = getToggleKey();
 		const isOpen = Storage.checkToggle(subKey, id);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const item = node.find(`#item-${id}`);
 		const children = node.find(`#item-${id}-children`);
 
@@ -208,14 +113,12 @@ const Group = observer(class Group extends React.Component<Props> {
 		Storage.setToggle(subKey, id, !isOpen);
 	};
 
-	onCreate (e: any) {
+	const onCreate = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { onCreate, getView, value } = this.props;
 		const view = getView();
-		const { id } = this.props;
-		const isOpen = Storage.checkToggle(this.getToggleKey(), id);
+		const isOpen = Storage.checkToggle(getToggleKey(), id);
 		const details = {};
 
 		details[view.groupRelationKey] = value;
@@ -223,17 +126,74 @@ const Group = observer(class Group extends React.Component<Props> {
 		onCreate({ details });
 
 		if (!isOpen) {
-			this.onToggle();
+			onToggle();
 		};
 	};
 
-	onAll (e: any) {
-		const { getObject, parent } = this.props;
-		const object = getObject();
-
+	const onAll = (e: any) => {
 		U.Object.openEvent(e, { ...object, _routeParam_: { viewId: parent.content.viewId } });
 	};
 
-});
+	useEffect(() => {
+		load();
+		initToggle();
+
+		return () => {
+			S.Record.recordsClear(subId, '');
+		};
+	}, []);
+
+	const items = getItems();
+
+	// Subscriptions
+	items.forEach(id => {
+		const object = S.Detail.get(subId, id, [ view.groupRelationKey ]);
+	});
+
+	return (
+		<div 
+			ref={nodeRef} 
+			className="group"
+		>
+			<div id={`item-${id}`} className="clickable" onClick={onToggle}>
+				<Icon className="arrow" />
+				<Cell 
+					id={`board-head-${id}`} 
+					rootId={rootId}
+					subId={subId}
+					block={S.Block.getLeaf(rootId, J.Constant.blockId.dataview)}
+					relationKey={view.groupRelationKey} 
+					viewType={I.ViewType.Board}
+					getRecord={() => head}
+					readonly={true} 
+					arrayLimit={2}
+					withName={true}
+					placeholder={translate('commonUncategorized')}
+				/>
+				{canCreate ? <Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreate} /> : ''}
+			</div>
+
+			<div id={`item-${id}-children`} className="items">
+				{!items.length ? (
+					<div className="item empty">{translate('commonNoObjects')}</div>
+				) : (
+					<React.Fragment>
+						{items.map(id => (
+							<Item 
+								{...props}
+								key={`widget-${block.id}-item-${id}`} 
+								subId={subId}
+								id={id} 
+								hideIcon={view.hideIcon}
+							/>
+						))}
+						{total > limit ? <div className="item more" onClick={onAll}>{translate('widgetShowAll')}</div> : ''}
+					</React.Fragment>
+				)}
+			</div>
+		</div>
+	);
+	
+}));
 
 export default Group;
