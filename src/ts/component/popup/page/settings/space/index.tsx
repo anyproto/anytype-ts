@@ -58,7 +58,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const hasLink = cid && key;
 		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const canDelete = !space.isPersonal;
 		const isShareActive = U.Space.isShareActive();
 
 		let bytesUsed = 0;
@@ -139,7 +138,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				<div className="sections">
 					<div 
 						className="section sectionSpaceShare"
-						onMouseEnter={isShareActive ? () => {} : e => Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) })}
+						onMouseEnter={isShareActive ? () => {} : e => {
+							Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) });
+						}}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
 						<Title text={translate(`popupSettingsSpaceShareTitle`)} />
@@ -239,8 +240,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										<Title text={translate('commonOwner')} />
 									</div>
 									<div className="side right">
-										<IconObject object={creator} size={24} />
-										<ObjectName object={creator} />
+										<IconObject object={{ ...creator, layout: I.ObjectLayout.Participant }} size={24} />
+										<ObjectName object={{ ...creator, layout: I.ObjectLayout.Participant }} />
 										{creator.identity == account.id ? <div className="caption">({translate('commonYou')})</div> : ''}
 									</div>
 								</div>
@@ -408,7 +409,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="sides">
 										<div className="side left">
 											<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-											<Label text={U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, space.createdDate)} />
+											<Label text={U.Date.dateWithFormat(S.Common.dateFormat, space.createdDate)} />
 										</div>
 									</div>
 								</div>
@@ -416,11 +417,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						</div>
 					</div>
 
-					{canDelete ? (
-						<div className="buttons">
-							<Button text={isOwner ? translate('commonDelete') : translate('commonLeaveSpace')} color="red" onClick={this.onDelete} />
-						</div>
-					) : ''}
+					<div className="buttons">
+						<Button text={isOwner ? translate('commonDelete') : translate('commonLeaveSpace')} color="red" onClick={this.onDelete} />
+					</div>
 
 					<Error text={error} />
 				</div>

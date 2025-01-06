@@ -51,6 +51,7 @@ export interface Toast {
 	count?: number;
 	value?: boolean;
 	ids?: string[];
+	icon?: string;
 };
 
 export enum ToastAction {
@@ -122,15 +123,12 @@ export enum EdgeType {
 export enum Usecase {
 	None		 = 0,
 	GetStarted	 = 1,
-	Personal	 = 2,
-	Knowledge	 = 3,
-	Notes		 = 4,
-	Strategic 	 = 5,
-	Empty		 = 6,
+	Empty		 = 2,
 };
 
 export enum HomePredefinedId {
 	Graph		 = 'graph',
+	Chat		 = 'chat',
 	Last		 = 'lastOpened',
 	Existing	 = 'existing',
 };
@@ -300,6 +298,32 @@ export interface SearchSubscribeParam {
 	limit: number;
 	ignoreHidden: boolean;
 	ignoreDeleted: boolean;
-	withArchived: boolean;
+	ignoreArchived: boolean;
+	skipLayoutFormat: I.ObjectLayout[];
 	noDeps: boolean;
+};
+
+export enum SortId {
+	All			 = 'all',
+	Orphan		 = 'orphan',
+	Updated		 = 'updated',
+	Created		 = 'created',
+	Name		 = 'name',
+	LastUsed	 = 'lastUsed',
+	List		 = 'list',
+	Compact		 = 'compact',
+};
+
+export enum LoaderType {
+	Loader		 = 'loader',
+	Dots		 = 'dots',
+};
+
+export interface Error {
+	code: number;
+	description: string;
+};
+
+export interface PageRef {
+	resize: () => void;
 };

@@ -745,6 +745,22 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 	};
 
+	getIndex (): number {
+		if (!this.ref) {
+			return -1;
+		};
+
+		return this.ref.getIndex ? this.ref.getIndex() : this.ref.n;
+	};
+
+	setIndex (n: number) {
+		if (!this.ref) {
+			return;
+		};
+
+		this.ref.setIndex ? this.ref.setIndex(n) : this.ref.n = n;
+	};
+
 	onKeyDown (e: any) {
 		if (!this.ref || !this.ref.getItems || keyboard.isComposition) {
 			return;
@@ -759,17 +775,18 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const refInput = this.ref.refFilter || this.ref.refName;
 		const shortcutClose = [ 'escape' ];
 		const shortcutSelect = [ 'tab', 'enter' ];
-
+		
+		let index = this.getIndex();
 		let ret = false;
 
 		if (refInput) {
-			if (refInput.isFocused && (this.ref.n < 0)) {
+			if (refInput.isFocused && (index < 0)) {
 				keyboard.shortcut('arrowleft, arrowright', e, () => ret = true);
 
 				keyboard.shortcut('arrowdown', e, () => {
 					refInput.blur();
 
-					this.ref.n = 0;
+					this.setIndex(0);
 					this.setActive(null, true);
 
 					ret = true;
@@ -793,7 +810,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 						return;
 					};
 
-					this.ref.n = this.ref.getItems().length - 1;
+					this.setIndex(this.ref.getItems().length - 1);
 					this.setActive(null, true);
 
 					refInput.blur();
@@ -801,9 +818,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				});
 			} else {
 				keyboard.shortcut('arrowup', e, () => {
-					if (!this.ref.n) {
-						this.ref.n = -1;
+					if (index < 0) {
 						refInput.focus();
+
+						this.setIndex(-1);
 						this.setActive(null, true);
 
 						ret = true;
@@ -832,26 +850,29 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		const items = this.ref.getItems();
 		const l = items.length;
-		const item = items[this.ref.n];
+		
+		index = this.getIndex();
 
+		const item = items[index];
 		const onArrow = (dir: number) => {
-			this.ref.n += dir;
+			index += dir;
 
-			if (this.ref.n < 0) {
-				if ((this.ref.n == -1) && refInput) {
-					this.ref.n = -1;
+			if (index < 0) {
+				if ((index == -1) && refInput) {
+					index = -1;
 					refInput.focus();
 				} else {
-					this.ref.n = l - 1;
+					index = l - 1;
 				};
 			};
 
-			if (this.ref.n > l - 1) {
-				this.ref.n = 0;
+			if (index > l - 1) {
+				index = 0;
 			};
 
-			const item = items[this.ref.n];
+			this.setIndex(index);
 
+			const item = items[index];
 			if (!item) {
 				return;
 			};
@@ -861,7 +882,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			this.setActive(null, true);
+			this.setActive(null, true, dir);
 
 			if (!item.arrow && this.ref.onOver) {
 				this.ref.onOver(e, item);
@@ -899,7 +920,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				keyboard.shortcut('backspace', e, () => {
 					e.preventDefault();
 
-					this.ref.n--;
+					this.setIndex(index - 1);
 					this.checkIndex();
 					this.ref.onRemove(e, item);
 					this.setActive(null, true);
@@ -917,56 +938,62 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	onSortMove (dir: number) {
-		const n = this.ref.n;
+		const index = this.getIndex();
 
-		this.ref.n = n + dir;
+		this.setIndex(index + dir);
 		this.checkIndex();
-		this.ref.onSortEnd({ oldIndex: n, newIndex: this.ref.n });
+		this.ref.onSortEnd({ oldIndex: index, newIndex: index + dir });
 	};
 
 	checkIndex () {
 		const items = this.ref.getItems();
+		
+		let index = this.getIndex();
+		index = Math.max(0, index);
+		index = Math.min(items.length - 1, index);
 
-		this.ref.n = Math.max(0, this.ref.n);
-		this.ref.n = Math.min(items.length - 1, this.ref.n);
+		this.setIndex(index);
 	};
 
-	setActive (item?: any, scroll?: boolean) {
+	setActive (item?: any, scroll?: boolean, dir?: number) {
+		dir = dir || 1;
+
 		if (!this.ref || !this.ref.getItems) {
 			return;
 		};
 
 		const refInput = this.ref.refFilter || this.ref.refName;
-		if ((this.ref.n == -1) && refInput) {
+
+		let index = this.getIndex();
+		if ((index < 0) && refInput) {
 			refInput.focus();
 		};
 
 		const items = this.ref.getItems();
 		if (item && (undefined !== item.id)) {
-			this.ref.n = items.findIndex(it => it.id == item.id);
+			index = items.findIndex(it => it.id == item.id);
 		};
 
 		if (this.ref.refList && scroll) {
-			let idx = this.ref.n;
-			if (this.ref.recalcIndex) {
-				idx = this.ref.recalcIndex();
-			};
-			this.ref.refList.scrollToRow(Math.max(0, idx));
+			this.ref.refList.scrollToRow(Math.max(0, index));
 		};
 
-		const next = items[this.ref.n];
+		const next = items[index];
 		if (!next) {
 			return;
 		};
 
 		if (next.isDiv || next.isSection) {
-			this.ref.n++;
-			if (items[this.ref.n]) {
-				this.setActive(items[this.ref.n], scroll);
+			index += dir;
+			this.setIndex(index);
+			if (items[index]) {
+				this.setActive(items[index], scroll);
 			};
 		} else {
 			this.setHover(next, scroll);
 		};
+
+		this.setIndex(index);
 	};
 	
 	setHover (item?: any, scroll?: boolean) {

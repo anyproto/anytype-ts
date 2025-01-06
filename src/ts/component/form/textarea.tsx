@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { keyboard } from 'Lib';
 
@@ -22,182 +22,150 @@ interface Props {
 	onPaste?(e: any): void;
 };
 
-interface State {
-	value: string;
+interface TextareaRefProps {
+	focus(): void;
+	select(): void;
+	getValue(): string;
+	setError(v: boolean): void;
+	addClass(v: string): void;
+	removeClass(v: string): void;
 };
 
-class Textarea extends React.Component<Props, State> {
+const Textarea = forwardRef<TextareaRefProps, Props>(({
+	id = '',
+	name = '',
+	placeholder = '',
+	className = '',
+	rows = null,
+	value: initialValue = '',
+	autoComplete = null,
+	maxLength = null,
+	readonly = false,
+	onChange,
+	onKeyDown,
+	onKeyUp,
+	onInput,
+	onFocus,
+	onBlur,
+	onCopy,
+	onPaste,
+}, ref) => {
+	const [ value, setValue ] = useState(initialValue);
+	const nodeRef = useRef(null);
+	const cn = [ 'textarea' ];
 
-	public static defaultProps = {
-		value: ''
+	if (className) {
+		cn.push(className);
 	};
 
-	_isMounted = false;
-	node: any = null;
-	textAreaElement: HTMLTextAreaElement;
-
-	state = {
-		value: '',
-	};
-
-	constructor (props: Props) {
-		super(props);
-		
-		this.onChange = this.onChange.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onInput = this.onInput.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onPaste = this.onPaste.bind(this);
-	};
-	
-	render () {
-		const { id, name, className, placeholder, rows, autoComplete, readonly, maxLength } = this.props;
-		const { value } = this.state;
-		const cn = [ 'textarea' ];
-
-		if (className) {
-			cn.push(className);
-		};
-		
-		return (
-			<textarea
-				ref={node => this.node = node}
-				name={name}
-				id={id}
-				placeholder={placeholder}
-				value={value}
-				rows={rows}
-				className={cn.join(' ')}
-				autoComplete={autoComplete}
-				readOnly={readonly}
-				onChange={this.onChange}
-				onKeyDown={this.onKeyDown}
-				onKeyUp={this.onKeyUp}
-				onInput={this.onInput}
-				onFocus={this.onFocus}
-				onBlur={this.onBlur}
-				onCopy={this.onCopy}
-				onPaste={this.onPaste}
-				maxLength={maxLength ? maxLength : undefined}
-				spellCheck={false}
-			/>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		this.textAreaElement = $(this.node).get(0) as HTMLTextAreaElement;
-		this.setValue(this.props.value ? this.props.value : '');
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-	
-	onChange (e: any) {
-		this.setValue(e.target.value);
-		if (this.props.onChange) {
-			this.props.onChange(e, e.target.value);
+	const onChangeHandler = (e: any) => {
+		setValue(e.target.value);
+		if (onChange) {
+			onChange(e, e.target.value);
 		};
 	};
 
-	onKeyDown (e: any) {
-		this.setValue(e.target.value);
-		if (this.props.onKeyDown) {
-			this.props.onKeyDown(e, e.target.value);
-		};
-	};
-	
-	onKeyUp (e: any) {
-		this.setValue(e.target.value);
-		if (this.props.onKeyUp) {
-			this.props.onKeyUp(e, e.target.value);
+	const onKeyDownHandler = (e: any) => {
+		setValue(e.target.value);
+		if (onKeyDown) {
+			onKeyDown(e, e.target.value);
 		};
 	};
 
-	onInput (e: any) {
-		if (this.props.onInput) {
-			this.props.onInput(e, e.target.value);
+	const onKeyUpHandler = (e: any) => {
+		setValue(e.target.value);
+		if (onKeyUp) {
+			onKeyUp(e, e.target.value);
 		};
 	};
-	
-	onFocus (e: any) {
-		if (this.props.onFocus) {
-			this.props.onFocus(e, this.state.value);
+
+	const onInputHandler = (e: any) => {
+		if (onInput) {
+			onInput(e, e.target.value);
 		};
-		
+	};
+
+	const onFocusHandler = (e: any) => {
+		if (onFocus) {
+			onFocus(e, value);
+		};
 		keyboard.setFocus(true);
-		this.addClass('isFocused');
+		$(nodeRef.current).addClass('isFocused');
 	};
-	
-	onBlur (e: any) {
-		if (this.props.onBlur) {
-			this.props.onBlur(e, this.state.value);
+
+	const onBlurHandler = (e: any) => {
+		if (onBlur) {
+			onBlur(e, value);
 		};
-		
 		keyboard.setFocus(false);
-		this.removeClass('isFocused');
+		$(nodeRef.current).removeClass('isFocused');
 	};
 
-	onCopy (e: any) {
-		if (this.props.onCopy) {
-			this.props.onCopy(e, this.state.value);
-		};
-	};
-	
-	onPaste (e: any) {
-		if (this.props.onPaste) {
-			this.props.onPaste(e);
+	const onCopyHandler = (e: any) => {
+		if (onCopy) {
+			onCopy(e, value);
 		};
 	};
 
-	focus () {
-		window.setTimeout(() => { 
-			if (!this._isMounted) {
-				return;
-			};
-
-			this.textAreaElement.focus({ preventScroll: true });
-		});
-	};
-	
-	select () {
-		window.setTimeout(() => { 
-			if (!this._isMounted) {
-				return;
-			};
-
-			this.textAreaElement.select();
-		});
-	};
-	
-	setValue (v: string) {
-		this.setState({ value: v });
-	};
-	
-	getValue () {
-		return this.state.value;
-	};
-	
-	setError (v: boolean) {
-		v ? this.addClass('withError') : this.removeClass('withError');
-	};
-
-	addClass (v: string) {
-		if (this._isMounted) {
-			$(this.node).addClass(v);
+	const onPasteHandler = (e: any) => {
+		if (onPaste) {
+			onPaste(e);
 		};
 	};
-	
-	removeClass (v: string) {
-		if (this._isMounted) {
-			$(this.node).removeClass(v);
-		};
+
+	const focus = () => {
+		window.setTimeout(() => nodeRef.current.focus({ preventScroll: true }));
 	};
 	
-};
+	const select = () => {
+		window.setTimeout(() => nodeRef.current.select());
+	};
+	
+	const setError = (v: boolean) => {
+		$(nodeRef.current).toggleClass('withError', v);
+	};
+
+	const addClass = (v: string) => {
+		$(nodeRef.current).addClass(v);
+	};
+	
+	const removeClass = (v: string) => {
+		$(nodeRef.current).removeClass(v);
+	};
+	
+	useEffect(() => setValue(initialValue));
+	useImperativeHandle(ref, () => ({ 
+		focus, 
+		select, 
+		getValue: () => value, 
+		setError, 
+		addClass, 
+		removeClass 
+	}));
+
+	return (
+		<textarea
+			ref={nodeRef}
+			name={name}
+			id={id}
+			placeholder={placeholder}
+			value={value}
+			rows={rows}
+			className={cn.join(' ')}
+			autoComplete={autoComplete}
+			readOnly={readonly}
+			onChange={onChangeHandler}
+			onKeyDown={onKeyDownHandler}
+			onKeyUp={onKeyUpHandler}
+			onInput={onInputHandler}
+			onFocus={onFocusHandler}
+			onBlur={onBlurHandler}
+			onCopy={onCopyHandler}
+			onPaste={onPasteHandler}
+			maxLength={maxLength ? maxLength : undefined}
+			spellCheck={false}
+		/>
+	);
+});
 
 export default Textarea;

@@ -62,7 +62,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				ref={ref => this.node = ref} 
 				className="page pageCreate"
 			>
-				{isLoading ? <Loader type="loader" /> : ''}
+				{isLoading ? <Loader type={I.LoaderType.Loader} /> : ''}
 
 				<form onSubmit={this.onSubmit}>
 					<div className="rows">

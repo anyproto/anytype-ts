@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { MouseEvent, DragEvent, forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { I, Preview } from 'Lib';
 
@@ -15,77 +15,50 @@ interface Props {
 	inner?: any;
 	draggable?: boolean;
 	style?: any;
-	onClick?(e: any): void;
-	onMouseDown?(e: any): void;
-	onMouseEnter?(e: any): void;
-	onMouseLeave?(e: any): void;
-	onMouseMove?(e: any): void;
-	onDragStart?(e: any): void;
-	onContextMenu?(e: any): void;
+	onClick?(e: MouseEvent): void;
+	onMouseDown?(e: MouseEvent): void;
+	onMouseEnter?(e: MouseEvent): void;
+	onMouseLeave?(e: MouseEvent): void;
+	onMouseMove?(e: MouseEvent): void;
+	onDragStart?(e: DragEvent): void;
+	onContextMenu?(e: MouseEvent): void;
 };
 
-class Icon extends React.Component<Props> {
-	
-	public static defaultProps = {
-		tooltipY: I.MenuDirection.Bottom,
+const Icon = forwardRef<HTMLDivElement, Props>(({
+	id = '',
+	icon = '',
+	className = '',
+	arrow = false,
+	tooltip = '',
+	tooltipCaption = '',
+	tooltipX = I.MenuDirection.Center,
+	tooltipY = I.MenuDirection.Bottom,
+	tooltipClassName = '',
+	inner = null,
+	draggable = false,
+	style = {},
+	onClick,
+	onMouseDown,
+	onMouseEnter,
+	onMouseLeave,
+	onMouseMove,
+	onDragStart,
+	onContextMenu,
+}, ref) => {
+
+	const nodeRef = useRef<HTMLDivElement>(null);
+
+	if (icon) {
+		style.backgroundImage = `url("${icon}")`;
 	};
 
-	node: HTMLDivElement = null;
-	
-	constructor (props: Props) {
-		super(props);
+	useEffect(() => Preview.tooltipHide(false));
 
-		this.onMouseDown = this.onMouseDown.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
-		this.onContextMenu = this.onContextMenu.bind(this);
-	};
-	
-	render () {
-		const { id, icon, arrow, draggable, className, inner, onClick, onDragStart } = this.props;
-		const cn = [ 'icon' ];
-		const style: any = this.props.style || {};
-		
-		if (className) {
-			cn.push(className);
-		};
-		
-		if (icon) {
-			style.backgroundImage = `url("${icon}")`;
-		};
-		
-		return (
-			<div 
-				ref={node => this.node = node}
-				id={id} 
-				draggable={draggable} 
-				onMouseDown={this.onMouseDown} 
-				onContextMenu={this.onContextMenu} 
-				onMouseEnter={this.onMouseEnter} 
-				onMouseLeave={this.onMouseLeave} 
-				onMouseMove={this.props.onMouseMove}
-				onClick={onClick} 
-				onDragStart={onDragStart} 
-				className={cn.join(' ')} 
-				style={style}
-			>
-				{arrow ? <div className="icon arrow" /> : ''}
-				{inner ? inner : null}
-			</div>
-		);
-	};
-
-	componentWillUnmount () {
-		Preview.tooltipHide(false);
-	};
-	
-	onMouseEnter (e: any) {
-		const { tooltip, tooltipCaption, tooltipX, tooltipY, tooltipClassName, onMouseEnter } = this.props;
-		const node = $(this.node);
+	const onMouseEnterHandler = (e: MouseEvent) => {
 		const t = Preview.tooltipCaption(tooltip, tooltipCaption);
 		
 		if (t) {
-			Preview.tooltipShow({ text: t, element: node, typeX: tooltipX, typeY: tooltipY, className: tooltipClassName });
+			Preview.tooltipShow({ text: t, element: $(nodeRef.current), typeX: tooltipX, typeY: tooltipY, className: tooltipClassName });
 		};
 		
 		if (onMouseEnter) {
@@ -93,9 +66,7 @@ class Icon extends React.Component<Props> {
 		};
 	};
 	
-	onMouseLeave (e: any) {
-		const { tooltip, onMouseLeave } = this.props;
-		
+	const onMouseLeaveHandler = (e: MouseEvent) => {
 		if (tooltip) {
 			Preview.tooltipHide(false);
 		};
@@ -105,9 +76,7 @@ class Icon extends React.Component<Props> {
 		};
 	};
 	
-	onMouseDown (e: any) {
-		const { onMouseDown } = this.props;
-		
+	const onMouseDownHandler = (e: MouseEvent) => {
 		Preview.tooltipHide(true);
 		
 		if (onMouseDown) {
@@ -115,16 +84,34 @@ class Icon extends React.Component<Props> {
 		};
 	};
 
-	onContextMenu (e: any) {
-		const { onContextMenu } = this.props;
-		
+	const onContextMenuHandler = (e: MouseEvent) => {
 		Preview.tooltipHide(true);
 		
 		if (onContextMenu) {
 			onContextMenu(e);
 		};
 	};
-	
-};
+
+	return (
+		<div 
+			ref={ref || nodeRef}
+			id={id} 
+			draggable={draggable} 
+			className={[ 'icon', className ].join(' ')} 
+			style={style}
+			onMouseDown={onMouseDownHandler} 
+			onMouseEnter={onMouseEnterHandler} 
+			onMouseLeave={onMouseLeaveHandler} 
+			onMouseMove={onMouseMove}
+			onContextMenu={onContextMenuHandler} 
+			onDragStart={onDragStart} 
+			onClick={onClick} 
+		>
+			{arrow ? <div className="icon arrow" /> : ''}
+			{inner}
+		</div>
+	);
+
+});
 
 export default Icon;

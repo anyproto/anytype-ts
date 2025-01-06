@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
 import { J, S, keyboard, Storage } from 'Lib';
 
 interface Props {
-	value: string;
+	value?: string;
 	className?: string;
 	readonly?: boolean;
 	isHidden?: boolean;
@@ -18,10 +18,11 @@ interface Props {
 	onClick?: (e: any) => void;
 };
 
-interface State {
-	phrase: string[];
-	isHidden: boolean;
-	hasError: boolean;
+interface PhraseRefProps {
+	setValue: (value: string) => void;
+	getValue: () => string;
+	setError: (hasError: boolean) => void;
+	focus: () => void;
 };
 
 const COLORS = [
@@ -34,133 +35,55 @@ const COLORS = [
 	'lime',
 ];
 
-class Phrase extends React.Component<Props, State> {
+const Phrase = forwardRef<PhraseRefProps, Props>(({
+	value = '',
+	className = '',
+	readonly = false,
+	isHidden: initialHidden = false,
+	checkPin = false,
+	placeholder = '',
+	onKeyDown,
+	onChange,
+	onToggle,
+	onCopy,
+	onClick,
+}, ref) => {
 
-	public static defaultProps: Props = {
-		value: '',
-		className: '',
+	const [ isHidden, setIsHidden ] = useState(false);
+	const [ hasError, setHasError ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
+	const placeholderRef = useRef(null);
+	const entryRef = useRef(null);
+	const range = useRef(null);
+	const phrase = useRef([]);
+	const cn = [ 'phraseWrapper', className ];
+
+	if (isHidden) {
+		cn.push('isHidden');
 	};
 
-	state: State = {
-		isHidden: true,
-		hasError: false,
-		phrase: [],
+	if (hasError) {
+		cn.push('hasError');
 	};
 
-	node = null;
-	refEntry = null;
-	refPlaceholder = null;
-	range = null;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onSelect = this.onSelect.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onPaste = this.onPaste.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onToggle = this.onToggle.bind(this);
+	if (readonly) {
+		cn.push('isReadonly');
 	};
 
-	render () {
-		const { readonly, className, onCopy, placeholder } = this.props;
-		const { isHidden, hasError, phrase } = this.state;
-		const cn = [ 'phraseWrapper', className ];
+	const onClickHandler = (e: any) => {
+		focus();
 
-		if (isHidden) {
-			cn.push('isHidden');
-		};
-
-		if (hasError) {
-			cn.push('hasError');
-		};
-
-		if (readonly) {
-			cn.push('isReadonly');
-		};
-
-		const renderWord = (word: string, index: number) => {
-			const color = COLORS[index % COLORS.length];
-			const cn = isHidden ? `bg bg-${color}` : `textColor textColor-${color}`;
-
-			return <span className={[ 'word', cn ].join(' ')} key={index}>{word}</span>;
-		};
-
-		let placeholderEl = null;
-		if (placeholder) {
-			placeholderEl = (
-				<div 
-					ref={ref => this.refPlaceholder = ref} 
-					id="placeholder"
-					className="placeholder"
-				>
-					{placeholder}
-				</div>
-			);
-		};
-
-		return (
-			<div 
-				ref={ref => this.node = ref}
-				className={cn.join(' ')}
-				onClick={this.onClick}
-			>
-				<div className="phraseInnerWrapper">
-					{!phrase.length ? <span className="word" /> : ''}
-					{phrase.map(renderWord)}
-					<span 
-						ref={ref => this.refEntry = ref}
-						id="entry"
-						contentEditable={true}
-						suppressContentEditableWarning={true} 
-						onKeyDown={this.onKeyDown}
-						onKeyUp={this.onKeyUp}
-						onPaste={this.onPaste}
-						onBlur={this.onBlur}
-						onFocus={this.onFocus}
-						onSelect={this.onSelect}
-					>
-						{'\n'}
-					</span>
-				</div>
-
-				{placeholderEl}
-				<Icon className={[ (isHidden ? 'see' : 'hide'), 'withBackground' ].join(' ')} onClick={this.onToggle} />
-				<Icon className="copy withBackground" onClick={onCopy} />
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const { value, isHidden } = this.props;
-
-		this.setState({ isHidden });
-		this.setValue(value);
-		this.focus();
-	};
-
-	componentDidUpdate () {
-		this.placeholderCheck();
-	};
-
-	onClick (e: any) {
-		this.focus();
-
-		if (this.props.onClick) {
-			this.props.onClick(e);
+		if (onClick) {
+			onClick(e);
 		};
 	};
 
-	onKeyDown (e: React.KeyboardEvent) {
-		const { onKeyDown } = this.props;
-		const entry = $(this.refEntry);
+	const onKeyDownHandler = (e: React.KeyboardEvent) => {
+		const entry = $(entryRef.current);
 
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
-			this.updateValue();
+			updateValue();
 		});
 
 		keyboard.shortcut('backspace', e, () => {
@@ -173,69 +96,70 @@ class Phrase extends React.Component<Props, State> {
 
 			e.preventDefault();
 
-			this.setState(({ phrase }) => {
-				phrase.pop();
-				return { phrase };
-			});
+			phrase.current.pop();
+			setDummy(dummy + 1);
 		});
 
-		this.placeholderCheck();
+		placeholderCheck();
 
 		if (onKeyDown) {
 			onKeyDown(e);
 		};
 	};
 
-	onKeyUp (e: React.KeyboardEvent) {
-		this.placeholderCheck();
+	const onKeyUp = (e: React.KeyboardEvent) => {
+		placeholderCheck();
 	};
 
-	updateValue () {
-		const value = this.getEntryValue();
+	const updateValue = () => {
+		const value = getEntryValue();
 
 		if (!value.length) {
 			return;
 		};
 
-		this.clear();
+		clear();
 
-		this.state.phrase = this.checkValue(this.state.phrase.concat([ value ]));
-		this.setState({ phrase: this.state.phrase });
+		phrase.current = checkValue(phrase.current.concat(value.split(' ')));
+		setDummy(dummy + 1);
 	};
 
-	onPaste (e) {
+	const onPaste = (e) => {
 		e.preventDefault();
 
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
-		const text = this.normalizeWhiteSpace(cb.getData('text/plain'));
+		const text = normalizeWhiteSpace(cb.getData('text/plain'));
 
-		this.clear();
-		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat(text.split(' '))) }));
+		clear();
+		phrase.current = checkValue(phrase.current.concat(text.split(' ')));
+		
+		if (text) {
+			placeholderHide();
+		};
+
+		setDummy(dummy + 1);
 	};
 
-	onBlur () {
-		this.placeholderCheck();
+	const onBlur = () => {
+		placeholderCheck();
 	};
 
-	onFocus () {
-		this.placeholderCheck();
+	const onFocus = () => {
+		placeholderCheck();
 	};
 
-	onSelect () {
-		const node = $(this.node);
-		const entry = node.find('#entry');
+	const onSelect = () => {
+		const entry = $(entryRef.current);
 
 		if (entry.length) {
-			this.range = getRange(entry.get(0));
+			range.current = getRange(entry.get(0));
 		};
 	};
 
-	onToggle () {
-		const { checkPin, onToggle } = this.props;
-		const { isHidden } = this.state;
+	const onToggleHandler = () => {
 		const pin = Storage.getPin();
 		const onSuccess = () => {
-			this.setState({ isHidden: !isHidden });
+			setIsHidden(!isHidden);
 
 			if (onToggle) {
 				onToggle(!isHidden);
@@ -249,56 +173,118 @@ class Phrase extends React.Component<Props, State> {
 		};
 	};
 
-	checkValue (v: string[]) {
+	const checkValue = (v: string[]) => {
 		return v.map(it => it.substring(0, J.Constant.count.phrase.letter)).filter(it => it).slice(0, J.Constant.count.phrase.word);
 	};
 
-	setError (v: boolean) {
-		this.setState({ hasError: v });
+	const setError = (v: boolean) => {
+		setHasError(v);
 	};
 
-	focus () {
-		const entry = $(this.refEntry);
+	const focus = () => {
+		if (readonly) {
+			return;
+		};
+
+		const entry = $(entryRef.current);
 
 		entry.trigger('focus');
-		setRange(entry.get(0), this.range || { start: 0, end: 0 });
+		setRange(entry.get(0), range.current || { start: 0, end: 0 });
 	};
 
-	clear () {
-		$(this.refEntry).text('');
+	const clear = () => {
+		$(entryRef.current).text('');
 	};
 
-	getEntryValue () {
-		return this.normalizeWhiteSpace($(this.refEntry).text()).toLowerCase();
+	const getEntryValue = () => {
+		return normalizeWhiteSpace($(entryRef.current).text()).toLowerCase();
 	};
 
-	normalizeWhiteSpace = (val: string) => {
+	const normalizeWhiteSpace = (val: string) => {
 		return String(val || '').replace(/\s\s+/g, ' ').trim() || '';
 	};
 
-	setValue (value: string) {
-		const text = this.normalizeWhiteSpace(value);
-		const phrase = text.length ? text.split(' '): [];
+	const setValue = (value: string) => {
+		const text = normalizeWhiteSpace(value);
 
-		this.setState({ phrase });
+		phrase.current = text.length ? text.split(' '): [];
+		setDummy(dummy + 1);
 	};
 
-	getValue () {
-		return this.state.phrase.join(' ').trim().toLowerCase();
+	const getValue = () => {
+		return phrase.current.join(' ').trim().toLowerCase();
 	};
 
-	placeholderCheck () {
-		this.getValue().length || this.getEntryValue() ? this.placeholderHide() : this.placeholderShow();	
+	const placeholderCheck = () => {
+		getValue().length || getEntryValue() ? placeholderHide() : placeholderShow();	
 	};
 
-	placeholderHide () {
-		$(this.refPlaceholder).hide();
+	const placeholderHide= () => {
+		$(placeholderRef.current).hide();
 	};
 
-	placeholderShow () {
-		$(this.refPlaceholder).show();
+	const placeholderShow = () => {
+		$(placeholderRef.current).show();
 	};
 
-};
+	useEffect(() => {
+		setIsHidden(initialHidden);
+		setValue(value);
+		focus();
+	}, []);
+
+	useEffect(() => {
+		placeholderCheck();
+	}, [ phrase ]);
+
+	useImperativeHandle(ref, () => ({
+		setValue,
+		getValue,
+		setError,
+		focus,
+		onToggle: onToggleHandler,
+	}));
+
+	return (
+		<div 
+			className={cn.join(' ')}
+			onClick={onClickHandler}
+		>
+			<div className="phraseInnerWrapper">
+				{!phrase.current.length ? <span className="word" /> : ''}
+				{phrase.current.map((item: string, i: number) => {
+					const color = COLORS[i % COLORS.length];
+					const cn = isHidden ? `bg bg-${color}` : `textColor textColor-${color}`;
+					const word = isHidden ? '•'.repeat(item.length) : item;
+
+					return (
+						<span className={[ 'word', cn ].join(' ')} key={i}>
+							{word}
+						</span>
+					);
+				})}
+				<span 
+					ref={entryRef}
+					id="entry"
+					contentEditable={true}
+					suppressContentEditableWarning={true} 
+					onKeyDown={onKeyDownHandler}
+					onKeyUp={onKeyUp}
+					onPaste={onPaste}
+					onBlur={onBlur}
+					onFocus={onFocus}
+					onSelect={onSelect}
+				>
+					{'\n'}
+				</span>
+			</div>
+
+			{placeholder ? <div ref={placeholderRef} id="placeholder" className="placeholder">{placeholder}</div> : ''}
+			<Icon className={[ (isHidden ? 'see' : 'hide'), 'withBackground' ].join(' ')} onClick={onToggleHandler} />
+			<Icon className="copy withBackground" onClick={onCopy} />
+		</div>
+	);
+
+});
 
 export default Phrase;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, S, U, J, translate, analytics, keyboard } from 'Lib';
+import { I, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
 
@@ -172,7 +172,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	onLink (item: any) {
-		U.Common.onUrl(item.url);
+		Action.openUrl(item.url);
 		analytics.event(item.type, { route: analytics.route.settingsMembership });
 	};
 

@@ -26,6 +26,7 @@ class UtilObject {
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 			case I.ObjectLayout.Space:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
+			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
 		return r;
 	};
@@ -52,10 +53,6 @@ class UtilObject {
 	};
 
 	universalRoute (object: any): string {
-		if (!object) {
-			return;
-		};
-
 		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
 	};
 
@@ -256,6 +253,10 @@ class UtilObject {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
+	setLastUsedDate (rootId: string, timestamp: number, callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'lastUsedDate', value: timestamp } ], callBack);
+	};
+
 	name (object: any) {
 		const { layout, snippet } = object;
 
@@ -409,7 +410,6 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
-			I.ObjectLayout.Date,
 		];
 	};
 
@@ -481,6 +481,29 @@ class UtilObject {
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
 		return this.getPageLayouts().includes(layout);
+	};
+
+	isAllowedChat () {
+		const { config, space } = S.Common;
+		return config.experimental || (J.Constant.chatSpaceId.includes(space));
+	};
+
+	openDateByTimestamp (relationKey: string, t: number, method?: string) {
+		method = method || 'auto';
+
+		let fn = U.Common.toCamelCase(`open-${method}`);
+		if (!this[fn]) {
+			fn = 'openAuto';
+		};
+
+		C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
+			if (!message.error.code) {
+				const object = message.details;
+
+				object._routeParam_ = { relationKey };
+				this[fn](object);
+			};
+		});
 	};
 
 };

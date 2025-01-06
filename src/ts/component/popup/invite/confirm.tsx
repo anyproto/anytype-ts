@@ -1,93 +1,20 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject, Loader } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 
-interface State {
-	error: string;
-	isLoading: boolean;
-};
+const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Component<I.Popup, State> {
+	const [ error, setError ] = useState('');
+	const [ isLoading, setIsLoading ] = useState(false);
+	const { param, close } = props;
+	const { data } = param;
+	const { icon, identity, route, spaceId } = data;
+	const { membership } = S.Auth;
+	const readerLimt = useRef(0);
+	const writerLimit = useRef(0);
 
-	state = {
-		error: '',
-		isLoading: false,
-	};
-
-	buttonRefs: Map<string, any> = new Map();
-	participants = [];
-
-	constructor (props: I.Popup) {
-		super(props);
-
-		this.onConfirm = this.onConfirm.bind(this);
-		this.onReject = this.onReject.bind(this);
-		this.onMembership = this.onMembership.bind(this);
-	};
-
-	render() {
-		const { error, isLoading } = this.state;
-		const { param } = this.props;
-		const { data } = param;
-		const { icon } = data;
-		const { membership } = S.Auth;
-		const space = U.Space.getSpaceviewBySpaceId(this.getSpaceId());
-		const name = U.Common.shorten(String(data.name || translate('defaultNamePage')), 32);
-
-		if (!space) {
-			return null;
-		};
-
-		let buttons = [];
-		if (!this.getReaderLimit() && membership.isExplorer) {
-			buttons.push({ id: 'reader', text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => this.onMembership('members') });
-		} else 
-		if (!this.getWriterLimit()) {
-			buttons = buttons.concat([
-				{ id: 'reader', text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
-				{ id: 'writer', text: translate('popupInviteConfirmButtonWriterLimit'), onClick: () => this.onMembership('editors') },
-			]);
-		} else {
-			buttons = buttons.concat([
-				{ id: 'reader', text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
-				{ id: 'writer', text: translate('popupInviteConfirmButtonWriter'), onClick: () => this.onConfirm(I.ParticipantPermissions.Writer) },
-			]);
-		};
-
-		return (
-			<React.Fragment>
-				{isLoading ? <Loader id="loader" /> : ''}
-
-				<div className="iconWrapper">
-					<IconObject object={{ name, iconImage: icon, layout: I.ObjectLayout.Participant }} size={48} />
-				</div>
-
-				<Title text={U.Common.sprintf(translate('popupInviteConfirmTitle'), name, U.Common.shorten(space.name, 32))} />
-
-				<div className="buttons">
-					<div className="sides">
-						{buttons.map((item: any, i: number) => <Button ref={ref => this.buttonRefs.set(item.id, ref)} key={i} {...item} className="c36" />)}
-					</div>
-
-					<Button onClick={this.onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
-				</div>
-
-				<Error text={error} />
-			</React.Fragment>
-		);
-	};
-
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { route } = data;
-
-		analytics.event('ScreenInviteConfirm', { route });
-		this.load();
-	};
-
-	onMembership (type: string) {
+	const onMembership = (type: string) => {
 		S.Popup.closeAll(null, () => {
 			S.Popup.open('settings', { data: { page: 'membership' } });
 		});
@@ -95,49 +22,43 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });
 	};
 
-	onConfirm (permissions: I.ParticipantPermissions) {
-		this.setLoading(true);
+	const onConfirm = (permissions: I.ParticipantPermissions) => {
+		setIsLoading(true);
 
-		C.SpaceRequestApprove(this.getSpaceId(), this.getIdentity(), permissions, (message: any) => {
+		C.SpaceRequestApprove(spaceId, identity, permissions, (message: any) => {
 			if (message.error.code) {
-				this.setError(message.error.description);
+				setError(message.error.description);
 				return;
 			};
 
 			analytics.event('ApproveInviteRequest', { type: permissions });
-			this.setLoading(false);
-			this.props.close();
+			setIsLoading(false);
+			close();
 		});
 	};
 
-	onReject () {
-		this.setLoading(true);
+	const onReject = () => {
+		setIsLoading(true);
 
-		C.SpaceRequestDecline(this.getSpaceId(), this.getIdentity(), (message: any) => {
+		C.SpaceRequestDecline(spaceId, identity, (message: any) => {
 			if (message.error.code) {
-				this.setError(message.error.description);
+				setError(message.error.description);
 				return;
 			};
 
 			analytics.event('RejectInviteRequest');
-			this.setLoading(false);
-			this.props.close();
+			setIsLoading(false);
+			close();
 		});
 	};
 
-	setLoading (isLoading: boolean) {
-		this.setState({ isLoading });
-	};
+	const space = U.Space.getSpaceviewBySpaceId(spaceId) || {};
 
-	setError (error: string) {
-		this.setState({ error, isLoading: false });
-	};
-
-	load () {
-		this.setLoading(true);
+	const load = () => {
+		setIsLoading(true);
 
 		U.Data.search({
-			spaceId: this.getSpaceId(),
+			spaceId,
 			keys: U.Data.participantRelationKeys(),
 			filters: [
 				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
@@ -146,39 +67,60 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 			ignoreDeleted: true,
 			noDeps: true,
 		}, (message: any) => {
-			this.participants = message.records || [];
-			this.setLoading(false);
+			const records = (message.records || []).filter(it => it.isActive);
+
+			readerLimt.current = space.readersLimit - records.length;
+			writerLimit.current = space.writersLimit - records.filter(it => it.isWriter || it.isOwner).length;
+
+			setIsLoading(false);
 		});
 	};
 
-	getSpaceId () {
-		return String(this.props.param.data?.spaceId || '');
+	const name = U.Common.shorten(String(data.name || translate('defaultNamePage')), 32);
+
+	let buttons = [];
+	if (!readerLimt.current && membership.isExplorer) {
+		buttons.push({ id: 'reader', text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => onMembership('members') });
+	} else 
+	if (!writerLimit.current) {
+		buttons = buttons.concat([
+			{ id: 'reader', text: translate('popupInviteConfirmButtonReader'), onClick: () => onConfirm(I.ParticipantPermissions.Reader) },
+			{ id: 'writer', text: translate('popupInviteConfirmButtonWriterLimit'), onClick: () => onMembership('editors') },
+		]);
+	} else {
+		buttons = buttons.concat([
+			{ id: 'reader', text: translate('popupInviteConfirmButtonReader'), onClick: () => onConfirm(I.ParticipantPermissions.Reader) },
+			{ id: 'writer', text: translate('popupInviteConfirmButtonWriter'), onClick: () => onConfirm(I.ParticipantPermissions.Writer) },
+		]);
 	};
 
-	getIdentity () {
-		return String(this.props.param.data?.identity || '');
-	};
+	useEffect(() => {
+		analytics.event('ScreenInviteConfirm', { route });
+		load();
+	}, []);
 
-	getReaderLimit () {
-		const space = U.Space.getSpaceviewBySpaceId(this.getSpaceId());
-		if (!space) {
-			return 0;
-		};
+	return (
+		<>
+			{isLoading ? <Loader id="loader" /> : ''}
 
-		const participants = this.participants.filter(it => it.isActive);
-		return space.readersLimit - participants.length;
-	};
+			<div className="iconWrapper">
+				<IconObject object={{ name, iconImage: icon, layout: I.ObjectLayout.Participant }} size={48} />
+			</div>
 
-	getWriterLimit () {
-		const space = U.Space.getSpaceviewBySpaceId(this.getSpaceId());
-		if (!space) {
-			return 0;
-		};
+			<Title text={U.Common.sprintf(translate('popupInviteConfirmTitle'), name, U.Common.shorten(space.name, 32))} />
 
-		const participants = this.participants.filter(it => it.isActive && (it.isWriter || it.isOwner));
-		return space.writersLimit - participants.length;
-	};
+			<div className="buttons">
+				<div className="sides">
+					{buttons.map((item: any, i: number) => <Button key={i} {...item} className="c36" />)}
+				</div>
 
-});
+				<Button onClick={onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
+			</div>
+
+			<Error text={error} />
+		</>
+	);
+
+}));
 
 export default PopupInviteConfirm;

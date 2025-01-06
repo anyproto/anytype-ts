@@ -1543,7 +1543,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			maxWidth = container.width() - PADDING;
 			wrapperWidth = getWrapperWidth() + J.Size.blockMenu;
 
-			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+			wrap.toggleClass('withScroll', width > maxWidth);
 			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
 
 			obj.css({
@@ -1556,7 +1556,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				maxWidth = parentObj.width() - J.Size.blockMenu;
 			};
 
-			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+			wrap.toggleClass('withScroll', width > maxWidth);
 		};
 	};
 

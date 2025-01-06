@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useLayoutEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { U } from 'Lib';
@@ -9,61 +9,64 @@ interface Props {
 	dataset?: any;
 };
 
-class Frame extends React.Component<Props> {
+interface FrameRefProps {
+	resize: () => void,
+};
 
-	_isMounted = false;
-	node: any = null;
+const Frame = forwardRef<FrameRefProps, Props>(({ 
+	children, 
+	className = '', 
+	dataset = {},
+}, ref) => {
+	const nodeRef = useRef<HTMLDivElement | null>(null);
+	const cn = [ 'frame', className ];
 
-	render () {
-		const { children, className, dataset } = this.props;
-		const cn = [ 'frame' ];
-
-		if (className) {
-			cn.push(className);
-		};
-
-		return (
-			<div
-				ref={node => this.node = node}
-				className={cn.join(' ')}
-				{...U.Common.dataProps(dataset)}
-			>
-				{children}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		this.resize();
-		this.unbind();
-		
-		$(window).on('resize.frame', () => this.resize());
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('resize.frame');
 	};
-	
-	resize () {
+
+	const rebind = () => {
+		unbind();
+		$(window).on('resize.frame', () => resize());
+	};
+
+	const resize = () => {
 		raf(() => {
-			if (!this._isMounted) {
+			if (!nodeRef.current) {
 				return;
 			};
 			
-			const node = $(this.node);
+			const node = $(nodeRef.current);
 			node.css({ 
 				marginTop: -node.outerHeight() / 2,
 				marginLeft: -node.outerWidth() / 2
 			});
 		});
 	};
-	
-};
+
+	useEffect(() => {
+		rebind();
+		resize();
+
+		return () => unbind();
+	});
+
+	useLayoutEffect(() => resize());
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
+
+	return (
+		<div
+			ref={nodeRef}
+			className={cn.join(' ')}
+			{...U.Common.dataProps(dataset)}
+		>
+			{children}
+		</div>
+	);
+
+});
 
 export default Frame;

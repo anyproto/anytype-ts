@@ -277,7 +277,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		$(window).on('keydown.sidebarObject', e => this.onKeyDown(e));
 		$(this.node).on('click', e => {
-			if (!this.refFilter || this.refFilter.isFocused) {
+			if (!this.refFilter || this.refFilter.isFocused()) {
 				return;
 			};
 
@@ -317,6 +317,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const template = S.Record.getTemplateType();
 		const limit = this.offset + J.Constant.limit.menuRecords;
 		const fileLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Pdf ];
+		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
 
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
@@ -378,7 +379,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 		};
 
-		if (this.orphan) {
+		if (this.orphan && options.find(it => it.id == I.SortId.Orphan)) {
 			filters = filters.concat([
 				{ relationKey: 'links', condition: I.FilterCondition.Empty, value: null },
 				{ relationKey: 'backlinks', condition: I.FilterCondition.Empty, value: null },
@@ -487,7 +488,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				onSelect: id => {
 					switch (id) {
 						case 'archive': {
-							this.selected = [];
+							this.selected = null;
 							this.renderSelection();
 							break;
 						};
@@ -713,7 +714,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onKeyDown (e: any) {
-		if (!this.refFilter.isFocused) {
+		if (!this.refFilter.isFocused()) {
 			return;
 		};
 
@@ -760,7 +761,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				e.preventDefault();
 
 				const ids = this.selected ? this.selected : [ next.id ];
-				Action.archive(ids);
+				Action.archive(ids, analytics.route.allObjects);
 			});
 		};
 	};
@@ -1081,8 +1082,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const max = this.getMaxWidth();
 		const sw = scroll.width();
 
-		this.x <= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
-		this.x >= max - sw - 1 ? sideRight.addClass('hide') : sideRight.removeClass('hide');
+		sideLeft.toggleClass('hide', this.x <= 0);
+		sideRight.toggleClass('hide', this.x >= max - sw - 1);
 	};
 
 	getMaxWidth () {

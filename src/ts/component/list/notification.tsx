@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { Notification, Icon } from 'Component';
 import { observer } from 'mobx-react';
@@ -6,93 +6,43 @@ import { I, C, S } from 'Lib';
 
 const LIMIT = 5;
 
-const ListNotification = observer(class ListNotification extends React.Component {
+const ListNotification = observer(forwardRef(() => {
 
-	node = null;
-	isExpanded = false;
+	const nodeRef = useRef(null);
+	const { list } = S.Notification;
+	const isExpanded = useRef(false);
 
-	constructor (props: any) {
-		super(props);
-
-		this.onShow = this.onShow.bind(this);
-		this.onHide = this.onHide.bind(this);
-		this.onClear = this.onClear.bind(this);
-		this.resize = this.resize.bind(this);
-	};
-
-	render () {
-		const { list } = S.Notification;
-
-		return (
-			<div 
-				id="notifications" 
-				ref={node => this.node = node}
-				className="notifications"
-				onClick={this.onShow}
-			>
-				{list.length ? (
-					<div className="head">
-						<Icon className="hide" onClick={this.onHide} />
-						<Icon className="clear" onClick={this.onClear} />
-					</div>
-				) : ''}
-
-				<div className="body">
-					{list.slice(0, LIMIT).map((item: I.Notification, i: number) => (
-						<Notification 
-							{...this.props}
-							item={item}
-							key={item.id} 
-							style={{ zIndex: LIMIT - i }}
-							resize={this.resize}
-						/>
-					))}
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		this.resize();
-	};
-
-	componentDidUpdate (): void {
-		this.resize();
-	};
-
-	onShow (e: any) {
+	const onShow = (e: any) => {
 		e.stopPropagation();
 
-		if (this.isExpanded) {
+		if (isExpanded.current) {
 			return;
 		};
 
-		$(this.node).addClass('isExpanded');
-
-		this.isExpanded = true;
-		this.resize();
+		$(nodeRef.current).addClass('isExpanded');
+		isExpanded.current = true;
+		resize();
 	};
 
-	onHide (e: any) {
+	const onHide = (e: any) => {
 		e.stopPropagation();
 
-		if (!this.isExpanded) {
+		if (!isExpanded.current) {
 			return;
 		};
 
-		$(this.node).removeClass('isExpanded');
-
-		this.isExpanded = false;
-		this.resize();
+		$(nodeRef.current).removeClass('isExpanded');
+		isExpanded.current = false;
+		resize();
 	};
 
-	onClear () {
+	const onClear = () => {
 		C.NotificationReply(S.Notification.list.map(it => it.id), I.NotificationAction.Close);
 		S.Notification.clear();
 	};
 
-	resize () {
-		const node = $(this.node);
+	const resize = () => {
+		const node = $(nodeRef.current);
 		const items = node.find('.notification');
 
 		let listHeight = 0;
@@ -105,8 +55,8 @@ const ListNotification = observer(class ListNotification extends React.Component
 				item = $(item);
 
 				item.css({ 
-					width: (this.isExpanded ? '100%' : `calc(100% - ${4 * i * 2}px)`),
-					right: (this.isExpanded ? 0 : 4 * i),
+					width: (isExpanded.current ? '100%' : `calc(100% - ${4 * i * 2}px)`),
+					right: (isExpanded.current ? 0 : 4 * i),
 				});
 				
 				const h = item.outerHeight();
@@ -115,7 +65,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 					firstHeight = h;
 				};
 
-				if (!this.isExpanded) {
+				if (!isExpanded.current) {
 					if (i > 0) {
 						bottom = firstHeight + 4 * i - h;
 					};
@@ -130,7 +80,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 				height = h;
 			});
 
-			if (!this.isExpanded) {
+			if (!isExpanded.current) {
 				listHeight = firstHeight + 4 * items.length;
 			} else 
 			if (items.length) {
@@ -140,7 +90,36 @@ const ListNotification = observer(class ListNotification extends React.Component
 			node.css({ height: listHeight });
 		}, 50);
 	};
-	
-});
+
+	useEffect(() => resize(), [ list ]);
+
+	return (
+		<div 
+			id="notifications" 
+			ref={nodeRef}
+			className="notifications"
+			onClick={onShow}
+		>
+			{list.length ? (
+				<div className="head">
+					<Icon className="hide" onClick={onHide} />
+					<Icon className="clear" onClick={onClear} />
+				</div>
+			) : ''}
+
+			<div className="body">
+				{list.slice(0, LIMIT).map((item: I.Notification, i: number) => (
+					<Notification 
+						item={item}
+						key={item.id} 
+						style={{ zIndex: LIMIT - i }}
+						resize={resize}
+					/>
+				))}
+			</div>
+		</div>
+	);
+
+}));
 
 export default ListNotification;

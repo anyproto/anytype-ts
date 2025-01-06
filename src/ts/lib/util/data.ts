@@ -201,11 +201,6 @@ class UtilData {
 						Storage.set('bgColor', 'orange');
 					};
 
-					[ 
-						I.SurveyType.Register, 
-						I.SurveyType.Object, 
-					].forEach(it => Survey.check(it));
-
 					Storage.clearDeletedSpaces();
 
 					if (callBack) {
@@ -289,6 +284,7 @@ class UtilData {
 
 	createSubSpaceSubscriptions (ids: string[], callBack?: () => void) {
 		const { account } = S.Auth;
+		const skipIds = U.Space.getSystemDashboardIds();
 
 		if (!account) {
 			if (callBack) {
@@ -317,7 +313,7 @@ class UtilData {
 				U.Space.getParticipantId(space.targetSpaceId, account.id),
 			];
 
-			if (![ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId)) {
+			if (!skipIds.includes(space.spaceDashboardId)) {
 				ids.push(space.spaceDashboardId);
 			};
 
@@ -330,7 +326,8 @@ class UtilData {
 				],
 				noDeps: true,
 				ignoreDeleted: true,
-				ignoreHidden: false,
+				ignoreHidden: true,
+				ignoreArchived: true,
 			});
 		});
 
@@ -482,7 +479,7 @@ class UtilData {
 	};
 
 	chatRelationKeys () {
-		return J.Relation.default.concat([ 'source', 'picture' ]);
+		return J.Relation.default.concat([ 'source', 'picture', 'widthInPixels', 'heightInPixels' ]);
 	};
 
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
@@ -764,7 +761,7 @@ class UtilData {
 
 	searchDefaultFilters (param: any) {
 		const { config } = S.Common;
-		const { ignoreHidden, ignoreDeleted, withArchived } = param;
+		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = param.filters || [];
 		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
 
@@ -780,7 +777,7 @@ class UtilData {
 			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		if (!withArchived) {
+		if (ignoreArchived) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
@@ -824,7 +821,7 @@ class UtilData {
 			limit: 0,
 			ignoreHidden: true,
 			ignoreDeleted: true,
-			withArchived: false,
+			ignoreArchived: true,
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
@@ -839,7 +836,7 @@ class UtilData {
 			console.error('[U.Data].searchSubscribe: subId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'subId is empty' } });
 			};
 			return;
 		};
@@ -848,7 +845,7 @@ class UtilData {
 			console.error('[U.Data].searchSubscribe: spaceId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'spaceId is empty' } });
 			};
 			return;
 		};
@@ -885,7 +882,7 @@ class UtilData {
 			console.error('[U.Data].subscribeIds: subId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'subId is empty' } });
 			};
 			return;
 		};
@@ -894,7 +891,7 @@ class UtilData {
 			console.error('[U.Data].subscribeIds: spaceId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'spaceId is empty' } });
 			};
 			return;
 		};
@@ -903,7 +900,7 @@ class UtilData {
 			console.error('[U.Data].subscribeIds: ids list is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'ids list is empty' } });
 			};
 			return;
 		};
@@ -943,10 +940,11 @@ class UtilData {
 			limit: 0,
 			ignoreHidden: true,
 			ignoreDeleted: true,
-			withArchived: false,
+			ignoreArchived: true,
+			skipLayoutFormat: null,
 		}, param);
 
-		const { spaceId, idField, sorts, offset, limit } = param;
+		const { spaceId, idField, sorts, offset, limit, skipLayoutFormat } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 		const filters = this.searchDefaultFilters(param);
 
@@ -954,7 +952,7 @@ class UtilData {
 			console.error('[U.Data].search: spaceId is empty');
 
 			if (callBack) {
-				callBack({});
+				callBack({ error: { code: 1, description: 'spaceId is empty' } });
 			};
 			return;
 		};
@@ -965,7 +963,7 @@ class UtilData {
 
 		C.ObjectSearch(spaceId, filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
 			if (message.records) {
-				message.records = message.records.map(it => S.Detail.mapper(it));
+				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
 			};
 
 			if (callBack) {
@@ -1002,7 +1000,6 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { space } = S.Common;
 		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
@@ -1084,12 +1081,12 @@ class UtilData {
 		return Object.values(J.Constant.networkId).includes(S.Auth.account?.info?.networkId);
 	};
 
-	isLocalNetwork (): boolean {
-		return !S.Auth.account?.info?.networkId;
+	isDevelopmentNetwork (): boolean {
+		return S.Auth.account?.info?.networkId == J.Constant.networkId.development;
 	};
 
-	isLocalOnly (): boolean {
-		return S.Auth.account?.info?.networkId == '';
+	isLocalNetwork (): boolean {
+		return !S.Auth.account?.info?.networkId;
 	};
 
 	accountCreate (onError?: (text: string) => void, callBack?: () => void) {

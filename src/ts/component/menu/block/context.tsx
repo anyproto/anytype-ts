@@ -220,6 +220,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		};
 		
 		const { from, to } = range;
+		const object = S.Detail.get(rootId, rootId);
 
 		keyboard.disableContextClose(true);
 		focus.set(blockId, range);
@@ -249,6 +250,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				marks = Mark.toggle(marks, { type, param: '', range: { from, to } });
 				S.Menu.updateData(this.props.id, { marks });
 				onChange(marks);
+
+				analytics.event('ChangeTextStyle', { type, count: 1, objectType: object?.type });
 				break;
 			};
 				
@@ -350,6 +353,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						S.Menu.updateData(this.props.id, { marks });
 						onChange(marks);
 
+						analytics.event('ChangeTextStyle', { type: newType, count: 1, objectType: object?.type });
 						window.setTimeout(() => focus.apply(), 15);
 					}
 				});
@@ -387,6 +391,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 						marks = Mark.toggle(marks, { type, param, range: { from, to } });
 						S.Menu.updateData(this.props.id, { marks });
+
+						analytics.event('ChangeTextStyle', { type, count: 1, objectType: object?.type });
 						onChange(marks);
 					},
 				});

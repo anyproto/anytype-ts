@@ -88,7 +88,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				placeholder = translate('defaultNamePage');
 
 				if (root && U.Object.isTaskLayout(root.layout)) {
-					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
+					marker = { type: I.MarkerType.Task, className: 'check', active: checked, onClick: this.onCheckbox };
 				};
 				break;
 			};
@@ -147,22 +147,22 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 				
 			case I.TextStyle.Bulleted: {
-				marker = { type: I.TextStyle.Bulleted, className: 'bullet' };
+				marker = { type: I.MarkerType.Bulleted, className: 'bullet' };
 				break;
 			};
 				
 			case I.TextStyle.Numbered: {
-				marker = { type: I.TextStyle.Numbered, className: 'number' };
+				marker = { type: I.MarkerType.Numbered, className: 'number' };
 				break;
 			};
 				
 			case I.TextStyle.Toggle: {
-				marker = { type: I.TextStyle.Toggle, className: 'toggle', onClick: this.onToggle };
+				marker = { type: I.MarkerType.Toggle, className: 'toggle', onClick: this.onToggle };
 				break;
 			};
 				
 			case I.TextStyle.Checkbox: {
-				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
+				marker = { type: I.MarkerType.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
 				break;
 			};
 		};
@@ -307,15 +307,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const tag = Mark.getTag(I.MarkType.Latex);
 		const code = Mark.getTag(I.MarkType.Code);
 		const value = this.refEditable.getHtmlValue();
-		const reg = /(^|[^\d<]+)?\$((?:[^$<]|\.)*?)\$([^\d]|$)/gi;
-		const regCode = new RegExp(`^${code}`, 'i');
+		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
+		const regCode = new RegExp(`^${code}|${code}$`, 'i');
 
 		if (!/\$((?:[^$<]|\.)*?)\$/.test(value)) {
 			return;
 		};
 
 		const match = value.matchAll(reg);
-
 		const render = (s: string) => {
 			s = U.Common.fromHtmlSpecialChars(s);
 
@@ -342,7 +341,17 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const m3 = String(m[3] || '');
 
 			// Skip inline code marks
-			if (regCode.test(m1)) {
+			if (regCode.test(m1) || regCode.test(m3)) {
+				return;
+			};
+
+			// Skip Brazilian Real
+			if (/R$/.test(m1) || /R$/.test(m2)) {
+				return;
+			};
+
+			// Escaped $ sign
+			if (/\\$/.test(m1) || /\\$/.test(m2)) {
 				return;
 			};
 

@@ -1,5 +1,6 @@
 const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
+const fs = require('fs');
 const path = require('path');
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
@@ -64,12 +65,36 @@ class MenuManager {
 					Separator,
 
 					{ 
-						label: Util.translate('electronMenuDirectory'), submenu: [
+						label: Util.translate('electronMenuOpen'), submenu: [
 							{ label: Util.translate('electronMenuWorkDirectory'), click: () => shell.openPath(Util.userPath()) },
 							{ label: Util.translate('electronMenuDataDirectory'), click: () => shell.openPath(Util.dataPath()) },
 							{ label: Util.translate('electronMenuConfigDirectory'), click: () => shell.openPath(Util.defaultUserDataPath()) },
 							{ label: Util.translate('electronMenuLogsDirectory'), click: () => shell.openPath(Util.logPath()) },
+							{ 
+								label: Util.translate('electronMenuCustomCss'),
+								click: () => {
+									const fp = path.join(Util.userPath(), 'custom.css');
+
+									if (!fs.existsSync(fp)) {
+										fs.writeFileSync(fp, '');
+									};
+
+									shell.openPath(fp);
+								},
+							},
 						] 
+					},
+
+					Separator,
+
+					{ 
+						label: Util.translate('electronMenuApplyCustomCss'), type: 'checkbox', checked: !config.disableCss,
+						click: () => {
+							config.disableCss = !config.disableCss;
+							Api.setConfig(this.win, { disableCss: config.disableCss }, () => {
+								WindowManager.reloadAll();
+							});
+						},
 					},
 
 					Separator,
@@ -154,7 +179,7 @@ class MenuManager {
 					},
 					{
 						label: Util.translate('electronMenuShortcuts'), accelerator: 'Ctrl+Space',
-						click: () => Util.send(this.win, 'popup', 'shortcut', { preventResize: true })
+						click: () => Util.send(this.win, 'popup', 'shortcut', {})
 					},
 
 					Separator,
@@ -199,7 +224,7 @@ class MenuManager {
 					config.debug[i] = !config.debug[i];
 					Api.setConfig(this.win, { debug: config.debug });
 					
-					if ([ 'ho' ].includes(i)) {
+					if ([ 'hiddenObject' ].includes(i)) {
 						this.win.reload();
 					};
 				}
@@ -235,6 +260,7 @@ class MenuManager {
 				{ label: Util.translate('electronMenuDebugStat'), click: () => Util.send(this.win, 'commandGlobal', 'debugStat') },
 				{ label: Util.translate('electronMenuDebugReconcile'), click: () => Util.send(this.win, 'commandGlobal', 'debugReconcile') },
 				{ label: Util.translate('electronMenuDebugNet'), click: () => Util.send(this.win, 'commandGlobal', 'debugNet') },
+				{ label: Util.translate('electronMenuDebugLog'), click: () => Util.send(this.win, 'commandGlobal', 'debugLog') },
 
 				Separator,
 
@@ -319,7 +345,7 @@ class MenuManager {
 		this.tray = new Tray (this.getTrayIcon());
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
-			{ label: Util.translate('electronMenuOpen'), click: () => this.winShow() },
+			{ label: Util.translate('electronMenuOpenApp'), click: () => this.winShow() },
 
 			Separator,
 

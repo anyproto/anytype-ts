@@ -106,5 +106,7 @@
 
 		.list.isListPreview { overflow: hidden; height: 100%; }
 	}
-	> .body.withShareBanner { margin-top: -10px; }
+
+	> .body.isOnboardingHidden { visibility: visible; }
+	> .body.withShareBanner:not(.isOnboardingHidden) { margin-top: -10px; }
 }

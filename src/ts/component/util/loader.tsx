@@ -1,47 +1,44 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
+import { I } from 'Lib';
 
 interface Props {
 	id?: string;
-	type?: string;
+	type?: I.LoaderType;
 	className?: string;
 };
 
-class Loader extends React.Component<Props> {
+const Loader = forwardRef<HTMLDivElement, Props>(({
+	id = '',
+	type = I.LoaderType.Dots,
+	className = '',
+}, ref) => {
 
-	public static defaultProps = {
-		className: '',
-		type: 'dots',
-	};
-
-	render () {
-		const { id, type, className } = this.props;
-
-		let content = null;
-		switch (type) {
-			case 'loader': {
-				content = <div className="loader" />;
-				break;
-			};
-
-			case 'dots': {
-				content = (
-					<div className="dots">
-						<div className="dot" />
-						<div className="dot" />
-						<div className="dot" />
-					</div>
-				);
-				break;
-			};
+	let content = null;
+	switch (type) {
+		default:
+		case I.LoaderType.Dots: {
+			content = (
+				<div className="dots">
+					<div className="dot" />
+					<div className="dot" />
+					<div className="dot" />
+				</div>
+			);
+			break;
 		};
 
-		return (
-			<div id={id} className={[ 'loaderWrapper', className ].join(' ')}>
-				{content}
-			</div>
-		);
+		case I.LoaderType.Loader: {
+			content = <div className="loader" />;
+			break;
+		};
 	};
-	
-};
+
+	return (
+		<div id={id} className={[ 'loaderWrapper', className ].join(' ')}>
+			{content}
+		</div>
+	);
+
+});
 
 export default Loader;

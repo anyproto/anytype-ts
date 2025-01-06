@@ -353,8 +353,7 @@ export const Mapper = {
 				isVisible: obj.getIsvisible(),
 				width: obj.getWidth(),
 				includeTime: obj.getDateincludetime(),
-				timeFormat: obj.getTimeformat(),
-				dateFormat: obj.getDateformat(),
+				formulaType: obj.getFormula(),
 			};
 		},
 
@@ -904,8 +903,7 @@ export const Mapper = {
 			item.setIsvisible(obj.isVisible);
 			item.setWidth(obj.width);
 			item.setDateincludetime(obj.includeTime);
-			item.setTimeformat(obj.timeFormat);
-			item.setDateformat(obj.dateFormat);
+			item.setFormula(obj.formulaType);
 
 			return item;
 		},
@@ -1165,8 +1163,12 @@ export const Mapper = {
 		Data (e: any) {
 			const type = Mapper.Event.Type(e.getValueCase());
 			const fn = `get${U.Common.ucFirst(type)}`;
+			const data = e[fn] ? e[fn]() : {};
 
-			return e[fn] ? e[fn]() : {};
+			return {
+				spaceId: e.getSpaceid(),
+				data,
+			};
 		},
 
 		AccountShow: (obj: Events.Event.Account.Show) => {

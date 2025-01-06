@@ -11,6 +11,16 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	constructor (props: I.Popup) {
 		super(props);
 
+		const { networkConfig } = S.Auth;
+		const { mode, path } = networkConfig;
+		const userPath = U.Common.getElectron().userPath();
+
+		this.config = {
+			userPath,
+			mode,
+			path: path || '',
+		};
+
 		this.onUpload = this.onUpload.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onPathClick = this.onPathClick.bind(this);
@@ -50,7 +60,6 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 					<div className="actionItems">
 						<div className="item">
 							<Label text={translate('popupSettingsPersonalInterfaceLanguage')} />
-
 							<Select
 								id="interfaceLang"
 								value={interfaceLang}
@@ -89,7 +98,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 									<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
 									{path ? <Label className="small" text={U.Common.shorten(path, 32)} /> : ''}
 								</div>
-								<Button className="c28" text={translate('commonUpload')} onClick={this.onUpload} />
+								<Button className="c28" text={translate('commonLoad')} onClick={this.onUpload} />
 							</div>
 						) : ''}
 
@@ -111,20 +120,6 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 				</div>
 			</div>
 		);
-	};
-
-	componentDidMount(): void {
-		const { networkConfig } = S.Auth;
-		const { mode, path } = networkConfig;
-		const userPath = U.Common.getElectron().userPath();
-
-		this.config = {
-			userPath,
-			mode,
-			path: path || ''
-		};
-		this.refMode?.setValue(this.config.mode);
-		this.forceUpdate();
 	};
 
 	onChange (key: string, value: any) {

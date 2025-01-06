@@ -58,27 +58,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 			const type = S.Record.getTypeById(item.type);
 
-			let content = null;
-			if (item.isDiv) {
-				content = (
-					<div className="separator" style={param.style}>
-						<div className="inner" />
-					</div>
-				);
-			} else {
-				content = (
-					<MenuItemVertical 
-						id={item.id}
-						object={item}
-						name={item.name}
-						onMouseEnter={e => this.onOver(e, item)} 
-						onClick={e => this.onClick(e, item)}
-						caption={type ? type.name : undefined}
-						style={param.style}
-					/>
-				);
-			};
-
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -87,7 +66,15 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					{content}
+					<MenuItemVertical 
+						{...item}
+						object={item}
+						name={item.name}
+						onMouseEnter={e => this.onOver(e, item)} 
+						onClick={e => this.onClick(e, item)}
+						caption={type?.name}
+						style={param.style}
+					/>
 				</CellMeasurer>
 			);
 		};

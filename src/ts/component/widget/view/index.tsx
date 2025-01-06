@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Button } from 'Component';
-import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate } from 'Lib';
+import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics } from 'Lib';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
@@ -87,7 +87,14 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			content = (
 				<div className="emptyWrap">
 					<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-					{canCreate ? <Button text={translate('commonCreateObject')} color="blank" className="c28" onClick={onCreate} /> : ''}
+					{canCreate ? (
+						<Button 
+							text={translate('commonCreateObject')} 
+							color="blank" 
+							className="c28" 
+							onClick={() => onCreate({ route: analytics.route.inWidget })} 
+						/> 
+					) : ''}
 				</div>
 			);
 		} else {
@@ -223,9 +230,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		S.Record.viewsClear(rootId, J.Constant.blockId.dataview);
 		S.Record.viewsSet(rootId, J.Constant.blockId.dataview, views);
 
-		if (this.refSelect) {
-			this.refSelect.setOptions(views);
-		};
+		this.refSelect?.setOptions(views);
 	};
 
 	getSubId () {

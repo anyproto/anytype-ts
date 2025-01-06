@@ -1,48 +1,32 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { Icon } from 'Component';
 import { I, S, U, J, translate } from 'Lib';
 
-class HeaderMainGraph extends React.Component<I.HeaderComponent> {
+const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	refFilter: any = null;
-	rootId = '';
+	const { renderLeftIcons, renderTabs, menuOpen, rootId } = props;
+	const rootIdRef = useRef('');
 
-	constructor (props: I.HeaderComponent) {
-		super(props);
-		
-		this.onSearch = this.onSearch.bind(this);
-		this.onFilter = this.onFilter.bind(this);
-		this.onSettings = this.onSettings.bind(this);
+	const unbind = () => {
+		$(window).off(`updateGraphRoot.header`);
 	};
 
-	render () {
-		const { renderLeftIcons, renderTabs } = this.props;
+	const rebind = () => {
+		const win = $(window);
 
-		return (
-			<React.Fragment>
-				<div className="side left">{renderLeftIcons()}</div>
-				<div className="side center">{renderTabs()}</div>
-
-				<div className="side right">
-					<Icon id="button-header-search" className="btn-search withBackground" tooltip={translate('headerGraphTooltipSearch')} onClick={this.onSearch} />
-					<Icon id="button-header-filter" className="btn-filter withBackground dn" tooltip={translate('headerGraphTooltipFilters')} onClick={this.onFilter} />
-					<Icon id="button-header-settings" className="btn-settings withBackground" tooltip={translate('headerGraphTooltipSettings')} onClick={this.onSettings} />
-				</div>
-			</React.Fragment>
-		);
+		unbind();
+		win.on('updateGraphRoot.header', (e: any, data: any) => initRootId(data.id));
 	};
 
-	componentDidMount(): void {
-		this.setRootId(this.props.rootId);
-	};
+	const onSearch = () => {
+		const rootId = rootIdRef.current;
 
-	onSearch () {
-		this.props.menuOpen('searchObject', '#button-header-search', {
+		menuOpen('searchObject', '#button-header-search', {
 			horizontal: I.MenuDirection.Right,
 			data: {
-				rootId: this.rootId,
-				blockId: this.rootId,
-				blockIds: [ this.rootId ],
+				rootId,
+				blockId: rootId,
+				blockIds: [ rootId ],
 				filters: U.Data.graphFilters(),
 				filter: S.Common.getGraph(J.Constant.graphId.global).filter,
 				canAdd: true,
@@ -56,11 +40,11 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 		});
 	};
 
-	onFilter () {
+	const onFilter = () => {
 	};
 
-	onSettings () {
-		this.props.menuOpen('graphSettings', '#button-header-settings', { 
+	const onSettings = () => {
+		menuOpen('graphSettings', '#button-header-settings', { 
 			horizontal: I.MenuDirection.Right,
 			data: {
 				allowLocal: true,
@@ -69,10 +53,30 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 		});
 	};
 
-	setRootId (id: string) {
-		this.rootId = id;
+	const initRootId = (id: string) => {
+		rootIdRef.current = id;
 	};
 
-};
+	useEffect(() => {
+		initRootId(rootId)
+		rebind();
+
+		return () => unbind();
+	}, []);
+
+	return (
+		<>
+			<div className="side left">{renderLeftIcons()}</div>
+			<div className="side center">{renderTabs()}</div>
+
+			<div className="side right">
+				<Icon id="button-header-search" className="btn-search withBackground" tooltip={translate('headerGraphTooltipSearch')} onClick={onSearch} />
+				<Icon id="button-header-filter" className="btn-filter withBackground dn" tooltip={translate('headerGraphTooltipFilters')} onClick={onFilter} />
+				<Icon id="button-header-settings" className="btn-settings withBackground" tooltip={translate('headerGraphTooltipSettings')} onClick={onSettings} />
+			</div>
+		</>
+	);
+
+});
 
 export default HeaderMainGraph;

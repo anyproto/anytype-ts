@@ -10,6 +10,7 @@ interface ButtonProps {
 	icon?: string;
 	arrow?: boolean;
 	text?: string;
+	active?: boolean;
 	color?: string;
 	className?: string;
 	tooltip?: string;
@@ -22,7 +23,7 @@ interface ButtonProps {
 	onMouseDown?: (e: MouseEvent) => void;
 };
 
-export interface ButtonRef {
+interface ButtonRef {
 	setLoading: (v: boolean) => void;
 	setDisabled: (v: boolean) => void;
 	isDisabled: () => boolean;
@@ -44,7 +45,8 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	onMouseEnter,
 	onMouseLeave,
 	onMouseDown,
-	dataset
+	dataset,
+	active,
 }, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
@@ -54,6 +56,10 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 
 	if (isLoading) {
 		cn.push('isLoading');
+	};
+
+	if (active) {
+		cn.push('active');
 	};
 
 	const handleMouseEnter = (e: MouseEvent) => {
@@ -88,10 +94,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 
 	useImperativeHandle(ref, () => ({
 		setLoading: (v: boolean) => setIsLoading(v),
-		setDisabled: (v: boolean) => {
-			const node = $(nodeRef.current);
-			v ? node.addClass('disabled') : node.removeClass('disabled');
-		},
+		setDisabled: (v: boolean) => $(nodeRef.current).toggleClass('disabled', v),
 		isDisabled: () => $(nodeRef.current).hasClass('disabled'),
 		isLoading: () => isLoading,
 	}));

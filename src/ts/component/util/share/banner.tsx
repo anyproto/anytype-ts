@@ -1,59 +1,52 @@
-import * as React from 'react';
-import { observer } from 'mobx-react';
+import React, { FC, MouseEvent } from 'react';
 import { Icon, Label } from 'Component';
-import { S, translate, U, Storage, analytics } from 'Lib';
+import { S, translate, Storage, analytics } from 'Lib';
 
 interface Props {
-	onClose: () => void;
+	onClose?: () => void;
 };
 
-const ShareBanner = observer(class ShareBanner extends React.Component<Props, {}> {
+const ShareBanner: FC<Props> = ({ 
+	onClose,
+}) => {
 
-	node: any = null;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onClose = this.onClose.bind(this);
-	};
-
-	render () {
-		if (!U.Space.isShareBanner()) {
-			return null;
-		};
-
-		return (
-			<div
-				ref={ref => this.node = ref}
-				id="shareBanner"
-				className="shareBanner"
-				onClick={this.onClick}
-			>
-				<Icon className="close" onClick={this.onClose} />
-				<div className="bannerInner">
-					<Label text={translate('shareBannerLabel')} />
-					<Icon className="smile" />
-				</div>
-			</div>
-		);
-	};
-
-	onClick () {
-		S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
+	const onClickHandler = () => {
+		S.Popup.open('settings', { 
+			className: 'isSpace',
+			data: { 
+				page: 'spaceShare', 
+				isSpace: true,
+			},
+		});
 
 		analytics.event('ClickOnboardingTooltip', { id: 'SpaceShare', type: 'OpenSettings' });
 	};
 
-	onClose (e) {
+	const onCloseHandler = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		Storage.set('shareBannerClosed', true);
-		this.props.onClose();
+		if (onClose) {
+			onClose();
+		};
 
 		analytics.event('ClickOnboardingTooltip', { id: 'SpaceShare', type: 'Close' });
 	};
 
-});
+	return (
+		<div
+			id="shareBanner"
+			className="shareBanner"
+			onClick={onClickHandler}
+		>
+			<Icon className="close" onClick={onCloseHandler} />
+			<div className="bannerInner">
+				<Label text={translate('shareBannerLabel')} />
+				<Icon className="smile" />
+			</div>
+		</div>
+	);
+};
 
 export default ShareBanner;
