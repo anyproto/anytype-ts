@@ -498,6 +498,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.timeout = window.setTimeout(() => {
 			storageSet({ filter: v });
 
+			if (this.filter != v) {
+				analytics.event('SearchInput', { route });
+			};
+
 			this.filter = v;
 			this.range = this.refFilter?.getRange();
 			this.reload();
@@ -505,8 +509,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			if (!this.delay) {
 				this.delay = J.Constant.delay.keyboard;
 			};
-			
-			analytics.event('SearchInput', { route });
 		}, this.delay);
 	};
 

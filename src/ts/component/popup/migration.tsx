@@ -1,15 +1,13 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button } from 'Component';
-import { I, S, U, J, Onboarding, translate, analytics } from 'Lib';
-import QRCode from 'qrcode.react';
+import { Title, Label, Button, QR } from 'Component';
+import { I, U, J, Onboarding, translate, analytics } from 'Lib';
 
 const PopupMigration = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
 	const { type } = data;
-	const theme = S.Common.getThemeClass();
 
 	let content = null;
 
@@ -22,7 +20,7 @@ const PopupMigration = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<Label text={translate('popupMigrationOnboardingText2')} />
 
 					<div className="qrWrap">
-						<QRCode value={J.Url.download} fgColor={J.Theme[theme].qr.foreground} bgColor={J.Theme[theme].qr.bg} size={100} />
+						<QR value={J.Url.download} />
 					</div>
 
 					<Label text={translate('popupMigrationOnboardingText3')} />
@@ -43,7 +41,7 @@ const PopupMigration = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<Label text={translate('popupMigrationImportText2')} />
 
 					<div className="qrWrap">
-						<QRCode value={J.Url.download} fgColor={J.Theme[theme].qr.foreground} bgColor={J.Theme[theme].qr.bg} size={100} />
+						<QR value={J.Url.download} />
 					</div>
 
 					<Label text={U.Common.sprintf(translate('popupMigrationImportText3'), J.Url.community)} />

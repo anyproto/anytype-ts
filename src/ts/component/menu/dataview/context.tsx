@@ -261,7 +261,7 @@ class MenuContext extends React.Component<I.Menu> {
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-						{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					onClick: (item: any) => {
 						C.ObjectListSetObjectType(objectIds, item.uniqueKey);
