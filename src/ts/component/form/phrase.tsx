@@ -132,6 +132,11 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 
 		clear();
 		phrase.current = checkValue(phrase.current.concat(text.split(' ')));
+		
+		if (text) {
+			placeholderHide();
+		};
+
 		setDummy(dummy + 1);
 	};
 
@@ -177,6 +182,10 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	};
 
 	const focus = () => {
+		if (readonly) {
+			return;
+		};
+
 		const entry = $(entryRef.current);
 
 		entry.trigger('focus');

@@ -179,7 +179,7 @@ class MenuManager {
 					},
 					{
 						label: Util.translate('electronMenuShortcuts'), accelerator: 'Ctrl+Space',
-						click: () => Util.send(this.win, 'popup', 'shortcut', { preventResize: true })
+						click: () => Util.send(this.win, 'popup', 'shortcut', {})
 					},
 
 					Separator,
@@ -260,6 +260,7 @@ class MenuManager {
 				{ label: Util.translate('electronMenuDebugStat'), click: () => Util.send(this.win, 'commandGlobal', 'debugStat') },
 				{ label: Util.translate('electronMenuDebugReconcile'), click: () => Util.send(this.win, 'commandGlobal', 'debugReconcile') },
 				{ label: Util.translate('electronMenuDebugNet'), click: () => Util.send(this.win, 'commandGlobal', 'debugNet') },
+				{ label: Util.translate('electronMenuDebugLog'), click: () => Util.send(this.win, 'commandGlobal', 'debugLog') },
 
 				Separator,
 

@@ -69,7 +69,8 @@
 	}
 
 	.block.blockMedia > .wrapContent { border-radius: 8px; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); }
-	.block.blockMedia > .wrapContent > .selectionTarget > .dropTarget { line-height: 0px; }
+	.block.blockMedia.isAudio > .wrapContent  { border: 1px solid var(--color-shape-secondary); }
+	.block.blockMedia.isAudio > .wrapContent > .selectionTarget > .dropTarget > .focusable > .wrap { width: 100%; padding: 12px 12px 7px 14px; }
 
 	.block.blockMedia.isReadonly {
 		.icon.resize { display: none; }
@@ -93,9 +94,6 @@
 		.icon.dots { display: none; }
 		.icon.play { display: none; }
 	}
-
-	.block.blockMedia.isAudio.withContent > .wrapContent {box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); background-color: var(--color-bg-primary); }
-	.block.blockMedia.isAudio > .wrapContent > .selectionTarget > .dropTarget > .focusable > .wrap { width: 100%; padding: 12px 12px 7px 14px; border-radius: 8px; overflow: unset; }
 
 	.block.blockMedia > .wrapContent > .selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 	.block.blockMedia.isPdf.withContent > .wrapContent > .selectionTarget.isSelectionSelected::after { border-radius: 0px; }

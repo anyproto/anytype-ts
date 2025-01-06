@@ -106,6 +106,8 @@ class CommonStore {
 			spaceId: observable,
 			membershipTiersList: observable,
 			showRelativeDatesValue: observable,
+			dateFormatValue: observable,
+			timeFormatValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -118,6 +120,8 @@ class CommonStore {
 			isOnline: computed,
 			showVault: computed,
 			showRelativeDates: computed,
+			dateFormat: computed,
+			timeFormat: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -250,10 +254,16 @@ class CommonStore {
 
 	get dateFormat (): I.DateFormat {
 		let ret = this.dateFormatValue;
+		
 		if (ret === null) {
 			ret = Storage.get('dateFormat');
+
+			if (undefined === ret) {
+				ret = I.DateFormat.Long;
+			};
 		};
-		return Number(ret) || I.DateFormat.Long;
+
+		return Number(ret);
 	};
 
 	get timeFormat (): I.TimeFormat {

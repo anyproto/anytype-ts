@@ -2,13 +2,13 @@ import React, { FC, useRef, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
-import { Button, IconObject, ObjectName } from 'Component';
+import { Button, IconObject, ObjectName, Icon } from 'Component';
 import { I, S, U, Preview, Action, translate, keyboard, analytics, sidebar } from 'Lib';
 
 const Toast: FC = observer(() => {
 	const nodeRef = useRef(null);
 	const { toast } = S.Common;
-	const { count, action, text, value, object, target, origin, ids } = toast || {};
+	const { count, action, text, value, object, target, origin, ids, icon } = toast || {};
 
 	let buttons = [];
 	let textObject = null;
@@ -157,6 +157,9 @@ const Toast: FC = observer(() => {
 	return toast ? (
 		<div ref={nodeRef} id="toast" className="toast" onClick={onCloseHandler}>
 			<div className="inner">
+
+				{icon ? <Icon className={icon} /> : ''}
+
 				<div className="message">
 					{textObject}
 					{textAction ? <span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(textAction) }} /> : ''}

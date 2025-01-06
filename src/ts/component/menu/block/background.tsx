@@ -1,79 +1,76 @@
-import * as React from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, U, keyboard } from 'Lib';
 
-class MenuBlockBackground extends React.Component<I.Menu> {
-	
-	n = -1;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onClick = this.onClick.bind(this);
-	};
+const MenuBlockColor = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const value = String(data.value || '');
-		const items = this.getItems();
+	const { param, onKeyDown, setActive, close } = props;
+	const { data } = param;
+	const { onChange } = data;
+	const value = String(data.value || '');
+	const n = useRef(-1);
 
-		let id = 0;
-		return (
-			<div>
-				{items.map((action: any, i: number) => {
-					const inner = <div className={'inner bgColor bgColor-' + action.className} />;
-					return (
-						<MenuItemVertical 
-							id={id++} 
-							key={i} 
-							{...action} 
-							icon="color" 
-							inner={inner} 
-							checkbox={action.value == value} 
-							onClick={e => this.onClick(e, action)} 
-							onMouseEnter={e => this.onOver(e, action)} 
-						/>
-					);
-				})}
-			</div>
-		);
+	const rebind = () => {
+		unbind();
+
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this.rebind();
-	};
-	
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	getItems () {
-		return U.Menu.getBgColors();
+	const getItems = () => {
+		let id = 0;
+		return U.Menu.prepareForSelect(U.Menu.getBgColors().map(it => ({ ...it, id: id++ })));
 	};
 	
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 	
-	onClick (e: any, item: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onChange } = data;
-		
+	const onClick = (e: any, item: any) => {
 		close();
 		onChange(item.value);
 	};
-	
-};
 
-export default MenuBlockBackground;
+	useEffect(() => {
+		rebind();
+		return () => unbind();
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver
+	}), []);
+
+	const items = getItems();
+	
+	return (
+		<div>
+			{items.map((action: any, i: number) => (
+				<MenuItemVertical 
+					{...action} 
+					key={i} 
+					icon="color" 
+					inner={<div className={`inner bgColor bgColor-${action.className}`} />} 
+					checkbox={action.value == value} 
+					onClick={e => onClick(e, action)} 
+					onMouseEnter={e => onOver(e, action)} 
+				/>
+			))}
+		</div>
+	);
+
+});
+
+export default MenuBlockColor;

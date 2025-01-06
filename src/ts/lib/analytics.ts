@@ -157,7 +157,7 @@ class Analytics {
 			ret.push(config.channel);
 		};
 
-		C.InitialSetParameters(platform, ret.join('-'), userPath(), '', false);
+		C.InitialSetParameters(platform, ret.join('-'), userPath(), '', false, false);
 	};
 
 	profile (id: string, networkId: string) {
@@ -190,6 +190,10 @@ class Analytics {
 	};
 
 	setProperty (props: any) {
+		if (!this.instance || !this.isAllowed()) {
+			return;
+		};
+
 		this.instance.setUserProperties(props);
 		this.log(`[Analytics].setProperty: ${JSON.stringify(props, null, 3)}`);
 	};
@@ -516,6 +520,16 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeDateFormat': {
+				data.type = I.DateFormat[Number(data.type)];
+				break;
+			};
+
+			case 'ChangeTimeFormat': {
+				data.type = I.TimeFormat[Number(data.type)];
+				break;
+			};
+
 			case 'ObjectListSort': {
 				data.type = I.SortType[Number(data.type)];
 				break;
@@ -587,6 +601,7 @@ class Analytics {
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 			'main/date':		 'ScreenDate',
+			'main/archive':		 'ScreenBin',
 		};
 
 		return map[key] || '';
