@@ -1,5 +1,3 @@
-import { QRCodeCanvas as QRCode } from 'qrcode.react';
-
 import Page from './page';
 
 import EditorPage from './editor/page';
@@ -100,10 +98,9 @@ import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 import Floater from './util/floater';
+import QR from './util/qr';
 
 export {
-	QRCode,
-
 	Page,
 	EditorPage,
 	Block,
@@ -200,4 +197,6 @@ export {
 	Floater,
 	HeadSimple,
 	EditorControls,
+
+	QR,
 };

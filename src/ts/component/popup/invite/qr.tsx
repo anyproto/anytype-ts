@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef } from 'react';
 import $ from 'jquery';
-import { Title, Button, QRCode } from 'Component';
-import { I, S, J, translate, Renderer, analytics } from 'Lib';
+import { Title, Button, QR } from 'Component';
+import { I, translate, Renderer, analytics } from 'Lib';
 
 const PopupInviteQr = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -9,7 +9,6 @@ const PopupInviteQr = forwardRef<{}, I.Popup>((props, ref) => {
 	const { param } = props;
 	const { data } = param;
 	const { link } = data;
-	const theme = S.Common.getThemeClass();
 
 	const onDownload = () => {
 		const canvas = $(nodeRef.current).find('canvas').get(0);
@@ -31,7 +30,7 @@ const PopupInviteQr = forwardRef<{}, I.Popup>((props, ref) => {
 			<Title text={translate('popupInviteQrTitle')} />
 
 			<div className="qrWrap">
-				<QRCode value={link} fgColor={J.Theme[theme].qr.foreground} bgColor={J.Theme[theme].qr.bg} size={120} />
+				<QR value={link} />
 			</div>
 
 			<div className="buttons">
