@@ -22,6 +22,7 @@ interface Props extends I.BlockComponent {
 
 interface State {
 	attachments: any[];
+	charCounter: number;
 };
 
 const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
@@ -30,6 +31,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	node = null;
 	refEditable = null;
 	refButtons = null;
+	refCounter = null;
 	isLoading = [];
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
@@ -39,6 +41,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	swiper = null;
 	state = {
 		attachments: [],
+		charCounter: 0,
 	};
 
 	constructor (props: Props) {
@@ -77,7 +80,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	render () {
 		const { rootId, readonly, getReplyContent } = this.props;
-		const { attachments } = this.state;
+		const { attachments, charCounter } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
 
@@ -203,6 +206,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						removeBookmark={this.removeBookmark}
 					/>
 
+					<div ref={ref => this.refCounter = ref} className="charCounter">{charCounter} / {J.Constant.limit.chat.text}</div>
+
 					<Icon id="send" className="send" onClick={this.onSend} />
 				</div>
 			</div>
@@ -228,6 +233,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 			this.marks = marks;
 			this.updateMarkup(text, length, length);
+			this.updateCounter(text);
 
 			if (attachments.length) {
 				this.setAttachments(attachments);
@@ -443,6 +449,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.checkSendButton();
 		this.updateButtons();
 		this.removeBookmarks();
+		this.updateCounter(value);
 	};
 
 	onInput () {
@@ -478,6 +485,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		this.checkUrls();
 		this.onInput();
+		this.updateCounter(value);
 	};
 
 	checkUrls () {
@@ -625,6 +633,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const clear = () => {
 			this.onEditClear();
 			this.onReplyClear();
+			this.updateCounter();
 			loader.removeClass('active');
 		};
 		
@@ -723,6 +732,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.editingId = message.id;
 		this.replyingId = '';
 		this.updateMarkup(text, l, l);
+		this.updateCounter(text);
 
 		this.setAttachments(attachments, () => {
 			this.refEditable.setRange(this.range);
@@ -734,6 +744,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.marks = [];
 		this.updateMarkup('', 0, 0);
 		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
+		this.updateCounter();
 		this.refButtons.setButtons();
 	};
 
@@ -1031,6 +1042,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		renderObjects(rootId, node, this.marks, () => value, this.props);
 		renderLinks(node, this.marks, () => value, this.props);
 		renderEmoji(node);
+	};
+
+	updateCounter (v?: string) {
+		const l = v && v.length ? v.length : 0;
+
+		this.setState({ charCounter: l });
+		$(this.refCounter).toggleClass('show', l >= J.Constant.limit.chat.text - 50);
 	};
 
 });
