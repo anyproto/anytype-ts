@@ -798,7 +798,7 @@
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
 	"popupSettingsSpaceIndexInfoLabel": "Encrypted & local-first",
 
-	"popupSettingsSpaceIndexShareShareTitle": "Share space",
+	"popupSettingsSpaceIndexShareShareTitle": "Share Space",
 	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
 	"popupSettingsSpaceIndexShareDefaultText": "Entry space can’t be shared. Create a new one to share",
 	"popupSettingsSpaceIndexShareInviteText": "Generate invite link and share the space with other members",
@@ -1625,6 +1625,10 @@
 
 	"menuSyncStatusEmptyLocal": "Your Vault is currently in local-only mode, so your data isn't being synced to Anytype nodes.",
 	"menuSyncStatusEmpty": "There are no objects to show",
+
+	"menuPublishTitle": "Publish to web",
+	"menuPublishLabel": "Join Space Button",
+	"menuPublishButton": "Publish",
 
 	"previewEdit": "Edit Link",
 
