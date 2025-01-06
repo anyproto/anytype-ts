@@ -113,6 +113,7 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+		console.log('V1', e.target.value, 'V2', value);
 		setValue(e.target.value);
 		handleEvent(onChange, e);
 	};
@@ -236,6 +237,8 @@ const Input = forwardRef<InputRef, Props>(({
 		clone.remove();
 		return rect;
 	};
+
+	useEffect(() => setValue(initialValue), []);
 
 	useEffect(() => {
 		if (maskOptions && inputRef.current) {

@@ -159,6 +159,8 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 			return;
 		};
 
+		buttonCheck();
+
 		if (onKeyDown) {
 			onKeyDown(e, v);
 		};
@@ -169,6 +171,8 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		if (keyboard.isComposition) {
 			return;
 		};
+
+		buttonCheck();
 
 		if (onKeyUp) {
 			onKeyUp(e, v);
@@ -218,8 +222,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		resize();
 	};
 
-	useEffect(() => init(), []);
-	useEffect(() => init(), [ value ]);
+	useEffect(() => init());
 
 	useImperativeHandle(ref, () => ({
 		focus,

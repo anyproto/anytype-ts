@@ -97,6 +97,7 @@ import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 import Floater from './util/floater';
+import QR from './util/qr';
 
 export {
 	Page,
@@ -194,4 +195,6 @@ export {
 	Floater,
 	HeadSimple,
 	EditorControls,
+
+	QR,
 };
