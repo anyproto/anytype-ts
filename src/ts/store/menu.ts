@@ -167,7 +167,7 @@ class MenuStore {
 
 	closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		const timeout = this.getTimeout();
+		const timeout = this.getTimeout(ids);
 
 		items.filter(it => !it.param.noClose).forEach(it => this.close(it.id));
 		this.onCloseAll(timeout, callBack);
@@ -175,21 +175,27 @@ class MenuStore {
 
 	closeAllForced (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		const timeout = this.getTimeout();
+		const timeout = this.getTimeout(ids);
 
 		items.forEach(it => this.close(it.id));
 		this.onCloseAll(timeout, callBack);
 	};
 
 	onCloseAll (timeout: number, callBack?: () => void) {
-		if (callBack) {
+		if (!callBack) {
+			return;
+		};
+
+		if (timeout) {
 			this.clearTimeout();
 			this.timeout = window.setTimeout(() => callBack(), timeout);
+		} else {
+			callBack();
 		};
 	};
 
-	getTimeout (): number {
-		const items = this.getItems();
+	getTimeout (ids?: string[]): number {
+		const items = this.getItems(ids);
 
 		let t = 0;
 		for (const item of items) {
