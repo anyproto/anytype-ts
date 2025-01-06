@@ -174,8 +174,9 @@ const Pin = forwardRef<PinRefProps, Props>(({
 
 	useEffect(() => {
 		if (focusOnMount) {
-			focus();
+			window.setTimeout(() => focus(), 10);
 		};
+
 		rebind();
 
 		return () => {

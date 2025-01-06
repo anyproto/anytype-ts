@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, MouseEvent } from 'react';
+import React, { forwardRef, useState, useEffect, useRef, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
@@ -9,6 +9,8 @@ const BORDER = 12;
 
 const PreviewIndex = observer(forwardRef(() => {
 	
+	const nodeRef = useRef(null);
+	const polygonRef = useRef(null);
 	const { preview } = S.Common;
 	const { type, target, object: initialObject, marks, range, noUnlink, noEdit, x, y, width, height, onChange } = preview;
 	const [ object, setObject ] = useState(initialObject || {});
@@ -79,12 +81,12 @@ const PreviewIndex = observer(forwardRef(() => {
 	};
 
 	const position = () => {
-		const obj = $('#preview');
-		const poly = obj.find('.polygon');
+		const node = $(nodeRef.current);
+		const poly = $(polygonRef.current);
 		const { ww, wh } = U.Common.getWindowDimensions();
 		const st = win.scrollTop();
-		const ow = obj.outerWidth();
-		const oh = obj.outerHeight();
+		const ow = node.outerWidth();
+		const oh = node.outerHeight();
 		const css: any = { opacity: 0, left: 0, top: 0 };
 		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: height + OFFSET_Y, clipPath: '' };
 
@@ -128,14 +130,14 @@ const PreviewIndex = observer(forwardRef(() => {
 		css.left = Math.max(BORDER, css.left);
 		css.left = Math.min(ww - ow - BORDER, css.left);
 
-		obj.show().css(css);
+		node.show().css(css);
 
 		if (!preview.noAnimation) {
-			obj.addClass('anim');
+			node.addClass('anim');
 		};
 
 		poly.css(pcss);
-		window.setTimeout(() => { obj.css({ opacity: 1, transform: 'translateY(0%)' }); }, 15);
+		window.setTimeout(() => { node.css({ opacity: 1, transform: 'translateY(0%)' }); }, 15);
 	};
 
 	let head = null;
@@ -194,11 +196,16 @@ const PreviewIndex = observer(forwardRef(() => {
 		};
 
 		position();
-	});
+	}, [ type ]);
 
 	return content ? (
-		<div id="preview" className={cn.join(' ')}>
-			<div className="polygon" onClick={onClick} />
+		<div 
+			ref={nodeRef} 
+			id="preview" 
+			className={cn.join(' ')} 
+			onMouseLeave={() => Preview.previewHide(true)}
+		>
+			<div ref={polygonRef} className="polygon" onClick={onClick} />
 			<div className="content">
 				{head}
 

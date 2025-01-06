@@ -168,7 +168,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="dateFormat"
 							value={String(dateFormat)}
 							options={U.Menu.dateFormatOptions()}
-							onChange={v => S.Common.dateFormatSet(v)}
+							onChange={v => {
+								S.Common.dateFormatSet(v);
+								analytics.event('ChangeDateFormat', { type: v });
+							}}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>
@@ -180,7 +183,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="timeFormat"
 							value={String(timeFormat)}
 							options={U.Menu.timeFormatOptions()}
-							onChange={v => S.Common.timeFormatSet(v)}
+							onChange={v => {
+								S.Common.timeFormatSet(v);
+								analytics.event('ChangeTimeFormat', { type: v });
+							}}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>

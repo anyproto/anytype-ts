@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.43.33-alpha",
+	"version": "0.44.0",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -68,7 +68,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^31.0.2",
+		"electron": "^33.2.1",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -108,6 +108,7 @@
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^5.2.0",
+		"electron-store": "^8.2.0",
 		"electron-updater": "^6.2.1",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",

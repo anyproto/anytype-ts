@@ -33,7 +33,12 @@ export default {
 		'typeSuggest',
 		'blockAlign'
 	],
-	add: [ 'searchObject', 'blockRelationEdit', 'typeSuggest' ],
+	add: [ 
+		'searchObject', 
+		'blockRelationEdit', 
+		'typeSuggest', 
+		'dataviewCalendar',
+	],
 	action: [
 		'blockStyle',
 		'blockColor',

@@ -186,15 +186,17 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const canEdit = this.canCellEdit(relation, record);
 
 		if (!canEdit) {
-			if (Relation.isUrl(relation.format) && value) {
-				Action.openUrl(Relation.checkUrlScheme(relation.format, value));
-				return;
-			};
+			if (value) {
+				if (Relation.isUrl(relation.format)) {
+					Action.openUrl(Relation.checkUrlScheme(relation.format, value));
+					return;
+				};
 
-			if (relation.format == I.RelationType.Date) {
-				U.Object.openDateByTimestamp(relation.relationKey, value, 'config');
-				return;
-			}
+				if (Relation.isDate(relation.format)) {
+					U.Object.openDateByTimestamp(relation.relationKey, value, 'config');
+					return;
+				};
+			};
 
 			if (relation.format == I.RelationType.Checkbox) {
 				return;
@@ -298,6 +300,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
 					value: param.data.value || U.Date.now(),
+					noKeyboard: true,
 				});
 					
 				menuId = 'dataviewCalendar';

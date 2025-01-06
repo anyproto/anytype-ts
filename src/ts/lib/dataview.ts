@@ -469,11 +469,13 @@ class Dataview {
 		} else
 		if (relations.length) {
 			for (const item of relations) {
-				if (!item.objectTypes.length) {
+				const objectTypes = Relation.getArrayValue(item.objectTypes);
+
+				if (!objectTypes.length) {
 					continue;
 				};
 
-				const first = S.Record.getTypeById(item.objectTypes[0]);
+				const first = S.Record.getTypeById(objectTypes[0]);
 				if (first && !U.Object.isInFileOrSystemLayouts(first.recommendedLayout)) {
 					typeId = first.id;
 					break;
@@ -581,14 +583,14 @@ class Dataview {
 
 		const min = () => {
 			const map = records.map(it => it[relationKey]).filter(it => !Relation.isEmpty(it));
-			return Math.min(...map.map(it => Number(it || 0)));
+			return map.length ? Math.min(...map.map(it => Number(it || 0))) : null;
 		};
 		const max = () => {
 			const map = records.map(it => it[relationKey]).filter(it => !Relation.isEmpty(it));
-			return Math.max(...map.map(it => Number(it || 0)));
+			return map.length ? Math.max(...map.map(it => Number(it || 0))) : null;
 		};
 		const float = (v: any): string => {
-			return U.Common.formatNumber(U.Common.sprintf('%0.3f', v)).replace(/\.0+?$/, '');
+			return (v === null) ? null : U.Common.formatNumber(U.Common.sprintf('%0.3f', v)).replace(/\.0+?$/, '');
 		};
 		const filtered = (filterEmpty: boolean) => {
 			return records.filter(it => {

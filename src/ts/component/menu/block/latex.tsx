@@ -309,14 +309,6 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		return isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
 	};
 
-	recalcIndex () {
-		const itemsWithSection = this.getItems(true);
-		const itemsWithoutSection = itemsWithSection.filter(it => !it.isSection);
-		const active: any = itemsWithoutSection[this.n] || {};
-
-		return itemsWithSection.findIndex(it => it.id == active.id);
-	};
-
 	resize () {
 		const { param, getId, position } = this.props;
 		const { data } = param;

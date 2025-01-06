@@ -141,7 +141,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 
 					<Navigation ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
 					<Sidebar key="sidebar" {...this.props} />
-					<Page {...this.props} />
+					<Page {...this.props} isPopup={false} />
 				</DragProvider>
 			</SelectionProvider>
 		);
@@ -313,7 +313,7 @@ class App extends React.Component<object, State> {
 			Storage.delete('redirect');
 		};
 
-		if (css) {
+		if (css && !config.disableCss) {
 			U.Common.injectCss('anytype-custom-css', css);
 		};
 

@@ -1163,8 +1163,12 @@ export const Mapper = {
 		Data (e: any) {
 			const type = Mapper.Event.Type(e.getValueCase());
 			const fn = `get${U.Common.ucFirst(type)}`;
+			const data = e[fn] ? e[fn]() : {};
 
-			return e[fn] ? e[fn]() : {};
+			return {
+				spaceId: e.getSpaceid(),
+				data,
+			};
 		},
 
 		AccountShow: (obj: Events.Event.Account.Show) => {

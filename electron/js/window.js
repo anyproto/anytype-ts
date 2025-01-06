@@ -1,4 +1,4 @@
-const { app, BrowserWindow, nativeImage, dialog, screen } = require('electron');
+const { app, BrowserWindow, nativeImage, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
@@ -115,6 +115,7 @@ class WindowManager {
 				height: state.height,
 			});
 		} else {
+			const { screen } = require('electron');
 			const primaryDisplay = screen.getPrimaryDisplay();
 			const { width, height } = primaryDisplay.workAreaSize;
 

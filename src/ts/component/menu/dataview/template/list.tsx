@@ -139,6 +139,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	componentWillUnmount () {
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+		this.unbind();
 	};
 
 	rebind () {

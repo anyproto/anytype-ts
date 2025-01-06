@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
 import { I, C, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
@@ -10,100 +10,22 @@ interface Props {
 	isPopup?: boolean;
 };
 
-class HeaderBanner extends React.Component<Props> {
+const HeaderBanner: FC<Props> = ({ 
+	type, 
+	object, 
+	count = 0, 
+	isPopup,
+}) => {
 
-	node: any = null;
+	const nodeRef = useRef(null);
+	const cn = [ 'headerBanner' ];
+	const canWrite = U.Space.canMyParticipantWrite();
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onTemplateMenu = this.onTemplateMenu.bind(this);
-	};
-
-	render () {
-		const { type, object, count } = this.props;
-		const cn = [ 'headerBanner' ];
-
-		let label = '';
-		let target = null;
-		let action = null;
-		let onClick = null;
-
-		switch (type) {
-			case I.BannerType.IsArchived: {
-				label = translate('deletedBanner');
-				action = (
-					<div 
-						className="action" 
-						onClick={() => Action.restore([ object.id ], analytics.route.banner)}
-					>
-						{translate('deletedBannerRestore')}
-					</div>
-				);
-				break;
-			};
-
-			case I.BannerType.IsTemplate: {
-				const targetObjectType = S.Record.getTypeById(object.targetObjectType);
-
-				label = translate('templateBannner');
-				if (targetObjectType) {
-					target = (
-						<div className="typeName" onClick={() => U.Object.openAuto(targetObjectType)}>
-							{translate('commonOf')}
-							<IconObject size={18} object={targetObjectType} />
-							<ObjectName object={targetObjectType} />
-						</div>
-					);
-				};
-				break;
-			};
-
-			case I.BannerType.TemplateSelect: {
-				cn.push('withMenu');
-
-				if (count) {
-					label = U.Common.sprintf(translate('selectTemplateBannerWithNumber'), count, U.Common.plural(count, translate('pluralTemplate')));
-				} else {
-					label = translate('selectTemplateBanner');
-				};
-
-				onClick = this.onTemplateMenu;
-				break;
-			};
-		};
-
-		return (
-			<div
-				ref={node => this.node = node}
-				id="headerBanner"
-				className={cn.join(' ')}
-				onClick={onClick}
-			>
-				<div className="content">
-					<Label text={label} />
-					{target}
-				</div>
-
-				{action}
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		const { type, isPopup } = this.props;
-
-		if (type == I.BannerType.TemplateSelect) {
-			Onboarding.start('templateSelect', isPopup);
-		};
-	};
-
-	onTemplateMenu () {
-		const { object, isPopup } = this.props;
+	const onTemplateMenu = () => {
 		const { sourceObject } = object;
 		const type = S.Record.getTypeById(object.type);
 		const templateId = sourceObject || J.Constant.templateId.blank;
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 
 		if (!type || S.Menu.isOpen('dataviewTemplateList')) {
 			return;
@@ -145,6 +67,79 @@ class HeaderBanner extends React.Component<Props> {
 			},
 		});
 	};
+
+	let label = '';
+	let target = null;
+	let action = null;
+	let onClick = null;
+
+	switch (type) {
+		case I.BannerType.IsArchived: {
+			label = translate('deletedBanner');
+			if (canWrite) {
+				action = (
+					<div 
+						className="action" 
+						onClick={() => Action.restore([ object.id ], analytics.route.banner)}
+					>
+						{translate('deletedBannerRestore')}
+					</div>
+				);
+			};
+			break;
+		};
+
+		case I.BannerType.IsTemplate: {
+			const targetObjectType = S.Record.getTypeById(object.targetObjectType);
+
+			label = translate('templateBannner');
+			if (targetObjectType) {
+				target = (
+					<div className="typeName" onClick={() => U.Object.openAuto(targetObjectType)}>
+						{translate('commonOf')}
+						<IconObject size={18} object={targetObjectType} />
+						<ObjectName object={targetObjectType} />
+					</div>
+				);
+			};
+			break;
+		};
+
+		case I.BannerType.TemplateSelect: {
+			cn.push('withMenu');
+
+			if (count) {
+				label = U.Common.sprintf(translate('selectTemplateBannerWithNumber'), count, U.Common.plural(count, translate('pluralTemplate')));
+			} else {
+				label = translate('selectTemplateBanner');
+			};
+
+			onClick = onTemplateMenu;
+			break;
+		};
+	};
+
+	useEffect(() => {
+		if (type == I.BannerType.TemplateSelect) {
+			Onboarding.start('templateSelect', isPopup);
+		};
+	}, []);
+
+	return (
+		<div
+			ref={nodeRef}
+			id="headerBanner"
+			className={cn.join(' ')}
+			onClick={onClick}
+		>
+			<div className="content">
+				<Label text={label} />
+				{target}
+			</div>
+
+			{action}
+		</div>
+	);
 
 };
 

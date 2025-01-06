@@ -51,6 +51,7 @@ export interface Toast {
 	count?: number;
 	value?: boolean;
 	ids?: string[];
+	icon?: string;
 };
 
 export enum ToastAction {
@@ -316,4 +317,13 @@ export enum SortId {
 export enum LoaderType {
 	Loader		 = 'loader',
 	Dots		 = 'dots',
+};
+
+export interface Error {
+	code: number;
+	description: string;
+};
+
+export interface PageRef {
+	resize: () => void;
 };

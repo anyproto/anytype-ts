@@ -174,8 +174,10 @@ class Action {
 		const storageKey = 'openUrl';
 		const scheme = U.Common.getScheme(url);
 		const cb = () => Renderer.send('openUrl', url);
+		const allowedSchemes = J.Constant.allowedSchemes.concat(J.Constant.protocol);
+		const isAllowed = scheme.match(new RegExp(`^(${allowedSchemes.join('|')})$`));
 
-		if (!Storage.get(storageKey) && !scheme.match(new RegExp(`^(${J.Constant.allowedSchemes.join('|')})$`))) {
+		if (!Storage.get(storageKey) && !isAllowed) {
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
@@ -477,6 +479,8 @@ class Action {
 	};
 
 	restore (ids: string[], route: string, callBack?: () => void) {
+		ids = ids || [];
+
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
 			if (message.error.code) {
 				return;

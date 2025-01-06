@@ -2,7 +2,7 @@
 	.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
 	.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse.svg'); }
 	.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
-	.icon.plus { background-image: url('#{$themePath}/icon/widget/plus.svg'); }
+	.icon.plus { background-image: url('#{$themePath}/icon/widget/plus0.svg'); }
 
 	.icon.remove .inner { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
 
@@ -51,6 +51,8 @@
 		.group {
 			.clickable {
 				.icon.arrow {  background-image: url('~img/arrow/select/light.svg'); }
+				.icon.plus { background-image: url('#{$themePath}/icon/widget/plus0.svg'); }
+				.icon.plus:hover { background-image: url('#{$themePath}/icon/widget/plus1.svg'); }
 			}
 		}
 	}

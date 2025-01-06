@@ -33,6 +33,7 @@ class Popup extends React.Component<I.Popup> {
 
 	_isMounted = false;
 	node = null;
+	ref = null;
 	isAnimating = false;
 
 	constructor (props: I.Popup) {
@@ -102,7 +103,8 @@ class Popup extends React.Component<I.Popup> {
 				<div id={`${popupId}-innerWrap`} className="innerWrap">
 					<div className="content">
 						<Component 
-							{...this.props} 
+							{...this.props}
+							ref={ref => this.ref = ref}
 							position={this.position} 
 							close={this.close}
 							storageGet={this.storageGet}
@@ -176,6 +178,10 @@ class Popup extends React.Component<I.Popup> {
 	
 	position () {
 		const { id } = this.props;
+
+		if (this.ref && this.ref.beforePosition) {
+			this.ref.beforePosition();
+		};
 
 		raf(() => {
 			if (!this._isMounted) {

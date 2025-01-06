@@ -19,20 +19,19 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const showMenu = !isTypeOrRelation;
 	const cmd = keyboard.cmdSymbol();
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
-	const bannerProps: any = {};
+	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 
 	let center = null;
-	let banner = I.BannerType.None;
 	let locked = '';
 
-	if (object.isArchived && U.Space.canMyParticipantWrite()) {
-		banner = I.BannerType.IsArchived;
+	if (object.isArchived) {
+		bannerProps.type = I.BannerType.IsArchived;
 	} else
 	if (U.Object.isTemplate(object.type)) {
-		banner = I.BannerType.IsTemplate;
+		bannerProps.type = I.BannerType.IsTemplate;
 	} else
 	if (allowedTemplateSelect && templatesCnt) {
-		banner = I.BannerType.TemplateSelect;
+		bannerProps.type = I.BannerType.TemplateSelect;
 		bannerProps.count = templatesCnt + 1;
 	};
 
@@ -43,7 +42,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		locked = translate('commonSystem');
 	};
 
-	if (banner == I.BannerType.None) {
+	if (bannerProps.type == I.BannerType.None) {
 		center = (
 			<div
 				id="path"
@@ -60,7 +59,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 			</div>
 		);
 	} else {
-		center = <HeaderBanner type={banner} object={object} isPopup={isPopup} {...bannerProps} />;
+		center = <HeaderBanner {...bannerProps} />;
 	};
 
 	const onOpen = () => {

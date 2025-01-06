@@ -118,10 +118,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				]);
 			};
 
-			if (U.Space.hasShareBanner()) {
-				bodyCn.push('withShareBanner');
-			};
-
 			content = (
 				<React.Fragment>
 					{space && !space._empty_ ? (
@@ -197,6 +193,10 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 					</div>
 				</React.Fragment>
 			);
+		};
+
+		if (hasShareBanner) {
+			bodyCn.push('withShareBanner');
 		};
 
 		return (
