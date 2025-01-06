@@ -39,6 +39,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	editingId: string = '';
 	replyingId: string = '';
 	swiper = null;
+	speedLimit = { last: 0, counter: 0 }
 	state = {
 		attachments: [],
 		charCounter: 0,
@@ -634,6 +635,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.onEditClear();
 			this.onReplyClear();
 			this.updateCounter();
+			this.checkSpeedLimit();
 			loader.removeClass('active');
 		};
 		
@@ -1049,6 +1051,43 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		this.setState({ charCounter: l });
 		$(this.refCounter).toggleClass('show', l >= J.Constant.limit.chat.text - 50);
+	};
+
+	checkSpeedLimit () {
+		const { last, counter } = this.speedLimit;
+		const now = U.Date.now();
+
+		if (now - last >= 5 ) {
+			this.speedLimit = {
+				last: now,
+				counter: 1
+			};
+			return;
+		};
+
+		this.speedLimit = {
+			last: now,
+			counter: counter + 1,
+		};
+
+		if (counter >= 5) {
+			this.speedLimit = {
+				last: now,
+				counter: 1
+			};
+
+			S.Popup.open('confirm', {
+				data: {
+					icon: 'warningInverted',
+					bgColor: 'red',
+					title: translate('popupConfirmSpeedLimitTitle'),
+					text: translate('popupConfirmSpeedLimitText'),
+					textConfirm: translate('commonOkay'),
+					colorConfirm: 'blank',
+					canCancel: false,
+				}
+			});
+		};
 	};
 
 });
