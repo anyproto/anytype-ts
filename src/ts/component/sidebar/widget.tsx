@@ -1,8 +1,8 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Widget, DropTarget, Icon, Label, ShareBanner } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, Storage } from 'Lib';
+import { Button, Widget, DropTarget, ShareBanner } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -21,6 +21,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 	position: I.BlockPosition = null;
 	isDragging = false;
 	frame = 0;
+	isSubcribed = '';
 
 	constructor (props) {
 		super(props);
@@ -30,6 +31,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
+		this.onArchive = this.onArchive.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.setEditing = this.setEditing.bind(this);
@@ -43,6 +45,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const bodyCn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const hasShareBanner = U.Space.hasShareBanner();
 
 		let content = null;
 
@@ -115,15 +118,11 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				]);
 			};
 
-			if (U.Space.isShareBanner()) {
-				bodyCn.push('withShareBanner');
-			};
-
 			content = (
 				<React.Fragment>
 					{space && !space._empty_ ? (
 						<React.Fragment>
-							<ShareBanner onClose={() => this.forceUpdate()} />
+							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
 
 							<DropTarget 
 								{...this.props} 
@@ -168,6 +167,25 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						/>
 					))}
 
+					<DropTarget 
+						{...this.props} 
+						isTargetBottom={true}
+						rootId={S.Block.widgets} 
+						id={last?.id}
+						dropType={I.DropType.Widget} 
+						canDropMiddle={false}
+						className="lastTarget"
+						cacheKey="lastTarget"
+					>
+						<Button
+							text={translate('commonBin')}
+							color=""
+							className="widget"
+							icon="bin"
+							onClick={this.onArchive}
+						/>
+					</DropTarget>
+
 					<div className="buttons">
 						{buttons.map(button => (
 							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
@@ -175,6 +193,10 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 					</div>
 				</React.Fragment>
 			);
+		};
+
+		if (hasShareBanner) {
+			bodyCn.push('withShareBanner');
 		};
 
 		return (
@@ -224,7 +246,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			offsetY: -4,
 			vertical: I.MenuDirection.Top,
 			data: {
-				route: analytics.route.widget,
+				route: analytics.route.addWidget,
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
@@ -361,11 +383,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const body = node.find('#body');
 		const top = body.scrollTop();
 
-		head.removeClass('show');
-
-		if (showVault && (top > 32)) {
-			head.addClass('show')
-		};
+		head.toggleClass('show', showVault && (top > 32));
 	};
 
 	onContextMenu () {
@@ -442,6 +460,14 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				}
 			}
 		});
+	};
+
+	onArchive (e: any) {
+		const { isEditing } = this.state;
+
+		if (!isEditing && !e.button) {
+			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+		};
 	};
 
 	clear () {

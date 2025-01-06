@@ -186,9 +186,16 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const canEdit = this.canCellEdit(relation, record);
 
 		if (!canEdit) {
-			if (Relation.isUrl(relation.format) && value) {
-				Action.openUrl(Relation.getUrlScheme(relation.format, value) + value);
-				return;
+			if (value) {
+				if (Relation.isUrl(relation.format)) {
+					Action.openUrl(Relation.checkUrlScheme(relation.format, value));
+					return;
+				};
+
+				if (Relation.isDate(relation.format)) {
+					U.Object.openDateByTimestamp(relation.relationKey, value, 'config');
+					return;
+				};
 			};
 
 			if (relation.format == I.RelationType.Checkbox) {
@@ -275,6 +282,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				blockId: block.id,
 				value, 
 				relation: observable.box(relation),
+				relationKey: relation.relationKey,
 				record,
 				placeholder,
 				canEdit,
@@ -292,6 +300,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
 					value: param.data.value || U.Date.now(),
+					noKeyboard: true,
 				});
 					
 				menuId = 'dataviewCalendar';
@@ -380,8 +389,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				});
 
 				if (e.shiftKey && value) {
-					const scheme = Relation.getUrlScheme(relation.format, value);
-					Action.openUrl(scheme + value);
+					Action.openUrl(Relation.checkUrlScheme(relation.format, value));
 
 					ret = true;
 					break;
@@ -409,11 +417,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 							return;
 						};
 
-						const scheme = Relation.getUrlScheme(relation.format, value);
-
 						switch (item.id) {
 							case 'go': {
-								Action.openUrl(scheme + value);
+								Action.openUrl(Relation.checkUrlScheme(relation.format, value));
 								analytics.event('RelationUrlOpen');
 								break;
 							};

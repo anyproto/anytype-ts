@@ -1,60 +1,30 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { U, S, translate, analytics, Preview, Storage } from 'Lib';
+import { S, translate, analytics } from 'Lib';
 
 interface Props {
+	route: string;
 	showOnce?: boolean;
 };
 
-const ShareTooltip = observer(class ShareTooltip extends React.Component<Props, {}> {
-
-	node: any = null;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onClick = this.onClick.bind(this);
-	};
-
-	render () {
-		const { showOnce } = this.props;
-
-		if (showOnce && !S.Common.shareTooltip) {
-			return null;
-		};
-
-		return (
-			<div
-				ref={ref => this.node = ref}
-				id="shareTooltip"
-				className="shareTooltip"
-				onClick={this.onClick}
-			>
-				<Icon className="close" onClick={this.onClose} />
-				<Icon className="smile" />
-				<Label text={translate('shareTooltipLabel')} />
-			</div>
-		);
-	};
-
-	onClick () {
-		const { showOnce } = this.props;
-
+const ShareTooltip: FC<Props> = observer(({ 
+	route = '',
+}) => {
+	const onClickHandler = () => {
 		S.Popup.open('share', {});
-		Preview.shareTooltipHide();
-
-		analytics.event('ClickShareApp', { route: showOnce ? 'Onboarding' : 'Help' });
+		analytics.event('ClickShareApp', { route });
 	};
 
-	onClose (e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		Preview.shareTooltipHide();
-		Storage.set('shareTooltip', true);
-	};
-
+	return (
+		<div
+			className="shareTooltip"
+			onClick={onClickHandler}
+		>
+			<Icon className="smile" />
+			<Label text={translate('shareTooltipLabel')} />
+		</div>
+	);
 });
 
 export default ShareTooltip;

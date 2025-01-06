@@ -28,6 +28,8 @@ class Analytics {
 		deleted: 'Deleted',
 		banner: 'Banner',
 		widget: 'Widget',
+		addWidget: 'AddWidget',
+		inWidget: 'InWidget',
 		graph: 'Graph',
 		store: 'Library',
 		type: 'Type',
@@ -47,6 +49,13 @@ class Analytics {
 		allObjects: 'AllObjects',
 		vault: 'Vault',
 		void: 'Void',
+		chat: 'Chat',
+		archive: 'Bin',
+		toast: 'Toast',
+
+		screenDate: 'ScreenDate',
+		screenRelation: 'ScreenRelation',
+		screenType: 'ScreenType',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
@@ -130,7 +139,7 @@ class Analytics {
 		const { config } = S.Common;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
-		const { version, isPackaged } = electron;
+		const { version, isPackaged, userPath } = electron;
 
 		if (!version) {
 			return;
@@ -148,7 +157,7 @@ class Analytics {
 			ret.push(config.channel);
 		};
 
-		C.MetricsSetParameters(platform, ret.join('-'));
+		C.InitialSetParameters(platform, ret.join('-'), userPath(), '', false, false);
 	};
 
 	profile (id: string, networkId: string) {
@@ -181,6 +190,10 @@ class Analytics {
 	};
 
 	setProperty (props: any) {
+		if (!this.instance || !this.isAllowed()) {
+			return;
+		};
+
 		this.instance.setUserProperties(props);
 		this.log(`[Analytics].setProperty: ${JSON.stringify(props, null, 3)}`);
 	};
@@ -383,6 +396,15 @@ class Analytics {
 				break;
 			};
 
+			case 'ClickGridFormula':
+			case 'ChangeGridFormula': {
+				data.format = Number(data.format) || 0;
+				data.format = I.RelationType[data.format];
+				data.type = Number(data.type) || 0;
+				data.type = I.FormulaType[data.type];
+				break;
+			};
+
 			case 'OpenAsObject': {
 				if (data.type == I.BlockType.File) {
 					if (undefined !== data.params?.fileType) {
@@ -498,6 +520,21 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeDateFormat': {
+				data.type = I.DateFormat[Number(data.type)];
+				break;
+			};
+
+			case 'ChangeTimeFormat': {
+				data.type = I.TimeFormat[Number(data.type)];
+				break;
+			};
+
+			case 'ObjectListSort': {
+				data.type = I.SortType[Number(data.type)];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -563,6 +600,8 @@ class Analytics {
 			'main/relation':	 'ScreenRelation',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
+			'main/date':		 'ScreenDate',
+			'main/archive':		 'ScreenBin',
 		};
 
 		return map[key] || '';

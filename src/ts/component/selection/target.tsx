@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import { I, U } from 'Lib';
 
 interface Props {
@@ -10,31 +10,28 @@ interface Props {
 	onContextMenu?(e: any): void;
 };
 
-class SelectionTarget extends React.Component<Props> {
-	
-	public static defaultProps: Props = {
-		id: '',
-		type: I.SelectType.None,
-		style: {},
-		className: '',
-	};
+const SelectionTarget: FC<Props> = ({
+	id = '',
+	className = '',
+	type = I.SelectType.None,
+	children,
+	style = {},
+	onContextMenu,
+}) => {
 
-	render () {
-		const { id, type, children, style, className, onContextMenu } = this.props;
+	const cn = [ 'selectionTarget', className ];
 
-		return (
-			<div 
-				id={`selectionTarget-${id}`} 
-				className={`selectionTarget ${className}`}
-				style={style}
-				onContextMenu={onContextMenu}
-				{...U.Common.dataProps({ id, type })}
-			>
-				{children}
-			</div>
-		);
-	};
-	
+	return (
+		<div 
+			id={`selectionTarget-${id}`} 
+			className={cn.join(' ')}
+			style={style}
+			onContextMenu={onContextMenu}
+			{...U.Common.dataProps({ id, type })}
+		>
+			{children}
+		</div>
+	);
 };
 
 export default SelectionTarget;

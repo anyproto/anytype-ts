@@ -383,6 +383,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const item = view.getFilter(itemId);
+		if (!item) {
+			return [];
+		};
+
 		const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
@@ -625,7 +629,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onCalendar (value: number) {
-		const { getId } = this.props;
+		const { getId, param } = this.props;
+		const { data } = param;
+		const { getView, itemId } = data;
+		const item = getView().getFilter(itemId);
 
 		S.Menu.open('dataviewCalendar', {
 			element: `#${getId()} #value`,
@@ -634,6 +641,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				rebind: this.rebind,
 				value, 
 				canEdit: true,
+				relationKey: item.relationKey,
 				onChange: (value: number) => {
 					this.onChange('value', value);
 				},
@@ -728,14 +736,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	checkClear (v: any) {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).find('.icon.clear').toggleClass('active', v);
 		};
-
-		const node = $(this.node);
-		const clear = node.find('.icon.clear');
-
-		v ? clear.addClass('active') : clear.removeClass('active');
 	};
 
 	onClear (e: any) {

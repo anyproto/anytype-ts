@@ -30,7 +30,10 @@
 			.day.active {
 				.number { padding: 0px; color: var(--color-text-inversion); }
 				.number {
-					.inner { background-color: var(--color-system-accent-100); border-radius: 12px; padding: 0px 8px; align-self: flex-end; min-width: 24px; text-align: center; }
+					.inner { 
+						background-color: var(--color-system-accent-100); border-radius: 12px; padding: 0px 8px; align-self: flex-end; min-width: 24px; text-align: center; 
+						transition: $transitionAllCommon;
+					}
 				}
 			}
 

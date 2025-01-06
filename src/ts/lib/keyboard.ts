@@ -158,7 +158,7 @@ class Keyboard {
 						canClose = false;
 					} else
 					if (selection) {
-						const ids = selection.get(I.SelectType.Block);
+						const ids = selection?.get(I.SelectType.Block) || [];
 						if (ids.length) {
 							canClose = false;
 						};
@@ -283,8 +283,9 @@ class Keyboard {
 	checkSelection () {
 		const range = U.Common.getSelectionRange();
 		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
 
-		if ((range && !range.collapsed) || (selection && selection.get(I.SelectType.Block).length)) {
+		if ((range && !range.collapsed) || ids.length) {
 			return true;
 		};
 
@@ -442,8 +443,9 @@ class Keyboard {
 		};
 
 		const rootId = this.getRootId();
-		const logPath = U.Common.getElectron().logPath();
-		const tmpPath = U.Common.getElectron().tmpPath();
+		const electron = U.Common.getElectron();
+		const logPath = electron.logPath();
+		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
 
 		switch (cmd) {
@@ -561,7 +563,7 @@ class Keyboard {
 			};
 
 			case 'debugTree': {
-				C.DebugTree(rootId, logPath, (message: any) => {
+				C.DebugTree(rootId, logPath, false, (message: any) => {
 					if (!message.error.code) {
 						Renderer.send('openPath', logPath);
 					};
@@ -588,6 +590,43 @@ class Keyboard {
 							});
 						},
 					}
+				});
+				break;
+			};
+
+			case 'debugNet': {
+				const { networkConfig } = S.Auth;
+				const { path } = networkConfig;
+
+				C.DebugNetCheck(path, (message: any) => {
+					const result = String(message.result || '').trim();
+
+					if (!result) {
+						return;
+					};
+
+					S.Popup.open('confirm', {
+						className: 'isWide techInfo isLeft',
+						data: {
+							title: translate('menuHelpNet'),
+							text: U.Common.lbBr(result),
+							textConfirm: translate('commonCopy'),
+							colorConfirm: 'blank',
+							canCancel: false,
+							onConfirm: () => {
+								U.Common.copyToast(translate('libKeyboardNetInformation'), result);
+							},
+						}
+					});
+				});
+				break;
+			};
+
+			case 'debugLog': {
+				C.DebugExportLog(tmpPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('openPath', tmpPath);
+					};
 				});
 				break;
 			};
@@ -788,9 +827,9 @@ class Keyboard {
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat();
 		} else {
-			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
+			isDisabled = [ 'set', 'store', 'graph', 'chat' ].includes(popupMatch.params.action);
 		};
 
 		if (isDisabled) {
@@ -942,6 +981,10 @@ class Keyboard {
 
 	isMainGraph () {
 		return this.isMain() && (this.match?.params?.action == 'graph');
+	};
+
+	isMainChat () {
+		return this.isMain() && (this.match?.params?.action == 'chat');
 	};
 
 	isMainIndex () {

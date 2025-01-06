@@ -1,0 +1,4 @@
+@import "~scss/_mixins";
+
+.floater { position: fixed; pointer-events: none; z-index: 200; transition: opacity $transitionCommon; opacity: 0; }
+.floater.show { opacity: 1; pointer-events: auto; }

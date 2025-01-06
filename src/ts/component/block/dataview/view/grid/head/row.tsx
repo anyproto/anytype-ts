@@ -25,12 +25,13 @@ const HeadRow = observer(class HeadRow extends React.Component<Props> {
 
 		const Row = SortableContainer((item: any) => (
 			<div 
+				id="rowHead"
 				className="rowHead"
 				style={{ gridTemplateColumns: str }}
 			>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={'grid-head-' + relation.relationKey} 
+						key={`grid-head-${relation.relationKey}`} 
 						{...this.props}
 						{...relation}
 						index={i} 

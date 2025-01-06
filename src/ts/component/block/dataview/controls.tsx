@@ -121,10 +121,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				id="dataviewControls"
 				className={cn.join(' ')}
 			>
+				{head}
 				<div className="sides">
 					<div id="dataviewControlsSideLeft" className="side left">
-						{head}
-
 						<div 
 							id="view-selector"
 							className="viewSelect viewItem select"
@@ -536,11 +535,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	toggleHoverArea (v: boolean) {
-		const { block } = this.props;
-		const obj = $(`#block-${block.id}`);
-		const hoverArea = obj.find('.hoverArea');
-
-		v ? hoverArea.addClass('active') : hoverArea.removeClass('active');
+		$(`#block-${this.props.block.id} .hoverArea`).toggleClass('active', v);
 	};
 
 	resize () {
@@ -559,11 +554,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const nw = node.outerWidth();
 
 		let add = false;
-		let close = false;
 
 		if (sideLeft.hasClass('small')) {
 			sideLeft.removeClass('small');
-			close = true;
 		};
 
 		const width = sideLeft.outerWidth() + sideRight.outerWidth();
@@ -578,10 +571,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		if (add) {
 			sideLeft.addClass('small');
-			close = true;
-		};
-
-		if (close) {
+		} else {
 			S.Menu.closeAll([ 'dataviewViewList' ]);
 		};
 	};

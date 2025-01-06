@@ -8,6 +8,7 @@ class BlockStore {
 	public widgetsId = '';
 	public rootId = '';
 	public spaceviewId = '';
+	public workspaceId = '';
 
 	public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
 	public blockMap: Map<string, Map<string, I.Block>> = new Map();
@@ -20,16 +21,20 @@ class BlockStore {
 			profileId: observable,
 			spaceviewId: observable,
 			widgetsId: observable,
+			workspaceId: observable,
 
 			profile: computed,
 			root: computed,
 			spaceview: computed,
 			widgets: computed,
+			workspace: computed,
 
 			rootSet: action,
 			profileSet: action,
 			widgetsSet: action,
 			spaceviewSet: action,
+			workspaceSet: action,
+
 			set: action,
 			clear: action,
 			clearAll: action,
@@ -57,6 +62,10 @@ class BlockStore {
 		return String(this.spaceviewId || '');
 	};
 
+	get workspace (): string {
+		return String(this.workspaceId || '');
+	};
+
 	profileSet (id: string) {
 		this.profileId = String(id || '');
 	};
@@ -71,6 +80,10 @@ class BlockStore {
 
 	spaceviewSet (id: string) {
 		this.spaceviewId = String(id || '');
+	};
+
+	workspaceSet (id: string) {
+		this.workspaceId = String(id || '');
 	};
 	
 	set (rootId: string, blocks: I.Block[]) {
@@ -490,7 +503,7 @@ class BlockStore {
 	toggle (rootId: string, blockId: string, v: boolean) {
 		const element = $(`#block-${blockId}`);
 
-		v ? element.addClass('isToggled') : element.removeClass('isToggled');
+		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
 		
 		U.Common.triggerResizeEditor(keyboard.isPopup());
@@ -520,7 +533,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = S.Detail.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt' ], true);
+				const object = S.Detail.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt', 'timestamp' ], true);
 
 				if (object._empty_) {
 					continue;
@@ -572,8 +585,9 @@ class BlockStore {
 	checkBlockType (rootId: string) {
 		const { header, type } = J.Constant.blockId;
 		const element = this.getMapElement(rootId, header);
+		const canWrite = U.Space.canMyParticipantWrite();
 
-		if (!element) {
+		if (!element || !canWrite) {
 			return;
 		};
 
@@ -591,32 +605,6 @@ class BlockStore {
 	checkBlockTypeExists (rootId: string): boolean {
 		const header = this.getMapElement(rootId, J.Constant.blockId.header);
 		return header ? header.childrenIds.includes(J.Constant.blockId.type) : false;
-	};
-
-	checkBlockChat (rootId: string) {
-		return;
-
-		const element = this.getMapElement(rootId, rootId);
-
-		if (!element) {
-			return;
-		};
-
-		const object = S.Detail.get(rootId, rootId, [ 'layout', 'chatId' ], true);
-		if (U.Object.isChatLayout(object.layout)) {
-			return;
-		};
-
-		if (object.chatId && !this.checkBlockChatExists(rootId)) {
-			const childrenIds = element.childrenIds.concat(J.Constant.blockId.chat);
-
-			this.updateStructure(rootId, rootId, childrenIds);
-		};
-	};
-
-	checkBlockChatExists (rootId: string): boolean {
-		const element = this.getMapElement(rootId, rootId);
-		return element ? element.childrenIds.includes(J.Constant.blockId.chat) : false;
 	};
 
 	getLayoutIds (rootId: string, ids: string[]) {

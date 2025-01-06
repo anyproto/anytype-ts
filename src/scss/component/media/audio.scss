@@ -1,41 +1,44 @@
 @import "~scss/_mixins";
 
-.mediaAudio { width: 100%; }
+.mediaAudio { width: 100%; container-type: inline-size; container-name: media-audio; }
 .mediaAudio {
-    .controls { width: 100%; min-width: 160px; position: relative; text-align: left; color: var(--color-text-primary); }
-    .controls {
-		.input-drag { 
-			.icon { cursor: default; }
+    .controlsWrapper { width: 100%; position: relative; text-align: left; color: var(--color-text-primary); }
+    .controlsWrapper {
+        .name { @include text-common; display: inline-block; vertical-align: top; line-height: 20px; padding-bottom: 3px; }
+        .name {
+			span { display: inline-block; min-width: 100%; height: 100%; @include clamp1; }
 		}
 
-        .name {
-            @include text-common; display: inline-block; vertical-align: top;
-            line-height: 20px; width: calc(100% - 26px);
+        @container media-audio (max-width: 208px) { 
+			.controls { column-gap: 5px; }
+			.timeText { display: none; }
+		}
+
+		.controls { display: flex; align-items: center; column-gap: 10px; }
+        .controls {
+            .icon { width: 20px; height: 20px; vertical-align: top; transition: none; flex-shrink: 0; }
+            .icon.play { background-image: url('~img/icon/audio/play.svg'); margin-left: -4px; }
+            .icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
+            .icon.volume { background-image: url('~img/icon/audio/volume.svg'); }
+            .icon.volume.isMuted { background-image: url('~img/icon/audio/mute.svg'); }
+
+			.volumeWrap { height: 32px; display: flex; align-items: center; }
+
+			.timeDragWrapper { flex: 1 0 auto; }
+            .timeText { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
+
+            .input-drag-horizontal { display: inline-block; vertical-align: top; height: 20px; }
+            .input-drag-horizontal {
+                .icon { width: 6px; height: 6px; border: 0px; background: none; cursor: default; }
+                .bullet { width: 12px; height: 12px; border-radius: 6px; background: var(--color-control-accent); }
+                .fill { height: 4px; background: var(--color-control-accent); transform: translateY(-50%); margin-top: 0px; }
+                .back { width: 100%; height: 4px; background: var(--color-shape-secondary); transform: translateY(-50%); margin-top: 0px; }
+            }
+
         }
-        .name span { display: inline-block; min-width: 100%; height: 100%; @include clamp1; }
-        .icon { vertical-align: top; transition: none; }
-        .icon.play {
-            width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/play.svg'); margin-left: -4px;
-        }
-        .icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
-
-        .icon.volume { width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/volume.svg'); margin-left: -2px; }
-        .icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
-
-        .time { @include text-small; text-align: right; line-height: 20px; position: absolute; right: 0px; bottom: 0px; }
-
-        .input-drag { display: inline-block; vertical-align: top; height: 20px; }
-        .input-drag {
-            .icon { width: 6px; height: 6px; border: 0px; background: none;  }
-            .bullet { width: 6px; height: 6px; border-radius: 100%; background: var(--color-system-accent-100); }
-            .fill { background: var(--color-system-accent-100); }
-            .back { background: var(--color-shape-highlight-medium); }
-        }
-
-        #time { margin: 6px 0px; width: 100%; display: block; }
-        #volume { width: 40px; opacity: 0; transition: opacity $transitionCommon; }
-    }
-    .controls:hover {
-        #volume { opacity: 1; }
+        
+        #timeDrag { margin: 6px 0px; width: 100%; display: block; }
+        
     }
 }
+

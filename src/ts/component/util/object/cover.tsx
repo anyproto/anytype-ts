@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import { Cover, MediaAudio, MediaVideo } from 'Component';
 import { I, S, U } from 'Lib';
 
@@ -6,12 +6,12 @@ interface Props {
 	object: any;
 };
 
-class ObjectCover extends React.Component<Props> {
+const ObjectCover: FC<Props> = ({ 
+	object = {} 
+}) => {
+	object = object || {};
 
-	render () {
-		const object = this.props.object || {};
-		
-		if (!object) {
+	if (!object) {
 			return null;
 		};
 
@@ -55,8 +55,6 @@ class ObjectCover extends React.Component<Props> {
 		};
 
 		return content ? <div className={cn.join(' ')}>{content}</div> : null;
-	};
-	
 };
 
 export default ObjectCover;

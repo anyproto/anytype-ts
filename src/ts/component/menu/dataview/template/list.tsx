@@ -1,10 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, PreviewObject, IconObject } from 'Component';
-import { I, C, S, U, J, translate, keyboard } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, sidebar } from 'Lib';
 import { observer } from 'mobx-react';
 
-const TEMPLATE_WIDTH = 230;
+const TEMPLATE_WIDTH = 224;
 
 const MenuTemplateList = observer(class MenuTemplateList extends React.Component<I.Menu> {
 
@@ -24,7 +24,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		this.onType = this.onType.bind(this);
 		this.setCurrent = this.setCurrent.bind(this);
 		this.getTemplateId = this.getTemplateId.bind(this);
-		this.updateRowLength = this.updateRowLength.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.rebind = this.rebind.bind(this);
 	};
@@ -140,6 +139,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	componentWillUnmount () {
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+		this.unbind();
 	};
 
 	rebind () {
@@ -324,7 +324,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { getId, param } = this.props;
 		const { data } = param;
 		const { onTypeChange } = data;
-		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts()).concat(I.ObjectLayout.Chat);
+		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
 
 		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
@@ -348,13 +348,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				},
 			}
 		});
-	};
-
-	updateRowLength (n: number) {
-		const node = $(this.node);
-		const items = node.find('.items');
-
-		items.css({ 'grid-template-columns': `repeat(${n}, 1fr)` });
 	};
 
 	beforePosition () {

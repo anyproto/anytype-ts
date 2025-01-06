@@ -223,7 +223,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Chat: {
-				canDrop = canSelect = !U.Object.isChatLayout(root.layout);
+				canDrop = canSelect = false;
 				blockComponent = (
 					<BlockChat 
 						key={key} 
@@ -468,7 +468,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	onDragStart (e: any) {
 		e.stopPropagation();
 
-		if (!this._isMounted) {
+		if (!this._isMounted || keyboard.isResizing) {
 			return;
 		};
 		
@@ -484,7 +484,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		keyboard.disableSelection(true);
 
 		if (selection) {
-			if (selection.isSelecting) {
+			if (selection.isSelecting()) {
 				selection.setIsSelecting(false);
 			};
 
@@ -512,15 +512,14 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
+		const offset = element.offset();
+
 		selection.set(I.SelectType.Block, this.ids);
 
 		this.menuOpen({
 			horizontal: I.MenuDirection.Right,
 			offsetX: element.outerWidth(),
-			recalcRect: () => {
-				const offset = element.offset();
-				return { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
-			},
+			rect: { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 },
 		});
 	};
 
@@ -533,8 +532,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			isContextMenuDisabled || 
 			readonly || 
 			(block.isText() && (focused == block.id)) || 
-			block.isTable() || 
-			block.isDataview()
+			!block.canContextMenu()
 		) {
 			return;
 		};
@@ -559,7 +557,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			this.menuOpen({
-				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
+				rect: { x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 },
 			});
 		});
 	};
@@ -910,7 +908,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			let icon = null;
 			if (_empty_) {
-				icon = <Loader type="loader" className={[ 'c' + size, 'inline' ].join(' ')} />;
+				icon = <Loader type={I.LoaderType.Loader} className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {
 				icon = (
 					<IconObject 
@@ -1048,12 +1046,12 @@ const Block = observer(class Block extends React.Component<Props> {
 		node = $(node);
 
 		const items = node.find(Mark.getTag(I.MarkType.Emoji));
-		const { block } = this.props;
-		const size = U.Data.emojiParam(block.content.style);
-
 		if (!items.length) {
 			return;
 		};
+
+		const { block } = this.props;
+		const size = U.Data.emojiParam(block.content.style);
 
 		items.each((i: number, item: any) => {
 			item = $(item);

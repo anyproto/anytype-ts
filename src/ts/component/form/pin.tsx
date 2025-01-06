@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import sha1 from 'sha1';
 import { Input } from 'Component';
 import { keyboard } from 'Lib';
@@ -11,138 +11,89 @@ interface Props {
 	onSuccess?: (value: string) => void;
 	onError?: () => void;
 	isVisible?: boolean;
+	readonly?: boolean;
 };
 
-type State = {
-	index: number;
+interface PinRefProps {
+	clear: () => void;
+	reset: () => void;
+	focus: () => void;
+	getValue: () => string;
 };
-
-/**
- * This component provides an input field for a pin code
- */
 
 const TIMEOUT_DURATION = 150;
 
-class Pin extends React.Component<Props, State> {
+const Pin = forwardRef<PinRefProps, Props>(({
+	isNumeric = false,
+	pinLength = 6,
+	expectedPin = null,
+	focusOnMount = true,
+	isVisible = false,
+	readonly = false,
+	onSuccess = () => {},
+	onError = () => {},
+}, ref) => {
 
-	public static defaultProps = {
-		pinLength: 6,
-		expectedPin: null,
-		focusOnMount: true,
-		isVisible: false,
-		isNumeric: false,
+	const inputRefs = useRef([]);
+	const timeout = useRef(0);
+	const index = useRef(0);
+
+	const rebind = () => {
+		unbind();
+		$(window).on('mousedown.pin', e => e.preventDefault());
 	};
 
-	state = {
-		index: 0,
-	};
-
-	inputRefs = [];
-
-	// This timeout is used so that the input boxes first show the inputted value as text, then hides it as password showing (•)
-	timeout = 0;
-
-	render () {
-		const { pinLength, isNumeric } = this.props;
-		const props: any = {
-			maxLength: 1,
-			onKeyUp: this.onInputKeyUp,
-		};
-
-		if (isNumeric) {
-			props.inputMode = 'numeric';
-		};
-
-		return (
-			<div className="pin" onClick={this.onClick}>
-				{Array(pinLength).fill(null).map((_, i) => (
-					<Input 
-						ref={ref => this.inputRefs[i] = ref} 
-						key={i} 
-						onPaste={e => this.onPaste(e, i)}
-						onFocus={() => this.onInputFocus(i)} 
-						onKeyDown={e => this.onInputKeyDown(e, i)} 
-						onChange={(_, value) => this.onInputChange(i, value)} 
-						{...props}
-					/>
-				))}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		if (this.props.focusOnMount) {
-			this.focus();
-		};
-		this.rebind();
-	};
-
-	componentWillUnmount () {
-		window.clearTimeout(this.timeout);
-		this.unbind();
-	};
-
-	rebind = () => {
-		this.unbind();
-		$(window).on('mousedown.pin', e => { e.preventDefault(); });
-	};
-
-	unbind = () => {
+	const unbind = () => {
 		$(window).off('mousedown.pin');
 	}; 
 
-	focus = () => {
-		this.inputRefs[this.state.index].focus();
+	const focus = () => {
+		inputRefs.current[index.current].focus();
 	};
 
-	onClick = () => {
-		this.focus();
+	const onClick = () => {
+		focus();
 	};
 
 	/** triggers when all the pin characters have been entered in, resetting state and calling callbacks */
-	check = () => {
-		const { expectedPin } = this.props;
-		const pin = this.getValue();
+	const check = () => {
+		const pin = getValue();
 		const success = !expectedPin || (expectedPin === sha1(pin));
-		const onSuccess = this.props.onSuccess || (() => {});
-		const onError = this.props.onError || (() => {});
 
 		success ? onSuccess(pin) : onError();
 	};
 
 	/** returns the pin state stored in the input DOM */
-	getValue = () => {
-		return this.inputRefs.map((input) => input.getValue()).join('');
+	const getValue = () => {
+		return inputRefs.current.map((input) => input.getValue()).join('');
 	};
 
 	/** sets all the input boxes to empty string */
-	clear = () => {
-		for (const i in this.inputRefs) {
-			this.inputRefs[i].setValue('');
+	const clear = () => {
+		for (const i in inputRefs.current) {
+			inputRefs.current[i].setValue('');
 		};
 	};
 
 	/** resets state */
-	reset () {
-		this.setState({ index: 0 }, () => {
-			this.clear();
-			this.focus();
+	const reset = () => {
+		index.current = 0;
+		clear();
+		focus();
 
-			for (const i in this.inputRefs) {
-				this.inputRefs[i].setType('text');
-			};
-		});
+		for (const i in inputRefs.current) {
+			inputRefs.current[i].setType('text');
+		};
 	};
 
 	// Input subcomponent methods
 
-	onInputFocus = (index: number) => {
-		this.setState({ index });
+	const onInputFocus = (idx: number) => {
+		index.current = idx;
 	};
 
-	onInputKeyDown = (e, index: number) => {
-		const { isNumeric } = this.props;
-		const prev = this.inputRefs[index - 1];
+	const onInputKeyDown = (e, index: number) => {
+		const prev = inputRefs.current[index - 1];
 
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
@@ -159,18 +110,15 @@ class Pin extends React.Component<Props, State> {
 		};
 	};
 
-	onInputKeyUp = () => {
-		const { pinLength } = this.props;
-
-		if (this.getValue().length === pinLength) {
-			this.check();
+	const onInputKeyUp = () => {
+		if (getValue().length === pinLength) {
+			check();
 		};
 	};
 
-	onInputChange = (index: number, value: string) => {
-		const { isVisible, isNumeric } = this.props;
-		const input = this.inputRefs[index];
-		const next = this.inputRefs[index + 1];
+	const onInputChange = (index: number, value: string) => {
+		const input = inputRefs.current[index];
+		const next = inputRefs.current[index + 1];
 
 		let newValue = value;
 		if (isNumeric) {
@@ -194,29 +142,75 @@ class Pin extends React.Component<Props, State> {
 		};
 
 		if (!isVisible) {
-			this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
+			window.clearTimeout(timeout.current);
+			timeout.current = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
 		};
 	};
 
-	async onPaste (e: any, index: number) {
+	const onPaste = async (e: any, index: number) => {
 		e.preventDefault();
 
-		const { pinLength } = this.props;
 		const text = await navigator.clipboard.readText();
 		const value = String(text || '').split('');
 
 		for (let i = index; i < pinLength; i++) {
-			const input = this.inputRefs[i];
+			const input = inputRefs.current[i];
 			const char = value[i - index] || '';
 
 			input.setValue(char);
 			input.setType('text');
 		};
 
-		this.inputRefs[pinLength - 1].focus();
-		this.check();
+		inputRefs.current[pinLength - 1].focus();
+		check();
 	};
 
-};
+	useImperativeHandle(ref, () => ({
+		clear,
+		reset,
+		focus,
+		getValue,
+	}));
+
+	useEffect(() => {
+		if (focusOnMount) {
+			window.setTimeout(() => focus(), 10);
+		};
+
+		rebind();
+
+		return () => {
+			window.clearTimeout(timeout.current);
+			unbind();
+		};
+	}, []);
+
+	const props: any = {
+		maxLength: 1,
+		onKeyUp: onInputKeyUp,
+		readonly,
+	};
+
+	if (isNumeric) {
+		props.inputMode = 'numeric';
+	};
+
+	return (
+		<div className="pin" onClick={onClick}>
+			{Array(pinLength).fill(null).map((_, i) => (
+				<Input 
+					ref={ref => inputRefs.current[i] = ref} 
+					key={i} 
+					onPaste={e => onPaste(e, i)}
+					onFocus={() => onInputFocus(i)} 
+					onKeyDown={e => onInputKeyDown(e, i)} 
+					onChange={(_, value) => onInputChange(i, value)}
+					{...props}
+				/>
+			))}
+		</div>
+	);
+
+});
 
 export default Pin;

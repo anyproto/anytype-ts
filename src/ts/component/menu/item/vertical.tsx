@@ -9,12 +9,15 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 
 	render () {
 		const { 
-			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore,
-			className, style, iconSize, switchValue, selectValue, options, readonly, withDefault, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
-			selectMenuParam, subComponent, note, sortArrow
+			icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore,
+			className, style, iconSize, switchValue, selectValue, options, readonly, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
+			selectMenuParam, subComponent, note, sortArrow, isDiv,
 		} = this.props;
-		const cn = [ 'item' ];
+		const id = this.props.id || '';
+		const cn = [];
 		const withArrow = arrow || subComponent;
+
+		isDiv ? cn.push('separator') : cn.push('item');
 
 		let hasClick = true;
 		let iconMainElement = null;
@@ -93,6 +96,9 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		};
 
 		let content = null;
+		if (isDiv) {
+			content = <div className="inner" />;
+		} else
 		if (withDescription) {
 			content = (
 				<React.Fragment>
@@ -158,7 +164,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		return (
 			<div 
 				ref={node => this.node = node}
-				id={'item-' + id} 
+				id={`item-${id}`} 
 				className={cn.join(' ')} 
 				onMouseDown={hasClick ? onClick : undefined}
 				onMouseEnter={onMouseEnter} 
@@ -181,12 +187,9 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 	resize () {
 		const node = $(this.node);
 		
-		if (node.hasClass('withIcon')) {
-			return;
+		if (!node.hasClass('withIcon')) {
+			node.toggleClass('withIconObject', !!node.find('.iconObject').length);
 		};
-
-		const icon = node.find('.iconObject');
-		icon.length ? node.addClass('withIconObject') : node.removeClass('withIconObject');
 	};
 
 };

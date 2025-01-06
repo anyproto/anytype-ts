@@ -8,6 +8,7 @@ import { Popup } from './popup';
 import { Notification } from './notification';
 import { Extension } from './extension';
 import { Chat } from './chat';
+import { Progress } from './progress';
 
 export {
 	Common,
@@ -20,4 +21,5 @@ export {
 	Notification,
 	Extension,
 	Chat,
+	Progress,
 };

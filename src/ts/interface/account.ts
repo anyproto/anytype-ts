@@ -24,6 +24,7 @@ export interface AccountInfo {
 	widgetsId: string;
 	analyticsId: string;
 	networkId: string;
+	workspaceObjectId: string;
 };
 
 export interface AccountConfig {

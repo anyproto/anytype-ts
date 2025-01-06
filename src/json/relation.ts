@@ -24,6 +24,7 @@ export default {
 		'defaultTemplateId',
 		'createdDate',
 		'relationOptionColor',
+		'timestamp',
 	],
 
 	sidebar: [
@@ -50,7 +51,8 @@ export default {
 		'restrictions',
 		'source',
 		'lastModifiedDate',
-		'lastOpenedDate'
+		'lastOpenedDate',
+		'timestamp'
 	],
 
 	relation: [
@@ -72,7 +74,7 @@ export default {
 		'relationDefaultValue',
 		'relationFormatObjectTypes',
 		'sourceObject',
-		'restrictions'
+		'restrictions',
 	],
 
 	cover: [
@@ -117,7 +119,8 @@ export default {
 		'isDeleted',
 		'isArchived',
 		'isFavorite',
-		'restrictions'
+		'restrictions',
+		'timestamp',
 	],
 
 	template: [
@@ -138,7 +141,7 @@ export default {
 		'targetSpaceId',
 		'creator',
 		'createdDate',
-		'spaceMainChatId'
+		'chatId',
 	],
 
 	participant: [
@@ -155,4 +158,8 @@ export default {
 	],
 
 	pageCover: 'pageCover',
+
+	key: {
+		mention: 'mentions',
+	}
 };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, M, C, S, U, keyboard } from 'Lib';
-import { Block, Drag } from 'Component';
+import { Block, DragHorizontal } from 'Component';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
@@ -31,7 +31,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 		};
 
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'layout', 'layoutAlign' ], true);
 		const header = S.Block.getLeaf(rootId, 'header');
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
@@ -45,7 +45,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 		return (
 			<div ref={node => this.node = node}>
 				<div id="editorSize" className="dragWrap">
-					<Drag 
+					<DragHorizontal 
 						ref={ref => this.refDrag = ref} 
 						value={root.fields.width}
 						snaps={[ 0.25, 0.5, 0.75 ]}

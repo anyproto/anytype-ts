@@ -24,7 +24,7 @@
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
 		.icon.options { background-image: url('~img/icon/widget/options.svg'); }
 		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
-		.icon.plus { background-image: url('~img/icon/widget/plus.svg'); }
+		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; position: relative; z-index: 2; }
@@ -104,6 +104,15 @@
 }
 .widget.widgetLink:hover {
 	.head > .flex > .clickable { width: calc(100% - 36px); }
+}
+
+.button.widget { 
+	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; font-weight: 600; padding: 14px 16px;
+	display: flex; position: relative; gap: 0px 12px; justify-content: flex-start; text-align: left;
+}
+.button.widget {
+	.icon { height: 20px; width: 20px; margin: 0px; flex-shrink: 0; }
+	.icon.bin { background-image: url('~img/icon/widget/button/bin.svg'); }
 }
 
 @import "./space";

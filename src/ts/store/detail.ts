@@ -147,7 +147,7 @@ class DetailStore {
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
-	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
+	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean, skipLayoutFormat?: I.ObjectLayout[]): any {
 		let list = this.map.get(rootId)?.get(id) || [];
 		if (!list.length) {
 			return { id, _empty_: true };
@@ -164,21 +164,23 @@ class DetailStore {
 			object[list[i].relationKey] = list[i].value;
 		};
 
-		return this.mapper(object);
+		return this.mapper(object, skipLayoutFormat);
 	};
 
 	/** Mutates object provided and also returns a new object. Sets defaults.
 	 * This Function contains domain logic which should be encapsulated in a model */
-	public mapper (object: any): any {
+	public mapper (object: any, skipLayoutFormat?: I.ObjectLayout[]): any {
 		object = this.mapCommon(object || {});
 
-		const fn = `map${I.ObjectLayout[object.layout]}`;
-		if (this[fn]) {
-			object = this[fn](object);
-		};
+		if (!skipLayoutFormat || !skipLayoutFormat.includes(object.layout)) {
+			const fn = `map${I.ObjectLayout[object.layout]}`;
+			if (this[fn]) {
+				object = this[fn](object);
+			};
 
-		if (U.Object.isInFileLayouts(object.layout)) {
-			object = this.mapFile(object);
+			if (U.Object.isInFileLayouts(object.layout)) {
+				object = this.mapFile(object);
+			};
 		};
 
 		return object;
@@ -276,6 +278,15 @@ class DetailStore {
 	};
 
 	private mapDate (object: any) {
+		object.timestamp = Number(object.timestamp) || 0;
+
+		if (object.timestamp) {
+			const { showRelativeDates, dateFormat } = S.Common;
+			const day = showRelativeDates ? U.Date.dayString(object.timestamp) : null;
+
+			object.name = day ? day : U.Date.dateWithFormat(dateFormat, object.timestamp);
+		};
+
 		return this.mapSet(object);
 	};
 
@@ -294,8 +305,8 @@ class DetailStore {
 		object.readersLimit = Number(object.readersLimit) || 0;
 		object.writersLimit = Number(object.writersLimit) || 0;
 		object.spaceId = Relation.getStringValue(object.spaceId);
-		object.spaceMainChatId = Relation.getStringValue(object.spaceMainChatId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
+		object.chatId = Relation.getStringValue(object.chatId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
 

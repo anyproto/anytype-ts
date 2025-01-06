@@ -40,7 +40,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 		return (
 			<div ref={ref => this.node = ref} className="page pageCreate">
-				{isLoading ? <Loader type="loader" /> : ''}
+				{isLoading ? <Loader type={I.LoaderType.Loader} /> : ''}
 
 				<div className="head">
 					<div className="side left">

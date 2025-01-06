@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { I, U } from 'Lib';
 
@@ -14,41 +14,47 @@ interface Props {
 	onClick?: (e: any) => void;
 };
 
-class Label extends React.Component<Props> {
+const Label: FC<Props> = ({
+	id = '',
+	text = '',
+	color = '',
+	className = '',
+	dataset = {},
+	onClick,
+	onMouseDown,
+	onMouseEnter,
+	onMouseLeave,
+}) => {
+	const nodeRef = useRef<HTMLDivElement | null>(null);
+	const cn = [ 'label' ];
 
-	node: any = null;
-
-	render () {
-		const { id, text, color, className, dataset, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
-		const cn = [ 'label' ];
-
-		if (className) {
-			cn.push(className);
-		};
-
-		if (color) {
-			cn.push(`textColor textColor-${color}`);
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				id={id} 
-				className={cn.join(' ')} 
-				dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} 
-				onClick={onClick}
-				onMouseDown={onMouseDown} 
-				onMouseEnter={onMouseEnter}
-				onMouseLeave={onMouseLeave}
-				{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
-			/>
-		);
+	if (className) {
+		cn.push(className);
 	};
-	
-	componentDidMount () {
-		U.Common.renderLinks($(this.node));
+	if (color) {
+		cn.push(`textColor textColor-${color}`);
 	};
-	
+
+	useEffect(() => {
+		if (nodeRef.current) {
+			U.Common.renderLinks($(nodeRef.current));
+		};
+	}, []);
+
+	return (
+		<div
+			ref={nodeRef}
+			id={id}
+			className={cn.join(' ')}
+			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
+			onClick={onClick}
+			onMouseDown={onMouseDown}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
+		/>
+	);
+
 };
 
 export default Label;

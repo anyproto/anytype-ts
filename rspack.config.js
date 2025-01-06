@@ -1,14 +1,16 @@
 const path = require('path');
 const process = require('process');
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const rspack = require('@rspack/core');
+const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
 
 module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
+	const prod = argv.mode === 'production';
 
 	return {
 		mode: 'development',
@@ -44,6 +46,7 @@ module.exports = (env, argv) => {
 				Interface: path.resolve(__dirname, 'src/ts/interface'),
 				Model: path.resolve(__dirname, 'src/ts/model'),
 				Docs: path.resolve(__dirname, 'src/ts/docs'),
+				Hook: path.resolve(__dirname, 'src/ts/hook'),
 			},
 			modules: [
 				path.resolve('./src/'),
@@ -52,16 +55,18 @@ module.exports = (env, argv) => {
 				path.resolve('./node_modules')
 			]
 		},
+
+		watchOptions: {
+			ignored: /node_modules/,
+			poll: false,
+		},
 		
 		devServer: {
 			hot: true,
-			static: {
-				directory: path.join(__dirname, 'dist'),
-				watch: {
-					ignored: [
-						path.resolve(__dirname, 'dist'),
-						path.resolve(__dirname, 'node_modules')
-					],
+			static: ['dist'],
+			watchFiles: {
+				paths: ['src'],
+				options: {
 					usePolling: false,
 				},
 			},
@@ -70,15 +75,64 @@ module.exports = (env, argv) => {
 			port,
 			client: {
 				progress: false,
+				overlay: {
+					runtimeErrors: (error) => {
+						if (error.message === 'ResizeObserver loop completed with undelivered notifications.') {
+						  return false;
+						}
+				
+						return true;
+					  },
+				},
 			},
 		},
 	
 		module: {
 			rules: [
 				{
-					test: /\.ts(x?)$/,
-					exclude: /node_modules/,
-					loader: 'ts-loader'
+					test: /\.(j|t)s$/,
+					exclude: [/[\\/]node_modules[\\/]/],
+					loader: 'builtin:swc-loader',
+					options: {
+						jsc: {
+							parser: {
+								syntax: 'typescript',
+							},
+							transform: {
+								react: {
+									runtime: 'automatic',
+									development: !prod,
+									refresh: !prod,
+								},
+							},
+						},
+						env: {
+							targets: 'Chrome >= 48',
+						},
+					},
+				},
+				{
+					test: /\.(j|t)sx$/,
+					loader: 'builtin:swc-loader',
+					exclude: [/[\\/]node_modules[\\/]/],
+					options: {
+						jsc: {
+							parser: {
+								syntax: 'typescript',
+								tsx: true,
+							},
+							transform: {
+								react: {
+									runtime: 'automatic',
+									development: !prod,
+									refresh: !prod,
+								},
+							},
+						},
+						env: {
+							targets: 'Chrome >= 48', // browser compatibility
+						},
+					},
 				},
 				{
 					enforce: 'pre',
@@ -87,11 +141,11 @@ module.exports = (env, argv) => {
 				},
 				{
 					test: /\.(eot|ttf|otf|woff|woff2)$/,
-					loader: 'url-loader'
+					type: 'asset/inline'
 				},
 				{
 					test: /\.(jpe?g|png|gif|svg)$/,
-					loader: 'url-loader'
+					type: 'asset/inline'
 				},
 				{
 					test: /\.s?css/,
@@ -103,18 +157,26 @@ module.exports = (env, argv) => {
 				}
 			]
 		},
-		plugins: [
-			//new BundleAnalyzerPlugin(),
 
-			new webpack.optimize.LimitChunkCountPlugin({
+		plugins: [
+			!prod && new ReactRefreshPlugin(),
+			process.env.RSDOCTOR && new RsdoctorRspackPlugin({}),
+			
+			new ForkTsCheckerWebpackPlugin(),
+
+			// new rspack.IgnorePlugin({
+			// 	resourceRegExp: /osx-temperature-sensor/,
+			// }),
+
+			new rspack.optimize.LimitChunkCountPlugin({
 				maxChunks: 1,
 			}),
 
-			new CopyWebpackPlugin({
+			new rspack.CopyRspackPlugin({
 				patterns: [
 					{ from: cMapsDir, to: './cmaps/' },
 				],
 			}),
-		],
+		].filter(Boolean),
 	};
 };

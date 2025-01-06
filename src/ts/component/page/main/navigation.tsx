@@ -293,6 +293,10 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 	
 	onKeyDown (e: any) {
+		if (S.Popup.isOpen('search')) {
+			return;
+		};
+
 		const items = this.getItems();
 		const l = items.length;
 
@@ -399,8 +403,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 	loadPage (id: string) {
 		const { loading } = this.state;
+		const skipIds = U.Space.getSystemDashboardIds();
 
-		if (!id || [ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(id as any)) {
+		if (!id || skipIds.includes(id as any)) {
 			return;
 		};
 
@@ -466,7 +471,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	getRootId () {
 		const { rootId, match } = this.props;
 
-		let root = rootId ? rootId : match.params.id;
+		let root = rootId ? rootId : match?.params?.id;
 		if (root == I.HomePredefinedId.Graph) {
 			root = U.Space.getLastOpened()?.id;
 		};

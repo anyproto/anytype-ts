@@ -1,101 +1,42 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React, { forwardRef, useRef, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Footer, Icon, ListObjectManager } from 'Component';
+import { Title, Footer, Icon, ListManager } from 'Component';
 import { I, U, J, translate, Action, analytics } from 'Lib';
 
-const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
+const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
-	refManager: any = null;
-	rowLength = 0;
+	const { isPopup } = props;
+	const nodeRef = useRef(null);
+	const managerRef = useRef(null);
+	const [ rowLength, setRowLength ] = useState(0);
 
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onRestore = this.onRestore.bind(this);
-		this.onRemove = this.onRemove.bind(this);
-		this.resize = this.resize.bind(this);
-		this.getRowLength = this.getRowLength.bind(this);
-	};
-	
-	render () {
-		const filters: I.Filter[] = [
-			{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
-		];
-		const sorts: I.Sort[] = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
-		];
-
-		const buttons: I.ButtonComponent[] = [
-			{ icon: 'restore', text: translate('commonRestore'), onClick: this.onRestore },
-			{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: this.onRemove }
-		];
-
-		return (
-			<div className="wrapper">
-				<div className="body">
-					<div className="titleWrapper">
-						<Icon className="archive" />
-						<Title text={translate('commonBin')} />
-					</div>
-
-					<ListObjectManager
-						ref={ref => this.refManager = ref}
-						subId={J.Constant.subId.archive}
-						filters={filters}
-						sorts={sorts}
-						rowLength={this.getRowLength()}
-						withArchived={true}
-						buttons={buttons}
-						iconSize={48}
-						resize={this.resize}
-						textEmpty={translate('pageMainArchiveEmpty')}
-						isReadonly={!U.Space.canMyParticipantWrite()}
-					/>
-				</div>
-
-				<Footer component="mainObject" />
-			</div>
-		);
+	const onRestore = () => {
+		Action.restore(managerRef.current?.getSelected(), analytics.route.archive);
+		selectionClear();
 	};
 
-	componentDidMount () {
-		analytics.event('ScreenBin');
+	const onRemove = () => {
+		Action.delete(managerRef.current?.getSelected(), 'Bin', () => selectionClear());
 	};
 
-	onRestore () {
-		if (!this.refManager) {
-			return;
-		};
-
-		Action.restore(this.refManager.selected || []);
-		this.selectionClear();
+	const selectionClear = () => {
+		managerRef.current?.selectionClear();
 	};
 
-	onRemove () {
-		Action.delete(this.refManager?.selected || [], 'Bin', () => this.selectionClear());
+	const getRowLength = () => {
+		return U.Common.getWindowDimensions().ww <= 940 ? 2 : 3;
 	};
 
-	selectionClear () {
-		this.refManager?.selectionClear();
-	};
-
-	getRowLength () {
-		const { ww } = U.Common.getWindowDimensions();
-		return ww <= 940 ? 2 : 3;
-	};
-
-	resize () {
-		const { isPopup } = this.props;
+	const resize = () => {
 		const win = $(window);
 		const container = U.Common.getPageContainer(isPopup);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(nodeRef.current);
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = J.Size.header;
 		const wh = isPopup ? container.height() : win.height();
-		const rowLength = this.getRowLength();
+		const rl = getRowLength();
 
 		node.css({ height: wh });
 		
@@ -107,12 +48,54 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 			content.css({ minHeight: '', height: '' });
 		};
 
-		if (this.rowLength != rowLength) {
-			this.rowLength = rowLength;
-			this.forceUpdate();
-		};	
+		if (rowLength != rl) {
+			setRowLength(rl);
+		};
 	};
 
-});
+	const filters: I.Filter[] = [
+		{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
+	];
+	const sorts: I.Sort[] = [
+		{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+	];
+
+	const buttons: I.ButtonComponent[] = [
+		{ icon: 'restore', text: translate('commonRestore'), onClick: onRestore },
+		{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: onRemove }
+	];
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
+
+	return (
+		<div ref={nodeRef} className="wrapper">
+			<div className="body">
+				<div className="titleWrapper">
+					<Icon className="archive" />
+					<Title text={translate('commonBin')} />
+				</div>
+
+				<ListManager
+					ref={managerRef}
+					subId={J.Constant.subId.archive}
+					filters={filters}
+					sorts={sorts}
+					rowLength={getRowLength()}
+					ignoreArchived={false}
+					buttons={buttons}
+					iconSize={48}
+					resize={resize}
+					textEmpty={translate('pageMainArchiveEmpty')}
+					isReadonly={!U.Space.canMyParticipantWrite()}
+				/>
+			</div>
+
+			<Footer component="mainObject" />
+		</div>
+	);
+
+}));
 
 export default PageMainArchive;

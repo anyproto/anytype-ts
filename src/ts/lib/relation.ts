@@ -103,6 +103,98 @@ class Relation {
 		return ret;
 	};
 
+	public formulaByType (relationKey: string, type: I.RelationType): { id: string, name: string, short?: string, section: I.FormulaSection }[] {
+		const relation = S.Record.getRelationByKey(relationKey);
+		if (!relation) {
+			return [];
+		};
+
+		const isArrayType = this.isArrayType(type);
+		const skipEmptyKeys = [
+			'type', 
+			'creator', 
+			'createdDate', 
+			'addedDate',
+		];
+		const skipEmpty = [ 
+			I.FormulaType.CountEmpty, 
+			I.FormulaType.CountNotEmpty,
+			I.FormulaType.PercentEmpty,
+			I.FormulaType.PercentNotEmpty,
+		];
+		const skipUnique = [
+			I.FormulaType.CountValue,
+		];
+
+		const common = [
+			{ id: I.FormulaType.Count, name: translate('formulaCount'), section: I.FormulaSection.Count },
+			{ id: I.FormulaType.CountValue, name: translate('formulaValue'), short: translate('formulaValueShort'), section: I.FormulaSection.Count },
+			{ id: I.FormulaType.CountDistinct, name: translate('formulaDistinct'), short: translate('formulaDistinctShort'), section: I.FormulaSection.Count },
+			{ id: I.FormulaType.CountEmpty, name: translate('formulaEmpty'), short: translate('formulaEmptyShort'), section: I.FormulaSection.Count },
+			{ id: I.FormulaType.CountNotEmpty, name: translate('formulaNotEmpty'), short: translate('formulaNotEmptyShort'), section: I.FormulaSection.Count },
+			{ id: I.FormulaType.PercentEmpty, name: translate('formulaPercentEmpty'), short: translate('formulaEmptyShort'), section: I.FormulaSection.Percent },
+			{ id: I.FormulaType.PercentNotEmpty, name: translate('formulaPercentNotEmpty'), short: translate('formulaNotEmptyShort'), section: I.FormulaSection.Percent },
+		];
+
+		let ret: any[] = [
+			{ id: I.FormulaType.None, name: translate('commonNone') },
+		];
+
+		switch (type) {
+			case I.RelationType.Date: {
+				ret = ret.concat([
+					...common,
+					{ id: I.FormulaType.MathMin, name: translate('formulaDateMin'), short: translate('formulaDateMinShort'), section: I.FormulaSection.Date },
+					{ id: I.FormulaType.MathMax, name: translate('formulaDateMax'), short: translate('formulaDateMaxShort'), section: I.FormulaSection.Date },
+					{ id: I.FormulaType.Range, name: translate('formulaDateRange'), short: translate('formulaDateRangeShort'), section: I.FormulaSection.Date },
+				]);
+				break;
+			};
+
+			case I.RelationType.Checkbox: {
+				ret = ret.concat([
+					{ id: I.FormulaType.Count, name: translate('formulaCheckboxCount'), short: translate('formulaCount'), section: I.FormulaSection.Count },
+					{ id: I.FormulaType.CountNotEmpty, name: translate('formulaCheckboxNotEmpty'), short: translate('formulaCheckboxNotEmptyShort'), section: I.FormulaSection.Count },
+					{ id: I.FormulaType.CountEmpty, name: translate('formulaCheckboxEmpty'), short: translate('formulaCheckboxEmptyShort'), section: I.FormulaSection.Count },
+					{ id: I.FormulaType.PercentNotEmpty, name: translate('formulaCheckboxPercentNotEmpty'), short: translate('formulaNotEmptyShort'), section: I.FormulaSection.Percent },
+					{ id: I.FormulaType.PercentEmpty, name: translate('formulaCheckboxPercentEmpty'), short: translate('formulaEmptyShort'), section: I.FormulaSection.Percent },
+				]);
+				break;
+			};
+
+			case I.RelationType.Number: {
+				ret = ret.concat([
+					...common,
+					{ id: I.FormulaType.MathSum, name: translate('formulaSum'), section: I.FormulaSection.Math },
+					{ id: I.FormulaType.MathAverage, name: translate('formulaAverage'), section: I.FormulaSection.Math },
+					{ id: I.FormulaType.MathMedian, name: translate('formulaMedian'), section: I.FormulaSection.Math },
+					{ id: I.FormulaType.MathMin, name: translate('formulaMin'), section: I.FormulaSection.Math },
+					{ id: I.FormulaType.MathMax, name: translate('formulaMax'), section: I.FormulaSection.Math },
+					{ id: I.FormulaType.Range, name: translate('formulaRange'), section: I.FormulaSection.Math },
+				]);
+				break;
+			};
+			
+			default: {
+				ret = ret.concat(common);
+				break;
+			};
+
+		};
+
+		if (skipEmptyKeys.includes(relationKey)) {
+			ret = ret.filter(it => !skipEmpty.includes(it.id));
+		};
+		if (relation.maxCount == 1) {
+			ret = ret.filter(it => !skipUnique.includes(it.id));
+		};
+		if (!isArrayType) {
+			ret = ret.filter(it => ![ I.FormulaType.CountValue ].includes(it.id));
+		};
+
+		return U.Menu.prepareForSelect(ret);
+	};
+
 	public filterConditionsDictionary () {
 		return [ 
 			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
@@ -473,7 +565,7 @@ class Relation {
 	};
 
 	public isEmpty (v: any) {
-		return (v === null) || (v === undefined) || (v === '');
+		return (v === null) || (v === undefined) || (v === '') || (Array.isArray(v) && !v.length);
 	};
 
 	public isUrl (type: I.RelationType) {
@@ -484,11 +576,15 @@ class Relation {
 		return this.isUrl(type) || [ I.RelationType.Number, I.RelationType.ShortText ].includes(type);
 	};
 
+	public isDate (type: I.RelationType) {
+		return type == I.RelationType.Date;
+	};
+
 	public getUrlScheme (type: I.RelationType, value: string): string {
 		value = String(value || '');
 
 		let ret = '';
-		if (type == I.RelationType.Url && !value.match(/:\/\//)) {
+		if (type == I.RelationType.Url) {
 			ret = 'http://';
 		};
 		if (type == I.RelationType.Email) {
@@ -498,6 +594,17 @@ class Relation {
 			ret = 'tel:';
 		};
 		return ret;
+	};
+
+	public checkUrlScheme (type: I.RelationType, value: string): string {
+		value = String(value || '');
+
+		if (!value) {
+			return '';
+		};
+		
+		const scheme = U.Common.getScheme(value);
+		return scheme ? value : this.getUrlScheme(type, value) + value;
 	};
 
 	public getSetOfObjects (rootId: string, objectId: string, layout: I.ObjectLayout): any[] {

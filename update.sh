@@ -11,7 +11,7 @@ folder="build";
 if [ "$platform" = "ubuntu-latest" ]; then
   arch="linux-$arch";
   folder="$arch";
-elif [ "$platform" = "macos-12" ]; then
+elif [ "$platform" = "macos-13" ] || [ "$platform" = "macos-latest" ]; then
   arch="darwin-$arch";
   folder="$arch";
 elif [ "$platform" = "windows-latest" ]; then
@@ -34,7 +34,7 @@ mwv=`cat middleware.version`
 version=`curl -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases/tags/v$mwv | jq .`
 
 tag=`echo $version | jq ".tag_name"`
-asset_id=`echo $version | jq ".assets | map(select(.name | match(\"js_v[0-9]+.[0-9]+.[0-9]+(-rc[0-9]+)?_$arch\";\"i\")))[0].id"`
+asset_id=`echo $version | jq ".assets | map(select(.name | match(\"js_v[0-9]+.[0-9]+.[0-9]+([^_]+)?_$arch\";\"i\")))[0].id"`
 
 if [ "$asset_id" = "" ]; then
   echo "ERROR: version not found"
