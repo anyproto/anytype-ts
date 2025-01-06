@@ -38,7 +38,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	render (): React.ReactNode {
 		const { parent, block, isSystemTarget, onCreate } = this.props;
 		const { viewId, limit, layout } = parent.content;
-		const { targetBlockId } = block.content;
+		const targetId = block ? block.getTargetObjectId() : '';
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
