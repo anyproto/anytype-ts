@@ -64,7 +64,6 @@ import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewCalendarDay from './dataview/calendar/day';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
-import MenuDataviewDate from './dataview/date';
 import MenuDataviewText from './dataview/text';
 import MenuDataviewSource from './dataview/source';
 import MenuDataviewContext from './dataview/context';
@@ -145,7 +144,6 @@ const Components: any = {
 	dataviewViewLayout:	 	 MenuDataviewViewLayout,
 	dataviewCalendar:		 MenuDataviewCalendar,
 	dataviewCalendarDay:	 MenuDataviewCalendarDay,
-	dataviewDate:			 MenuDataviewDate,
 	dataviewText:			 MenuDataviewText,
 	dataviewSource:			 MenuDataviewSource,
 	dataviewContext:		 MenuDataviewContext,

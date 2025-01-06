@@ -53,7 +53,6 @@ export default {
 	relationEdit: [
 		'select',
 		'searchObject',
-		'dataviewDate',
 		'dataviewObjectValues',
 		'dataviewObjectList'
 	],

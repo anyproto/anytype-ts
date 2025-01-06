@@ -1444,11 +1444,6 @@
 
 	"menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
 
-	"menuDataviewDateDateFormat": "Date format",
-	"menuDataviewDateTimeFormat": "Time format",
-	"menuDataviewDate12Hour": "12 hour",
-	"menuDataviewDate24Hour": "24 hour",
-
 	"menuDataviewFileValuesFindAFile": "Find a file...",
 
 	"menuDataviewFilterValuesChecked": "Checked",
@@ -2283,6 +2278,9 @@
 	"formulaCheckboxNotEmpty": "Count checked",
 	"formulaCheckboxNotEmptyShort": "Checked",
 	"formulaCheckboxPercentEmpty": "Percentage unchecked",
-	"formulaCheckboxPercentNotEmpty": "Percentage checked"
+	"formulaCheckboxPercentNotEmpty": "Percentage checked",
+
+	"timeFormat12": "12 hour",
+	"timeFormat24": "24 hour"
 
 }
