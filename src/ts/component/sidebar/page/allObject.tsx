@@ -314,7 +314,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const option = this.getSortOption();
-		const template = S.Record.getTemplateType();
 		const limit = this.offset + J.Constant.limit.menuRecords;
 		const fileLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Pdf ];
 		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
@@ -322,7 +321,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Participant },
-			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: template?.id },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 
 		if (option) {

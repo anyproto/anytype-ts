@@ -1,259 +1,73 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Deleted, HeadSimple } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate, sidebar } from 'Lib';
 
-interface State {
-	isLoading: boolean;
-	isDeleted: boolean;
-};
+const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-const PageMainType = observer(class PageMainType extends React.Component<I.PageComponent, State> {
+	const { isPopup, match } = props;
+	const [ isLoading, setIsLoading ] = useState(false);
+	const headerRef = useRef(null);
+	const headRef = useRef(null);
+	const rootId = props.rootId || match?.params?.id;
+	const type = S.Detail.get(rootId, rootId, U.Data.typeRelationKeys());
+	const subIdTemplate = S.Record.getSubId(rootId, 'templates');
+	const subIdObject = S.Record.getSubId(rootId, 'data');
+	const idRef = useRef(null);
+	const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(type.recommendedLayout) && (type.uniqueKey != J.Constant.typeKey.template);
 
-	_isMounted = false;
-	id = '';
-	refHeader: any = null;
-	refHead: any = null;
-	refControls: any = null;
-	refListPreview: any = null;
-	timeout = 0;
-	page = 0;
-
-	state = {
-		isLoading: false,
-		isDeleted: false,
-	};
-
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onTemplateAdd = this.onTemplateAdd.bind(this);
-		this.onObjectAdd = this.onObjectAdd.bind(this);
-		this.onSetAdd = this.onSetAdd.bind(this);
-		this.onCreate = this.onCreate.bind(this);
-		this.onMore = this.onMore.bind(this);
-		this.onEdit = this.onEdit.bind(this);
-	};
-
-	render () {
-		const { isLoading, isDeleted } = this.state;
-
-		if (isDeleted) {
-			return <Deleted {...this.props} />;
-		};
-
-		const rootId = this.getRootId();
-		const type = this.getObject();
-
-		if (!type) {
-			return null;
-		};
-
-		const recommended = Relation.getArrayValue(type.recommendedRelations).map(id => S.Record.getRelationById(id)).filter(it => it).map(it => it.relationKey);
-
-		const subIdTemplate = this.getSubIdTemplate();
-		const subIdObject = this.getSubIdObject();
-
-		const showTemplates = this.showTemplates();
-
-		const allowedObject = this.isAllowedObject();
-		const allowedTemplate = this.isAllowedTemplate();
-
-		const templates = S.Record.getRecordIds(subIdTemplate, '');
-		const totalObject = S.Record.getMeta(subIdObject, '').total;
-		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
-
-		const isFileType = U.Object.isInFileLayouts(type.recommendedLayout);
-		const columns: any[] = [
-			{
-				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: v => v ? U.Date.dateWithFormat(S.Common.dateFormat, v) : '',
-			},
-		];
-
-		if (!isFileType) {
-			columns.push({ relationKey: 'creator', name: translate('commonOwner'), isObject: true });
-		};
-
-		return (
-			<div>
-				<Header
-					{...this.props}
-					component="mainObject"
-					ref={ref => this.refHeader = ref}
-					rootId={rootId}
-				/>
-
-				{isLoading ? <Loader id="loader" /> : ''}
-
-				<div className="blocks wrapper">
-					<HeadSimple
-						{...this.props}
-						ref={ref => this.refHead = ref}
-						placeholder={translate('defaultNameType')}
-						rootId={rootId}
-						onEdit={this.onEdit}
-					/>
-
-					{showTemplates ? (
-						<div className="section template">
-							<div className="title">
-								<div className="side left">
-									{U.Common.plural(totalTemplate, translate('pluralTemplate'))}
-									<span className="cnt">{totalTemplate}</span>
-								</div>
-
-								<div className="side right">
-									{allowedTemplate ? (
-										<Icon
-											className="plus withBackground"
-											tooltip={translate('commonCreateNewTemplate')}
-											onClick={this.onTemplateAdd}
-										/>
-									) : ''}
-								</div>
-							</div>
-
-							{totalTemplate ? (
-								<div className="content">
-									<ListObjectPreview
-										key="listTemplate"
-										getItems={() => S.Record.getRecords(subIdTemplate, [])}
-										canAdd={allowedTemplate}
-										onAdd={this.onTemplateAdd}
-										onMenu={allowedTemplate ? (e: any, item: any) => this.onMenu(item) : null}
-										onClick={(e: any, item: any) => this.templateOpen(item)}
-										withBlank={true}
-										blankId={J.Constant.templateId.blank}
-										defaultId={type.defaultTemplateId || J.Constant.templateId.blank}
-									/>
-								</div>
-							) : (
-								<div className="empty">
-									{translate('pageMainTypeNoTemplates')}
-								</div>
-							)}
-						</div>
-					) : ''}
-
-					{type.isInstalled ? (
-						<div className="section set">
-							<div className="title">
-								<div className="side left">
-									{U.Common.plural(totalObject, translate('pluralObject'))}
-									<span className="cnt">{totalObject}</span>
-								</div>
-
-								<div className="side right">
-									<Icon
-										id="button-create"
-										className="more withBackground"
-										onClick={this.onMore}
-									/>
-
-									{allowedObject ? (
-										<Icon
-											className="plus withBackground"
-											tooltip={translate('commonCreateNewObject')}
-											onClick={this.onCreate}
-										/>
-									) : ''}
-								</div>
-							</div>
-							<div className="content">
-								<ListObject
-									{...this.props}
-									sources={[ rootId ]}
-									spaceId={type.spaceId}
-									subId={subIdObject}
-									rootId={rootId}
-									columns={columns}
-									relationKeys={recommended}
-									route={analytics.route.screenType}
-								/>
-							</div>
-						</div>
-					) : ''}
-				</div>
-
-				<Footer component="mainObject" {...this.props} />
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-		this.open();
-	};
-
-	componentDidUpdate () {
-		this.open();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.close();
-	};
-
-	open () {
-		const rootId = this.getRootId();
-
-		if (this.id == rootId) {
+	const open = () => {
+		if (idRef.current == rootId) {
 			return;
 		};
 
-		this.close();
-		this.id = rootId;
-		this.setState({ isLoading: true });
+		close();
+		setIsLoading(true);
+
+		idRef.current = rootId;
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+			setIsLoading(false);
+
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
 			const object = S.Detail.get(rootId, rootId, []);
 			if (object.isDeleted) {
-				this.setState({ isDeleted: true, isLoading: false });
 				return;
 			};
 
-			this.refHeader?.forceUpdate();
-			this.refHead?.forceUpdate();
-			this.refControls?.forceUpdate();
+			headerRef.current.forceUpdate();
+			headRef.current.forceUpdate();
 			sidebar.rightPanelSetState({ rootId });
-			this.setState({ isLoading: false });
-			this.loadTemplates();
+			
+			loadTemplates();
 		});
 	};
 
-	close () {
-		if (!this.id) {
+	const close = () => {
+		if (!idRef.current) {
 			return;
 		};
 
-		const { isPopup, match } = this.props;
-		const close = !(isPopup && (match?.params?.id == this.id));
+		const close = !(isPopup && (match?.params?.id == idRef.current));
 
 		if (close) {
-			Action.pageClose(this.id, true);
+			Action.pageClose(idRef.current, true);
 		};
 	};
 
-	loadTemplates () {
-		const type = this.getObject();
-		if (!type) {
-			return;
-		};
-
-		const template = S.Record.getTemplateType();
+	const loadTemplates = () => {
+		const type = S.Detail.get(rootId, rootId);
 
 		U.Data.searchSubscribe({
 			spaceId: type.spaceId,
-			subId: this.getSubIdTemplate(),
+			subId: subIdTemplate,
 			filters: [
 				{ relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: type.id },
-				{ relationKey: 'type', condition: I.FilterCondition.Equal, value: template.id },
+				{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.Equal, value: J.Constant.typeKey.template },
 			],
 			sorts: [
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
@@ -263,12 +77,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
-	onTemplateAdd () {
-		const type = this.getObject();
-		if (!type) {
-			return;
-		};
-
+	const onTemplateAdd = () => {
 		const details: any = {
 			targetObjectType: type.id,
 			layout: type.recommendedLayout,
@@ -282,34 +91,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: type.id, route: analytics.route.store });
 
-			this.templateOpen(message.details);
+			templateOpen(message.details);
 		});
 	};
 
-	templateOpen (object: any) {
+	const templateOpen = (object: any) => {
 		U.Object.openConfig(object, {
 			onClose: () => $(window).trigger(`updatePreviewObject.${object.id}`)
 		});
 	};
 
-	showTemplates (): boolean {
-		const type = this.getObject();
-		if (!type) {
-			return false;
-		};
-
-		return !U.Object.getLayoutsWithoutTemplates().includes(type.recommendedLayout) && (type.uniqueKey != J.Constant.typeKey.template);
-	};
-
-	isAllowedTemplate (): boolean {
-		const type = this.getObject();
-
-		return type?.isInstalled && this.isAllowedObject() && this.showTemplates();
-	};
-
-	isAllowedObject (): boolean {
-		const type = this.getObject();
-
+	const isAllowedObject = (): boolean => {
 		if (!type || !type.isInstalled) {
 			return false;
 		};
@@ -335,20 +127,15 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		return ret;
 	};
 
-	onCreate () {
-		const type = this.getObject();
-		if (!type) {
-			return;
-		};
-
+	const onCreate = () => {
 		if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
-			this.onBookmarkAdd();
+			onBookmarkAdd();
 		} else {
-			this.onObjectAdd();
+			onObjectAdd();
 		};
 	};
 
-	onMore () {
+	const onMore = () => {
 		const options = [
 			{ id: 'set', name: translate('pageMainTypeNewSetOfObjects') }
 		];
@@ -363,7 +150,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					switch (item.id) {
 
 						case 'set':
-							this.onSetAdd();
+							onSetAdd();
 							break;
 					};
 				},
@@ -371,19 +158,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
-	onEdit () {
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-
+	const onEdit = () => {
 		sidebar.rightPanelToggle(true, isPopup, 'type', { rootId });
 	};
 
-	onObjectAdd () {
-		const type = this.getObject();
-		if (!type) {
-			return;
-		};
-
+	const onObjectAdd = () => {
 		const details: any = {};
 
 		if (U.Object.isInSetLayouts(type.recommendedLayout)) {
@@ -402,7 +181,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
-	onBookmarkAdd () {
+	const onBookmarkAdd = () => {
 		S.Menu.open('dataviewCreateBookmark', {
 			type: I.MenuType.Horizontal,
 			element: `#button-create`,
@@ -413,12 +192,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
-	onSetAdd () {
-		const type = this.getObject();
-		if (!type) {
-			return;
-		};
-
+	const onSetAdd = () => {
 		const details = {
 			name: U.Common.sprintf(translate('commonSetName'), type.name),
 			iconEmoji: type.iconEmoji,
@@ -432,14 +206,9 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
-	onMenu (item: any) {
+	const onMenu = (item: any) => {
 		if (S.Menu.isOpen('dataviewTemplateContext', item.id)) {
 			S.Menu.close('dataviewTemplateContext');
-			return;
-		};
-
-		const type = this.getObject();
-		if (!type) {
 			return;
 		};
 
@@ -474,7 +243,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						U.Object.setDefaultTemplateId(type.id, template.id);
 					},
 					onDuplicate: (object: any) => {
-						this.templateOpen(object);
+						templateOpen(object);
 					},
 					onArchive: () => {
 						if (template.isDefault) {
@@ -486,24 +255,142 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
-	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+	const recommended = Relation.getArrayValue(type.recommendedRelations).map(id => S.Record.getRelationById(id)).filter(it => it).map(it => it.relationKey);
+	const allowedObject = isAllowedObject();
+	const isAllowedTemplate = type?.isInstalled && isAllowedObject() && canShowTemplates;
+	const templates = S.Record.getRecordIds(subIdTemplate, '');
+	const totalObject = S.Record.getMeta(subIdObject, '').total;
+	const totalTemplate = templates.length + (isAllowedTemplate ? 1 : 0);
+	const isFileType = U.Object.isInFileLayouts(type.recommendedLayout);
+	const columns: any[] = [
+		{
+			relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
+			mapper: v => v ? U.Date.dateWithFormat(S.Common.dateFormat, v) : '',
+		},
+	];
+
+	if (!isFileType) {
+		columns.push({ relationKey: 'creator', name: translate('commonOwner'), isObject: true });
 	};
 
-	getObject () {
-		const rootId = this.getRootId();
-		return S.Detail.get(rootId, rootId, U.Data.typeRelationKeys());
+	useEffect(() => {
+		return () => close();
+	}, []);
+
+	useEffect(() => open());
+
+	let content = null;
+	if (type.isDeleted) {
+		content = <Deleted {...props} />;
+	} else {
+		content = (
+			<div>
+				<Header
+					{...props}
+					component="mainObject"
+					ref={headerRef}
+					rootId={rootId}
+				/>
+
+				{isLoading ? <Loader id="loader" /> : ''}
+
+				<div className="blocks wrapper">
+					<HeadSimple
+						{...props}
+						ref={headRef}
+						placeholder={translate('defaultNameType')}
+						rootId={rootId}
+						onEdit={onEdit}
+					/>
+
+					{canShowTemplates ? (
+						<div className="section template">
+							<div className="title">
+								<div className="side left">
+									{U.Common.plural(totalTemplate, translate('pluralTemplate'))}
+									<span className="cnt">{totalTemplate}</span>
+								</div>
+
+								<div className="side right">
+									{isAllowedTemplate ? (
+										<Icon
+											className="plus withBackground"
+											tooltip={translate('commonCreateNewTemplate')}
+											onClick={onTemplateAdd}
+										/>
+									) : ''}
+								</div>
+							</div>
+
+							{totalTemplate ? (
+								<div className="content">
+									<ListObjectPreview
+										key="listTemplate"
+										getItems={() => S.Record.getRecords(subIdTemplate, [])}
+										canAdd={isAllowedTemplate}
+										onAdd={onTemplateAdd}
+										onMenu={isAllowedTemplate ? (e: any, item: any) => onMenu(item) : null}
+										onClick={(e: any, item: any) => templateOpen(item)}
+										withBlank={true}
+										blankId={J.Constant.templateId.blank}
+										defaultId={type.defaultTemplateId || J.Constant.templateId.blank}
+									/>
+								</div>
+							) : (
+								<div className="empty">
+									{translate('pageMainTypeNoTemplates')}
+								</div>
+							)}
+						</div>
+					) : ''}
+
+					{type.isInstalled ? (
+						<div className="section set">
+							<div className="title">
+								<div className="side left">
+									{U.Common.plural(totalObject, translate('pluralObject'))}
+									<span className="cnt">{totalObject}</span>
+								</div>
+
+								<div className="side right">
+									<Icon
+										id="button-create"
+										className="more withBackground"
+										onClick={onMore}
+									/>
+
+									{allowedObject ? (
+										<Icon
+											className="plus withBackground"
+											tooltip={translate('commonCreateNewObject')}
+											onClick={onCreate}
+										/>
+									) : ''}
+								</div>
+							</div>
+							<div className="content">
+								<ListObject
+									{...props}
+									sources={[ rootId ]}
+									spaceId={type.spaceId}
+									subId={subIdObject}
+									rootId={rootId}
+									columns={columns}
+									relationKeys={recommended}
+									route={analytics.route.screenType}
+								/>
+							</div>
+						</div>
+					) : ''}
+				</div>
+
+				<Footer component="mainObject" {...props} />
+			</div>
+		);
 	};
 
-	getSubIdTemplate () {
-		return S.Record.getSubId(this.getRootId(), 'templates');
-	};
+	return content;
 
-	getSubIdObject () {
-		return S.Record.getSubId(this.getRootId(), 'data');
-	};
-
-});
+}));
 
 export default PageMainType;

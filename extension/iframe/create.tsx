@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
-import { I, C, M, S, U, translate } from 'Lib';
+import { I, C, M, S, U, J, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -151,10 +151,9 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	onSelect () {
 		const { object } = this.state;
 		const node = $(this.node);
-		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 
 		S.Menu.open('searchObject', {

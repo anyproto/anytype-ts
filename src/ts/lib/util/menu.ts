@@ -560,7 +560,6 @@ class UtilMenu {
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
 		const { spaceview } = S.Block;
-		const templateType = S.Record.getTemplateType();
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
@@ -620,7 +619,7 @@ class UtilMenu {
 								data: {
 									filters: [
 										{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
-										{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+										{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 									],
 									canAdd: true,
 									onSelect: el => {

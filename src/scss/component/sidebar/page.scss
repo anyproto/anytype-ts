@@ -20,7 +20,7 @@
 		.titleWrap { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 8px 0px; padding: 0px 8px 0px 16px; }
 		.titleWrap {
 			.icon.withBackground { width: 24px !important; height: 24px !important; }
-			.icon.plus { background-image: url('~img/icon/widget/plus.svg'); }
+			.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 		}
 
 		.title { @include text-paragraph; font-weight: 600; }

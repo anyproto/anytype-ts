@@ -580,10 +580,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { space } = S.Common;
 		const { backlink } = this.state;
 		const filter = this.filter;
-		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },

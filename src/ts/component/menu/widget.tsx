@@ -235,10 +235,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		switch (item.itemId) {
 			case 'source': {
-				const templateType = S.Record.getTemplateType();
 				const filters: I.Filter[] = [
 					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				];
 
 				menuId = 'searchObject';

@@ -12,13 +12,8 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const headerRef = useRef(null);
 	const idRef = useRef('');
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ isDeleted, setIsDeleted ] = useState(false);
 	const rootId = props.rootId ? props.rootId : match?.params?.id;
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-
-	if (isDeleted || object.isDeleted) {
-		return <Deleted {...props} />;
-	};
 
 	const open = () => {
 		if (idRef.current == rootId) {
@@ -27,7 +22,6 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 		close();
 		setIsLoading(true);
-		setIsDeleted(false);
 
 		idRef.current = rootId;
 
@@ -99,12 +93,22 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		});
 	};
 
+	useEffect(() => {
+		return () => close();
+	}, []);
+
+	useEffect(() => {
+		open();
+		resize();
+	});
+
 	let content = null;
+	let inner = null;
 
 	if (isLoading) {
-		content = <Loader id="loader" />;
+		inner = <Loader id="loader" />;
 	} else {
-		content = (
+		inner = (
 			<div className="blocks">
 				<Block
 					{...props}
@@ -121,33 +125,30 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		);
 	};
 
-	useEffect(() => {
-		return () => close();
-	}, []);
+	if (object.isDeleted) {
+		content = <Deleted {...props} />;
+	} else {
+		content = (
+			<div ref={nodeRef}>
+				<Header 
+					{...props} 
+					component="mainChat" 
+					ref={headerRef} 
+					rootId={object.chatId} 
+				/>
 
-	useEffect(() => {
-		open();
-		resize();
-	});
-
-	return (
-		<div ref={nodeRef}>
-			<Header 
-				{...props} 
-				component="mainChat" 
-				ref={headerRef} 
-				rootId={object.chatId} 
-			/>
-
-			<div id="bodyWrapper" className="wrapper">
-				<div className="editorWrapper isChat">
-					{content}
+				<div id="bodyWrapper" className="wrapper">
+					<div className="editorWrapper isChat">
+						{inner}
+					</div>
 				</div>
-			</div>
 
-			<Footer component="mainObject" {...props} />
-		</div>
-	);
+				<Footer component="mainObject" {...props} />
+			</div>
+		);
+	};
+
+	return content;
 
 }));
 

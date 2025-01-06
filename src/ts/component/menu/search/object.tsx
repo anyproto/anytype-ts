@@ -296,7 +296,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { type, dataMapper, dataSort, dataChange, skipIds, keys } = data;
 		const filter = String(data.filter || '');
-		const templateType = S.Record.getTemplateType();
 		const spaceId = data.spaceId || S.Common.space;
 		
 		const filters: any[] = [
@@ -321,7 +320,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo, I.NavigationType.Link ].includes(type)) {
 			filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() });
-			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id });
+			filters.push({ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template });
 		};
 
 		if (clear) {

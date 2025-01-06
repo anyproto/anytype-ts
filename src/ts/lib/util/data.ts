@@ -563,9 +563,8 @@ class UtilData {
 	};
 
 	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
-		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
-			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.Equal, value: J.Constant.typeKey.template },
 			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
 		const sorts = [
@@ -1012,20 +1011,15 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const templateType = S.Record.getTemplateType();
-		const filters: any[] = [
+		return [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
 		];
-
-		if (templateType) {
-			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType.id });
-		};
-		return filters;
 	};
 
 	moveToPage (rootId: string, ids: string[], typeId: string, route: string) {

@@ -586,11 +586,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const { targetBlockId } = child.content;
 		const space = U.Space.getSpaceview();
-		const templateType = S.Record.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
-			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		let limit = this.getLimit(block.content);
 

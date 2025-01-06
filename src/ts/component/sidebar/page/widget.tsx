@@ -243,7 +243,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				route: analytics.route.addWidget,
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				canAdd: true,
 				dataChange: (context: any, items: any[]) => {

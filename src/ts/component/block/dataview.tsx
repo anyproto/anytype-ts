@@ -1296,7 +1296,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
 		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
-		const templateType = S.Record.getTemplateType();
 
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {
@@ -1304,7 +1303,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 			};
 
-			if (templateType && (type.id == templateType.id)) {
+			if (type.uniqueKey == J.Constant.typeKey.template) {
 				isAllowed = false;
 				break;
 			};

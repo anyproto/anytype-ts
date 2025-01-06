@@ -195,10 +195,9 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
-		const templateType = S.Record.getTemplateType();
 
 		const filters: I.Filter[] = [
-			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.Equal, value: J.Constant.typeKey.template },
 			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
 		const sorts = [
