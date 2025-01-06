@@ -291,7 +291,10 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 		return () => close();
 	}, []);
 
-	useEffect(() => open());
+	useEffect(() => {
+		open();
+		reload();	
+	});
 
 	return content;
 
