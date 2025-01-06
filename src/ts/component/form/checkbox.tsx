@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 
 interface Props {
 	id?: string;
@@ -8,86 +8,57 @@ interface Props {
 	onChange?(e: any, value: boolean): void;
 };
 
-interface State {
-	value: boolean;
+interface CheckboxRefProps {
+	getValue: () => boolean;
+	setValue: (v: boolean) => void;
+	toggle: () => void;
 };
 
-class Checkbox extends React.Component<Props, State> {
-	
-	_isMounted = false;
-	public static defaultProps = {
-		value: false
+const Checkbox = forwardRef<CheckboxRefProps, Props>(({
+	id = '',
+	value: initialValue = false,
+	className = '',
+	readonly = false,
+	onChange,
+}, ref: any) => {
+
+	const [ value, setValue ] = useState(false);
+	const cn = [ 'icon', 'checkbox', className ];
+
+	if (readonly) {
+		cn.push('isReadonly');
+	};
+	if (value) {
+		cn.push('active');
 	};
 
-	state = {
-		value: false,
-	};
-	
-	constructor (props: Props) {
-		super(props);
-
-		this.onChange = this.onChange.bind(this);
-	};
-
-	render () {
-		const { value } = this.state;
-		const { id, className, readonly } = this.props;
-		const cn = [ 'icon', 'checkbox' ];
-
-		if (className) {
-			cn.push(className);
-		};
-		if (readonly) {
-			cn.push('isReadonly');
-		};
-		if (value) {
-			cn.push('active');
-		};
-		
-		return (
-			<div
-				id={id}
-				className={cn.join(' ')}
-				onClick={this.onChange}
-			/>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		
-		this.setValue(this.props.value);
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-	
-	onChange (e: any) {
-		const { readonly } = this.props;
-		const { value } = this.state;
-
+	const onChangeHandler = (e: any) => {
 		if (readonly) {
 			return;
 		};
 
-		this.setValue(!value);
-		if (this.props.onChange) {
-			this.props.onChange(e, !value);
+		setValue(!value);
+		if (onChange) {
+			onChange(e, !value);
 		};
 	};
-	
-	setValue (v: boolean) {
-		this.setState({ value: Boolean(v) });
-	};
-	
-	getValue () {
-		return this.state.value;
-	};
 
-	toggle () {
-		this.setValue(!this.getValue());
-	};
-};
+	useImperativeHandle(ref, () => ({
+		getValue: () => value,
+		setValue,
+		toggle: () => setValue(!value)
+	}));
+	
+	useEffect(() => setValue(initialValue), []);
+	
+	return (
+		<div
+			id={id}
+			className={cn.join(' ')}
+			onClick={onChangeHandler}
+		/>
+	);
+
+});
 
 export default Checkbox;

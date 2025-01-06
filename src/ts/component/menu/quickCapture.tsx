@@ -316,7 +316,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		} else {
 			const pinned = pinnedIds.map(id => S.Record.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
-			items = U.Data.getObjectTypesForNewObject({ withChat: true }).filter(it => !pinnedIds.includes(it.id));
+			items = U.Data.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
 			items = items.slice(0, LIMIT_PINNED - pinned.length);
 			items.push(S.Record.getSetType());
 			items.push(S.Record.getCollectionType());
@@ -463,6 +463,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				const object = message.details;
 
 				U.Object.openAuto(object);
+				U.Object.setLastUsedDate(object.id, U.Date.now());
 
 				analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
 				analytics.event('SelectObjectType', { objectType: object.type });
@@ -673,7 +674,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		obj.find('.item').each((i: number, item: any) => {
 			item = $(item);
-			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
+			item.toggleClass('withIcon', !!item.find('.iconObject').length);
 		});
 
 		obj.css({ width: Math.min(ww - J.Size.menuBorder * 2 - sw, Math.ceil(obj.outerWidth())) });

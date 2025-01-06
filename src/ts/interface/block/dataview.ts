@@ -1,9 +1,9 @@
 import { I } from 'Lib';
 
 export enum CardSize {
-	Small	 = 0,
-	Medium	 = 1,
-	Large	 = 2,
+	Small			 = 0,
+	Medium			 = 1,
+	Large			 = 2,
 };
 
 export enum DateFormat {
@@ -12,49 +12,42 @@ export enum DateFormat {
 	Short				 = 2, // 30/07/2020
 	ShortUS				 = 3, // 07/30/2020
 	ISO					 = 4, // 2020-07-30
+	Long				 = 5, // July 15, 2020 
+	Nordic				 = 6, // 15. Jul 2020  
+	European			 = 7, // 15.07.2020,
+	Default				 = 8, // Sat, Dec 14, 2024
 };
 
 export enum TimeFormat {
-	H12		 = 0,
-	H24		 = 1,
+	H12				 = 0,
+	H24				 = 1,
 };
 
 export enum ViewType {
-	Grid	 = 0,
-	List	 = 1,
-	Gallery	 = 2,
-	Board	 = 3,
-	Calendar = 4,
-	Graph	 = 5,
-};
-
-export enum SortId {
-	All			 = 'all',
-	Orphan		 = 'orphan',
-	Updated		 = 'updated',
-	Created		 = 'created',
-	Name		 = 'name',
-	LastUsed	 = 'lastUsed',
-	List		 = 'list',
-	Compact		 = 'compact',
+	Grid			 = 0,
+	List			 = 1,
+	Gallery			 = 2,
+	Board			 = 3,
+	Calendar		 = 4,
+	Graph			 = 5,
 };
 
 export enum SortType { 
-	Asc		 = 0, 
-	Desc	 = 1,
-	Custom	 = 2,
+	Asc				 = 0, 
+	Desc			 = 1,
+	Custom			 = 2,
 };
 
 export enum EmptyType {
-	None	 = 0,
-	Start	 = 1,
-	End		 = 2,
+	None			 = 0,
+	Start			 = 1,
+	End				 = 2,
 };
 
 export enum FilterOperator { 
-	None	 = 0,
-	And		 = 1,
-	Or		 = 2,
+	None			 = 0,
+	And				 = 1,
+	Or				 = 2,
 };
 
 export enum FilterCondition { 
@@ -92,6 +85,31 @@ export enum FilterQuickOption {
 	NumberOfDaysNow	 = 11,
 };
 
+export enum FormulaType {
+	None				 = 0,
+	Count				 = 1,
+	CountValue 			 = 2,
+	CountDistinct		 = 3,
+	CountEmpty			 = 4,
+	CountNotEmpty		 = 5,
+	PercentEmpty		 = 6,
+	PercentNotEmpty		 = 7,
+	MathSum				 = 8,
+	MathAverage			 = 9,
+	MathMedian			 = 10,
+	MathMin				 = 11,
+	MathMax				 = 12,
+	Range				 = 13,
+};
+
+export enum FormulaSection {
+	None				 = 0,
+	Count				 = 1,
+	Percent				 = 2,
+	Math				 = 3,
+	Date				 = 4,
+};
+
 export interface Sort {
 	id?: string;
 	relationKey: string;
@@ -117,8 +135,7 @@ export interface ViewRelation {
 	isVisible?: boolean;
 	width?: number;
 	includeTime?: boolean;
-	dateFormat?: I.DateFormat;
-	timeFormat?: I.TimeFormat;
+	formulaType?: I.FormulaType;
 };
 
 export interface ViewComponent {
@@ -197,6 +214,7 @@ export interface View {
 	defaultTemplateId?: string;
 	defaultTypeId?: string;
 	getVisibleRelations?: () => I.ViewRelation[];
+	getRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
 	isGrid?(): boolean;
 	isList?(): boolean;

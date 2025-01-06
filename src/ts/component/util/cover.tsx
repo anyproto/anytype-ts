@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC, MouseEvent } from 'react';
 import { I, S, J } from 'Lib';
 
 interface Props {
@@ -11,50 +11,51 @@ interface Props {
 	y?: number;
 	scale?: number;
 	withScale?: boolean;
-	preview?: boolean;
 	children?: React.ReactNode;
-	onClick?(e: any): void;
-	onMouseDown?(e: any): void;
+	onClick?(e: MouseEvent): void;
+	onMouseDown?(e: MouseEvent): void;
 };
 
-class Cover extends React.Component<Props> {
+const Cover: FC<Props> = ({ 
+	id = '', 
+	image = '', 
+	src = '', 
+	type = 0, 
+	x = 0.5, 
+	y = 0.5, 
+	scale = 0, 
+	withScale = false, 
+	className = '', 
+	onClick, 
+	onMouseDown, 
+	children,
+}) => {
 
-	private static defaultProps = {
-		type: 0,
-		x: 0.5,
-		y: 0.5,
-		scale: 0,
+	const cn = [ 'cover', `type${type}`, id, className ];
+	const style: any = {};
+	
+	if ([ I.CoverType.Upload, I.CoverType.Source ].includes(type) && image) {
+		style.backgroundImage = `url("${S.Common.imageUrl(image, J.Size.cover)}")`;
 	};
 
-	render () {
-		const { id, image, src, type, x, y, scale, withScale, className, preview, onClick, onMouseDown, children } = this.props;
-		const cn = [ 'cover', 'type' + type, id ];
-		const style: any = {};
-		
-		if (className) {
-			cn.push(className);
-		};
-
-		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(type) && image) {
-			style.backgroundImage = `url("${S.Common.imageUrl(image, J.Size.cover)}")`;
-		};
-
-		if (src) {
-			style.backgroundImage = `url("${src}")`;
-		};
-		
-		if (withScale) {
-			style.backgroundPosition = `${Math.abs(x * 100)}% ${Math.abs(y * 100)}%`;
-			style.backgroundSize = ((scale + 1) * 100) + '%';
-		};
-		
-		return (
-			<div className={cn.join(' ')} onClick={onClick} onMouseDown={onMouseDown} style={style}>
-				{children}
-			</div>
-		);
+	if (src) {
+		style.backgroundImage = `url("${src}")`;
 	};
 	
+	if (withScale) {
+		style.backgroundPosition = `${Math.abs(x * 100)}% ${Math.abs(y * 100)}%`;
+		style.backgroundSize = ((scale + 1) * 100) + '%';
+	};
+	
+	return (
+		<div 
+			className={cn.join(' ')} 
+			onClick={onClick} 
+			onMouseDown={onMouseDown}
+			style={style}>
+			{children}
+		</div>
+	);
 };
 
 export default Cover;

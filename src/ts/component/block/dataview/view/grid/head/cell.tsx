@@ -30,7 +30,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		};
 
 		const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(relation.format) ];
+		const cn = [ 'cellHead', `cell-key-${relationKey}`, Relation.className(relation.format) ];
 
 		if (allowed) {
 			cn.push('canDrag');
@@ -56,15 +56,17 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 	};
 
 	onMouseEnter (): void {
-		const { block } = this.props;
+		const { block, relationKey } = this.props;
 
-		if (!keyboard.isDragging) {
-			$(`#block-${block.id} .cell-key-${this.props.relationKey}`).addClass('cellKeyHover');
+		if (!keyboard.isDragging && !keyboard.isResizing) {
+			$(`#block-${block.id} .cell-key-${relationKey}`).addClass('cellKeyHover');
 		};
 	};
 
 	onMouseLeave () {
-		$('.cellKeyHover').removeClass('cellKeyHover');
+		if (!keyboard.isDragging && !keyboard.isResizing) {
+			$('.cellKeyHover').removeClass('cellKeyHover');
+		};
 	};
 
 	onEdit (e: any) {
@@ -78,7 +80,11 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 			return;
 		};
 
-		const element = `#block-${block.id} #${Relation.cellId('head', relationKey, '')}`;
+		const blockEl =	`#block-${block.id}`;
+		const rowHead = $(`${blockEl} #rowHead`);
+		const isFixed = rowHead.hasClass('fixed');
+		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
+		const element = `${blockEl} ${headEl} #${Relation.cellId('head', relationKey, '')}`;
 		const obj = $(element);
 
 		window.setTimeout(() => {
@@ -88,6 +94,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				noFlipY: true,
 				onOpen: () => obj.addClass('active'),
 				onClose: () => obj.removeClass('active'),
+				className: isFixed ? 'fixed' : '',
 				data: {
 					...this.props,
 					blockId: block.id,

@@ -60,6 +60,11 @@ export default {
 			text: '#b6b6b6',
 			bg: '#f2f2f2'
 		},
+
+		progress: {
+			bg: '#ebebeb',
+			fg: '#ffd15b',
+		}
 	},
 
 	dark: {
@@ -109,6 +114,11 @@ export default {
 			text: '#9a9a9a',
 			bg: '#b6b6b6'
 		},
+
+		progress: {
+			bg: '#292929',
+			fg: '#ffd15b',
+		}
 	}
 
 };

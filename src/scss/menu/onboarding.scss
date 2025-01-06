@@ -74,6 +74,8 @@
 		}
 	}
 
+	.menu.menuOnboarding.invertedColor { box-shadow: inset 0px 0px 0px 1px var(--color-control-inactive), 0px 4px 12px 0px rgba(37, 37, 37, 0.20); background-color: var(--color-bg-primary); color: var(--color-text-primary); }
+
 	.menu.menuOnboarding.isWizard { min-height: 458px; }
 	.menu.menuOnboarding.isWizard {
 		.bottom { position: absolute; bottom: 16px; width: calc(100% - 32px); margin: 0px; }

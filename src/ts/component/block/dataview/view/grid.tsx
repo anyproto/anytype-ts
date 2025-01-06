@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
@@ -7,6 +8,7 @@ import { Icon, LoadMore } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
+import FootRow from './grid/foot/row';
 
 const PADDING = 46;
 
@@ -28,6 +30,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
+		const { config } = S.Common;
 		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
@@ -133,6 +136,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 								</div>
 							) : null}
 
+							<FootRow
+								{...this.props} 
+								getColumnWidths={this.getColumnWidths}
+							/>
+
 							{isInline && (limit + offset < total) ? (
 								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
 							) : ''}
@@ -224,13 +232,26 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const sl = scroll.scrollLeft();
 
 		rowHead.removeClass('fixed');
-		node.find('.rowHead.isClone').remove();
+		node.find('#rowHeadClone').remove();
 
 		if (top - st <= hh) {
-			const clone = rowHead.clone(true, true);
+			const clone = $('<div id="rowHeadClone"></div>');
 
 			node.append(clone);
-			clone.addClass('isClone').attr({ id: 'rowHeadClone' }).css({ 
+
+			ReactDOM.render((
+				<HeadRow 
+					{...this.props} 
+					onCellAdd={this.onCellAdd} 
+					onSortStart={this.onSortStart} 
+					onSortEnd={this.onSortEnd} 
+					onResizeStart={this.onResizeStart}
+					getColumnWidths={this.getColumnWidths}
+				/>
+			), clone.get(0));
+
+			clone.find('.rowHead').attr({ id: '' });
+			clone.css({ 
 				left: left + sl, 
 				top: hh, 
 				width: rowHead.width(),
@@ -253,10 +274,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			const width = widths[it.relationKey];
 			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
 
-			width <= size.icon ? el.addClass('small') : el.removeClass('small');
+			el.toggleClass('small', width <= size.icon);
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });
+		node.find('.rowFoot').css({ gridTemplateColumns: str });
 		node.find('.row .selectionTarget').css({ gridTemplateColumns: str });
 	};
 
@@ -365,11 +387,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, loadData, getView, isInline, isCollection } = this.props;
+		const blockEl = `#block-${block.id}`;
+		const cellLast = $(`${blockEl} .cellHead.last`);
 
 		S.Menu.open('dataviewRelationList', { 
-			element: `#block-${block.id} #cell-add`,
+			element: `${blockEl} #cell-add`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
+			onOpen: () => cellLast.addClass('hover'),
+			onClose: () => cellLast.removeClass('hover'),
 			data: {
 				readonly,
 				loadData,

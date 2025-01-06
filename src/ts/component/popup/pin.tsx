@@ -1,56 +1,15 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { Title, Pin, Error } from 'Component';
 import { I, keyboard, translate, Storage } from 'Lib';
-import { observer } from 'mobx-react';
 
-interface State {
-	error: string;
-};
+const PopupPin = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
-const PopupPin = observer(class PopupConfirm extends React.Component<I.Popup, State> {
+	const { data } = param;
+	const { onError, onSuccess } = data;
+	const pinRef = useRef(null);
+	const [ error, setError ] = useState('');
 
-	ref = null;
-	state = {
-		error: ''
-	};
-
-	constructor (props: I.Popup) {
-		super(props);
-
-		this.onSuccess = this.onSuccess.bind(this);
-		this.onError = this.onError.bind(this);
-	};
-
-	render () {
-		const { error } = this.state;
-
-		return (
-			<React.Fragment>
-				<Title text={translate('authPinCheckTitle')} />
-				<Pin 
-					ref={ref => this.ref = ref}
-					expectedPin={Storage.getPin()} 
-					onSuccess={this.onSuccess} 
-					onError={this.onError} 
-				/>
-				<Error text={error} />
-			</React.Fragment>
-		);
-	};
-
-	componentDidMount() {
-		keyboard.setFocus(true);
-	};
-
-	componentWillUnmount() {
-		keyboard.setFocus(false);
-	};
-
-	onSuccess () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onSuccess } = data;
-
+	const onSuccessHandler = () => {
 		if (onSuccess) {
 			onSuccess();
 		};
@@ -58,19 +17,36 @@ const PopupPin = observer(class PopupConfirm extends React.Component<I.Popup, St
 		close();
 	};
 
-	onError () {
-		const { param } = this.props;
-		const { data } = param;
-		const { onError } = data;
-
-		this.ref.reset();		
-		this.setState({ error: translate('authPinCheckError') });
+	const onErrorHandler = () => {
+		pinRef.current.reset();	
+		setError(translate('authPinCheckError'));	
 
 		if (onError) {
 			onError();
 		};
 	};
-	
+
+	useEffect(() => {
+		keyboard.setFocus(true);
+
+		return () => {
+			keyboard.setFocus(false);
+		};
+	}, []);
+
+	return (
+		<>
+			<Title text={translate('authPinCheckTitle')} />
+			<Pin 
+				ref={pinRef}
+				expectedPin={Storage.getPin()} 
+				onSuccess={onSuccessHandler} 
+				onError={onErrorHandler}
+			/>
+			<Error text={error} />
+		</>
+	);
+
 });
 
 export default PopupPin;

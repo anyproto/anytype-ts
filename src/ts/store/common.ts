@@ -39,8 +39,9 @@ class CommonStore {
 	public fullscreenObjectValue = null;
 	public navigationMenuValue = null;
 	public linkStyleValue = null;
+	public dateFormatValue = null;
+	public timeFormatValue = null;
 	public isOnlineValue = false;
-	public shareTooltipValue = false;
 	public showVaultValue = null;
 	public hideSidebarValue = null;
 	public showObjectValue = null;
@@ -99,14 +100,15 @@ class CommonStore {
 			navigationMenuValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
-			shareTooltipValue: observable,
 			showVaultValue: observable,
 			hideSidebarValue: observable,
 			showObjectValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
+			showRelativeDatesValue: observable,
+			dateFormatValue: observable,
+			timeFormatValue: observable,
 			config: computed,
-			progress: computed,
 			preview: computed,
 			toast: computed,
 			filter: computed,
@@ -116,11 +118,11 @@ class CommonStore {
 			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
-			shareTooltip: computed,
 			showVault: computed,
+			showRelativeDates: computed,
+			dateFormat: computed,
+			timeFormat: computed,
 			gatewaySet: action,
-			progressSet: action,
-			progressClear: action,
 			filterSetFrom: action,
 			filterSetText: action,
 			filterSet: action,
@@ -133,11 +135,13 @@ class CommonStore {
 			spaceStorageSet: action,
 			navigationMenuSet: action,
 			linkStyleSet: action,
+			dateFormatSet: action,
+			timeFormatSet: action,
 			isOnlineSet: action,
-			shareTooltipSet: action,
 			membershipTiersListSet: action,
 			showVaultSet: action,
 			showObjectSet: action,
+			showRelativeDatesSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -151,10 +155,6 @@ class CommonStore {
 		config.flagsMw = config.flagsMw || {};
 
 		return config;
-	};
-
-	get progress (): I.Progress {
-		return this.progressObj;
 	};
 
 	get preview (): I.Preview {
@@ -252,16 +252,34 @@ class CommonStore {
 		return Number(ret) || I.LinkCardStyle.Text;
 	};
 
+	get dateFormat (): I.DateFormat {
+		let ret = this.dateFormatValue;
+		
+		if (ret === null) {
+			ret = Storage.get('dateFormat');
+
+			if (undefined === ret) {
+				ret = I.DateFormat.Long;
+			};
+		};
+
+		return Number(ret);
+	};
+
+	get timeFormat (): I.TimeFormat {
+		let ret = this.timeFormatValue;
+		if (ret === null) {
+			ret = Storage.get('timeFormat');
+		};
+		return Number(ret) || I.TimeFormat.H12;
+	};
+
 	get dataPath (): string {
 		return String(this.dataPathValue || '');
 	};
 
 	get isOnline (): boolean {
 		return Boolean(this.isOnlineValue);
-	};
-
-	get shareTooltip (): boolean {
-		return Boolean(this.shareTooltipValue);
 	};
 
 	get membershipTiers (): I.MembershipTier[] {
@@ -295,14 +313,6 @@ class CommonStore {
 		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
 	};
 
-	progressSet (v: I.Progress) {
-		this.progressObj = v;
-	};
-
-	progressClear () {
-		this.progressObj = null;
-	};
-
 	filterSetFrom (from: number) {
 		this.filterObj.from = from;
 	};
@@ -330,7 +340,7 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			U.Object.getByIds(ids, (objects: any[]) => {
+			U.Object.getByIds(ids, {}, (objects: any[]) => {
 				const map = U.Common.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {
@@ -357,7 +367,7 @@ class CommonStore {
 	};
 
 	previewClear () {
-		this.previewObj = { type: null, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
+		this.previewObj = { type: I.PreviewType.None, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
 
 	toastClear () {
@@ -399,11 +409,9 @@ class CommonStore {
 	};
 
 	fullscreenSet (v: boolean) {
-		const body = $('body');
-		
 		this.isFullScreen = v;
-		v ? body.addClass('isFullScreen') : body.removeClass('isFullScreen');
 
+		$('body').toggleClass('isFullScreen', v);
 		$(window).trigger('resize');
 	};
 
@@ -472,8 +480,6 @@ class CommonStore {
 		if (c) {
 			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
 		};
-
-		$(window).trigger('updateTheme');
 	};
 
 	getThemePath () {
@@ -501,13 +507,21 @@ class CommonStore {
 		Storage.set('linkStyle', v);
 	};
 
+	dateFormatSet (v: I.DateFormat) {
+		v = Number(v);
+		this.dateFormatValue = v;
+		Storage.set('dateFormat', v);
+	};
+
+	timeFormatSet (v: I.TimeFormat) {
+		v = Number(v);
+		this.timeFormatValue = v;
+		Storage.set('timeFormat', v);
+	};
+
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
 		console.log('[Online status]:', v);
-	};
-
-	shareTooltipSet (v: boolean) {
-		this.shareTooltipValue = Boolean(v);
 	};
 
 	configSet (config: any, force: boolean) {
@@ -527,7 +541,7 @@ class CommonStore {
 		set(this.configObj, newConfig);
 
 		this.configObj.debug = this.configObj.debug || {};
-		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
+		html.toggleClass('debug', Boolean(this.configObj.debug.ui));
 	};
 
 	spaceStorageSet (value: Partial<SpaceStorage>) {

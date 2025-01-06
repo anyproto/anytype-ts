@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC, useRef } from 'react';
 import { U } from 'Lib';
 
 interface Props {
@@ -6,61 +6,29 @@ interface Props {
 	onDragEnd(oldIndex: number, newIndex: number): void;
 };
 
-class DragBox extends React.Component<Props> {
-	
-	_isMounted = false;
-	node: any = null;
-	cache: any = {};
-	ox = 0;
-	oy = 0;
-	oldIndex = -1;
-	newIndex = -1;
-	
-	constructor (props: Props) {
-		super(props);
+const DragBox: FC<Props> = ({ children: initialChildren, onDragEnd }) => {
 
-		this.onDragStart = this.onDragStart.bind(this);
-	};
-	
-	render () {
-		const children = React.Children.map(this.props.children, (child: any) => {
-			return React.cloneElement(child, { 
-				onDragStart: this.onDragStart 
-			});
-		});
+	const nodeRef = useRef(null);
+	const cache = useRef({});
+	const ox = useRef(0);
+	const oy = useRef(0);
+	const oldIndex = useRef(-1);
+	const newIndex = useRef(-1);
 
-		return (
-			<span 
-				ref={node => this.node = node}
-				className="dragbox"
-			>
-				{children}
-			</span>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
-	onDragStart (e: any) {
+	const onDragStart = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!this._isMounted) {
+		if (!nodeRef.current) {
 			return;
 		};
 
 		const win = $(window);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const items = node.find('.isDraggable');
 		const element = $(e.currentTarget);
 		const clone = element.clone();
-		const offset = node.offset();
+		const { left, top } = node.offset();
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -71,7 +39,7 @@ class DragBox extends React.Component<Props> {
 			};
 
 			const p = item.position();
-			this.cache[id] = {
+			cache.current[id] = {
 				x: p.left,
 				y: p.top,
 				width: item.outerWidth(),
@@ -79,58 +47,57 @@ class DragBox extends React.Component<Props> {
 			};
 		});
 
-		this.ox = offset.left;
-		this.oy = offset.top;
-		this.oldIndex = element.data('index');
+		ox.current = left;
+		oy.current = top;
+		oldIndex.current = element.data('index');
 
 		node.append(clone);
 		clone.addClass('isClone');
 		element.addClass('isDragging');
 
 		win.off('mousemove.dragbox mouseup.dragbox');
-		win.on('mousemove.dragbox', e => this.onDragMove(e));
-		win.on('mouseup.dragbox', e => this.onDragEnd(e));
+		win.on('mousemove.dragbox', e => onDragMove(e));
+		win.on('mouseup.dragbox', e => onDragEndHandler(e));
 	};
 
-	onDragMove (e: any) {
-		if (!this._isMounted) {
+	const onDragMove = (e: any) => {
+		if (!nodeRef.current) {
 			return;
 		};
 
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const items = node.find('.isDraggable');
 		const clone = node.find('.isDraggable.isClone');
 		const width = clone.outerWidth();
 		const height = clone.outerHeight();
-		const x = e.pageX - this.ox - width / 2;
-		const y = e.pageY - this.oy - height / 2;
+		const x = e.pageX - ox.current - width / 2;
+		const y = e.pageY - oy.current - height / 2;
 		const center = x + width / 2;
 
-		this.newIndex = -1;
+		newIndex.current = -1;
 
 		node.find('.isDraggable.isOver').removeClass('isOver left right');
 		clone.css({ transform: `translate3d(${x}px,${y}px,0px)` });
 
 		for (let i = 0; i < items.length; ++i) {
 			const el = $(items.get(i));
-			const rect = this.cache[el.data('id')];
+			const rect = cache.current[el.data('id')];
 
 			if (rect && U.Common.rectsCollide({ x: center, y, width: 2, height }, rect)) {
 				const isLeft = center <= rect.x + rect.width / 2;
-				this.newIndex = i;
+				newIndex.current = i;
 				el.addClass('isOver ' + (isLeft ? 'left' : 'right'));
 				break;
 			};
 		};
 	};
 
-	onDragEnd (e: any) {
-		if (!this._isMounted) {
+	const onDragEndHandler = (e: any) => {
+		if (!nodeRef.current) {
 			return;
 		};
 
-		const node = $(this.node);
-		const { onDragEnd } = this.props;
+		const node = $(nodeRef.current);
 
 		node.find('.isDraggable.isClone').remove();
 		node.find('.isDraggable.isDragging').removeClass('isDragging');
@@ -138,15 +105,25 @@ class DragBox extends React.Component<Props> {
 
 		$(window).off('mousemove.dragbox mouseup.dragbox');
 
-		if (this.newIndex >= 0) {
-			onDragEnd(this.oldIndex, this.newIndex);
+		if (newIndex.current >= 0) {
+			onDragEnd(oldIndex.current, newIndex.current);
 		};
 
-		this.cache = {};
-		this.oldIndex = -1;
-		this.newIndex = -1;
+		cache.current = {};
+		oldIndex.current = -1;
+		newIndex.current = -1;
 	};
-	
+
+	const children = React.Children.map(initialChildren, (child: any) => React.cloneElement(child, { onDragStart }));
+
+	return (
+		<span 
+			ref={nodeRef}
+			className="dragbox"
+		>
+			{children}
+		</span>
+	);
 };
 
 export default DragBox;

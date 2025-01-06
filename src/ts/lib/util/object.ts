@@ -27,6 +27,7 @@ class UtilObject {
 			case I.ObjectLayout.Space:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 			case I.ObjectLayout.Tag:		 r = 'tag'; break;
+			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
 		return r;
 	};
@@ -53,17 +54,22 @@ class UtilObject {
 	};
 
 	universalRoute (object: any): string {
-		if (!object) {
-			return;
-		};
-
 		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
+	};
+
+	checkParam (param: any) {
+		param = param || {};
+		param.routeParam = param.routeParam || {};
+		param.menuParam = param.menuParam || {};
+		return param;
 	};
 
 	openEvent (e: any, object: any, param?: any) {
 		if (!object) {
 			return;
 		};
+
+		param = this.checkParam(param);
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -83,6 +89,13 @@ class UtilObject {
 			return;
 		};
 
+		param = this.checkParam(param);
+
+		if (this.isParticipantLayout(object.layout)) {
+			U.Menu.participant(object, param.menuParam);
+			return;
+		};
+
 		// Prevent opening object in popup from different space
 		if (object.spaceId && (object.spaceId != S.Common.space)) {
 			this.openRoute(object, param);
@@ -93,13 +106,15 @@ class UtilObject {
 	};
 	
 	openRoute (object: any, param?: any) {
+		param = this.checkParam(param);
+
 		const route = this.route(object);
 		if (!route) {
 			return;
 		};
 
 		keyboard.setSource(null);
-		U.Router.go(`/${route}`, param || {});
+		U.Router.go(`/${route}`, param);
 	};
 
 	openWindow (object: any) {
@@ -111,6 +126,13 @@ class UtilObject {
 
 	openPopup (object: any, param?: any) {
 		if (!object) {
+			return;
+		};
+
+		param = this.checkParam(param);
+
+		if (this.isParticipantLayout(object.layout)) {
+			U.Menu.participant(object, param.menuParam);
 			return;
 		};
 
@@ -232,6 +254,10 @@ class UtilObject {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
+	setLastUsedDate (rootId: string, timestamp: number, callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'lastUsedDate', value: timestamp } ], callBack);
+	};
+
 	name (object: any) {
 		const { layout, snippet } = object;
 
@@ -248,20 +274,24 @@ class UtilObject {
 		return name;
 	};
 
-	getById (id: string, callBack: (object: any) => void) {
-		this.getByIds([ id ], objects => {
+	getById (id: string, param: Partial<I.SearchSubscribeParam>, callBack: (object: any) => void) {
+		this.getByIds([ id ], param, objects => {
 			if (callBack) {
 				callBack(objects[0]);
 			};
 		});
 	};
 
-	getByIds (ids: string[], callBack: (objects: any[]) => void) {
+	getByIds (ids: string[], param: Partial<I.SearchSubscribeParam>, callBack: (objects: any[]) => void) {
 		const filters = [
 			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids }
 		];
 
-		U.Data.search({ filters, keys: J.Relation.default.concat([ 'links', 'backlinks' ]) }, (message: any) => {
+		param = param || {};
+		param.filters = (param.filters || []).concat(filters);
+		param.keys = (param.keys || []).concat(J.Relation.default).concat([ 'links', 'backlinks' ]);
+
+		U.Data.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
 			};
@@ -385,7 +415,6 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
-			I.ObjectLayout.Date,
 		];
 	};
 
@@ -457,6 +486,29 @@ class UtilObject {
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
 		return this.getPageLayouts().includes(layout);
+	};
+
+	isAllowedChat () {
+		const { config, space } = S.Common;
+		return config.experimental || (J.Constant.chatSpaceId.includes(space));
+	};
+
+	openDateByTimestamp (relationKey: string, t: number, method?: string) {
+		method = method || 'auto';
+
+		let fn = U.Common.toCamelCase(`open-${method}`);
+		if (!this[fn]) {
+			fn = 'openAuto';
+		};
+
+		C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
+			if (!message.error.code) {
+				const object = message.details;
+
+				object._routeParam_ = { relationKey };
+				this[fn](object);
+			};
+		});
 	};
 
 };

@@ -640,7 +640,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 		const { close } = this.props;
 		const { tab } = this.state;
-		const checkFilter = () => this.refFilter && this.refFilter.isFocused;
+		const checkFilter = () => this.refFilter && this.refFilter.isFocused();
 
 		e.stopPropagation();
 		keyboard.disableMouse(true);

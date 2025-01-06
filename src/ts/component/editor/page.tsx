@@ -3,9 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { Icon, Loader, Deleted, DropTarget } from 'Component';
+import { Icon, Loader, Deleted, DropTarget, EditorControls } from 'Component';
 import { I, C, S, U, J, Key, Preview, Mark, focus, keyboard, Storage, Action, translate, analytics, Renderer, sidebar } from 'Lib';
-import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 
@@ -98,7 +97,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				id="editorWrapper"
 				className="editorWrapper"
 			>
-				<Controls 
+				<EditorControls 
 					ref={ref => this.refControls = ref} 
 					key="editorControls" 
 					{...this.props} 
@@ -188,8 +187,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
 		window.clearTimeout(this.timeoutMove);
-
-		Renderer.remove('commandEditor');
 	};
 
 	initNodes () {
@@ -277,7 +274,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup, match } = this.props;
 
 		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
+		if (isPopup && (match?.params?.id == this.id)) {
 			close = false;
 		};
 		if (keyboard.isCloseDisabled) {
@@ -292,10 +289,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onCommand (cmd: string, arg: any) {
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const { focused, range } = focus.state;
 		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 		const menuOpen = this.menuCheck();
+
+		if (isPopup !== keyboard.isPopup()) {
+			return;
+		};
 
 		switch (cmd) {
 			case 'selectAll': {
@@ -333,13 +334,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	focusInit () {
-		const { rootId, isPopup } = this.props;
-		const isReadonly = this.isReadonly();
-		const storage = Storage.getFocus(rootId);
-
-		if (isReadonly) {
+		if (this.isReadonly()) {
 			return;
 		};
+
+		const { rootId, isPopup } = this.props;
+		const storage = Storage.getFocus(rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		let block = null;
 		let from = 0;
@@ -352,7 +353,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (!block) {
-			block = S.Block.getLeaf(rootId, J.Constant.blockId.title);
+			if (U.Object.isNoteLayout(root.layout)) {
+				block = S.Block.getFirstBlock(rootId, -1, it => it.isFocusable());
+			} else {
+				block = S.Block.getLeaf(rootId, J.Constant.blockId.title);
+			};
+
 			if (block && block.getLength()) {
 				block = null;
 			};
@@ -376,7 +382,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 		container.off(`scroll.${ns}`);
-		Renderer.remove('commandEditor');
+		Renderer.remove(`commandEditor`);
 	};
 
 	rebind () {
@@ -416,7 +422,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		win.on(`resize.${ns}`, () => this.resizePage());
 		container.on(`scroll.${ns}`, e => this.onScroll());
 
-		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
+		Renderer.on(`commandEditor`, (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
 	onMouseMove (e: any) {
@@ -453,7 +459,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			readonly || 
 			keyboard.isResizing || 
 			keyboard.isDragging || 
-			(selection && selection.isSelecting) || 
+			selection?.isSelecting() || 
 			menuOpen || 
 			popupOpen ||
 			isLoading
@@ -547,7 +553,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onKeyDownEditor (e: any) {
 		const { rootId, isPopup } = this.props;
 
-		if (!isPopup && keyboard.isPopup()) {
+		if (isPopup !== keyboard.isPopup()) {
 			return;
 		};
 
@@ -563,23 +569,30 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		Preview.previewHide(true);
 		
 		const ids = selection.get(I.SelectType.Block);
+		const idsWithChildren = selection.get(I.SelectType.Block, true);
 		const cmd = keyboard.cmdKey();
 		const readonly = this.isReadonly();
 		const styleParam = this.getStyleParam();
 
+		let ret = false;
+
 		// Select all
-		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+a`, e, () => {
 			if (popupOpen || menuOpen) {
 				return;
 			};
 
 			e.preventDefault();
 			this.onSelectAll();
+
+			ret = true;
 		});
 
 		// Copy/Cut
 		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
 			this.onCopy(e, pressed.match('x') ? true : false);
+
+			ret = true;
 		});
 
 		// Undo
@@ -588,6 +601,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				e.preventDefault();
 				keyboard.onUndo(rootId, 'editor');
 			};
+
+			ret = true;
 		});
 
 		// Redo
@@ -596,26 +611,26 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
 			};
+
+			ret = true;
 		});
 
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory(e);
+
+			ret = true;
 		});
 
 		// Expand selection
 		keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
 			this.onShiftArrowEditor(e, pressed);
+
+			ret = true;
 		});
 
-		if (ids.length) {
-			keyboard.shortcut('escape', e, () => {
-				if (!menuOpen) {
-					selection.clear();
-				};
-			});
-
+		if (idsWithChildren.length) {
 			// Mark-up
 
 			let type = null;
@@ -625,6 +640,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				keyboard.shortcut(item.key, e, () => {
 					type = item.type;
 					param = item.param;
+
+					ret = true;
 				});
 			};
 
@@ -638,18 +655,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						data: {
 							filter: '',
 							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockTextListSetMark(rootId, ids, { type: newType, param, range: { from: 0, to: 0 } }, () => {
-									analytics.event('ChangeTextStyle', { type: newType, count: ids.length });
+								C.BlockTextListSetMark(rootId, idsWithChildren, { type: newType, param, range: { from: 0, to: 0 } }, () => {
+									analytics.event('ChangeTextStyle', { type: newType, count: idsWithChildren.length });
 								});
-							}
-						}
+							},
+						},
 					});
 				} else {
-					C.BlockTextListSetMark(rootId, ids, { type, param, range: { from: 0, to: 0 } }, () => {
-						analytics.event('ChangeTextStyle', { type, count: ids.length });
+					C.BlockTextListSetMark(rootId, idsWithChildren, { type, param, range: { from: 0, to: 0 } }, () => {
+						analytics.event('ChangeTextStyle', { type, count: idsWithChildren.length });
 					});
 				};
 			};
+		};
+
+		if (ids.length) {
+			keyboard.shortcut('escape', e, () => {
+				if (!menuOpen) {
+					selection.clear();
+				};
+
+				ret = true;
+			});
 
 			// Duplicate
 			keyboard.shortcut(`${cmd}+d`, e, () => {
@@ -659,6 +686,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 				e.preventDefault();
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom, () => focus.clear(true));
+
+				ret = true;
 			});
 
 			for (const item of styleParam) {
@@ -666,6 +695,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 				keyboard.shortcut(item.key, e, () => {
 					style = item.style;
+
+					ret = true;
 				});
 
 				if (style !== null) {
@@ -691,11 +722,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						}
 					});
 				});
+
+				ret = true;
 			});
 
 			// Move blocks with arrows
 			keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
 				this.onCtrlShiftArrowEditor(e, pressed);
+
+				ret = true;
 			});
 		};
 
@@ -705,11 +740,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				e.preventDefault();
 				this.blockRemove();
 			};
+
+			ret = true;
 		});
 
 		// Indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 			this.onTabEditor(e, ids, pressed);
+
+			ret = true;
 		});
 
 		// Restore focus
@@ -721,6 +760,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			selection.clear();
 			focus.restore();
 			focus.apply();
+
+			ret = true;
 		});
 
 		// Enter
@@ -737,7 +778,26 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
 			});
+
+			ret = true;
 		});
+
+		if (!ret && ids.length && !keyboard.isSpecial(e)) {
+			this.blockCreate(ids[ids.length - 1] , I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			}, (blockId: string) => {
+				const key = e.key;
+
+				C.BlockListDelete(rootId, ids);
+				U.Data.blockSetText(rootId, blockId, key, [], true, () => {
+					const block = S.Block.getLeaf(rootId, blockId);
+					const length = block.getLength();
+
+					window.setTimeout(() => this.focus(blockId, length, length, true));
+				});
+			});
+		};
 	};
 
 	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any, props: any) {
@@ -1378,12 +1438,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		const isEnter = pressed == 'enter';
 		const isShift = !!pressed.match('shift');
 		const length = block.getLength();
 		const parent = S.Block.getParentLeaf(rootId, block.id);
-		const replace = !range.to && (block.isTextList() || parent?.isTextToggle()) && !length;
+		const replace = !range.to && block.isTextList() && !length;
 
-		if (block.isTextCode() && (pressed == 'enter')) {
+		if (block.isTextCode() && isEnter) {
 			return;
 		};
 		if (!block.isText() && keyboard.isFocused) {
@@ -1748,6 +1809,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onPasteEvent (e: any, props: any, data?: any) {
+		const { isPopup } = props;
+
+		if (isPopup !== keyboard.isPopup()) {
+			return;
+		};
+
 		if (keyboard.isPasteDisabled || this.isReadonly()) {
 			return;
 		};

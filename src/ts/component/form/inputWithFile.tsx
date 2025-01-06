@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
@@ -17,229 +17,126 @@ interface Props {
 	onChangeFile? (e: any, path: string): void;
 };
 
-interface State {
-	focused: boolean;
-	size: Size;
-};
-
 const SMALL_WIDTH = 248;
 const ICON_WIDTH = 60;
 
 enum Size { Icon = 0, Small = 1, Full = 2 };
 
-class InputWithFile extends React.Component<Props, State> {
+const InputWithFile: FC<Props> = ({
+	icon = '',
+	textUrl = translate('inputWithFileTextUrl'),
+	textFile = '',
+	withFile = true,
+	accept,
+	block,
+	readonly = false,
+	canResize = true,
+	onChangeUrl,
+	onChangeFile,
+}) => {
 
-	public static defaultProps = {
-		withFile: true,
-		canResize: true,
+	const [ isFocused, setIsFocused ] = useState(false);
+	const [ size, setSize ] = useState(Size.Full);
+	const nodeRef = useRef(null);
+	const urlRef = useRef(null);
+	const timeout = useRef(0);
+	const cn = [ 'inputWithFile', 'resizable' ];
+	const or = ` ${translate('commonOr')} `;
+	const isSmall = size == Size.Small;
+	const isIcon = size == Size.Icon;
+
+	let placeholder = textUrl;
+	let onClick = null;
+	
+	if (!withFile) {
+		cn.push('noFile');
+	};
+	
+	if (isSmall) {
+		cn.push('isSmall');
 	};
 
-	_isMounted = false;
-	node: any = null;
-	state = {
-		focused: false,
-		size: Size.Full,
+	if (readonly) {
+		cn.push('isReadonly');
 	};
-	t = 0;
-	refUrl: any = null;
+	
+	if (isIcon) {
+		cn.push('isIcon');
+		onClick = e => onClickFile(e);
+	};
+	
+	if (isFocused) {
+		cn.push('isFocused');
+	};
+	
+	if (withFile && isFocused) {
+		placeholder += or + (!isSmall ? textFile : '');
+	};
 
-	constructor (props: Props) {
-		super(props);
-		
-		this.onSubmit = this.onSubmit.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onClickFile = this.onClickFile.bind(this);
-	};
-	
-	render () {
-		const { focused, size } = this.state;
-		const { icon, textUrl = translate('inputWithFileTextUrl'), textFile, withFile, readonly } = this.props;
-		const cn = [ 'inputWithFile', 'resizable' ];		
-		const or = ` ${translate('commonOr')} `;
-		const onBlur = focused ? this.onBlur : null;
-		const onFocus = !focused ? this.onFocus : null;
-		const isSmall = size == Size.Small;
-		const isIcon = size == Size.Icon;
-
-		let placeholder = textUrl;
-		let onClick = null;
-		
-		if (!withFile) {
-			cn.push('noFile');
-		};
-		
-		if (isSmall) {
-			cn.push('isSmall');
-		};
-
-		if (readonly) {
-			cn.push('isReadonly');
-		};
-		
-		if (isIcon) {
-			cn.push('isIcon');
-			onClick = e => this.onClickFile(e);
-		};
-		
-		if (focused) {
-			cn.push('isFocused');
-		};
-		
-		if (withFile && focused) {
-			placeholder += or + (!isSmall ? textFile : '');
-		};
-		
-		return (
-			<div 
-				ref={node => this.node = node}
-				className={cn.join(' ')}
-				onClick={onClick}
-			>
-				{icon ? <Icon className={icon} /> : ''}
-			
-				<div id="text" className="txt">
-					<form id="form" onSubmit={this.onSubmit}>
-						{focused ? (
-							<React.Fragment>
-								<Input 
-									id="url" 
-									ref={ref => this.refUrl = ref}
-									placeholder={placeholder}
-									onPaste={e => this.onChangeUrl(e, true)} 
-									onFocus={onFocus} 
-									onBlur={onBlur} 
-								/>
-								<Button type="input" className="dn" />
-							</React.Fragment>
-						) : (
-							<span className="urlToggle" onClick={this.onFocus}>{textUrl + (withFile && isSmall ? or : '')}</span>
-						)}
-					</form>
-
-					{withFile ? (
-						<span className="fileWrap" onMouseDown={this.onClickFile}>
-							{!isSmall ? <span>&nbsp;{translate('commonOr')}&nbsp;</span> : ''}
-							<span className="border">{textFile}</span>
-						</span>
-					) : ''}
-				</div>
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		this.resize();
-		this.rebind();
-	};
-	
-	componentDidUpdate () {
-		const { focused } = this.state;
-		const { block } = this.props;
-		
-		this.resize();
-		this.rebind();
-		
-		if (focused) {
-			if (this.refUrl) {
-				this.refUrl.focus();
-			};
-			focus.set(block.id, { from: 0, to: 0 });
+	const rebind = () => {
+		if (canResize) {
+			$(nodeRef.current).off('resizeMove').on('resizeMove', () => resize());
 		};
 	};
 	
-	componentWillUnmount () {
-		const { focused } = focus.state;
-		const { block } = this.props;
-		
-		this._isMounted = false;
-		this.unbind();
-		
-		if (focused == block.id) {
-			keyboard.setFocus(false);
+	const unbind = () => {
+		if (canResize) {
+			$(nodeRef.current).off('resizeMove');
 		};
 	};
 	
-	rebind () {
-		const { canResize } = this.props;
-		if (!this._isMounted || !canResize) {
-			return;
-		};
-		
-		$(this.node).off('resizeMove').on('resizeMove', (e: any) => this.resize());
-	};
-	
-	unbind () {
-		const { canResize } = this.props;
-		if (!this._isMounted || !canResize) {
-			return;
-		};
-		
-		$(this.node).off('resizeMove');
-	};
-	
-	resize () {
-		const { canResize } = this.props;
+	const resize = () => {
 		if (!canResize) {
 			return;
 		};
 
 		raf(() => {
-			if (!this._isMounted) {
+			const node = $(nodeRef.current);
+			if (!node.length) {
 				return;
 			};
-			
-			const node = $(this.node);
+
 			const rect = (node.get(0) as HTMLInputElement).getBoundingClientRect();
-			
-			let size = Size.Full;
+
+			let s = Size.Full;
 			if (rect.width <= SMALL_WIDTH) {
-				size = Size.Small;
+				s = Size.Small;
 			};
 			if (rect.width <= ICON_WIDTH) {
-				size = Size.Icon;
+				s = Size.Icon;
 			};
-			
-			if (size != this.state.size) {
-				this.setState({ size });	
+
+			if (s != size) {
+				setSize(s);
 			};
 		});
 	};
 	
-	onFocus (e: any) {
+	const onFocusHandler = (e: any) => {
 		e.stopPropagation();
 
-		const { readonly } = this.props;
-		if (readonly) {
-			return;
+		if (!readonly) {
+			setIsFocused(true);
 		};
-		this.setState({ focused: true });
 	};
 	
-	onBlur (e: any) {
+	const onBlurHandler = (e: any) => {
 		e.stopPropagation();
-		this.setState({ focused: false });
+		setIsFocused(false);
 	};
 	
-	focus () {
-		this.setState({ focused: true });
-	};
-	
-	onChangeUrl (e: any, force: boolean) {
-		const { onChangeUrl, readonly } = this.props;
-		
+	const onChangeUrlHandler = (e: any, force: boolean) => {
 		if (readonly) {
 			return;
 		};
 		
-		window.clearTimeout(this.t);
-		this.t = window.setTimeout(() => {
-			if (!this.refUrl) {
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => {
+			if (!urlRef.current) {
 				return;
 			};
 			
-			const url = this.refUrl.getValue() || '';
+			const url = String(urlRef.current.getValue() || '');
 			if (!url) {
 				return;
 			};
@@ -250,9 +147,7 @@ class InputWithFile extends React.Component<Props, State> {
 		}, force ? 50 : J.Constant.delay.keyboard);
 	};
 	
-	onClickFile (e: any) {
-		const { onChangeFile, accept, readonly } = this.props;
-		
+	const onClickFile = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -267,11 +162,77 @@ class InputWithFile extends React.Component<Props, State> {
 		});
 	};
 	
-	onSubmit (e: any) {
+	const onSubmit = (e: any) => {
 		e.preventDefault();
-		this.onChangeUrl(e, true);
+		onChangeUrlHandler(e, true);
 	};
+
+	const onBlur = isFocused ? onBlurHandler : null;
+	const onFocus = !isFocused ? onFocusHandler : null;
+
+	useEffect(() => {
+		resize();
+		rebind();
+
+		return () => {
+			const { focused } = focus.state;
+
+			unbind();
+
+			if (focused == block.id) {
+				keyboard.setFocus(false);
+			};
+		};
+	}, []);
+
+	useEffect(() => {
+		resize();
+		rebind();
+
+		if (isFocused) {
+			keyboard.setFocus(true);
+			urlRef.current?.focus();
+			focus.set(block.id, { from: 0, to: 0 });
+		};
+
+	}, [ isFocused, size ]);
 	
+	return (
+		<div 
+			ref={nodeRef}
+			className={cn.join(' ')}
+			onClick={onClick}
+		>
+			{icon ? <Icon className={icon} /> : ''}
+		
+			<div className="inputWithFile-inner">
+				<form className="form" onSubmit={onSubmit}>
+					{isFocused ? (
+						<>
+							<Input 
+								ref={urlRef}
+								placeholder={placeholder}
+								onPaste={e => onChangeUrlHandler(e, true)} 
+								onKeyDown={e => e.stopPropagation()}
+								onFocus={onFocus} 
+								onBlur={onBlur} 
+							/>
+							<Button type="input" className="dn" />
+						</>
+					) : (
+						<span className="urlToggle" onClick={onFocusHandler}>{textUrl + (withFile && isSmall ? or : '')}</span>
+					)}
+				</form>
+
+				{withFile ? (
+					<span className="fileWrap" onMouseDown={onClickFile}>
+						{!isSmall ? <span>&nbsp;{translate('commonOr')}&nbsp;</span> : ''}
+						<span className="border">{textFile}</span>
+					</span>
+				) : ''}
+			</div>
+		</div>
+	);
 };
 
 export default InputWithFile;

@@ -9,7 +9,7 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar, Vault, ShareTooltip, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -75,6 +75,7 @@ if (!isPackaged) {
 			C,
 			S,
 			U,
+			M,
 			analytics,
 			dispatcher,
 			keyboard,
@@ -140,7 +141,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 
 					<Navigation ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
 					<Sidebar key="sidebar" {...this.props} />
-					<Page {...this.props} />
+					<Page {...this.props} isPopup={false} />
 				</DragProvider>
 			</SelectionProvider>
 		);
@@ -204,7 +205,6 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<ListNotification key="listNotification" />
-						<ShareTooltip showOnce={true} />
 						<Vault ref={ref => S.Common.refSet('vault', ref)} />
 
 						<Switch>
@@ -239,16 +239,6 @@ class App extends React.Component<object, State> {
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
 	};
 
-	initStorage () {
-		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-
-		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', U.Date.now());
-		};
-
-		Storage.delete('lastSurveyCanceled');
-	};
-
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('route', (e: any, route: string) => this.onRoute(route));
@@ -257,7 +247,7 @@ class App extends React.Component<object, State> {
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => S.Common.progressClear());
+		Renderer.on('update-downloaded', () => S.Progress.delete('update'));
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('spellcheck', this.onSpellcheck);
@@ -318,13 +308,12 @@ class App extends React.Component<object, State> {
 		S.Common.dataPathSet(dataPath);
 
 		analytics.init();
-		this.initStorage();
 
 		if (redirect) {
 			Storage.delete('redirect');
 		};
 
-		if (css) {
+		if (css && !config.disableCss) {
 			U.Common.injectCss('anytype-custom-css', css);
 		};
 
@@ -422,12 +411,12 @@ class App extends React.Component<object, State> {
 
 	onUpdateCheck (e: any, auto: boolean) {
 		if (!auto) {
-			S.Common.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
+			S.Progress.add({ id: I.ProgressType.UpdateCheck, type: I.ProgressType.UpdateCheck, current: 0, total: 1 });
 		};
 	};
 
 	onUpdateConfirm (e: any, auto: boolean) {
-		S.Common.progressClear();
+		S.Progress.delete(I.ProgressType.UpdateCheck);
 		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
@@ -453,7 +442,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateAvailable (e: any, auto: boolean) {
-		S.Common.progressClear();
+		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;
@@ -478,7 +467,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateUnavailable (e: any, auto: boolean) {
-		S.Common.progressClear();
+		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;
@@ -499,7 +488,7 @@ class App extends React.Component<object, State> {
 
 	onUpdateError (e: any, err: string, auto: boolean) {
 		console.error(err);
-		S.Common.progressClear();
+		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;
@@ -524,11 +513,11 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateProgress (e: any, progress: any) {
-		S.Common.progressSet({ 
-			status: U.Common.sprintf(translate('commonUpdateProgress'), U.File.size(progress.transferred), U.File.size(progress.total)), 
+		S.Progress.update({ 
+			id: I.ProgressType.Update,
+			type: I.ProgressType.Update,
 			current: progress.transferred, 
 			total: progress.total,
-			isUnlocked: true,
 		});
 	};
 

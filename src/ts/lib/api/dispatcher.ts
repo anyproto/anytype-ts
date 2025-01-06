@@ -110,8 +110,8 @@ class Dispatcher {
 
 		const rootId = ctx.join('-');
 		const messages = event.getMessagesList() || [];
-		const log = (rootId: string, type: string, data: any, valueCase: any) => {
-			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId);
+		const log = (rootId: string, type: string, spaceId: string, data: any, valueCase: any) => {
+			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId, spaceId);
 			if (!type) {
 				console.error('Event not found for valueCase', valueCase);
 			};
@@ -130,9 +130,13 @@ class Dispatcher {
 
 		for (const message of messages) {
 			const type = Mapper.Event.Type(message.getValueCase());
-			const data = Mapper.Event.Data(message);
-			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : {};
+			const { spaceId, data } = Mapper.Event.Data(message);
+			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 			const needLog = this.checkLog(type) && !skipDebug;
+
+			if (!mapped) {
+				continue;
+			};
 
 			switch (type) {
 
@@ -244,7 +248,6 @@ class Dispatcher {
 
 					if (id == rootId) {
 						S.Block.checkBlockType(rootId);
-						S.Block.checkBlockChat(rootId);
 					};
 
 					updateParents = true;
@@ -816,7 +819,6 @@ class Dispatcher {
 
 					S.Detail.delete(rootId, id, keys);
 					S.Block.checkBlockType(rootId);
-					S.Block.checkBlockChat(rootId);
 
 					updateMarkup = true;
 					break;
@@ -950,7 +952,18 @@ class Dispatcher {
 					S.Chat.add(rootId, idx, message);
 
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
-						U.Common.notification({ title: author?.name, text: message.content.text });
+						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
+							const { space } = S.Common;
+							const open = () => {
+								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+							};
+
+							if (spaceId != space) {
+								U.Router.switchSpace(spaceId, '', false, { onRouteChange: open });
+							} else {
+								open();
+							};
+						});
 					};
 
 					$(window).trigger('messageAdd', [ message ]);
@@ -959,6 +972,8 @@ class Dispatcher {
 
 				case 'ChatUpdate': {
 					S.Chat.update(rootId, mapped.message);
+
+					$(window).trigger('messageUpdate', [ mapped.message ]);
 					break;
 				};
 
@@ -973,44 +988,42 @@ class Dispatcher {
 						set(message, { reactions: mapped.reactions });
 					};
 
-					$(window).trigger('updateReactions', [ message ]);
+					$(window).trigger('reactionUpdate', [ message ]);
 					break;
 				};
 
-				case 'ProcessNew':
-				case 'ProcessUpdate':
-				case 'ProcessDone': {
+				case 'ProcessNew': {
 					const { process } = mapped;
-					const { id, progress, state, type } = process;
+					const { progress, type } = process;
 
-					switch (state) {
-						case I.ProgressState.Running: {
-							let canCancel = true;
-							let isUnlocked = true;
+					S.Progress.update({
+						...process,
+						current: progress.done,
+						total: progress.total,
+						canCancel: [ 
+							I.ProgressType.Migrate, 
+							I.ProgressType.Import, 
+							I.ProgressType.Export, 
+							I.ProgressType.Drop,
+						].includes(type),
+					});
+					break;
+				};
 
-							if ([ I.ProgressType.Recover, I.ProgressType.Migration ].includes(type)) {
-								canCancel = false;
-								isUnlocked = false;
-							};
+				case 'ProcessUpdate': {
+					const { process } = mapped;
+					const { progress } = process;
 
-							S.Common.progressSet({
-								id,
-								status: translate(`progress${type}`),
-								current: progress.done,
-								total: progress.total,
-								isUnlocked,
-								canCancel,
-							});
-							break;
-						};
+					S.Progress.update({
+						...process,
+						current: progress.done,
+						total: progress.total,
+					});
+					break;
+				};
 
-						case I.ProgressState.Error:
-						case I.ProgressState.Done:
-						case I.ProgressState.Canceled: {
-							S.Common.progressClear();
-							break;
-						};
-					};
+				case 'ProcessDone': {
+					S.Progress.delete(mapped.process.id);
 					break;
 				};
 
@@ -1022,7 +1035,7 @@ class Dispatcher {
 			};
 
 			if (needLog) {
-				log(rootId, type, data, message.getValueCase());
+				log(rootId, type, spaceId, data, message.getValueCase());
 			};
 		};
 
@@ -1047,15 +1060,20 @@ class Dispatcher {
 		subIds = this.getUniqueSubIds(subIds);
 		subIds.forEach(subId => S.Detail.update(subId, { id, details }, clear));
 
+		const { space } = S.Common;
 		const keys = Object.keys(details);
 		const check = [ 'creator', 'spaceDashboardId', 'spaceAccountStatus' ];
 		const intersection = check.filter(k => keys.includes(k));
 
-		if (intersection.length && subIds.length && subIds.includes(J.Constant.subId.space)) {
-			const object = S.Detail.get(J.Constant.subId.space, id, [ 'layout', 'targetSpaceId' ], true);
+		if (subIds.length && subIds.includes(J.Constant.subId.space)) {
+			const object = U.Space.getSpaceview(id);
 
-			if (U.Object.isSpaceViewLayout(object.layout) && object.targetSpaceId) {
+			if (intersection.length && object.targetSpaceId) {
 				U.Data.createSubSpaceSubscriptions([ object.targetSpaceId ]);
+			};
+
+			if (object.isAccountDeleted && (object.targetSpaceId == space)) {
+				U.Space.openFirstSpaceOrVoid(null, { replace: true });
 			};
 		};
 
@@ -1073,7 +1091,6 @@ class Dispatcher {
 			};
 
 			S.Block.checkBlockType(rootId);
-			S.Block.checkBlockChat(rootId);
 		};
 
 		if (undefined !== details.setOf) {
@@ -1178,7 +1195,6 @@ class Dispatcher {
 		S.Block.updateNumbers(contextId); 
 		S.Block.updateMarkup(contextId);
 		S.Block.checkBlockType(contextId);
-		S.Block.checkBlockChat(contextId);
 
 		keyboard.setWindowTitle();
 	};

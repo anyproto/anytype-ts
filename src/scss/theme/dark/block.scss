@@ -194,8 +194,12 @@
 
 	/* BlockChat */
 	.block.blockChat {
+		.emptyState {
+			.img { background: none; }
+		}
 		.message {
 			.side.right { background: var(--color-shape-tertiary); }
+			.reply { background: #3c3c3c; }
 
 			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('#{$themePath}/icon/chat/buttons/reaction1.svg'); }
 
@@ -205,7 +209,8 @@
 			}
 		}
 		.message.isSelf {
-			.side.right { background: #162908; }
+			.side.right { background: #202919; }
+			.reply { background: #36551d; }
 		}
 
 		.form {
@@ -218,6 +223,10 @@
 				.swiper-button-next::before { box-shadow: none; }
 				.swiper-button-prev::after,
 				.swiper-button-next::after { background-image: url('#{$themePath}/arrow/chatFormAttachment.svg'); }
+
+				.attachment {
+					.icon.remove { background-image: url('#{$themePath}/icon/chat/buttons/remove.svg'); }
+				}
 			}
 		}
 	}

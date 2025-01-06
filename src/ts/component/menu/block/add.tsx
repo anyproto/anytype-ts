@@ -177,7 +177,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={20}
-											scrollToAlignment="center"
+											scrollToAlignment="start"
 										/>
 									)}
 								</AutoSizer>
@@ -246,10 +246,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 
 	checkFilter () {
+		const { getId } = this.props;
 		const { filter } = S.Common;
-		const obj = $('#menuBlockAdd');
-		
-		filter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
+
+		$(`#${getId()}`).toggleClass('withFilter', !!filter);
 	};
 	
 	rebind () {
@@ -339,7 +339,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			
 			sections = U.Menu.sectionsFilter(sections, filter.text);
 		};
-		
+
 		return U.Menu.sectionsMap(sections);
 	};
 	
@@ -411,7 +411,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		switch (item.itemId) {	
-			case 'move':
+			case 'move': {
 				menuId = 'searchObject';
 				menuParam.offsetY = -36;
 
@@ -422,27 +422,60 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					],
 				});
 				break;
+			};
 
-			case 'existingPage':
-				menuId = 'searchObject';
-				menuParam.data.canAdd = true;
+			case 'date': {
+				menuId = 'dataviewCalendar';
 				menuParam.data = Object.assign(menuParam.data, {
+					canEdit: true,
+					value: U.Date.now(),
+					onChange: (t: number) => {
+						C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
+							if (message.error.code) {
+								return;
+							};
+
+							const target = message.details;
+
+							C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, target.layout, true), (message: any) => {
+								if (message.error.code) {
+									return;
+								};
+
+								focus.set(message.blockId, { from: 0, to: 0 });
+								focus.apply();
+
+								analytics.event('CreateLink');
+								close();
+							});
+						});
+					}
+				});
+				break;
+			};
+
+			case 'existingPage': {
+				menuId = 'searchObject';
+				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					type: I.NavigationType.Link,
 				});
 				break;
+			};
 
-			case 'existingFile':
+			case 'existingFile': {
 				menuId = 'searchObject';
-				menuParam.data.canAdd = true;
 				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					type: I.NavigationType.Link,
 					filters: [
 						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 				});
 				break;
+			};
 
-			case 'turnObject':
+			case 'turnObject': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
@@ -457,6 +490,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					},
 				});
 				break;
+			};
 
 		};
 
@@ -696,24 +730,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 
 	getRowHeight (item: any, index: number) {
-		if (item.isRelation || item.isRelationAdd) {
-			return HEIGHT_RELATION;
-		};
-		if (item.isSection && index > 0) {
-			return HEIGHT_SECTION;
-		};
-		if (item.isBlock) {
-			return HEIGHT_DESCRIPTION;
-		};
-		return HEIGHT_ITEM;
-	};
-
-	recalcIndex () {
-		const itemsWithSection = this.getItems(true);
-		const itemsWithoutSection = itemsWithSection.filter(it => !it.isSection);
-		const active: any = itemsWithoutSection[this.n] || {};
-
-		return itemsWithSection.findIndex(it => it.id == active.id);
+		let h = HEIGHT_ITEM
+		if (item.isRelation || item.isRelationAdd) h = HEIGHT_RELATION;
+		else if (item.isSection && (index > 0)) h = HEIGHT_SECTION;
+		else if (item.isBlock) h = HEIGHT_DESCRIPTION;
+		return h;
 	};
 
 });

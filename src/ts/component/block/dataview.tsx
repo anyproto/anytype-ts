@@ -313,7 +313,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const head = node.find(`#block-head-${block.id}`);
 		const object = this.getTarget();
 
-		object.isDeleted ? head.addClass('isDeleted') : head.removeClass('isDeleted');
+		head.toggleClass('isDeleted', object.isDeleted);
 	};
 
 	unbind () {
@@ -632,6 +632,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
+		const isViewGraph = view.type == I.ViewType.Graph;
+		const isViewCalendar = view.type == I.ViewType.Calendar;
 		
 		let typeId = '';
 		let templateId = '';
@@ -649,12 +651,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!typeId) {
 			typeId = this.getTypeId();
 		};
+
 		if (!templateId) {
 			templateId = this.getDefaultTemplateId(typeId);
 		};
 
 		const type = S.Record.getTypeById(typeId);
 		if (!type) {
+			console.error('[BlockDataview.recordCreate] No type');
 			return;
 		};
 
@@ -701,16 +705,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				S.Record.recordsSet(subId, '', records);
 			};
 
-			if ([ I.ViewType.Graph ].includes(view.type)) {
+			if (isViewGraph) {
 				const refGraph = this.refView?.refGraph;
 				if (refGraph) {
 					refGraph.addNewNode(object.id, '', null, () => {
-						refGraph.setRootId(object.id);
+						$(window).trigger('updateGraphRoot', { id: object.id });
 					});
 				};
 			};
 
-			if ([ I.ViewType.Calendar ].includes(view.type)) {
+			if (isViewGraph || isViewCalendar) {
 				U.Object.openConfig(object);
 			} else {
 				if (U.Object.isNoteLayout(object.layout)) {
@@ -923,7 +927,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (!view.isGrid() && Relation.isUrl(relation.format)) {
-			Action.openUrl(Relation.getUrlScheme(relation.format, record[relationKey]) + record[relationKey]);
+			Action.openUrl(Relation.checkUrlScheme(relation.format, record[relationKey]));
 			return;
 		};
 
@@ -1437,9 +1441,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	setSelected (ids: string[]) {
-		if (this.refSelect) {
-			this.refSelect.setIds(ids);
-		};
+		this.refSelect?.setIds(ids);
 	};
 
 	multiSelectAction (id: string) {
@@ -1456,7 +1458,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		switch (id) {
 			case 'archive': {
-				Action.archive(ids);
+				Action.archive(ids, this.analyticsRoute());
 				break;
 			};
 
@@ -1491,7 +1493,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const node = $(this.node);
 				const obj = $(`#block-${block.id}`);
 
-				node.width() <= getWrapperWidth() / 2 ? obj.addClass('isVertical') : obj.removeClass('isVertical');
+				obj.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
 			};
 
 			if (this.refControls && this.refControls.resize) {

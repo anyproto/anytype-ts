@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Storage, Onboarding } from 'Lib';
+import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -10,244 +10,87 @@ enum Stage {
 	Soul	 = 2,
 };
 
-type State = {
-	stage: Stage;
-	phraseVisible: boolean;
-	error: string;
-};
+const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
-const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
+	const { account } = S.Auth;
+	const nodeRef = useRef(null);
+	const frameRef = useRef(null);
+	const phraseRef = useRef(null);
+	const nextRef = useRef(null);
+	const nameRef = useRef(null);
+	const [ stage, setStage ] = useState(Stage.Vault);
+	const [ phraseVisible, setPhraseVisible ] = useState(false);
+	const [ error, setError ] = useState('');
+	const cnb = [];
 
-	node: HTMLDivElement = null;
-	refFrame: Frame = null;
-	refPhrase: Phrase = null;
-	refNext: Button = null;
-	refName: Input = null;
-
-	state: State = {
-		stage: Stage.Vault,
-		phraseVisible: false,
-		error: '',
-	};
-
-	isDelayed = false;
-	isCreating = false;
-
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onForward = this.onForward.bind(this);
-		this.onBack = this.onBack.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onShowPhrase = this.onShowPhrase.bind(this);
-		this.setError = this.setError.bind(this);
-	};
-
-	render () {
-		const { stage, phraseVisible, error } = this.state;
-		const cnb = [];
-
-		if (!this.canMoveForward()) {
-			cnb.push('disabled');
-		};
-
-		let content = null;
-		let buttons = null;
-		let more = null;
-
-		switch (stage) {
-			case Stage.Vault: {
-				buttons = (
-					<div className="animation">
-						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('authOnboardVaultButton')} onClick={this.onForward} />
-					</div>
-				);
-				break;
-			};
-
-			case Stage.Phrase: {
-				const text = phraseVisible ? translate('commonNext') : translate('authOnboardPhraseSubmit');
-
-				content = (
-					<Phrase
-						ref={ref => this.refPhrase = ref}
-						className="animation"
-						readonly={true}
-						isHidden={!phraseVisible}
-						onCopy={this.onCopy}
-						onClick={this.onCopy}
-					/>
-				);
-
-				buttons = (
-					<React.Fragment>
-						<div className="animation">
-							<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={text} onClick={this.onShowPhrase} />
-						</div>
-
-						{!phraseVisible ? (
-							<div className="animation">
-								<Button color="blank" text={translate('commonSkip')} onClick={this.onForward} />
-							</div>
-						) : ''}
-					</React.Fragment>
-				);
-
-				if (!phraseVisible) {
-					more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
-				};
-				break;
-			};
-
-			case Stage.Soul: {
-				content = (
-					<div className="inputWrapper animation">
-						<Input
-							ref={ref => this.refName = ref}
-							focusOnMount={true}
-							placeholder={translate('defaultNamePage')}
-							maxLength={255}
-						/>
-					</div>
-				);
-
-				buttons = (
-					<div className="animation">
-						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('authOnboardSoulButton')} onClick={this.onForward} />
-					</div>
-				);
-				break;
-			};
-		};
-
-		return (
-			<div 
-				ref={(ref) => (this.node = ref)} 
-				className={`stage${Stage[stage]}`}
-			>
-				{this.canMoveBack() ? <Icon className="arrow back" onClick={this.onBack} /> : ''}
-
-				<Frame ref={(ref) => (this.refFrame = ref)}>
-					<DotIndicator className="animation" index={stage} count={3} />
-					<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
-					<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
-
-					{content}
-
-					<Error className="animation" text={error} />
-					<div className="buttons">{buttons}</div>
-					{more}
-				</Frame>
-
-				<CanvasWorkerBridge state={0} />
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		const { stage } = this.state;
-
-		Animation.to();
-		this.rebind();
-
-		analytics.event('ScreenOnboarding', { step: Stage[stage] });
-	};
-
-	componentDidUpdate (_, prevState): void {
-		const { stage } = this.state;
-		const { account } = S.Auth;
-
-		if (prevState.stage != stage) {
-			Animation.to();
-			analytics.event('ScreenOnboarding', { step: Stage[stage] });
-		};
-
-		if (account && (stage == Stage.Phrase)) {
-			Renderer.send('keytarGet', account.id).then(value => this.refPhrase?.setValue(value));
-		};
-
-		this.refFrame?.resize();
-		this.rebind();
-	};
-
-	componentWillUnmount (): void {
-		this.unbind();
-	};
-
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.onboarding');
 	};
 
-	rebind () {
-		const node = $(this.node);
+	const rebind = () => {
+		const node = $(nodeRef.current);
 		const tooltipPhrase = node.find('#tooltipPhrase');
 
-		this.unbind();
-		$(window).on('keydown.onboarding', e => this.onKeyDown(e));
-
-		tooltipPhrase.off('click').on('click', () => this.onPhraseTooltip());
+		unbind();
+		$(window).on('keydown.onboarding', e => onKeyDown(e));
+		tooltipPhrase.off('click').on('click', () => onPhraseTooltip());
 	};
 
-	onKeyDown (e) {
-		keyboard.shortcut('enter', e, this.onForward);
+	const onKeyDown = e => {
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			onForward();
+		});
 	};
 
-	/** Guard to prevent illegal state change */
-	canMoveForward (): boolean {
-		return !this.isDelayed && !!Stage[this.state.stage];
+	// Guard to prevent illegal state change
+	const canMoveForward = (): boolean => {
+		return !!Stage[stage] && !nextRef.current?.isLoading();
 	};
 
-	/** Guard to prevent illegal state change */
-	canMoveBack (): boolean {
-		return this.state.stage <= Stage.Soul;
+	// Guard to prevent illegal state change
+	const canMoveBack = (): boolean => {
+		return stage <= Stage.Soul;
 	};
 
-	/** Moves the Onboarding Flow one stage forward if possible */
-	onForward () {
-		if (!this.canMoveForward()) {
+	// Moves the Onboarding Flow one stage forward if possible
+	const onForward = () => {
+		if (!canMoveForward()) {
 			return;
 		};
-
-		const { stage } = this.state;
-		const { account } = S.Auth;
 
 		if (stage == Stage.Vault) {
 			const cb = () => {
 				Animation.from(() => {
-					this.setState({ stage: stage + 1 });
-					this.refNext?.setLoading(false);
+					nextRef.current?.setLoading(false);
+					setStage(stage + 1);
 				});
 			};
 
 			if (account) {
 				cb();
 			} else {
-				this.refNext?.setLoading(true);
-				U.Data.accountCreate(this.setError, cb);
+				nextRef.current?.setLoading(true);
+				U.Data.accountCreate(setErrorHandler, cb);
 			};
 		};
 
-		if (!account) {
-			return;
-		};
-
 		if (stage == Stage.Phrase) {
-			Animation.from(() => { 
-				this.setState({ stage: stage + 1 });
-			});
+			Animation.from(() => setStage(stage + 1));
 		};
 
 		if (stage == Stage.Soul) {
-			const name = this.refName.getValue();
+			const name = nameRef.current?.getValue();
 			const cb = () => {
 				Animation.from(() => {
-					this.refNext?.setLoading(false);
+					nextRef.current?.setLoading(false);
 
 					const routeParam = {
 						replace: true, 
 						onRouteChange: () => {
 							S.Common.fullscreenObjectSet(true);
 							S.Common.showRelativeDatesSet(true);
+							S.Common.showObjectSet(false);
 
 							U.Space.initSpaceState();
 							Onboarding.start('basics', false);
@@ -268,7 +111,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 			C.WorkspaceSetInfo(S.Common.space, details, () => {
 				if (name) {
-					this.refNext?.setLoading(true);
+					nextRef.current?.setLoading(true);
 					U.Object.setName(S.Block.profile, name, cb);
 				} else {
 					cb();
@@ -278,49 +121,164 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 	};
 
-	/** Moves the Onboarding Flow one stage backward, or exits it entirely */
-	onBack () {
-		if (!this.canMoveBack()) {
+	// Moves the Onboarding Flow one stage backward, or exits it entirely
+	const onBack = () => {
+		if (!canMoveBack()) {
 			return;
 		};
-
-		const { stage } = this.state;
 
 		if (stage == Stage.Vault) {
 			Animation.from(() => U.Router.go('/', { replace: true }));
 		} else {
-			this.setState({ stage: stage - 1 });
+			setStage(stage - 1);
 		};
 	};
 
-	onShowPhrase () {
-		const { stage, phraseVisible } = this.state;
-
+	const onShowPhrase = () => {
 		if (phraseVisible) {
-			this.onForward();
+			onForward();
 		} else {
-			this.refPhrase.onToggle();
-			this.setState({ phraseVisible: true });
+			phraseRef.current?.onToggle();
+			setPhraseVisible(true);
 
 			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: Stage[stage] });
 		};
 	};
 
-	onCopy () {
-		U.Common.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
+	const onCopy = () => {
+		U.Common.copyToast(translate('commonPhrase'), phraseRef.current?.getValue());
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
-	onPhraseTooltip () {
+	const onPhraseTooltip = () => {
 		S.Popup.open('phrase', {});
-		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[this.state.stage] });
+		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[stage] });
 	};
 
-	setError (error: string) {
-		this.refNext?.setLoading(false);
-		this.setState({ error });
+	const setErrorHandler = (error: string) => {
+		nextRef.current?.setLoading(false);
+		setError(error);
 	};
 
-});
+	if (!canMoveForward()) {
+		cnb.push('disabled');
+	};
+
+	let content = null;
+	let buttons = null;
+	let more = null;
+
+	switch (stage) {
+		case Stage.Vault: {
+			buttons = (
+				<div className="animation">
+					<Button ref={nextRef} className={cnb.join(' ')} text={translate('authOnboardVaultButton')} onClick={onForward} />
+				</div>
+			);
+			break;
+		};
+
+		case Stage.Phrase: {
+			const text = phraseVisible ? translate('commonNext') : translate('authOnboardPhraseSubmit');
+
+			content = (
+				<Phrase
+					ref={phraseRef}
+					className="animation"
+					readonly={true}
+					isHidden={!phraseVisible}
+					onCopy={onCopy}
+					onClick={onCopy}
+				/>
+			);
+
+			buttons = (
+				<React.Fragment>
+					<div className="animation">
+						<Button ref={nextRef} className={cnb.join(' ')} text={text} onClick={onShowPhrase} />
+					</div>
+
+					{!phraseVisible ? (
+						<div className="animation">
+							<Button color="blank" text={translate('commonSkip')} onClick={onForward} />
+						</div>
+					) : ''}
+				</React.Fragment>
+			);
+
+			if (!phraseVisible) {
+				more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
+			};
+			break;
+		};
+
+		case Stage.Soul: {
+			content = (
+				<div className="inputWrapper animation">
+					<Input
+						ref={nameRef}
+						focusOnMount={true}
+						placeholder={translate('defaultNamePage')}
+						maxLength={255}
+					/>
+				</div>
+			);
+
+			buttons = (
+				<div className="animation">
+					<Button ref={nextRef} className={cnb.join(' ')} text={translate('authOnboardSoulButton')} onClick={onForward} />
+				</div>
+			);
+			break;
+		};
+	};
+
+	const init = () => {
+		Animation.to();
+		frameRef.current.resize();
+		rebind();
+	};
+
+	useEffect(() => {
+		init();
+		return () => unbind();
+	}, []);
+
+	useEffect(() => {
+		init();
+
+		if (account && (stage == Stage.Phrase)) {
+			Renderer.send('keytarGet', account.id).then(value => phraseRef.current?.setValue(value));
+		};
+	}, [ stage ]);
+
+	useEffect(() => {
+		analytics.event('ScreenOnboarding', { step: Stage[stage] });
+	});
+
+	return (
+		<div 
+			ref={nodeRef} 
+			className={`stage${Stage[stage]}`}
+		>
+			{canMoveBack() ? <Icon className="arrow back" onClick={onBack} /> : ''}
+
+			<Frame ref={frameRef}>
+				<DotIndicator className="animation" index={stage} count={3} />
+				<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
+				<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
+
+				{content}
+
+				<Error className="animation" text={error} />
+				<div className="buttons">{buttons}</div>
+				{more}
+			</Frame>
+
+			<CanvasWorkerBridge state={0} />
+		</div>
+	);
+
+}));
 
 export default PageAuthOnboard;

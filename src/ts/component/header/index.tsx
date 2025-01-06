@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon } from 'Component';
+import { Icon, Sync } from 'Component';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -25,80 +25,51 @@ const Components = {
 	mainEmpty:			 HeaderMainEmpty,
 };
 
-class Header extends React.Component<Props> {
+const Header = forwardRef<{}, Props>((props, ref) => {
 
-	refChild: any = null;
+	const { 
+		component, 
+		className = '', 
+		withBanner = false, 
+		rootId = '', 
+		tab = '', 
+		tabs = [], 
+		layout = I.ObjectLayout.Page,
+		isPopup = false,
+		onTab,
+	} = props;
 
-	constructor (props: Props) {
-		super(props);
+	const childRef = useRef(null);
+	const Component = Components[component] || null;
+	const cn = [ 'header', component, className ];
 
-		this.menuOpen = this.menuOpen.bind(this);
-		this.renderLeftIcons = this.renderLeftIcons.bind(this);
-		this.renderTabs = this.renderTabs.bind(this);
-		this.onSearch = this.onSearch.bind(this);
-		this.onTooltipShow = this.onTooltipShow.bind(this);
-		this.onTooltipHide = this.onTooltipHide.bind(this);
-		this.onDoubleClick = this.onDoubleClick.bind(this);
-		this.onExpand = this.onExpand.bind(this);
-		this.onRelation = this.onRelation.bind(this);
+	if (![ 'authIndex' ].includes(component)) {
+		cn.push('isCommon');
 	};
-	
-	render () {
-		const { component, className, withBanner } = this.props;
-		const Component = Components[component] || null;
-		const cn = [ 'header', component, className ];
 
-		if (![ 'authIndex' ].includes(component)) {
-			cn.push('isCommon');
-		};
+	if (withBanner) {
+		cn.push('withBanner');
+	};
 
-		if (withBanner) {
-			cn.push('withBanner');
-		};
+	const renderLeftIcons = (onOpen?: () => void) => {
+		const object = S.Detail.get(rootId, rootId, J.Relation.template);
+		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+		const showMenu = !isTypeOrRelation;
+		const canSync = showMenu && !object.templateIsBundled && !U.Object.isParticipantLayout(object.layout);
 
 		return (
-			<div id="header" className={cn.join(' ')} onDoubleClick={this.onDoubleClick}>
-				{Component ? (
-					<Component 
-						ref={ref => this.refChild = ref} 
-						{...this.props} 
-						onSearch={this.onSearch}
-						onTooltipShow={this.onTooltipShow}
-						onTooltipHide={this.onTooltipHide}
-						menuOpen={this.menuOpen}
-						renderLeftIcons={this.renderLeftIcons}
-						renderTabs={this.renderTabs}
-						onRelation={this.onRelation}
-					/>
-				) : ''}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		sidebar.resizePage(null, false);
-	};
-
-	componentDidUpdate () {
-		sidebar.resizePage(null, false);
-		this.refChild.forceUpdate();
-	};
-
-	renderLeftIcons (onOpen?: () => void) {
-		return (
-			<React.Fragment>
+			<>
 				<Icon 
 					className="expand withBackground" 
 					tooltip={translate('commonOpenObject')} 
-					onClick={onOpen || this.onExpand} 
+					onClick={onOpen || onExpand} 
 				/>
-			</React.Fragment>
+				{canSync ? <Sync id="button-header-sync" onClick={onSync} /> : ''}
+			</>
 		);
 	};
 
-	renderTabs () {
-		const { tab, tabs, onTab } = this.props;
-
+	const renderTabs = () => {
 		return (
 			<div id="tabs" className="tabs">
 				{tabs.map((item: any, i: number) => (
@@ -106,8 +77,8 @@ class Header extends React.Component<Props> {
 						key={i}
 						className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
 						onClick={() => onTab(item.id)}
-						onMouseOver={e => this.onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
-						onMouseOut={this.onTooltipHide}
+						onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
+						onMouseOut={onTooltipHide}
 					>
 						{item.name}
 					</div>
@@ -116,35 +87,34 @@ class Header extends React.Component<Props> {
 		);
 	};
 
-	onExpand () {
-		const { rootId, layout } = this.props;
-
+	const onExpand = () => {
 		S.Popup.closeAll(null, () => U.Object.openRoute({ id: rootId, layout }));
 	};
 
-	onSearch () {
+	const onSearch = () => {
 		keyboard.onSearchPopup('Header');
 	};
 
-	onTooltipShow (e: any, text: string, caption?: string) {
+	const onTooltipShow = (e: any, text: string, caption?: string) => {
 		const t = Preview.tooltipCaption(text, caption);
 		if (t) {
 			Preview.tooltipShow({ text: t, element: $(e.currentTarget), typeY: I.MenuDirection.Bottom });
 		};
 	};
 
-	onTooltipHide () {
+	const onTooltipHide = () => {
 		Preview.tooltipHide(false);
 	};
 
-	onDoubleClick () {
-		Renderer.send('winCommand', 'maximize');
+	const onDoubleClick = () => {
+		if (U.Common.isPlatformMac()) {
+			Renderer.send('winCommand', 'maximize');
+		};
 	};
 
-	menuOpen (id: string, elementId: string, param: Partial<I.MenuParam>) {
-		const { isPopup } = this.props;
+	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
 		const st = $(window).scrollTop();
-		const element = $(`${this.getContainer()} ${elementId}`);
+		const element = $(`${getContainer()} ${elementId}`);
 		const menuParam: any = Object.assign({
 			element,
 			offsetY: 4,
@@ -158,18 +128,17 @@ class Header extends React.Component<Props> {
 		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
 	};
 
-	onRelation (param?: Partial<I.MenuParam>, data?: any) {
+	const onRelation = (param?: Partial<I.MenuParam>, data?: any) => {
 		param = param || {};
 		data = data || {};
 
-		const { isPopup, rootId } = this.props;
 		const cnw = [ 'fixed' ];
 
 		if (!isPopup) {
 			cnw.push('fromHeader');
 		};
 
-		this.menuOpen('blockRelationView', '#button-header-relation', {
+		menuOpen('blockRelationView', '#button-header-relation', {
 			noFlipX: true,
 			noFlipY: true,
 			horizontal: I.MenuDirection.Right,
@@ -184,10 +153,59 @@ class Header extends React.Component<Props> {
 		});
 	};
 
-	getContainer () {
-		return (this.props.isPopup ? '.popup' : '') + ' .header';
+	const onSync = () => {
+		menuOpen('syncStatus', '#button-header-sync', {
+			subIds: [ 'syncStatusInfo' ],
+			data: {
+				rootId,
+			}
+		});
 	};
 
-};
+	const getContainer = () => {
+		return (isPopup ? '.popup' : '') + ' .header';
+	};
+
+	useEffect(() => {
+		sidebar.resizePage(null, false);
+	});
+
+	useImperativeHandle(ref, () => ({
+		setVersion: (version: string) => {
+			if (childRef.current && childRef.current.setVersion) {
+				childRef.current.setVersion(version);
+			};
+		},
+
+		forceUpdate: () => {
+			if (childRef.current && childRef.current.forceUpdate) {
+				childRef.current.forceUpdate();
+			};
+		},
+	}));
+
+	return (
+		<div 
+			id="header" 
+			className={cn.join(' ')}
+			onDoubleClick={onDoubleClick}
+		>
+			{Component ? (
+				<Component 
+					ref={childRef} 
+					{...props} 
+					onSearch={onSearch}
+					onTooltipShow={onTooltipShow}
+					onTooltipHide={onTooltipHide}
+					menuOpen={menuOpen}
+					renderLeftIcons={renderLeftIcons}
+					renderTabs={renderTabs}
+					onRelation={onRelation}
+				/>
+			) : ''}
+		</div>
+	);
+
+});
 
 export default Header;

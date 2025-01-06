@@ -344,7 +344,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.onCreate();
+		this.onCreate({ route: analytics.route.widget });
 	};
 
 	onCreate (param?: any): void {
@@ -353,6 +353,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const { viewId, layout } = block.content;
 		const object = this.getObject();
+		const route = param.route || analytics.route.widget;
 
 		if (!object) {
 			return;
@@ -440,8 +441,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
-			U.Object.openAuto(newObject);
-			analytics.createObject(newObject.type, newObject.layout, analytics.route.widget, message.middleTime);
+			U.Object.openConfig(newObject);
+			analytics.createObject(newObject.type, newObject.layout, param.route, message.middleTime);
 		});
 	};
 
@@ -488,8 +489,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const isClosed = Storage.checkToggle('widget', block.id);
 
 		if (!isPreview) {
-			isClosed ? node.addClass('isClosed') : node.removeClass('isClosed');
-			isClosed ? icon.addClass('isClosed') : node.removeClass('isClosed');
+			node.toggleClass('isClosed', isClosed);
+			icon.toggleClass('isClosed', isClosed);
+
 			isClosed ? innerWrap.hide() : innerWrap.show();
 		};
 	};

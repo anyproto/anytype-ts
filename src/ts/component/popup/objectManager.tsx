@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Button, ListObjectManager } from 'Component';
+import { Title, Button, ListManager } from 'Component';
 import { C, I, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -35,11 +35,11 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 			<React.Fragment>
 				<Title text={title} />
 
-				<ListObjectManager
+				<ListManager
 					ref={ref => this.refManager = ref}
 					subId={subId}
 					rowLength={2}
-					withArchived={true}
+					ignoreArchived={false}
 					buttons={[]}
 					iconSize={48}
 					collectionId={collectionId}
@@ -89,7 +89,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 
 		switch (type) {
 			case I.ObjectManagerPopup.Favorites: {
-				C.ObjectListSetIsFavorite(this.refManager.selected, true);
+				C.ObjectListSetIsFavorite(this.refManager.getSelected(), true);
 				break;
 			};
 		};

@@ -124,7 +124,7 @@
 
 			.buttons { flex-shrink: 0; }
 			.buttons {
-				.icon { position: static; margin: 0px; }
+				.icon { position: static; margin: 0px; flex-shrink: 0; }
 			}
 			
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
@@ -150,7 +150,7 @@
 			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: var(--color-text-secondary); }
 			.descr:empty { display: none; }
 
-			.info { line-height: 40px; width: calc(100% - 16px); }
+			.info { line-height: 40px; }
 			.txt { width: 100%; }
 		}
 
@@ -272,6 +272,7 @@ html.platformWindows {
 @import "./quickCapture";
 @import "./syncStatus";
 @import "./graph";
+@import "./participant";
 
 @import "./search/object";
 @import "./search/text";

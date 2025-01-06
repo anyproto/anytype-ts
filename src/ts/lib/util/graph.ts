@@ -16,6 +16,11 @@ class UtilGraph {
 				break;
 			};
 
+			case I.ObjectLayout.Date: {
+				src = `img/icon/relation/date.svg`;
+				break;
+			};
+
 			case I.ObjectLayout.Audio:
 			case I.ObjectLayout.Video:
 			case I.ObjectLayout.Pdf:

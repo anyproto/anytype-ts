@@ -1,6 +1,15 @@
 import $ from 'jquery';
 import { I, C, S, U, J, Preview, analytics, Storage } from 'Lib';
 
+interface RouteParam {
+	page: string; 
+	action: string; 
+	id: string; 
+	spaceId: string; 
+	viewId: string; 
+	relationKey: string;
+};
+
 class UtilRouter {
 
 	history: any = null;
@@ -35,15 +44,17 @@ class UtilRouter {
 		return param;
 	};
 
-	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; viewId: string; }>): string {
+	build (param: Partial<RouteParam>): string {
 		const { page, action } = param;
 		const id = String(param.id || J.Constant.blankRouteId);
 		const spaceId = String(param.spaceId || J.Constant.blankRouteId);
 		const viewId = String(param.viewId || J.Constant.blankRouteId);
+		const relationKey = String(param.relationKey || J.Constant.blankRouteId);
 
 		let route = [ page, action, id ];
 		route = route.concat([ 'spaceId', spaceId ]);
 		route = route.concat([ 'viewId', viewId ]);
+		route = route.concat([ 'relationKey', relationKey ]);
 
 		return route.join('/');
 	};
@@ -139,9 +150,10 @@ class UtilRouter {
 			return;
 		};
 
-		const { config } = S.Common;
+		const withChat = U.Object.isAllowedChat();
 
 		S.Menu.closeAllForced();
+		S.Progress.showSet(false);
 
 		if (sendEvent) {
 			analytics.event('SwitchSpace');
@@ -149,11 +161,17 @@ class UtilRouter {
 
 		this.isOpening = true;
 
-		C.WorkspaceOpen(id, config.experimental, (message: any) => {
+		C.WorkspaceOpen(id, withChat, (message: any) => {
 			this.isOpening = false;
 
 			if (message.error.code) {
-				U.Data.onAuthWithoutSpace();
+				const spaces = U.Space.getList().filter(it => it.targetSpaceId != id);
+
+				if (spaces.length) {
+					this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam);
+				} else {
+					U.Router.go('/main/void', routeParam);
+				};
 				return;
 			};
 
