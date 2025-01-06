@@ -67,11 +67,11 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 					{!items.length ? (
 						<div className="item empty">{translate('menuDataviewObjectListEmptySearch')}</div>
 					) : (
-						<React.Fragment>
+						<>
 							{items.map((item, i) => (
 								<Item key={i} {...item} />
 							))}
-						</React.Fragment>
+						</>
 					)}
 				</div>
 			</div>

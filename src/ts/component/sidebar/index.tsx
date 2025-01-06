@@ -38,7 +38,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		const cmd = keyboard.cmdSymbol();
 
 		return (
-			<React.Fragment>
+			<>
 				<Icon 
 					id="sidebarToggle"
 					className="withBackground"
@@ -58,7 +58,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

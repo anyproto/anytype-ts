@@ -121,7 +121,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupExportTitle')} />
 
 				{items.map((item: any, i: number) => (
@@ -132,7 +132,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 					<Button text={translate('popupExportOk')} onClick={this.onConfirm} />
 					<Button color="blank" text={translate('commonCancel')} onClick={this.onCancel} />
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

@@ -101,11 +101,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		let content = null;
 		if (noVirtualisation) {
 			content = (
-				<React.Fragment>
+				<>
 					{items.map((item, i) => (
 						<Item {...item} key={i} index={i} />
 					))}
-				</React.Fragment>
+				</>
 			);
 		} else {
 			const rowRenderer = (param: any) => (
@@ -150,7 +150,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 		
 		return (
-			<React.Fragment>
+			<>
 				{withFilter ? (
 					<Filter 
 						ref={ref => this.refFilter = ref}
@@ -174,7 +174,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 				<div className="items">
 					{content}
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 	

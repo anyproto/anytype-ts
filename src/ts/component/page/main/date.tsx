@@ -84,7 +84,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 			};
 
 			content = (
-				<React.Fragment>
+				<>
 					<div className="categories">
 						{relations.map(item => {
 							const isMention = item.relationKey == J.Relation.key.mention;
@@ -116,7 +116,7 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 						route={analytics.route.screenDate}
 						relationKeys={keys}
 					/>
-				</React.Fragment>
+				</>
 			);
 		};
 

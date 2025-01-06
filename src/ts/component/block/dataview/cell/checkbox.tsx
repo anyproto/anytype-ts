@@ -35,10 +35,10 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell>
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Icon className={cn.join(' ')} />
 				{label ? <Label text={label} /> : ''}
-			</React.Fragment>
+			</>
 		);
 	};
 

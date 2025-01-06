@@ -16,7 +16,7 @@ const PopupMigration = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	switch (type) {
 		case 'onboarding': {
 			content = (
-				<React.Fragment>
+				<>
 					<Title text={'⚡️ ' + translate('popupMigrationOnboardingTitle')} />
 					<Label text={translate('popupMigrationOnboardingText1')} />
 					<Label text={translate('popupMigrationOnboardingText2')} />
@@ -30,14 +30,14 @@ const PopupMigration = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<div className="buttons">
 						<Button text={translate('commonDone')} className="c36" onClick={() => close()} />
 					</div>
-				</React.Fragment>
+				</>
 			);
 			break;
 		};
 
 		case 'import': {
 			content = (
-				<React.Fragment>
+				<>
 					<Title text={translate('popupMigrationImportTitle')} />
 					<Label text={translate('popupMigrationImportText1')} />
 					<Label text={translate('popupMigrationImportText2')} />
@@ -51,7 +51,7 @@ const PopupMigration = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<div className="buttons">
 						<Button text={translate('commonDone')} className="c36" onClick={() => close()} />
 					</div>
-				</React.Fragment>
+				</>
 			);
 			break;
 		};

@@ -218,10 +218,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				{icon}
 				<Name name={value} />
-			</React.Fragment>
+			</>
 		);
 	};
 

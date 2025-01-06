@@ -86,7 +86,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				{!items.length && !isLoading ? (
 					<EmptySearch text={translate('commonNothingFound')} />
 				) : ''}
@@ -122,7 +122,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						)}
 					</div>
 				) : ''}
-			</React.Fragment>
+			</>
 		);
 	};
 	

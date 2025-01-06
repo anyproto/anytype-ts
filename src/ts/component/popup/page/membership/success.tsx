@@ -27,13 +27,13 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={title} />
 				<Icon className="tierIcon" />
 				<Label text={text} />
 
 				<Button onClick={() => close()} className="c36" color="blank" text={translate('commonContinue')} />
-			</React.Fragment>
+			</>
 		);
 	};
 

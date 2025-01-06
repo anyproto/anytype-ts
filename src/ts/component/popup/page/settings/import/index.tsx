@@ -24,7 +24,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Head onPage={() => onPage('spaceIndex')} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsImportTitle')} />
 				<Label className="description" text={translate('popupSettingsImportText')} />
@@ -34,7 +34,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 						<Item key={i} {...item} />
 					))}
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

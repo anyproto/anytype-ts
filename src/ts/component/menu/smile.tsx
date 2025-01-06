@@ -147,7 +147,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				};
 
 				content = (
-					<React.Fragment>
+					<>
 						<Filter 
 							ref={ref => this.refFilter = ref}
 							value={filter}
@@ -207,7 +207,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 								/>
 							</div>
 						) : ''}
-					</React.Fragment>
+					</>
 				);
 				break;
 			};
@@ -247,7 +247,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				};
 
 				content = (
-					<React.Fragment>
+					<>
 						<Filter 
 							ref={ref => this.refFilter = ref}
 							value={filter}
@@ -287,7 +287,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 							): ''}
 						</div>
 
-					</React.Fragment>
+					</>
 				);
 				break;
 			};

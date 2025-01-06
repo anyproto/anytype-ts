@@ -73,7 +73,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					/>
 
 					{!object._empty_ ? (
-						<React.Fragment>
+						<>
 							<div className="section set">
 								<div className="title">{totalType} {U.Common.plural(totalType, translate('pluralObjectType'))}</div>
 								<div className="content">
@@ -107,7 +107,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 									</div>
 								</div>
 							) : ''}
-						</React.Fragment>
+						</>
 					) : ''}
 				</div>
 

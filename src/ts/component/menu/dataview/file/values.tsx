@@ -32,10 +32,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		));
 
 		const File = (item: any) => (
-			<React.Fragment>
+			<>
 				<IconObject object={item} />
 				<ObjectName object={item} />
-			</React.Fragment>
+			</>
 		);
 
 		const Image = (item: any) => (

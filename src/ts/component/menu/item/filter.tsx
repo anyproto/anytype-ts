@@ -88,7 +88,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 
 				if (list.length) {
 					v = (
-						<React.Fragment>
+						<>
 							{list.map((item: any) => (
 								<Tag 
 									key={item.id}
@@ -97,7 +97,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 									className={Relation.selectClassName(relation.format)} 
 								/>
 							))}
-						</React.Fragment>
+						</>
 					);
 				} else {
 					v = 'empty';
@@ -122,11 +122,11 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				list = list.filter(it => !it._empty_);
 
 				v = (
-					<React.Fragment>
+					<>
 						{list.map((item: any, i: number) => {
 							return <Item key={i} {...item} />;
 						})}
-					</React.Fragment>
+					</>
 				);
 				break;
 			};

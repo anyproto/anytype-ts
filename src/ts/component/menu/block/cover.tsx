@@ -90,7 +90,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			case Tab.Unsplash:
 			case Tab.Library: {
 				content = (
-					<React.Fragment>
+					<>
 						{sections.length ? (
 							<div className="sections">
 								{sections.map((section: any, i: number) => (
@@ -98,7 +98,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 								))}
 							</div>
 						) : <EmptySearch text={filter ? U.Common.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
-					</React.Fragment>
+					</>
 				);
 				break;
 			};

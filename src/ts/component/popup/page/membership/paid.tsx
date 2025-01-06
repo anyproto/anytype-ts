@@ -102,7 +102,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		return (
 			<form className="anyNameForm" onSubmit={this.onSubmit}>
 				{tierItem.namesCount ? (
-					<React.Fragment>
+					<>
 						<Title text={translate(`popupMembershipPaidTitle`)} />
 						<Label text={labelText} />
 
@@ -119,7 +119,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 						</div>
 
 						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
-					</React.Fragment>
+					</>
 				) : ''}
 
 				<div className="priceWrapper">
@@ -133,12 +133,12 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 						{withContactButton ? <Button onClick={() => Action.membershipUpgrade()} text={translate('popupMembershipWriteToAnyteam')} className="c36" color="blank" /> : ''}
 					</div>
 				) : (
-					<React.Fragment>
+					<>
 						<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
 						<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
 
 						<FooterAuthDisclaimer />
-					</React.Fragment>
+					</>
 				)}
 			</form>
 		);

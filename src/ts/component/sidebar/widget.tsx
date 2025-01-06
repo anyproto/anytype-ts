@@ -119,9 +119,9 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			};
 
 			content = (
-				<React.Fragment>
+				<>
 					{space && !space._empty_ ? (
-						<React.Fragment>
+						<>
 							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
 
 							<DropTarget 
@@ -150,7 +150,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 								onDragOver={this.onDragOver}
 								isEditing={isEditing}
 							/>
-						</React.Fragment>
+						</>
 					) : ''}
 
 					{blocks.map((block, i) => (
@@ -191,7 +191,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
 						))}
 					</div>
-				</React.Fragment>
+				</>
 			);
 		};
 

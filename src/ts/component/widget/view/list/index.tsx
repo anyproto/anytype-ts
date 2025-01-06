@@ -204,7 +204,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		);
 	} else {
 		content = (
-			<React.Fragment>
+			<>
 				{items.map((item: any) => (
 					<WidgetListItem 
 						key={`widget-${block.id}-${item.id}`} 
@@ -215,7 +215,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 						isCompact={isCompact}
 					/>
 				))}
-			</React.Fragment>
+			</>
 		);
 	};
 

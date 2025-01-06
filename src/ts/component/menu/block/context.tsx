@@ -72,7 +72,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				) : ''}
 				
 				{canHaveMarks ? (
-					<React.Fragment>
+					<>
 						{markActions.length ? (
 							<div className="section">
 								{markActions.map((action: any, i: number) => {
@@ -126,7 +126,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								onMouseDown={e => this.onMark(e, I.MarkType.BgColor)} 
 							/>
 						</div>
-					</React.Fragment>
+					</>
 				) : ''}
 				
 				{hasMore ? (

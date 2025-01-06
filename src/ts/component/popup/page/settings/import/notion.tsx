@@ -25,7 +25,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 		const { error } = this.state;
 
 		return (
-			<React.Fragment>
+			<>
 				<Head {...this.props} returnTo="importIndex" name={translate('commonBack')} />
 
 				<Icon className="logo" />
@@ -68,7 +68,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 						<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList32')} />
 					</li>
 				</ol>
-			</React.Fragment>
+			</>
 		);
 	};
 	

@@ -20,7 +20,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 		const { error } = this.state;
 
 		return (
-			<React.Fragment>
+			<>
 				<Head onPage={() => onPage(prevPage)} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinVerify')} />
@@ -31,7 +31,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 					onError={this.onError} 
 				/>
 				<Error text={error} />
-			</React.Fragment>
+			</>
 		);
 	};
 

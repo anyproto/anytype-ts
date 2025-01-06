@@ -184,10 +184,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 										onChange={this.onLayout} 
 									/>
 								) : (
-									<React.Fragment>
+									<>
 										<Icon className={layout.icon} />
 										<div className="name">{layout.name}</div>
-									</React.Fragment>
+									</>
 								)}
 							</div>
 						</div>
