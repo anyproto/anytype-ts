@@ -11,7 +11,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: U.Date.duration(time) }));
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinText')} />
 				
@@ -45,7 +45,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 						<Button className="c36" text={translate('popupSettingsPinOn')} onClick={this.onTurnOnPin} />
 					</div>
 				)}
-			</React.Fragment>
+			</>
 		);
 	};
 

@@ -32,7 +32,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={title} />
 
 				<ListObjectManager
@@ -48,7 +48,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 				/>
 
 				<Button text={button} className="c36" onClick={this.onClick} />
-			</React.Fragment>
+			</>
 		);
 	};
 

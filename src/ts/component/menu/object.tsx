@@ -45,7 +45,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let sectionPage = null;
 		if (block && block.isPage() && config.sudo && restrictions.length) {
 			sectionPage = (
-				<React.Fragment>
+				<>
 					<div className="section">
 						<div className="name">Restrictions</div>
 						<div className="items">
@@ -54,7 +54,7 @@ class MenuObject extends React.Component<I.Menu> {
 							))}
 						</div>
 					</div>
-				</React.Fragment>
+				</>
 			);
 		};
 

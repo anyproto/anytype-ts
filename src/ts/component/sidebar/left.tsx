@@ -52,7 +52,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 		const Component = Components[page];
 
 		return (
-			<React.Fragment>
+			<>
 				<Icon 
 					id="sidebarToggle"
 					className="withBackground"
@@ -72,7 +72,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

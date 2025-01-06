@@ -129,11 +129,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if (isDate) {
 			buttonCreate = (
-				<React.Fragment>
+				<>
 					<Icon className="arrow left withBackground" onClick={() => this.changeDate(-1)} />
 					<Icon className="arrow right withBackground" onClick={() => this.changeDate(1)}/>
 					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
-				</React.Fragment>
+				</>
 			);
 		};
 

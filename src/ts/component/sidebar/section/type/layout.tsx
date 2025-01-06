@@ -33,7 +33,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
         return (
 			<div ref={ref => this.node = ref} className="wrap">
 				{!object.id ? (
-					<React.Fragment>
+					<>
 						<Label text={translate('sidebarSectionLayoutFormat')} />
 						<div className="items">
 							<div className="item">
@@ -45,7 +45,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 								/>
 							</div>
 						</div>
-					</React.Fragment>
+					</>
 				) : ''}
 
 				<Label text={translate('sidebarSectionLayoutName')} />

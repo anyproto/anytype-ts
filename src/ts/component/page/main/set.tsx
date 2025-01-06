@@ -55,7 +55,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			const readonly = this.isReadonly();
 
 			content = (
-				<React.Fragment>
+				<>
 					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} readonly={readonly} /> : ''}
 
 					<div className="blocks wrapper">
@@ -90,7 +90,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 							/>
 						))}
 					</div>
-				</React.Fragment>
+				</>
 			);
 		};
 

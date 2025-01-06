@@ -21,7 +21,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 	}));
 
 	return (
-		<React.Fragment>
+		<>
 			<div className="side left">{renderLeftIcons()}</div>
 
 			<div className="side center">
@@ -41,7 +41,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 					/> 
 				) : ''}
 			</div>
-		</React.Fragment>
+		</>
 	);
 
 }));

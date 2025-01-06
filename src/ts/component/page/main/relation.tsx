@@ -73,7 +73,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					/>
 
 					{!object._empty_ ? (
-						<React.Fragment>
+						<>
 							<div className="section set">
 								<div className="title">
 									<div className="side left">
@@ -127,7 +127,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 									</div>
 								</div>
 							) : ''}
-						</React.Fragment>
+						</>
 					) : ''}
 				</div>
 

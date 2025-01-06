@@ -137,7 +137,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 			switch (Number(viewType)) {
 				case I.ViewType.Board: {
 					content = (
-						<React.Fragment>
+						<>
 							<div className="group">
 								<div className="headerPlug" />
 								{this.insertEmtpyNodes('item', 1)}
@@ -152,7 +152,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 								<div className="headerPlug" />
 								{this.insertEmtpyNodes('item', 2)}
 							</div>
-						</React.Fragment>
+						</>
 					);
 					break;
 				};

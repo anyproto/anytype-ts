@@ -192,7 +192,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			);
 
 			buttons = (
-				<React.Fragment>
+				<>
 					<div className="animation">
 						<Button ref={nextRef} className={cnb.join(' ')} text={text} onClick={onShowPhrase} />
 					</div>
@@ -202,7 +202,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 							<Button color="blank" text={translate('commonSkip')} onClick={onForward} />
 						</div>
 					) : ''}
-				</React.Fragment>
+				</>
 			);
 
 			if (!phraseVisible) {

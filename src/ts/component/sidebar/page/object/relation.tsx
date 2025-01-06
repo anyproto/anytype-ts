@@ -22,7 +22,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const sections = this.getSections();
 
         return (
-			<React.Fragment>
+			<>
 				<div className="head">
 					<div className="side left">
 						<Label text={translate('sidebarTypeRelation')} />
@@ -54,7 +54,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 						</React.Fragment>
 					))}
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

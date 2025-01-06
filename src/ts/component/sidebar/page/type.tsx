@@ -26,7 +26,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const sections = this.getSections();
 
 		return (
-			<React.Fragment>
+			<>
 				<div className="head">
 					<div className="side left">
 						<Label text={translate('sidebarTypeTitle')} />
@@ -53,7 +53,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				</div>
 
 				<SidebarLayoutPreview {...this.props} ref={ref => this.previewRef = ref} />
-			</React.Fragment>
+			</>
 		);
 	};
 

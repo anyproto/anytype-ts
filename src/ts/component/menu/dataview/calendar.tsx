@@ -137,7 +137,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 					})}
 				</div>
 				{canEdit ? (
-					<React.Fragment>
+					<>
 						<div className="line" />
 						<div className="foot">
 							<div className="sides">
@@ -150,7 +150,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								</div>
 							</div>
 						</div>
-					</React.Fragment>
+					</>
 				) : ''}
 			</div>
 		);

@@ -177,7 +177,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 				{!items.length ? (
 					<div className="item empty">{translate('commonNoObjects')}</div>
 				) : (
-					<React.Fragment>
+					<>
 						{items.map(id => (
 							<Item 
 								{...props}
@@ -188,7 +188,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 							/>
 						))}
 						{total > limit ? <div className="item more" onClick={onAll}>{translate('widgetShowAll')}</div> : ''}
-					</React.Fragment>
+					</>
 				)}
 			</div>
 		</div>

@@ -101,7 +101,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		} else
 		if (withDescription) {
 			content = (
-				<React.Fragment>
+				<>
 					{iconMainElement}
 					<div className="info">
 						<div className="txt">
@@ -110,7 +110,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						</div>
 						{iconSideElement}
 					</div>
-				</React.Fragment>
+				</>
 			);
 		} else {
 			let additional = null;
@@ -135,19 +135,19 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				);
 			} else {
 				additional = (
-					<React.Fragment>
+					<>
 						{typeof caption === 'string' ? (
 							<div className="caption" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(caption) }} />
 						) : (
 							<div className="caption">{caption}</div>
 						)}
 						{withMore ? <Icon className="more" onMouseDown={onMore} /> : ''}
-					</React.Fragment>
+					</>
 				);
 			};
 
 			content = (
-				<React.Fragment>
+				<>
 					<div 
 						className="clickable" 
 						onMouseDown={hasClick ? undefined : onClick}
@@ -157,7 +157,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						{iconSideElement}
 					</div>
 					{additional}
-				</React.Fragment>
+				</>
 			);
 		};
 

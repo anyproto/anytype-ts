@@ -56,7 +56,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 
 		if (!compact) {
 			content = (
-				<React.Fragment>
+				<>
 					{iconLarge}
 					<div className="info">
 						<div className="nameWrap">
@@ -70,16 +70,16 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 							{description}
 						</div>
 					</div>
-				</React.Fragment>
+				</>
 			);
 		} else {
 			content = (
-				<React.Fragment>
+				<>
 					<div className="nameWrap">
 						{iconSmall}
 						<ObjectName object={item} />
 					</div>
-				</React.Fragment>
+				</>
 			);
 		};
 

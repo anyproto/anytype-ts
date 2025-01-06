@@ -128,7 +128,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 				<div id="blocks" className={cn.join(' ')}>
 					{file ? (
-						<React.Fragment>
+						<>
 							<div className="side left">
 								<div id="inner" className="inner">
 									{content}
@@ -174,7 +174,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 									) : ''}
 								</div>
 							</div>
-						</React.Fragment>
+						</>
 					) : (
 						<div id="empty" className="empty">{translate('pageMainMediaNotFound')}</div>
 					)}

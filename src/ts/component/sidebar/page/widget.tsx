@@ -122,9 +122,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			};
 
 			content = (
-				<React.Fragment>
+				<>
 					{space && !space._empty_ ? (
-						<React.Fragment>
+						<>
 							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
 
 							<DropTarget 
@@ -153,7 +153,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								onDragOver={this.onDragOver}
 								isEditing={isEditing}
 							/>
-						</React.Fragment>
+						</>
 					) : ''}
 
 					{blocks.map((block, i) => (
@@ -194,7 +194,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
 						))}
 					</div>
-				</React.Fragment>
+				</>
 			);
 		};
 

@@ -90,7 +90,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			cn.push('active');
 
 			elements = (
-				<React.Fragment>
+				<>
 					<div key="btn-drag" className="btn black drag withIcon">
 						<Icon />
 						<div className="txt">{translate('blockCoverDrag')}</div>
@@ -110,7 +110,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 						<div className="btn white" onMouseDown={this.onSave}>{translate('commonSave')}</div>
 						<div className="btn white" onMouseDown={this.onCancel}>{translate('commonCancel')}</div>
 					</div>
-				</React.Fragment>
+				</>
 			);
 		} else {
 			elements = (

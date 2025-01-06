@@ -96,7 +96,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 			};
 
 			content = (
-				<React.Fragment>
+				<>
 					<div className="usecases">
 						<Swiper
 							effect={'creative'}
@@ -129,7 +129,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 					<div className="buttonWrapper">
 						<Button onClick={() => this.onUsecaseSelect()} className="c24" text={buttonText} />
 					</div>
-				</React.Fragment>
+				</>
 			);
 		} else {
 			content = <div className="cards">{items.map((el, i) => <Card key={i} {...el} />)}</div>;

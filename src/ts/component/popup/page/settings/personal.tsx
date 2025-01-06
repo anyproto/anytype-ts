@@ -25,7 +25,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		const sidebarMode = showVault ? translate('sidebarMenuAll') : translate('sidebarMenuSidebar');
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
 				<Label className="section" text={translate('popupSettingsPersonalSectionLanguage')} />
@@ -194,7 +194,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 				</div>
 
-			</React.Fragment>
+			</>
 		);
 	};
 

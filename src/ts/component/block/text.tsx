@@ -117,7 +117,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				spellcheck = false;
 				
 				additional = (
-					<React.Fragment>
+					<>
 						<Select 
 							id={'lang-' + id} 
 							arrowClassName="light" 
@@ -139,7 +139,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 								<div className="txt">{translate('commonCopy')}</div>
 							</div>
 						</div>
-					</React.Fragment>
+					</>
 				);
 				break;
 			};
