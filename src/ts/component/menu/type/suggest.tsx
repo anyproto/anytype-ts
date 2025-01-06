@@ -437,6 +437,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			if (onClick) {
 				onClick(S.Detail.mapper(item));
 			};
+
+			U.Object.setLastUsedDate(item.id, U.Date.now());
 		};
 
 		if (item.id == 'add') {

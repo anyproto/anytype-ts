@@ -134,11 +134,16 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		};
 	};
 
-	getContent () {
+	getContent (): any {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
+		
+		if (!block) {
+			return {};
+		};
+
 		const object = S.Detail.get(rootId, block.getTargetObjectId());
 
 		return U.Data.checkLinkSettings(block.content, object.layout);

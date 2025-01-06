@@ -9,6 +9,7 @@ const protocol = 'anytype';
 const remote = require('@electron/remote/main');
 const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
+const Store = require('electron-store');
 
 // Fix notifications app name
 if (is.windows) {
@@ -16,6 +17,7 @@ if (is.windows) {
 };
 
 storage.setDataPath(app.getPath('userData'));
+Store.initRenderer();
 
 const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');

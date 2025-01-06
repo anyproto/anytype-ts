@@ -92,6 +92,10 @@ const InputWithFile: FC<Props> = ({
 
 		raf(() => {
 			const node = $(nodeRef.current);
+			if (!node.length) {
+				return;
+			};
+
 			const rect = (node.get(0) as HTMLInputElement).getBoundingClientRect();
 
 			let s = Size.Full;

@@ -1,31 +1,39 @@
 import * as React from 'react';
-import { I, S, U, J, translate } from 'Lib';
+import { I, S, U, J, translate, keyboard } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 
 interface State {
 	dotMap: Map<string, boolean>;
+	selectedDate: ReturnType<typeof U.Date.getCalendarDateParam>;
 };
 
+enum ArrowDirection {
+	Up = 'arrowup',
+	Down = 'arrowdown',
+	Left = 'arrowleft',
+	Right = 'arrowright',
+}
+
 const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
-	
+
 	originalValue = 0;
 	refMonth: any = null;
 	refYear: any = null;
 
 	state: Readonly<State> = {
 		dotMap: new Map(),
+		selectedDate: null,
 	};
-	
+
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { value, isEmpty, canEdit, canClear = true } = data;
-		const { dotMap } = this.state;
+		const { dotMap, selectedDate } = this.state;
 		const items = this.getData();
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
-
 		const now = U.Date.now();
 		const tomorrow = now + 86400;
 		const dayToday = U.Date.today();
@@ -50,14 +58,14 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				<div className="head">
 					<div className="sides">
 						<div className="side left">
-							<Select 
+							<Select
 								ref={ref => this.refMonth = ref}
 								id="month"
-								value={String(m || '')} 
-								options={months} 
-								onChange={m => this.setValue(U.Date.timestamp(y, m, 1), false, false)} 
-								menuParam={{ 
-									classNameWrap, 
+								value={String(m || '')}
+								options={months}
+								onChange={m => this.setValue(U.Date.timestamp(y, m, 1), false, false)}
+								menuParam={{
+									classNameWrap,
 									width: 124,
 								}}
 							/>
@@ -101,13 +109,23 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 							cn.push('active');
 						};
 
+						if (selectedDate && (selectedDate.d == item.d) && (selectedDate.m == item.m) && (selectedDate.y == item.y)) {
+							cn.push('selected');
+						};
+
 						const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
 						return (
-							<div 
+							<div
 								key={i}
 								id={[ 'day', item.d, item.m, item.y ].join('-')}
-								className={cn.join(' ')} 
+								className={cn.join(' ')}
 								onClick={e => this.onClick(e, item)}
+								onMouseEnter={() => {
+									if (!keyboard.isMouseDisabled) {
+										this.setState({ selectedDate: item });
+									};
+								}}
+								onMouseLeave={() => this.setState({ selectedDate: null })}
 								onContextMenu={e => this.onContextMenu(e, item)}
 							>
 								<div className="inner">
@@ -141,11 +159,84 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 	componentDidMount(): void {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const { value, noKeyboard } = data;
 
 		this.originalValue = value;
+
+		const selectedDate = U.Date.getCalendarDateParam(value);
+		this.setState({
+			selectedDate,
+		});
+
 		this.initDotMap();
+		if (!noKeyboard) {
+			this.rebind();
+		};
 		this.forceUpdate();
+	};
+
+	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { noKeyboard } = data;
+
+		if (!noKeyboard) {
+			this.unbind();
+		};
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+	};
+
+	unbind () {
+		$(window).off('keydown.menu');
+	};
+
+	onKeyDown = (e: any) => {
+		e.stopPropagation();
+		keyboard.disableMouse(true);
+
+		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
+			e.preventDefault();
+
+			this.onArrow(pressed as ArrowDirection);
+		});
+
+		const { selectedDate } = this.state;
+
+		if (selectedDate) {
+			keyboard.shortcut('enter', e, () => this.onClick(e, selectedDate));
+		};
+	};
+
+	onArrow = (dir: ArrowDirection) => {
+		const num = [ ArrowDirection.Up, ArrowDirection.Down ].includes(dir) ? 7 : 1;
+		const d = [ ArrowDirection.Up, ArrowDirection.Left ].includes(dir) ? -1 : 1;
+		const daysDelta = num * d;
+
+		const { param } = this.props;
+		const { data } = param;
+		const { value } = data;
+		const currentMonth = U.Date.getCalendarDateParam(value).m;
+
+		const { selectedDate } = this.state;
+		if (!selectedDate) {
+			return;
+		};
+
+		const newDateValue = U.Date.timestamp(selectedDate.y, selectedDate.m, selectedDate.d, 12) + daysDelta * 86400;
+		const newCalendarDate = U.Date.getCalendarDateParam(newDateValue);
+
+		const hasAnotherMonth = newCalendarDate.m != currentMonth;
+		if (hasAnotherMonth) {
+			this.setValue(newDateValue, false, false);
+		};
+
+		this.setState({
+			selectedDate: newCalendarDate,
+		});
 	};
 
 	componentDidUpdate () {
@@ -178,17 +269,22 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		getDotMap(start, end, dotMap => this.setState({ dotMap }));
 	};
 
-	onClick (e: any, item: any) {
+	onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
+		this.setOrOpenDate(item);
+	};
+
+	setOrOpenDate = (item: any) => {
 		const { param } = this.props;
 		const { data } = param;
 		const { canEdit, relationKey } = data;
+		const ts = U.Date.timestamp(item.y, item.m, item.d);
 
 		if (canEdit) {
-			this.setValue(U.Date.timestamp(item.y, item.m, item.d), true, true); 
+			this.setValue(ts, true, true); 
 		} else {
-			U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));
+			U.Object.openDateByTimestamp(relationKey, ts);
 		};
 	};
 
@@ -206,7 +302,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 			className,
 			classNameWrap,
 			data: {
-				options: [ 
+				options: [
 					{ id: 'open', icon: 'expand', name: translate('commonOpenObject') },
 				],
 				onSelect: () => {
@@ -227,7 +323,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 		S.Menu.updateData(id, { value });
 
-		if (save) {
+		if (save && onChange) {
 			onChange(value);
 		};
 
@@ -240,11 +336,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
-		
+
 		return U.Date.getCalendarMonth(value);
 	};
 
-	stepMonth (value: number, dir: number) {
+	stepMonth = (value: number, dir: number) => {
 		const { m, y } = U.Date.getCalendarDateParam(value);
 
 		let nY = y;
@@ -261,7 +357,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 		return U.Date.timestamp(nY, nM, 1);
 	};
-	
+
 });
 
 export default MenuCalendar;

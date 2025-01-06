@@ -31,7 +31,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const volumeIconRef = useRef(null);
 	const playIconRef = useRef(null);
 	const floaterRef = useRef(null);
-	const resizeObserver = new ResizeObserver(() => onResize());
+	const resizeObserver = new ResizeObserver(() => resize());
 	const [ current, setCurrent ] = useState<PlaylistItem>(null);
 	const { src, name }	= current || {};
 	const ci = [ 'volume' ];
@@ -57,11 +57,6 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 	const resize = () => {
 		timeRef.current?.resize();
-	};
-
-	const onResize = () => {
-		resize();
-		rebind();
 	};
 
 	const onPlayClick = (e: React.MouseEvent) => {
@@ -171,23 +166,26 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	useEffect(() => {
-		if (nodeRef.current) {
-			resizeObserver.observe(nodeRef.current);
-		};
-		setCurrent(playlist[0]);
+		onVolume(1);
 
 		return () => {
 			unbind();
+
 			if (nodeRef.current) {
-				resizeObserver.unobserve(nodeRef.current)
+				resizeObserver.unobserve(nodeRef.current);
 			};
 		};
-	});
+	}, []);
 
 	useEffect(() => {
 		resize();
 		rebind();
-	}, []);
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+		setCurrent(playlist[0]);
+	});
 
 	useImperativeHandle(ref, () => ({
 		updatePlaylist: (playlist: PlaylistItem[]) => {
@@ -212,7 +210,12 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 				</div>
 
 				<div className="controls">
-					<Icon ref={playIconRef} className="play" onClick={onPlayClick} />
+					<Icon 
+						ref={playIconRef} 
+						className="play" 
+						onMouseDown={onPlayClick} 
+						onClick={e => e.stopPropagation()}
+					/>
 
 					<div className="timeDragWrapper">
 						<DragHorizontal
@@ -233,8 +236,9 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 						<Icon
 							ref={volumeIconRef} 
 							className={ci.join(' ')} 
-							onClick={onMute} 
+							onMouseDown={onMute}
 							onMouseEnter={onVolumeEnter}
+							onClick={e => e.stopPropagation()}
 						/>
 
 						<Floater 

@@ -116,6 +116,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 				button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 			};
+
+			if (!canWrite) {
+				button = null;
+			};
 		};
 
 		if (isDate) {
@@ -126,10 +130,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
 				</React.Fragment>
 			);
-		};
-
-		if (!canWrite) {
-			button = null;
 		};
 
 		return (
@@ -288,21 +288,21 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
-		let sources: string[] = [];
+		let sources: any[] = [];
 
 		switch (object.layout) {
 			case I.ObjectLayout.Type: {
-				sources = S.Record.getTypes().map(it => it.sourceObject);
+				sources = S.Record.getTypes();
 				break;
 			};
 
 			case I.ObjectLayout.Relation: {
-				sources = S.Record.getRelations().map(it => it.sourceObject);
+				sources = S.Record.getRelations();
 				break;
 			};
 		};
 
-		return sources.includes(rootId);
+		return sources.map(it => it.sourceObject).includes(rootId);
 	};
 
 	onCalendar = () => {

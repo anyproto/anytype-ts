@@ -118,10 +118,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				]);
 			};
 
-			if (U.Space.hasShareBanner()) {
-				bodyCn.push('withShareBanner');
-			};
-
 			content = (
 				<React.Fragment>
 					{space && !space._empty_ ? (
@@ -197,6 +193,10 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 					</div>
 				</React.Fragment>
 			);
+		};
+
+		if (hasShareBanner) {
+			bodyCn.push('withShareBanner');
 		};
 
 		return (
@@ -383,11 +383,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const body = node.find('#body');
 		const top = body.scrollTop();
 
-		head.removeClass('show');
-
-		if (showVault && (top > 32)) {
-			head.addClass('show')
-		};
+		head.toggleClass('show', showVault && (top > 32));
 	};
 
 	onContextMenu () {

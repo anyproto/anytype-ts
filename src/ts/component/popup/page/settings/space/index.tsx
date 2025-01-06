@@ -139,7 +139,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					<div 
 						className="section sectionSpaceShare"
 						onMouseEnter={isShareActive ? () => {} : e => {
-							Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) })
+							Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) });
 						}}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
@@ -240,8 +240,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										<Title text={translate('commonOwner')} />
 									</div>
 									<div className="side right">
-										<IconObject object={creator} size={24} />
-										<ObjectName object={creator} />
+										<IconObject object={{ ...creator, layout: I.ObjectLayout.Participant }} size={24} />
+										<ObjectName object={{ ...creator, layout: I.ObjectLayout.Participant }} />
 										{creator.identity == account.id ? <div className="caption">({translate('commonYou')})</div> : ''}
 									</div>
 								</div>

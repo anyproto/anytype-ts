@@ -55,7 +55,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const favCnt = this.getFavoriteIds().length;
 		const limit = this.getLimit(block.content);
-		const hasIcon = U.Object.hasIcon(object);
+		const hasIcon = U.Object.getIcon(object);
 
 		let layout = block.content.layout;
 		if (object) {

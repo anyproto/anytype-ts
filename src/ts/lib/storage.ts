@@ -21,18 +21,22 @@ const SPACE_KEYS = [
 class Storage {
 	
 	storage: any = null;
+	store: any = null;
 	
 	constructor () {
 		this.storage = localStorage;
 	};
 
 	get (key: string): any {
-		const o = String(this.storage[key] || '');
+		let o = U.Common.getElectron().storeGet(key);
+		if (!o) {
+			o = this.parse(String(this.storage[key] || ''));
+		};
 
 		if (this.isSpaceKey(key)) {
 			if (o) {
 				delete(this.storage[key]);
-				this.set(key, this.parse(o), true);
+				this.set(key, o, true);
 			};
 
 			return this.getSpaceKey(key);
@@ -40,16 +44,18 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			if (o) {
 				delete(this.storage[key]);
-				this.set(key, this.parse(o), true);
+				this.set(key, o, true);
 			};
 
 			return this.getAccountKey(key);
 		} else {
-			return this.parse(o);
+			return o;
 		};
 	};
 
 	set (key: string, obj: any, del?: boolean): void {
+		obj = U.Common.objectCopy(obj);
+
 		if (!key) {
 			console.log('[Storage].set: key not specified');
 			return;
@@ -74,7 +80,8 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			this.setAccountKey(key, o);
 		} else {
-			this.storage[key] = JSON.stringify(o);
+			U.Common.getElectron().storeSet(key, o);
+			//delete(this.storage[key]);
 		};
 	};
 	
@@ -85,6 +92,7 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			this.deleteAccountKey(key);
 		} else {
+			U.Common.getElectron().storeDelete(key);
 			delete(this.storage[key]);
 		};
 	};
@@ -98,7 +106,9 @@ class Storage {
 
 		const obj = this.getSpace(spaceId);
 
-		obj[spaceId][key] = value;
+		if (spaceId) {
+			obj[spaceId][key] = value;
+		};
 
 		this.setSpace(obj);
 	};
@@ -161,7 +171,9 @@ class Storage {
 		const obj = this.getAccount();
 		const accountId = this.getAccountId();
 
-		obj[accountId][key] = value;
+		if (accountId) {
+			obj[accountId][key] = value;
+		};
 
 		this.setAccount(obj);
 	};
@@ -446,6 +458,10 @@ class Storage {
 	};
 
 	setChat (id: string, obj: any) {
+		if (!id) {
+			return;
+		};
+
 		const map = this.get('chat') || {};
 
 		map[id] = Object.assign(map[id] || {}, obj);

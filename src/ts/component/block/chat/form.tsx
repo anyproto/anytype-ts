@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
+import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
@@ -30,6 +30,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	node = null;
 	refEditable = null;
 	refButtons = null;
+	isLoading = [];
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
@@ -115,7 +116,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 					icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
 				};
-				if (reply.isMultiple) {
+				if (reply.isMultiple && !reply.attachment) {
 					icon = <Icon className="isMultiple" />;
 				};
 				onClear = this.onReplyClear;
@@ -149,6 +150,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					<Editable 
 						ref={ref => this.refEditable = ref}
 						id="messageBox"
+						classNameWrap="customScrollbar"
 						maxLength={J.Constant.limit.chat.text}
 						placeholder={translate('blockChatPlaceholder')}
 						onSelect={this.onSelect}
@@ -245,17 +247,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		window.clearTimeout(this.timeoutFilter);
-
-		const { rootId } = this.props;
-		const { attachments } = this.state;
-
 		keyboard.disableSelection(false);
-
-		Storage.setChat(rootId, {
-			text: this.getTextValue(),
-			marks: this.marks,
-			attachments,
-		});
 	};
 
 	checkSendButton () {
@@ -285,8 +277,17 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onBlurInput () {
+		const { rootId } = this.props;
+		const { attachments } = this.state;
+
 		keyboard.disableSelection(false);
 		this.refEditable?.placeholderCheck();
+
+		Storage.setChat(rootId, {
+			text: this.getTextValue(),
+			marks: this.marks,
+			attachments,
+		});
 	};
 
 	onKeyDownInput (e: any) {
@@ -370,7 +371,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onKeyUpInput (e: any) {
-		this.range = this.refEditable.getRange();
+		this.range = this.refEditable.getRange() || { from: 0, to: 0 };
 
 		const { attachments } = this.state;
 		const { to } = this.range;
@@ -464,12 +465,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const value = U.Common.stringInsert(this.getTextValue(), text, from, to);
 
 		this.range = { from: to, to: to + text.length };
-		this.refEditable.setValue(value);
+		this.refEditable.setValue(Mark.toHtml(value, this.marks));
 		this.refEditable.setRange(this.range);
 		this.refEditable.placeholderCheck();
+		this.renderMarkup();
 
 		if (list.length) {
-			this.addAttachments(list);
+			U.Common.saveClipboardFiles(list, {}, data => {
+				this.addAttachments(data.files);
+			});
 		};
 
 		this.checkUrls();
@@ -485,17 +489,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		this.removeBookmarks();
 
-		window.setTimeout(() => {
-			for (const url of urls) {
-				const { from, to, isLocal, value } = url;
-				const param = isLocal ? `file://${value}` : value;
+		for (const url of urls) {
+			const { from, to, isLocal, value } = url;
+			const param = isLocal ? `file://${value}` : value;
 
-				this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
-				this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
-				this.addBookmark(param, true);
-			};
-			this.updateMarkup(text, this.range.to + 1, this.range.to + 1);
-		}, 150);
+			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
+			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
+			this.addBookmark(param, true);
+		};
+
+		this.updateMarkup(text, this.range.to + 1, this.range.to + 1);
 	};
 
 	canDrop (e: any): boolean {
@@ -568,7 +571,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.addAttachments([ item ]);
 		};
 
+		this.isLoading.push(url);
+
 		C.LinkPreview(url, (message: any) => {
+			this.isLoading = this.isLoading.filter(it => it != url);
+
 			if (message.error.code) {
 				add({ title: url, url });
 			} else {
@@ -978,8 +985,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 	};
 
-	canSend () {
-		return this.editingId || this.getTextValue() || this.state.attachments.length || this.marks.length;
+	canSend (): boolean {
+		return !this.isLoading.length && Boolean(this.editingId || this.getTextValue() || this.state.attachments.length || this.marks.length);
 	};
 
 	hasSelection (): boolean {
@@ -993,6 +1000,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		if (list.length > limit[type]) {
 			list = list.slice(0, limit[type]);
+
+			if (type == 'attachments') {
+				Preview.toastShow({
+					icon: 'notice',
+					text: U.Common.sprintf(translate('toastChatAttachmentsLimitReached'), limit[type], U.Common.plural(limit[type], translate('pluralFile')).toLowerCase())
+				});
+			};
 		};
 
 		return list;
@@ -1001,6 +1015,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	updateMarkup (value: string, from: number, to: number) {
 		this.range = { from, to };
 		this.refEditable.setValue(Mark.toHtml(value, this.marks));
+
 		this.refEditable.setRange({ from, to });
 		this.refEditable.placeholderCheck();
 		this.renderMarkup();
@@ -1009,7 +1024,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	renderMarkup () {
 		const { rootId, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
-		const node = this.refEditable.node;
+		const node = this.refEditable.getNode();
 		const value = this.refEditable.getTextValue();
 
 		renderMentions(rootId, node, this.marks, () => value);

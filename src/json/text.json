@@ -102,6 +102,7 @@
 	"commonMoveTo": "Move to",
 	"commonLinkTo": "Add Link to Object",
 	"commonUpload": "Upload",
+	"commonLoad": "Load",
 	"commonDownload": "Download",
 	"commonAscending": "Ascending",
 	"commonDescending": "Descending",
@@ -220,12 +221,13 @@
 	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
-	"electronMenuDirectory": "Show Directory",
-	"electronMenuCustomCss": "Apply custom CSS",
-	"electronMenuWorkDirectory": "Work",
-	"electronMenuDataDirectory": "Data",
-	"electronMenuConfigDirectory": "Config",
-	"electronMenuLogsDirectory": "Logs",
+	"electronMenuOpen": "Open",
+	"electronMenuApplyCustomCss": "Apply custom CSS",
+	"electronMenuWorkDirectory": "Work directory",
+	"electronMenuDataDirectory": "Data directory",
+	"electronMenuConfigDirectory": "Config directory",
+	"electronMenuLogsDirectory": "Logs directory",
+	"electronMenuCustomCss": "Custom CSS",
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
 	"electronMenuSaveAs": "Export Object",
@@ -237,6 +239,7 @@
 	"electronMenuDebugStat": "Statistics",
 	"electronMenuDebugReconcile": "Reconcile",
 	"electronMenuDebugNet": "Network",
+	"electronMenuDebugLog": "Export log",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -272,7 +275,7 @@
 	"electronMenuFlags": "Flags",
 	"electronMenuDevTools": "Dev Tools",
 	"electronMenuVersion": "Version",
-	"electronMenuOpen": "Open Anytype",
+	"electronMenuOpenApp": "Open Anytype",
 	"electronMenuLanguage": "Interface Language",
 	"electronMenuFlagAnalytics": "Analytics",
 	"electronMenuFlagMw": "Middleware",
@@ -548,6 +551,7 @@
 	"blockNameTableOfContents": "Table of Contents",
 	"blockNameSet": "Inline set",
 	"blockNameCollection": "Inline Collection",
+	"blockNameDate": "Date",
 
 	"blockTextParagraph": "Write a plain text",
 	"blockTextHeader1": "Big headline of a chapter, paragraph or section",
@@ -582,6 +586,7 @@
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
 	"blockTextPlain": "Plain Text",
+	"blockTextDate": "Mention a date in editor",
 
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
@@ -1673,6 +1678,8 @@
 
 	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
 
+	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
+
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
 	"textColor-orange": "Amber",
@@ -1905,7 +1912,7 @@
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
 	"onboardingSpacesTitle": "Spaces",
-	"onboardingSpacesText": "<b>This is your Space.</b> Click here to customize its name or icon, or to securely migrate and protect your data. ",
+	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
 	"onboardingAllObjectTitle": "All Objects",
 	"onboardingAllObjectText": "<b>Everything in Anytype is an Object.</b> All objects is where all your content lives.",
 	"onboardingWidgetsTitle": "Widgets",
@@ -1964,7 +1971,7 @@
 	"libMenuCopyUrl": "Copy URL",
 
 	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
-	"libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
+	"libActionUninstallTypeText": "This Type will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
 	"libActionUninstallRelationTitle": "Do you want to remove Relation \"%s\"?",
 	"libActionUninstallRelationText": "This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.",
 

@@ -158,7 +158,7 @@ class Keyboard {
 						canClose = false;
 					} else
 					if (selection) {
-						const ids = selection.get(I.SelectType.Block);
+						const ids = selection?.get(I.SelectType.Block) || [];
 						if (ids.length) {
 							canClose = false;
 						};
@@ -283,8 +283,9 @@ class Keyboard {
 	checkSelection () {
 		const range = U.Common.getSelectionRange();
 		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
 
-		if ((range && !range.collapsed) || (selection && selection.get(I.SelectType.Block).length)) {
+		if ((range && !range.collapsed) || ids.length) {
 			return true;
 		};
 
@@ -621,6 +622,15 @@ class Keyboard {
 				break;
 			};
 
+			case 'debugLog': {
+				C.DebugExportLog(tmpPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('openPath', tmpPath);
+					};
+				});
+				break;
+			};
+
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
 				break;
@@ -817,9 +827,9 @@ class Keyboard {
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat();
 		} else {
-			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
+			isDisabled = [ 'set', 'store', 'graph', 'chat' ].includes(popupMatch.params.action);
 		};
 
 		if (isDisabled) {
@@ -971,6 +981,10 @@ class Keyboard {
 
 	isMainGraph () {
 		return this.isMain() && (this.match?.params?.action == 'graph');
+	};
+
+	isMainChat () {
+		return this.isMain() && (this.match?.params?.action == 'chat');
 	};
 
 	isMainIndex () {

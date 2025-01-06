@@ -112,7 +112,8 @@ class UtilMenu {
 		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
 		];
 
 		items.sort((c1, c2) => U.Data.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
@@ -329,6 +330,7 @@ class UtilMenu {
 				options,
 				onSelect: (e, option) => {
 					S.Menu.closeAll([ 'select' ]);
+
 					if (close) {
 						close();
 					};
@@ -358,7 +360,7 @@ class UtilMenu {
 	};
 
 	getRelationTypes () {
-		return [
+		return this.prepareForSelect([
 			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
 			{ id: I.RelationType.Number },
@@ -374,7 +376,7 @@ class UtilMenu {
 			it.name = translate(`relationName${it.id}`);
 			it.icon = `relation ${Relation.className(it.id)}`;
 			return it;
-		});
+		}));
 	};
 
 	getWidgetLimitOptions (layout: I.WidgetLayout) {
@@ -1035,6 +1037,7 @@ class UtilMenu {
 
 	dateFormatOptions () {
 		return ([
+			{ id: I.DateFormat.Default },
 			{ id: I.DateFormat.MonthAbbrBeforeDay },
 			{ id: I.DateFormat.MonthAbbrAfterDay },
 			{ id: I.DateFormat.Short },

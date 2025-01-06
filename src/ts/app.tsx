@@ -141,7 +141,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 
 					<Navigation ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
 					<Sidebar key="sidebar" {...this.props} />
-					<Page {...this.props} />
+					<Page {...this.props} isPopup={false} />
 				</DragProvider>
 			</SelectionProvider>
 		);
@@ -174,7 +174,6 @@ class App extends React.Component<object, State> {
 	render () {
 		const { isLoading } = this.state;
 		const platform = U.Common.getPlatform();
-		const { shareTooltip } = S.Common
 
 		let drag = null;
 		if (platform == I.Platform.Mac) {
@@ -206,7 +205,6 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<ListNotification key="listNotification" />
-						<ShareTooltip showOnce={true} route={analytics.route.onboarding} />
 						<Vault ref={ref => S.Common.refSet('vault', ref)} />
 
 						<Switch>
@@ -239,16 +237,6 @@ class App extends React.Component<object, State> {
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
-	};
-
-	initStorage () {
-		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-
-		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', U.Date.now());
-		};
-
-		Storage.delete('lastSurveyCanceled');
 	};
 
 	registerIpcEvents () {
@@ -320,13 +308,12 @@ class App extends React.Component<object, State> {
 		S.Common.dataPathSet(dataPath);
 
 		analytics.init();
-		this.initStorage();
 
 		if (redirect) {
 			Storage.delete('redirect');
 		};
 
-		if (css) {
+		if (css && !config.disableCss) {
 			U.Common.injectCss('anytype-custom-css', css);
 		};
 

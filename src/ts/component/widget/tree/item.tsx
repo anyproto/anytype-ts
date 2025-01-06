@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, MouseEvent, SyntheticEvent } from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, S, U, J, keyboard, Storage, translate } from 'Lib';
@@ -17,76 +17,81 @@ interface Props extends I.WidgetTreeItem {
 	onContext?(param: any): void;
 };
 
-const TreeItem = observer(class Node extends React.Component<Props> { 
-		
-	node = null;
+const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	constructor (props: Props) {
-		super(props);
+	const { id, parentId, treeKey, depth, style, numChildren, isEditing, isSection, getSubKey, getSubId, onContext, onClick, onToggle } = props;
+	const nodeRef = useRef(null);
+	const moreRef = useRef(null);
+	const subKey = getSubKey();
+	const subId = getSubId(parentId);
+	const isOpen = Storage.checkToggle(subKey, treeKey);
+	const object = S.Detail.get(subId, id, J.Relation.sidebar);
+	const { isReadonly, isArchived, type, restrictions, done, layout } = object;
+	const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
+	const rootId = keyboard.getRootId();
+	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
+	const hasMore = U.Space.canMyParticipantWrite();
+	const [ dummy, setDummy ] = useState(0);
+	const hasIcon = U.Object.getIcon(object);
 
-		this.onToggle = this.onToggle.bind(this);
+	const onContextHandler = (e: SyntheticEvent, withElement: boolean): void => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const node = $(nodeRef.current);
+		const element = $(moreRef.current);
+
+		onContext({ node, element, withElement, subId, objectId: id });
 	};
 
-	render () {
-		const { id, parentId, treeKey, depth, style, numChildren, isEditing, onClick, isSection, getSubKey, getSubId } = this.props;
-		const subKey = getSubKey();
-		const subId = getSubId(parentId);
-		const isOpen = Storage.checkToggle(subKey, treeKey);
-		const object = S.Detail.get(subId, id, J.Relation.sidebar);
-		const { isReadonly, isArchived, type, restrictions, done, layout } = object;
-		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
-		const rootId = keyboard.getRootId();
-		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
-		const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
-		const hasMore = U.Space.canMyParticipantWrite();
-		const hasIcon = U.Object.hasIcon(object);
+	const onToggleHandler = (e: MouseEvent): void => {
+		e.preventDefault();
+		e.stopPropagation();
 
-		let arrow = null;
-		let onArrowClick = null;
-		let more = null;
+		onToggle(e, { ...props, details: object });
+		setDummy(dummy + 1);
+	};
 
-		if (isSection) {
-			cn.push('isSection');
+	let arrow = null;
+	let onArrowClick = null;
+	let onContextMenu = null;
+	let more = null;
+	let inner = null;
 
-			return (
-				<div
-					ref={node => this.node = node}
-					style={style}
-					id={treeKey}
-					className={cn.join(' ')}
-				>
-					<div className="inner">
-						<Label text={translate(U.Common.toCamelCase([ 'common', id ].join('-')))} />
-					</div>
-				</div>
-			);
-		};
+	if (U.Object.isSetLayout(layout) || (U.Object.isCollectionLayout(layout) && !numChildren)) {
+		arrow = <Icon className="set" />;
+	} else
+	if (numChildren > 0) {
+		cn.push('withArrow');
+		onArrowClick = onToggleHandler;
+		arrow = <Icon className="arrow" />;
+	} else {
+		arrow = <Icon className="blank" />;
+	};
 
-		if (U.Object.isSetLayout(layout) || (U.Object.isCollectionLayout(layout) && !numChildren)) {
-			arrow = <Icon className="set" />;
-		} else
-		if (numChildren > 0) {
-			cn.push('withArrow');
-			onArrowClick = this.onToggle;
-			arrow = <Icon className="arrow" />;
-		} else {
-			arrow = <Icon className="blank" />;
-		};
+	if (arrow) {
+		arrow = <div className="arrowWrap" onMouseDown={onArrowClick}>{arrow}</div>;
+	};
 
-		if (arrow) {
-			arrow = <div className="arrowWrap" onMouseDown={onArrowClick}>{arrow}</div>;
-		};
+	if (hasMore) {
+		more = <Icon ref={moreRef} className="more" tooltip={translate('widgetOptions')} onMouseDown={e => onContextHandler(e, true)} />;
+	};
 
-		if (hasMore) {
-			more = <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />;
-		};
+	if (!hasIcon) {
+		cn.push('noIcon');
+	};
 
-		if (!hasIcon) {
-			cn.push('noIcon');
-		};
-
-		let inner = (
+	if (isSection) {
+		inner = (
+			<div className="inner">
+				<Label text={translate(U.Common.toCamelCase([ 'common', id ].join('-')))} />
+			</div>
+		);
+	} else {
+		onContextMenu = e => onContextHandler(e, false);
+		inner = (
 			<div className="inner" style={{ paddingLeft }}>
 				<div
 					className="clickable"
@@ -124,43 +129,20 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 				</DropTarget>
 			);
 		};
-
-		return (
-			<div
-				ref={node => this.node = node}
-				id={treeKey}
-				className={cn.join(' ')}
-				style={style}
-				onContextMenu={e => this.onContext(e, false)}
-			>
-				{inner}
-			</div>
-		);
 	};
 
-	onContext = (e: React.SyntheticEvent, withElement: boolean): void => {
-		e.preventDefault();
-		e.stopPropagation();
+	return (
+		<div
+			ref={nodeRef}
+			id={treeKey}
+			className={cn.join(' ')}
+			style={style}
+			onContextMenu={onContextMenu}
+		>
+			{inner}
+		</div>
+	);
 
-		const { id, parentId, getSubId, onContext } = this.props;
-		const subId = getSubId(parentId);
-		const node = $(this.node);
-		const element = node.find('.icon.more');
-
-		onContext({ node, element, withElement, subId, objectId: id });
-	};
-
-	onToggle (e: React.MouseEvent): void {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { id, parentId, onToggle, getSubId } = this.props;
-		const object = S.Detail.get(getSubId(parentId), id, J.Relation.sidebar, true);
-
-		onToggle(e, { ...this.props, details: object });
-		this.forceUpdate();
-	};
-
-});
+}));
 
 export default TreeItem;

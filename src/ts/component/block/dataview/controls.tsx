@@ -121,10 +121,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				id="dataviewControls"
 				className={cn.join(' ')}
 			>
+				{head}
 				<div className="sides">
 					<div id="dataviewControlsSideLeft" className="side left">
-						{head}
-
 						<div 
 							id="view-selector"
 							className="viewSelect viewItem select"

@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.mediaAudio { width: 100%; border: 1px solid var(--color-shape-secondary); container-type: inline-size; container-name: media-audio; }
+.mediaAudio { width: 100%; container-type: inline-size; container-name: media-audio; }
 .mediaAudio {
     .controlsWrapper { width: 100%; position: relative; text-align: left; color: var(--color-text-primary); }
     .controlsWrapper {
@@ -17,7 +17,7 @@
 		.controls { display: flex; align-items: center; column-gap: 10px; }
         .controls {
             .icon { width: 20px; height: 20px; vertical-align: top; transition: none; flex-shrink: 0; }
-            .icon.play { background-image: url('~img/icon/audio/play.svg'); }
+            .icon.play { background-image: url('~img/icon/audio/play.svg'); margin-left: -4px; }
             .icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
             .icon.volume { background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.isMuted { background-image: url('~img/icon/audio/mute.svg'); }

@@ -1,109 +1,42 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import _ from 'lodash';
 import { Label, Input, IconObject, Button, Loader, Error } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Storage } from 'Lib';
 
-interface State {
-	error: string;
-	isLoading: boolean;
-	iconOption: number;
-	usecase: I.Usecase;
-};
+const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 
-const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component<I.PopupSettings, State> {
+	const nameRef = useRef(null);
+	const iconRef = useRef(null);
+	const [ error, setError ] = useState('');
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
 
-	refIcon: any = null;
-	refName: any = null;
-
-	state = {
-		error: '',
-		isLoading: false,
-		iconOption: U.Common.rand(1, J.Constant.count.icon),
-		usecase: I.Usecase.Empty,
-	};
-
-	constructor (props: any) {
-		super(props);
-
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.onIcon = this.onIcon.bind(this);
-	};
-
-	render () {
-		const { error, isLoading } = this.state;
-		const object = this.getObject();
-
-		return (
-			<React.Fragment>
-
-				{isLoading ? <Loader id="loader" /> : ''}
-
-				<Label text={translate('popupSpaceCreateLabel')} />
-
-				<div className="iconWrapper">
-					<IconObject
-						ref={ref => this.refIcon = ref}
-						size={96}
-						object={object}
-						canEdit={false}
-						menuParam={{ horizontal: I.MenuDirection.Center }}
-						onClick={this.onIcon}
-					/>
-				</div>
-
-				<div className="nameWrapper">
-					<Input
-						ref={ref => this.refName = ref}
-						value=""
-						onKeyDown={this.onKeyDown}
-						onChange={this.onChange}
-						placeholder={translate('defaultNamePage')}
-					/>
-				</div>
-
-				<div className="buttons">
-					<Button text={translate('popupSpaceCreateCreate')} onClick={() => this.onSubmit(false)} />
-					<Button text={translate('popupSpaceCreateImport')} color="blank" onClick={() => this.onSubmit(true)} />
-				</div>
-
-				<Error text={error} />
-
-			</React.Fragment>
-		);
-	};
-
-	componentDidMount (): void {
-		window.setTimeout(() => this.refName?.focus(), 15);
-	};
-
-	onKeyDown (e: any, v: string) {
+	const onKeyDown = (e: any, v: string) => {
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
-			this.onSubmit(false);
+			onSubmit(false);
 		});
 	};
 
-	onChange (e: any, v: string) {
-		const object = this.getObject();
+	const onChange = (e: any, v: string) => {
+		const object = getObject();
 
-		if (this.refIcon) {
+		if (iconRef.current) {
 			object.name = v;
-			this.refIcon.setObject(object);
+			iconRef.current?.setObject(object);
 		};
 	};
 
-	getObject () {
+	const getObject = () => {
 		return {
-			name: this.refName?.getValue(),
+			name: nameRef.current?.getValue(),
 			layout: I.ObjectLayout.SpaceView,
-			iconOption: this.state.iconOption,
+			iconOption: iconOption,
 		};
 	};
 
-	checkName (v: string): string {
+	const checkName = (v: string): string => {
 		if ([
 			translate('defaultNameSpace'), 
 			translate('defaultNamePage'),
@@ -113,18 +46,16 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 		return v;
 	};
 
-	onSubmit (withImport: boolean) {
-		const { param } = this.props;
-		const { isLoading, iconOption } = this.state;
+	const onSubmit = (withImport: boolean) => {
 		const { data } = param;
 		const { onCreate, route } = data;
-		const name = this.checkName(this.refName.getValue());
+		const name = checkName(nameRef.current.getValue());
 
 		if (isLoading) {
 			return;
 		};
 
-		this.setLoading(true);
+		setIsLoading(true);
 
 		const withChat = U.Object.isAllowedChat();
 		const details = {
@@ -135,17 +66,17 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
 
-		C.WorkspaceCreate(details, I.Usecase.GetStarted, withChat, (message: any) => {
-			this.setLoading(false);
+		C.WorkspaceCreate(details, I.Usecase.Empty, withChat, (message: any) => {
+			setIsLoading(false);
 
 			if (message.error.code) {
-				this.setState({ error: message.error.description });
+				setError(message.error.description);
 				return;
 			};
 
 			C.WorkspaceSetInfo(message.objectId, details, () => {
 				if (message.error.code) {
-					this.setState({ error: message.error.description });
+					setError(message.error.description);
 					return;
 				};
 
@@ -158,7 +89,7 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 						U.Space.initSpaceState();
 
 						if (withImport) {
-							this.props.close(() => {
+							close(() => {
 								S.Popup.open('settings', { data: { isSpace: true, page: 'importIndex' }, className: 'isSpace' });
 							});
 						};
@@ -169,28 +100,67 @@ const PopupSpaceCreate = observer(class PopupSpaceCreate extends React.Component
 					} 
 				});
 
-				analytics.event('CreateSpace', { usecase: I.Usecase.GetStarted, middleTime: message.middleTime, route });
-				analytics.event('SelectUsecase', { type: I.Usecase.GetStarted });
+				analytics.event('CreateSpace', { usecase: I.Usecase.Empty, middleTime: message.middleTime, route });
+				analytics.event('SelectUsecase', { type: I.Usecase.Empty });
 			});
 		});
 	};
 
-	setLoading (isLoading: boolean) {
-		this.state.isLoading = isLoading;
-		this.setState({ isLoading });
-	};
+	const onIcon = () => {
+		let icon = iconOption;
 
-	onIcon () {
-		let { iconOption } = this.state;
-
-		iconOption++;
-		if (iconOption > J.Constant.count.icon) {
-			iconOption = 1;
+		icon++;
+		if (icon > J.Constant.count.icon) {
+			icon = 1;
 		};
 
-		this.setState({ iconOption });
+		setIconOption(icon);
 	};
 
-});
+	const object = getObject();
+
+	useEffect(() => {
+		const object = getObject();
+		iconRef.current?.setObject(object);
+	}, [ iconOption ]);
+
+	return (
+		<>
+			{isLoading ? <Loader id="loader" /> : ''}
+			<Label text={translate('popupSpaceCreateLabel')} />
+
+			<div className="iconWrapper">
+				<IconObject
+					ref={iconRef}
+					size={96}
+					object={object}
+					canEdit={false}
+					menuParam={{ horizontal: I.MenuDirection.Center }}
+					onClick={onIcon}
+				/>
+			</div>
+
+			<div className="nameWrapper">
+				<Input
+					ref={nameRef}
+					value=""
+					focusOnMount={true}
+					onKeyDown={onKeyDown}
+					onChange={onChange}
+					placeholder={translate('defaultNamePage')}
+				/>
+			</div>
+
+			<div className="buttons">
+				<Button text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
+				<Button text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+			</div>
+
+			<Error text={error} />
+
+		</>
+	);
+
+}));
 
 export default PopupSpaceCreate;

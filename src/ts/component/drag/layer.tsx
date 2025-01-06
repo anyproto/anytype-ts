@@ -93,7 +93,7 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 	};
 
 	const hide = () => {
-		$(nodeRef.current).find('#inner').html('')
+		$(nodeRef.current).find('#inner').html('');
 	};
 
 	useImperativeHandle(ref, () => ({

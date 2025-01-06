@@ -11,7 +11,7 @@ folder="build";
 if [ "$platform" = "ubuntu-latest" ]; then
   arch="linux-$arch";
   folder="$arch";
-elif [ "$platform" = "macos-13" ]; then
+elif [ "$platform" = "macos-13" ] || [ "$platform" = "macos-latest" ]; then
   arch="darwin-$arch";
   folder="$arch";
 elif [ "$platform" = "windows-latest" ]; then

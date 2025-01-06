@@ -73,7 +73,7 @@ export default {
 		'relationDefaultValue',
 		'relationFormatObjectTypes',
 		'sourceObject',
-		'restrictions'
+		'restrictions',
 	],
 
 	cover: [
@@ -118,7 +118,8 @@ export default {
 		'isDeleted',
 		'isArchived',
 		'isFavorite',
-		'restrictions'
+		'restrictions',
+		'timestamp',
 	],
 
 	template: [
