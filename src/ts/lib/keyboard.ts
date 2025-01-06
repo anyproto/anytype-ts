@@ -180,7 +180,7 @@ class Keyboard {
 
 			// Shortcuts
 			this.shortcut('ctrl+space', e, () => {
-				S.Popup.open('shortcut', { preventResize: true });
+				S.Popup.open('shortcut', {});
 			});
 
 			// Print
