@@ -330,6 +330,7 @@ class UtilMenu {
 				options,
 				onSelect: (e, option) => {
 					S.Menu.closeAll([ 'select' ]);
+
 					if (close) {
 						close();
 					};
