@@ -1,237 +1,51 @@
-import * as React from 'react';
+import React, { forwardRef, useImperativeHandle, useEffect, useRef, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
-import { Loader, Label, Button } from 'Component';
+import { Label, Button } from 'Component';
 import { I, C, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
 import Item from './item';
-
-interface State {
-	loading: boolean;
-};
 
 const MAX_DEPTH = 15; // Maximum depth of the tree
 const LIMIT = 20; // Number of nodes to load at a time
 const HEIGHT = 28; // Height of each row
 
-const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetComponent, State> {
+interface WidgetTreeRefProps {
+	updateData: () => void;
+};
 
-	private _isMounted: boolean = false;
+const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	node: any = null;
-	state = {
-		loading: false,
-	};
-	top = 0;
-	id = '';
-	cache: CellMeasurerCache = null;
-	subscriptionHashes: { [ key: string ]: string } = {};
-	branches: string[] = [];
-	refList = null;
-	deletedIds = new Set();
-	links = [];
+	const { block, parent, isPreview, canCreate, onCreate, isSystemTarget, getData, getTraceId, sortFavorite, addGroupLabels } = props;
+	const { targetBlockId } = block.content;
+	const nodeRef = useRef(null);
+	const listRef = useRef(null);
+	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
+	const object = S.Detail.get(S.Block.widgets, block.getTargetObjectId());
+	const subKey = `widget${block.id}`;
+	const links = useRef([]);
+	const top = useRef(0);
+	const branches = useRef([]);
+	const subscriptionHashes = useRef({});
+	const cache = useRef(new CellMeasurerCache());
+	const [ dummy, setDummy ] = useState(0);
+	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
-	constructor (props: I.WidgetComponent) {
-		super(props);
-
-		this.onScroll = this.onScroll.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onToggle = this.onToggle.bind(this);
-		this.getSubId = this.getSubId.bind(this);
-		this.initCache = this.initCache.bind(this);
-		this.getSubKey = this.getSubKey.bind(this);
-	};
-
-	render () {
-		const { loading } = this.state;
-		const { isPreview, canCreate, onCreate } = this.props;
-		const nodes = this.loadTree();
-		const length = nodes.length;
-
-		if (!this.cache) {
-			return null;
-		};
-
-		this.getDeleted();
-
-		let content = null;
-
-		if (loading) {
-			content = <Loader />;
-		} else
-		if (!length) {
-			content = (
-				<div className="emptyWrap">
-					<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-					{canCreate ? (
-						<Button 
-							text={translate('commonCreateObject')} 
-							color="blank" 
-							className="c28" 
-							onClick={() => onCreate({ route: analytics.route.inWidget })} 
-						/> 
-					) : ''}
-				</div>
-			);
-		} else 
-		if (isPreview) {
-			const rowRenderer = ({ index, parent, style }) => {
-				const node: I.WidgetTreeItem = nodes[index];
-				const key = this.getTreeKey(node);
-
-				return (
-					<CellMeasurer
-						key={key}
-						parent={parent}
-						cache={this.cache}
-						columnIndex={0}
-						rowIndex={index}
-						fixedWidth
-					>
-						<Item
-							{...this.props}
-							{...node}
-							index={index}
-							treeKey={key}
-							style={style}
-							onClick={this.onClick}
-							onToggle={this.onToggle}
-							getSubId={this.getSubId}
-							getSubKey={this.getSubKey}
-						/>
-					</CellMeasurer>
-				);
-			};
-
-			content = (
-				<InfiniteLoader
-					rowCount={nodes.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => true}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={ref => this.refList = ref}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={nodes.length}
-									rowHeight={({ index }) => this.getRowHeight(nodes[index], index)}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={LIMIT}
-									onScroll={this.onScroll}
-									scrollToAlignment="center"
-								/>
-						)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
-			);
-		} else {
-			content = (
-				<div className="ReactVirtualized__List">
-					{nodes.map((node, i: number) => {
-						const key = this.getTreeKey(node);
-
-						return (
-							<Item
-								key={key}
-								{...this.props}
-								{...node}
-								index={i}
-								treeKey={key}
-								onClick={this.onClick}
-								onToggle={this.onToggle}
-								getSubId={this.getSubId}
-								getSubKey={this.getSubKey}
-							/>
-						);
-					})}
-				</div>
-			);
-		};
-
-		return (
-			<div
-				ref={node => this.node = node}
-				id="innerWrap"
-				className="innerWrap"
-			>
-				{content}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-		
-		const { block, isSystemTarget, getData, getTraceId } = this.props;
-		const object = this.getTarget();
-
-		this.links = object.links;
-
-		if (isSystemTarget()) {
-			getData(this.getSubId(), this.initCache);
-		} else {
-			this.initCache();
-			C.ObjectShow(block.getTargetObjectId(), getTraceId(), U.Router.getRouteSpaceId());
-		};
-
-		this.getDeleted();
-	};
-
-	componentDidUpdate () {
-		const object = this.getTarget();
-
-		this.resize();
-		this.getDeleted();
-
-		// Reload the tree if the links have changed
-		if (!U.Common.compareJSON(this.links, object.links)) {
-			this.clear();
-			this.initCache();
-			this.links = object.links;
-		};
-
-		if (this.refList) {
-			this.refList.recomputeRowHeights(0);
-			this.refList.scrollToPosition(this.top);
-		};
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unsubscribe();
-	};
-
-	getDeleted () {
-		const deleted = S.Record.getRecordIds(J.Constant.subId.deleted, '');
-		const length = deleted.length;
-
-		this.deletedIds = new Set(deleted);
-		return this.deletedIds;
-	};
-
-	unsubscribe () {	
-		const subIds = Object.keys(this.subscriptionHashes).map(this.getSubId);
+	const unsubscribe = () => {	
+		const subIds = Object.keys(subscriptionHashes.current).map(getSubId);
 
 		if (subIds.length) {
 			C.ObjectSearchUnsubscribe(subIds);
-
-			this.clear();
+			clear();
 		};
 	};
 
-	clear () {
-		const subIds = Object.keys(this.subscriptionHashes).map(this.getSubId);
+	const clear = () => {
+		const subIds = Object.keys(subscriptionHashes.current).map(getSubId);
 
-		this.subscriptionHashes = {};
-		this.branches = [];
+		subscriptionHashes.current = {};
+		branches.current = [];
 
 		subIds.forEach(subId => {
 			S.Record.recordsClear(subId, '');
@@ -239,51 +53,40 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		});
 	};
 
-	updateData () {
-		const { isSystemTarget, getData } = this.props;
-
+	const updateData = () => {
 		if (isSystemTarget()) {
-			getData(this.getSubId(), this.initCache);
+			getData(getSubId(), initCache);
 		};
 	};
 
-	initCache () {
-		const nodes = this.loadTree();
+	const initCache = () => {
+		const nodes = loadTree();
 
-		this.cache = new CellMeasurerCache({
+		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: i => this.getRowHeight(nodes[i], i),
+			defaultHeight: i => getRowHeight(nodes[i], i),
 			keyMapper: i => (nodes[i] || {}).id,
 		});
 
-		this.forceUpdate();
+		setDummy(dummy + 1);
 	};
 
-	getTarget () {
-		return S.Detail.get(S.Block.widgets, this.props.block.getTargetObjectId());
-	};
-
-	loadTree (): I.WidgetTreeItem[] {
-		const { block, isSystemTarget, isPreview, sortFavorite, addGroupLabels } = this.props;
-		const { targetBlockId } = block.content;
-		const object = this.getTarget();
-		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
-
-		this.branches = [];
+	const loadTree = (): I.WidgetTreeItem[] => {
+		branches.current = [];
 
 		let children = [];
 		if (isSystemTarget()) {
-			const subId = this.getSubId(targetBlockId);
+			const subId = getSubId(targetBlockId);
 			
 			let records = S.Record.getRecordIds(subId, '');
 			if (targetBlockId == J.Constant.widgetId.favorite) {
 				records = sortFavorite(records);
 			};
 
-			children = records.map(id => this.mapper(S.Detail.get(subId, id, J.Relation.sidebar)));
+			children = records.map(id => mapper(S.Detail.get(subId, id, J.Relation.sidebar)));
 		} else {
-			children = this.getChildNodesDetails(object.id);
-			this.subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
+			children = getChildNodesDetails(object.id);
+			subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
 		};
 
 		if (isPreview && isRecent) {
@@ -291,11 +94,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			children = addGroupLabels(children, targetBlockId);
 		};
 
-		return this.loadTreeRecursive(object.id, object.id, [], children, 1, '');
+		return loadTreeRecursive(object.id, object.id, [], children, 1, '');
 	};
 
 	// Recursive function which returns the tree structure
-	loadTreeRecursive (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number, branch: string): I.WidgetTreeItem[] {
+	const loadTreeRecursive = (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number, branch: string): I.WidgetTreeItem[] => {
 		if (!childNodeList.length || depth >= MAX_DEPTH) {
 			return treeNodeList;
 		};
@@ -303,12 +106,12 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		for (const childNode of childNodeList) {
 			const childBranch = [ branch, childNode.id ].join('-');
 
-			const links = this.filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter(nodeId => {
+			const links = filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter(nodeId => {
 				const branchId = [ childBranch, nodeId ].join('-');
-				if (this.branches.includes(branchId)) {
+				if (branches.current.includes(branchId)) {
 					return false;
 				} else {
-					this.branches.push(branchId);
+					branches.current.push(branchId);
 					return true;
 				};
 			});
@@ -329,50 +132,45 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 				continue;
 			};
 
-			const isOpen = Storage.checkToggle(this.getSubKey(), this.getTreeKey(node));
+			const isOpen = Storage.checkToggle(subKey, getTreeKey(node));
 			if (isOpen) {
-				this.subscribeToChildNodes(childNode.id, childNode.links);
-				treeNodeList = this.loadTreeRecursive(rootId, childNode.id, treeNodeList, this.getChildNodesDetails(childNode.id), depth + 1, childBranch);
+				subscribeToChildNodes(childNode.id, childNode.links);
+				treeNodeList = loadTreeRecursive(rootId, childNode.id, treeNodeList, getChildNodesDetails(childNode.id), depth + 1, childBranch);
 			};
 		};
 
 		return treeNodeList;
 	};
 
-	filterDeletedLinks (ids: string[]): string[] {
-		return ids.filter(id => !this.deletedIds.has(id));
+	const filterDeletedLinks = (ids: string[]): string[] => {
+		return ids.filter(id => !deletedIds.has(id));
 	};
 
 	// return the child nodes details for the given subId
-	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
-		return S.Record.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
+	const getChildNodesDetails = (nodeId: string): I.WidgetTreeDetails[] => {
+		return S.Record.getRecords(getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => mapper(it));
 	};
 
-	mapper (item) {
-		let links = [];
-		if (item.layout != I.ObjectLayout.Set) {
-			links = this.filterDeletedLinks(Relation.getArrayValue(item.links));
-		};
-
-		item.links = links;
-		return item;
+	const mapper = (o) => {
+		o.links = U.Object.isSetLayout(o.layout) ? [] : filterDeletedLinks(Relation.getArrayValue(o.links));
+		return o;
 	};
 
 	// Subscribe to changes to child nodes for a given node Id and its links
-	subscribeToChildNodes (nodeId: string, links: string[]): void {
+	const subscribeToChildNodes = (nodeId: string, links: string[]): void => {
 		if (!links.length) {
 			return;
 		};
 
 		const hash = sha1(U.Common.arrayUnique(links).join('-'));
-		const subId = this.getSubId(nodeId);
+		const subId = getSubId(nodeId);
 
 		// if already subscribed to the same links, dont subscribe again
-		if (this.subscriptionHashes[nodeId] && (this.subscriptionHashes[nodeId] == hash)) {
+		if (subscriptionHashes.current[nodeId] && (subscriptionHashes.current[nodeId] == hash)) {
 			return;
 		};
 
-		this.subscriptionHashes[nodeId] = hash;
+		subscriptionHashes.current[nodeId] = hash;
 		U.Data.subscribeIds({
 			subId,
 			ids: links,
@@ -382,58 +180,38 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	// Utility methods
-
-	getSubKey () {
-		return `widget${this.props.block.id}`;
-	};
-
-	getSubId (nodeId?: string): string {
-		return S.Record.getSubId(this.getSubKey(), nodeId || this.props.block.getTargetObjectId());
+	const getSubId = (nodeId?: string): string => {
+		return S.Record.getSubId(subKey, nodeId || targetBlockId);
 	};
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth
-	getTreeKey (node: I.WidgetTreeItem): string {
-		const { block } = this.props;
-		const { depth, branch } = node;
-
-		return [ block.id, branch, depth ].join('-');
-	};
-
-	sortByIds (ids: string[], id1: string, id2: string) {
-		const i1 = ids.indexOf(id1);
-		const i2 = ids.indexOf(id2);
-		if (i1 > i2) return 1;
-		if (i1 < i2) return -1;
-		return 0;
+	const getTreeKey = (node: I.WidgetTreeItem): string => {
+		return [ block.id, node.branch, node.depth ].join('-');
 	};
 
 	// Event handlers
 
-	onToggle (e: React.MouseEvent, node: I.WidgetTreeItem): void {
-		if (!this._isMounted) {
-			return;
-		};
-
+	const onToggle = (e: MouseEvent, node: I.WidgetTreeItem): void => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const subKey = this.getSubKey();
-		const treeKey = this.getTreeKey(node);
+		const treeKey = getTreeKey(node);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
 
 		Storage.setToggle(subKey, treeKey, !isOpen);
 		analytics.event(!isOpen ? 'OpenSidebarObjectToggle' : 'CloseSidebarObjectToggle');
-		this.forceUpdate();
+
+		setDummy(dummy + 1);
 	};
 
-	onScroll ({ scrollTop }): void {
+	const onScroll = ({ scrollTop }): void => {
 		const dragProvider = S.Common.getRef('dragProvider');
 
-		this.top = scrollTop;
+		top.current = scrollTop;
 		dragProvider?.onScroll();
 	};
 
-	onClick (e: React.MouseEvent, item: unknown): void {
+	const onClick = (e: MouseEvent, item: unknown): void => {
 		if (e.button) {
 			return;
 		};
@@ -445,19 +223,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		analytics.event('OpenSidebarObject');
 	};
 
-	getTotalHeight () {
-		const nodes = this.loadTree();
-
-		let height = 0;
-
-		nodes.forEach((node, index) => {
-			height += this.getRowHeight(node, index);
-		});
-
-		return height;
+	const getTotalHeight = () => {
+		return loadTree().reduce((acc, node, index) => acc + getRowHeight(node, index), 0);
 	};
 
-	getRowHeight (node: any, index: number) {
+	const getRowHeight = (node: any, index: number) => {
 		let h = HEIGHT;
 		if (node && node.isSection && index) {
 			h += 12;
@@ -465,12 +235,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		return h;
 	};
 
-	resize () {
-		const { parent, isPreview } = this.props;
-		const nodes = this.loadTree();
-		const node = $(this.node);
+	const resize = () => {
+		const nodes = loadTree();
+		const node = $(nodeRef.current);
 		const length = nodes.length;
-		const css: any = { height: this.getTotalHeight() + 16, paddingBottom: '' };
+		const css: any = { height: getTotalHeight() + 16, paddingBottom: '' };
 		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {
@@ -488,6 +257,150 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		node.css(css);
 	};
 
-});
+
+	const nodes = loadTree();
+	const length = nodes.length;
+
+	let content = null;
+
+	if (!length) {
+		content = (
+			<div className="emptyWrap">
+				<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
+				{canCreate ? (
+					<Button 
+						text={translate('commonCreateObject')} 
+						color="blank" 
+						className="c28" 
+						onClick={() => onCreate({ route: analytics.route.inWidget })} 
+					/> 
+				) : ''}
+			</div>
+		);
+	} else 
+	if (isPreview) {
+		const rowRenderer = ({ index, parent, style }) => {
+			const node: I.WidgetTreeItem = nodes[index];
+			const key = getTreeKey(node);
+
+			return (
+				<CellMeasurer
+					key={key}
+					parent={parent}
+					cache={cache.current}
+					columnIndex={0}
+					rowIndex={index}
+					fixedWidth
+				>
+					<Item
+						{...props}
+						{...node}
+						index={index}
+						treeKey={key}
+						style={style}
+						onClick={onClick}
+						onToggle={onToggle}
+						getSubId={getSubId}
+						getSubKey={() => subKey}
+					/>
+				</CellMeasurer>
+			);
+		};
+
+		content = (
+			<InfiniteLoader
+				rowCount={nodes.length}
+				loadMoreRows={() => {}}
+				isRowLoaded={() => true}
+				threshold={LIMIT}
+			>
+				{({ onRowsRendered }) => (
+					<AutoSizer className="scrollArea">
+						{({ width, height }) => (
+							<List
+								ref={listRef}
+								width={width}
+								height={height}
+								deferredMeasurmentCache={cache.current}
+								rowCount={nodes.length}
+								rowHeight={({ index }) => getRowHeight(nodes[index], index)}
+								rowRenderer={rowRenderer}
+								onRowsRendered={onRowsRendered}
+								overscanRowCount={LIMIT}
+								onScroll={onScroll}
+								scrollToAlignment="center"
+							/>
+					)}
+					</AutoSizer>
+				)}
+			</InfiniteLoader>
+		);
+	} else {
+		content = (
+			<div className="ReactVirtualized__List">
+				{nodes.map((node, i: number) => {
+					const key = getTreeKey(node);
+
+					return (
+						<Item
+							key={key}
+							{...props}
+							{...node}
+							index={i}
+							treeKey={key}
+							onClick={onClick}
+							onToggle={onToggle}
+							getSubId={getSubId}
+							getSubKey={() => subKey}
+						/>
+					);
+				})}
+			</div>
+		);
+	};
+
+	useEffect(() => {
+		links.current = object.links;
+
+		if (isSystemTarget()) {
+			getData(getSubId(), initCache);
+		} else {
+			initCache();
+			C.ObjectShow(block.getTargetObjectId(), getTraceId(), U.Router.getRouteSpaceId());
+		};
+
+		return () => unsubscribe();
+	}, []);
+
+	useEffect(() => {
+		resize();
+
+		// Reload the tree if the links have changed
+		if (!U.Common.compareJSON(links.current, object.links)) {
+			clear();
+			initCache();
+
+			links.current = object.links;
+		};
+
+		listRef.current?.recomputeRowHeights(0);
+		listRef.current?.scrollToPosition(top.current);
+	});
+
+	useImperativeHandle(ref, () => ({
+		updateData,
+	}));
+
+	return (
+		<div
+			ref={nodeRef}
+			id="innerWrap"
+			className="innerWrap"
+		>
+			{content}
+		</div>
+	);
+
+}));
 
 export default WidgetTree;

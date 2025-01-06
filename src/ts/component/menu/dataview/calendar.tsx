@@ -159,7 +159,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 	componentDidMount(): void {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const { value, noKeyboard } = data;
 
 		this.originalValue = value;
 
@@ -169,12 +169,20 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		});
 
 		this.initDotMap();
-		this.rebind();
+		if (!noKeyboard) {
+			this.rebind();
+		};
 		this.forceUpdate();
 	};
 
 	componentWillUnmount () {
-		this.unbind();
+		const { param } = this.props;
+		const { data } = param;
+		const { noKeyboard } = data;
+
+		if (!noKeyboard) {
+			this.unbind();
+		};
 	};
 
 	rebind () {

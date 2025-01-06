@@ -3,9 +3,9 @@
 .listObject {
 	.table { display: grid; margin: 0px 0px 10px 0px; }
 	.table {
-		.selectionTarget { display: grid; grid-template-columns: minmax(0, 1fr) 20% 20%; }
+		.selectionTarget { display: grid; grid-template-columns: minmax(0, 1fr) 30% 30%; }
 		
-		.row.isHead { display: grid; grid-template-columns: minmax(0, 1fr) 20% 20%; color: var(--color-control-active); }
+		.row.isHead { display: grid; grid-template-columns: minmax(0, 1fr) 30% 30%; color: var(--color-control-active); }
 		.row.isHead {
 			.cell { 
 				text-align: left; padding: 9px 0px 9px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 

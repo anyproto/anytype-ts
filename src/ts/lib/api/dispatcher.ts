@@ -131,8 +131,12 @@ class Dispatcher {
 		for (const message of messages) {
 			const type = Mapper.Event.Type(message.getValueCase());
 			const { spaceId, data } = Mapper.Event.Data(message);
-			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : {};
+			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 			const needLog = this.checkLog(type) && !skipDebug;
+
+			if (!mapped) {
+				continue;
+			};
 
 			switch (type) {
 
@@ -968,6 +972,8 @@ class Dispatcher {
 
 				case 'ChatUpdate': {
 					S.Chat.update(rootId, mapped.message);
+
+					$(window).trigger('messageUpdate', [ mapped.message ]);
 					break;
 				};
 
@@ -982,7 +988,7 @@ class Dispatcher {
 						set(message, { reactions: mapped.reactions });
 					};
 
-					$(window).trigger('updateReactions', [ message ]);
+					$(window).trigger('reactionUpdate', [ message ]);
 					break;
 				};
 

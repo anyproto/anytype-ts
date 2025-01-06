@@ -35,10 +35,10 @@
 			.side.left {
 				.link { @include text-small; color: var(--color-text-secondary); display: flex; justify-content: flex-start; align-items: center; gap: 0px 6px; }
 				.name { @include text-common; line-height: 20px; font-weight: 500; @include clamp2; }
-				.descr { @include text-small; line-height: 16px; color: var(--color-text-secondary); @include clamp3; }
+				.descr { @include text-small; line-height: 16px; color: var(--color-text-primary); @include clamp3; }
 
 				.link {
-					.iconObject { background: none; }
+					.iconObject { background: none; border-radius: 2px; }
 				}
 			}
 			.side.right { position: relative; display: flex; align-items: center; border-radius: 4px; overflow: hidden; }

@@ -632,6 +632,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
+		const isViewGraph = view.type == I.ViewType.Graph;
+		const isViewCalendar = view.type == I.ViewType.Calendar;
 		
 		let typeId = '';
 		let templateId = '';
@@ -703,16 +705,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				S.Record.recordsSet(subId, '', records);
 			};
 
-			if ([ I.ViewType.Graph ].includes(view.type)) {
+			if (isViewGraph) {
 				const refGraph = this.refView?.refGraph;
 				if (refGraph) {
 					refGraph.addNewNode(object.id, '', null, () => {
-						refGraph.setRootId(object.id);
+						$(window).trigger('updateGraphRoot', { id: object.id });
 					});
 				};
 			};
 
-			if ([ I.ViewType.Calendar ].includes(view.type)) {
+			if (isViewGraph || isViewCalendar) {
 				U.Object.openConfig(object);
 			} else {
 				if (U.Object.isNoteLayout(object.layout)) {

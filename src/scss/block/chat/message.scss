@@ -88,9 +88,12 @@
 }
 
 .message.isSelf {
-	.flex { flex-direction: row-reverse; }
-	> .flex > .side.right { background: #e5f8d6; }
-	.controls { flex-direction: row-reverse; }
+	> .flex { flex-direction: row-reverse; }
+	> .flex {
+		> .side.right { background: #e5f8d6; }
+		> .controls { flex-direction: row-reverse; }
+	}
+
 	.reply { background-color: #c5efa3; }
 	.reply::before { background-color: #4dae00; }
 }

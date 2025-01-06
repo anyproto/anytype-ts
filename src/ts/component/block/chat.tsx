@@ -133,7 +133,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.rebind();
 		this.setState({ isLoading: true });
 
-		this.loadMessages(-1, true, () => {
+		this.loadMessages(1, true, () => {
 			this.loadReplies(() => {
 				this.replies = this.getReplies();
 
@@ -181,7 +181,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	unbind () {
 		const { isPopup, block } = this.props;
-		const events = [ 'messageAdd' ];
+		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -190,17 +190,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	rebind () {
 		const { isPopup, block } = this.props;
-		const { account } = S.Auth;
 		const win = $(window);
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		this.unbind();
 
-		win.on(`messageAdd.${ns}`, (e, message: I.ChatMessage) => {
-			if (message.creator != account.id) {
-				this.scrollToMessage(message.id);
-			};
-		});
+		win.on(`messageAdd.${ns}`, () => this.scrollToBottomCheck());
+		win.on(`messageUpdate.${ns}`, () => this.scrollToBottomCheck());
+		win.on(`reactionUpdate.${ns}`, () => this.scrollToBottomCheck());
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 	};
@@ -237,6 +234,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		if (!clear && (dir > 0) && this.isLoaded) {
+			this.setIsBottom(true);
 			return;
 		};
 
@@ -277,10 +275,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 				const messages = message.messages || [];
 
-				if ((dir > 0) && !messages.length) {
-					this.isLoaded = true;
-					this.isBottom = true;
-					this.subscribeMessages(false);
+				if (dir > 0) {
+					if (!messages.length) {
+						this.isLoaded = true;
+						this.setIsBottom(true);
+						this.subscribeMessages(false);
+					} else {
+						this.setIsBottom(false);
+					};
+				} else {
+					this.setIsBottom(false);
 				};
 
 				if (messages.length) {
@@ -530,7 +534,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			});
 		};
 
-		this.isBottom = false;
+		this.setIsBottom(false);
 
 		if (st <= 0) {
 			this.loadMessages(-1, false);
@@ -610,7 +614,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		this.isLoaded = false;
-		this.isBottom = false;
+		this.setIsBottom(false);
 
 		const rootId = this.getRootId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
@@ -687,19 +691,20 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		} else {
 			let attachmentLayout = I.ObjectLayout[first.layout];
 
-			attachment = first;
+			attachment = null;
 			attachments.forEach((el) => {
 				if ((I.ObjectLayout[el.layout] != attachmentLayout) || !layouts.includes(el.layout)) {
 					isMultiple = true;
-					attachment = null;
+					attachment = first;
 					attachmentLayout = 'Attachment';
 				};
 			});
-			attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
+			attachmentText = text.length ? `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})` : `${l} ${U.Common.plural(l, translate(`plural${attachmentLayout}`)).toLowerCase()}`;
 		};
 
 		if (!text) {
 			text = attachmentText;
+			attachment = first;
 		};
 
 		return { title, text, attachment, isMultiple };
@@ -715,6 +720,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onDrop (e: React.DragEvent) {
 		this.refForm?.onDrop(e);
+	};
+
+	setIsBottom (v: boolean) {
+		this.isBottom = v;
 	};
 
 });

@@ -6,7 +6,8 @@ const path = require('path');
 const mime = require('mime-types');
 const tmpPath = () => app.getPath('temp');
 const Store = require('electron-store');
-const store = new Store({ name: 'localStorage' });
+const suffix = app.isPackaged ? '' : 'dev';
+const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
 
 contextBridge.exposeInMainWorld('Electron', {
 	version: {

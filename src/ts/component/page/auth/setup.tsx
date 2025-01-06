@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
-import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer } from 'Lib';
+import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey } from 'Lib';
 
 const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -56,14 +56,26 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			S.Common.configSet(account.config, false);
 
 			const spaceId = Storage.get('spaceId');
+			const routeParam = { 
+				replace: true,
+				onFadeIn: () => {
+					[
+						I.SurveyType.Register, 
+						I.SurveyType.Object,
+						I.SurveyType.Pmf,
+					].forEach(it => Survey.check(it));
+				},
+			};
+
 			if (spaceId) {
-				U.Router.switchSpace(spaceId, '', false, {});
+				U.Router.switchSpace(spaceId, '', false, routeParam);
 			} else {
-				U.Data.onAuthWithoutSpace({ replace: true });
+				U.Data.onAuthWithoutSpace(routeParam);
 			};
 
 			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce(false);
+
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};

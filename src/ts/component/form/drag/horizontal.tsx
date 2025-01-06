@@ -156,6 +156,7 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 			id={id} 
 			className={cn.join(' ')} 
 			onMouseDown={start}
+			onClick={e => e.stopPropagation()}
 		>
 			<div ref={backRef} className="back" />
 			<div ref={fillRef} className="fill" />

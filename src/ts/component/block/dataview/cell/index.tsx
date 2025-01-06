@@ -299,6 +299,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
 					value: param.data.value || U.Date.now(),
+					noKeyboard: true,
 				});
 					
 				menuId = 'dataviewCalendar';
