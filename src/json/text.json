@@ -798,7 +798,7 @@
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
 	"popupSettingsSpaceIndexInfoLabel": "Encrypted & local-first",
 
-	"popupSettingsSpaceIndexShareShareTitle": "Share space",
+	"popupSettingsSpaceIndexShareShareTitle": "Share Space",
 	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
 	"popupSettingsSpaceIndexShareDefaultText": "Entry space can’t be shared. Create a new one to share",
 	"popupSettingsSpaceIndexShareInviteText": "Generate invite link and share the space with other members",
@@ -1094,6 +1094,9 @@
 
 	"popupConfirmChatDeleteMessageTitle": "Delete this message?",
 	"popupConfirmChatDeleteMessageText": "It cannot be restored after confirmation",
+
+	"popupConfirmSpeedLimitTitle": "Hold up! Turbo typing detected!",
+	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1625,6 +1628,10 @@
 
 	"menuSyncStatusEmptyLocal": "Your Vault is currently in local-only mode, so your data isn't being synced to Anytype nodes.",
 	"menuSyncStatusEmpty": "There are no objects to show",
+
+	"menuPublishTitle": "Publish to web",
+	"menuPublishLabel": "Join Space Button",
+	"menuPublishButton": "Publish",
 
 	"previewEdit": "Edit Link",
 
