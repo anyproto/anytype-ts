@@ -6,6 +6,7 @@ import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
+	const { config } = S.Common;
 	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, onRelation, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
@@ -14,7 +15,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const isLocked = root ? root.isLocked() : false;
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
-	const showShare = !isTypeOrRelation && !isDate;
+	const showShare = !isTypeOrRelation && !isDate && config.experimental;
 	const showRelations = !isTypeOrRelation && !isDate;
 	const showMenu = !isTypeOrRelation;
 	const cmd = keyboard.cmdSymbol();

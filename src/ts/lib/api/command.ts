@@ -1365,6 +1365,7 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 };
 
 export const PublishingCreate = (spaceId: string, objectId: string, uri: string,  callBack?: (message: any) => void) => {
+	/*
 	const request = new Rpc.Publishing.Create.Request();
 
 	request.setObjectid(objectId);
@@ -1372,6 +1373,7 @@ export const PublishingCreate = (spaceId: string, objectId: string, uri: string,
 	request.setUri(uri);
 
 	dispatcher.request(PublishingCreate.name, request, callBack);
+	*/
 };
 
 
