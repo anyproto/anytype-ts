@@ -152,12 +152,13 @@
 				.name { @include text-overflow-nw; }
 			}
 
-			.side.left.small {
+			.button { padding: 0px 8px; @include text-common; }
+		}
+		.dataviewControls.small {
+			.side.left {
 				.views { display: none; }
 				.viewSelect { display: inline-block; }
 			}
-
-			.button { padding: 0px 8px; @include text-common; }
 		}
 		.dataviewControls.isCollection {
 			.side.left { padding-left: 20px; }
@@ -239,9 +240,9 @@
 
 		.dataviewControls { margin: 0px 0px 8px 0px; }
 		.dataviewControls {
-			> .sides { align-items: flex-end; }
+			> .sides { align-items: center; }
 			> .sides {
-				> .side { padding: 0px; }
+				> .side { padding: 0px; height: 28px; }
 				> .side.left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px 0px; }
 				> .side.right { transition: opacity $transitionCommon; opacity: 0; }
 			}
@@ -254,6 +255,10 @@
 			.icon.plus:hover { background-color: transparent; }
 		}
 		.dataviewControls::after { display: none !important; }
+
+		.dataviewControls.small {
+			.side.right { display: none; }
+		}
 
 		.dataviewSelection {
 			.side.left { @include text-paragraph; }

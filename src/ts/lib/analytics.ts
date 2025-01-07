@@ -605,6 +605,7 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			inviteRequest:		 'ScreenInviteRequest',
+			spaceCreate:		 'ScreenSettingsSpaceCreate',
 		};
 
 		return map[id] || '';

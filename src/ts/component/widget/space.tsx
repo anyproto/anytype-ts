@@ -12,7 +12,6 @@ const WidgetSpace = observer(forwardRef<I.WidgetComponent>(() => {
 	const isSpaceOwner = U.Space.isMyOwner();
 	const cn = [ 'body' ];
 	const cmd = keyboard.cmdSymbol();
-	const alt = keyboard.altSymbol();
 	const buttons = [
 		U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
 		space.isShared ? { id: 'member', name: translate('commonMembers') } : null,
@@ -45,11 +44,6 @@ const WidgetSpace = observer(forwardRef<I.WidgetComponent>(() => {
 	const onCreate = (e: MouseEvent) => {
 		e.stopPropagation();
 		keyboard.pageCreate({}, analytics.route.widget);
-	};
-
-	const onGraph = (e: MouseEvent) => {
-		e.stopPropagation();
-		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
 	const onButtonClick = (e: any, item: any) => {
@@ -95,7 +89,6 @@ const WidgetSpace = observer(forwardRef<I.WidgetComponent>(() => {
 				<div className="side right">
 					<Icon className="search withBackground" onClick={onSearch} tooltip={translate('commonSearch')} tooltipCaption={`${cmd} + S`} />
 					<Icon className="plus withBackground" onClick={onCreate} tooltip={translate('commonCreateNewObject')} tooltipCaption={`${cmd} + N`} />
-					<Icon className="graph withBackground" onClick={onGraph} tooltip={translate('commonGraph')} tooltipCaption={`${cmd} + ${alt} + O`} />
 					<div className="cnt" onClick={onRequest}>{requestCnt}</div>
 				</div>
 			</div>
