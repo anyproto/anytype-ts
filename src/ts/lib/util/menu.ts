@@ -1054,8 +1054,8 @@ class UtilMenu {
 
 	timeFormatOptions () {
 		return [
-			{ id: I.TimeFormat.H12, name: translate('menuDataviewDate12Hour') },
-			{ id: I.TimeFormat.H24, name: translate('menuDataviewDate24Hour') },
+			{ id: I.TimeFormat.H12, name: translate('timeFormat12') },
+			{ id: I.TimeFormat.H24, name: translate('timeFormat24') },
 		];
 	};
 

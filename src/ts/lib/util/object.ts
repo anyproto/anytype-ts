@@ -150,7 +150,6 @@ class UtilObject {
 		};
 
 		param = param || {};
-		param.preventResize = true;
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
@@ -490,7 +489,8 @@ class UtilObject {
 
 	isAllowedChat () {
 		const { config, space } = S.Common;
-		return config.experimental || (J.Constant.chatSpaceId.includes(space));
+		const spaceview = U.Space.getSpaceview();
+		return spaceview.chatId && (config.experimental || J.Constant.chatSpaceId.includes(space));
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {

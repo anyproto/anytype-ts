@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar, Vault, ShareTooltip, Loader } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, Sidebar, Vault, Loader } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -139,7 +139,6 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 
-					<Navigation ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
 					<Sidebar key="sidebar" {...this.props} />
 					<Page {...this.props} isPopup={false} />
 				</DragProvider>
