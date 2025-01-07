@@ -53,7 +53,6 @@ export default {
 	relationEdit: [
 		'select',
 		'searchObject',
-		'dataviewDate',
 		'dataviewObjectValues',
 		'dataviewObjectList'
 	],
@@ -66,6 +65,5 @@ export default {
 	widget: [ 'searchObject', 'select' ],
 	dataviewTemplate: [ 'previewObject' ],
 	table: [ 'select2', 'blockColor', 'blockBackground' ],
-	navigation: [ 'quickCapture', 'space' ],
 	dataviewContext: [ 'typeSuggest', 'searchObject' ]
 };
