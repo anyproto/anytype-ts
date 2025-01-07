@@ -23,35 +23,32 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	useEffect(() => {
 		S.Auth.clearAll();
 
-		Animation.to(() => {
-			C.AccountMigrate(accountId, dataPath, (message: any) => {
-				if (message.error.code) {
-					setError(message.error.description);
+		C.AccountMigrate(accountId, dataPath, (message: any) => {
+			if (message.error.code) {
+				setError(message.error.description);
+				return;
+			};
+
+			C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
+				const { account } = message;
+
+				if (!account) {
 					return;
 				};
 
-				C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
-					const { account } = message;
+				S.Auth.accountSet(account);
+				S.Common.configSet(account.config, false);
 
-					if (!account) {
-						return;
-					};
+				const routeParam = { replace: true };
 
-					S.Auth.accountSet(account);
-					S.Common.configSet(account.config, false);
+				if (spaceId) {
+					U.Router.switchSpace(spaceId, '', false, routeParam);
+				} else {
+					U.Data.onAuthWithoutSpace(routeParam);
+				};
 
-					const routeParam = { replace: true };
-
-					if (spaceId) {
-						U.Router.switchSpace(spaceId, '', false, routeParam);
-					} else {
-						U.Data.onAuthWithoutSpace(routeParam);
-					};
-
-					U.Data.onInfo(account.info);
-					U.Data.onAuthOnce(false);
-				});
-
+				U.Data.onInfo(account.info);
+				U.Data.onAuthOnce(false);
 			});
 		});
 	}, []);
