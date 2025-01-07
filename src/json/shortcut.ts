@@ -31,6 +31,7 @@ export default () => {
 						{ com: `${cmd} + 0`,			 name: translate('popupShortcutMainBasics18') },
 						{ com: `Ctrl + Tab, Ctrl + Shift + Tab`, name: translate('popupShortcutMainBasics20') },
 						{ com: `${cmd} + Shift + M`, name: translate('popupShortcutMainBasics21') },
+						{ com: `${cmd} + ${alt} + L`, name: translate('popupShortcutMainBasics22') },
 					]
 				},
 
