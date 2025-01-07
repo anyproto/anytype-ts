@@ -172,8 +172,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			});
 		};
 
-		console.log('SECTIONS: ', sections)
-
 		return sections;
 	};
 
@@ -347,8 +345,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	onOptionClick (e: React.MouseEvent, option: any, section: any) {
-		console.log('OPTION: ', option)
-		console.log('SECTION: ', section)
 		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, isEditing } = data;
