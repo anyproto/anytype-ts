@@ -7,8 +7,9 @@ import { I, S, U, C, J, Storage, keyboard, translate } from 'Lib';
 const Progress: FC = observer(() => {
 
 	const { show } = S.Progress;
-	const list = S.Progress.getList();
-	const percent = S.Progress.getPercent();
+	const skipType = [ I.ProgressType.Migrate ];
+	const list = S.Progress.getList(it => !skipType.includes(it.type));
+	const percent = S.Progress.getPercent(list);
 	const nodeRef = useRef(null);
 	const innerRef = useRef(null);
 	const dx = useRef(0);

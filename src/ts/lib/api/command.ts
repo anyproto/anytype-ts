@@ -195,6 +195,15 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
 
+export const AccountMigrate = (id: string, path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.Migrate.Request();
+
+	request.setId(id);
+	request.setRootpath(path);
+
+	dispatcher.request(AccountMigrate.name, request, callBack);
+};
+
 export const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Stop.Request();
 
