@@ -34,6 +34,7 @@
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; }
 	}
+	.head:hover { padding-right: 8px; }
 	.head:hover {
 		.clickable { gap: 0px 4px; }
 		.iconWrap.back { background-color: var(--color-shape-highlight-medium); }
@@ -91,7 +92,7 @@
 .widget.active {
 	.head { padding-right: 8px; }
 	.head {
-		.clickable { width: calc(100% - 60px); }
+		.clickable { width: calc(100% - 60px); gap: 0px 4px; }
 		.buttons { display: flex; }
 		.iconObject { display: none; }
 		.iconWrap.collapse { display: flex; }
