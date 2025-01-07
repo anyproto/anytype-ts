@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Button } from 'Component';
 import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics } from 'Lib';
@@ -9,188 +9,28 @@ import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
 import WidgetViewGraph from './graph';
 
-interface State {
-	isLoading: boolean;
+interface WidgetViewRefProps {
+	updateData: () => void;
+	updateViews: () => void;
+	onOpen: () => void;
 };
 
-const WidgetView = observer(class WidgetView extends React.Component<I.WidgetComponent, State> {
+const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
-	node = null;
-	state = {
-		isLoading: false,
-	};
-	refSelect = null;
-	refChild = null;
+	const { parent, block, isSystemTarget, onCreate, getData, getTraceId, getLimit, sortFavorite } = props;
+	const { viewId, limit, layout } = parent.content;
+	const targetId = block ? block.getTargetObjectId() : '';
+	const [ isLoading, setIsLoading ] = useState(false);
+	const nodeRef = useRef(null);
+	const selectRef = useRef(null);
+	const childRef = useRef(null);
+	const rootId = block ? [ targetId, 'widget', block.id ].join('-') : '';
+	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
+	const object = S.Detail.get(S.Block.widgets, targetId);
+	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+	const viewType = view ? view.type : I.ViewType.List;
 
-	constructor (props: I.WidgetComponent) {
-		super(props);
-		
-		this.getView = this.getView.bind(this);
-		this.getViewType = this.getViewType.bind(this);
-		this.getSubId = this.getSubId.bind(this);
-		this.getRecordIds = this.getRecordIds.bind(this);
-		this.getObject = this.getObject.bind(this);
-		this.getLimit = this.getLimit.bind(this);
-		this.reload = this.reload.bind(this);
-		this.onChangeView = this.onChangeView.bind(this);
-	};
-
-	render (): React.ReactNode {
-		const { parent, block, isSystemTarget, onCreate } = this.props;
-		const { viewId, limit, layout } = parent.content;
-		const { targetBlockId } = block.content;
-		const { isLoading } = this.state;
-		const rootId = this.getRootId();
-		const subId = this.getSubId();
-		const records = this.getRecordIds();
-		const length = records.length;
-		const views = S.Record.getViews(rootId, J.Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
-		const viewType = this.getViewType();
-		const cn = [ 'innerWrap' ];
-		const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
-		const canCreate = this.props.canCreate && this.isAllowedObject();
-		const props = {
-			...this.props,
-			ref: ref => this.refChild = ref,
-			reload: this.reload,
-			getRecordIds: this.getRecordIds,
-			getView: this.getView,
-			getViewType: this.getViewType,
-			getObject: this.getObject,
-			getViewLimit: this.getLimit,
-			rootId,
-			subId,
-		};
-
-		let content = null;
-		let viewSelect = null;
-
-		if (!isSystemTarget() && (views.length > 1)) {
-			viewSelect = (
-				<Select 
-					ref={ref => this.refSelect = ref}
-					id={`select-view-${rootId}`} 
-					value={viewId} 
-					options={views} 
-					onChange={this.onChangeView}
-					arrowClassName="light"
-					menuParam={{ 
-						width: 300,
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-					}}
-				/>
-			);
-		};
-
-		if (!isLoading && !length && showEmpty) {
-			content = (
-				<div className="emptyWrap">
-					<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-					{canCreate ? (
-						<Button 
-							text={translate('commonCreateObject')} 
-							color="blank" 
-							className="c28" 
-							onClick={() => onCreate({ route: analytics.route.inWidget })} 
-						/> 
-					) : ''}
-				</div>
-			);
-		} else {
-			if (layout == I.WidgetLayout.View) {
-				cn.push(`view${I.ViewType[viewType]}`);
-				switch (viewType) {
-					default: {
-						content = <WidgetViewList {...props} />;
-						break;
-					};
-
-					case I.ViewType.Gallery: {
-						content = <WidgetViewGallery {...props} />;
-						break;
-					};
-
-					case I.ViewType.Board: {
-						content = <WidgetViewBoard {...props} />;
-						break;
-					};
-
-					case I.ViewType.Calendar: {
-						content = <WidgetViewCalendar {...props} />;
-						break;
-					};
-
-					case I.ViewType.Graph: {
-						content = <WidgetViewGraph {...props} />;
-						break;
-					};
-				};
-			} else {
-				cn.push('viewList');
-				content = <WidgetViewList {...props} />;
-			};
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				id="innerWrap"
-				className={cn.join(' ')}
-			>
-				{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
-				{content}
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		const { block, isSystemTarget, getData, getTraceId } = this.props;
-		const { targetBlockId } = block.content;
-
-		if (isSystemTarget()) {
-			getData(this.getSubId());
-		} else {
-			this.setState({ isLoading: true });
-
-			C.ObjectShow(targetBlockId, getTraceId(), U.Router.getRouteSpaceId(), () => {
-				this.setState({ isLoading: false });
-
-				const view = this.getView();
-				if (view) {
-					this.load(view.id);
-				};
-			});
-		};
-	};
-
-	componentDidUpdate (): void {
-		const { parent, isSystemTarget } = this.props;
-		const { viewId } = parent.content;
-		const view = Dataview.getView(this.getRootId(), J.Constant.blockId.dataview);
-
-		if (!isSystemTarget() && view && viewId && (viewId != view.id)) {
-			const ref = this.refSelect;
-
-			if (ref) {
-				const selectValue = ref.getValue();
-				if (viewId != selectValue) {
-					ref.setValue(viewId);
-				};
-			};
-
-			this.load(viewId);
-		};
-	};
-
-	componentWillUnmount(): void {
-		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
-	};
-
-	updateData () {
-		const { block, isSystemTarget, getData } = this.props;
-		const targetId = block.getTargetObjectId();
-		const rootId = this.getRootId();
+	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
 		const srcBlock = S.Block.getLeaf(targetId, J.Constant.blockId.dataview);
 
@@ -208,54 +48,35 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		};
 
 		if (isSystemTarget()) {
-			getData(this.getSubId());
+			getData(subId);
 		} else {
-			const view = Dataview.getView(this.getRootId(), J.Constant.blockId.dataview);
+			const view = Dataview.getView(subId, J.Constant.blockId.dataview);
 			if (view) {
-				this.load(view.id);
+				load(view.id);
 			};
 		};
 	};
 
-	updateViews () {
-		const { block } = this.props;
-		const { targetBlockId } = block.content;
-		const views = U.Common.objectCopy(S.Record.getViews(targetBlockId, J.Constant.blockId.dataview)).map(it => new M.View(it));
-		const rootId = this.getRootId();
+	const updateViews = () => {
+		const views = U.Common.objectCopy(S.Record.getViews(targetId, J.Constant.blockId.dataview)).map(it => new M.View(it));
 
-		if (!views.length || (targetBlockId != keyboard.getRootId())) {
+		if (!views.length || (targetId != keyboard.getRootId())) {
 			return;
 		};
 
 		S.Record.viewsClear(rootId, J.Constant.blockId.dataview);
 		S.Record.viewsSet(rootId, J.Constant.blockId.dataview, views);
 
-		this.refSelect?.setOptions(views);
+		selectRef.current?.setOptions(views);
 	};
 
-	getSubId () {
-		return S.Record.getSubId(this.getRootId(), J.Constant.blockId.dataview);
-	};
-
-	getRootId = (): string => {
-		const { block } = this.props;
-		const { targetBlockId } = block.content;
-
-		return [ targetBlockId, 'widget', block.id ].join('-');
-	};
-
-	load (viewId: string) {
-		const subId = this.getSubId();
-
-		if (this.refChild && this.refChild.load) {
-			this.refChild.load();
-			S.Record.metaSet(this.getSubId(), '', { viewId });
+	const load = (viewId: string) => {
+		if (childRef.current?.load) {
+			childRef.current?.load();
+			S.Record.metaSet(subId, '', { viewId });
 			return;
 		};
 
-		const rootId = this.getRootId();
-		const blockId = J.Constant.blockId.dataview;
-		const object = this.getObject();
 		const setOf = Relation.getArrayValue(object.setOf);
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 
@@ -264,91 +85,63 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			return;
 		};
 
-		const limit = this.getLimit();
-		const view = this.getView();
+		const view = getView();
 		if (!view) {
 			return;
 		};
 
 		Dataview.getData({
 			rootId,
-			blockId,
+			blockId: J.Constant.blockId.dataview,
 			newViewId: viewId,
 			sources: setOf,
-			limit,
-			filters: this.getFilters(),
+			limit: getLimitHandler(),
+			filters: getFilters(),
 			collectionId: (isCollection ? object.id : ''),
 			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
 		});
 	};
 
-	reload () {
-		this.load(this.props.parent.content.viewId);
-	};
-
-	getFilters () {
-		const view = this.getView();
+	const getFilters = () => {
 		if (!view) {
 			return [];
 		};
 
 		let filters: I.Filter[] = [];
 
-		if (this.refChild && this.refChild.getFilters) {
-			filters = filters.concat(this.refChild.getFilters());
+		if (childRef.current?.getFilters) {
+			filters = filters.concat(childRef.current?.getFilters());
 		};
 
 		return filters;
 	};
 
-	getView () {
-		return Dataview.getView(this.getRootId(), J.Constant.blockId.dataview, this.props.parent.content.viewId);
+	const getView = () => {
+		return Dataview.getView(rootId, J.Constant.blockId.dataview, parent.content.viewId);
 	};
 
-	getViewType () {
-		const view = this.getView();
-		return view ? view.type : I.ViewType.List;
-	};
-
-	getObject () {
-		return S.Detail.get(S.Block.widgets, this.props.block.getTargetObjectId());
-	};
-
-	getLimit (): number {
-		const { parent, getLimit } = this.props;
-		const { layout } = parent.content;
-		const viewType = this.getViewType();
-
+	const getLimitHandler = (): number => {
 		let limit = getLimit(parent.content);
-
 		if ((layout == I.WidgetLayout.View) && (viewType == I.ViewType.Calendar)) {
 			limit = 1000;
 		};
-
 		return limit;
 	};
 
-	onChangeView (viewId: string) {
-		C.BlockWidgetSetViewId(S.Block.widgets, this.props.parent.id, viewId);
+	const onChangeView = (viewId: string) => {
+		C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
 	};
 
-	getRecordIds () {
-		const { parent, block, sortFavorite } = this.props;
-		const { targetBlockId } = block.content;
-		const rootId = this.getRootId();
-		const subId = this.getSubId();
+	const getRecordIds = () => {
 		const records = S.Record.getRecordIds(subId, '');
 		const views = S.Record.getViews(rootId, J.Constant.blockId.dataview);
 		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
 		const ret = Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, viewId, '', U.Common.objectCopy(records));
 
-		return (targetBlockId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
+		return (targetId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
 	};
 
-	isAllowedObject () {
-		const { isSystemTarget } = this.props;
-		const rootId = this.getRootId();
-		const object = this.getObject();
+	const isAllowedObject = () => {
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		if (isSystemTarget()) {
@@ -364,7 +157,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			return true;
 		};
 
-		const sources = this.getSources();
+		const sources = getSources();
 		if (!sources.length) {
 			return false;
 		};
@@ -382,26 +175,162 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		return isAllowed;
 	};
 
-	getSources (): string[] {
-		const object = this.getObject();
-
+	const getSources = (): string[] => {
 		if (U.Object.isCollectionLayout(object.layout)) {
 			return [];
 		};
 
-		const rootId = this.getRootId();
 		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type).map(it => it.id);
 		const relations = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Relation).map(it => it.id);
 
 		return [].concat(types).concat(relations);
 	};
 
-	onOpen () {
-		if (this.refChild && this.refChild.onOpen) {
-			this.refChild.onOpen();
+	const onOpen = () => {
+		if (childRef.current?.onOpen) {
+			childRef.current?.onOpen();
 		};
 	};
 
-});
+	const records = getRecordIds();
+	const length = records.length;
+	const views = S.Record.getViews(rootId, J.Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
+	const cn = [ 'innerWrap' ];
+	const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
+	const canCreate = props.canCreate && isAllowedObject();
+	const childProps = {
+		...props,
+		ref: childRef,
+		rootId,
+		subId,
+		reload: () => load(viewId),
+		getRecordIds,
+		getView: () => view,
+		getViewType: () => viewType,
+		getObject: () => object,
+		getViewLimit: getLimitHandler,
+	};
+
+	let content = null;
+	let viewSelect = null;
+
+	if (!isSystemTarget() && (views.length > 1)) {
+		viewSelect = (
+			<Select 
+				ref={selectRef}
+				id={`select-view-${rootId}`} 
+				value={viewId} 
+				options={views} 
+				onChange={onChangeView}
+				arrowClassName="light"
+				menuParam={{ 
+					width: 300,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+				}}
+			/>
+		);
+	};
+
+	if (!isLoading && !length && showEmpty) {
+		content = (
+			<div className="emptyWrap">
+				<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
+				{canCreate ? (
+					<Button 
+						text={translate('commonCreateObject')} 
+						color="blank" 
+						className="c28" 
+						onClick={() => onCreate({ route: analytics.route.inWidget })} 
+					/> 
+				) : ''}
+			</div>
+		);
+	} else {
+		if (layout == I.WidgetLayout.View) {
+			cn.push(`view${I.ViewType[viewType]}`);
+			switch (viewType) {
+				default: {
+					content = <WidgetViewList {...childProps} />;
+					break;
+				};
+
+				case I.ViewType.Gallery: {
+					content = <WidgetViewGallery {...childProps} />;
+					break;
+				};
+
+				case I.ViewType.Board: {
+					content = <WidgetViewBoard {...childProps} />;
+					break;
+				};
+
+				case I.ViewType.Calendar: {
+					content = <WidgetViewCalendar {...childProps} />;
+					break;
+				};
+
+				case I.ViewType.Graph: {
+					content = <WidgetViewGraph {...childProps} />;
+					break;
+				};
+			};
+		} else {
+			cn.push('viewList');
+			content = <WidgetViewList {...childProps} />;
+		};
+	};
+
+	useEffect(() => {
+		if (isSystemTarget()) {
+			getData(subId);
+		} else {
+			setIsLoading(true);
+
+			C.ObjectShow(targetId, getTraceId(), U.Router.getRouteSpaceId(), () => {
+				setIsLoading(false);
+
+				const view = getView();
+				if (view) {
+					load(view.id);
+				};
+			});
+		};
+
+		return () => {
+			C.ObjectSearchUnsubscribe([ subId ]);
+		};
+	}, []);
+
+	useEffect(() => {
+		if (!isSystemTarget() && view && viewId && (viewId != view.id)) {
+			if (selectRef.current) {
+				if (viewId != selectRef.current.getValue()) {
+					selectRef.current.setValue(viewId);
+				};
+			};
+
+			load(viewId);
+		};
+	});
+
+	useImperativeHandle(ref, () => ({
+		updateData,
+		updateViews,
+		onOpen,
+	}));
+
+	return (
+		<div 
+			ref={nodeRef}
+			id="innerWrap"
+			className={cn.join(' ')}
+		>
+			{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
+			{content}
+		</div>
+	);
+
+}));
 
 export default WidgetView;

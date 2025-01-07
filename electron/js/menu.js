@@ -175,7 +175,7 @@ class MenuManager {
 				submenu: [
 					{
 						label: `${Util.translate('electronMenuReleaseNotes')} (${app.getVersion()})`,
-						click: () => Util.send(this.win, 'popup', 'help', { preventResize: true, data: { document: 'whatsNew' } })
+						click: () => Util.send(this.win, 'popup', 'help', { data: { document: 'whatsNew' } })
 					},
 					{
 						label: Util.translate('electronMenuShortcuts'), accelerator: 'Ctrl+Space',

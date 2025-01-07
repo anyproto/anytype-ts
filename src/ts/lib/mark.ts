@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, U, J, analytics } from 'Lib';
+import { I, U, J } from 'Lib';
 
 const Tags = {};
 for (const i in I.MarkType) {
