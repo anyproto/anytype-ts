@@ -187,9 +187,11 @@ const Input = forwardRef<InputRef, Props>(({
 		onCompositionStart?.();
 	};
 
-	const handleCompositionEnd = () => {
+	const handleCompositionEnd = (e) => {
 		keyboard.setComposition(false);
 		onCompositionEnd?.();
+
+		handleChange(e);
 	};
 
 	const addClass = (className: string) => {

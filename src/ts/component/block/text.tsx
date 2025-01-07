@@ -194,6 +194,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
 					onDragStart={e => e.preventDefault()}
+					onCompositionEnd={this.onKeyUp}
 				/>
 			</div>
 		);
@@ -1099,7 +1100,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onSelect () {
-		if (keyboard.isContextDisabled) {
+		if (keyboard.isContextDisabled || keyboard.isComposition) {
 			return;
 		};
 

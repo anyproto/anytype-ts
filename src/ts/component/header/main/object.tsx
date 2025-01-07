@@ -12,12 +12,13 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const [ dummy, setDummy ] = useState(0);
 	const root = S.Block.getLeaf(rootId, rootId);
 	const object = S.Detail.get(rootId, rootId, J.Relation.template);
+	const isDeleted = object._empty_ || object.isDeleted;
 	const isLocked = root ? root.isLocked() : false;
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
-	const showShare = !isTypeOrRelation && !isDate && config.experimental;
-	const showRelations = !isTypeOrRelation && !isDate;
-	const showMenu = !isTypeOrRelation;
+	const showShare = !isTypeOrRelation && !isDate && config.experimental && !isDeleted;
+	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
+	const showMenu = !isTypeOrRelation && !isDeleted;
 	const cmd = keyboard.cmdSymbol();
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
@@ -43,24 +44,26 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		locked = translate('commonSystem');
 	};
 
-	if (bannerProps.type == I.BannerType.None) {
-		center = (
-			<div
-				id="path"
-				className="path"
-				onClick={onSearch}
-				onMouseOver={e => onTooltipShow(e, translate('headerTooltipPath'))}
-				onMouseOut={onTooltipHide}
-			>
-				<div className="inner">
-					<IconObject object={object} size={18} />
-					<ObjectName object={object} />
-					{locked ? <Label text={locked} className="lock" /> : ''}
+	if (!isDeleted) {
+		if (bannerProps.type == I.BannerType.None) {
+			center = (
+				<div
+					id="path"
+					className="path"
+					onClick={onSearch}
+					onMouseOver={e => onTooltipShow(e, translate('headerTooltipPath'))}
+					onMouseOut={onTooltipHide}
+				>
+					<div className="inner">
+						<IconObject object={object} size={18} />
+						<ObjectName object={object} />
+						{locked ? <Label text={locked} className="lock" /> : ''}
+					</div>
 				</div>
-			</div>
-		);
-	} else {
-		center = <HeaderBanner {...bannerProps} />;
+			);
+		} else {
+			center = <HeaderBanner {...bannerProps} />;
+		};
 	};
 
 	const onOpen = () => {
