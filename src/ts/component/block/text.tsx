@@ -194,6 +194,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
 					onDragStart={e => e.preventDefault()}
+					onCompositionEnd={this.onKeyUp}
 				/>
 			</div>
 		);
