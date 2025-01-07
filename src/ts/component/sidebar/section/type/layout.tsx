@@ -23,7 +23,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 	};
 
     render () {
-		const { object } = this.props;
+		const { object, readonly } = this.props;
 		const formatOptions: I.Option[] = [
 			{ id: I.LayoutFormat.Page, name: translate('sidebarSectionLayoutFormatPage') },
 			{ id: I.LayoutFormat.List, name: translate('sidebarSectionLayoutFormatList') },
@@ -42,6 +42,7 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 									options={formatOptions}
 									value={object.layoutFormat}
 									onChange={this.onLayout}
+									readonly={readonly}
 								/>
 							</div>
 						</div>

@@ -16,9 +16,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
     render () {
-		const { object } = this.props;
-
-		console.log('object', object);
+		const { object, readonly } = this.props;
 
         return (
 			<div className="wrap">
@@ -26,7 +24,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 					id={`sidebar-icon-title-${object.id}`} 
 					object={object} 
 					size={24} 
-					canEdit={!object.isReadonly}
+					canEdit={!readonly}
 					onSelect={this.onSelect}
 					menuParam={{
 						horizontal: I.MenuDirection.Center,
@@ -37,6 +35,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 				<Editable
 					ref={ref => this.refName = ref}
+					readonly={readonly}
 					onBlur={this.onChange}
 					onKeyDown={this.onKeyDown}
 					placeholder={translate('defaultNameType')} 

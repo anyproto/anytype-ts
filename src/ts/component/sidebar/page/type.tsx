@@ -24,6 +24,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
     render () {
 		const type = this.getObject();
 		const sections = this.getSections();
+		const readonly = !S.Block.isAllowed(type.restrictions, [ I.RestrictionObject.Details ]);
 
 		return (
 			<>
@@ -48,6 +49,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							object={this.object} 
 							withState={true}
 							onChange={update => this.onChange(item.id, update)}
+							readonly={readonly}
 						/>
 					))}
 				</div>

@@ -8,6 +8,7 @@ interface Props {
 	snaps?: number[];
 	strictSnap?: boolean;
 	iconIsOutside?: boolean;
+	readonly?: boolean;
 	onStart?(e: any, v: number): void;
 	onMove?(e: any, v: number): void;
 	onEnd?(e: any, v: number): void;
@@ -28,6 +29,7 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 	snaps = [],
 	strictSnap = false,
 	iconIsOutside = false,
+	readonly = false,
 	onStart,
 	onMove,
 	onEnd,
@@ -39,6 +41,10 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 	const backRef = useRef(null);
 	const fillRef = useRef(null);
 	const cn = [ 'input-drag-horizontal', className ];
+
+	if (readonly) {
+		cn.push('isReadonly');
+	};
 
 	const checkValue = (v: number): number => {
 		v = Number(v) || 0;
@@ -66,6 +72,10 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 	const start = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
+
+		if (readonly) {
+			return;
+		};
 		
 		const win = $(window);
 		const node = $(nodeRef.current);

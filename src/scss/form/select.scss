@@ -35,7 +35,7 @@
 	}
 }
 
-.select.isReadonly { cursor: default; }
+.select.isReadonly { cursor: default; padding-right: 6px; }
 .select.isReadonly {
 	.icon.arrow { display: none; }
 }

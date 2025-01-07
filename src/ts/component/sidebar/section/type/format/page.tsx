@@ -15,7 +15,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 	refWidth = null;
 
 	render () {
-		const { object, onChange, layoutOptions } = this.props;
+		const { object, onChange, layoutOptions, readonly } = this.props;
 		const alignOptions = U.Menu.prepareForSelect(U.Menu.getHAlign([ I.BlockHAlign.Justify ]));
 
 		return (
@@ -33,6 +33,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 							value={object.recommendedLayout}
 							arrowClassName="light"
 							onChange={id => onChange({ recommendedLayout: id })}
+							readonly={readonly}
 							menuParam={{
 								className: 'fixed',
 								classNameWrap: 'fromSidebar',
@@ -55,6 +56,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 							value={object.layoutAlign}
 							arrowClassName="light"
 							onChange={id => onChange({ layoutAlign: id })}
+							readonly={readonly}
 							menuParam={{
 								className: 'fixed',
 								classNameWrap: 'fromSidebar',
@@ -76,6 +78,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 							value={object.layoutWidth}
 							onMove={(e, v) => this.onWidthMove(v)}
 							onEnd={(e, v) => this.onWidthEnd(v)}
+							readonly={readonly}
 							iconIsOutside={false}
 						/>
 					</div>

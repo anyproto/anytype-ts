@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Select } from 'Component';
-import { I, U, translate, S, J, analytics } from 'Lib';
+import { I, U, translate, S, J } from 'Lib';
 
 interface Props extends I.SidebarSectionComponent {
 	layoutOptions?: any[];
@@ -18,12 +18,11 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 	};
 
 	render () {
-		const { object, onChange } = this.props;
+		const { object, onChange, readonly } = this.props;
 
 		const defaultViewOptions = U.Menu.prepareForSelect(U.Menu.getViews().filter(it => it.id != I.ViewType.Graph));
 		const typeId = object.defaultType;
 		const type = S.Record.getTypeById(typeId);
-
 
 		return (
 			<div className="items">
@@ -40,6 +39,7 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 							value={object.defaultView}
 							arrowClassName="light"
 							onChange={id => onChange({ defaultView: id })}
+							readonly={readonly}
 							menuParam={{
 								className: 'fixed',
 								classNameWrap: 'fromSidebar',
@@ -55,7 +55,11 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 					</div>
 
 					<div className="value">
-						<div id={`sidebar-layout-default-type-${object.id}`} className="select" onClick={this.onType}>
+						<div 
+							id={`sidebar-layout-default-type-${object.id}`} 
+							className={[ 'select', (readonly ? 'isReadonly' : '') ].join(' ')} 
+							onClick={this.onType}
+						>
 							<div className="item">
 								<div className="name">{type?.name || translate('commonSelect')}</div>
 							</div>
@@ -76,7 +80,11 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 	};
 
 	onType () {
-		const { object, onChange } = this.props;
+		const { object, onChange, readonly } = this.props;
+		
+		if (readonly) {
+			return;
+		};
 
 		S.Menu.open('typeSuggest', {
 			element: `#sidebar-layout-default-type-${object.id}`,
