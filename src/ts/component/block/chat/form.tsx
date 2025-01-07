@@ -473,14 +473,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		});
 
 		let text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
-		if ((current.length + text.length) >= limit) {
-			const excess = (current.length + text.length) - limit;
+		let value = U.Common.stringInsert(current, text, from, to);
+		if (value.length >= limit) {
+			const excess = value.length - limit;
 			const keep = text.length - excess;
 
 			text = text.substring(0, keep);
+			value = U.Common.stringInsert(current, text, from, to);
 		};
-
-		const value = U.Common.stringInsert(current, text, from, to);
 
 		this.range = { from: to, to: to + text.length };
 		this.refEditable.setValue(Mark.toHtml(value, this.marks));
