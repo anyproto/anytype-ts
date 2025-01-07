@@ -51,6 +51,11 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		cn.push('withBanner');
 	};
 
+	const onGraph = (e: MouseEvent) => {
+		e.stopPropagation();
+		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
+	};
+
 	const renderLeftIcons = (onOpen?: () => void) => {
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
@@ -63,6 +68,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
 			{ id: 'back', name: translate('commonBack'), caption: cb, onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
 			{ id: 'forward', name: translate('commonForward'), caption: cf, onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
+			{ id: 'graph', name: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: onGraph },
 		];
 
 		return (
