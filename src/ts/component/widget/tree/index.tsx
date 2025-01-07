@@ -23,7 +23,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const listRef = useRef(null);
 	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
 	const object = S.Detail.get(S.Block.widgets, targetId);
-	const subKey = `widget${block.id}`;
+	const subKey = block ? `widget${block.id}` : '';
 	const links = useRef([]);
 	const top = useRef(0);
 	const branches = useRef([]);
@@ -366,7 +366,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			getData(getSubId(), initCache);
 		} else {
 			initCache();
-			C.ObjectShow(block.getTargetObjectId(), getTraceId(), U.Router.getRouteSpaceId());
+			C.ObjectShow(targetId, getTraceId(), U.Router.getRouteSpaceId());
 		};
 
 		return () => unsubscribe();

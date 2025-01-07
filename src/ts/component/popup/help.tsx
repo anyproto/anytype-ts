@@ -1,6 +1,5 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import * as Docs from 'Docs';
 import { Label, Icon, Cover, Button } from 'Component';
 import { I, U, J, translate, Action } from 'Lib';
@@ -23,15 +22,6 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 
 	if (cover) {
 		cn.push('withCover');
-	};
-
-	const rebind = () => {
-		unbind();
-		$(window).off('resize.popupHelp').on('resize.popupHelp', () => resize());
-	};
-
-	const unbind = () => {
-		$(window).off('resize.help');
 	};
 
 	const getSections = (): any[] => {
@@ -84,23 +74,7 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 		setPage(page + dir);
 	};
 
-	const resize = () => {
-		const obj = $(`#${getId()}-innerWrap`);
-		const loader = obj.find('#loader');
-
-		loader.css({ width: obj.width(), height: obj.height() });
-		position();
-
-		raf(() => { obj.css({ top: J.Size.header + 20, marginTop: 0 }); });
-	};
-
-	useEffect(() => {
-		rebind();
-		resize();
-
-		U.Common.renderLinks($(nodeRef.current));
-		return () => unbind();
-	});
+	useEffect(() => U.Common.renderLinks($(nodeRef.current)));
 
 	return (
 		<div 

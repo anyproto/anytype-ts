@@ -271,12 +271,6 @@ class Keyboard {
 					this.pageCreate({}, analytics.route.shortcut);
 				});
 
-				// Quick capture menu
-				this.shortcut(`${cmd}+alt+n`, e, () => {
-					e.preventDefault();
-					this.onQuickCapture(true);
-				});
-
 				// Lock/Unlock
 				this.shortcut(`ctrl+shift+l`, e, () => {
 					this.onToggleLock();
@@ -305,7 +299,7 @@ class Keyboard {
 			return;
 		};
 
-		const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+		const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
 			U.Object.openConfig(message.details);
@@ -866,47 +860,6 @@ class Keyboard {
 			preventCloseByEscape: true,
 			data: { isPopup: this.isPopup(), route },
 		});
-	};
-
-	menuFromNavigation (id: string, param: Partial<I.MenuParam>, data: any) {
-		const menuParam = Object.assign({
-			element: '#navigationPanel',
-			className: 'fixed',
-			classNameWrap: 'fromNavigation',
-			type: I.MenuType.Horizontal,
-			horizontal: I.MenuDirection.Center,
-			vertical: I.MenuDirection.Top,
-			noFlipY: true,
-			offsetY: -12,
-			data,
-		}, param);
-
-		if (S.Menu.isOpen(id)) {
-			S.Menu.open(id, menuParam);
-		} else {
-			S.Popup.close('search', () => {
-				S.Menu.closeAll(J.Menu.navigation, () => {
-					S.Menu.open(id, menuParam);
-				});
-			});
-		};
-	};
-
-	onQuickCapture (shortcut: boolean, param?: Partial<I.MenuParam>) {
-		param = param || {};
-
-		if ((S.Common.navigationMenu != I.NavigationMenuMode.Hover) && S.Menu.isOpen('quickCapture')) {
-			S.Menu.close('quickCapture');
-			return;
-		};
-
-		const button = $('#button-navigation-plus');
-
-		this.menuFromNavigation('quickCapture', {
-			...param,
-			onOpen: () => button.addClass('active'),
-			onClose: () => button.removeClass('active'),
-		}, { isExpanded: shortcut });
 	};
 
 	onLock (rootId: string, v: boolean, route?: string) {
