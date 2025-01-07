@@ -241,6 +241,14 @@ class Keyboard {
 				Action.themeSet(!theme ? 'dark' : '');
 			});
 
+			// Lock the app
+			this.shortcut(`${cmd}+alt+l`, e, () => {
+				const pin = Storage.getPin();
+				if (pin) {
+					Renderer.send('pinCheck');
+				};
+			});
+
 			// Object id
 			this.shortcut(`${cmd}+shift+\\`, e, () => {
 				S.Popup.open('confirm', {
@@ -1067,14 +1075,11 @@ class Keyboard {
 				return;
 			};
 
-			this.setPinChecked(false);
-
 			if (this.isMain()) {
 				S.Common.redirectSet(U.Router.getRoute());
 			};
 
-			U.Router.go('/auth/pin-check', { replace: true, animate: true });
-			Renderer.send('pin-check');
+			Renderer.send('pinCheck');
 		}, S.Common.pinTime);
 	};
 
