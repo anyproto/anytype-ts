@@ -18,19 +18,19 @@ interface WidgetTreeRefProps {
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
 	const { block, parent, isPreview, canCreate, onCreate, isSystemTarget, getData, getTraceId, sortFavorite, addGroupLabels } = props;
-	const { targetBlockId } = block.content;
+	const targetId = block ? block.getTargetObjectId() : '';
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
-	const object = S.Detail.get(S.Block.widgets, block.getTargetObjectId());
-	const subKey = `widget${block.id}`;
+	const object = S.Detail.get(S.Block.widgets, targetId);
+	const subKey = block ? `widget${block.id}` : '';
 	const links = useRef([]);
 	const top = useRef(0);
 	const branches = useRef([]);
 	const subscriptionHashes = useRef({});
 	const cache = useRef(new CellMeasurerCache());
 	const [ dummy, setDummy ] = useState(0);
-	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
+	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
 
 	const unsubscribe = () => {	
 		const subIds = Object.keys(subscriptionHashes.current).map(getSubId);
@@ -76,10 +76,10 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		let children = [];
 		if (isSystemTarget()) {
-			const subId = getSubId(targetBlockId);
+			const subId = getSubId(targetId);
 			
 			let records = S.Record.getRecordIds(subId, '');
-			if (targetBlockId == J.Constant.widgetId.favorite) {
+			if (targetId == J.Constant.widgetId.favorite) {
 				records = sortFavorite(records);
 			};
 
@@ -91,7 +91,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		if (isPreview && isRecent) {
 			// add group labels
-			children = addGroupLabels(children, targetBlockId);
+			children = addGroupLabels(children, targetId);
 		};
 
 		return loadTreeRecursive(object.id, object.id, [], children, 1, '');
@@ -181,7 +181,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	// Utility methods
 	const getSubId = (nodeId?: string): string => {
-		return S.Record.getSubId(subKey, nodeId || targetBlockId);
+		return S.Record.getSubId(subKey, nodeId || targetId);
 	};
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth
@@ -366,7 +366,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			getData(getSubId(), initCache);
 		} else {
 			initCache();
-			C.ObjectShow(block.getTargetObjectId(), getTraceId(), U.Router.getRouteSpaceId());
+			C.ObjectShow(targetId, getTraceId(), U.Router.getRouteSpaceId());
 		};
 
 		return () => unsubscribe();

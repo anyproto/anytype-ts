@@ -229,7 +229,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			classNameWrap: 'fromSidebar',
 			element: `#vault #item-${item.id}`,
 			vertical: I.MenuDirection.Center,
-			route: analytics.route.navigation,
+			route: analytics.route.vault,
 		});
 	};
 

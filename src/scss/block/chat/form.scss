@@ -1,6 +1,6 @@
 
 
-.formWrapper.isFixed { padding: 0px 0px 90px 0px; position: sticky; z-index: 11; bottom: 0px; width: 100%; background: var(--color-bg-primary); }
+.formWrapper.isFixed { padding: 0px 0px 16px 0px; position: sticky; z-index: 11; bottom: 0px; width: 100%; background: var(--color-bg-primary); }
 
 .form { 
 	padding: 0px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); background-color: var(--color-bg-primary); border-radius: 12px; position: relative; 
@@ -114,6 +114,9 @@
 			.inner.textColor-lime { background: var(--color-lime); }
 		}
 	}
+
+	.charCounter { display: none; position: absolute; bottom: 10px; right: 48px; @include text-small; line-height: 20px; color: var(--color-text-secondary); }
+	.charCounter.show { display: block; }
 
 	.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
 }

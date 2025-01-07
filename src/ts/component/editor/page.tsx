@@ -1845,17 +1845,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
 
-		let url = U.Common.matchUrl(data.text);
-		let isLocal = false;
+		if (!data.html) {
+			let url = U.Common.matchUrl(data.text);
+			let isLocal = false;
 
-		if (!url) {
-			url = U.Common.matchLocalPath(data.text);
-			isLocal = true;
-		};
+			if (!url) {
+				url = U.Common.matchLocalPath(data.text);
+				isLocal = true;
+			};
 
-		if (block && url && !block.isTextTitle() && !block.isTextDescription()) {
-			this.onPasteUrl(url, isLocal);
-			return;
+			if (block && url && !block.isTextTitle() && !block.isTextDescription()) {
+				this.onPasteUrl(url, isLocal);
+				return;
+			};
 		};
 
 		let id = '';

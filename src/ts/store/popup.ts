@@ -72,10 +72,6 @@ class PopupStore {
 		};
 
 		Preview.previewHide(true);
-
-		if (this.checkShowDimmer(this.popupList)) {
-			$('#navigationPanel').addClass('hide');
-		};
 	};
 
 	get (id: string): I.Popup {
@@ -140,10 +136,6 @@ class PopupStore {
 		};
 		
 		const filtered = this.popupList.filter(it => it.id != id);
-
-		if (!this.checkShowDimmer(filtered)) {
-			$('#navigationPanel').removeClass('hide');
-		};
 
 		if (force) {
 			this.popupList = filtered;
