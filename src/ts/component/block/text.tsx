@@ -1100,7 +1100,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onSelect () {
-		if (keyboard.isContextDisabled) {
+		if (keyboard.isContextDisabled || keyboard.isComposition) {
 			return;
 		};
 
