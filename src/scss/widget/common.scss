@@ -10,7 +10,10 @@
 		padding: 12px 16px 10px 16px;
 	}
 	.head {
-		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; @include text-paragraph; font-weight: 600; width: 100%; }
+		.clickable { 
+			display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; @include text-paragraph; font-weight: 600; width: 100%; 
+			overflow: hidden;
+		}
 		.clickable {
 			.name { @include text-overflow-nw; }
 			.count { color: var(--color-text-secondary); }
@@ -19,24 +22,29 @@
 		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 		.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
 		.iconWrap.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
+		.iconWrap.collapse { display: none; }
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
-		.icon.options { background-image: url('~img/icon/widget/options.svg'); }
-		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); display: none; }
-		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
+		.icon.more { background-image: url('~img/icon/widget/more.svg'); }
+		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
+		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; }
 	}
 	.head:hover {
+		.clickable { gap: 0px 4px; }
 		.iconWrap.back { background-color: var(--color-shape-highlight-medium); }
+		.iconWrap.collapse { display: flex; }
 		.buttons { display: flex; }
+		.iconObject { display: none; }
 	}
 	.head.noIcon {
-		.icon.collapse { display: block; }
-		.iconObject.widgetHeadIcon { display: none; }
+		.clickable { gap: 0px 4px; }
+		.iconWrap.collapse { display: flex; }
+		.iconObject { display: none; }
 	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
@@ -80,14 +88,13 @@
 	.item.isSection .inner::before { display: none !important; }
 }
 
-.widget.active, .widget:hover {
+.widget.active {
 	.head { padding-right: 8px; }
 	.head {
 		.clickable { width: calc(100% - 60px); }
-		.iconWrap.options { background-color: var(--color-shape-highlight-medium); }
-
-		.iconObject.widgetHeadIcon { display: none; }
-		.icon.collapse { display: block; }
+		.buttons { display: flex; }
+		.iconObject { display: none; }
+		.iconWrap.collapse { display: flex; }
 	}
 }
 
@@ -108,7 +115,7 @@
 .widget.widgetLink {
 	.head { padding-bottom: 12px; }
 	.icon.collapse { display: none !important; }
-	.iconObject.widgetHeadIcon { display: block !important; }
+	.iconObject { display: block !important; }
 }
 .widget.widgetLink:hover {
 	.head > .flex > .clickable { width: calc(100% - 36px); }
@@ -124,6 +131,5 @@
 }
 
 @import "./space";
-@import "./buttons";
 @import "./tree";
 @import "./view/common";

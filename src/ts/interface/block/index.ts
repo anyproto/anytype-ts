@@ -161,7 +161,6 @@ export interface Block {
 	isLayoutColumn?(): boolean;
 	isLayoutDiv?(): boolean;
 	isLayoutHeader?(): boolean;
-	isLayoutFooter?(): boolean;
 	isLayoutTableRows?(): boolean;
 	isLayoutTableColumns?(): boolean;
 

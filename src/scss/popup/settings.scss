@@ -344,10 +344,7 @@
 			> .side.right.tabPhrase {
 				.inputs { margin: 0px 0px 54px 0px; }
 
-				.qrWrap { padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: var(--color-shape-tertiary); overflow: hidden; }
-				.qrWrap {
-					canvas { width: 100%; height: 100%; }
-				}
+				.qrWrap { width: 130px; overflow: hidden; }
 			}
 
 			> .side.right.tabDataManagement {
