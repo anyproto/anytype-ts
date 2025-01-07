@@ -93,11 +93,12 @@ const Pin = forwardRef<PinRefProps, Props>(({
 	};
 
 	const onInputKeyDown = (e, index: number) => {
+		const current = inputRefs.current[index];
 		const prev = inputRefs.current[index - 1];
 
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
-				prev.setValue('');
+				current.setValue('');
 				prev.setType('text');
 				prev.focus();
 			});
