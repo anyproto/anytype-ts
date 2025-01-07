@@ -12,6 +12,20 @@
 			.caption { @include text-common; line-height: 20px; padding-right: 16px; }
 		}
 
+		.options { display: flex; gap: 0px 8px; padding: 0px 14px; }
+		.options {
+			.option { display: flex; align-items: center; justify-content: center; width: 48px; min-height: 32px; border-radius: 8px; border: 1px solid var(--color-shape-tertiary); }
+			.option {
+				.icon { width: 40px; height: 40px; }
+				.icon.widget-0 { background-image: url('~img/icon/menu/widget/link.svg'); }
+				.icon.widget-1 { background-image: url('~img/icon/menu/widget/tree.svg'); }
+				.icon.widget-2 { background-image: url('~img/icon/menu/widget/list.svg'); }
+				.icon.widget-3 { background-image: url('~img/icon/menu/widget/compact.svg'); }
+				.icon.widget-4 { background-image: url('~img/icon/menu/widget/view.svg'); }
+			}
+			.option.active { background-color: var(--color-shape-highlight-light); }
+		}
+
 		.buttons { padding: 8px 16px 0px 16px; }
 		.button { width: 100%; }
 	}

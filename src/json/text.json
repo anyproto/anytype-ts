@@ -1566,9 +1566,7 @@
 	"menuTypeSuggestCreateType": "Create type %s",
 
 	"menuWidgetAddWidget": "Add Widget",
-	"menuWidgetChooseSource": "Choose a source",
 	"menuWidgetWidgetType": "Widget type",
-	"menuWidgetWidgetSource": "Widget Source",
 	"menuWidgetNumberOfObjects": "Number of Objects",
 	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetEditWidgets": "Edit Widgets",

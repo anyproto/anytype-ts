@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { MenuItemVertical, Button } from 'Component';
+import { MenuItemVertical, Button, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
@@ -40,16 +40,33 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const Section = item => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action, i) => (
-						<MenuItemVertical 
-							key={i} 
-							{...action} 
-							onMouseEnter={e => this.onMouseEnter(e, action)} 
-							onClick={e => this.onClick(e, action)} 
-						/>
-					))}
-				</div>
+
+				{item.options ? (
+					<div className="options">
+						{item.options.map((option, i) => {
+							const cn = [ 'option', item.value == option.id ? 'active' : '' ];
+
+							return (
+								<div className={cn.join(' ')} key={i} onClick={e => this.onOptionClick(e, option, item)}>
+									{option.icon ? <Icon className={option.icon} /> : option.name}
+								</div>
+							);
+						})}
+					</div>
+				) : ''}
+
+				{item.children.length ? (
+					<div className="items">
+						{item.children.map((action, i) => (
+							<MenuItemVertical
+								key={i}
+								{...action}
+								onMouseEnter={e => this.onMouseEnter(e, action)}
+								onClick={e => this.onClick(e, action)}
+							/>
+						))}
+					</div>
+				) : ''}
 			</div>
 		);
 		
@@ -129,41 +146,35 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { isEditing } = data;
 		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || U.Menu.isSystemWidget(this.target?.id);
 
-		let sourceName = translate('menuWidgetChooseSource');
-		let layoutName = translate('menuWidgetWidgetType');
+		const sections: any[] = [{
+			id: 'layout',
+			name: translate('commonAppearance'),
+			children: [],
+			options: U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout)),
+			value: this.layout,
+		}];
 
-		if (this.target) {
-			sourceName = U.Object.name(this.target);
+		if (hasLimit) {
+			sections.push({
+				id: 'limit',
+				name: translate('menuWidgetNumberOfObjects'),
+				children: [],
+				options: U.Menu.getWidgetLimitOptions(this.layout),
+				value: this.limit,
+			});
 		};
-
-		if (this.layout !== null) {
-			layoutName = translate(`widget${this.layout}Name`);
-		};
-
-		const sections: any[] = [
-			{ 
-				id: 'source', name: translate('menuWidgetWidgetSource'), children: [
-					{ id: 'source', name: sourceName, arrow: true, object: this.target }
-				] 
-			},
-			{ 
-				id: 'layout', name: translate('commonAppearance'), children: [
-					{ id: 'layout', name: layoutName, arrow: true },
-					hasLimit ? { id: 'limit', name: translate('menuWidgetNumberOfObjects'), arrow: true, caption: this.limit } : null,
-				] 
-			},
-		];
 
 		if (isEditing) {
 			sections.push({
 				children: [
-					{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' },
-					{ id: 'edit', name: translate('menuWidgetEditWidgets'), icon: 'source' }
+					{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' }
 				],
 			});
 		};
 
-		return U.Menu.sectionsMap(sections);
+		console.log('SECTIONS: ', sections)
+
+		return sections;
 	};
 
 	checkState () {
@@ -335,6 +346,51 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 	};
 
+	onOptionClick (e: React.MouseEvent, option: any, section: any) {
+		console.log('OPTION: ', option)
+		console.log('SECTION: ', section)
+		const { param, close } = this.props;
+		const { data } = param;
+		const { blockId, isEditing } = data;
+		const { widgets } = S.Block;
+
+		switch (section.id) {
+			case 'layout': {
+				this.layout = Number(option.id);
+				this.checkState();
+				this.forceUpdate();
+
+				if (isEditing) {
+					C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
+				};
+
+				analytics.event('ChangeWidgetLayout', {
+					layout: this.layout,
+					route: isEditing ? 'Inner' : 'AddWidget',
+					params: { target: this.target },
+				});
+				break;
+			};
+			case 'limit': {
+				this.limit = Number(option.id);
+				this.checkState();
+				this.forceUpdate();
+
+				if (isEditing) {
+					C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
+				};
+
+				analytics.event('ChangeWidgetLimit', {
+					limit: this.limit,
+					layout: this.layout,
+					route: isEditing ? 'Inner' : 'AddWidget',
+					params: { target: this.target },
+				});
+				break;
+			};
+		};
+	};
+
 	onClick (e: React.MouseEvent, item) {
 		if (item.arrow) {
 			return;
@@ -347,11 +403,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		switch (item.itemId) {
 			case 'remove':
 				Action.removeWidget(blockId, target);
-				break;
-
-			case 'edit':
-				setEditing(true);
-				analytics.event('EditWidget');
 				break;
 		};
 
