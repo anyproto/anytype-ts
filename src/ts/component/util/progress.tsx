@@ -7,8 +7,9 @@ import { I, S, U, C, J, Storage, keyboard, translate } from 'Lib';
 const Progress: FC = observer(() => {
 
 	const { show } = S.Progress;
+	const skipState = [ I.ProgressState.Done, I.ProgressState.Canceled ];
 	const skipType = [ I.ProgressType.Migrate ];
-	const list = S.Progress.getList(it => !skipType.includes(it.type));
+	const list = S.Progress.getList(it => !skipType.includes(it.type) && !skipState.includes(it.state));
 	const percent = S.Progress.getPercent(list);
 	const nodeRef = useRef(null);
 	const innerRef = useRef(null);
