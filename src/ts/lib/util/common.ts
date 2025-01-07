@@ -712,7 +712,7 @@ class UtilCommon {
 
 	getUrlsFromText (text: string): any[] {
 		const urls = [];
-		const words = text.split(/[\s\r?\n]+/);
+		const words = text.split(/[\s\r\n]+/);
 
 		let offset = 0;
 
