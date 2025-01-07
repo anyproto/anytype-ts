@@ -180,7 +180,7 @@ class Keyboard {
 
 			// Shortcuts
 			this.shortcut('ctrl+space', e, () => {
-				S.Popup.open('shortcut', { preventResize: true });
+				S.Popup.open('shortcut', {});
 			});
 
 			// Print
@@ -241,6 +241,14 @@ class Keyboard {
 				Action.themeSet(!theme ? 'dark' : '');
 			});
 
+			// Lock the app
+			this.shortcut(`${cmd}+alt+l`, e, () => {
+				const pin = Storage.getPin();
+				if (pin) {
+					Renderer.send('pinCheck');
+				};
+			});
+
 			// Object id
 			this.shortcut(`${cmd}+shift+\\`, e, () => {
 				S.Popup.open('confirm', {
@@ -261,12 +269,6 @@ class Keyboard {
 				this.shortcut(`${cmd}+n`, e, () => {
 					e.preventDefault();
 					this.pageCreate({}, analytics.route.shortcut);
-				});
-
-				// Quick capture menu
-				this.shortcut(`${cmd}+alt+n`, e, () => {
-					e.preventDefault();
-					this.onQuickCapture(true);
 				});
 
 				// Lock/Unlock
@@ -297,7 +299,7 @@ class Keyboard {
 			return;
 		};
 
-		const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+		const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
 			U.Object.openConfig(message.details);
@@ -860,47 +862,6 @@ class Keyboard {
 		});
 	};
 
-	menuFromNavigation (id: string, param: Partial<I.MenuParam>, data: any) {
-		const menuParam = Object.assign({
-			element: '#navigationPanel',
-			className: 'fixed',
-			classNameWrap: 'fromNavigation',
-			type: I.MenuType.Horizontal,
-			horizontal: I.MenuDirection.Center,
-			vertical: I.MenuDirection.Top,
-			noFlipY: true,
-			offsetY: -12,
-			data,
-		}, param);
-
-		if (S.Menu.isOpen(id)) {
-			S.Menu.open(id, menuParam);
-		} else {
-			S.Popup.close('search', () => {
-				S.Menu.closeAll(J.Menu.navigation, () => {
-					S.Menu.open(id, menuParam);
-				});
-			});
-		};
-	};
-
-	onQuickCapture (shortcut: boolean, param?: Partial<I.MenuParam>) {
-		param = param || {};
-
-		if ((S.Common.navigationMenu != I.NavigationMenuMode.Hover) && S.Menu.isOpen('quickCapture')) {
-			S.Menu.close('quickCapture');
-			return;
-		};
-
-		const button = $('#button-navigation-plus');
-
-		this.menuFromNavigation('quickCapture', {
-			...param,
-			onOpen: () => button.addClass('active'),
-			onClose: () => button.removeClass('active'),
-		}, { isExpanded: shortcut });
-	};
-
 	onLock (rootId: string, v: boolean, route?: string) {
 		const block = S.Block.getLeaf(rootId, rootId);
 		if (!block) {
@@ -1067,14 +1028,11 @@ class Keyboard {
 				return;
 			};
 
-			this.setPinChecked(false);
-
 			if (this.isMain()) {
 				S.Common.redirectSet(U.Router.getRoute());
 			};
 
-			U.Router.go('/auth/pin-check', { replace: true, animate: true });
-			Renderer.send('pin-check');
+			Renderer.send('pinCheck');
 		}, S.Common.pinTime);
 	};
 

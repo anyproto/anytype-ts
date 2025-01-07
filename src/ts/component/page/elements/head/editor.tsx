@@ -34,10 +34,8 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 		const header = S.Block.getLeaf(rootId, 'header');
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const isHuman = U.Object.isHumanLayout(check.layout);
-		const isParticipant = U.Object.isParticipantLayout(check.layout);
 
-		if (isHuman || isParticipant) {
+		if (U.Object.isInHumanLayouts(check.layout)) {
 			icon.type = I.BlockType.IconUser;
 		};
 

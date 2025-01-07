@@ -5,7 +5,6 @@
 	.menuWrap.fromPopup, 
 	.menuWrap.fromHeader, 
 	.menuWrap.fromSidebar,
-	.menuWrap.fromNavigation { z-index: 103; }
 	.menuWrap.fromOnboarding { z-index: 1001; }
 
 	.menuWrap.fixed { position: fixed; }
@@ -263,6 +262,7 @@ html.platformWindows {
 @import "./syncStatus";
 @import "./graph";
 @import "./participant";
+@import "./publish";
 
 @import "./search/object";
 @import "./search/text";

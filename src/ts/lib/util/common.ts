@@ -1038,6 +1038,14 @@ class UtilCommon {
 		return /^[\u04c7-\u0591\u05D0-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
 	};
 
+	slug (s: string): string {
+		return String(s || '').toLowerCase().trim().normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.replace(/[^a-z0-9\s\-]/g, '')
+			.replace(/\s+/g, '-')
+			.replace(/-+/g, '-');
+	};
+
 };
 
 export default new UtilCommon();

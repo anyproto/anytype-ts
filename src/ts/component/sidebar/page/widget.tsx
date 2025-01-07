@@ -145,14 +145,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									isEditing={isEditing}
 								/>
 							</DropTarget>
-
-							<Widget 
-								block={new M.Block({ id: 'buttons', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Buttons } })} 
-								disableContextMenu={true} 
-								onDragStart={this.onDragStart}
-								onDragOver={this.onDragOver}
-								isEditing={isEditing}
-							/>
 						</>
 					) : ''}
 

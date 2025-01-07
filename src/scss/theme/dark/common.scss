@@ -38,7 +38,7 @@ html.themeDark {
 	--color-system-accent-125: #ffc83c;
 	--color-system-accent-50: #9f6b00;
 	--color-system-accent-25: #694500;
-	--color-system-selection: rgba(24, 163, 241, 0.15);
+	--color-system-selection: rgba(24, 163, 241, 0.3);
 
 	/* Common */
 
@@ -320,13 +320,6 @@ html.themeDark {
 				}
 			}
 		}
-	}
-
-	/* Navigation */
-
-	.navigationPanel { background-color: rgba(0, 0, 0, 0.6); }
-	.navigationPanel {
-		.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(255, 255, 255, 0.1); }
 	}
 
 	/* Notifications */

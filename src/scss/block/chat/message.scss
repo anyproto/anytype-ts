@@ -104,6 +104,9 @@
 }
 .message.canExpand.isExpanded {
 	.text { -webkit-line-clamp: unset; }
+	.reply {
+		.text { @include clamp; -webkit-line-clamp: 10; }
+	}
 	.expand::after { transform: rotateZ(180deg); margin-top: 2px; }
 }
 .message:hover, .message.hover {

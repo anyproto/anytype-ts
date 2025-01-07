@@ -11,6 +11,9 @@
 	.side.left { padding: 0px 16px; width: 20%; flex-shrink: 0; gap: 0px 8px; }
 	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
 	.side.right { padding: 0px 12px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
+	.side.right {
+		.button.blank { font-weight: 500; border: 0px; padding: 0px 6px; color: var(--color-text-secondary); flex-shrink: 0; }
+	}
 
 	.path { 
 		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; transition: $transitionAllCommon;
@@ -50,9 +53,7 @@
 	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
-	.sync { -webkit-app-region: no-drag; flex-shrink: 0; }
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
-
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
@@ -64,18 +65,18 @@
 }
 
 .header:not(.withSidebarLeft) {
-	.side.left { padding-left: 120px; }
+	.side.left { padding-left: 156px; }
 }
 
 html:not(.platformMac) {
 	.header:not(.withSidebarLeft) {
-		.side.left { padding-left: 52px; }
+		.side.left { padding-left: 88px; }
 	}
 }
 
 body.isFullScreen {
 	.header:not(.withSidebarLeft) {
-		.side.left { padding-left: 52px; }
+		.side.left { padding-left: 88px; }
 	}
 }
 

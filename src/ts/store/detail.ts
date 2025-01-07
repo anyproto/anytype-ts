@@ -337,7 +337,9 @@ class DetailStore {
 	private mapParticipant (object) {
 		object.permissions = Number(object.permissions || object.participantPermissions) || I.ParticipantPermissions.Reader;
 		object.status = Number(object.status || object.participantStatus) || I.ParticipantStatus.Joining;
+		object.identity = Relation.getStringValue(object.identity);
 		object.globalName = Relation.getStringValue(object.globalName);
+		object.resolvedName = object.globalName || object.identity;
 
 		delete(object.participantPermissions);
 		delete(object.participantStatus);

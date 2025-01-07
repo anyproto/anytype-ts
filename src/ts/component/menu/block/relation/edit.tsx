@@ -16,7 +16,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		super(props);
 		
 		this.onRelationType = this.onRelationType.bind(this);
-		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onObjectType = this.onObjectType.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onOpen = this.onOpen.bind(this);
@@ -296,27 +295,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					};
 				},
 			}
-		});
-	};
-
-	onDateSettings (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { param, getId } = this.props;
-		const { data } = param;
-		const relation = this.getRelation();
-
-		if (relation && relation.isReadonlyRelation) {
-			return;
-		};
-
-		this.menuOpen('dataviewDate', { 
-			element: `#${getId()} #item-date-settings`,
-			onClose: () => {
-				S.Menu.close('select');
-			},
-			data,
 		});
 	};
 

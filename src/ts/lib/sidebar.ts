@@ -24,6 +24,7 @@ class Sidebar {
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
 	toggleButton: JQuery<HTMLElement> = null;
+	syncButton: JQuery<HTMLElement> = null;
 	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutAnim = 0;
@@ -60,14 +61,14 @@ class Sidebar {
 
 		this.objLeft = $('#sidebarLeft');
 		this.objRight = $('#sidebarRight');
-		this.dummyLeft = $('#sidebarDummyLeft');
-		this.toggleButton = $('#sidebarToggle');
-
 		this.page = U.Common.getPageContainer(keyboard.isPopup());
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
-		this.dummyRight = this.page.find('#sidebarDummyRight');
+		this.dummyLeft = $('#sidebarDummyLeft');
+		this.dummyRight = $('#sidebarDummyRight');
+		this.toggleButton = $('#sidebarToggle');
+		this.syncButton = $('#sidebarSync');
 
 		if (vault) {
 			this.vault = $(vault.node);
@@ -223,6 +224,7 @@ class Sidebar {
 		this.initObjects();
 
 		let toggleX = 16;
+		let syncX = 52;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
@@ -251,10 +253,14 @@ class Sidebar {
 
 		const pageWidth = (!isPopup ? ww : this.page.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
-		const navigation = S.Common.getRef('navigation');
 
 		if ((widthLeft && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
 			toggleX = 84;
+			syncX = 120;
+
+			if (widthLeft) {
+				syncX = widthLeft - 40;
+			};
 		};
 
 		this.header.css({ width: '' });
@@ -273,13 +279,12 @@ class Sidebar {
 
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.toggleButton.toggleClass('sidebarAnimation', animate);
-
-			navigation?.position(widthLeft, animate);
-
+			this.syncButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
 
 			this.page.css({ width: pageWidth });
 			this.toggleButton.css({ left: toggleX });
+			this.syncButton.css({ left: syncX });
 		};
 
 		$(window).trigger('sidebarResize');
