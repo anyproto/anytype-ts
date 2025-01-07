@@ -32,7 +32,6 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 				<Pin 
 					ref={ref => this.ref = ref}
 					pinLength={4}
-					focusOnMount={true}
 					onSuccess={this.onSuccess} 
 					onError={this.onError} 
 				/>

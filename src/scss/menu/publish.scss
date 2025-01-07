@@ -1,0 +1,43 @@
+@import "~scss/_mixins";
+
+.menus {
+	.menu.menuPublish { width: var(--menu-width-large); }
+	.menu.menuPublish {
+		.content { padding: 16px; display: flex; flex-direction: column; gap: 8px 0px; overflow: visible; max-height: unset; }
+		.title { padding: 0px; @include text-paragraph; font-weight: 600; margin: 0px 0px 8px 0px; color: var(--color-text-primary); }
+
+		.input { padding: 7px 9px; height: auto; border-radius: 7px; border: 1px solid var(--color-shape-secondary); }
+		.input.isReadonly { background: rgba(0, 0, 0, 0.03); }
+		.input.isFocused { box-shadow: 0px 0px 0px 1px var(--color-system-accent-50); border-color: var(--color-system-accent-50); }
+
+		.label.small { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
+
+		.flex { padding: 3px 0px; align-items: center; gap: 0px 16px; justify-content: space-between; }
+		.flex {
+			.value { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; flex-shrink: 0; }
+		}
+
+		.outer { 
+			position: absolute; left: 0px; bottom: 0px; transform: translateY(calc(100% + 8px)); width: 100%; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 
+			border-radius: 8px; overflow: hidden;
+		}
+		.outer {
+			.item { 
+				display: flex; flex-direction: row; align-items: center; padding: 18px 16px; @include text-paragraph; font-weight: 600; gap: 0px 12px; 
+				border-bottom: 1px solid var(--color-shape-secondary);
+			}
+			.item:last-child { border-bottom: none; }
+			.item::before {
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1; pointer-events: none;
+			}
+			.item:hover::before { background: var(--color-shape-highlight-medium); }
+
+			.icon { flex-shrink: 0; }
+			.icon.space { background-image: url('~img/icon/widget/button/member.svg'); }
+			.icon.export { background-image: url('~img/icon/widget/button/export.svg'); }
+			.icon.arrow { background-size: 6px 10px; background-image: url('~img/icon/popup/settings/forward.svg'); right: 12px; }
+
+			.name { flex-grow: 1; }
+		}
+	}
+}

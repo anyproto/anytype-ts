@@ -1,5 +1,5 @@
 import { observable, action, makeObservable, set } from 'mobx';
-import { I, M } from 'Lib';
+import { I, U, M } from 'Lib';
 
 class ChatStore {
 
@@ -17,14 +17,25 @@ class ChatStore {
 
 	set (rootId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
+		list = U.Common.arrayUniqueObjects(list, 'id');
 		this.messageMap.set(rootId, observable.array(list));
 	};
 
 	prepend (rootId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
 
-		const list = this.getList(rootId);
+		let list = this.getList(rootId);
 		list.unshift(...add);
+		list = U.Common.arrayUniqueObjects(list, 'id');
+		this.set(rootId, list);
+	};
+
+	append (rootId: string, add: I.ChatMessage[]): void {
+		add = add.map(it => new M.ChatMessage(it));
+
+		let list = this.getList(rootId);
+		list.push(...add);
+		list = U.Common.arrayUniqueObjects(list, 'id');
 		this.set(rootId, list);
 	};
 

@@ -180,7 +180,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const { block } = this.props;
 		const element = `#block-${block.id} #item-menu`;
 		const obj = $(element);
-		const items = this.getItems();
 
 		S.Menu.open('typeSuggest', {
 			element: `#block-${block.id} #item-menu`,
@@ -192,7 +191,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			data: {
 				filter: '',
 				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: items.map(it => it.id) },
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
 				],

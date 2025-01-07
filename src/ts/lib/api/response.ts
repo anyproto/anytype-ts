@@ -56,6 +56,12 @@ export const DebugStat = (response: Rpc.Debug.Stat.Response) => {
 	return res;
 };
 
+export const DebugNetCheck = (response: Rpc.Debug.NetCheck.Response) => {
+	return {
+		result: response.getResult(),
+	};
+};
+
 export const Export = (response: any) => {
 	return {
 		path: response.getPath(),
@@ -192,6 +198,14 @@ export const ObjectShow = (response: Rpc.Object.Show.Response) => {
 	};
 };
 
+/*
+export const PublishingCreate = (response: Rpc.Publishing.Create.Response) => {
+	return { 
+		url: response.getUri(),
+	};
+};
+*/
+
 export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.struct),
@@ -295,6 +309,12 @@ export const ObjectRedo = (response: Rpc.Object.Redo.Response) => {
 export const ObjectChatAdd = (response: Rpc.Object.ChatAdd.Response) => {
 	return {
 		chatId: response.getChatid(),
+	};
+};
+
+export const ObjectDateByTimestamp = (response: Rpc.Object.DateByTimestamp.Response) => {
+	return {
+		details: Decode.struct(response.getDetails()),
 	};
 };
 
@@ -410,10 +430,11 @@ export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response)
 	return {
 		events: (response.getHistoryeventsList() || []).map(it => {
 			const type = Mapper.Event.Type(it.getValueCase());
-			const data = Mapper.Event[type](Mapper.Event.Data(it));
+			const { spaceId, data } = Mapper.Event.Data(it);
+			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 
-			return { type, data };
-		}),
+			return mapped ? { spaceId, type, data: mapped } : null;
+		}).filter(it => it),
 	};
 };
 
@@ -579,5 +600,16 @@ export const ChatSubscribeLastMessages = (response: Rpc.Chat.SubscribeLastMessag
 export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 	return {
 		messageId: response.getMessageid(),
+	};
+};
+
+export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response) => {
+	return {
+		relations: (response.getListList() || []).map(it => {
+			return {
+				relationKey: it.getRelationkey(),
+				counter: it.getCounter(),
+			};
+		}),
 	};
 };

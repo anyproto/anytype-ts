@@ -282,7 +282,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				menuId = 'select';
 				menuParam.width = 320;
 				menuParam.data = Object.assign(menuParam.data, {
-					options: U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout),
+					options: U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout)),
 					value: this.layout,
 					onSelect: (e, option) => {
 						this.layout = Number(option.id);

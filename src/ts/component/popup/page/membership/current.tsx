@@ -168,7 +168,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			} else {
 				C.MembershipGetPortalLinkUrl((message: any) => {
 					if (message.url) {
-						U.Common.onUrl(message.url);
+						Action.openUrl(message.url);
 					};
 				});
 			};
@@ -188,7 +188,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 		this.refButton.setLoading(true);
 
-		C.MembershipGetVerificationEmail(this.refEmail.getValue(), true, (message) => {
+		C.MembershipGetVerificationEmail(this.refEmail.getValue(), true, false, false, (message) => {
 			this.refButton.setLoading(false);
 
 			if (message.error.code) {

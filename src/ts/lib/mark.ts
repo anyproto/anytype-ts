@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, U, J, analytics } from 'Lib';
+import { I, U, J } from 'Lib';
 
 const Tags = {};
 for (const i in I.MarkType) {
@@ -139,8 +139,7 @@ class Mark {
 		if (add) {
 			map[type].push(mark);
 		};
-
-		analytics.event('ChangeTextStyle', { type, count: 1 });
+		
 		return U.Common.unmap(map).sort(this.sort);
 	};
 	
@@ -304,11 +303,12 @@ class Mark {
 				return;
 			};
 
-			const attr = this.paramToAttr(mark.type, param);
+			const fixedParam = param.replace(/([^\\])\$/gi, '$1\\$'); // Escape $ symbol for inline LaTeX
+			const attr = this.paramToAttr(mark.type, fixedParam);
 			const data = [];
 
 			if (param) {
-				data.push(`data-param="${param}"`);
+				data.push(`data-param="${fixedParam}"`);
 			};
 
 			if ([ I.MarkType.Link, I.MarkType.Object, I.MarkType.Mention ].includes(mark.type)) {

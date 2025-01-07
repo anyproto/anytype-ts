@@ -2,7 +2,20 @@
 
 .blocks {
 	.block.blockDataview {
-		.cellHead { 
+		.rowHead, .rowFoot, #rowHeadClone { display: grid; white-space: nowrap; height: 36px; }
+
+		.rowHead, .rowFoot { width: calc(100% - 4px); margin-left: 2px; }
+		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }
+
+		.rowFoot { box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-top: -2px; height: 48px; }
+
+		#rowHeadClone { position: fixed !important; background: var(--color-bg-primary); z-index: 1; }
+		#rowHeadClone::after { content: ''; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: -1px; }
+		#rowHeadClone {
+			.rowHead { margin: 0px; width: 100%; }
+		}
+
+		.cellHead, .cellFoot { 
 			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative; height: 38px;
 			display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
 		}
@@ -11,9 +24,9 @@
 			.cellContent { cursor: grab; }
 		}
 
-		.cellHead {
+		.cellHead, .cellFoot {
 			.cellContent { height: 36px !important; overflow: visible !important; }
-			.flex { padding: 9px 14px; gap: 0px 6px; align-items: center; }
+			.flex { padding: 9px 14px; gap: 0px 6px; align-items: center; height: 100%; }
 			.iconObject { width: 20px; height: 20px; margin: 0px; vertical-align: top; flex-shrink: 0; display: none; }
 			.icon.lock { flex-shrink: 0; }
 
@@ -24,6 +37,7 @@
 
 			.resize { width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; cursor: col-resize; z-index: 10; }
 		}
+
 		.cellHead.small { text-align: center; }
 		.cellHead.small {
 			.flex { display: inline-block; }
@@ -31,9 +45,21 @@
 			.name { display: none; }
 			.icon.lock { display: none; }
 		}
-		.cellHead.last { overflow: visible; padding: 9px 14px; cursor: default; }
+
+		.cellHead.last, .cellFoot.last { overflow: visible; padding: 9px 14px; cursor: default; }
 		.cellHead.last {
 			.icon.plus { margin: 0px; }
+		}
+
+		.cellFoot { height: 48px; @include text-common; color: var(--color-text-primary); }
+		.cellFoot {
+			.flex { justify-content: flex-end; }
+			.result { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; max-width: 100%; }
+			.result {
+				.value { @include text-overflow-nw; }
+			}
+			.name { width: auto !important; color: var(--color-text-secondary); }
+			.cellContent { height: 48px !important; }
 		}
 
 		.cellHead.isDragging { border: 0px; height: 38px; }
@@ -45,29 +71,33 @@
 			.resize { display: none; }
 		}
 
-		.cellHead.cellKeyHover::after, .cellHead.active::after { 
+		.cellHead.cellKeyHover::after, 
+		.cellHead.hover::after,
+		.cellFoot.cellKeyHover::after, 
+		.cellFoot.hover::after 
+		{ 
 			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
 			background-color: var(--color-shape-highlight-light);
 		}
 
-		.cellHead.last::after, .cellHead.active::after { background: none; }
-		.cellHead.last:hover, .cellHead.last.active {
+		.cellFoot.cellKeyHover::after, .cellFoot.hover::after { height: calc(100% - 1px); }
+
+		.cellHead.last::after, .cellHead.hover::after { background: none; }
+		.cellHead.last:hover, .cellHead.last.hover {
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
 		.viewContent.viewGrid { width: 100%; position: relative; padding: 0px 0px 80px 0px; }
 		.viewContent.viewGrid {
-			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 36px; }
-
 			.loadMore { padding: 10px 2px; box-shadow: 0px 1px var(--color-shape-secondary) inset; }
 
 			.icon.checkbox { vertical-align: top; }
 			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
 			.row { white-space: nowrap; box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
-			.row.add { margin-top: -2px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
 			.row:hover { background-color: var(--color-shape-highlight-light); }
+			.row.add { margin-top: -2px; }
 
 			.row > .selectionTarget,
 			.row > .dropTarget > .selectionTarget { display: grid; }

@@ -1,78 +1,57 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import mermaid from 'mermaid';
 import { observer } from 'mobx-react';
-import { J, S } from 'Lib';
+import { J, S, U } from 'Lib';
 
 interface Props {
 	chart: string;
 };
 
-const Mermaid = observer(class Mermaid extends React.Component<Props> {
+const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
+	chart = '',
+}, ref) => {
 
-	node = null;
+	const nodeRef = useRef(null);
+	const chartRef = useRef(null);
+	const errorRef = useRef(null);
+	const themeClass = S.Common.getThemeClass();
 
-	render () {
-		const { theme } = S.Common;
-		const { chart } = this.props;
+	const init = () => {
+		const themeVariables = (J.Theme[themeClass] || {}).mermaid;
+		if (!themeVariables) {
+			return;
+		};
 
-		return (
-			<div ref={ref => this.node = ref} className="mermaidWrapper">
-				<div className="error" />
-				<div className="mermaid">{chart}</div>
-			</div>
-		);
-	};
+		for (const k in themeVariables) {
+			if (!themeVariables[k]) {
+				delete(themeVariables[k]);
+			};
+		};
 
-	componentDidMount () {
-		this.init();
+		mermaid.initialize({ theme: 'base', themeVariables });
 		mermaid.contentLoaded();
+
+		U.Common.renderLinks($(chartRef.current));
 	};
 
-	async componentDidUpdate (prevProps: Props) {
-		const node = $(this.node);
+	useEffect(() => {
+		init();
+	});
 
-		this.init();
-		node.find('.chart').removeAttr('data-processed');
-		node.find('.error').text('');
+	useEffect(() => {
+		$(chartRef.current).removeAttr('data-processed');
+		$(errorRef.current).text('');
+		init();
+	}, [ themeClass, chart ]);
 
-		await this.drawDiagram();
-	};
+	return (
+		<div ref={nodeRef} className="mermaidWrapper">
+			<div ref={errorRef} className="error" />
+			<div ref={chartRef} className="mermaid">{chart}</div>
+		</div>
+	);
 
-	init () {
-		const theme = (J.Theme[S.Common.getThemeClass()] || {}).mermaid;
+}));
 
-		if (theme) {
-			for (const k in theme) {
-				if (!theme[k]) {
-					delete(theme[k]);
-				};
-			};
-
-			mermaid.initialize({ theme: 'base', themeVariables: theme });
-		};
-	};
-
-	async drawDiagram () {
-		const node = $(this.node);
-		const { chart } = this.props;
-
-		let svg: any = '';
-
-		try {
-			const res = await mermaid.render('mermaid-chart', chart);
-
-			if (res.svg) {
-				svg = res.svg;
-			};
-		} catch (e) {
-			console.error('[Mermaid].drawDiagram', e);
-			node.find('.error').text(e.message);
-		};
-		
-		node.find('.mermaid').html(svg);
-	};
-
-});
-
-export default Mermaid;
+export default MediaMermaid;

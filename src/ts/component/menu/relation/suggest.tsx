@@ -68,13 +68,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					</div>
 				);
 			} else
-			if (item.isDiv) {
-				content = (
-					<div className="separator" style={param.style}>
-						<div className="inner" />
-					</div>
-				);
-			} else
 			if (item.isSection) {
 				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
 			} else {
@@ -433,6 +426,15 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data, classNameWrap } = param;
 		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+		const onAdd = (item: any) => {
+			close();
+
+			if (addCommand && item) {
+				addCommand(rootId, blockId, item);
+			};
+
+			U.Object.setLastUsedDate(item.id, U.Date.now());
+		};
 
 		if (item.id == 'add') {
 			S.Menu.open(menuIdEdit, { 
@@ -445,23 +447,18 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					...data,
 					rebind: this.rebind,
 					onChange: () => close(),
+					addCommand: (rootId: string, blockId: string, item: any) => onAdd(item),
 				}
 			});
-		} else 
-		if (addCommand) {
-			const cb = (item: any) => {
-				close(); 
-				addCommand(rootId, blockId, item);
-			};
-
+		} else {
 			if (item.isInstalled || noInstall) {
-				cb(item);
+				onAdd(item);
 
 				if (!noInstall) {
 					analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type, relationKey: item.relationKey });
 				};
 			} else {
-				Action.install(item, true, message => cb(message.details));
+				Action.install(item, true, message => onAdd(message.details));
 			};
 		};
 	};

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { Icon } from 'Component';
 import { translate, U } from 'Lib';
 
@@ -9,30 +9,26 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-class LoadMore extends React.Component<Props> {
-
-	public static defaultProps = {
-		limit: 10,
+const LoadMore = forwardRef<HTMLDivElement, Props>(({
+	limit = 10,
+	loaded = 0,
+	total = 0,
+	onClick,
+}, ref) => {
+		
+	let number = limit;
+	if (loaded && total) {
+		const left = total - loaded;
+		number = limit < left ? limit : left;
 	};
 
-	render () {
-		const { limit, loaded, total, onClick } = this.props;
+	return (
+		<div className="loadMore" onClick={onClick}>
+			<Icon />
+			<div className="name">{U.Common.sprintf(translate('utilLoadMoreText'), number, U.Common.plural(number, translate('pluralObject')))}</div>
+		</div>
+	);
 
-		let number = limit;
-		if (loaded && total) {
-			const left = total - loaded;
-			number = limit < left ? limit : left;
-		};
-
-		return (
-			<div className="loadMore" onClick={onClick}>
-				<Icon />
-				<div className="name">{U.Common.sprintf(translate('utilLoadMoreText'), number, U.Common.plural(number, translate('pluralObject')))}</div>
-			</div>
-		);
-	};
-
-	
-};
+});
 
 export default LoadMore;

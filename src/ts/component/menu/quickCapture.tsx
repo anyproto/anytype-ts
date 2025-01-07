@@ -201,14 +201,6 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
 		window.setTimeout(() => setActive(), 15);
-
-		if (S.Common.navigationMenu == I.NavigationMenuMode.Hover) {
-			$(`#${getId()}`).off(`mouseleave`).on(`mouseleave`, () => {
-				if (!this.state.isExpanded) {
-					close();
-				};
-			});
-		};
 	};
 
 	unbind () {
@@ -316,7 +308,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		} else {
 			const pinned = pinnedIds.map(id => S.Record.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
-			items = U.Data.getObjectTypesForNewObject({ withChat: true }).filter(it => !pinnedIds.includes(it.id));
+			items = U.Data.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
 			items = items.slice(0, LIMIT_PINNED - pinned.length);
 			items.push(S.Record.getSetType());
 			items.push(S.Record.getCollectionType());
@@ -463,8 +455,9 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				const object = message.details;
 
 				U.Object.openAuto(object);
+				U.Object.setLastUsedDate(object.id, U.Date.now());
 
-				analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
+				analytics.createObject(object.type, object.layout, '', message.middleTime);
 				analytics.event('SelectObjectType', { objectType: object.type });
 			});
 		};
@@ -506,7 +499,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const canPin = type.isInstalled;
 		const canDefault = type.isInstalled && !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
 		const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
-		const route = analytics.route.navigation;
+		const route = '';
 
 		let options: any[] = [
 			canPin ? { id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) } : null,
@@ -673,7 +666,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		obj.find('.item').each((i: number, item: any) => {
 			item = $(item);
-			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
+			item.toggleClass('withIcon', !!item.find('.iconObject').length);
 		});
 
 		obj.css({ width: Math.min(ww - J.Size.menuBorder * 2 - sw, Math.ceil(obj.outerWidth())) });

@@ -40,6 +40,7 @@ class Survey {
 				break;
 
 			case I.SurveyType.Pmf:
+				param.complete = true;
 				param.time = U.Date.now();
 				break;
 		};
@@ -80,22 +81,23 @@ class Survey {
 		const time = U.Date.now();
 		const obj = Storage.getSurvey(type);
 		const timeRegister = this.getTimeRegister();
-		const lastCompleted = Number(obj.time || Storage.get('lastSurveyTime')) || 0;
-		const lastCanceled = Number(obj.time || Storage.get('lastSurveyCanceled')) || 0;
+		const lastTime = Number(obj.time) || 0;
 		const week = 86400 * 7;
 		const month = 86400 * 30;
-
 		const registerTime = timeRegister <= time - week;
-		const completeTime = obj.complete && registerTime && (lastCompleted <= time - month);
-		const cancelTime = obj.cancel && registerTime && (lastCanceled <= time - month);
+		const cancelTime = obj.cancel && registerTime && (lastTime <= time - (month * 2));
+
+		if (obj.complete) {
+			return;
+		};
 
 		// Show this survey to 5% of users
-		if (this.checkRandSeed(5) && !completeTime) {
+		if (!this.checkRandSeed(5)) {
 			Storage.setSurvey(type, { time });
 			return;
 		};
 
-		if (!S.Popup.isOpen() && (cancelTime || !lastCompleted) && !completeTime) {
+		if (!S.Popup.isOpen() && (cancelTime || !lastTime)) {
 			this.show(type);
 		};
 	};
@@ -119,6 +121,7 @@ class Survey {
 	};
 
 	checkObject (type: I.SurveyType) {
+		const { space } = S.Common;
 		const timeRegister = this.getTimeRegister();
 		const isComplete = this.isComplete(type);
 
@@ -127,6 +130,7 @@ class Survey {
 		};
 
 		U.Data.search({
+			spaceId: space,
 			filters: [
 				{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 				{ relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }

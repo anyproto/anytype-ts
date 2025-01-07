@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Block } from 'Component';
+import { Header, Block, HeadSimple } from 'Component';
 import { I, M, S, U, translate } from 'Lib';
-import HeadSimple from 'Component/page/elements/head/simple';
 
 interface Props extends I.PageComponent {
 	rootId: string;
@@ -34,8 +33,6 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 		const cn = [ 'editorWrapper', check.className ];
 		const isSet = U.Object.isSetLayout(object.layout);
 		const isCollection = U.Object.isCollectionLayout(object.layout);
-		const isHuman = U.Object.isHumanLayout(object.layout);
-		const isParticipant = U.Object.isParticipantLayout(object.layout);
 
 		let head = null;
 		let children = S.Block.getChildren(rootId, rootId);
@@ -56,7 +53,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 			children = children.filter(it => it.isDataview());
 			check.withIcon = false;
 		} else
-		if (isHuman || isParticipant) {
+		if (U.Object.isInHumanLayouts(object.layout)) {
 			icon.type = I.BlockType.IconUser;
 		};
 

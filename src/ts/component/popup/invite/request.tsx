@@ -56,7 +56,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		const { data } = param;
 		const { invite, cid, key } = data;
 
-		if (!account || this.refButton.state.isLoading) {
+		if (!account || this.refButton.isLoading()) {
 			return;
 		};
 

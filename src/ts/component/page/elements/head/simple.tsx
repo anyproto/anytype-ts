@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, S, U, J, Action, focus, keyboard, Relation, translate } from 'Lib';
+import { IconObject, Block, Button, Editable, Icon } from 'Component';
+import { I, M, S, U, J, Action, focus, keyboard, Relation, translate, analytics } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -9,7 +9,9 @@ interface Props {
 	isContextMenuDisabled?: boolean;
 	readonly?: boolean;
 	noIcon?: boolean;
+	relationKey?: string;
 	onCreate?: () => void;
+	getDotMap?: (start: number, end: number, callback: (res: Map<string, boolean>) => void) => void;
 };
 
 const EDITORS = [ 
@@ -44,9 +46,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+		const isDate = U.Object.isDateLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
+
 		const placeholder = {
 			title: this.props.placeholder,
 			description: translate('placeholderBlockDescription'),
@@ -70,11 +74,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			/>
 		);
 
-		let button = null;
+		let button: React.ReactElement = null;
 		let descr = null;
 		let featured = null;
 
-		if (!isTypeOrRelation) {
+		if (!isTypeOrRelation && !isDate) {
 			if (featuredRelations.includes('description')) {
 				descr = <Editor className="descr" id="description" />;
 			};
@@ -112,10 +116,20 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 				button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 			};
+
+			if (!canWrite) {
+				button = null;
+			};
 		};
 
-		if (!canWrite) {
-			button = null;
+		if (isDate) {
+			button = (
+				<React.Fragment>
+					<Icon className="arrow left withBackground" onClick={() => this.changeDate(-1)} />
+					<Icon className="arrow right withBackground" onClick={() => this.changeDate(1)}/>
+					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
+				</React.Fragment>
+			);
 		};
 
 		return (
@@ -221,6 +235,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	setValue () {
+		const { dateFormat } = S.Common;
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
@@ -230,6 +245,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 
 			let text = String(object[item.relationKey] || '');
+
+			if (U.Object.isDateLayout(object.layout) && object.timestamp) {
+				text = U.Date.dateWithFormat(dateFormat, object.timestamp);
+			};
+
 			if (text == translate('defaultNamePage')) {
 				text = '';
 			};
@@ -268,21 +288,49 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
-		let sources: string[] = [];
+		let sources: any[] = [];
 
 		switch (object.layout) {
 			case I.ObjectLayout.Type: {
-				sources = S.Record.getTypes().map(it => it.sourceObject);
+				sources = S.Record.getTypes();
 				break;
 			};
 
 			case I.ObjectLayout.Relation: {
-				sources = S.Record.getRelations().map(it => it.sourceObject);
+				sources = S.Record.getRelations();
 				break;
 			};
 		};
 
-		return sources.includes(rootId);
+		return sources.map(it => it.sourceObject).includes(rootId);
+	};
+
+	onCalendar = () => {
+		const { rootId, getDotMap, relationKey } = this.props;
+		const object = S.Detail.get(rootId, rootId);
+
+		S.Menu.open('dataviewCalendar', {
+			element: '#calendar-icon',
+			horizontal: I.MenuDirection.Center,
+			data: {
+				value: object.timestamp,
+				canEdit: true,
+				canClear: false,
+				relationKey,
+				onChange: (value: number) => U.Object.openDateByTimestamp(relationKey, value),
+				getDotMap,
+			},
+		});
+
+		analytics.event('ClickDateCalendarView');
+	};
+
+	changeDate = (dir: number) => {
+		const { rootId, relationKey } = this.props;
+		const object = S.Detail.get(rootId, rootId);
+
+		U.Object.openDateByTimestamp(relationKey, object.timestamp + dir * 86400);
+		analytics.event(dir > 0 ? 'ClickDateForward' : 'ClickDateBack');
 	};
 
 });

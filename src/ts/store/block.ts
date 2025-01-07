@@ -503,7 +503,7 @@ class BlockStore {
 	toggle (rootId: string, blockId: string, v: boolean) {
 		const element = $(`#block-${blockId}`);
 
-		v ? element.addClass('isToggled') : element.removeClass('isToggled');
+		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
 		
 		U.Common.triggerResizeEditor(keyboard.isPopup());
@@ -533,7 +533,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = S.Detail.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt' ], true);
+				const object = S.Detail.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt', 'timestamp' ], true);
 
 				if (object._empty_) {
 					continue;
@@ -585,8 +585,9 @@ class BlockStore {
 	checkBlockType (rootId: string) {
 		const { header, type } = J.Constant.blockId;
 		const element = this.getMapElement(rootId, header);
+		const canWrite = U.Space.canMyParticipantWrite();
 
-		if (!element) {
+		if (!element || !canWrite) {
 			return;
 		};
 
@@ -604,32 +605,6 @@ class BlockStore {
 	checkBlockTypeExists (rootId: string): boolean {
 		const header = this.getMapElement(rootId, J.Constant.blockId.header);
 		return header ? header.childrenIds.includes(J.Constant.blockId.type) : false;
-	};
-
-	checkBlockChat (rootId: string) {
-		return;
-
-		const element = this.getMapElement(rootId, rootId);
-
-		if (!element) {
-			return;
-		};
-
-		const object = S.Detail.get(rootId, rootId, [ 'layout', 'chatId' ], true);
-		if (U.Object.isChatLayout(object.layout)) {
-			return;
-		};
-
-		if (object.chatId && !this.checkBlockChatExists(rootId)) {
-			const childrenIds = element.childrenIds.concat(J.Constant.blockId.chat);
-
-			this.updateStructure(rootId, rootId, childrenIds);
-		};
-	};
-
-	checkBlockChatExists (rootId: string): boolean {
-		const element = this.getMapElement(rootId, rootId);
-		return element ? element.childrenIds.includes(J.Constant.blockId.chat) : false;
 	};
 
 	getLayoutIds (rootId: string, ids: string[]) {

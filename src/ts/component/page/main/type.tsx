@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
+import { Icon, Header, Footer, Loader, ListPreviewObject, ListObject, Select, Deleted, HeadSimple, EditorControls } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate } from 'Lib';
-import Controls from 'Component/page/elements/head/controls';
-import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	isLoading: boolean;
@@ -18,7 +16,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	refHeader: any = null;
 	refHead: any = null;
 	refControls: any = null;
-	refListPreview: any = null;
 	timeout = 0;
 	page = 0;
 
@@ -92,7 +89,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: v => v ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v) : '',
+				mapper: v => v ? U.Date.dateWithFormat(S.Common.dateFormat, v) : '',
 			},
 		];
 
@@ -131,7 +128,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
-					<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
+					<EditorControls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
 					<HeadSimple 
 						{...this.props} 
 						ref={ref => this.refHead = ref} 
@@ -154,9 +151,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 							{totalTemplate ? (
 								<div className="content">
-									<ListObjectPreview 
+									<ListPreviewObject 
 										key="listTemplate"
-										ref={ref => this.refListPreview = ref}
 										getItems={() => S.Record.getRecords(subIdTemplate, [])}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
@@ -219,6 +215,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									rootId={rootId} 
 									columns={columns} 
 									relationKeys={recommendedKeys}
+									route={analytics.route.screenType}
 								/>
 							</div>
 						</div>
@@ -297,11 +294,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
+		const close = !(isPopup && (match?.params?.id == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -556,7 +549,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return rootId ? rootId : match?.params?.id;
 	};
 
 	getSpaceId () {

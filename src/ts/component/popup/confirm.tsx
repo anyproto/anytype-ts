@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Icon, Label, Button, Checkbox } from 'Component';
+import { Title, Icon, Label, Button, Checkbox, Error } from 'Component';
 import { I, keyboard, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -22,7 +22,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 	render() {
 		const { param } = this.props;
 		const { data } = param;
-		const { title, text, icon, storageKey } = data;
+		const { title, text, icon, storageKey, error } = data;
 		
 		const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
 		const canCancel = undefined === data.canCancel ? true : data.canCancel;
@@ -53,6 +53,8 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 					{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={this.onConfirm} onMouseEnter={this.onMouseEnter} /> : ''}
 					{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={this.onCancel} onMouseEnter={this.onMouseEnter} /> : ''}
 				</div>
+
+				<Error text={error} />
 			</div>
 		);
 	};
@@ -115,12 +117,14 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 	};
 	
 	onConfirm (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
-		const { onConfirm } = data;
+		const { onConfirm, noCloseOnConfirm } = data;
 		
 		e.preventDefault();
-		this.props.close();
+		if (!noCloseOnConfirm) {
+			close();
+		};
 		
 		if (onConfirm) {
 			onConfirm();

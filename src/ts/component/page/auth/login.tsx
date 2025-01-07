@@ -1,129 +1,70 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Preview, Storage } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage } from 'Lib';
 
-interface State {
-	error: string;
-};
+const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
 
-const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.PageComponent, State> {
+	const nodeRef = useRef(null);
+	const phraseRef = useRef(null);
+	const submitRef = useRef(null);
+	const [ error, setError ] = useState('');
+	const isSelecting = useRef(false);
+	const { accounts } = S.Auth;
+	const length = accounts.length;
 
-	node = null;
-	refPhrase = null;
-	refSubmit = null;
-	isSelecting = false;
-
-	state = {
-		error: '',
-	};
-	
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onSubmit = this.onSubmit.bind(this);
-		this.onCancel = this.onCancel.bind(this);
-		this.onKeyDownPhrase = this.onKeyDownPhrase.bind(this);
-		this.onForgot = this.onForgot.bind(this);
-	};
-	
-	render () {
-		const { error } = this.state;
-		const { accounts } = S.Auth;
-		const length = accounts.length;
-		
-		return (
-			<div ref={ref => this.node = ref}>
-				<Header {...this.props} component="authIndex" />
-				<Icon className="arrow back" onClick={this.onCancel} />
-				
-				<Frame>
-					<form className="form" onSubmit={this.onSubmit}>
-						<Error text={error} className="animation" />
-
-						<div className="animation">
-							<Phrase 
-								ref={ref => this.refPhrase = ref} 
-								onKeyDown={this.onKeyDownPhrase}
-								isHidden={true} 
-								placeholder={translate('phrasePlaceholder')}
-							/>
-						</div>
-						<div className="buttons">
-							<div className="animation">
-								<Button ref={ref => this.refSubmit = ref} text={translate('authLoginSubmit')} onClick={this.onSubmit} />
-							</div>
-
-							<div className="animation">
-								<div className="small" onClick={this.onForgot}>{translate('authLoginLostPhrase')}</div>
-							</div>
-						</div>
-					</form>
-				</Frame>
-			</div>
-		);
+	const focus = () => {
+		phraseRef.current?.focus();
 	};
 
-	componentDidMount () {
-		Animation.to();
-		this.focus();
-	};
-	
-	componentDidUpdate () {
-		this.focus();
-		this.select();
+	const getPhrase = () => {
+		return String(phraseRef.current?.getValue() || '');
 	};
 
-	focus () {
-		if (this.refPhrase) {
-			this.refPhrase.focus();
-		};
-	};
-
-	onSubmit (e: any) {
+	const onSubmit = (e: any) => {
 		e.preventDefault();
 
-		const phrase = this.refPhrase.getValue();
+		const phrase = getPhrase();
 		const length = phrase.split(' ').length;
 
 		if (length < J.Constant.count.phrase.word) {
-			this.setError({ code: 1, description: translate('pageAuthLoginShortPhrase')});
+			setErrorHandler(1, translate('pageAuthLoginShortPhrase'));
 			return;
 		};
 
-		this.refSubmit?.setLoading(true);
+		submitRef.current?.setLoading(true);
 		
 		C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
-			if (this.setError({ ...message.error, description: translate('pageAuthLoginInvalidPhrase')})) {
+			if (setErrorHandler(message.error.code, translate('pageAuthLoginInvalidPhrase'))) {
 				return;
 			};
 
 			S.Auth.accountListClear();
 			U.Data.createSession(phrase, '', () => {
 				C.AccountRecover(message => {
-					this.setError(message.error);
+					setErrorHandler(message.error.code, message.error.description);
 				});
 			});
 		});
 	};
 
-	select () {
+	const select = () => {
 		const { accounts, networkConfig } = S.Auth;
-		if (this.isSelecting || !accounts.length) {
+		if (isSelecting.current || !accounts.length) {
 			return;
 		};
 
-		this.isSelecting = true;
+		isSelecting.current = true;
 
 		const { mode, path } = networkConfig;
 		const account = accounts[0];
 
 		S.Auth.accountSet(account);
-		Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
+		Renderer.send('keytarSet', account.id, getPhrase());
 
 		C.AccountSelect(account.id, S.Common.dataPath, mode, path, (message: any) => {
-			if (this.setError(message.error) || !message.account) {
-				this.isSelecting = false;
+			if (setErrorHandler(message.error.code, message.error.description) || !message.account) {
+				isSelecting.current = false;
 				return;
 			};
 
@@ -131,22 +72,14 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			S.Common.configSet(message.account.config, false);
 
 			const spaceId = Storage.get('spaceId');
-			const shareTooltip = Storage.get('shareTooltip');
-			const routeParam = {
-				replace: true, 
-				onRouteChange: () => {
-					if (!shareTooltip) {
-						Preview.shareTooltipShow();
-					};
-				},
-			};
+			const routeParam = { replace: true };
 
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam);
 			} else {
 				Animation.from(() => {
 					U.Data.onAuthWithoutSpace(routeParam);
-					this.isSelecting = false;
+					isSelecting.current = false;
 				});
 			};
 
@@ -156,42 +89,39 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		});
 	};
 
-	setError (error: { description: string, code: number}) {
-		if (!error.code) {
+	const setErrorHandler = (code: number, text: string) => {
+		if (!code) {
 			return false;
 		};
 
-		if (error.code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
+		if (code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
 			U.Router.go('/auth/setup/select', {});
 			return;
 		};
 
-		this.setState({ error: error.description });
-		this.refPhrase?.setError(true);
-		this.refSubmit?.setLoading(false);
+		setError(text);
+		phraseRef.current?.setError(true);
+		submitRef.current?.setLoading(false);
 
 		S.Auth.accountListClear();
-
-		return U.Common.checkErrorCommon(error.code);
+		return U.Common.checkErrorCommon(code);
 	};
 
-	onKeyDownPhrase (e: React.KeyboardEvent) {
-		const { error } = this.state;
-
+	const onKeyDownPhrase = (e: React.KeyboardEvent) => {
 		if (error) {
-			this.refPhrase?.setError(false);
-			this.setState({ error: '' });
+			phraseRef.current?.setError(false);
+			setError('');
 		};
 
-		keyboard.shortcut('enter', e, () => this.onSubmit(e));
+		keyboard.shortcut('enter', e, () => onSubmit(e));
 	};
 	
-	onCancel () {
+	const onCancel = () => {
 		S.Auth.logout(true, false);
 		Animation.from(() => U.Router.go('/', { replace: true }));
 	};
 
-	onForgot () {
+	const onForgot = () => {
 		const platform = U.Common.getPlatform();
 
 		S.Popup.open('confirm', {
@@ -206,6 +136,47 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		});
 	};
 
-});
+	useEffect(() => {
+		Animation.to();
+		focus();
+	}, []);
+
+	useEffect(() => {
+		focus();
+		select();
+	});
+	
+	return (
+		<div ref={nodeRef}>
+			<Header {...props} component="authIndex" />
+			<Icon className="arrow back" onClick={onCancel} />
+			
+			<Frame>
+				<form className="form" onSubmit={onSubmit}>
+					<Error text={error} className="animation" />
+
+					<div className="animation">
+						<Phrase 
+							ref={phraseRef} 
+							onKeyDown={onKeyDownPhrase}
+							isHidden={true} 
+							placeholder={translate('phrasePlaceholder')}
+						/>
+					</div>
+					<div className="buttons">
+						<div className="animation">
+							<Button ref={submitRef} text={translate('authLoginSubmit')} onClick={onSubmit} />
+						</div>
+
+						<div className="animation">
+							<div className="small" onClick={onForgot}>{translate('authLoginLostPhrase')}</div>
+						</div>
+					</div>
+				</form>
+			</Frame>
+		</div>
+	);
+
+}));
 
 export default PageAuthLogin;

@@ -1,120 +1,59 @@
-import * as React from 'react';
+import React, { FC, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Error } from 'Component';
 import { I, C, S, U, J, translate, Action, analytics } from 'Lib';
 
-interface State {
-	error: string;
-};
+const Notification: FC<I.NotificationComponent> = observer((props) => {
 
-const Notification = observer(class Notification extends React.Component<I.NotificationComponent, State> {
+	const nodeRef = useRef(null);
+	const timeout = useRef(0);
+	const [ error, setError ] = useState('');
+	const { item, style, resize } = props;
+	const { space } = S.Common;
+	const { id, type, payload, title, text } = item;
+	const { errorCode, spaceId } = payload;
+	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+	const participant = U.Space.getMyParticipant(spaceId);
+	const spaceCheck = spaceview && (spaceview.isAccountRemoving || spaceview.isAccountDeleted);
+	const participantCheck = participant && (participant.isRemoving || participant.isJoining);
 
-	_isMounted = false;
-	node: any = null;
-	timeout = 0;
-	state = {
-		error: '',
-	};
+	let buttons = [];
 
-	constructor (props: I.NotificationComponent) {
-		super(props);
-
-		this.onButton = this.onButton.bind(this);
-		this.onDelete = this.onDelete.bind(this);
-	};
-
-	render () {
-		const { error } = this.state;
-		const { item, style } = this.props;
-		const { space } = S.Common;
-		const { id, type, payload, title, text } = item;
-		const { errorCode, spaceId } = payload;
-		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-		const participant = U.Space.getMyParticipant(spaceId);
-		const spaceCheck = spaceview && (spaceview.isAccountRemoving || spaceview.isAccountDeleted);
-		const participantCheck = participant && (participant.isRemoving || participant.isJoining);
-
-		let buttons = [];
-
-		switch (type) {
-			case I.NotificationType.Gallery:
-			case I.NotificationType.Import: {
-				if (!errorCode && (spaceId != space)) {
-					buttons = buttons.concat([
-						{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch') }
-					]);
-				};
-				break;
-			};
-
-			case I.NotificationType.Join: {
+	switch (type) {
+		case I.NotificationType.Gallery:
+		case I.NotificationType.Import: {
+			if (!errorCode && (spaceId != space)) {
 				buttons = buttons.concat([
-					{ id: 'request', text: translate('notificationButtonRequest') },
-					{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch'), color: 'blank' },
+					{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch') }
 				]);
-				break;
 			};
-
-			case I.NotificationType.Leave: {
-				buttons = buttons.concat([
-					{ id: 'approve', text: translate('commonApprove') }
-				]);
-				break;
-			};
-
+			break;
 		};
 
-		// Check that space is not removed
-		if (spaceCheck || participantCheck) {
-			buttons = buttons.filter(it => ![ 'spaceSwitch' ].includes(it.id));
+		case I.NotificationType.Join: {
+			buttons = buttons.concat([
+				{ id: 'request', text: translate('notificationButtonRequest') },
+				{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch'), color: 'blank' },
+			]);
+			break;
 		};
 
-		return (
-			<div 
-				id={`notification-${id}`}
-				ref={node => this.node = node}
-				className="notification"
-				style={style}
-			>
-				<Icon className="delete" onClick={this.onDelete} />
-				<div className="content">
-					{title ? <Title text={title} /> : ''}
-					{text ? <Label text={text} /> : ''}
-					<Error text={error} />
-
-					{buttons.length ? (
-						<div className="buttons">
-							{buttons.map((item: any, i: number) => (
-								<Button key={i} className="c28" {...item} onClick={e => this.onButton(e, item.id)} />
-							))}
-						</div>
-					) : ''}
-				</div>
-			</div>
-		);
+		case I.NotificationType.Leave: {
+			buttons = buttons.concat([
+				{ id: 'approve', text: translate('commonApprove') }
+			]);
+			break;
+		};
 	};
 
-	componentDidMount (): void {
-		const { resize } = this.props;
-		const node = $(this.node);
-
-		node.addClass('from');
-		this.timeout = window.setTimeout(() => {
-			node.removeClass('from');
-			window.setTimeout(() => resize(), J.Constant.delay.notification);
-		}, 40);
+	// Check that space is not removed
+	if (spaceCheck || participantCheck) {
+		buttons = buttons.filter(it => ![ 'spaceSwitch' ].includes(it.id));
 	};
 
-	componentWillUnmount (): void {
-		window.clearTimeout(this.timeout);
-	};
-
-	onButton (e: any, action: string) {
+	const onButton = (e: any, action: string) => {
 		e.stopPropagation();
-
-		const { item } = this.props;
-		const { payload } = item;
 
 		switch (action) {
 			case 'spaceSwitch': {
@@ -143,7 +82,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			case 'approve': {
 				Action.leaveApprove(payload.spaceId, [ payload.identity ], payload.identityName, analytics.route.notification, (message: any) => {
 					if (message.error.code) {
-						this.setState({ error: message.error.description });
+						setError(message.error.description);
 					};
 				});
 				break;
@@ -151,24 +90,62 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		};
 
-		this.onDelete(e);
+		onDelete(e);
 	};
 
-	onDelete (e: any): void {
+	const onDelete = (e: any): void => {
 		e.stopPropagation();
 
-		const { item, resize } = this.props;
-		const node = $(this.node);
+		$(nodeRef.current).addClass('to');
 
-		node.addClass('to');
-		this.timeout = window.setTimeout(() => {
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => {
 			C.NotificationReply([ item.id ], I.NotificationAction.Close);
 
 			S.Notification.delete(item.id);
 			resize();
 		}, J.Constant.delay.notification);
 	};
-	
+
+	useEffect(() => {
+		const node = $(nodeRef.current);
+
+		node.addClass('from');
+
+		timeout.current = window.setTimeout(() => {
+			node.removeClass('from');
+			window.setTimeout(() => resize(), J.Constant.delay.notification);
+		}, 40);
+
+		return () => {
+			window.clearTimeout(timeout.current);
+		};
+	}, []);
+
+	return (
+		<div 
+			id={`notification-${id}`}
+			ref={nodeRef}
+			className="notification"
+			style={style}
+		>
+			<Icon className="delete" onClick={onDelete} />
+			<div className="content">
+				{title ? <Title text={title} /> : ''}
+				{text ? <Label text={text} /> : ''}
+				<Error text={error} />
+
+				{buttons.length ? (
+					<div className="buttons">
+						{buttons.map((item: any, i: number) => (
+							<Button key={i} className="c28" {...item} onClick={e => onButton(e, item.id)} />
+						))}
+					</div>
+				) : ''}
+			</div>
+		</div>
+	);
+
 });
 
 export default Notification;

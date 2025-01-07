@@ -38,7 +38,7 @@ html.themeDark {
 	--color-system-accent-125: #ffc83c;
 	--color-system-accent-50: #9f6b00;
 	--color-system-accent-25: #694500;
-	--color-system-selection: rgba(24, 163, 241, 0.15);
+	--color-system-selection: rgba(24, 163, 241, 0.3);
 
 	/* Common */
 
@@ -170,6 +170,8 @@ html.themeDark {
 	}
 
 	.inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
+	.input-drag-vertical { background-color: var(--color-bg-secondary); }
+
 	.input-drag-horizontal {
 		.fill { background: var(--color-text-primary); }
 		.icon { border-color: var(--color-text-secondary); }
@@ -225,7 +227,7 @@ html.themeDark {
 	/* Progress */
 
 	.progress {
-		.inner { background: var(--color-bg-secondary); }
+		.inner { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px var(--color-shape-primary) inset; }
 	}
 
 	.tooltip { color: var(--color-text-primary); }
@@ -318,13 +320,6 @@ html.themeDark {
 				}
 			}
 		}
-	}
-
-	/* Navigation */
-
-	.navigationPanel { background-color: rgba(0, 0, 0, 0.6); }
-	.navigationPanel {
-		.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(255, 255, 255, 0.1); }
 	}
 
 	/* Notifications */

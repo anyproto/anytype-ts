@@ -317,7 +317,6 @@ updateSettings = (param) => {
 
 updateTheme = ({ theme, colors }) => {
 	data.colors = colors;
-
 	initTheme(theme);
 	redraw();
 };
@@ -624,7 +623,9 @@ onClick = ({ x, y }) => {
 
 onSelect = ({ x, y, selectRelated }) => {
   	const d = getNodeByCoords(x, y);
-  	let related = [];
+  	
+	let related = [];
+
 	if (d) {
 		if (selectRelated) {
 			related = edgeMap.get(d.id);
@@ -638,6 +639,7 @@ onSetRootId = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
 	if (d) {
 		this.setRootId({ rootId: d.id });
+		send('setRootId', { node: d.id });
 	};
 };
 

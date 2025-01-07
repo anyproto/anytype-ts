@@ -87,6 +87,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	getSections () {
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, isFilePreview } = data;
@@ -94,6 +95,14 @@ class MenuObject extends React.Component<I.Menu> {
 		const object = this.getObject();
 		const cmd = keyboard.cmdSymbol();
 		const isTemplate = U.Object.isTemplate(object.type);
+		const isDate = U.Object.isDateLayout(object.layout);
+		const isChat = U.Object.isChatLayout(object.layout);
+		const isBookmark = U.Object.isBookmarkLayout(object.layout);
+		const isParticipant = U.Object.isParticipantLayout(object.layout);
+		const isInSetLayouts = U.Object.isInSetLayouts(object.layout);
+		const isInFileLayouts = U.Object.isInFileLayouts(object.layout);
+		const isInFileOrSystemLayouts = U.Object.isInFileOrSystemLayouts(object.layout);
+		const isTypeOrRelationLayout = U.Object.isTypeOrRelationLayout(object.layout);
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
@@ -105,18 +114,19 @@ class MenuObject extends React.Component<I.Menu> {
 		let template = null;
 		let setDefaultTemplate = null;
 
-		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
-		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
+		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
+		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -156,50 +166,52 @@ class MenuObject extends React.Component<I.Menu> {
 		// Restrictions
 
 		const hasShortMenu = (
-			U.Object.isTypeOrRelationLayout(object.layout) ||
-			U.Object.isInFileLayouts(object.layout) ||
-			U.Object.isInSetLayouts(object.layout) ||
-			U.Object.isParticipantLayout(object.layout) ||
-			U.Object.isChatLayout(object.layout)
+			isTypeOrRelationLayout ||
+			isInFileLayouts ||
+			isInSetLayouts ||
+			isParticipant ||
+			isChat
 		);
 
 		const allowedArchive = canWrite && canDelete;
-		const allowedSearch = !isFilePreview && !U.Object.isInSetLayouts(object.layout);
-		const allowedHistory = !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !U.Object.isParticipantLayout(object.layout) && !object.templateIsBundled;
+		const allowedSearch = !isFilePreview && !isInSetLayouts;
+		const allowedHistory = !object.isArchived && !isInFileOrSystemLayouts && !isParticipant && !isDate && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !object.templateIsBundled;
-		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystemLayouts;
 		const allowedLinkTo = canWrite && !object.isArchived;
 		const allowedAddCollection = canWrite && !object.isArchived;
 		const allowedPageLink = !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
-		const allowedReload = canWrite && object.source && U.Object.isBookmarkLayout(object.layout);
-		const allowedInstall = canWrite && !object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout);
-		const allowedUninstall = canWrite && object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout) && canDelete;
+		const allowedReload = canWrite && object.source && isBookmark;
+		const allowedInstall = canWrite && !object.isInstalled && isTypeOrRelationLayout;
+		const allowedUninstall = canWrite && object.isInstalled && isTypeOrRelationLayout && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
-		const allowedExport = !isFilePreview && !U.Object.isChatLayout(object.layout);
+		const allowedExport = !isFilePreview && !isChat && !isDate;
 		const allowedPrint = !isFilePreview;
-		const allowedDownloadFile = U.Object.isInFileLayouts(object.layout);
-		const allowedOpenFile = U.Object.isInFileLayouts(object.layout);
+		const allowedDownloadFile = isInFileLayouts;
+		const allowedOpenFile = isInFileLayouts;
+		const allowedOpenObject = isFilePreview;
 
-		if (!allowedArchive)	 archive = null;
-		if (!allowedLock)		 pageLock = null;
-		if (!allowedCopy)		 pageCopy = null;
-		if (!allowedReload)		 pageReload = null;
-		if (!allowedSearch)		 search = null;
-		if (!allowedHistory)	 history = null;
-		if (!allowedFav)		 fav = null;
+		if (!allowedArchive)		 archive = null;
+		if (!allowedLock)			 pageLock = null;
+		if (!allowedCopy)			 pageCopy = null;
+		if (!allowedReload)			 pageReload = null;
+		if (!allowedSearch)			 search = null;
+		if (!allowedHistory)		 history = null;
+		if (!allowedFav)			 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
-		if (allowedUninstall)	 archive = null;
-		if (!allowedWidget)		 createWidget = null;
-		if (!allowedLinkTo)		 linkTo = null;
-		if (!allowedPageLink)	 pageLink = null;
+		if (allowedUninstall)		 archive = null;
+		if (!allowedWidget)			 createWidget = null;
+		if (!allowedLinkTo)			 linkTo = null;
+		if (!allowedPageLink)		 pageLink = null;
 		if (!allowedAddCollection)	 addCollection = null;
-		if (!allowedExport)		 pageExport = null;
-		if (!allowedPrint)		 print = null;
+		if (!allowedExport)			 pageExport = null;
+		if (!allowedPrint)			 print = null;
 		if (!allowedDownloadFile)	 downloadFile = null;
 		if (!allowedOpenFile)		 openFile = null;
+		if (!allowedOpenObject)		 openObject = null;
 
 		if (!canWrite) {
 			template = null;
@@ -213,33 +225,37 @@ class MenuObject extends React.Component<I.Menu> {
 				pageCopy = null;
 			};
 
-			sections = [
+			sections = sections.concat([
+				{ children: [ openObject ] },
 				{ children: [ createWidget, fav, pageLock, history ] },
 				{ children: [ linkTo, addCollection ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 				{ children: [ openFile, downloadFile ] },
-			];
+			]);
 		} else {
 			if (isTemplate) {
-				sections = [
+				sections = sections.concat([
+					{ children: [ openObject ] },
 					{ children: [ search, template, pageCopy, setDefaultTemplate, pageExport, archive, history ] },
 					{ children: [ print ] },
-				];
+				]);
 			} else
 			if (object.isArchived) {
-				sections = [
+				sections = sections.concat([
+					{ children: [ openObject ] },
 					{ children: [ search, pageExport, remove, archive ] },
 					{ children: [ print ] },
-				];
+				]);
 			} else {
-				sections = [
+				sections = sections.concat([
+					{ children: [ openObject ] },
 					{ children: [ createWidget, fav, pageLock ] },
 					{ children: [ linkTo, addCollection, template ] },
 					{ children: [ search, history, pageCopy, archive ] },
 					{ children: [ pageLink, pageReload ] },
 					{ children: [ print, pageExport ] },
-				];
+				]);
 			};
 
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
@@ -366,6 +382,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
 		const route = analytics.route.menuObject;
+		const space = U.Space.getSpaceview();
 		
 		if (item.arrow) {
 			return;
@@ -427,9 +444,9 @@ class MenuObject extends React.Component<I.Menu> {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
 				break;
 			};
-				
+
 			case 'pageArchive': {
-				Action.archive([ object.id ], () => {
+				Action.archive([ object.id ], route, () => {
 					if (onArchive) {
 						onArchive();
 					} else {
@@ -440,7 +457,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageUnarchive': {
-				Action.restore([ object.id ]);
+				Action.restore([ object.id ], route);
 				break;
 			};
 
@@ -471,8 +488,24 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Common.copyToast(translate('commonLink'), `${J.Constant.protocol}://${U.Object.universalRoute(object)}`);
-				analytics.event('CopyLink', { route });
+				const link = `${J.Constant.protocol}://${U.Object.universalRoute(object)}`;
+				const cb = (link: string) => {
+					U.Common.copyToast(translate('commonLink'), link);
+					analytics.event('CopyLink', { route });
+				};
+
+				if (space.isShared) {
+					U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
+						if (cid && key) {
+							cb(link + `&cid=${cid}&key=${key}`);
+						} else {
+							cb(link);
+						};
+					});
+				} else {
+					cb(link);
+				};
+
 				break;
 			};
 
@@ -536,6 +569,11 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'downloadFile': {
 				Action.downloadFile(object.id, route, U.Object.isImageLayout(object.layout));
+				break;
+			};
+
+			case 'openAsObject': {
+				U.Object.openAuto(object);
 				break;
 			};
 		};

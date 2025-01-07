@@ -7,21 +7,16 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	render () {
 		const { getId } = this.props;
-		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject, hideSidebar, showRelativeDates, showVault } = S.Common;
+		const { config, interfaceLang, linkStyle, fullscreenObject, hideSidebar, showRelativeDates, showVault, dateFormat, timeFormat, } = S.Common;
 		const { hideTray, hideMenuBar, languages } = config;
 
 		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
 		const interfaceLanguages = U.Menu.getInterfaceLanguages();
 		const spellingLanguages = U.Menu.getSpellingLanguages();
-		const navigationMenuModes: I.Option[] = [
-			{ id: I.NavigationMenuMode.Click, name: translate('popupSettingsPersonalNavigationMenuClick') },
-			{ id: I.NavigationMenuMode.Hover, name: translate('popupSettingsPersonalNavigationMenuHover') },
-			{ id: I.NavigationMenuMode.Context, name: translate('popupSettingsPersonalNavigationMenuContext') },
-		];
 		const linkStyles: I.Option[] = [
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
-		].map(it => ({ ...it, id: String(it.id) }));
+		];
 		const sidebarMode = showVault ? translate('sidebarMenuAll') : translate('sidebarMenuSidebar');
 
 		return (
@@ -65,22 +60,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 				<div className="actionItems">
 					<div className="item">
-						<Label text={translate('popupSettingsPersonalNavigationMenu')} />
-
-						<Select
-							id="navigationMenu"
-							value={navigationMenu}
-							options={navigationMenuModes}
-							onChange={v => {
-								S.Common.navigationMenuSet(v);
-								analytics.event('ChangeShowQuickCapture', { type: v });
-							}}
-							arrowClassName="black"
-							menuParam={{ horizontal: I.MenuDirection.Right }}
-						/>
-					</div>
-
-					<div className="item">
 						<Label text={translate('popupSettingsPersonalLinkStyle')} />
 
 						<Select
@@ -105,17 +84,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						/>
 					</div>
 
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalRelativeDates')} />
-						<Switch
-							className="big"
-							value={showRelativeDates}
-							onChange={(e: any, v: boolean) => {
-								S.Common.showRelativeDatesSet(v);
-								analytics.event('RelativeDates', { type: v });
-							}}
-						/>
-					</div>
 				</div>
 
 				<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
@@ -155,6 +123,54 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)} />
 						</div>
 					) : ''}
+				</div>
+
+				<Label className="section" text={translate('popupSettingsPersonalSectionDateTime')} />
+
+				<div className="actionItems">
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalRelativeDates')} />
+						<Switch
+							className="big"
+							value={showRelativeDates}
+							onChange={(e: any, v: boolean) => {
+								S.Common.showRelativeDatesSet(v);
+								analytics.event('RelativeDates', { type: v });
+							}}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalDateFormat')} />
+						<Select
+							id="dateFormat"
+							value={String(dateFormat)}
+							options={U.Menu.dateFormatOptions()}
+							onChange={v => {
+								S.Common.dateFormatSet(v);
+								analytics.event('ChangeDateFormat', { type: v });
+							}}
+							arrowClassName="black"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalTimeFormat')} />
+						<Select
+							id="timeFormat"
+							value={String(timeFormat)}
+							options={U.Menu.timeFormatOptions()}
+							onChange={v => {
+								S.Common.timeFormatSet(v);
+								analytics.event('ChangeTimeFormat', { type: v });
+							}}
+							arrowClassName="black"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
+						/>
+					</div>
+
 				</div>
 
 			</React.Fragment>

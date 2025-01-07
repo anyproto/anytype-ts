@@ -9,6 +9,7 @@ import Lang from './lang';
 import Relation from './relation';
 import Menu from './menu';
 import Size from './size';
+import Shortcut from './shortcut';
 
 const Emoji = require('./emoji.json');
 const Latex = require('./latex.json');
@@ -27,4 +28,5 @@ export {
 	Relation,
 	Menu,
 	Size,
+	Shortcut,
 };

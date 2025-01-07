@@ -21,25 +21,15 @@ class MenuContext extends React.Component<I.Menu> {
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						if (action.isDiv) {
-							return (
-								<div key={i} className="separator">
-									<div className="inner" />
-								</div>
-							);
-						};
-
-						return (
-							<MenuItemVertical
-								key={i}
-								{...action}
-								icon={action.icon || action.id}
-								onMouseEnter={e => this.onMouseEnter(e, action)}
-								onClick={e => this.onClick(e, action)}
-							/>
-						);
-					})}
+					{item.children.map((action: any, i: number) => (
+						<MenuItemVertical
+							key={i}
+							{...action}
+							icon={action.icon || action.id}
+							onMouseEnter={e => this.onMouseEnter(e, action)}
+							onClick={e => this.onClick(e, action)}
+						/>
+					))}
 				</div>
 			</div>
 		);
@@ -172,7 +162,7 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedCollection = false;
 		};
 
-		if (archiveCnt == length) {
+		if (archiveCnt && (archiveCnt == length)) {
 			allowedOpen = false;
 			allowedLinkTo = false;
 			allowedUnlink = false;
@@ -271,6 +261,7 @@ class MenuContext extends React.Component<I.Menu> {
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					onClick: (item: any) => {
 						C.ObjectListSetObjectType(objectIds, item.uniqueKey);
@@ -416,13 +407,13 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'archive': {
-				Action.archive(objectIds, cb);
+				Action.archive(objectIds, route, cb);
 				win.trigger('removeGraphNode', { ids: objectIds });
 				break;
 			};
 
 			case 'unarchive': {
-				Action.restore(objectIds, cb);
+				Action.restore(objectIds, route, cb);
 				break;
 			};
 
@@ -445,6 +436,10 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'createWidget': {
+				if (!first) {
+					break;
+				};
+
 				const firstBlock = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
 				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top, analytics.route.addWidgetMenu);

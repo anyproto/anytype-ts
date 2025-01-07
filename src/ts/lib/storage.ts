@@ -15,23 +15,28 @@ const SPACE_KEYS = [
 	'popupSearch',
 	'focus',
 	'openUrl',
+	'redirectInvite',
 ];
 
 class Storage {
 	
 	storage: any = null;
+	store: any = null;
 	
 	constructor () {
 		this.storage = localStorage;
 	};
 
 	get (key: string): any {
-		const o = String(this.storage[key] || '');
+		let o = U.Common.getElectron().storeGet(key);
+		if (!o) {
+			o = this.parse(String(this.storage[key] || ''));
+		};
 
 		if (this.isSpaceKey(key)) {
 			if (o) {
 				delete(this.storage[key]);
-				this.set(key, this.parse(o), true);
+				this.set(key, o, true);
 			};
 
 			return this.getSpaceKey(key);
@@ -39,16 +44,18 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			if (o) {
 				delete(this.storage[key]);
-				this.set(key, this.parse(o), true);
+				this.set(key, o, true);
 			};
 
 			return this.getAccountKey(key);
 		} else {
-			return this.parse(o);
+			return o;
 		};
 	};
 
 	set (key: string, obj: any, del?: boolean): void {
+		obj = U.Common.objectCopy(obj);
+
 		if (!key) {
 			console.log('[Storage].set: key not specified');
 			return;
@@ -73,7 +80,8 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			this.setAccountKey(key, o);
 		} else {
-			this.storage[key] = JSON.stringify(o);
+			U.Common.getElectron().storeSet(key, o);
+			//delete(this.storage[key]);
 		};
 	};
 	
@@ -84,6 +92,7 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			this.deleteAccountKey(key);
 		} else {
+			U.Common.getElectron().storeDelete(key);
 			delete(this.storage[key]);
 		};
 	};
@@ -92,31 +101,41 @@ class Storage {
 		return SPACE_KEYS.includes(key);
 	};
 
-	setSpaceKey (key: string, value: any) {
-		const obj = this.getSpace();
+	setSpaceKey (key: string, value: any, spaceId?: string) {
+		spaceId = spaceId || S.Common.space;
 
-		obj[S.Common.space][key] = value;
+		const obj = this.getSpace(spaceId);
 
-		this.setSpace(obj);
-	};
-
-	getSpaceKey (key: string) {
-		const obj = this.getSpace();
-		return obj[S.Common.space][key];
-	};
-
-	deleteSpaceKey (key: string) {
-		const obj = this.getSpace();
-
-		delete(obj[S.Common.space][key]);
+		if (spaceId) {
+			obj[spaceId][key] = value;
+		};
 
 		this.setSpace(obj);
 	};
 
-	getSpace () {
+	getSpaceKey (key: string, spaceId?: string) {
+		spaceId = spaceId || S.Common.space;
+
+		const obj = this.getSpace(spaceId);
+		return obj[spaceId][key];
+	};
+
+	deleteSpaceKey (key: string, spaceId?: string) {
+		spaceId = spaceId || S.Common.space;
+
+		const obj = this.getSpace(spaceId);
+
+		delete(obj[spaceId][key]);
+
+		this.setSpace(obj);
+	};
+
+	getSpace (spaceId?: string) {
+		spaceId = spaceId || S.Common.space;
+
 		const obj = this.get('space') || {};
 
-		obj[S.Common.space] = obj[S.Common.space] || {};
+		obj[spaceId] = obj[spaceId] || {};
 
 		return obj;
 	};
@@ -152,7 +171,9 @@ class Storage {
 		const obj = this.getAccount();
 		const accountId = this.getAccountId();
 
-		obj[accountId][key] = value;
+		if (accountId) {
+			obj[accountId][key] = value;
+		};
 
 		this.setAccount(obj);
 	};
@@ -224,7 +245,7 @@ class Storage {
 		this.deleteLastOpenedByWindowId(windowIds);
 	};
 
-	deleteLastOpenedByWindowId (windowIds: string[],) {
+	deleteLastOpenedByWindowId (windowIds: string[]) {
 		windowIds = windowIds.filter(id => id != '1');
 
 		if (!windowIds.length) {
@@ -437,6 +458,10 @@ class Storage {
 	};
 
 	setChat (id: string, obj: any) {
+		if (!id) {
+			return;
+		};
+
 		const map = this.get('chat') || {};
 
 		map[id] = Object.assign(map[id] || {}, obj);

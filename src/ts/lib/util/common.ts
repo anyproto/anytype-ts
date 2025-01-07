@@ -441,7 +441,7 @@ class UtilCommon {
 
 		const scheme = this.getScheme(url);
 		if (!scheme) {
-			url = 'http://' + url;
+			url = `http://${url}`;
 		};
 
 		return url;
@@ -454,18 +454,11 @@ class UtilCommon {
 		links.on('auxclick', e => e.preventDefault());
 		links.click((e: any) => {
 			const el = $(e.currentTarget);
+			const href = el.attr('href') || el.attr('xlink:href');
 
 			e.preventDefault();
-			el.hasClass('path') ? this.onPath(el.attr('href')) : this.onUrl(el.attr('href'));
+			el.hasClass('path') ? Action.openPath(href) : Action.openUrl(href);
 		});
-	};
-	
-	onUrl (url: string) {
-		Action.openUrl(url);
-	};
-
-	onPath (path: string) {
-		Renderer.send('openPath', path);
 	};
 	
 	checkEmail (v: string) {
@@ -585,7 +578,7 @@ class UtilCommon {
 					text: translate('popupConfirmObjectOpenErrorText'),
 					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
 					onConfirm: () => {
-						C.DebugTree(rootId, logPath, (message: any) => {
+						C.DebugTree(rootId, logPath, false, (message: any) => {
 							if (!message.error.code) {
 								Renderer.send('openPath', logPath);
 							};
@@ -634,9 +627,13 @@ class UtilCommon {
 		});
 	};
 
-	getScheme (url: string): string {
-		url = String(url || '');
-		return url.indexOf('://') >= 0 ? String(url.split('://')[0] || '') : '';
+	getScheme(url: string): string {
+		try {
+			const u = new URL(String(url || ''));
+			return u.protocol.replace(/:$/, '');
+		} catch {
+			return '';
+		}
 	};
 
 	intercept (obj: any, change: any) {
@@ -670,7 +667,7 @@ class UtilCommon {
 	};
 
 	searchParam (url: string): any {
-		const a = url.replace(/^\?/, '').split('&');
+		const a = String(url || '').replace(/^\?/, '').split('&');
 		const param: any = {};
 		
 		a.forEach((s) => {
@@ -708,6 +705,24 @@ class UtilCommon {
 	
 	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
 		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
+	};
+
+	getUrlsFromText (text: string): any[] {
+		const urls = [];
+		const words = text.split(/[\s\r?\n]+/);
+
+		let offset = 0;
+
+		for (const word of words) {
+			if (this.matchUrl(word) || this.matchLocalPath(word)) {
+				const from = text.substring(offset).indexOf(word) + offset;
+
+				offset = from + word.length;
+				urls.push({ value: word, from, to: offset, isLocal: !!this.matchLocalPath(word) });
+			};
+		};
+
+		return urls;
 	};
 
 	matchUrl (s: string): string {
@@ -792,8 +807,9 @@ class UtilCommon {
 			return;
 		};
 
-		const ret: any[] = [];
 		let n = 0;
+
+		const ret: any[] = [];
 		const cb = () => {
 			n++;
 			if (n == items.length) {
@@ -803,19 +819,19 @@ class UtilCommon {
 
 		for (const item of items) {
 			if (item.path) {
-				ret.push({ name: item.name, path: item.path });
+				ret.push(item);
 				cb();
 			} else {
 				const reader = new FileReader();
 				reader.onload = () => {
-					ret.push({ 
-						name: item.name, 
+					ret.push({
+						...item,
 						path: this.getElectron().fileWrite(item.name, reader.result, { encoding: 'binary' }),
 					});
 					cb();
 				};
 				reader.onerror = cb;
-				reader.readAsBinaryString(item);
+				reader.readAsBinaryString(item.file ? item.file : item);
 			};
 		};
 	};
@@ -825,7 +841,7 @@ class UtilCommon {
 
 		const ret: any = {};
 		for (const k in data) {
-			ret['data-' + k] = data[k];
+			ret[`data-${k}`] = data[k];
 		};
 		return ret;
 	};
@@ -1005,6 +1021,26 @@ class UtilCommon {
 				onClick();
 			};
 		};
+	};
+
+	isAlphaVersion (): boolean {
+		return !!this.getElectron().version.app.match(/alpha/);
+	};
+
+	isBetaVersion (): boolean {
+		return !!this.getElectron().version.app.match(/beta/);
+	};
+
+	checkRtl (s: string): boolean {
+		return /^[\u04c7-\u0591\u05D0-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
+	};
+
+	slug (s: string): string {
+		return String(s || '').toLowerCase().trim().normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.replace(/[^a-z0-9\s\-]/g, '')
+			.replace(/\s+/g, '-')
+			.replace(/-+/g, '-');
 	};
 
 };

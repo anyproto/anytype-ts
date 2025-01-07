@@ -19,6 +19,7 @@ class Sidebar {
 	loader: JQuery<HTMLElement> = null;
 	dummy: JQuery<HTMLElement> = null;
 	toggleButton: JQuery<HTMLElement> = null;
+	syncButton: JQuery<HTMLElement> = null;
 	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutAnim = 0;
@@ -44,13 +45,10 @@ class Sidebar {
 			this.resizePage(J.Size.sidebar.width.default, false);
 		};
 
-		if (this.data.isClosed) {
-			vault.addClass('isClosed');
-			this.obj.addClass('isClosed');
-		} else {
-			vault.removeClass('isClosed');
-			this.obj.removeClass('isClosed');
-		};
+		const { isClosed } = this.data;
+
+		vault.toggleClass('isClosed', isClosed);
+		this.obj.toggleClass('isClosed', isClosed);
 	};
 
 	initObjects () {
@@ -63,6 +61,7 @@ class Sidebar {
 		this.loader = this.page.find('#loader');
 		this.dummy = $('#sidebarDummy');
 		this.toggleButton = $('#sidebarToggle');
+		this.syncButton = $('#sidebarSync');
 
 		if (vault) {
 			this.vault = $(vault.node);
@@ -226,39 +225,38 @@ class Sidebar {
 		const vw = isClosed || !showVault || !keyboard.isMain() ? 0 : J.Size.vault.width;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
-		const navigation = S.Common.getRef('navigation');
 
 		let toggleX = 16;
+		let syncX = 52;
+
 		if ((width && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
 			toggleX = 84;
+			syncX = 120;
+
+			if (width) {
+				syncX = J.Size.vault.width + width - 40;
+			};
 		};
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
 		this.footer.css({ width: '' });
 		this.dummy.css({ width: width + vw });
 
-		if (animate) {
-			this.header.addClass('sidebarAnimation');
-			this.page.addClass('sidebarAnimation');
-			this.footer.addClass('sidebarAnimation');
-			this.dummy.addClass('sidebarAnimation');
-			this.toggleButton.addClass('sidebarAnimation');
-		} else {
-			this.header.removeClass('sidebarAnimation');
-			this.page.removeClass('sidebarAnimation');
-			this.footer.removeClass('sidebarAnimation');
-			this.dummy.removeClass('sidebarAnimation');
-			this.toggleButton.removeClass('sidebarAnimation');
-		};
+		this.header.toggleClass('sidebarAnimation', animate);
+		this.footer.toggleClass('sidebarAnimation', animate);
+		this.page.toggleClass('sidebarAnimation', animate);
+		this.dummy.toggleClass('sidebarAnimation', animate);
+		this.toggleButton.toggleClass('sidebarAnimation', animate);
+		this.syncButton.toggleClass('sidebarAnimation', animate);
 
-		navigation?.position(width + vw, animate);
-		width ? this.header.addClass('withSidebar') : this.header.removeClass('withSidebar');
+		this.header.toggleClass('withSidebar', !!width);
 
 		this.page.css({ width: pageWidth });
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: pageWidth - ho });
 		this.footer.css({ width: pageWidth - ho });
 		this.toggleButton.css({ left: toggleX });
+		this.syncButton.css({ left: syncX });
 
 		$(window).trigger('sidebarResize');
 	};

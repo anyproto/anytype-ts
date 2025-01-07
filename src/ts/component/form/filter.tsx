@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useImperativeHandle, useEffect, useState, useRef } from 'react';
 import $ from 'jquery';
 import { Input, Icon } from 'Component';
 import { I, keyboard, translate } from 'Lib';
@@ -27,134 +27,81 @@ interface Props {
 	onIconClick?(e: any): void;
 };
 
-interface State {
-	isActive: boolean;
+interface FilterRefProps {
+	focus(): void;
+	blur(): void;
+	setActive(v: boolean): void;
+	setValue(v: string): void;
+	getValue(): string;
+	getRange(): I.TextRange;
+	setRange(range: I.TextRange): void;
 };
 
-class Filter extends React.Component<Props, State> {
+const Filter = forwardRef<FilterRefProps, Props>(({
+	id = '',
+	className = '',
+	inputClassName = '',
+	icon = '',
+	value = '',
+	placeholder = translate('commonFilterClick'),
+	placeholderFocus = '',
+	tooltip = '',
+	tooltipCaption = '',
+	tooltipX = I.MenuDirection.Center,
+	tooltipY = I.MenuDirection.Bottom,
+	focusOnMount = false,
+	onClick,
+	onFocus,
+	onBlur,
+	onKeyDown,
+	onKeyUp,
+	onChange,
+	onSelect,
+	onClear,
+	onIconClick,
+}, ref) => {
+	const nodeRef = useRef(null);
+	const inputRef = useRef(null);
+	const placeholderRef = useRef(null);
+	const [ isFocused, setIsFocused ] = useState(false);
+	const [ isActive, setIsActive ] = useState(false);
+	const cn = [ 'filter', className ];
 
-	public static defaultProps = {
-		className: '',
-		inputClassName: '',
-		tooltipY: I.MenuDirection.Bottom,
+	if (isFocused) {
+		cn.push('isFocused');
 	};
 
-	state = {
-		isActive: false,
+	if (isActive) {
+		cn.push('isActive');
 	};
-	
-	node: any = null;
-	isFocused = false;
-	placeholder: any = null;
-	ref = null;
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.onClear = this.onClear.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onInput = this.onInput.bind(this);
-	};
-	
-	render () {
-		const { isActive } = this.state;
-		const { id, value, icon, tooltip, tooltipCaption, tooltipX, tooltipY, placeholder = translate('commonFilterClick'), className, inputClassName, focusOnMount, onKeyDown, onKeyUp, onClick, onIconClick } = this.props;
-		const cn = [ 'filter' ];
-
-		if (className) {
-			cn.push(className);
-		};
-
-		if (isActive) {
-			cn.push('isActive');
-		};
-
-		let iconObj = null;
-		if (icon) {
-			iconObj = (
-				<Icon 
-					className={icon} 
-					tooltip={tooltip}
-					tooltipCaption={tooltipCaption}
-					tooltipX={tooltipX}
-					tooltipY={tooltipY}
-					onClick={onIconClick} 
-				/>
-			);
-		};
-
-		return (
-			<div
-				ref={node => this.node = node}
-				id={id} 
-				className={cn.join(' ')}
-				onClick={onClick}
-			>
-				<div className="inner">
-					{iconObj}
-
-					<div className="filterInputWrap">
-						<Input 
-							ref={ref => this.ref = ref}
-							id="input"
-							className={inputClassName}
-							value={value}
-							focusOnMount={focusOnMount}
-							onFocus={this.onFocus} 
-							onBlur={this.onBlur} 
-							onChange={this.onChange} 
-							onKeyDown={this.onKeyDown}
-							onKeyUp={this.onKeyUp}
-							onInput={() => this.placeholderCheck()}
-							onCompositionStart={() => this.placeholderCheck()}
-							onCompositionEnd={() => this.placeholderCheck()}
-						/>
-						<div id="placeholder" className="placeholder">{placeholder}</div>
-					</div>
-
-					<Icon className="clear" onClick={this.onClear} />
-				</div>
-				<div className="line" />
-			</div>
+	let iconObj = null;
+	if (icon) {
+		iconObj = (
+			<Icon 
+				className={icon} 
+				tooltip={tooltip}
+				tooltipCaption={tooltipCaption}
+				tooltipX={tooltipX}
+				tooltipY={tooltipY}
+				onClick={onIconClick} 
+			/>
 		);
 	};
 
-	componentDidMount() {
-		const node = $(this.node);
-
-		this.ref.setValue(this.props.value);
-		this.placeholder = node.find('#placeholder');
-
-		this.checkButton();
-		this.resize();
+	const focus = () => {
+		inputRef.current.focus();
 	};
 
-	componentDidUpdate () {
-		this.checkButton();
-		this.resize();
+	const blur = () => {
+		inputRef.current.blur();
 	};
 
-	focus () {
-		this.ref.focus();
-		this.checkButton();
-	};
-
-	blur () {
-		this.ref.blur();
-	};
-
-	onFocus (e: any) {
-		const { placeholderFocus, onFocus } = this.props;
-
-		this.isFocused = true;
-		this.addFocusedClass();
+	const onFocusHandler = (e: any) => {
+		setIsFocused(true);
 
 		if (placeholderFocus) {
-			this.placeholderSet(placeholderFocus);
+			placeholderSet(placeholderFocus);
 		};
 
 		if (onFocus) { 
@@ -162,14 +109,11 @@ class Filter extends React.Component<Props, State> {
 		};
 	};
 	
-	onBlur (e: any) {
-		const { placeholderFocus, placeholder, onBlur } = this.props;
-
-		this.isFocused = false;
-		this.removeFocusedClass();
+	const onBlurHandler = (e: any) => {
+		setIsFocused(false);
 
 		if (placeholderFocus) {
-			this.placeholderSet(placeholder);
+			placeholderSet(placeholder);
 		};
 
 		if (onBlur) {
@@ -177,124 +121,161 @@ class Filter extends React.Component<Props, State> {
 		};
 	};
 
-	onInput () {
-		this.placeholderCheck();
+	const onSelectHandler = (e: any) => {
+		if (onSelect) {
+			onSelect(e);
+		};
 	};
 
-	addFocusedClass () {
-		this.addClass('isFocused');
-	};
-
-	removeFocusedClass () {
-		this.removeClass('isFocused');
-	};
-
-	addClass (c: string) {
-		$(this.node).addClass(c);
-	};
-
-	removeClass (c: string) {
-		$(this.node).removeClass(c);
-	};
-
-	setActive (v: boolean) {
-		this.setState({ isActive: v });
-	};
-
-	onClear (e: any) {
+	const onClearHandler = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { onClear } = this.props;
-
-		this.ref.setValue('');
-		this.ref.focus();
-		this.onChange(e, '');
-
+		inputRef.current.setValue('');
+		inputRef.current.focus();
+		
+		onChangeHandler(e, '');
 		if (onClear) {
 			onClear();
 		};
 	};
 
-	onChange (e: any, v: string) {	
+	const onChangeHandler = (e: any, v: string) => {
 		// Chinese IME is open
 		if (keyboard.isComposition) {
 			return;
 		};
 
-		this.checkButton();
+		resize();
 
-		if (this.props.onChange) {
-			this.props.onChange(v);
+		if (onChange) {
+			onChange(v);
 		};
 	};
 
-	onKeyDown (e: any, v: string): void {
+	const onKeyDownHandler = (e: any, v: string): void => {
 		// Chinese IME is open
 		if (keyboard.isComposition) {
 			return;
 		};
 
-		if (this.props.onKeyDown) {
-			this.props.onKeyDown(e, v);
+		buttonCheck();
+
+		if (onKeyDown) {
+			onKeyDown(e, v);
 		};
 	};
 
-	onKeyUp (e: any, v: string): void {
+	const onKeyUpHandler = (e: any, v: string): void => {
 		// Chinese IME is open
 		if (keyboard.isComposition) {
 			return;
 		};
 
-		if (this.props.onKeyUp) {
-			this.props.onKeyUp(e, v);
+		buttonCheck();
+
+		if (onKeyUp) {
+			onKeyUp(e, v);
 		};
 	};
 
-	checkButton () {
-		const node = $(this.node);
-
-		this.getValue() ? node.addClass('active') : node.removeClass('active');
-		this.placeholderCheck();
+	const buttonCheck = () => {
+		$(nodeRef.current).toggleClass('active', Boolean(getValue()));
+		placeholderCheck();
 	};
 
-	setValue (v: string) {
-		this.ref.setValue(v);
-		this.checkButton();
+	const getValue = () => {
+		return inputRef.current?.getValue();
 	};
 
-	getValue () {
-		return this.ref.getValue();
+	const getRange = (): I.TextRange => {
+		return inputRef.current.getRange();
 	};
 
-	getRange () {
-		return this.ref.getRange();
+	const setRange = (range: I.TextRange) => {
+		inputRef.current.setRange(range);
 	};
 
-	setRange (range: I.TextRange) {
-		this.ref.setRange(range);
+	const placeholderCheck = () => {
+		getValue() ? placeholderHide() : placeholderShow();	
 	};
 
-	placeholderCheck () {
-		this.getValue() ? this.placeholderHide() : this.placeholderShow();	
-	};
-
-	placeholderSet (v: string) {
-		this.placeholder.text(v);
+	const placeholderSet = (v: string) => {
+		$(placeholderRef.current).text(v);
 	};
 	
-	placeholderHide () {
-		this.placeholder.hide();
+	const placeholderHide = () => {
+		$(placeholderRef.current).hide();
 	};
 
-	placeholderShow () {
-		this.placeholder.show();
+	const placeholderShow = () => {
+		$(placeholderRef.current).show();
 	};
 
-	resize () {
-		this.placeholder.css({ lineHeight: this.placeholder.height() + 'px' });
+	const resize = () => {
+		const ref = $(placeholderRef.current);
+		ref.css({ lineHeight: ref.height() + 'px' });
 	};
 
-};
+	const init = () => {
+		buttonCheck();
+		resize();
+	};
+
+	useEffect(() => init());
+
+	useImperativeHandle(ref, () => ({
+		focus,
+		blur,
+		setActive: v => setIsActive(v),
+		isFocused: () => isFocused,
+		setValue: (v: string) => inputRef.current.setValue(v),
+		getValue,
+		getRange,
+		setRange,
+	}));
+
+	const val = getValue();
+
+	if (val) {
+		cn.push('active');
+	};
+
+	return (
+		<div
+			ref={nodeRef}
+			id={id} 
+			className={cn.join(' ')}
+			onClick={onClick}
+		>
+			<div className="inner">
+				{iconObj}
+
+				<div className="filterInputWrap">
+					<Input 
+						ref={inputRef}
+						id="input"
+						className={inputClassName}
+						value={value}
+						focusOnMount={focusOnMount}
+						onFocus={onFocusHandler} 
+						onBlur={onBlurHandler} 
+						onChange={onChangeHandler} 
+						onKeyDown={onKeyDownHandler}
+						onKeyUp={onKeyUpHandler}
+						onSelect={onSelectHandler}
+						onInput={() => placeholderCheck()}
+						onCompositionStart={() => placeholderCheck()}
+						onCompositionEnd={() => placeholderCheck()}
+					/>
+					<div ref={placeholderRef} className="placeholder">{placeholder}</div>
+				</div>
+
+				<Icon className="clear" onClick={onClearHandler} />
+			</div>
+			<div className="line" />
+		</div>
+	);
+});
 
 export default Filter;

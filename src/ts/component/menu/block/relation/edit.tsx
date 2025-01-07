@@ -16,7 +16,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		super(props);
 		
 		this.onRelationType = this.onRelationType.bind(this);
-		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onObjectType = this.onObjectType.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onOpen = this.onOpen.bind(this);
@@ -93,31 +92,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				</div>
 			);
 		};
-		/*
-		const opts = (
-			<React.Fragment>
-
-				{isDate && relation ? (
-					<div className="section">
-						<div className="item" onMouseEnter={this.menuClose}>
-							<Icon className="clock" />
-							<div className="name">{translate('menuBlockRelationEditIncludeTime')}</div>
-							<Switch value={relation ? relation.includeTime : false} onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
-						</div>
-
-						<MenuItemVertical 
-							id="date-settings" 
-							icon="settings" 
-							name={translate('commonPreferences')}
-							arrow={!isReadonly} 
-							readonly={isReadonly}
-							onMouseEnter={this.onDateSettings} 
-						/>
-					</div>
-				) : ''}
-			</React.Fragment>
-		);
-		*/
 
 		return (
 			<form 
@@ -243,11 +217,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { id, param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getRelation();
-		
-		if (relation) {
+
+		if (relation || S.Menu.isAnimating(id)) {
 			return;
 		};
 
@@ -271,13 +245,13 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, getSize } = this.props;
+		const { id ,param, getSize } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const { getId } = this.props;
 		const type = S.Record.getTypeType();
 
-		if (!type) {
+		if (!type || S.Menu.isAnimating(id)) {
 			return;
 		};
 		
@@ -324,27 +298,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		});
 	};
 
-	onDateSettings (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { param, getId } = this.props;
-		const { data } = param;
-		const relation = this.getRelation();
-
-		if (relation && relation.isReadonlyRelation) {
-			return;
-		};
-
-		this.menuOpen('dataviewDate', { 
-			element: `#${getId()} #item-date-settings`,
-			onClose: () => {
-				S.Menu.close('select');
-			},
-			data,
-		});
-	};
-
 	onKeyDown (e: any) {
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			this.onSubmit(e);
@@ -376,7 +329,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			rebind: this.rebind,
 		});
 
-		if (!S.Menu.isOpen(id)) {
+		if (!S.Menu.isOpen(id) && !S.Menu.isAnimating(id)) {
 			S.Menu.closeAll(J.Menu.relationEdit, () => {
 				S.Menu.open(id, options);
 			});

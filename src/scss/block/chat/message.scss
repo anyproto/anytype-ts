@@ -11,7 +11,7 @@
 		.iconObject { display: none; }
 	}
 
-	> .flex > .side.right { display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); position: relative; }
+	> .flex > .side.right { display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: var(--color-shape-tertiary); position: relative; }
 
 	.icon.reactionAdd { width: 20px; height: 20px; background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
 	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
@@ -27,17 +27,15 @@
 	}
 
 	.reply { 
-		padding: 8px 8px 8px 12px; margin: 4px 0px; border-radius: 12px; background: var(--color-shape-tertiary); position: relative; overflow: hidden;
+		padding: 8px 8px 8px 12px; margin: 4px 0px; border-radius: 12px; background: #e3e3e3; position: relative; overflow: hidden;
 		display: flex; align-items: center; gap: 0px 8px;
 	}
 	.reply::before { 
 		content: ''; display: block; position: absolute; top: 0px; left: 0px; width: 4px; height: 100%;	background-color: var(--color-text-secondary); 
 	}
 	.reply {
-		.icon,
-		.iconObject { flex-shrink: 0; width: 32px; height: 32px; }
-
-		.iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
+		> .icon, > .iconObject { flex-shrink: 0; width: 32px; height: 32px; }
+		> .iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
 
 		.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
 
@@ -90,10 +88,13 @@
 }
 
 .message.isSelf {
-	.flex { flex-direction: row-reverse; }
-	> .flex > .side.right { background: rgba(229, 248, 214, 0.5); }
-	.controls { flex-direction: row-reverse; }
-	.reply { background-color: #e5f8d6; }
+	> .flex { flex-direction: row-reverse; }
+	> .flex {
+		> .side.right { background: #e5f8d6; }
+		> .controls { flex-direction: row-reverse; }
+	}
+
+	.reply { background-color: #c5efa3; }
 	.reply::before { background-color: #4dae00; }
 }
 
@@ -103,6 +104,9 @@
 }
 .message.canExpand.isExpanded {
 	.text { -webkit-line-clamp: unset; }
+	.reply {
+		.text { @include clamp; -webkit-line-clamp: 10; }
+	}
 	.expand::after { transform: rotateZ(180deg); margin-top: 2px; }
 }
 .message:hover, .message.hover {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { I, U } from 'Lib';
 import $ from 'jquery';
 
@@ -8,32 +8,27 @@ interface Props {
 	dataset?: any;
 };
 
-class Title extends React.Component<Props> {
+const Title = forwardRef<{}, Props>(({ 
+	text = '',
+	className = '', 
+	dataset = {},
+}, ref) => {
+	const nodeRef = useRef<HTMLDivElement | null>(null);
 
-	node: any = null;
-
-	render () {
-		const { text, className, dataset } = this.props;
-		const cn = [ 'title' ];
-
-		if (className) {
-			cn.push(className);
+	useEffect(() => {
+		if (nodeRef.current) {
+			U.Common.renderLinks($(nodeRef.current));
 		};
+	}, []);
 
-		return (
-			<div
-				ref={node => this.node = node}
-				className={cn.join(' ')} 
-				dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} 
-				{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
-			/>
-		);
-	};
-
-	componentDidMount () {
-		U.Common.renderLinks($(this.node));
-	};
-	
-};
+	return (
+		<div
+			ref={nodeRef}
+			className={[ 'title', className ].join(' ')}
+			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
+			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
+		/>
+	);
+});
 
 export default Title;

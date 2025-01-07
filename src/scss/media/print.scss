@@ -14,7 +14,6 @@ html.printMedia {
 	.header, 
 	.footer,
 	.notifications,
-	#navigationPanel,
 	#sidebar,
 	.sidebarDummy,
 	.progress,
@@ -95,16 +94,12 @@ html.printMedia {
 		}
 		.block.blockText.textCode > .wrapContent > .selectionTarget > .dropTarget #value { white-space: pre-wrap; overflow-x: visible; }
 
+		.block.blockMedia.isAudio > .wrapContent { box-shadow: 0px 0px; }
+
 		.block.blockDataview.isInline {
 			.content {
 				.scroll { width: 100% !important; margin: 0px !important; padding-left: 0px !important; }
 			}
-		}
-
-		.block.blockTable { width: 100% !important; margin: 0px !important; }
-		.block.blockTable {
-			.scrollWrap > .inner { width: 100% !important; }
-			.row { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; }
 		}
 
 		.block.blockDataview {
@@ -121,8 +116,16 @@ html.printMedia {
 			.inner { box-shadow: 0px 0px; }
 		}
 
+		.block.blockBookmark {
+			.inner { box-shadow: 0px 0px; }
+		}
+
 		.block.blockRelation {
 			.info { width: auto; }
+		}
+
+		.block.blockTable {
+			.handle { display: none; }
 		}
 	}
 
@@ -137,6 +140,14 @@ html.printMedia.themeDark {
 
 html.printMedia.print {
 	#editorWrapper { width: 100% !important; }
+
+	.blocks {
+		.block.blockTable { width: 100% !important; margin: 0px !important; }
+		.block.blockTable {
+			.scrollWrap > .inner { width: 100% !important; }
+			.row { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important; }
+		}
+	}
 }
 
 html.printMedia.withPopup {

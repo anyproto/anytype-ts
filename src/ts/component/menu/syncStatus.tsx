@@ -83,7 +83,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more" />
+						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
 					</div>
 				</div>
 			);
@@ -94,7 +94,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 			let content = null;
 			if (item.isSection) {
-				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}</div>;
+				content = (
+					<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
+						{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}
+					</div>
+				);
 			} else {
 				content = (
 					<div className="row" style={style}>
@@ -175,12 +179,15 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	onContextMenu (e, item) {
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const node = $(this.node);
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
-		const element = node.find(`#item-${item.id}`);
+		const element = $(e.currentTarget);
+		const node = $(this.node);
+		const itemElement = node.find(`#item-${item.id}`);
 		const options: any[] = [
 			{ id: 'open', name: translate('commonOpen') }
 		];
@@ -194,6 +201,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
+			onOpen: () => itemElement.addClass('hover'),
+			onClose: () => itemElement.removeClass('hover'),
 			data: {
 				options,
 				onSelect: (e, option) => {

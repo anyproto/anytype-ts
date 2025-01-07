@@ -82,6 +82,7 @@
 				let cachedHtml = '';
 				let height = 0;
 				let blockId = '';
+				let player;
 
 				win.off('message resize');
 
@@ -137,6 +138,23 @@
 
 						if (insertBeforeLoad) {
 							insertHtml(html);
+						};
+
+						if (processor == Processor.Youtube) {
+							window.onYouTubeIframeAPIReady = () => {
+								player = new YT.Player('player', {
+									events: {
+										onReady,
+										onStateChange,
+									}
+								});
+							};
+
+							const onReady = (event) => {
+							};
+
+							const onStateChange = (event) => {
+							};
 						};
 
 						loadLibs(libs, () => {
@@ -258,6 +276,10 @@
 							libs.push('https://cpwebassets.codepen.io/assets/embed/ei.js');
 							break;
 						};
+
+						case Processor.Youtube:
+							libs.push('https://www.youtube.com/iframe_api');
+							break;
 					};
 
 					return { 

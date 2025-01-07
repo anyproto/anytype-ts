@@ -131,6 +131,10 @@ class Block implements I.Block {
 		return this.isLink() || this.isBookmark() || this.isFile() || this.isText() || this.isDataview();
 	};
 
+	canContextMenu(): boolean {
+		return !this.isSystem() && !this.isTable() && !this.isDataview() && !this.isCover() && !this.isChat();
+	};
+
 	isSystem () {
 		return this.isPage() || this.isLayout();
 	};
@@ -169,6 +173,10 @@ class Block implements I.Block {
 
 	isChat (): boolean {
 		return this.type == I.BlockType.Chat;
+	};
+
+	isCover (): boolean {
+		return this.type == I.BlockType.Cover;
 	};
 
 	isRelation (): boolean {
@@ -217,10 +225,6 @@ class Block implements I.Block {
 
 	isLayoutHeader (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Header);
-	};
-
-	isLayoutFooter (): boolean {
-		return this.isLayout() && (this.content.style == I.LayoutStyle.Footer);
 	};
 
 	isLayoutTableRows (): boolean {

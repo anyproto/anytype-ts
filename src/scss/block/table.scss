@@ -68,7 +68,7 @@
 			.handleColumn { display: block; border-color: var(--color-system-accent-100); }
 		}
 		
-		.row { display: grid; position: relative; border-right: 1px solid var(--color-shape-primary); }
+		.row { display: grid; position: relative; border-right: 1px solid var(--color-shape-primary); background-color: var(--color-shape-primary); }
 		.row:first-child { border-radius: 4px 4px 0px 0px; }
 		.row:last-child { border-bottom: 1px solid var(--color-shape-primary); border-radius: 0px 0px 4px 4px; }
 

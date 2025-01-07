@@ -68,7 +68,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 	onOffload (e: any) {
 		const { setLoading } = this.props;
 		const suffix = this.getSuffix();
-		const isLocalOnly = U.Data.isLocalOnly();
+		const isLocalNetwork = U.Data.isLocalNetwork();
 
 		analytics.event('ScreenFileOffloadWarning');
 
@@ -76,8 +76,8 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 			data: {
 				title: translate('commonAreYouSure'),
 				text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
-				textConfirm: isLocalOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
-				canCancel: isLocalOnly,
+				textConfirm: isLocalNetwork ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
+				canCancel: isLocalNetwork,
 				textCancel: translate('popupSettingsDataRemoveFiles'),
 				onConfirm: () => {
 					setLoading(true);
@@ -93,7 +93,6 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 						S.Popup.open('confirm',{
 							data: {
 								title: translate('popupSettingsDataFilesOffloaded'),
-								//text: U.Common.sprintf('Files: %s, Size: %s', message.files, U.File.size(message.bytes)),
 								textConfirm: translate('commonOk'),
 								canCancel: false,
 							}
@@ -112,7 +111,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 	};
 
 	getSuffix () {
-		return U.Data.isLocalOnly() ? 'LocalOnly' : '';
+		return U.Data.isLocalNetwork() ? 'LocalOnly' : '';
 	};
 
 });

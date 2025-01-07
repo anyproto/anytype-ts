@@ -23,7 +23,6 @@
 	"commonHome": "Home",
 	"commonSubmit": "Submit",
 	"commonValue": "Value",
-	"commonProgress": "Processing...",
 	"commonArchived": "Object is in the bin",
 	"commonEmpty": "Empty",
 	"commonBack": "Back",
@@ -34,6 +33,7 @@
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
 	"commonGraph": "Graph",
+	"commonChat": "Chat",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
 	"commonAllContent": "All Objects",
@@ -90,6 +90,7 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
+	"commonDates": "Dates",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
@@ -101,6 +102,7 @@
 	"commonMoveTo": "Move to",
 	"commonLinkTo": "Add Link to Object",
 	"commonUpload": "Upload",
+	"commonLoad": "Load",
 	"commonDownload": "Download",
 	"commonAscending": "Ascending",
 	"commonDescending": "Descending",
@@ -168,8 +170,13 @@
 	"commonNothingFound": "Nothing found",
 	"commonEntrySpace": "My First Space",
 	"commonSystem": "System",
-	"commonMainChat": "Main сhat",
+	"commonProgress": "Progress",
+	"commonMainChat": "Chat",
 	"commonMenu": "Menu",
+	"commonSignUp": "Sign Up",
+	"commonNotFound": "Not found",
+	"commonCalculate": "Calculate",
+	"commonRelations": "Relations",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -214,11 +221,13 @@
 	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
-	"electronMenuDirectory": "Show Directory",
-	"electronMenuWorkDirectory": "Work",
-	"electronMenuDataDirectory": "Data",
-	"electronMenuConfigDirectory": "Config",
-	"electronMenuLogsDirectory": "Logs",
+	"electronMenuOpen": "Open",
+	"electronMenuApplyCustomCss": "Apply custom CSS",
+	"electronMenuWorkDirectory": "Work directory",
+	"electronMenuDataDirectory": "Data directory",
+	"electronMenuConfigDirectory": "Config directory",
+	"electronMenuLogsDirectory": "Logs directory",
+	"electronMenuCustomCss": "Custom CSS",
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
 	"electronMenuSaveAs": "Export Object",
@@ -229,6 +238,8 @@
 	"electronMenuDebugTree": "Tree diagnostics",
 	"electronMenuDebugStat": "Statistics",
 	"electronMenuDebugReconcile": "Reconcile",
+	"electronMenuDebugNet": "Network",
+	"electronMenuDebugLog": "Export log",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -264,7 +275,7 @@
 	"electronMenuFlags": "Flags",
 	"electronMenuDevTools": "Dev Tools",
 	"electronMenuVersion": "Version",
-	"electronMenuOpen": "Open Anytype",
+	"electronMenuOpenApp": "Open Anytype",
 	"electronMenuLanguage": "Interface Language",
 	"electronMenuFlagAnalytics": "Analytics",
 	"electronMenuFlagMw": "Middleware",
@@ -322,12 +333,14 @@
 	"viewName4": "Calendar",
 	"viewName5": "Graph",
 
-	"progress0": "Copying files %s\/%s",
-	"progress1": "Import in progress",
-	"progress2": "Export in progress",
-	"progress3": "Download in progress",
-	"progress4": "Recovering vault",
-	"progress5": "Migration in progress",
+
+	"progressDropFiles": "Copying files...",
+	"progressImport": "Import in progress...",
+	"progressExport": "Export in progress...",
+	"progressSaveFile": "Download in progress...",
+	"progressMigration": "Recovering vault...",
+	"progressRecoverAccount": "Migration in progress...",
+	"progressUpdate": "Update...",
 	"progressUpdateCheck": "Checking for update...",
 
 	"spellcheckAdd": "Add to dictionary",
@@ -474,6 +487,8 @@
 	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
 	"pageMainVoidCreateSpace": "Create space",
 
+	"pageMainDateEmptyText" : "There is nothing here for this date yet",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 	"pageAuthLoginShortPhrase": "Key is too short",
 
@@ -536,6 +551,7 @@
 	"blockNameTableOfContents": "Table of Contents",
 	"blockNameSet": "Inline set",
 	"blockNameCollection": "Inline Collection",
+	"blockNameDate": "Date",
 
 	"blockTextParagraph": "Write a plain text",
 	"blockTextHeader1": "Big headline of a chapter, paragraph or section",
@@ -570,6 +586,7 @@
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
 	"blockTextPlain": "Plain Text",
+	"blockTextDate": "Mention a date in editor",
 
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
@@ -606,8 +623,8 @@
 	"blockDataviewHeadMenuChange": "Change source %s",
 	"blockDataviewHeadMenuOpen": "Open source %s",
 
-	"blockDataviewBoardRelationDeletedTitle": "Relation has been deleted",
-	"blockDataviewBoardRelationDeletedDescription": "Choose another Relation to group your Kanban",
+	"blockDataviewBoardRelationDeletedTitle": "No Relation",
+	"blockDataviewBoardRelationDeletedDescription": "Choose Relation to group your Kanban",
 	"blockDataviewBoardOpenViewMenu": "Open View menu",
 
 	"blockDataviewBoardColumnSettings": "Column settings",
@@ -721,9 +738,12 @@
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
 	"popupSettingsPersonalRelativeDates": "Display relative dates",
+	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionApp": "App Appearance",
+	"popupSettingsPersonalSectionDateTime": "Date & Time",
+	"popupSettingsPersonalTimeFormat": "Time format",
 
 	"popupSettingsColorMode": "Color mode",
 	"popupSettingsColorModeButtonLight": "Light",
@@ -779,7 +799,7 @@
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
 	"popupSettingsSpaceIndexInfoLabel": "Encrypted & local-first",
 
-	"popupSettingsSpaceIndexShareShareTitle": "Share space",
+	"popupSettingsSpaceIndexShareShareTitle": "Share Space",
 	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
 	"popupSettingsSpaceIndexShareDefaultText": "Entry space can’t be shared. Create a new one to share",
 	"popupSettingsSpaceIndexShareInviteText": "Generate invite link and share the space with other members",
@@ -1073,8 +1093,11 @@
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
 	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?",
 
-	"popupConfirmChatDeleteMessageTitle": "Delete message",
-	"popupConfirmChatDeleteMessageText": "Are you sure you want to delete this message?",
+	"popupConfirmChatDeleteMessageTitle": "Delete this message?",
+	"popupConfirmChatDeleteMessageText": "It cannot be restored after confirmation",
+
+	"popupConfirmSpeedLimitTitle": "Hold up! Turbo typing detected!",
+	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1164,6 +1187,7 @@
 	"popupShortcutMainBasics19": "Open the Quick Capture menu",
 	"popupShortcutMainBasics20": "Switch to the next/previous Space",
 	"popupShortcutMainBasics21": "Switch color mode (light/dark)",
+	"popupShortcutMainBasics22": "Lock the app with a PIN code",
 	"popupShortcutMainStructuring": "Structuring",
 	"popupShortcutMainStructuring1": "Create a new text block",
 	"popupShortcutMainStructuring2": "Create a line break within a block of text",
@@ -1386,7 +1410,7 @@
 	"menuBlockRelationEditSelectRelationType": "Select Relation Type",
 	"menuBlockRelationEditAddObjectType": "Add Object Type",
 	"menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
-	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
+	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
 	"menuBlockRelationViewFeaturedRelations": "Featured Relations",
 	"menuBlockRelationViewInThisObject": "In this Object",
@@ -1422,11 +1446,6 @@
 
 	"menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
 
-	"menuDataviewDateDateFormat": "Date format",
-	"menuDataviewDateTimeFormat": "Time format",
-	"menuDataviewDate12Hour": "12 hour",
-	"menuDataviewDate24Hour": "24 hour",
-
 	"menuDataviewFileValuesFindAFile": "Find a file...",
 
 	"menuDataviewFilterValuesChecked": "Checked",
@@ -1459,7 +1478,7 @@
 	"menuDataviewRelationEditHideRelation": "Hide Relation",
 	"menuDataviewRelationEditAddObjectType": "Add Object type",
 	"menuDataviewRelationEditFilterObjectTypes": "Filter Object types...",
-	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
+	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
 	"menuDataviewSortNoSortsApplied": "No sorts applied to this View",
 	"menuDataviewSortNewSort": "New sort",
@@ -1515,6 +1534,7 @@
 	"menuHelpTutorial": "Help and Tutorials",
 	"menuHelpContact": "Contact Us",
 	"menuHelpTech": "Technical Information",
+	"menuHelpNet": "Network Information",
 	"menuHelpTerms": "Terms of Use",
 	"menuHelpPrivacy": "Privacy Policy",
 	"menuHelpGallery": "ANY Experience Gallery",
@@ -1606,6 +1626,10 @@
 	"menuSyncStatusEmptyLocal": "Your Vault is currently in local-only mode, so your data isn't being synced to Anytype nodes.",
 	"menuSyncStatusEmpty": "There are no objects to show",
 
+	"menuPublishTitle": "Publish to web",
+	"menuPublishLabel": "Join Space Button",
+	"menuPublishButton": "Publish",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
@@ -1657,6 +1681,8 @@
 	"toastSetDefaultTemplate": "This Template was Set as default",
 
 	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
+
+	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
 
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
@@ -1771,8 +1797,6 @@
 
 	"phrasePlaceholder": "Please enter your Key",
 
-	"navigationAccount": "Spaces",
-
 	"spaceAccessType0": "Private Space",
 	"spaceAccessType1": "Entry Space",
 	"spaceAccessType2": "Shared Space",
@@ -1847,6 +1871,22 @@
 	"onboardingObjectCreationStart21": "<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu.",
 	"onboardingObjectCreationStart2Button": "I got it!",
 
+	"emailCollectionStep0Title": "Want to stay in touch?",
+	"emailCollectionStep0Description": "Enter your email to receive tips and updates. We do not link your account with your email, ever. Cancel anytime.",
+	"emailCollectionStep1Title": "Just a moment",
+	"emailCollectionStep1Description": "Enter the code we’ve sent you to your email",
+	"emailCollectionStep2Title": "You’re Subscribed!",
+
+	"emailCollectionStep2News": "You are now set to receive the latest updates. Enjoy exploring!",
+	"emailCollectionStep2Tips": "You are now set to receive new insights. Enjoy exploring!",
+	"emailCollectionStep2NewsAndTips": "You are now set to receive the latest updates and perks. Enjoy exploring!",
+
+	"emailCollectionCheckboxTipsLabel": "Insider tips & tutorials on using Anytype",
+	"emailCollectionCheckboxNewsLabel": "Product updates & company news",
+	"emailCollectionEnterEmail": "Enter email...",
+	"emailCollectionCodeSent": "Code sent!",
+	"emailCollectionGreat": "Great!",
+
 	"onboardingObjectCreationFinish": "Creating Objects",
 	"onboardingObjectCreationFinish11": "<b>For the Object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.",
 	"onboardingObjectCreationFinish1Button": "Ok! I like it",
@@ -1874,7 +1914,7 @@
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
 	"onboardingSpacesTitle": "Spaces",
-	"onboardingSpacesText": "<b>This is your Space.</b> Click here to customize its name or icon, or to securely migrate and protect your data. ",
+	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
 	"onboardingAllObjectTitle": "All Objects",
 	"onboardingAllObjectText": "<b>Everything in Anytype is an Object.</b> All objects is where all your content lives.",
 	"onboardingWidgetsTitle": "Widgets",
@@ -1905,7 +1945,6 @@
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
 	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
-	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
 
@@ -1917,6 +1956,7 @@
 	"libKeyboardAnalyticsId": "Analytics ID",
 	"libKeyboardDeviceId": "Device ID",
 	"libKeyboardTechInformation": "Tech information",
+	"libKeyboardNetInformation": "Network information",
 
 	"libRelationSmall": "Small",
 	"libRelationMedium": "Medium",
@@ -1933,7 +1973,7 @@
 	"libMenuCopyUrl": "Copy URL",
 
 	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
-	"libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
+	"libActionUninstallTypeText": "This Type will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
 	"libActionUninstallRelationTitle": "Do you want to remove Relation \"%s\"?",
 	"libActionUninstallRelationText": "This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.",
 
@@ -2134,16 +2174,18 @@
 	"notificationGalleryErrorTitle": "Something went wrong",
 	"notificationGalleryErrorText": "Oops! <b>'%s'</b> wasn't installed. Please check your Internet connection and try again or post a report in our community.",
 
-	"notificationImportErrorTitle5": "No Items to Import",
-	"notificationImportErrorText5": "There are no items to import. Please check your file type or Import selection and try again.",
-	"notificationImportErrorTitle6": "Import Canceled",
-	"notificationImportErrorText6": "The import has been canceled.",
-	"notificationImportErrorTitle7": "Import Limit Exceeded",
-	"notificationImportErrorText7": "The file exceeds the import limit of 1,000 rows or 10 columns. Please adjust your file and try again.",
-	"notificationImportErrorTitle8": "File Load Error",
-	"notificationImportErrorText8": "We couldn’t load your files. Please check your files and try again, or manually transfer the files.",
-	"notificationImportErrorTitle9": "Permission Denied",
+	"notificationImportErrorText3": "Internal error during import. Please report it to Anytype devs using Help -> Report a Bug. We will check.",
+	"notificationImportErrorText5": "No objects found in the provided Notion integration. Open Notion and check that you have added the integration to the pages you want to export. Check our FAQ for more details.",
+	"notificationImportErrorText6": "The import was canceled by the user.",
+	"notificationImportErrorText7": "The number of lines of the CSV file exceeds 1000. Try splitting the file into smaller parts.",
+	"notificationImportErrorText8": "Error when uploading a file. Check if you have enough space and try again.",
 	"notificationImportErrorText9": "We don’t have permission to import into this Anytype space.",
+	"notificationImportErrorText10": "An error occurred during HTML rendering. Check the format of your HTML file.",
+	"notificationImportErrorText11": "The imported AnyBlock file has an unsupported format. It may have been exported from an old or unsupported version of Anytype. Update it and try exporting again.",
+	"notificationImportErrorText12": "Notion API returned an internal error. Most likely something is broken on the Notion side. Try running the import again later.",
+	"notificationImportErrorText13": "Notion API returned an exceeded limits error. Wait a few minutes and try running the import again.",
+	"notificationImportErrorText14": "No objects of the required format were found in the imported archive. Make sure you have selected the correct import format, such as HTML or Markdown",
+	"notificationImportErrorText17": "No objects of the required format were found in the imported folder. Make sure you have selected the correct file format, such as HTML or Markdown",
 
 	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>'%s'</b> space",
 
@@ -2173,6 +2215,9 @@
 	"participantPermissions2": "Owner",
 	"participantPermissions3": "No access",
 
+	"relationMentions": "Mentioned in",
+	"relationCreator": "Created by",
+	
 	"spaceStatus0": "Active",
 	"spaceStatus1": "Loading",
 	"spaceStatus2": "Ok",
@@ -2199,6 +2244,43 @@
 	"networkMode1Title": "Local-only",
 	"networkMode1Text": "Don't back up; sync within local network",
 	"networkMode2Title": "Self-hosted",
-	"networkMode2Text": "Back up to your self-hosted network"
+	"networkMode2Text": "Back up to your self-hosted network",
+
+	"formulaCount": "Count",
+	"formulaPercentage": "Percentage",
+	"formulaMath": "Math",
+	"formulaDate": "Date",
+	"formulaValue": "Count values",
+	"formulaValueShort": "Values",
+	"formulaDistinct": "Count unique values",
+	"formulaDistinctShort": "Unique",
+	"formulaEmpty": "Count empty",
+	"formulaEmptyShort": "Empty",
+	"formulaNotEmpty": "Count not empty",
+	"formulaNotEmptyShort": "Not empty",
+	"formulaPercentEmpty": "Percentage empty",
+	"formulaPercentNotEmpty": "Percentage not empty",
+	"formulaSum": "Sum",
+	"formulaAverage": "Average",
+	"formulaMedian": "Median",
+	"formulaMin": "Minimum",
+	"formulaMax": "Maximum",
+	"formulaRange": "Range",
+	"formulaDateMin": "Earliest date",
+	"formulaDateMinShort": "Earliest",
+	"formulaDateMax": "Latest date",
+	"formulaDateMaxShort": "Latest",
+	"formulaDateRange": "Date range",
+	"formulaDateRangeShort": "Range",
+	"formulaCheckboxCount": "Count all",
+	"formulaCheckboxEmpty": "Count unchecked",
+	"formulaCheckboxEmptyShort": "Unchecked",
+	"formulaCheckboxNotEmpty": "Count checked",
+	"formulaCheckboxNotEmptyShort": "Checked",
+	"formulaCheckboxPercentEmpty": "Percentage unchecked",
+	"formulaCheckboxPercentNotEmpty": "Percentage checked",
+
+	"timeFormat12": "12 hour",
+	"timeFormat24": "24 hour"
 
 }
