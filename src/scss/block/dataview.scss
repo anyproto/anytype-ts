@@ -84,7 +84,7 @@
 			.editableWrap.isEmpty { min-width: 160px; }
 		}
 
-		.dataviewControls { font-weight: 500; color: var(--color-control-active); position: relative; }
+		.dataviewControls { font-weight: 500; color: var(--color-control-active); position: relative; overflow: hidden; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: 0px; }
 		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
 
