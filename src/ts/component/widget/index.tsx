@@ -236,10 +236,13 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const node = $(nodeRef.current);
-		const { x, y } = keyboard.mouse.page;
+		const element = $(`#widget-${block.id}`);
 
 		S.Menu.open('widget', {
-			rect: { width: 0, height: 0, x: x + 4, y },
+			element,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			offsetX: element.width() + 24,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			subIds: J.Menu.widget,
