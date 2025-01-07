@@ -17,7 +17,7 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	const segments = [];
 
 	if (progress) {
-		segments.push({ name: 'migrate', caption: 'Migrate', percent: progress.current / progress.total, isActive: true });
+		segments.push({ name: '', caption: '', percent: progress.current / progress.total, isActive: true });
 	};
 
 	useEffect(() => {
