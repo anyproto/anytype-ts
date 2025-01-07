@@ -309,7 +309,7 @@ const Vault = observer(class Vault extends React.Component {
 			classNameWrap: 'fromSidebar',
 			element: `#vault #item-${item.id}`,
 			vertical: I.MenuDirection.Center,
-			route: analytics.route.navigation,
+			route: analytics.route.vault,
 		});
 	};
 

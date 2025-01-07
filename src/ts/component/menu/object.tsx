@@ -87,6 +87,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	getSections () {
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, isFilePreview } = data;
@@ -113,16 +114,16 @@ class MenuObject extends React.Component<I.Menu> {
 		let template = null;
 		let setDefaultTemplate = null;
 
-		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
-		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
+		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
@@ -443,7 +444,7 @@ class MenuObject extends React.Component<I.Menu> {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
 				break;
 			};
-				
+
 			case 'pageArchive': {
 				Action.archive([ object.id ], route, () => {
 					if (onArchive) {
