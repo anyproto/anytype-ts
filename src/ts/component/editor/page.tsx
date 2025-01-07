@@ -1819,6 +1819,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		console.log(e.clipboardData || e.originalEvent.clipboardData);
+
 		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
 
 		S.Menu.closeAll([ 'blockAdd' ]);
@@ -1826,6 +1828,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!data) {
 			data = this.getClipboardData(e);
 		};
+
+		console.log(JSON.stringify(data));
+		console.log(files);
 
 		if (files.length && !data.files.length) {
 			U.Common.saveClipboardFiles(files, data, data => this.onPasteEvent(e, props, data));
@@ -1845,17 +1850,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
 
-		let url = U.Common.matchUrl(data.text);
-		let isLocal = false;
+		if (!data.html) {
+			let url = U.Common.matchUrl(data.text);
+			let isLocal = false;
 
-		if (!url) {
-			url = U.Common.matchLocalPath(data.text);
-			isLocal = true;
-		};
+			if (!url) {
+				url = U.Common.matchLocalPath(data.text);
+				isLocal = true;
+			};
 
-		if (block && url && !block.isTextTitle() && !block.isTextDescription()) {
-			this.onPasteUrl(url, isLocal);
-			return;
+			if (block && url && !block.isTextTitle() && !block.isTextDescription()) {
+				this.onPasteUrl(url, isLocal);
+				return;
+			};
 		};
 
 		let id = '';
