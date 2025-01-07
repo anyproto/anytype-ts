@@ -24,6 +24,7 @@ export default {
 		'defaultTemplateId',
 		'createdDate',
 		'timestamp',
+		'resolvedLayout',
 	],
 
 	sidebar: [
