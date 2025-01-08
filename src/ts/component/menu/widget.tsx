@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { MenuItemVertical, Button } from 'Component';
+import { MenuItemVertical, Button, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
@@ -40,16 +40,38 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const Section = item => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action, i) => (
-						<MenuItemVertical 
-							key={i} 
-							{...action} 
-							onMouseEnter={e => this.onMouseEnter(e, action)} 
-							onClick={e => this.onClick(e, action)} 
-						/>
-					))}
-				</div>
+
+				{item.options ? (
+					<div className="options">
+						{item.options.map((option, i) => {
+							const withIcon = option.icon;
+							const cn = [
+								'option',
+								item.value == option.id ? 'active' : '',
+								withIcon ? 'withIcon' : '',
+							];
+
+							return (
+								<div className={cn.join(' ')} key={i} onClick={e => this.onOptionClick(e, option, item)}>
+									{withIcon ? <Icon className={option.icon} /> : option.name}
+								</div>
+							);
+						})}
+					</div>
+				) : ''}
+
+				{item.children.length ? (
+					<div className="items">
+						{item.children.map((action, i) => (
+							<MenuItemVertical
+								key={i}
+								{...action}
+								onMouseEnter={e => this.onMouseEnter(e, action)}
+								onClick={e => this.onClick(e, action)}
+							/>
+						))}
+					</div>
+				) : ''}
 			</div>
 		);
 		
@@ -129,41 +151,33 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { isEditing } = data;
 		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || U.Menu.isSystemWidget(this.target?.id);
 
-		let sourceName = translate('menuWidgetChooseSource');
-		let layoutName = translate('menuWidgetWidgetType');
+		const sections: any[] = [{
+			id: 'layout',
+			name: translate('commonAppearance'),
+			children: [],
+			options: U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout)),
+			value: this.layout,
+		}];
 
-		if (this.target) {
-			sourceName = U.Object.name(this.target);
+		if (hasLimit) {
+			sections.push({
+				id: 'limit',
+				name: translate('menuWidgetNumberOfObjects'),
+				children: [],
+				options: U.Menu.getWidgetLimitOptions(this.layout),
+				value: this.limit,
+			});
 		};
-
-		if (this.layout !== null) {
-			layoutName = translate(`widget${this.layout}Name`);
-		};
-
-		const sections: any[] = [
-			{ 
-				id: 'source', name: translate('menuWidgetWidgetSource'), children: [
-					{ id: 'source', name: sourceName, arrow: true, object: this.target }
-				] 
-			},
-			{ 
-				id: 'layout', name: translate('commonAppearance'), children: [
-					{ id: 'layout', name: layoutName, arrow: true },
-					hasLimit ? { id: 'limit', name: translate('menuWidgetNumberOfObjects'), arrow: true, caption: this.limit } : null,
-				] 
-			},
-		];
 
 		if (isEditing) {
 			sections.push({
 				children: [
-					{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' },
-					{ id: 'edit', name: translate('menuWidgetEditWidgets'), icon: 'source' }
+					{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' }
 				],
 			});
 		};
 
-		return U.Menu.sectionsMap(sections);
+		return sections;
 	};
 
 	checkState () {
@@ -204,134 +218,49 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	onMouseEnter (e: React.MouseEvent, item): void {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
-			this.onOver(e, item);
 		};
 	};
 
-	onOver (e: React.MouseEvent, item) {
-		if (!item.arrow) {
-			S.Menu.closeAll(J.Menu.widget);
-			return;
-		};
-
-		const { getId, getSize, param, close } = this.props;
-		const { data, className, classNameWrap } = param;
+	onOptionClick (e: React.MouseEvent, option: any, section: any) {
+		const { param, close } = this.props;
+		const { data } = param;
 		const { blockId, isEditing } = data;
 		const { widgets } = S.Block;
-		const menuParam: Partial<I.MenuParam> = {
-			menuKey: item.itemId,
-			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			className,
-			classNameWrap,
-			isSub: true,
-			data: {
-				rebind: this.rebind,
-			} as any,
-		};
 
-		let menuId = '';
-
-		switch (item.itemId) {
-			case 'source': {
-				const templateType = S.Record.getTemplateType();
-				const filters: I.Filter[] = [
-					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
-				];
-
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					route: analytics.route.widget,
-					filters,
-					value: this.target ? this.target.id : '',
-					canAdd: true,
-					dataChange: (context: any, items: any[]) => {
-						const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
-						const fixed: any[] = U.Menu.getFixedWidgets().filter(it => it.name.match(reg));
-
-						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
-					},
-					onSelect: (target: any, isNew: boolean) => {
-						this.target = target;
-						this.checkState();
-						this.forceUpdate();
-						
-						if (isEditing && this.target) {
-							if (isNew) {
-								U.Object.openConfig(target);
-							};
-
-							C.BlockWidgetSetTargetId(widgets, blockId, this.target.id, () => {
-								C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
-							});
-						};
-
-						analytics.event('ChangeWidgetSource', {
-							layout: this.layout,
-							route: isEditing ? 'Inner' : 'AddWidget',
-							params: { target },
-						});
-					},
-				});
-				break;
-			};
-
+		switch (section.id) {
 			case 'layout': {
-				menuId = 'select';
-				menuParam.width = 320;
-				menuParam.data = Object.assign(menuParam.data, {
-					options: U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout)),
-					value: this.layout,
-					onSelect: (e, option) => {
-						this.layout = Number(option.id);
-						this.checkState();
-						this.forceUpdate();
-						
-						if (isEditing) {
-							C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
-						};
+				this.layout = Number(option.id);
+				this.checkState();
+				this.forceUpdate();
 
-						analytics.event('ChangeWidgetLayout', {
-							layout: this.layout,
-							route: isEditing ? 'Inner' : 'AddWidget',
-							params: { target: this.target },
-						});
-					},
+				if (isEditing) {
+					C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
+				};
+
+				analytics.event('ChangeWidgetLayout', {
+					layout: this.layout,
+					route: isEditing ? 'Inner' : 'AddWidget',
+					params: { target: this.target },
 				});
 				break;
 			};
+			case 'limit': {
+				this.limit = Number(option.id);
+				this.checkState();
+				this.forceUpdate();
 
-			case 'limit':
-				menuId = 'select';
-				menuParam.data = Object.assign(menuParam.data, {
-					options: U.Menu.getWidgetLimitOptions(this.layout),
-					value: String(this.limit || ''),
-					onSelect: (e, option) => {
-						this.limit = Number(option.id);
-						this.checkState();
-						this.forceUpdate();
-						
-						if (isEditing) {
-							C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
-						};
+				if (isEditing) {
+					C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
+				};
 
-						analytics.event('ChangeWidgetLimit', {
-							limit: this.limit,
-							layout: this.layout,
-							route: isEditing ? 'Inner' : 'AddWidget',
-							params: { target: this.target },
-						});
-					},
+				analytics.event('ChangeWidgetLimit', {
+					limit: this.limit,
+					layout: this.layout,
+					route: isEditing ? 'Inner' : 'AddWidget',
+					params: { target: this.target },
 				});
 				break;
-		};
-
-		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
-			S.Menu.closeAll(J.Menu.widget, () => {
-				S.Menu.open(menuId, menuParam);
-			});
+			};
 		};
 	};
 
@@ -347,11 +276,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		switch (item.itemId) {
 			case 'remove':
 				Action.removeWidget(blockId, target);
-				break;
-
-			case 'edit':
-				setEditing(true);
-				analytics.event('EditWidget');
 				break;
 		};
 

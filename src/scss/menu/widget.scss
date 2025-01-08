@@ -1,15 +1,29 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuWidget { width: var(--menu-width-icon); }
+	.menu.menuWidget { width: unset; }
 	.menu.menuWidget {
-		.section:last-child::after { display: none; }
+		.section::after { display: none; }
+		.section:last-child::before { content: ''; display: block; height: 1px; margin: 0px 14px 8px; background-color: var(--color-shape-secondary); }
 
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 36px); }
 		}
-		.item.withCaption {
-			.caption { @include text-common; line-height: 20px; padding-right: 16px; }
+
+		.options { display: flex; gap: 0px 8px; padding: 0px 14px; margin-bottom: 4px; }
+		.options {
+			.option { display: flex; align-items: center; justify-content: center; width: 48px; height: 32px; border-radius: 8px; border: 1px solid var(--color-shape-tertiary); }
+			.option.withIcon { height: 48px; }
+			.option {
+				.icon { width: 48px; height: 48px; flex-shrink: 0; }
+				.icon.widget-0 { background-image: url('~img/icon/menu/widget/link.svg'); }
+				.icon.widget-1 { background-image: url('~img/icon/menu/widget/tree.svg'); }
+				.icon.widget-2 { background-image: url('~img/icon/menu/widget/list.svg'); }
+				.icon.widget-3 { background-image: url('~img/icon/menu/widget/compact.svg'); }
+				.icon.widget-4 { background-image: url('~img/icon/menu/widget/view.svg'); }
+			}
+			.option:hover { background-color: var(--color-shape-highlight-light); }
+			.option.active { background-color: var(--color-shape-highlight-light); border-color: var(--color-shape-primary); }
 		}
 
 		.buttons { padding: 8px 16px 0px 16px; }
