@@ -41,6 +41,12 @@
 				img { width: 100%; height: 100%; }
 			}
 		}
+
+		.flex.isRtl {
+			.markers {
+				.marker { margin-right: 0px; margin-left: 6px; }
+			}
+		}
 	}
 
 	.block.blockText {

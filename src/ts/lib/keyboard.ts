@@ -32,6 +32,7 @@ class Keyboard {
 	isSelectionClearDisabled = false;
 	isComposition = false;
 	isCommonDropDisabled = false;
+	isRtl = false;
 	
 	init () {
 		this.unbind();
@@ -1005,6 +1006,10 @@ class Keyboard {
 
 	setComposition (v: boolean) {
 		this.isComposition = v;
+	};
+
+	setRtl (v: boolean) {
+		this.isRtl = v;
 	};
 
 	initPinCheck () {
