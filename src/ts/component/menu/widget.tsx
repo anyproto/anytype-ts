@@ -44,11 +44,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				{item.options ? (
 					<div className="options">
 						{item.options.map((option, i) => {
-							const cn = [ 'option', item.value == option.id ? 'active' : '' ];
+							const withIcon = option.icon;
+							const cn = [
+								'option',
+								item.value == option.id ? 'active' : '',
+								withIcon ? 'withIcon' : '',
+							];
 
 							return (
 								<div className={cn.join(' ')} key={i} onClick={e => this.onOptionClick(e, option, item)}>
-									{option.icon ? <Icon className={option.icon} /> : option.name}
+									{withIcon ? <Icon className={option.icon} /> : option.name}
 								</div>
 							);
 						})}
