@@ -65,7 +65,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const root = S.Block.getLeaf(rootId, rootId);
 		const cn = [ 'flex' ];
 		const cv = [ 'value', 'focusable', 'c' + id ];
-		const checkRtl = U.Common.checkRtl(text);
+		const checkRtl = keyboard.isRtl || U.Common.checkRtl(text);
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
@@ -712,6 +712,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
+
+		keyboard.setRtl(U.Common.checkRtl(value));
 
 		if (range) {
 			isAllowedMenu = isAllowedMenu && (!range.from || (range.from == 1) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
