@@ -8,24 +8,25 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data } = param;
 	const { rootId } = data;
 	const inputRef = useRef(null);
+	const space = U.Space.getSpaceview();
 	const object = S.Detail.get(rootId, rootId, []);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const participant = U.Space.getMyParticipant();
 	const domain = U.Common.sprintf(J.Url.publish, participant.resolvedName);
 	const items = [
-		{ 
+		(!space.isPersonal ? { 
 			id: 'space', name: translate('popupSettingsSpaceIndexShareShareTitle'), onClick: () => {
 				S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
 				close();
 			},
-		},
+		} : null),
 		{ 
 			id: 'export', name: translate('popupExportTitle'), onClick: () => {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
 				close();
 			},
 		},
-	];
+	].filter(it => it);
 
 	const onPublish = () => {
 		setIsLoading(true);
