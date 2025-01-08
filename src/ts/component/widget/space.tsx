@@ -13,7 +13,7 @@ const WidgetSpace = observer(forwardRef<I.WidgetComponent>(() => {
 	const cn = [ 'body' ];
 	const cmd = keyboard.cmdSymbol();
 	const buttons = [
-		U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
+		space.chatId && U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
 		space.isShared ? { id: 'member', name: translate('commonMembers') } : null,
 		{ id: 'all', name: translate('commonAllContent') },
 	].filter(it => it);
