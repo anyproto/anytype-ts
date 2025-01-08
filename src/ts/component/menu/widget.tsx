@@ -22,6 +22,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		this.save = this.save.bind(this);
 		this.rebind = this.rebind.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 
 		if (isEditing) {
 			this.layout = layout;
@@ -67,6 +68,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 								key={i}
 								{...action}
 								onMouseEnter={e => this.onMouseEnter(e, action)}
+								onMouseLeave={this.onMouseLeave}
 								onClick={e => this.onClick(e, action)}
 							/>
 						))}
@@ -219,6 +221,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
+	};
+
+	onMouseLeave () {
+		$(this.node).find('.hover').removeClass('hover');
 	};
 
 	onOptionClick (e: React.MouseEvent, option: any, section: any) {
