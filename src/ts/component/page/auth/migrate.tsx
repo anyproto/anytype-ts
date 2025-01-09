@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Error, ProgressBar } from 'Component';
-import { I, C, S, U, Storage } from 'Lib';
+import { Frame, Error, ProgressBar, Button } from 'Component';
+import { I, C, S, U, Storage, translate } from 'Lib';
 
 const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -15,6 +15,14 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 
 	if (progress) {
 		segments.push({ name: '', caption: '', percent: progress.current / progress.total, isActive: true });
+	};
+
+	const onCancel = () => {
+		C.AccountMigrateCancel(accountId, (message: any) => {
+			if (message.error.code) {
+				setError(message.error.description);
+			};
+		});
 	};
 
 	useEffect(() => {
@@ -34,6 +42,7 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		<Frame>
 			<Error text={error} />
 			<ProgressBar segments={segments} />
+			<Button text={translate('commonCancel')} onClick={onCancel} />
 		</Frame>
 	);
 

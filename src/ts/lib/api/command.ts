@@ -204,6 +204,14 @@ export const AccountMigrate = (id: string, path: string, callBack?: (message: an
 	dispatcher.request(AccountMigrate.name, request, callBack);
 };
 
+export const AccountMigrateCancel = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.MigrateCancel.Request();
+
+	request.setId(id);
+
+	dispatcher.request(AccountMigrateCancel.name, request, callBack);
+};
+
 export const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Stop.Request();
 
