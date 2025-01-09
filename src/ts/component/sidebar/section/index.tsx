@@ -52,7 +52,7 @@ const SidebarSectionIndex = observer(class SidebarSectionIndex extends React.Com
 			<div 
 				id={id.join('-')}
 				className={cn.join(' ')}
-				draggable={!!onDragStart}
+				draggable={!readonly && !!onDragStart}
 				onDragStart={onDragStart}
 			>
 				{Component ? (
