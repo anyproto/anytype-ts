@@ -145,7 +145,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltip={translate('commonRelations')}
 						tooltipCaption={`${cmd} + Shift + R`}
 						className="relation withBackground"
-						onClick={() => onRelation({ readonly: object.isArchived })} 
+						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
 					/> 
 				) : ''}
 
