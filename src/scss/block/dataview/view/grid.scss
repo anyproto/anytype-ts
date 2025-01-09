@@ -4,6 +4,7 @@
 	.block.blockDataview {
 		.rowHead, .rowFoot, #rowHeadClone { display: grid; white-space: nowrap; height: 36px; }
 
+		.rowHead { user-select: none; }
 		.rowHead, .rowFoot { width: calc(100% - 4px); margin-left: 2px; }
 		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }
 
