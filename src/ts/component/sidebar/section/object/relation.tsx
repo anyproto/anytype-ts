@@ -27,7 +27,9 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 
 		const object = S.Detail.get(rootId, rootId, [ relation.relationKey ]);
 		const id = Relation.cellId(PREFIX, relation.relationKey, rootId);
-		const cn = [ 'cell', Relation.className(relation.format) ];
+		const rc = Relation.className(relation.format);
+		const cw = [ 'wrap', rc ];
+		const cn = [ 'cell', rc ];
 		const readonly = this.props.readonly || root.isLocked();
 		const canEdit = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const container = [ 
@@ -40,7 +42,7 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 		};
 
         return (
-			<div className="wrap">
+			<div className={cw.join(' ')}>
 				<div className="name">{relation.name}</div>
 
 				<div 
