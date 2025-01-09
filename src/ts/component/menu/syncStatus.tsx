@@ -92,11 +92,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const rowRenderer = ({ index, key, style, parent }) => {
 			const item = items[index];
 
+			console.log(item);
+
 			let content = null;
 			if (item.isSection) {
 				content = (
 					<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
-						{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}
+						{item.name}
 					</div>
 				);
 			} else {
