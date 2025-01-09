@@ -17,14 +17,17 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		const cn = [];
 		const withArrow = arrow || subComponent;
 
-		isDiv ? cn.push('separator') : cn.push('item');
-		
+		if (isDiv) {
+			cn.push('separator');
+		} else 
 		if (isSection) {
 			cn.push('sectionName');
 
 			if (!index) {
 				cn.push('first');
 			};
+		} else {
+			cn.push('item');
 		};
 
 		let hasClick = true;
