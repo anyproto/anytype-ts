@@ -65,53 +65,33 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			const type = S.Record.getTypeById(item.type);
 			const checkbox = value && value.length && value.includes(item.id);
 			const cn = [];
+			const props = {
+				...item,
+				object: (item.isAdd || item.isSection ? undefined : item),
+			};
 
-			let content = null;
+			if (item.isAdd) {
+				cn.push('add');
+				props.isAdd = true;
+			};
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
 
-			if (item.isSection) {
-				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			if (isBig && !item.isAdd) {
+				props.withDescription = true;
+				props.iconSize = 40;
 			} else {
-				const props = {
-					...item,
-					object: (item.isAdd ? undefined : item),
-				};
+				props.caption = (type ? type.name : undefined);
+			};
 
-				if (item.isAdd) {
-					cn.push('add');
-					props.isAdd = true;
-				};
-				if (item.isHidden) {
-					cn.push('isHidden');
-				};
+			if (undefined !== item.caption) {
+				props.caption = item.caption;
+			};
 
-				if (isBig && !item.isAdd) {
-					props.withDescription = true;
-					props.iconSize = 40;
-				} else {
-					props.caption = (type ? type.name : undefined);
-				};
-
-				if (undefined !== item.caption) {
-					props.caption = item.caption;
-				};
-
-				if (noIcon) {
-					props.object = undefined;
-				};
-
-				content = (
-					<MenuItemVertical
-						{...props}
-						name={<ObjectName object={item} />}
-						onMouseEnter={e => this.onMouseEnter(e, item)}
-						onClick={e => this.onClick(e, item)}
-						onMore={onMore ? e => onMore(e, item) : undefined}
-						style={param.style}
-						checkbox={checkbox}
-						className={cn.join(' ')}
-					/>
-				);
-			}
+			if (noIcon) {
+				props.object = undefined;
+			};
 
 			return (
 				<CellMeasurer
@@ -121,7 +101,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					{content}
+					<MenuItemVertical
+						{...props}
+						index={param.index}
+						name={<ObjectName object={item} />}
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onClick={e => this.onClick(e, item)}
+						onMore={onMore ? e => onMore(e, item) : undefined}
+						style={param.style}
+						checkbox={checkbox}
+						className={cn.join(' ')}
+					/>
 				</CellMeasurer>
 			);
 		};

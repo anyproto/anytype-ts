@@ -1141,54 +1141,52 @@ class UtilData {
 		const yesterday = now - U.Date.timestamp(y, m, d - 1);
 		const lastWeek = now - U.Date.timestamp(y, m, d - 7);
 		const lastMonth = now - U.Date.timestamp(y, m - 1, d);
-		const groups = {
-			today: [],
-			yesterday: [],
-			lastWeek: [],
-			lastMonth: [],
-			older: []
-		};
+		const groups = {};
+		const ids = [ 'today', 'yesterday', 'lastWeek', 'lastMonth', 'older' ];
 
-		const groupNames = [ 'today', 'yesterday', 'lastWeek', 'lastMonth', 'older' ];
 		if (dir == I.SortType.Asc) {
-			groupNames.reverse();
+			ids.reverse();
 		};
 
-		let groupedRecords = [];
+		ids.forEach(id => groups[id] = []);
 
-		if (!sectionTemplate) {
-			sectionTemplate = {};
-		};
-
+		let ret = [];
 		records.forEach((record) => {
 			const diff = now - record[key];
+
+			let id = '';
 			if (diff < today) {
-				groups.today.push(record);
+				id = 'today';
 			} else
 			if (diff < yesterday) {
-				groups.yesterday.push(record);
+				id = 'yesterday';
 			} else
 			if (diff < lastWeek) {
-				groups.lastWeek.push(record);
+				id = 'lastWeek';
 			} else
 			if (diff < lastMonth) {
-				groups.lastMonth.push(record);
+				id = 'lastMonth';
 			} else {
-				groups.older.push(record);
+				id = 'older';
 			};
+			groups[id].push(record);
 		});
 
-		groupNames.forEach((name) => {
-			if (groups[name].length) {
-				groupedRecords.push(Object.assign({ id: name, isSection: true }, sectionTemplate));
+		ids.forEach(id => {
+			if (groups[id].length) {
+				ret.push(Object.assign({
+					id, 
+					name: translate(U.Common.toCamelCase([ 'common', id ].join('-'))),
+					isSection: true,
+				}, sectionTemplate || {}));
+
 				if (dir) {
-					groups[name] = groups[name].sort((c1, c2) => U.Data.sortByNumericKey(key, c1, c2, dir));
+					groups[id] = groups[id].sort((c1, c2) => U.Data.sortByNumericKey(key, c1, c2, dir));
 				};
-				groupedRecords = groupedRecords.concat(groups[name]);
+				ret = ret.concat(groups[id]);
 			};
 		});
-
-		return groupedRecords;
+		return ret;
 	};
 
 	getLinkBlockParam (id: string, layout: I.ObjectLayout, allowBookmark?: boolean) {
