@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, U, sidebar, translate } from 'Lib';
+import { I, S, U, sidebar, translate, keyboard } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 
@@ -51,6 +51,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 									object={object}
 									item={item} 
 									readonly={readonly}
+									onDragStart={e => this.onDragStart(e, item)}
 								/>
 							))}
 						</React.Fragment>
@@ -101,6 +102,19 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	onSetUp () {
 		const object = this.getObject();
 		sidebar.rightPanelSetState({ page: 'type', rootId: object.type });
+	};
+
+	onDragStart (e: any, item: any) {
+		console.log('onDragStart', item);
+
+		e.stopPropagation();
+
+		const dragProvider = S.Common.getRef('dragProvider');
+		const selection = S.Common.getRef('selectionProvider');
+
+		keyboard.disableSelection(true);
+		selection?.clear();
+		dragProvider?.onDragStart(e, I.DropType.Relation, [ item.id ], this);
 	};
 
 });

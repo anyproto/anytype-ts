@@ -57,11 +57,12 @@ class Sidebar {
 	};
 
 	initObjects () {
+		const isPopup = keyboard.isPopup();
 		const vault = S.Common.getRef('vault');
 
 		this.objLeft = $('#sidebarLeft');
 		this.objRight = $('#sidebarRight');
-		this.page = U.Common.getPageContainer(keyboard.isPopup());
+		this.page = $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');

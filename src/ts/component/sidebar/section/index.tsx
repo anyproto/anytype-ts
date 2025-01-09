@@ -33,18 +33,28 @@ const SidebarSectionIndex = observer(class SidebarSectionIndex extends React.Com
 	ref = null;
 
     render () {
-		const { component } = this.props;
+		const { component, item, onDragStart } = this.props;
 		const object = this.getObject();
-		const Component = Components[component];
-		const cn = [ 'section', U.Common.toCamelCase(component.replace(/\//g, '-')) ];
-		const readonly = this.isReadonly();
-
 		if (!object) {
 			return null;
 		};
 
+		const Component = Components[component];
+		const cn = [ 'section', U.Common.toCamelCase(component.replace(/\//g, '-')) ];
+		const readonly = this.isReadonly();
+		const id = [ 'section' ].concat(component.split('/'));
+
+		if (item) {
+			id.push(item.id);
+		};
+
         return (
-			<div className={cn.join(' ')}>
+			<div 
+				id={id.join('-')}
+				className={cn.join(' ')}
+				draggable={!!onDragStart}
+				onDragStart={onDragStart}
+			>
 				{Component ? (
 					<Component 
 						ref={ref => this.ref = ref} 

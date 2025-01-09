@@ -199,6 +199,7 @@ export interface SidebarSectionComponent extends SidebarPageComponent {
 	item?: any;
 	readonly?: boolean;
 	onChange?(update: any): void;
+	onDragStart?: (e: React.DragEvent) => void;
 };
 
 export enum SurveyType {

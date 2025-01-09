@@ -725,38 +725,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 		};
 
-		if (ret) {
-			return;
-		};
-
-		if (menuId) {
+		if (!ret && menuId) {
 			this.onCellMenu(relationKey, menuId, menuParam, menuData);
-		} else {
-			const param: Partial<I.MenuParam> = {
-				element: '#header',
-				horizontal: I.MenuDirection.Right,
-				noFlipY: true,
-				noAnimation: true,
-				subIds: J.Menu.cell,
-				onOpen: (component: any) => {
-					if (component && component.ref) {
-						component.ref.onCellClick(e, relationKey);
-						component.ref.scrollTo(relationKey);
-					};
-				},
-				onClose: () => S.Menu.closeAll(),
-				data: {
-					relationKey,
-					rootId,
-				},
-			};
-
-			if (!isPopup) {
-				param.fixedY = J.Size.header;
-				param.classNameWrap = 'fixed fromHeader';
-			};
-
-			S.Menu.closeAll(null, () => S.Menu.open('blockRelationView', param));
 		};
 	};
 

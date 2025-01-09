@@ -645,17 +645,17 @@ class UtilCommon {
 	};
 
 	getPageContainer (isPopup: boolean) {
-		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
+		return $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
 	};
 
 	getCellContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
-				return '#page.isFull';
+				return '#pageFlex.isFull';
 
 			case 'popup':
-				return '#popupPage-innerWrap';
+				return '#pageFlex.isPopup';
 
 			case 'menuBlockAdd':
 			case 'menuBlockRelationView':

@@ -17,8 +17,7 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 	};
 
     render () {
-		const { rootId, isPopup } = this.props;
-		const relation = this.props.item;
+		const { rootId, isPopup, item: relation, onDragStart } = this.props;
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!relation || !root) {

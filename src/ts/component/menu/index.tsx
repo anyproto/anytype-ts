@@ -117,7 +117,6 @@ const Components: any = {
 	blockLinkSettings:		 MenuBlockLinkSettings,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
-	blockRelationView:		 MenuBlockRelationView,
 
 	relationSuggest:		 MenuRelationSuggest,
 	typeSuggest:			 MenuTypeSuggest,
