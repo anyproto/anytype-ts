@@ -839,7 +839,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 					case 'relation': {
 						$('#button-header-relation').trigger('click');
-						window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), S.Menu.getTimeout() * 2);
 						break;
 					};
 

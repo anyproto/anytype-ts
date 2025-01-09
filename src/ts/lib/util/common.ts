@@ -658,7 +658,6 @@ class UtilCommon {
 				return '#pageFlex.isPopup';
 
 			case 'menuBlockAdd':
-			case 'menuBlockRelationView':
 				return `#${type}`;
 
 			case 'popupRelation':

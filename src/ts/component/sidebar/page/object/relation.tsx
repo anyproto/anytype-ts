@@ -80,11 +80,11 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 		const sections = [
 			{ 
-				id: 'object', name: translate('menuBlockRelationViewInThisObject'),
+				id: 'object', name: translate('sidebarRelationInThisObject'),
 				children: items,
 			},
 			{
-				id: 'conflicts', name: translate('menuBlockRelationViewConflictingRelations'),
+				id: 'conflicts', name: translate('sidebarRelationConflicting'),
 				children: conflicts,
 			}
 		];
