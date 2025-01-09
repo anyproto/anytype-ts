@@ -11,13 +11,24 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		const { 
 			icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore,
 			className, style, iconSize, switchValue, selectValue, options, readonly, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
-			selectMenuParam, subComponent, note, sortArrow, isDiv,
+			selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index
 		} = this.props;
 		const id = this.props.id || '';
 		const cn = [];
 		const withArrow = arrow || subComponent;
 
-		isDiv ? cn.push('separator') : cn.push('item');
+		if (isDiv) {
+			cn.push('separator');
+		} else 
+		if (isSection) {
+			cn.push('sectionName');
+
+			if (!index) {
+				cn.push('first');
+			};
+		} else {
+			cn.push('item');
+		};
 
 		let hasClick = true;
 		let iconMainElement = null;
@@ -98,6 +109,9 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		let content = null;
 		if (isDiv) {
 			content = <div className="inner" />;
+		} else
+		if (isSection) {
+			content = name;
 		} else
 		if (withDescription) {
 			content = (

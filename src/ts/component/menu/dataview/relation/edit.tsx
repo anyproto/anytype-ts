@@ -41,6 +41,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		let opts = null;
+		let name = '';
+
+		if (relation) {
+			name = relation.name;
+		} else 
+		if (data.filter) {
+			name = data.filter;
+		};
 
 		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
 			const length = this.objectTypes.length;
@@ -100,7 +108,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						<div className="inputWrap">
 							<Input 
 								ref={ref => this.ref = ref} 
-								value={relation ? relation.name : ''} 
+								value={name} 
 								onChange={this.onChange}
 								onMouseEnter={this.menuClose}
 							/>

@@ -96,6 +96,8 @@ export interface MenuItem {
 	selectMenuParam?: any;
 	isActive?: boolean;
 	isDiv?: boolean;
+	isSection?: boolean;
+	index?: number;
 	withDescription?: boolean;
 	withSwitch?: boolean;
 	withSelect?: boolean;
