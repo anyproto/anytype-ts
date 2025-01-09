@@ -150,7 +150,7 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
 	onBanner?: (e: any) => void;
 	onBannerClose?: (e: any) => void;
-	onRelation?: (param?: Partial<I.MenuParam>, data?: any) => void;
+	onRelation?: (data?: any) => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {

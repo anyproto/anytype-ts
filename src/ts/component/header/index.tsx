@@ -147,33 +147,8 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
 	};
 
-	const onRelation = (param?: Partial<I.MenuParam>, data?: any) => {
-		/*
-		param = param || {};
-		data = data || {};
-
-		const cnw = [ 'fixed' ];
-
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		menuOpen('blockRelationView', '#button-header-relation', {
-			noFlipX: true,
-			noFlipY: true,
-			horizontal: I.MenuDirection.Right,
-			subIds: J.Menu.cell,
-			classNameWrap: cnw.join(' '),
-			...param,
-			data: {
-				isPopup,
-				rootId,
-				...data,
-			},
-		});
-		*/
-
-		sidebar.rightPanelToggle(!S.Common.getShowSidebarRight(isPopup), isPopup, 'object/relation', { rootId });
+	const onRelation = (data) => {
+		sidebar.rightPanelToggle(!S.Common.getShowSidebarRight(isPopup), isPopup, 'object/relation', { ...data, rootId });
 	};
 
 	const getContainer = () => {

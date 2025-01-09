@@ -96,10 +96,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		});
 	};
 
-	const onRelationHandler = () => {
-		onRelation({}, { readonly: object.isArchived });
-	};
-
 	const updateTemplatesCnt = () => {
 		if (!allowedTemplateSelect || !object.type) {
 			return;
@@ -149,7 +145,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltip={translate('commonRelations')}
 						tooltipCaption={`${cmd} + Shift + R`}
 						className="relation withBackground"
-						onClick={onRelationHandler} 
+						onClick={() => onRelation({ readonly: object.isArchived })} 
 					/> 
 				) : ''}
 

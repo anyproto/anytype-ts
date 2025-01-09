@@ -13,6 +13,7 @@ interface State {
 	page: string;
 	rootId: string;
 	details: any;
+	readonly: boolean;
 };
 
 const Components = {
@@ -28,6 +29,7 @@ const SidebarRight = observer(class SidebarRight extends React.Component<Props, 
 		page: '',
 		rootId: '',
 		details: {},
+		readonly: false,
 	};
 
     render () {
@@ -38,7 +40,7 @@ const SidebarRight = observer(class SidebarRight extends React.Component<Props, 
 			return null;
 		};
 
-		const { page, rootId, details } = this.state;
+		const { page, rootId, details, readonly } = this.state;
 		const Component = Components[page];
 		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 
@@ -55,6 +57,7 @@ const SidebarRight = observer(class SidebarRight extends React.Component<Props, 
 							{...this.props} 
 							rootId={rootId}
 							details={details}
+							readonly={readonly}
 						/> 
 					</div>
 				): ''}

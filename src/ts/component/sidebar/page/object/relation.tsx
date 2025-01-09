@@ -20,6 +20,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const { rootId } = this.props;
 		const object = this.getObject();
 		const sections = this.getSections();
+		const readonly = this.props.readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 
         return (
 			<>
@@ -49,6 +50,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 									rootId={rootId}
 									object={object}
 									item={item} 
+									readonly={readonly}
 								/>
 							))}
 						</React.Fragment>
