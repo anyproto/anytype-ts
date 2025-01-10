@@ -57,11 +57,12 @@ class Sidebar {
 	};
 
 	initObjects () {
+		const isPopup = keyboard.isPopup();
 		const vault = S.Common.getRef('vault');
 
 		this.objLeft = $('#sidebarLeft');
 		this.objRight = $('#sidebarRight');
-		this.page = U.Common.getPageContainer(keyboard.isPopup());
+		this.page = $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
@@ -369,7 +370,7 @@ class Sidebar {
 		ref.setState({ page: (page == 'object' ? '' : 'object') });
 	};
 
-	rightPanelToggle (v: boolean, isPopup: boolean, page?: string, param?: any) {
+	rightPanelToggle (v: boolean, animate: boolean, isPopup: boolean, page?: string, param?: any) {
 		if (v) {
 			S.Common.showSidebarRightSet(isPopup, v);
 
@@ -396,20 +397,26 @@ class Sidebar {
 			this.objRight.css(cssStart);
 
 			raf(() => {
-				this.objRight.addClass('anim').css(cssEnd);
-				this.resizePage(null, v ? null : 0, true);
+				if (animate) {
+					this.objRight.addClass('anim');
+				};
+
+				this.objRight.css(cssEnd);
+				this.resizePage(null, v ? null : 0, animate);
 			});
 		});
 
 		window.setTimeout(() => {
-			this.objRight.removeClass('anim');
+			if (animate) {
+				this.objRight.removeClass('anim');
+			};
 
 			if (!v) {
 				S.Common.showSidebarRightSet(isPopup, v);
 			};
 
 			$(window).trigger('resize');
-		}, J.Constant.delay.sidebar);
+		}, animate ? J.Constant.delay.sidebar : 0);
 	};
 
 	rightPanelSetState (v: any) {

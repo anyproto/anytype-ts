@@ -22,9 +22,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
     render () {
+		const { noPreview } = this.props;
 		const type = this.getObject();
 		const sections = this.getSections();
-		const readonly = !S.Block.isAllowed(type.restrictions, [ I.RestrictionObject.Details ]);
+		const readonly = this.props.readonly || !S.Block.isAllowed(type.restrictions, [ I.RestrictionObject.Details ]);
 
 		return (
 			<>
@@ -54,14 +55,14 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					))}
 				</div>
 
-				<SidebarLayoutPreview {...this.props} ref={ref => this.previewRef = ref} />
+				{!noPreview ? <SidebarLayoutPreview {...this.props} ref={ref => this.previewRef = ref} /> : ''}
 			</>
 		);
 	};
 
 	componentDidMount (): void {
 		this.init();
-		window.setTimeout(() => this.previewRef.show(true), J.Constant.delay.sidebar);
+		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 	};
 
 	componentDidUpdate (): void {
@@ -70,7 +71,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	componentWillUnmount () {
 		const { isPopup } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 
 		S.Common.getRef('sidebarRight')?.setState({ details: {}, rootId: ''});
 		container.removeClass('overPopup');
@@ -78,7 +79,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	init () {
 		const { isPopup } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const type = this.getObject();
 		const sections = this.getSections();
 		const details: any = this.props.details || {};
@@ -157,13 +158,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	close () {
-		this.previewRef.show(false);
-		window.setTimeout(() => sidebar.rightPanelToggle(false, this.props.isPopup), J.Constant.delay.sidebar);
+		this.previewRef?.show(false);
+		window.setTimeout(() => sidebar.rightPanelToggle(false, true, this.props.isPopup), J.Constant.delay.sidebar);
 	};
 
 	updateObject (id: string) {
 		this.sectionRefs.get(id)?.setObject(this.object);
-		this.previewRef.update(this.object);
+		this.previewRef?.update(this.object);
 	};
 
 });

@@ -191,7 +191,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			data: {
 				filter: '',
 				filters: [
-					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
 					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
 				],
 				onClick: (item: any) => {
@@ -258,7 +258,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		};
 
 		C.ObjectSetObjectType(rootId, type.uniqueKey, () => {
-			C.ObjectApplyTemplate(rootId, type.defaultTemplateId || J.Constant.templateId.blank, this.onTemplate);
+			C.ObjectApplyTemplate(rootId, type.defaultTemplateId, this.onTemplate);
 		});
 
 		Onboarding.start('objectCreationFinish', isPopup);

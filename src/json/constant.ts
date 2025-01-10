@@ -136,7 +136,6 @@ export default {
 	},
 
 	templateId: {
-		blank:			 'blank',
 		new:			 'newTemplate'
 	},
 

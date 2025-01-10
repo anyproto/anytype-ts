@@ -303,7 +303,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		wrap.css({ width: 0, height: 0, marginLeft: 0 });
 
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const cw = container.width();
 		const ch = container.height();
 		const mw = cw - PADDING * 2;

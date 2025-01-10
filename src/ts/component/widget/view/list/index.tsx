@@ -85,7 +85,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 			const head = obj.find('.head');
 			const viewSelect = obj.find('#viewSelect');
 
-			let height = getTotalHeight() + (isPreview ? 12 : 0);
+			let height = getTotalHeight() + (isPreview ? 16 : 0);
 
 			if (isPreview) {
 				let maxHeight = container.height() - head.outerHeight(true);

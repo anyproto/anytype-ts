@@ -21,7 +21,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const { subId, id, block, style, isCompact, isEditing, index, isPreview, isSection, onContext } = props;
 	const rootId = keyboard.getRootId();
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
-	const { isReadonly, isArchived, restrictions, source } = object;
+	const { isReadonly, isArchived, isHidden, restrictions, source } = object;
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
@@ -32,6 +32,10 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (canDrag) {
 		cn.push('canDrag');
+	};
+
+	if (isHidden) {
+		cn.push('isHidden');
 	};
 
 	const onClick = (e: React.MouseEvent) => {

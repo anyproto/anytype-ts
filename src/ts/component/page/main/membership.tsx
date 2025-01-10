@@ -65,7 +65,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const resize = () => {
 		const win = $(window);
 		const node = $(nodeRef.current);
-		const obj = U.Common.getPageContainer(isPopup);
+		const obj = U.Common.getPageFlexContainer(isPopup);
 
 		node.css({ height: (isPopup ? obj.height() : win.height()) });
 	};

@@ -18,12 +18,6 @@
 		.icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/text/numbered0.svg'); }
 		.icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/text/toggle0.svg'); }
 
-		.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
-		.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
-		.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
-		.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
-		.icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
-
         .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
 
         .icon.color {
@@ -115,18 +109,6 @@
 	.menu.menuBlockRelationEdit {
 		.item:hover { background: var(--color-shape-highlight-medium); }
 	}
-
-    /* BlockRelationView */
-
-    .menu.menuBlockRelationView {
-		.item {
-			.icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
-		}
-
-        .item.add:hover { 
-			.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
-        }
-    }
 
 	/* DataviewRelationEdit */
 
@@ -310,5 +292,19 @@
 			.icon { background-color: var(--color-bg-secondary); }
 		}
 	}
+
+    /* Widget */
+
+    .menu.menuWidget {
+        .options {
+            .option {
+                .icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
+                .icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
+                .icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
+                .icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
+                .icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
+            }
+        }
+    }
 
 }

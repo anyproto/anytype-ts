@@ -616,7 +616,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (type && type.defaultTemplateId) {
 			return type.defaultTemplateId;
 		};
-		return J.Constant.templateId.blank;
+		return '';
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string, idx?: number) {
@@ -756,7 +756,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			groupId = 'empty';
 		};
 
-		if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
+		if (type && U.Object.isBookmarkLayout(type.recommendedLayout)) {
 			this.onBookmarkMenu(e, dir, groupId, menuParam);
 		} else {
 			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);
@@ -835,7 +835,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				route,
 				onTypeChange: (id) => {
 					if (id != this.getTypeId()) {
-						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: J.Constant.templateId.blank });
+						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: '' });
 						analytics.event('DefaultTypeChange', { route });
 					};
 				},

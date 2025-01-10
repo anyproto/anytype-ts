@@ -644,21 +644,24 @@ class UtilCommon {
 		return (isPopup ? $('#popupPage-innerWrap') : $(window)) as JQuery<HTMLElement>;
 	};
 
+	getPageFlexContainer (isPopup: boolean) {
+		return $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
+	};
+
 	getPageContainer (isPopup: boolean) {
-		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
+		return $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
 	};
 
 	getCellContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
-				return '#page.isFull';
+				return '#pageFlex.isFull';
 
 			case 'popup':
-				return '#popupPage-innerWrap';
+				return '#pageFlex.isPopup';
 
 			case 'menuBlockAdd':
-			case 'menuBlockRelationView':
 				return `#${type}`;
 
 			case 'popupRelation':

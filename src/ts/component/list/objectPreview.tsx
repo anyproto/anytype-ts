@@ -6,8 +6,6 @@ import { I, U, keyboard, translate } from 'Lib';
 interface Props {
 	offsetX?: number;
 	canAdd?: boolean;
-	withBlank?: boolean;
-	blankId?: string;
 	defaultId?: string;
 	getItems: () => any[];
 	onClick?: (e: any, item: any) => void;
@@ -26,8 +24,6 @@ const WIDTH = 224;
 const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 	offsetX = 0,
 	canAdd = false,
-	withBlank = false,
-	blankId = '',
 	defaultId = '',
 	getItems,
 	onClick,
@@ -44,9 +40,6 @@ const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 	const getItemsHandler = () => {
 		const items = U.Common.objectCopy(getItems());
 
-		if (withBlank) {
-			items.unshift({ id: blankId });
-		};
 		if (canAdd) {
 			items.push({ id: 'add' });
 		};
@@ -187,41 +180,26 @@ const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 
 		const cn = [ 'item' ];
 
-		let label = null;
-		let content = null;
-
 		if (onMenu) {
 			cn.push('withMenu');
 		};
 
-		if (defaultId == item.id) {
-			label = <div className="defaultLabel">{translate('commonDefault')}</div>;
-		};
-
-		if (item.id == blankId) {
-			content = <ItemBlank {...item} />;
-		} else {
-			content = (
-				<PreviewObject
-					ref={ref => objectRef.current.set(item.id, ref)}
-					size={I.PreviewSize.Medium}
-					rootId={item.id}
-					onClick={e => onClick(e, item)}
-					onMore={onMenu ? e => onMenu(e, item) : null}
-				/>
-			);
-		};
-
 		return (
 			<div id={`item-${item.id}`} className={cn.join(' ')}>
-				{label}
+				{defaultId == item.id ? <div className="defaultLabel">{translate('commonDefault')}</div> : ''}
 
 				<div
 					className="hoverArea"
 					onMouseEnter={e => onMouseEnter(e, item)}
 					onMouseLeave={e => onMouseLeave(e, item)}
 				>
-					{content}
+					<PreviewObject
+						ref={ref => objectRef.current.set(item.id, ref)}
+						size={I.PreviewSize.Medium}
+						rootId={item.id}
+						onClick={e => onClick(e, item)}
+						onMore={onMenu ? e => onMenu(e, item) : null}
+					/>
 				</div>
 			</div>
 		);

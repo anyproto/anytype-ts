@@ -615,7 +615,6 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			help:				 'MenuHelp',
-			blockRelationView:	 'ScreenObjectRelation',
 			quickCapture:		 'ScreenQuickCapture',
 		};
 

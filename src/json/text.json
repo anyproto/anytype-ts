@@ -1416,10 +1416,6 @@
 	"menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
 	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
-	"menuBlockRelationViewInThisObject": "In this Object",
-	"menuBlockRelationViewFromType": "From Type %s",
-	"menuBlockRelationViewConflictingRelations": "Conflicting Relations",
-
 	"menuBlockStyleTurnText": "Turn into text",
 	"menuBlockStyleTurnList": "Turn into list",
 	"menuBlockStyleTurnDiv": "Turn into divider",
@@ -1568,9 +1564,7 @@
 	"menuTypeSuggestCreateType": "Create type %s",
 
 	"menuWidgetAddWidget": "Add Widget",
-	"menuWidgetChooseSource": "Choose a source",
 	"menuWidgetWidgetType": "Widget type",
-	"menuWidgetWidgetSource": "Widget Source",
 	"menuWidgetNumberOfObjects": "Number of Objects",
 	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetEditWidgets": "Edit Widgets",
@@ -1856,10 +1850,15 @@
 	"sidebarSectionLayoutWidth": "Layout width",
 	"sidebarSectionLayoutDefaultView": "Default view",
 	"sidebarSectionLayoutDefaultType": "Default type",
+
 	"sidebarTypeRelation": "Fields",
 	"sidebarTypeRelationHeader": "Header",
 	"sidebarTypeRelationSidebar": "Sidebar",
 	"sidebarObjectRelationSetUp": "Set up",
+
+	"sidebarRelationInThisObject": "In this Object",
+	"sidebarRelationFromType": "From Type %s",
+	"sidebarRelationConflicting": "Conflicting Relations",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

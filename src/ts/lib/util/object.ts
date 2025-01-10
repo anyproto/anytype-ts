@@ -183,7 +183,7 @@ class UtilObject {
 				typeKey = type.uniqueKey;
 
 				if (!templateId) {
-					templateId = type.defaultTemplateId || J.Constant.templateId.blank;
+					templateId = type.defaultTemplateId || '';
 				};
 			};
 		};
@@ -484,8 +484,7 @@ class UtilObject {
 
 	isAllowedChat () {
 		const { config, space } = S.Common;
-		const spaceview = U.Space.getSpaceview();
-		return spaceview.chatId && (config.experimental || J.Constant.chatSpaceId.includes(space));
+		return config.experimental || J.Constant.chatSpaceId.includes(space);
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {

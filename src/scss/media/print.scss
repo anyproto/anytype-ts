@@ -24,7 +24,9 @@ html.printMedia {
 	#sidebarSync
 	{ display: none !important; }
 
-	#page.isFull { width: 100% !important; }
+	#pageFlex.isFull {
+		#page { width: 100% !important; }
+	}
 
 	.focusable.isFocused { background: none !important; }
 
@@ -152,7 +154,7 @@ html.printMedia.print {
 }
 
 html.printMedia.withPopup {
-	.page.isFull { display: none !important; }
+	#pageFlex.isFull { display: none !important; }
 }
 
 @media (max-width: 500px) {

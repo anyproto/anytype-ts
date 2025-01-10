@@ -2,6 +2,8 @@
 	.section.objectRelation { padding: 12px 16px; }
 	.section.objectRelation {
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 0px 10px; }
+		> .wrap.c-longText { flex-direction: column; flex-wrap: nowrap; }
+
 		> .wrap {
 			> .name { color: var(--color-text-secondary); }
 
@@ -21,7 +23,6 @@
 			.cell.c-shortText {
 				.name { width: 100%; }
 			}
-
 			.cell.c-longText {
 				.name, span { @include clamp3; word-wrap: break-word; line-height: 22px; }
 			}

@@ -63,7 +63,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const { theme } = S.Common;
 		const root = S.Block.getLeaf(rootId, rootId);
-		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
+		const cn = [ 'flex' ];
+		const cv = [ 'value', 'focusable', 'c' + id ];
+		const checkRtl = keyboard.isRtl || U.Common.checkRtl(text);
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
@@ -72,6 +74,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (color) {
 			cv.push('textColor textColor-' + color);
+		};
+
+		if (checkRtl) {
+			cn.push('isRtl');
 		};
 
 		// Subscriptions
@@ -168,7 +174,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		return (
 			<div 
 				ref={node => this.node = node}
-				className="flex"
+				className={cn.join(' ')}
 			>
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
@@ -707,6 +713,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 
+		keyboard.setRtl(U.Common.checkRtl(value));
+
 		if (range) {
 			isAllowedMenu = isAllowedMenu && (!range.from || (range.from == 1) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
 		};
@@ -1186,7 +1194,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				});
 
 				window.setTimeout(() => {
-					const pageContainer = U.Common.getPageContainer(isPopup);
+					const pageContainer = U.Common.getPageFlexContainer(isPopup);
 
 					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
 						pageContainer.off('mousedown.context');

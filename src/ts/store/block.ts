@@ -551,8 +551,6 @@ class BlockStore {
 					name = object.name;
 				};
 
-				console.log('NAME', name);
-
 				name = U.Common.shorten(name.trim(), 30);
 
 				if (old != name) {

@@ -356,8 +356,11 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 					};
 
 					case I.DropType.Relation: {
-						ids.forEach((key: string) => {
-							C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
+						ids.forEach((id: string) => {
+							const relation = S.Record.getRelationById(id);
+							if (relation) {
+								C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key: relation.relationKey } });
+							};
 						});
 						break;
 					};

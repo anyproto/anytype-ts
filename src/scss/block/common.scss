@@ -81,11 +81,11 @@
 	}
 	
 	.block.isAdding.top::before {
-		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: var(--color-system-accent-100); position: absolute; right: 0px; top: -2px;
+		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: var(--color-control-accent); position: absolute; right: 0px; top: -2px;
 	}
 	
 	.block.isAdding.bottom::after {
-		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: var(--color-system-accent-100); position: absolute; right: 0px; bottom: -2px;
+		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: var(--color-control-accent); position: absolute; right: 0px; bottom: -2px;
 	}
 	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }

@@ -198,7 +198,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this._isMounted = false;
 
 		const { isPopup } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		container.off('mousedown.filter');
@@ -492,7 +492,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		const { isPopup, isInline } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		this.refFilter.setActive(true);
@@ -547,7 +547,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const node = $(this.node);
 		const sideLeft = node.find('#dataviewControlsSideLeft');
 		const sideRight = node.find('#dataviewControlsSideRight');
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const { left } = sideLeft.offset();
 		const sw = sidebar.getDummyWidth();
 		const cw = container.outerWidth();

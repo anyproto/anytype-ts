@@ -762,10 +762,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		if (canWrite) {
 			items.push({ name: translate('commonActions'), isSection: true });
 			items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ], isSmall: true });
-
-			if (hasRelations) {
-				items.push({ id: 'relation', name: translate('commonAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ], isSmall: true });
-			};
 		};
 
 		return items.map(it => {
@@ -834,12 +830,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				switch (item.id) {
 					case 'add': {
 						keyboard.pageCreate({ name: filter }, 'Search');
-						break;
-					};
-
-					case 'relation': {
-						$('#button-header-relation').trigger('click');
-						window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), S.Menu.getTimeout() * 2);
 						break;
 					};
 
