@@ -51,6 +51,7 @@ class Analytics {
 		chat: 'Chat',
 		archive: 'Bin',
 		toast: 'Toast',
+		share: 'Share',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',

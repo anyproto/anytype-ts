@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState } from 'react';
 import { Title, Input, Label, Switch, Button, Icon, Loader } from 'Component';
-import { J, U, I, S, Action, translate } from 'Lib';
+import { J, U, I, S, Action, translate, analytics } from 'Lib';
 
 const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -16,7 +16,12 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const items = [
 		(!space.isPersonal ? { 
 			id: 'space', name: translate('popupSettingsSpaceIndexShareShareTitle'), onClick: () => {
-				S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
+				S.Popup.open('settings', { 
+					data: { 
+						page: 'spaceShare', 
+						isSpace: true, 
+						route: analytics.route.share,
+				}, className: 'isSpace' });
 				close();
 			},
 		} : null),
@@ -43,7 +48,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
                 value={U.Common.slug(object.name)}
                 focusOnMount={true} 
 			/>
-			<Label className="small" text="https:/any.copp/kjshdfkjahsjdkhAJDH*78/rem-koolhaas-architects" />
+			<Label className="small" text="https://any.copp/kjshdfkjahsjdkhAJDH*78/rem-koolhaas-architects" />
 
 			<div className="flex">
 				<Label text={translate('menuPublishLabel')} />
