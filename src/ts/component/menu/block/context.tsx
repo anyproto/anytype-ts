@@ -414,7 +414,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],

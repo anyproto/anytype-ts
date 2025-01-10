@@ -49,7 +49,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		];
 
 		const filtersType: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 			{ relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
 		];
 

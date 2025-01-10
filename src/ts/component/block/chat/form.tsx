@@ -970,7 +970,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					marks: this.marks,
 					skipIds: [ S.Auth.account.id ],
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
 					],
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
 						S.Detail.update(rootId, { id: object.id, details: object }, false);

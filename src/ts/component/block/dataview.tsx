@@ -1017,7 +1017,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		
 		if (isCollection) {
 			filters = filters.concat([
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
@@ -1027,7 +1027,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		} else {
 			filters = filters.concat([
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 

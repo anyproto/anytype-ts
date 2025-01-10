@@ -583,7 +583,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { backlink } = this.state;
 		const filter = this.filter;
 		const filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		const sorts = [

@@ -431,7 +431,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 					onSelect: (item: any) => {
 						C.BlockFileSetTargetObjectId(rootId, blockId, item.id);
@@ -457,7 +457,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					position: I.BlockPosition.Bottom,
 					skipIds,
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					canAdd: true,
 					onSelect: () => close()
@@ -546,7 +546,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					};
 
 					filters = filters.concat([
-						{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 					]);
 				} else {
 					addParam.onClick = (details: any) => {
@@ -554,7 +554,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					};
 
 					filters = filters.concat([
-						{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 						{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 					]);
 				};

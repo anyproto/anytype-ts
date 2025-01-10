@@ -352,7 +352,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const space = U.Space.getSpaceview();
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		let limit = getLimit(block.content);
@@ -380,12 +380,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 
 			case J.Constant.widgetId.set: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set });
 				break;
 			};
 
 			case J.Constant.widgetId.collection: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
 				break;
 			};
 		};

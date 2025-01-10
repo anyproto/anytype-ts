@@ -268,7 +268,7 @@ class UtilData {
 				subId: J.Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
@@ -349,7 +349,7 @@ class UtilData {
 				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
 					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
@@ -368,7 +368,7 @@ class UtilData {
 				subId: J.Constant.subId.typeStore,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
 					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
@@ -382,7 +382,7 @@ class UtilData {
 				subId: J.Constant.subId.relation,
 				keys: J.Relation.relation,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -397,7 +397,7 @@ class UtilData {
 				subId: J.Constant.subId.relationStore,
 				keys: J.Relation.relation,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -407,7 +407,7 @@ class UtilData {
 				subId: J.Constant.subId.option,
 				keys: J.Relation.option,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
@@ -419,7 +419,7 @@ class UtilData {
 				subId: J.Constant.subId.participant,
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
@@ -775,7 +775,7 @@ class UtilData {
 		const filters = param.filters || [];
 		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
 
-		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
@@ -1018,7 +1018,7 @@ class UtilData {
 			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
 		];

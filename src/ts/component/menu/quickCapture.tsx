@@ -213,7 +213,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const layouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
 
 		const filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 			{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: layouts },
 			{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];

@@ -152,7 +152,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const { object } = this.state;
 		const node = $(this.node);
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 

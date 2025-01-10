@@ -289,7 +289,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const spaceId = data.spaceId || S.Common.space;
 		
 		const filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(data.filters || []);
 
 		let sorts = [].concat(data.sorts || []);
@@ -309,7 +309,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			filters.push({ relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo, I.NavigationType.Link ].includes(type)) {
-			filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() });
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() });
 			filters.push({ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template });
 		};
 
