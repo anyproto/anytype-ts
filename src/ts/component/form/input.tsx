@@ -96,7 +96,7 @@ const Input = forwardRef<InputRef, Props>(({
 	const isFocused = useRef(false);
 	const rangeRef = useRef<I.TextRange | null>(null);
 	const cn = [ 'input', `input-${inputType}`, className ];
-	
+
 	if (readonly) {
 		cn.push('isReadonly');
 	};
