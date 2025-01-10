@@ -1194,7 +1194,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				});
 
 				window.setTimeout(() => {
-					const pageContainer = U.Common.getPageContainer(isPopup);
+					const pageContainer = U.Common.getPageFlexContainer(isPopup);
 
 					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
 						pageContainer.off('mousedown.context');

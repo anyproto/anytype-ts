@@ -101,12 +101,10 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 	onSetUp () {
 		const object = this.getObject();
-		sidebar.rightPanelSetState({ page: 'type', rootId: object.type });
+		sidebar.rightPanelSetState({ page: 'type', rootId: object.type, noPreview: true });
 	};
 
 	onDragStart (e: any, item: any) {
-		console.log('onDragStart', item);
-
 		e.stopPropagation();
 
 		const dragProvider = S.Common.getRef('dragProvider');

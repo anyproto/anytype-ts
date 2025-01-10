@@ -192,6 +192,7 @@ export interface SidebarPageComponent {
 	isPopup?: boolean;
 	readonly?: boolean;
 	details?: any;
+	noPreview?: boolean;
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {

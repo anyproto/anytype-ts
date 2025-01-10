@@ -183,7 +183,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	onResize (e: any) {
-		const container = U.Common.getPageContainer(keyboard.isPopup());
+		const container = U.Common.getPageFlexContainer(keyboard.isPopup());
 		const wrapper = $('#editorWrapper');
 
 		wrapper.addClass('isResizing');

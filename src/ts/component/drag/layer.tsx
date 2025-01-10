@@ -13,7 +13,7 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 		const rect = (comp.get(0) as Element).getBoundingClientRect();
 		const node = $(nodeRef.current);
 		const inner = node.find('#inner').html('');
-		const container = U.Common.getPageContainer(keyboard.isPopup());
+		const container = U.Common.getPageFlexContainer(keyboard.isPopup());
 		const wrap = $('<div></div>');
 
 		let width = rect.width;
@@ -48,7 +48,7 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 			};
 
 			case I.DropType.Relation: {
-				const container = U.Common.getPageContainer(keyboard.isPopup());
+				const container = U.Common.getPageFlexContainer(keyboard.isPopup());
 				const add = $('<div class="sidebarPage pageObjectRelation"></div>');
 
 				wrap.addClass('sidebar').append(add);

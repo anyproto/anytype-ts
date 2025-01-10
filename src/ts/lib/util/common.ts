@@ -644,8 +644,12 @@ class UtilCommon {
 		return (isPopup ? $('#popupPage-innerWrap') : $(window)) as JQuery<HTMLElement>;
 	};
 
-	getPageContainer (isPopup: boolean) {
+	getPageFlexContainer (isPopup: boolean) {
 		return $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
+	};
+
+	getPageContainer (isPopup: boolean) {
+		return $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
 	};
 
 	getCellContainer (type: string) {

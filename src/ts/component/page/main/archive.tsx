@@ -30,7 +30,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const resize = () => {
 		const win = $(window);
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const node = $(nodeRef.current);
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
