@@ -37,10 +37,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				<div className="body customScrollbar">
 					{sections.map((section, i) => (
 						<React.Fragment key={section.id}>
-							<div key={section.id} className="sectionName">
-								{section.name}
-							</div>
-
+							{section.name ? <div className="sectionName">{section.name}</div> : null}
 							{section.children.map((item, i) => (
 								<Section 
 									{...this.props} 
@@ -79,14 +76,8 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
 		const sections = [
-			{ 
-				id: 'object', name: translate('sidebarRelationInThisObject'),
-				children: items,
-			},
-			{
-				id: 'conflicts', name: translate('sidebarRelationConflicting'),
-				children: conflicts,
-			}
+			{ id: 'object', children: items },
+			{ id: 'conflicts', name: translate('sidebarRelationLocal'), children: conflicts	}
 		];
 
 		return sections.filter(it => it.children.length);

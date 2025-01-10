@@ -1856,9 +1856,7 @@
 	"sidebarTypeRelationSidebar": "Sidebar",
 	"sidebarObjectRelationSetUp": "Set up",
 
-	"sidebarRelationInThisObject": "In this Object",
-	"sidebarRelationFromType": "From Type %s",
-	"sidebarRelationConflicting": "Conflicting Relations",
+	"sidebarRelationLocal": "Local Fields",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
