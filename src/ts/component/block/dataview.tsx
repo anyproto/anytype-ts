@@ -756,7 +756,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			groupId = 'empty';
 		};
 
-		if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
+		if (type && U.Object.isBookmarkLayout(type.recommendedLayout)) {
 			this.onBookmarkMenu(e, dir, groupId, menuParam);
 		} else {
 			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);

@@ -154,6 +154,7 @@ class UtilRouter {
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
+		sidebar.rightPanelToggle(false, false, false);
 
 		if (sendEvent) {
 			analytics.event('SwitchSpace');

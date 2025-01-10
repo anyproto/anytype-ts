@@ -159,7 +159,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const onEdit = () => {
-		sidebar.rightPanelToggle(true, isPopup, 'type', { rootId });
+		sidebar.rightPanelToggle(true, true, isPopup, 'type', { rootId });
 	};
 
 	const onObjectAdd = () => {
