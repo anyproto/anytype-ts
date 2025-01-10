@@ -185,7 +185,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', J.Constant.typeKey.collection, S.Common.space, (message: any) => { 
+				C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};

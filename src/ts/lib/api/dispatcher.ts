@@ -1090,6 +1090,10 @@ class Dispatcher {
 				S.Block.update(rootId, rootId, { layout: details.layout });
 			};
 
+			if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
+				S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
+			};
+
 			S.Block.checkBlockType(rootId);
 		};
 

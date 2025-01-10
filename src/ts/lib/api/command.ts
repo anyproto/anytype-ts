@@ -1677,15 +1677,6 @@ export const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], 
 	dispatcher.request(ObjectRelationRemoveFeatured.name, request, callBack);
 };
 
-export const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SetLayout.Request();
-
-	request.setContextid(contextId);
-	request.setLayout(layout as number);
-
-	dispatcher.request(ObjectSetLayout.name, request, callBack);
-};
-
 export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetIsFavorite.Request();
 

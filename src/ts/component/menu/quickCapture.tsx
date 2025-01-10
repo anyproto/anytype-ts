@@ -447,7 +447,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 			};
 
-			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
+			C.ObjectCreate({}, flags, item.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
 				if (message.error.code || !message.details) {
 					return;
 				};

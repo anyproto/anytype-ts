@@ -239,11 +239,6 @@ class UtilObject {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'done', value: Boolean(done) } ], callBack);
 	};
 
-	setLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		S.Block.update(rootId, rootId, { layout });
-		C.ObjectSetLayout(rootId, layout, callBack);
-	};
-
 	setAlign (rootId: string, align: I.BlockHAlign, callBack?: (message: any) => void) {
 		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
