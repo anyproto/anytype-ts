@@ -86,6 +86,8 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	const setValue = (html: string) => {
 		$(editableRef.current).get(0).innerHTML = U.Common.sanitize(html);
+
+		onInputHandler($.Event('input'));
 	};
 
 	const getTextValue = (): string => {
