@@ -183,7 +183,7 @@ class UtilObject {
 				typeKey = type.uniqueKey;
 
 				if (!templateId) {
-					templateId = type.defaultTemplateId || J.Constant.templateId.blank;
+					templateId = type.defaultTemplateId || '';
 				};
 			};
 		};

@@ -212,18 +212,10 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		const { defaultTemplateId } = type;
-		const template: any = { id: item.id, typeId: type.id };
-
-		if (template.id == J.Constant.templateId.blank) {
-			template.isBlank = true;
-
-			if (!defaultTemplateId) {
-				template.isDefault = true;
-			};
-		} else
-		if (template.id == defaultTemplateId) {
-			template.isDefault = true;
+		const template: any = { 
+			id: item.id, 
+			typeId: type.id,
+			isDefault: item.id == type.defaultTemplateId,
 		};
 
 		S.Menu.closeAll(J.Menu.dataviewTemplate, () => {
@@ -237,7 +229,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				data: {
 					template,
 					typeId: type.id,
-					templateId: defaultTemplateId,
+					templateId: type.defaultTemplateId,
 					route: analytics.route.type,
 					onSetDefault: () => {
 						U.Object.setDefaultTemplateId(type.id, template.id);
@@ -247,7 +239,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					},
 					onArchive: () => {
 						if (template.isDefault) {
-							U.Object.setDefaultTemplateId(type.id, J.Constant.templateId.blank);
+							U.Object.setDefaultTemplateId(type.id, '');
 						};
 					}
 				}
@@ -331,9 +323,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 										onAdd={onTemplateAdd}
 										onMenu={isAllowedTemplate ? (e: any, item: any) => onMenu(item) : null}
 										onClick={(e: any, item: any) => templateOpen(item)}
-										withBlank={true}
-										blankId={J.Constant.templateId.blank}
-										defaultId={type.defaultTemplateId || J.Constant.templateId.blank}
+										defaultId={type.defaultTemplateId}
 									/>
 								</div>
 							) : (

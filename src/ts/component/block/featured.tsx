@@ -492,7 +492,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 						C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
 							if (object.internalFlags && object.internalFlags.includes(I.ObjectFlag.SelectTemplate)) {
-								C.ObjectApplyTemplate(rootId, item.defaultTemplateId || J.Constant.templateId.blank, open);
+								C.ObjectApplyTemplate(rootId, item.defaultTemplateId, open);
 							} else {
 								open();
 							};
