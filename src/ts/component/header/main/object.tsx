@@ -34,7 +34,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	} else
 	if (allowedTemplateSelect && templatesCnt) {
 		bannerProps.type = I.BannerType.TemplateSelect;
-		bannerProps.count = templatesCnt + 1;
+		bannerProps.count = templatesCnt;
 	};
 
 	if (isLocked) {
