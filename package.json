@@ -201,7 +201,8 @@
 			"node_modules/p-finally",
 			"node_modules/file-type",
 			"node_modules/regedit",
-			"node_modules/mime-types"
+			"node_modules/mime-types",
+			"node_modules/electron-store"
 		],
 		"extraResources": [
 			{
