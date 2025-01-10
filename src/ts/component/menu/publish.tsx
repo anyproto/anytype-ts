@@ -44,7 +44,10 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onPublish = () => {
 		setIsLoading(true);
-		Action.publish(rootId, inputRef.current.getValue(), () => setIsLoading(false));
+		Action.publish(rootId, inputRef.current.getValue(), () => {
+			setIsLoading(false);
+			close();
+		});
 	};
 
 	const setSlugHander = v => setSlug(U.Common.slug(v));
