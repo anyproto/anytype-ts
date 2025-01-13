@@ -37,6 +37,10 @@
         .loaderWrapper { border: 0px; }
     }
 
+	.block.blockLink.card {
+		.side::after { background: rgba(255,255,255,0.03); }
+	}
+
     /* BlockDataview */
 
     .block.blockDataview {
@@ -101,8 +105,9 @@
 			.cell.cellKeyHover { background-color: rgba(223, 221, 208, 0.04); }
         }
 
-        .viewContent.viewGallery {
-			.card:hover { background: rgba(166, 166, 166, 0.04); }
+        .viewContent.viewGallery,
+		.viewContent.viewBoard {
+			.card::after { background: rgba(255,255,255,0.03); }
         }
 
         .viewContent.viewBoard {
@@ -178,6 +183,7 @@
 
     .block.blockBookmark {
 		.loaderWrapper { border: 0px; }
+		.inner::after { background: rgba(255,255,255,0.03); }
     }
 
 	/* BlockTable */
