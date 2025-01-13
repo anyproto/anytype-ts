@@ -716,7 +716,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		keyboard.setRtl(isRtl);
 		if (isRtl && !fields.isRtlDetected) {
-			C.BlockListSetFields(rootId, [ { blockId: block.id, fields: { ...fields, isRtlDetected: true } } ], () => {
+			C.BlockListSetFields(rootId, [ 
+				{ blockId: block.id, fields: { ...fields, isRtlDetected: true } } 
+			], () => {
 				C.BlockListSetAlign(rootId, [ block.id ], I.BlockHAlign.Right);
 			});
 		};
