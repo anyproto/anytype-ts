@@ -415,7 +415,6 @@ export const Mapper = {
 				rootId: obj.getRootid(),
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
-				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
 				participants: (obj.getBlockparticipantsList() || []).map(it => ({
 					blockId: it.getBlockid(),
