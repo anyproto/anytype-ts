@@ -352,7 +352,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			to = storage.range.to;
 		};
 
-		if (!block) {
+		if (!block || !block.isText()) {
 			if (U.Object.isNoteLayout(root.layout)) {
 				block = S.Block.getFirstBlock(rootId, -1, it => it.isFocusable());
 			} else {
