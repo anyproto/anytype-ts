@@ -2200,6 +2200,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				S.Block.toggle(rootId, message.blockId, true);
 			};
 
+			if (keyboard.isRtl) {
+				U.Data.setRtl(rootId, message.blockId);
+			};
+
 			analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style });
 		});
 	};

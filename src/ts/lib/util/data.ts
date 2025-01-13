@@ -1218,6 +1218,24 @@ class UtilData {
 		};
 	};
 
+	setRtl (rootId: string, blockId: string) {
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const fields = block.fields || {};
+		if (fields.isRtlDetected) {
+			return;
+		};
+
+		C.BlockListSetFields(rootId, [ 
+			{ blockId: block.id, fields: { ...fields, isRtlDetected: true } } 
+		], () => {
+			C.BlockListSetAlign(rootId, [ block.id ], I.BlockHAlign.Right);
+		});
+	};
+
 };
 
 export default new UtilData();
