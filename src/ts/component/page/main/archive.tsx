@@ -70,11 +70,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	}));
 
 	return (
-		<div>
-			<Header 
-				{...props} 
-				component="mainEmpty" 
-			/>
+		<>
+			<Header {...props} component="mainEmpty" />
 
 			<div ref={nodeRef} className="wrapper">
 				<div className="body">
@@ -97,10 +94,10 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 						isReadonly={!U.Space.canMyParticipantWrite()}
 					/>
 				</div>
-
-				<Footer component="mainObject" />
 			</div>
-		</div>
+
+			<Footer {...props} component="mainObject" />
+		</>
 	);
 
 }));
