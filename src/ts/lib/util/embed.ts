@@ -78,10 +78,6 @@ class UtilEmbed {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
-	getKrokiHtml (content: string): string {
-		return `<img src="${content}" />`;
-	};
-
 	getSketchfabHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};

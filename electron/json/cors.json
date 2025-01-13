@@ -121,7 +121,8 @@
 		"https://media.sketchfab.com",
 		"https://sentry.io",
 		"https://*.any.coop",
-		"https://*.amplitude.com"
+		"https://*.amplitude.com",
+		"https://kroki.io"
 	],
 
 	"script-src-elem": [
