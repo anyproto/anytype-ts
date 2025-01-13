@@ -45,16 +45,19 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				{item.options ? (
 					<div className="options">
 						{item.options.map((option, i) => {
-							const withIcon = option.icon;
-							const cn = [
-								'option',
-								item.value == option.id ? 'active' : '',
-								withIcon ? 'withIcon' : '',
-							];
+							const cn = [ 'option' ];
+
+							if (item.value == option.id) {
+								cn.push('active');
+							};
+
+							if (option.icon) {
+								cn.push('icon');
+							};
 
 							return (
 								<div className={cn.join(' ')} key={i} onClick={e => this.onOptionClick(e, option, item)}>
-									{withIcon ? <Icon className={option.icon} /> : option.name}
+									{option.icon ? <Icon className={option.icon} /> : option.name}
 								</div>
 							);
 						})}
@@ -250,6 +253,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				});
 				break;
 			};
+
 			case 'limit': {
 				this.limit = Number(option.id);
 				this.checkState();
@@ -277,12 +281,13 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, setEditing, target } = data;
+		const { blockId, target } = data;
 
-		switch (item.itemId) {
-			case 'remove':
+		switch (item.id) {
+			case 'remove': {
 				Action.removeWidget(blockId, target);
 				break;
+			};
 		};
 
 		close();
