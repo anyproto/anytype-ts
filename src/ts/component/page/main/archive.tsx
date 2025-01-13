@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Footer, Icon, ListManager } from 'Component';
+import { Title, Footer, Icon, ListManager, Header } from 'Component';
 import { I, U, J, translate, Action, analytics } from 'Lib';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
@@ -70,29 +70,36 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	}));
 
 	return (
-		<div ref={nodeRef} className="wrapper">
-			<div className="body">
-				<div className="titleWrapper">
-					<Icon className="archive" />
-					<Title text={translate('commonBin')} />
+		<div>
+			<Header 
+				{...props} 
+				component="mainEmpty" 
+			/>
+
+			<div ref={nodeRef} className="wrapper">
+				<div className="body">
+					<div className="titleWrapper">
+						<Icon className="archive" />
+						<Title text={translate('commonBin')} />
+					</div>
+
+					<ListManager
+						ref={managerRef}
+						subId={J.Constant.subId.archive}
+						filters={filters}
+						sorts={sorts}
+						rowLength={getRowLength()}
+						ignoreArchived={false}
+						buttons={buttons}
+						iconSize={48}
+						resize={resize}
+						textEmpty={translate('pageMainArchiveEmpty')}
+						isReadonly={!U.Space.canMyParticipantWrite()}
+					/>
 				</div>
 
-				<ListManager
-					ref={managerRef}
-					subId={J.Constant.subId.archive}
-					filters={filters}
-					sorts={sorts}
-					rowLength={getRowLength()}
-					ignoreArchived={false}
-					buttons={buttons}
-					iconSize={48}
-					resize={resize}
-					textEmpty={translate('pageMainArchiveEmpty')}
-					isReadonly={!U.Space.canMyParticipantWrite()}
-				/>
+				<Footer component="mainObject" />
 			</div>
-
-			<Footer component="mainObject" />
 		</div>
 	);
 
