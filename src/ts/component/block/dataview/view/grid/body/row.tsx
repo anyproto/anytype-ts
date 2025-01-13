@@ -65,14 +65,16 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		if (isCollection && !isInline) {
 			content = (
 				<React.Fragment>
-					{!readonly ? <Icon
-						className="drag"
-						draggable={true}
-						onClick={e => onSelectToggle(e, record.id)}
-						onDragStart={e => onDragRecordStart(e, record.id)}
-						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
-						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
-					/> : ''}
+					{!readonly ? (
+						<Icon
+							className="drag"
+							draggable={true}
+							onClick={e => onSelectToggle(e, record.id)}
+							onDragStart={e => onDragRecordStart(e, record.id)}
+							onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
+							onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
+						/>
+ 					) : ''}
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}
 					</DropTarget>
