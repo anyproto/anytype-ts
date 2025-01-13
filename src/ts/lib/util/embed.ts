@@ -97,6 +97,17 @@ class UtilEmbed {
 
 			if (url.match(reg)) {
 				p = Number(i);
+
+				// Restrict youtube channel links
+				if ((p == I.EmbedProcessor.Youtube)) {
+					try {
+						const info = new URL(url);
+
+						if (info.pathname.match(/^\/@/)) {
+							p = null;
+						};
+					} catch (e) { p = null; };
+				};
 				break;
 			};
 		};
