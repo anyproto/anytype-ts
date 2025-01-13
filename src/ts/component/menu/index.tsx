@@ -70,6 +70,7 @@ import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 import MenuDataviewTemplateContext from './dataview/template/context';
 import MenuDataviewTemplateList from './dataview/template/list';
+import MenuDataviewNew from './dataview/new';
 
 import MenuQuickCapture from './quickCapture';
 
@@ -150,6 +151,7 @@ const Components: any = {
 	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
 	dataviewTemplateContext: MenuDataviewTemplateContext,
 	dataviewTemplateList:	 MenuDataviewTemplateList,
+	dataviewNew: 		 	 MenuDataviewNew,
 
 	quickCapture: 			 MenuQuickCapture,
 

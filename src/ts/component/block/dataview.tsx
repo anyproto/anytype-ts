@@ -811,7 +811,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let menuContext = null;
 
-		S.Menu.open('dataviewTemplateList', {
+		S.Menu.open('dataviewNew', {
 			...menuParam,
 			offsetY: 10,
 			noAnimation: true,
@@ -829,6 +829,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			data: {
 				rootId,
 				blockId: block.id,
+				subId: this.getSubId(),
 				hasSources,
 				getView: this.getView,
 				withTypeSelect: this.isAllowedDefaultType(),

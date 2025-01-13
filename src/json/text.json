@@ -123,6 +123,7 @@
 	"commonRedo": "Redo",
 	"commonBlank": "Blank",
 	"commonSetDefault": "Set as default",
+	"commonTemplate": "Template",
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
 	"commonCreateNew": "Create new",
@@ -1512,6 +1513,8 @@
 
 	"menuDataviewTemplateSetDefaultForView": "Default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
+
+	"menuDataviewExistingObject": "Existing object",
 
 	"menuGraphSettingsTitles": "Titles",
 	"menuGraphSettingsArrows": "Arrows",

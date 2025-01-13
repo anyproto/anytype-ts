@@ -105,18 +105,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 		return (
 			<div ref={node => this.node = node}>
-				{withTypeSelect ? (
-					<div id="defaultType" className="select big defaultTypeSelect" onClick={this.onType}>
-						<div className="item">
-							<IconObject object={type} size={18} />
-							<div className="name">{type?.name || translate('commonObjectType')}</div>	
-						</div>
-						<Icon className="arrow black" />
-					</div>
-				) : ''}
-
-				{!noTitle ? <Title text={translate('commonTemplates')} /> : ''}
-
 				<div className="items">
 					{items.map((item: any, i: number) => (
 						<Item key={i} {...item} />
