@@ -333,8 +333,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		const cell = $(`#${id}`);
 		const card = viewType == I.ViewType.Grid ? null : $(`#record-${record.id}`);
 
-		setValue(Relation.formatValue(relation, record[relation.relationKey], true));
-
 		if (isEditing) {
 			let val = value.current;
 
@@ -376,6 +374,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				cellPosition(id);
 			};
 		} else {
+			setValue(Relation.formatValue(relation, record[relation.relationKey], true));
+
 			cell.find('.cellContent').css({ left: '', right: '' });
 		};
 

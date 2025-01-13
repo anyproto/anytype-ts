@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable } from 'Component';
-import { I, J, keyboard, translate } from 'Lib';
+import { I, J, U } from 'Lib';
 
 const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	
@@ -44,7 +44,7 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		const length = value.length;
 
 		if (this.node) {
-			this.node.setValue(value);
+			this.node.setValue(U.Common.htmlSpecialChars(value));
 			this.node.setRange({ from: length, to: length });
 		};
 

@@ -349,7 +349,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			to = storage.range.to;
 		};
 
-		if (!block) {
+		if (!block || !block.isText()) {
 			if (U.Object.isNoteLayout(root.layout)) {
 				block = S.Block.getFirstBlock(rootId, -1, it => it.isFocusable());
 			} else {
@@ -399,7 +399,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		win.on(`keydown.${ns}`, e => this.onKeyDownEditor(e));
 		win.on(`paste.${ns}`, (e: any) => {
 			if (!keyboard.isFocused) {
-				this.onPasteEvent(e, {});
+				this.onPasteEvent(e, this.props);
 			};
 		});
 
@@ -589,6 +589,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
 			this.onCopy(e, pressed.match('x') ? true : false);
 
+			ret = true;
+		});
+
+		// Paste
+		keyboard.shortcut(`${cmd}+v`, e, (pressed: string) => {
 			ret = true;
 		});
 

@@ -457,7 +457,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const value = this.getTextValue();
 		const checkRtl = U.Common.checkRtl(value);
 
-		$(this.refEditable?.node).toggleClass('isRtl', checkRtl);
+		$(this.refEditable?.getNode()).toggleClass('isRtl', checkRtl);
 	};
 
 	onPaste (e: any) {
@@ -1038,7 +1038,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	updateMarkup (value: string, from: number, to: number) {
 		this.range = { from, to };
 		this.refEditable.setValue(Mark.toHtml(value, this.marks));
-
 		this.refEditable.setRange({ from, to });
 		this.refEditable.placeholderCheck();
 		this.renderMarkup();
