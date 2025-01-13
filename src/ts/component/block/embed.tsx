@@ -760,7 +760,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				ReactDOM.render(<MediaMermaid chart={this.text} />, value.get(0));
+				ReactDOM.render(<MediaMermaid id={`block-${block.id}-mermaid`} chart={this.text} />, value.get(0));
 				break;
 			};
 
