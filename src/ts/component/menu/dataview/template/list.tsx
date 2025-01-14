@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Title, PreviewObject, IconObject } from 'Component';
+import { Icon, PreviewObject } from 'Component';
 import { I, C, S, U, J, translate, keyboard, sidebar } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -14,14 +14,12 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	node: any = null;
 	n = 0;
-	typeId = '';
 
 	constructor (props: I.Menu) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
 		this.onMore = this.onMore.bind(this);
-		this.onType = this.onType.bind(this);
 		this.setCurrent = this.setCurrent.bind(this);
 		this.getTemplateId = this.getTemplateId.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
@@ -31,11 +29,10 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	render () {
 		const { param, setHover } = this.props;
 		const { data } = param;
-		const { withTypeSelect, noTitle, typeId } = data;
+		const { typeId } = data;
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
-		const type = S.Record.getTypeById(typeId);
 		const isAllowed = U.Object.isAllowedTemplate(typeId);
 
 		const ItemBlank = (item: any) => {
@@ -105,18 +102,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 		return (
 			<div ref={node => this.node = node}>
-				{withTypeSelect ? (
-					<div id="defaultType" className="select big defaultTypeSelect" onClick={this.onType}>
-						<div className="item">
-							<IconObject object={type} size={18} />
-							<div className="name">{type?.name || translate('commonObjectType')}</div>	
-						</div>
-						<Icon className="arrow black" />
-					</div>
-				) : ''}
-
-				{!noTitle ? <Title text={translate('commonTemplates')} /> : ''}
-
 				<div className="items">
 					{items.map((item: any, i: number) => (
 						<Item key={i} {...item} />
@@ -318,36 +303,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		if (onSelect) {
 			onSelect(item);
 		};
-	};
-
-	onType () {
-		const { getId, param } = this.props;
-		const { data } = param;
-		const { onTypeChange } = data;
-		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
-
-		S.Menu.open('typeSuggest', {
-			element: `#${getId()} #defaultType`,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				rebind: this.rebind,
-				filter: '',
-				filters: [
-					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: allowedLayouts },
-					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-				],
-				onClick: type => {
-					data.typeId = type.id;
-					data.templateId = type.defaultTemplateId || J.Constant.templateId.blank;
-
-					this.load();
-
-					if (onTypeChange) {
-						onTypeChange(type.id);
-					};
-				},
-			}
-		});
 	};
 
 	beforePosition () {

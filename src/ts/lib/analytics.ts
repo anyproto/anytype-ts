@@ -253,11 +253,6 @@ class Analytics {
 				break;
 			};
 
-			case 'ScreenRelation': {
-				data.relationKey = data.params.id;
-				break;
-			};
-
 			case 'ObjectInstall':
 			case 'ObjectUninstall':
 			case 'SelectGraphNode':
@@ -592,7 +587,6 @@ class Analytics {
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
-			'main/relation':	 'ScreenRelation',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 			'main/date':		 'ScreenDate',

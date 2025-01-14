@@ -69,7 +69,7 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 			};
 		};
 
-		return U.Menu.getHAlign(restricted);
+		return U.Menu.prepareForSelect(U.Menu.getHAlign(restricted));
 	};
 	
 	onOver (e: any, item: any) {
@@ -79,12 +79,12 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
-		this.props.close();
-		onSelect(item.id);
+		close();
+		onSelect(Number(item.id));
 	};
 	
 };

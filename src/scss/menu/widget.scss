@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuWidget { width: unset; }
+	.menu.menuWidget { width: unset; min-width: var(--menu-width-common); }
 	.menu.menuWidget {
 		.section::after { display: none; }
 		.section:last-child::before { content: ''; display: block; height: 1px; margin: 0px 14px 8px; background-color: var(--color-shape-secondary); }
@@ -13,7 +13,7 @@
 		.options { display: flex; gap: 0px 8px; padding: 0px 14px; margin-bottom: 4px; }
 		.options {
 			.option { display: flex; align-items: center; justify-content: center; width: 48px; height: 32px; border-radius: 8px; border: 1px solid var(--color-shape-tertiary); }
-			.option.withIcon { height: 48px; }
+			.option.icon { height: 48px; }
 			.option {
 				.icon { width: 48px; height: 48px; flex-shrink: 0; }
 				.icon.widget-0 { background-image: url('~img/icon/menu/widget/link.svg'); }

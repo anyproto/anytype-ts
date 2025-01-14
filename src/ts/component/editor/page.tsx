@@ -249,10 +249,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
 			this.focusInit();
-
-			U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
 			if (onOpen) {
 				onOpen();
@@ -262,7 +259,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				this.refControls.forceUpdate();
 			};
 
-			window.setTimeout(() => this.resizePage(), 15);
+			this.resizePage(() => {
+				this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
+				if (this.containerScrollTop) {
+					U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
+				};
+			});
 		});
 	};
 
@@ -352,7 +354,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			to = storage.range.to;
 		};
 
-		if (!block) {
+		if (!block || !block.isText()) {
 			if (U.Object.isNoteLayout(root.layout)) {
 				block = S.Block.getFirstBlock(rootId, -1, it => it.isFocusable());
 			} else {
@@ -370,8 +372,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.set(block.id, { from, to });
 		focus.apply();
-
-		window.setTimeout(() => focus.scroll(isPopup, block.id), 10);
+		focus.scroll(isPopup, block.id);
 	};
 	
 	unbind () {
@@ -402,7 +403,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		win.on(`keydown.${ns}`, e => this.onKeyDownEditor(e));
 		win.on(`paste.${ns}`, (e: any) => {
 			if (!keyboard.isFocused) {
-				this.onPasteEvent(e, {});
+				this.onPasteEvent(e, this.props);
 			};
 		});
 
@@ -592,6 +593,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
 			this.onCopy(e, pressed.match('x') ? true : false);
 
+			ret = true;
+		});
+
+		// Paste
+		keyboard.shortcut(`${cmd}+v`, e, (pressed: string) => {
 			ret = true;
 		});
 
@@ -2195,6 +2201,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				S.Block.toggle(rootId, message.blockId, true);
 			};
 
+			if (keyboard.isRtl) {
+				U.Data.setRtl(rootId, message.blockId);
+			};
+
 			analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style });
 		});
 	};
@@ -2287,7 +2297,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 	};
 	
-	resizePage () {
+	resizePage (callBack?: () => void) {
 		const { isLoading } = this.state;
 
 		if (isLoading || !this._isMounted) {
@@ -2330,6 +2340,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 			if (cover.length) {
 				cover.css({ top: hh });
+			};
+
+			if (callBack) {
+				callBack();
 			};
 		});
 	};

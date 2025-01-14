@@ -27,7 +27,7 @@
 				.selectionTarget { height: 100%; }
 				.selectionTarget.isSelectionSelected::after { border-radius: 8px; }
 			}
-			.card:hover { border-color: var(--color-shape-secondary); background: var(--color-shape-highlight-light); }
+			.card:hover { border-color: var(--color-shape-secondary); }
 			.card:hover {
 				.icon.checkbox { opacity: 1; }
 			}
