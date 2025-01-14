@@ -315,7 +315,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
 		const regCode = new RegExp(`^${code}|${code}$`, 'i');
 
-		if (!/\$((?:[^$<]|\.)*?)\$/.test(value)) {
+		if (!/\$[^\$]+\$/.test(value)) {
 			return;
 		};
 
