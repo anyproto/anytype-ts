@@ -39,6 +39,10 @@
 			.resize { width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; cursor: col-resize; z-index: 10; }
 		}
 
+		.cellHead {
+			.name { user-select: none !important; }
+		}
+
 		.cellHead.small { text-align: center; }
 		.cellHead.small {
 			.flex { display: inline-block; }
