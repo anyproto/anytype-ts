@@ -31,13 +31,13 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getSections = () => {
 		const { data } = param;
-		const { typeId, withTypeSelect } = data;
+		const { typeId, withTypeSelect, isAllowedObject } = data;
 		const type = S.Record.getTypeById(typeId);
 		const templateName = template ? template.name : translate('commonBlank');
 
 		const itemsAdd = [
 			{ id: 'new', icon: 'add', name: translate('commonNew') },
-			{ id: 'existing', icon: 'existingObject', name: translate('menuDataviewExistingObject'), arrow: true },
+			isAllowedObject ? { id: 'existing', icon: 'existingObject', name: translate('menuDataviewExistingObject'), arrow: true } : null,
 		];
 		const itemsSettings = [
 			withTypeSelect ? { id: 'type', name: translate('commonDefaultType'), arrow: true, caption: type.name } : '',
