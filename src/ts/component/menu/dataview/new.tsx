@@ -5,6 +5,7 @@ import { I, S, U, J, analytics, keyboard, translate, Action } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
 const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+
 	const { param, setActive, setHover, onKeyDown, getId, getSize, position, close } = props;
 	const n = useRef(-1);
 	const [ template, setTemplate ] = useState(null);
@@ -96,7 +97,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		let menuId = '';
-		
+
 		switch (item.id) {
 			case 'existing': {
 				menuId = 'searchObject';
@@ -262,6 +263,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			))}
 		</>
 	);
+	
 }));
 
 export default MenuNew;
