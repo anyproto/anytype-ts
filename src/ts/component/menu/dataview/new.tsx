@@ -96,6 +96,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		let menuId = '';
+		
 		switch (item.id) {
 			case 'existing': {
 				menuId = 'searchObject';
@@ -111,6 +112,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				});
 				break;
 			};
+
 			case 'type': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
@@ -133,6 +135,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				});
 				break;
 			};
+
 			case 'template': {
 				const update = (item) => {
 					data.templateId = item.id;
@@ -206,6 +209,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const sections = getSections();
+
 	const Section = (item: any) => (
 		<div id={'section-' + item.id} className="section">
 			{item.name ? <div className="name">{item.name}</div> : ''}
