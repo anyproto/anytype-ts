@@ -125,7 +125,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					skipIds: [ typeId ],
 					onClick: type => {
 						data.typeId = type.id;
-						data.templateId = type.defaultTemplateId || J.Constant.templateId.blank;
+						data.templateId = type.defaultTemplateId;
 
 						loadTemplate();
 
@@ -182,7 +182,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		switch (item.id) {
 			case 'new': {
 				if (onSelect) {
-					onSelect(template ? template : { id: J.Constant.templateId.blank });
+					onSelect(template ? template : { id: '' });
 				};
 				break;
 			};
