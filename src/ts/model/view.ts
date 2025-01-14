@@ -18,7 +18,6 @@ class View implements I.View {
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
-	align = I.BlockHAlign.Left;
 	
 	constructor (props: I.View) {
 		this.id = String(props.id || '');
@@ -33,7 +32,6 @@ class View implements I.View {
 		this.pageLimit = Number(props.pageLimit) || 0;
 		this.defaultTemplateId = String(props.defaultTemplateId || '');
 		this.defaultTypeId = String(props.defaultTypeId || '');
-		this.align = Number(props.align) || I.BlockHAlign.Left;
 		
 		this.relations = Array.isArray(props.relations) ? props.relations : [];
 		this.relations = this.relations.map(it => new M.ViewRelation(it));

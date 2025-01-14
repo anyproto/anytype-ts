@@ -223,11 +223,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			return;
 		};
 
+		const viewRelation = this.getViewRelation();
+
 		const object = S.Detail.get(rootId, rootId);
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const canFilter = !isFile;
 		const canSort = !isFile;
 		const canHide = relation && (relation.relationKey != 'name');
+		const canAlign = relation; 
 		const canCalculate = relation;
 		
 		let unlinkText = translate('commonUnlink');
@@ -273,7 +276,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						{ id: 'insert-left', icon: 'relation-insert-left', name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
 						{ id: 'insert-right', icon: 'relation-insert-right', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
 						canHide ? { id: 'hide', icon: 'relation-hide', name: translate('menuDataviewRelationEditHideRelation') } : null,
-						{ id: 'align', icon: U.Data.alignHIcon(view.align), name: translate('commonAlign'), arrow: true },
+						canAlign ? { id: 'align', icon: U.Data.alignHIcon(view.align), name: translate('commonAlign'), arrow: true } : null,
 					]
 				},
 				{
@@ -282,8 +285,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					]
 				},
 			]);
-
-
 		};
 
 		sections = sections.filter((s: any) => {
@@ -355,7 +356,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					value: view.align,
 					restricted: [ I.BlockHAlign.Justify ],
 					onSelect: (align: I.BlockHAlign) => {
-						Dataview.viewUpdate(rootId, blockId, view.id, { align });
+						this.saveViewRelation('align', align);
 						close();
 					}
 				});

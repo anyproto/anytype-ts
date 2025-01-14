@@ -136,6 +136,7 @@ export interface ViewRelation {
 	width?: number;
 	includeTime?: boolean;
 	formulaType?: I.FormulaType;
+	align?: I.BlockHAlign;
 };
 
 export interface ViewComponent {
@@ -213,7 +214,6 @@ export interface View {
 	relations: any[];
 	defaultTemplateId: string;
 	defaultTypeId: string;
-	align: I.BlockHAlign;
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
