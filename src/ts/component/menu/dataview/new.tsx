@@ -1,99 +1,38 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, keyboard, translate, Action } from 'Lib';
+import { I, S, U, J, analytics, keyboard, translate, Action } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
-const MenuNew = observer(class MenuNew extends React.Component<I.Menu> {
+const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+	const { param, setActive, setHover, onKeyDown, getId, getSize, position, close } = props;
+	const n = useRef(-1);
+	const [ template, setTemplate ] = useState(null);
 
-	n = -1;
-	template: any = null;
-
-	constructor (props: I.Menu) {
-		super(props);
-
-		this.rebind = this.rebind.bind(this);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 
-	render () {
-		const sections = this.getSections();
-
-		const Section = (item: any) => (
-			<div id={'section-' + item.id} className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<MenuItemVertical
-							key={i}
-							{...action}
-							icon={action.icon}
-							onMouseEnter={e => this.onMouseEnter(e, action)}
-							onMouseLeave={e => this.onMouseLeave(e, action)}
-							onClick={e => this.onClick(e, action)}
-						/>
-					))}
-				</div>
-			</div>
-		);
-
-		return (
-			<div>
-				{sections.map((item: any, i: number) => (
-					<Section key={i} index={i} {...item} />
-				))}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-
-		this.forceUpdate();
-		this.rebind();
-		this.loadTemplate();
-
-		window.setTimeout(() => this.resize(), 5);
-	};
-
-	componentDidUpdate () {
-		this.resize();
-		this.props.setActive();
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-
-		S.Menu.closeAll(J.Menu.dataviewNew);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	loadTemplate () {
-		const { param } = this.props;
+	const loadTemplate = () => {
 		const { data } = param;
 		const { templateId } = data;
 
 		U.Object.getById(templateId, {}, (object: any) => {
-			this.template = object ? object : null;
-			this.forceUpdate();
+			setTemplate(object ? object : null);
 		});
 	};
 
-	getSections () {
-		const { param } = this.props;
+	const getSections = () => {
 		const { data } = param;
 		const { typeId, withTypeSelect } = data;
 		const type = S.Record.getTypeById(typeId);
-		const templateName = this.template ? this.template.name : translate('commonBlank');
+		const templateName = template ? template.name : translate('commonBlank');
 
 		const itemsAdd = [
 			{ id: 'new', icon: 'add', name: translate('commonNew') },
@@ -117,8 +56,8 @@ const MenuNew = observer(class MenuNew extends React.Component<I.Menu> {
 		return sections;
 	};
 
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 
 		let items: any[] = [];
 		for (const section of sections) {
@@ -128,20 +67,12 @@ const MenuNew = observer(class MenuNew extends React.Component<I.Menu> {
 		return items;
 	};
 
-	onMouseEnter (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-			this.onOver(e, item);
-		};
-	};
-
-	onOver (e: any, item: any) {
+	const onOver = (e: React.MouseEvent, item: any) => {
 		if (!item.arrow) {
 			S.Menu.closeAll(J.Menu.dataviewNew);
 			return;
 		};
 
-		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, subId, blockId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect } = data;
 		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
@@ -193,7 +124,7 @@ const MenuNew = observer(class MenuNew extends React.Component<I.Menu> {
 						data.typeId = type.id;
 						data.templateId = type.defaultTemplateId || J.Constant.templateId.blank;
 
-						this.loadTemplate();
+						loadTemplate();
 
 						if (onTypeChange) {
 							onTypeChange(type.id);
@@ -205,7 +136,7 @@ const MenuNew = observer(class MenuNew extends React.Component<I.Menu> {
 			case 'template': {
 				const update = (item) => {
 					data.templateId = item.id;
-					this.loadTemplate();
+					loadTemplate();
 				};
 
 				menuId = 'dataviewTemplateList';
@@ -236,39 +167,97 @@ const MenuNew = observer(class MenuNew extends React.Component<I.Menu> {
 		};
 	};
 
-	onMouseLeave (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setHover(null, false);
-		};
-	};
-
-	onClick (e: any, item: any) {
+	const onClick = (e: React.MouseEvent, item: any) => {
 		if (item.arrow) {
 			return;
 		};
 
-		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 
 		switch (item.id) {
 			case 'new': {
 				if (onSelect) {
-					onSelect(this.template ? this.template : { id: J.Constant.templateId.blank });
+					onSelect(template ? template : { id: J.Constant.templateId.blank });
 				};
 				break;
 			};
 		};
 	};
 
-	resize () {
-		const { getId, position } = this.props;
+	const onMouseEnter = (e: React.MouseEvent, item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setActive(item, false);
+			onOver(e, item);
+		};
+	};
+
+	const onMouseLeave = (e: React.MouseEvent, item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setHover(null, false);
+		};
+	};
+
+	const resize = () => {
 		const obj = $(`#${getId()} .content`);
 
 		obj.css({ height: 'auto' });
 		position();
 	};
 
-});
+	const sections = getSections();
+	const Section = (item: any) => (
+		<div id={'section-' + item.id} className="section">
+			{item.name ? <div className="name">{item.name}</div> : ''}
+			<div className="items">
+				{item.children.map((action: any, i: number) => (
+					<MenuItemVertical
+						key={i}
+						{...action}
+						icon={action.icon}
+						onMouseEnter={e => onMouseEnter(e, action)}
+						onMouseLeave={e => onMouseLeave(e, action)}
+						onClick={e => onClick(e, action)}
+					/>
+				))}
+			</div>
+		</div>
+	);
+
+	useEffect(() => {
+		rebind();
+		loadTemplate();
+		window.setTimeout(() => resize(), 5);
+
+		return () => {
+			unbind();
+			S.Menu.closeAll(J.Menu.dataviewNew);
+		};
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		loadTemplate,
+		getSections,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onOver,
+		onClick,
+		onMouseEnter,
+		onMouseLeave,
+		resize,
+		Section,
+	}), []);
+
+	return (
+		<>
+			{sections.map((item: any, i: number) => (
+				<Section key={i} index={i} {...item} />
+			))}
+		</>
+	);
+}));
 
 export default MenuNew;
