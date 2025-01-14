@@ -30,9 +30,9 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		};
 
 		const view = getView();
-		const vr = view?.getRelation(relationKey);
+		const viewRelation = view?.getRelation(relationKey);
 		const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'cellHead', `cell-key-${relationKey}`, Relation.className(relation.format), `align${vr?.align}` ];
+		const cn = [ 'cellHead', `cell-key-${relationKey}`, Relation.className(relation.format), `align${viewRelation?.align}` ];
 
 		if (allowed) {
 			cn.push('canDrag');
