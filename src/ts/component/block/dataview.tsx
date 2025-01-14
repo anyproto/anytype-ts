@@ -811,7 +811,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let menuContext = null;
 
-		S.Menu.open('dataviewTemplateList', {
+		S.Menu.open('dataviewNew', {
 			...menuParam,
 			offsetY: 10,
 			noAnimation: true,
@@ -829,6 +829,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			data: {
 				rootId,
 				blockId: block.id,
+				subId: this.getSubId(),
 				hasSources,
 				getView: this.getView,
 				withTypeSelect: this.isAllowedDefaultType(),
@@ -837,7 +838,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				route,
 				onTypeChange: (id) => {
 					if (id != this.getTypeId()) {
-						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: J.Constant.templateId.blank });
+						const newType = S.Record.getTypeById(id);
+						const newTemplateId = newType?.defaultTemplateId || J.Constant.templateId.blank;
+
+						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: newTemplateId });
 						analytics.event('DefaultTypeChange', { route });
 					};
 				},
