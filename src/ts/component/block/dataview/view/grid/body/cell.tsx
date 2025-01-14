@@ -33,7 +33,8 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 
 	render () {
 		const { 
-			rootId, block, className, relationKey, readonly, recordId, getView, getRecord, onRef, onCellClick, onCellChange, getIdPrefix, canCellEdit
+			rootId, block, className, relationKey, readonly, recordId, getView, getRecord, onRef, onCellClick, onCellChange, 
+			getIdPrefix, canCellEdit,
 		} = this.props;
 		const record = getRecord(recordId);
 		const relation: any = S.Record.getRelationByKey(relationKey) || {};
@@ -46,8 +47,9 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		const size = J.Size.dataview.cell;
 		const subId = S.Record.getSubId(rootId, block.id);
 		const canEdit = canCellEdit(relation, record);
+		const isName = relationKey == 'name';
 
-		if (relationKey == 'name') {
+		if (isName) {
 			cn.push('isName');
 		};
 
@@ -64,7 +66,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		};
 
 		let iconEdit = null;
-		if ((relationKey == 'name') && !U.Object.isNoteLayout(record.layout) && canEdit) {
+		if (isName && !U.Object.isNoteLayout(record.layout) && canEdit) {
 			iconEdit = <Icon className="edit" onClick={this.onEdit} />;
 		};
 
