@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, keyboard, translate, Dataview, Action } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, translate, Action } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
 const MenuNew = observer(class MenuNew extends React.Component<I.Menu> {
@@ -203,21 +203,22 @@ const MenuNew = observer(class MenuNew extends React.Component<I.Menu> {
 				break;
 			};
 			case 'template': {
+				const update = (item) => {
+					data.templateId = item.id;
+					this.loadTemplate();
+				};
+
 				menuId = 'dataviewTemplateList';
 				menuParam.data = Object.assign(menuParam.data, {
 					onSetDefault: (item) => {
-						data.templateId = item.id;
-
-						this.loadTemplate();
+						update(item);
 
 						if (onSetDefault) {
 							onSetDefault(item);
 						};
 					},
 					onSelect: (item) => {
-						data.templateId = item.id;
-
-						this.loadTemplate();
+						update(item);
 
 						if (onSelect) {
 							onSelect(item);
