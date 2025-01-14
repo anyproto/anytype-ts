@@ -839,7 +839,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				onTypeChange: (id) => {
 					if (id != this.getTypeId()) {
 						const newType = S.Record.getTypeById(id);
-						const newTemplateId = newType.defaultTemplateId || J.Constant.templateId.blank;
+						const newTemplateId = newType?.defaultTemplateId || J.Constant.templateId.blank;
 
 						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: newTemplateId });
 						analytics.event('DefaultTypeChange', { route });
