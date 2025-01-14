@@ -211,8 +211,9 @@ export interface View {
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];
-	defaultTemplateId?: string;
-	defaultTypeId?: string;
+	defaultTemplateId: string;
+	defaultTypeId: string;
+	align: I.BlockHAlign;
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;

@@ -344,6 +344,7 @@ export const Mapper = {
 				pageLimit: obj.getPagelimit(),
 				defaultTemplateId: obj.getDefaulttemplateid(),
 				defaultTypeId: obj.getDefaultobjecttypeid(),
+				align: obj.getAlign(),
 			};
 		},
 
@@ -957,6 +958,7 @@ export const Mapper = {
 			item.setSortsList(obj.sorts.map(Mapper.To.Sort));
 			item.setDefaulttemplateid(obj.defaultTemplateId);
 			item.setDefaultobjecttypeid(obj.defaultTypeId);
+			item.setAlign(obj.align as number);
 
 			return item;
 		},

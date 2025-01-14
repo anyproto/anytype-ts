@@ -54,7 +54,8 @@ export default {
 		'select',
 		'searchObject',
 		'dataviewObjectValues',
-		'dataviewObjectList'
+		'dataviewObjectList',
+		'blockAlign',
 	],
 	layout: [ 'blockAlign' ],
 	latex: [ 'previewLatex' ],
