@@ -249,10 +249,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
 			this.focusInit();
-
-			U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
 			if (onOpen) {
 				onOpen();
@@ -262,7 +259,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				this.refControls.forceUpdate();
 			};
 
-			window.setTimeout(() => this.resizePage(), 15);
+			this.resizePage(() => {
+				this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
+				if (this.containerScrollTop) {
+					U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
+				};
+			});
 		});
 	};
 
@@ -370,8 +372,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.set(block.id, { from, to });
 		focus.apply();
-
-		window.setTimeout(() => focus.scroll(isPopup, block.id), 10);
+		focus.scroll(isPopup, block.id);
 	};
 	
 	unbind () {
@@ -2296,7 +2297,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 	};
 	
-	resizePage () {
+	resizePage (callBack?: () => void) {
 		const { isLoading } = this.state;
 
 		if (isLoading || !this._isMounted) {
@@ -2339,6 +2340,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 			if (cover.length) {
 				cover.css({ top: hh });
+			};
+
+			if (callBack) {
+				callBack();
 			};
 		});
 	};
