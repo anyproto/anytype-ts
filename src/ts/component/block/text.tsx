@@ -315,7 +315,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
 		const regCode = new RegExp(`^${code}|${code}$`, 'i');
 
-		if (!/\$((?:[^$<]|\.)*?)\$/.test(value)) {
+		if (!/\$[^\$]+\$/.test(value)) {
 			return;
 		};
 
@@ -675,7 +675,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp } = this.props;
 		const { filter } = S.Common;
-		const { id, content } = block;
+		const { id, content, fields } = block;
 		const range = this.getRange();
 		const langCodes = Object.keys(Prism.languages).join('|');
 		const langKey = '```(' + langCodes + ')?';
@@ -712,8 +712,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
+		const isRtl = U.Common.checkRtl(value);
 
-		keyboard.setRtl(U.Common.checkRtl(value));
+		keyboard.setRtl(isRtl);
+		if (isRtl) {
+			U.Data.setRtl(rootId, block.id);
+		};
 
 		if (range) {
 			isAllowedMenu = isAllowedMenu && (!range.from || (range.from == 1) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));

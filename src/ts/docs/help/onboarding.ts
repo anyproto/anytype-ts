@@ -100,7 +100,7 @@ export default {
 			hiddenElements: [ 
 				'#widget-buttons', 
 				'.widget', 
-				'#containerWidget #list .buttons',
+				'#containerWidget #list > .buttons',
 				'#containerWidget #body',
 				'.shareBanner',
 			],
@@ -122,7 +122,7 @@ export default {
 				category: translate('onboardingAllObjectTitle'),
 				description: translate('onboardingAllObjectText'),
 				param: {
-					element: '#widget-buttons',
+					element: '#widget-space #item-all',
 				}
 			},
 			{

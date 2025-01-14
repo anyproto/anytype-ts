@@ -439,6 +439,7 @@ class RecordStore {
 
 		return records.filter(it => isHidden ? true : !it.isHidden);
 	};
+
 };
 
  export const Record: RecordStore = new RecordStore();

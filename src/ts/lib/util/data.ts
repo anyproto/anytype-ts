@@ -155,7 +155,7 @@ class UtilData {
 		param = param || {};
 		param.routeParam = param.routeParam || {};
 
-		const pin = Storage.getPin();
+		const { pin } = S.Common;
 		const { root, widgets } = S.Block;
 		const { redirect, space } = S.Common;
 		const color = Storage.get('color');
@@ -1236,6 +1236,24 @@ class UtilData {
 		};
 
 		return Number(ret) || 0;
+	};
+
+	setRtl (rootId: string, blockId: string) {
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const fields = block.fields || {};
+		if (fields.isRtlDetected) {
+			return;
+		};
+
+		C.BlockListSetFields(rootId, [ 
+			{ blockId: block.id, fields: { ...fields, isRtlDetected: true } } 
+		], () => {
+			C.BlockListSetAlign(rootId, [ block.id ], I.BlockHAlign.Right);
+		});
 	};
 
 };

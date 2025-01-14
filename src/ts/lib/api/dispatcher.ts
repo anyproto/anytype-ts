@@ -1136,7 +1136,7 @@ class Dispatcher {
 	};
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
-		const { details, restrictions, relationLinks, participants } = objectView;
+		const { details, restrictions, participants } = objectView;
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');

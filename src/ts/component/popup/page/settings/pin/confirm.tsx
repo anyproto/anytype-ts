@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Pin, Error } from 'Component';
-import { I, Storage, translate } from 'Lib';
+import { I, S, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
@@ -16,6 +16,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 	ref = null;
 
 	render () {
+		const { pin } = S.Common;
 		const { onPage, prevPage } = this.props;
 		const { error } = this.state;
 
@@ -26,7 +27,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 				<Label className="description" text={translate('popupSettingsPinVerify')} />
 				<Pin 
 					ref={ref => this.ref = ref} 
-					expectedPin={Storage.getPin()} 
+					expectedPin={pin} 
 					onSuccess={this.onCheckPin} 
 					onError={this.onError} 
 				/>
