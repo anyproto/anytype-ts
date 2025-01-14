@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { SortableElement } from 'react-sortable-hoc';
-import { I, S, keyboard, Relation, Dataview } from 'Lib';
+import { I, S, J, keyboard, Relation, Dataview } from 'Lib';
 import Handle from './handle';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
@@ -95,6 +95,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				onOpen: () => obj.addClass('active'),
 				onClose: () => obj.removeClass('active'),
 				className: isFixed ? 'fixed' : '',
+				subIds: J.Menu.relationEdit,
 				data: {
 					...this.props,
 					blockId: block.id,
