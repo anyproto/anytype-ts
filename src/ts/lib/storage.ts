@@ -48,22 +48,15 @@ const Api = {
 
 class Storage {
 	
-	storage: any = null;
-	store: any = null;
-	
-	constructor () {
-		this.storage = localStorage;
-	};
-
 	get (key: string): any {
 		let o = Api.get(key);
 		if (!o) {
-			o = this.parse(String(this.storage[key] || ''));
+			o = this.parse(String(localStorage.getItem(key) || ''));
 		};
 
 		if (this.isSpaceKey(key)) {
 			if (o) {
-				delete(this.storage[key]);
+				localStorage.removeItem(key);
 				this.set(key, o, true);
 			};
 
@@ -71,7 +64,7 @@ class Storage {
 		} else 
 		if (this.isAccountKey(key)) {
 			if (o) {
-				delete(this.storage[key]);
+				localStorage.removeItem(key);
 				this.set(key, o, true);
 			};
 
@@ -109,7 +102,7 @@ class Storage {
 			this.setAccountKey(key, o);
 		} else {
 			Api.set(key, o);
-			//delete(this.storage[key]);
+			//localStorage.removeItem(key);
 		};
 	};
 	
@@ -121,8 +114,7 @@ class Storage {
 			this.deleteAccountKey(key);
 		} else {
 			U.Common.getElectron().storeDelete(key);
-			Api.delete(key);
-			delete(this.storage[key]);
+			localStorage.removeItem(key);
 		};
 	};
 
