@@ -130,7 +130,10 @@
 				}
 			};
 			
-			.cell.c-object, .cell.c-file { padding-right: 0px; }
+			.cell.c-object, .cell.c-file {
+				:not(.align2) { padding-right: 0px; }
+				&.align2 { padding-left: 0px; }
+			}
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
 				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 			}
@@ -139,7 +142,13 @@
 			.cell.cellKeyHover { background-color: var(--color-shape-highlight-light); }
 			.cell {
 				&.align1 { text-align: center; }
+				&.align1 {
+					.over { justify-content: center; }
+				}
 				&.align2 { text-align: right; }
+				&.align2 {
+					.over { justify-content: flex-end; }
+				}
 			}
 
 			.cell.isEditing {

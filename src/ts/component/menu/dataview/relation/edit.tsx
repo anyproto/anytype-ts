@@ -211,20 +211,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, extendedOptions, readonly, noUnlink, getView } = data;
-		
-		const view = getView();
-		if (!view) {
-			return;
-		};
-
+		const { rootId, blockId, extendedOptions, readonly, noUnlink } = data;
 		const relation = this.getRelation();
+
 		if (!relation) {
 			return;
 		};
 
 		const viewRelation = this.getViewRelation();
-
 		const object = S.Detail.get(rootId, rootId);
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const canFilter = !isFile;
@@ -276,7 +270,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						{ id: 'insert-left', icon: 'relation-insert-left', name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
 						{ id: 'insert-right', icon: 'relation-insert-right', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
 						canHide ? { id: 'hide', icon: 'relation-hide', name: translate('menuDataviewRelationEditHideRelation') } : null,
-						canAlign ? { id: 'align', icon: U.Data.alignHIcon(view.align), name: translate('commonAlign'), arrow: true } : null,
+						canAlign ? { id: 'align', icon: U.Data.alignHIcon(viewRelation?.align), name: translate('commonAlign'), arrow: true } : null,
 					]
 				},
 				{
@@ -320,18 +314,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const { getId, getSize, param, close } = this.props;
 		const { classNameWrap, data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId } = data;
 		const relation = this.getRelation();
 
 		if (!relation) {
 			return;
 		};
 
-		const view = getView();
-		if (!view) {
-			return;
-		};
-
+		const viewRelation = this.getViewRelation();
 		const object = S.Detail.get(rootId, rootId);
 
 		let menuContext = null;
@@ -353,7 +343,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				menuId = 'blockAlign';
 
 				menuParam.data = Object.assign(menuParam.data, {
-					value: view.align,
+					value: viewRelation?.align,
 					restricted: [ I.BlockHAlign.Justify ],
 					onSelect: (align: I.BlockHAlign) => {
 						this.saveViewRelation('align', align);
