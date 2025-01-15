@@ -8,7 +8,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const { parent } = props;
 	const space = U.Space.getSpaceview();
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-	const members = participants.filter(it => it.isActive);
 	const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
 	const isSpaceOwner = U.Space.isMyOwner();
 	const cn = [ 'body' ];
@@ -278,7 +277,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					<Icon className="search withBackground" onClick={onSearch} tooltip={translate('commonSearch')} tooltipCaption={`${cmd} + S`} />
 					<Icon className="plus withBackground" onClick={onCreate} tooltip={translate('commonCreateNewObject')} tooltipCaption={`${cmd} + N`} />
 					<Icon id={`widget-${parent.id}-arrow`} className="arrow withBackground" onClick={onArrow} tooltip={translate('commonSelectType')} />
-					<div className="cnt" onClick={onRequest}>{requestCnt}</div>
 				</div>
 			</div>
 
@@ -287,7 +285,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					let cnt = null;
 
 					if (item.id == 'member') {
-						cnt = <div className="cnt">{members.length}</div>;
+						cnt = <div className="cnt">{requestCnt}</div>;
 					};
 
 					return (
@@ -301,10 +299,11 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 								<Icon className={item.id} />
 								<div className="name">
 									{item.name}
-									{cnt}
 								</div>
 							</div>
-							<div className="side right" />
+							<div className="side right">
+								{cnt}
+							</div>
 						</div>
 					);
 				})}
