@@ -16,7 +16,13 @@
 			display: flex; border: 1px solid var(--color-shape-secondary); transition: border-color $transitionCommon; 
 			position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 		}
+		.inner::after { 
+			content: ''; position: absolute; left: 0px; top: 0px; border-radius: inherit; width: 100%; height: 100%; 
+			background: rgba(0,0,0,0.03); transition: $transitionAllCommon; pointer-events: none; opacity: 0; z-index: 1;
+		}
+
 		.inner:hover { border-color: var(--color-shape-primary); }
+		.inner:hover::after { opacity: 1; }
 		.inner.bgColor { border: 0px; }
 		
 		.inner {

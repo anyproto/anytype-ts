@@ -26,6 +26,7 @@ interface Props {
 interface ListManagerRefProps {
 	getSelected(): string[];
 	setSelection(ids: string[]): void;
+	setSelectedRange(start: number, end: number): void;
 	selectionClear(): void;
 };
 
@@ -48,7 +49,6 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	onAfterLoad
 }, ref) => {
 
-	const nodeRef = useRef(null);
 	const filterWrapperRef = useRef(null);
 	const filterRef = useRef(null);
 	const listRef = useRef(null);
@@ -144,18 +144,17 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 
 	const load = () => {
 		const filter = getFilterValue();
-		const fl = [].concat(filters || []);
-		const sl = [].concat(sorts || []);
+		const fl = [ ...filters ];
 
 		if (filter) {
-			filters.push({ relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
+			fl.push({ relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
 		};
 
 		setIsLoading(true);
 
 		U.Data.searchSubscribe({
 			subId,
-			sorts: sl,
+			sorts,
 			filters: fl,
 			ignoreArchived,
 			ignoreHidden,
@@ -400,6 +399,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	useImperativeHandle(ref, () => ({
 		getSelected: () => selected,
 		setSelection,
+		setSelectedRange,
 		selectionClear,
 	}));
 

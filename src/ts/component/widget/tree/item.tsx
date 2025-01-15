@@ -26,14 +26,22 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const subId = getSubId(parentId);
 	const isOpen = Storage.checkToggle(subKey, treeKey);
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
-	const { isReadonly, isArchived, type, restrictions, done, layout } = object;
-	const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
+	const { isReadonly, isArchived, isHidden, type, restrictions, done, layout } = object;
+	const cn = [ 'item', `c${id}` ];
 	const rootId = keyboard.getRootId();
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
 	const hasMore = U.Space.canMyParticipantWrite();
 	const [ dummy, setDummy ] = useState(0);
+
+	if (isOpen) {
+		cn.push('isOpen');
+	};
+
+	if (isHidden) {
+		cn.push('isHidden');
+	};
 
 	const onContextHandler = (e: SyntheticEvent, withElement: boolean): void => {
 		e.preventDefault();

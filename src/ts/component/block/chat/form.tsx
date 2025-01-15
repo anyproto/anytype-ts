@@ -353,9 +353,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				this.editingId = '';
 				this.marks = [];
 				this.range = { from: 0, to: 0 };
-
-				this.refEditable.setValue('');
-				this.refEditable.placeholderCheck();
+				this.updateValue('');
 			});
 		};
 
@@ -394,8 +392,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		let adjustMarks = false;
 
 		if (value !== parsed.text) {
-			this.refEditable.setValue(Mark.toHtml(parsed.text, this.marks));
-			this.refEditable.setRange(this.range);
+			this.updateValue(parsed.text);
 		};
 
 		if (canOpenMenuMention) {
@@ -450,33 +447,40 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.checkSendButton();
 		this.updateButtons();
 		this.removeBookmarks();
-		this.updateCounter(value);
+		this.updateCounter();
 	};
 
 	onInput () {
 		const value = this.getTextValue();
 		const checkRtl = U.Common.checkRtl(value);
 
-		$(this.refEditable?.node).toggleClass('isRtl', checkRtl);
+		$(this.refEditable?.getNode()).toggleClass('isRtl', checkRtl);
 	};
 
 	onPaste (e: any) {
 		e.preventDefault();
 
 		const { from, to } = this.range;
+		const limit = J.Constant.limit.chat.text;
+		const current = this.getTextValue();
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
-		const text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
 		const electron = U.Common.getElectron();
 		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
-		const value = U.Common.stringInsert(this.getTextValue(), text, from, to);
+
+		let text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
+		let value = U.Common.stringInsert(current, text, from, to);
+		if (value.length >= limit) {
+			const excess = value.length - limit;
+			const keep = text.length - excess;
+
+			text = text.substring(0, keep);
+			value = U.Common.stringInsert(current, text, from, to);
+		};
 
 		this.range = { from: to, to: to + text.length };
-		this.refEditable.setValue(Mark.toHtml(value, this.marks));
-		this.refEditable.setRange(this.range);
-		this.refEditable.placeholderCheck();
-		this.renderMarkup();
+		this.updateMarkup(value, this.range.from, this.range.to);
 
 		if (list.length) {
 			U.Common.saveClipboardFiles(list, {}, data => {
@@ -485,8 +489,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		this.checkUrls();
-		this.onInput();
-		this.updateCounter(value);
+		this.updateCounter();
 	};
 
 	checkUrls () {
@@ -634,7 +637,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const clear = () => {
 			this.onEditClear();
 			this.onReplyClear();
-			this.updateCounter();
+			this.clearCounter();
 			this.checkSpeedLimit();
 			loader.removeClass('active');
 		};
@@ -734,7 +737,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.editingId = message.id;
 		this.replyingId = '';
 		this.updateMarkup(text, l, l);
-		this.updateCounter(text);
+		this.updateCounter();
 
 		this.setAttachments(attachments, () => {
 			this.refEditable.setRange(this.range);
@@ -746,7 +749,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.marks = [];
 		this.updateMarkup('', 0, 0);
 		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
-		this.updateCounter();
+		this.clearCounter();
 		this.refButtons.setButtons();
 	};
 
@@ -1027,12 +1030,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	updateMarkup (value: string, from: number, to: number) {
 		this.range = { from, to };
-		this.refEditable.setValue(Mark.toHtml(value, this.marks));
-
-		this.refEditable.setRange({ from, to });
-		this.refEditable.placeholderCheck();
+		this.updateValue(value);
 		this.renderMarkup();
 		this.checkSendButton();
+	};
+
+	updateValue (value: string) {
+		this.refEditable.setValue(Mark.toHtml(value, this.marks));
+		this.refEditable.setRange(this.range);
+		this.refEditable.placeholderCheck();
+		this.onInput();
 	};
 
 	renderMarkup () {
@@ -1047,10 +1054,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	updateCounter (v?: string) {
-		const l = v && v.length ? v.length : 0;
+		const value = v || this.getTextValue();
+		const l = value.length;
 
 		this.setState({ charCounter: l });
 		$(this.refCounter).toggleClass('show', l >= J.Constant.limit.chat.text - 50);
+	};
+
+	clearCounter () {
+		this.setState({ charCounter: 0 });
+		$(this.refCounter).removeClass('show');
 	};
 
 	checkSpeedLimit () {

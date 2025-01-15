@@ -551,7 +551,7 @@ class BlockStore {
 					name = object.name;
 				};
 
-				name = U.Common.shorten(object.name.trim(), 30);
+				name = U.Common.shorten(name.trim(), 30);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;

@@ -42,6 +42,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		let canDelete = !noDelete;
 		let opts: any = null;
 		let unlinkText = '';
+		let name = '';
+
+		if (relation) {
+			name = relation.name;
+		} else 
+		if (data.filter) {
+			name = data.filter;
+		};
 
 		if (readonly) {	
 			canDuplicate = canDelete = false;
@@ -107,7 +115,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 						<div className="inputWrap">
 							<Input 
 								ref={ref => this.ref = ref} 
-								value={relation ? relation.name : ''}
+								value={name}
 								onChange={this.onChange} 
 								onMouseEnter={this.menuClose}
 							/>

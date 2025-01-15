@@ -8,7 +8,6 @@ import { ListMenu } from 'Component';
 import { S, U, C, J } from 'Lib'; 
 
 import Index from './popup/index';
-import Challenge from './popup/challenge';
 import Create from './popup/create';
 import Success from './popup/success';
 
@@ -23,7 +22,6 @@ const Routes = [
 
 const Components = {
 	index: Index,
-	challenge: Challenge,
 	create: Create,
 	success: Success,
 };
