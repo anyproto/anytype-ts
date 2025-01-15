@@ -340,11 +340,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { page } = data || {};
+		const route = data.route || analytics.route.settings;
 
 		this.prevPage = page;
 
 		S.Popup.updateData(this.props.id, { page: id, ...additional });
-		analytics.event('settings', { params: { id } });
+		analytics.event('settings', { route, params: { id } });
 	};
 
 	onExport (type: I.ExportType, param: any) {

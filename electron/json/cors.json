@@ -125,7 +125,9 @@
 		"https://*.any.coop",
 		"https://*.amplitude.com",
 		"https://kroki.io",
-		"https://*.vimeo.com"
+		"https://*.vimeo.com",
+		"https://*.statsigapi.net",
+		"https://*.bstarstatic.com"
 	],
 
 	"script-src-elem": [
@@ -161,7 +163,9 @@
 		"https://*.hdslb.com",
 		"https://static.sketchfab.com",
 		"https://*.codepenassets.com",
-		"https://*.bstarstatic.com"
+		"https://*.bstarstatic.com",
+		"https://*.googletagmanager.com",
+		"https://*.facebook.net"
 	],
 
 	"frame-src": [

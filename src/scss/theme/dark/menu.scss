@@ -302,16 +302,27 @@
 
     /* Widget */
 
-    .menu.menuWidget {
-        .options {
-            .option {
-                .icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
-                .icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
-                .icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
-                .icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
-                .icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
-            }
-        }
-    }
+	.menu.menuWidget {
+		.options {
+			.option {
+				.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
+				.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
+				.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
+				.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
+				.icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
+			}
+		}
+	}
+
+	/* Publish */
+
+	.menu.menuPublish {
+		.input.isReadonly { background: rgba(255, 255, 255, 0.03); }
+
+		.outer {
+			.icon.space { background-image: url('#{$themePath}/icon/widget/button/member.svg'); }
+			.icon.export { background-image: url('#{$themePath}/icon/widget/button/export.svg'); }
+		}
+	}
 
 }
