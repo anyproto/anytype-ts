@@ -13,6 +13,9 @@
 		padding: 0px 12px 12px 12px; overflow: scroll; display: flex; flex-direction: column; gap: 12px 0px; overscroll-behavior: none; 
 		scrollbar-gutter: stable both-edges; flex-grow: 1;
 	}
+	.body {
+		.group { display: flex; flex-direction: column; gap: 12px 0px; margin-bottom: 10px; }
+	}
 
 	.section { background: var(--color-bg-primary); border-radius: 12px; padding: 8px 0px; }
 
