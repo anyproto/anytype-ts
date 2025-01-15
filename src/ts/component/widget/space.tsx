@@ -65,9 +65,9 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		const route = '';
 
 		let options: any[] = [
-			canPin ? { id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) } : null,
+			canPin ? { id: 'pin', name: (isPinned ? translate('commonUnpin') : translate('commonPin')) } : null,
 			canDefault ? { id: 'default', name: translate('commonSetDefault') } : null,
-			{ id: 'open', name: translate('menuQuickCaptureOpenType') },
+			{ id: 'open', name: translate('commonOpenType') },
 		];
 
 		if (canDelete) {

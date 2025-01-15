@@ -179,6 +179,9 @@
 	"commonCalculate": "Calculate",
 	"commonRelations": "Relations",
 	"commonSelectType": "Select Type",
+	"commonPin": "Pin on top",
+	"commonUnpin": "Unpin",
+	"commonOpenType": "Open Type",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1579,15 +1582,6 @@
 
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
-
-	"menuQuickCaptureSearchObjectTypes": "Search object types...",
-	"menuQuickCaptureGroups": "Lists",
-	"menuQuickCapturePinned": "Pinned",
-	"menuQuickCaptureTooltipSearch": "Search types",
-	"menuQuickCaptureTooltipClipboard": "Create from clipboard",
-	"menuQuickCaptureOpenType": "Open type",
-	"menuQuickCapturePin": "Pin on top",
-	"menuQuickCaptureUnpin": "Unpin",
 
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",

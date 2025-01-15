@@ -610,7 +610,6 @@ class Analytics {
 		const map = {
 			help:				 'MenuHelp',
 			blockRelationView:	 'ScreenObjectRelation',
-			quickCapture:		 'ScreenQuickCapture',
 		};
 
 		return map[id] || '';
