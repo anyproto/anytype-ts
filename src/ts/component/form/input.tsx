@@ -96,7 +96,7 @@ const Input = forwardRef<InputRef, Props>(({
 	const isFocused = useRef(false);
 	const rangeRef = useRef<I.TextRange | null>(null);
 	const cn = [ 'input', `input-${inputType}`, className ];
-	
+
 	if (readonly) {
 		cn.push('isReadonly');
 	};
@@ -187,9 +187,11 @@ const Input = forwardRef<InputRef, Props>(({
 		onCompositionStart?.();
 	};
 
-	const handleCompositionEnd = () => {
+	const handleCompositionEnd = (e) => {
 		keyboard.setComposition(false);
 		onCompositionEnd?.();
+
+		handleChange(e);
 	};
 
 	const addClass = (className: string) => {
@@ -244,8 +246,6 @@ const Input = forwardRef<InputRef, Props>(({
 		clone.remove();
 		return rect;
 	};
-
-	useEffect(() => setValue(initialValue), []);
 
 	useEffect(() => {
 		if (maskOptions && inputRef.current) {

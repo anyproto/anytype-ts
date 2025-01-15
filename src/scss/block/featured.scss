@@ -11,7 +11,7 @@
 		.wrap { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-wrap: wrap; }
 		.bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-secondary); }
 
-		.cell { white-space: nowrap; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 2px; }
+		.cell { white-space: nowrap; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 2px; height: 28px; }
 		.cell.canEdit {
 			.cellContent {
 				.empty { display: inline; }
@@ -19,7 +19,10 @@
 		}
 		.cell:last-child .bullet { display: none; }
 
-		.cellContent { display: inline-block; border-radius: 4px; vertical-align: top; padding: 0px 6px; transition: background $transitionCommon; cursor: default !important; }
+		.cellContent { 
+			height: 100% ;display: flex; border-radius: 4px; vertical-align: top; padding: 0px 6px; transition: background $transitionCommon; 
+			cursor: default !important; 
+		}
 		.cellContent.disabled { opacity: 1; }
 
 		.cellContent:not(.disabled):hover, .cellContent:not(.disabled).hover { background: var(--color-shape-highlight-medium); }

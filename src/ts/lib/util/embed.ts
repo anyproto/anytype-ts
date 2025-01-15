@@ -78,10 +78,6 @@ class UtilEmbed {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
-	getKrokiHtml (content: string): string {
-		return `<img src="${content}" />`;
-	};
-
 	getSketchfabHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
@@ -97,6 +93,17 @@ class UtilEmbed {
 
 			if (url.match(reg)) {
 				p = Number(i);
+
+				// Restrict youtube channel links
+				if ((p == I.EmbedProcessor.Youtube)) {
+					try {
+						const info = new URL(url);
+
+						if (info.pathname.match(/^\/@/)) {
+							p = null;
+						};
+					} catch (e) { p = null; };
+				};
 				break;
 			};
 		};

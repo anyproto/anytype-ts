@@ -1,6 +1,6 @@
-import React, { forwardRef, useRef, useState } from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Title, Input, Label, Switch, Button, Icon, Loader } from 'Component';
-import { J, U, I, S, Action, translate } from 'Lib';
+import { J, U, I, S, Action, translate, analytics } from 'Lib';
 
 const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -8,29 +8,62 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data } = param;
 	const { rootId } = data;
 	const inputRef = useRef(null);
+	const space = U.Space.getSpaceview();
 	const object = S.Detail.get(rootId, rootId, []);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
 	const participant = U.Space.getMyParticipant();
-	const domain = U.Common.sprintf(J.Url.publish, participant.resolvedName);
+
+	let domain = '';
+	if (participant.resolvedName) {
+		domain = U.Common.sprintf(J.Url.publishDomain, participant.resolvedName);
+	} else {
+		domain = U.Common.sprintf(J.Url.publish, participant.identity);
+	};
+
+	const url = [ domain, slug ].join('/');
 	const items = [
-		{ 
+		(!space.isPersonal ? { 
 			id: 'space', name: translate('popupSettingsSpaceIndexShareShareTitle'), onClick: () => {
-				S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
+				S.Popup.open('settings', { 
+					data: { 
+						page: 'spaceShare', 
+						isSpace: true, 
+						route: analytics.route.share,
+				}, className: 'isSpace' });
 				close();
+
+				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });
 			},
-		},
+		} : null),
 		{ 
 			id: 'export', name: translate('popupExportTitle'), onClick: () => {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
 				close();
+
+				analytics.event('ClickShareObjectShareExport', { objectType: object.type });
 			},
 		},
-	];
+	].filter(it => it);
 
 	const onPublish = () => {
 		setIsLoading(true);
-		Action.publish(rootId, inputRef.current.getValue(), () => setIsLoading(false));
+		Action.publish(rootId, inputRef.current.getValue(), () => {
+			setIsLoading(false);
+			close();
+
+			analytics.event('ShareObjectPublish', { objectType: object.type });
+		});
+
+		analytics.event('ClickShareObjectPublish', { objectType: object.type });
 	};
+
+	const setSlugHander = v => setSlug(U.Common.slug(v));
+	const onUrlClick = () => Action.openUrl(url);
+
+	useEffect(() => {
+		setSlugHander(object.name);
+	}, []);
 
 	return (
 		<>
@@ -39,10 +72,11 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<Input value={domain} readonly={true} />
 			<Input
                 ref={inputRef}
-                value={U.Common.slug(object.name)}
+                value={slug}
                 focusOnMount={true} 
+				onChange={(e, v) => setSlugHander(v)}
 			/>
-			<Label className="small" text="https:/any.copp/kjshdfkjahsjdkhAJDH*78/rem-koolhaas-architects" />
+			<Label className="small" text={url} onClick={onUrlClick} />
 
 			<div className="flex">
 				<Label text={translate('menuPublishLabel')} />

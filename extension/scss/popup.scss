@@ -33,11 +33,7 @@ html.anytypeWebclipper-popup { width: 268px; }
 
 	.isFocused { border-color: var(--color-ice) !important; box-shadow: 0px 0px 0px 1px var(--color-ice); }
 
-	.page.pageIndex, .page.pageChallenge { padding: 50px 16px; text-align: center; }
-
-	.page.pageChallenge {
-		.title { @include text-common; font-weight: 600; margin: 0px 0px 24px 0px; }
-	}
+	.page.pageIndex { padding: 50px 16px; text-align: center; }
 
 	.page.pageCreate { padding: 16px; }
 	.page.pageCreate {

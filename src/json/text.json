@@ -123,6 +123,7 @@
 	"commonRedo": "Redo",
 	"commonBlank": "Blank",
 	"commonSetDefault": "Set as default",
+	"commonTemplate": "Template",
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
 	"commonCreateNew": "Create new",
@@ -177,6 +178,10 @@
 	"commonNotFound": "Not found",
 	"commonCalculate": "Calculate",
 	"commonRelations": "Relations",
+	"commonSelectType": "Select Type",
+	"commonPin": "Pin on top",
+	"commonUnpin": "Unpin",
+	"commonOpenType": "Open Type",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1065,6 +1070,7 @@
 
 	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
+	"popupConfirmSpaceDeleted": "The space you try to access has been deleted",
 
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
@@ -1090,7 +1096,7 @@
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
-	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?",
+	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
 
 	"popupConfirmChatDeleteMessageTitle": "Delete this message?",
 	"popupConfirmChatDeleteMessageText": "It cannot be restored after confirmation",
@@ -1513,6 +1519,8 @@
 	"menuDataviewTemplateSetDefaultForView": "Default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
 
+	"menuDataviewExistingObject": "Existing object",
+
 	"menuGraphSettingsTitles": "Titles",
 	"menuGraphSettingsArrows": "Arrows",
 	"menuGraphSettingsIcons": "Icons",
@@ -1566,9 +1574,7 @@
 	"menuTypeSuggestCreateType": "Create type %s",
 
 	"menuWidgetAddWidget": "Add Widget",
-	"menuWidgetChooseSource": "Choose a source",
 	"menuWidgetWidgetType": "Widget type",
-	"menuWidgetWidgetSource": "Widget Source",
 	"menuWidgetNumberOfObjects": "Number of Objects",
 	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetEditWidgets": "Edit Widgets",
@@ -1576,15 +1582,6 @@
 
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
-
-	"menuQuickCaptureSearchObjectTypes": "Search object types...",
-	"menuQuickCaptureGroups": "Lists",
-	"menuQuickCapturePinned": "Pinned",
-	"menuQuickCaptureTooltipSearch": "Search types",
-	"menuQuickCaptureTooltipClipboard": "Create object from clipboard",
-	"menuQuickCaptureOpenType": "Open type",
-	"menuQuickCapturePin": "Pin on top",
-	"menuQuickCaptureUnpin": "Unpin",
 
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",
@@ -1793,6 +1790,7 @@
 	"widgetEmptyLabel": "There are no Objects here",
 	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
 	"widgetShowAll": "See all Objects",
+	"widgetItemClipboard": "Create from clipboard",
 
 	"phrasePlaceholder": "Please enter your Key",
 

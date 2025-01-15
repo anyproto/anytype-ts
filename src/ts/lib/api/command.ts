@@ -1366,7 +1366,6 @@ export const PublishingCreate = (spaceId: string, objectId: string, uri: string,
 	*/
 };
 
-
 export const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
 
