@@ -1861,6 +1861,7 @@
 	"sidebarObjectRelationSetUp": "Set up",
 
 	"sidebarRelationLocal": "Local Fields",
+	"sidebarTypeRelationLocalDescription": "Some fields are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

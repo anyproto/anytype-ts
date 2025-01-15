@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button } from 'Component';
+import { Label, Button, Icon } from 'Component';
 import { I, S, U, sidebar, translate, keyboard } from 'Lib';
 
 import Section from 'Component/sidebar/section';
@@ -36,8 +36,19 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 				<div className="body customScrollbar">
 					{sections.map((section, i) => (
-						<React.Fragment key={section.id}>
-							{section.name ? <div className="sectionName">{section.name}</div> : null}
+						<div className="group" key={section.id}>
+							{section.name ? (
+								<div className="sectionName">
+									<Label text={section.name} />
+
+									{section.description ? (
+										<div className="groupDescription">
+											<Icon className="question" />
+											<Label text={section.description} />
+										</div>
+									) : null}
+								</div>
+							) : null}
 							{section.children.map((item, i) => (
 								<Section 
 									{...this.props} 
@@ -51,7 +62,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 									onDragStart={e => this.onDragStart(e, item)}
 								/>
 							))}
-						</React.Fragment>
+						</div>
 					))}
 				</div>
 			</>
@@ -77,7 +88,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 		const sections = [
 			{ id: 'object', children: items },
-			{ id: 'conflicts', name: translate('sidebarRelationLocal'), children: conflicts	}
+			{ id: 'conflicts', name: translate('sidebarRelationLocal'), children: conflicts, description: translate('sidebarTypeRelationLocalDescription') }
 		];
 
 		return sections.filter(it => it.children.length);
