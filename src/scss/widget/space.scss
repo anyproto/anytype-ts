@@ -26,6 +26,10 @@
 				.icon { width: 24px; height: 24px; flex-shrink: 0; }
 				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
 				.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); }
+				.icon.arrow { 
+					background-image: url('~img/icon/widget/button/arrow.svg'); width: 20px !important; 
+					background-size: 8px 5px !important; 
+				}
 			}
 		}
 

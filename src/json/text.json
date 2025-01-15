@@ -178,6 +178,10 @@
 	"commonNotFound": "Not found",
 	"commonCalculate": "Calculate",
 	"commonRelations": "Relations",
+	"commonSelectType": "Select Type",
+	"commonPin": "Pin on top",
+	"commonUnpin": "Unpin",
+	"commonOpenType": "Open Type",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1579,15 +1583,6 @@
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
 
-	"menuQuickCaptureSearchObjectTypes": "Search object types...",
-	"menuQuickCaptureGroups": "Lists",
-	"menuQuickCapturePinned": "Pinned",
-	"menuQuickCaptureTooltipSearch": "Search types",
-	"menuQuickCaptureTooltipClipboard": "Create object from clipboard",
-	"menuQuickCaptureOpenType": "Open type",
-	"menuQuickCapturePin": "Pin on top",
-	"menuQuickCaptureUnpin": "Unpin",
-
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",
 	"syncButtonNameError3": "No access",
@@ -1795,6 +1790,7 @@
 	"widgetEmptyLabel": "There are no Objects here",
 	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
 	"widgetShowAll": "See all Objects",
+	"widgetItemClipboard": "Create from clipboard",
 
 	"phrasePlaceholder": "Please enter your Key",
 
