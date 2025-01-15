@@ -24,6 +24,7 @@
 		}
 		.emptySearch { height: 238px; }
 
-        .button { flex-shrink: 0; width: 100%; }
+		.buttons { display: flex; flex-direction: row-reverse; gap: 0px 8px; justify-content: space-evenly; }
+		.button { width: 100%; }
     }
 }

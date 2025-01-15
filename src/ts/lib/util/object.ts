@@ -73,6 +73,11 @@ class UtilObject {
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (this.isParticipantLayout(object.layout)) {
+			U.Menu.participant(object, param.menuParam);
+			return;
+		};
+
 		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else
@@ -484,8 +489,7 @@ class UtilObject {
 
 	isAllowedChat () {
 		const { config, space } = S.Common;
-		const spaceview = U.Space.getSpaceview();
-		return spaceview.chatId && (config.experimental || J.Constant.chatSpaceId.includes(space));
+		return config.experimental || J.Constant.chatSpaceId.includes(space);
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {

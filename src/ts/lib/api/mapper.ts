@@ -354,6 +354,7 @@ export const Mapper = {
 				width: obj.getWidth(),
 				includeTime: obj.getDateincludetime(),
 				formulaType: obj.getFormula(),
+				align: obj.getAlign(),
 			};
 		},
 
@@ -415,7 +416,6 @@ export const Mapper = {
 				rootId: obj.getRootid(),
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
-				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
 				participants: (obj.getBlockparticipantsList() || []).map(it => ({
 					blockId: it.getBlockid(),
@@ -904,6 +904,7 @@ export const Mapper = {
 			item.setWidth(obj.width);
 			item.setDateincludetime(obj.includeTime);
 			item.setFormula(obj.formulaType);
+			item.setAlign(obj.align as number);
 
 			return item;
 		},

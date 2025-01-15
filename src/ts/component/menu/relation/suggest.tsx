@@ -67,13 +67,11 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						<div className="name">{item.name}</div>
 					</div>
 				);
-			} else
-			if (item.isSection) {
-				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
 			} else {
 				content = (
 					<MenuItemVertical 
 						{...item}
+						index={param.index}
 						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
@@ -109,8 +107,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						focusOnMount={true}
 					/>
 				) : ''}
-
-				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
 					<EmptySearch readonly={!canWrite} filter={filter} />
@@ -496,7 +492,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	resize () {
-		const { isLoading } = this.state;
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
@@ -505,7 +500,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		let height = 16 + (noFilter ? 0 : 42);
 		if (!items.length) {
-			height = isLoading ? height + 40 : 160;
+			height = 160;
 		} else {
 			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
 		};

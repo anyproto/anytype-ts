@@ -54,7 +54,8 @@ export default {
 		'select',
 		'searchObject',
 		'dataviewObjectValues',
-		'dataviewObjectList'
+		'dataviewObjectList',
+		'blockAlign',
 	],
 	layout: [ 'blockAlign' ],
 	latex: [ 'previewLatex' ],
@@ -65,5 +66,6 @@ export default {
 	widget: [ 'searchObject', 'select' ],
 	dataviewTemplate: [ 'previewObject' ],
 	table: [ 'select2', 'blockColor', 'blockBackground' ],
-	dataviewContext: [ 'typeSuggest', 'searchObject' ]
+	dataviewContext: [ 'typeSuggest', 'searchObject' ],
+	dataviewNew: [ 'searchObject', 'typeSuggest', 'dataviewTemplateList' ]
 };

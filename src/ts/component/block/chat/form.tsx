@@ -353,9 +353,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				this.editingId = '';
 				this.marks = [];
 				this.range = { from: 0, to: 0 };
-
-				this.refEditable.setValue('');
-				this.refEditable.placeholderCheck();
+				this.updateValue('');
 			});
 		};
 
@@ -394,8 +392,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		let adjustMarks = false;
 
 		if (value !== parsed.text) {
-			this.refEditable.setValue(Mark.toHtml(parsed.text, this.marks));
-			this.refEditable.setRange(this.range);
+			this.updateValue(parsed.text);
 		};
 
 		if (canOpenMenuMention) {
@@ -457,7 +454,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const value = this.getTextValue();
 		const checkRtl = U.Common.checkRtl(value);
 
-		$(this.refEditable?.node).toggleClass('isRtl', checkRtl);
+		$(this.refEditable?.getNode()).toggleClass('isRtl', checkRtl);
 	};
 
 	onPaste (e: any) {
@@ -483,10 +480,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		this.range = { from: to, to: to + text.length };
-		this.refEditable.setValue(Mark.toHtml(value, this.marks));
-		this.refEditable.setRange(this.range);
-		this.refEditable.placeholderCheck();
-		this.renderMarkup();
+		this.updateMarkup(value, this.range.from, this.range.to);
 
 		if (list.length) {
 			U.Common.saveClipboardFiles(list, {}, data => {
@@ -495,7 +489,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		this.checkUrls();
-		this.onInput();
 		this.updateCounter();
 	};
 
@@ -1037,12 +1030,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	updateMarkup (value: string, from: number, to: number) {
 		this.range = { from, to };
-		this.refEditable.setValue(Mark.toHtml(value, this.marks));
-
-		this.refEditable.setRange({ from, to });
-		this.refEditable.placeholderCheck();
+		this.updateValue(value);
 		this.renderMarkup();
 		this.checkSendButton();
+	};
+
+	updateValue (value: string) {
+		this.refEditable.setValue(Mark.toHtml(value, this.marks));
+		this.refEditable.setRange(this.range);
+		this.refEditable.placeholderCheck();
+		this.onInput();
 	};
 
 	renderMarkup () {

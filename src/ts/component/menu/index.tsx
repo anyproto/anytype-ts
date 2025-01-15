@@ -70,8 +70,7 @@ import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 import MenuDataviewTemplateContext from './dataview/template/context';
 import MenuDataviewTemplateList from './dataview/template/list';
-
-import MenuQuickCapture from './quickCapture';
+import MenuDataviewNew from './dataview/new';
 
 import MenuSyncStatus from './syncStatus';
 import MenuSyncStatusInfo from './syncStatus/info';
@@ -150,8 +149,7 @@ const Components: any = {
 	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
 	dataviewTemplateContext: MenuDataviewTemplateContext,
 	dataviewTemplateList:	 MenuDataviewTemplateList,
-
-	quickCapture: 			 MenuQuickCapture,
+	dataviewNew: 		 	 MenuDataviewNew,
 
 	syncStatus:				 MenuSyncStatus,
 	syncStatusInfo:			 MenuSyncStatusInfo,
