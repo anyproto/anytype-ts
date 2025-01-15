@@ -178,7 +178,6 @@ class Action {
 		const isDangerous = [ 
 			'javascript', 
 			'data', 
-			'data', 
 			'ws', 
 			'wss', 
 			'chrome', 
