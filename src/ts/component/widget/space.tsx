@@ -206,7 +206,27 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-					]
+					],
+					onClick: (item: any) => {
+						let flags: I.ObjectFlag[] = [];
+						if (!U.Object.isInSetLayouts(item.recommendedLayout)) {
+							flags = flags.concat([ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+						};
+
+						C.ObjectCreate({}, flags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
+							if (message.error.code || !message.details) {
+								return;
+							};
+
+							const object = message.details;
+
+							U.Object.openAuto(object);
+							U.Object.setLastUsedDate(object.id, U.Date.now());
+
+							analytics.createObject(object.type, object.layout, '', message.middleTime);
+							analytics.event('SelectObjectType', { objectType: object.type });
+						});
+					},
 				},
 			});
 		};
