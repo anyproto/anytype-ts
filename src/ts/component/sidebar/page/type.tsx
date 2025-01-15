@@ -12,6 +12,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	update: any = {};
 	sectionRefs: Map<string, any> = new Map();
 	previewRef: any = null;
+	hasConflicts: boolean = false;
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -62,6 +63,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	componentDidMount (): void {
 		this.init();
+		this.checkConflicts();
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 	};
 
@@ -110,11 +112,17 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	getSections () {
-		return [
+		const sections = [
 			{ id: 'title', component: 'type/title' },
 			{ id: 'layout', component: 'type/layout' },
 			{ id: 'relation', component: 'type/relation' },
 		];
+
+		if (this.hasConflicts) {
+			sections.push({ id: 'conflicts', component: 'type/conflict' });
+		};
+
+		return sections;
 	};
 
 	onChange (section: string, update: any) {
@@ -165,6 +173,18 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	updateObject (id: string) {
 		this.sectionRefs.get(id)?.setObject(this.object);
 		this.previewRef?.update(this.object);
+	};
+
+	checkConflicts () {
+		const { space } = S.Common;
+		const { rootId } = this.props;
+
+		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
+			if (!message.error.code && message.conflictRelationIds?.length) {
+				this.hasConflicts = true;
+				this.forceUpdate();
+			};
+		});
 	};
 
 });

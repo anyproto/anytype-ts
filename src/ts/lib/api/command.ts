@@ -1227,6 +1227,15 @@ export const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: str
 	dispatcher.request(ObjectTypeRelationRemove.name, request, callBack);
 };
 
+export const ObjectTypeListConflictingRelations = (objectTypeId: string, spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.ListConflictingRelations.Request();
+
+	request.setSpaceid(spaceId);
+	request.setTypeobjectid(objectTypeId);
+
+	dispatcher.request(ObjectTypeListConflictingRelations.name, request, callBack);
+};
+
 // ---------------------- OBJECT ---------------------- //
 
 export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
