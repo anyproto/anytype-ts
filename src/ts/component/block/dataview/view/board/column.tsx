@@ -158,7 +158,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		const subId = getSubId();
 		const limit = getLimit() + this.offset;
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);

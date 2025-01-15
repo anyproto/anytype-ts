@@ -171,7 +171,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
 		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(view.filters as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();

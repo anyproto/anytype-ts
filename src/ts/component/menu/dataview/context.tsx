@@ -277,7 +277,7 @@ class MenuContext extends React.Component<I.Menu> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
@@ -305,7 +305,7 @@ class MenuContext extends React.Component<I.Menu> {
 				menuParam.className = 'single';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
@@ -317,7 +317,7 @@ class MenuContext extends React.Component<I.Menu> {
 						name: translate('blockDataviewCreateNewCollection'),
 						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
 						onClick: (details: any) => {
-							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, objectIds);
 								U.Object.openAuto(message.details);
 							});

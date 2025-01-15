@@ -66,7 +66,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		const limit = J.Constant.limit.listObject
 		const offset = (page - 1) * limit;
 		const fl = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(filters || []);
 
 		S.Record.metaSet(subId, '', { offset });

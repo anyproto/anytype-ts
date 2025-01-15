@@ -244,7 +244,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		];
 
 		let filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts },
 		];
 
 		if (data.filters && data.filters.length) {

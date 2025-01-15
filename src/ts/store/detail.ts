@@ -194,7 +194,6 @@ class DetailStore {
 		object.name = Relation.getStringValue(object.name) || translate('defaultNamePage');
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 		object.type = Relation.getStringValue(object.type);
-		object.layout = Number(object.layout) || I.ObjectLayout.Page;
 		object.origin = Number(object.origin) || I.ObjectOrigin.None;
 		object.iconImage = Relation.getStringValue(object.iconImage);
 		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
@@ -207,6 +206,12 @@ class DetailStore {
 		object.isHidden = Boolean(object.isHidden);
 		object.isReadonly = Boolean(object.isReadonly);
 		object.isDeleted = Boolean(object.isDeleted);
+
+		if (undefined === object.layout) {
+			object.layout = object.resolvedLayout;
+		};
+
+		object.layout = Number(object.layout) || I.ObjectLayout.Page;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedObject');

@@ -1554,6 +1554,8 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 };
 
 export const ObjectSearch = (spaceId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.Search.Request();
 
 	request.setSpaceid(spaceId);
@@ -1568,6 +1570,8 @@ export const ObjectSearch = (spaceId: string, filters: I.Filter[], sorts: I.Sort
 };
 
 export const ObjectSearchWithMeta = (spaceId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.SearchWithMeta.Request();
 
 	request.setSpaceid(spaceId);
@@ -1582,6 +1586,8 @@ export const ObjectSearchWithMeta = (spaceId: string, filters: I.Filter[], sorts
 };
 
 export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	request.setSpaceid(spaceId);
@@ -1614,6 +1620,8 @@ export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKe
 };
 
 export const ObjectSubscribeIds = (spaceId: string, subId: string, ids: string[], keys: string[], noDeps: boolean, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.SubscribeIds.Request();
 
 	request.setSpaceid(spaceId);
@@ -1669,15 +1677,6 @@ export const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], 
 	dispatcher.request(ObjectRelationRemoveFeatured.name, request, callBack);
 };
 
-export const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SetLayout.Request();
-
-	request.setContextid(contextId);
-	request.setLayout(layout as number);
-
-	dispatcher.request(ObjectSetLayout.name, request, callBack);
-};
-
 export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetIsFavorite.Request();
 
@@ -1688,6 +1687,8 @@ export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, call
 };
 
 export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.Graph.Request();
 
 	request.setSpaceid(spaceId);

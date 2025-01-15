@@ -320,7 +320,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Participant },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Participant },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 
@@ -341,39 +341,39 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			case I.ObjectContainerType.Object: {
 				const skipped = U.Object.getFileAndSystemLayouts().concat(U.Object.getSetLayouts()).concat([ I.ObjectLayout.Bookmark ]);
 
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipped });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipped });
 				break;
 			};
 
 			case I.ObjectContainerType.List: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getSetLayouts() });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getSetLayouts() });
 				break;
 			};
 
 			case I.ObjectContainerType.Type: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type });
 				break;
 			};
 
 			case I.ObjectContainerType.File: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: fileLayouts });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: fileLayouts });
 				break;
 			};
 
 			case I.ObjectContainerType.Media: {
 				filters = filters.concat([
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts().filter(it => !fileLayouts.includes(it)) },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts().filter(it => !fileLayouts.includes(it)) },
 				]);
 				break;
 			};
 
 			case I.ObjectContainerType.Bookmark: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Bookmark });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Bookmark });
 				break;
 			};
 
 			case I.ObjectContainerType.Relation: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation });
 				break;
 			};
 		};

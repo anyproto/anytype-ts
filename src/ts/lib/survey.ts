@@ -132,7 +132,7 @@ class Survey {
 		U.Data.search({
 			spaceId: space,
 			filters: [
-				{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 				{ relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }
 			],
 			limit: 50,

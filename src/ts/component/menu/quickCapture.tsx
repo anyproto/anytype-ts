@@ -213,7 +213,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const layouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
 
 		const filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 			{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: layouts },
 			{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
@@ -447,7 +447,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 			};
 
-			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
+			C.ObjectCreate({}, flags, item.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
 				if (message.error.code || !message.details) {
 					return;
 				};
