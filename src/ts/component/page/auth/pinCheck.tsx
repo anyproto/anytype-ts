@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	const pinRef = useRef(null);
+	const { pin } = S.Common;
 	const [ error, setError ] = useState('');
 
 	const unbind = () => {
@@ -46,7 +47,7 @@ const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
 			<Title text={translate('authPinCheckTitle')} />
 			<Pin 
 				ref={pinRef}
-				expectedPin={Storage.getPin()} 
+				expectedPin={pin} 
 				onSuccess={onSuccess} 
 				onError={onError} 
 			/>

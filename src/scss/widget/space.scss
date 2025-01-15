@@ -7,7 +7,7 @@
 	.body {
 		.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 4px 4px 8px; }
 		.sides {
-			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; width: 100%; }
+			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; width: 100%; flex-grow: 1; overflow: hidden; }
 			.side.left {
 				.iconObject { flex-shrink: 0; }
 				.iconObject:not(.withOption) { background-color: var(--color-shape-tertiary); }
@@ -26,15 +26,21 @@
 				.icon { width: 24px; height: 24px; flex-shrink: 0; }
 				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
 				.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); }
-				.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
+				.icon.arrow { 
+					background-image: url('~img/icon/widget/button/arrow.svg'); width: 20px !important; 
+					background-size: 8px 5px !important; 
+				}
 			}
 		}
 
 		.buttons {
-			.item { padding: 4px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+			.item { 
+				padding: 4px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; background: var(--color-bg-primary); 
+				border-radius: 6px;
+			}
 			.item::before {
 				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
-				border-radius: 6px; opacity: 0;
+				border-radius: inherit; opacity: 0;
 			}
 			.item:hover::before, .item.hover::before { opacity: 1; }
 

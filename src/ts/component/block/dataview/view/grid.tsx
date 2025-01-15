@@ -429,14 +429,17 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		keyboard.disableSelection(false);
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
+	loadMoreRows () {
 		const { rootId, block, loadData, getView, getLimit } = this.props;
 		const subId = S.Record.getSubId(rootId, block.id);
-		let { offset } = S.Record.getMeta(subId, '');
 		const view = getView();
+		const limit = getLimit();
+
+		let { offset } = S.Record.getMeta(subId, '');
 
 		return new Promise((resolve, reject) => {
-			offset += getLimit();
+			offset += limit;
+
 			loadData(view.id, offset, false, resolve);
 			S.Record.metaSet(subId, '', { offset });
 		});

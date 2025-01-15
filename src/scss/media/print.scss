@@ -20,7 +20,8 @@ html.printMedia {
 	.toast,
 	.focusable.isFocused::before,
 	#vault,
-	#sidebarToggle
+	#sidebarToggle,
+	#sidebarSync
 	{ display: none !important; }
 
 	#page.isFull { width: 100% !important; }

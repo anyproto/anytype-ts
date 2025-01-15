@@ -686,16 +686,24 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					iw.postMessage(data, '*');
 
-					if (allowIframeResize) {
-						win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
-							const oe = e.originalEvent as any;
-							const { height, blockId } = oe.data;
+					win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
+						const oe = e.originalEvent as any;
+						const { type, height, blockId, url } = oe.data;
 
-							if (blockId == block.id) {
-								iframe.css({ height: Math.max(80, height) });
+						switch (type) {
+							case 'resize': {
+								if (allowIframeResize && (blockId == block.id)) {
+									iframe.css({ height: Math.max(80, height) });
+								};
+								break;
 							};
-						});
-					};
+
+							case 'openUrl': {
+								Action.openUrl(url);
+								break;
+							};
+						};
+					});
 				};
 
 				if (!iframe.length) {
@@ -753,7 +761,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 			case I.EmbedProcessor.Mermaid: {
 				const root = createRoot(value.get(0));
-				root.render(<MediaMermaid chart={this.text} />);
+				root.render(<MediaMermaid id={`block-${block.id}-mermaid`} chart={this.text} />);
 				break;
 			};
 

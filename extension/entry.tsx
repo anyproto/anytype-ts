@@ -5,6 +5,7 @@ import $ from 'jquery';
 import { C, U, J, S } from 'Lib'; 
 import Popup from './popup';
 import Iframe from './iframe';
+import Auth from './auth';
 import Util from './lib/util';
 
 import './scss/common.scss';
@@ -39,8 +40,8 @@ window.Anytype = {
 window.AnytypeGlobalConfig = { 
 	emojiUrl: J.Extension.clipper.emojiUrl, 
 	menuBorderTop: 16, 
-	menuBorderBottom: 16, 
-	flagsMw: { request: false },
+	menuBorderBottom: 16,
+	flagsMw: { request: true },
 };
 
 let rootId = '';
@@ -53,6 +54,10 @@ if (Util.isPopup()) {
 if (Util.isIframe()) {
 	rootId = `${J.Extension.clipper.prefix}-iframe`;
 	component = <Iframe />;
+} else 
+if (Util.isAuth()) {
+	rootId = `${J.Extension.clipper.prefix}-auth`;
+	component = <Auth />;
 };
 
 if (!rootId) {

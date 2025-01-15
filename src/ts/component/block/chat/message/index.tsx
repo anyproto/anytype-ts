@@ -254,14 +254,22 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	onReactionAdd () {
+		const { isPopup } = this.props;
 		const node = $(this.node);
+		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
 
 		S.Menu.open('smile', { 
 			element: node.find('#reaction-add'),
 			horizontal: I.MenuDirection.Center,
 			noFlipX: true,
-			onOpen: () => node.addClass('hover'),
-			onClose: () => node.removeClass('hover'),
+			onOpen: () => {
+				node.addClass('hover');
+				container.addClass('over');
+			},
+			onClose: () => {
+				node.removeClass('hover');
+				container.removeClass('over');
+			},
 			data: {
 				noHead: true,
 				noUpload: true,
