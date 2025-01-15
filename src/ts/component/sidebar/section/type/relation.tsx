@@ -27,8 +27,8 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		const Item = SortableElement((item: any) => {
 			const ce = [ 'eye' ];
 			const isActive = item.container == 'section-relation-featured';
-			const canDrag = !readonly && ![ 'type' ].includes(item.relationKey);
-			const canHide = canDrag;
+			const canDrag = !readonly;
+			const canHide = !readonly;
 
 			if (isActive) {
 				ce.push('active');

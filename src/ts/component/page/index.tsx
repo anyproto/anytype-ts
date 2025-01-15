@@ -187,6 +187,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	init () {
 		const { account } = S.Auth;
+		const { pin } = S.Common;
 		const { isPopup } = this.props;
 		const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
 		const match = this.getMatch();
@@ -195,7 +196,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
 		const isPinCheck = this.isAuthPinCheck();
-		const pin = Storage.getPin();
 		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];

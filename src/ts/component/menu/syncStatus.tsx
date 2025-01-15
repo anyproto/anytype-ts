@@ -92,8 +92,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const rowRenderer = ({ index, key, style, parent }) => {
 			const item = items[index];
 
-			console.log(item);
-
 			let content = null;
 			if (item.isSection) {
 				content = (

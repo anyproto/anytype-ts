@@ -117,7 +117,7 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const { theme } = S.Common;
+		const { theme, pin } = S.Common;
 		const isMac = U.Common.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
@@ -244,7 +244,6 @@ class Keyboard {
 
 			// Lock the app
 			this.shortcut(`${cmd}+alt+l`, e, () => {
-				const pin = Storage.getPin();
 				if (pin) {
 					Renderer.send('pinCheck');
 				};
@@ -889,7 +888,7 @@ class Keyboard {
 	};
 
 	setWindowTitle () {
-		const pin = Storage.getPin();
+		const { pin } = S.Common;
 		if (pin && !this.isPinChecked) {
 			document.title = J.Constant.appName;
 			return;
@@ -1014,8 +1013,9 @@ class Keyboard {
 
 	initPinCheck () {
 		const { account } = S.Auth;
+
 		const check = () => {
-			const pin = Storage.getPin();
+			const { pin } = S.Common;
 			if (!pin) {
 				this.setPinChecked(true);
 				return false;

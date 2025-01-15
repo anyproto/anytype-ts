@@ -30,10 +30,13 @@
 		}
 
 		.buttons {
-			.item { padding: 4px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+			.item { 
+				padding: 4px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; background: var(--color-bg-primary); 
+				border-radius: 6px;
+			}
 			.item::before {
 				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
-				border-radius: 6px; opacity: 0;
+				border-radius: inherit; opacity: 0;
 			}
 			.item:hover::before, .item.hover::before { opacity: 1; }
 

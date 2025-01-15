@@ -5,10 +5,12 @@ import { observer } from 'mobx-react';
 import { J, S, U } from 'Lib';
 
 interface Props {
+	id?: string;
 	chart: string;
 };
 
 const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
+	id = '',
 	chart = '',
 }, ref) => {
 
@@ -29,24 +31,26 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 			};
 		};
 
-		mermaid.initialize({ theme: 'base', themeVariables });
-		mermaid.contentLoaded();
+		$(chartRef.current).removeAttr('data-processed');
+		$(errorRef.current).text('');
 
-		U.Common.renderLinks($(chartRef.current));
+		try {
+			mermaid.initialize({ theme: 'base', themeVariables });
+			mermaid.run({ 
+				querySelector: `#${id} .mermaid`,
+				postRenderCallback: () => {
+					U.Common.renderLinks($(chartRef.current));
+				}, 
+			});
+		} catch (e) { /**/ };
 	};
 
 	useEffect(() => {
 		init();
 	});
 
-	useEffect(() => {
-		$(chartRef.current).removeAttr('data-processed');
-		$(errorRef.current).text('');
-		init();
-	}, [ themeClass, chart ]);
-
 	return (
-		<div ref={nodeRef} className="mermaidWrapper">
+		<div id={id} ref={nodeRef} className="mermaidWrapper">
 			<div ref={errorRef} className="error" />
 			<div ref={chartRef} className="mermaid">{chart}</div>
 		</div>

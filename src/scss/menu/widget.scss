@@ -1,7 +1,6 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuWidget { width: unset; }
 	.menu.menuWidget {
 		.section::after { display: none; }
 		.section:last-child::before { content: ''; display: block; height: 1px; margin: 0px 14px 8px; background-color: var(--color-shape-secondary); }

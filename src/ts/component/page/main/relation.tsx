@@ -164,7 +164,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				return;
 			};
 
-			const object = S.Detail.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId);
 			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
@@ -174,6 +174,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			this.refHead?.forceUpdate();
 			sidebar.rightPanelSetState({ rootId });
 			this.setState({ isLoading: false });
+
+			analytics.event('ScreenRelation', { relationKey: object.relationKey });
 		});
 	};
 
