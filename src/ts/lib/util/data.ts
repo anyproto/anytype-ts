@@ -155,7 +155,7 @@ class UtilData {
 		param = param || {};
 		param.routeParam = param.routeParam || {};
 
-		const pin = Storage.getPin();
+		const { pin } = S.Common;
 		const { root, widgets } = S.Block;
 		const { redirect, space } = S.Common;
 		const color = Storage.get('color');
@@ -531,6 +531,7 @@ class UtilData {
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
+		const pinned = Storage.getPinnedTypes();
 
 		let items: any[] = [];
 
@@ -558,7 +559,7 @@ class UtilData {
 			items = items.filter(it => !it.isHidden);
 		};
 
-		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
+		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
 		return items;
 	};
 
@@ -671,10 +672,14 @@ class UtilData {
 	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
 		const idx1 = ids.indexOf(c1.id);
 		const idx2 = ids.indexOf(c2.id);
+		const isPinned1 = idx1 >= 0;
+		const isPinned2 = idx2 >= 0;
 
+		if (isPinned1 && !isPinned2) return -1;
+		if (!isPinned1 && isPinned2) return 1;
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
-		return 0;
+		return this.sortByLastUsedDate(c1, c2);
 	};
 
 	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
@@ -1142,54 +1147,52 @@ class UtilData {
 		const yesterday = now - U.Date.timestamp(y, m, d - 1);
 		const lastWeek = now - U.Date.timestamp(y, m, d - 7);
 		const lastMonth = now - U.Date.timestamp(y, m - 1, d);
-		const groups = {
-			today: [],
-			yesterday: [],
-			lastWeek: [],
-			lastMonth: [],
-			older: []
-		};
+		const groups = {};
+		const ids = [ 'today', 'yesterday', 'lastWeek', 'lastMonth', 'older' ];
 
-		const groupNames = [ 'today', 'yesterday', 'lastWeek', 'lastMonth', 'older' ];
 		if (dir == I.SortType.Asc) {
-			groupNames.reverse();
+			ids.reverse();
 		};
 
-		let groupedRecords = [];
+		ids.forEach(id => groups[id] = []);
 
-		if (!sectionTemplate) {
-			sectionTemplate = {};
-		};
-
+		let ret = [];
 		records.forEach((record) => {
 			const diff = now - record[key];
+
+			let id = '';
 			if (diff < today) {
-				groups.today.push(record);
+				id = 'today';
 			} else
 			if (diff < yesterday) {
-				groups.yesterday.push(record);
+				id = 'yesterday';
 			} else
 			if (diff < lastWeek) {
-				groups.lastWeek.push(record);
+				id = 'lastWeek';
 			} else
 			if (diff < lastMonth) {
-				groups.lastMonth.push(record);
+				id = 'lastMonth';
 			} else {
-				groups.older.push(record);
+				id = 'older';
 			};
+			groups[id].push(record);
 		});
 
-		groupNames.forEach((name) => {
-			if (groups[name].length) {
-				groupedRecords.push(Object.assign({ id: name, isSection: true }, sectionTemplate));
+		ids.forEach(id => {
+			if (groups[id].length) {
+				ret.push(Object.assign({
+					id, 
+					name: translate(U.Common.toCamelCase([ 'common', id ].join('-'))),
+					isSection: true,
+				}, sectionTemplate || {}));
+
 				if (dir) {
-					groups[name] = groups[name].sort((c1, c2) => U.Data.sortByNumericKey(key, c1, c2, dir));
+					groups[id] = groups[id].sort((c1, c2) => U.Data.sortByNumericKey(key, c1, c2, dir));
 				};
-				groupedRecords = groupedRecords.concat(groups[name]);
+				ret = ret.concat(groups[id]);
 			};
 		});
-
-		return groupedRecords;
+		return ret;
 	};
 
 	getLinkBlockParam (id: string, layout: I.ObjectLayout, allowBookmark?: boolean) {
@@ -1219,6 +1222,24 @@ class UtilData {
 			type: I.BlockType.Link,
 			content: { ...this.defaultLinkSettings(), targetBlockId: id },
 		};
+	};
+
+	setRtl (rootId: string, blockId: string) {
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const fields = block.fields || {};
+		if (fields.isRtlDetected) {
+			return;
+		};
+
+		C.BlockListSetFields(rootId, [ 
+			{ blockId: block.id, fields: { ...fields, isRtlDetected: true } } 
+		], () => {
+			C.BlockListSetAlign(rootId, [ block.id ], I.BlockHAlign.Right);
+		});
 	};
 
 };

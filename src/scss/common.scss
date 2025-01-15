@@ -106,7 +106,7 @@ html.platformWindows, html.platformLinux {
 ::-webkit-input-placeholder { color: var(--color-text-tertiary) !important; }
 .isBlurred { filter: blur(7px); }
 .animationWord { display: inline-block; }
-.isRtl { direction: rtl; text-align: right; }
+.isRtl { direction: rtl; }
 .isOnboardingHidden { visibility: hidden; }
 
 .fileWrap { position: relative; overflow: hidden; }

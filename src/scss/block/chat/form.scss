@@ -38,6 +38,7 @@
 	.editableWrap {
 		.editable, .placeholder { padding: 16px; }
 	}
+	.editableWrap.isRtl { text-align: right; }
 
 	.attachments { padding: 0px 8px; max-height: 360px; overflow-x: hidden; overflow-y: auto; max-width: unset; }
 	.attachments {

@@ -1,10 +1,11 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { Title, Pin, Error } from 'Component';
-import { I, keyboard, translate, Storage } from 'Lib';
+import { I, S, keyboard, translate, Storage } from 'Lib';
 
 const PopupPin = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 	const { data } = param;
+	const { pin } = S.Common;
 	const { onError, onSuccess } = data;
 	const pinRef = useRef(null);
 	const [ error, setError ] = useState('');
@@ -39,7 +40,7 @@ const PopupPin = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 			<Title text={translate('authPinCheckTitle')} />
 			<Pin 
 				ref={pinRef}
-				expectedPin={Storage.getPin()} 
+				expectedPin={pin} 
 				onSuccess={onSuccessHandler} 
 				onError={onErrorHandler}
 			/>

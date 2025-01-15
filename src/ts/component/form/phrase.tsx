@@ -157,7 +157,7 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	};
 
 	const onToggleHandler = () => {
-		const pin = Storage.getPin();
+		const { pin } = S.Common;
 		const onSuccess = () => {
 			setIsHidden(!isHidden);
 

@@ -8,7 +8,7 @@ interface State {
 	error: string;
 };
 
-const Challenge = observer(class Challenge extends React.Component<I.PageComponent, State> {
+const Index = observer(class Index extends React.Component<I.PageComponent, State> {
 
 	ref: any = null;
 	state = {
@@ -19,21 +19,20 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 		super(props);
 
 		this.onSuccess = this.onSuccess.bind(this);
-		this.onError = this.onError.bind(this);
 	};
 
 	render () {
 		const { error } = this.state;
 
 		return (
-			<div className="page pageChallenge">
+			<div className="page pageIndex">
 				<Title text="Please enter the numbers from the app" />
 
 				<Pin 
 					ref={ref => this.ref = ref}
 					pinLength={4}
 					onSuccess={this.onSuccess} 
-					onError={this.onError} 
+					onError={() => {}} 
 				/>
 
 				<Error text={error} />
@@ -42,29 +41,35 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 	};
 
 	onSuccess () {
-		C.AccountLocalLinkSolveChallenge(S.Extension.challengeId, this.ref?.getValue().trim(), (message: any) => {
+		const urlParams = new URLSearchParams(window.location.search);
+		const data = JSON.parse(atob(urlParams.get('data') as string));
+
+		if (!data) {
+			this.setState({ error: 'Invalid data' });
+			return;
+		};
+
+		Util.init(data.serverPort, data.gatewayPort);
+
+		C.AccountLocalLinkSolveChallenge(data.challengeId, this.ref?.getValue().trim(), (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
 			};
 
 			const { appKey } = message;
-			const { serverPort, gatewayPort } = S.Extension;
 
 			Storage.set('appKey', appKey);
 
 			Util.authorize(appKey, () => {
-				Util.sendMessage({ type: 'initIframe', appKey, serverPort, gatewayPort }, () => {});
+				Util.sendMessage({ type: 'initIframe', appKey, ...data }, () => {});
 				Util.sendMessage({ type: 'initMenu' }, () => {});
 
-				U.Router.go('/create', {});
+				U.Router.go('/success', {});
 			});
 		});
 	};
 
-	onError () {
-	};
-
 });
 
-export default Challenge;
+export default Index;

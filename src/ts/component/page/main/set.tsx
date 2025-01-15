@@ -38,12 +38,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const rootId = this.getRootId();
 		const check = U.Data.checkDetails(rootId);
 
-		if (isDeleted) {
-			return <Deleted {...this.props} />;
-		};
-
 		let content = null;
-
+		if (isDeleted) {
+			content = <Deleted {...this.props} />;
+		} else
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
