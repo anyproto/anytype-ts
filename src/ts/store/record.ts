@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { S, I, M, U, J, Dataview } from 'Lib';
+import { S, I, M, U, J, Dataview, Relation } from 'Lib';
 
 enum KeyMapType {
 	Relation = 'relation',
@@ -104,7 +104,7 @@ class RecordStore {
 
 	relationListDelete (rootId: string, blockId: string, keys: string[]) {
 		const key = this.getId(rootId, blockId);
-		const relations = this.getObjectRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
+		const relations = this.getDataviewRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
 		
 		this.relationMap.set(key, relations.map(it => ({ relationKey: it.relationKey, format: it.format })));
 	};
@@ -312,8 +312,21 @@ class RecordStore {
 		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => it.relationKey);
 	};
 
-	getObjectRelations (rootId: string, blockId: string): any[] {
-		return this.getObjectRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
+	getObjectRelations (rootId: string, typeId: string): any[] {
+		const type = S.Record.getTypeById(typeId);
+		const recommended = Relation.getArrayValue(type?.recommendedRelations);
+		const typeRelations = recommended.map(it => this.getRelationById(it)).filter(it => it);
+		const objectRelations = S.Detail.getKeys(rootId, rootId).map(it => this.getRelationByKey(it)).filter(it => it && !recommended.includes(it.id));
+
+		return this.checkHiddenObjects(typeRelations.concat(objectRelations));
+	};
+
+	getDataviewRelationKeys (rootId: string, blockId: string): any[] {
+		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => it.relationKey);
+	};
+
+	getDataviewRelations (rootId: string, blockId: string): any[] {
+		return this.getDataviewRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
 	};
 
 	getRelationByKey (relationKey: string): any {
@@ -380,6 +393,16 @@ class RecordStore {
 
 	getGroupSubId (rootId: string, blockId: string, groupId: string): string {
 		return [ rootId, blockId, groupId ].join('-');
+	};
+
+	checkHiddenObjects (records: any[]): any[] {
+		const isHidden = S.Common.config.debug.hiddenObject;
+
+		if (!Array.isArray(records)) {
+			return [];
+		};
+
+		return records.filter(it => isHidden ? true : !it.isHidden);
 	};
 
 };

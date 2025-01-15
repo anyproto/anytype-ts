@@ -2,7 +2,7 @@ import * as React from 'react';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Title, Pin, Error } from 'Component';
-import { I, Storage, translate } from 'Lib';
+import { I, S, translate } from 'Lib';
 import Head from '../head';
 
 type State = {
@@ -50,7 +50,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 			return;
 		};
 
-		Storage.set('pin', sha1(pin));
+		S.Common.pinSet(sha1(pin));
 		onPage('pinIndex');
 	};
 

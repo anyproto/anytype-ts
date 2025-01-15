@@ -15,7 +15,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 	};
 
 	render () {
-		const { param, getId } = this.props;
+		const { param, getId, close } = this.props;
 		const { data } = param;
 		const { collectionId, type } = data;
 		const subId = [ getId(), 'data' ].join('-');
@@ -47,7 +47,10 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 					onAfterLoad={this.onAfterLoad}
 				/>
 
-				<Button text={button} className="c36" onClick={this.onClick} />
+				<div className="buttons">
+					<Button text={button} className="c36" onClick={this.onClick} />
+					<Button text={translate('commonCancel')} color="blank" className="c36" onClick={() => close()} />
+				</div>
 			</React.Fragment>
 		);
 	};

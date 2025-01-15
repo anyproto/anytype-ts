@@ -51,6 +51,7 @@ class Analytics {
 		chat: 'Chat',
 		archive: 'Bin',
 		toast: 'Toast',
+		share: 'Share',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',
@@ -249,11 +250,6 @@ class Analytics {
 		switch (code) {
 			case 'ScreenType': {
 				data.objectType = data.params.id;
-				break;
-			};
-
-			case 'ScreenRelation': {
-				data.relationKey = data.params.id;
 				break;
 			};
 
@@ -591,7 +587,6 @@ class Analytics {
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
-			'main/relation':	 'ScreenRelation',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 			'main/date':		 'ScreenDate',
@@ -605,6 +600,7 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			inviteRequest:		 'ScreenInviteRequest',
+			spaceCreate:		 'ScreenSettingsSpaceCreate',
 		};
 
 		return map[id] || '';
@@ -615,7 +611,6 @@ class Analytics {
 		const map = {
 			help:				 'MenuHelp',
 			blockRelationView:	 'ScreenObjectRelation',
-			quickCapture:		 'ScreenQuickCapture',
 		};
 
 		return map[id] || '';
