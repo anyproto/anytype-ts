@@ -51,6 +51,7 @@ class Analytics {
 		chat: 'Chat',
 		archive: 'Bin',
 		toast: 'Toast',
+		share: 'Share',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',
@@ -609,7 +610,6 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			help:				 'MenuHelp',
-			quickCapture:		 'ScreenQuickCapture',
 		};
 
 		return map[id] || '';

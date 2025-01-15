@@ -52,7 +52,8 @@
 		"https://cdnjs.cloudflare.com",
 		"https://*.bilibili.com",
 		"https://s1.hdslb.com",
-		"https://static.sketchfab.com"
+		"https://static.sketchfab.com",
+		"https://*.bstarstatic.com"
 	],
 
 	"font-src": [ 
@@ -69,7 +70,8 @@
 		"https://*.fbcdn.net",
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
-		"https://static.sketchfab.com"
+		"https://static.sketchfab.com",
+		"https://*.bstarstatic.com"
 	],
 
 	"connect-src": [ 
@@ -122,7 +124,10 @@
 		"https://sentry.io",
 		"https://*.any.coop",
 		"https://*.amplitude.com",
-		"https://kroki.io"
+		"https://kroki.io",
+		"https://*.vimeo.com",
+		"https://*.statsigapi.net",
+		"https://*.bstarstatic.com"
 	],
 
 	"script-src-elem": [
@@ -156,7 +161,11 @@
 		"https://codepen.io",
 		"https://cdnjs.cloudflare.com",
 		"https://*.hdslb.com",
-		"https://static.sketchfab.com"
+		"https://static.sketchfab.com",
+		"https://*.codepenassets.com",
+		"https://*.bstarstatic.com",
+		"https://*.googletagmanager.com",
+		"https://*.facebook.net"
 	],
 
 	"frame-src": [
@@ -172,6 +181,7 @@
 		"https://*.figma.com",
 		"https://*.github.com",
 		"https://*.bilibili.com",
+		"https://*.bilibili.tv",
 		"https://platform.twitter.com",
 		"https://*.openstreetmap.org",
 		"https://embed.reddit.com",

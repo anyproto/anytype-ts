@@ -23,7 +23,8 @@ export default {
 	invite:				 'https://invite.any.coop/%s#%s',
 	share: 				 'https://join.anytype.io/',
 	notionFAQ:			 'https://doc.anytype.io/anytype-docs/basics/space/import-export#notion-import-faq',
-	publish:			 '%s.coop',
+	publishDomain:		 '%s.coop',
+	publish:			 'https://any.coop/%s/',
 
 	survey: {
 		register:		 'https://community.anytype.io/survey0',

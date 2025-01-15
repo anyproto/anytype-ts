@@ -73,6 +73,11 @@ class UtilObject {
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (this.isParticipantLayout(object.layout)) {
+			U.Menu.participant(object, param.menuParam);
+			return;
+		};
+
 		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else

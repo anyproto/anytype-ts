@@ -532,6 +532,7 @@ class UtilData {
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
+		const pinned = Storage.getPinnedTypes();
 
 		let items: any[] = [];
 
@@ -557,7 +558,7 @@ class UtilData {
 		items = items.filter(it => it);
 		items = S.Record.checkHiddenObjects(items);
 
-		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
+		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
 		return items;
 	};
 
@@ -680,10 +681,14 @@ class UtilData {
 	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
 		const idx1 = ids.indexOf(c1.id);
 		const idx2 = ids.indexOf(c2.id);
+		const isPinned1 = idx1 >= 0;
+		const isPinned2 = idx2 >= 0;
 
+		if (isPinned1 && !isPinned2) return -1;
+		if (!isPinned1 && isPinned2) return 1;
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
-		return 0;
+		return this.sortByLastUsedDate(c1, c2);
 	};
 
 	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {

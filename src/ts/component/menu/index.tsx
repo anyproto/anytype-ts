@@ -71,8 +71,6 @@ import MenuDataviewTemplateContext from './dataview/template/context';
 import MenuDataviewTemplateList from './dataview/template/list';
 import MenuDataviewNew from './dataview/new';
 
-import MenuQuickCapture from './quickCapture';
-
 import MenuSyncStatus from './syncStatus';
 import MenuSyncStatusInfo from './syncStatus/info';
 
@@ -150,8 +148,6 @@ const Components: any = {
 	dataviewTemplateContext: MenuDataviewTemplateContext,
 	dataviewTemplateList:	 MenuDataviewTemplateList,
 	dataviewNew: 		 	 MenuDataviewNew,
-
-	quickCapture: 			 MenuQuickCapture,
 
 	syncStatus:				 MenuSyncStatus,
 	syncStatusInfo:			 MenuSyncStatusInfo,
