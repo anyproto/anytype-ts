@@ -130,8 +130,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					/>
 				) : ''}
 
-				{isLoading ? <Loader /> : ''}
-
 				{!items.length && !isLoading ? (
 					<EmptySearch filter={filter} />
 				) : ''}

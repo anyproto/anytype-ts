@@ -274,11 +274,6 @@
         }
     }
 
-	/* QuickCapture */
-
-	.menu.menuQuickCapture { background: none; box-shadow: none; }
-	.menu.menuQuickCapture.isExpanded { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
-
     /* SyncStatus */
 
     .menu.menuSyncStatus {
