@@ -11,7 +11,7 @@ interface State {
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
-const LIMIT = 20;
+const LIMIT = 15;
 
 const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I.Menu, State> {
 
@@ -542,18 +542,17 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const buttons = data.buttons || [];
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
+		const offset = 16 + (noFilter ? 0 : 42);
+		const buttonHeight = buttons.reduce((res: number, current: any) => res + this.getRowHeight(current), 16)
 
-		let height = 16 + (noFilter ? 0 : 42);
+		let height = offset + buttonHeight;
 		if (!items.length) {
 			height = 160;
 		} else {
 			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
 		};
-		if (buttons.length) {
-			height = buttons.reduce((res: number, current: any) => res + this.getRowHeight(current), height + 20);
-		};
 
-		height = Math.min(height, 420);
+		height = Math.min(height, offset + buttonHeight + HEIGHT_ITEM * LIMIT);
 
 		obj.css({ height });
 		position();
