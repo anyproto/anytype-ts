@@ -11,11 +11,10 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 	const conflictIds = useRef([]);
 
 	const load = () => {
-		console.log('OBJECT: ', object)
 		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
 			if (!message.error.code) {
 				conflictIds.current = message.conflictRelationIds;
-				setDummy(dummy + 1);
+				setDummy(dummy + 2);
 			};
 		});
 	};
@@ -85,8 +84,6 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 
 	const items = getItems();
 
-	console.log('ITEMS: ', items)
-
 	return (
 		<div className="wrap">
 			<div className="titleWrap">
@@ -95,17 +92,19 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 			</div>
 
 			<div className="items">
-				{items.map((item, i) => (
-					<div key={i} id={`conflict-${rootId}-${item.id}`} className="item" onContextMenu={e => onMore(e, item)}>
-						<div className="side left">
-							<IconObject object={item} />
-							<ObjectName object={item} />
+				{items.map((item, i) => {
+					return (
+						<div key={i} id={`conflict-${rootId}-${item.id}`} className="item" onContextMenu={e => onMore(e, item)}>
+							<div className="side left">
+								<IconObject object={item} />
+								<ObjectName object={item} />
+							</div>
+							<div className="side right">
+								<Icon className="more" onClick={e => onMore(e, item)} />
+							</div>
 						</div>
-						<div className="side right">
-							<Icon className="more" onClick={e => onMore(e, item)} />
-						</div>
-					</div>
-				))}
+					)
+				})}
 			</div>
 		</div>
 	);
