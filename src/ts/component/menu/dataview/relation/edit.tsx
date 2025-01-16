@@ -270,22 +270,18 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						{ id: 'insert-left', icon: 'relation-insert-left', name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
 						{ id: 'insert-right', icon: 'relation-insert-right', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
 						canHide ? { id: 'hide', icon: 'relation-hide', name: translate('menuDataviewRelationEditHideRelation') } : null,
-						canAlign ? { id: 'align', icon: U.Data.alignHIcon(viewRelation?.align), name: translate('commonAlign'), arrow: true } : null,
 					]
 				},
 				{
 					children: [
+						canAlign ? { id: 'align', icon: U.Data.alignHIcon(viewRelation?.align), name: translate('commonAlign'), arrow: true } : null,
 						canCalculate ? { id: 'calculate', icon: 'relation c-number', name: translate('commonCalculate'), arrow: true } : null,
 					]
 				},
 			]);
 		};
 
-		sections = sections.filter((s: any) => {
-			s.children = s.children.filter(c => c);
-			return s.children.length > 0;
-		});
-
+		sections = sections.filter(s => s.children.filter(c => c).length);
 		return sections;
 	};
 
