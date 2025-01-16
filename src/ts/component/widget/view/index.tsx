@@ -30,8 +30,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
 	const viewType = view ? view.type : I.ViewType.List;
 
-	console.log(view);
-
 	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
 		const srcBlock = S.Block.getLeaf(targetId, J.Constant.blockId.dataview);
