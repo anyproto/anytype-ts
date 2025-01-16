@@ -5,22 +5,16 @@ import { Title, Icon, ObjectName, IconObject } from 'Component';
 import { I, C, S, Relation, translate, keyboard } from 'Lib';
 
 const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
+
 	const { space } = S.Common;
 	const { rootId, object, onChange } = props;
-	const conflictIds = useRef([]);
-	const dummyNum = useRef(0);
-	const [ dummy, setDummy ] = useState(dummyNum.current);
-
-	const dummyUpdate = () => {
-		dummyNum.current += 1;
-		setDummy(dummyNum.current);
-	};
+	const [ dummy, setDummy ] = useState(0);
+	const [ conflictIds, setConflictIds ] = useState([]);
 
 	const load = () => {
 		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
 			if (!message.error.code) {
-				conflictIds.current = message.conflictRelationIds;
-				dummyUpdate();
+				setConflictIds(message.conflictRelationIds);
 			};
 		});
 	};
@@ -29,7 +23,7 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 		const relations = Relation.getArrayValue(object.recommendedRelations).concat(Relation.getArrayValue(object.recommendedFeaturedRelations));
 
 		return Relation
-			.getArrayValue(conflictIds.current)
+			.getArrayValue(conflictIds)
 			.map(key => S.Record.getRelationById(key))
 			.filter(it => it && !Relation.isSystem(it.relationKey));
 	};
@@ -55,7 +49,6 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
 							onChange({ recommendedRelations: [ item.id ].concat(recommendedRelations) });
-							dummyUpdate();
 							break;
 						};
 
@@ -87,8 +80,7 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 	useEffect(() => load(), []);
 
 	useImperativeHandle(ref, () => ({
-		dummyUpdate,
-		forceUpdate: dummyUpdate,
+		forceUpdate: () => setDummy(dummy + 1),
 		load,
 		getItems,
 		onMore,
@@ -119,6 +111,7 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 			</div>
 		</div>
 	);
+
 }));
 
 export default SidebarSectionTypeConflict;
