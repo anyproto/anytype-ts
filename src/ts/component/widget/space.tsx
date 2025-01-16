@@ -48,7 +48,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const onCreate = (e: MouseEvent) => {
 		e.stopPropagation();
-		keyboard.pageCreate({}, analytics.route.widget);
+		keyboard.pageCreate({}, analytics.route.navigation);
 	};
 
 	const onMore = (e: MouseEvent, context: any, item: any) => {
@@ -153,10 +153,14 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			};
 
 			const url = U.Common.matchUrl(text);
+			const cb = (object: any, time: number) => {
+				U.Object.openAuto(object);
+				analytics.createObject(object.type, object.layout, analytics.route.navigation, time);
+			};
 
 			if (url) {
 				C.ObjectCreateBookmark({ source: url }, S.Common.space, (message: any) => {
-					U.Object.openAuto(message.details);
+					cb(message.details, message.middleTime);
 				});
 			} else {
 				C.ObjectCreate({}, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, (message: any) => {
@@ -165,12 +169,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					};
 
 					const object = message.details;
-
-					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, '', () => {
-						U.Object.openAuto(object);
-					});
-
-					analytics.createObject(object.type, object.layout, analytics.route.clipboard, message.middleTime);
+					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, '', () => cb(object, message.middleTime));
 				});
 			};
 		});
@@ -222,8 +221,8 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 							U.Object.openAuto(object);
 							U.Object.setLastUsedDate(object.id, U.Date.now());
 
-							analytics.createObject(object.type, object.layout, '', message.middleTime);
 							analytics.event('SelectObjectType', { objectType: object.type });
+							analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
 						});
 					},
 				},

@@ -52,6 +52,7 @@ class Analytics {
 		archive: 'Bin',
 		toast: 'Toast',
 		share: 'Share',
+		navigation: 'Navigation',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',
