@@ -1,24 +1,61 @@
-import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Icon, ObjectName, IconObject } from 'Component';
-import { I, C, S, Relation, translate } from 'Lib';
+import { I, C, S, Relation, translate, keyboard } from 'Lib';
 
 const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 	const { space } = S.Common;
 	const { rootId, object, onChange } = props;
-	const [ conflictIds, setConflictIds ] = useState([]);
 	const [ dummy, setDummy ] = useState(0);
+	const conflictIds = useRef([]);
 
 	const load = () => {
+		console.log('OBJECT: ', object)
 		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
 			if (!message.error.code) {
-				setConflictIds(message.conflictRelationIds);
+				conflictIds.current = message.conflictRelationIds;
+				setDummy(dummy + 1);
 			};
 		});
 	};
 
 	const getItems = () => {
-		return Relation.getArrayValue(conflictIds).map(key => S.Record.getRelationById(key)).filter(it => it && !Relation.isSystem(it.relationKey));
+		return Relation.getArrayValue(conflictIds.current).map(key => S.Record.getRelationById(key)).filter(it => it && !Relation.isSystem(it.relationKey));
+	};
+
+	const onMore = (e: React.MouseEvent, item: any) => {
+		const { x, y } = keyboard.mouse.page;
+		const node = $(`#conflict-${rootId}-${item.id}`);
+
+		S.Menu.open('select', {
+			rect: { width: 0, height: 0, x: x + 4, y },
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			onOpen: () => node.addClass('hover'),
+			onClose: () => node.removeClass('hover'),
+			data: {
+				options: [
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType'), icon: '' },
+					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObjects'), color: 'red' },
+				],
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'addToType': {
+							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+
+							onChange({ recommendedRelations: [ item.id ].concat(recommendedRelations) });
+							break;
+						};
+
+						case 'remove': {
+							// command needed
+							break;
+						};
+					};
+				},
+			},
+		});
 	};
 
 	const onQuestion = () => {
@@ -30,22 +67,25 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 				colorConfirm: 'red',
 				colorCancel: 'blank',
 				onConfirm: () => {
-					// need command?
+					// command needed
 				},
 			},
 		});
 	};
 
-	useEffect(() => load());
+	useEffect(() => load(), []);
 
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
 		load,
 		getItems,
+		onMore,
 		onQuestion,
 	}));
 
 	const items = getItems();
+
+	console.log('ITEMS: ', items)
 
 	return (
 		<div className="wrap">
@@ -56,13 +96,13 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 
 			<div className="items">
 				{items.map((item, i) => (
-					<div key={i} className="item">
+					<div key={i} id={`conflict-${rootId}-${item.id}`} className="item" onContextMenu={e => onMore(e, item)}>
 						<div className="side left">
 							<IconObject object={item} />
 							<ObjectName object={item} />
 						</div>
 						<div className="side right">
-							<Icon className="more" />
+							<Icon className="more" onClick={e => onMore(e, item)} />
 						</div>
 					</div>
 				))}
