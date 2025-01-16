@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Cell } from 'Component';
+import { Cell, Icon } from 'Component';
 import { I, S, U, C, Relation, analytics } from 'Lib';
 
 const PREFIX = 'sidebarObjectRelation';
@@ -65,6 +65,8 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 						pageContainer={container}
 					/>
 				</div>
+
+				{relation.onMore ? <Icon className="more" onClick={e => relation.onMore(e, relation)} /> : ''}
 			</div>
 		);
     };
