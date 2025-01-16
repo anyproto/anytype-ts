@@ -37,4 +37,11 @@
 		}
 		.item:hover::before, .item.hover::before { background: var(--color-shape-highlight-medium); }
 	}
+
+	.section.typeConflict {
+		.titleWrap { padding-right: 12px; }
+		.titleWrap {
+			.icon.question { width: 20px; height: 20px; background: url('~img/icon/question.svg'); }
+		}
+	}
 }

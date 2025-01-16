@@ -1105,6 +1105,9 @@
 	"popupConfirmSpeedLimitTitle": "Hold up! Turbo typing detected!",
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 
+	"popupConfirmLocalFieldsTitle": "Remove Local Fields?",
+	"popupConfirmLocalFieldsText": "These fields will be removed from the object. You can completely delete any field in the All object menu.",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
