@@ -7,20 +7,31 @@ import { I, C, S, Relation, translate, keyboard } from 'Lib';
 const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 	const { space } = S.Common;
 	const { rootId, object, onChange } = props;
-	const [ dummy, setDummy ] = useState(0);
 	const conflictIds = useRef([]);
+	const dummyNum = useRef(0);
+	const [ dummy, setDummy ] = useState(dummyNum.current);
+
+	const dummyUpdate = () => {
+		dummyNum.current += 1;
+		setDummy(dummyNum.current);
+	};
 
 	const load = () => {
 		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
 			if (!message.error.code) {
 				conflictIds.current = message.conflictRelationIds;
-				setDummy(dummy + 2);
+				dummyUpdate();
 			};
 		});
 	};
 
 	const getItems = () => {
-		return Relation.getArrayValue(conflictIds.current).map(key => S.Record.getRelationById(key)).filter(it => it && !Relation.isSystem(it.relationKey));
+		const relations = Relation.getArrayValue(object.recommendedRelations).concat(Relation.getArrayValue(object.recommendedFeaturedRelations));
+
+		return Relation
+			.getArrayValue(conflictIds.current)
+			.map(key => S.Record.getRelationById(key))
+			.filter(it => it && !Relation.isSystem(it.relationKey));
 	};
 
 	const onMore = (e: React.MouseEvent, item: any) => {
@@ -44,6 +55,7 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
 							onChange({ recommendedRelations: [ item.id ].concat(recommendedRelations) });
+							dummyUpdate();
 							break;
 						};
 
@@ -75,7 +87,8 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 	useEffect(() => load(), []);
 
 	useImperativeHandle(ref, () => ({
-		forceUpdate: () => setDummy(dummy + 1),
+		dummyUpdate,
+		forceUpdate: dummyUpdate,
 		load,
 		getItems,
 		onMore,
@@ -92,19 +105,17 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 			</div>
 
 			<div className="items">
-				{items.map((item, i) => {
-					return (
-						<div key={i} id={`conflict-${rootId}-${item.id}`} className="item" onContextMenu={e => onMore(e, item)}>
-							<div className="side left">
-								<IconObject object={item} />
-								<ObjectName object={item} />
-							</div>
-							<div className="side right">
-								<Icon className="more" onClick={e => onMore(e, item)} />
-							</div>
+				{items.map((item, i) => (
+					<div key={i} id={`conflict-${rootId}-${item.id}`} className="item" onContextMenu={e => onMore(e, item)}>
+						<div className="side left">
+							<IconObject object={item} />
+							<ObjectName object={item} />
 						</div>
-					)
-				})}
+						<div className="side right">
+							<Icon className="more" onClick={e => onMore(e, item)} />
+						</div>
+					</div>
+				))}
 			</div>
 		</div>
 	);
