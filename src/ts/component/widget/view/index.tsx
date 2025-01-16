@@ -30,6 +30,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
 	const viewType = view ? view.type : I.ViewType.List;
 
+	console.log(view);
+
 	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
 		const srcBlock = S.Block.getLeaf(targetId, J.Constant.blockId.dataview);
@@ -49,11 +51,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		if (isSystemTarget()) {
 			getData(subId);
-		} else {
-			const view = Dataview.getView(subId, J.Constant.blockId.dataview);
-			if (view) {
-				load(view.id);
-			};
+		} else 
+		if (view) {
+			load(view.id);
 		};
 	};
 
