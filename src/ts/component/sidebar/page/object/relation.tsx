@@ -130,7 +130,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 			data: {
 				options: [
 					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType'), icon: '' },
-					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObjects'), color: 'red' },
+					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'red' },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {
