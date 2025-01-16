@@ -281,7 +281,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			]);
 		};
 
-		sections = sections.filter(s => s.children.filter(c => c).length);
+		sections = sections.map(s => {
+			s.children = s.children.filter(c => c);
+			return s;
+		});
+
+		sections = sections.filter(s => s.children.length);
 		return sections;
 	};
 
