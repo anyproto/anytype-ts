@@ -7,7 +7,10 @@
 	@include text-common; cursor: default; -webkit-app-region: no-drag;
 }
 
-.button > .loaderWrapper { position: absolute; z-index: 1; width: 100%; height: 100%; }
+.button > .loaderWrapper { 
+	position: absolute !important; ; z-index: 1; width: 100% !important; ; height: 100% !important; ; border-radius: inherit !important; 
+	background: none !important; 
+}
 .button.isLoading {
 	.txt, .icon { display: none; }
 }

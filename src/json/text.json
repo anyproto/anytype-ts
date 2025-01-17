@@ -1624,7 +1624,9 @@
 
 	"menuPublishTitle": "Publish to web",
 	"menuPublishLabel": "Join Space Button",
-	"menuPublishButton": "Publish",
+	"menuPublishButtonPublish": "Publish",
+	"menuPublishButtonUnpublish": "Unpublish",
+	"menuPublishButtonUpdate": "Update",
 
 	"previewEdit": "Edit Link",
 

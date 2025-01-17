@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { Title, Input, Label, Switch, Button, Icon, Loader } from 'Component';
-import { J, U, I, S, Action, translate, analytics } from 'Lib';
+import { Title, Input, Label, Switch, Button, Icon, Error } from 'Component';
+import { C, J, U, I, S, Action, translate, analytics } from 'Lib';
 
 const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -8,10 +8,15 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data } = param;
 	const { rootId } = data;
 	const inputRef = useRef(null);
+	const publishRef = useRef(null);
+	const unpublishRef = useRef(null);
+	const joinRef = useRef(null);
 	const space = U.Space.getSpaceview();
 	const object = S.Detail.get(rootId, rootId, []);
-	const [ isLoading, setIsLoading ] = useState(false);
 	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
+	const [ status, setStatus ] = useState(null);
+	const [ isStatusLoaded, setIsStatusLoaded ] = useState(false);
+	const [ error, setError ] = useState('');
 	const participant = U.Space.getMyParticipant();
 
 	let domain = '';
@@ -23,21 +28,28 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const url = [ domain, slug ].join('/');
 	const items = [
-		(!space.isPersonal ? { 
-			id: 'space', name: translate('popupSettingsSpaceIndexShareShareTitle'), onClick: () => {
+		(!space.isPersonal ? 
+		{ 
+			id: 'space', 
+			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
+			onClick: () => {
 				S.Popup.open('settings', { 
 					data: { 
 						page: 'spaceShare', 
 						isSpace: true, 
 						route: analytics.route.share,
-				}, className: 'isSpace' });
+					}, 
+					className: 'isSpace' 
+				});
 				close();
 
 				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });
 			},
 		} : null),
 		{ 
-			id: 'export', name: translate('popupExportTitle'), onClick: () => {
+			id: 'export', 
+			name: translate('popupExportTitle'), 
+			onClick: () => {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
 				close();
 
@@ -47,9 +59,34 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	].filter(it => it);
 
 	const onPublish = () => {
-		setIsLoading(true);
-		Action.publish(rootId, inputRef.current.getValue(), () => {
-			setIsLoading(false);
+		publishRef.current.setLoading(true);
+
+		C.PublishingCreate(S.Common.space, rootId, url, joinRef.current.getValue(), (message: any) => {
+			publishRef.current.setLoading(false);
+
+			if (message.error.code) {
+				setError(message.error.message);
+				return;
+			};
+
+			if (message.url) {
+				Action.openUrl(message.url);
+				close();
+			};
+		});
+	};
+
+	const onUnpublish = () => {
+		unpublishRef.current.setLoading(true);
+
+		C.PublishingRemove(S.Common.space, rootId, (message: any) => {
+			unpublishRef.current.setLoading(false);
+
+			if (message.error.code) {
+				setError(message.error.message);
+				return;
+			};
+
 			close();
 
 			analytics.event('ShareObjectPublish', { objectType: object.type });
@@ -61,13 +98,33 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const setSlugHander = v => setSlug(U.Common.slug(v));
 	const onUrlClick = () => Action.openUrl(url);
 
+	let buttons = [];
+
+	if (isStatusLoaded) {
+		if (status === null) {
+			buttons.push({ text: translate('menuPublishButtonPublish'), ref: publishRef, onClick: onPublish });
+		} else {
+			buttons = buttons.concat([
+				{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
+				{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: onPublish },
+			]);
+		};
+	};
+
 	useEffect(() => {
 		setSlugHander(object.name);
+
+		C.PublishingGetStatus(space.targetSpaceId, rootId, (message) => {
+			setIsStatusLoaded(true);
+
+			if (message.state) {
+				setStatus(message.state);
+			};
+		});
 	}, []);
 
 	return (
 		<>
-			{isLoading ? <Loader /> : ''}
 			<Title text={translate('menuPublishTitle')} />
 			<Input value={domain} readonly={true} />
 			<Input
@@ -78,14 +135,20 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			/>
 			<Label className="small" text={url} onClick={onUrlClick} />
 
-			<div className="flex">
-				<Label text={translate('menuPublishLabel')} />
-				<div className="value">
-					<Switch />
+			{space.isShared ? (
+				<div className="flex">
+					<Label text={translate('menuPublishLabel')} />
+					<div className="value">
+						<Switch ref={joinRef} />
+					</div>
 				</div>
+			) : ''}
+
+			<div className="buttons">
+				{buttons.map((item, i) => <Button key={i} {...item} className="c36" />)}
 			</div>
 
-			<Button text={translate('menuPublishButton')} className="c36" onClick={onPublish} />
+			<Error text={error} />
 
 			<div className="outer">
 				{items.map((item, index) => (
