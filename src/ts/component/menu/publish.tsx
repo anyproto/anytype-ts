@@ -72,8 +72,12 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (message.url) {
 				Action.openUrl(message.url);
 				close();
+
+				analytics.event('ShareObjectPublish', { objectType: object.type });
 			};
 		});
+
+		analytics.event('ClickShareObjectPublish', { objectType: object.type });
 	};
 
 	const onUnpublish = () => {
@@ -89,10 +93,10 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			close();
 
-			analytics.event('ShareObjectPublish', { objectType: object.type });
+			analytics.event('ShareObjectUnpublish', { objectType: object.type });
 		});
 
-		analytics.event('ClickShareObjectPublish', { objectType: object.type });
+		analytics.event('ClickShareObjectUnpublish', { objectType: object.type });
 	};
 
 	const setSlugHander = v => setSlug(U.Common.slug(v));
