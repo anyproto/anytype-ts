@@ -354,6 +354,7 @@ export const Mapper = {
 				width: obj.getWidth(),
 				includeTime: obj.getDateincludetime(),
 				formulaType: obj.getFormula(),
+				align: obj.getAlign(),
 			};
 		},
 
@@ -915,6 +916,7 @@ export const Mapper = {
 			item.setWidth(obj.width);
 			item.setDateincludetime(obj.includeTime);
 			item.setFormula(obj.formulaType);
+			item.setAlign(obj.align as number);
 
 			return item;
 		},

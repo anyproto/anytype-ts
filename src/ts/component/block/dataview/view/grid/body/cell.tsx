@@ -12,6 +12,7 @@ interface Props {
 	className?: string;
 	recordId?: string;
 	recordIdx?: number;
+	getView?(): I.View;
 	getRecord?(id: string): any;
 	getIdPrefix?(): string;
 	onRef?(ref: any, id: string): void;
@@ -31,19 +32,29 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, className, relationKey, readonly, recordId, getRecord, onRef, onCellClick, onCellChange, getIdPrefix, canCellEdit } = this.props;
+		const { 
+			rootId, block, className, relationKey, readonly, recordId, getView, getRecord, onRef, onCellClick, onCellChange, 
+			getIdPrefix, canCellEdit,
+		} = this.props;
 		const record = getRecord(recordId);
 		const relation: any = S.Record.getRelationByKey(relationKey) || {};
-		const cn = [ 'cell', `cell-key-${relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
+		const view = getView();
+		const viewRelation = view?.getRelation(relationKey);
+		const cn = [ 'cell', `cell-key-${relationKey}`, Relation.className(relation.format), `align${viewRelation?.align}` ];
 		const idPrefix = getIdPrefix();
 		const id = Relation.cellId(idPrefix, relationKey, record.id);
 		const width = Relation.width(this.props.width, relation.format);
 		const size = J.Size.dataview.cell;
 		const subId = S.Record.getSubId(rootId, block.id);
 		const canEdit = canCellEdit(relation, record);
+		const isName = relationKey == 'name';
 
-		if (relationKey == 'name') {
+		if (isName) {
 			cn.push('isName');
+		};
+
+		if (!readonly) {
+			cn.push('canEdit');
 		};
 
 		if (width <= size.icon) {
@@ -55,7 +66,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		};
 
 		let iconEdit = null;
-		if ((relationKey == 'name') && !U.Object.isNoteLayout(record.layout) && canEdit) {
+		if (isName && !U.Object.isNoteLayout(record.layout) && canEdit) {
 			iconEdit = <Icon className="edit" onClick={this.onEdit} />;
 		};
 

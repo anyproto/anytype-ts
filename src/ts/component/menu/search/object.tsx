@@ -130,8 +130,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					/>
 				) : ''}
 
-				{isLoading ? <Loader /> : ''}
-
 				{!items.length && !isLoading ? (
 					<EmptySearch filter={filter} />
 				) : ''}
@@ -476,16 +474,18 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { onFilterChange } = data;
 
-		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			const filter = this.refFilter.getValue();
+		if (v != this.filter) {
+			window.clearTimeout(this.timeoutFilter);
+			this.timeoutFilter = window.setTimeout(() => {
+				const filter = this.refFilter.getValue();
 
-			this.props.param.data.filter = filter;
+				data.filter = filter;
 
-			if (onFilterChange) {
-				onFilterChange(filter);
-			};
-		}, J.Constant.delay.keyboard);
+				if (onFilterChange) {
+					onFilterChange(filter);
+				};
+			}, J.Constant.delay.keyboard);
+		};
 	};
 
 	getRowHeight (item: any) {
@@ -508,13 +508,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
-		const { isLoading } = this.state;
 		const items = this.getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
 
 		let height = 16 + (noFilter ? 0 : 42);
 		if (!items.length) {
-			height = isLoading ? height + 40 : 160;
+			height = 160;
 		} else {
 			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
 		};

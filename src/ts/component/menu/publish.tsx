@@ -42,6 +42,8 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					className: 'isSpace' 
 				});
 				close();
+
+				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });
 			},
 		} : null),
 		{ 
@@ -50,6 +52,8 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			onClick: () => {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
 				close();
+
+				analytics.event('ClickShareObjectShareExport', { objectType: object.type });
 			},
 		},
 	].filter(it => it);
@@ -84,7 +88,11 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			close();
+
+			analytics.event('ShareObjectPublish', { objectType: object.type });
 		});
+
+		analytics.event('ClickShareObjectPublish', { objectType: object.type });
 	};
 
 	const setSlugHander = v => setSlug(U.Common.slug(v));

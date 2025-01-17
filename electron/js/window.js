@@ -21,7 +21,6 @@ class WindowManager {
 	list = new Set();
 
 	create (options, param) {
-		const { route, isChild } = options;
 		const { hideMenuBar } = ConfigManager.config;
 
 		param = Object.assign({
@@ -45,8 +44,7 @@ class WindowManager {
 
 		remote.enable(win.webContents);
 
-		win.isChild = isChild;
-		win.route = route;
+		win = Object.assign(win, options);
 		win.windowId = win.id;
 
 		this.list.add(win);
@@ -144,14 +142,14 @@ class WindowManager {
 	createChallenge (options) {
 		const { screen } = require('electron');
 		const primaryDisplay = screen.getPrimaryDisplay();
-		const { width } = primaryDisplay.workAreaSize;
+		const { width, height } = primaryDisplay.workAreaSize;
 
-		const win = this.create({}, {
+		const win = this.create({ isChallenge: true }, {
 			backgroundColor: '',
 			width: 424, 
 			height: 232,
 			x: Math.floor(width / 2 - 212),
-			y: 50,
+			y: Math.floor(height - 282),
 			titleBarStyle: 'hidden',
 		});
 
@@ -165,12 +163,16 @@ class WindowManager {
 			win.webContents.postMessage('challenge', options);
 		});
 
-		setTimeout(() => {
-			if (win && !win.isDestroyed()) {
+		setTimeout(() => this.closeChallenge(), 30000);
+		return win;
+	};
+
+	closeChallenge () {
+		for (const win of this.list) {
+			if (win && win.isChallenge && !win.isDestroyed()) {
 				win.close();
 			};
-		}, 30000);
-		return win;
+		};
 	};
 
 	command (win, cmd, param) {

@@ -12,5 +12,10 @@
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}
 		.label { color: var(--color-control-active); @include text-common; padding: 0px 16px; }
+
+		.bottom { padding: 8px 0px; position: relative; }
+		.bottom::before {
+			content: ''; position: absolute; top: 0px; left: 14px; height: 1px; width: calc(100% - 28px); background: var(--color-shape-secondary); 
+		}
 	}
 }

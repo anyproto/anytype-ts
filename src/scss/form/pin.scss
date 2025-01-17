@@ -1,8 +1,9 @@
 @import "~scss/_mixins";
 
+.pin { display: flex; flex-direction:row; align-items: center; gap: 0px 8px; }
 .pin {
     .input { 
-        width: 40px; height: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: var(--font-size-header3);
+        width: 40px; height: 40px; padding: 0px; text-align: center; vertical-align: top; font-size: var(--font-size-header3);
         border: 1px solid var(--color-shape-primary); border-radius: 2px;
     }
     .input.isFocused { box-shadow: 0px 0px 0px 1px var(--color-system-accent-100) inset; border-color: var(--color-system-accent-100); }
