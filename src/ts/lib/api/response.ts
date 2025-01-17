@@ -198,12 +198,6 @@ export const ObjectShow = (response: Rpc.Object.Show.Response) => {
 	};
 };
 
-export const PublishingCreate = (response: Rpc.Publishing.Create.Response) => {
-	return { 
-		url: response.getUri(),
-	};
-};
-
 export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.struct),
@@ -609,5 +603,29 @@ export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Respo
 				counter: it.getCounter(),
 			};
 		}),
+	};
+};
+
+export const PublishingCreate = (response: Rpc.Publishing.Create.Response) => {
+	return { 
+		url: response.getUri(),
+	};
+};
+
+export const PublishingList = (response: Rpc.Publishing.List.Response) => {
+	return {
+		list: (response.getPublishesList() || []).map(Mapper.From.PublishState),
+	};
+};
+
+export const PublishingResolveUri = (response: Rpc.Publishing.ResolveUri.Response) => {
+	return {
+		state: response.hasPublish() ? Mapper.From.PublishState(response.getPublish()) : null,
+	};
+};
+
+export const PublishingGetStatus = (response: Rpc.Publishing.GetStatus.Response) => {
+	return {
+		state: response.hasPublish() ? Mapper.From.PublishState(response.getPublish()) : null,
 	};
 };

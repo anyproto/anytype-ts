@@ -825,21 +825,6 @@ class Action {
 		analytics.event('ThemeSet', { id });
 	};
 
-	publish (objectId: string, url: string, callBack?: (message: any) => void) {
-		if (!url) {
-			return;
-		};
-
-		C.PublishingCreate(S.Common.space, objectId, url, (message: any) => {
-			if (!message.error.code) {
-				this.openUrl(message.url);
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
 };
 
 export default new Action();

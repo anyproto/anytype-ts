@@ -1364,16 +1364,6 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 	});
 };
 
-export const PublishingCreate = (spaceId: string, objectId: string, uri: string,  callBack?: (message: any) => void) => {
-	const request = new Rpc.Publishing.Create.Request();
-
-	request.setObjectid(objectId);
-	request.setSpaceid(spaceId);
-	request.setUri(uri);
-
-	dispatcher.request(PublishingCreate.name, request, callBack);
-};
-
 export const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
 
@@ -2272,4 +2262,50 @@ export const RelationListWithValue = (spaceId: string, value: any, callBack?: (m
 	request.setValue(Encode.value(value));
 
 	dispatcher.request(RelationListWithValue.name, request, callBack);
+};
+
+// ---------------------- PUBLISHING ---------------------- //
+
+export const PublishingCreate = (spaceId: string, objectId: string, uri: string,  callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.Create.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+	request.setUri(uri);
+
+	dispatcher.request(PublishingCreate.name, request, callBack);
+};
+
+export const PublishingRemove = (spaceId: string, objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.Remove.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(PublishingRemove.name, request, callBack);
+};
+
+export const PublishingList = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.List.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(PublishingList.name, request, callBack);
+};
+
+export const PublishingResolveUri = (uri: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.ResolveUri.Request();
+
+	request.setUri(uri);
+
+	dispatcher.request(PublishingResolveUri.name, request, callBack);
+};
+
+export const PublishingGetStatus = (spaceId: string, objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.GetStatus.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(PublishingGetStatus.name, request, callBack);
 };
