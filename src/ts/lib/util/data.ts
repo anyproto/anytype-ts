@@ -271,6 +271,7 @@ class UtilData {
 					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
+					{ relationKey: 'spaceOrder', type: I.SortType.Asc, empty: I.EmptyType.End },
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreHidden: false,
@@ -335,7 +336,6 @@ class UtilData {
 	};
 
 	createSpaceSubscriptions (callBack?: () => void): void {
-		const { space } = S.Common;
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.deleted,

@@ -4,7 +4,6 @@ const electron = U.Common.getElectron();
 
 const ACCOUNT_KEYS = [
 	'spaceId',
-	'spaceOrder',
 ];
 
 const SPACE_KEYS = [
