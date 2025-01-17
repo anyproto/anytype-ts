@@ -215,7 +215,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const relation = this.getRelation();
 
 		if (!relation) {
-			return;
+			return [];
 		};
 
 		const viewRelation = this.getViewRelation();
