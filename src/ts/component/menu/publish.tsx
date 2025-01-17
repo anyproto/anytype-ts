@@ -127,12 +127,14 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			/>
 			<Label className="small" text={url} onClick={onUrlClick} />
 
-			<div className="flex">
-				<Label text={translate('menuPublishLabel')} />
-				<div className="value">
-					<Switch />
+			{space.isShared ? (
+				<div className="flex">
+					<Label text={translate('menuPublishLabel')} />
+					<div className="value">
+						<Switch />
+					</div>
 				</div>
-			</div>
+			) : ''}
 
 			<div className="buttons">
 				{buttons.map((item, i) => <Button key={i} {...item} className="c36" />)}
