@@ -14,6 +14,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const object = S.Detail.get(rootId, rootId, []);
 	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
 	const [ status, setStatus ] = useState(null);
+	const [ isStatusLoaded, setIsStatusLoaded ] = useState(false);
 	const [ error, setError ] = useState('');
 	const participant = U.Space.getMyParticipant();
 
@@ -91,19 +92,23 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	let buttons = [];
 
-	if (status === null) {
-		buttons.push({ text: translate('menuPublishButtonPublish'), ref: publishRef, onClick: onPublish });
-	} else {
-		buttons = buttons.concat([
-			{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
-			{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: onPublish },
-		]);
+	if (isStatusLoaded) {
+		if (status === null) {
+			buttons.push({ text: translate('menuPublishButtonPublish'), ref: publishRef, onClick: onPublish });
+		} else {
+			buttons = buttons.concat([
+				{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
+				{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: onPublish },
+			]);
+		};
 	};
 
 	useEffect(() => {
 		setSlugHander(object.name);
 
 		C.PublishingGetStatus(space.targetSpaceId, rootId, (message) => {
+			setIsStatusLoaded(true);
+
 			if (message.state) {
 				setStatus(message.state);
 			};
@@ -130,7 +135,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			</div>
 
 			<div className="buttons">
-				{buttons.map((item, i) => <Button key={i} {...item} />)}
+				{buttons.map((item, i) => <Button key={i} {...item} className="c36" />)}
 			</div>
 
 			<Error text={error} />
