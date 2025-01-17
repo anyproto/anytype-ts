@@ -2227,7 +2227,8 @@
 	"spaceStatus9": "Joining",
 	"spaceStatus10": "Removing",
 
-	"challengeTitle": "Please enter the following numbers in the extension",
+	"challengeTitle": "Grant Limited Access",
+	"challengeDescription": "This extension requires a 4-digit code for limited access to your account. Proceed only if you trust the extension.",
 	"webclipperEmptySelection": "Selection is empty",
 
 	"paymentMethod0": "None",
