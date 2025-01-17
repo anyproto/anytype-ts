@@ -10,6 +10,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
+	const joinRef = useRef(null);
 	const space = U.Space.getSpaceview();
 	const object = S.Detail.get(rootId, rootId, []);
 	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
@@ -56,9 +57,8 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPublish = () => {
 		publishRef.current.setLoading(true);
 
-		C.PublishingCreate(S.Common.space, rootId, url, (message: any) => {
+		C.PublishingCreate(S.Common.space, rootId, url, joinRef.current.getValue(), (message: any) => {
 			publishRef.current.setLoading(false);
-
 
 			if (message.error.code) {
 				setError(message.error.message);
@@ -131,7 +131,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div className="flex">
 					<Label text={translate('menuPublishLabel')} />
 					<div className="value">
-						<Switch />
+						<Switch ref={joinRef} />
 					</div>
 				</div>
 			) : ''}
