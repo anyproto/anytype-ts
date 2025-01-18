@@ -155,7 +155,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						) : (
 							<div className="caption">{caption}</div>
 						)}
-						{withMore ? <Icon className="more" onMouseDown={onMore} /> : ''}
+						{withMore ? <Icon className="more withBackground" onMouseDown={onMore} /> : ''}
 					</React.Fragment>
 				);
 			};

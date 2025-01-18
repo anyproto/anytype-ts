@@ -157,7 +157,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	componentDidUpdate () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const filter = String(data.filter || '');
 		const items = this.getItems();
 
 		if (filter != this.filter) {
@@ -324,10 +324,12 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	onFilterChange (v: string) {
-		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			this.props.param.data.filter = this.refFilter.getValue();
-		}, J.Constant.delay.keyboard);
+		if (v != this.filter) {
+			window.clearTimeout(this.timeoutFilter);
+			this.timeoutFilter = window.setTimeout(() => {
+				this.props.param.data.filter = this.refFilter.getValue();
+			}, J.Constant.delay.keyboard);
+		};
 	};
 
 	onMouseEnter (e: any, item: any) {
