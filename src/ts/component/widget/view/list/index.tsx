@@ -62,6 +62,10 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 	};
 
 	const getItems = () => {
+		if (!block) {
+			return [];
+		};
+
 		const { targetBlockId } = block.content;
 		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
