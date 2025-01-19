@@ -310,7 +310,7 @@ const Vault = observer(class Vault extends React.Component {
 
 		let ids = U.Menu.getVaultItems().map(it => it.id);
 		ids = arrayMove(ids, oldIndex, newIndex);
-		Storage.set('spaceOrder', ids, true);
+		Storage.set('spaceOrder', ids);
 
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);

@@ -5,9 +5,6 @@ const os = require('os');
 const path = require('path');
 const mime = require('mime-types');
 const tmpPath = () => app.getPath('temp');
-const Store = require('electron-store');
-const suffix = app.isPackaged ? '' : 'dev';
-const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
 
 contextBridge.exposeInMainWorld('Electron', {
 	version: {
@@ -19,9 +16,9 @@ contextBridge.exposeInMainWorld('Electron', {
 	platform: os.platform(),
 	arch: process.arch,
 
-	storeSet: (key, value) => store.set(key, value),
-	storeGet: key => store.get(key),
-	storeDelete: key => store.delete(key),
+	storeGet: key => ipcRenderer.sendSync('storeGet', key),
+	storeSet: (key, value) => ipcRenderer.sendSync('storeSet', key, value),
+	storeDelete: key => ipcRenderer.sendSync('storeDelete', key),
 
 	isPackaged: app.isPackaged,
 	userPath: () => app.getPath('userData'),
