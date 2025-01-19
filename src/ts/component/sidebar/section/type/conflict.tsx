@@ -11,11 +11,21 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 	const [ dummy, setDummy ] = useState(0);
 	const [ conflictIds, setConflictIds ] = useState([]);
 
+	const forceUpdate = () => {
+		setDummy(dummy + 1);
+	};
+
 	const load = () => {
 		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
-			if (!message.error.code) {
-				setConflictIds(message.conflictRelationIds);
+			if (message.error.code) {
+				return;
 			};
+
+			setConflictIds(Relation
+				.getArrayValue(message.conflictRelationIds)
+				.map(key => S.Record.getRelationById(key))
+				.filter(it => it && !Relation.isSystem(it.relationKey)).map(it => it.id)
+			);
 		});
 	};
 
@@ -25,7 +35,7 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 		return Relation
 			.getArrayValue(conflictIds)
 			.map(key => S.Record.getRelationById(key))
-			.filter(it => it && !Relation.isSystem(it.relationKey));
+			.filter(it => !relations.includes(it.id));
 	};
 
 	const onMore = (e: React.MouseEvent, item: any) => {
@@ -63,7 +73,9 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 				textConfirm: translate('commonAdd'),
 				colorCancel: 'blank',
 				onConfirm: () => {
-					// command needed
+					const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+
+					onChange({ recommendedRelations: conflictIds.concat(recommendedRelations) });
 				},
 			},
 		});
@@ -72,7 +84,7 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 	useEffect(() => load(), []);
 
 	useImperativeHandle(ref, () => ({
-		forceUpdate: () => setDummy(dummy + 1),
+		forceUpdate,
 		load,
 		getItems,
 		onMore,

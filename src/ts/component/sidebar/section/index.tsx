@@ -82,7 +82,7 @@ const SidebarSectionIndex = observer(class SidebarSectionIndex extends React.Com
 	};
 
 	setObject (object: any): void {
-		this.setState({ object }, () => this.ref?.forceUpdate());
+		this.setState({ object: Object.assign(object, { isUpdated: true }) }, () => this.ref?.forceUpdate());
 	};
 
 	isReadonly (): boolean {

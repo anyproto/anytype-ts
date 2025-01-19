@@ -12,7 +12,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	update: any = {};
 	sectionRefs: Map<string, any> = new Map();
 	previewRef: any = null;
-	hasConflicts: boolean = false;
+	conflicts: string[] = [];
+	keepObject: boolean = false;
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -63,7 +64,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	componentDidMount (): void {
 		this.init();
-		this.checkConflicts();
+		this.loadConflicts();
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 	};
 
@@ -94,7 +95,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			defaultView: I.ViewType.Grid,
 		}, details);
 
-		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
+		if (this.keepObject) {
+			this.keepObject = false;
+		} else {
+			this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
+		};
+
 		sections.forEach(it => this.updateObject(it.id));
 
 		container.addClass('overPopup');
@@ -118,8 +124,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			{ id: 'relation', component: 'type/relation' },
 		];
 
-		if (this.hasConflicts) {
-			sections.push({ id: 'conflicts', component: 'type/conflict' });
+		if (this.getConflicts().length) {
+			sections.push({ id: 'conflict', component: 'type/conflict' });
 		};
 
 		return sections;
@@ -135,6 +141,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.object = Object.assign(this.object, update);
 		this.update = Object.assign(this.update, update);
 		this.updateObject(section);
+
+		if (section == 'conflict') {
+			this.updateObject('relation');
+			this.keepObject = true;
+			this.forceUpdate();
+		};
 	};
 
 	onSave () {
@@ -175,16 +187,27 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.previewRef?.update(this.object);
 	};
 
-	checkConflicts () {
+	loadConflicts () {
 		const { space } = S.Common;
 		const { rootId } = this.props;
 
 		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
-			if (!message.error.code && message.conflictRelationIds?.length) {
-				this.hasConflicts = true;
+			if (!message.error.code) {
+				this.conflicts = Relation
+					.getArrayValue(message.conflictRelationIds)
+					.map(key => S.Record.getRelationById(key))
+					.filter(it => it && !Relation.isSystem(it.relationKey))
+					.map(it => it.id);
+
 				this.forceUpdate();
 			};
 		});
+	};
+
+	getConflicts () {
+		const relations = (this.object.recommendedRelations || []).concat(this.object.recommendedFeaturedRelations || []);
+
+		return this.conflicts.slice(0).filter(it => !relations.includes(it));
 	};
 
 });

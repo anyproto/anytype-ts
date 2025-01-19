@@ -6,7 +6,7 @@ import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
 import { I, C, S, Relation, translate, keyboard } from 'Lib';
 
 const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation extends React.Component<I.SidebarSectionComponent> {
-	
+
 	constructor (props: I.SidebarSectionComponent) {
 		super(props);
 
