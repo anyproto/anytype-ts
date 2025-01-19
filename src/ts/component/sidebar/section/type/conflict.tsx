@@ -41,7 +41,6 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 			data: {
 				options: [
 					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType'), icon: '' },
-					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObjects'), color: 'red' },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {
@@ -49,11 +48,6 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
 							onChange({ recommendedRelations: [ item.id ].concat(recommendedRelations) });
-							break;
-						};
-
-						case 'remove': {
-							// command needed
 							break;
 						};
 					};
@@ -66,9 +60,7 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmLocalFieldsTitle'),
-				text: translate('popupConfirmLocalFieldsText'),
-				textConfirm: translate('commonRemove'),
-				colorConfirm: 'red',
+				textConfirm: translate('commonAdd'),
 				colorCancel: 'blank',
 				onConfirm: () => {
 					// command needed

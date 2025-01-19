@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, sidebar, translate, keyboard, Relation } from 'Lib';
+import { I, S, U, sidebar, translate, keyboard, Relation, C } from 'Lib';
 
 import Section from 'Component/sidebar/section';
+import { ObjectRelationDelete } from 'Lib/api/command';
 
 const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent> {
 	
@@ -14,6 +15,8 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		super(props);
 
 		this.onSetUp = this.onSetUp.bind(this);
+		this.getObject = this.getObject.bind(this);
+		this.onConflict = this.onConflict.bind(this);
 	};
 
     render () {
@@ -122,6 +125,8 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 	onConflict (e: React.MouseEvent, item: any) {
 		const { x, y } = keyboard.mouse.page;
+		const object = this.getObject();
+		const isTemplate = U.Object.isTemplate(object.type);
 
 		S.Menu.open('select', {
 			rect: { width: 0, height: 0, x: x + 4, y },
@@ -135,12 +140,19 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				onSelect: (e, option) => {
 					switch (option.id) {
 						case 'addToType': {
-							console.log('ADD')
+							const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
+							if (!type) {
+								return;
+							};
+
+							C.ObjectListSetDetails([ type.id ], [ { key: 'recommendedRelations', value: type.recommendedRelations.concat([ item.id ]) } ], () => {
+								this.forceUpdate();
+							});
 							break;
 						};
 
 						case 'remove': {
-							console.log('REMOVE')
+							// remove from object
 							break;
 						};
 					};
