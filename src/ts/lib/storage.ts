@@ -49,6 +49,11 @@ const Api = {
 class Storage {
 	
 	get (key: string): any {
+		if (!key) {
+			console.log('[Storage].get: key not specified');
+			return;
+		};
+
 		let o = Api.get(key);
 		if (undefined === o) {
 			o = this.parse(String(localStorage.getItem(key) || ''));
@@ -223,8 +228,9 @@ class Storage {
 		this.setAccount(obj);
 	};
 
-	getAccountId () {
-		return this.get('accountId');
+	getAccountId (): string {
+		const { account } = S.Auth;
+		return account ? account.id : '';
 	};
 
 	getPin () {

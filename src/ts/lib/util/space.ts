@@ -188,11 +188,13 @@ class UtilSpace {
 	};
 
 	hasShareBanner () {
+		/*
 		const hasShared = !!this.getList().find(it => it.isShared && this.isMyOwner(it.targetSpaceId));
 		const space = this.getSpaceview();
 		const closed = Storage.get('shareBannerClosed');
 
-		// return !space.isPersonal && !space.isShared && !closed && this.isMyOwner() && !hasShared;
+		return !space.isPersonal && !space.isShared && !closed && this.isMyOwner() && !hasShared;
+		*/
 		return false;
 	};
 

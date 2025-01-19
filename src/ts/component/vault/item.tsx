@@ -1,11 +1,9 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
-import { U } from 'Lib';
 
 interface Props {
-	id: string;
-	isButton: boolean;
+	item: any;
 	onClick: (e: any) => void;
 	onMouseEnter: (e: any) => void;
 	onMouseLeave: () => void;
@@ -13,8 +11,7 @@ interface Props {
 };
 
 const VaultItem: FC<Props> = observer(({ 
-	id = '', 
-	isButton = false, 
+	item,
 	onClick, 
 	onMouseEnter, 
 	onMouseLeave, 
@@ -23,16 +20,15 @@ const VaultItem: FC<Props> = observer(({
 	const cn = [ 'item' ];
 
 	let icon = null;
-	if (!isButton) {
-		const object = U.Menu.getVaultItems().find(it => it.id == id);
-		icon = <IconObject object={object} size={36} iconSize={36} />;
+	if (!item.isButton) {
+		icon = <IconObject object={item} size={36} iconSize={36} />;
 	} else {
-		cn.push(`isButton ${id}`);
+		cn.push(`isButton ${item.id}`);
 	};
 
 	return (
 		<div 
-			id={`item-${id}`}
+			id={`item-${item.id}`}
 			className={cn.join(' ')}
 			onClick={onClick}
 			onMouseEnter={onMouseEnter}
@@ -44,6 +40,7 @@ const VaultItem: FC<Props> = observer(({
 			</div>
 		</div>
 	);
+
 });
 
 export default VaultItem;
