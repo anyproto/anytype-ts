@@ -25,7 +25,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const { noPreview } = this.props;
 		const type = this.getObject();
 		const sections = this.getSections();
-		const readonly = this.props.readonly || !S.Block.isAllowed(type.restrictions, [ I.RestrictionObject.Details ]);
+		const readonly = this.props.readonly || !S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
 
 		return (
 			<>
