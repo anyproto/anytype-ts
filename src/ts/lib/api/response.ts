@@ -438,6 +438,12 @@ export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response)
 	};
 };
 
+export const ObjectTypeListConflictingRelations = (response: Rpc.ObjectType.ListConflictingRelations.Response) => {
+	return {
+		conflictRelationIds: response.getRelationidsList()
+	};
+};
+
 export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObjectInfoWithLinks.Response) => {
 	const object = response.getObject();
 	const links = object.getLinks();

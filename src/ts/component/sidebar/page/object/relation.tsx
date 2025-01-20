@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, sidebar, translate, keyboard } from 'Lib';
+import { I, S, U, sidebar, translate, keyboard, Relation, C } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 
@@ -14,6 +14,8 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		super(props);
 
 		this.onSetUp = this.onSetUp.bind(this);
+		this.getObject = this.getObject.bind(this);
+		this.onConflict = this.onConflict.bind(this);
 	};
 
     render () {
@@ -79,7 +81,10 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const object = this.getObject();
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type) || {};
-		const conflicts = S.Record.getConflictRelations(rootId, rootId, type.id).sort(U.Data.sortByName);
+		const conflicts = S.Record
+			.getConflictRelations(rootId, rootId, type.id)
+			.sort(U.Data.sortByName)
+			.map((it) => ({ ...it, onMore: this.onConflict }));
 		const conflictingKeys = conflicts.map(it => it.relationKey);
 
 		let items = (type.recommendedRelations || []).map(it => S.Record.getRelationById(it)).filter(it => it && it.relationKey);
@@ -115,6 +120,42 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		keyboard.disableSelection(true);
 		selection?.clear();
 		dragProvider?.onDragStart(e, I.DropType.Relation, [ item.id ], this);
+	};
+
+	onConflict (e: React.MouseEvent, item: any) {
+		const { x, y } = keyboard.mouse.page;
+		const object = this.getObject();
+		const isTemplate = U.Object.isTemplate(object.type);
+		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
+
+		S.Menu.open('select', {
+			rect: { width: 0, height: 0, x: x + 4, y },
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			data: {
+				options: [
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType'), icon: '' },
+					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'red' },
+				],
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'addToType': {
+							if (!type) {
+								break;
+							};
+
+							C.ObjectListSetDetails([ type.id ], [ { key: 'recommendedRelations', value: type.recommendedRelations.concat([ item.id ]) || [] } ]);
+							break;
+						};
+
+						case 'remove': {
+							C.ObjectRelationDelete(object.id, [ item.relationKey ]);
+							break;
+						};
+					};
+				},
+			},
+		});
 	};
 
 });

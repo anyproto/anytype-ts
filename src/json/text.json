@@ -1109,6 +1109,8 @@
 	"popupConfirmSpeedLimitTitle": "Hold up! Turbo typing detected!",
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 
+	"popupConfirmLocalFieldsTitle": "Add Local Fields to current type?",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1858,6 +1860,10 @@
 
 	"sidebarRelationLocal": "Local Fields",
 	"sidebarTypeRelationLocalDescription": "Some fields are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
+
+	"sidebarRelationLocalAddToCurrentType": "Add to the current type",
+	"sidebarRelationLocalRemoveFromObject": "Remove from object",
+	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

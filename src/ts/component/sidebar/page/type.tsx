@@ -12,6 +12,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	update: any = {};
 	sectionRefs: Map<string, any> = new Map();
 	previewRef: any = null;
+	conflicts: string[] = [];
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -62,11 +63,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	componentDidMount (): void {
 		this.init();
+		this.loadConflicts();
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
-	};
-
-	componentDidUpdate (): void {
-		this.init();
 	};
 
 	componentWillUnmount () {
@@ -93,6 +91,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		}, details);
 
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
+
 		sections.forEach(it => this.updateObject(it.id));
 
 		container.addClass('overPopup');
@@ -110,11 +109,17 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	getSections () {
-		return [
+		const sections = [
 			{ id: 'title', component: 'type/title' },
 			{ id: 'layout', component: 'type/layout' },
 			{ id: 'relation', component: 'type/relation' },
 		];
+
+		if (this.getConflicts().length) {
+			sections.push({ id: 'conflict', component: 'type/conflict' });
+		};
+
+		return sections;
 	};
 
 	onChange (section: string, update: any) {
@@ -127,6 +132,11 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.object = Object.assign(this.object, update);
 		this.update = Object.assign(this.update, update);
 		this.updateObject(section);
+
+		if (section == 'conflict') {
+			this.updateObject('relation');
+			this.forceUpdate();
+		};
 	};
 
 	onSave () {
@@ -165,6 +175,29 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	updateObject (id: string) {
 		this.sectionRefs.get(id)?.setObject(this.object);
 		this.previewRef?.update(this.object);
+	};
+
+	loadConflicts () {
+		const { space } = S.Common;
+		const { rootId } = this.props;
+
+		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
+			if (!message.error.code) {
+				this.conflicts = Relation
+					.getArrayValue(message.conflictRelationIds)
+					.map(id => S.Record.getRelationById(id))
+					.filter(it => it && !Relation.isSystem(it.relationKey))
+					.map(it => it.id);
+
+				this.forceUpdate();
+			};
+		});
+	};
+
+	getConflicts () {
+		const relations = (this.object.recommendedRelations || []).concat(this.object.recommendedFeaturedRelations || []);
+
+		return this.conflicts.slice(0).filter(it => !relations.includes(it));
 	};
 
 });
