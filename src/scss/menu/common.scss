@@ -95,6 +95,7 @@
 			.icon.delete, .icon.more { opacity: 1; }
 		}
 		.item.withMore.hover, .item.withMore:hover {
+			.clickable { padding-right: 28px; }
 			.caption { opacity: 0; }
 		}
 
