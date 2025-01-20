@@ -481,9 +481,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			if (onClick) {
 				onClick(S.Detail.mapper(item));
 			};
-
-			U.Object.setLastUsedDate(item.id, U.Date.now());
 		};
+		const setLast = item => U.Object.setLastUsedDate(item.id, U.Date.now());
 
 		if (item.id == 'add') {
 			C.ObjectCreateObjectType({ name: filter }, [], S.Common.space, (message: any) => {
@@ -498,8 +497,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		} else {
 			if (item.isInstalled || noInstall) {
 				cb(item);
+				setLast(item);
 			} else {
-				Action.install(item, true, message => cb(message.details));
+				Action.install(item, true, message => {
+					cb(message.details);
+					setLast(message.details);
+				});
 			};
 		};
 	};
