@@ -85,7 +85,6 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			close();
-
 			analytics.event('ShareObjectUnpublish', { objectType: object.type });
 		});
 
