@@ -1146,7 +1146,7 @@ class Dispatcher {
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
 
 		if (root && root.fields.analyticsContext) {
-			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
+			analytics.setContext(root.fields.analyticsContext);
 		} else {
 			analytics.removeContext();
 		};

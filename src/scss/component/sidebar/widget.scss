@@ -14,7 +14,7 @@
 		.name { opacity: 1; transform: translate3d(0px,0px,0px); }
 	}
 
-	> .body { 
+	> .body {
 		height: calc(100% - 52px); padding: 0px 6px 12px 12px; position: relative; flex-grow: 1; overflow: scroll; overscroll-behavior: none; 
 		display: flex; flex-direction: column; gap: 12px 0px;
 	}

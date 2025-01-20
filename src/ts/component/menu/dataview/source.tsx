@@ -33,7 +33,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 						<div className="value">{item.value}</div>
 					</div>
 					<div className="buttons">
-						{canDelete ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
+						{canDelete ? <Icon className="delete withBackground" onClick={e => this.onRemove(e, item)} /> : ''}
 					</div>
 				</form>
 			);

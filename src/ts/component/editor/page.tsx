@@ -1620,6 +1620,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		};
 
+		console.log(pressed, dir, range.to);
+
 		const onVertical = () => {
 			this.onArrowVertical(e, (dir < 0 ? 'arrowup' : 'arrowdown'), range, length, props);
 		};

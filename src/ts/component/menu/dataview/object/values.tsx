@@ -55,7 +55,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 						<IconObject object={item} />
 						<ObjectName object={item} />
 					</span>
-					{canEdit ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
+					{canEdit ? <Icon className="delete withBackground" onClick={e => this.onRemove(e, item)} /> : ''}
 				</div>
 			);
 		});

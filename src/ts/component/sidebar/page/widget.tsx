@@ -30,7 +30,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onArchive = this.onArchive.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -205,7 +204,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					onScroll={this.onScroll}
 					onDrop={this.onDrop}
 					onDragOver={e => e.preventDefault()}
-					onContextMenu={this.onContextMenu}
 				>
 					{content}
 				</div>
@@ -370,82 +368,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const top = body.scrollTop();
 
 		head.toggleClass('show', showVault && (top > 32));
-	};
-
-	onContextMenu () {
-		const { previewId } = this.state;
-		if (previewId || !U.Space.canMyParticipantWrite()) {
-			return;
-		};
-
-		const win = $(window);
-		const widgetIds = S.Block.getChildrenIds(S.Block.widgets, S.Block.widgets);
-		const options: any[] = [
-			{ id: 'edit', name: translate('widgetEdit') },
-		];
-
-		if (widgetIds.length < J.Constant.limit.widgets) {
-			options.unshift({ id: 'add', name: translate('widgetAdd'), arrow: true });
-		};
-
-		let menuContext = null;
-
-		S.Menu.open('selectList', {
-			component: 'select',
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			onOpen: (context) => {
-				menuContext = context;
-			},
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { x, y: y + win.scrollTop(), width: 0, height: 0, }; 
-			},
-			subIds: [ 'widget', 'searchObject', 'select' ],
-			data: {
-				options,
-				onOver: (e: any, item: any) => {
-					if (!menuContext) {
-						return;
-					};
-
-					if (!item.arrow) {
-						S.Menu.close('widget');
-						return;
-					};
-
-					const { x, y } = keyboard.mouse.page;
-
-					S.Menu.open('widget', {
-						element: `#${menuContext.getId()} #item-${item.id}`,
-						offsetX: menuContext.getSize().width,
-						isSub: true,
-						vertical: I.MenuDirection.Center,
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-						data: {
-							coords: { x, y },
-							onSave: () => {
-								menuContext.close();
-							}
-						}
-					});
-				},
-				onSelect: (e: any, item: any) => {
-					if (item.arrow) {
-						return;
-					};
-
-					switch (item.id) {
-						case 'edit': {
-							this.setEditing(true);
-							menuContext.close();
-							break;
-						};
-					};
-				}
-			}
-		});
 	};
 
 	onArchive (e: any) {

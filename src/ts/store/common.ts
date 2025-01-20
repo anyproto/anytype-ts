@@ -27,7 +27,7 @@ class CommonStore {
 	public cellId = '';
 	public themeId = '';
 	public nativeThemeIsDark = false;
-	public defaultType = '';
+	public defaultType = null;
 	public pinTimeId = null;
 	public emailConfirmationTimeId = 0;
 	public isFullScreen = false;
@@ -175,9 +175,15 @@ class CommonStore {
 	};
 
 	get type (): string {
-		const key = String(this.defaultType || Storage.get('defaultType') || J.Constant.default.typeKey);
+		if (this.defaultType === null) {
+			this.defaultType = Storage.get('defaultType');
+		};
 
-		let type = S.Record.getTypeByKey(key);
+		if (!this.defaultType) {
+			this.defaultType = J.Constant.default.typeKey;
+		};
+
+		let type = S.Record.getTypeByKey(this.defaultType);
 		if (!type || !type.isInstalled || !U.Object.isAllowedObject(type.recommendedLayout)) {
 			type = S.Record.getTypeByKey(J.Constant.default.typeKey);
 		};

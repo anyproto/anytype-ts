@@ -826,6 +826,11 @@ class UtilMenu {
 	};
 
 	getVaultItems () {
+		const { account } = S.Auth;
+		if (!account) {
+			return [];
+		};
+
 		const ids = Storage.get('spaceOrder') || [];
 		const items = U.Common.objectCopy(U.Space.getList());
 

@@ -188,11 +188,13 @@ class UtilSpace {
 	};
 
 	hasShareBanner () {
+		/*
 		const hasShared = !!this.getList().find(it => it.isShared && this.isMyOwner(it.targetSpaceId));
 		const space = this.getSpaceview();
 		const closed = Storage.get('shareBannerClosed');
 
-		// return !space.isPersonal && !space.isShared && !closed && this.isMyOwner() && !hasShared;
+		return !space.isPersonal && !space.isShared && !closed && this.isMyOwner() && !hasShared;
+		*/
 		return false;
 	};
 
@@ -267,6 +269,23 @@ class UtilSpace {
 		C.SpaceInviteGetCurrent(id, (message: any) => {
 			callBack(message.inviteCid, message.inviteKey);
 		});
+	};
+
+	getPublishDomain (): string {
+		const participant = this.getMyParticipant();
+
+		let domain = '';
+		if (participant.resolvedName) {
+			domain = U.Common.sprintf(J.Url.publishDomain, participant.resolvedName);
+		} else {
+			domain = U.Common.sprintf(J.Url.publish, participant.identity);
+		};
+
+		return domain;
+	};
+
+	getPublishUrl (slug: string): string {
+		return [ this.getPublishDomain(), slug ].join('/');
 	};
 
 };

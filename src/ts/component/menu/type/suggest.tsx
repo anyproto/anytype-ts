@@ -11,7 +11,7 @@ interface State {
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
-const LIMIT = 20;
+const LIMIT = 15;
 
 const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I.Menu, State> {
 
@@ -481,9 +481,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			if (onClick) {
 				onClick(S.Detail.mapper(item));
 			};
-
-			U.Object.setLastUsedDate(item.id, U.Date.now());
 		};
+		const setLast = item => U.Object.setLastUsedDate(item.id, U.Date.now());
 
 		if (item.id == 'add') {
 			C.ObjectCreateObjectType({ name: filter }, [], S.Common.space, (message: any) => {
@@ -498,8 +497,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		} else {
 			if (item.isInstalled || noInstall) {
 				cb(item);
+				setLast(item);
 			} else {
-				Action.install(item, true, message => cb(message.details));
+				Action.install(item, true, message => {
+					cb(message.details);
+					setLast(message.details);
+				});
 			};
 		};
 	};
@@ -536,25 +539,23 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	resize () {
-		const { isLoading } = this.state;
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
 		const buttons = data.buttons || [];
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
+		const offset = 16 + (noFilter ? 0 : 42);
+		const buttonHeight = buttons.reduce((res: number, current: any) => res + this.getRowHeight(current), 16)
 
-		let height = 16 + (noFilter ? 0 : 42);
+		let height = offset + buttonHeight;
 		if (!items.length) {
-			height = isLoading ? height + 40 : 160;
+			height = 160;
 		} else {
 			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
 		};
-		if (buttons.length) {
-			height = buttons.reduce((res: number, current: any) => res + this.getRowHeight(current), height + 20);
-		};
 
-		height = Math.min(height, 420);
+		height = Math.min(height, offset + buttonHeight + HEIGHT_ITEM * LIMIT);
 
 		obj.css({ height });
 		position();

@@ -61,12 +61,13 @@ const Progress: FC = observer(() => {
 	};
 
 	const onDragMove = (e: any) => {
+		const obj = Storage.get('progress') || {};
 		const win = $(window);
 		const x = e.pageX - dx.current - win.scrollLeft();
 		const y = e.pageY - dy.current - win.scrollTop();
 
 		setStyle(x, y);
-		Storage.set('progress', { x, y }, true);
+		Storage.set('progress', { ...obj, x, y });
 	};
 
 	const onDragEnd = (e: any) => {

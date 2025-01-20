@@ -53,7 +53,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
-					<Icon className="more" onClick={e => this.onViewContext(e, item)} />
+					<Icon className="more withBackground" onClick={e => this.onViewContext(e, item)} />
 				</div>
 			</div>
 		));

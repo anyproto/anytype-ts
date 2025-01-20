@@ -682,6 +682,18 @@ export const Mapper = {
 			return reactions;
 		},
 
+		PublishState: (obj: Rpc.Publishing.PublishState): I.PublishState => {
+			return {
+				spaceId: obj.getSpaceid(),
+				objectId: obj.getObjectid(),
+				uri: obj.getUri(),
+				status: obj.getStatus() as number,
+				version: obj.getVersion(),
+				timestamp: obj.getTimestamp(),
+				size: obj.getSize(),
+			};
+		},
+
 	},
 
 	//------------------------------------------------------------

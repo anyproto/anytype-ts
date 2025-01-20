@@ -131,7 +131,7 @@
 			};
 			
 			.cell.c-object, .cell.c-file {
-				:not(.align2) { padding-right: 0px; }
+				:not(.align1, .align2) { padding-right: 0px; }
 				&.align2 { padding-left: 0px; }
 			}
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
