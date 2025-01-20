@@ -32,7 +32,7 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 					<div className="col colDate">{U.Date.dateWithFormat(dateFormat, item.timestamp)}</div>
 					<div className="col">{U.File.size(item.size)}</div>
 					<div className="col colMore">
-						<Icon id={`icon-more-${item.id}`} className="more withBackground" onClick={() => this.onMore(item)} />
+						<Icon id={`icon-more-${item.objectId}`} className="more withBackground" onClick={() => this.onMore(item)} />
 					</div>
 				</div>
 			);
@@ -87,7 +87,7 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 
 	onMore (item: any) {
 		const { getId } = this.props;
-		const element = $(`#${getId()} #icon-more-${item.id}`);
+		const element = $(`#${getId()} #icon-more-${item.objectId}`);
 		const options: any[] = [
 			{ id: 'update', name: translate('menuPublishButtonUpdate') },
 			{ id: 'unpublish', name: translate('menuPublishButtonUnpublish'), color: 'red' },
