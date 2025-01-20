@@ -61,7 +61,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					period = translate('popupSettingsMembershipForeverFree');
 				};
 
-				buttonText = translate('popupSettingsMembershipManage');
+				buttonText = translate('commonManage');
 			} else 
 			if (item.period) {
 				// default is year

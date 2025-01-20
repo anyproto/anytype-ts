@@ -17,16 +17,9 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const [ status, setStatus ] = useState(null);
 	const [ isStatusLoaded, setIsStatusLoaded ] = useState(false);
 	const [ error, setError ] = useState('');
-	const participant = U.Space.getMyParticipant();
 
-	let domain = '';
-	if (participant.resolvedName) {
-		domain = U.Common.sprintf(J.Url.publishDomain, participant.resolvedName);
-	} else {
-		domain = U.Common.sprintf(J.Url.publish, participant.identity);
-	};
-
-	const url = [ domain, slug ].join('/');
+	const domain = U.Space.getPublishDomain();
+	const url = U.Space.getPublishUrl(slug);
 	const items = [
 		(!space.isPersonal ? 
 		{ 
