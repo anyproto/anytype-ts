@@ -61,7 +61,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPublish = () => {
 		publishRef.current.setLoading(true);
 
-		C.PublishingCreate(S.Common.space, rootId, url, joinRef.current?.getValue(), (message: any) => {
+		C.PublishingCreate(S.Common.space, rootId, slug, joinRef.current?.getValue(), (message: any) => {
 			publishRef.current.setLoading(false);
 
 			if (message.error.code) {
