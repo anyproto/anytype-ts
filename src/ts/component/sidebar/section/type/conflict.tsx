@@ -21,10 +21,10 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 				return;
 			};
 
-			setConflictIds(Relation
-				.getArrayValue(message.conflictRelationIds)
-				.map(key => S.Record.getRelationById(key))
-				.filter(it => it && !Relation.isSystem(it.relationKey)).map(it => it.id)
+			setConflictIds(message.conflictRelationIds
+				.map(id => S.Record.getRelationById(id))
+				.filter(it => it && !Relation.isSystem(it.relationKey))
+				.map(it => it.id)
 			);
 		});
 	};
@@ -32,10 +32,9 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 	const getItems = () => {
 		const relations = Relation.getArrayValue(object.recommendedRelations).concat(Relation.getArrayValue(object.recommendedFeaturedRelations));
 
-		return Relation
-			.getArrayValue(conflictIds)
-			.map(key => S.Record.getRelationById(key))
-			.filter(it => !relations.includes(it.id));
+		return conflictIds
+			.filter(it => !relations.includes(it))
+			.map(id => S.Record.getRelationById(id));
 	};
 
 	const onMore = (e: React.MouseEvent, item: any) => {
@@ -50,14 +49,14 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 			onClose: () => node.removeClass('hover'),
 			data: {
 				options: [
-					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType'), icon: '' },
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType') },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {
 						case 'addToType': {
 							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
-							onChange({ recommendedRelations: [ item.id ].concat(recommendedRelations) });
+							onChange({ recommendedRelations: recommendedRelations.concat([ item.id ]) });
 							break;
 						};
 					};
@@ -75,7 +74,7 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 				onConfirm: () => {
 					const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
-					onChange({ recommendedRelations: conflictIds.concat(recommendedRelations) });
+					onChange({ recommendedRelations: recommendedRelations.concat(conflictIds) });
 				},
 			},
 		});

@@ -13,7 +13,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	sectionRefs: Map<string, any> = new Map();
 	previewRef: any = null;
 	conflicts: string[] = [];
-	keepObject: boolean = false;
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -68,10 +67,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 	};
 
-	componentDidUpdate (): void {
-		this.init();
-	};
-
 	componentWillUnmount () {
 		const { isPopup } = this.props;
 		const container = U.Common.getPageFlexContainer(isPopup);
@@ -95,11 +90,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			defaultView: I.ViewType.Grid,
 		}, details);
 
-		if (this.keepObject) {
-			this.keepObject = false;
-		} else {
-			this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
-		};
+		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
 
 		sections.forEach(it => this.updateObject(it.id));
 
@@ -144,7 +135,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		if (section == 'conflict') {
 			this.updateObject('relation');
-			this.keepObject = true;
 			this.forceUpdate();
 		};
 	};
@@ -195,7 +185,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			if (!message.error.code) {
 				this.conflicts = Relation
 					.getArrayValue(message.conflictRelationIds)
-					.map(key => S.Record.getRelationById(key))
+					.map(id => S.Record.getRelationById(id))
 					.filter(it => it && !Relation.isSystem(it.relationKey))
 					.map(it => it.id);
 

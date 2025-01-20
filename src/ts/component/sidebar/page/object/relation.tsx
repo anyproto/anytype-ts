@@ -4,7 +4,6 @@ import { Label, Button, Icon } from 'Component';
 import { I, S, U, sidebar, translate, keyboard, Relation, C } from 'Lib';
 
 import Section from 'Component/sidebar/section';
-import { ObjectRelationDelete } from 'Lib/api/command';
 
 const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent> {
 	
@@ -127,6 +126,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const { x, y } = keyboard.mouse.page;
 		const object = this.getObject();
 		const isTemplate = U.Object.isTemplate(object.type);
+		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 
 		S.Menu.open('select', {
 			rect: { width: 0, height: 0, x: x + 4, y },
@@ -140,19 +140,16 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				onSelect: (e, option) => {
 					switch (option.id) {
 						case 'addToType': {
-							const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 							if (!type) {
-								return;
+								break;
 							};
 
-							C.ObjectListSetDetails([ type.id ], [ { key: 'recommendedRelations', value: type.recommendedRelations.concat([ item.id ]) } ], () => {
-								this.forceUpdate();
-							});
+							C.ObjectListSetDetails([ type.id ], [ { key: 'recommendedRelations', value: type.recommendedRelations.concat([ item.id ]) || [] } ]);
 							break;
 						};
 
 						case 'remove': {
-							// remove from object
+							C.ObjectRelationDelete(object.id, [ item.relationKey ]);
 							break;
 						};
 					};

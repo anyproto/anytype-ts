@@ -18,7 +18,10 @@
 	.section.objectRelation { padding: 12px 16px; }
 	.section.objectRelation {
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 0px 10px; }
-		> .wrap.c-longText { flex-direction: column; flex-wrap: nowrap; }
+		> .wrap.c-longText { flex-direction: column; flex-wrap: nowrap; position: relative; }
+		> .wrap.c-longText {
+			.icon.more { position: absolute; right: 0px; top: 0px; }
+		}
 
 		> .wrap {
 			> .name { color: var(--color-text-secondary); }
