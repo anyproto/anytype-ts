@@ -182,6 +182,8 @@
 	"commonPin": "Pin on top",
 	"commonUnpin": "Unpin",
 	"commonOpenType": "Open Type",
+	"commonManage": "Manage",
+	"commonSize": "Size",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -781,7 +783,6 @@
 	"popupSettingsSpacesListSpace": "Space",
 	"popupSettingsSpacesCancelRequest": "Cancel request",
 	"popupSettingsSpacesListAccess": "Access",
-	"popupSettingsSpacesListSize": "Size",
 	"popupSettingsSpacesListNetwork": "Network",
 	"popupSettingsSpacesListDevice": "Device",
 
@@ -796,6 +797,9 @@
 	"popupSettingsDataManagementDeleteTitle": "Danger zone",
 	"popupSettingsDataManagementDeleteText": "Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
 	"popupSettingsDataManagementDeleteButton": "Delete vault",
+
+	"popupSettingsDataManagementDataPublishTitle": "My Sites",
+	"popupSettingsDataManagementDataPublishDate": "Published date",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
@@ -902,7 +906,6 @@
 	"popupSettingsMembershipPerGenericMany": "per %s %s",
 	"popupSettingsMembershipLearnMore": "Learn more",
 	"popupSettingsMembershipCurrent": "Current",
-	"popupSettingsMembershipManage": "Manage",
 	"popupSettingsMembershipValidUntil": "Valid until %s",
 	"popupSettingsMembershipForeverFree": "Forever free",
 	"popupSettingsMembershipPending": "Pending...",

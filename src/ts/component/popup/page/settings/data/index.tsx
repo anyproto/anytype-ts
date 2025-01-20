@@ -3,12 +3,20 @@ import { Title, Label, IconObject, Button } from 'Component';
 import { I, C, S, U, translate, Renderer, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
+interface State {
+	list: I.PublishState[];
+};
+
 interface Props extends I.PopupSettings {
 	onPage: (id: string) => void;
 	setLoading: (v: boolean) => void;
 };
 
-const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageIndex extends React.Component<Props, {}> {
+const PopupSettingsPageDataIndex = observer(class PopupSettingsPageDataIndex extends React.Component<Props, State> {
+
+	state = {
+		list: [],
+	};
 
 	constructor (props: Props) {
 		super(props);
@@ -18,9 +26,11 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
 	render () {
 		const { onPage } = this.props;
+		const { list } = this.state;
 		const { dataPath, spaceStorage } = S.Common;
 		const { localUsage } = spaceStorage;
 		const suffix = this.getSuffix();
+		const size = U.File.size(list.reduce((acc, item) => acc + item.size, 0));
 
 		return (
 			<React.Fragment>
@@ -28,6 +38,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 				<Label className="description" text={translate(`popupSettingsDataManagementLocalStorageText${suffix}`)} />
 
 				<div className="actionItems">
+
 					<div className="item storageUsage">
 						<div className="side left">
 							<IconObject object={{ iconEmoji: ':desktop_computer:' }} size={44} />
@@ -42,6 +53,19 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 						</div>
 					</div>
 
+					<div className="item">
+						<div className="side left">
+							<IconObject object={{ iconEmoji: ':earth_americas:' }} size={44} />
+
+							<div className="txt">
+								<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
+								<Label text={size} />
+							</div>
+						</div>
+						<div className="side right">
+							<Button color="blank" className="c28" text={translate(`commonManage`)} onClick={() => onPage('dataPublish')} />
+						</div>
+					</div>
 
 					<div className="item">
 						<div className="side left">
@@ -63,6 +87,14 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 				<Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
 			</React.Fragment>
 		);
+	};
+
+	componentDidMount(): void {
+		C.PublishingList(S.Common.space, (message: any) => {
+			if (!message.error.code) {
+				this.setState({ list: message.list });
+			};
+		});
 	};
 
 	onOffload (e: any) {
@@ -116,4 +148,4 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
 });
 
-export default PopupSettingsPageDataManagement;
+export default PopupSettingsPageDataIndex;

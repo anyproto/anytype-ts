@@ -271,6 +271,23 @@ class UtilSpace {
 		});
 	};
 
+	getPublishDomain (): string {
+		const participant = this.getMyParticipant();
+
+		let domain = '';
+		if (participant.resolvedName) {
+			domain = U.Common.sprintf(J.Url.publishDomain, participant.resolvedName);
+		} else {
+			domain = U.Common.sprintf(J.Url.publish, participant.identity);
+		};
+
+		return domain;
+	};
+
+	getPublishUrl (slug: string): string {
+		return [ this.getPublishDomain(), slug ].join('/');
+	};
+
 };
 
 export default new UtilSpace();
