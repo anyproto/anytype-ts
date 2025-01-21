@@ -1,12 +1,14 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { Title, Input, Label, Switch, Button, Icon, Error } from 'Component';
-import { C, J, U, I, S, Action, translate, analytics } from 'Lib';
+import { observer } from 'mobx-react';
+import { Title, Input, Label, Switch, Button, Icon, Error, Loader } from 'Component';
+import { C, U, I, S, Action, translate, analytics } from 'Lib';
 
-const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
 	const { rootId } = data;
+	const { isOnline } = S.Common;
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
@@ -15,6 +17,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const object = S.Detail.get(rootId, rootId, []);
 	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
 	const [ status, setStatus ] = useState(null);
+	const [ isStatusLoading, setIsStatusLoading ] = useState(false);
 	const [ isStatusLoaded, setIsStatusLoaded ] = useState(false);
 	const [ error, setError ] = useState('');
 
@@ -91,12 +94,25 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		analytics.event('ClickShareObjectUnpublish', { objectType: object.type });
 	};
 
+	const loadStatus = () => {
+		setIsStatusLoading(true);
+
+		C.PublishingGetStatus(space.targetSpaceId, rootId, message => {
+			setIsStatusLoading(false);
+			setIsStatusLoaded(true);
+
+			if (message.state) {
+				setStatus(message.state);
+			};
+		});
+	};
+
 	const setSlugHander = v => setSlug(U.Common.slug(v));
 	const onUrlClick = () => Action.openUrl(url);
 
 	let buttons = [];
 
-	if (isStatusLoaded) {
+	if (isStatusLoaded && isOnline) {
 		if (status === null) {
 			buttons.push({ text: translate('menuPublishButtonPublish'), ref: publishRef, onClick: onPublish });
 		} else {
@@ -110,14 +126,16 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		setSlugHander(object.name);
 
-		C.PublishingGetStatus(space.targetSpaceId, rootId, (message) => {
-			setIsStatusLoaded(true);
-
-			if (message.state) {
-				setStatus(message.state);
-			};
-		});
+		if (isOnline) {
+			loadStatus();
+		};
 	}, []);
+
+	useEffect(() => {
+		if (isOnline) {
+			loadStatus();
+		};
+	}, [ isOnline ]);
 
 	return (
 		<>
@@ -133,7 +151,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			{space.isShared ? (
 				<div className="flex">
-					<Label text={translate('menuPublishLabel')} />
+					<Label text={translate('menuPublishLabelJoin')} />
 					<div className="value">
 						<Switch ref={joinRef} />
 					</div>
@@ -141,7 +159,15 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			) : ''}
 
 			<div className="buttons">
-				{buttons.map((item, i) => <Button key={i} {...item} className="c36" />)}
+				{isOnline ? (
+					<>
+						{isStatusLoading ? <Loader /> : (
+							<>
+								{buttons.map((item, i) => <Button key={i} {...item} className="c36" />)}
+							</>
+						)}
+					</>
+				) : <Label text={translate('menuPublishLabelOffline')} />}
 			</div>
 
 			<Error text={error} />
@@ -158,6 +184,6 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 
-});
+}));
 
 export default MenuPublish;

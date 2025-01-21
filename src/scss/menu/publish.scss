@@ -20,6 +20,8 @@
 		.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; justify-content: space-evenly; height: 36px; }
 		.buttons {
 			.button { flex-grow: 1; width: 100%; }
+			.loaderWrapper { position: relative; height: 36px; }
+			.label { color: var(--color-text-secondary); }
 		}
 
 		.outer { 
