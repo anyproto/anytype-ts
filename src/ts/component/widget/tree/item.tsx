@@ -61,8 +61,6 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		console.log('DUMMY: ', dummy)
-
 		onToggle(e, { ...props, details: object });
 		forceUpdate();
 	};

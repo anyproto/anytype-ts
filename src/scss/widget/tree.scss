@@ -68,10 +68,8 @@
 		.iconObject { transition: opacity $transitionCommon; }
 	}
 	.item.withArrow:hover, .item.withArrow.isOpen {
-		> .dropTarget > .inner > .clickable {
-			> .arrowWrap { opacity: 1; }
-			> .iconObject { opacity: 0; }
-		}
+		.arrowWrap { opacity: 1; }
+		.iconObject { opacity: 0; }
 	}
 }
 
