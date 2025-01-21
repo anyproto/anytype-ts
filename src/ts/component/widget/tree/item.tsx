@@ -43,6 +43,10 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('isHidden');
 	};
 
+	const forceUpdate = () => {
+		setDummy(dummy + 1);
+	};
+
 	const onContextHandler = (e: SyntheticEvent, withElement: boolean): void => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -57,8 +61,10 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
+		console.log('DUMMY: ', dummy)
+
 		onToggle(e, { ...props, details: object });
-		setDummy(dummy + 1);
+		forceUpdate();
 	};
 
 	let arrow = null;
@@ -67,14 +73,10 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let more = null;
 	let inner = null;
 
-	if (U.Object.isSetLayout(layout) || (U.Object.isCollectionLayout(layout) && !numChildren)) {
-		arrow = <Icon className="set" />;
-	} else
 	if (numChildren > 0) {
+		cn.push('withArrow');
 		onArrowClick = onToggleHandler;
 		arrow = <Icon className="arrow" />;
-	} else {
-		arrow = <Icon className="blank" />;
 	};
 
 	if (arrow) {
