@@ -64,7 +64,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			publishRef.current.setLoading(false);
 
 			if (message.error.code) {
-				setError(message.error.message);
+				setError(message.error.description);
 				return;
 			};
 
@@ -86,7 +86,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			unpublishRef.current.setLoading(false);
 
 			if (message.error.code) {
-				setError(message.error.message);
+				setError(message.error.description);
 				return;
 			};
 
@@ -106,10 +106,20 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		C.PublishingGetStatus(space.targetSpaceId, rootId, message => {
 			setIsStatusLoading(false);
+
+			if (message.error.code) {
+				setError(message.error.description);
+				return;
+			};
+
 			setIsStatusLoaded(true);
 
-			if (message.state) {
-				setStatus(message.state);
+			const { state } = message;
+
+			if (state) {
+				setStatus(state);
+				setSlug(state.uri);
+				inputRef.current.setValue(state.uri);
 			};
 		});
 	};
