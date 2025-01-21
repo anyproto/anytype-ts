@@ -6,7 +6,12 @@ import { MenuItemVertical } from 'Component';
 
 const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, setActive, setHover, onKeyDown, getId, getSize, position, close } = props;
+	const { param, setActive, setHover, onKeyDown, getId, getSize, position } = props;
+	const { data } = param;
+	const { 
+		rootId, subId, blockId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect, isCollection, withTypeSelect, 
+		isAllowedObject,
+	} = data;
 	const n = useRef(-1);
 	const [ template, setTemplate ] = useState(null);
 
@@ -21,28 +26,29 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const loadTemplate = () => {
-		const { data } = param;
-		const { templateId } = data;
-
 		U.Object.getById(templateId, {}, (object: any) => {
 			setTemplate(object ? object : null);
 		});
 	};
 
 	const getSections = () => {
-		const { data } = param;
-		const { typeId, withTypeSelect, isAllowedObject } = data;
 		const type = S.Record.getTypeById(typeId);
 		const templateName = template ? template.name : translate('commonBlank');
 
-		const itemsAdd = [
+		const itemsAdd: any[] = [
 			{ id: 'new', icon: 'add', name: translate('commonNew') },
-			isAllowedObject ? { id: 'existing', icon: 'existingObject', name: translate('menuDataviewExistingObject'), arrow: true } : null,
 		];
-		const itemsSettings = [
-			withTypeSelect ? { id: 'type', name: translate('commonDefaultType'), arrow: true, caption: type.name } : '',
+		const itemsSettings: any[] = [
 			{ id: 'template', name: translate('commonTemplate'), arrow: true, caption: templateName },
 		];
+
+		if (isAllowedObject && isCollection) {
+			itemsAdd.push({ id: 'existing', icon: 'existingObject', name: translate('menuDataviewExistingObject'), arrow: true });
+		};
+
+		if (withTypeSelect) {
+			itemsSettings.unshift({ id: 'type', name: translate('commonDefaultType'), arrow: true, caption: type.name });
+		};
 
 		let sections: any[] = [
 			{ id: 'add', name: '', children: itemsAdd },
@@ -74,8 +80,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const { data } = param;
-		const { rootId, subId, blockId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect } = data;
 		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
 
 		const menuParam: I.MenuParam = {
@@ -176,9 +180,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const { data } = param;
-		const { onSelect } = data;
-
 		switch (item.id) {
 			case 'new': {
 				if (onSelect) {
@@ -203,9 +204,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const resize = () => {
-		const obj = $(`#${getId()} .content`);
-
-		obj.css({ height: 'auto' });
+		$(`#${getId()} .content`).css({ height: 'auto' });
 		position();
 	};
 
