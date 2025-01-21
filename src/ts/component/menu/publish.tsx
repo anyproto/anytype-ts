@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Input, Label, Switch, Button, Icon, Error, Loader } from 'Component';
-import { C, U, I, S, Action, translate, analytics } from 'Lib';
+import { C, U, I, S, Action, translate, analytics, Preview } from 'Lib';
+import $ from 'jquery';
 
 const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -113,6 +114,18 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
+	const showInfo = (e: React.MouseEvent) => {
+		Preview.tooltipShow({
+			text: translate('menuPublishInfoTooltip'),
+			className: 'big',
+			element: $(e.currentTarget),
+			typeY: I.MenuDirection.Bottom,
+			typeX: I.MenuDirection.Left,
+		});
+
+		analytics.event('ShowShareObjectHelp', { objectType: object.type });
+	};
+
 	const setSlugHander = v => setSlug(U.Common.slug(v));
 	const onUrlClick = () => Action.openUrl(url);
 
@@ -145,7 +158,11 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<>
-			<Title text={translate('menuPublishTitle')} />
+			<div className="menuHeader">
+				<Title text={translate('menuPublishTitle')} />
+				<Icon className="info" onMouseEnter={showInfo} onMouseLeave={() => Preview.tooltipHide()} />
+			</div>
+
 			<Input value={domain} readonly={true} />
 			<Input
                 ref={inputRef}
