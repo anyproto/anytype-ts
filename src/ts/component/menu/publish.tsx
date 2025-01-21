@@ -54,7 +54,9 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		},
 	].filter(it => it);
 
-	const onPublish = () => {
+	const onPublish = (isUpdate?: boolean) => {
+		const analyticsName = isUpdate ? 'ShareObjectUpdate' : 'ShareObjectPublish';
+
 		publishRef.current.setLoading(true);
 
 		C.PublishingCreate(S.Common.space, rootId, slug, joinRef.current?.getValue(), (message: any) => {
@@ -69,11 +71,11 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				Action.openUrl(message.url);
 				close();
 
-				analytics.event('ShareObjectPublish', { objectType: object.type });
+				analytics.event(analyticsName, { objectType: object.type });
 			};
 		});
 
-		analytics.event('ClickShareObjectPublish', { objectType: object.type });
+		analytics.event(`Click${analyticsName}`, { objectType: object.type });
 	};
 
 	const onUnpublish = () => {
@@ -92,6 +94,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 
 		analytics.event('ClickShareObjectUnpublish', { objectType: object.type });
+	};
+
+	const onJoinSwitch = (v: boolean) => {
+		analytics.event('JoinSpaceButtonToPublish', { objectType: object.type, type: v });
 	};
 
 	const loadStatus = () => {
@@ -118,7 +124,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		} else {
 			buttons = buttons.concat([
 				{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
-				{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: onPublish },
+				{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: () => onPublish(true) },
 			]);
 		};
 	};
@@ -153,7 +159,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div className="flex">
 					<Label text={translate('menuPublishLabelJoin')} />
 					<div className="value">
-						<Switch ref={joinRef} />
+						<Switch ref={joinRef} onChange={(e, v) => onJoinSwitch(v)} />
 					</div>
 				</div>
 			) : ''}
