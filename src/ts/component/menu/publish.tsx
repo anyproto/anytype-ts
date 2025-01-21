@@ -122,6 +122,8 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Left,
 		});
+
+		analytics.event('ShowShareObjectHelp', { objectType: object.type });
 	};
 
 	const setSlugHander = v => setSlug(U.Common.slug(v));
