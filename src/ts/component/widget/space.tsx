@@ -219,7 +219,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 							const object = message.details;
 
 							U.Object.openAuto(object);
-							U.Object.setLastUsedDate(object.id, U.Date.now());
 
 							analytics.event('SelectObjectType', { objectType: object.type });
 							analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
