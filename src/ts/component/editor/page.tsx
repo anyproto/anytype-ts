@@ -986,7 +986,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
-				this.onArrowHorizontal(e, pressed, range, length, props);
+				this.onArrowHorizontal(e, text, pressed, range, length, props);
 			});
 
 			// Enter
@@ -1003,7 +1003,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				const isShift = pressed.match('shift') ? true : false;
 
 				if (isInsideTable) {
-					this.onArrowHorizontal(e, pressed, { from: length, to: length }, length, props);
+					this.onArrowHorizontal(e, text, pressed, { from: length, to: length }, length, props);
 				} else {
 					this.onTabBlock(e, range, isShift);
 				};
@@ -1601,13 +1601,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 	};
 
-	onArrowHorizontal (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
+	onArrowHorizontal (e: any, text: string, pressed: string, range: I.TextRange, length: number, props: any) {
 		const { focused } = focus.state;
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = S.Block.getLeaf(rootId, focused);
 		const withTab = pressed.match(Key.tab);
-		const dir = pressed.match([ Key.left, Key.shift ].join('|')) ? -1 : 1;
+		const isRtl = U.Common.checkRtl(text);
+		const dir = (pressed.match([ Key.left, Key.shift ].join('|')) ? -1 : 1) * (isRtl ? -1 : 1);
 
 		if (!block) {
 			return;
@@ -1622,8 +1623,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 		};
-
-		console.log(pressed, dir, range.to);
 
 		const onVertical = () => {
 			this.onArrowVertical(e, (dir < 0 ? 'arrowup' : 'arrowdown'), range, length, props);
