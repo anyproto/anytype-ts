@@ -27,6 +27,8 @@
 			.label { color: var(--color-text-secondary); }
 		}
 
+		.error { margin: 0px; }
+
 		.outer { 
 			position: absolute; left: 0px; bottom: 0px; transform: translateY(calc(100% + 8px)); width: 100%; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 
 			border-radius: 8px; overflow: hidden; background: var(--color-bg-primary);
