@@ -14,11 +14,12 @@ interface Props extends I.WidgetViewComponent {
 	isCompact?: boolean;
 	isPreview?: boolean;
 	isSection?: boolean;
+	hideIcon?: boolean;
 };
 
 const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { subId, id, block, style, isCompact, isEditing, index, isPreview, isSection, onContext } = props;
+	const { subId, id, block, style, isCompact, isEditing, index, isPreview, isSection, hideIcon, onContext } = props;
 	const rootId = keyboard.getRootId();
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
 	const { isReadonly, isArchived, isHidden, restrictions, source } = object;
@@ -88,6 +89,24 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	let descr = null;
 	let more = null;
+	let icon = null;
+
+	if (!hideIcon) {
+		icon = (
+			<IconObject 
+				id={iconKey}
+				key={iconKey}
+				object={object} 
+				size={isCompact ? 18 : 48} 
+				iconSize={isCompact ? 18 : 28}
+				canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
+				menuParam={{ 
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+				}}
+			/>
+		);
+	};
 
 	if (!isCompact) {
 		if (U.Object.isBookmarkLayout(object.layout)) {
@@ -103,18 +122,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	
 	let inner = (
 		<div className="inner" onMouseDown={onClick}>
-			<IconObject 
-				id={iconKey}
-				key={iconKey}
-				object={object} 
-				size={isCompact ? 18 : 48} 
-				iconSize={isCompact ? 18 : 28}
-				canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
-				menuParam={{ 
-					className: 'fixed',
-					classNameWrap: 'fromSidebar',
-				}}
-			/>
+			{icon}
 
 			<div className="info">
 				<ObjectName object={object} />
