@@ -51,8 +51,17 @@ export default [
 
 	h2(`Quality-of-Life`),
 	bullet(`Added a new option to add existing Objects to Collection, available in the updated arrow menu alongside other content-related settings.`),
+	img(`45/5.png`, `c70`),
+	text(``),
+
 	bullet(`Horizontal alignment has been added to the Grid layout: each column can be set to align left, center or right.`),
+	img(`45/6.png`, `c70`),
+	text(``),
+
 	bullet(`Updated Widget Settings menu: removed the ability to change widget source and ${hl('Edit Widgets')} action. The appearance section now contains only options to change widget view (Compact List, List, View, Link) and the number of objects has been moved to a separate section.`),
+	img(`45/7.png`, `c70`),
+	text(``),
+
 	bullet(`Diagrams in the Kroki embed block support links. Thanks, @${link('https://community.anytype.io/t/kroki-links-are-not-usable/25543', 'siousu')}!`),
 	bullet(`Updated the color of text selection in dark mode to improve visibility. Thanks, @${link('https://community.anytype.io/t/selected-text-background-color-on-a-given-object-heavily-dependent-on-monitor-settings/25509', 'kermit_frog')}!`),
 	bullet(`Inline Set header adapts to resizing, preventing controls from overlapping a block next to it.`),
