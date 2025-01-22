@@ -22,10 +22,7 @@
 
 		.iconObject { flex-shrink: 0; flex-basis: 20px; margin-right: 6px; }
 
-		.arrowWrap { width: 24px; height: 24px; position: absolute; z-index: 2; left: -2px; top: -2px; opacity: 0; cursor: default; display: flex; align-items: center; justify-content: center; }
-		.arrowWrap:hover {
-			.icon.arrow { background-color: var(--color-shape-highlight-medium); }
-		}
+		.arrowWrap { display: none; }
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background $transitionCommon; border-radius: 4px; cursor: default; }
 		.icon.set { background-image: url('~img/icon/widget/set.svg'); }
@@ -62,7 +59,19 @@
 	.item.isOpen {
 		.icon.arrow { transform: rotate(0deg); }
 	}
+}
 
+.widget.widgetTree.isClosed {
+	.contentWrapper { height: 8px; }
+}
+
+.widget.widgetTree:not(.depth0) {
+	.item {
+		.arrowWrap { width: 24px; height: 24px; position: absolute; z-index: 2; left: -2px; top: -2px; opacity: 0; cursor: default; display: flex; align-items: center; justify-content: center; }
+		.arrowWrap:hover {
+			.icon.arrow { background-color: var(--color-shape-highlight-medium); }
+		}
+	}
 	.item.withArrow {
 		.arrowWrap,
 		.iconObject { transition: opacity 0.15s ease-in; }
@@ -71,8 +80,4 @@
 		.arrowWrap { opacity: 1; }
 		.iconObject { opacity: 0; }
 	}
-}
-
-.widget.widgetTree.isClosed {
-	.contentWrapper { height: 8px; }
 }

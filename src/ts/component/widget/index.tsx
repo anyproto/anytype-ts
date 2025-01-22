@@ -678,14 +678,19 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			break;
 		};
 
+		case I.WidgetLayout.Compact:
 		case I.WidgetLayout.Tree: {
 			cn.push('widgetTree');
+
+			if (layout == I.WidgetLayout.Compact) {
+				cn.push('depth0');
+			};
+
 			content = <WidgetTree {...childProps} />;
 			break;
 		};
 
 		case I.WidgetLayout.List:
-		case I.WidgetLayout.Compact:
 		case I.WidgetLayout.View: {
 			cn.push('widgetView');
 			content = <WidgetView {...childProps} />;
