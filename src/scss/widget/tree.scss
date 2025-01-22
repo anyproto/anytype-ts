@@ -65,7 +65,7 @@
 
 	.item.withArrow {
 		.arrowWrap,
-		.iconObject { transition: opacity $transitionCommon; }
+		.iconObject { transition: opacity 0.15s ease-in; }
 	}
 	.item.withArrow:hover, .item.withArrow.isOpen {
 		.arrowWrap { opacity: 1; }
