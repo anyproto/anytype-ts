@@ -1097,7 +1097,7 @@ export const Mapper = {
 			if (v == V.ACCOUNTUPDATE)				 t = 'AccountUpdate';
 			if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'AccountConfigUpdate';
 			if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'AccountLinkChallenge';
-			if (v == V.ACCOUNTLINKCHALLENGEHIDE)	 t = 'AccountLinkChallengeHide';
+			//if (v == V.ACCOUNTLINKCHALLENGEHIDE)	 t = 'AccountLinkChallengeHide';
 
 			if (v == V.BLOCKADD)					 t = 'BlockAdd';
 			if (v == V.BLOCKDELETE)					 t = 'BlockDelete';
@@ -1209,11 +1209,13 @@ export const Mapper = {
 			};
 		},
 
+		/*
 		AccountLinkChallengeHide: (obj: Events.Event.Account.LinkChallengeHide) => {
 			return {
 				challenge: obj.getChallenge(),
 			};
 		},
+		*/
 
 		ObjectRelationsAmend: (obj: Events.Event.Object.Relations.Amend) => {
 			return {
