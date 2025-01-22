@@ -144,7 +144,7 @@ class WindowManager {
 		const primaryDisplay = screen.getPrimaryDisplay();
 		const { width, height } = primaryDisplay.workAreaSize;
 
-		const win = this.create({ isChallenge: true }, {
+		const win = this.create({ ...options, isChallenge: true }, {
 			backgroundColor: '',
 			width: 424, 
 			height: 232,
@@ -163,13 +163,13 @@ class WindowManager {
 			win.webContents.postMessage('challenge', options);
 		});
 
-		setTimeout(() => this.closeChallenge(), 30000);
+		setTimeout(() => this.closeChallenge(options), 30000);
 		return win;
 	};
 
-	closeChallenge () {
+	closeChallenge (options) {
 		for (const win of this.list) {
-			if (win && win.isChallenge && !win.isDestroyed()) {
+			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
 				win.close();
 			};
 		};
