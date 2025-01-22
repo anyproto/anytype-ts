@@ -174,6 +174,7 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 	request.setIcon(icon);
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
+	request.setJsonapilistenaddr(J.Url.api);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -191,6 +192,7 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 	request.setRootpath(path);
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
+	request.setJsonapilistenaddr(J.Url.api);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };

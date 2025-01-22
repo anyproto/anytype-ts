@@ -25,6 +25,7 @@ export default {
 	notionFAQ:			 'https://doc.anytype.io/anytype-docs/basics/space/import-export#notion-import-faq',
 	publishDomain:		 '%s.coop',
 	publish:			 'https://any.coop/%s/',
+	api:				 '127.0.0.1:31009',
 
 	survey: {
 		register:		 'https://community.anytype.io/survey0',
