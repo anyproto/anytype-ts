@@ -632,7 +632,7 @@ class UtilData {
 			ret.withIcon = true;
 		};
 
-		if (checkType) {
+		if (checkType && !keyboard.isMainHistory()) {
 			className.push('noSystemBlocks');
 		};
 

@@ -237,7 +237,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 
 		const { rootId, block } = this.props;
 		const blocks = S.Block.getBlocks(rootId, (it: I.Block) => it.isFileImage() || it.isFileVideo());
-		const idx = blocks.findIndex(it => it.id == block.id);
+		const targetId = block.getTargetObjectId();
 		const gallery = [];
 
 		blocks.forEach(it => {
@@ -268,7 +268,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 
 		S.Popup.open('preview', { 
 			data: {
-				initialIdx: idx,
+				initialIdx: gallery.findIndex(it => it.object.id == targetId),
 				gallery,
 			},
 		});

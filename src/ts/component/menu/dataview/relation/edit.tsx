@@ -221,10 +221,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const viewRelation = this.getViewRelation();
 		const object = S.Detail.get(rootId, rootId);
 		const isFile = relation && (relation.format == I.RelationType.File);
+		const isName = relation && (relation.relationKey == 'name');
 		const canFilter = !isFile;
 		const canSort = !isFile;
-		const canHide = relation && (relation.relationKey != 'name');
-		const canAlign = relation; 
+		const canHide = !isName;
+		const canAlign = !isName; 
 		const canCalculate = relation;
 		
 		let unlinkText = translate('commonUnlink');

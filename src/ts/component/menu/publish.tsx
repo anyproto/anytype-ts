@@ -1,12 +1,15 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { Title, Input, Label, Switch, Button, Icon, Error } from 'Component';
-import { C, J, U, I, S, Action, translate, analytics } from 'Lib';
+import { observer } from 'mobx-react';
+import { Title, Input, Label, Switch, Button, Icon, Error, Loader } from 'Component';
+import { C, U, I, S, Action, translate, analytics, Preview } from 'Lib';
+import $ from 'jquery';
 
-const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
 	const { rootId } = data;
+	const { isOnline } = S.Common;
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
@@ -15,6 +18,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const object = S.Detail.get(rootId, rootId, []);
 	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
 	const [ status, setStatus ] = useState(null);
+	const [ isStatusLoading, setIsStatusLoading ] = useState(false);
 	const [ isStatusLoaded, setIsStatusLoaded ] = useState(false);
 	const [ error, setError ] = useState('');
 
@@ -51,14 +55,16 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		},
 	].filter(it => it);
 
-	const onPublish = () => {
+	const onPublish = (isUpdate?: boolean) => {
+		const analyticsName = isUpdate ? 'ShareObjectUpdate' : 'ShareObjectPublish';
+
 		publishRef.current.setLoading(true);
 
 		C.PublishingCreate(S.Common.space, rootId, slug, joinRef.current?.getValue(), (message: any) => {
 			publishRef.current.setLoading(false);
 
 			if (message.error.code) {
-				setError(message.error.message);
+				setError(message.error.description);
 				return;
 			};
 
@@ -66,11 +72,11 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				Action.openUrl(message.url);
 				close();
 
-				analytics.event('ShareObjectPublish', { objectType: object.type });
+				analytics.event(analyticsName, { objectType: object.type });
 			};
 		});
 
-		analytics.event('ClickShareObjectPublish', { objectType: object.type });
+		analytics.event(`Click${analyticsName}`, { objectType: object.type });
 	};
 
 	const onUnpublish = () => {
@@ -80,7 +86,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			unpublishRef.current.setLoading(false);
 
 			if (message.error.code) {
-				setError(message.error.message);
+				setError(message.error.description);
 				return;
 			};
 
@@ -91,18 +97,57 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		analytics.event('ClickShareObjectUnpublish', { objectType: object.type });
 	};
 
+	const onJoinSwitch = (v: boolean) => {
+		analytics.event('JoinSpaceButtonToPublish', { objectType: object.type, type: v });
+	};
+
+	const loadStatus = () => {
+		setIsStatusLoading(true);
+
+		C.PublishingGetStatus(space.targetSpaceId, rootId, message => {
+			setIsStatusLoading(false);
+
+			if (message.error.code) {
+				setError(message.error.description);
+				return;
+			};
+
+			setIsStatusLoaded(true);
+
+			const { state } = message;
+
+			if (state) {
+				setStatus(state);
+				setSlug(state.uri);
+				inputRef.current.setValue(state.uri);
+			};
+		});
+	};
+
+	const showInfo = (e: React.MouseEvent) => {
+		Preview.tooltipShow({
+			text: translate('menuPublishInfoTooltip'),
+			className: 'big',
+			element: $(e.currentTarget),
+			typeY: I.MenuDirection.Bottom,
+			typeX: I.MenuDirection.Left,
+		});
+
+		analytics.event('ShowShareObjectHelp', { objectType: object.type });
+	};
+
 	const setSlugHander = v => setSlug(U.Common.slug(v));
 	const onUrlClick = () => Action.openUrl(url);
 
 	let buttons = [];
 
-	if (isStatusLoaded) {
+	if (isStatusLoaded && isOnline) {
 		if (status === null) {
 			buttons.push({ text: translate('menuPublishButtonPublish'), ref: publishRef, onClick: onPublish });
 		} else {
 			buttons = buttons.concat([
 				{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
-				{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: onPublish },
+				{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: () => onPublish(true) },
 			]);
 		};
 	};
@@ -110,18 +155,24 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		setSlugHander(object.name);
 
-		C.PublishingGetStatus(space.targetSpaceId, rootId, (message) => {
-			setIsStatusLoaded(true);
-
-			if (message.state) {
-				setStatus(message.state);
-			};
-		});
+		if (isOnline) {
+			loadStatus();
+		};
 	}, []);
+
+	useEffect(() => {
+		if (isOnline) {
+			loadStatus();
+		};
+	}, [ isOnline ]);
 
 	return (
 		<>
-			<Title text={translate('menuPublishTitle')} />
+			<div className="menuHeader">
+				<Title text={translate('menuPublishTitle')} />
+				<Icon className="info" onMouseEnter={showInfo} onMouseLeave={() => Preview.tooltipHide()} />
+			</div>
+
 			<Input value={domain} readonly={true} />
 			<Input
                 ref={inputRef}
@@ -133,15 +184,23 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			{space.isShared ? (
 				<div className="flex">
-					<Label text={translate('menuPublishLabel')} />
+					<Label text={translate('menuPublishLabelJoin')} />
 					<div className="value">
-						<Switch ref={joinRef} />
+						<Switch ref={joinRef} onChange={(e, v) => onJoinSwitch(v)} />
 					</div>
 				</div>
 			) : ''}
 
 			<div className="buttons">
-				{buttons.map((item, i) => <Button key={i} {...item} className="c36" />)}
+				{isOnline ? (
+					<>
+						{isStatusLoading ? <Loader /> : (
+							<>
+								{buttons.map((item, i) => <Button key={i} {...item} className="c36" />)}
+							</>
+						)}
+					</>
+				) : <Label text={translate('menuPublishLabelOffline')} />}
 			</div>
 
 			<Error text={error} />
@@ -158,6 +217,6 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 
-});
+}));
 
 export default MenuPublish;

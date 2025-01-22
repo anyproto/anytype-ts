@@ -484,8 +484,8 @@ class BlockStore {
 		return this.isAllowed(this.getRestrictions(rootId, blockId), flags);
 	};
 
-	isAllowed (restrictions: any[], flags: any[]): boolean {
-		if (!U.Space.canMyParticipantWrite()) {
+	isAllowed (restrictions: any[], flags: any[], noSpaceCheck?: boolean): boolean {
+		if (!noSpaceCheck && !U.Space.canMyParticipantWrite()) {
 			return false;
 		};
 

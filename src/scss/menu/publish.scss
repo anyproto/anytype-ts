@@ -4,7 +4,10 @@
 	.menu.menuPublish { width: var(--menu-width-large); }
 	.menu.menuPublish {
 		.content { padding: 16px; display: flex; flex-direction: column; gap: 8px 0px; overflow: visible; max-height: unset; }
-		.title { padding: 0px; @include text-paragraph; font-weight: 600; margin: 0px 0px 8px 0px; color: var(--color-text-primary); }
+
+		.menuHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+		.title { padding: 0px; @include text-paragraph; font-weight: 600; margin: 0px; color: var(--color-text-primary); }
+		.icon.info { width: 20px; height: 20px; background: url('~img/icon/info.svg'); }
 
 		.input { padding: 7px 9px; height: auto; border-radius: 7px; border: 1px solid var(--color-shape-secondary); }
 		.input.isReadonly { background: rgba(0, 0, 0, 0.03); }
@@ -20,7 +23,11 @@
 		.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; justify-content: space-evenly; height: 36px; }
 		.buttons {
 			.button { flex-grow: 1; width: 100%; }
+			.loaderWrapper { position: relative; height: 36px; }
+			.label { color: var(--color-text-secondary); }
 		}
+
+		.error { margin: 0px; }
 
 		.outer { 
 			position: absolute; left: 0px; bottom: 0px; transform: translateY(calc(100% + 8px)); width: 100%; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 

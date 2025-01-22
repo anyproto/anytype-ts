@@ -835,6 +835,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				templateId: this.getDefaultTemplateId(),
 				route,
 				isAllowedObject: this.isAllowedObject(),
+				isCollection,
 				onTypeChange: (id) => {
 					if (id != this.getTypeId()) {
 						const newType = S.Record.getTypeById(id);

@@ -715,6 +715,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const isRtl = U.Common.checkRtl(value);
 
 		keyboard.setRtl(isRtl);
+
 		if (isRtl) {
 			U.Data.setRtl(rootId, block.id);
 		};

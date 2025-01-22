@@ -18,19 +18,16 @@
 
 			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 4px; }
 			.side.right {
-				.icon { width: 24px; height: 24px; flex-shrink: 0; }
+				.icon { width: 24px !important; height: 24px !important; flex-shrink: 0; }
 				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
 				.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); }
-				.icon.arrow { 
-					background-image: url('~img/icon/widget/button/arrow.svg'); width: 20px !important; 
-					background-size: 8px 5px !important; 
-				}
+				.icon.arrow { background-image: url('~img/icon/widget/button/arrow.svg'); }
 			}
 		}
 
 		.buttons {
 			.item { 
-				padding: 4px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; background: var(--color-bg-primary); 
+				padding: 3px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; background: var(--color-bg-primary); 
 				border-radius: 6px;
 			}
 			.item::before {

@@ -388,12 +388,17 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, loadData, getView, isInline, isCollection } = this.props;
 		const blockEl = `#block-${block.id}`;
-		const cellLast = $(`${blockEl} .cellHead.last`);
+		const rowHead = $(`${blockEl} #rowHead`);
+		const isFixed = rowHead.hasClass('fixed');
+		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
+		const element = `${blockEl} ${headEl} #cell-add`;
+		const cellLast = $(`${blockEl} ${headEl} .cellHead.last`);
 
 		S.Menu.open('dataviewRelationList', { 
-			element: `${blockEl} #cell-add`,
+			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
+			className: isFixed ? 'fixed' : '',
 			onOpen: () => cellLast.addClass('hover'),
 			onClose: () => cellLast.removeClass('hover'),
 			data: {
