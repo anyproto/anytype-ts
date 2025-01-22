@@ -162,10 +162,19 @@ class Dispatcher {
 					};
 
 					Renderer.send('showChallenge', {
-						challenge: mapped.challenge,
+						...mapped,
 						theme: S.Common.getThemeClass(),
 						lang: S.Common.interfaceLang,
 					});
+					break;
+				};
+
+				case 'AccountLinkChallengeHide': {
+					if (!isMainWindow) {
+						break;
+					};
+
+					Renderer.send('hideChallenge', mapped);
 					break;
 				};
 

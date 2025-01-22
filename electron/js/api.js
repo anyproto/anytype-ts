@@ -217,6 +217,10 @@ class Api {
 		WindowManager.createChallenge(param);
 	};
 
+	hideChallenge (win, param) {
+		WindowManager.closeChallenge(param);
+	};
+
 	reload (win, route) {
 		win.route = route;
 		win.webContents.reload();
