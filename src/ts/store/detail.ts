@@ -156,6 +156,10 @@ class DetailStore {
 		const object = { id };
 
 		if (withKeys) {
+			if (keys.has('layout')) {
+				keys.add('resolvedLayout');
+			};
+
 			list = list.filter(it => keys.has(it.relationKey));
 		};
 

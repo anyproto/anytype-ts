@@ -298,7 +298,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			const win = $(window);
 			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
-			const container = U.Common.getPageFlexContainer(isPopup);
+			const container = U.Common.getPageContainer(isPopup);
 			const header = container.find('#header');
 			const hh = isPopup ? header.height() : J.Size.header;
 
