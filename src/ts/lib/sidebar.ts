@@ -234,7 +234,7 @@ class Sidebar {
 			syncX = 120;
 
 			if (width) {
-				syncX = J.Size.vault.width + width - 40;
+				syncX = vw + width - 40;
 			};
 		};
 

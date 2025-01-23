@@ -67,7 +67,7 @@ class AuthStore {
 	};
 
 	networkConfigSet (obj: NetworkConfig) {
-		Storage.set('networkConfig', obj, true);
+		Storage.set('networkConfig', obj);
 	};
 
 	appKeySet (v: string) {

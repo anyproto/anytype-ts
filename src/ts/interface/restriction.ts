@@ -9,6 +9,7 @@
 	Template				 = 7,
 	Duplicate				 = 8,
 	CreateObjectOfThisType	 = 9,
+	Publish					 = 10,
 };
 
 export enum RestrictionDataview {

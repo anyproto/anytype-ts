@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.44.4-alpha",
+	"version": "0.44.11-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -201,19 +201,7 @@
 			"node_modules/p-finally",
 			"node_modules/file-type",
 			"node_modules/regedit",
-			"node_modules/mime-types",
-			"node_modules/electron-store",
-			"node_modules/conf",
-			"node_modules/dot-prop",
-			"node_modules/is-obj",
-			"node_modules/pkg-up",
-			"node_modules/env-paths",
-			"node_modules/atomically",
-			"node_modules/fast-deep-equal",
-			"node_modules/fast-uri",
-			"node_modules/ajv-formats",
-			"node_modules/debounce-fn",
-			"node_modules/semver"
+			"node_modules/mime-types"
 		],
 		"extraResources": [
 			{

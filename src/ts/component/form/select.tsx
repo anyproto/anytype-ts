@@ -23,6 +23,7 @@ interface SelectRefProps {
 	getValue: () => any;
 	setValue: (v: any) => void;
 	setOptions: (options: I.Option[]) => void;
+	show: (e: MouseEvent) => void;
 };
 
 const Select = forwardRef<SelectRefProps, Props>(({
@@ -198,6 +199,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 		getValue: () => getValue(val),
 		setValue: setValueHandler,
 		setOptions: (options: I.Option[]) => setOptions(options),
+		show,
 	}));
 
 	return (

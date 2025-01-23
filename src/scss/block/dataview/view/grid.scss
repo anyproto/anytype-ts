@@ -117,6 +117,7 @@
 			}
 
 			.cell.isName, .cellContent.isName { cursor: default; }
+			.cellContent.isName { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
 
 			.cell.isName.canEdit:hover {
 				.name { width: calc(100% - 40px) !important; }
@@ -131,11 +132,16 @@
 			};
 			
 			.cell.c-object, .cell.c-file {
-				:not(.align2) { padding-right: 0px; }
+				:not(.align1, .align2) { padding-right: 0px; }
 				&.align2 { padding-left: 0px; }
 			}
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
 				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
+			}
+
+			.cell.c-checkbox {
+				&.align1 .cellContent { justify-content: center; }
+				&.align2 .cellContent { justify-content: flex-end; }
 			}
 				
 			.cell { display: inline-block; height: 48px; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
