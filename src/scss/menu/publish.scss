@@ -13,7 +13,7 @@
 		.input.isReadonly { background: rgba(0, 0, 0, 0.03); }
 		.input.isFocused { box-shadow: 0px 0px 0px 1px var(--color-system-accent-50); border-color: var(--color-system-accent-50); }
 
-		.label.small { @include text-small; color: var(--color-text-secondary); word-wrap: break-word; }
+		.label.small { @include text-small; color: var(--color-text-secondary); word-wrap: break-word; @include clamp3; }
 
 		.flex { padding: 3px 0px; align-items: center; gap: 0px 16px; justify-content: space-between; }
 		.flex {
