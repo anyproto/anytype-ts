@@ -187,7 +187,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div className="flex">
 					<Label text={translate('menuPublishLabelJoin')} />
 					<div className="value">
-						<Switch ref={joinRef} onChange={(e, v) => onJoinSwitch(v)} />
+						<Switch ref={joinRef} value={true} onChange={(e, v) => onJoinSwitch(v)} />
 					</div>
 				</div>
 			) : ''}
