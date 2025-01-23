@@ -31,11 +31,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		openSettings('spaceIndex');
 	};
 
-	const onRequest = (e: MouseEvent) => {
-		e.stopPropagation();
-		openSettings('spaceShare');
-	};
-
 	const onImport = (e: MouseEvent) => {
 		e.stopPropagation();
 		openSettings('importIndex');
