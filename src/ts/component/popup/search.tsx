@@ -834,7 +834,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			} else {
 				switch (item.id) {
 					case 'add': {
-						keyboard.pageCreate({ name: filter }, 'Search');
+						keyboard.pageCreate({ name: filter }, 'Search', [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 						break;
 					};
 

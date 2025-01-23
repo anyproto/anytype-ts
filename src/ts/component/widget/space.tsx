@@ -43,7 +43,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const onCreate = (e: MouseEvent) => {
 		e.stopPropagation();
-		keyboard.pageCreate({}, analytics.route.navigation);
+		keyboard.pageCreate({}, analytics.route.navigation, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 	};
 
 	const onMore = (e: MouseEvent, context: any, item: any) => {

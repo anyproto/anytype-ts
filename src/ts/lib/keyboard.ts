@@ -268,7 +268,7 @@ class Keyboard {
 				// Create new page
 				this.shortcut(`${cmd}+n`, e, () => {
 					e.preventDefault();
-					this.pageCreate({}, analytics.route.shortcut);
+					this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				});
 
 				// Lock/Unlock
@@ -294,12 +294,10 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate (details: any, route: string, callBack?: (message: any) => void) {
+	pageCreate (details: any, route: string, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
 		if (!this.isMain()) {
 			return;
 		};
-
-		const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
 			U.Object.openConfig(message.details);
@@ -495,7 +493,7 @@ class Keyboard {
 			};
 
 			case 'createObject': {
-				this.pageCreate({}, route);
+				this.pageCreate({}, route, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				break;
 			};
 
