@@ -179,6 +179,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
                 value={slug}
                 focusOnMount={true} 
 				onChange={(e, v) => setSlugHander(v)}
+				maxLength={300}
 			/>
 			<Label className="small" text={url} onClick={onUrlClick} />
 
