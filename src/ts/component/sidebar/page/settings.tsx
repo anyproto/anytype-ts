@@ -110,8 +110,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 		return S.Common.isOnline && U.Data.isAnytypeNetwork();
 	};
 
-	onPage (id) {
-
+	onPage (page) {
+		U.Router.go(`/main/settings/${page}`, {});
 	};
 });
 

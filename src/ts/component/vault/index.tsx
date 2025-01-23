@@ -211,7 +211,7 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			case 'settings': {
-				// S.Popup.open('settings', {});
+				// need to change to use kind of history
 				sidebar.objectContainerToggle('widget', 'settings');
 				break;
 			};
