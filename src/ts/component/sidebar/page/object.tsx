@@ -115,7 +115,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			>
 				<div className="inner">
 					<div className="head">
-						<div className="titleWrap" onClick={() => sidebar.objectContainerToggle()}>
+						<div className="titleWrap" onClick={() => sidebar.objectContainerSwitch('widget')}>
 							<div className="side left">
 								<Icon className="back withBackground" />
 								<Title text={translate('commonAllContent')} />
@@ -729,7 +729,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			if (this.selected) {
 				this.clearSelection();
 			} else {
-				sidebar.objectContainerToggle();
+				sidebar.objectContainerSwitch('widget');
 			};
 		});
 
