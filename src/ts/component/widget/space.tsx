@@ -237,7 +237,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			};
 
 			case 'all': {
-				sidebar.objectContainerToggle();
+				sidebar.objectContainerSwitch('object');
 				break;
 			};
 

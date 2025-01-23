@@ -334,6 +334,15 @@ class Sidebar {
 		S.Common.showObjectSet(!S.Common.showObject);
 	};
 
+	objectContainerSwitch (page: string) {
+		const ref = S.Common.getRef('sidebarLeft');
+		if (!ref) {
+			return;
+		};
+
+		ref.setState({ page });
+	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();
