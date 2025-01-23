@@ -119,11 +119,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	};
 
 	const getLimitHandler = (): number => {
-		let limit = getLimit(parent.content);
-		if ((layout == I.WidgetLayout.View) && (viewType == I.ViewType.Calendar)) {
-			limit = 1000;
-		};
-		return limit;
+		const view = getView();
+		return (layout == I.WidgetLayout.View) && (view.type == I.ViewType.Calendar) ? 1000 : getLimit(parent.content);
 	};
 
 	const onChangeView = (viewId: string) => {
