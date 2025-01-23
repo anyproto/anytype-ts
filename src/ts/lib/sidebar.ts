@@ -330,10 +330,6 @@ class Sidebar {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
-	objectContainerToggle () {
-		S.Common.showObjectSet(!S.Common.showObject);
-	};
-
 	objectContainerSwitch (page: string) {
 		const ref = S.Common.getRef('sidebarLeft');
 		if (!ref) {
