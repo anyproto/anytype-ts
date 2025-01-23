@@ -211,7 +211,8 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			case 'settings': {
-				S.Popup.open('settings', {});
+				// S.Popup.open('settings', {});
+				sidebar.objectContainerToggle('widget', 'settings');
 				break;
 			};
 

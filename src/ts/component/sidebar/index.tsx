@@ -7,6 +7,7 @@ import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 
 import SidebarWidget from './page/widget';
 import SidebarObject from './page/object';
+import SidebarSettings from './page/settings';
 
 interface State {
 	page: string;
@@ -15,6 +16,7 @@ interface State {
 const Components = {
 	object: SidebarObject,
 	widget: SidebarWidget,
+	settings: SidebarSettings,
 };
 
 const Sidebar = observer(class Sidebar extends React.Component<{}, State> {
@@ -45,7 +47,7 @@ const Sidebar = observer(class Sidebar extends React.Component<{}, State> {
 	};
 
 	render() {
-		const page = this.state.page || 'widget';
+		const page = this.state.page;
 		const cmd = keyboard.cmdSymbol();
 		const Component = Components[page];
 

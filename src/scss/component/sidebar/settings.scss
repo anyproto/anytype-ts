@@ -1,0 +1,43 @@
+> #containerSettings {
+    height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0;
+    background-color: var(--color-shape-tertiary);
+}
+> #containerSettings {
+    > .head {
+        display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
+        gap: 0px 8px; overflow: hidden;
+    }
+
+    > .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: scroll; overscroll-behavior: none; }
+    > .body {
+        .list { display: flex; flex-direction: column; gap: 12px 0px; padding: 8px; border-radius: 12px; background: var(--color-bg-primary); }
+        .list {
+            .section {
+                > .name { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 4px 0px; padding: 0px 8px; }
+            }
+
+            .items { display: flex; flex-direction: column; }
+
+            .item {
+                display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px;
+                transition: background-color $transitionCommon;
+            }
+            .item:hover, .item.active { background-color: var(--color-shape-highlight-medium); }
+            .item {
+                .icon { width: 24px; height: 24px; flex-shrink: 0; }
+                .icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
+
+                .name { @include text-overflow-nw; overflow: visible; flex-grow: 1; }
+
+                .caption { color: var(--color-text-secondary); text-align: right; @include text-overflow-nw; }
+                .caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
+            }
+
+            .item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; border-radius: 8px; background-color: var(--color-shape-highlight-medium); }
+            .item.itemAccount {
+                .iconObject { flex-shrink: 0; }
+                .name { @include text-common; @include text-overflow-nw; font-weight: 600; }
+            }
+        }
+    }
+}
