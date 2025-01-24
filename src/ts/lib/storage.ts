@@ -25,7 +25,7 @@ const Api = {
 		if (electron.storeGet) {
 			return electron.storeGet(key);
 		} else {
-			return localStorage.getItem(key);
+			return Api.parse(localStorage.getItem(key));
 		};
 	},
 
@@ -44,6 +44,16 @@ const Api = {
 			localStorage.removeItem(key);
 		};
 	},
+
+	parse: (s: string) => {
+		if (!s) {
+			return;
+		};
+
+		let ret = '';
+		try { ret = JSON.parse(s); } catch (e) { /**/ };
+		return ret;
+	},
 };
 
 class Storage {
@@ -56,7 +66,7 @@ class Storage {
 
 		let o = Api.get(key);
 		if (undefined === o) {
-			o = this.parse(String(localStorage.getItem(key) || ''));
+			o = Api.parse(String(localStorage.getItem(key) || ''));
 		};
 
 		if (this.isSpaceKey(key)) {
@@ -458,16 +468,6 @@ class Storage {
 		];
 
 		keys.forEach(key => this.delete(key));
-	};
-
-	parse (s: string) {
-		if (!s) {
-			return;
-		};
-
-		let ret = '';
-		try { ret = JSON.parse(s); } catch (e) { /**/ };
-		return ret;
 	};
 
 	setChat (id: string, obj: any) {
