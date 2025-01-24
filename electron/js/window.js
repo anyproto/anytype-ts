@@ -156,7 +156,7 @@ class WindowManager {
 			skipTaskbar: true,
 
 		});
-		win.setVisibleOnAllWorkspaces(true);
+		win.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
 		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
 		win.setMenu(null);
 
