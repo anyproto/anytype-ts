@@ -105,8 +105,7 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			this.deleteAccountKey(key);
 		} else {
-			U.Common.getElectron().storeDelete(key);
-			localStorage.removeItem(key);
+			Api.delete(key);
 		};
 	};
 
