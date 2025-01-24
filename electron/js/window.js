@@ -151,6 +151,10 @@ class WindowManager {
 			x: Math.floor(width / 2 - 212),
 			y: Math.floor(height - 282),
 			titleBarStyle: 'hidden',
+			alwaysOnTop: true,
+			focusable: false,
+			skipTaskbar: true,
+
 		});
 
 		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
