@@ -154,13 +154,13 @@ class WindowManager {
 			alwaysOnTop: true,
 			focusable: true,
 			skipTaskbar: true,
-
 		});
-		win.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
-		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
-		win.setMenu(null);
 
+		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', 'index.html'));
+		win.setMenu(null);
 		win.showInactive(); // show inactive to prevent focus loose from other app
+
 		win.webContents.once('did-finish-load', () => {
 			win.webContents.postMessage('challenge', options);
 		});
