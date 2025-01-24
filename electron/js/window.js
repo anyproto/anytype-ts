@@ -152,16 +152,15 @@ class WindowManager {
 			y: Math.floor(height - 282),
 			titleBarStyle: 'hidden',
 			alwaysOnTop: true,
-			focusable: false,
+			focusable: true,
 			skipTaskbar: true,
 
 		});
-
+		win.setVisibleOnAllWorkspaces(true);
 		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
 		win.setMenu(null);
 
-		is.windows || is.linux ? win.showInactive() : win.show();
-
+		win.showInactive(); // show inactive to prevent focus loose from other app
 		win.webContents.once('did-finish-load', () => {
 			win.webContents.postMessage('challenge', options);
 		});
