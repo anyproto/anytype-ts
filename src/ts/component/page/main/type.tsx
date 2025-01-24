@@ -341,7 +341,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			U.Object.isInPageLayouts(layout) || 
 			U.Object.isInSetLayouts(layout) || 
 			U.Object.isBookmarkLayout(layout) ||
-			U.Object.isChatLayout(layout);
+			U.Object.isChatLayout(layout) ||
+			U.Object.isTagLayout(layout);
 
 		if (type.uniqueKey == J.Constant.typeKey.template) {
 			allowedObject = false;

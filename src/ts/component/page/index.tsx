@@ -30,6 +30,7 @@ import PageMainMembership from './main/membership';
 import PageMainObject from './main/object';
 import PageMainOnboarding from './main/onboarding';
 import PageMainChat from './main/chat';
+import PageMainTag from './main/tag';
 import PageMainDate from './main/date';
 
 const Components = {
@@ -60,6 +61,7 @@ const Components = {
 	'main/onboarding':		 PageMainOnboarding,
 	'main/chat':			 PageMainChat,
 	'main/void':			 PageMainVoid,
+	'main/tag':			 	 PageMainTag,
 	'main/date':			 PageMainDate,
 };
 

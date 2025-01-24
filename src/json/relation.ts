@@ -23,6 +23,7 @@ export default {
 		'restrictions',
 		'defaultTemplateId',
 		'createdDate',
+		'relationOptionColor',
 		'timestamp',
 	],
 
