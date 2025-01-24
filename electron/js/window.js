@@ -161,7 +161,6 @@ class WindowManager {
 		win.setMenu(null);
 
 		is.windows || is.linux ? win.showInactive() : win.show();
-		win.focus();
 
 		win.webContents.once('did-finish-load', () => {
 			win.webContents.postMessage('challenge', options);
