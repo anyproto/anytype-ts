@@ -267,8 +267,10 @@ class Keyboard {
 			if (canWrite) {
 				// Create new page
 				this.shortcut(`${cmd}+n`, e, () => {
-					e.preventDefault();
-					this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+					if (!S.Popup.isOpen('search')) {
+						e.preventDefault();
+						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+					}
 				});
 
 				// Lock/Unlock
