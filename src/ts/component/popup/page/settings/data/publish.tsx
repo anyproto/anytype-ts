@@ -89,7 +89,10 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 		const { getId } = this.props;
 		const element = $(`#${getId()} #icon-more-${item.objectId}`);
 		const options: any[] = [
-			{ id: 'update', name: translate('menuPublishButtonUpdate') },
+			{ id: 'open', name: translate('menuPublishButtonOpen') },
+			{ isDiv: true },
+			{ id: 'view', name: translate('menuPublishButtonView') },
+			{ id: 'copy', name: translate('menuPublishButtonCopy') },
 			{ id: 'unpublish', name: translate('menuPublishButtonUnpublish'), color: 'red' },
 		];
 
@@ -104,8 +107,18 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 				options,
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
-						case 'update': {
-							this.onUpdate(item);
+						case 'open': {
+							U.Object.openAuto(S.Detail.get(SUB_ID, item.objectId));
+							break;
+						};
+
+						case 'view': {
+							this.onClick(item);
+							break;
+						};
+
+						case 'copy': {
+							U.Common.copyToast(translate('commonLink'), U.Space.getPublishUrl(item.uri));
 							break;
 						};
 
@@ -117,23 +130,6 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 				},
 			},
 		});
-	};
-
-	onUpdate (item: any) {
-		const object = S.Detail.get(SUB_ID, item.objectId);
-
-		C.PublishingCreate(S.Common.space, item.objectId, item.uri, false, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (message.url) {
-				Action.openUrl(message.url);
-				analytics.event('ShareObjectPublish', { objectType: object.type });
-			};
-		});
-
-		analytics.event('ClickShareObjectPublish', { objectType: object.type });
 	};
 
 	onUnpublish (item: any) {

@@ -1631,6 +1631,9 @@
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
 	"menuPublishButtonUpdate": "Update",
+	"menuPublishButtonView": "View in Browser",
+	"menuPublishButtonOpen": "Open Object",
+	"menuPublishButtonCopy": "Copy Web Link",
 	"menuPublishLabelOffline": "No internet connection",
 
 	"previewEdit": "Edit Link",
