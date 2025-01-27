@@ -1,6 +1,7 @@
 import { U, translate, keyboard } from 'Lib';
 
 export default () => {
+	const isMac = U.Common.isPlatformMac();
 	const cmdSymbol = keyboard.cmdSymbol();
 	const cmdKey = keyboard.cmdKey();
 	const alt = keyboard.altSymbol();
@@ -18,6 +19,9 @@ export default () => {
 				};
 				if (key == 'alt') {
 					return alt;
+				};
+				if ((key == 'ctrl') && isMac) {
+					return '&#8963;';
 				};
 				return key;
 			});
@@ -49,8 +53,36 @@ export default () => {
 						{ id: 'zoomIn', name: translate('popupShortcutMainBasics16'), keys: [ cmdKey, '=' ] },
 						{ id: 'zoomOut', name: translate('popupShortcutMainBasics17'), keys: [ cmdKey, '-' ] },
 						{ id: 'zoomReset', name: translate('popupShortcutMainBasics18'), keys: [ cmdKey, '0' ] },
+						{ id: 'theme', name: translate('popupShortcutMainBasics21'), keys: [ cmdKey, 'shift', 'm' ] },
 					]
-				}
+				},
+
+				{
+					name: translate('popupShortcutNavigation'), children: [
+						{ id: 'settings', name: translate('popupShortcutNavigationBasics1'), keys: [ cmdKey, ',' ] },
+						{ id: 'navigation', name: translate('popupShortcutNavigationBasics2'), keys: [ cmdKey, 'o' ] },
+						{ id: 'graph', name: translate('popupShortcutNavigationBasics3'), keys: [ cmdKey, 'alt', 'o' ] },
+						{ id: 'search', name: translate('popupShortcutNavigationBasics4'), keys: [ cmdKey, 's' ] },
+						{ id: 'home', name: translate('popupShortcutNavigationBasics6'), keys: [ 'alt', 'h' ] },
+						{ id: 'back', name: translate('popupShortcutNavigationBasics7'), keys: isMac ? [ cmdKey, '[' ] : [ 'alt', '←' ] },
+						{ id: 'forward', name: translate('popupShortcutNavigationBasics8'), keys: isMac ? [ cmdKey, ']' ] : [ 'alt', '→' ] },
+						{ id: 'shortcut', name: translate('popupShortcutMainBasics14'), keys: [ 'ctrl', 'space' ] },
+						{ id: 'bin', name: translate('popupShortcutMainBasics14'), keys: [ cmdKey, 'alt', 'b' ] },
+						{ name: translate('popupShortcutMainBasics20'), keys: [ 'ctrl', 'tab' ] },
+						{ name: translate('popupShortcutMainBasics23'), keys: [ 'ctrl', 'shift', 'tab' ] },
+						{ name: translate('popupShortcutMainBasics12'), keys: [ 'shift', 'click' ] },
+						{ name: translate('popupShortcutMainBasics13'), keys: [ cmdKey, 'click' ] },
+					]
+				},
+
+				{ 
+					name: translate('popupShortcutObject'), children: [
+						{ id: 'relation', name: translate('popupShortcutNavigationPage9'), keys: [ cmdKey, 'shift', 'r' ] },
+						{ id: 'print', name: translate('popupShortcutMainBasics8'), keys: [ cmdKey, 'p' ] },
+						{ id: 'history', name: translate('popupShortcutMainBasics11'), keys: [ cmdKey, 'alt', 'h' ] },
+						{ id: 'searchText', name: translate('popupShortcutMainBasics9'), keys: [ cmdKey, 'f' ] },
+					]
+				},
 			]
 		},
 
@@ -150,63 +182,8 @@ export default () => {
 	});
 
 	/*
-Create New Object
-⌘ N
-Create New Object and Choose Type
-⌘ ⌥ N
-New Anytype Window
-⌘ ⇧ N
-Close Anytype
-⌘ Q
-Lock Anytype ❗️ 
-Unassigned
-Log out ❗️ 
-Unassigned
-Undo
-⌘ Z
-Redo
-⌘ ⇧ Z
-#### Interface
-Show / Hide Sidebar
-⌘ .
-Fullscreen
-⌘ ⇧ F
-Zoom in
-⌘ =
-Zoom out
-⌘ –
-Default zoom
-⌘ 0
-#### Navigation
-Jump to a space ⭕️  
-⌘ 1-9
-Open Settings
-⌘ ,
-Open the Flow pane
-⌘ O
-Open the Graph pane
-⌘ ⇧ O
-Open the Search pane
-⌘ S
-Open the Library pane
-⌘ L
-Return to home screen
-⌥ H
-Go back
-⌘ ←
-Go forward
-⌘ →
-Open Bin ❗️ 
-Unassigned
-Space settings ❗️ 
-Unassigned
-View shortcuts
-⌃ Space
-Open in a modal window
-⇧ Click
-Open in a new window
-⌘ Click
 #### Menu, Search
+
 Go to the next option ⭕️  
 ↓ , Tab
 Go to the previous option ⭕️  
@@ -217,29 +194,7 @@ Go to the right side of navigation (Link to page) ⭕️
 →
 Select option
 Enter
-#### Object Actions
-Open Relations
-⌘ ⇧ R
-Print
-⌘ P
-Version History
-⌘ Q
-Add to favorites ❗️ 
-Unassigned
-Add to collection ❗️ 
-Unassigned
-Link to object ❗️ 
-Unassigned
-Move object to bin ❗️ 
-Unassigned
-Copy link ❗️ 
-Unassigned
-Create widget ❗️ 
-Unassigned
-Change type ❗️ 
-Unassigned
-Open in full page ❗️ 
-Unassigned
+
 #### Editor
 New text block ⭕️  
 Enter
@@ -286,7 +241,9 @@ Move selected block(s) down  ⭕️
 Check / Uncheck Checkbox
 ⌘ Enter
 actual 
+
 #### Set and Collection
+
 Focus the first object in list ❗️ 
 Enter
 Select objects above ❗️  ⭕️
@@ -324,28 +281,6 @@ Apply previously selected highlight
 			id: 'main',
 			name: translate('popupShortcutMain'),
 			children: [
-				{
-					name: translate('popupShortcutBasics'), children: [
-						{ com: `${cmd} + Enter`,		 name: translate('popupShortcutMainBasics4') },
-						{ mac: `${cmd} + Ctrl + F`,		 com: `${cmd} + ${alt} + F`,	 name: translate('popupShortcutMainBasics5') },
-						{ com: `${cmd} + Z`,			 name: translate('popupShortcutMainBasics6') },
-						{ com: `${cmd} + ${shift} + Z`,	 name: translate('popupShortcutMainBasics7') },
-						{ com: `${cmd} + P`,			 name: translate('popupShortcutMainBasics8') },
-						{ com: `${cmd} + F`,			 name: translate('popupShortcutMainBasics9') },
-						{ com: `${cmd} + Q`,			 name: translate('popupShortcutMainBasics10') },
-						{ mac: `${cmd} + Y`,			 com: 'Ctrl + H',			 name: translate('popupShortcutMainBasics11') },
-						{ com: '${shift} + Click',			 name: translate('popupShortcutMainBasics12') },
-						{ com: `${cmd} + Click`,		 name: translate('popupShortcutMainBasics13') },
-						{ com: 'Ctrl + Space',		 	 name: translate('popupShortcutMainBasics14') },
-						{ com: `${cmd} + \\, ${cmd} + .`, name: translate('popupShortcutMainBasics15') },
-						{ com: `${cmd} + =`,			 name: translate('popupShortcutMainBasics16') },
-						{ com: `${cmd} + Minus`,		 name: translate('popupShortcutMainBasics17') },
-						{ com: `${cmd} + 0`,			 name: translate('popupShortcutMainBasics18') },
-						{ com: `Ctrl + Tab, Ctrl + ${shift} + Tab`, name: translate('popupShortcutMainBasics20') },
-						{ com: `${cmd} + ${shift} + M`, name: translate('popupShortcutMainBasics21') },
-					]
-				},
-
 				{
 					name: translate('popupShortcutMainStructuring'), children: [
 						{ com: 'Enter',				 name: translate('popupShortcutMainStructuring1') },
@@ -400,18 +335,6 @@ Apply previously selected highlight
 			name: translate('popupShortcutNavigation'),
 			children: [
 				{
-					name: translate('popupShortcutBasics'), children: [
-						{ com: `${cmd} + ,(comma)`,		 name: translate('popupShortcutNavigationBasics1') },
-						{ com: `${cmd} + O`,			 name: translate('popupShortcutNavigationBasics2') },
-						{ com: `${cmd} + ${alt} + O`,	 name: translate('popupShortcutNavigationBasics3') },
-						{ com: `${cmd} + S, ${cmd} + K`, name: translate('popupShortcutNavigationBasics4') },
-						{ com: `${alt} + H`,			 name: translate('popupShortcutNavigationBasics6') },
-						{ mac: `${cmd} + [, ${cmd} + ←`, com: 'Alt + ←',			 name: translate('popupShortcutNavigationBasics7') },
-						{ mac: `${cmd} + ], ${cmd} + →`, com: 'Alt + →',			 name: translate('popupShortcutNavigationBasics8') },
-					]
-				},
-
-				{
 					name: translate('popupShortcutNavigationMenu'), children: [
 						{ com: '↓ or Tab',			 name: translate('popupShortcutNavigationMenu1') },
 						{ com: '↑ or ${shift} + Tab',	 name: translate('popupShortcutNavigationMenu2') },
@@ -431,7 +354,6 @@ Apply previously selected highlight
 						{ com: `${cmd} + ↑`,	 name: translate('popupShortcutNavigationPage6') },
 						{ com: `${cmd} + ↓`,	 name: translate('popupShortcutNavigationPage7') },
 						{ com: `${cmd} + ${shift} + ↑↓`, name: translate('popupShortcutNavigationPage8') },
-						{ com: `${cmd} + ${shift} + R`, name: translate('popupShortcutNavigationPage9') },
 						{ com: `${cmd} + Enter`, name: translate('popupShortcutNavigationPage10') },
 					]
 				},

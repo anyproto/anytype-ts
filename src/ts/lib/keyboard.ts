@@ -136,11 +136,6 @@ class Keyboard {
 		if (!this.isNavigationDisabled) {
 			this.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 			this.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
-
-			if (!U.Common.getSelectionRange() && isMac) {
-				this.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
-				this.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
-			};
 		};
 
 		// Close popups and menus
@@ -186,7 +181,7 @@ class Keyboard {
 			});
 
 			// Navigation search
-			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
+			this.shortcut(`${cmd}+s`, e, (pressed: string) => {
 				if (S.Popup.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
 					return;
 				};
@@ -211,6 +206,12 @@ class Keyboard {
 			this.shortcut(`${cmd}+alt+o`, e, () => {
 				e.preventDefault();
 				U.Object.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+			});
+
+			// Archive
+			this.shortcut(`${cmd}+alt+b`, e, () => {
+				e.preventDefault();
+				U.Object.openAuto({ layout: I.ObjectLayout.Archive });
 			});
 
 			// Go to dashboard

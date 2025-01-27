@@ -87,13 +87,13 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	getSections () {
-		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, isFilePreview } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
 		const cmd = keyboard.cmdSymbol();
+		const alt = keyboard.altSymbol();
 		const shift = keyboard.shiftSymbol();
 		const isTemplate = U.Object.isTemplate(object.type);
 		const isDate = U.Object.isDateLayout(object.layout);
@@ -119,7 +119,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
-		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let history = { id: 'history', name: translate('commonVersionHistory'), caption: `${cmd} + ${alt} + H` };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
