@@ -226,10 +226,9 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onTooltipShow (e: any, text: string) {
-		if (!text) {
-			return;
+		if (text) {
+			Preview.tooltipShow({ text, element: $(e.currentTarget) });
 		};
-		Preview.tooltipShow({ text, element: $(e.currentTarget) });
 	};
 
 	onTooltipHide () {
