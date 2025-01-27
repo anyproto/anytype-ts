@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Label } from 'Component';
+import { Icon } from 'Component';
 import { I, S, U, analytics, translate } from 'Lib';
 
 interface Props {
@@ -48,8 +48,7 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 			className={cn.join(' ')} 
 			onClick={onClickHandler}
 		>
-			<Icon className={getIcon()} />
-			{isDevelopment ? <Label className="badge" text={translate('syncButtonStaging')} /> : ''}
+			<Icon tooltip={isDevelopment ? translate('syncButtonStaging') : ''} className={getIcon()} />
 		</div>
 	);
 

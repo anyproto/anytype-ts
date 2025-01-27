@@ -171,19 +171,32 @@ class Action {
 
 		url = U.Common.urlFix(url);
 
-		const storageKey = 'openUrl';
 		const scheme = U.Common.getScheme(url);
 		const cb = () => Renderer.send('openUrl', url);
 		const allowedSchemes = J.Constant.allowedSchemes.concat(J.Constant.protocol);
-		const isAllowed = scheme.match(new RegExp(`^(${allowedSchemes.join('|')})$`));
+		const isAllowed = allowedSchemes.includes(scheme);
+		const isDangerous = [ 
+			'javascript', 
+			'data', 
+			'ws', 
+			'wss', 
+			'chrome', 
+			'about', 
+			'ssh', 
+			'blob',
+			'ms-msdt',
+			'search-ms',
+			'ms-officecmd',
+		].includes(scheme);
+		const storageKey = isDangerous ? '' : 'openUrl';
 
-		if (!Storage.get(storageKey) && !isAllowed) {
+		if (isDangerous || (!Storage.get(storageKey) && !isAllowed)) {
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
 					bgColor: 'red',
 					title: translate('popupConfirmOpenExternalLinkTitle'),
-					text: translate('popupConfirmOpenExternalLinkText'),
+					text: U.Common.sprintf(translate('popupConfirmOpenExternalLinkText'), U.Common.shorten(url, 120)),
 					textConfirm: translate('commonYes'),
 					storageKey,
 					onConfirm: () => cb(),
@@ -825,21 +838,6 @@ class Action {
 		analytics.event('ThemeSet', { id });
 	};
 
-	publish (objectId: string, url: string, callBack?: (message: any) => void) {
-		if (!url) {
-			return;
-		};
-
-		C.PublishingCreate(S.Common.space, objectId, url, (message: any) => {
-			if (!message.error.code) {
-				this.openUrl(message.url);
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
 };
 
 export default new Action();

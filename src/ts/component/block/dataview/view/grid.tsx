@@ -388,12 +388,17 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, loadData, getView, isInline, isCollection } = this.props;
 		const blockEl = `#block-${block.id}`;
-		const cellLast = $(`${blockEl} .cellHead.last`);
+		const rowHead = $(`${blockEl} #rowHead`);
+		const isFixed = rowHead.hasClass('fixed');
+		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
+		const element = `${blockEl} ${headEl} #cell-add`;
+		const cellLast = $(`${blockEl} ${headEl} .cellHead.last`);
 
 		S.Menu.open('dataviewRelationList', { 
-			element: `${blockEl} #cell-add`,
+			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
+			className: isFixed ? 'fixed' : '',
 			onOpen: () => cellLast.addClass('hover'),
 			onClose: () => cellLast.removeClass('hover'),
 			data: {
@@ -427,14 +432,17 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		keyboard.disableSelection(false);
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
+	loadMoreRows () {
 		const { rootId, block, loadData, getView, getLimit } = this.props;
 		const subId = S.Record.getSubId(rootId, block.id);
-		let { offset } = S.Record.getMeta(subId, '');
 		const view = getView();
+		const limit = getLimit();
+
+		let { offset } = S.Record.getMeta(subId, '');
 
 		return new Promise((resolve, reject) => {
-			offset += getLimit();
+			offset += limit;
+
 			loadData(view.id, offset, false, resolve);
 			S.Record.metaSet(subId, '', { offset });
 		});

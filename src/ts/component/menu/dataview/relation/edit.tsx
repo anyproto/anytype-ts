@@ -212,12 +212,20 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, extendedOptions, readonly, noUnlink } = data;
-		const object = S.Detail.get(rootId, rootId);
 		const relation = this.getRelation();
+
+		if (!relation) {
+			return [];
+		};
+
+		const viewRelation = this.getViewRelation();
+		const object = S.Detail.get(rootId, rootId);
 		const isFile = relation && (relation.format == I.RelationType.File);
+		const isName = relation && (relation.relationKey == 'name');
 		const canFilter = !isFile;
 		const canSort = !isFile;
-		const canHide = relation && (relation.relationKey != 'name');
+		const canHide = !isName;
+		const canAlign = !isName; 
 		const canCalculate = relation;
 		
 		let unlinkText = translate('commonUnlink');
@@ -267,19 +275,19 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				},
 				{
 					children: [
+						canAlign ? { id: 'align', icon: U.Data.alignHIcon(viewRelation?.align), name: translate('commonAlign'), arrow: true } : null,
 						canCalculate ? { id: 'calculate', icon: 'relation c-number', name: translate('commonCalculate'), arrow: true } : null,
 					]
 				},
 			]);
-
-
 		};
 
-		sections = sections.filter((s: any) => {
+		sections = sections.map(s => {
 			s.children = s.children.filter(c => c);
-			return s.children.length > 0;
+			return s;
 		});
 
+		sections = sections.filter(s => s.children.length);
 		return sections;
 	};
 
@@ -306,15 +314,17 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			return;
 		};
 
-		const { getId, getSize, param } = this.props;
+		const { getId, getSize, param, close } = this.props;
 		const { classNameWrap, data } = param;
 		const { rootId } = data;
 		const relation = this.getRelation();
-		const object = S.Detail.get(rootId, rootId);
 
 		if (!relation) {
 			return;
 		};
+
+		const viewRelation = this.getViewRelation();
+		const object = S.Detail.get(rootId, rootId);
 
 		let menuContext = null;
 		let menuId = '';
@@ -331,6 +341,20 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		switch (item.id) {
+			case 'align': {
+				menuId = 'blockAlign';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					value: viewRelation?.align,
+					restricted: [ I.BlockHAlign.Justify ],
+					onSelect: (align: I.BlockHAlign) => {
+						this.saveViewRelation('align', align);
+						close();
+					}
+				});
+				break;
+			};
+
 			case 'calculate': {
 				const save = (id: any) => {
 					id = Number(id) || 0;

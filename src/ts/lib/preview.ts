@@ -45,9 +45,13 @@ class Preview {
 		const { element } = param;
 		const typeX = Number(param.typeX) || I.MenuDirection.Center;
 		const typeY = Number(param.typeY) || I.MenuDirection.Top;
-		const delay = Number(param.delay) || DELAY_TOOLTIP;
 		const offsetX = Number(param.offsetX) || 0;
 		const offsetY = Number(param.offsetY) || 0;
+
+		let delay = DELAY_TOOLTIP;
+		if (undefined !== param.delay) {
+			delay = param.delay;
+		};
 		
 		if (!element.length || keyboard.isResizing) {
 			return;
@@ -56,7 +60,7 @@ class Preview {
 		let text = String(param.text || '').replace(/\\n/g, '\n');
 		text = U.Common.lbBr(U.Common.sanitize(text));
 
-		this.delayTooltip = delay;
+		this.delayTooltip = Number(delay) || 0;
 
 		window.clearTimeout(this.timeout.tooltip);
 		this.timeout.tooltip = window.setTimeout(() => {

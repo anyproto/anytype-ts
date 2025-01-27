@@ -94,12 +94,13 @@
 				.icon { width: 20px; height: 20px; margin-top: -4px; }
 				.icon.help { background-image: url('~img/icon/help.svg'); }
 
-				.full, .c70, .half { margin: 16px 0px; border-radius: 8px; display: block; }
+				.c50, .c60, .c70, .half, .full, .screen { margin: 16px auto; border-radius: 8px; display: block; }
 
-				.full { width: 100%; }
-				.c70 { width: 70%; margin: 16px auto; }
-				.half { width: 50%; }
-				.screen { margin: 16px auto; display: block; box-shadow: 0px 0px 25px rgba(0,0,0,0.2); }
+				.full, .c100 { width: 100%; }
+				.half, .c50 { width: 50%; }
+				.c60 {  width: 60%; }
+				.c70 { width: 70%; }
+				.screen { box-shadow: 0px 0px 25px rgba(0,0,0,0.2); }
 
 				img.mention { margin-left: -18px; }
 			}

@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, translate } from 'Lib';
+import { I, C, S, U, J, translate } from 'Lib';
 
 interface PageMainInviteRefProps {
 	resize: () => void;
@@ -35,12 +35,25 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
 
 					if (message.error.code) {
+						let icon = '';
+						let title = '';
+						let text = '';
+
+						if (message.error.code == J.Error.Code.SPACE_IS_DELETED) {
+							icon = 'error';
+							title = translate('popupConfirmSpaceDeleted');
+						} else {
+							icon = 'sad';
+							title = translate('popupInviteRequestTitle');
+							text = translate('popupConfirmInviteError');
+						};
+
 						S.Popup.open('confirm', {
 							data: {
-								icon: 'sad',
+								icon,
 								bgColor: 'red',
-								title: translate('popupInviteRequestTitle'),
-								text: translate('popupConfirmInviteError'),
+								title,
+								text,
 								textConfirm: translate('commonOkay'),
 								canCancel: false,
 							},

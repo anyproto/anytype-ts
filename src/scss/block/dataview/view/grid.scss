@@ -26,6 +26,9 @@
 		}
 
 		.cellHead, .cellFoot {
+			&.align1 { text-align: center; }
+			&.align2 { text-align: right; }
+
 			.cellContent { height: 36px !important; overflow: visible !important; }
 			.flex { padding: 9px 14px; gap: 0px 6px; align-items: center; height: 100%; }
 			.iconObject { width: 20px; height: 20px; margin: 0px; vertical-align: top; flex-shrink: 0; display: none; }
@@ -37,6 +40,10 @@
 			}
 
 			.resize { width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; cursor: col-resize; z-index: 10; }
+		}
+
+		.cellHead {
+			.name { user-select: none !important; }
 		}
 
 		.cellHead.small { text-align: center; }
@@ -110,6 +117,7 @@
 			}
 
 			.cell.isName, .cellContent.isName { cursor: default; }
+			.cellContent.isName { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
 
 			.cell.isName.canEdit:hover {
 				.name { width: calc(100% - 40px) !important; }
@@ -123,13 +131,31 @@
 				}
 			};
 			
-			.cell.c-object, .cell.c-file { padding-right: 0px; }
+			.cell.c-object, .cell.c-file {
+				:not(.align1, .align2) { padding-right: 0px; }
+				&.align2 { padding-left: 0px; }
+			}
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
 				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
+			}
+
+			.cell.c-checkbox {
+				&.align1 .cellContent { justify-content: center; }
+				&.align2 .cellContent { justify-content: flex-end; }
 			}
 				
 			.cell { display: inline-block; height: 48px; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
 			.cell.cellKeyHover { background-color: var(--color-shape-highlight-light); }
+			.cell {
+				&.align1 { text-align: center; }
+				&.align1 {
+					.over { justify-content: center; }
+				}
+				&.align2 { text-align: right; }
+				&.align2 {
+					.over { justify-content: flex-end; }
+				}
+			}
 
 			.cell.isEditing {
 				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; border-radius: 4px; }

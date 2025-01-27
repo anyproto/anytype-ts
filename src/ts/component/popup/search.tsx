@@ -726,7 +726,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
 				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
-				{ id: 'dataManagement', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
+				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
 				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
 			];
 
@@ -834,7 +834,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			} else {
 				switch (item.id) {
 					case 'add': {
-						keyboard.pageCreate({ name: filter }, 'Search');
+						keyboard.pageCreate({ name: filter }, 'Search', [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 						break;
 					};
 

@@ -117,7 +117,7 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const { theme } = S.Common;
+		const { theme, pin } = S.Common;
 		const isMac = U.Common.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
@@ -244,7 +244,6 @@ class Keyboard {
 
 			// Lock the app
 			this.shortcut(`${cmd}+alt+l`, e, () => {
-				const pin = Storage.getPin();
 				if (pin) {
 					Renderer.send('pinCheck');
 				};
@@ -269,7 +268,7 @@ class Keyboard {
 				// Create new page
 				this.shortcut(`${cmd}+n`, e, () => {
 					e.preventDefault();
-					this.pageCreate({}, analytics.route.shortcut);
+					this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				});
 
 				// Lock/Unlock
@@ -295,12 +294,10 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate (details: any, route: string, callBack?: (message: any) => void) {
+	pageCreate (details: any, route: string, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
 		if (!this.isMain()) {
 			return;
 		};
-
-		const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
 			U.Object.openConfig(message.details);
@@ -496,7 +493,7 @@ class Keyboard {
 			};
 
 			case 'createObject': {
-				this.pageCreate({}, route);
+				this.pageCreate({}, route, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				break;
 			};
 
@@ -889,7 +886,7 @@ class Keyboard {
 	};
 
 	setWindowTitle () {
-		const pin = Storage.getPin();
+		const { pin } = S.Common;
 		if (pin && !this.isPinChecked) {
 			document.title = J.Constant.appName;
 			return;
@@ -1014,8 +1011,9 @@ class Keyboard {
 
 	initPinCheck () {
 		const { account } = S.Auth;
+
 		const check = () => {
-			const pin = Storage.getPin();
+			const { pin } = S.Common;
 			if (!pin) {
 				this.setPinChecked(true);
 				return false;

@@ -27,7 +27,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const rootId = block ? [ targetId, 'widget', block.id ].join('-') : '';
 	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
 	const object = S.Detail.get(S.Block.widgets, targetId);
-	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
 	const viewType = view ? view.type : I.ViewType.List;
 
 	const updateData = () =>{
@@ -49,11 +49,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		if (isSystemTarget()) {
 			getData(subId);
-		} else {
-			const view = Dataview.getView(subId, J.Constant.blockId.dataview);
-			if (view) {
-				load(view.id);
-			};
+		} else 
+		if (view) {
+			load(view.id);
 		};
 	};
 

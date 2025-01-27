@@ -18,28 +18,33 @@
 
 			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 4px; }
 			.side.right {
-				.cnt { 
-					@include text-very-small; background-color: var(--color-control-active); color: var(--color-control-bg); border-radius: 50%; min-width: 18px; 
-					text-align: center; font-weight: 500; height: 18px; line-height: 18px; display: none; padding: 0px 2px; flex-shrink: 0;
-				}
-
-				.icon { width: 24px; height: 24px; flex-shrink: 0; }
+				.icon { width: 24px !important; height: 24px !important; flex-shrink: 0; }
 				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
 				.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); }
+				.icon.arrow { background-image: url('~img/icon/widget/button/arrow.svg'); }
 			}
 		}
 
 		.buttons {
-			.item { padding: 4px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+			.item { 
+				padding: 3px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; background: var(--color-bg-primary); 
+				border-radius: 6px;
+			}
 			.item::before {
 				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
-				border-radius: 6px; opacity: 0;
+				border-radius: inherit; opacity: 0;
 			}
 			.item:hover::before, .item.hover::before { opacity: 1; }
 
 			.item {
 				.side { display: flex; flex-direction: row; align-items: center; }
 				.side.left { gap: 0px 6px; }
+				.side.right {
+					.cnt { 
+						@include text-very-small; background-color: var(--color-control-active); color: var(--color-control-bg); border-radius: 50%; min-width: 18px; 
+						text-align: center; font-weight: 500; height: 18px; line-height: 18px; display: none; padding: 0px 2px; flex-shrink: 0;
+					}
+				}
 
 				.name { display: flex; gap: 0px 8px; @include text-overflow-nw; }
 
@@ -47,8 +52,6 @@
 				.icon.member { background-image: url('~img/icon/widget/button/member.svg'); }
 				.icon.all { background-image: url('~img/icon/widget/button/all.svg'); }
 				.icon.chat { background-image: url('~img/icon/widget/button/chat.svg'); }
-
-				.cnt { color: var(--color-text-secondary); }
 			}
 			.item:hover {
 				.side.right {
@@ -59,7 +62,7 @@
 	}
 
 	.body.withCnt {
-		.sides {
+		.buttons {
 			.side.left { width: calc(100% - 30px); }
 			.side.right {
 				.cnt { display: block; }

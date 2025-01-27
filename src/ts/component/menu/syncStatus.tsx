@@ -83,7 +83,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						<Icon className="more withBackground" onClick={e => this.onContextMenu(e, item)} />
 					</div>
 				</div>
 			);
@@ -91,8 +91,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 		const rowRenderer = ({ index, key, style, parent }) => {
 			const item = items[index];
-
-			console.log(item);
 
 			let content = null;
 			if (item.isSection) {

@@ -136,14 +136,13 @@ class DetailStore {
 			return;
 		};
 
-		if (keys && keys.length) {
-			const item = { id, details: {} };
-			keys.forEach(key => item.details[key] = null);
+		let list = [];
 
-			this.update(rootId, item, false);
-		} else {
-			map.set(id, []);
+		if (keys && keys.length) {
+			list = (map.get(id) || []).filter(it => !keys.includes(it.relationKey));
 		};
+
+		map.set(id, list);
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
@@ -165,6 +164,10 @@ class DetailStore {
 		};
 
 		return this.mapper(object, skipLayoutFormat);
+	};
+
+	public getKeys (rootId: string, id: string): string[] {
+		return (this.map.get(rootId)?.get(id) || []).map(it => it.relationKey);
 	};
 
 	/** Mutates object provided and also returns a new object. Sets defaults.

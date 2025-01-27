@@ -27,8 +27,8 @@ class CommonStore {
 	public cellId = '';
 	public themeId = '';
 	public nativeThemeIsDark = false;
-	public defaultType = '';
-	public pinTimeId = 0;
+	public defaultType = null;
+	public pinTimeId = null;
 	public emailConfirmationTimeId = 0;
 	public isFullScreen = false;
 	public redirect = '';
@@ -44,6 +44,7 @@ class CommonStore {
 	public showVaultValue = null;
 	public hideSidebarValue = null;
 	public showObjectValue = null;
+	public pinValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -106,6 +107,7 @@ class CommonStore {
 			showRelativeDatesValue: observable,
 			dateFormatValue: observable,
 			timeFormatValue: observable,
+			pinValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -120,6 +122,7 @@ class CommonStore {
 			showRelativeDates: computed,
 			dateFormat: computed,
 			timeFormat: computed,
+			pin: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -139,6 +142,7 @@ class CommonStore {
 			showVaultSet: action,
 			showObjectSet: action,
 			showRelativeDatesSet: action,
+			pinSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -171,9 +175,15 @@ class CommonStore {
 	};
 
 	get type (): string {
-		const key = String(this.defaultType || Storage.get('defaultType') || J.Constant.default.typeKey);
+		if (this.defaultType === null) {
+			this.defaultType = Storage.get('defaultType');
+		};
 
-		let type = S.Record.getTypeByKey(key);
+		if (!this.defaultType) {
+			this.defaultType = J.Constant.default.typeKey;
+		};
+
+		let type = S.Record.getTypeByKey(this.defaultType);
 		if (!type || !type.isInstalled || !U.Object.isAllowedObject(type.recommendedLayout)) {
 			type = S.Record.getTypeByKey(J.Constant.default.typeKey);
 		};
@@ -185,8 +195,20 @@ class CommonStore {
 		return this.isFullScreen;
 	};
 
+	get pin (): string {
+		if (this.pinValue === null) {
+			this.pinValue = Storage.get('pin');
+		};
+
+		return String(this.pinValue || '');
+	};
+
 	get pinTime (): number {
-		return (Number(this.pinTimeId) || Storage.get('pinTime') || J.Constant.default.pinTime) * 1000;
+		if (this.pinTimeId === null) {
+			this.pinTimeId = Storage.get('pinTime');
+		};
+
+		return (Number(this.pinTimeId) || J.Constant.default.pinTime) * 1000;
 	};
 
 	get emailConfirmationTime (): number {
@@ -373,6 +395,11 @@ class CommonStore {
 		this.pinTimeId = Number(v) || J.Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
+	};
+
+	pinSet (v: string) {
+		this.pinValue = String(v || '');
+		Storage.set('pin', this.pinValue);
 	};
 
 	emailConfirmationTimeSet (t: number) {

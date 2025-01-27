@@ -95,6 +95,7 @@
 			.icon.delete, .icon.more { opacity: 1; }
 		}
 		.item.withMore.hover, .item.withMore:hover {
+			.clickable { padding-right: 28px; }
 			.caption { opacity: 0; }
 		}
 
@@ -111,8 +112,8 @@
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.plus { margin-right: 6px; background-image: url('~img/icon/plus/menu0.svg'); }
 			.icon.delete, .icon.more { 
-				width: 24px; height: 24px; background-size: 20px; position: absolute; right: 10px; top: 50%; 
-				margin: -12px 0px 0px 0px; border-radius: 4px; opacity: 0; z-index: 1;
+				width: 24px !important; height: 24px !important; background-size: 20px; position: absolute; right: 10px; top: 50%; margin: -12px 0px 0px 0px; 
+				border-radius: 4px; opacity: 0; z-index: 1;
 			}
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
 			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
@@ -268,7 +269,6 @@ html.platformWindows {
 @import "./smile";
 @import "./type";
 @import "./widget";
-@import "./quickCapture";
 @import "./syncStatus";
 @import "./graph";
 @import "./participant";

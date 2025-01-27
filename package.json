@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.44.0",
+	"version": "0.44.11-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -299,8 +299,20 @@
 				"to": "node_modules/@electron"
 			},
 			{
+				"from": "node_modules/ajv",
+				"to": "node_modules/ajv"
+			},
+			{
+				"from": "node_modules/ajv-formats",
+				"to": "node_modules/ajv-formats"
+			},
+			{
 				"from": "node_modules/async",
 				"to": "node_modules/async"
+			},
+			{
+				"from": "node_modules/atomically",
+				"to": "node_modules/atomically"
 			},
 			{
 				"from": "node_modules/balanced-match",
@@ -319,12 +331,24 @@
 				"to": "node_modules/concat-map"
 			},
 			{
+				"from": "node_modules/conf",
+				"to": "node_modules/conf"
+			},
+			{
 				"from": "node_modules/core-util-is",
 				"to": "node_modules/core-util-is"
 			},
 			{
+				"from": "node_modules/debounce-fn",
+				"to": "node_modules/debounce-fn"
+			},
+			{
 				"from": "node_modules/debug",
 				"to": "node_modules/debug"
+			},
+			{
+				"from": "node_modules/dot-prop",
+				"to": "node_modules/dot-prop"
 			},
 			{
 				"from": "node_modules/electron-dl",
@@ -343,6 +367,10 @@
 				"to": "node_modules/electron-log"
 			},
 			{
+				"from": "node_modules/electron-store",
+				"to": "node_modules/electron-store"
+			},
+			{
 				"from": "node_modules/electron-updater",
 				"to": "node_modules/electron-updater"
 			},
@@ -355,12 +383,28 @@
 				"to": "node_modules/electron-window-state"
 			},
 			{
+				"from": "node_modules/env-paths",
+				"to": "node_modules/env-paths"
+			},
+			{
 				"from": "node_modules/ext-list",
 				"to": "node_modules/ext-list"
 			},
 			{
 				"from": "node_modules/ext-name",
 				"to": "node_modules/ext-name"
+			},
+			{
+				"from": "node_modules/fast-deep-equal",
+				"to": "node_modules/fast-deep-equal"
+			},
+			{
+				"from": "node_modules/fast-uri",
+				"to": "node_modules/fast-uri"
+			},
+			{
+				"from": "node_modules/find-up",
+				"to": "node_modules/find-up"
 			},
 			{
 				"from": "node_modules/fs-extra",
@@ -399,6 +443,10 @@
 				"to": "node_modules/inherits"
 			},
 			{
+				"from": "node_modules/is-obj",
+				"to": "node_modules/is-obj"
+			},
+			{
 				"from": "node_modules/is-plain-obj",
 				"to": "node_modules/is-plain-obj"
 			},
@@ -411,6 +459,10 @@
 				"to": "node_modules/js-yaml"
 			},
 			{
+				"from": "node_modules/json-schema-traverse",
+				"to": "node_modules/json-schema-traverse"
+			},
+			{
 				"from": "node_modules/jsonfile",
 				"to": "node_modules/jsonfile"
 			},
@@ -421,6 +473,10 @@
 			{
 				"from": "node_modules/lazy-val",
 				"to": "node_modules/lazy-val"
+			},
+			{
+				"from": "node_modules/locate-path",
+				"to": "node_modules/locate-path"
 			},
 			{
 				"from": "node_modules/lockfile",
@@ -441,6 +497,10 @@
 			{
 				"from": "node_modules/mime-db",
 				"to": "node_modules/mime-db"
+			},
+			{
+				"from": "node_modules/mimic-fn",
+				"to": "node_modules/mimic-fn"
 			},
 			{
 				"from": "node_modules/minimatch",
@@ -467,12 +527,32 @@
 				"to": "node_modules/once"
 			},
 			{
+				"from": "node_modules/onetime",
+				"to": "node_modules/onetime"
+			},
+			{
+				"from": "node_modules/p-limit",
+				"to": "node_modules/p-limit"
+			},
+			{
+				"from": "node_modules/p-locate",
+				"to": "node_modules/p-locate"
+			},
+			{
+				"from": "node_modules/p-try",
+				"to": "node_modules/p-try"
+			},
+			{
 				"from": "node_modules/path-exists",
 				"to": "node_modules/path-exists"
 			},
 			{
 				"from": "node_modules/path-is-absolute",
 				"to": "node_modules/path-is-absolute"
+			},
+			{
+				"from": "node_modules/pkg-up",
+				"to": "node_modules/pkg-up"
 			},
 			{
 				"from": "node_modules/pupa",

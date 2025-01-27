@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Button, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, S, U, J, keyboard, translate } from 'Lib';
+import { I, S, U, J, keyboard, translate, analytics } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
@@ -16,7 +16,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const isLocked = root ? root.isLocked() : false;
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
-	const showShare = !isTypeOrRelation && !isDate && config.experimental && !isDeleted;
+	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && config.experimental && !isDeleted;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isTypeOrRelation && !isDeleted;
 	const cmd = keyboard.cmdSymbol();
@@ -94,6 +94,8 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				rootId,
 			}
 		});
+
+		analytics.event('ClickShareObject', { objectType: object.type });
 	};
 
 	const onRelationHandler = () => {

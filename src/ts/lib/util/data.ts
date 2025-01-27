@@ -155,7 +155,7 @@ class UtilData {
 		param = param || {};
 		param.routeParam = param.routeParam || {};
 
-		const pin = Storage.getPin();
+		const { pin } = S.Common;
 		const { root, widgets } = S.Block;
 		const { redirect, space } = S.Common;
 		const color = Storage.get('color');
@@ -531,6 +531,7 @@ class UtilData {
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
+		const pinned = Storage.getPinnedTypes();
 
 		let items: any[] = [];
 
@@ -558,7 +559,7 @@ class UtilData {
 			items = items.filter(it => !it.isHidden);
 		};
 
-		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
+		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
 		return items;
 	};
 
@@ -621,7 +622,7 @@ class UtilData {
 			ret.withIcon = true;
 		};
 
-		if (checkType) {
+		if (checkType && !keyboard.isMainHistory()) {
 			className.push('noSystemBlocks');
 		};
 
@@ -670,10 +671,14 @@ class UtilData {
 	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
 		const idx1 = ids.indexOf(c1.id);
 		const idx2 = ids.indexOf(c2.id);
+		const isPinned1 = idx1 >= 0;
+		const isPinned2 = idx2 >= 0;
 
+		if (isPinned1 && !isPinned2) return -1;
+		if (!isPinned1 && isPinned2) return 1;
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
-		return 0;
+		return this.sortByLastUsedDate(c1, c2);
 	};
 
 	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
@@ -1216,6 +1221,24 @@ class UtilData {
 			type: I.BlockType.Link,
 			content: { ...this.defaultLinkSettings(), targetBlockId: id },
 		};
+	};
+
+	setRtl (rootId: string, blockId: string) {
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const fields = block.fields || {};
+		if (fields.isRtlDetected) {
+			return;
+		};
+
+		C.BlockListSetFields(rootId, [ 
+			{ blockId: block.id, fields: { ...fields, isRtlDetected: true } } 
+		], () => {
+			C.BlockListSetAlign(rootId, [ block.id ], I.BlockHAlign.Right);
+		});
 	};
 
 };

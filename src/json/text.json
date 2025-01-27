@@ -123,6 +123,7 @@
 	"commonRedo": "Redo",
 	"commonBlank": "Blank",
 	"commonSetDefault": "Set as default",
+	"commonTemplate": "Template",
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
 	"commonCreateNew": "Create new",
@@ -177,6 +178,12 @@
 	"commonNotFound": "Not found",
 	"commonCalculate": "Calculate",
 	"commonRelations": "Relations",
+	"commonSelectType": "Select Type",
+	"commonPin": "Pin on top",
+	"commonUnpin": "Unpin",
+	"commonOpenType": "Open Type",
+	"commonManage": "Manage",
+	"commonSize": "Size",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -776,7 +783,6 @@
 	"popupSettingsSpacesListSpace": "Space",
 	"popupSettingsSpacesCancelRequest": "Cancel request",
 	"popupSettingsSpacesListAccess": "Access",
-	"popupSettingsSpacesListSize": "Size",
 	"popupSettingsSpacesListNetwork": "Network",
 	"popupSettingsSpacesListDevice": "Device",
 
@@ -791,6 +797,9 @@
 	"popupSettingsDataManagementDeleteTitle": "Danger zone",
 	"popupSettingsDataManagementDeleteText": "Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
 	"popupSettingsDataManagementDeleteButton": "Delete vault",
+
+	"popupSettingsDataManagementDataPublishTitle": "My Sites",
+	"popupSettingsDataManagementDataPublishDate": "Published date",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
@@ -897,7 +906,6 @@
 	"popupSettingsMembershipPerGenericMany": "per %s %s",
 	"popupSettingsMembershipLearnMore": "Learn more",
 	"popupSettingsMembershipCurrent": "Current",
-	"popupSettingsMembershipManage": "Manage",
 	"popupSettingsMembershipValidUntil": "Valid until %s",
 	"popupSettingsMembershipForeverFree": "Forever free",
 	"popupSettingsMembershipPending": "Pending...",
@@ -1065,6 +1073,7 @@
 
 	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
+	"popupConfirmSpaceDeleted": "The space you try to access has been deleted",
 
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
@@ -1090,7 +1099,7 @@
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
-	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?",
+	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
 
 	"popupConfirmChatDeleteMessageTitle": "Delete this message?",
 	"popupConfirmChatDeleteMessageText": "It cannot be restored after confirmation",
@@ -1513,6 +1522,8 @@
 	"menuDataviewTemplateSetDefaultForView": "Default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
 
+	"menuDataviewExistingObject": "Existing object",
+
 	"menuGraphSettingsTitles": "Titles",
 	"menuGraphSettingsArrows": "Arrows",
 	"menuGraphSettingsIcons": "Icons",
@@ -1575,15 +1586,6 @@
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
 
-	"menuQuickCaptureSearchObjectTypes": "Search object types...",
-	"menuQuickCaptureGroups": "Lists",
-	"menuQuickCapturePinned": "Pinned",
-	"menuQuickCaptureTooltipSearch": "Search types",
-	"menuQuickCaptureTooltipClipboard": "Create object from clipboard",
-	"menuQuickCaptureOpenType": "Open type",
-	"menuQuickCapturePin": "Pin on top",
-	"menuQuickCaptureUnpin": "Unpin",
-
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",
 	"syncButtonNameError3": "No access",
@@ -1624,8 +1626,15 @@
 	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"menuPublishTitle": "Publish to web",
-	"menuPublishLabel": "Join Space Button",
-	"menuPublishButton": "Publish",
+	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as sets, collections, and relations.",
+	"menuPublishLabelJoin": "Join Space Button",
+	"menuPublishButtonPublish": "Publish",
+	"menuPublishButtonUnpublish": "Unpublish",
+	"menuPublishButtonUpdate": "Update",
+	"menuPublishButtonView": "View in Browser",
+	"menuPublishButtonOpen": "Open Object",
+	"menuPublishButtonCopy": "Copy Web Link",
+	"menuPublishLabelOffline": "No internet connection",
 
 	"previewEdit": "Edit Link",
 
@@ -1791,6 +1800,7 @@
 	"widgetEmptyLabel": "There are no Objects here",
 	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
 	"widgetShowAll": "See all Objects",
+	"widgetItemClipboard": "Create from clipboard",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -2135,6 +2145,8 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
+	"errorPublishingCreate103": "Looks like some files are over 100 MB. Please remove or slim them down and try again.",
+
 	"errorIncorrectEmail": "Incorrect E-mail",
 
 	"origin0": "Empty",
@@ -2146,6 +2158,7 @@
 	"origin6": "Use case",
 	"origin7": "Library installed",
 	"origin8": "Bookmark",
+	"origin9": "API",
 
 	"emojiCategoryPeople": "Smileys & People",
 	"emojiCategoryNature": "Animals & Nature",
@@ -2227,7 +2240,8 @@
 	"spaceStatus9": "Joining",
 	"spaceStatus10": "Removing",
 
-	"challengeTitle": "Please enter the following numbers in the extension",
+	"challengeTitle": "Grant Limited Access",
+	"challengeDescription": "This extension requires a 4-digit code for limited access to your account. Proceed only if you trust the extension.",
 	"webclipperEmptySelection": "Selection is empty",
 
 	"paymentMethod0": "None",

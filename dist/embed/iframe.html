@@ -130,6 +130,9 @@
 					// Github Gist
 					if (processor == Processor.GithubGist) {
 						loadGithubGist(html);
+					} else
+					if (processor == Processor.Kroki) {
+						loadKroki(html);
 					} else {
 						if ((processor == Processor.Telegram) && !html.match(/<script/)) {
 							const post = html.replace(/^https:\/\/t.me\//, '');
@@ -179,7 +182,7 @@
 
 				function resize () {
 					const height = useRootHeight ? root.height() : document.documentElement.scrollHeight;
-					window.parent.postMessage({ height, blockId }, '*');
+					window.parent.postMessage({ type: 'resize', height, blockId }, '*');
 				};
 
 				function insertHtml (html) {
@@ -242,6 +245,26 @@
 
 							root.html(data.div);
 							resize();
+						}
+					});
+				};
+
+				function loadKroki (html) {
+					if (!html) {
+						return;
+					};
+
+					$.ajax({
+						url: html,
+						dataType: 'text',
+						timeout: 1000,
+						success: (data) => {
+							root.html(data);
+
+							root.find('a').off('click').on('click', function (e) {
+								e.preventDefault();
+								window.parent.postMessage({ type: 'openUrl', url: $(this).attr('href') }, '*');
+							});
 						}
 					});
 				};

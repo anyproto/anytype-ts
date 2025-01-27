@@ -25,7 +25,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 			return (
 				<div className="row">
-					<div className="col colSpace" onClick={() => this.onClick(space)}>
+					<div className="col colObject" onClick={() => this.onClick(space)}>
 						<IconObject object={space} size={40} />
 						<div className="info">
 							<ObjectName object={space} />
