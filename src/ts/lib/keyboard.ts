@@ -233,6 +233,11 @@ class Keyboard {
 				$('#button-header-relation').trigger('click');
 			});
 
+			// Select type
+			this.shortcut(`${cmd}+alt+n`, e, () => {
+				$('#widget-space #widget-space-arrow').trigger('click');
+			});
+
 			// Switch dark/light mode
 			this.shortcut(`${cmd}+shift+m`, e, () => {
 				Action.themeSet(!theme ? 'dark' : '');
