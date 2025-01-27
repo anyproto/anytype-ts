@@ -1192,6 +1192,36 @@
 	"popupShortcutMarkdownBeginningOfLine11": "Create dots divider",
 	"popupShortcutMarkdownBeginningOfLineKey": "%s + Space",
 
+	"popupShortcutCommand": "Commands",
+
+	"popupShortcutCommandText": "Text",
+	"popupShortcutCommandText1": "Text block",
+	"popupShortcutCommandText2": "Large heading",
+	"popupShortcutCommandText3": "Medium-sized heading",
+	"popupShortcutCommandText4": "Small heading",
+	"popupShortcutCommandText5": "Highlighted block of larger text",
+
+	"popupShortcutCommandLists": "Lists",
+	"popupShortcutCommandLists1": "To-do list with checkboxes",
+	"popupShortcutCommandLists2": "Bulleted list",
+	"popupShortcutCommandLists3": "Numbered list",
+	"popupShortcutCommandLists4": "Toggle list",
+
+	"popupShortcutCommandObjects": "Objects",
+	"popupShortcutCommandObjects1": "Create an Object with a relative date",
+	"popupShortcutCommandObjects2": "Object",
+	"popupShortcutCommandObjects3": "File",
+	"popupShortcutCommandObjects4": "Image",
+	"popupShortcutCommandObjects5": "Video",
+	"popupShortcutCommandObjects6": "Bookmark",
+	"popupShortcutCommandObjects7": "Link to Object",
+	"popupShortcutCommandObjects8": "Also available",
+
+	"popupShortcutCommandOther": "Other",
+	"popupShortcutCommandOther1": "Line divider",
+	"popupShortcutCommandOther2": "Dots divider",
+	"popupShortcutCommandOther3": "Code  snippet",
+
 	"popupMigrationOnboardingTitle": "Congratulations!",
 	"popupMigrationOnboardingText1": "You're now using the new & improved version of Anytype.<br/>It's still encrypted, offline-first and the safest app for your personal information.",
 	"popupMigrationOnboardingText2": "The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",

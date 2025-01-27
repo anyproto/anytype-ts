@@ -38,7 +38,8 @@
 				.item {
 					.name { flex-grow: 1; }
 
-					.label { @include text-small; }
+					.label { @include text-small; font-weight: 500; }
+					.label.text { text-align: right; }
 
 					.symbols { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 					.symbols {

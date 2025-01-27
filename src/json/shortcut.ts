@@ -65,8 +65,47 @@ export default () => {
 
 		{
 			id: 'command',
-			name: 'Command Menu',
+			name: translate('popupShortcutCommand'),
 			children: [
+				{
+					name: translate('popupShortcutCommandText'), children: [
+						{ name: translate('popupShortcutCommandText1'), text: '/text' },
+						{ name: translate('popupShortcutCommandText2'), text: '/h1' },
+						{ name: translate('popupShortcutCommandText3'), text: '/h2' },
+						{ name: translate('popupShortcutCommandText4'), text: '/h3' },
+						{ name: translate('popupShortcutCommandText5'), text: '/high' },
+					]
+				},
+
+				{
+					name: translate('popupShortcutCommandLists'), children: [
+						{ name: translate('popupShortcutCommandLists1'), text: '/todo' },
+						{ name: translate('popupShortcutCommandLists2'), text: '/bullet' },
+						{ name: translate('popupShortcutCommandLists3'), text: '/num' },
+						{ name: translate('popupShortcutCommandLists4'), text: '/toggle' },
+					]
+				},
+
+				{
+					name: translate('popupShortcutCommandObjects'), children: [
+						{ name: translate('popupShortcutCommandObjects1'), text: '@today, @tomorrow' },
+						{ name: translate('popupShortcutCommandObjects8'), text: '@three days ago, @last month, @2016-05-12' },
+						{ name: translate('popupShortcutCommandObjects2'), text: '/page' },
+						{ name: translate('popupShortcutCommandObjects3'), text: '/file' },
+						{ name: translate('popupShortcutCommandObjects4'), text: '/image' },
+						{ name: translate('popupShortcutCommandObjects5'), text: '/video' },
+						{ name: translate('popupShortcutCommandObjects6'), text: '/bookmark' },
+						{ name: translate('popupShortcutCommandObjects7'), text: '/link' },
+					]
+				},
+
+				{
+					name: translate('popupShortcutCommandOther'), children: [
+						{ name: translate('popupShortcutCommandOther1'), text: '/line' },
+						{ name: translate('popupShortcutCommandOther2'), text: '/dots' },
+						{ name: translate('popupShortcutCommandOther3'), text: '/code' },
+					]
+				},
 			]
 		},
 	];
@@ -196,47 +235,6 @@ export default () => {
 		},
 
 		{
-			id: 'markdown',
-			name: translate('popupShortcutMarkdown'),
-			children: [
-				{
-					name: translate('popupShortcutMarkdownWhileTyping'),
-					children: [
-						{ com: '`',					 name: translate('popupShortcutMarkdownWhileTyping1') },
-						{ com: '** or __',			 name: translate('popupShortcutMarkdownWhileTyping2') },
-						{ com: '* or _',			 name: translate('popupShortcutMarkdownWhileTyping3') },
-						{ com: '~~',				 name: translate('popupShortcutMarkdownWhileTyping4') },
-						{ com: '-->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟶') },
-						{ com: '<--',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟵') },
-						{ com: '<-->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟷') },
-						{ com: '->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '→') },
-						{ com: '<-',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '←') },
-						{ com: '--',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '—') },
-						{ com: '(r)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '®') },
-						{ com: '(tm)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '™') },
-						{ com: '...',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '…') },
-					]
-				},
-				{
-					name: translate('popupShortcutMarkdownBeginningOfLine'),
-					children: [
-						{ com: '# + Space',			 name: translate('popupShortcutMarkdownBeginningOfLine1') },
-						{ com: '# # + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine2') },
-						{ com: '# # # + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine3') },
-						{ com: '" + Space',			 name: translate('popupShortcutMarkdownBeginningOfLine4') },
-						{ com: '* or + or - and Space',	 name: translate('popupShortcutMarkdownBeginningOfLine5') },
-						{ com: '[] + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine6') },
-						{ com: '1. + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine7') },
-						{ com: '>  + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine8') },
-						{ com: '``` + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine9') },
-						{ com: '--- + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine10') },
-						{ com: '*** + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine11') },
-					]
-				},
-			],
-		},
-
-		{
 			id: 'command',
 			name: translate('popupShortcutCommand'),
 			children: [
@@ -250,44 +248,6 @@ export default () => {
 				},
 
 				{ description: translate('popupShortcutCommandDescription'), children: [], className: 'separator' },
-				{
-					name: translate('popupShortcutCommandText'), children: [
-						{ com: '/text',			 name: translate('popupShortcutCommandText1') },
-						{ com: '/h1',			 name: translate('popupShortcutCommandText2') },
-						{ com: '/h2',			 name: translate('popupShortcutCommandText3') },
-						{ com: '/h3',			 name: translate('popupShortcutCommandText4') },
-						{ com: '/high',			 name: translate('popupShortcutCommandText5') },
-					]
-				},
-
-				{
-					name: translate('popupShortcutCommandLists'), children: [
-						{ com: '/todo',			 name: translate('popupShortcutCommandLists1') },
-						{ com: '/bullet',		 name: translate('popupShortcutCommandLists2') },
-						{ com: '/num',			 name: translate('popupShortcutCommandLists3') },
-						{ com: '/toggle',		 name: translate('popupShortcutCommandLists4') },
-					]
-				},
-
-				{
-					name: translate('popupShortcutCommandObjects'), children: [
-						{ com: '@today, @tomorrow',	name: translate('popupShortcutCommandObjects1') },
-						{ com: '/page',			 	name: translate('popupShortcutCommandObjects2') },
-						{ com: '/file',			 	name: translate('popupShortcutCommandObjects3') },
-						{ com: '/image',		 	name: translate('popupShortcutCommandObjects4') },
-						{ com: '/video',		 	name: translate('popupShortcutCommandObjects5') },
-						{ com: '/bookmark',		 	name: translate('popupShortcutCommandObjects6') },
-						{ com: '/link',			 	name: translate('popupShortcutCommandObjects7') },
-					]
-				},
-
-				{
-					name: translate('popupShortcutCommandOther'), children: [
-						{ com: '/line',			 name: translate('popupShortcutCommandOther1') },
-						{ com: '/dots',			 name: translate('popupShortcutCommandOther2') },
-						{ com: '/code',			 name: translate('popupShortcutCommandOther3') },
-					]
-				},
 			],
 		},
 	];

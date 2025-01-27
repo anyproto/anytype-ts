@@ -44,7 +44,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						{symbols.map((item: any, i: number) => <Label key={i} text={item} />)}
 					</div>
 				) : ''}
-				{item.text ? <Label text={item.text} /> : ''}
+				{item.text ? <Label className="text" text={item.text} /> : ''}
 			</div>
 		);
 	};
