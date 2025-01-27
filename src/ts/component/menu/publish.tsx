@@ -131,6 +131,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			element: $(e.currentTarget),
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Left,
+			delay: 0,
 		});
 
 		analytics.event('ShowShareObjectHelp', { objectType: object.type });
@@ -158,6 +159,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (isOnline) {
 			loadStatus();
 		};
+
+		return () => {
+			Preview.tooltipHide(true);
+		};
 	}, []);
 
 	useEffect(() => {
@@ -170,7 +175,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<>
 			<div className="menuHeader">
 				<Title text={translate('menuPublishTitle')} />
-				<Icon className="info" onMouseEnter={showInfo} onMouseLeave={() => Preview.tooltipHide()} />
+				<Icon className="info" onClick={showInfo} />
 			</div>
 
 			<Input value={domain} readonly={true} />

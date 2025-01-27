@@ -1626,7 +1626,7 @@
 	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"menuPublishTitle": "Publish to web",
-	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published. Currently, not all blocks are supported for publishing, such as sets, collections, and relations.",
+	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as sets, collections, and relations.",
 	"menuPublishLabelJoin": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
