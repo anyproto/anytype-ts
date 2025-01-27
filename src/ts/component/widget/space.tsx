@@ -12,6 +12,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const isSpaceOwner = U.Space.isMyOwner();
 	const cn = [ 'body' ];
 	const cmd = keyboard.cmdSymbol();
+	const alt = keyboard.altSymbol();
 	const buttons = [
 		space.chatId && U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
 		space.isShared ? { id: 'member', name: translate('commonMembers') } : null,
@@ -269,7 +270,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				<div className="side right">
 					<Icon className="search withBackground" onClick={onSearch} tooltip={translate('commonSearch')} tooltipCaption={`${cmd} + S`} />
 					<Icon className="plus withBackground" onClick={onCreate} tooltip={translate('commonCreateNewObject')} tooltipCaption={`${cmd} + N`} />
-					<Icon id={`widget-${parent.id}-arrow`} className="arrow withBackground" onClick={onArrow} tooltip={translate('commonSelectType')} />
+					<Icon id={`widget-${parent.id}-arrow`} className="arrow withBackground" onClick={onArrow} tooltip={translate('commonSelectType')} tooltipCaption={`${cmd} + ${alt} + N`} />
 				</div>
 			</div>
 
