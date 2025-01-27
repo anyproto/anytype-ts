@@ -781,9 +781,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 	};
 
-	pageCreate (filter: string) {
-		keyboard.pageCreate({ name: filter }, 'Search', [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
-	}
+	pageCreate (name: string) {
+		keyboard.pageCreate({ name }, analytics.route.search, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+	};
 
 	filterMapper (it: any, config: any) {
 		return !(it.isHidden && !config.debug.hiddenObject);

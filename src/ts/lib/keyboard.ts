@@ -266,12 +266,12 @@ class Keyboard {
 
 			if (canWrite) {
 				// Create new page
-				this.shortcut(`${cmd}+n`, e, () => {
-					if (!S.Popup.isOpen('search')) {
+				if (!S.Popup.isOpen('search')) {
+					this.shortcut(`${cmd}+n`, e, () => {
 						e.preventDefault();
 						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
-					}
-				});
+					});
+				};
 
 				// Lock/Unlock
 				this.shortcut(`ctrl+shift+l`, e, () => {
