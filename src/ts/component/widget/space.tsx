@@ -11,6 +11,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 	const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
 	const isSpaceOwner = U.Space.isMyOwner();
+	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'body' ];
 	const cmd = keyboard.cmdSymbol();
 	const alt = keyboard.altSymbol();
@@ -277,10 +278,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				<div className="side right">
 					<Icon className="search withBackground" onClick={onSearch} tooltip={translate('commonSearch')} tooltipCaption={`${cmd} + S`} />
 
-					<div className="plusWrapper" onMouseEnter={onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
-						<Icon ref={plusRef} className="plus withBackground" onClick={onCreate} />
-						<Icon id={`widget-${parent.id}-arrow`} className="arrow withBackground" onClick={onArrow} />
-					</div>
+					{canWrite ? (
+						<div className="plusWrapper" onMouseEnter={onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
+							<Icon ref={plusRef} className="plus withBackground" onClick={onCreate} />
+							<Icon id={`widget-${parent.id}-arrow`} className="arrow withBackground" onClick={onArrow} />
+						</div>
+					) : ''}
 				</div>
 			</div>
 
