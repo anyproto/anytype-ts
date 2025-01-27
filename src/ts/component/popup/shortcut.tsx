@@ -7,7 +7,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const { getId, close } = props;
 	const [ page, setPage ] = useState('');
 	const isMac = U.Common.isPlatformMac();
-	const sections = J.Shortcut();
+	const sections = J.Shortcut.getSections();
 	const current = page || sections[0].id;
 	const section = sections.find(it => it.id == current);
 	const id = getId();

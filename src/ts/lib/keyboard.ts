@@ -14,6 +14,7 @@ class Keyboard {
 	matchPopup: any = {};
 	source: any = null;
 	selection: any = null;
+	shortcuts: any = {};
 	
 	isDragging = false;
 	isResizing = false;
@@ -36,6 +37,7 @@ class Keyboard {
 	
 	init () {
 		this.unbind();
+		this.shortcuts = J.Shortcut.getItems();
 		
 		const win = $(window);
 
@@ -234,7 +236,7 @@ class Keyboard {
 			});
 
 			// Select type
-			this.shortcut(`${cmd}+alt+n`, e, () => {
+			this.shortcut('selectType', e, () => {
 				$('#widget-space #widget-space-arrow').trigger('click');
 			});
 
@@ -267,7 +269,7 @@ class Keyboard {
 
 			if (canWrite) {
 				// Create new page
-				this.shortcut(`${cmd}+n`, e, () => {
+				this.shortcut('createObject', e, () => {
 					e.preventDefault();
 					this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				});
@@ -1156,7 +1158,13 @@ class Keyboard {
 			return;
 		};
 
-		const a = s.split(',').map(it => it.trim());
+		const string = this.shortcuts[s] ? (this.shortcuts[s].keys || []).join('+') : s;
+		if (!string) {
+			console.log('[keyboard.shortcut] Empty string', s);
+			return;
+		};
+
+		const a = string.split(',').map(it => it.trim());
 		const key = this.eventKey(e);
 		const which = e.which;
 

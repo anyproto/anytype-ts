@@ -1,6 +1,6 @@
 import { U, translate, keyboard } from 'Lib';
 
-export default () => {
+const getSections = () => {
 	const isMac = U.Common.isPlatformMac();
 	const cmdSymbol = keyboard.cmdSymbol();
 	const cmdKey = keyboard.cmdKey();
@@ -36,13 +36,13 @@ export default () => {
 			children: [
 				{
 					name: translate('popupShortcutBasics'), children: [
-						{ id: 'createNewObject', name: translate('popupShortcutMainBasics1'), keys: [ cmdKey, 'n' ] },
-						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, alt, 'n' ] },
+						{ id: 'createObject', name: translate('popupShortcutMainBasics1'), keys: [ cmdKey, 'n' ] },
+						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, 'alt', 'n' ] },
 						{ id: 'newWindow', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 'shift', 'n' ] },
 						{ id: 'close', name: translate('popupShortcutMainBasics10'), keys: [ cmdKey, 'q' ] },
 						{ id: 'lock', name: translate('popupShortcutMainBasics22'), keys: [ cmdKey, 'alt', 'l' ] },
 						{ id: 'undo', name: translate('popupShortcutMainBasics6'), keys: [ cmdKey, 'z' ] },
-						{ id: 'redo', name: translate('popupShortcutMainBasics7'), keys: [ cmdKey, shift, 'z' ] },
+						{ id: 'redo', name: translate('popupShortcutMainBasics7'), keys: [ cmdKey, 'shift', 'z' ] },
 					]
 				},
 
@@ -180,6 +180,24 @@ export default () => {
 		});
 		return s;
 	});
+};
+
+const getItems = () => {
+	const sections = getSections();
+	const ret = {};
+
+	sections.forEach(section => {
+		section.children.forEach(sub => {
+			sub.children.forEach(item => {
+				if (item.id) {
+					ret[item.id] = item;
+				};
+			});
+		});
+	});
+
+	return ret;
+};
 
 	/*
 #### Menu, Search
@@ -378,4 +396,5 @@ Apply previously selected highlight
 		},
 	];
 	*/
-};
+
+export { getSections, getItems };
