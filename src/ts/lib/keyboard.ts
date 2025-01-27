@@ -250,10 +250,6 @@ class Keyboard {
 				};
 			});
 
-			this.shortcut(`${cmd}+alt+n`, e, () => {
-				$('#widget-space #widget-space-arrow').trigger('click');
-			});
-
 			// Object id
 			this.shortcut(`${cmd}+shift+\\`, e, () => {
 				S.Popup.open('confirm', {
