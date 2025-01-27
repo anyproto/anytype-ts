@@ -7,17 +7,50 @@ export default () => {
 	const shift = keyboard.shiftSymbol();
 	const or = translate('commonOr');
 
+	const mapper = (item: any) => {
+		if (item.keys) {
+			item.symbols = item.keys.map((key: string) => {
+				if (key === cmdKey) {
+					return cmdSymbol;
+				};
+				if (key == 'shift') {
+					return shift;
+				};
+				if (key == 'alt') {
+					return alt;
+				};
+				return key;
+			});
+		};
+		return item;
+	};
+
 	return [
 		{
 			id: 'shortcut',
-			name: 'Keyboard Shortcuts',
+			name: translate('popupShortcutKeyboard'),
 			children: [
 				{
-					name: 'Basics', children: [
-						{ id: 'createNewObject', name: 'Create New Object', keys: [ cmdKey, 'n' ], symbols: [ cmdSymbol, 'N' ] },
-						{ id: 'selectType', name: 'Select Type and Create Object', keys: [ cmdKey, alt, 'n' ], symbols: [ cmdSymbol, alt, 'N' ] },
+					name: translate('popupShortcutBasics'), children: [
+						{ id: 'createNewObject', name: translate('popupShortcutMainBasics1'), keys: [ cmdKey, 'n' ] },
+						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, alt, 'n' ] },
+						{ id: 'newWindow', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 'shift', 'n' ] },
+						{ id: 'close', name: translate('popupShortcutMainBasics10'), keys: [ cmdKey, 'q' ] },
+						{ id: 'lock', name: translate('popupShortcutMainBasics22'), keys: [ cmdKey, 'alt', 'l' ] },
+						{ id: 'undo', name: translate('popupShortcutMainBasics6'), keys: [ cmdKey, 'z' ] },
+						{ id: 'redo', name: translate('popupShortcutMainBasics7'), keys: [ cmdKey, shift, 'z' ] },
 					]
-				},	
+				},
+
+				{
+					name: translate('popupShortcutInterface'), children: [
+						{ id: 'toggleSidebar', name: translate('popupShortcutMainBasics15'), keys: [ cmdKey, '.' ] },
+						{ id: 'toggleFullscreen', name: translate('popupShortcutMainBasics5'), keys: [ cmdKey, 'shift', 'f' ] },
+						{ id: 'zoomIn', name: translate('popupShortcutMainBasics16'), keys: [ cmdKey, '=' ] },
+						{ id: 'zoomOut', name: translate('popupShortcutMainBasics17'), keys: [ cmdKey, '-' ] },
+						{ id: 'zoomReset', name: translate('popupShortcutMainBasics18'), keys: [ cmdKey, '0' ] },
+					]
+				}
 			]
 		},
 
@@ -108,7 +141,182 @@ export default () => {
 				},
 			]
 		},
-	];
+	].map(s => {
+		s.children = s.children.map(sub => {
+			sub.children = sub.children.map(mapper);
+			return sub;
+		});
+		return s;
+	});
+
+	/*
+Create New Object
+⌘ N
+Create New Object and Choose Type
+⌘ ⌥ N
+New Anytype Window
+⌘ ⇧ N
+Close Anytype
+⌘ Q
+Lock Anytype ❗️ 
+Unassigned
+Log out ❗️ 
+Unassigned
+Undo
+⌘ Z
+Redo
+⌘ ⇧ Z
+#### Interface
+Show / Hide Sidebar
+⌘ .
+Fullscreen
+⌘ ⇧ F
+Zoom in
+⌘ =
+Zoom out
+⌘ –
+Default zoom
+⌘ 0
+#### Navigation
+Jump to a space ⭕️  
+⌘ 1-9
+Open Settings
+⌘ ,
+Open the Flow pane
+⌘ O
+Open the Graph pane
+⌘ ⇧ O
+Open the Search pane
+⌘ S
+Open the Library pane
+⌘ L
+Return to home screen
+⌥ H
+Go back
+⌘ ←
+Go forward
+⌘ →
+Open Bin ❗️ 
+Unassigned
+Space settings ❗️ 
+Unassigned
+View shortcuts
+⌃ Space
+Open in a modal window
+⇧ Click
+Open in a new window
+⌘ Click
+#### Menu, Search
+Go to the next option ⭕️  
+↓ , Tab
+Go to the previous option ⭕️  
+↑ , ⇧ Tab
+Go to the left side of navigation (Link from page) ⭕️  
+←
+Go to the right side of navigation (Link to page) ⭕️  
+→
+Select option
+Enter
+#### Object Actions
+Open Relations
+⌘ ⇧ R
+Print
+⌘ P
+Version History
+⌘ Q
+Add to favorites ❗️ 
+Unassigned
+Add to collection ❗️ 
+Unassigned
+Link to object ❗️ 
+Unassigned
+Move object to bin ❗️ 
+Unassigned
+Copy link ❗️ 
+Unassigned
+Create widget ❗️ 
+Unassigned
+Change type ❗️ 
+Unassigned
+Open in full page ❗️ 
+Unassigned
+#### Editor
+New text block ⭕️  
+Enter
+Line break ⭕️  
+⇧ Enter
+Merge block with the one above ⭕️  
+Delete
+Indent ⭕️  
+Tab
+Outdent ⭕️  
+⇧ Tab
+Select word ⭕️  
+Double Click
+Select an Entire Block ⭕️  
+Triple Click
+Select all blocks
+⌘ A
+Expand Selection Up ⭕️  
+⇧ ↑
+Expand Selection Down ⭕️  
+⇧ ↓
+Select / Deselect an entire block ⭕️
+⌘ Click
+Select block and all blocks in between ⭕️
+⇧ Click
+Expand / Collapse Toggle 
+⌘ ⇧ T
+Go down one line ⭕️
+↓
+Go up one line ⭕️
+↑
+Go to the start of the line  ⭕️
+⌘ ←
+Go to the end of the line  ⭕️
+⌘ →
+Go to the top of the Object  ⭕️
+⌘ ↑
+Go to the end of the Object  ⭕️
+⌘ ↓
+Move selected block(s) up  ⭕️
+⌘ ⇧ ↑
+Move selected block(s) down  ⭕️
+⌘ ⇧ ↓
+Check / Uncheck Checkbox
+⌘ Enter
+actual 
+#### Set and Collection
+Focus the first object in list ❗️ 
+Enter
+Select objects above ❗️  ⭕️
+⇧ ↑
+Select objects below ❗️   ⭕️
+⇧ ↓
+Switch views ❗️ 
+Unassigned
+Create New Object in set  ❗️ 
+⌘ N
+Create New Object From Template ❗️ 
+Unassigned
+#### Text Style
+Bold
+⌘ B
+Italic
+⌘ I
+Underline
+⌘ U
+Strikethrough
+⌘ ⇧ S
+Add a link
+⌘ K
+Convert to inline code
+⌘ L
+Apply previously selected font color
+⌘ ⇧ C
+Apply previously selected highlight
+⌘ ⇧ H
+	*/
 
 	/*
 	return [
@@ -118,9 +326,6 @@ export default () => {
 			children: [
 				{
 					name: translate('popupShortcutBasics'), children: [
-						{ com: `${cmd} + N`,			 name: translate('popupShortcutMainBasics1') },
-						{ com: `${cmd} + ${alt} + N`,	 name: translate('popupShortcutMainBasics19') },
-						{ com: `${cmd} + ${shift} + N`,	 name: translate('popupShortcutMainBasics2') },
 						{ com: `${cmd} + Enter`,		 name: translate('popupShortcutMainBasics4') },
 						{ mac: `${cmd} + Ctrl + F`,		 com: `${cmd} + ${alt} + F`,	 name: translate('popupShortcutMainBasics5') },
 						{ com: `${cmd} + Z`,			 name: translate('popupShortcutMainBasics6') },
@@ -138,7 +343,6 @@ export default () => {
 						{ com: `${cmd} + 0`,			 name: translate('popupShortcutMainBasics18') },
 						{ com: `Ctrl + Tab, Ctrl + ${shift} + Tab`, name: translate('popupShortcutMainBasics20') },
 						{ com: `${cmd} + ${shift} + M`, name: translate('popupShortcutMainBasics21') },
-						{ com: `${cmd} + ${alt} + L`, name: translate('popupShortcutMainBasics22') },
 					]
 				},
 

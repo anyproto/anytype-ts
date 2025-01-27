@@ -1169,6 +1169,24 @@
 
 	"popupIndexComponentNotFound": "Component %s not found",
 
+	"popupShortcutKeyboard": "Keyboard Shortcuts",
+
+	"popupShortcutBasics": "Basics",
+	"popupShortcutInterface": "Interface",
+	"popupShortcutMainBasics1": "Create New Object",
+	"popupShortcutMainBasics2": "New Anytype window",
+	"popupShortcutMainBasics5": "Fullscreen",
+	"popupShortcutMainBasics6": "Undo",
+	"popupShortcutMainBasics7": "Redo",
+	"popupShortcutMainBasics10": "Close Anytype",
+	"popupShortcutMainBasics15": "Show / Hide Sidebar",
+	"popupShortcutMainBasics16": "Zoom in",
+	"popupShortcutMainBasics17": "Zoom out",
+	"popupShortcutMainBasics18": "Default zoom",
+	"popupShortcutMainBasics19": "Select Type and Create Object",
+	"popupShortcutMainBasics21": "Switch color mode (light/dark)",
+	"popupShortcutMainBasics22": "Lock Anytype",
+
 	"popupShortcutMarkdown": "Markdown",
 
 	"popupShortcutMarkdownWhileTyping": "While typing",

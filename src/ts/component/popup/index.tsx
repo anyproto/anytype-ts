@@ -164,13 +164,9 @@ class Popup extends React.Component<I.Popup> {
 				return;
 			};
 			
-			const node = $(this.node); 
 			this.isAnimating = true;
 
-			node.addClass('show');
-
-			console.log('ADD CLASS');
-			console.trace();
+			$(this.node).addClass('show');
 			window.setTimeout(() => { this.isAnimating = false; }, S.Popup.getTimeout());
 		}, 50);
 	};
