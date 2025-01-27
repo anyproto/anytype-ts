@@ -436,6 +436,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				this.onClick(e, item);
 			};
 		});
+
+		keyboard.shortcut(`${cmd}+n`, e, () => {
+			e.preventDefault();
+
+			this.pageCreate(filter);
+		})
 	};
 
 	onArrow (dir: number) {
@@ -775,6 +781,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 	};
 
+	pageCreate (name: string) {
+		keyboard.pageCreate({ name }, analytics.route.search, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+	};
+
 	filterMapper (it: any, config: any) {
 		return !(it.isHidden && !config.debug.hiddenObject);
 	};
@@ -834,7 +844,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			} else {
 				switch (item.id) {
 					case 'add': {
-						keyboard.pageCreate({ name: filter }, 'Search', [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+						this.pageCreate(filter)
 						break;
 					};
 
