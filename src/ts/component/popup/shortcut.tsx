@@ -34,15 +34,17 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const Item = (item: any) => {
-		//const caption = isMac && item.mac ? item.mac : item.com;
 		const symbols = item.symbols || [];
 
 		return (
 			<div className="item">
 				<div className="name">{item.name}</div>
-				<div className="symbols">
-					{symbols.map((item: any, i: number) => <Label key={i} text={item} />)}
-				</div>
+				{symbols.length ? (
+					<div className="symbols">
+						{symbols.map((item: any, i: number) => <Label key={i} text={item} />)}
+					</div>
+				) : ''}
+				{item.text ? <Label text={item.text} /> : ''}
 			</div>
 		);
 	};

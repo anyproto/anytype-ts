@@ -38,10 +38,14 @@
 				.item {
 					.name { flex-grow: 1; }
 
+					.label { @include text-small; }
+
 					.symbols { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
-					.label { 
-						background: var(--color-shape-tertiary); border-radius: 4px; height: 24px; @include text-small; padding: 0px 4px; min-width: 24px;
-						display: flex; flex-direction: row; align-items: center; justify-content: center;
+					.symbols {
+						.label { 
+							background: var(--color-shape-tertiary); border-radius: 4px; height: 24px; padding: 0px 4px; min-width: 24px;
+							display: flex; flex-direction: row; align-items: center; justify-content: center;
+						}
 					}
 				}
 			}

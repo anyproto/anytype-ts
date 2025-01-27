@@ -5,6 +5,7 @@ export default () => {
 	const cmdKey = keyboard.cmdKey();
 	const alt = keyboard.altSymbol();
 	const shift = keyboard.shiftSymbol();
+	const or = translate('commonOr');
 
 	return [
 		{
@@ -13,8 +14,8 @@ export default () => {
 			children: [
 				{
 					name: 'Basics', children: [
-						{ name: 'Create New Object', keys: [ cmdKey, 'n' ], symbols: [ cmdSymbol, 'N' ] },
-						{ name: 'Select Type and Create Object', keys: [ cmdKey, alt, 'n' ], symbols: [ cmdSymbol, alt, 'N' ] },
+						{ id: 'createNewObject', name: 'Create New Object', keys: [ cmdKey, 'n' ], symbols: [ cmdSymbol, 'N' ] },
+						{ id: 'selectType', name: 'Select Type and Create Object', keys: [ cmdKey, alt, 'n' ], symbols: [ cmdSymbol, alt, 'N' ] },
 					]
 				},	
 			]
@@ -22,8 +23,43 @@ export default () => {
 
 		{
 			id: 'markdown',
-			name: 'Markdown',
+			name: translate('popupShortcutMarkdown'),
 			children: [
+				{
+					name: translate('popupShortcutMarkdownWhileTyping'),
+					children: [
+						{ name: translate('popupShortcutMarkdownWhileTyping1'), text: '` `' },
+						{ name: translate('popupShortcutMarkdownWhileTyping2'), text: `_ _ ${or} * *` },
+						{ name: translate('popupShortcutMarkdownWhileTyping3'), text: `_ ${or} *` },
+						{ name: translate('popupShortcutMarkdownWhileTyping4'), text: '~ ~' },
+
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟶'), text: '-->' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟵'), text: '<--' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟷'), text: '<-->' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '→'), text: '->' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '←'), text: '<-' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '—'), text: '--' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '®'), text: '(r)' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '™'), text: '(tm)' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '…'), text: '...' },
+					]
+				},
+				{
+					name: translate('popupShortcutMarkdownBeginningOfLine'),
+					children: [
+						{ name: translate('popupShortcutMarkdownBeginningOfLine1'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '#') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine2'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '##') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine3'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '###') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine4'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '"') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine5'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), `* ${or} + ${or} -`) },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine6'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '[]') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine7'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '1.') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine8'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '>') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine9'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '```') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine10'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '---') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine11'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '***') },
+					]
+				},
 			]
 		},
 

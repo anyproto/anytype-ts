@@ -1169,6 +1169,29 @@
 
 	"popupIndexComponentNotFound": "Component %s not found",
 
+	"popupShortcutMarkdown": "Markdown",
+
+	"popupShortcutMarkdownWhileTyping": "While typing",
+	"popupShortcutMarkdownWhileTyping1": "Inline code",
+	"popupShortcutMarkdownWhileTyping2": "Inline bold",
+	"popupShortcutMarkdownWhileTyping3": "Inline italic",
+	"popupShortcutMarkdownWhileTyping4": "Inline strikethrough",
+	"popupShortcutMarkdownWhileTypingInserts": "Inserts %s",
+
+	"popupShortcutMarkdownBeginningOfLine": "At the beginning of a new line",
+	"popupShortcutMarkdownBeginningOfLine1": "Create an H1 heading",
+	"popupShortcutMarkdownBeginningOfLine2": "Create an H2 heading",
+	"popupShortcutMarkdownBeginningOfLine3": "Create an H3 heading",
+	"popupShortcutMarkdownBeginningOfLine4": "Create a highlighted block",
+	"popupShortcutMarkdownBeginningOfLine5": "Create a bulleted list",
+	"popupShortcutMarkdownBeginningOfLine6": "Create a to-do checkbox",
+	"popupShortcutMarkdownBeginningOfLine7": "Create a numbered list",
+	"popupShortcutMarkdownBeginningOfLine8": "Create a toggle list",
+	"popupShortcutMarkdownBeginningOfLine9": "Create a code block",
+	"popupShortcutMarkdownBeginningOfLine10": "Create line divider",
+	"popupShortcutMarkdownBeginningOfLine11": "Create dots divider",
+	"popupShortcutMarkdownBeginningOfLineKey": "%s + Space",
+
 	"popupMigrationOnboardingTitle": "Congratulations!",
 	"popupMigrationOnboardingText1": "You're now using the new & improved version of Anytype.<br/>It's still encrypted, offline-first and the safest app for your personal information.",
 	"popupMigrationOnboardingText2": "The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
