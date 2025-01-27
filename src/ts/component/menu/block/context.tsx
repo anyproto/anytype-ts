@@ -34,6 +34,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const hasMore = !isInsideTable;
 		const canHaveMarks = block.canHaveMarks();
 		const cmd = keyboard.cmdSymbol();
+		const shift = keyboard.shiftSymbol();
 
 		const color = (
 			<div className={[ 'inner', 'textColor', 'textColor-' + (colorMark.param || 'default') ].join(' ')} />
@@ -45,7 +46,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		let markActions = [
 			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: `${cmd} + B` },
 			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: `${cmd} + I` },
-			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + Shift + S` },
+			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + ${shift} + S` },
 			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: `${cmd} + U` },
 			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: `${cmd} + K` },
 			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: `${cmd} + L` },
@@ -111,7 +112,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								className="color"
 								inner={color}
 								tooltip={translate('commonColor')}
-								tooltipCaption={`${cmd} + Shift + C`}
+								tooltipCaption={`${cmd} + ${shift} + C`}
 								tooltipY={I.MenuDirection.Top}
 								onMouseDown={e => this.onMark(e, I.MarkType.Color)} 
 							/>
@@ -121,7 +122,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								className="color"
 								inner={background} 
 								tooltip={translate('commonBackground')}
-								tooltipCaption={`${cmd} + Shift + H`}
+								tooltipCaption={`${cmd} + ${shift} + H`}
 								tooltipY={I.MenuDirection.Top}
 								onMouseDown={e => this.onMark(e, I.MarkType.BgColor)} 
 							/>

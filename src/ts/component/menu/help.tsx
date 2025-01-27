@@ -53,7 +53,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'shortcut': {
-				S.Popup.open('shortcut', {});
+				keyboard.onShortcut();
 				break;
 			};
 

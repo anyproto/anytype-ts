@@ -1,9 +1,41 @@
 import { U, translate, keyboard } from 'Lib';
 
 export default () => {
-	const cmd = keyboard.cmdSymbol();
+	const cmdSymbol = keyboard.cmdSymbol();
+	const cmdKey = keyboard.cmdKey();
 	const alt = keyboard.altSymbol();
+	const shift = keyboard.shiftSymbol();
 
+	return [
+		{
+			id: 'shortcut',
+			name: 'Keyboard Shortcuts',
+			children: [
+				{
+					name: 'Basics', children: [
+						{ name: 'Create New Object', keys: [ cmdKey, 'n' ], symbols: [ cmdSymbol, 'N' ] },
+						{ name: 'Select Type and Create Object', keys: [ cmdKey, alt, 'n' ], symbols: [ cmdSymbol, alt, 'N' ] },
+					]
+				},	
+			]
+		},
+
+		{
+			id: 'markdown',
+			name: 'Markdown',
+			children: [
+			]
+		},
+
+		{
+			id: 'command',
+			name: 'Command Menu',
+			children: [
+			]
+		},
+	];
+
+	/*
 	return [
 		{
 			id: 'main',
@@ -13,24 +45,24 @@ export default () => {
 					name: translate('popupShortcutBasics'), children: [
 						{ com: `${cmd} + N`,			 name: translate('popupShortcutMainBasics1') },
 						{ com: `${cmd} + ${alt} + N`,	 name: translate('popupShortcutMainBasics19') },
-						{ com: `${cmd} + Shift + N`,	 name: translate('popupShortcutMainBasics2') },
+						{ com: `${cmd} + ${shift} + N`,	 name: translate('popupShortcutMainBasics2') },
 						{ com: `${cmd} + Enter`,		 name: translate('popupShortcutMainBasics4') },
 						{ mac: `${cmd} + Ctrl + F`,		 com: `${cmd} + ${alt} + F`,	 name: translate('popupShortcutMainBasics5') },
 						{ com: `${cmd} + Z`,			 name: translate('popupShortcutMainBasics6') },
-						{ com: `${cmd} + Shift + Z`,	 name: translate('popupShortcutMainBasics7') },
+						{ com: `${cmd} + ${shift} + Z`,	 name: translate('popupShortcutMainBasics7') },
 						{ com: `${cmd} + P`,			 name: translate('popupShortcutMainBasics8') },
 						{ com: `${cmd} + F`,			 name: translate('popupShortcutMainBasics9') },
 						{ com: `${cmd} + Q`,			 name: translate('popupShortcutMainBasics10') },
 						{ mac: `${cmd} + Y`,			 com: 'Ctrl + H',			 name: translate('popupShortcutMainBasics11') },
-						{ com: 'Shift + Click',			 name: translate('popupShortcutMainBasics12') },
+						{ com: '${shift} + Click',			 name: translate('popupShortcutMainBasics12') },
 						{ com: `${cmd} + Click`,		 name: translate('popupShortcutMainBasics13') },
 						{ com: 'Ctrl + Space',		 	 name: translate('popupShortcutMainBasics14') },
 						{ com: `${cmd} + \\, ${cmd} + .`, name: translate('popupShortcutMainBasics15') },
 						{ com: `${cmd} + =`,			 name: translate('popupShortcutMainBasics16') },
 						{ com: `${cmd} + Minus`,		 name: translate('popupShortcutMainBasics17') },
 						{ com: `${cmd} + 0`,			 name: translate('popupShortcutMainBasics18') },
-						{ com: `Ctrl + Tab, Ctrl + Shift + Tab`, name: translate('popupShortcutMainBasics20') },
-						{ com: `${cmd} + Shift + M`, name: translate('popupShortcutMainBasics21') },
+						{ com: `Ctrl + Tab, Ctrl + ${shift} + Tab`, name: translate('popupShortcutMainBasics20') },
+						{ com: `${cmd} + ${shift} + M`, name: translate('popupShortcutMainBasics21') },
 						{ com: `${cmd} + ${alt} + L`, name: translate('popupShortcutMainBasics22') },
 					]
 				},
@@ -38,10 +70,10 @@ export default () => {
 				{
 					name: translate('popupShortcutMainStructuring'), children: [
 						{ com: 'Enter',				 name: translate('popupShortcutMainStructuring1') },
-						{ com: 'Shift + Enter',		 name: translate('popupShortcutMainStructuring2') },
+						{ com: `${shift} + Enter`,	 name: translate('popupShortcutMainStructuring2') },
 						{ com: 'Delete',			 name: translate('popupShortcutMainStructuring3') },
 						{ com: 'Tab',				 name: translate('popupShortcutMainStructuring4') },
-						{ com: 'Shift + Tab',		 name: translate('popupShortcutMainStructuring5') },
+						{ com: `${shift} + Tab`,	 name: translate('popupShortcutMainStructuring5') },
 					]
 				},
 
@@ -50,9 +82,9 @@ export default () => {
 						{ com: 'Double Click',			 name: translate('popupShortcutMainSelection1') },
 						{ com: 'Triple Click',			 name: translate('popupShortcutMainSelection2') },
 						{ com: `${cmd} + A`,			 name: translate('popupShortcutMainSelection3') },
-						{ com: 'Shift + ↑ or ↓',		 name: translate('popupShortcutMainSelection4') },
+						{ com: `${shift} + ↑ or ↓`,		 name: translate('popupShortcutMainSelection4') },
 						{ com: `${cmd} + Click`,		 name: translate('popupShortcutMainSelection5') },
-						{ com: 'Shift + Click',			 name: translate('popupShortcutMainSelection6') },
+						{ com: `${shift} + Click`,		 name: translate('popupShortcutMainSelection6') },
 					]
 				},
 
@@ -74,11 +106,11 @@ export default () => {
 						{ com: `${cmd} + B`,			 name: translate('popupShortcutMainTextStyle1') },
 						{ com: `${cmd} + I`,			 name: translate('popupShortcutMainTextStyle2') },
 						{ com: `${cmd} + U`,			 name: translate('popupShortcutMainTextStyle3') },
-						{ com: `${cmd} + Shift +S`,		 name: translate('popupShortcutMainTextStyle4') },
+						{ com: `${cmd} + ${shift} +S`,		 name: translate('popupShortcutMainTextStyle4') },
 						{ com: `${cmd} + K`,			 name: translate('popupShortcutMainTextStyle5') },
 						{ com: `${cmd} + L`,			 name: translate('popupShortcutMainTextStyle6') },
-						{ com: `${cmd} + Shift + C`,	 name: translate('popupShortcutMainTextStyle7') },
-						{ com: `${cmd} + Shift + H`,	 name: translate('popupShortcutMainTextStyle8') },
+						{ com: `${cmd} + ${shift} + C`,	 name: translate('popupShortcutMainTextStyle7') },
+						{ com: `${cmd} + ${shift} + H`,	 name: translate('popupShortcutMainTextStyle8') },
 					]
 				},
 			],
@@ -103,7 +135,7 @@ export default () => {
 				{
 					name: translate('popupShortcutNavigationMenu'), children: [
 						{ com: '↓ or Tab',			 name: translate('popupShortcutNavigationMenu1') },
-						{ com: '↑ or Shift + Tab',	 name: translate('popupShortcutNavigationMenu2') },
+						{ com: '↑ or ${shift} + Tab',	 name: translate('popupShortcutNavigationMenu2') },
 						{ com: '←',					 name: translate('popupShortcutNavigationMenu3') },
 						{ com: '→',					 name: translate('popupShortcutNavigationMenu4') },
 						{ com: 'Enter',				 name: translate('popupShortcutNavigationMenu5') },
@@ -112,15 +144,15 @@ export default () => {
 
 				{
 					name: translate('popupShortcutNavigationPage'), children: [
-						{ com: `${cmd} + Shift + T`, name: translate('popupShortcutNavigationPage1') },
+						{ com: `${cmd} + ${shift} + T`, name: translate('popupShortcutNavigationPage1') },
 						{ com: '↓',				 name: translate('popupShortcutNavigationPage2') },
 						{ com: '↑',				 name: translate('popupShortcutNavigationPage3') },
 						{ com: `${cmd} + ←`,	 name: translate('popupShortcutNavigationPage4') },
 						{ com: `${cmd} + →`,	 name: translate('popupShortcutNavigationPage5') },
 						{ com: `${cmd} + ↑`,	 name: translate('popupShortcutNavigationPage6') },
 						{ com: `${cmd} + ↓`,	 name: translate('popupShortcutNavigationPage7') },
-						{ com: `${cmd} + Shift + ↑↓`, name: translate('popupShortcutNavigationPage8') },
-						{ com: `${cmd} + Shift + R`, name: translate('popupShortcutNavigationPage9') },
+						{ com: `${cmd} + ${shift} + ↑↓`, name: translate('popupShortcutNavigationPage8') },
+						{ com: `${cmd} + ${shift} + R`, name: translate('popupShortcutNavigationPage9') },
 						{ com: `${cmd} + Enter`, name: translate('popupShortcutNavigationPage10') },
 					]
 				},
@@ -223,4 +255,5 @@ export default () => {
 			],
 		},
 	];
+	*/
 };

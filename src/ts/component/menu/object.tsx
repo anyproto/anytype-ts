@@ -94,6 +94,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
 		const cmd = keyboard.cmdSymbol();
+		const shift = keyboard.shiftSymbol();
 		const isTemplate = U.Object.isTemplate(object.type);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isChat = U.Object.isChatLayout(object.layout);
@@ -144,9 +145,9 @@ class MenuObject extends React.Component<I.Menu> {
 
 		if (block) {
 			if (block.isLocked()) {
-				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: `Ctrl + Shift + L` };
+				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: `Ctrl + ${shift} + L` };
 			} else {
-				pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: `Ctrl + Shift + L` };
+				pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: `Ctrl + ${shift} + L` };
 			};
 		};
 

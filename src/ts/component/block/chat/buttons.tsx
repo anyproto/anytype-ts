@@ -199,6 +199,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		const { getMarksAndRange } = this.props;
 		const { marks, range } = getMarksAndRange();
 		const cmd = keyboard.cmdSymbol();
+		const shift = keyboard.shiftSymbol();
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 
@@ -212,12 +213,12 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		return [
 			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: `${cmd} + B` },
 			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: `${cmd} + I` },
-			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + Shift + S` },
+			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + ${shift} + S` },
 			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: `${cmd} + U` },
 			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: `${cmd} + K` },
 			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: `${cmd} + L` },
-			//{ type: I.MarkType.Color, icon: 'color', name: translate('commonColor'), caption: `${cmd} + Shift + C`, inner: color },
-			//{ type: I.MarkType.BgColor, icon: 'color', name: translate('commonBackground'), caption: `${cmd} + Shift + H`, inner: background },
+			//{ type: I.MarkType.Color, icon: 'color', name: translate('commonColor'), caption: `${cmd} + ${shift} + C`, inner: color },
+			//{ type: I.MarkType.BgColor, icon: 'color', name: translate('commonBackground'), caption: `${cmd} + ${shift} + H`, inner: background },
 		].map((it: any) => {
 			it.isActive = false;
 			if (it.type == I.MarkType.Link) {

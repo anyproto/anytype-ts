@@ -179,11 +179,6 @@ class Keyboard {
 
 		if (isMain) {
 
-			// Shortcuts
-			this.shortcut('ctrl+space', e, () => {
-				S.Popup.open('shortcut', {});
-			});
-
 			// Print
 			this.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
@@ -247,6 +242,10 @@ class Keyboard {
 				if (pin) {
 					Renderer.send('pinCheck');
 				};
+			});
+
+			this.shortcut(`${cmd}+alt+n`, e, () => {
+				$('#widget-space #widget-space-arrow').trigger('click');
 			});
 
 			// Object id
@@ -451,6 +450,11 @@ class Keyboard {
 		switch (cmd) {
 			case 'search': {
 				this.onSearchMenu('', route);
+				break;
+			};
+
+			case 'shortcut': {
+				this.onShortcut();
 				break;
 			};
 
@@ -860,6 +864,14 @@ class Keyboard {
 		});
 	};
 
+	onShortcut () {
+		if (!S.Popup.isOpen('shortcut')) {
+			S.Popup.open('shortcut', { preventResize: true });
+		} else {
+			S.Popup.close('shortcut');
+		};
+	};
+
 	onLock (rootId: string, v: boolean, route?: string) {
 		const block = S.Block.getLeaf(rootId, rootId);
 		if (!block) {
@@ -1199,6 +1211,10 @@ class Keyboard {
 
 	altSymbol () {
 		return U.Common.isPlatformMac() ? '&#8997;' : 'Alt';
+	};
+
+	shiftSymbol () {
+		return '&#x21E7;';
 	};
 
 	cmdKey () {

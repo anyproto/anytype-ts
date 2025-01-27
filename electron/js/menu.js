@@ -179,7 +179,7 @@ class MenuManager {
 					},
 					{
 						label: Util.translate('electronMenuShortcuts'), accelerator: 'Ctrl+Space',
-						click: () => Util.send(this.win, 'popup', 'shortcut', {})
+						click: () => Util.send(this.win, 'commandGlobal', 'shortcut')
 					},
 
 					Separator,
