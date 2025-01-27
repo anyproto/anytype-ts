@@ -52,39 +52,39 @@ export default [
 
 	h2(`Quality-of-Life`),
 	text(``),
-	text(`<b>Add Existing Objects to a Collection</b>`),
+	h3(`Add Existing Objects to a Collection`),
 	text(`We’ve added an option to add existing Objects into a Collection. Look for it in the updated arrow menu alongside other content settings.`),
 	img(`45/5.png`, `c50`),
 	text(``),
 
-	text(`<b>Horizontal Alignment in Grid Layout</b>`),
+	h3(`Horizontal Alignment in Grid Layout`),
 	text(`Columns in the Grid layout can now be aligned left, center, or right.`),
 	img(`45/6.png`, `c60`),
 	text(``),
 
-	text(`<b>Simplified Widget Settings Menu</b>`),
+	h3(`Simplified Widget Settings Menu`),
 	bullet(`Appearance options are now limited to changing the widget’s view (Compact List, List, View, Link).`),
 	bullet(`The "Number of Objects" setting has moved to its own section.`),
 	img(`45/7.png`, `c40`),
 	text(``),
 
-	text(`<b>Clickable Links in Kroki Diagrams</b>`),
+	h3(`Clickable Links in Kroki Diagrams`),
 	text(`Kroki embed blocks now support links within diagrams. Thanks to @${link('https://community.anytype.io/t/kroki-links-are-not-usable/25543', 'siousu')} for the suggestion!`),
 	text(``),
 
-	text(`<b>Improved Dark Mode Text Selection</b>`),
+	h3(`Improved Dark Mode Text Selection`),
 	text(`We tweaked the selection color for better visibility. Shout-out to @${link('https://community.anytype.io/t/selected-text-background-color-on-a-given-object-heavily-dependent-on-monitor-settings/25509', 'kermit_frog')} for flagging this!`),
 	text(``),
 
-	text(`<b>Inline Set Header Resize Adjustments</b>`),
+	h3(`Inline Set Header Resize Adjustments`),
 	text(`Inline Set headers now adapt when resizing to keep controls from overlapping neighboring blocks.`),
 	text(``),
 
-	text(`<b>Better Image Pasting on macOS Safari</b>`),
+	h3(`Better Image Pasting on macOS Safari`),
 	text(`Images copied from Safari will now paste into the object editor as files instead of URLs.`),
 	text(``),
 
-	text(`<b>Standardized QR Code Appearance</b>`),
+	h3(`Standardized QR Code Appearance`),
 	text(`All QR codes in Anytype now follow a consistent style.`),
 	text(``),
 
