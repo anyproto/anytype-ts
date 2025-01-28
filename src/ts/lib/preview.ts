@@ -132,6 +132,13 @@ class Preview {
 			window.clearTimeout(this.timeout.delay);
 			this.timeout.delay = window.setTimeout(() => this.delayTooltip = delay, 500);
 			this.delayTooltip = 100;
+
+			win.off('click.tooltip').on('click.tooltip', () => {
+				this.tooltipHide(true);
+
+				win.off('click.tooltip');
+			});
+
 		}, this.delayTooltip);
 	};
 
