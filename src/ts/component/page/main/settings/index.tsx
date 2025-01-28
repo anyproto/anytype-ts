@@ -79,6 +79,10 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	pinConfirmed = false;
 	onConfirmPin: any = null;
 
+	state = {
+		loading: false,
+	};
+
 	constructor (props: I.PageComponent) {
 		super(props);
 
@@ -156,8 +160,8 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		});
 	};
 
-	setLoading () {
-
+	setLoading (v: boolean) {
+		this.setState({ loading: v });
 	};
 
 });

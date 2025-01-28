@@ -349,8 +349,8 @@ class Sidebar {
 		ref.setState({ page });
 	};
 
-	settingsOpen (page?: string) {
-		U.Router.go(`/main/settings/${page || ''}`, {});
+	settingsOpen (id?: string) {
+		U.Router.go(`/main/settings/${id || ''}`, {});
 
 		window.setTimeout(() => {
 			this.objectContainerSwitch('settings');

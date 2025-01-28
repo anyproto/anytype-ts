@@ -166,10 +166,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		// Membership route
-		if (pathname.match('/membership')) {
-			ret.params.page = 'main';
-			ret.params.action = 'membership';
-		};
+		// if (pathname.match('/membership')) {
+		// 	ret.params.page = 'main';
+		// 	ret.params.action = 'membership';
+		// };
 
 		return ret;
 	};
