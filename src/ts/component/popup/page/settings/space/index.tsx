@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
-import { I, C, S, U, J, translate, Preview, analytics, Action, Storage } from 'Lib';
+import { I, C, S, U, J, translate, Preview, analytics, Action, Storage, sidebar } from 'Lib';
 
 interface State {
 	error: string;
@@ -513,7 +513,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			Action.membershipUpgrade();
 		} else {
 			this.props.close(() => {
-				S.Popup.open('settings', { data: { page: 'membership' } });
+				sidebar.settingsOpen('membership');
 			});
 		};
 

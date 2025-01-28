@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
-import { I, C, S, U, translate, Preview, Action, analytics, } from 'Lib';
+import { I, C, S, U, translate, Preview, Action, analytics, sidebar, } from 'Lib';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 
@@ -296,7 +296,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			Action.membershipUpgrade();
 		} else {
 			this.props.close(() => {
-				S.Popup.open('settings', { data: { page: 'membership' } });
+				sidebar.settingsOpen('membership');
 			});
 		};
 

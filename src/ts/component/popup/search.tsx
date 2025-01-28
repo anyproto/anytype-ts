@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, EmptySearch, Label, Filter } from 'Component';
-import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark, sidebar } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -823,7 +823,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			// Settings item
 			if (item.isSettings) {
-				S.Popup.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
+				sidebar.settingsOpen(item.id);
 			} else 
 
 			// Import action
