@@ -4,7 +4,6 @@ import raf from 'raf';
 import { I, S, U, analytics, Storage, Preview, translate, sidebar } from 'Lib';
 import { Dimmer } from 'Component';
 
-import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
 import PopupSearch from './search';
 import PopupHelp from './help';
@@ -52,7 +51,6 @@ class Popup extends React.Component<I.Popup> {
 		const { className } = param;
 
 		const Components: any = {
-			settings:				 PopupSettings,
 			settingsOnboarding:		 PopupSettingsOnboarding,
 			search:					 PopupSearch,
 			confirm:				 PopupConfirm,
