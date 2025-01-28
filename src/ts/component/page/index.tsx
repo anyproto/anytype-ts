@@ -166,6 +166,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		// Membership route
+		// need to investigate the reason of this
+
 		// if (pathname.match('/membership')) {
 		// 	ret.params.page = 'main';
 		// 	ret.params.action = 'membership';
