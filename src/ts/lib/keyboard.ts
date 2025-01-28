@@ -1217,6 +1217,14 @@ class Keyboard {
 		};
 	};
 
+	getCaption (id: string) {
+		let ret = '';
+		if (this.shortcuts[id]) {
+			ret = this.shortcuts[id].symbols.join(' + ').toUpperCase();
+		};
+		return ret;
+	};
+
 	cmdSymbol () {
 		return U.Common.isPlatformMac() ? '&#8984;' : 'Ctrl';
 	};

@@ -86,14 +86,14 @@ const getSections = () => {
 
 				{
 					name: translate('popupShortcutMainTextStyle'), children: [
-						{ name: translate('popupShortcutMainTextStyle1'), keys: [ cmdKey, 'b' ] },
-						{ name: translate('popupShortcutMainTextStyle2'), keys: [ cmdKey, 'i' ] },
-						{ name: translate('popupShortcutMainTextStyle3'), keys: [ cmdKey, 'u' ] },
-						{ name: translate('popupShortcutMainTextStyle4'), keys: [ cmdKey, 'shift', 's' ] },
-						{ name: translate('popupShortcutMainTextStyle5'), keys: [ cmdKey, 'k' ] },
-						{ name: translate('popupShortcutMainTextStyle6'), keys: [ cmdKey, 'l' ] },
-						{ name: translate('popupShortcutMainTextStyle7'), keys: [ cmdKey, 'shift', 'c' ] },
-						{ name: translate('popupShortcutMainTextStyle8'), keys: [ cmdKey, 'shift', 'h' ] },
+						{ id: 'textBold', name: translate('popupShortcutMainTextStyle1'), keys: [ cmdKey, 'b' ] },
+						{ id: 'textItalic', name: translate('popupShortcutMainTextStyle2'), keys: [ cmdKey, 'i' ] },
+						{ id: 'textUnderlined', name: translate('popupShortcutMainTextStyle3'), keys: [ cmdKey, 'u' ] },
+						{ id: 'textStrike', name: translate('popupShortcutMainTextStyle4'), keys: [ cmdKey, 'shift', 's' ] },
+						{ id: 'textLink', name: translate('popupShortcutMainTextStyle5'), keys: [ cmdKey, 'k' ] },
+						{ id: 'textCode', name: translate('popupShortcutMainTextStyle6'), keys: [ cmdKey, 'l' ] },
+						{ id: 'textColor', name: translate('popupShortcutMainTextStyle7'), keys: [ cmdKey, 'shift', 'c' ] },
+						{ id: 'textBackground', name: translate('popupShortcutMainTextStyle8'), keys: [ cmdKey, 'shift', 'h' ] },
 					]
 				},
 			]
