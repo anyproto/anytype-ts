@@ -30,9 +30,12 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	render () {
-		const { getId, setHover } = this.props;
+		const { getId, setHover, param } = this.props;
+		const { data } = param;
+		const { getView } = data;
 		const isReadonly = this.isReadonly();
 		const items = this.getItems();
+		const view = getView();
 
 		items.map((it: any) => {
 			const { format, name } = it.relation;
@@ -43,7 +46,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		));
 
 		const Item = SortableElement((item: any) => {
-			const canHide = !isReadonly && (item.relationKey != 'name');
+			const isName = item.relationKey == 'name';
+			const canHide = !isReadonly && (!isName || (view.type == I.ViewType.Gallery));
 			const cn = [ 'item' ];
 			
 			if (item.relation.isHidden) {
