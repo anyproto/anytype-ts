@@ -195,8 +195,6 @@ class PageMainSettingsImportCsv extends React.Component<I.PopupSettings, State> 
 				this.setState({ error: message.error.description });
 				return;
 			};
-
-			this.props.close();
 		});
 	};
 

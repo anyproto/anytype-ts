@@ -56,22 +56,6 @@ class PageMainSettingsImportNotionHelp extends React.Component<I.PopupSettings> 
 		);
 	};
 
-	componentWillUnmount (): void {
-		const { getId } = this.props;
-		const obj = $(`#${getId()}-innerWrap`);
-
-		obj.css({ width: '', height: '' }).removeClass('scroll');
-	};
-
-	resize () {
-		const { getId } = this.props;
-		const obj = $(`#${getId()}-innerWrap`);
-		const { ww, wh } = U.Common.getWindowDimensions();
-		const width = Math.min(888, ww - 32);
-
-		obj.css({ width, height: wh - 96 }).addClass('scroll');
-	};
-
 };
 
 export default PageMainSettingsImportNotionHelp;

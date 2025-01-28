@@ -106,11 +106,12 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		const Component = Components[id];
 
 		return (
-			<div className="settingsPageContainer">
+			<div className="settingsPageContainer" id="settingsPageContainer">
 				<div className={U.Common.toCamelCase(`pageSettings-${id}`)}>
 					<Component
 						ref={ref => this.ref = ref}
 						{...this.props}
+						getId={this.getId}
 						prevPage={this.prevPage}
 						onPage={this.onPage}
 						onExport={this.onExport}
@@ -162,6 +163,10 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 	setLoading (v: boolean) {
 		this.setState({ loading: v });
+	};
+
+	getId () {
+		return 'settingsPageContainer';
 	};
 
 });

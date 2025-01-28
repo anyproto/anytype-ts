@@ -497,12 +497,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onDelete () {
-		this.props.close(() => {
-			Action.removeSpace(S.Common.space, 'Settings', (message: any) => {
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-				};
-			});
+		Action.removeSpace(S.Common.space, 'Settings', (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+			};
 		});
 	};
 
@@ -512,9 +510,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		if (membership.tier >= I.TierType.CoCreator) {
 			Action.membershipUpgrade();
 		} else {
-			this.props.close(() => {
-				sidebar.settingsOpen('membership');
-			});
+			this.props.onPage('membership');
 		};
 
 		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });

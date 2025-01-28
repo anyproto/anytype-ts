@@ -39,14 +39,13 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 	};
 
 	onClick (id: string) {
-		const { onPage, close } = this.props;
+		const { onPage } = this.props;
 		const items = this.getItems();
 		const item = items.find(it => it.id == id);
 		const common = [ I.ImportType.Html, I.ImportType.Text, I.ImportType.Protobuf, I.ImportType.Markdown ];
 
 		if (common.includes(item.format)) {
 			Action.import(item.format, J.Constant.fileExtension.import[item.format]);
-			close();
 		} else {
 			onPage(U.Common.toCamelCase('import-' + item.id));
 		};

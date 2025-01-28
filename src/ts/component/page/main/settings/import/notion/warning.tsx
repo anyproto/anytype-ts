@@ -32,11 +32,8 @@ class PageMainSettingsImportNotionWarning extends React.Component<I.PopupSetting
 	};
 
 	onImport (): void {
-		const { id, close } = this.props;
-
 		analytics.event('ImportNotionProceed');
 
-		close();
 		C.ObjectImport(S.Common.space, { apiKey: S.Common.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, false);
 	};
 

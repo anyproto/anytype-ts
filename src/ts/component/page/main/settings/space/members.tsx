@@ -125,13 +125,9 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	resize () {
-		const { position } = this.props;
-
 		if (this.refList) {
 			this.refList.recomputeRowHeights(0);
 		};
-
-		position();
 	};
 
 });

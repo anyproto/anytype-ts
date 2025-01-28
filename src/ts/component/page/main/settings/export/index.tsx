@@ -60,10 +60,9 @@ const PageMainSettingsExportIndex = observer(class PageMainSettingsExportIndex e
 	};
 
 	onExportCommon (type: I.ExportType, options?: any) {
-		const { close, onExport } = this.props;
+		const { onExport } = this.props;
 
 		onExport(type, options);
-		close();
 	};
 
 	onExportProtobuf () {

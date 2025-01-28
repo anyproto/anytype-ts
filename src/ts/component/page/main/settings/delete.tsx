@@ -65,8 +65,6 @@ const PageMainSettingsDelete = observer(class PageMainSettingsDelete extends Rea
 			S.Auth.accountSetStatus(message.status);
 			S.Menu.closeAllForced();
 
-			this.props.close();
-
 			U.Router.go('/auth/deleted', { replace: true });
 			analytics.event('DeleteAccount');
 		});

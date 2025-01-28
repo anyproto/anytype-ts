@@ -295,9 +295,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		if (membership.tier >= I.TierType.Builder) {
 			Action.membershipUpgrade();
 		} else {
-			this.props.close(() => {
-				sidebar.settingsOpen('membership');
-			});
+			this.props.onPage('membership');
 		};
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.settingsSpaceShare });
@@ -544,23 +542,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 	
 	resize () {
-		const { position, getId } = this.props;
-		const node = $(this.node);
-		const obj = $(`#${getId()}-innerWrap`);
-		const head = node.find('.head');
-		const titleWrapper = node.find('#titleWrapper');
-		const sectionInvite = node.find('#sectionInvite');
-		const sectionMember = node.find('#sectionMembers');
-		const buttons = node.find('#buttons');
-		const mh = obj.height() - head.outerHeight(true) - titleWrapper.outerHeight(true) - sectionInvite.outerHeight(true) - buttons.outerHeight(true) - 80;
-
-		sectionMember.css({ minHeight: mh });
-
 		if (this.refList) {
 			this.refList.recomputeRowHeights(0);
 		};
-
-		position();
 	};
 
 });
