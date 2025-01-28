@@ -1195,6 +1195,16 @@
 	"popupShortcutMainBasics22": "Lock Anytype",
 	"popupShortcutMainBasics23": "Previous Space",
 
+	"popupShortcutMainTextStyle": "Text style",
+	"popupShortcutMainTextStyle1": "Bold",
+	"popupShortcutMainTextStyle2": "Italic",
+	"popupShortcutMainTextStyle3": "Underline",
+	"popupShortcutMainTextStyle4": "Strikethrough",
+	"popupShortcutMainTextStyle5": "Add a link",
+	"popupShortcutMainTextStyle6": "Convert to inline code",
+	"popupShortcutMainTextStyle7": "Apply previously selected font color",
+	"popupShortcutMainTextStyle8": "Apply previously selected highlight",
+
 	"popupShortcutNavigation": "Navigation",
 	"popupShortcutObject": "Object Actions",
 	"popupShortcutNavigationBasics1": "Open Settings",

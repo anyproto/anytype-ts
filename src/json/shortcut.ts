@@ -83,6 +83,19 @@ const getSections = () => {
 						{ id: 'searchText', name: translate('popupShortcutMainBasics9'), keys: [ cmdKey, 'f' ] },
 					]
 				},
+
+				{
+					name: translate('popupShortcutMainTextStyle'), children: [
+						{ name: translate('popupShortcutMainTextStyle1'), keys: [ cmdKey, 'b' ] },
+						{ name: translate('popupShortcutMainTextStyle2'), keys: [ cmdKey, 'i' ] },
+						{ name: translate('popupShortcutMainTextStyle3'), keys: [ cmdKey, 'u' ] },
+						{ name: translate('popupShortcutMainTextStyle4'), keys: [ cmdKey, 'shift', 's' ] },
+						{ name: translate('popupShortcutMainTextStyle5'), keys: [ cmdKey, 'k' ] },
+						{ name: translate('popupShortcutMainTextStyle6'), keys: [ cmdKey, 'l' ] },
+						{ name: translate('popupShortcutMainTextStyle7'), keys: [ cmdKey, 'shift', 'c' ] },
+						{ name: translate('popupShortcutMainTextStyle8'), keys: [ cmdKey, 'shift', 'h' ] },
+					]
+				},
 			]
 		},
 
@@ -330,19 +343,6 @@ Apply previously selected highlight
 						{ com: `${cmd} + V`,			 name: translate('popupShortcutMainActions6') },
 						{ com: `${cmd} + D`,			 name: translate('popupShortcutMainActions7') },
 						{ com: `${cmd} + E`,			 name: translate('popupShortcutMainActions8') + ' 🏄‍♂' },
-					]
-				},
-
-				{
-					name: translate('popupShortcutMainTextStyle'), children: [
-						{ com: `${cmd} + B`,			 name: translate('popupShortcutMainTextStyle1') },
-						{ com: `${cmd} + I`,			 name: translate('popupShortcutMainTextStyle2') },
-						{ com: `${cmd} + U`,			 name: translate('popupShortcutMainTextStyle3') },
-						{ com: `${cmd} + ${shift} +S`,		 name: translate('popupShortcutMainTextStyle4') },
-						{ com: `${cmd} + K`,			 name: translate('popupShortcutMainTextStyle5') },
-						{ com: `${cmd} + L`,			 name: translate('popupShortcutMainTextStyle6') },
-						{ com: `${cmd} + ${shift} + C`,	 name: translate('popupShortcutMainTextStyle7') },
-						{ com: `${cmd} + ${shift} + H`,	 name: translate('popupShortcutMainTextStyle8') },
 					]
 				},
 			],

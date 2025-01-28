@@ -269,10 +269,12 @@ class Keyboard {
 
 			if (canWrite) {
 				// Create new page
-				this.shortcut('createObject', e, () => {
-					e.preventDefault();
-					this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
-				});
+				if (!S.Popup.isOpen('search')) {
+					this.shortcut('createObject', e, () => {
+						e.preventDefault();
+						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+					});
+				};
 
 				// Lock/Unlock
 				this.shortcut(`ctrl+shift+l`, e, () => {
