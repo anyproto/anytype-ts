@@ -79,9 +79,9 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	render () {
 		const pathname = U.Router.getRoute();
 		const param = U.Router.getParam(pathname);
-		const { id } = param;
+		const id = param.id || 'account';
 
-		if (!id || !Components[id]) {
+		if (!Components[id]) {
 			return;
 		};
 
@@ -89,7 +89,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 		return (
 			<div className="settingsPageContainer">
-				<div className={U.Common.toCamelCase(`tab-${id}`)}>
+				<div className={U.Common.toCamelCase(`pageSettings-${id}`)}>
 					<Component
 						ref={ref => this.ref = ref}
 						{...this.props}
