@@ -80,3 +80,97 @@
 		}
 	}
 }
+
+/* PageMainSettings */
+.settingsPageContainer {
+	.pageSettingsSpaceIndex {
+		.sections {
+			.section {
+				.sectionContent {
+					.item {
+						.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+					}
+				}
+			}
+		}
+		.sections {
+			.section {
+				.sectionContent {
+					.item {
+						.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+					}
+				}
+			}
+		}
+	}
+
+	.pageSettingsSpaceIndex .sectionIntegrations .item:hover,
+	.pageSettingsPinIndex .actionItems > .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
+
+	.pageSettingsImportNotion {
+		.btn {
+			.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help0.svg'); }
+		}
+		.btn:hover {
+			.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help1.svg'); }
+		}
+	}
+
+	.pageSettingsImportNotion,
+	.pageSettingsImportNotionHelp {
+		.icon.logo { background-image: url('#{$themePath}/icon/import/notion.svg'); }
+	}
+
+	.pageSettingsAppearance {
+		.btn.light {
+			.bg { background-color: #fff; }
+		}
+
+		.btn.dark {
+			.bg { background: var(--color-bg-primary); box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
+			.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
+		}
+		.btn.system {
+			.bg::before, .bg::after {
+				content: ''; position: absolute; top: 0px; width: 50%; height: 100%;
+			}
+			.bg::before { background: var(--color-control-bg); }
+			.bg::after { background: var(--color-bg-primary); box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
+			.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
+		}
+
+		.btn.active {
+			.bg { box-shadow: 0px 0px 0px 2px var(--color-system-accent-25); }
+		}
+		.btn.system.active {
+			.bg::before { box-shadow: 0px 0px; }
+		}
+	}
+
+	.pageSettingsImportIndex,
+	.pageSettingsExportIndex {
+		.item:hover { border-color: var(--color-shape-primary); }
+	}
+
+	.pageSettingsMembership {
+		.slide { background: var(--color-shape-tertiary) !important; }
+		.slide.c0 {
+			.illustration { background: url('#{$themePath}/icon/payment/slide0.svg'); }
+		}
+		.slide.c1 {
+			.illustration { background: url('#{$themePath}/icon/payment/slide1.svg'); }
+		}
+		.slide.c2 {
+			.illustration { background: url('#{$themePath}/icon/payment/slide2.svg'); }
+		}
+		.slide.c3 {
+			.illustration { background: url('#{$themePath}/icon/payment/slide3.svg'); }
+		}
+		.tiers {
+			.tier { background: var(--color-shape-tertiary) !important; }
+		}
+		.actionItems {
+			.icon { background-image: url('#{$themePath}/icon/payment/hyperlink.svg'); }
+		}
+	}
+}
