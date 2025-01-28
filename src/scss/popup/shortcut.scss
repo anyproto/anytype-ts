@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .popups {
-	.popup.popupShortcut * { user-select: text !important; }
+	.popup.popupShortcut * { user-select: text !important; user-select: none; }
 	.popup.popupShortcut {
 		.innerWrap { 
 			width: 336px; height: 100%; overflow: visible; left: auto; top: 0px; right: 0px; border-radius: 0px; 
@@ -33,7 +33,18 @@
 			.section {
 				> .name { padding: 9px 8px; @include text-small; color: var(--color-text-secondary); }
 
+<<<<<<< Updated upstream
 				.item { padding: 6px 8px; display: flex; flex-direction: row; align-items: center; border-radius: 6px; gap: 0px 8px; }
+=======
+<<<<<<< Updated upstream
+				.items {
+					.item { display: flex; flex-direction: row; padding: 12px 0px; border-bottom: 1px solid var(--color-shape-secondary); }
+					.item {
+						.key { flex-basis: 30%; flex-shrink: 0; font-weight: 500; color: var(--color-control-active); }
+						.descr { flex: 1; padding-left: 14px; }
+=======
+				.item { padding: 6px 8px; display: flex; flex-direction: row; align-items: center; border-radius: 6px; gap: 0px 8px; cursor: default; }
+>>>>>>> Stashed changes
 				.item:hover, .item.hover { background: var(--color-shape-highlight-medium); }
 				.item {
 					.name { flex-grow: 1; }
@@ -47,6 +58,10 @@
 							background: var(--color-shape-tertiary); border-radius: 4px; height: 24px; padding: 0px 4px; min-width: 24px;
 							display: flex; flex-direction: row; align-items: center; justify-content: center; text-transform: uppercase;
 						}
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 					}
 				}
 			}
