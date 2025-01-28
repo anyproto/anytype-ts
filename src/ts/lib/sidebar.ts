@@ -349,6 +349,14 @@ class Sidebar {
 		ref.setState({ page });
 	};
 
+	settingsOpen (page?: string) {
+		U.Router.go(`/main/settings/${page || ''}`, {});
+
+		window.setTimeout(() => {
+			this.objectContainerSwitch('settings');
+		}, 5);
+	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();

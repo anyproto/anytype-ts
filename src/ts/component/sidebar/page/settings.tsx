@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { S, translate, U } from 'Lib';
+import { S, sidebar, translate, U } from 'Lib';
 import { Icon, IconObject } from 'Component';
 
 const SidebarSettings = observer(class SidebarSettings extends React.Component<{}, {}> {
@@ -12,6 +12,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 		const sections = this.getSections();
 		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant() || profile;
+		const pathname = U.Router.getRoute();
+		const param = U.Router.getParam(pathname);
 
 		const Item = (action: any) => {
 			const cn = [ 'item' ];
@@ -19,6 +21,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 			let icon = null;
 			let name = null;
 			let caption = null;
+
+			if (action.id == param.id) {
+				cn.push('active');
+			};
 
 			if (action.id == 'account') {
 				if (participant) {
@@ -111,7 +117,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 	};
 
 	onPage (page) {
-		U.Router.go(`/main/settings/${page}`, {});
+		sidebar.settingsOpen(page);
 	};
 });
 
