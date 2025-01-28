@@ -144,7 +144,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	if (isStatusLoaded && isOnline) {
 		if (status === null) {
-			buttons.push({ text: translate('menuPublishButtonPublish'), ref: publishRef, onClick: onPublish });
+			buttons.push({ text: translate('menuPublishButtonPublish'), ref: publishRef, onClick: () => onPublish() });
 		} else {
 			buttons = buttons.concat([
 				{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
