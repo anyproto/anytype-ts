@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding } from 'Lib';
+import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding, sidebar } from 'Lib';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -33,6 +33,7 @@ import PageSpaceMembers from './space/members';
 import PageSpaceList from './space/list';
 
 import PageMembership from './membership';
+import $ from 'jquery';
 
 interface State {
 	loading: boolean;
@@ -75,6 +76,19 @@ const Components: any = {
 const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
 
 	ref: any = null;
+	pinConfirmed = false;
+	onConfirmPin: any = null;
+
+	constructor (props: I.PageComponent) {
+		super(props);
+
+		this.onPage = this.onPage.bind(this);
+		this.onExport = this.onExport.bind(this);
+		this.setConfirmPin = this.setConfirmPin.bind(this);
+		this.setPinConfirmed = this.setPinConfirmed.bind(this);
+		this.onSpaceTypeTooltip = this.onSpaceTypeTooltip.bind(this);
+		this.setLoading = this.setLoading.bind(this);
+	};
 
 	render () {
 		const pathname = U.Router.getRoute();
@@ -108,34 +122,41 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	};
 
 	prevPage () {
-
+		keyboard.onBack();
 	};
 
-	onPage () {
-
+	onPage (id: string) {
+		sidebar.settingsOpen(id);
 	};
 
-	onExport () {
-
+	onExport (type: I.ExportType, param: any) {
+		analytics.event('ClickExport', { type, route: analytics.route.settings });
+		Action.export(S.Common.space, [], type, { ...param, route: analytics.route.settings }, () => {
+			// callback?
+		});
 	};
 
-	onConfirmPin () {
-
+	setConfirmPin (v: () => void) {
+		this.onConfirmPin = v;
+		this.forceUpdate();
 	};
 
-	setConfirmPin () {
-
+	setPinConfirmed (v: boolean) {
+		this.pinConfirmed = v;
 	};
 
-	setPinConfirmed () {
-
+	onSpaceTypeTooltip (e) {
+		Preview.tooltipShow({
+			title: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle'),
+			text: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipText'),
+			className: 'big',
+			element: $(e.currentTarget),
+			typeY: I.MenuDirection.Bottom,
+			typeX: I.MenuDirection.Left,
+		});
 	};
 
 	setLoading () {
-
-	};
-
-	onSpaceTypeTooltip () {
 
 	};
 
