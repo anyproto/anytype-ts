@@ -45,7 +45,7 @@ const PageMainSettingsLogout = observer(class PageMainSettingsLogout extends Rea
 
 				<div className="buttons">
 					<Button className="c36" text={translate('popupSettingsPhraseBackup')} onClick={this.onCopy} />
-					<Button color="red" className="c36" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
+					<Button color="red" className="c36" text={translate('commonLogout')} onClick={this.onLogout} />
 				</div>
 			</div>
 		);

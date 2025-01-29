@@ -8,7 +8,7 @@
         gap: 0px 8px; overflow: hidden;
     }
 
-    > .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: scroll; overscroll-behavior: none; }
+    > .body { display: flex; flex-direction: column; justify-content: space-between; height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: scroll; overscroll-behavior: none; }
     > .body {
         .list { display: flex; flex-direction: column; gap: 12px 0px; padding: 8px; border-radius: 12px; background: var(--color-bg-primary); }
         .list {
@@ -38,6 +38,11 @@
                 .iconObject { flex-shrink: 0; }
                 .name { @include text-common; @include text-overflow-nw; font-weight: 600; }
             }
+        }
+
+        .logout { display: flex; align-content: center; justify-content: center; gap: 0px 8px; }
+        .logout {
+            .icon { width: 20px; height: 20px; background-size: 20px; margin-left: -8px; background-image: url('~img/icon/popup/settings/logout.svg'); }
         }
     }
 }

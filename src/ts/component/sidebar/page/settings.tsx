@@ -26,10 +26,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 				cn.push('active');
 			};
 
-			if (action.id == 'account') {
+			if (action.id == 'spaceIndex') {
 				if (participant) {
-					name = participant?.globalName || participant?.name;
-					icon = <IconObject object={{ ...participant, name }} size={36} iconSize={36} />;
+					name = space?.name;
+					icon = <IconObject object={{ ...space, spaceId: S.Common.space, name }} size={36} iconSize={36} />;
 				};
 
 				cn.push('itemAccount');
@@ -83,6 +83,11 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 							<Section key={i} {...item} />
 						))}
 					</div>
+
+					<div className="logout" onClick={() => this.onPage('logout')}>
+						<Icon />
+						{translate('commonLogout')}
+					</div>
 				</div>
 			</div>
 		);
@@ -100,9 +105,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 		};
 
 		return [
-			{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
+			{ id: 'space', children: [ { id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') } ] },
 			{
 				name: translate('popupSettingsApplicationTitle'), children: [
+					{ id: 'account', name: translate('popupSettingsProfileTitle') },
 					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 					{ id: 'appearance', name: translate('popupSettingsColorMode') },
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },

@@ -184,6 +184,7 @@
 	"commonOpenType": "Open Type",
 	"commonManage": "Manage",
 	"commonSize": "Size",
+	"commonLogout": "Log out",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -860,8 +861,6 @@
 
 	"popupSettingsExportProtobufTitle": "Export Space to Any-Block",
 	"popupSettingsExportProtobufFormat": "File Format",
-
-	"popupSettingsLogout": "Log out",
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
