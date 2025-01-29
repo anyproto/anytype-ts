@@ -980,6 +980,11 @@
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
+	"popupLogoutTitle": "Make sure you saved your login ley",
+	"popupLogoutText": "We have no way to recover your login key— it’s yours alone. Please save it before logging out.",
+	"popupLogoutCopyButton": "Reveal and copy key",
+	"popupLogoutLogoutButton": "I saved it, logout",
+
 	"popupSpaceCreateLabel": "Encrypted & local-first",
 	"popupSpaceCreateCreate": "Create from scratch",
 	"popupSpaceCreateImport": "Import my data",

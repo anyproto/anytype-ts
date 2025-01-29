@@ -20,6 +20,7 @@ const SHOW_DIMMER = [
 	'membershipFinalization',
 	'share',
 	'spaceCreate',
+	'logout',
 ];
 
 class PopupStore {

@@ -7,7 +7,6 @@ import PageDelete from './delete';
 import PagePersonal from './personal';
 import PageAppearance from './appearance';
 import PagePhrase from './phrase';
-import PageLogout from './logout';
 
 import PageDataIndex from './data/index';
 import PageDataPublish from './data/publish';
@@ -46,7 +45,6 @@ const Components: any = {
 	appearance:			 PageAppearance,
 	phrase:				 PagePhrase,
 	membership:			 PageMembership,
-	logout:				 PageLogout,
 
 	pinIndex:			 PagePinIndex,
 	pinSelect:			 PagePinSelect,

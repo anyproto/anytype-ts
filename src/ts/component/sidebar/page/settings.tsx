@@ -84,7 +84,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 						))}
 					</div>
 
-					<div className="logout" onClick={() => this.onPage('logout')}>
+					<div className="logout" onClick={() => S.Popup.open('logout', {})}>
 						<Icon />
 						{translate('commonLogout')}
 					</div>
