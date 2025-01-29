@@ -58,10 +58,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPublish = (isUpdate?: boolean) => {
 		const analyticsName = isUpdate ? 'ShareObjectUpdate' : 'ShareObjectPublish';
 
-		publishRef.current.setLoading(true);
+		publishRef.current?.setLoading(true);
 
 		C.PublishingCreate(S.Common.space, rootId, slug, joinRef.current?.getValue(), (message: any) => {
-			publishRef.current.setLoading(false);
+			publishRef.current?.setLoading(false);
 
 			if (message.error.code) {
 				setError(message.error.description);
@@ -80,10 +80,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onUnpublish = () => {
-		unpublishRef.current.setLoading(true);
+		unpublishRef.current?.setLoading(true);
 
 		C.PublishingRemove(S.Common.space, rootId, (message: any) => {
-			unpublishRef.current.setLoading(false);
+			unpublishRef.current?.setLoading(false);
 
 			if (message.error.code) {
 				setError(message.error.description);
