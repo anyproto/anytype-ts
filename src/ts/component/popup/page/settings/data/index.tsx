@@ -25,7 +25,6 @@ const PopupSettingsPageDataIndex = observer(class PopupSettingsPageDataIndex ext
 	};
 
 	render () {
-		const { config } = S.Common;
 		const { onPage } = this.props;
 		const { list } = this.state;
 		const { dataPath, spaceStorage } = S.Common;
@@ -54,21 +53,19 @@ const PopupSettingsPageDataIndex = observer(class PopupSettingsPageDataIndex ext
 						</div>
 					</div>
 
-					{config.experimental ? (
-						<div className="item">
-							<div className="side left">
-								<IconObject object={{ iconEmoji: ':earth_americas:' }} size={44} />
+					<div className="item">
+						<div className="side left">
+							<IconObject object={{ iconEmoji: ':earth_americas:' }} size={44} />
 
-								<div className="txt">
-									<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
-									<Label text={size} />
-								</div>
-							</div>
-							<div className="side right">
-								<Button color="blank" className="c28" text={translate(`commonManage`)} onClick={() => onPage('dataPublish')} />
+							<div className="txt">
+								<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
+								<Label text={size} />
 							</div>
 						</div>
-					) : ''}
+						<div className="side right">
+							<Button color="blank" className="c28" text={translate(`commonManage`)} onClick={() => onPage('dataPublish')} />
+						</div>
+					</div>
 
 					<div className="item">
 						<div className="side left">

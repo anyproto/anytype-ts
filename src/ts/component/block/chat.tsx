@@ -617,10 +617,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onReplyClick (e: React.MouseEvent, item: any) {
-		if (!S.Common.config.experimental) {
-			return;
-		};
-
 		this.isLoaded = false;
 		this.setIsBottom(false);
 
