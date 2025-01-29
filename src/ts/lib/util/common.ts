@@ -580,7 +580,7 @@ class UtilCommon {
 					onConfirm: () => {
 						C.DebugTree(rootId, logPath, false, (message: any) => {
 							if (!message.error.code) {
-								Renderer.send('openPath', logPath);
+								Action.openPath(logPath);
 							};
 						});
 

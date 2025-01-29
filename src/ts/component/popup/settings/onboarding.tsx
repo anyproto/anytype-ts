@@ -180,7 +180,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onPathClick (path: string) {
 		if (path) {
-			Renderer.send('openPath', U.Common.getElectron().dirName(path));
+			Action.openPath(U.Common.getElectron().dirName(path));
 		};
 	};
 

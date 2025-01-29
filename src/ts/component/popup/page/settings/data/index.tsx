@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, IconObject, Button } from 'Component';
-import { I, C, S, U, translate, Renderer, analytics } from 'Lib';
+import { I, C, S, U, translate, Renderer, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -138,7 +138,7 @@ const PopupSettingsPageDataIndex = observer(class PopupSettingsPageDataIndex ext
 	};
 
 	onOpenDataLocation () {
-		Renderer.send('openPath', S.Common.dataPath);
+		Action.openPath(S.Common.dataPath);
 		analytics.event('ClickSettingsDataManagementLocation', { route: analytics.route.settings });
 	};
 
