@@ -138,7 +138,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const setSlugHander = v => setSlug(U.Common.slug(v));
-	const onUrlClick = () => Action.openUrl(url);
 
 	let buttons = [];
 
@@ -187,7 +186,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				maxLength={300}
 			/>
 			<div className="urlWrapper">
-				<Label className="small" text={url} onClick={onUrlClick} />
+				<Label className="small" text={url} />
 				<Button 
 					color="blank" 
 					className="simple"
