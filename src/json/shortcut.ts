@@ -32,7 +32,7 @@ const getSections = () => {
 			if (key == 'delete') {
 				return 'Del';
 			};
-			return key;
+			return U.Common.ucFirst(key);
 		});
 		return item;
 	};
@@ -293,8 +293,6 @@ const getItems = () => {
 						{ com: 'Esc or Clear /',	 name: translate('popupShortcutCommandMenu4') },
 					]
 				},
-
-				{ description: translate('popupShortcutCommandDescription'), children: [], className: 'separator' },
 			],
 		},
 	];
