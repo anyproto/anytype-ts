@@ -21,7 +21,7 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 		const { list } = this.state;
 
 		const Row = (item: any) => {
-			const object = S.Detail.get(SUB_ID, item.objectId);
+			const object = S.Detail.mapper(item.details);
 
 			return (
 				<div className="row">
@@ -65,18 +65,9 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 	};
 
 	load () {
-		C.PublishingList(S.Common.space, (message: any) => {
+		C.PublishingList('', (message: any) => {
 			if (!message.error.code) {
-				const list = message.list;
-				const ids = list.map(item => item.objectId);
-
-				U.Data.subscribeIds({
-					subId: SUB_ID,
-					ids,
-					noDeps: true,
-				}, () => {
-					this.setState({ list });
-				});
+				this.setState({ list: message.list });
 			};
 		});
 	};
@@ -88,6 +79,7 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 	onMore (item: any) {
 		const { getId } = this.props;
 		const element = $(`#${getId()} #icon-more-${item.objectId}`);
+		const object = S.Detail.mapper(item.details);
 		const options: any[] = [
 			{ id: 'open', name: translate('menuPublishButtonOpen') },
 			{ isDiv: true },
@@ -108,7 +100,7 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
 						case 'open': {
-							U.Object.openAuto(S.Detail.get(SUB_ID, item.objectId));
+							U.Object.openAuto(object);
 							break;
 						};
 
@@ -133,7 +125,7 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 	};
 
 	onUnpublish (item: any) {
-		const object = S.Detail.get(SUB_ID, item.objectId);
+		const object = S.Detail.mapper(item.details);
 
 		C.PublishingRemove(S.Common.space, item.objectId, (message: any) => {
 			if (!message.error.code) {
