@@ -20,6 +20,12 @@
 			.value { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; flex-shrink: 0; }
 		}
 
+		.urlWrapper { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+		.urlWrapper {
+			.label { flex-grow: 1; }
+			.button { flex-shrink: 0; font-weight: 500; }
+		}
+
 		.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; justify-content: space-evenly; height: 36px; }
 		.buttons {
 			.button { flex-grow: 1; width: 100%; }
