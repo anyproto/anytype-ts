@@ -22,7 +22,7 @@
 
 		.urlWrapper { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 		.urlWrapper {
-			.label { flex-grow: 1; }
+			.label { flex-grow: 1; user-select: text !important; }
 			.button { flex-shrink: 0; font-weight: 500; }
 		}
 
