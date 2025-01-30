@@ -71,7 +71,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 				<div className="section sectionMembers">
 					{this.cache ? (
 						<div id="list" className="rows">
-							<WindowScroller scrollElement={$('#popupSettings-innerWrap .mainSides #sideRight').get(0)}>
+							<WindowScroller scrollElement={window}>
 								{({ height, isScrolling, registerChild, scrollTop }) => (
 									<AutoSizer disableHeight={true} className="scrollArea">
 										{({ width }) => (
