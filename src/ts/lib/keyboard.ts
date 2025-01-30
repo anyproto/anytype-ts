@@ -1230,9 +1230,7 @@ class Keyboard {
 				};
 			};
 
-			pressed = [ ...new Set(pressed) ];
-
-			const check = pressed.sort().join('+');
+			const check = U.Common.arrayUnique(pressed).sort().join('+');
 
 			if (check == keys.join('+')) {
 				res = check;
