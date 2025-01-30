@@ -296,7 +296,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 		const menuOpen = this.menuCheck();
 
-		if (isPopup !== keyboard.isPopup()) {
+		if ((isPopup !== keyboard.isPopup()) || keyboard.isShortcutEditing) {
 			return;
 		};
 
