@@ -9,23 +9,31 @@ const getSections = () => {
 	const or = translate('commonOr');
 
 	const mapper = (item: any) => {
-		if (item.keys) {
-			item.symbols = item.keys.map((key: string) => {
-				if (key === cmdKey) {
-					return cmdSymbol;
-				};
-				if (key == 'shift') {
-					return shift;
-				};
-				if (key == 'alt') {
-					return alt;
-				};
-				if ((key == 'ctrl') && isMac) {
-					return '&#8963;';
-				};
-				return key;
-			});
+		if (!item.keys) {
+			return item;
 		};
+
+		item.symbols = item.keys.map((key: string) => {
+			if (key === cmdKey) {
+				return cmdSymbol;
+			};
+			if (key == 'shift') {
+				return shift;
+			};
+			if (key == 'alt') {
+				return alt;
+			};
+			if ((key == 'ctrl') && isMac) {
+				return '&#8963;';
+			};
+			if (key == 'enter') {
+				return '&#8629;';
+			};
+			if (key == 'delete') {
+				return 'Del';
+			};
+			return key;
+		});
 		return item;
 	};
 
@@ -75,12 +83,51 @@ const getSections = () => {
 					]
 				},
 
+				{
+					name: translate('popupShortcutNavigationMenu'), children: [
+						{ name: translate('popupShortcutNavigationMenu1'), keys: [ '↓', '[,]', 'tab' ] },
+						{ name: translate('popupShortcutNavigationMenu2'), keys: [ '↑', '[,]', 'shift', 'tab' ] },
+						{ name: translate('popupShortcutNavigationMenu3'), keys: [ '←' ] },
+						{ name: translate('popupShortcutNavigationMenu4'), keys: [ '→' ] },
+						{ name: translate('popupShortcutNavigationMenu5'), keys: [ 'enter' ] },
+					]
+				},
+
 				{ 
 					name: translate('popupShortcutObject'), children: [
 						{ id: 'relation', name: translate('popupShortcutNavigationPage9'), keys: [ cmdKey, 'shift', 'r' ] },
 						{ id: 'print', name: translate('popupShortcutMainBasics8'), keys: [ cmdKey, 'p' ] },
 						{ id: 'history', name: translate('popupShortcutMainBasics11'), keys: [ cmdKey, 'alt', 'h' ] },
 						{ id: 'searchText', name: translate('popupShortcutMainBasics9'), keys: [ cmdKey, 'f' ] },
+					]
+				},
+
+				{ 
+					name: translate('popupShortcutEditor'), children: [
+						{ name: translate('popupShortcutMainStructuring1'), keys: [ 'enter' ] },
+						{ name: translate('popupShortcutMainStructuring2'), keys: [ 'shift', 'enter' ] },
+						{ name: translate('popupShortcutMainStructuring3'), keys: [ 'delete' ] },
+						{ name: translate('popupShortcutMainStructuring4'), keys: [ 'tab' ] },
+						{ name: translate('popupShortcutMainStructuring5'), keys: [ 'shift', 'tab' ] },
+
+						{ name: translate('popupShortcutMainSelection1'), text: translate('popupShortcutMainSelectionDblClick') },
+						{ name: translate('popupShortcutMainSelection2'), text: translate('popupShortcutMainSelectionTplClick') },
+						{ name: translate('popupShortcutMainSelection3'), keys: [ cmdKey, 'a' ] },
+						{ name: translate('popupShortcutMainSelection4'), keys: [ 'shift', '↑' ] },
+						{ name: translate('popupShortcutMainSelection7'), keys: [ 'shift', '↓' ] },
+						{ name: translate('popupShortcutMainSelection5'), keys: [ cmdKey, 'click' ] },
+						{ name: translate('popupShortcutMainSelection6'), keys: [ 'shift', 'click' ] },
+
+						{ name: translate('popupShortcutNavigationPage1'), keys: [ cmdKey, 'shift', 't' ] },
+						{ name: translate('popupShortcutNavigationPage2'), keys: [ '↓' ] },
+						{ name: translate('popupShortcutNavigationPage3'), keys: [ '↑' ] },
+						{ name: translate('popupShortcutNavigationPage4'), keys: [ cmdKey, '←' ] },
+						{ name: translate('popupShortcutNavigationPage5'), keys: [ cmdKey, '→' ] },
+						{ name: translate('popupShortcutNavigationPage6'), keys: [ cmdKey, '↑' ] },
+						{ name: translate('popupShortcutNavigationPage7'), keys: [ cmdKey, '↓' ] },
+						{ name: translate('popupShortcutNavigationPage8'), keys: [ cmdKey, 'shift', '↑' ] },
+						{ name: translate('popupShortcutNavigationPage10'), keys: [ cmdKey, 'shift', '↓' ] },
+						{ name: translate('popupShortcutNavigationPage10'), keys: [ cmdKey, 'enter' ] },
 					]
 				},
 
@@ -213,126 +260,11 @@ const getItems = () => {
 };
 
 	/*
-#### Menu, Search
-
-Go to the next option ⭕️  
-↓ , Tab
-Go to the previous option ⭕️  
-↑ , ⇧ Tab
-Go to the left side of navigation (Link from page) ⭕️  
-←
-Go to the right side of navigation (Link to page) ⭕️  
-→
-Select option
-Enter
-
-#### Editor
-New text block ⭕️  
-Enter
-Line break ⭕️  
-⇧ Enter
-Merge block with the one above ⭕️  
-Delete
-Indent ⭕️  
-Tab
-Outdent ⭕️  
-⇧ Tab
-Select word ⭕️  
-Double Click
-Select an Entire Block ⭕️  
-Triple Click
-Select all blocks
-⌘ A
-Expand Selection Up ⭕️  
-⇧ ↑
-Expand Selection Down ⭕️  
-⇧ ↓
-Select / Deselect an entire block ⭕️
-⌘ Click
-Select block and all blocks in between ⭕️
-⇧ Click
-Expand / Collapse Toggle 
-⌘ ⇧ T
-Go down one line ⭕️
-↓
-Go up one line ⭕️
-↑
-Go to the start of the line  ⭕️
-⌘ ←
-Go to the end of the line  ⭕️
-⌘ →
-Go to the top of the Object  ⭕️
-⌘ ↑
-Go to the end of the Object  ⭕️
-⌘ ↓
-Move selected block(s) up  ⭕️
-⌘ ⇧ ↑
-Move selected block(s) down  ⭕️
-⌘ ⇧ ↓
-Check / Uncheck Checkbox
-⌘ Enter
-actual 
-
-#### Set and Collection
-
-Focus the first object in list ❗️ 
-Enter
-Select objects above ❗️  ⭕️
-⇧ ↑
-Select objects below ❗️   ⭕️
-⇧ ↓
-Switch views ❗️ 
-Unassigned
-Create New Object in set  ❗️ 
-⌘ N
-Create New Object From Template ❗️ 
-Unassigned
-#### Text Style
-Bold
-⌘ B
-Italic
-⌘ I
-Underline
-⌘ U
-Strikethrough
-⌘ ⇧ S
-Add a link
-⌘ K
-Convert to inline code
-⌘ L
-Apply previously selected font color
-⌘ ⇧ C
-Apply previously selected highlight
-⌘ ⇧ H
-	*/
-
-	/*
 	return [
 		{
 			id: 'main',
 			name: translate('popupShortcutMain'),
 			children: [
-				{
-					name: translate('popupShortcutMainStructuring'), children: [
-						{ com: 'Enter',				 name: translate('popupShortcutMainStructuring1') },
-						{ com: `${shift} + Enter`,	 name: translate('popupShortcutMainStructuring2') },
-						{ com: 'Delete',			 name: translate('popupShortcutMainStructuring3') },
-						{ com: 'Tab',				 name: translate('popupShortcutMainStructuring4') },
-						{ com: `${shift} + Tab`,	 name: translate('popupShortcutMainStructuring5') },
-					]
-				},
-
-				{
-					name: translate('popupShortcutMainSelection'), children: [
-						{ com: 'Double Click',			 name: translate('popupShortcutMainSelection1') },
-						{ com: 'Triple Click',			 name: translate('popupShortcutMainSelection2') },
-						{ com: `${cmd} + A`,			 name: translate('popupShortcutMainSelection3') },
-						{ com: `${shift} + ↑ or ↓`,		 name: translate('popupShortcutMainSelection4') },
-						{ com: `${cmd} + Click`,		 name: translate('popupShortcutMainSelection5') },
-						{ com: `${shift} + Click`,		 name: translate('popupShortcutMainSelection6') },
-					]
-				},
-
 				{
 					name: translate('commonActions'), children: [
 						{ com: '/',						 name: translate('popupShortcutMainActions1') },
@@ -343,36 +275,6 @@ Apply previously selected highlight
 						{ com: `${cmd} + V`,			 name: translate('popupShortcutMainActions6') },
 						{ com: `${cmd} + D`,			 name: translate('popupShortcutMainActions7') },
 						{ com: `${cmd} + E`,			 name: translate('popupShortcutMainActions8') + ' 🏄‍♂' },
-					]
-				},
-			],
-		},
-
-		{
-			id: 'navigation',
-			name: translate('popupShortcutNavigation'),
-			children: [
-				{
-					name: translate('popupShortcutNavigationMenu'), children: [
-						{ com: '↓ or Tab',			 name: translate('popupShortcutNavigationMenu1') },
-						{ com: '↑ or ${shift} + Tab',	 name: translate('popupShortcutNavigationMenu2') },
-						{ com: '←',					 name: translate('popupShortcutNavigationMenu3') },
-						{ com: '→',					 name: translate('popupShortcutNavigationMenu4') },
-						{ com: 'Enter',				 name: translate('popupShortcutNavigationMenu5') },
-					]
-				},
-
-				{
-					name: translate('popupShortcutNavigationPage'), children: [
-						{ com: `${cmd} + ${shift} + T`, name: translate('popupShortcutNavigationPage1') },
-						{ com: '↓',				 name: translate('popupShortcutNavigationPage2') },
-						{ com: '↑',				 name: translate('popupShortcutNavigationPage3') },
-						{ com: `${cmd} + ←`,	 name: translate('popupShortcutNavigationPage4') },
-						{ com: `${cmd} + →`,	 name: translate('popupShortcutNavigationPage5') },
-						{ com: `${cmd} + ↑`,	 name: translate('popupShortcutNavigationPage6') },
-						{ com: `${cmd} + ↓`,	 name: translate('popupShortcutNavigationPage7') },
-						{ com: `${cmd} + ${shift} + ↑↓`, name: translate('popupShortcutNavigationPage8') },
-						{ com: `${cmd} + Enter`, name: translate('popupShortcutNavigationPage10') },
 					]
 				},
 			],

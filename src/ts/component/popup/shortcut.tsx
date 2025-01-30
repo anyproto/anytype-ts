@@ -33,6 +33,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		);
 	};
 
+	const Symbol = (item: any) => {
+		if (item.text == '[,]') {
+			return <>,</>;
+		} else {
+			return <Label text={item.text} />;
+		};
+	};
+
 	const Item = (item: any) => {
 		const symbols = item.symbols || [];
 
@@ -41,7 +49,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				<div className="name">{item.name}</div>
 				{symbols.length ? (
 					<div className="symbols">
-						{symbols.map((item: any, i: number) => <Label key={i} text={item} />)}
+						{symbols.map((item: any, i: number) => <Symbol key={i} text={item} />)}
 					</div>
 				) : ''}
 				{item.text ? <Label className="text" text={item.text} /> : ''}
