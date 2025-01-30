@@ -535,7 +535,7 @@ class Keyboard {
 							return;
 						};
 
-						Renderer.send('openPath', paths[0]);
+						Action.openPath(paths[0]);
 					});
 				});
 				break;
@@ -545,7 +545,7 @@ class Keyboard {
 				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
-							Renderer.send('openPath', paths[0]);
+							Action.openPath(paths[0]);
 						};
 					});
 				});
@@ -556,7 +556,7 @@ class Keyboard {
 				C.DebugSpaceSummary(S.Common.space, (message: any) => {
 					if (!message.error.code) {
 						U.Common.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
-						Renderer.send('openPath', tmpPath);
+						Action.openPath(tmpPath);
 					};
 				});
 				break;
@@ -566,7 +566,7 @@ class Keyboard {
 				C.DebugStat((message: any) => {
 					if (!message.error.code) {
 						U.Common.getElectron().fileWrite('debug-stat.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
-						Renderer.send('openPath', tmpPath);
+						Action.openPath(tmpPath);
 					};
 				});
 				break;
@@ -575,7 +575,7 @@ class Keyboard {
 			case 'debugTree': {
 				C.DebugTree(rootId, logPath, false, (message: any) => {
 					if (!message.error.code) {
-						Renderer.send('openPath', logPath);
+						Action.openPath(logPath);
 					};
 				});
 				break;
@@ -584,7 +584,7 @@ class Keyboard {
 			case 'debugProcess': {
 				C.DebugStackGoroutines(logPath, (message: any) => {
 					if (!message.error.code) {
-						Renderer.send('openPath', logPath);
+						Action.openPath(logPath);
 					};
 				});
 				break;
@@ -635,7 +635,16 @@ class Keyboard {
 			case 'debugLog': {
 				C.DebugExportLog(tmpPath, (message: any) => {
 					if (!message.error.code) {
-						Renderer.send('openPath', tmpPath);
+						Action.openPath(tmpPath);
+					};
+				});
+				break;
+			};
+
+			case 'debugProfiler': {
+				C.DebugRunProfiler(30, (message: any) => {
+					if (!message.error.code) {
+						Action.openPath(message.path);
 					};
 				});
 				break;

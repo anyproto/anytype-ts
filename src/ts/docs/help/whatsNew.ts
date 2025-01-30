@@ -95,7 +95,7 @@ export default [
 	bullet(`Dragging headers in the Grid to rearrange columns no longer highlights the text of other headers. Thanks, @${link('https://community.anytype.io/t/moving-column-headers-in-the-grid-to-swap-columns-selects-all-headers/26100', 'Code-Jack')}!`),
 	bullet(`Fixed keyboard navigation in the Command menu. Thanks, @${link('https://community.anytype.io/t/adding-a-link-cursor-jumps-too-deep-in-the-selection-box/25763', 'Code-Jack')}!`),
 	bullet(`Bin Search works correctly, without causing Objects to be filtered out.`),
-	bullet(`Relations containing angle brackets (e.g., <abc>) are saved correctly. Thanks, @${link('https://community.anytype.io/t/angle-brackets-in-relation-will-disappear-when-clicking-it/25534', 'CoolGuy')}!`),
+	bullet(`Relations containing angle brackets (e.g., ${hl('&lt;abc&gt;')}) are saved correctly. Thanks, @${link('https://community.anytype.io/t/angle-brackets-in-relation-will-disappear-when-clicking-it/25534', 'CoolGuy')}!`),
 	bullet(`Input to Date type relations works correctly. Thanks, @${link('https://community.anytype.io/t/date-entry-not-working/26112', 'flypenguin')}!`),
 	bullet(`Removed the option to paste YouTube channel links as Embed. Thanks, @${link('https://community.anytype.io/t/pasting-a-link-to-an-yt-channel-paste-as-embed-shouldnt-appear/26297', 'Code-Jack')}!`),
 	bullet(`Fixed an issue where pasting with all blocks selected in the object editor would wipe out content without pasting from the clipboard. Thanks, @${link('https://community.anytype.io/t/pasting-when-all-blocks-in-the-object-editor-are-selected-will-wipe-out-everything-but-will-not-paste-whats-in-the-clipboard/25040', 'sky1')}!`),
