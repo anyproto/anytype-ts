@@ -50,7 +50,6 @@ const PopupLogout = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	};
 
 	const onLogout = () => {
-		// this.props.setPinConfirmed(false);
 		analytics.event('LogOut');
 
 		U.Router.go('/', {

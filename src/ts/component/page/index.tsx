@@ -160,7 +160,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		// Invite route
-		if (pathname.match('/invite')) {
+		if (pathname.match('^/invite')) {
 			ret.params.page = 'main';
 			ret.params.action = 'invite';
 		};
@@ -168,10 +168,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		// Membership route
 		// need to investigate the reason of this
 
-		// if (pathname.match('/membership')) {
-		// 	ret.params.page = 'main';
-		// 	ret.params.action = 'membership';
-		// };
+		if (pathname.match(/^\/membership/)) {
+			ret.params.page = 'main';
+			ret.params.action = 'membership';
+		};
 
 		return ret;
 	};

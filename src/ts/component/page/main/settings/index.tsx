@@ -39,6 +39,7 @@ interface State {
 };
 
 const Components: any = {
+	index: 				 PageAccount,
 	account:			 PageAccount,
 	delete:				 PageDelete,
 	personal:			 PagePersonal,
@@ -97,6 +98,8 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		const param = U.Router.getParam(pathname);
 		const id = param.id || 'account';
 
+		console.log('PARAM: ', param)
+
 		if (!Components[id]) {
 			return;
 		};
@@ -122,6 +125,14 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		sidebar.objectContainerSwitch('settings');
+	};
+
+	componentWillUnmount () {
+		sidebar.objectContainerSwitch('widget');
 	};
 
 	prevPage () {

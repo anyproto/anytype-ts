@@ -107,14 +107,14 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 		return [
 			{ id: 'space', children: [ { id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') } ] },
 			{
-				name: translate('popupSettingsApplicationTitle'), children: [
+				id: 'index', name: translate('popupSettingsApplicationTitle'), children: [
 					{ id: 'account', name: translate('popupSettingsProfileTitle') },
 					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 					{ id: 'appearance', name: translate('popupSettingsColorMode') },
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 				]
 			},
-			{ name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
+			{ id: 'test',  name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
 		];
 	};
 

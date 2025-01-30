@@ -212,7 +212,8 @@ const Vault = observer(class Vault extends React.Component {
 
 			case 'settings': {
 				// need to change to use kind of history
-				sidebar.objectContainerToggle('widget', 'settings');
+				U.Router.go('/main/settings/index', {});
+				// sidebar.objectContainerToggle('widget', 'settings');
 				break;
 			};
 
