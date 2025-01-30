@@ -157,7 +157,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon 
 						id="button-header-relation" 
 						tooltip={translate('commonRelations')}
-						tooltipCaption={`${cmd} + ${shift} + R`}
+						tooltipCaption={keyboard.getCaption('relation')}
 						className="relation withBackground"
 						onClick={onRelationHandler} 
 					/> 

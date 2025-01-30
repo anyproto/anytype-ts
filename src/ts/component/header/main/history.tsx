@@ -36,7 +36,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 					<Icon 
 						id="button-header-relation" 
 						tooltip={translate('commonRelations')}
-						tooltipCaption={`${cmd} + ${shift} + R`} 
+						tooltipCaption={keyboard.getCaption('relation')} 
 						className="relation withBackground"
 						onClick={() => onRelation({}, { readonly: true })} 
 					/> 
