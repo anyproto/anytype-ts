@@ -102,7 +102,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 							onClick={() => this.onJoinRequest(item)}
 						/>
 					);
-				} else 
+				} else
 				if (item.isRemoving) {
 					button = (
 						<Button
@@ -122,21 +122,21 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						</div>
 					);
 				};
-			} else 
+			} else
 			if (item.isActive) {
 				button = <Label color="grey" text={translate(`participantPermissions${item.permissions}`)} />;
-			} else 
+			} else
 			if (item.isDeclined || item.isRemoved) {
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
 			};
 
 			if (item.isJoining) {
 				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
-			} else 
+			} else
 			if (item.isRemoving) {
 				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
 			};
-		
+
 			return (
 				<div id={`item-${item.id}`} className="row" style={item.style} >
 					<div className="side left" onClick={() => U.Object.openConfig(item)}>
@@ -195,12 +195,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						</div>
 					) : (
 						<div className="buttons">
-							<Button 
-								ref={ref => this.refButton = ref} 
-								onClick={isShareActive ? () => this.onInitLink() : null} 
-								className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')} 
+							<Button
+								ref={ref => this.refButton = ref}
+								onClick={isShareActive ? () => this.onInitLink() : null}
+								className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')}
 								tooltip={isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled')}
-								text={translate('popupSettingsSpaceShareGenerateInvite')} 
+								text={translate('popupSettingsSpaceShareGenerateInvite')}
 							/>
 						</div>
 					)}
@@ -482,7 +482,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onJoinRequest (item: any) {
-		S.Popup.open('inviteConfirm', { 
+		S.Popup.open('inviteConfirm', {
 			data: {
 				name: item.name,
 				icon: item.iconImage,
@@ -540,7 +540,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.setState({ error: error.description });
 		return true;
 	};
-	
+
 	resize () {
 		if (this.refList) {
 			this.refList.recomputeRowHeights(0);
