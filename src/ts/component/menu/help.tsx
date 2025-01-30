@@ -21,7 +21,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		return [
 			{ id: 'whatsNew', document: 'whatsNew', caption: btn },
-			{ id: 'shortcut', caption: 'Ctrl+Space' },
+			{ id: 'shortcut', caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
 			{ id: 'gallery' },
 			{ id: 'community' },

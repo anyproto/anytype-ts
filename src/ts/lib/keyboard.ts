@@ -1229,7 +1229,7 @@ class Keyboard {
 	getCaption (id: string) {
 		let ret = '';
 		if (this.shortcuts[id]) {
-			ret = this.shortcuts[id].symbols.join(' + ').toUpperCase();
+			ret = this.shortcuts[id].symbols.map(it => U.Common.ucFirst(it)).join(' + ');
 		};
 		return ret;
 	};
