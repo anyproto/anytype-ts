@@ -517,6 +517,8 @@
 	"pageHeadSimpleCreateSet": "Create Set",
 	"pageHeadSimpleInstall": "Install",
 
+	"pageSettingsLanguageTitle": "Language & Region",
+
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
 	"editorControlLayout": "Layout",
@@ -745,7 +747,7 @@
 	"popupSettingsPersonalLinkStyle": "Link to object style",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
-	"popupSettingsPersonalRelativeDates": "Display relative dates",
+	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",

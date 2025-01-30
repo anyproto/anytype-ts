@@ -480,46 +480,6 @@
         .check { border-top: 1px solid var(--color-shape-secondary); padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; }
     }
 
-    > .pageSettingsAppearance {
-        > .title { margin: 0px 0px 32px 0px; }
-
-        .buttons { display: flex; gap: 16px 34px; margin: 0px 0px 46px 0px; flex-wrap: wrap; }
-        .label.section { margin-bottom: 8px; }
-
-        .btn { text-align: center; @include text-small; color: var(--color-text-secondary); }
-        .btn {
-            .bg {
-                width: 120px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
-                position: relative;
-            }
-            .icon { width: 40px; height: 40px; display: block; z-index: 1; position: relative; }
-        }
-
-        .btn.light {
-            .bg { box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
-            .icon { background-image: url('~img/icon/popup/settings/theme/light.svg'); }
-        }
-
-        .btn.dark {
-            .bg { background: var(--color-control-accent); }
-            .icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
-        }
-        .btn.system {
-            .bg::before, .bg::after { content: ''; position: absolute; top: 0px; width: 50%; height: 100%; }
-            .bg::before { left: 0px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary); border-radius: 14px 0px 0px 14px; }
-            .bg::after { right: 0px; background: var(--color-control-accent); border-radius: 0px 14px 14px 0px; }
-            .icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
-        }
-
-        .btn.active { color: var(--color-text-primary); }
-        .btn.active {
-            .bg { box-shadow: 0px 0px 0px 2px var(--color-system-accent-25); }
-        }
-        .btn.system.active {
-            .bg::before { box-shadow: 0px 0px; }
-        }
-    }
-
     > .pageSettingsImportCsv,
     > .pageSettingsPersonal,
     > .pageSettingsPinIndex {
@@ -536,6 +496,44 @@
 
     > .pageSettingsPersonal {
         .title { margin-bottom: 32px !important; }
+
+        .colorScheme { display: flex; gap: 16px 34px; margin: 0px 0px 46px 0px; flex-wrap: wrap; }
+        .colorScheme {
+            .label.section { margin-bottom: 8px; }
+
+            .btn { text-align: center; @include text-small; color: var(--color-text-secondary); }
+            .btn {
+                .bg {
+                    width: 120px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
+                    position: relative;
+                }
+                .icon { width: 40px; height: 40px; display: block; z-index: 1; position: relative; }
+            }
+
+            .btn.light {
+                .bg { box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
+                .icon { background-image: url('~img/icon/popup/settings/theme/light.svg'); }
+            }
+
+            .btn.dark {
+                .bg { background: var(--color-control-accent); }
+                .icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
+            }
+            .btn.system {
+                .bg::before, .bg::after { content: ''; position: absolute; top: 0px; width: 50%; height: 100%; }
+                .bg::before { left: 0px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary); border-radius: 14px 0px 0px 14px; }
+                .bg::after { right: 0px; background: var(--color-control-accent); border-radius: 0px 14px 14px 0px; }
+                .icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
+            }
+
+            .btn.active { color: var(--color-text-primary); }
+            .btn.active {
+                .bg { box-shadow: 0px 0px 0px 2px var(--color-system-accent-25); }
+            }
+            .btn.system.active {
+                .bg::before { box-shadow: 0px 0px; }
+            }
+        }
     }
 
     > .pageSettingsImportIndex,

@@ -109,7 +109,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 			{
 				name: translate('popupSettingsApplicationTitle'), children: [
 					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
-					{ id: 'appearance', name: translate('popupSettingsColorMode') },
+					{ id: 'language', name: translate('pageSettingsLanguageTitle') },
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 				]
 			},

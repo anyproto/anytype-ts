@@ -7,12 +7,17 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 
 	render () {
 		const { getId } = this.props;
-		const { config, interfaceLang, linkStyle, fullscreenObject, hideSidebar, showRelativeDates, showVault, dateFormat, timeFormat, } = S.Common;
-		const { hideTray, hideMenuBar, languages } = config;
+		const { config, linkStyle, fullscreenObject, hideSidebar, showVault } = S.Common;
+		const { hideTray, hideMenuBar } = config;
+		const { theme } = S.Common;
+
+		const themes: any[] = [
+			{ id: '', class: 'light', name: translate('popupSettingsColorModeButtonLight') },
+			{ id: 'dark', class: 'dark', name: translate('popupSettingsColorModeButtonDark') },
+			{ id: 'system', class: 'system', name: translate('popupSettingsColorModeButtonSystem') },
+		];
 
 		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
-		const interfaceLanguages = U.Menu.getInterfaceLanguages();
-		const spellingLanguages = U.Menu.getSpellingLanguages();
 		const linkStyles: I.Option[] = [
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
@@ -23,37 +28,21 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 			<React.Fragment>
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
-				<Label className="section" text={translate('popupSettingsPersonalSectionLanguage')} />
+				<Label className="section" text={translate('commonAppearance')} />
 
-				<div className="actionItems">
-
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalSpellcheckLanguage')} />
-
-						<Select
-							id="spellcheck"
-							value={languages}
-							options={spellingLanguages}
-							onChange={v => Action.setSpellingLang(v)}
-							arrowClassName="black"
-							isMultiple={true}
-							noFilter={false}
-							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
-						/>
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalInterfaceLanguage')} />
-
-						<Select
-							id="interfaceLang"
-							value={interfaceLang}
-							options={interfaceLanguages}
-							onChange={v => Action.setInterfaceLang(v)}
-							arrowClassName="black"
-							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
-						/>
-					</div>
+				<div className="colorScheme">
+					{themes.map((item: any, i: number) => (
+						<div
+							key={i}
+							className={[ 'btn', (theme == item.id ? 'active' : ''), item.class ].join(' ')}
+							onClick={() => Action.themeSet(item.id)}
+						>
+							<div className="bg">
+								<Icon />
+							</div>
+							<Label text={item.name} />
+						</div>
+					))}
 				</div>
 
 				<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
@@ -123,54 +112,6 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)} />
 						</div>
 					) : ''}
-				</div>
-
-				<Label className="section" text={translate('popupSettingsPersonalSectionDateTime')} />
-
-				<div className="actionItems">
-
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalRelativeDates')} />
-						<Switch
-							className="big"
-							value={showRelativeDates}
-							onChange={(e: any, v: boolean) => {
-								S.Common.showRelativeDatesSet(v);
-								analytics.event('RelativeDates', { type: v });
-							}}
-						/>
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalDateFormat')} />
-						<Select
-							id="dateFormat"
-							value={String(dateFormat)}
-							options={U.Menu.dateFormatOptions()}
-							onChange={v => {
-								S.Common.dateFormatSet(v);
-								analytics.event('ChangeDateFormat', { type: v });
-							}}
-							arrowClassName="black"
-							menuParam={{ horizontal: I.MenuDirection.Right }}
-						/>
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalTimeFormat')} />
-						<Select
-							id="timeFormat"
-							value={String(timeFormat)}
-							options={U.Menu.timeFormatOptions()}
-							onChange={v => {
-								S.Common.timeFormatSet(v);
-								analytics.event('ChangeTimeFormat', { type: v });
-							}}
-							arrowClassName="black"
-							menuParam={{ horizontal: I.MenuDirection.Right }}
-						/>
-					</div>
-
 				</div>
 
 			</React.Fragment>

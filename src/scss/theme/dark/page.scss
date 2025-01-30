@@ -121,29 +121,31 @@
 		.icon.logo { background-image: url('#{$themePath}/icon/import/notion.svg'); }
 	}
 
-	.pageSettingsAppearance {
-		.btn.light {
-			.bg { background-color: #fff; }
-		}
-
-		.btn.dark {
-			.bg { background: var(--color-bg-primary); box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
-			.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
-		}
-		.btn.system {
-			.bg::before, .bg::after {
-				content: ''; position: absolute; top: 0px; width: 50%; height: 100%;
+	.pageSettingsPersonal {
+		.colorScheme {
+			.btn.light {
+				.bg { background-color: #fff; }
 			}
-			.bg::before { background: var(--color-control-bg); }
-			.bg::after { background: var(--color-bg-primary); box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
-			.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
-		}
 
-		.btn.active {
-			.bg { box-shadow: 0px 0px 0px 2px var(--color-system-accent-25); }
-		}
-		.btn.system.active {
-			.bg::before { box-shadow: 0px 0px; }
+			.btn.dark {
+				.bg { background: var(--color-bg-primary); box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
+				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
+			}
+			.btn.system {
+				.bg::before, .bg::after {
+					content: ''; position: absolute; top: 0px; width: 50%; height: 100%;
+				}
+				.bg::before { background: var(--color-control-bg); }
+				.bg::after { background: var(--color-bg-primary); box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
+				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
+			}
+
+			.btn.active {
+				.bg { box-shadow: 0px 0px 0px 2px var(--color-system-accent-25); }
+			}
+			.btn.system.active {
+				.bg::before { box-shadow: 0px 0px; }
+			}
 		}
 	}
 

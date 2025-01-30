@@ -5,8 +5,8 @@ import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding, s
 import PageAccount from './account';
 import PageDelete from './delete';
 import PagePersonal from './personal';
-import PageAppearance from './appearance';
 import PagePhrase from './phrase';
+import PageLanguage from './language';
 
 import PageDataIndex from './data/index';
 import PageDataPublish from './data/publish';
@@ -43,9 +43,9 @@ const Components: any = {
 	account:			 PageAccount,
 	delete:				 PageDelete,
 	personal:			 PagePersonal,
-	appearance:			 PageAppearance,
 	phrase:				 PagePhrase,
 	membership:			 PageMembership,
+	language:			 PageLanguage,
 
 	pinIndex:			 PagePinIndex,
 	pinSelect:			 PagePinSelect,
