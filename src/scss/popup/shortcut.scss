@@ -33,8 +33,15 @@
 			.section {
 				> .name { padding: 9px 8px; @include text-small; color: var(--color-text-secondary); }
 
-				.item { padding: 6px 8px; display: flex; flex-direction: row; align-items: center; border-radius: 6px; gap: 0px 8px; cursor: default; }
-				.item:hover, .item.hover { background: var(--color-shape-highlight-medium); }
+				.item { 
+					padding: 6px 8px; display: flex; flex-direction: row; align-items: center; border-radius: 6px; gap: 0px 8px; cursor: default; 
+					min-height: 36px;
+				}
+				.item.canEdit:not(.isEditing) {
+					&:hover, &.hover { background: var(--color-shape-highlight-medium); }
+				}
+				.item.isEditing { box-shadow: 0px 0px 0px 2px var(--color-system-accent-100) inset; }
+
 				.item {
 					.name { flex-grow: 1; }
 

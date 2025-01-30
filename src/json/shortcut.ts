@@ -1,39 +1,24 @@
-import { U, translate, keyboard } from 'Lib';
+import { U, translate, keyboard, Storage } from 'Lib';
 
 const getSections = () => {
 	const isMac = U.Common.isPlatformMac();
-	const cmdSymbol = keyboard.cmdSymbol();
 	const cmdKey = keyboard.cmdKey();
-	const alt = keyboard.altSymbol();
-	const shift = keyboard.shiftSymbol();
 	const or = translate('commonOr');
+	const storage = Storage.getShortcuts();
 
 	const mapper = (item: any) => {
 		if (!item.keys) {
 			return item;
 		};
 
-		item.symbols = item.keys.map((key: string) => {
-			if (key === cmdKey) {
-				return cmdSymbol;
+		if (item.id) {
+			storage[item.id] = storage[item.id] || [];
+			if (storage[item.id].length) {
+				item.keys = storage[item.id];
 			};
-			if (key == 'shift') {
-				return shift;
-			};
-			if (key == 'alt') {
-				return alt;
-			};
-			if ((key == 'ctrl') && isMac) {
-				return '&#8963;';
-			};
-			if (key == 'enter') {
-				return '&#8629;';
-			};
-			if (key == 'delete') {
-				return 'Del';
-			};
-			return U.Common.ucFirst(key);
-		});
+		};
+
+		item.symbols = keyboard.getSymbolsFromKeys(item.keys);
 		return item;
 	};
 

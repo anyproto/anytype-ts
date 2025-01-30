@@ -33,11 +33,12 @@ class Keyboard {
 	isSelectionClearDisabled = false;
 	isComposition = false;
 	isCommonDropDisabled = false;
+	isShortcutEditing = false;
 	isRtl = false;
 	
 	init () {
 		this.unbind();
-		this.shortcuts = J.Shortcut.getItems();
+		this.initShortcuts();
 		
 		const win = $(window);
 
@@ -72,6 +73,10 @@ class Keyboard {
 
 		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
+	};
+
+	initShortcuts () {
+		this.shortcuts = J.Shortcut.getItems();
 	};
 	
 	unbind () {
@@ -1036,6 +1041,10 @@ class Keyboard {
 		this.isRtl = v;
 	};
 
+	setShortcutEditing (v: boolean) {
+		this.isShortcutEditing = v;
+	};
+
 	initPinCheck () {
 		const { account } = S.Auth;
 
@@ -1164,8 +1173,25 @@ class Keyboard {
 		return e && e.key ? e.key.toLowerCase() : '';
 	};
 
+	metaKeys (e: any): string[] {
+		const ret = [];
+		if (e.shiftKey) {
+			ret.push('shift');
+		};
+		if (e.altKey) {
+			ret.push('alt');
+		};
+		if (e.ctrlKey) {
+			ret.push('ctrl');
+		};
+		if (e.metaKey) {
+			ret.push('cmd');
+		};
+		return ret;
+	};
+
 	shortcut (s: string, e: any, callBack: (pressed: string) => void) {
-		if (!e || !e.key) {
+		if (!e || !e.key || this.isShortcutEditing) {
 			return;
 		};
 
@@ -1178,21 +1204,13 @@ class Keyboard {
 		const a = string.split(',').map(it => it.trim());
 		const key = this.eventKey(e);
 		const which = e.which;
+		const metaKeys = this.metaKeys(e);
 
 		let pressed = [];
 		let res = '';
 
-		if (e.shiftKey) {
-			pressed.push('shift');
-		};
-		if (e.altKey) {
-			pressed.push('alt');
-		};
-		if (e.ctrlKey) {
-			pressed.push('ctrl');
-		};
-		if (e.metaKey) {
-			pressed.push('cmd');
+		if (metaKeys.length) {
+			pressed = pressed.concat(metaKeys);
 		};
 
 		// Cmd + Alt + N hack
@@ -1232,6 +1250,32 @@ class Keyboard {
 			ret = this.shortcuts[id].symbols.join(' + ');
 		};
 		return ret;
+	};
+
+	getSymbolsFromKeys (keys: string[]) {
+		const isMac = U.Common.isPlatformMac();
+
+		return keys.map((key: string) => {
+			if (key === this.cmdKey()) {
+				return this.cmdSymbol();
+			};
+			if (key == 'shift') {
+				return this.shiftSymbol();
+			};
+			if (key == 'alt') {
+				return this.altSymbol();
+			};
+			if ((key == 'ctrl') && isMac) {
+				return '&#8963;';
+			};
+			if (key == 'enter') {
+				return '&#8629;';
+			};
+			if (key == 'delete') {
+				return 'Del';
+			};
+			return U.Common.ucFirst(key);
+		});
 	};
 
 	cmdSymbol () {

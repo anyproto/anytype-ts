@@ -1,22 +1,25 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import { Filter, Icon, Select, Label } from 'Component';
-import { I, U, J, translate } from 'Lib';
+import { I, U, J, translate, keyboard, Key, Storage } from 'Lib';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { getId, close } = props;
 	const [ page, setPage ] = useState('');
+	const [ editingId, setEditingId ] = useState('');
+	const [ editingKeys, setEditingKeys ] = useState([]);
 	const sections = J.Shortcut.getSections();
 	const current = page || sections[0].id;
 	const section = sections.find(it => it.id == current);
+	const timeout = useRef(0);
 	const id = getId();
+
+	const onClick = (item: any) => {
+		setEditingId(item.id);
+	};
 
 	const Section = (item: any) => {
 		const cn = [ 'section' ];
-
-		if (item.className) {
-			cn.push(item.className);
-		};
 
 		return (
 			<div className={cn.join(' ')}>
@@ -41,10 +44,21 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const Item = (item: any) => {
-		const symbols = item.symbols || [];
+		const cn = [ 'item' ];
+
+		let symbols = item.symbols || [];
+
+		if (item.id) {
+			cn.push('canEdit');
+
+			if (editingId == item.id) {
+				cn.push('isEditing');
+				symbols = keyboard.getSymbolsFromKeys(editingKeys);
+			};
+		};
 
 		return (
-			<div className="item">
+			<div className={cn.join(' ')} onClick={() => onClick(item)}>
 				<div className="name">{item.name}</div>
 				{symbols.length ? (
 					<div className="symbols">
@@ -55,6 +69,64 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			</div>
 		);
 	};
+
+	useEffect(() => {
+
+		return () => {
+			window.clearTimeout(timeout.current);
+			keyboard.setShortcutEditing(false);
+		};
+
+	}, []);
+
+	useEffect(() => {
+		const win = $(window);
+		const shortcuts = Storage.getShortcuts();
+		const setTimeout = () => {
+			window.clearTimeout(timeout.current);
+			timeout.current = window.setTimeout(() => {
+				keyboard.initShortcuts();
+				setEditingId('');
+			}, 1000);
+		};
+
+		win.off('keyup.shortcut keydown.shortcut');
+		keyboard.setShortcutEditing(!!editingId);
+
+		if (editingId) {
+			let pressed = [];
+
+			win.on('keydown.shortcut', (e: any) => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				const metaKeys = keyboard.metaKeys(e);
+				const key = keyboard.eventKey(e);
+				const skip = [ Key.meta, Key.ctrl ];
+
+				if (key == Key.escape) {
+					setEditingId('');
+					window.clearTimeout(timeout.current);
+					return;
+				};
+
+				if (metaKeys.length) {
+					pressed = pressed.concat(metaKeys);
+				};
+
+				if (!skip.includes(key)) {
+					pressed.push(key);
+				};
+
+				pressed = U.Common.arrayUnique(pressed);
+
+				Storage.setShortcuts({ ...shortcuts, [editingId]: pressed });
+				setEditingKeys(pressed);
+				setTimeout();
+			});
+		};
+
+	}, [ editingId ]);
 
 	return (
 		<>
