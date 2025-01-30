@@ -20,15 +20,6 @@ export interface Popup {
 	getId?(): string;
 };
 
-export interface PopupSettings extends Popup {
-	prevPage: string;
-	onPage: (id: string, data?: any) => void;
-	setConfirmPin: (v: () => void) => void;
-	onConfirmPin: () => void;
-	onExport: (format: I.ExportType, param: any) => void;
-	onSpaceTypeTooltip: (e: any) => void;
-};
-
 export interface PopupUsecase extends Popup {
 	onPage(page: string, data: any): void;
 	getAuthor(author: string): string;

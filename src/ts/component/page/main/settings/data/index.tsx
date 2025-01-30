@@ -7,7 +7,7 @@ interface State {
 	list: I.PublishState[];
 };
 
-interface Props extends I.PopupSettings {
+interface Props extends I.PageSettingsComponent {
 	onPage: (id: string) => void;
 	setLoading: (v: boolean) => void;
 };

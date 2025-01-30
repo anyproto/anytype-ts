@@ -8,7 +8,7 @@ interface State {
 	error: string;
 };
 
-const PageMainSettingsDelete = observer(class PageMainSettingsDelete extends React.Component<I.PopupSettings, State> {
+const PageMainSettingsDelete = observer(class PageMainSettingsDelete extends React.Component<I.PageSettingsComponent, State> {
 
 	refCheckbox: any = null;
 	refButton = null;
@@ -17,7 +17,7 @@ const PageMainSettingsDelete = observer(class PageMainSettingsDelete extends Rea
 		error: '',
 	};
 
-	constructor (props: I.PopupSettings) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
 		this.onDelete = this.onDelete.bind(this);

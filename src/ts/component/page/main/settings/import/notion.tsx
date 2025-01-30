@@ -7,14 +7,14 @@ interface State {
 	error: string;
 };
 
-class PageMainSettingsImportNotion extends React.Component<I.PopupSettings, State> {
+class PageMainSettingsImportNotion extends React.Component<I.PageSettingsComponent, State> {
 
 	ref = null;
 	state: State = {
 		error: '',
 	};
 
-	constructor (props: I.PopupSettings) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
 		this.onImport = this.onImport.bind(this);

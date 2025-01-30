@@ -5,11 +5,11 @@ import { I, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
 
-const PageMainSettingsMembership = observer(class PageMainSettingsMembership extends React.Component<I.PopupSettings> {
+const PageMainSettingsMembership = observer(class PageMainSettingsMembership extends React.Component<I.PageSettingsComponent> {
 
 	swiper = null;
 
-	constructor (props: I.PopupSettings) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
 		this.onSwiper = this.onSwiper.bind(this);

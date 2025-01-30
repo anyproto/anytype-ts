@@ -3,7 +3,7 @@ import { Icon, Title, Label } from 'Component';
 import { I, S, U, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PageMainSettingsAppearance = observer(class PageMainSettingsAppearance extends React.Component<I.PopupSettings> {
+const PageMainSettingsAppearance = observer(class PageMainSettingsAppearance extends React.Component<I.PageSettingsComponent> {
 
 	render () {
 		const { theme } = S.Common;

@@ -3,7 +3,7 @@ import { Title, Label, Select, Button, Icon } from 'Component';
 import { I, S, U, Storage, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PageMainSettingsPinIndex = observer(class PageMainSettingsPinIndex extends React.Component<I.PopupSettings> {
+const PageMainSettingsPinIndex = observer(class PageMainSettingsPinIndex extends React.Component<I.PageSettingsComponent> {
 
 	render () {
 		const { pin } = S.Common;

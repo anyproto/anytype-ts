@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import { I, S, U, J, translate, analytics } from 'Lib';
 
-const PageMainSettingsSpacesList = observer(class PageMainSettingsSpacesList extends React.Component<I.PopupSettings> {
+const PageMainSettingsSpacesList = observer(class PageMainSettingsSpacesList extends React.Component<I.PageSettingsComponent> {
 
 	render () {
 		const spaces = this.getItems();

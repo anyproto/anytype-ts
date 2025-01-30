@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding, sidebar } from 'Lib';
+import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding, sidebar, Storage } from 'Lib';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -90,6 +90,8 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.onSpaceTypeTooltip = this.onSpaceTypeTooltip.bind(this);
 		this.setLoading = this.setLoading.bind(this);
+		this.storageGet = this.storageGet.bind(this);
+		this.storageSet = this.storageSet.bind(this);
 	};
 
 	render () {
@@ -105,7 +107,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 		return (
 			<div className="settingsPageContainer" id="settingsPageContainer">
-				<div className={U.Common.toCamelCase(`pageSettings-${id}`)}>
+				<div className={this.getId()}>
 					<Component
 						ref={ref => this.ref = ref}
 						{...this.props}
@@ -117,6 +119,8 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 						setConfirmPin={this.setConfirmPin}
 						setLoading={this.setLoading}
 						onSpaceTypeTooltip={this.onSpaceTypeTooltip}
+						storageGet={this.storageGet}
+						storageSet={this.storageSet}
 					/>
 				</div>
 			</div>
@@ -166,8 +170,20 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		this.setState({ loading: v });
 	};
 
+	storageGet () {
+		return Storage.get(this.getId()) || {};
+	};
+
+	storageSet (data: any) {
+		Storage.set(this.getId(), data);
+	};
+
 	getId () {
-		return 'settingsPageContainer';
+		const pathname = U.Router.getRoute();
+		const param = U.Router.getParam(pathname);
+		const id = param.id || 'account';
+
+		return U.Common.toCamelCase(`pageSettings-${id}`);
 	};
 
 });

@@ -15,7 +15,7 @@ interface State {
 
 const HEIGHT = 64;
 
-const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
+const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PageSettingsComponent, State> {
 
 	node: any = null;
 	cache: any = null;
@@ -32,7 +32,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		key: '',
 	};
 
-	constructor (props: I.PopupSettings) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);

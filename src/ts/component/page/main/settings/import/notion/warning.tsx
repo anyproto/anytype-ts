@@ -3,9 +3,9 @@ import { Title, Button } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 import Head from '../../head';
 
-class PageMainSettingsImportNotionWarning extends React.Component<I.PopupSettings> {
+class PageMainSettingsImportNotionWarning extends React.Component<I.PageSettingsComponent> {
 
-	constructor (props: I.PopupSettings) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
 		this.onImport = this.onImport.bind(this);

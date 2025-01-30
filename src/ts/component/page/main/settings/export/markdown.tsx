@@ -4,7 +4,7 @@ import { I, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
-const PageMainSettingsExportMarkdown = observer(class PageMainSettingsExportMarkdown extends React.Component<I.PopupSettings> {
+const PageMainSettingsExportMarkdown = observer(class PageMainSettingsExportMarkdown extends React.Component<I.PageSettingsComponent> {
 
 	data: any = {};
 

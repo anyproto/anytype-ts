@@ -3,7 +3,7 @@ import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
 import { I, S, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PopupSettings {
+interface Props extends I.PageSettingsComponent {
 	setLoading: (v: boolean) => void;
 };
 

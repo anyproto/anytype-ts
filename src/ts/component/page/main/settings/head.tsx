@@ -25,8 +25,6 @@ class PopupSettingsHead extends React.Component<Props> {
 		);
 	};
 
-	
-
 };
 
 export default PopupSettingsHead;

@@ -11,7 +11,7 @@ interface State {
 
 const STORAGE_FULL = 0.7;
 
-const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
+const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
 	refInput = null;

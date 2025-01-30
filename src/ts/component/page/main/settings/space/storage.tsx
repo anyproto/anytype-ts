@@ -4,11 +4,11 @@ import { Title, ListManager } from 'Component';
 import { I, J, translate, Action, analytics } from 'Lib';
 import Head from '../head';
 
-const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageManager extends React.Component<I.PopupSettings, {}> {
+const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageManager extends React.Component<I.PageSettingsComponent, {}> {
 
 	refManager = null;
 
-	constructor (props: I.PopupSettings) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
 		this.onRemove = this.onRemove.bind(this);

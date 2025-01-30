@@ -4,7 +4,7 @@ import { I, U, J, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
-interface Props extends I.PopupSettings {
+interface Props extends I.PageSettingsComponent {
 	onImport: (type: I.ImportType, param: any) => void;
 };
 

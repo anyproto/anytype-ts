@@ -3,7 +3,7 @@ import { Title, Label, Icon } from 'Component';
 import { I, U, translate } from 'Lib';
 import Head from '../../head';
 
-class PageMainSettingsImportNotionHelp extends React.Component<I.PopupSettings> {
+class PageMainSettingsImportNotionHelp extends React.Component<I.PageSettingsComponent> {
 
 	render () {
 		return (

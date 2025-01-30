@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
 import { I, S, U, translate, Action, analytics, Renderer } from 'Lib';
 
-const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends React.Component<I.PopupSettings> {
+const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends React.Component<I.PageSettingsComponent> {
 
 	render () {
 		const { getId } = this.props;

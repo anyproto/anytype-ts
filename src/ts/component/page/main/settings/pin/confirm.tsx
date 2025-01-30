@@ -8,7 +8,7 @@ interface State {
 	error: string;
 };
 
-const PageMainSettingsPinConfirm = observer(class PageMainSettingsPinConfirm extends React.Component<I.PopupSettings, State> {
+const PageMainSettingsPinConfirm = observer(class PageMainSettingsPinConfirm extends React.Component<I.PageSettingsComponent, State> {
 
 	state = {
 		error: '',

@@ -161,6 +161,18 @@ export interface PageComponent extends RouteComponentProps<any> {
 	storageSet?(data: any): void;
 };
 
+export interface PageSettingsComponent extends RouteComponentProps<any> {
+	prevPage: string;
+	onPage: (id: string, data?: any) => void;
+	setConfirmPin: (v: () => void) => void;
+	onConfirmPin: () => void;
+	onExport: (format: I.ExportType, param: any) => void;
+	onSpaceTypeTooltip: (e: any) => void;
+	getId?(): string;
+	storageGet?(): any;
+	storageSet?(data: any): void;
+};
+
 export interface FooterComponent {
 	onHelp?: (e: any) => void;
 	onTogglePanel?: (toggle: boolean) => void;

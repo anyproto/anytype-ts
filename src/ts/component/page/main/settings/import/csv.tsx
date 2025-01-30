@@ -7,7 +7,7 @@ interface State {
 	error: string;
 };
 
-class PageMainSettingsImportCsv extends React.Component<I.PopupSettings, State> {
+class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent, State> {
 
 	refMode = null;
 	refDelimiter = null;
@@ -16,7 +16,7 @@ class PageMainSettingsImportCsv extends React.Component<I.PopupSettings, State> 
 		error: '',
 	};
 
-	constructor (props: I.PopupSettings) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
 		this.onImport = this.onImport.bind(this);

@@ -10,7 +10,7 @@ interface State {
 
 const SUB_ID = 'dataPublish';
 
-const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish extends React.Component<I.PopupSettings, State> {
+const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish extends React.Component<I.PageSettingsComponent, State> {
 
 	state = {
 		list: [],

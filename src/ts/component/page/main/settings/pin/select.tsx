@@ -10,7 +10,7 @@ type State = {
 	error: string;
 };
 
-const PageMainSettingsPinSelect = observer(class PageMainSettingsPinSelect extends React.Component<I.PopupSettings, State> {
+const PageMainSettingsPinSelect = observer(class PageMainSettingsPinSelect extends React.Component<I.PageSettingsComponent, State> {
 
 	state = {
 		pin: null,

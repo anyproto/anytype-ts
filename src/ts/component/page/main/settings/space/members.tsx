@@ -8,14 +8,14 @@ import Head from '../head';
 
 const HEIGHT = 62;
 
-const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers extends React.Component<I.PopupSettings> {
+const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers extends React.Component<I.PageSettingsComponent> {
 
 	node: any = null;
 	cache: any = null;
 	top = 0;
 	refList: any = null;
 
-	constructor (props: I.PopupSettings) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);

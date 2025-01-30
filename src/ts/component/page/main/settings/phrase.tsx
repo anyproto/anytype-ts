@@ -8,7 +8,7 @@ interface State {
 	showCode: boolean;
 };
 
-const PageMainSettingsPhrase = observer(class PageMainSettingsPhrase extends React.Component<I.PopupSettings, State> {
+const PageMainSettingsPhrase = observer(class PageMainSettingsPhrase extends React.Component<I.PageSettingsComponent, State> {
 
 	node: any = null;
 	refPhrase: any = null;
@@ -17,7 +17,7 @@ const PageMainSettingsPhrase = observer(class PageMainSettingsPhrase extends Rea
 		showCode: false,
 	};
 
-	constructor (props: I.PopupSettings) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
 		this.onCode = this.onCode.bind(this);
