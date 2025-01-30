@@ -211,9 +211,7 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			case 'settings': {
-				// need to change to use kind of history
 				U.Router.go('/main/settings/index', {});
-				// sidebar.objectContainerToggle('widget', 'settings');
 				break;
 			};
 

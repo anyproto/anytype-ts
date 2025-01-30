@@ -4,7 +4,6 @@ import { I, S, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PopupSettings {
-	setPinConfirmed: (v: boolean) => void;
 	setLoading: (v: boolean) => void;
 };
 

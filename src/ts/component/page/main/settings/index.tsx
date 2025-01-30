@@ -88,7 +88,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		this.onPage = this.onPage.bind(this);
 		this.onExport = this.onExport.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
-		this.setPinConfirmed = this.setPinConfirmed.bind(this);
 		this.onSpaceTypeTooltip = this.onSpaceTypeTooltip.bind(this);
 		this.setLoading = this.setLoading.bind(this);
 	};
@@ -97,8 +96,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		const pathname = U.Router.getRoute();
 		const param = U.Router.getParam(pathname);
 		const id = param.id || 'account';
-
-		console.log('PARAM: ', param)
 
 		if (!Components[id]) {
 			return;
@@ -118,7 +115,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 						onExport={this.onExport}
 						onConfirmPin={this.onConfirmPin}
 						setConfirmPin={this.setConfirmPin}
-						setPinConfirmed={this.setPinConfirmed}
 						setLoading={this.setLoading}
 						onSpaceTypeTooltip={this.onSpaceTypeTooltip}
 					/>
@@ -153,10 +149,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	setConfirmPin (v: () => void) {
 		this.onConfirmPin = v;
 		this.forceUpdate();
-	};
-
-	setPinConfirmed (v: boolean) {
-		this.pinConfirmed = v;
 	};
 
 	onSpaceTypeTooltip (e) {

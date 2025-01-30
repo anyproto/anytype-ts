@@ -26,10 +26,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 				cn.push('active');
 			};
 
-			if (action.id == 'spaceIndex') {
+			if (action.id == 'account') {
 				if (participant) {
-					name = space?.name;
-					icon = <IconObject object={{ ...space, spaceId: S.Common.space, name }} size={36} iconSize={36} />;
+					name = participant?.globalName || participant?.name;
+					icon = <IconObject object={{ ...participant, name }} size={36} iconSize={36} />;
 				};
 
 				cn.push('itemAccount');
@@ -105,16 +105,15 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 		};
 
 		return [
-			{ id: 'space', children: [ { id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') } ] },
+			{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
 			{
-				id: 'index', name: translate('popupSettingsApplicationTitle'), children: [
-					{ id: 'account', name: translate('popupSettingsProfileTitle') },
+				name: translate('popupSettingsApplicationTitle'), children: [
 					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 					{ id: 'appearance', name: translate('popupSettingsColorMode') },
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 				]
 			},
-			{ id: 'test',  name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
+			{ name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
 		];
 	};
 
