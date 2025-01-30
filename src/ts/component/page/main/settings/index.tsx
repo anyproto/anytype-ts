@@ -85,6 +85,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	constructor (props: I.PageComponent) {
 		super(props);
 
+		this.getId = this.getId.bind(this);
 		this.onPage = this.onPage.bind(this);
 		this.onExport = this.onExport.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
@@ -107,7 +108,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 		return (
 			<div className="settingsPageContainer" id="settingsPageContainer">
-				<div className={this.getId()}>
+				<div className={this.getId()} id={this.getId()}>
 					<Component
 						ref={ref => this.ref = ref}
 						{...this.props}
