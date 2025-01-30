@@ -191,7 +191,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					color="blank" 
 					className="simple"
 					text={translate('commonCopy')}
-					onClick={() => U.Common.copyToast(translate('commonLink'), url)} 
+					onClick={() => U.Common.copyToast(translate('commonLink'), `https://${url}`)} 
 				/>
 			</div>
 
