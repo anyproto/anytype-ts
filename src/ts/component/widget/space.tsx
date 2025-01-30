@@ -1,17 +1,20 @@
-import React, { forwardRef, MouseEvent } from 'react';
+import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, C, J, translate, sidebar, keyboard, analytics, Storage, Action } from 'Lib';
+import { I, S, U, C, J, translate, sidebar, keyboard, analytics, Storage, Action, Preview } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent } = props;
 	const space = U.Space.getSpaceview();
+	const plusRef = useRef(null);
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 	const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
 	const isSpaceOwner = U.Space.isMyOwner();
+	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'body' ];
 	const cmd = keyboard.cmdSymbol();
+	const alt = keyboard.altSymbol();
 	const buttons = [
 		space.chatId && U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
 		space.isShared ? { id: 'member', name: translate('commonMembers') } : null,
@@ -43,7 +46,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const onCreate = (e: MouseEvent) => {
 		e.stopPropagation();
-		keyboard.pageCreate({}, analytics.route.navigation);
+		keyboard.pageCreate({}, analytics.route.navigation, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 	};
 
 	const onMore = (e: MouseEvent, context: any, item: any) => {
@@ -248,6 +251,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		};
 	};
 
+	const onPlusHover = (e: MouseEvent) => {
+		const t = Preview.tooltipCaption(translate('commonCreateNewObject'), `${cmd} + N / ${cmd} + ${alt} + N`);
+
+		Preview.tooltipShow({ text: t, element: $(plusRef.current) });
+	};
+
 	return (
 		<div 
 			className={cn.join(' ')}
@@ -268,8 +277,13 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				</div>
 				<div className="side right">
 					<Icon className="search withBackground" onClick={onSearch} tooltip={translate('commonSearch')} tooltipCaption={`${cmd} + S`} />
-					<Icon className="plus withBackground" onClick={onCreate} tooltip={translate('commonCreateNewObject')} tooltipCaption={`${cmd} + N`} />
-					<Icon id={`widget-${parent.id}-arrow`} className="arrow withBackground" onClick={onArrow} tooltip={translate('commonSelectType')} />
+
+					{canWrite ? (
+						<div className="plusWrapper" onMouseEnter={onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
+							<Icon ref={plusRef} className="plus withBackground" onClick={onCreate} />
+							<Icon id={`widget-${parent.id}-arrow`} className="arrow withBackground" onClick={onArrow} />
+						</div>
+					) : ''}
 				</div>
 			</div>
 

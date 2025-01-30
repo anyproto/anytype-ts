@@ -21,7 +21,7 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 		const { list } = this.state;
 
 		const Row = (item: any) => {
-			const object = S.Detail.get(SUB_ID, item.objectId);
+			const object = S.Detail.mapper(item.details);
 
 			return (
 				<div className="row">
@@ -65,18 +65,9 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 	};
 
 	load () {
-		C.PublishingList(S.Common.space, (message: any) => {
+		C.PublishingList('', (message: any) => {
 			if (!message.error.code) {
-				const list = message.list;
-				const ids = list.map(item => item.objectId);
-
-				U.Data.subscribeIds({
-					subId: SUB_ID,
-					ids,
-					noDeps: true,
-				}, () => {
-					this.setState({ list });
-				});
+				this.setState({ list: message.list });
 			};
 		});
 	};
@@ -88,8 +79,12 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 	onMore (item: any) {
 		const { getId } = this.props;
 		const element = $(`#${getId()} #icon-more-${item.objectId}`);
+		const object = S.Detail.mapper(item.details);
 		const options: any[] = [
-			{ id: 'update', name: translate('menuPublishButtonUpdate') },
+			{ id: 'open', name: translate('menuPublishButtonOpen') },
+			{ isDiv: true },
+			{ id: 'view', name: translate('menuPublishButtonView') },
+			{ id: 'copy', name: translate('menuPublishButtonCopy') },
 			{ id: 'unpublish', name: translate('menuPublishButtonUnpublish'), color: 'red' },
 		];
 
@@ -104,8 +99,18 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 				options,
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
-						case 'update': {
-							this.onUpdate(item);
+						case 'open': {
+							U.Object.openAuto(object);
+							break;
+						};
+
+						case 'view': {
+							this.onClick(item);
+							break;
+						};
+
+						case 'copy': {
+							U.Common.copyToast(translate('commonLink'), U.Space.getPublishUrl(item.uri));
 							break;
 						};
 
@@ -119,25 +124,8 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 		});
 	};
 
-	onUpdate (item: any) {
-		const object = S.Detail.get(SUB_ID, item.objectId);
-
-		C.PublishingCreate(S.Common.space, item.objectId, item.uri, false, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (message.url) {
-				Action.openUrl(message.url);
-				analytics.event('ShareObjectPublish', { objectType: object.type });
-			};
-		});
-
-		analytics.event('ClickShareObjectPublish', { objectType: object.type });
-	};
-
 	onUnpublish (item: any) {
-		const object = S.Detail.get(SUB_ID, item.objectId);
+		const object = S.Detail.mapper(item.details);
 
 		C.PublishingRemove(S.Common.space, item.objectId, (message: any) => {
 			if (!message.error.code) {

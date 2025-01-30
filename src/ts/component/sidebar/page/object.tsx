@@ -566,7 +566,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		if (this.type == I.ObjectContainerType.Relation) {
 			this.onRelationMenu(cb);
 		} else {
-			keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
+			keyboard.pageCreate(details, analytics.route.allObjects, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
 				cb(message.targetId);
 			});
 		};
