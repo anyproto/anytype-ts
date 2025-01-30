@@ -27,6 +27,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 			};
 
 			if (action.id == 'account') {
+				if ('index' == param.id) {
+					cn.push('active');
+				};
+				
 				if (participant) {
 					name = participant?.globalName || participant?.name;
 					icon = <IconObject object={{ ...participant, name }} size={36} iconSize={36} />;

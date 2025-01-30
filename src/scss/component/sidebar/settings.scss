@@ -24,7 +24,7 @@
             }
             .item:hover, .item.active { background-color: var(--color-shape-highlight-medium); }
             .item {
-                .icon { width: 24px; height: 24px; flex-shrink: 0; }
+                .icon { width: 20px; height: 20px; flex-shrink: 0; }
                 .icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
 
                 .name { @include text-overflow-nw; overflow: visible; flex-grow: 1; }
@@ -33,7 +33,7 @@
                 .caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
             }
 
-            .item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; border-radius: 8px; background-color: var(--color-shape-highlight-medium); }
+            .item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; border-radius: 8px; }
             .item.itemAccount {
                 .iconObject { flex-shrink: 0; }
                 .name { @include text-common; @include text-overflow-nw; font-weight: 600; }
