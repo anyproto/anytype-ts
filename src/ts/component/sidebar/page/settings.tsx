@@ -5,7 +5,7 @@ import { Icon, IconObject } from 'Component';
 
 const SidebarSettings = observer(class SidebarSettings extends React.Component<{}, {}> {
 
-	render() {
+	render () {
 		const space = U.Space.getSpaceview();
 		const { membership } = S.Auth;
 		const { membershipTiersList } = S.Common;
@@ -128,6 +128,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 	onPage (page) {
 		sidebar.settingsOpen(page);
 	};
+
 });
 
 export default SidebarSettings

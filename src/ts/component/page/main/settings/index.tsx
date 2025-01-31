@@ -130,6 +130,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 	componentDidMount () {
 		sidebar.objectContainerSwitch('settings');
+		S.Common.getRef('vault')?.setActive('settings');
 	};
 
 	componentWillUnmount () {
