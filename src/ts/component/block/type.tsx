@@ -21,7 +21,12 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	render (): any {
-		const { block } = this.props;
+		const { block, readonly } = this.props;
+
+		if (readonly) {
+			return null;
+		};
+
 		const items = this.getItems();
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 
@@ -191,7 +196,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			data: {
 				filter: '',
 				filters: [
-					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
 					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
 				],
 				onClick: (item: any) => {

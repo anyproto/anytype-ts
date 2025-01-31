@@ -11,13 +11,24 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		const { 
 			icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore,
 			className, style, iconSize, switchValue, selectValue, options, readonly, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
-			selectMenuParam, subComponent, note, sortArrow, isDiv,
+			selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index
 		} = this.props;
 		const id = this.props.id || '';
 		const cn = [];
 		const withArrow = arrow || subComponent;
 
-		isDiv ? cn.push('separator') : cn.push('item');
+		if (isDiv) {
+			cn.push('separator');
+		} else 
+		if (isSection) {
+			cn.push('sectionName');
+
+			if (!index) {
+				cn.push('first');
+			};
+		} else {
+			cn.push('item');
+		};
 
 		let hasClick = true;
 		let iconMainElement = null;
@@ -99,6 +110,9 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		if (isDiv) {
 			content = <div className="inner" />;
 		} else
+		if (isSection) {
+			content = name;
+		} else
 		if (withDescription) {
 			content = (
 				<React.Fragment>
@@ -141,7 +155,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						) : (
 							<div className="caption">{caption}</div>
 						)}
-						{withMore ? <Icon className="more" onMouseDown={onMore} /> : ''}
+						{withMore ? <Icon className="more withBackground" onMouseDown={onMore} /> : ''}
 					</React.Fragment>
 				);
 			};
@@ -150,7 +164,8 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				<React.Fragment>
 					<div 
 						className="clickable" 
-						onMouseDown={hasClick ? undefined : onClick}
+						onClick={hasClick ? undefined : onClick}
+						onContextMenu={!hasClick && withMore ? onMore : undefined}
 					>
 						{iconMainElement}
 						{nameElement}
@@ -166,9 +181,10 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				ref={node => this.node = node}
 				id={`item-${id}`} 
 				className={cn.join(' ')} 
-				onMouseDown={hasClick ? onClick : undefined}
+				onClick={hasClick ? onClick : undefined}
 				onMouseEnter={onMouseEnter} 
-				onMouseLeave={onMouseLeave} 
+				onMouseLeave={onMouseLeave}
+				onContextMenu={hasClick && withMore ? onMore : undefined}
 				style={style}
 			>
 				{content}

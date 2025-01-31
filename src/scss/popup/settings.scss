@@ -233,6 +233,9 @@
 						.sectionContent {
 							> .item { padding: 16px; border-bottom: 1px solid var(--color-shape-secondary); }
 							> .item:last-child { border-bottom: 0; }
+							> .item.red { 
+								.title { color: var(--color-red); }
+							}
 
 							> .item {
 								.sides { display: flex; justify-content: space-between; gap: 0px 16px; }
@@ -347,7 +350,7 @@
 				.qrWrap { width: 130px; overflow: hidden; }
 			}
 
-			> .side.right.tabDataManagement {
+			> .side.right.tabDataIndex {
 				.description {
 					.label { display: inline; }
 					.label.extend { color: var(--color-red); }
@@ -380,7 +383,8 @@
 				}
 			}
 
-			> .side.right.tabSpaceList {
+			> .side.right.tabSpaceList,
+			> .side.right.tabDataPublish {
 				.title { margin-bottom: 32px !important; }
 
 				.items {
@@ -388,26 +392,32 @@
 
 					.row.isHead { 
 						@include text-small; color: var(--color-text-secondary); font-weight: 400; border-color: var(--color-shape-secondary); border-style: solid;
-						border-top-width: 1px; border-bottom-width: 1px;
+						padding: 9px 0px;
 					}
 					.row.isHead {
-						.col { height: 36px; line-height: 36px; }
+						.col { height: 18px; line-height: 18px; }
 					}
 
-					.row { border-bottom: 1px solid var(--color-shape-secondary); padding: 12px 8px 12px 0px; }
+					.row { border-bottom: 1px solid var(--color-shape-secondary); padding: 11px 0px; }
 
-					.col.colSpace { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 12px; }
-					.col.colSpace {
+					.col.colObject { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 12px; }
+					.col.colObject {
 						.iconObject { flex-shrink: 0; }
 						.info { width: calc(100% - 52px); }
-						.info {
-							.name { @include text-overflow-nw; }
-						}
+						.name { @include text-overflow-nw; }
 						.creator { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-secondary); }
 					}
 
+					.col.colDate { @include text-overflow-nw; }
+
 					.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 					.icon.active { background-color: var(--color-shape-highlight-medium); }
+				}
+			}
+
+			> .side.right.tabDataPublish {
+				.items {
+					.col.colObject { gap: 0px 8px; }
 				}
 			}
 

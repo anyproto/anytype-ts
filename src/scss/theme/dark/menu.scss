@@ -18,12 +18,6 @@
 		.icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/text/numbered0.svg'); }
 		.icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/text/toggle0.svg'); }
 
-		.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
-		.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
-		.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
-		.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
-		.icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
-
         .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
 
         .icon.color {
@@ -280,11 +274,6 @@
         }
     }
 
-	/* QuickCapture */
-
-	.menu.menuQuickCapture { background: none; box-shadow: none; }
-	.menu.menuQuickCapture.isExpanded { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
-
     /* SyncStatus */
 
     .menu.menuSyncStatus {
@@ -308,6 +297,31 @@
 	.menu.menuGraphSettings {
 		.input-drag-horizontal {
 			.icon { background-color: var(--color-bg-secondary); }
+		}
+	}
+
+    /* Widget */
+
+	.menu.menuWidget {
+		.options {
+			.option {
+				.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
+				.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
+				.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
+				.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
+				.icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
+			}
+		}
+	}
+
+	/* Publish */
+
+	.menu.menuPublish {
+		.input.isReadonly { background: rgba(255, 255, 255, 0.03); }
+
+		.outer {
+			.icon.space { background-image: url('#{$themePath}/icon/widget/button/member.svg'); }
+			.icon.export { background-image: url('#{$themePath}/icon/widget/button/export.svg'); }
 		}
 	}
 

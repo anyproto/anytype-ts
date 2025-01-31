@@ -148,7 +148,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const ret = (isPopup ? matchPopup : match) || { params: {} };
 
 		// Universal object route
-		if (pathname.match('/object')) {
+		if (pathname.match(/^\/object/)) {
 			ret.params.page = 'main';
 			ret.params.action = 'object';
 			ret.params.id = data.objectId;
@@ -158,13 +158,13 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		// Invite route
-		if (pathname.match('/invite')) {
+		if (pathname.match(/^\/invite/)) {
 			ret.params.page = 'main';
 			ret.params.action = 'invite';
 		};
 
 		// Membership route
-		if (pathname.match('/membership')) {
+		if (pathname.match(/^\/membership/)) {
 			ret.params.page = 'main';
 			ret.params.action = 'membership';
 		};
@@ -191,6 +191,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	init () {
 		const { account } = S.Auth;
+		const { pin } = S.Common;
 		const { isPopup } = this.props;
 		const match = this.getMatch();
 		const { page, action } = this.getMatchParams();
@@ -198,7 +199,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
 		const isPinCheck = this.isAuthPinCheck();
-		const pin = Storage.getPin();
 		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];

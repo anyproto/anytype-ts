@@ -39,7 +39,7 @@
 
 .cellContent { cursor: default; }
 .cellContent {
-	.iconObject { margin-right: 8px; vertical-align: top; flex-shrink: 0; cursor: default; }
+	.iconObject { flex-shrink: 0; cursor: default; }
 	.icon.clear { display: none; }
 
 	.name { display: inline-block; vertical-align: top; user-select: text !important; }

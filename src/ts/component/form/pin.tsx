@@ -35,7 +35,6 @@ const Pin = forwardRef<PinRefProps, Props>(({
 }, ref) => {
 
 	const inputRefs = useRef([]);
-	const timeout = useRef(0);
 	const index = useRef(0);
 
 	const rebind = () => {
@@ -93,11 +92,12 @@ const Pin = forwardRef<PinRefProps, Props>(({
 	};
 
 	const onInputKeyDown = (e, index: number) => {
+		const current = inputRefs.current[index];
 		const prev = inputRefs.current[index - 1];
 
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
-				prev.setValue('');
+				current.setValue('');
 				prev.setType('text');
 				prev.focus();
 			});
@@ -142,8 +142,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		};
 
 		if (!isVisible) {
-			window.clearTimeout(timeout.current);
-			timeout.current = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
+			window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
 		};
 	};
 
@@ -178,11 +177,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		};
 
 		rebind();
-
-		return () => {
-			window.clearTimeout(timeout.current);
-			unbind();
-		};
+		return () => unbind();
 	}, []);
 
 	const props: any = {

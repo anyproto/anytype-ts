@@ -13,6 +13,7 @@ export * from './payment';
 export * from './history';
 export * from './syncStatus';
 export * from './ai';
+export * from './publish';
 
 export * from './block';
 export * from './block/dataview';

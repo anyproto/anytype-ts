@@ -84,7 +84,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 
 		const Member = (item: any) => {
-			const isCurrent = item.id == participant.id;
+			const isCurrent = item.id == participant?.id;
 
 			let tag = null;
 			let button = null;

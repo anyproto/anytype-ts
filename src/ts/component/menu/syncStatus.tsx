@@ -83,7 +83,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						<Icon className="more withBackground" onClick={e => this.onContextMenu(e, item)} />
 					</div>
 				</div>
 			);
@@ -96,7 +96,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			if (item.isSection) {
 				content = (
 					<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
-						{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}
+						{item.name}
 					</div>
 				);
 			} else {

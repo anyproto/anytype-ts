@@ -5,12 +5,14 @@ import { Loader, IconObject, Icon, Label } from 'Component';
 import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding } from 'Lib';
 
 import PageAccount from './page/settings/account';
-import PageDataManagement from './page/settings/data';
 import PageDelete from './page/settings/delete';
 import PagePersonal from './page/settings/personal';
 import PageAppearance from './page/settings/appearance';
 import PagePhrase from './page/settings/phrase';
 import PageLogout from './page/settings/logout';
+
+import PageDataIndex from './page/settings/data/index';
+import PageDataPublish from './page/settings/data/publish';
 
 import PagePinIndex from './page/settings/pin/index';
 import PagePinSelect from './page/settings/pin/select';
@@ -40,7 +42,6 @@ interface State {
 
 const Components: any = {
 	account:			 PageAccount,
-	dataManagement: 	 PageDataManagement,
 	delete:				 PageDelete,
 	personal:			 PagePersonal,
 	appearance:			 PageAppearance,
@@ -52,6 +53,8 @@ const Components: any = {
 	pinSelect:			 PagePinSelect,
 	pinConfirm:			 PagePinConfirm,
 
+	dataIndex: 			 PageDataIndex,
+	dataPublish:		 PageDataPublish,
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
@@ -285,7 +288,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		} else {
 			const settingsVault = [
 				{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
-				{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
+				{ id: 'dataIndex', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'dataPublish', 'delete' ] },
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
 			if (this.withMembership()) {
@@ -340,11 +343,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { page } = data || {};
+		const route = data.route || analytics.route.settings;
 
 		this.prevPage = page;
 
 		S.Popup.updateData(this.props.id, { page: id, ...additional });
-		analytics.event('settings', { params: { id } });
+		analytics.event('settings', { route, params: { id } });
 	};
 
 	onExport (type: I.ExportType, param: any) {

@@ -57,9 +57,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					</div>
 				);
 			} else 
-			if (item.isSection) {
-				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
-			} else
 			if (item.isRelation) {
 				content = (
 					<div 
@@ -131,6 +128,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					<MenuItemVertical 
 						key={item.id + '-' + index} 
 						{...item} 
+						index={index}
 						className={cn.join(' ')}
 						withDescription={item.isBlock} 
 						onMouseEnter={e => this.onMouseEnter(e, item)} 

@@ -448,15 +448,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
 		const { readonly } = this.props;
-		const { account } = S.Auth;
-		const blockId = this.getBlockId();
-		const message = `#block-${blockId} #item-${item.id}`;
-		const isSelf = item.creator == account.id;
-
 		if (readonly) {
 			return;
 		};
 
+
+		const { isPopup } = this.props;
+		const { account } = S.Auth;
+		const blockId = this.getBlockId();
+		const message = `#block-${blockId} #item-${item.id}`;
+		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
+		const isSelf = item.creator == account.id;
 		const options: any[] = [
 			{ id: 'reply', name: translate('blockChatReply') },
 			isSelf ? { id: 'edit', name: translate('commonEdit') } : null,
@@ -465,9 +467,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const menuParam: Partial<I.MenuParam> = {
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			onOpen: () => $(message).addClass('hover'),
-			onClose: () => $(message).removeClass('hover'),
+			horizontal: onMore ? I.MenuDirection.Center : I.MenuDirection.Left,
+			onOpen: () => {
+				$(message).addClass('hover');
+				container.addClass('over');
+			},
+			onClose: () => {
+				$(message).removeClass('hover');
+				container.removeClass('over');
+			},
 			data: {
 				options,
 				onSelect: (e, option) => {
@@ -584,7 +592,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const container = U.Common.getScrollContainer(this.props.isPopup);
 		const top = this.getMessageScrollOffset(id);
 
-		container.scrollTop(top);
+		container.scrollTop(top - container.height() / 2);
 	};
 
 	scrollToBottom () {
@@ -609,10 +617,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onReplyClick (e: React.MouseEvent, item: any) {
-		if (!S.Common.config.experimental) {
-			return;
-		};
-
 		this.isLoaded = false;
 		this.setIsBottom(false);
 

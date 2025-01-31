@@ -174,6 +174,7 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 	request.setIcon(icon);
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
+	request.setJsonapilistenaddr(J.Url.api);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -191,6 +192,7 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 	request.setRootpath(path);
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
+	request.setJsonapilistenaddr(J.Url.api);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
@@ -1364,19 +1366,6 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 	});
 };
 
-export const PublishingCreate = (spaceId: string, objectId: string, uri: string,  callBack?: (message: any) => void) => {
-	/*
-	const request = new Rpc.Publishing.Create.Request();
-
-	request.setObjectid(objectId);
-	request.setSpaceid(spaceId);
-	request.setUri(uri);
-
-	dispatcher.request(PublishingCreate.name, request, callBack);
-	*/
-};
-
-
 export const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
 
@@ -1952,7 +1941,15 @@ export const DebugExportLog = (path: string, callBack?: (message: any) => void) 
 	request.setDir(path);
 
 	dispatcher.request(DebugExportLog.name, request, callBack);
-}
+};
+
+export const DebugRunProfiler = (duration: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.RunProfiler.Request();
+
+	request.setDurationinseconds(duration);
+
+	dispatcher.request(DebugRunProfiler.name, request, callBack);
+};
 
 // ---------------------- NOTIFICATION ---------------------- //
 
@@ -2293,4 +2290,51 @@ export const AIWritingTools = (mode: I.AIMode, text: string, callBack?: (message
 	request.setText(text);
 
 	dispatcher.request(AIWritingTools.name, request, callBack);
+};
+
+// ---------------------- PUBLISHING ---------------------- //
+
+export const PublishingCreate = (spaceId: string, objectId: string, uri: string, joinSpace: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.Create.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+	request.setUri(uri);
+	request.setJoinspace(joinSpace);
+
+	dispatcher.request(PublishingCreate.name, request, callBack);
+};
+
+export const PublishingRemove = (spaceId: string, objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.Remove.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(PublishingRemove.name, request, callBack);
+};
+
+export const PublishingList = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.List.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(PublishingList.name, request, callBack);
+};
+
+export const PublishingResolveUri = (uri: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.ResolveUri.Request();
+
+	request.setUri(uri);
+
+	dispatcher.request(PublishingResolveUri.name, request, callBack);
+};
+
+export const PublishingGetStatus = (spaceId: string, objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Publishing.GetStatus.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(PublishingGetStatus.name, request, callBack);
 };

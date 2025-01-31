@@ -1,5 +1,7 @@
 import { I, S, U, J } from 'Lib';
 
+const electron = U.Common.getElectron();
+
 const ACCOUNT_KEYS = [
 	'spaceId',
 	'spaceOrder',
@@ -18,33 +20,67 @@ const SPACE_KEYS = [
 	'redirectInvite',
 ];
 
+const Api = {
+	get: (key: string) => {
+		if (electron.storeGet) {
+			return electron.storeGet(key);
+		} else {
+			return Api.parse(localStorage.getItem(key));
+		};
+	},
+
+	set: (key: string, obj: any) => {
+		if (electron.storeSet) {
+			electron.storeSet(key, obj);
+		} else {
+			localStorage.setItem(key, JSON.stringify(obj));
+		};
+	},
+
+	delete: (key: string) => {
+		if (electron.storeDelete) {
+			electron.storeDelete(key);
+		} else {
+			localStorage.removeItem(key);
+		};
+	},
+
+	parse: (s: string) => {
+		if (!s) {
+			return;
+		};
+
+		let ret = '';
+		try { ret = JSON.parse(s); } catch (e) { /**/ };
+		return ret;
+	},
+};
+
 class Storage {
 	
-	storage: any = null;
-	store: any = null;
-	
-	constructor () {
-		this.storage = localStorage;
-	};
-
 	get (key: string): any {
-		let o = U.Common.getElectron().storeGet(key);
-		if (!o) {
-			o = this.parse(String(this.storage[key] || ''));
+		if (!key) {
+			console.log('[Storage].get: key not specified');
+			return;
+		};
+
+		let o = Api.get(key);
+		if (undefined === o) {
+			o = Api.parse(String(localStorage.getItem(key) || ''));
 		};
 
 		if (this.isSpaceKey(key)) {
 			if (o) {
-				delete(this.storage[key]);
-				this.set(key, o, true);
+				localStorage.removeItem(key);
+				this.set(key, o);
 			};
 
 			return this.getSpaceKey(key);
 		} else 
 		if (this.isAccountKey(key)) {
 			if (o) {
-				delete(this.storage[key]);
-				this.set(key, o, true);
+				localStorage.removeItem(key);
+				this.set(key, o);
 			};
 
 			return this.getAccountKey(key);
@@ -53,7 +89,7 @@ class Storage {
 		};
 	};
 
-	set (key: string, obj: any, del?: boolean): void {
+	set (key: string, obj: any): void {
 		obj = U.Common.objectCopy(obj);
 
 		if (!key) {
@@ -61,27 +97,14 @@ class Storage {
 			return;
 		};
 
-		if (del) {
-			this.delete(key);
-		};
-		
-		let o = this.get(key);
-		if ((typeof o === 'object') && (o !== null)) {
-			for (const i in obj) {
-				o[i] = obj[i];
-			};
-		} else {
-			o = obj;
-		};
-
 		if (this.isSpaceKey(key)) {
-			this.setSpaceKey(key, o);
+			this.setSpaceKey(key, obj);
 		} else 
 		if (this.isAccountKey(key)) {
-			this.setAccountKey(key, o);
+			this.setAccountKey(key, obj);
 		} else {
-			U.Common.getElectron().storeSet(key, o);
-			//delete(this.storage[key]);
+			Api.set(key, obj);
+			//localStorage.removeItem(key);
 		};
 	};
 	
@@ -92,8 +115,7 @@ class Storage {
 		if (this.isAccountKey(key)) {
 			this.deleteAccountKey(key);
 		} else {
-			U.Common.getElectron().storeDelete(key);
-			delete(this.storage[key]);
+			Api.delete(key);
 		};
 	};
 
@@ -141,7 +163,7 @@ class Storage {
 	};
 
 	setSpace (obj: any) {
-		this.set('space', obj, true);
+		this.set('space', obj);
 	};
 
 	deleteSpace (id: string) {
@@ -195,7 +217,7 @@ class Storage {
 	};
 
 	setAccount (obj: any) {
-		this.set('account', obj, true);
+		this.set('account', obj);
 	};
 
 	deleteAccount (id: string) {
@@ -215,8 +237,9 @@ class Storage {
 		this.setAccount(obj);
 	};
 
-	getAccountId () {
-		return this.get('accountId');
+	getAccountId (): string {
+		const { account } = S.Auth;
+		return account ? account.id : '';
 	};
 
 	getPin () {
@@ -227,7 +250,7 @@ class Storage {
 		const obj = this.get('lastOpenedObject') || {};
 
 		obj[windowId] = Object.assign(obj[windowId] || {}, param);
-		this.set('lastOpenedObject', obj, true);
+		this.set('lastOpenedObject', obj);
 	};
 
 	deleteLastOpenedByObjectId (objectIds: string[]) {
@@ -255,7 +278,7 @@ class Storage {
 		const obj = this.get('lastOpenedObject') || {};
 
 		windowIds.forEach(windowId => delete(obj[windowId]));
-		this.set('lastOpenedObject', obj, true);
+		this.set('lastOpenedObject', obj);
 	};
 
 	getLastOpened (windowId: string) {
@@ -278,7 +301,7 @@ class Storage {
 		list = [ ...new Set(list) ];
 
 		obj[rootId] = list;
-		this.set('toggle', obj, true);
+		this.set('toggle', obj);
 		return obj;
 	};
 
@@ -295,7 +318,7 @@ class Storage {
 		const obj = this.get('toggle') || {};
 
 		delete(obj[rootId]);
-		this.set('toggle', obj, true);
+		this.set('toggle', obj);
 	};
 
 	setScroll (key: string, rootId: string, scroll: number, isPopup: boolean) {
@@ -306,7 +329,7 @@ class Storage {
 			obj[key] = obj[key] || {};
 			obj[key][rootId] = Number(scroll) || 0;
 
-			this.set('scroll', obj, true);
+			this.set('scroll', obj);
 		} catch (e) { /**/ };
 		return obj;
 	};
@@ -326,7 +349,7 @@ class Storage {
 		const obj = this.get('focus') || {};
 
 		obj[rootId] = state;
-		this.set('focus', obj, true);
+		this.set('focus', obj);
 		return obj;
 	};
 
@@ -342,7 +365,7 @@ class Storage {
 			keys.push(key);
 		};
 
-		this.set('onboarding', keys, true);
+		this.set('onboarding', keys);
 		return keys;
 	};
 
@@ -372,7 +395,7 @@ class Storage {
 	setSurvey (type: I.SurveyType, param: any) {
 		const obj = this.get('survey') || {};
 		obj[type] = Object.assign(obj[type] || {}, param);
-		this.set('survey', obj, true);
+		this.set('survey', obj);
 	};
 
 	initPinnedTypes () {
@@ -424,7 +447,7 @@ class Storage {
 	setPinnedTypes (list: string[]) {
 		list = list.slice(0, 50);
 
-		this.set('pinnedTypes', this.checkArray([ ...new Set(list) ]), true);
+		this.set('pinnedTypes', this.checkArray([ ...new Set(list) ]));
 	};
 
 	getPinnedTypes () {
@@ -445,16 +468,6 @@ class Storage {
 		];
 
 		keys.forEach(key => this.delete(key));
-	};
-
-	parse (s: string) {
-		if (!s) {
-			return;
-		};
-
-		let ret = '';
-		try { ret = JSON.parse(s); } catch (e) { /**/ };
-		return ret;
 	};
 
 	setChat (id: string, obj: any) {
