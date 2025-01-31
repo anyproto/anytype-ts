@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Title, Label, Button, Switch } from 'Component';
 import { I, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
-import Head from '../head';
 
 const PageMainSettingsExportMarkdown = observer(class PageMainSettingsExportMarkdown extends React.Component<I.PageSettingsComponent> {
 
@@ -20,8 +19,6 @@ const PageMainSettingsExportMarkdown = observer(class PageMainSettingsExportMark
 
 		return (
 			<React.Fragment>
-				<Head {...this.props} returnTo="exportIndex" name={translate('commonBack')} />
-
 				<Title text={translate('popupSettingsExportMarkdownTitle')} />
 
 				<div className="labels">

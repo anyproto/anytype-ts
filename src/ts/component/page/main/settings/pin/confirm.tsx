@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Title, Label, Pin, Error } from 'Component';
 import { I, S, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import Head from '../head';
 
 interface State {
 	error: string;
@@ -17,12 +16,10 @@ const PageMainSettingsPinConfirm = observer(class PageMainSettingsPinConfirm ext
 
 	render () {
 		const { pin } = S.Common;
-		const { onPage, prevPage } = this.props;
 		const { error } = this.state;
 
 		return (
 			<React.Fragment>
-				<Head onPage={() => onPage(prevPage)} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinVerify')} />
 				<Pin 

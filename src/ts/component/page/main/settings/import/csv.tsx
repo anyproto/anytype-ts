@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
 import { I, S, translate, keyboard, Action } from 'Lib';
-import Head from '../head';
 
 interface State {
 	error: string;
@@ -40,8 +39,6 @@ class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent,
 
 		return (
 			<div>
-				<Head {...this.props} returnTo="importIndex" name={translate('popupSettingsImportTitle')} />
-
 				<Icon className="logo" />
 				<Title text={translate('popupSettingsImportCsvTitle')} />
 				<Label text={translate('popupSettingsImportCsvText')} />

@@ -141,7 +141,7 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	text?: string;
 	layout?: I.ObjectLayout;
 	withBanner?: boolean;
-	renderLeftIcons?: (onOpen?: () => void) => any;
+	renderLeftIcons?: (withGraph?: boolean, onOpen?: () => void) => any;
 	renderTabs?: () => any;
 	onTab?: (id: string) => void;
 	onSearch?: () => void;
@@ -162,7 +162,6 @@ export interface PageComponent extends RouteComponentProps<any> {
 };
 
 export interface PageSettingsComponent extends RouteComponentProps<any> {
-	prevPage: string;
 	onPage: (id: string, data?: any) => void;
 	setConfirmPin: (v: () => void) => void;
 	onConfirmPin: () => void;

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListManager } from 'Component';
 import { I, J, translate, Action, analytics } from 'Lib';
-import Head from '../head';
 
 const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageManager extends React.Component<I.PageSettingsComponent, {}> {
 
@@ -12,7 +11,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 		super(props);
 
 		this.onRemove = this.onRemove.bind(this);
-		this.onBack = this.onBack.bind(this);
 	};
 
 	render () {
@@ -28,7 +26,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 		return (
 			<div className="wrap">
-				<Head onPage={this.onBack} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsSpaceStorageManagerTitle')} />
 
 				<ListManager
@@ -50,10 +47,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 	onRemove () {
 		Action.delete(this.refManager.getSelected(), analytics.route.settings, () => this.refManager?.selectionClear());
-	};
-
-	onBack () {
-		this.props.onPage('spaceIndex');
 	};
 
 });

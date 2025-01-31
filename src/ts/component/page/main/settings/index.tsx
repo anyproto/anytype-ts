@@ -33,6 +33,7 @@ import PageSpaceList from './space/list';
 
 import PageMembership from './membership';
 import $ from 'jquery';
+import { Header } from 'Component';
 
 interface State {
 	loading: boolean;
@@ -107,38 +108,40 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		const Component = Components[id];
 
 		return (
-			<div className="settingsPageContainer" id="settingsPageContainer">
-				<div className={this.getId()} id={this.getId()}>
-					<Component
-						ref={ref => this.ref = ref}
-						{...this.props}
-						getId={this.getId}
-						prevPage={this.prevPage}
-						onPage={this.onPage}
-						onExport={this.onExport}
-						onConfirmPin={this.onConfirmPin}
-						setConfirmPin={this.setConfirmPin}
-						setLoading={this.setLoading}
-						onSpaceTypeTooltip={this.onSpaceTypeTooltip}
-						storageGet={this.storageGet}
-						storageSet={this.storageSet}
-					/>
+			<>
+				<Header {...this.props} component="mainSettings" />
+				<div className="settingsPageContainer" id="settingsPageContainer">
+
+					<div className={this.getId()} id={this.getId()}>
+						<Component
+							ref={ref => this.ref = ref}
+							{...this.props}
+							getId={this.getId}
+							onPage={this.onPage}
+							onExport={this.onExport}
+							onConfirmPin={this.onConfirmPin}
+							setConfirmPin={this.setConfirmPin}
+							setLoading={this.setLoading}
+							onSpaceTypeTooltip={this.onSpaceTypeTooltip}
+							storageGet={this.storageGet}
+							storageSet={this.storageSet}
+						/>
+					</div>
 				</div>
-			</div>
+			</>
 		);
 	};
 
 	componentDidMount () {
-		sidebar.objectContainerSwitch('settings');
 		S.Common.getRef('vault')?.setActive('settings');
+		sidebar.objectContainerSwitch('settings');
 	};
 
 	componentWillUnmount () {
-		sidebar.objectContainerSwitch('widget');
-	};
+		const space = U.Space.getSpaceview();
 
-	prevPage () {
-		keyboard.onBack();
+		S.Common.getRef('vault')?.setActive(space.id);
+		sidebar.objectContainerSwitch('widget');
 	};
 
 	onPage (id: string) {

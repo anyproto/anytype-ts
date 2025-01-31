@@ -4,7 +4,6 @@ import { Title, Label, IconObject, ObjectName } from 'Component';
 import { I, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
-import Head from '../head';
 
 const HEIGHT = 62;
 
@@ -65,7 +64,6 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
 				<Title text={translate('commonMembers')} />
 
 				<div className="section sectionMembers">

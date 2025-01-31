@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Input, Label, Icon, Error } from 'Component';
 import { I, C, S, U, J, translate, analytics } from 'Lib';
-import Head from '../head';
 
 interface State {
 	error: string;
@@ -26,8 +25,6 @@ class PageMainSettingsImportNotion extends React.Component<I.PageSettingsCompone
 
 		return (
 			<React.Fragment>
-				<Head {...this.props} returnTo="importIndex" name={translate('commonBack')} />
-
 				<Icon className="logo" />
 				<Title text="Notion" />
 				<Label className="description" text={translate('popupSettingsImportNotionDescription')} />

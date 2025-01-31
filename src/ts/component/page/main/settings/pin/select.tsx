@@ -3,7 +3,6 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Title, Pin, Error } from 'Component';
 import { I, S, translate } from 'Lib';
-import Head from '../head';
 
 type State = {
 	pin: string | null;
@@ -23,7 +22,6 @@ const PageMainSettingsPinSelect = observer(class PageMainSettingsPinSelect exten
 
 		return (
 			<div>
-				<Head onPage={this.onBack} name={translate('commonBack')} />
 				<Title text={translate(pin ? 'popupSettingsPinSelectRepeat' : 'popupSettingsPinSelect')} />
 				<Pin 
 					ref={ref => this.ref = ref} 
@@ -39,6 +37,9 @@ const PageMainSettingsPinSelect = observer(class PageMainSettingsPinSelect exten
 
 	componentDidUpdate (): void {
 		this.ref.reset();	
+	};
+
+	componentWillUnmount () {
 	};
 
 	onSuccess = (pin: string) => {
@@ -58,18 +59,6 @@ const PageMainSettingsPinSelect = observer(class PageMainSettingsPinSelect exten
 	onError = () => {
 		this.ref.reset();
 		this.setState({ error: translate('popupSettingsPinSelectError') });
-	};
-
-	onBack = () => {
-		const { onPage } = this.props;
-		const { pin } = this.state;
-
-		if (pin) {
-			this.setState({ pin: null });
-			return;
-		};
-
-		onPage('pinIndex');
 	};
 
 });

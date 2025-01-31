@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
 import { I, C, S, U, translate, Preview, Action, analytics, sidebar, } from 'Lib';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
-import Head from '../head';
 
 interface State {
 	isLoading: boolean;
@@ -170,8 +169,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-
 				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 

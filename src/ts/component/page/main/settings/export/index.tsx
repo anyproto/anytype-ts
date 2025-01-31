@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
 import { I, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import Head from '../head';
 
 interface Props extends I.PageSettingsComponent {
 	onImport: (type: I.ImportType, param: any) => void;
@@ -26,7 +25,6 @@ const PageMainSettingsExportIndex = observer(class PageMainSettingsExportIndex e
 
 		return (
 			<React.Fragment>
-				<Head onPage={() => onPage('spaceIndex')} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsExportTitle')} />
 				<Label className="description" text={translate('popupSettingsExportText')} />
 

@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { Title, Label, Icon } from 'Component';
 import { I, U, translate } from 'Lib';
-import Head from '../../head';
 
 class PageMainSettingsImportNotionHelp extends React.Component<I.PageSettingsComponent> {
 
 	render () {
 		return (
 			<div>
-				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
 				<Icon className="logo" />
 				<Title text={translate('popupSettingsImportNotionHelpTitle')} />
 				

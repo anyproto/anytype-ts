@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Title, Button, Checkbox, Error } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
-import Head from './head';
 
 interface State {
 	error: string;
@@ -29,7 +28,6 @@ const PageMainSettingsDelete = observer(class PageMainSettingsDelete extends Rea
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="dataIndex" name={translate('commonBack')} />
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 				<div className="text">

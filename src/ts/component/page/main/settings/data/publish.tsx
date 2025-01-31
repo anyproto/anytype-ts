@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import { I, S, U, C, translate, Action, analytics } from 'Lib';
-import Head from '../head';
 
 interface State {
 	list: I.PublishState[];
@@ -40,7 +39,6 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 
 		return (
 			<>
-				<Head {...this.props} returnTo="dataIndex" name={translate('commonBack')} />
 				<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
 
 				<div className="items">

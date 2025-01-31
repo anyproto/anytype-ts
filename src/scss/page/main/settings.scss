@@ -1,19 +1,7 @@
 @import "~scss/_mixins";
 
-.settingsPageContainer { width: 70%; margin: 0 auto; padding: 88px 0px 60px; min-width: 300px; }
+.settingsPageContainer { width: 70%; margin: 0 auto; padding: 36px 0px 60px; min-width: 300px; max-width: 640px; }
 .settingsPageContainer {
-    .head { width: 100%; margin: 0px 0px 14px 0px; position: sticky; top: 0px; left: 0px; z-index: 10; }
-    .head {
-        .inner { display: flex; flex-direction: row; align-items: center; background: var(--color-bg-primary); padding: 22px 0px; }
-        .icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
-
-        .element {
-            color: var(--color-text-secondary); display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 8px 2px 6px;
-            border-radius: 6px; margin-left: -6px;
-        }
-        .element:hover { background: var(--color-shape-highlight-medium); }
-    }
-
     .title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
     .title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
     .description { margin: 0px 0px 24px 0px; }
@@ -353,7 +341,7 @@
     > .pageSettingsSpaceStorageManager {
         > .wrap { height: 100%; display: flex; flex-direction: column; }
         > .wrap {
-            .head, .title { padding: 0px 54px; }
+            .title { padding: 0px 54px; }
         }
 
         .objectManagerWrapper {

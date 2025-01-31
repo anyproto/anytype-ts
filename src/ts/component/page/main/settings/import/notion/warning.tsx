@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
-import Head from '../../head';
 
 class PageMainSettingsImportNotionWarning extends React.Component<I.PageSettingsComponent> {
 
@@ -14,7 +13,6 @@ class PageMainSettingsImportNotionWarning extends React.Component<I.PageSettings
 	render () {
 		return (
 			<div>
-				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
 				<Title text={translate('popupSettingsImportNotionWarningTitle')} />
 
 				<div className="listWrapper">
