@@ -138,7 +138,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const setSlugHander = v => setSlug(U.Common.slug(v));
-	const onUrlClick = () => Action.openUrl(url);
 
 	let buttons = [];
 
@@ -186,7 +185,15 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				onChange={(e, v) => setSlugHander(v)}
 				maxLength={300}
 			/>
-			<Label className="small" text={url} onClick={onUrlClick} />
+			<div className="urlWrapper">
+				<Label className="small" text={url} />
+				<Button 
+					color="blank" 
+					className="simple"
+					text={translate('commonCopy')}
+					onClick={() => U.Common.copyToast(translate('commonLink'), `https://${url}`)} 
+				/>
+			</div>
 
 			{space.isShared ? (
 				<div className="flex">

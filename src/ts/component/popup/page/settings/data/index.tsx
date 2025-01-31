@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, IconObject, Button } from 'Component';
-import { I, C, S, U, translate, Renderer, analytics, Action } from 'Lib';
+import { I, C, S, U, translate, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -90,7 +90,7 @@ const PopupSettingsPageDataIndex = observer(class PopupSettingsPageDataIndex ext
 	};
 
 	componentDidMount(): void {
-		C.PublishingList(S.Common.space, (message: any) => {
+		C.PublishingList('', (message: any) => {
 			if (!message.error.code) {
 				this.setState({ list: message.list });
 			};
