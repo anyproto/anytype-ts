@@ -260,7 +260,7 @@ class Sidebar {
 			syncX = 120;
 
 			if (widthLeft) {
-				syncX = vw + widthLeft - 40;
+				syncX = widthLeft - 40;
 			};
 		};
 

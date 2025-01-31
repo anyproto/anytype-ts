@@ -44,16 +44,22 @@ const SidebarRight = observer(class SidebarRight extends React.Component<Props, 
 
 		const { page, rootId, details, readonly, noPreview } = this.state;
 		const Component = Components[page];
-		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
+		const cn = [ 'sidebar', 'right' ];
+		const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
+		const withPreview = [ 'type' ].includes(page);
+
+		if (withPreview) {
+			cn.push('withPreview');
+		};
 
         return (
 			<div 
 				ref={node => this.node = node}
 				id="sidebarRight"
-				className={[ 'sidebar', 'right', (page == 'type' ? 'withPreview' : '') ].join(' ')}
+				className={cn.join(' ')}
 			>
 				{Component ? (
-					<div className={cn.join(' ')}>
+					<div className={cnp.join(' ')}>
 						<Component 
 							ref={ref => this.refChild = ref} 
 							{...this.props} 

@@ -45,6 +45,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 	};
 
 	render() {
+		const { showVault } = S.Common;
 		const page = this.state.page || 'widget';
 		const cmd = keyboard.cmdSymbol();
 		const Component = Components[page];
@@ -65,7 +66,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 				<div 
 					ref={node => this.node = node}
 					id="sidebarLeft" 
-					className="sidebar" 
+					className="sidebar left" 
 				>
 					<Component ref={ref => this.refChild = ref} {...this.props} />
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
@@ -98,13 +99,8 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 		const node = $(this.node);
 		const vault = $(S.Common.getRef('vault').node);
 
-		if (showVault) {
-			node.addClass('withVault');
-			vault.removeClass('isHidden');
-		} else {
-			node.removeClass('withVault');
-			vault.addClass('isHidden');
-		};
+		node.toggleClass('withVault', showVault);
+		vault.toggleClass('isHidden', !showVault);
 	};
 
 	setActive (id: string): void {
