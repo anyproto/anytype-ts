@@ -1958,7 +1958,15 @@ export const DebugExportLog = (path: string, callBack?: (message: any) => void) 
 	request.setDir(path);
 
 	dispatcher.request(DebugExportLog.name, request, callBack);
-}
+};
+
+export const DebugRunProfiler = (duration: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.RunProfiler.Request();
+
+	request.setDurationinseconds(duration);
+
+	dispatcher.request(DebugRunProfiler.name, request, callBack);
+};
 
 // ---------------------- NOTIFICATION ---------------------- //
 

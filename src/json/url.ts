@@ -24,7 +24,7 @@ export default {
 	share: 				 'https://join.anytype.io/',
 	notionFAQ:			 'https://doc.anytype.io/anytype-docs/basics/space/import-export#notion-import-faq',
 	publishDomain:		 '%s.org',
-	publish:			 'https://any.coop/%s/',
+	publish:			 'any.coop/%s',
 	api:				 '127.0.0.1:31009',
 
 	survey: {
