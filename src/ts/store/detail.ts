@@ -244,6 +244,7 @@ class DetailStore {
 		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
+		object.defaultTypeId = Relation.getStringValue(object.defaultTypeId);
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;

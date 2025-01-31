@@ -388,9 +388,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const object = getTarget();
 		const view = getView();
 		const type = S.Record.getTypeById(object.type);
-		const viewType = type?.defaultViewType || I.ViewType.Grid;
+		
+		let viewType = I.ViewType.Grid;
+		if (type && (undefined !== type.defaultViewType)) {
+			viewType = type.defaultViewType;
+		};
 
-		console.log(type);
 		const newView = {
 			...view,
 			id: '',
