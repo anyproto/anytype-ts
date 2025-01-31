@@ -11,4 +11,5 @@ export interface PublishState {
 	version: string;
 	timestamp: number;
 	size: number;
+	details: any;
 };

@@ -43,7 +43,7 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			headerRef.current.forceUpdate();
+			headerRef.current?.forceUpdate();
 			resize();
 		});
 	};
