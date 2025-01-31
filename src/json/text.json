@@ -1868,6 +1868,7 @@
 	"sidebarTypeRelationHeader": "Header",
 	"sidebarTypeRelationSidebar": "Sidebar",
 	"sidebarObjectRelationSetUp": "Set up",
+	"sidebarTypeRelationEmpty": "There are no fields yet",
 
 	"sidebarRelationLocal": "Local Fields",
 	"sidebarTypeRelationLocalDescription": "Some fields are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",

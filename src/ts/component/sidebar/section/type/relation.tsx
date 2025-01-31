@@ -66,7 +66,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				</div>
 			));
 
-			return (
+			return list.data.length ? (
 				<SortableList
 					axis="y" 
 					transitionDuration={150}
@@ -78,6 +78,8 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 					lockToContainerEdges={false}
 					helperContainer={() => $(`#sidebarRight #${list.container}`).get(0)}
 				/>
+			) : (
+				<div className="item empty">{translate('sidebarTypeRelationEmpty')}</div>
 			);
 		};
 
