@@ -83,7 +83,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						<Icon className="more withBackground" onClick={e => this.onContextMenu(e, item)} />
 					</div>
 				</div>
 			);

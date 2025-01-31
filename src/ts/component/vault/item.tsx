@@ -5,9 +5,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
-	id: string;
-	isButton: boolean;
-	object?: any;
+	item: any;
 	onClick: (e: any) => void;
 	onMouseEnter: (e: any) => void;
 	onMouseLeave: () => void;
@@ -15,9 +13,7 @@ interface Props {
 };
 
 const VaultItem: FC<Props> = observer(({ 
-	id = '', 
-	isButton = false,
-	object,
+	item,
 	onClick, 
 	onMouseEnter, 
 	onMouseLeave, 
@@ -25,22 +21,22 @@ const VaultItem: FC<Props> = observer(({
 }) => {
 
 	const cn = [ 'item' ];
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
 
 	let icon = null;
-	if (!isButton) {
-		icon = <IconObject object={object} size={36} iconSize={36} />;
+	if (!item.isButton) {
+		icon = <IconObject object={item} size={36} iconSize={36} />;
 	} else {
-		cn.push(`isButton ${id}`);
+		cn.push(`isButton ${item.id}`);
 	};
 
 	return (
 		<div 
-			id={`item-${id}`}
+			id={`item-${item.id}`}
 			ref={setNodeRef}
 			className={cn.join(' ')}
 			onClick={onClick}
@@ -56,6 +52,7 @@ const VaultItem: FC<Props> = observer(({
 			</div>
 		</div>
 	);
+
 });
 
 export default VaultItem;

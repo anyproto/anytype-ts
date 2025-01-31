@@ -244,7 +244,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
 
-		Storage.set('spaceOrder', arrayMove(ids, oldIndex, newIndex), true);
+		Storage.set('spaceOrder', arrayMove(ids, oldIndex, newIndex));
 
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
@@ -332,9 +332,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 							{items.map((item, i) => (
 								<VaultItem 
 									key={`item-space-${item.id}`}
-									id={item.id}
-									object={item}
-									isButton={item.isButton}
+									item={item}
 									onClick={e => onClick(e, item)}
 									onMouseEnter={e => onMouseEnter(e, item)}
 									onMouseLeave={() => Preview.tooltipHide()}
@@ -347,7 +345,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 				<div className="side bottom" onDragStart={e => e.preventDefault()}>
 					<VaultItem 
-						{...itemSettings}
+						item={itemSettings}
 						onClick={e => onClick(e, itemSettings)}
 						onContextMenu={null}
 						onMouseEnter={e => onMouseEnter(e, itemSettings)}

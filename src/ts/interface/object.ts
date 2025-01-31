@@ -72,4 +72,5 @@ export enum ObjectOrigin {
 	Usecase			 = 6,
 	Builtin			 = 7,
 	Bookmark		 = 8,
+	Api				 = 9,
 };

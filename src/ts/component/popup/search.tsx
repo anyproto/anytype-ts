@@ -436,6 +436,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				this.onClick(e, item);
 			};
 		});
+
+		keyboard.shortcut(`${cmd}+n`, e, () => {
+			e.preventDefault();
+
+			this.pageCreate(filter);
+		})
 	};
 
 	onArrow (dir: number) {
@@ -726,7 +732,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
 				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
-				{ id: 'dataManagement', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
+				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
 				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
 			];
 
@@ -773,6 +779,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			it.shortcut = it.shortcut || [];
 			return it;
 		});
+	};
+
+	pageCreate (name: string) {
+		keyboard.pageCreate({ name }, analytics.route.search, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 	};
 
 	filterMapper (it: any, config: any) {
@@ -834,7 +844,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			} else {
 				switch (item.id) {
 					case 'add': {
-						keyboard.pageCreate({ name: filter }, 'Search');
+						this.pageCreate(filter)
 						break;
 					};
 

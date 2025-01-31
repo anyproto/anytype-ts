@@ -66,6 +66,8 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	login () {
 		const appKey = Storage.get('appKey');
 
+		console.log('appKey', appKey);
+
 		if (appKey) {
 			Util.authorize(appKey, () => {
 				const { serverPort, gatewayPort } = S.Extension;

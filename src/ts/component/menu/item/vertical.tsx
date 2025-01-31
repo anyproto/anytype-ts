@@ -155,7 +155,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						) : (
 							<div className="caption">{caption}</div>
 						)}
-						{withMore ? <Icon className="more" onMouseDown={onMore} /> : ''}
+						{withMore ? <Icon className="more withBackground" onMouseDown={onMore} /> : ''}
 					</React.Fragment>
 				);
 			};
@@ -164,7 +164,8 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				<React.Fragment>
 					<div 
 						className="clickable" 
-						onMouseDown={hasClick ? undefined : onClick}
+						onClick={hasClick ? undefined : onClick}
+						onContextMenu={!hasClick && withMore ? onMore : undefined}
 					>
 						{iconMainElement}
 						{nameElement}
@@ -180,9 +181,10 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				ref={node => this.node = node}
 				id={`item-${id}`} 
 				className={cn.join(' ')} 
-				onMouseDown={hasClick ? onClick : undefined}
+				onClick={hasClick ? onClick : undefined}
 				onMouseEnter={onMouseEnter} 
-				onMouseLeave={onMouseLeave} 
+				onMouseLeave={onMouseLeave}
+				onContextMenu={hasClick && withMore ? onMore : undefined}
 				style={style}
 			>
 				{content}
