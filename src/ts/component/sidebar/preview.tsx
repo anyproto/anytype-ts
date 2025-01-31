@@ -15,7 +15,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		layoutAlign: I.BlockHAlign.Left,
 		layoutWidth: 0,
 		layoutFormat: I.LayoutFormat.Page,
-		defaultView: I.ViewType.Grid,
+		defaultViewType: I.ViewType.Grid,
 	};
 
 	constructor (props: I.SidebarPageComponent) {
@@ -181,7 +181,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	getViewType () {
-		return Number(this.object.defaultView) || I.ViewType.Grid;
+		return Number(this.object.defaultViewType) || I.ViewType.Grid;
 	};
 
 	getNodeWidth (): number {

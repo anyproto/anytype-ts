@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon } from 'Component';
 import { I, C, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
@@ -45,8 +45,8 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	route = '',
 }, ref) => {
 
-	const [ sortId, setSortId ] = React.useState('');
-	const [ sortType, setSortType ] = React.useState(I.SortType.Asc);
+	const [ sortId, setSortId ] = useState('');
+	const [ sortType, setSortType ] = useState(I.SortType.Asc);
 	const { offset, total } = S.Record.getMeta(subId, '');
 	const { dateFormat } = S.Common;
 

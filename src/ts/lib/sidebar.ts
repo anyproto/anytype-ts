@@ -360,14 +360,13 @@ class Sidebar {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
-	objectContainerToggle () {
+	objectContainerSwitch (page: string) {
 		const ref = S.Common.getRef('sidebarLeft');
 		if (!ref) {
 			return;
 		};
 
-		const page = ref.state.page;
-		ref.setState({ page: (page == 'object' ? '' : 'object') });
+		ref.setState({ page });
 	};
 
 	rightPanelToggle (v: boolean, animate: boolean, isPopup: boolean, page?: string, param?: any) {

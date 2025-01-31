@@ -104,13 +104,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if (isTypeOrRelation) {
 			if (object.isInstalled) {
-				if (isType && !allowDetails) {
+				if (isType && allowDetails) {
 					buttonEdit = <Button id="button-edit" color="blank" className="c28" text={translate('commonEdit')} onClick={onEdit} />;
 				};
 			} else {
 				const cn = [ 'c36' ];
 				const isInstalled = this.isInstalled();
-
 				const onClick = isInstalled ? null : this.onInstall;
 				const color = isInstalled ? 'blank' : 'black';
 

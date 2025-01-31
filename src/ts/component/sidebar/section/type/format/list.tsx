@@ -19,10 +19,8 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 
 	render () {
 		const { object, onChange, readonly } = this.props;
-
-		const defaultViewOptions = U.Menu.prepareForSelect(U.Menu.getViews().filter(it => it.id != I.ViewType.Graph));
-		const typeId = object.defaultType;
-		const type = S.Record.getTypeById(typeId);
+		const defaultViewOptions = U.Menu.getViews().filter(it => it.id != I.ViewType.Graph);
+		const type = S.Record.getTypeById(object.defaultTypeId);
 
 		return (
 			<div className="items">
@@ -36,9 +34,9 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 							ref={ref => this.refDefaultView = ref}
 							id={`sidebar-layout-default-view-${object.id}`}
 							options={defaultViewOptions}
-							value={object.defaultView}
+							value={object.defaultViewType}
 							arrowClassName="light"
-							onChange={id => onChange({ defaultView: id })}
+							onChange={id => onChange({ defaultViewType: id })}
 							readonly={readonly}
 							menuParam={{
 								className: 'fixed',
@@ -98,17 +96,14 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				onClick: (item: any) => {
-					onChange({ defaultType: item.id })
+					onChange({ defaultTypeId: item.id });
 				},
 			}
 		});
 	};
 
-
 	setValue () {
-		const { object } = this.props;
-
-		this.refDefaultView.setValue(object.defaultView);
+		this.refDefaultView.setValue(String(this.props.object.defaultViewType));
 	};
 });
 

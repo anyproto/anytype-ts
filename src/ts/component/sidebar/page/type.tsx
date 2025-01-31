@@ -64,6 +64,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	componentDidMount (): void {
 		this.init();
 		this.loadConflicts();
+
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 	};
 
@@ -87,7 +88,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			layoutWidth: 0,
 			layoutFormat: I.LayoutFormat.Page,
 			recommendedFeaturedRelations: [],
-			defaultView: I.ViewType.Grid,
+			defaultViewType: I.ViewType.Grid,
 		}, details);
 
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
@@ -123,7 +124,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onChange (section: string, update: any) {
+		const skipFormat = [ 'defaultTypeId' ];
+
 		for (const relationKey in update) {
+			if (skipFormat.includes(relationKey)) {
+				continue;
+			};
+
 			const relation = S.Record.getRelationByKey(relationKey);
 
 			update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
@@ -179,18 +186,23 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	loadConflicts () {
 		const { space } = S.Common;
-		const { rootId } = this.props;
+		const type = this.getObject();
 
-		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
-			if (!message.error.code) {
-				this.conflicts = Relation
-					.getArrayValue(message.conflictRelationIds)
-					.map(id => S.Record.getRelationById(id))
-					.filter(it => it && !Relation.isSystem(it.relationKey))
-					.map(it => it.id);
+		if (!type) {
+			return;
+		};
 
-				this.forceUpdate();
+		C.ObjectTypeListConflictingRelations(type.id, space, (message) => {
+			if (message.error.code) {
+				return;
 			};
+
+			this.conflicts = Relation.getArrayValue(message.conflictRelationIds)
+				.map(id => S.Record.getRelationById(id))
+				.filter(it => it && !Relation.isSystem(it.relationKey))
+				.map(it => it.id);
+
+			this.forceUpdate();
 		});
 	};
 

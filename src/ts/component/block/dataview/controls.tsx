@@ -111,7 +111,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				{views.map((item: I.View, i: number) => (
 					<ViewItem key={i} {...item} index={i} disabled={readonly} />
 				))}
-				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip={translate('blockDataviewControlsViewAdd')} onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus withBackground" tooltip={translate('blockDataviewControlsViewAdd')} onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -387,12 +387,16 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const sources = getSources();
 		const object = getTarget();
 		const view = getView();
+		const type = S.Record.getTypeById(object.type);
+		const viewType = type?.defaultViewType || I.ViewType.Grid;
+
+		console.log(type);
 		const newView = {
 			...view,
 			id: '',
-			name: translate(`viewName${I.ViewType.Grid}`),
-			type: I.ViewType.Grid,
-			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, view.type, '')?.id,
+			name: translate(`viewName${viewType}`),
+			type: viewType,
+			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
 			filters: [],
 			sorts: [],

@@ -102,6 +102,8 @@ export default {
 		'sourceObject',
 		'uniqueKey',
 		'defaultTemplateId',
+		'defaulTypeId',
+		'defaultVewType',
 		'layoutAlign',
 		'layoutWidth',
 	],

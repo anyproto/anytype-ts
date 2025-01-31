@@ -221,10 +221,8 @@ class Action {
 		};
 
 		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
-			if (message.path) {
-				Renderer.send('openPath', message.path);
-				analytics.event('OpenMedia', { route });
-			};
+			this.openPath(message.path);
+			analytics.event('OpenMedia', { route });
 		});
 	};
 
@@ -554,7 +552,7 @@ class Action {
 					return;
 				};
 
-				Renderer.send('openPath', paths[0]);
+				this.openPath(paths[0]);
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
 				if (callBack) {

@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Switch } from 'Component';
-import { I, C, S, J, keyboard, Dataview, translate } from 'Lib';
+import { I, C, S, J, keyboard, Dataview, translate, analytics } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -288,7 +288,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onSortEnd (result: any) {
-		const { config } = S.Common;
 		const { oldIndex, newIndex } = result;
 		const { param } = this.props;
 		const { data } = param;
@@ -305,8 +304,12 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
+		const object = S.Detail.get(rootId, rootId);
+		const relation = S.Record.getRelationByKey(item.relationKey);
 
 		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item, isVisible: v });
+
+		analytics.event('ShowDataviewRelation', { type: v ? 'True' : 'False', relationKey: item.relationKey, format: relation.format, objectType: object.type });
 	};
 
 	onScroll ({ scrollTop }) {

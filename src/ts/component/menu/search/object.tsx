@@ -456,7 +456,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				addParam.onClick(details);
 				close();
 			} else {
-				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+				const flags = [ I.ObjectFlag.SelectTemplate ];
 
 				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route || analytics.route.search, (message: any) => {
 					process(message.details, true);
