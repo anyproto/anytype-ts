@@ -613,8 +613,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const value = item.value || U.Date.now();
 
 		S.Menu.closeAll([ 'select' ], () => {
-			if (S.Menu.isOpen('dataviewCalendar')) {
-				S.Menu.updateData('dataviewCalendar', { value });
+			if (S.Menu.isOpen('calendar')) {
+				S.Menu.updateData('calendar', { value });
 			} else {
 				this.onCalendar(value);
 			};
@@ -634,7 +634,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
 
-		S.Menu.open('dataviewCalendar', {
+		S.Menu.open('calendar', {
 			element: `#${getId()} #value`,
 			horizontal: I.MenuDirection.Center,
 			data: { 

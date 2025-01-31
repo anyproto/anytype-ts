@@ -185,7 +185,7 @@ class Sidebar {
 		const { x } = keyboard.mouse.page;
 		const { width, isClosed } = this.data;
 		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
-		const menuOpen = S.Menu.isOpenList([ 'dataviewContext', 'widget', 'selectSidebarToggle' ]);
+		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle' ]);
 		const popupOpen = S.Popup.isOpen();
 
 		let show = false;

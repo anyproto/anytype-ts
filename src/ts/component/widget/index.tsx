@@ -534,7 +534,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
 		};
 
-		S.Menu.open('dataviewContext', menuParam);
+		S.Menu.open('objectContext', menuParam);
 	};
 
 	const canCreate = canCreateHandler();

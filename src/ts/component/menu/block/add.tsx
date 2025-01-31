@@ -425,7 +425,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 
 			case 'date': {
-				menuId = 'dataviewCalendar';
+				menuId = 'calendar';
 				menuParam.data = Object.assign(menuParam.data, {
 					canEdit: true,
 					value: U.Date.now(),

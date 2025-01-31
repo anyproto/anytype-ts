@@ -192,7 +192,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					noKeyboard: true,
 				});
 					
-				menuId = 'dataviewCalendar';
+				menuId = 'calendar';
 				closeIfOpen = false;
 				break;
 			};

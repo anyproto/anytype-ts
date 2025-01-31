@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
 import { Input, IconObject } from 'Component';
 
-const MENU_ID = 'dataviewCalendar';
+const MENU_ID = 'calendar';
 
 const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 

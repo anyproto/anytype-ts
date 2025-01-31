@@ -1,8 +1,8 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewCalendar { width: var(--menu-width-value); }
-	.menu.menuDataviewCalendar {
+	.menu.menuCalendar { width: var(--menu-width-value); }
+	.menu.menuCalendar {
 		.titleWrapper { padding: 8px 16px 0px; }
 		.content { padding: 10px 0px; overflow: visible; max-height: unset; }
 		.inner { user-select: none; }
@@ -75,7 +75,7 @@
 		}
 	}
 
-	.menu.menuDataviewCalendarDay {
+	.menu.menuCalendarDay {
 		.content { max-height: unset; overflow: visible; }
 
 		.wrap { display: flex; flex-direction: column; }
@@ -109,7 +109,7 @@
 		}
 	}
 
-	.menu.menuDataviewCalendarDay.fromBlock {
+	.menu.menuCalendarDay.fromBlock {
 		.content { padding: 8px 4px 0px 4px; }
 		
 		.wrap {
@@ -125,8 +125,8 @@
 		}
 	}
 
-	.menu.menuDataviewCalendarDay.fromWidget { width: var(--menu-width-value); }
-	.menu.menuDataviewCalendarDay.fromWidget {
+	.menu.menuCalendarDay.fromWidget { width: var(--menu-width-value); }
+	.menu.menuCalendarDay.fromWidget {
 		.content { padding: 12px 0px 8px 0px; }
 
 		.wrap {

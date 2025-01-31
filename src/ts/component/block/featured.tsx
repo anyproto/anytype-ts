@@ -666,7 +666,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					break;
 				};
 
-				menuId = 'dataviewCalendar';
+				menuId = 'calendar';
 				menuData = {
 					value,
 					isEmpty,

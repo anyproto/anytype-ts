@@ -267,6 +267,10 @@ html.platformWindows {
 @import "./search/object";
 @import "./search/text";
 
+
+@import "./calendar";
+@import "./object";
+
 @import "./preview/object";
 
 @import "./block/common";
@@ -279,7 +283,6 @@ html.platformWindows {
 @import "./block/mention";
 @import "./block/relation";
 
-@import "./dataview/calendar";
 @import "./dataview/common";
 @import "./dataview/create/bookmark";
 @import "./dataview/file";

@@ -130,9 +130,9 @@
 		.item:hover::before { background: var(--color-shape-highlight-medium); }
     }
 
-    /* DataviewCalendar */
+    /* Calendar */
 
-    .menu.menuDataviewCalendar {
+    .menu.menuCalendar {
 		.head {
 			.side.right {
 				.btn { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }

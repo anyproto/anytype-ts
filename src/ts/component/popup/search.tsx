@@ -860,7 +860,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { data } = param;
 		const { route } = data;
 
-		S.Menu.open('dataviewContext', {
+		S.Menu.open('objectContext', {
 			element: `#${getId()} #item-${item.id}`,
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;

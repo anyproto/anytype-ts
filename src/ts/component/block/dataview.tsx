@@ -990,7 +990,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			objectIds = [ id ];
 		};
 
-		S.Menu.open('dataviewContext', {
+		S.Menu.open('objectContext', {
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };

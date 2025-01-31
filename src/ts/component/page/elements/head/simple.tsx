@@ -310,7 +310,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId, getDotMap, relationKey } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
-		S.Menu.open('dataviewCalendar', {
+		S.Menu.open('calendar', {
 			element: '#calendar-icon',
 			horizontal: I.MenuDirection.Center,
 			data: {

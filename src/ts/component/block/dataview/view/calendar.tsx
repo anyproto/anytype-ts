@@ -310,13 +310,13 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const margin = (cw - mw) / 2;
 		const { top } = node.offset();
 		const day = node.find('.day').first();
-		const menu = S.Menu.get('dataviewCalendarDay');
+		const menu = S.Menu.get('calendarDay');
 
 		wrap.css({ width: cw, height: Math.max(600, ch - top - 130), marginLeft: -margin - 2 });
-		win.trigger('resize.menuDataviewCalendarDay');
+		win.trigger('resize.menuCalendarDay');
 
 		if (menu && !menu.param.data.fromWidget && day.length) {
-			S.Menu.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
+			S.Menu.update('calendarDay', { width: day.outerWidth() + 8 });
 		};
 	};
 

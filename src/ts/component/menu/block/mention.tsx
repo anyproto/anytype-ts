@@ -345,7 +345,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (item.id == 'selectDate') {
 			close = false;
 
-			S.Menu.open('dataviewCalendar', {
+			S.Menu.open('calendar', {
 				element: `#${getId()} #item-${item.id}`,
 				horizontal: I.MenuDirection.Center,
 				data: { 

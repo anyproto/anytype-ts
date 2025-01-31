@@ -71,7 +71,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 				S.Popup.open('confirm', {
 					data: {
 						title: translate('menuDataviewCreateSomethingWentWrong'),
-						text: translate('menuDataviewContextTryAgain'),
+						text: translate('menuObjectContextTryAgain'),
 						textConfirm: translate('commonOk'),
 						canCancel: false,
 					},

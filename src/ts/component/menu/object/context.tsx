@@ -43,7 +43,7 @@ class MenuContext extends React.Component<I.Menu> {
 						))}
 					</>
 				) : (
-					<div className="item empty">{translate('menuDataviewContextNoAvailableActions')}</div>
+					<div className="item empty">{translate('menuObjectContextNoAvailableActions')}</div>
 				)}
 			</div>
 		);
@@ -54,7 +54,7 @@ class MenuContext extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		S.Menu.closeAll(J.Menu.dataviewContext);
+		S.Menu.closeAll(J.Menu.objectContext);
 	};
 
 	rebind () {
@@ -83,8 +83,8 @@ class MenuContext extends React.Component<I.Menu> {
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
-		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
-		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuDataviewContextEditRelations') };
+		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuObjectContextUnlinkFromCollection') };
+		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuObjectContextEditRelations') };
 		let archive = null;
 		let archiveCnt = 0;
 		let fav = null;
@@ -234,7 +234,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (!item.arrow || !objectIds.length) {
-			S.Menu.closeAll(J.Menu.dataviewContext);
+			S.Menu.closeAll(J.Menu.objectContext);
 			return;
 		};
 
@@ -338,7 +338,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id) && !S.Menu.isAnimating(menuId)) {
-			S.Menu.closeAll(J.Menu.dataviewContext, () => {
+			S.Menu.closeAll(J.Menu.objectContext, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

@@ -374,7 +374,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const onContextMenu = (id: string, param: any) => {
 		const selected = ids.current.length ? ids.current : [ id ];
 
-		S.Menu.open('dataviewContext', {
+		S.Menu.open('objectContext', {
 			...param,
 			data: {
 				route: analytics.route.graph,

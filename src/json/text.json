@@ -1451,10 +1451,10 @@
 	"menuDataviewUrlActionGo9": "Call to",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
-	"menuDataviewContextNoAvailableActions": "No available actions",
-	"menuDataviewContextUnlinkFromCollection": "Unlink from collection",
-	"menuDataviewContextTryAgain": "Please try again",
-	"menuDataviewContextEditRelations": "Edit relations",
+	"menuObjectContextNoAvailableActions": "No available actions",
+	"menuObjectContextUnlinkFromCollection": "Unlink from collection",
+	"menuObjectContextTryAgain": "Please try again",
+	"menuObjectContextEditRelations": "Edit relations",
 
 	"menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
 
