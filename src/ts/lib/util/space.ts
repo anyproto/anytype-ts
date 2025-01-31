@@ -275,8 +275,8 @@ class UtilSpace {
 		const participant = this.getMyParticipant();
 
 		let domain = '';
-		if (participant.resolvedName) {
-			domain = U.Common.sprintf(J.Url.publishDomain, participant.resolvedName);
+		if (participant.globalName) {
+			domain = U.Common.sprintf(J.Url.publishDomain, participant.globalName);
 		} else {
 			domain = U.Common.sprintf(J.Url.publish, participant.identity);
 		};

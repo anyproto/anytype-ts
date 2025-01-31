@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
 import { I, C, S, U, keyboard, focus, translate } from 'Lib';
 
-import Item from 'Component/sidebar/object/item';
+import Item from 'Component/sidebar/page/object/item';
 
 interface State {
 	loading: boolean;

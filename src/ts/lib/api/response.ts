@@ -62,6 +62,12 @@ export const DebugNetCheck = (response: Rpc.Debug.NetCheck.Response) => {
 	};
 };
 
+export const DebugRunProfiler = (response: Rpc.Debug.RunProfiler.Response) => {
+	return {
+		path: response.getPath(),
+	};
+};
+
 export const Export = (response: any) => {
 	return {
 		path: response.getPath(),

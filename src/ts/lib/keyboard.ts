@@ -237,6 +237,11 @@ class Keyboard {
 				$('#button-header-relation').trigger('click');
 			});
 
+			// Select type
+			this.shortcut(`${cmd}+alt+n`, e, () => {
+				$('#widget-space #widget-space-arrow').trigger('click');
+			});
+
 			// Switch dark/light mode
 			this.shortcut(`${cmd}+shift+m`, e, () => {
 				Action.themeSet(!theme ? 'dark' : '');
@@ -266,10 +271,12 @@ class Keyboard {
 
 			if (canWrite) {
 				// Create new page
-				this.shortcut(`${cmd}+n`, e, () => {
-					e.preventDefault();
-					this.pageCreate({}, analytics.route.shortcut);
-				});
+				if (!S.Popup.isOpen('search')) {
+					this.shortcut(`${cmd}+n`, e, () => {
+						e.preventDefault();
+						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+					});
+				};
 
 				// Lock/Unlock
 				this.shortcut(`ctrl+shift+l`, e, () => {
@@ -294,12 +301,10 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate (details: any, route: string, callBack?: (message: any) => void) {
+	pageCreate (details: any, route: string, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
 		if (!this.isMain()) {
 			return;
 		};
-
-		const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
 			U.Object.openConfig(message.details);
@@ -495,7 +500,7 @@ class Keyboard {
 			};
 
 			case 'createObject': {
-				this.pageCreate({}, route);
+				this.pageCreate({}, route, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				break;
 			};
 
@@ -527,7 +532,7 @@ class Keyboard {
 							return;
 						};
 
-						Renderer.send('openPath', paths[0]);
+						Action.openPath(paths[0]);
 					});
 				});
 				break;
@@ -537,7 +542,7 @@ class Keyboard {
 				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
-							Renderer.send('openPath', paths[0]);
+							Action.openPath(paths[0]);
 						};
 					});
 				});
@@ -548,7 +553,7 @@ class Keyboard {
 				C.DebugSpaceSummary(S.Common.space, (message: any) => {
 					if (!message.error.code) {
 						U.Common.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
-						Renderer.send('openPath', tmpPath);
+						Action.openPath(tmpPath);
 					};
 				});
 				break;
@@ -558,7 +563,7 @@ class Keyboard {
 				C.DebugStat((message: any) => {
 					if (!message.error.code) {
 						U.Common.getElectron().fileWrite('debug-stat.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
-						Renderer.send('openPath', tmpPath);
+						Action.openPath(tmpPath);
 					};
 				});
 				break;
@@ -567,7 +572,7 @@ class Keyboard {
 			case 'debugTree': {
 				C.DebugTree(rootId, logPath, false, (message: any) => {
 					if (!message.error.code) {
-						Renderer.send('openPath', logPath);
+						Action.openPath(logPath);
 					};
 				});
 				break;
@@ -576,7 +581,7 @@ class Keyboard {
 			case 'debugProcess': {
 				C.DebugStackGoroutines(logPath, (message: any) => {
 					if (!message.error.code) {
-						Renderer.send('openPath', logPath);
+						Action.openPath(logPath);
 					};
 				});
 				break;
@@ -627,7 +632,16 @@ class Keyboard {
 			case 'debugLog': {
 				C.DebugExportLog(tmpPath, (message: any) => {
 					if (!message.error.code) {
-						Renderer.send('openPath', tmpPath);
+						Action.openPath(tmpPath);
+					};
+				});
+				break;
+			};
+
+			case 'debugProfiler': {
+				C.DebugRunProfiler(30, (message: any) => {
+					if (!message.error.code) {
+						Action.openPath(message.path);
 					};
 				});
 				break;

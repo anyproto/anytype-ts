@@ -377,6 +377,7 @@ class Analytics {
 				break;
 			};
 
+			case 'ShowDataviewRelation':
 			case 'DeleteRelationValue':
 			case 'ChangeRelationValue':
 			case 'FeatureRelation':
