@@ -128,7 +128,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onUpload () {
-		Action.openFileDialog({ extensions: [ 'yml' ] }, (paths: string[]) => this.onChange('path', paths[0]));
+		Action.openFileDialog({ extensions: [ 'yml', 'yaml' ] }, (paths: string[]) => this.onChange('path', paths[0]));
 	};
 
 	onSave () {
@@ -180,7 +180,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onPathClick (path: string) {
 		if (path) {
-			Renderer.send('openPath', U.Common.getElectron().dirName(path));
+			Action.openPath(U.Common.getElectron().dirName(path));
 		};
 	};
 
@@ -226,10 +226,9 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onTooltipShow (e: any, text: string) {
-		if (!text) {
-			return;
+		if (text) {
+			Preview.tooltipShow({ text, element: $(e.currentTarget) });
 		};
-		Preview.tooltipShow({ text, element: $(e.currentTarget) });
 	};
 
 	onTooltipHide () {

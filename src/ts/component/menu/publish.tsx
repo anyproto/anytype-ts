@@ -58,10 +58,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPublish = (isUpdate?: boolean) => {
 		const analyticsName = isUpdate ? 'ShareObjectUpdate' : 'ShareObjectPublish';
 
-		publishRef.current.setLoading(true);
+		publishRef.current?.setLoading(true);
 
 		C.PublishingCreate(S.Common.space, rootId, slug, joinRef.current?.getValue(), (message: any) => {
-			publishRef.current.setLoading(false);
+			publishRef.current?.setLoading(false);
 
 			if (message.error.code) {
 				setError(message.error.description);
@@ -80,10 +80,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onUnpublish = () => {
-		unpublishRef.current.setLoading(true);
+		unpublishRef.current?.setLoading(true);
 
 		C.PublishingRemove(S.Common.space, rootId, (message: any) => {
-			unpublishRef.current.setLoading(false);
+			unpublishRef.current?.setLoading(false);
 
 			if (message.error.code) {
 				setError(message.error.description);
@@ -131,19 +131,19 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			element: $(e.currentTarget),
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Left,
+			delay: 0,
 		});
 
 		analytics.event('ShowShareObjectHelp', { objectType: object.type });
 	};
 
 	const setSlugHander = v => setSlug(U.Common.slug(v));
-	const onUrlClick = () => Action.openUrl(url);
 
 	let buttons = [];
 
 	if (isStatusLoaded && isOnline) {
 		if (status === null) {
-			buttons.push({ text: translate('menuPublishButtonPublish'), ref: publishRef, onClick: onPublish });
+			buttons.push({ text: translate('menuPublishButtonPublish'), ref: publishRef, onClick: () => onPublish() });
 		} else {
 			buttons = buttons.concat([
 				{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
@@ -158,6 +158,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (isOnline) {
 			loadStatus();
 		};
+
+		return () => {
+			Preview.tooltipHide(true);
+		};
 	}, []);
 
 	useEffect(() => {
@@ -170,7 +174,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<>
 			<div className="menuHeader">
 				<Title text={translate('menuPublishTitle')} />
-				<Icon className="info" onMouseEnter={showInfo} onMouseLeave={() => Preview.tooltipHide()} />
+				<Icon className="info" onClick={showInfo} />
 			</div>
 
 			<Input value={domain} readonly={true} />
@@ -181,13 +185,21 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				onChange={(e, v) => setSlugHander(v)}
 				maxLength={300}
 			/>
-			<Label className="small" text={url} onClick={onUrlClick} />
+			<div className="urlWrapper">
+				<Label className="small" text={url} />
+				<Button 
+					color="blank" 
+					className="simple"
+					text={translate('commonCopy')}
+					onClick={() => U.Common.copyToast(translate('commonLink'), `https://${url}`)} 
+				/>
+			</div>
 
 			{space.isShared ? (
 				<div className="flex">
 					<Label text={translate('menuPublishLabelJoin')} />
 					<div className="value">
-						<Switch ref={joinRef} onChange={(e, v) => onJoinSwitch(v)} />
+						<Switch ref={joinRef} value={true} onChange={(e, v) => onJoinSwitch(v)} />
 					</div>
 				</div>
 			) : ''}

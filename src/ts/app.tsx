@@ -139,7 +139,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 
-					<Sidebar key="sidebar" {...this.props} />
+					<Sidebar ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebar" {...this.props} />
 					<Page {...this.props} isPopup={false} />
 				</DragProvider>
 			</SelectionProvider>

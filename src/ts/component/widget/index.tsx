@@ -180,7 +180,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					};
 
 					details.layout = type.recommendedLayout;
-					flags = flags.concat([ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ]);
+					flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 					typeKey = type.uniqueKey;
 					templateId = type.defaultTemplateId;
 					break;
