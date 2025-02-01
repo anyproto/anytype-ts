@@ -19,7 +19,7 @@
 .sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; left: 0px; height: 100%; }
 .sidebar.anim { transition-property: width; transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
 .sidebar.withVault { left: $vaultWidthCollapsed; }
-.sidebar.isClosed { left: 0px !important; }
+.sidebar.isClosed { left: 0px !important; overflow: hidden; }
 
 .sidebar {
 	@import "./sidebar/widget";
