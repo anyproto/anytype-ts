@@ -22,7 +22,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 
 	return (
 		<React.Fragment>
-			<div className="side left">{renderLeftIcons()}</div>
+			<div className="side left">{renderLeftIcons(true)}</div>
 
 			<div className="side center">
 				<div className="txt">

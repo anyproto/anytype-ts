@@ -132,7 +132,7 @@ const Toast: FC = observer(() => {
 			};
 
 			case 'manageStorage': {
-				S.Popup.open('settings', { data: { page: 'storageManager' }});
+				sidebar.settingsOpen('storageManager');
 				S.Common.toastClear();
 			};
 		};

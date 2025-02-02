@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Input, Label, Switch, Button, Icon, Error, Loader } from 'Component';
-import { C, U, I, S, Action, translate, analytics, Preview } from 'Lib';
+import { C, U, I, S, Action, translate, analytics, Preview, sidebar } from 'Lib';
 import $ from 'jquery';
 
 const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -30,14 +30,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
 			onClick: () => {
-				S.Popup.open('settings', { 
-					data: { 
-						page: 'spaceShare', 
-						isSpace: true, 
-						route: analytics.route.share,
-					}, 
-					className: 'isSpace' 
-				});
+				sidebar.settingsOpen('spaceShare');
 				close();
 
 				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });

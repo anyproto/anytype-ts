@@ -184,6 +184,7 @@
 	"commonOpenType": "Open Type",
 	"commonManage": "Manage",
 	"commonSize": "Size",
+	"commonLogout": "Log out",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -516,6 +517,8 @@
 	"pageHeadSimpleCreateSet": "Create Set",
 	"pageHeadSimpleInstall": "Install",
 
+	"pageSettingsLanguageTitle": "Language & Region",
+
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
 	"editorControlLayout": "Layout",
@@ -744,7 +747,7 @@
 	"popupSettingsPersonalLinkStyle": "Link to object style",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
-	"popupSettingsPersonalRelativeDates": "Display relative dates",
+	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
@@ -861,8 +864,6 @@
 
 	"popupSettingsExportProtobufTitle": "Export Space to Any-Block",
 	"popupSettingsExportProtobufFormat": "File Format",
-
-	"popupSettingsLogout": "Log out",
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
@@ -981,6 +982,11 @@
 	"popupSettingsImportNotionIntegrationList32": "Select document → ... → Add Connections → Confirm Integration",
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
+
+	"popupLogoutTitle": "Make sure you saved your login ley",
+	"popupLogoutText": "We have no way to recover your login key— it’s yours alone. Please save it before logging out.",
+	"popupLogoutCopyButton": "Reveal and copy key",
+	"popupLogoutLogoutButton": "I saved it, logout",
 
 	"popupSpaceCreateLabel": "Encrypted & local-first",
 	"popupSpaceCreateCreate": "Create from scratch",

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, S, U, J, translate, analytics } from 'Lib';
+import { I, S, U, J, translate, analytics, sidebar } from 'Lib';
 
 const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -49,7 +49,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 			} else {
 				S.Popup.open('membership', {
 					onClose: () => {
-						window.setTimeout(() => S.Popup.open('settings', { data: { page: 'membership' } }), J.Constant.delay.popup * 2);
+						sidebar.settingsOpen('membership');
 					},
 					data: {
 						tier: membership.tier,

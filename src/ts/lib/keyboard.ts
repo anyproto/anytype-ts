@@ -227,9 +227,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
-				if (!S.Popup.isOpen('settings')) {
-					S.Popup.open('settings', {});
-				};
+				sidebar.settingsOpen();
 			});
 
 			// Create relation

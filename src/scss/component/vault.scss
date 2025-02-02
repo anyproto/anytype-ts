@@ -55,6 +55,7 @@
 	.item.settings {
 		.iconWrap { background-color: unset; background-image: url('~img/icon/vault/settings.svg'); }
 	}
+	.item.settings.isActive,
 	.item.settings:hover {
 		.iconWrap { background-color: var(--color-shape-highlight-dark); }
 	}

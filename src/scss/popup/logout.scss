@@ -1,0 +1,25 @@
+
+.popups {
+    .popup.popupLogout {
+        .innerWrap { width: 424px; padding: 32px; text-align: center; }
+        .title { @include text-header3; margin-bottom: 6px; }
+        .label { margin-bottom: 16px; user-select: text !important; word-wrap: break-word; }
+
+        .phraseWrapper { padding: 16px 44px; border-radius: 12px; background-color: var(--color-shape-tertiary); margin-bottom: 32px; @include text-small; line-height: 24px; }
+        .phraseWrapper {
+            .phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; word-break: unset; }
+            .word { @include text-small; font-weight: 500; margin: 0; }
+            .bg { filter: blur(8px); opacity: 0.5; }
+
+            .icon { margin: 0px; top: 50%; right: 12px; transform: translateY(-50%); z-index: 1; }
+            .icon.hide { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
+            .icon.see { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: var(--color-shape-tertiary); }
+        }
+
+        .buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+        .buttons {
+            .button { width: 100%; }
+            .button.blank:not(:hover):not(.hover) { background-color: var(--color-bg-primary); }
+        }
+    }
+}

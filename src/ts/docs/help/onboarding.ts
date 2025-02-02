@@ -162,7 +162,7 @@ export default {
 			width: 288,
 			offsetX: -304,
 			offsetY: () => {
-				const $element = $('#popupSettings #item-membership');
+				const $element = $('#containerSettings #item-membership');
 				return -$element.outerHeight();
 			},
 			noClose: true,
@@ -174,7 +174,7 @@ export default {
 				buttonText: translate('onboardingMembershipButton'),
 				cloneElementClassName: 'onboardingSettingsItem',
 				param: {
-					element: '#popupSettings #item-membership',
+					element: '#containerSettings #item-membership',
 				}
 			}
 		]
