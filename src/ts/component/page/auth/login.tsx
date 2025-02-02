@@ -60,7 +60,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 		const account = accounts[0];
 
 		S.Auth.accountSet(account);
-		Renderer.send('keytarSet', account.id, getPhrase());
+		Renderer.send('safeStorageSet', account.id, getPhrase());
 
 		C.AccountSelect(account.id, S.Common.dataPath, mode, path, (message: any) => {
 			if (setErrorHandler(message.error.code, message.error.description) || !message.account) {

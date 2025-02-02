@@ -338,7 +338,7 @@ class App extends React.Component<object, State> {
 
 		if (accountId) {
 			if (isChild) {
-				Renderer.send('keytarGet', accountId).then((phrase: string) => {
+				Renderer.send('safeStorageGet', accountId).then((phrase: string) => {
 					U.Data.createSession(phrase, '', () => {
 						if (!account) {
 							console.error('[App.onInit]: Account not found');

@@ -248,7 +248,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		init();
 
 		if (account && (stage == Stage.Phrase)) {
-			Renderer.send('keytarGet', account.id).then(value => phraseRef.current?.setValue(value));
+			Renderer.send('safeStorageGet', account.id).then(value => phraseRef.current?.setValue(value));
 		};
 	}, [ stage ]);
 

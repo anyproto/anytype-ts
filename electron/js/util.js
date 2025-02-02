@@ -34,6 +34,14 @@ class Util {
 		console.log(text);
 	};
 
+	keyPath (key) {
+		const dir = path.join(app.getPath('userData'), 'keys');
+
+		this.mkDir(dir);
+
+		return path.join(dir, `${key}.dat`);
+	};
+
 	dateForFile() {
 		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
 	};

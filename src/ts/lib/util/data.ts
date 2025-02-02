@@ -1129,7 +1129,7 @@ class UtilData {
 					S.Common.configSet(message.account.config, false);
 
 					this.onInfo(message.account.info);
-					Renderer.send('keytarSet', message.account.id, phrase);
+					Renderer.send('safeStorageSet', message.account.id, phrase);
 					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, callBack);
 
 					analytics.event('CreateAccount', { middleTime: message.middleTime });

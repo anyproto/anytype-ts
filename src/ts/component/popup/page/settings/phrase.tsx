@@ -64,7 +64,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 			return;
 		};
 
-		Renderer.send('keytarGet', account.id).then((value: string) => {
+		Renderer.send('safeStorageGet', account.id).then((value: string) => {
 			C.WalletConvert(value, '', (message: any) => {
 				if (!message.error.code) {
 					this.refPhrase?.setValue(value);

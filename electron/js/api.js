@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow } = require('electron');
+const { app, shell, BrowserWindow, safeStorage } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -119,6 +119,33 @@ class Api {
 
 	keytarDelete (win, key) {
 		keytar.deletePassword(KEYTAR_SERVICE, key);
+	};
+
+	async safeStorageGet (win, key) {
+		const keyPath = Util.keyPath(key);
+
+		let ret = '';
+		if (fs.existsSync(keyPath)) {
+			try { ret = safeStorage.decryptString(fs.readFileSync(keyPath)); } catch (e) {};
+		};
+
+		if (!ret) {
+			ret = await this.keytarGet(win, key);
+
+			if (ret && safeStorage.isEncryptionAvailable()) {
+				this.safeStorageSet(win, key, ret);
+			};
+		};
+
+		return ret;
+	};
+
+	safeStorageSet (win, key, value) {
+		if (safeStorage.isEncryptionAvailable()) {
+			fs.writeFileSync(Util.keyPath(key), safeStorage.encryptString(value));
+		} else {
+			this.keytarSet(win, key, value);
+		};
 	};
 
 	updateCheck (win) {

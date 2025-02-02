@@ -19,7 +19,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		Renderer.send('keytarGet', accountId).then((phrase: string) => {
+		Renderer.send('safeStorageGet', accountId).then((phrase: string) => {
 			C.WalletRecover(dataPath, phrase, (message: any) => {
 				if (setErrorHandler(message.error)) {
 					return;
