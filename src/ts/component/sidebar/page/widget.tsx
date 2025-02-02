@@ -279,6 +279,17 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 					name: translate('commonCreateNewObject'),
 					nameWithFilter: translate('commonCreateObjectWithName'),
 					arrow: true,
+					onClick: (details: any) => {
+						const types = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 1 });
+
+						if (!types.length) {
+							return;
+						};
+
+						C.ObjectCreate(details, [], '', types[0].uniqueKey, S.Common.space, (message: any) => {
+							onSelect(message.details, true);
+						});
+					},
 				},
 				onOver: (e, context: any, item: any) => {
 					if (!item.isAdd) {
@@ -291,7 +302,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						classNameWrap: 'fromSidebar',
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
-					}, { name: context.filter }, object => onSelect(object, true));
+					}, { name: context.filter }, {}, object => onSelect(object, true));
 				},
 				dataChange: (context: any, items: any[]) => {
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');

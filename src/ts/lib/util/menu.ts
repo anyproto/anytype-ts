@@ -1102,8 +1102,9 @@ class UtilMenu {
 		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: any, callBack?: (item: any) => void) {
 		details = details || {};
+		flags = flags || {};
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
@@ -1238,11 +1239,8 @@ class UtilMenu {
 		};
 
 		const buttons = [
-			{ id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport },
-		].map((it: any) => {
-			it.isButton = true;
-			return it;
-		});
+			flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport } : null,
+		].filter(it => it);
 
 		const check = async () => {
 			const items = await getClipboardData();
@@ -1256,7 +1254,7 @@ class UtilMenu {
 				data: {
 					noStore: true,
 					onMore,
-					buttons,
+					buttons: buttons.map(it => ({ ...it, isButton: true })),
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
