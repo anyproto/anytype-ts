@@ -46,7 +46,7 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 				<div className="items">
 					<div className="row isHead">
 						<div className="col colSpace">{translate('commonObject')}</div>
-						<div className="col">{translate('popupSettingsDataManagementDataPublishTitle')}</div>
+						<div className="col">{translate('popupSettingsDataManagementDataPublishDate')}</div>
 						<div className="col">{translate('commonSize')}</div>
 						<div className="col colMore" />
 					</div>
