@@ -127,7 +127,7 @@ const PopupSettingsPageDataPublish = observer(class PopupSettingsPageDataPublish
 	onUnpublish (item: any) {
 		const object = S.Detail.mapper(item.details);
 
-		C.PublishingRemove(S.Common.space, item.objectId, (message: any) => {
+		C.PublishingRemove(item.spaceId, item.objectId, (message: any) => {
 			if (!message.error.code) {
 				this.load();
 
