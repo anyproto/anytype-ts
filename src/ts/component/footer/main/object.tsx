@@ -9,9 +9,10 @@ const FooterMainObject = observer(forwardRef<{}, I.FooterComponent>((props, ref)
 	const { onHelp } = props;
 	const { show } = S.Progress;
 	const theme = S.Common.getThemeClass();
-	const current = S.Progress.getCurrent();
-	const total = S.Progress.getTotal();
-	const percent = Math.round((current / total) * 100);
+	const skipState = [ I.ProgressState.Done, I.ProgressState.Canceled ];
+	const skipType = [ I.ProgressType.Migrate ];
+	const list = S.Progress.getList(it => !skipType.includes(it.type) && !skipState.includes(it.state));
+	const percent = S.Progress.getPercent(list);
 	const color = J.Theme[theme].progress;
 
 	const onTooltipShow = (e: any, text: string, caption?: string) => {
@@ -23,7 +24,7 @@ const FooterMainObject = observer(forwardRef<{}, I.FooterComponent>((props, ref)
 
 	return (
 		<div className="buttons">
-			{total ? (
+			{percent ? (
 				<div 
 					id="button-progress"
 					className="iconWrap"
