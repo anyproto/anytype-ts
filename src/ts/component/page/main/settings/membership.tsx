@@ -127,7 +127,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 
 						<Swiper
 							spaceBetween={16}
-							slidesPerView={1.15}
+							slidesPerView={1}
 							pagination={{ clickable: true }}
 							autoplay={{
 								waitForTransition: true,

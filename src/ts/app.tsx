@@ -219,6 +219,10 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
+
+		window.setTimeout(() => {
+			sidebar?.settingsOpen('membership')
+		}, 2000);
 	};
 
 	init () {

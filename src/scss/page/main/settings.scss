@@ -676,13 +676,16 @@
         .description { text-align: center; margin-bottom: 26px !important; }
 
         .label.special {
-            span { font-weight: 600; text-decoration: underline; }
+            span { text-decoration: underline; }
         }
 
-        .swiper { margin: 0px -31px 8px -31px; flex-shrink: 0; }
+        .swiper { overflow: visible; margin: 0px 0px 8px 0px; flex-shrink: 0; }
         .swiper {
             .swiper-wrapper { margin-bottom: 10px; }
-            .swiper-slide { width: calc(100% - 64px); min-width: 396px; }
+            .swiper-slide { width: calc(100% - 64px); min-width: 396px; opacity: 0; transition: opacity 0.3s ease-out; }
+            .swiper-slide.swiper-slide-prev,
+            .swiper-slide.swiper-slide-next { opacity: 0.2; }
+            .swiper-slide.swiper-slide-active { opacity: 1; }
         }
 
         .slide {
