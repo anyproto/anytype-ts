@@ -560,13 +560,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 		};
 
+		let flags = [];
+
+		if (![ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(this.type)) {
+			flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+		};
+
 		if (this.type == I.ObjectContainerType.Bookmark) {
 			this.onBookmarkMenu(details, cb);
 		} else
 		if (this.type == I.ObjectContainerType.Relation) {
 			this.onRelationMenu(cb);
 		} else {
-			keyboard.pageCreate(details, analytics.route.allObjects, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
+			keyboard.pageCreate(details, analytics.route.allObjects, flags, (message: any) => {
 				cb(message.targetId);
 			});
 		};
