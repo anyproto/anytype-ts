@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import { trace } from 'mobx';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListPreviewObject, ListObject, Select, Deleted, HeadSimple, EditorControls } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate } from 'Lib';
@@ -131,6 +132,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					<EditorControls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
 					<HeadSimple 
 						{...this.props} 
+						key="headSimple"
 						ref={ref => this.refHead = ref} 
 						placeholder={translate('defaultNameType')} 
 						rootId={rootId} 
