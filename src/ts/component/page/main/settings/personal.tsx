@@ -39,14 +39,11 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 						>
 							<div className="bg">
 								<Icon />
-								<div className="labelWrapper">
-									<Label className="left" text={item.name} />
-									<Label className="right" text={translate('pageSettingsColorModeButtonMode')} />
-								</div>
 								<div className="a" />
 								<div className="b" />
 								<div className="c" />
 							</div>
+							<Label className="left" text={item.name} />
 						</div>
 					))}
 				</div>

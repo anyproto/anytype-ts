@@ -129,15 +129,13 @@
 
 			.btn.dark {
 				.bg { background: var(--color-bg-primary); box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
-				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
 			}
 			.btn.system {
 				.bg::before, .bg::after {
 					content: ''; position: absolute; top: 0px; width: 50%; height: 100%;
 				}
 				.bg::before { background: var(--color-control-bg); }
-				.bg::after { background: var(--color-bg-primary); box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
-				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
+				.bg::after { background: var(--color-bg-primary); }
 			}
 
 			.btn.active {

@@ -520,10 +520,9 @@
 	"pageSettingsLanguageTitle": "Language & Region",
 
 	"pageSettingsColorMode": "Color mode",
-	"pageSettingsColorModeButtonLight": "Light",
-	"pageSettingsColorModeButtonDark": "Dark",
-	"pageSettingsColorModeButtonSystem": "Auto",
-	"pageSettingsColorModeButtonMode": "Mode",
+	"pageSettingsColorModeButtonLight": "Light Mode",
+	"pageSettingsColorModeButtonDark": "Dark Mode",
+	"pageSettingsColorModeButtonSystem": "Auto Mode",
 
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",

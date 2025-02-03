@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Label, IconObject, Button } from 'Component';
+import { Title, Label, IconObject, Button, Icon } from 'Component';
 import { I, C, S, U, translate, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -41,7 +41,7 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 
 					<div className="item storageUsage">
 						<div className="side left">
-							<IconObject object={{ iconEmoji: ':desktop_computer:' }} size={44} />
+							<Icon className="drive" />
 
 							<div className="txt">
 								<div className="name">{translate('popupSettingsDataLocalFiles')}</div>
@@ -55,7 +55,7 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 
 					<div className="item">
 						<div className="side left">
-							<IconObject object={{ iconEmoji: ':earth_americas:' }} size={44} />
+							<Icon className="sites" />
 
 							<div className="txt">
 								<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
@@ -69,7 +69,7 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 
 					<div className="item">
 						<div className="side left">
-							<IconObject object={{ iconEmoji: ':file_folder:' }} size={44} />
+							<Icon className="location" />
 
 							<div className="txt">
 								<Title text={translate('popupSettingsDataManagementDataLocation')} />
