@@ -29,9 +29,12 @@
 			}
 			.button { 
 				flex-shrink: 0; font-weight: 500; @include text-small; color: var(--color-text-primary); height: 18px; padding: 0px 4px; 
-				border-radius: 4px; transition: $transitionAllCommon;
+				border-radius: 4px; transition: $transitionAllCommon; display: none;
 			}
 			.button:hover { background-color: var(--color-shape-highlight-medium) !important; }
+		}
+		.urlWrapper:hover {
+			.button { display: block; }
 		}
 
 		.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; justify-content: space-evenly; height: 36px; }
