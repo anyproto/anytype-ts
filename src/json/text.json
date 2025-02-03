@@ -519,6 +519,12 @@
 
 	"pageSettingsLanguageTitle": "Language & Region",
 
+	"pageSettingsColorMode": "Color mode",
+	"pageSettingsColorModeButtonLight": "Light",
+	"pageSettingsColorModeButtonDark": "Dark",
+	"pageSettingsColorModeButtonSystem": "Auto",
+	"pageSettingsColorModeButtonMode": "Mode",
+
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
 	"editorControlLayout": "Layout",
@@ -754,11 +760,6 @@
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
 	"popupSettingsPersonalTimeFormat": "Time format",
-
-	"popupSettingsColorMode": "Color mode",
-	"popupSettingsColorModeButtonLight": "Light",
-	"popupSettingsColorModeButtonDark": "Dark",
-	"popupSettingsColorModeButtonSystem": "System",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",

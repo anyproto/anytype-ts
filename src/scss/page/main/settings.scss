@@ -19,9 +19,9 @@
 
     .error { margin: 8px 0px 0px 0px; }
 
-    .label.small, .label.section, .label.grey { color: var(--color-text-secondary); }
-    .label.small, .label.section { @include text-small; }
-    .label.section { margin: 30px 0px 4px 0px; }
+    .label.small, .label.grey { color: var(--color-text-secondary); }
+    .label.small { @include text-small; }
+    .label.section { @include text-paragraph; font-weight: 600; margin: 0px; padding: 8px 0px; }
     .label.red { color: var(--color-red); }
 
     .name { width: 100%; }
@@ -46,7 +46,7 @@
 
     ol, ul { padding-left: 1.35em; margin: 8px 0px; }
 
-    .actionItems { border: 1px solid var(--color-shape-secondary); border-radius: 12px; margin-bottom: 40px; }
+    .actionItems { border: 1px solid var(--color-shape-secondary); border-radius: 12px; margin-bottom: 24px; }
     .actionItems {
         > .item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid var(--color-shape-secondary); }
         > .item:last-child { border-bottom: 0; }
@@ -86,13 +86,13 @@
     > .pageSettingsAccount {
         .sections { display: flex; flex-direction: column; height: 100%; }
         .sections {
-            .section { margin-bottom: 40px; display: flex; flex-direction: column; gap: 12px 0px; }
+            .section { margin-bottom: 40px; display: flex; flex-direction: column; gap: 8px 0px; }
             .section.top { margin-bottom: 16px; justify-content: flex-start; flex-direction: row; }
-            .section.bottom { height: 100%; flex-direction: row; align-items: end; margin-bottom: 0; }
+            .section.bottom { height: 100%; flex-direction: row; align-items: end; margin-bottom: 0px; }
 
             .section {
                 .iconWrapper { width: 108px; }
-                .title { @include text-header3; margin: 0; }
+                .title { @include text-paragraph; font-weight: 600; margin: 0px; padding: 8px 0px; }
                 .input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid var(--color-shape-secondary); border-radius: 10px; }
                 .input:hover:not(.isReadonly) { border-color: var(--color-shape-primary); }
                 .input:focus:not(.isReadonly) { border-width: 2px; border-color: var(--color-system-accent-100); padding: 5px 11px; }
@@ -485,38 +485,62 @@
     > .pageSettingsPersonal {
         .title { margin-bottom: 32px !important; }
 
-        .colorScheme { display: flex; gap: 16px 34px; margin: 0px 0px 46px 0px; flex-wrap: wrap; }
+        .colorScheme { display: flex; gap: 0px 32px; justify-content: stretch; margin: 0px 0px 24px 0px; flex-wrap: nowrap; }
         .colorScheme {
             .label.section { margin-bottom: 8px; }
 
-            .btn { text-align: center; @include text-small; color: var(--color-text-secondary); }
+            .btn { text-align: center; flex-grow: 1; aspect-ratio: 192/140; }
             .btn {
                 .bg {
-                    width: 120px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
-                    position: relative;
+                    overflow: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; padding-top: 16px;
+                    position: relative; width: 100%; height: 100%;  box-shadow: 0px 0px 0px 1px var(--color-shape-tertiary), 0px 0px 4px 0px var(--color-shape-highlight-medium);
                 }
-                .icon { width: 40px; height: 40px; display: block; z-index: 1; position: relative; }
+                .icon { width: 40px; height: 40px; background-size: 40px; display: block; z-index: 1; position: relative; margin-bottom: 4px; flex-shrink: 0; }
+                .labelWrapper { position: relative; z-index: 1; display: flex; justify-content: center; flex-wrap: nowrap; gap: 0px 5px; margin-bottom: 6px; }
+                .labelWrapper {
+                    .label { font-weight: 700; color: var(--color-text-primary); }
+                }
+
+                .a, .b, .c { border-radius: 1px; position: relative; z-index: 1; background-color: var(--color-shape-tertiary); flex-grow: 0; flex-shrink: 0; }
+                .a { width: 25px; height: 4px; margin-bottom: 12px; }
+                .b { width: calc(100% - 66px); height: 8px; margin-bottom: 4px; }
+                .c { width: calc(100% - 96px); height: 8px; }
             }
 
             .btn.light {
-                .bg { box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
-                .icon { background-image: url('~img/icon/popup/settings/theme/light.svg'); }
+                .bg {  }
+                .icon { background-image: url('~img/icon/settings/theme/light.png'); }
             }
 
             .btn.dark {
                 .bg { background: var(--color-control-accent); }
-                .icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
+                .icon { background-image: url('~img/icon/settings/theme/dark.png'); }
+                .labelWrapper {
+                    .label { color: var(--color-text-inversion); }
+                }
+
+                .a, .b, .c { background: rgba(134, 134, 134, 0.70); }
             }
             .btn.system {
                 .bg::before, .bg::after { content: ''; position: absolute; top: 0px; width: 50%; height: 100%; }
                 .bg::before { left: 0px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary); border-radius: 14px 0px 0px 14px; }
                 .bg::after { right: 0px; background: var(--color-control-accent); border-radius: 0px 14px 14px 0px; }
-                .icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
+                .icon { background-image: url('~img/icon/settings/theme/system.png'); }
+
+                .labelWrapper {
+                    .label.left { width: 49%; text-align: right; }
+                    .label.right { width: 51%; color: var(--color-text-inversion); text-indent: -1px; }
+                }
+
+                .a, .b, .c { background: none;}
+                .a, .b, .c {
+                    &:before { content: ''; position: absolute; width: 50%; height: 100%; top: 0; left: 0; background:  var(--color-shape-tertiary); }
+                    &:after { content: ''; position: absolute; width: 50%; height: 100%; top: 0; right: 0; background: rgba(134, 134, 134, 0.70); }
+                }
             }
 
-            .btn.active { color: var(--color-text-primary); }
             .btn.active {
-                .bg { box-shadow: 0px 0px 0px 2px var(--color-system-accent-25); }
+                .bg { box-shadow: 0px 0px 0px 2px var(--color-system-accent-50); }
             }
             .btn.system.active {
                 .bg::before { box-shadow: 0px 0px; }

@@ -12,9 +12,9 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 		const { theme } = S.Common;
 
 		const themes: any[] = [
-			{ id: '', class: 'light', name: translate('popupSettingsColorModeButtonLight') },
-			{ id: 'dark', class: 'dark', name: translate('popupSettingsColorModeButtonDark') },
-			{ id: 'system', class: 'system', name: translate('popupSettingsColorModeButtonSystem') },
+			{ id: '', class: 'light', name: translate('pageSettingsColorModeButtonLight') },
+			{ id: 'dark', class: 'dark', name: translate('pageSettingsColorModeButtonDark') },
+			{ id: 'system', class: 'system', name: translate('pageSettingsColorModeButtonSystem') },
 		];
 
 		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
@@ -39,8 +39,14 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 						>
 							<div className="bg">
 								<Icon />
+								<div className="labelWrapper">
+									<Label className="left" text={item.name} />
+									<Label className="right" text={translate('pageSettingsColorModeButtonMode')} />
+								</div>
+								<div className="a" />
+								<div className="b" />
+								<div className="c" />
 							</div>
-							<Label text={item.name} />
 						</div>
 					))}
 				</div>
