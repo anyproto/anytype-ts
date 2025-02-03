@@ -303,11 +303,16 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			oy = containerOffset.current.top - top.current;
 		};
 
+		const el = $(rectRef.current);
 		const x1 = x.current + ox;
 		const y1 = y.current + oy;
 		const rect = getRect(x1, y1, dx, dy);
 
-		$(rectRef.current).show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
+		if (range.current) {
+			el.hide();
+		} else {
+			el.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
+		};
 	};
 	
 	const getRect = (x1: number, y1: number, x2: number, y2: number) => {

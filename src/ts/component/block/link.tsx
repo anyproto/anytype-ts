@@ -134,7 +134,12 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						<div key="sideLeft" className={cnl.join(' ')}>
 							<div className="relationItem cardName" onClick={onNameClick}>
 								{icon}
-								<ObjectName object={object} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} />
+								<ObjectName 
+									object={object} 
+									onMouseEnter={this.onMouseEnter} 
+									onMouseLeave={this.onMouseLeave} 
+									withLatex={true} 
+								/>
 								{archive}
 							</div>
 
