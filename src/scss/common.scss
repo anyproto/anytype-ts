@@ -1,5 +1,5 @@
-@import "~scss/_vars";
-@import "~scss/_mixins";
+@import "~./_vars";
+@import "~./_mixins";
 
 * { padding: 0px; margin: 0px; border: 0px; box-sizing: border-box; }
 html, body { height: 100%; }
@@ -218,5 +218,17 @@ a { color: var(--color-text-primary); }
 	.icon.download { display: none; }
 }
 
-@import "scss/debug";
-@import "scss/font";
+@import "./debug";
+@import "./font";
+@import "./component/common.scss";
+@import "./page/common.scss";
+@import "./block/common.scss";
+@import "./form/common.scss";
+@import "./list/common.scss";
+@import "./widget/common.scss";
+@import "./popup/common.scss";
+@import "./menu/common.scss";
+@import "./notification/common.scss";
+
+@import "./media/print.scss";
+@import "./theme/dark/common.scss";
