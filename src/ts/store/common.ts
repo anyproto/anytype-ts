@@ -42,8 +42,8 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public showVaultValue = null;
+	public showSidebarRightValue = { full: false, popup: false };
 	public hideSidebarValue = null;
-	public showObjectValue = null;
 	public pinValue = null;
 	public gallery = {
 		categories: [],
@@ -101,9 +101,9 @@ class CommonStore {
 			isOnlineValue: observable,
 			showVaultValue: observable,
 			hideSidebarValue: observable,
-			showObjectValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
+			showSidebarRightValue: observable,
 			showRelativeDatesValue: observable,
 			dateFormatValue: observable,
 			timeFormatValue: observable,
@@ -140,7 +140,7 @@ class CommonStore {
 			isOnlineSet: action,
 			membershipTiersListSet: action,
 			showVaultSet: action,
-			showObjectSet: action,
+			showSidebarRightSet: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
 		});
@@ -221,10 +221,6 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
-	};
-
-	get showObject (): boolean {
-		return this.showObjectValue;
 	};
 
 	get theme (): string {
@@ -420,8 +416,8 @@ class CommonStore {
 		this.boolSet('hideSidebar', v);
 	};
 
-	showObjectSet (v: boolean) {
-		this.showObjectValue = v;
+	showSidebarRightSet (isPopup: boolean, v: boolean) {
+		set(this.showSidebarRightValue, { [isPopup ? 'popup' : 'full'] : v });
 	};
 
 	fullscreenSet (v: boolean) {
@@ -579,6 +575,10 @@ class CommonStore {
 
 	getRef (id: string) {
 		return this.refs.get(id);
+	};
+
+	getShowSidebarRight (isPopup: boolean): boolean {
+		return Boolean(this.showSidebarRightValue[isPopup ? 'popup' : 'full']);
 	};
 
 };

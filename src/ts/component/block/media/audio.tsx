@@ -44,7 +44,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 				case I.FileState.Error:
 				case I.FileState.Empty: {
 					element = (
-						<React.Fragment>
+						<>
 							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
 							<InputWithFile 
 								block={block} 
@@ -55,7 +55,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 								onChangeFile={this.onChangeFile} 
 								readonly={readonly} 
 							/>
-						</React.Fragment>
+						</>
 					);
 					break;
 				};

@@ -9,6 +9,7 @@ html.bodyIndex, html.bodyAuth {
 	--color-text-tertiary: #606060 !important;
 
 	--color-shape-tertiary: #2b2b2b !important;
+	--color-shape-highlight-medium: rgba(255, 255, 255, 0.05) !important;
 
 	--color-button-stroke: #252525 !important;
 	--color-button-black-hover: rgba(37, 37, 37, 0.8);
@@ -25,7 +26,14 @@ html.bodyIndex, html.bodyAuth {
 	--shadow: 0px 0px 0px 1px var(--color-button-stroke) !important;
 
 	body { background: var(--color-bg-primary); color: var(--color-text-secondary); overflow: hidden; }
-	#notifications, #sidebar, #vault, #sidebarToggle, #sidebarSync, .shareTooltip { display: none !important; }
+
+	#vault,
+	#sidebarToggle,
+	#sidebarSync,
+	#notifications,
+	.sidebar,
+	.sidebarDummy,
+	.shareTooltip { display: none !important; }
 
 	.popup { 
 		.innerWrap { background: var(--color-popup) !important;; box-shadow: var(--shadow) !important; color: var(--color-text-primary) !important; }
@@ -59,7 +67,7 @@ html.bodyIndex, html.bodyAuth {
 		.menu.vertical { background: var(--color-popup) !important; box-shadow: var(--shadow) !important; }
 		.menu.vertical {
 			.item { background: var(--color-popup) !important; }
-			.item.hover::before { background: rgba(255, 255, 255, 0.05) !important; }
+			.item.hover::before { background: var(--color-shape-highlight-medium) !important; }
 		}
 		.menu.menuAccountPath {
 			.label { color: var(--color-text-secondary) !important; }

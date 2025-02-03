@@ -95,7 +95,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<div className="spaceHeader">
 					<div className="iconWrapper">
 						<IconObject
@@ -424,7 +424,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					<Error text={error} />
 				</div>
 
-			</React.Fragment>
+			</>
 		);
 	};
 

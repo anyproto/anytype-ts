@@ -115,14 +115,14 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Title 
 					className={cnt.join(' ')} 
 					text={!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')} 
 				/>
 
 				{(membership.isNone || membership.isExplorer) ? (
-					<React.Fragment>
+					<>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
 						<Swiper
@@ -146,7 +146,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 								</SwiperSlide>
 							))}
 						</Swiper>
-					</React.Fragment>
+					</>
 				) : ''}
 
 				<div className="tiers">
@@ -163,7 +163,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				</div>
 
 				<Label className="special" text={translate('popupSettingsMembershipSpecial')} onClick={this.onContact} />
-			</React.Fragment>
+			</>
 		);
 	};
 

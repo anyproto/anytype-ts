@@ -263,7 +263,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		};
 
 		C.ObjectSetObjectType(rootId, type.uniqueKey, () => {
-			C.ObjectApplyTemplate(rootId, type.defaultTemplateId || J.Constant.templateId.blank, this.onTemplate);
+			C.ObjectApplyTemplate(rootId, type.defaultTemplateId, this.onTemplate);
 		});
 
 		Onboarding.start('objectCreationFinish', isPopup);

@@ -34,7 +34,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	} else
 	if (allowedTemplateSelect && templatesCnt) {
 		bannerProps.type = I.BannerType.TemplateSelect;
-		bannerProps.count = templatesCnt + 1;
+		bannerProps.count = templatesCnt;
 	};
 
 	if (isLocked) {
@@ -98,16 +98,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		analytics.event('ClickShareObject', { objectType: object.type });
 	};
 
-	const onRelationHandler = () => {
-		const object = S.Detail.get(rootId, rootId, [ 'isArchived' ]);
-
-		onRelation({}, { readonly: object.isArchived });
-	};
-
 	const updateTemplatesCnt = () => {
-		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
-		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
-
 		if (!allowedTemplateSelect || !object.type) {
 			return;
 		};
@@ -123,9 +114,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		});
 	};
 
-	useEffect(() => {
-		updateTemplatesCnt();
-	});
+	useEffect(() => updateTemplatesCnt());
 
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
@@ -158,7 +147,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltip={translate('commonRelations')}
 						tooltipCaption={`${cmd} + Shift + R`}
 						className="relation withBackground"
-						onClick={onRelationHandler} 
+						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
 					/> 
 				) : ''}
 
