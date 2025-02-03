@@ -104,7 +104,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const loadStatus = () => {
 		setIsStatusLoading(true);
 
-		C.PublishingGetStatus(space.targetSpaceId, rootId, message => {
+		C.PublishingGetStatus(S.Common.space, rootId, message => {
 			setIsStatusLoading(false);
 
 			if (message.error.code) {

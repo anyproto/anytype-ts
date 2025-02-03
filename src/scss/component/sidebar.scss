@@ -17,7 +17,7 @@
 
 .sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-tertiary); }
 .sidebar.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
-.sidebar.isClosed { left: 0px !important; }
+.sidebar.isClosed { left: 0px !important; overflow: hidden; }
 
 .sidebar.left { left: 0px; }
 .sidebar.left.withVault { left: $vaultWidthCollapsed; }
