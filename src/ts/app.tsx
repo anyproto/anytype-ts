@@ -23,18 +23,6 @@ import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
 import 'scss/common.scss';
-import 'scss/component/common.scss';
-import 'scss/page/common.scss';
-import 'scss/block/common.scss';
-import 'scss/form/common.scss';
-import 'scss/list/common.scss';
-import 'scss/widget/common.scss';
-import 'scss/popup/common.scss';
-import 'scss/menu/common.scss';
-import 'scss/notification/common.scss';
-
-import 'scss/media/print.scss';
-import 'scss/theme/dark/common.scss';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
