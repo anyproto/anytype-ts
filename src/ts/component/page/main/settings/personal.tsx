@@ -93,7 +93,7 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 							<div className="item">
 								<div className="name">{sidebarMode}</div>
 							</div>
-							<Icon className="arrow light" />
+							<Icon className="arrow black" />
 						</div>
 					</div>
 

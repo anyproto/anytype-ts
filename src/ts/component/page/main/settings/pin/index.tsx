@@ -22,7 +22,7 @@ const PageMainSettingsPinIndex = observer(class PageMainSettingsPinIndex extends
 
 							<Select
 								id="pinTime"
-								arrowClassName="light"
+								arrowClassName="black"
 								options={times}
 								value={String(pinTime || '')}
 								onChange={v => S.Common.pinTimeSet(v)}
