@@ -1048,7 +1048,7 @@ class UtilCommon {
 
 	getLatex (html: string): string {
 		if (!/\$[^\$]+\$/.test(html)) {
-			return;
+			return html;
 		};
 
 		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
