@@ -41,7 +41,7 @@ class DetailStore {
 				makeObservable(el, { value: observable });
 
 				intercept(el as any, (change: any) => { 
-					return (change.newValue === el[change.name] ? null : change); 
+					return (change.newValue === el[change.name] ? null : change);
 				});
 
 				list.push(el);
@@ -95,7 +95,7 @@ class DetailStore {
 
 				list.push(el);
 
-				intercept(el as any, (change: any) => { 
+				intercept(el as any, (change: any) => {
 					return (change.newValue === el[change.name] ? null : change); 
 				});
 			};
