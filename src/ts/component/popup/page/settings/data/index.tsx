@@ -33,7 +33,7 @@ const PopupSettingsPageDataIndex = observer(class PopupSettingsPageDataIndex ext
 		const size = U.File.size(list.reduce((acc, item) => acc + item.size, 0));
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsDataManagementTitle')} />
 				<Label className="description" text={translate(`popupSettingsDataManagementLocalStorageText${suffix}`)} />
 
@@ -85,7 +85,7 @@ const PopupSettingsPageDataIndex = observer(class PopupSettingsPageDataIndex ext
 				<Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
 				<Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
 				<Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
-			</React.Fragment>
+			</>
 		);
 	};
 

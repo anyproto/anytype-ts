@@ -19,7 +19,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 		this.init();
 
 		return (
-			<React.Fragment>
+			<>
 				<Head {...this.props} returnTo="exportIndex" name={translate('commonBack')} />
 
 				<Title text={translate('popupSettingsExportMarkdownTitle')} />
@@ -53,7 +53,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 						onClick={() => onExport(I.ExportType.Markdown, this.data)} 
 					/>
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

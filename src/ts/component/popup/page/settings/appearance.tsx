@@ -14,7 +14,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 		];
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsColorMode')} />
 
 				<div className="buttons">
@@ -31,7 +31,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 						</div>
 					))}
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

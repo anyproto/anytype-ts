@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Footer, Icon, ListManager, Header } from 'Component';
+import { Footer, Header, ListObjectManager, Icon, Title } from 'Component';
 import { I, U, J, translate, Action, analytics } from 'Lib';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
@@ -30,7 +30,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const resize = () => {
 		const win = $(window);
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const node = $(nodeRef.current);
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
@@ -80,7 +80,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 						<Title text={translate('commonBin')} />
 					</div>
 
-					<ListManager
+					<ListObjectManager
 						ref={managerRef}
 						subId={J.Constant.subId.archive}
 						filters={filters}

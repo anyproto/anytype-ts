@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, Cell } from 'Component';
 import { I, S, U, J, translate, Dataview, Storage } from 'Lib';
-import Cell from 'Component/block/dataview/cell';
 import Item from './item';
 
 const ANIMATION = 200;
@@ -35,7 +34,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
@@ -178,7 +177,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 				{!items.length ? (
 					<div className="item empty">{translate('commonNoObjects')}</div>
 				) : (
-					<React.Fragment>
+					<>
 						{items.map(id => (
 							<Item 
 								{...props}
@@ -189,7 +188,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 							/>
 						))}
 						{total > limit ? <div className="item more" onClick={onAll}>{translate('widgetShowAll')}</div> : ''}
-					</React.Fragment>
+					</>
 				)}
 			</div>
 		</div>

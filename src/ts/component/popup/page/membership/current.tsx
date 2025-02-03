@@ -87,7 +87,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 					case 2: {
 						content = (
-							<React.Fragment>
+							<>
 								<Title text={translate(`popupMembershipFreeTitleStep2`)} />
 
 								<Pin
@@ -103,7 +103,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 									{translate('popupMembershipResend')}
 									{countdown ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
 								</div>
-							</React.Fragment>
+							</>
 						);
 						break;
 					};

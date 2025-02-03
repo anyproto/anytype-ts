@@ -8,7 +8,6 @@ import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
 import PopupSearch from './search';
 import PopupHelp from './help';
-import PopupPrompt from './prompt';
 import PopupPreview from './preview';
 import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
@@ -56,7 +55,6 @@ class Popup extends React.Component<I.Popup> {
 			settingsOnboarding:		 PopupSettingsOnboarding,
 			search:					 PopupSearch,
 			confirm:				 PopupConfirm,
-			prompt:					 PopupPrompt,
 			help:					 PopupHelp,
 			preview:				 PopupPreview,
 			shortcut:				 PopupShortcut,

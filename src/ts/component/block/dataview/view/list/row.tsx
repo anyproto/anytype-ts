@@ -32,7 +32,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		};
 
 		let content = (
-			<React.Fragment>
+			<>
 				{relations.map((relation: any, i: number) => {
 					const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 					return (
@@ -55,7 +55,7 @@ const Row = observer(class Row extends React.Component<Props> {
 						/>
 					);
 				})}
-			</React.Fragment>
+			</>
 		);
 
 		if (!isInline) {
@@ -68,7 +68,7 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		if (isCollection && !isInline) {
 			content = (
-				<React.Fragment>
+				<>
 					<Icon
 						className="drag"
 						draggable={true}
@@ -80,7 +80,7 @@ const Row = observer(class Row extends React.Component<Props> {
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}
 					</DropTarget>
-				</React.Fragment>
+				</>
 			);
 		};
 

@@ -120,7 +120,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				spellcheck = false;
 				
 				additional = (
-					<React.Fragment>
+					<>
 						<Select 
 							id={'lang-' + id} 
 							arrowClassName="light" 
@@ -142,7 +142,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 								<div className="txt">{translate('commonCopy')}</div>
 							</div>
 						</div>
-					</React.Fragment>
+					</>
 				);
 				break;
 			};
@@ -1145,7 +1145,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				});
 
 				window.setTimeout(() => {
-					const pageContainer = U.Common.getPageContainer(isPopup);
+					const pageContainer = U.Common.getPageFlexContainer(isPopup);
 
 					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
 						pageContainer.off('mousedown.context');

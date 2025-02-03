@@ -176,7 +176,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		const win = $(window);
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
-		const sidebar = $('#sidebar');
+		const sidebar = $('#sidebarLeft');
 		const layer = $('#dragLayer');
 		const body = $('body');
 		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey };
@@ -240,7 +240,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
-		const sidebar = $('#sidebar');
+		const sidebar = $('#sidebarLeft');
 		const body = $('body');
 
 		layerRef.current.hide();
@@ -356,8 +356,11 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 					};
 
 					case I.DropType.Relation: {
-						ids.forEach((key: string) => {
-							C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
+						ids.forEach((id: string) => {
+							const relation = S.Record.getRelationById(id);
+							if (relation) {
+								C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key: relation.relationKey } });
+							};
 						});
 						break;
 					};

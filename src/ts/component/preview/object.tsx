@@ -76,50 +76,50 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 
 					case I.TextStyle.Checkbox: {
 						inner = (
-							<React.Fragment>
+							<>
 								<Icon className={[ 'check', (checked ? 'active' : '') ].join(' ')} />
 								{line}
-							</React.Fragment>
+							</>
 						);
 						break;
 					};
 
 					case I.TextStyle.Quote: {
 						inner = (
-							<React.Fragment>
+							<>
 								<Icon className="hl" />
 								{line}
-							</React.Fragment>
+							</>
 						);
 						break;
 					};
 
 					case I.TextStyle.Bulleted: {
 						inner = (
-							<React.Fragment>
+							<>
 								<Icon className="bullet" />
 								{line}
-							</React.Fragment>
+							</>
 						);
 						break;
 					};
 
 					case I.TextStyle.Toggle: {
 						inner = (
-							<React.Fragment>
+							<>
 								<Icon className="toggle" />
 								{line}
-							</React.Fragment>
+							</>
 						);
 						break;
 					};
 
 					case I.TextStyle.Numbered: {
 						inner = (
-							<React.Fragment>
+							<>
 								<div id={'marker-' + item.id} className="number" />
 								{line}
-							</React.Fragment>
+							</>
 						);
 						break;
 					};
@@ -136,10 +136,10 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 
 			case I.BlockType.Relation: {
 				inner = (
-					<React.Fragment>
+					<>
 						{line}
 						{line}
-					</React.Fragment>
+					</>
 				);
 				break;
 			};
@@ -154,10 +154,10 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.FileType.File: {
 						bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
 						inner = (
-							<React.Fragment>
+							<>
 								<Icon className="color" inner={bullet} />
 								{line}
-							</React.Fragment>
+							</>
 						);
 
 						c++;
@@ -189,10 +189,10 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 			case I.BlockType.Link: {
 				bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
 				inner = (
-					<React.Fragment>
+					<>
 						<Icon className="color" inner={bullet} />
 						{line}
-					</React.Fragment>
+					</>
 				);
 
 				c++;

@@ -24,6 +24,7 @@ export default {
 		'defaultTemplateId',
 		'createdDate',
 		'timestamp',
+		'resolvedLayout',
 	],
 
 	sidebar: [
@@ -94,11 +95,17 @@ export default {
 	],
 
 	type: [
+		'featuredRelations',
 		'recommendedRelations',
+		'recommendedFeaturedRelations',
 		'recommendedLayout',
 		'sourceObject',
 		'uniqueKey',
 		'defaultTemplateId',
+		'defaulTypeId',
+		'defaultVewType',
+		'layoutAlign',
+		'layoutWidth',
 	],
 
 	graph: [

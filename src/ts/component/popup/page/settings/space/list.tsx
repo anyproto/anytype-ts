@@ -42,7 +42,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsSpacesListTitle')} />
 
 				<div className="items">
@@ -54,7 +54,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 					</div>
 					{spaces.map((item: any, i: number) => <Row key={i} {...item} />)}
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 
