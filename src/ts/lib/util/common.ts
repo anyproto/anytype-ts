@@ -1057,7 +1057,7 @@ class UtilCommon {
 		const regCode = new RegExp(`^${code}|${code}$`, 'i');
 		const match = html.matchAll(reg);
 		const render = (s: string) => {
-			s = U.Common.fromHtmlSpecialChars(s);
+			s = this.fromHtmlSpecialChars(s);
 
 			let ret = s;
 			try {
