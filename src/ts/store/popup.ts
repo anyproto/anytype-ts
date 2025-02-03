@@ -147,7 +147,7 @@ class PopupStore {
 			const el = $(`#${U.Common.toCamelCase(`popup-${id}`)}`);
 
 			if (el.length) {
-				raf(() => { el.css({ transform: '' }).removeClass('show'); });
+				raf(() => { el.removeClass('show'); });
 			};
 
 			window.setTimeout(() => {

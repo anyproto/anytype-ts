@@ -153,7 +153,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search withBackground"
 							tooltip={translate('commonSearch')}
-							tooltipCaption={`${cmd} + F`}
+							tooltipCaption={keyboard.getCaption('searchText')}
 							onChange={onFilterChange}
 							onIconClick={this.onFilterShow}
 						/>
