@@ -1,9 +1,10 @@
-import React, { FC, forwardRef, MouseEvent } from 'react';
+import React, { FC, MouseEvent } from 'react';
 import { U, translate } from 'Lib';
 
 interface Props {
 	object: any;
 	className?: string;
+	withLatex?: boolean;
 	onClick? (e: MouseEvent): void;
 	onMouseDown? (e: MouseEvent): void;
 	onMouseEnter? (e: MouseEvent): void;
@@ -13,6 +14,7 @@ interface Props {
 const ObjectName: FC<Props> = ({
 	object = {},
 	className = 'name',
+	withLatex = false,
 	onClick,
 	onMouseDown,
 	onMouseEnter,
@@ -31,6 +33,10 @@ const ObjectName: FC<Props> = ({
 		};
 	};
 
+	if (withLatex) {
+		name = U.Common.getLatex(name);
+	};
+
 	return (
 		<div 
 			className={className} 
@@ -39,7 +45,7 @@ const ObjectName: FC<Props> = ({
 			onMouseEnter={onMouseEnter} 
 			onMouseLeave={onMouseLeave}
 		>
-			<span>{name}</span>
+			<span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
 		</div>
 	);
 

@@ -1,4 +1,5 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
+import { Label } from 'Component';
 import { I, S, U, J, focus, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -81,7 +82,7 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 			onClick={e => onClick(e, item.id)}
 			style={{ paddingLeft: item.depth * 24 }}
 		>
-			<span>{item.text}</span>
+			<Label text={U.Common.getLatex(item.text)} />
 		</div>
 	);
 

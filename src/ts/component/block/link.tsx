@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
+import { Icon, IconObject, Loader, ObjectName, Cover, Label } from 'Component';
 import { I, S, U, J, translate, keyboard, focus, Preview } from 'Lib';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
@@ -134,14 +134,19 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						<div key="sideLeft" className={cnl.join(' ')}>
 							<div className="relationItem cardName" onClick={onNameClick}>
 								{icon}
-								<ObjectName object={object} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} />
+								<ObjectName 
+									object={object} 
+									onMouseEnter={this.onMouseEnter} 
+									onMouseLeave={this.onMouseLeave} 
+									withLatex={true} 
+								/>
 								{archive}
 							</div>
 
 							{descr ? (
 								<div className="relationItem cardDescription">
 									{div}
-									<div className="description">{descr}</div>
+									<Label className="description" text={U.Common.getLatex(descr)} />
 								</div>
 							) : ''}
 

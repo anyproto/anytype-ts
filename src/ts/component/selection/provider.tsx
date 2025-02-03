@@ -44,6 +44,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	const { children } = props;
 	const length = list.length;
 	const rectRef = useRef(null);
+	const allowRect = useRef(true);
 
 	const rebind = () => {
 		unbind();
@@ -303,11 +304,16 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			oy = containerOffset.current.top - top.current;
 		};
 
+		const el = $(rectRef.current);
 		const x1 = x.current + ox;
 		const y1 = y.current + oy;
 		const rect = getRect(x1, y1, dx, dy);
 
-		$(rectRef.current).show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
+		if (allowRect.current) {
+			el.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
+		} else {
+			el.hide();	
+		};
 	};
 	
 	const getRect = (x1: number, y1: number, x2: number, y2: number) => {
@@ -411,18 +417,22 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				if (!rc) {
 					focus.set(focusedId.current, { from: range.current.start, to: range.current.end });
 					focus.apply();
+
+					allowRect.current = false;
 				};
 			};
 		} else {
-			const { focused, range } = focus.state;
+			const { focused, range: fr } = focus.state;
 
-			if (focused && range.to) {
+			if (focused && fr.to) {
 				focus.clear(false);
 			};
 			
 			keyboard.setFocus(false);
 			window.getSelection().empty();
 			window.focus();
+
+			allowRect.current = true;
 		};
 
 		renderSelection();		
@@ -451,6 +461,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		nodes.current = [];
 		range.current = null;
 		containerOffset.current = null;
+		allowRect.current = true;
 	};
 
 	const set = (type: I.SelectType, list: string[]) => {
