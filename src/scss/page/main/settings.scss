@@ -72,7 +72,7 @@
 
     .select {
         background: none; border: 0px; font-weight: 400; text-decoration: none;
-        min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px; padding-left: 10px; max-width: 250px;
+        min-height: 28px; padding: 3px 24px 3px 8px; border-radius: 8px; padding-left: 10px; max-width: 250px;
     }
     .select:hover { background: var(--color-shape-highlight-medium); }
     .select {
@@ -488,7 +488,7 @@
     > .pageSettingsPinIndex {
         .select {
             background: none; font-weight: 400; text-decoration: none;
-            min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px;
+            min-height: 28px; padding: 3px 24px 3px 8px; border-radius: 8px;
         }
         .select:hover { background: var(--color-shape-highlight-medium); }
         .select {
