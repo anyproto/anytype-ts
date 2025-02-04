@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { S, sidebar, translate, U } from 'Lib';
-import { Icon, IconObject } from 'Component';
+import { Icon, IconObject, ObjectName } from 'Component';
 
-const SidebarSettings = observer(class SidebarSettings extends React.Component<{}, {}> {
+interface Props extends React.Component {
+	page: string;
+};
+
+const SidebarSettings = observer(class SidebarSettings extends React.Component<Props, {}> {
 
 	render () {
 		const space = U.Space.getSpaceview();
@@ -14,6 +18,11 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 		const participant = U.Space.getParticipant() || profile;
 		const pathname = U.Router.getRoute();
 		const param = U.Router.getParam(pathname);
+		const isSpace = this.props.page == 'settingsSpace';
+
+		const onBack = () => {
+			// tbd
+		};
 
 		const Item = (action: any) => {
 			const cn = [ 'item' ];
@@ -83,21 +92,32 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 
 				<div className="body">
 					<div className="list">
-						{sections.map((item: any, i: number) => (
-							<Section key={i} {...item} />
-						))}
+						{isSpace ? (
+							<div className="head" onClick={onBack}>
+								<Icon className="back" />
+								<ObjectName object={space} />
+							</div>
+						) : ''}
+						<div className="inner">
+							{sections.map((item: any, i: number) => (
+								<Section key={i} {...item} />
+							))}
+						</div>
 					</div>
 
-					<div className="logout" onClick={() => S.Popup.open('logout', {})}>
-						<Icon />
-						{translate('commonLogout')}
-					</div>
+					{!isSpace ? (
+						<div className="logout" onClick={() => S.Popup.open('logout', {})}>
+							<Icon />
+							{translate('commonLogout')}
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);
 	};
 
 	getSections () {
+		const isSpace = this.props.page == 'settingsSpace';
 		const settingsVault = [
 			{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 			{ id: 'dataIndex', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'dataPublish', 'delete' ] },
@@ -108,7 +128,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 			settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') });
 		};
 
-		return [
+		const appSettings = [
 			{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
 			{
 				name: translate('popupSettingsApplicationTitle'), children: [
@@ -119,6 +139,21 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<{
 			},
 			{ name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
 		];
+		const spaceSettings = [
+			{ name: translate('commonPreferences'), children: [
+					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceOverview') },
+					{ id: 'spaceMembers', icon: 'members', name: translate('commonMembers') },
+					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
+				]
+			},
+			{ name: translate('pageSettingsSpaceIntegrations'), children: [
+					{ id: 'importIndex', icon: 'import', name: translate('commonImport') },
+					{ id: 'exportIndex', icon: 'export', name: translate('commonExport') },
+				]
+			},
+		];
+
+		return isSpace ? spaceSettings : appSettings;
 	};
 
 	withMembership () {

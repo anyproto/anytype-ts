@@ -244,6 +244,10 @@ html.themeDark {
 	.icon.settings-spaces { background-image: url('#{$themePath}/icon/settings/spaces.svg'); }
 	.icon.settings-membership { background-image: url('#{$themePath}/icon/settings/membership.svg'); }
 	.icon.settings-language { background-image: url('#{$themePath}/icon/settings/language.svg'); }
+	.icon.settings-space { background-image: url('#{$themePath}/icon/settings/space/overview.svg'); }
+	.icon.settings-members { background-image: url('#{$themePath}/icon/settings/space/members.svg'); }
+	.icon.settings-import { background-image: url('#{$themePath}/icon/settings/space/import.svg'); }
+	.icon.settings-export { background-image: url('#{$themePath}/icon/settings/space/export.svg'); }
 
 	/* Editor */
 

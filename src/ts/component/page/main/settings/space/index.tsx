@@ -258,7 +258,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className={usageCn.join(' ')}>
 										<div className="sides alignTop">
 											<div className="side left">
-												<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
+												<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 												<div className="storageLabel">
 													<Label text={U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit))} />
 												</div>
@@ -322,7 +322,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					) : ''}	
 
 					<div className="section sectionIntegrations">
-						<Title text={translate(`popupSettingsSpaceIndexIntegrations`)} />
+						<Title text={translate(`pageSettingsSpaceIntegrations`)} />
 						<div className="sectionContent">
 
 							{canWrite ? (

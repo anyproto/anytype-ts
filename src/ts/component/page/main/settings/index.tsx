@@ -73,6 +73,12 @@ const Components: any = {
 };
 
 
+const SPACE_PAGES = [
+	'spaceIndex', 'spaceStorageManager', 'spaceShare', 'spaceMembers', 'spaceList',
+	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'exportIndex', 'exportProtobuf', 'exportMarkdown',
+];
+
+
 const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
 
 	ref: any = null;
@@ -87,6 +93,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		super(props);
 
 		this.getId = this.getId.bind(this);
+		this.isSpace = this.isSpace.bind(this);
 		this.onPage = this.onPage.bind(this);
 		this.onExport = this.onExport.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
@@ -133,8 +140,11 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	};
 
 	componentDidMount () {
-		S.Common.getRef('vault')?.setActive('settings');
-		sidebar.objectContainerSwitch('settings');
+		this.init();
+	};
+
+	componentDidUpdate () {
+		this.init();
 	};
 
 	componentWillUnmount () {
@@ -142,6 +152,15 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 		S.Common.getRef('vault')?.setActive(space.id);
 		sidebar.objectContainerSwitch('widget');
+	};
+
+	init () {
+		if (this.isSpace()) {
+			sidebar.objectContainerSwitch('settingsSpace');
+		} else {
+			S.Common.getRef('vault')?.setActive('settings');
+			sidebar.objectContainerSwitch('settings');
+		};
 	};
 
 	onPage (id: string) {
@@ -189,6 +208,14 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		const id = param.id || 'account';
 
 		return U.Common.toCamelCase(`pageSettings-${id}`);
+	};
+
+	isSpace () {
+		const pathname = U.Router.getRoute();
+		const param = U.Router.getParam(pathname);
+		const id = param.id || 'account';
+
+		return SPACE_PAGES.includes(id);
 	};
 
 });

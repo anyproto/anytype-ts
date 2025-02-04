@@ -330,16 +330,6 @@ class Sidebar {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
-	objectContainerToggle (page1: string, page2: string) {
-		const ref = S.Common.getRef('sidebarLeft');
-		if (!ref) {
-			return;
-		};
-
-		const page = ref.state.page;
-		ref.setState({ page: page == page1 ? page2 : page1 });
-	};
-
 	objectContainerSwitch (page: string) {
 		const ref = S.Common.getRef('sidebarLeft');
 		if (!ref) {
@@ -349,7 +339,7 @@ class Sidebar {
 		ref.setState({ page });
 	};
 
-	settingsOpen (id?: string) {
+	settingsOpen (id?: string, isSpace?: boolean) {
 		U.Router.go(`/main/settings/${id || ''}`, {});
 	};
 

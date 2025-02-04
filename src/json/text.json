@@ -524,6 +524,11 @@
 	"pageSettingsColorModeButtonDark": "Dark Mode",
 	"pageSettingsColorModeButtonSystem": "Auto Mode",
 
+	"pageSettingsSpaceOverview": "Overview",
+	"pageSettingsSpaceRemoteStorage": "Remote Storage",
+	"pageSettingsSpaceIntegrations": "Integrations",
+	"pageSettingsSpaceManageContent": "Manage Content",
+
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
 	"editorControlLayout": "Layout",
@@ -825,12 +830,10 @@
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
-	"popupSettingsSpaceIndexRemoteStorageTitle": "Remote Storage",
 	"popupSettingsSpaceIndexRemoteStorageUpgradeText": "✦ Upgrade to add more storage",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
-	"popupSettingsSpaceIndexIntegrations": "Integrations",
 	"popupSettingsSpaceIndexImport": "Import to Space",
 	"popupSettingsSpaceIndexExport": "Export Space",
 	"popupSettingsSpaceIndexSpaceInfoTitle": "Space information",
