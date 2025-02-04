@@ -5,7 +5,7 @@
 	.icon.remove { display: none !important; }
 
 	.body {
-		.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 4px 4px 8px; }
+		.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 2px 4px 8px; }
 		.sides {
 			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; width: 100%; flex-grow: 1; overflow: hidden; }
 			.side.left {
@@ -25,7 +25,7 @@
 				.plusWrapper:hover { background-color: var(--color-shape-highlight-medium); }
 
 				.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); }
-				.icon.arrow { width: 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
+				.icon.arrow { background-image: url('~img/icon/widget/button/arrow.svg'); }
 			}
 		}
 
