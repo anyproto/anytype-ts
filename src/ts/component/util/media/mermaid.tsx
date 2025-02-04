@@ -20,10 +20,7 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 	const themeClass = S.Common.getThemeClass();
 
 	const init = () => {
-		const themeVariables = (J.Theme[themeClass] || {}).mermaid;
-		if (!themeVariables) {
-			return;
-		};
+		const themeVariables = (J.Theme[themeClass] || {}).mermaid || {};
 
 		for (const k in themeVariables) {
 			if (!themeVariables[k]) {
