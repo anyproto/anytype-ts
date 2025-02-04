@@ -9,6 +9,8 @@ interface Props extends React.Component {
 
 const SidebarSettings = observer(class SidebarSettings extends React.Component<Props, {}> {
 
+	routeBack: any = null;
+
 	render () {
 		const space = U.Space.getSpaceview();
 		const { membership } = S.Auth;
@@ -21,7 +23,12 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const isSpace = this.props.page == 'settingsSpace';
 
 		const onBack = () => {
-			// tbd
+			if (!this.routeBack || !this.routeBack.pathname) {
+				U.Space.openDashboard('route');
+				return;
+			};
+
+			U.Router.go(this.routeBack.pathname, {});
 		};
 
 		const Item = (action: any) => {
@@ -114,6 +121,12 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		const history = U.Router.history;
+
+		this.routeBack = history.entries[history.index - 1];
 	};
 
 	getSections () {
