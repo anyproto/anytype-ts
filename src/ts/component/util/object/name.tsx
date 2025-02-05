@@ -27,7 +27,7 @@ const ObjectName: FC<Props> = ({
 	let name = String(object.name || '');
 	if (!isDeleted) {
 		if (U.Object.isNoteLayout(layout)) {
-			name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
+			name = snippet || `<span class="empty">${translate('commonEmpty')}</span>`;
 		} else {
 			name = U.Object.name(object);
 		};
