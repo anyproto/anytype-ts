@@ -116,6 +116,7 @@ class Storage {
 			this.deleteAccountKey(key);
 		} else {
 			Api.delete(key);
+			localStorage.removeItem(key);
 		};
 	};
 
