@@ -1260,12 +1260,16 @@ class UtilMenu {
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					onClick: (item: any) => {
-						let flags: I.ObjectFlag[] = [];
+						const objectFlags: I.ObjectFlag[] = [];
+
 						if (!U.Object.isInSetLayouts(item.recommendedLayout)) {
-							flags = flags.concat([ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+							objectFlags.push(I.ObjectFlag.SelectTemplate);
+						};
+						if (flags.deleteEmpty) {
+							objectFlags.push(I.ObjectFlag.DeleteEmpty);
 						};
 
-						C.ObjectCreate(details, flags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
+						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
 							if (message.error.code || !message.details) {
 								return;
 							};

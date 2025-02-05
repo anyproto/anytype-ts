@@ -65,6 +65,8 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				);
 			};
 		} else {
+			const childrenIds = S.Block.getChildrenIds(widgets, widgets);
+
 			const blocks = S.Block.getBlocks(widgets, (block: I.Block) => {
 				if (!block.isWidget()) {
 					return false;

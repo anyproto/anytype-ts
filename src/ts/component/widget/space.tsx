@@ -52,7 +52,10 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			offsetY: 2,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-		}, {}, { withImport: true }, object => U.Object.openAuto(object));
+		}, {}, { 
+			deleteEmpty: true, 
+			withImport: true,
+		}, object => U.Object.openAuto(object));
 	};
 
 	const onButtonClick = (e: any, item: any) => {
