@@ -290,10 +290,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		switch (id) {
 			case 'onClick': {
-				if (data.node === undefined){
-					setSelected([]);
-				} else {
+				if (data.node){
 					onClickObject(data.node);
+				} else {
+					setSelected([]);
 				}
 				break;
 			};
