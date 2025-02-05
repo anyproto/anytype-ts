@@ -66,6 +66,10 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			};
 		} else {
 			const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+				if (!block.isWidget()) {
+					return false;
+				};
+
 				const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 				if (!childrenIds.length) {
 					return false;
