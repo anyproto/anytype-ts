@@ -341,20 +341,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			defaultIcon('date');
 			break;
 
-		case I.ObjectLayout.Collection:
-		case I.ObjectLayout.Set: {
-			if (iconImage) {
-				cn.push('withImage');
-			};
-
-			if (iconEmoji || iconImage) {
-				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-			} else {
-				defaultIcon('set');
-			};
-			break;
-		};
-
 		case I.ObjectLayout.Human: 
 		case I.ObjectLayout.Participant: {
 			icn = icn.concat([ 'iconImage', 'c' + size ]);
