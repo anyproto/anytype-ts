@@ -44,7 +44,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	const { children } = props;
 	const length = list.length;
 	const rectRef = useRef(null);
-	const allowRect = useRef(true);
+	const allowRect = useRef(false);
 
 	const rebind = () => {
 		unbind();
@@ -461,7 +461,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		nodes.current = [];
 		range.current = null;
 		containerOffset.current = null;
-		allowRect.current = true;
+		allowRect.current = false;
 	};
 
 	const set = (type: I.SelectType, list: string[]) => {
