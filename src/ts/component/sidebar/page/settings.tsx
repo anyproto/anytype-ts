@@ -154,8 +154,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		];
 		const spaceSettings = [
 			{ name: translate('commonPreferences'), children: [
-					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceOverview') },
-					{ id: 'spaceMembers', icon: 'members', name: translate('commonMembers') },
+					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
+					{ id: 'spaceShare', icon: 'members', name: translate('commonMembers') },
 					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
 				]
 			},

@@ -58,4 +58,38 @@
 			}
 		}
 	}
+
+	.popupSpaceInfo {
+		.wrapper { padding: 16px; }
+		.sectionContent { border-radius: 12px; border: 1px solid var(--color-shape-secondary); overflow: hidden; }
+		.sectionContent {
+			> .item { padding: 16px; border-bottom: 1px solid var(--color-shape-secondary); }
+			> .item:last-child { border-bottom: 0; }
+			> .item.red {
+				.title { color: var(--color-red); }
+			}
+
+			> .item {
+				.sides { display: flex; justify-content: space-between; align-items: center; gap: 0px 16px; }
+				.sides:not(.alignTop) { align-items: center; }
+				.sides {
+					.side { width: unset; background: unset; padding: unset; }
+					.side.left { flex-grow: 1; }
+					.side.right { flex-shrink: 0; }
+				}
+
+				.title { @include text-header3; margin-bottom: 12px; }
+				.label { @include text-small; color: var(--color-text-secondary); }
+
+				.button { max-width: 200px; }
+				.button {
+					.txt { @include text-overflow-nw; line-height: unset; }
+				}
+				.icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; background-image: url('~img/icon/menu/action/copy0.svg'); }
+			}
+			> .item:hover {
+				.icon { opacity: 1; }
+			}
+		}
+	}
 }

@@ -28,7 +28,6 @@ import PageExportMarkdown from './export/markdown';
 import PageSpaceIndex from './space/index';
 import PageSpaceStorageManager from './space/storage';
 import PageSpaceShare from './space/share';
-import PageSpaceMembers from './space/members';
 import PageSpaceList from './space/list';
 
 import PageMembership from './membership';
@@ -68,13 +67,12 @@ const Components: any = {
 	spaceIndex:			 PageSpaceIndex,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
-	spaceMembers:		 PageSpaceMembers,
 	spaceList:			 PageSpaceList,
 };
 
 
 const SPACE_PAGES = [
-	'spaceIndex', 'spaceStorageManager', 'spaceShare', 'spaceMembers', 'spaceList',
+	'spaceIndex', 'spaceStorageManager', 'spaceShare', 'spaceList',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'exportIndex', 'exportProtobuf', 'exportMarkdown',
 ];
 

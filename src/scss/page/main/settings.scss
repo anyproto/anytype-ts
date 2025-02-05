@@ -355,14 +355,9 @@
     > .pageSettingsSpaceStorageManager { padding: 0px !important; }
     > .pageSettingsSpaceStorageManager {
         > .wrap { height: 100%; display: flex; flex-direction: column; }
-        > .wrap {
-            .title { padding: 0px 54px; }
-        }
 
+        .objectManagerWrapper { margin-top: 16px; }
         .objectManagerWrapper {
-            .controlsWrapper, .ReactVirtualized__List { padding: 0px 54px; }
-            .emptySearch { margin: 0px 54px; }
-
             .items {
                 .row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }
 

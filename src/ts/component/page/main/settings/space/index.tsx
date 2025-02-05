@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
+import { Icon, Title, Label, Input, IconObject, Button, Error, ObjectName } from 'Component';
 import { I, C, S, U, J, translate, Preview, analytics, Action, Storage, sidebar } from 'Lib';
 
 interface State {
@@ -9,9 +9,7 @@ interface State {
 	key: string;
 };
 
-const STORAGE_FULL = 0.7;
-
-const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
+const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
 	refInput = null;
@@ -32,7 +30,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDelete = this.onDelete.bind(this);
-		this.onUpgrade = this.onUpgrade.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onMoreLink = this.onMoreLink.bind(this);
 		this.onAdd = this.onAdd.bind(this);
@@ -40,54 +37,25 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
-		const { error, cid, key } = this.state;
-		const { spaceStorage, isOnline } = S.Common;
-		const { localUsage, bytesLimit } = spaceStorage;
-		const { account } = S.Auth;
-		const spaces = U.Space.getList();
+		const { error } = this.state;
 		const space = U.Space.getSpaceview();
-		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const profile = U.Space.getProfile();
-		const usageCn = [ 'item' ];
 
 		const requestCnt = this.getRequestCnt();
 		const sharedCnt = this.getSharedCnt();
 
-		const hasLink = cid && key;
 		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const isShareActive = U.Space.isShareActive();
 
-		let bytesUsed = 0;
-		let buttonUpgrade = null;
 		let requestCaption = null;
 		let canShare = isOwner && !space.isPersonal;
-		let canMembers = !isOwner && space.isShared;
 
-		const progressSegments = (spaces || []).map(space => {
-			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
-			const usage = Number(object.bytesUsage) || 0;
-			const isOwner = U.Space.isMyOwner(space.targetSpaceId);
-
-			if (!isOwner) {
-				return null;
-			};
-
-			bytesUsed += usage;
-			return { name: space.name, caption: U.File.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
-		}).filter(it => it);
-		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
 		if ((sharedCnt >= profile.sharedSpacesLimit) && !space.isShared) {
 			canShare = false;
-			canMembers = false;
-		};
-
-		if (isRed) {
-			usageCn.push('red');
-			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={this.onUpgrade} />;
 		};
 
 		if (requestCnt) {
@@ -178,30 +146,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								</div>
 							) : ''}
 
-							{hasLink ? (
-								<div className="item isInvite">
-									<div className="sides">
-										<div className="side left">
-											<Title text={translate('popupSettingsSpaceIndexShareLinkTitle')} />
-											<Label text={translate('popupSettingsSpaceIndexShareLinkText')} />
-										</div>
-										<div className="side right">
-											<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c28" color="blank" text={translate('commonCopyLink')} />
-										</div>
-									</div>
-
-									<div className="inviteLinkWrapper">
-										<div className="inputWrapper">
-											<Input ref={ref => this.refInput = ref} readonly={true} value={U.Space.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
-											<Icon id="button-more-link" className="more withBackground" onClick={this.onMoreLink} />
-										</div>
-									</div>
-								</div>
-							) : ''}
-
 							{canShare && space.isShared ? (
-								<div 
-									className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
+								<div
+									className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')}
 									onClick={() => isShareActive ? onPage('spaceShare') : null}
 								>
 									<div className="sides">
@@ -217,32 +164,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								</div>
 							) : ''}
 
-							{canMembers ? (
-								<div 
-									className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
-									onClick={() => isShareActive ? onPage('spaceMembers') : null}
-								>
-									<div className="sides">
-										<div className="side left">
-											<Title text={translate('commonMembers')} />
-											<Label text={translate('popupSettingsSpaceIndexShareMembersViewText')} />
-										</div>
-										<div className="side right">
-											<Icon className="arrow" />
-										</div>
-									</div>
-								</div>
-							) : ''}
-
-							<div className="item isOwner">
+							<div
+								className="item"
+								onClick={() => S.Popup.open('spaceInfo', {})}
+							>
 								<div className="sides">
 									<div className="side left">
-										<Title text={translate('commonOwner')} />
+										<Title text={translate('popupSettingsSpaceIndexSpaceInfoTitle')} />
 									</div>
 									<div className="side right">
-										<IconObject object={{ ...creator, layout: I.ObjectLayout.Participant }} size={24} />
-										<ObjectName object={{ ...creator, layout: I.ObjectLayout.Participant }} />
-										{creator.identity == account.id ? <div className="caption">({translate('commonYou')})</div> : ''}
+										<Icon className="arrow" />
 									</div>
 								</div>
 							</div>
@@ -253,33 +184,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<div className="section sectionSpaceManager">
 							<Title text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 							<div className="sectionContent">
-
-								{isOwner ? (
-									<div className={usageCn.join(' ')}>
-										<div className="sides alignTop">
-											<div className="side left">
-												<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
-												<div className="storageLabel">
-													<Label text={U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit))} />
-												</div>
-											</div>
-											<div className="side right">
-												{canWrite ? (
-													<Button 
-														onClick={() => onPage('spaceStorageManager')} 
-														text={translate('popupSettingsSpaceIndexStorageManageFiles')} 
-														color="blank" 
-														className="c28" 
-													/>
-												) : ''}
-											</div>
-										</div>
-
-										<ProgressBar segments={progressSegments} current={U.File.size(bytesUsed)} max={U.File.size(bytesLimit)} />
-
-										{buttonUpgrade}
-									</div>
-								) : ''}
 
 								<div className="item">
 									<div className="sides">
@@ -319,103 +223,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							</div>
 						</div>
-					) : ''}	
-
-					<div className="section sectionIntegrations">
-						<Title text={translate(`pageSettingsSpaceIntegrations`)} />
-						<div className="sectionContent">
-
-							{canWrite ? (
-								<div className="item" onClick={() => onPage('importIndex')}>
-									<div className="sides">
-										<div className="side left">
-											<Icon className="settings-import" />
-											<Title text={translate(`popupSettingsSpaceIndexImport`)} />
-										</div>
-										<div className="side right">
-											<Icon className="arrow" />
-										</div>
-									</div>
-								</div>
-							) : ''}
-
-							<div className="item" onClick={() => onPage('exportIndex')}>
-								<div className="sides">
-									<div className="side left">
-										<Icon className="settings-export" />
-										<Title text={translate(`popupSettingsSpaceIndexExport`)} />
-									</div>
-									<div className="side right">
-										<Icon className="arrow" />
-									</div>
-								</div>
-							</div>
-
-						</div>
-					</div>
-
-					<div className="section sectionInfo">
-						<Title text={translate(`popupSettingsSpaceIndexSpaceInfoTitle`)} />
-
-						<div className="sectionContent">
-
-							<div
-								className="item"
-								onClick={() => U.Common.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId)}
-							>
-								<div className="sides">
-									<div className="side left">
-										<Title text={translate(`popupSettingsSpaceIndexSpaceIdTitle`)} />
-										<Label text={space.targetSpaceId} />
-									</div>
-									<div className="side right">
-										<Icon className="copy" />
-									</div>
-								</div>
-							</div>
-
-							<div 
-								className="item" 
-								onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
-							>
-								<div className="sides">
-									<div className="side left">
-										<Title text={translate(`popupSettingsSpaceIndexCreatedByTitle`)} />
-										<Label text={creator.globalName || creator.identity} />
-									</div>
-									<div className="side right">
-										<Icon className="copy" />
-									</div>
-								</div>
-							</div>
-
-							<div
-								className="item"
-								onClick={() => U.Common.copyToast(translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId)}
-							>
-								<div className="sides">
-									<div className="side left">
-										<Title text={translate(`popupSettingsSpaceIndexNetworkIdTitle`)} />
-										<Label text={account.info.networkId} />
-									</div>
-									<div className="side right">
-										<Icon className="copy" />
-									</div>
-								</div>
-							</div>
-
-							{space.createdDate ? (
-								<div className="item">
-									<div className="sides">
-										<div className="side left">
-											<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-											<Label text={U.Date.dateWithFormat(S.Common.dateFormat, space.createdDate)} />
-										</div>
-									</div>
-								</div>
-							) : ''}
-						</div>
-					</div>
+					) : ''}
 
 					<div className="buttons">
 						<Button text={isOwner ? translate('commonDelete') : translate('commonLeaveSpace')} color="red" onClick={this.onDelete} />
@@ -504,18 +312,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		});
 	};
 
-	onUpgrade () {
-		const { membership } = S.Auth;
-
-		if (membership.tier >= I.TierType.CoCreator) {
-			Action.membershipUpgrade();
-		} else {
-			this.props.onPage('membership');
-		};
-
-		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
-	};
-
 	onCopy () {
 		const { cid, key } = this.state;
 		if (!cid || !key) {
@@ -562,4 +358,4 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 });
 
-export default PopupSettingsSpaceIndex;
+export default pageMainSettingsSpaceIndex;

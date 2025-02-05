@@ -14,7 +14,7 @@ interface State {
 
 const HEIGHT = 64;
 
-const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PageSettingsComponent, State> {
+const pageMainSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PageSettingsComponent, State> {
 
 	node: any = null;
 	cache: any = null;
@@ -546,4 +546,4 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 });
 
-export default PopupSettingsSpaceShare;
+export default pageMainSettingsSpaceShare;
