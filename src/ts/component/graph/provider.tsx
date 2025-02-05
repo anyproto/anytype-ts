@@ -294,7 +294,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					onClickObject(data.node);
 				} else {
 					setSelected([]);
-				}
+				};
 				break;
 			};
 
