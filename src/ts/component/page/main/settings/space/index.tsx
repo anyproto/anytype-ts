@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Input, IconObject, Button, Error, ObjectName } from 'Component';
 import { I, C, S, U, J, translate, Preview, analytics, Action, Storage, sidebar } from 'Lib';
@@ -33,6 +34,7 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		this.onCopy = this.onCopy.bind(this);
 		this.onMoreLink = this.onMoreLink.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -42,6 +44,7 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const profile = U.Space.getProfile();
+		const buttons = this.getButtons();
 
 		const requestCnt = this.getRequestCnt();
 		const sharedCnt = this.getSharedCnt();
@@ -103,86 +106,19 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 					</div>
 				</div>
 
-				<div className="sections">
-					<div 
-						className="section sectionSpaceShare"
-						onMouseEnter={isShareActive ? () => {} : e => {
-							Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) });
-						}}
-						onMouseLeave={e => Preview.tooltipHide(false)}
-					>
-						<Title text={translate(`popupSettingsSpaceShareTitle`)} />
-
-						<div className="sectionContent">
-
-							{space.isPersonal ? (
-								<div className="item isDefault" onClick={this.onAdd}>
-									<div className="sides">
-										<div className="side left">
-											<Title text={translate('popupSettingsSpaceIndexShareShareTitle')} />
-											<Label text={translate('popupSettingsSpaceIndexShareDefaultText')} />
-										</div>
-										<div className="side right">
-											<Icon className="arrow" />
-										</div>
-									</div>
-								</div>
-							) : ''}
-
-							{canShare && !space.isShared ? (
-								<div 
-									className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
-									onClick={() => isShareActive ? onPage('spaceShare') : null}
-								>
-									<div className="sides">
-										<div className="side left">
-											<Title text={translate('popupSettingsSpaceIndexShareShareTitle')} />
-											<Label text={translate('popupSettingsSpaceIndexShareInviteText')} />
-										</div>
-										<div className="side right">
-											<Icon className="arrow" />
-										</div>
-									</div>
-								</div>
-							) : ''}
-
-							{canShare && space.isShared ? (
-								<div
-									className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')}
-									onClick={() => isShareActive ? onPage('spaceShare') : null}
-								>
-									<div className="sides">
-										<div className="side left">
-											<Title text={translate('commonMembers')} />
-											<Label text={translate('popupSettingsSpaceIndexShareMembersManageText')} />
-										</div>
-										<div className="side right">
-											{requestCaption}
-											<Icon className="arrow" />
-										</div>
-									</div>
-								</div>
-							) : ''}
-
-							<div
-								className="item"
-								onClick={() => S.Popup.open('spaceInfo', {})}
-							>
-								<div className="sides">
-									<div className="side left">
-										<Title text={translate('popupSettingsSpaceIndexSpaceInfoTitle')} />
-									</div>
-									<div className="side right">
-										<Icon className="arrow" />
-									</div>
-								</div>
-							</div>
+				<div className="buttons">
+					{buttons.map((el, idx) => (
+						<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className="btn" onClick={e => this.onClick(e, el)}>
+							<Icon className={el.icon} />
+							<Label text={el.name} />
 						</div>
-					</div>
+					))}
+				</div>
 
+				<div className="sections">
 					{canWrite ? (
 						<div className="section sectionSpaceManager">
-							<Title text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
+							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 							<div className="sectionContent">
 
 								<div className="item">
@@ -224,10 +160,6 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 							</div>
 						</div>
 					) : ''}
-
-					<div className="buttons">
-						<Button text={isOwner ? translate('commonDelete') : translate('commonLeaveSpace')} color="red" onClick={this.onDelete} />
-					</div>
 
 					<Error text={error} />
 				</div>
@@ -338,6 +270,54 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		Action.createSpace(analytics.route.settingsSpaceIndex);
 	};
 
+	onClick (e: React.MouseEvent, item: any) {
+		const { cid, key } = this.state;
+
+		switch (item.id) {
+			case 'invite': {
+				this.props.onPage('spaceShare');
+				break;
+			};
+			case 'qr': {
+				S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
+				break;
+			};
+			case 'more': {
+				const element = `#${U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)}`;
+				S.Menu.open('select', {
+					element,
+					offsetX: 16,
+					offsetY: -40,
+					onOpen: () => {
+						$(element).addClass('hover');
+					},
+					onClose: () => {
+						$(element).removeClass('hover');
+					},
+					data: {
+						options: [
+							{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
+							{ id: 'delete', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' },
+						],
+						onSelect: (e: React.MouseEvent, option: any) => {
+							switch (option.id) {
+								case 'spaceInfo': {
+									S.Popup.open('spaceInfo', {});
+									break;
+								};
+								case 'delete': {
+									this.onDelete();
+									break;
+								};
+							};
+						},
+					}
+				});
+				break;
+			};
+		};
+	};
+
 	checkName (v: string): string {
 		if ([ 
 			translate('defaultNameSpace'), 
@@ -346,6 +326,14 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 			v = '';
 		};
 		return v;
+	};
+
+	getButtons () {
+		return [
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexInvitePeople'), icon: 'invite' },
+			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
+			{ id: 'more', name: translate('commonMore'), icon: 'more' },
+		];
 	};
 
 	getRequestCnt (): number {

@@ -145,6 +145,23 @@
             }
         }
 
+        .buttons { display: flex; gap: 0px 8px; padding-top: 24px; margin-bottom: 36px; }
+        .buttons {
+            .btn {
+                height: 86px; flex: 1 0 0px; border: 1px solid var(--color-shape-secondary); border-radius: 16px; transition: $transitionAllCommon;
+                display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px 0px;
+            }
+            .btn:hover, .btn.hover { background: var(--color-shape-tertiary); }
+            .btn {
+                .icon { width: 20px; height: 20px; }
+                .icon.invite { background: url('~img/icon/settings/space/invite.svg'); }
+                .icon.qr { background: url('~img/icon/settings/space/qr.svg'); }
+                .icon.more { background: url('~img/icon/settings/space/more.svg'); }
+
+                .label { @include text-common; color: var(--color-text-primary); text-transform: capitalize; }
+            }
+        }
+
         .sections {
             .section { margin: 0px 0px 32px 0px; }
             .section:last-child { margin: 0px; }
@@ -152,6 +169,7 @@
             .section {
                 .title { @include text-header3; margin-bottom: 12px; }
                 .label { @include text-small; color: var(--color-text-secondary); }
+                .label.sub { font-weight: 500; margin-bottom: 8px; }
 
                 .sectionContent { border-radius: 12px; border: 1px solid var(--color-shape-secondary); overflow: hidden; }
                 .sectionContent {

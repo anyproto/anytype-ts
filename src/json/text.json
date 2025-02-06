@@ -529,6 +529,11 @@
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Manage Content",
 
+	"pageSettingsSpaceIndexInvitePeople": "Invite People",
+	"pageSettingsSpaceIndexQRCode": "QR code",
+
+	"pageSettingsSpaceDeleteSpace": "Delete Space",
+
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
 	"editorControlLayout": "Layout",

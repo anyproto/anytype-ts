@@ -14,7 +14,6 @@ const SHOW_DIMMER = [
 	'usecase',
 	'inviteRequest',
 	'inviteConfirm',
-	'inviteQr',
 	'usecase',
 	'membership',
 	'membershipFinalization',
