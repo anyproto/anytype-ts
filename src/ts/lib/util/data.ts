@@ -605,6 +605,7 @@ class UtilData {
 				ret.withIcon = iconEmoji || iconImage;
 				break;
 
+			case I.ObjectLayout.Note:
 			case I.ObjectLayout.Bookmark:
 			case I.ObjectLayout.Task: {
 				break;
