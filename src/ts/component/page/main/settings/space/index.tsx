@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Input, IconObject, Button, Error, ObjectName } from 'Component';
-import { I, C, S, U, J, translate, Preview, analytics, Action, Storage, sidebar } from 'Lib';
+import { Icon, Title, Label, Input, IconObject, Error, ObjectName } from 'Component';
+import { I, C, S, U, J, translate, Preview, analytics, Action } from 'Lib';
 
 interface State {
 	error: string;
@@ -13,8 +13,6 @@ interface State {
 const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
-	refInput = null;
-	refCopy: any = null;
 
 	state = {
 		error: '',
@@ -31,39 +29,17 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDelete = this.onDelete.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onMoreLink = this.onMoreLink.bind(this);
-		this.onAdd = this.onAdd.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
-		const { onPage, onSpaceTypeTooltip } = this.props;
+		const { onSpaceTypeTooltip } = this.props;
 		const { error } = this.state;
 		const space = U.Space.getSpaceview();
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
-		const profile = U.Space.getProfile();
 		const buttons = this.getButtons();
-
-		const requestCnt = this.getRequestCnt();
-		const sharedCnt = this.getSharedCnt();
-
-		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const isShareActive = U.Space.isShareActive();
-
-		let requestCaption = null;
-		let canShare = isOwner && !space.isPersonal;
-
-
-		if ((sharedCnt >= profile.sharedSpacesLimit) && !space.isShared) {
-			canShare = false;
-		};
-
-		if (requestCnt) {
-			requestCaption = <Label text={U.Common.sprintf('%d %s', requestCnt, U.Common.plural(requestCnt, translate('pluralRequest')))} className="caption" />;
-		};
 
 		return (
 			<React.Fragment>
@@ -244,32 +220,6 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		});
 	};
 
-	onCopy () {
-		const { cid, key } = this.state;
-		if (!cid || !key) {
-			return;
-		};
-
-		U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
-		analytics.event('ClickShareSpaceCopyLink');
-	};
-
-	onMoreLink () {
-		const { getId } = this.props;
-		const { cid, key } = this.state;
-
-		U.Menu.inviteContext({
-			containerId: getId(),
-			cid,
-			key,
-			onInviteRevoke: () => this.setInvite('', ''),
-		});
-	};
-
-	onAdd () {
-		Action.createSpace(analytics.route.settingsSpaceIndex);
-	};
-
 	onClick (e: React.MouseEvent, item: any) {
 		const { cid, key } = this.state;
 
@@ -334,14 +284,6 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
 			{ id: 'more', name: translate('commonMore'), icon: 'more' },
 		];
-	};
-
-	getRequestCnt (): number {
-		return U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]).length;
-	};
-
-	getSharedCnt (): number {
-		return U.Space.getList().filter(it => it.isShared && U.Space.isMyOwner(it.targetSpaceId)).length;
 	};
 
 });
