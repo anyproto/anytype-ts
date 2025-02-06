@@ -356,7 +356,11 @@
     > .pageSettingsSpaceStorageManager {
         > .wrap { height: 100%; display: flex; flex-direction: column; }
 
-        .progressBar { margin-bottom: 16px; }
+        .label { margin-bottom: 16px; }
+        .progressBar { margin-bottom: 40px; }
+        .progressBar {
+            .bar { height: 32px; }
+        }
 
         .objectManagerWrapper {
             .items {

@@ -69,7 +69,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 				{canWrite ? (
 					<div className="fileManagerWrapper">
-						<Title text={translate('popupSettingsSpaceStorageManagerTitle')} />
+						<Title className="sub" text={translate('popupSettingsSpaceStorageManagerTitle')} />
 
 						<ListManager
 							ref={ref => this.refManager = ref}
