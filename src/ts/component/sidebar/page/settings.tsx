@@ -38,7 +38,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			let name = null;
 			let caption = null;
 
-			if (action.id == param.id) {
+			if (action.id == param.id || (action.subPages && action.subPages.includes(param.id))) {
 				cn.push('active');
 			};
 
@@ -160,8 +160,14 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				]
 			},
 			{ name: translate('pageSettingsSpaceIntegrations'), children: [
-					{ id: 'importIndex', icon: 'import', name: translate('commonImport') },
-					{ id: 'exportIndex', icon: 'export', name: translate('commonExport') },
+					{
+						id: 'importIndex', icon: 'import', name: translate('commonImport'),
+						subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ]
+					},
+					{
+						id: 'exportIndex', icon: 'export', name: translate('commonExport'),
+						subPages: [ 'exportProtobuf', 'exportMarkdown' ]
+					},
 				]
 			},
 		];

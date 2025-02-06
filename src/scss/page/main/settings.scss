@@ -356,7 +356,8 @@
     > .pageSettingsSpaceStorageManager {
         > .wrap { height: 100%; display: flex; flex-direction: column; }
 
-        .objectManagerWrapper { margin-top: 16px; }
+        .progressBar { margin-bottom: 16px; }
+
         .objectManagerWrapper {
             .items {
                 .row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }

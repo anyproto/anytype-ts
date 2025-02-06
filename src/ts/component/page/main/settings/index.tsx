@@ -72,7 +72,7 @@ const Components: any = {
 
 
 const SPACE_PAGES = [
-	'spaceIndex', 'spaceStorageManager', 'spaceShare', 'spaceList',
+	'spaceIndex', 'spaceStorageManager', 'spaceShare',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'exportIndex', 'exportProtobuf', 'exportMarkdown',
 ];
 
@@ -80,7 +80,6 @@ const SPACE_PAGES = [
 const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
 
 	ref: any = null;
-	pinConfirmed = false;
 	onConfirmPin: any = null;
 
 	state = {
