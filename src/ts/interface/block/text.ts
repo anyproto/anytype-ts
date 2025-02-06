@@ -4,8 +4,7 @@ export enum MarkerType {
 	Bulleted	 = 0,
 	Numbered	 = 1,
 	Checkbox	 = 2,
-	Task		 = 3,
-	Toggle		 = 4,
+	Toggle		 = 3,
 };
 
 export enum TextStyle {
