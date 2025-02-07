@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.settingsPageContainer { width: 70%; margin: 0 auto; padding: 36px 0px 60px; min-width: 300px; max-width: 640px; }
+.settingsPageContainer { width: calc(100% - 64px); margin: 0 auto; padding: 36px 0px 60px; min-width: 300px; max-width: 640px; }
 .settingsPageContainer {
     .title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
     .title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
@@ -518,11 +518,11 @@
     > .pageSettingsPersonal {
         .title { margin-bottom: 32px !important; }
 
-        .colorScheme { display: flex; gap: 0px 32px; justify-content: stretch; margin: 0px 0px 24px 0px; flex-wrap: nowrap; }
+        .colorScheme { display: flex; gap: 0px 12px; justify-content: space-between; margin: 0px 0px 24px 0px; flex-wrap: nowrap; }
         .colorScheme {
             .label.section { margin-bottom: 8px; }
 
-            .btn { text-align: center; flex-grow: 1; }
+            .btn { text-align: center; flex-grow: 1; aspect-ratio: 193/150; max-height: 150px; }
             .btn {
                 .bg {
                     overflow: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; padding-top: 16px; margin-bottom: 8px;
