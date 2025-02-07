@@ -187,7 +187,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 			if (it.isArchived) {
 				return false;
-			}
+			};
 
 			return !config.debug.hiddenObject ? !it.isHidden : true;
 		});
