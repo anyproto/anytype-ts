@@ -186,7 +186,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				maxLength={300}
 			/>
 			<div className="urlWrapper">
-				<Label className="small" text={url} />
+				<Label className="small" text={url} onClick={() => Action.openUrl(url)} />
 				<Button 
 					color="blank" 
 					className="simple"

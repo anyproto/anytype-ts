@@ -22,7 +22,7 @@
 
 		.urlWrapper { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 		.urlWrapper {
-			.label { flex-grow: 1; user-select: text !important; position: relative; @include text-overflow-nw; }
+			.label { flex-grow: 1; cursor: default; position: relative; @include text-overflow-nw; }
 			.label::after {
 				content: ''; display: block; position: absolute; right: -22px; top: 0px; width: 46px; height: 100%; z-index: 1;
 				background: linear-gradient(90deg, rgba(255, 255, 255, 0) -22.83%, var(--color-bg-primary) 34.78%);
