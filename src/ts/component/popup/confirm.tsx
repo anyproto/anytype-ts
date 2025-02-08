@@ -7,7 +7,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 
 	refButtons: any = null;
 	refCheckbox: any = null;
-	n = 0;
+	n: number = null;
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -16,6 +16,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		this.onConfirm = this.onConfirm.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.setHighlight = this.setHighlight.bind(this);
 	};
 
@@ -50,8 +51,8 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 				) : ''}
 
 				<div ref={ref => this.refButtons = ref} className="buttons">
-					{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={this.onConfirm} onMouseEnter={this.onMouseEnter} /> : ''}
-					{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={this.onCancel} onMouseEnter={this.onMouseEnter} /> : ''}
+					{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={this.onConfirm} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} /> : ''}
+					{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={this.onCancel} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} /> : ''}
 				</div>
 
 				<Error text={error} />
@@ -103,6 +104,12 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 			if (buttons.length < 2) {
 				return;
 			};
+
+			if (this.n === null) {
+				this.n = 0;
+				this.setHighlight();
+				return;
+			}
 
 			this.n += dir;
 			if (this.n < 0) {
@@ -159,6 +166,17 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		this.n = $(buttons).index(e.currentTarget);
 		this.setHighlight();
 	};
+
+	onMouseLeave (e: any) {
+		const buttons = $(this.refButtons).find('.button');
+		this.n = $(buttons).index(e.currentTarget);
+
+		if (buttons[this.n]) {
+			$(this.refButtons).find('.hover').removeClass('hover');
+		};
+
+		this.n = null;
+	}
 
 	setHighlight () {
 		const buttons = $(this.refButtons).find('.button');
