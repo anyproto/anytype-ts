@@ -34,6 +34,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
 	const hasMore = U.Space.canMyParticipantWrite();
 	const [ dummy, setDummy ] = useState(0);
+	const hasIcon = U.Object.getIcon(object);
 
 	if (isOpen) {
 		cn.push('isOpen');
@@ -71,6 +72,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		arrow = <Icon className="set" />;
 	} else
 	if (numChildren > 0) {
+		cn.push('withArrow');
 		onArrowClick = onToggleHandler;
 		arrow = <Icon className="arrow" />;
 	} else {
@@ -83,6 +85,10 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (hasMore) {
 		more = <Icon ref={moreRef} className="more" tooltip={translate('widgetOptions')} onMouseDown={e => onContextHandler(e, true)} />;
+	};
+
+	if (!hasIcon) {
+		cn.push('noIcon');
 	};
 
 	if (isSection) {
