@@ -168,12 +168,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 	};
 
 	onMouseLeave (e: any) {
-		const buttons = $(this.refButtons).find('.button');
-		this.n = $(buttons).index(e.currentTarget);
-
-		if (buttons[this.n]) {
-			$(this.refButtons).find('.hover').removeClass('hover');
-		};
+		$(e.currentTarget).removeClass('hover');
 
 		this.n = null;
 	}
