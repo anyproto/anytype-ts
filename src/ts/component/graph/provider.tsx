@@ -42,6 +42,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const isPreviewDisabled = useRef(false);
 	const ids = useRef([]);
 	const zoom = useRef(null);
+	const isDraggingToSelect = useRef(false);
 
 	const send = (id: string, param: any, transfer?: any[]) => {
 		if (worker.current) {
@@ -73,7 +74,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const settings = S.Common.getGraph(storageKey);
 
 		images.current = {};
-		zoom.current = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => onZoom(e));
+		zoom.current = d3.zoom().scaleExtent([ 0.05, 10 ])
+			.on('start', e => onZoomStart(e))
+			.on('zoom', e => onZoom(e))
+			.on('end', e => onZoomEnd(e));
 		edges.current = (data.edges || []).map(edgeMapper);
 		nodes.current = (data.nodes || []).map(nodeMapper);
 
@@ -227,8 +231,33 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		send('onDragEnd', { active: e.active });
 	};
 
-	const onZoom = ({ transform }) => {
-		send('onZoom', { transform });
+	const onZoomStart = ({ sourceEvent }) => {
+		if (sourceEvent && sourceEvent.type === 'mousedown' && sourceEvent.shiftKey) {
+			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
+			const node = $(nodeRef.current);
+			const { left, top } = node.offset();
+			isDraggingToSelect.current = true;
+			send('onDragToSelectStart', { x: p[0] - left, y: p[1] - top });
+		};
+	};
+
+	const onZoom = ({ transform, sourceEvent }) => {
+		if(isDraggingToSelect.current && sourceEvent) {
+			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
+			const node = $(nodeRef.current);
+			const { left, top } = node.offset();
+
+			send('onDragToSelectMove', { x: p[0] - left, y: p[1] - top });
+		} else {
+			send('onZoom', { transform });
+		};
+	};
+
+	const onZoomEnd = (e: any) => {
+		if(isDraggingToSelect.current){
+			send('onDragToSelectEnd', {});
+		};
+		isDraggingToSelect.current = false;
 	};
 
 	const onPreviewShow = (data: any) => {
@@ -469,14 +498,19 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			ret = ret.concat(related);
 		};
 
-		ret.forEach(id => {
-			if (isSelected) {
-				ids.current = ids.current.filter(it => it != id);
-				return;
-			};
+		if(isDraggingToSelect.current){
+			if(isSelected) return;
+			ids.current = ids.current.concat([id]);
+		} else {
+			ret.forEach(id => {
+				if (isSelected) {
+					ids.current = ids.current.filter(it => it != id);
+					return;
+				};
 
-			ids.current = ids.current.includes(id) ? ids.current.filter(it => it != id) : ids.current.concat([ id ]);
-		});
+				ids.current = ids.current.includes(id) ? ids.current.filter(it => it != id) : ids.current.concat([ id ]);
+			});
+		};
 
 		setSelected(ids.current);
 	};
