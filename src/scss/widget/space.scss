@@ -18,14 +18,16 @@
 
 			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 4px; }
 			.side.right {
-				.icon { width: 24px !important; height: 24px !important; flex-shrink: 0; border-radius: 4px; }
+				.icon { width: 28px !important; height: 28px !important; flex-shrink: 0; }
 				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
 
-				.plusWrapper { border-radius: 4px; }
-				.plusWrapper:hover { background-color: var(--color-shape-highlight-medium); }
+				.plusWrapper { box-shadow: 0 0 0 1px var(--color-shape-secondary); border-radius: 6px; overflow: hidden; }
+				.plusWrapper {
+					.icon { border-radius: 0; }
+				}
 
-				.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); }
-				.icon.arrow { background-image: url('~img/icon/widget/button/arrow.svg'); }
+				.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); border-right: 1px solid var(--color-shape-secondary); }
+				.icon.arrow { width: 24px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
 			}
 		}
 
