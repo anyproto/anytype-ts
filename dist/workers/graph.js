@@ -357,7 +357,7 @@ draw = (t) => {
 		};
 	});
 
-	if(dragToSelectStartCoord.x && dragToSelectStartCoord.y && dragToSelectCursorCoord.x && dragToSelectStartCoord.y) {
+	if(dragToSelectStartCoord.x && dragToSelectStartCoord.y && dragToSelectCursorCoord.x && dragToSelectCursorCoord.y) {
 		drawDragToSelectBox();
 	}
 
