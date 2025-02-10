@@ -81,7 +81,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const onPlusHover = (e: MouseEvent) => {
-		const t = Preview.tooltipCaption(translate('commonNewObject'), `${cmd} + N / ${cmd} + ${alt} + N`);
+		const t = Preview.tooltipCaption(translate('commonNew'), `${cmd} + N / ${cmd} + ${alt} + N`);
 
 		Preview.tooltipShow({ text: t, element: $(plusRef.current) });
 	};
