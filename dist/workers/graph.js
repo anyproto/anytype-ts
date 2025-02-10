@@ -648,6 +648,7 @@ onSetEdges = (param) => {
 
 onSetSelected = ({ ids }) => {
 	selected = ids;
+	redraw();
 };
 
 onMouseMove = ({ x, y }) => {
