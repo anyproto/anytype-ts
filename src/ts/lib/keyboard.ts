@@ -130,7 +130,6 @@ class Keyboard {
 		this.shortcut(`${cmd}+\\, ${cmd}+dot`, e, (pressed: string) => {
 			e.preventDefault();
 			sidebar.toggleOpenClose();
-			S.Menu.closeAll();
 		});
 
 		// Navigation
