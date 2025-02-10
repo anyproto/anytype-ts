@@ -233,17 +233,18 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	};
 
 	const onZoomStart = ({ sourceEvent }) => {
-		if (sourceEvent && sourceEvent.type === 'mousedown' && sourceEvent.shiftKey) {
+		if (sourceEvent && (sourceEvent.type == 'mousedown') && sourceEvent.shiftKey) {
 			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
 			const node = $(nodeRef.current);
 			const { left, top } = node.offset();
+
 			isDraggingToSelect.current = true;
 			send('onDragToSelectStart', { x: p[0] - left, y: p[1] - top });
 		};
 	};
 
 	const onZoom = ({ transform, sourceEvent }) => {
-		if(isDraggingToSelect.current && sourceEvent) {
+		if (isDraggingToSelect.current && sourceEvent) {
 			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
 			const node = $(nodeRef.current);
 			const { left, top } = node.offset();
@@ -255,10 +256,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	};
 
 	const onZoomEnd = (e: any) => {
-		if(isDraggingToSelect.current){
+		if (isDraggingToSelect.current){
 			send('onDragToSelectEnd', {});
 			nodesSelectedByDragToSelect.current = [];
 		};
+
 		isDraggingToSelect.current = false;
 	};
 
@@ -384,18 +386,19 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				const currentSelected = data.selected;
 
 				setSelected(ids.current.filter((id: string) => {
-					if(!nodesSelectedByDragToSelect.current.includes(id)){
+					if (!nodesSelectedByDragToSelect.current.includes(id)){
 						return true;
 					}
 					return currentSelected.includes(id);
 				}));
+
 				nodesSelectedByDragToSelect.current = nodesSelectedByDragToSelect.current.filter(id => currentSelected.includes(id));
 
 
 				currentSelected.forEach((id: string) => {
-					if(ids.current.includes(id)){
+					if (ids.current.includes(id)){
 						return;
-					}
+					};
 
 					setSelected(ids.current.concat([id]));
 					nodesSelectedByDragToSelect.current = nodesSelectedByDragToSelect.current.concat([id]);

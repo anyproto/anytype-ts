@@ -586,6 +586,7 @@ drawNode = (d) => {
 drawDragToSelectBox = () => {
 	const width = dragToSelectCursorCoord.x - dragToSelectStartCoord.x;
 	const height = dragToSelectCursorCoord.y - dragToSelectStartCoord.y;
+
 	util.roundedRect(dragToSelectStartCoord.x, dragToSelectStartCoord.y, width, height, 1);
 
 	ctx.strokeStyle = data.colors.selected;
@@ -601,19 +602,19 @@ onZoom = (data) => {
 };
 
 onDragToSelectStart = (data) => {
-	let {x, y} = data;
+	let { x, y } = data;
 
 	x = transform.invertX(x);
 	y = transform.invertY(y);
-	dragToSelectStartCoord = {x: x, y: y};
+	dragToSelectStartCoord = { x: x, y: y };
 }
 
 onDragToSelectMove = (data) => {
-	let {x, y} = data;
+	let { x, y } = data;
 
 	x = transform.invertX(x);
 	y = transform.invertY(y);
-	dragToSelectCursorCoord = {x: x, y: y};
+	dragToSelectCursorCoord = { x: x, y: y };
 
 	const left = Math.min(dragToSelectStartCoord.x, x);
 	const top = Math.min(dragToSelectStartCoord.y, y);
@@ -621,8 +622,8 @@ onDragToSelectMove = (data) => {
 	const bottom = Math.max(dragToSelectStartCoord.y, y);
 
 	const selected = [];
-	nodes.forEach((d) => {
-		if (d.x >= left && d.x <= right && d.y >= top && d.y <= bottom) {
+	nodes.forEach(d => {
+		if (d.x >= left) && (d.x <= right) && (d.y >= top) && (d.y <= bottom) {
 			selected.push(d.id);
 		};
 	});
