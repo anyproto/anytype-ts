@@ -606,8 +606,6 @@ onDragToSelectStart = (data) => {
 	x = transform.invertX(x);
 	y = transform.invertY(y);
 	dragToSelectStartCoord = {x: x, y: y};
-
-	redraw();
 }
 
 onDragToSelectMove = (data) => {
@@ -637,7 +635,6 @@ onDragToSelectEnd = (data) => {
 	dragToSelectStartCoord = {};
 	dragToSelectCursorCoord = {};
 	send('onTransform', { ...transform });
-	redraw();
 }
 
 onDragStart = ({ active }) => {
