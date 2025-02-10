@@ -28,7 +28,7 @@ export default [
 	h2(`Highlights`),
 	h3(`Web Publishing`),
 	text(`You can now publish Objects as static web pages (HTTPS links) on your personal subdomain if you have *any name. These pages are uploaded to our servers as unencrypted HTML files.`),
-	text(`This is an early version — mobile optimization, linked Objects, and blocks like Sets, Collections and Relations aren’t supported yet. Multi-page publishing and other enhancements are on the way, and we’d love your feedback to guide these improvements.`),
+	text(`This is an early version — mobile optimization, linked Objects, and blocks like Sets and Collections aren’t supported yet. Multi-page publishing and other enhancements are on the way, and we’d love your feedback to guide these improvements.`),
 	img(`45/2.png`),
 	text(``),
 
