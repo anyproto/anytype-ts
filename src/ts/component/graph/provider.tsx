@@ -388,7 +388,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				setSelected(ids.current.filter((id: string) => {
 					if (!nodesSelectedByDragToSelect.current.includes(id)){
 						return true;
-					}
+					};
 					return currentSelected.includes(id);
 				}));
 

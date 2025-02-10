@@ -357,9 +357,9 @@ draw = (t) => {
 		};
 	});
 
-	if(dragToSelectStartCoord.x && dragToSelectStartCoord.y && dragToSelectCursorCoord.x && dragToSelectCursorCoord.y) {
+	if ( dragToSelectStartCoord.x && dragToSelectStartCoord.y && dragToSelectCursorCoord.x && dragToSelectCursorCoord.y ) {
 		drawDragToSelectBox();
-	}
+	};
 
 	ctx.restore();
 };
@@ -606,8 +606,8 @@ onDragToSelectStart = (data) => {
 
 	x = transform.invertX(x);
 	y = transform.invertY(y);
-	dragToSelectStartCoord = { x: x, y: y };
-}
+	dragToSelectStartCoord = { x, y };
+};
 
 onDragToSelectMove = (data) => {
 	let { x, y } = data;
@@ -630,13 +630,14 @@ onDragToSelectMove = (data) => {
 	send('onSelectByDragToSelect', { selected })
 
 	redraw();
-}
+};
 
 onDragToSelectEnd = (data) => {
 	dragToSelectStartCoord = {};
 	dragToSelectCursorCoord = {};
+
 	send('onTransform', { ...transform });
-}
+};
 
 onDragStart = ({ active }) => {
 	if (!active) {
