@@ -390,7 +390,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		case I.ObjectLayout.Bookmark: {
 			if (iconImage) {
-				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 			} else {
 				defaultIcon('bookmark');
