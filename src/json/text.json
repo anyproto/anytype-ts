@@ -156,6 +156,7 @@
 	"commonAddRelation": "Add Relation",
 	"commonCollection": "Collection",
 	"commonSet": "Set",
+	"commonNewObject" : "New Object",
 	"commonCreateNewObject": "Create new Object",
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObjectTypeWithName": "Create Object Type \"%s\"",
