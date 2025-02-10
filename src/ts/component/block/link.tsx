@@ -140,7 +140,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 									onMouseLeave={this.onMouseLeave} 
 									withLatex={true} 
 								/>
-								{archive}
 							</div>
 
 							{descr ? (
@@ -156,6 +155,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 									<div className="item">{type.name}</div>
 								</div>
 							) : ''}
+
+							{archive}
 						</div>
 
 						{withCover ? (
