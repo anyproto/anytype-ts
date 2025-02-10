@@ -122,27 +122,10 @@
     }
 
     > .pageSettingsSpaceIndex {
-        .spaceHeader { margin: 0px 0px 32px 0px; display: flex; flex-wrap: nowrap; width: 100%; gap: 0px 24px; }
+        .spaceHeader { margin: 0px 0px 24px 0px; display: flex; flex-direction: column; align-items: center; width: 100%; gap: 16px 0px; }
         .spaceHeader {
-            .iconWrapper { width: 96px; flex-shrink: 0; }
-
-            .headerContent { width: calc(100% - 96px); display: flex; flex-direction: column; justify-content: center; }
-            .headerContent {
-                .input { padding: 0px; }
-
-                .name { margin: 0px 0px 8px 0px; }
-                .name {
-                    .input { @include text-header1; height: 32px; }
-                }
-
-                .info { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
-                .bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-secondary); }
-
-                .infoLabel { @include text-small; color: var(--color-text-secondary); transition: $transitionAllCommon; }
-                .infoLabel.withTooltip:hover { color: var(--color-text-primary); }
-
-                .spaceAccessType { padding: 3px 6px; border-radius: 6px; background-color: var(--color-shape-highlight-light); }
-            }
+            .title { @include text-title; margin-bottom: 0px; }
+            .input { @include text-title; text-align: center; height: 40px; }
         }
 
         .buttons { display: flex; gap: 0px 8px; padding-top: 24px; margin-bottom: 36px; }

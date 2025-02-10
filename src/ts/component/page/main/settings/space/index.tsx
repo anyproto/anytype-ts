@@ -44,42 +44,26 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		return (
 			<React.Fragment>
 				<div className="spaceHeader">
-					<div className="iconWrapper">
-						<IconObject
-							id="spaceIcon"
-							size={96}
-							object={{ ...space, spaceId: S.Common.space }}
-							canEdit={canWrite}
-							menuParam={{ horizontal: I.MenuDirection.Center }}
-							onSelect={this.onSelect}
-							onUpload={this.onUpload}
-						/>
-					</div>
+					<IconObject
+						id="spaceIcon"
+						size={128}
+						iconSize={128}
+						object={{ ...space, spaceId: S.Common.space }}
+						canEdit={canWrite}
+						menuParam={{ horizontal: I.MenuDirection.Center }}
+						onSelect={this.onSelect}
+						onUpload={this.onUpload}
+					/>
 
-					<div className="headerContent">
-						<div className="name">
-							<Input
-								ref={ref => this.refName = ref}
-								value={this.checkName(space.name)}
-								onKeyUp={this.onName}
-								placeholder={translate('defaultNamePage')}
-								readonly={!canWrite}
-							/>
-						</div>
-						<div className="info">
-							<Label
-								className="infoLabel spaceAccessType"
-								text={translate(`spaceAccessType${space.spaceAccessType}`)}
-							/>
-							<div className="bullet" />
-							<Label 
-								className="infoLabel withTooltip"
-								text={translate('popupSettingsSpaceIndexInfoLabel')} 
-								onMouseEnter={onSpaceTypeTooltip}
-								onMouseLeave={e => Preview.tooltipHide(false)}
-							/>
-						</div>
-					</div>
+					{/*<Title text={space.name} />*/}
+
+					<Input
+						ref={ref => this.refName = ref}
+						value={this.checkName(space.name)}
+						onKeyUp={this.onName}
+						placeholder={translate('defaultNamePage')}
+						readonly={!canWrite}
+					/>
 				</div>
 
 				<div className="buttons">
