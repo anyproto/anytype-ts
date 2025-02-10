@@ -43,6 +43,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const ids = useRef([]);
 	const zoom = useRef(null);
 	const isDraggingToSelect = useRef(false);
+	const nodesSelectedByDragToSelect = useRef([]);
 
 	const send = (id: string, param: any, transfer?: any[]) => {
 		if (worker.current) {
@@ -256,6 +257,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const onZoomEnd = (e: any) => {
 		if(isDraggingToSelect.current){
 			send('onDragToSelectEnd', {});
+			nodesSelectedByDragToSelect.current = [];
 		};
 		isDraggingToSelect.current = false;
 	};
@@ -375,8 +377,30 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 			case 'setRootId': {
 				$(window).trigger('updateGraphRoot', { id: data.node });
+				break;
 			};
 
+			case 'onSelectByDragToSelect': {
+				const currentSelected = data.selected;
+
+				setSelected(ids.current.filter((id: string) => {
+					if(!nodesSelectedByDragToSelect.current.includes(id)){
+						return true;
+					}
+					return currentSelected.includes(id);
+				}));
+				nodesSelectedByDragToSelect.current = nodesSelectedByDragToSelect.current.filter(id => currentSelected.includes(id));
+
+
+				currentSelected.forEach((id: string) => {
+					if(ids.current.includes(id)){
+						return;
+					}
+
+					setSelected(ids.current.concat([id]));
+					nodesSelectedByDragToSelect.current = nodesSelectedByDragToSelect.current.concat([id]);
+				});
+			};
 		};
 	};
 
@@ -498,19 +522,14 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			ret = ret.concat(related);
 		};
 
-		if(isDraggingToSelect.current){
-			if(isSelected) return;
-			ids.current = ids.current.concat([id]);
-		} else {
-			ret.forEach(id => {
-				if (isSelected) {
-					ids.current = ids.current.filter(it => it != id);
-					return;
-				};
+		ret.forEach(id => {
+			if (isSelected) {
+				ids.current = ids.current.filter(it => it != id);
+				return;
+			};
 
-				ids.current = ids.current.includes(id) ? ids.current.filter(it => it != id) : ids.current.concat([ id ]);
-			});
-		};
+			ids.current = ids.current.includes(id) ? ids.current.filter(it => it != id) : ids.current.concat([ id ]);
+		});
 
 		setSelected(ids.current);
 	};

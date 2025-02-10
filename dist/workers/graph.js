@@ -622,11 +622,13 @@ onDragToSelectMove = (data) => {
 	const right = Math.max(dragToSelectStartCoord.x, x);
 	const bottom = Math.max(dragToSelectStartCoord.y, y);
 
+	const selected = [];
 	nodes.forEach((d) => {
 		if (d.x >= left && d.x <= right && d.y >= top && d.y <= bottom) {
-			send('onSelect', { node: d.id })
+			selected.push(d.id);
 		};
 	});
+	send('onSelectByDragToSelect', { selected })
 
 	redraw();
 }
