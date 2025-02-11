@@ -1072,6 +1072,10 @@ class UtilCommon {
 
 		let text = html;
 
+		if (!match) {
+			return text;
+		};
+
 		match.forEach((m: any) => {
 			const m0 = String(m[0] || '');
 			const m1 = String(m[1] || '');
