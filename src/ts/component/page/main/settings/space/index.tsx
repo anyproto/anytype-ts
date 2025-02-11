@@ -8,6 +8,7 @@ interface State {
 	error: string;
 	cid: string;
 	key: string;
+	isEditing: boolean;
 };
 
 const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
@@ -18,22 +19,24 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		error: '',
 		cid: '',
 		key: '',
+		isEditing: false,
 	};
 
 	constructor (props: any) {
 		super(props);
 
+		this.setName = this.setName.bind(this);
+		this.onSave = this.onSave.bind(this);
 		this.onDashboard = this.onDashboard.bind(this);
 		this.onType = this.onType.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
-		this.onName = this.onName.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
-		const { error } = this.state;
+		const { error, isEditing } = this.state;
 		const space = U.Space.getSpaceview();
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
@@ -42,6 +45,12 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		const canWrite = U.Space.canMyParticipantWrite();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const maxIcons = 5;
+		const headerButtons = isEditing ? [
+			{ color: 'blank', text: translate('commonCancel'), onClick: () => this.setState({ isEditing: false }, this.setName) },
+			{ color: 'black', text: translate('commonSave'), onClick: this.onSave },
+		] : [
+			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: () => this.setState({ isEditing: true }) },
+		];
 
 		const Member = (item: any) => {
 			const isCurrent = item.id == participant?.id;
@@ -68,7 +77,13 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 
 		return (
 			<React.Fragment>
-				<div className="spaceHeader">
+				<div className={[ 'spaceHeader', isEditing? 'isEditing' : '' ].join(' ')}>
+					{canWrite ? (
+						<div className="buttons">
+							{headerButtons.map((el, idx) => <Button key={idx} text={el.text} className="c28" color={el.color} onClick={el.onClick} />)}
+						</div>
+					) : ''}
+
 					<IconObject
 						id="spaceIcon"
 						size={128}
@@ -80,14 +95,10 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 						onUpload={this.onUpload}
 					/>
 
-					{/*<Title text={space.name} />*/}
-
 					<Input
 						ref={ref => this.refName = ref}
-						value={this.checkName(space.name)}
-						onKeyUp={this.onName}
 						placeholder={translate('defaultNamePage')}
-						readonly={!canWrite}
+						readonly={!canWrite || !isEditing}
 					/>
 				</div>
 
@@ -175,6 +186,7 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 	};
 
 	componentDidMount (): void {
+		this.setName();
 		this.init();
 	};
 
@@ -184,6 +196,12 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 
 	componentWillUnmount(): void {
 		S.Menu.closeAll([ 'select', 'searchObject' ]);
+	};
+
+	setName () {
+		const space = U.Space.getSpaceview();
+
+		this.refName.setValue(space.name);
 	};
 
 	init () {
@@ -226,10 +244,6 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 				},
 			}
 		});
-	};
-
-	onName (e: any, v: string) {
-		C.WorkspaceSetInfo(S.Common.space, { name: this.checkName(v) });
 	};
 
 	onSelect (icon: string) {
@@ -322,6 +336,11 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 				},
 			}
 		});
+	};
+
+	onSave () {
+		C.WorkspaceSetInfo(S.Common.space, { name: this.checkName(this.refName.getValue()) });
+		this.setState({ isEditing: false });
 	};
 
 	checkName (v: string): string {

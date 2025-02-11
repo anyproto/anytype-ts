@@ -122,10 +122,16 @@
     }
 
     > .pageSettingsSpaceIndex {
-        .spaceHeader { margin: 0px 0px 24px 0px; display: flex; flex-direction: column; align-items: center; width: 100%; gap: 16px 0px; }
+        .spaceHeader { position: relative; margin: 0px 0px 24px 0px; display: flex; flex-direction: column; align-items: center; width: 100%; gap: 8px 0px; }
         .spaceHeader {
-            .title { @include text-title; margin-bottom: 0px; }
-            .input { @include text-title; text-align: center; height: 40px; }
+            .buttons { position: absolute; right: 0px; top: 0px; display: flex; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
+            .iconObject { margin-bottom: 8px; }
+            .input { @include text-title; text-align: center; height: 42px; border-bottom: 1px solid var(--color-shape-primary); padding-bottom: 6px; }
+            .input.isReadonly { border-bottom-color: transparent; }
+        }
+        .spaceHeader:hover,
+        .spaceHeader.isEditing {
+            .buttons { opacity: 1; }
         }
 
         .membersIcons { display: flex; align-items: center; justify-content: center; }
@@ -137,8 +143,8 @@
             }
         }
 
-        .buttons { display: flex; gap: 0px 8px; padding-top: 24px; margin-bottom: 36px; }
-        .buttons {
+        > .buttons { display: flex; gap: 0px 8px; padding-top: 24px; margin-bottom: 36px; }
+        > .buttons {
             .btn {
                 height: 86px; flex: 1 0 0px; border: 1px solid var(--color-shape-secondary); border-radius: 16px; transition: $transitionAllCommon;
                 display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px 0px;
