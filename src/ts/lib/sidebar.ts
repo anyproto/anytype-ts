@@ -129,6 +129,7 @@ class Sidebar {
 		const { width, isClosed } = this.data;
 		
 		isClosed ? this.open(width) : this.close();
+		S.Menu.closeAll();
 	};
 
 	setElementsWidth (width: any): void {

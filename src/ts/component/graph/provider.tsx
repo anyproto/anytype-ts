@@ -290,7 +290,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		switch (id) {
 			case 'onClick': {
-				onClickObject(data.node);
+				if (data.node){
+					onClickObject(data.node);
+				} else {
+					setSelected([]);
+				};
 				break;
 			};
 
@@ -362,7 +366,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		keyboard.shortcut('backspace, delete', e, () => {
 			Action.archive(ids.current, analytics.route.graph, () => {
 				nodes.current = nodes.current.filter(d => !ids.current.includes(d.id));
-				send('onRemoveNode', { ids: ids });
+				send('onRemoveNode', { ids: ids.current });
 			});
 		});
 	};

@@ -26,6 +26,8 @@
 
 				.selectionTarget { height: 100%; }
 				.selectionTarget.isSelectionSelected::after { border-radius: 8px; }
+
+				.inner:empty { display: none; }
 			}
 			.card:hover { border-color: var(--color-shape-secondary); }
 			.card:hover {

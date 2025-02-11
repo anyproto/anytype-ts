@@ -97,7 +97,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const loadStatus = () => {
 		setIsStatusLoading(true);
 
-		C.PublishingGetStatus(space.targetSpaceId, rootId, message => {
+		C.PublishingGetStatus(S.Common.space, rootId, message => {
 			setIsStatusLoading(false);
 
 			if (message.error.code) {
@@ -179,12 +179,15 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				maxLength={300}
 			/>
 			<div className="urlWrapper">
-				<Label className="small" text={url} />
+				<Label className="small" text={url} onClick={() => Action.openUrl(url)} />
 				<Button 
 					color="blank" 
 					className="simple"
 					text={translate('commonCopy')}
-					onClick={() => U.Common.copyToast(translate('commonLink'), `https://${url}`)} 
+					onClick={() => {
+						U.Common.copyToast(translate('commonLink'), `https://${url}`)
+						analytics.event('ClickShareObjectCopyUrl', { objectType: object.type });
+					}} 
 				/>
 			</div>
 

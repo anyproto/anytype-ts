@@ -156,6 +156,7 @@
 	"commonAddRelation": "Add Relation",
 	"commonCollection": "Collection",
 	"commonSet": "Set",
+	"commonNewObject" : "New Object",
 	"commonCreateNewObject": "Create new Object",
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObjectTypeWithName": "Create Object Type \"%s\"",
@@ -1801,7 +1802,7 @@
 	"widget2Description": "Widget with a list view",
 	"widget3Name": "Compact list",
 	"widget3Description": "Widget with a compact list view",
-	"widget4Name": "View",
+	"widget4Name": "List View",
 	"widget4Description": "Widget with a Set or Collection layout",
 
 	"widgetFavorite": "Favorites",

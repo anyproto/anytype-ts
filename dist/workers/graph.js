@@ -616,9 +616,7 @@ onDragEnd = ({ active }) => {
 
 onClick = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
-	if (d) {
-		send('onClick', { node: d.id });
-	};
+	send('onClick', { node: d?.id });
 };
 
 onSelect = ({ x, y, selectRelated }) => {
@@ -650,6 +648,7 @@ onSetEdges = (param) => {
 
 onSetSelected = ({ ids }) => {
 	selected = ids;
+	redraw();
 };
 
 onMouseMove = ({ x, y }) => {
