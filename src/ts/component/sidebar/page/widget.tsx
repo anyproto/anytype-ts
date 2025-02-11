@@ -275,7 +275,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			data: {
 				route: analytics.route.addWidget,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
 					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
 				],
 				canAdd: true,
