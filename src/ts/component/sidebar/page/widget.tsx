@@ -306,7 +306,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						classNameWrap: 'fromSidebar',
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
-					}, { name: context.filter }, {}, object => onSelect(object, true));
+					}, { name: context.filter }, {}, analytics.route.addWidget, object => onSelect(object, true));
 				},
 				dataChange: (context: any, items: any[]) => {
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');

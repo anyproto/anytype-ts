@@ -55,7 +55,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		}, {}, { 
 			deleteEmpty: true, 
 			withImport: true,
-		}, object => U.Object.openAuto(object));
+		}, analytics.route.widget, object => U.Object.openAuto(object));
 	};
 
 	const onButtonClick = (e: any, item: any) => {
