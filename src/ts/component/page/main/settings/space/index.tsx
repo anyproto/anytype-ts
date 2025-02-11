@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Input, IconObject, Error, ObjectName } from 'Component';
+import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Tag } from 'Component';
 import { I, C, S, U, J, translate, Preview, analytics, Action } from 'Lib';
 
 interface State {
@@ -33,13 +33,38 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 	};
 
 	render () {
-		const { onSpaceTypeTooltip } = this.props;
 		const { error } = this.state;
 		const space = U.Space.getSpaceview();
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const buttons = this.getButtons();
+		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const maxIcons = 5;
+
+		const Member = (item: any) => {
+			const isCurrent = item.id == participant?.id;
+
+			return (
+				<div className="member" style={item.style} >
+					<div className="side left">
+						<IconObject size={48} object={item} />
+						<div className="nameWrapper">
+							<div className="memberName">
+								<ObjectName object={item} />
+								{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
+							</div>
+							{item.globalName ? <Label className="globalName" text={item.globalName} /> : ''}
+						</div>
+
+					</div>
+					<div className="side right">
+						<Label text={translate(`participantPermissions${item.permissions}`)} />
+					</div>
+				</div>
+			);
+		};
 
 		return (
 			<React.Fragment>
@@ -66,6 +91,20 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 					/>
 				</div>
 
+				{canWrite ? (
+					<div className="membersIcons">
+						{members.map((el, idx) => {
+							if (idx < maxIcons) {
+								return <IconObject key={idx} size={36} object={el} />;
+							};
+							return null;
+						})}
+						{members.length > maxIcons ? (
+							<div className="membersMore">+{members.length - maxIcons}</div>
+						) : ''}
+					</div>
+				) : ''}
+
 				<div className="buttons">
 					{buttons.map((el, idx) => (
 						<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className="btn" onClick={e => this.onClick(e, el)}>
@@ -76,6 +115,8 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 				</div>
 
 				<div className="sections">
+					<Error text={error} />
+
 					{canWrite ? (
 						<div className="section sectionSpaceManager">
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
@@ -119,9 +160,14 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 
 							</div>
 						</div>
-					) : ''}
-
-					<Error text={error} />
+					) : (
+						<div className="membersList section">
+							<Label className="sub" text={translate(`pageSettingsSpaceIndexSpaceMembers`)} />
+							{members.map((el, idx) => (
+								<Member {...el} key={idx} />
+							))}
+						</div>
+					)}
 				</div>
 
 			</React.Fragment>

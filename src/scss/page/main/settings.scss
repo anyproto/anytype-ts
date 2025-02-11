@@ -128,6 +128,15 @@
             .input { @include text-title; text-align: center; height: 40px; }
         }
 
+        .membersIcons { display: flex; align-items: center; justify-content: center; }
+        .membersIcons {
+            .iconObject { margin-left: -4px; box-shadow: 0 0 0 2px var(--color-bg-primary); }
+            .membersMore {
+                width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: -4px; box-shadow: 0 0 0 2px var(--color-bg-primary);
+                background: var(--color-shape-tertiary); color: var(--color-text-secondary); @include text-common; position: relative;
+            }
+        }
+
         .buttons { display: flex; gap: 0px 8px; padding-top: 24px; margin-bottom: 36px; }
         .buttons {
             .btn {
@@ -263,8 +272,18 @@
                 }
             }
 
-            .buttons {
-                .button { width: 100%; }
+            .section.membersList {
+                .member { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+                .member {
+                    .left { display: flex; justify-content: flex-start; align-items: center; gap: 0px 12px; }
+                    .left {
+                        .memberName { display: flex; justify-content: flex-start; gap: 0px 4px; }
+                        .caption { color: var(--color-text-secondary); }
+                    }
+                    .right {
+                        .label { color: var(--color-text-primary); }
+                    }
+                }
             }
         }
     }

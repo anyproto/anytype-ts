@@ -130,6 +130,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	};
 
 	getSections () {
+		const canWrite = U.Space.canMyParticipantWrite();
 		const isSpace = this.props.page == 'settingsSpace';
 		const settingsVault = [
 			{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
@@ -152,6 +153,18 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			},
 			{ name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
 		];
+		const importExport = [{
+			id: 'exportIndex', icon: 'export', name: translate('commonExport'),
+			subPages: [ 'exportProtobuf', 'exportMarkdown' ]
+		}];
+
+		if (canWrite) {
+			importExport.unshift({
+				id: 'importIndex', icon: 'import', name: translate('commonImport'),
+				subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ]
+			});
+		};
+
 		const spaceSettings = [
 			{ name: translate('commonPreferences'), children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
@@ -159,17 +172,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
 				]
 			},
-			{ name: translate('pageSettingsSpaceIntegrations'), children: [
-					{
-						id: 'importIndex', icon: 'import', name: translate('commonImport'),
-						subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ]
-					},
-					{
-						id: 'exportIndex', icon: 'export', name: translate('commonExport'),
-						subPages: [ 'exportProtobuf', 'exportMarkdown' ]
-					},
-				]
-			},
+			{ name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
