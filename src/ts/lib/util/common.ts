@@ -1041,13 +1041,6 @@ class UtilCommon {
 
 	slug (s: string): string {
 		return slugify(String(s || ''));
-		/*
-		return String(s || '').toLowerCase().trim().normalize('NFD')
-			.replace(/[\u0300-\u036f]/g, '')
-			.replace(/[^a-z0-9\s\-]/g, '')
-			.replace(/\s+/g, '-')
-			.replace(/-+/g, '-');
-		*/
 	};
 
 	getLatex (html: string): string {
