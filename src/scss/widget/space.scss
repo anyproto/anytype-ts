@@ -5,7 +5,7 @@
 	.icon.remove { display: none !important; }
 
 	.body {
-		.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 2px 4px 8px; }
+		.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 8px; }
 		.sides {
 			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; width: 100%; flex-grow: 1; overflow: hidden; }
 			.side.left {
@@ -16,7 +16,7 @@
 				.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
 			}
 
-			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 4px; }
+			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 6px; }
 			.side.right {
 				.icon { width: 28px !important; height: 28px !important; flex-shrink: 0; }
 				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
@@ -27,7 +27,7 @@
 				}
 
 				.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); border-right: 1px solid var(--color-shape-secondary); }
-				.icon.arrow { width: 24px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
+				.icon.arrow { width: 23px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
 			}
 		}
 
