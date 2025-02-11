@@ -97,7 +97,7 @@ const Sidebar = observer(class Sidebar extends React.Component<{}, State> {
 	init () {
 		const { showVault } = S.Common;
 		const node = $(this.node);
-		const vault = $(S.Common.getRef('vault').node);
+		const vault = S.Common.getRef('vault');
 
 		node.toggleClass('withVault', showVault);
 		vault.toggleClass('isHidden', !showVault);
