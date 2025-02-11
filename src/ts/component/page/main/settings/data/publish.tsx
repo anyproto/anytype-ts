@@ -44,7 +44,7 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 				<div className="items">
 					<div className="row isHead">
 						<div className="col colSpace">{translate('commonObject')}</div>
-						<div className="col">{translate('popupSettingsDataManagementDataPublishTitle')}</div>
+						<div className="col">{translate('popupSettingsDataManagementDataPublishDate')}</div>
 						<div className="col">{translate('commonSize')}</div>
 						<div className="col colMore" />
 					</div>
@@ -125,7 +125,7 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 	onUnpublish (item: any) {
 		const object = S.Detail.mapper(item.details);
 
-		C.PublishingRemove(S.Common.space, item.objectId, (message: any) => {
+		C.PublishingRemove(item.spaceId, item.objectId, (message: any) => {
 			if (!message.error.code) {
 				this.load();
 
