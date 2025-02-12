@@ -26,7 +26,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const openSettings = (page: string) => {
-		S.Popup.open('settings', { data: { page, isSpace: true }, className: 'isSpace' });
+		sidebar.settingsOpen(page);
 	};
 
 	const onSettings = (e: MouseEvent) => {
@@ -64,7 +64,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'member': {
-				S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
+				sidebar.settingsOpen('spaceShare');
 				break;
 			};
 

@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action } from 'Lib';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, sidebar } from 'Lib';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -625,7 +625,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					window.setTimeout(() => { S.Popup.open('settings', { data: { page: 'spaceList' } }); }, S.Popup.getTimeout());
+					sidebar.settingsOpen('spaceList');
 				},
 			},
 		});

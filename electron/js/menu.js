@@ -58,8 +58,8 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
-					{ label: Util.translate('electronMenuExport'), click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex') },
+					{ label: Util.translate('electronMenuExport'), click: () => this.openSettings('exportIndex') },
 					{ label: Util.translate('electronMenuSaveAs'), click: () => Util.send(this.win, 'commandGlobal', 'save') },
 
 					Separator,
@@ -412,7 +412,7 @@ class MenuManager {
 			{ 
 				label: Util.translate('electronMenuSpaceSettings'), click: () => { 
 					this.winShow(); 
-					this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }); 
+					this.openSettings('spaceIndex');
 				}
 			},
 
@@ -421,13 +421,13 @@ class MenuManager {
 			{ 
 				label: Util.translate('electronMenuImport'), click: () => { 
 					this.winShow(); 
-					this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }); 
+					this.openSettings('importIndex');
 				} 
 			},
 			{ 
 				label: Util.translate('electronMenuExport'), click: () => { 
 					this.winShow(); 
-					this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }); 
+					this.openSettings('exportIndex');
 				} 
 			},
 
@@ -460,17 +460,11 @@ class MenuManager {
 		].filter(it => it);
 	};
 
-	openSettings (page, param) {
-		param = param || {};
-		param.data = param.data || {};
-
+	openSettings (page) {
 		const Api = require('./api.js');
 
 		if (Api.isPinChecked) {
-			const popupParam = Object.assign({}, param);
-			popupParam.data = Object.assign({ page }, param.data);
-
-			Util.send(this.win, 'popup', 'settings', popupParam, true); 
+			Util.send(this.win, 'route', '/main/settings/' + page);
 		};
 	};
 

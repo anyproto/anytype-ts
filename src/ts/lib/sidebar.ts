@@ -340,6 +340,10 @@ class Sidebar {
 		ref.setState({ page });
 	};
 
+	settingsOpen (id?: string, isSpace?: boolean) {
+		U.Router.go(`/main/settings/${id || ''}`, {});
+	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();
