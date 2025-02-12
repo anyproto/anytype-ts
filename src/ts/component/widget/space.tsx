@@ -26,7 +26,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const openSettings = (page: string) => {
-		S.Popup.open('settings', { data: { page, isSpace: true }, className: 'isSpace' });
+		sidebar.settingsOpen(page);
 	};
 
 	const onSettings = (e: MouseEvent) => {
@@ -55,7 +55,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		}, {}, { 
 			deleteEmpty: true, 
 			withImport: true,
-		}, object => U.Object.openAuto(object));
+		}, analytics.route.widget, object => U.Object.openAuto(object));
 	};
 
 	const onButtonClick = (e: any, item: any) => {
@@ -64,7 +64,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'member': {
-				S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
+				sidebar.settingsOpen('spaceShare');
 				break;
 			};
 
@@ -81,7 +81,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const onPlusHover = (e: MouseEvent) => {
-		const t = Preview.tooltipCaption(translate('commonCreateNewObject'), `${cmd} + N / ${cmd} + ${alt} + N`);
+		const t = Preview.tooltipCaption(translate('commonNew'), `${cmd} + N / ${cmd} + ${alt} + N`);
 
 		Preview.tooltipShow({ text: t, element: $(plusRef.current) });
 	};

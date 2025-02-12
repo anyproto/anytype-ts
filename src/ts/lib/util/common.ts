@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import DOMPurify from 'dompurify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action } from 'Lib';
+import slugify from '@sindresorhus/slugify';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, sidebar } from 'Lib';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -624,7 +625,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					window.setTimeout(() => { S.Popup.open('settings', { data: { page: 'spaceList' } }); }, S.Popup.getTimeout());
+					sidebar.settingsOpen('spaceList');
 				},
 			},
 		});
@@ -1039,11 +1040,7 @@ class UtilCommon {
 	};
 
 	slug (s: string): string {
-		return String(s || '').toLowerCase().trim().normalize('NFD')
-			.replace(/[\u0300-\u036f]/g, '')
-			.replace(/[^a-z0-9\s\-]/g, '')
-			.replace(/\s+/g, '-')
-			.replace(/-+/g, '-');
+		return slugify(String(s || ''));
 	};
 
 	getLatex (html: string): string {
@@ -1074,6 +1071,10 @@ class UtilCommon {
 		};
 
 		let text = html;
+
+		if (!match) {
+			return text;
+		};
 
 		match.forEach((m: any) => {
 			const m0 = String(m[0] || '');

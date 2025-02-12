@@ -65,9 +65,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				);
 			};
 		} else {
-			const childrenIds = S.Block.getChildrenIds(widgets, widgets);
-
-			const blocks = S.Block.getBlocks(widgets, (block: I.Block) => {
+			const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
 				if (!block.isWidget()) {
 					return false;
 				};
@@ -299,6 +297,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				},
 				onOver: (e, context: any, item: any) => {
 					if (!item.isAdd) {
+						S.Menu.closeAll([ 'typeSuggest', 'select' ]);
 						return;
 					};
 
@@ -308,7 +307,8 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						classNameWrap: 'fromSidebar',
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
-					}, { name: context.filter }, {}, object => onSelect(object, true));
+						isSub: true,
+					}, { name: context.filter }, {}, analytics.route.addWidget, object => onSelect(object, true));
 				},
 				dataChange: (context: any, items: any[]) => {
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');

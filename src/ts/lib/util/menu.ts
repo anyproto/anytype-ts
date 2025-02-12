@@ -619,7 +619,7 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+										{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant) },
 										{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 									],
 									canAdd: true,
@@ -1102,7 +1102,7 @@ class UtilMenu {
 		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: any, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: any, route: string, callBack?: (item: any) => void) {
 		details = details || {};
 		flags = flags || {};
 
@@ -1151,7 +1151,7 @@ class UtilMenu {
 						callBack(object);
 					};
 
-					analytics.createObject(object.type, object.layout, analytics.route.navigation, time);
+					analytics.createObject(object.type, object.layout, route, time);
 				};
 
 				if (url) {
@@ -1281,7 +1281,7 @@ class UtilMenu {
 							};
 
 							analytics.event('SelectObjectType', { objectType: object.type });
-							analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
+							analytics.createObject(object.type, object.layout, route, message.middleTime);
 						});
 					},
 				},
