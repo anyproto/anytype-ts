@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget } from 'Component';
+import { Icon, IconObject, ObjectName, DropTarget } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
 
 import WidgetSpace from './space';
@@ -76,6 +76,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const recordIds = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).map(it => it.id)
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
 	const favCnt = isFavorite ? recordIds.length : 0;
+	const hasIcon = U.Object.getIcon(object);
 
 	let layout = block.content.layout;
 	if (object) {
@@ -593,18 +594,13 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	} else {
 		buttons = (
 			<div className="buttons">
-				{isEditing ? (
-					<div className="iconWrap more">
-						<Icon className="options" tooltip={translate('widgetOptions')} onClick={onOptions} />
-					</div>
-				) : ''}
 				{canCreate ? (
 					<div className="iconWrap create">
 						<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreateClick} />
 					</div>
 				) : ''}
-				<div className="iconWrap collapse">
-					<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={onToggle} />
+				<div className="iconWrap more">
+					<Icon className="more" tooltip={translate('widgetOptions')} onClick={onOptions} />
 				</div>
 			</div>
 		);
@@ -612,11 +608,20 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (hasChild) {
 		const onClickHandler = isSystemTarget() ? onSetPreview : onClick;
+		const cnh = [ 'head' ];
+
+		if (!hasIcon) {
+			cnh.push('noIcon');
+		};
 
 		head = (
-			<div className="head" onClick={onClickHandler}>
+			<div className={cnh.join(' ')} onClick={onClickHandler}>
 				{back}
 				<div className="clickable">
+					<div className="iconWrap collapse">
+						<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={onToggle} />
+					</div>
+					<IconObject object={object} />
 					<ObjectName object={object} />
 					{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
 				</div>

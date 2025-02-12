@@ -108,7 +108,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			onClose: () => node.removeClass('hover'),
 			data: {
 				noUpload: U.Object.isTypeLayout(object.layout),
-				value: (object.iconEmoji || object.iconImage || ''),
+				value: U.Object.getIcon(object),
 				onSelect: (icon: string) => {
 					U.Object.setIcon(rootId, icon, '', cb);
 				},
