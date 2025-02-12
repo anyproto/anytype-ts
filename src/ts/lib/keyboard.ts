@@ -118,6 +118,7 @@ class Keyboard {
 	
 	onKeyDown (e: any) {
 		const { theme, pin } = S.Common;
+		const isPopup = this.isPopup();
 		const isMac = U.Common.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
@@ -150,6 +151,9 @@ class Keyboard {
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
+			if (S.Common.getShowSidebarRight(isPopup)) {
+				sidebar.rightPanelToggle(false, true, isPopup);
+			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
 
