@@ -9,7 +9,7 @@ const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_RELATION = 32;
-const LIMIT = 40;
+const LIMIT = 10;
 
 const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu> {
 	
@@ -34,7 +34,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { filter } = S.Common;
-		const items = this.getItems(true);
+		const items = this.getItems();
 		const block = S.Block.getLeaf(rootId, blockId);
 		const idPrefix = 'menuBlockAdd';
 
@@ -160,7 +160,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							rowCount={items.length}
 							loadMoreRows={() => {}}
 							isRowLoaded={() => true}
-							threshold={LIMIT}
 						>
 							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
@@ -174,8 +173,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 											rowHeight={({ index }) => this.getRowHeight(items[index], index)}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
-											overscanRowCount={20}
-											scrollToAlignment="start"
+											overscanRowCount={LIMIT}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -189,7 +188,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	componentDidMount () {
 		const { getId } = this.props;
-		const items = this.getItems(true);
+		const items = this.getItems();
 		
 		this._isMounted = true;
 		this.rebind();
@@ -198,7 +197,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
+			defaultHeight: i => this.getRowHeight(items[i], i),
 			keyMapper: i => (items[i] || {}).id,
 		});
 		
@@ -207,8 +206,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	componentDidUpdate () {
 		const { filter } = S.Common;
-		const items = this.getItems(true);
-		const itemsWithoutSections = this.getItems(false);
+		const items = this.getItems();
+		const itemsWithoutSections = items.filter(it => !it.isSection);
 
 		if (!itemsWithoutSections.length && !this.emptyLength) {
 			this.emptyLength = filter.text.length;
@@ -221,7 +220,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
+			defaultHeight: i => this.getRowHeight(items[i], i),
 			keyMapper: i => (items[i] || {}).id,
 		});
 
@@ -234,7 +233,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		this.checkFilter();
 		this.resize();
-
 		this.props.setActive();
 	};
 
@@ -341,12 +339,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		return U.Menu.sectionsMap(sections);
 	};
 	
-	getItems (withSections: boolean) {
+	getItems () {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
-			if (withSections) {
+			if (section.name) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};
 			items = items.concat(section.children);
@@ -714,21 +712,21 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 	resize () {
 		const { getId, position } = this.props;
-		const items = this.getItems(true);
+		const items = this.getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
 		
 		let height = 16;
 		for (let i = 0; i < items.length; ++i) {
 			height += this.getRowHeight(items[i], i);
 		};
-		height = Math.max(HEIGHT_ITEM + 18, Math.min(360, height));
+		height = Math.max(HEIGHT_ITEM + 18, height);
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 
 	getRowHeight (item: any, index: number) {
-		let h = HEIGHT_ITEM
+		let h = HEIGHT_ITEM;
 		if (item.isRelation || item.isRelationAdd) h = HEIGHT_RELATION;
 		else if (item.isSection && (index > 0)) h = HEIGHT_SECTION;
 		else if (item.isBlock) h = HEIGHT_DESCRIPTION;

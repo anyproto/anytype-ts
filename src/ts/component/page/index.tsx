@@ -32,6 +32,7 @@ import PageMainObject from './main/object';
 import PageMainOnboarding from './main/onboarding';
 import PageMainChat from './main/chat';
 import PageMainDate from './main/date';
+import PageMainSettings from './main/settings';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -63,6 +64,7 @@ const Components = {
 	'main/chat':			 PageMainChat,
 	'main/void':			 PageMainVoid,
 	'main/date':			 PageMainDate,
+	'main/settings':		 PageMainSettings,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {

@@ -212,9 +212,11 @@ const Select = forwardRef<SelectRefProps, Props>(({
 		>
 			{current ? (
 				<>
-					{current.map((item: any, i: number) => (
-						<MenuItemVertical key={i} {...item} />
-					))}
+					<div className="currentSelected">
+						{current.map((item: any, i: number) => (
+							<MenuItemVertical key={i} {...item} />
+						))}
+					</div>
 					<Icon className={acn.join(' ')} />
 				</>
 			) : ''}

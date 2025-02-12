@@ -22,22 +22,10 @@ Icons[I.MarkerType.Checkbox] = {
 	2:		 require('img/icon/marker/checkbox2.svg'),
 };
 
-Icons[I.MarkerType.Task] = {
-	0:		 require('img/icon/object/checkbox0.svg'),
-	1:		 require('img/icon/object/checkbox1.svg'),
-	2:		 require('img/icon/object/checkbox2.svg'),
-};
-
 Theme.dark[I.MarkerType.Checkbox] = {
 	0:		 require('img/icon/marker/checkbox0.svg'),
 	1:		 require('img/theme/dark/icon/marker/checkbox1.svg'),
 	2:		 require('img/icon/marker/checkbox2.svg'),
-};
-
-Theme.dark[I.MarkerType.Task] = {
-	0:		 require('img/icon/object/checkbox0.svg'),
-	1:		 require('img/theme/dark/icon/object/checkbox1.svg'),
-	2:		 require('img/icon/object/checkbox2.svg'),
 };
 
 const Marker = observer(forwardRef<HTMLDivElement, Props>(({ 
@@ -108,8 +96,7 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 			break;
 		};
 			
-		case I.MarkerType.Checkbox:
-		case I.MarkerType.Task: {
+		case I.MarkerType.Checkbox: {
 			inner = (
 				<img 
 					src={getIcon(type)[active ? 2 : 0]} 

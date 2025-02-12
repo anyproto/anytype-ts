@@ -14,9 +14,6 @@ for (const lang of U.Prism.components) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
 
-const katex = require('katex');
-require('katex/dist/contrib/mhchem');
-
 const BlockText = observer(class BlockText extends React.Component<Props> {
 
 	public static defaultProps = {
@@ -68,6 +65,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const checkRtl = keyboard.isRtl || U.Common.checkRtl(text);
 
 		let marker: any = null;
+		let markerIcon = null;
 		let placeholder = translate('placeholderBlock');
 		let additional = null;
 		let spellcheck = true;
@@ -92,7 +90,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				placeholder = translate('defaultNamePage');
 
 				if (root && U.Object.isTaskLayout(root.layout)) {
-					marker = { type: I.MarkerType.Task, className: 'check', active: checked, onClick: this.onCheckbox };
+					markerIcon = (
+						<IconObject 
+							object={{ id: rootId, layout: root.layout, done: checked }} 
+							size={30} 
+							iconSize={30}
+							canEdit={!readonly}
+							onCheckbox={this.onCheckbox}
+						/>
+					);
 				};
 				break;
 			};
@@ -178,6 +184,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			>
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
+					{markerIcon}
 				</div>
 
 				{additional ? <div className="additional">{additional}</div> : ''}
@@ -309,59 +316,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const tag = Mark.getTag(I.MarkType.Latex);
-		const code = Mark.getTag(I.MarkType.Code);
 		const value = this.refEditable.getHtmlValue();
-		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
-		const regCode = new RegExp(`^${code}|${code}$`, 'i');
-
-		if (!/\$[^\$]+\$/.test(value)) {
-			return;
-		};
-
-		const match = value.matchAll(reg);
-		const render = (s: string) => {
-			s = U.Common.fromHtmlSpecialChars(s);
-
-			let ret = s;
-			try {
-				ret = katex.renderToString(s, { 
-					displayMode: false, 
-					throwOnError: false,
-					output: 'html',
-					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
-				});
-
-				ret = ret ? ret : s;
-			} catch (e) {};
-			return ret;
-		};
-
-		let html = value;
-
-		match.forEach((m: any) => {
-			const m0 = String(m[0] || '');
-			const m1 = String(m[1] || '');
-			const m2 = String(m[2] || '');
-			const m3 = String(m[3] || '');
-
-			// Skip inline code marks
-			if (regCode.test(m1) || regCode.test(m3)) {
-				return;
-			};
-
-			// Skip Brazilian Real
-			if (/R$/.test(m1) || /R$/.test(m2)) {
-				return;
-			};
-
-			// Escaped $ sign
-			if (/\\$/.test(m1) || /\\$/.test(m2)) {
-				return;
-			};
-
-			html = html.replace(m0, `${m1}<${tag}>${render(m2)}</${tag}>${m3}`);
-		});
+		const html = U.Common.getLatex(value);
 
 		if (html !== value) {
 			ref.setValue(html);

@@ -32,6 +32,10 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			return;
 		};
 
+		if (submitRef.current?.isLoading()) {
+			return;
+		};
+
 		submitRef.current?.setLoading(true);
 		
 		C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {

@@ -66,6 +66,10 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			};
 		} else {
 			const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+				if (!block.isWidget()) {
+					return false;
+				};
+
 				const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 				if (!childrenIds.length) {
 					return false;
@@ -228,6 +232,38 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 		analytics.event('ClickAddWidget', { route });
 
+		const onSelect = (target: any, isNew: boolean) => {
+			const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
+			const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
+			const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
+
+			const newBlock = { 
+				type: I.BlockType.Link,
+				content: { 
+					targetBlockId: target.id, 
+				},
+			};
+
+			C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layout, Number(limitOptions[0].id), (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				if (isNew) {
+					U.Object.openConfig(target);
+				};
+
+				analytics.event('AddWidget', { type: I.WidgetLayout.Link, route });
+				analytics.event('ChangeWidgetSource', {
+					layout,
+					route: 'AddWidget',
+					params: { target },
+				});
+			});					
+		};
+
+		let menuContext = null;
+
 		S.Menu.open('searchObjectWidgetAdd', {
 			component: 'searchObject',
 			element: '#widget-list-add',
@@ -235,6 +271,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			classNameWrap: 'fromSidebar',
 			offsetY: -4,
 			vertical: I.MenuDirection.Top,
+			onOpen: context => menuContext = context,
 			data: {
 				route: analytics.route.addWidget,
 				filters: [
@@ -242,41 +279,44 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
 				],
 				canAdd: true,
+				addParam: {
+					name: translate('commonCreateNewObject'),
+					nameWithFilter: translate('commonCreateObjectWithName'),
+					arrow: true,
+					onClick: (details: any) => {
+						const types = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 1 });
+
+						if (!types.length) {
+							return;
+						};
+
+						C.ObjectCreate(details, [], '', types[0].uniqueKey, S.Common.space, (message: any) => {
+							onSelect(message.details, true);
+						});
+					},
+				},
+				onOver: (e, context: any, item: any) => {
+					if (!item.isAdd) {
+						S.Menu.closeAll([ 'typeSuggest', 'select' ]);
+						return;
+					};
+
+					U.Menu.typeSuggest({ 
+						element: `#${menuContext.getId()} #item-${item.id}`,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+						offsetX: menuContext.getSize().width,
+						vertical: I.MenuDirection.Center,
+						isSub: true,
+					}, { name: context.filter }, {}, analytics.route.addWidget, object => onSelect(object, true));
+				},
 				dataChange: (context: any, items: any[]) => {
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
 					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => it.name.match(reg));
 
 					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 				},
-				onSelect: (target: any, isNew: boolean) => {
-					const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
-					const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
-					const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
-
-					const newBlock = { 
-						type: I.BlockType.Link,
-						content: { 
-							targetBlockId: target.id, 
-						},
-					};
-
-					C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layout, Number(limitOptions[0].id), (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						if (isNew) {
-							U.Object.openConfig(target);
-						};
-
-						analytics.event('AddWidget', { type: I.WidgetLayout.Link, route });
-						analytics.event('ChangeWidgetSource', {
-							layout,
-							route: 'AddWidget',
-							params: { target },
-						});
-					});					
-				},
+				onSelect,
 			},
 		});
 	};

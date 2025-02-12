@@ -161,7 +161,7 @@
 				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; border-radius: 4px; }
 				.cellContent.isName { padding: 0px 14px !important; }
 				.cellContent.isName {
-					.iconObject { margin: 14px 8px 14px 0px; }
+					.iconObject { margin: 14px 0px; }
 					.input-text { height: 48px; width: calc(100% - 30px) !important; }
 					.name { width: 100%; }
 				}
@@ -189,6 +189,10 @@
 
 		.viewContent.viewGrid.isCollection {
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
+			.cell.isEditing.isName { 
+				.cellContent { padding-left: 20px !important; }
+			}
+
 			.row:hover {
 				.icon.drag { opacity: 1; }
 			}

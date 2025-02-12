@@ -67,7 +67,7 @@
 			.icon.source { background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; flex-shrink: 0; }
 			.icon.source.active { opacity: 1; }
 
-			.editableWrap { @include text-header2; height: 28px; @include text-overflow-nw; }
+			.editableWrap { @include text-header2; height: 28px; @include text-overflow-nw; flex: auto; }
 			.editableWrap.isEmpty { min-width: 90px; }
 			.editableWrap {
 				.editable { height: 100%; }
