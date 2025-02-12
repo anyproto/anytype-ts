@@ -251,7 +251,6 @@ class Sidebar {
 			widthRight = 0;
 		};
 
-
 		const pageWidth = (!isPopup ? ww : this.page.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 
