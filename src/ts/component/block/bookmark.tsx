@@ -80,7 +80,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 					};
 
 					if (block.bgColor) {
-						cnl.push(`bgColor bgColor-${block.bgColor}`);
+						cni.push(`bgColor bgColor-${block.bgColor}`);
 					};
 
 					if (isArchived) {

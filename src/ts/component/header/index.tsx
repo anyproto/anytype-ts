@@ -8,6 +8,7 @@ import HeaderMainChat from './main/chat';
 import HeaderMainHistory from './main/history';
 import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
+import HeaderMainSettings from './main/settings';
 import HeaderMainEmpty from './main/empty';
 
 interface Props extends I.HeaderComponent {
@@ -23,6 +24,7 @@ const Components = {
 	mainGraph:			 HeaderMainGraph,
 	mainNavigation:		 HeaderMainNavigation,
 	mainEmpty:			 HeaderMainEmpty,
+	mainSettings: 		 HeaderMainSettings,
 };
 
 const Header = forwardRef<{}, Props>((props, ref) => {
@@ -56,13 +58,17 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
-	const renderLeftIcons = (onOpen?: () => void) => {
+	const renderLeftIcons = (withGraph?: boolean, onOpen?: () => void) => {
 		const buttons: any[] = [
 			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
 			{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
 			{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
 			{ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph },
 		];
+
+		if (withGraph) {
+			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph });
+		};
 
 		return (
 			<>

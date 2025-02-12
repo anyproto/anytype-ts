@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuBlockAdd { width: var(--menu-width-add) !important; }
 	.menu.menuBlockAdd {
-		.content { padding: 0px; }
+		.content { padding: 0px; max-height: unset; }
 		.wrap { height: 100%; }
 		.items { height: 100%; }
 

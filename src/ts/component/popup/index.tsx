@@ -4,7 +4,6 @@ import raf from 'raf';
 import { I, S, U, analytics, Storage, Preview, translate, sidebar } from 'Lib';
 import { Dimmer } from 'Component';
 
-import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
 import PopupSearch from './search';
 import PopupHelp from './help';
@@ -28,6 +27,7 @@ import PopupMembership from './membership';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
 import PopupSpaceCreate from './spaceCreate';
+import PopupLogout from './logout';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -52,7 +52,6 @@ class Popup extends React.Component<I.Popup> {
 		const { className } = param;
 
 		const Components: any = {
-			settings:				 PopupSettings,
 			settingsOnboarding:		 PopupSettingsOnboarding,
 			search:					 PopupSearch,
 			confirm:				 PopupConfirm,
@@ -76,6 +75,7 @@ class Popup extends React.Component<I.Popup> {
 			membershipFinalization:  PopupMembershipFinalization,
 			share:					 PopupShare,
 			spaceCreate:			 PopupSpaceCreate,
+			logout: 				 PopupLogout,
 		};
 		
 		const popupId = this.getId();

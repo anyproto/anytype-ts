@@ -116,6 +116,7 @@ class Storage {
 			this.deleteAccountKey(key);
 		} else {
 			Api.delete(key);
+			localStorage.removeItem(key);
 		};
 	};
 
@@ -406,9 +407,14 @@ class Storage {
 		};
 
 		const keys = [
-			J.Constant.typeKey.note,
 			J.Constant.typeKey.page,
 			J.Constant.typeKey.task,
+			J.Constant.typeKey.collection,
+			J.Constant.typeKey.set,
+			J.Constant.typeKey.bookmark,
+			J.Constant.typeKey.note,
+			J.Constant.typeKey.project,
+			J.Constant.typeKey.human,
 		];
 
 		for (const key of keys) {

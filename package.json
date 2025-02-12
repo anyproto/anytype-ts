@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.44.15-beta",
+	"version": "0.45.0",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -94,6 +94,7 @@
 		"@emoji-mart/data": "^1.1.2",
 		"@sentry/browser": "^7.39.0",
 		"@sentry/cli": "^2.18.1",
+		"@sindresorhus/slugify": "^2.2.1",
 		"@types/emoji-mart": "^3.0.13",
 		"@viz-js/viz": "^3.2.4",
 		"amplitude-js": "^5.11.0",
