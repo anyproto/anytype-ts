@@ -28,7 +28,7 @@
 			> .icon.more { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); }
 			> .icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 
-			.cell { line-height: 22px; transition: background $transitionCommon; position: relative; flex-grow: 1; }
+			.cell { line-height: 22px; transition: background $transitionCommon; position: relative; flex-grow: 1; max-width: 100%; }
 			.cell.canEdit {
 				.cellContent {
 					.empty { display: block; }
@@ -68,10 +68,10 @@
 				.cellContent span:empty { height: 22px; }
 			}
 
-			.cellContent { min-height: 22px; display: flex; align-items: center; }
+			.cellContent { min-height: 22px; max-width: 100%; display: flex; align-items: center; }
 			.cellContent {
 				.name, .more { line-height: 22px; }
-				.wrap { display: flex; align-items: center; }
+				.wrap { display: flex; align-items: center; max-width: 100%; }
 			}
 		}
 	}
