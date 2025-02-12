@@ -496,13 +496,25 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const py = y / this.rect.ch * 100;
 		const css: any = { transform: `translate3d(${px}%,${py}%,0px)` };
 
+		console.log('cover', `${this.rect.ch}`, `${this.rect.height}`);
+
+		let moveX = false;
 		if (this.rect.ch < this.rect.height) {
 			css.transform = 'translate3d(0px,0px,0px)';
 			css.height = this.rect.height;
 			css.width = 'auto';
+
+			moveX = true;
 		};
 
 		this.cover.css(css);
+
+		if (moveX) {
+			const w = this.cover.width();
+			if (w > this.rect.width) {
+				this.cover.css({ transform: `translate3d(${(this.rect.width - w) / 2}px,0px,0px)` });
+			};
+		};
 
 		return { x, y };
 	};
