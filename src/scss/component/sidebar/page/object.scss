@@ -68,6 +68,10 @@
 				.cellContent span:empty { height: 22px; }
 			}
 
+			.cell.isEditing.c-object {
+				.itemWrap { margin-bottom: 0px; }
+			}
+
 			.cellContent { min-height: 22px; max-width: 100%; display: flex; align-items: center; }
 			.cellContent {
 				.name, .more { line-height: 22px; }
