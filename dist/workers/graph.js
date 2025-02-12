@@ -85,6 +85,8 @@ let paused = false;
 let isOver = '';
 let maxDegree = 0;
 let clusters = {};
+let dragToSelectStartCoord = {};
+let dragToSelectCursorCoord = {};
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -355,6 +357,10 @@ draw = (t) => {
 		};
 	});
 
+	if ( dragToSelectStartCoord.x && dragToSelectStartCoord.y && dragToSelectCursorCoord.x && dragToSelectCursorCoord.y ) {
+		drawDragToSelectBox();
+	};
+
 	ctx.restore();
 };
 
@@ -577,9 +583,60 @@ drawNode = (d) => {
 	};
 };
 
+drawDragToSelectBox = () => {
+	const width = dragToSelectCursorCoord.x - dragToSelectStartCoord.x;
+	const height = dragToSelectCursorCoord.y - dragToSelectStartCoord.y;
+
+	util.roundedRect(dragToSelectStartCoord.x, dragToSelectStartCoord.y, width, height, 1);
+
+	ctx.strokeStyle = data.colors.selected;
+	ctx.lineWidth = getLineWidth() * 3;
+	ctx.stroke();
+
+	ctx.restore();
+}
+
 onZoom = (data) => {
 	transform = Object.assign(transform, data.transform);
 	redraw();
+};
+
+onDragToSelectStart = (data) => {
+	let { x, y } = data;
+
+	x = transform.invertX(x);
+	y = transform.invertY(y);
+	dragToSelectStartCoord = { x, y };
+};
+
+onDragToSelectMove = (data) => {
+	let { x, y } = data;
+
+	x = transform.invertX(x);
+	y = transform.invertY(y);
+	dragToSelectCursorCoord = { x: x, y: y };
+
+	const left = Math.min(dragToSelectStartCoord.x, x);
+	const top = Math.min(dragToSelectStartCoord.y, y);
+	const right = Math.max(dragToSelectStartCoord.x, x);
+	const bottom = Math.max(dragToSelectStartCoord.y, y);
+
+	const selected = [];
+	nodes.forEach(d => {
+		if (d.x >= left) && (d.x <= right) && (d.y >= top) && (d.y <= bottom) {
+			selected.push(d.id);
+		};
+	});
+	send('onSelectByDragToSelect', { selected })
+
+	redraw();
+};
+
+onDragToSelectEnd = (data) => {
+	dragToSelectStartCoord = {};
+	dragToSelectCursorCoord = {};
+
+	send('onTransform', { ...transform });
 };
 
 onDragStart = ({ active }) => {
