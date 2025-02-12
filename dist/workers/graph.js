@@ -85,8 +85,7 @@ let paused = false;
 let isOver = '';
 let maxDegree = 0;
 let clusters = {};
-let dragToSelectStartCoord = {};
-let dragToSelectCursorCoord = {};
+let selectBox = { x: 0, y: 0, width: 0, height: 0 };
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -357,8 +356,8 @@ draw = (t) => {
 		};
 	});
 
-	if ( dragToSelectStartCoord.x && dragToSelectStartCoord.y && dragToSelectCursorCoord.x && dragToSelectCursorCoord.y ) {
-		drawDragToSelectBox();
+	if (selectBox.x && selectBox.y && selectBox.width && selectBox.height) {
+		drawSelectBox();
 	};
 
 	ctx.restore();
@@ -583,16 +582,15 @@ drawNode = (d) => {
 	};
 };
 
-drawDragToSelectBox = () => {
-	const width = dragToSelectCursorCoord.x - dragToSelectStartCoord.x;
-	const height = dragToSelectCursorCoord.y - dragToSelectStartCoord.y;
+drawSelectBox = () => {
+	const { x, y, width, height } = selectBox;
 
-	util.roundedRect(dragToSelectStartCoord.x, dragToSelectStartCoord.y, width, height, 1);
+	ctx.save();
+	util.roundedRect(x, y, width, height, 1);
 
 	ctx.strokeStyle = data.colors.selected;
 	ctx.lineWidth = getLineWidth() * 3;
 	ctx.stroke();
-
 	ctx.restore();
 }
 
@@ -602,40 +600,37 @@ onZoom = (data) => {
 };
 
 onDragToSelectStart = (data) => {
-	let { x, y } = data;
+	const { x, y } = data;
 
-	x = transform.invertX(x);
-	y = transform.invertY(y);
-	dragToSelectStartCoord = { x, y };
+	selectBox.x = transform.invertX(x);
+	selectBox.y = transform.invertY(y);
 };
 
 onDragToSelectMove = (data) => {
-	let { x, y } = data;
+	const x = transform.invertX(data.x);
+	const y = transform.invertY(data.y);
 
-	x = transform.invertX(x);
-	y = transform.invertY(y);
-	dragToSelectCursorCoord = { x: x, y: y };
+	selectBox.width = x - selectBox.x;
+	selectBox.height = y - selectBox.y;
 
-	const left = Math.min(dragToSelectStartCoord.x, x);
-	const top = Math.min(dragToSelectStartCoord.y, y);
-	const right = Math.max(dragToSelectStartCoord.x, x);
-	const bottom = Math.max(dragToSelectStartCoord.y, y);
-
+	const left = Math.min(selectBox.x, x);
+	const top = Math.min(selectBox.y, y);
+	const right = Math.max(selectBox.x, x);
+	const bottom = Math.max(selectBox.y, y);
 	const selected = [];
+
 	nodes.forEach(d => {
-		if (d.x >= left) && (d.x <= right) && (d.y >= top) && (d.y <= bottom) {
+		if ((d.x >= left) && (d.x <= right) && (d.y >= top) && (d.y <= bottom)) {
 			selected.push(d.id);
 		};
 	});
-	send('onSelectByDragToSelect', { selected })
 
+	send('onSelectByDragToSelect', { selected })
 	redraw();
 };
 
-onDragToSelectEnd = (data) => {
-	dragToSelectStartCoord = {};
-	dragToSelectCursorCoord = {};
-
+onDragToSelectEnd = () => {
+	selectBox = { x: 0, y: 0, width: 0, height: 0 };
 	send('onTransform', { ...transform });
 };
 
