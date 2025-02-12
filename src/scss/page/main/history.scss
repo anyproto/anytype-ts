@@ -17,7 +17,7 @@
 		> #historySideRight {
 			> .head { 
 				display: flex; flex-direction: row; align-items: center; justify-content: space-between; -webkit-app-region: no-drag; 
-				@include text-paragraph; font-weight: 600; padding: 0px 4px; flex-shrink: 0; padding: 12px 16px;
+				@include text-paragraph; font-weight: 600; flex-shrink: 0; padding: 12px 16px;
 			}
 			> .head {
 				.name { @include text-overflow-nw; }
