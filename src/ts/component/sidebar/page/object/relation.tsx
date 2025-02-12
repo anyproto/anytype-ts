@@ -19,10 +19,12 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
     render () {
-		const { rootId } = this.props;
+		const { rootId, readonly } = this.props;
 		const object = this.getObject();
 		const sections = this.getSections();
-		const readonly = this.props.readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+		const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+		const type = S.Record.getTypeById(object.type);
+		const allowDetails = !readonly && S.Block.isAllowed(type.restrictions, [ I.RestrictionObject.Details ]);
 
         return (
 			<>
@@ -31,9 +33,11 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 						<Label text={translate('sidebarTypeRelation')} />
 					</div>
 
-					<div className="side right">
-						<Button color="blank" text={translate('sidebarObjectRelationSetUp')} className="simple" onClick={this.onSetUp} />
-					</div>
+					{allowDetails ? (
+						<div className="side right">
+							<Button color="blank" text={translate('sidebarObjectRelationSetUp')} className="simple" onClick={this.onSetUp} />
+						</div>
+					) : ''}
 				</div>
 
 				<div className="body customScrollbar">
@@ -60,7 +64,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 									rootId={rootId}
 									object={object}
 									item={item} 
-									readonly={readonly}
+									readonly={isReadonly}
 									onDragStart={e => this.onDragStart(e, item)}
 								/>
 							))}
@@ -108,7 +112,9 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 	onSetUp () {
 		const object = this.getObject();
-		sidebar.rightPanelSetState({ page: 'type', rootId: object.type, noPreview: true });
+		const rootId = object.targetObjectType || object.type;
+
+		sidebar.rightPanelSetState({ page: 'type', rootId, noPreview: true });
 	};
 
 	onDragStart (e: any, item: any) {
