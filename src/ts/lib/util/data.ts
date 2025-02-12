@@ -583,16 +583,18 @@ class UtilData {
 		}, callBack);
 	};
 
-	checkDetails (rootId: string, blockId?: string) {
+	checkDetails (rootId: string, blockId?: string, keys?: string[]) {
 		blockId = blockId || rootId;
+		keys = keys || [];
 
-		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover), true);
+		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover).concat(keys), true);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret = {
 			withCover: false,
 			withIcon: false,
 			className: '',
+			object,
 		};
 
 		let className = [];
