@@ -64,6 +64,7 @@
 	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; }
 	.element {
 		.iconObject { flex-shrink: 0; }
+		.flex { align-items: center; gap: 0px 4px; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
 	.cellContent { white-space: normal; }

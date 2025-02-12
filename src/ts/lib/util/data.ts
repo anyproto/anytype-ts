@@ -579,6 +579,7 @@ class UtilData {
 			sorts,
 			keys,
 			limit: J.Constant.limit.menuRecords,
+			noDeps: true,
 		}, callBack);
 	};
 
@@ -607,6 +608,7 @@ class UtilData {
 				ret.withIcon = iconEmoji || iconImage;
 				break;
 
+			case I.ObjectLayout.Note:
 			case I.ObjectLayout.Bookmark:
 			case I.ObjectLayout.Task: {
 				break;
@@ -1047,14 +1049,10 @@ class UtilData {
 			};
 
 			const membership = new M.Membership(message.membership);
-			const { status, tier } = membership;
+			const { tier } = membership;
 
 			S.Auth.membershipSet(membership);
 			analytics.setTier(tier);
-
-			if (status && (status == I.MembershipStatus.Finalization)) {
-				S.Popup.open('membershipFinalization', { data: { tier } });
-			};
 
 			if (callBack) {
 				callBack(membership);

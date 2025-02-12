@@ -521,9 +521,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return {};
 		};
 
-		const keys = this.getKeys(view.id);
+		const skip = [ 'restrictions' ];
+		const keys = this.getKeys(view.id).filter(it => !skip.includes(it));
 		const subId = this.getSubId();
-		const item = S.Detail.get(subId, id, keys);
+		const item = S.Detail.get(subId, id, keys, true);
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
 		if (item.name == translate('defaultNamePage')) {

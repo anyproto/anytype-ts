@@ -561,7 +561,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 
 		let flags = [];
-
 		if (![ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(this.type)) {
 			flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 		};

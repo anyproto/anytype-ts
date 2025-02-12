@@ -263,7 +263,7 @@
 
 							root.find('a').off('click').on('click', function (e) {
 								e.preventDefault();
-								window.parent.postMessage({ type: 'openUrl', url: $(this).attr('href') }, '*');
+								window.parent.postMessage({ type: 'openUrl', url: $(this).attr('href'), blockId }, '*');
 							});
 						}
 					});

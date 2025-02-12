@@ -67,6 +67,15 @@
 		}
 	}
 
+	.popup.popupConfirm.spaceInfo {
+		.title { margin-bottom: 9px; }
+		.label {
+			dl { margin-bottom: 16px; }
+			dt { text-align: left; }
+			dd { text-align: left; color: var(--color-text-secondary); }
+		}
+	}
+
 	.popup.popupConfirm.isLeft {
 		.innerWrap { text-align: left; }
 	}
