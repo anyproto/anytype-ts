@@ -859,8 +859,8 @@ class UtilMenu {
 	getFixedWidgets () {
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
-			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
-			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
+			//{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
+			//{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
 		].filter(it => it);

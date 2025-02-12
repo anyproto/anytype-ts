@@ -47,6 +47,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			};
 		};
 
+		console.log(view);
+
 		if (isSystemTarget()) {
 			getData(subId);
 		} else 

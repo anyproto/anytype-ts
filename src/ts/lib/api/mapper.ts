@@ -691,7 +691,8 @@ export const Mapper = {
 				version: obj.getVersion(),
 				timestamp: obj.getTimestamp(),
 				size: obj.getSize(),
-				details: Decode.struct(obj.getDetails()),
+				details: {},
+				//details: Decode.struct(obj.getDetails()),
 			};
 		},
 
