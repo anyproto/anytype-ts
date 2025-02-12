@@ -417,6 +417,7 @@ class UtilMenu {
 				if (treeSkipLayouts.includes(layout)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
+
 				if (!isSet) {
 					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
 				} else {

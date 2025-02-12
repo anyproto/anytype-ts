@@ -684,8 +684,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			break;
 		};
 
-		case I.WidgetLayout.List:
 		case I.WidgetLayout.Compact:
+		case I.WidgetLayout.List:
 		case I.WidgetLayout.View: {
 			cn.push('widgetView');
 			content = <WidgetView {...childProps} />;
