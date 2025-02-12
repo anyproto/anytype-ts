@@ -1,8 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { trace } from 'mobx';
 import { observer } from 'mobx-react';
-import { Icon, Header, Footer, Loader, ListPreviewObject, ListObject, Select, Deleted, HeadSimple, EditorControls } from 'Component';
+import { Icon, Header, Footer, Loader, ListPreviewObject, ListObject, Select, Deleted, HeadSimple, EditorControls, Block } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate } from 'Lib';
 
 interface State {
@@ -56,6 +55,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const templates = S.Record.getRecordIds(subIdTemplate, '');
 		const canWrite = U.Space.canMyParticipantWrite();
 		const isTemplate = object.uniqueKey == J.Constant.typeKey.template;
+		const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 
 		const layout: any = U.Menu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
@@ -66,6 +66,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) && !U.Object.isParticipantLayout(object.recommendedLayout);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite && !isTemplate;
+		const allowedBlock = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedLayout = ![ I.ObjectLayout.Bookmark, I.ObjectLayout.Participant ].includes(object.recommendedLayout);
 		
 		const subIdObject = this.getSubIdObject();
@@ -219,6 +220,19 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									relationKeys={recommendedKeys}
 									route={analytics.route.screenType}
 								/>
+
+								{children.map((block: I.Block, i: number) => (
+									<Block
+										{...this.props}
+										key={block.id}
+										rootId={rootId}
+										iconSize={20}
+										block={block}
+										className="noPlus"
+										isSelectionDisabled={true}
+										readonly={allowedBlock}
+									/>
+								))}
 							</div>
 						</div>
 					) : ''}
