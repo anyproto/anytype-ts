@@ -579,6 +579,7 @@ class UtilData {
 			sorts,
 			keys,
 			limit: J.Constant.limit.menuRecords,
+			noDeps: true,
 		}, callBack);
 	};
 
