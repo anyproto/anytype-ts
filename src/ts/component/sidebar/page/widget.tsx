@@ -297,6 +297,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				},
 				onOver: (e, context: any, item: any) => {
 					if (!item.isAdd) {
+						S.Menu.closeAll([ 'typeSuggest', 'select' ]);
 						return;
 					};
 
@@ -306,6 +307,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						classNameWrap: 'fromSidebar',
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
+						isSub: true,
 					}, { name: context.filter }, {}, analytics.route.addWidget, object => onSelect(object, true));
 				},
 				dataChange: (context: any, items: any[]) => {

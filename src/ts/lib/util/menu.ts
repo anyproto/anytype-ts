@@ -620,7 +620,7 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+										{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant) },
 										{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 									],
 									canAdd: true,
