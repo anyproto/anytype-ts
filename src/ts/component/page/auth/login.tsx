@@ -103,6 +103,11 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			return;
 		};
 
+		if (code == J.Error.Code.ACCOUNT_STORE_NOT_MIGRATED) {
+			U.Router.go('/auth/migrate', {});
+			return;
+		};
+
 		setError(text);
 		phraseRef.current?.setError(true);
 		submitRef.current?.setLoading(false);

@@ -85,6 +85,11 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			return false;
 		};
 
+		if (error.code == J.Error.Code.ACCOUNT_STORE_NOT_MIGRATED) {
+			U.Router.go('/auth/migrate', {});
+			return;
+		};
+
 		setError(error);
 		return U.Common.checkErrorCommon(error.code);
 	};

@@ -11,6 +11,7 @@ import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
+import PageAuthMigrate from './auth/migrate';
 
 import PageMainBlank from './main/blank';
 import PageMainEmpty from './main/empty';
@@ -42,6 +43,7 @@ const Components = {
 	'auth/setup':			 PageAuthSetup,
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
+	'auth/migrate':			 PageAuthMigrate,
 
 	'main/blank':			 PageMainBlank,		
 	'main/empty':			 PageMainEmpty,		
