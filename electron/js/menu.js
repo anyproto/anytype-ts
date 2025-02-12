@@ -131,7 +131,11 @@ class MenuManager {
 					{ label: Util.translate('electronMenuPaste'), role: 'paste' },
 					{ 
 						label: Util.translate('electronMenuPastePlain'), accelerator: 'CmdOrCtrl+Shift+V',
-						click: () => Util.send(this.win, 'commandEditor', 'pastePlain'),
+						click: () => {
+							if (is.macos) {
+								Util.send(this.win, 'commandEditor', 'pastePlain');
+							};
+						},
 					},
 
 					Separator,
