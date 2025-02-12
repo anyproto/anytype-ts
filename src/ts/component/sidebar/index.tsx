@@ -50,7 +50,6 @@ const Sidebar = observer(class Sidebar extends React.Component<{}, State> {
 	render() {
 		const { showVault } = S.Common;
 		const page = this.state.page || 'widget';
-		const cmd = keyboard.cmdSymbol();
 		const Component = Components[page];
 
 		return (
@@ -58,7 +57,7 @@ const Sidebar = observer(class Sidebar extends React.Component<{}, State> {
 				<Icon 
 					id="sidebarToggle"
 					className="withBackground"
-					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+					tooltipCaption={keyboard.getCaption('toggleSidebar')}
 					tooltipY={I.MenuDirection.Bottom}
 					onClick={this.onToggleClick}
 					onContextMenu={this.onToggleContext}

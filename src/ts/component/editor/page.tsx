@@ -296,7 +296,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 		const menuOpen = this.menuCheck();
 
-		if (isPopup !== keyboard.isPopup()) {
+		if ((isPopup !== keyboard.isPopup()) || keyboard.isShortcutEditing) {
 			return;
 		};
 
@@ -622,7 +622,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// History
-		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+alt+h`, e, () => {
 			e.preventDefault();
 			this.onHistory(e);
 
@@ -894,7 +894,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		// History
-		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
+		keyboard.shortcut(`${cmd}+alt+h`, e, () => {
 			e.preventDefault();
 			this.onHistory(e);
 		});
