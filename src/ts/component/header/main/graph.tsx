@@ -58,7 +58,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
-		initRootId(rootId)
+		initRootId(rootId);
 		rebind();
 
 		return () => unbind();
