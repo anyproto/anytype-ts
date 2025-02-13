@@ -220,7 +220,7 @@ class CommonStore {
 		if (ret === null) {
 			ret = Storage.get('fullscreenObject');
 		};
-		if (undefined === ret) {
+		if (ret === undefined) {
 			ret = true;
 		};
 		return ret;

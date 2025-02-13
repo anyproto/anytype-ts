@@ -70,6 +70,7 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 							className="big"
 							value={fullscreenObject}
 							onChange={(e: any, v: boolean) => {
+								S.Common.fullscreenObjectSet(v);
 								analytics.event('ShowObjectFullscreen', { type: v });
 							}}
 						/>
@@ -111,7 +112,13 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 					{canHideMenu ? (
 						<div className="item">
 							<Label text={translate('electronMenuShowMenu')} />
-							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)} />
+							<Switch 
+								className="big" 
+								value={!hideMenuBar} 
+								onChange={(e: any, v: boolean) => {
+									Renderer.send('setMenuBarVisibility', v);
+								}} 
+							/>
 						</div>
 					) : ''}
 				</div>
