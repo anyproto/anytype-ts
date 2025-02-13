@@ -85,7 +85,7 @@
     }
 
     #select-spellcheck {
-        .currentSelected { display: flex; gap: 0px 4px; }
+        .currentSelected { display: flex; flex-wrap: wrap; gap: 0px 4px; }
         .item::after { content: ','; }
         .item:last-of-type::after { display: none; }
     }
