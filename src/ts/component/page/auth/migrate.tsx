@@ -60,7 +60,7 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			{!errorCode ? (
 				<ProgressBar segments={segments} />
 			) : (
-				<Button text={translate('pageAuthMigrateTryAgain')} className="c36" color="none" />
+				<Button text={translate('pageAuthMigrateTryAgain')} className="c36" color="none" onClick={onMigrate} />
 			)}
 		</Frame>
 	);
