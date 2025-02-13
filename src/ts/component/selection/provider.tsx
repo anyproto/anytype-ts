@@ -391,7 +391,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		if ((target.current.length === 0 && !allowRect.current) || (target.current[0] && target.current[0].id.includes('dataview'))){
 			allowRect.current = true;
-		}
+		};
 
 		if (!length) {
 			renderSelection();
