@@ -360,9 +360,7 @@
             .col.colObject { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 12px; }
             .col.colObject {
                 .iconObject { flex-shrink: 0; }
-                .info { width: calc(100% - 52px); }
                 .name { @include text-overflow-nw; }
-                .creator { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-secondary); }
             }
 
             .col.colDate { @include text-overflow-nw; }
