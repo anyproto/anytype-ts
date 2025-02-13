@@ -183,8 +183,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
-
-		allowRect.current = true;
+		
 		top.current = U.Common.getScrollContainer(isPopup).scrollTop();
 		checkNodes(e);
 		drawRect(e.pageX, e.pageY);
@@ -388,6 +387,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const length = (list[I.SelectType.Block] || []).length;
+		allowRect.current = true;
 
 		if (!length) {
 			renderSelection();
