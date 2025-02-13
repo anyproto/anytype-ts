@@ -70,7 +70,6 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 							className="big"
 							value={fullscreenObject}
 							onChange={(e: any, v: boolean) => {
-								S.Common.fullscreenObjectSet(v);
 								analytics.event('ShowObjectFullscreen', { type: v });
 							}}
 						/>
