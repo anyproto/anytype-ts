@@ -388,9 +388,11 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const length = (list[I.SelectType.Block] || []).length;
-		const param = U.Router.getParam(U.Router.getRoute());
+		const isPopup = keyboard.isPopup();
+		const popupMatch = keyboard.getPopupMatch();
+		const isSet = !isPopup ? keyboard.isMainSet() : [ 'set' ].includes(popupMatch.params.action);
 
-		if ((target.current.length === 0 && !allowRect.current) || (param.page === 'main' && param.action === 'set')){
+		if ((target.current.length === 0 && !allowRect.current) || (isSet)){
 			allowRect.current = true;
 		};
 
