@@ -1,10 +1,11 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import { Filter, Icon, Select, Label, Error } from 'Component';
-import { I, U, J, translate, keyboard, Key, Storage } from 'Lib';
+import { I, U, J, S, translate, keyboard, Key, Storage } from 'Lib';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { getId, close } = props;
+	const { config } = S.Common;
 	const [ page, setPage ] = useState('');
 	const [ filter, setFilter ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
@@ -48,11 +49,12 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const Item = (item: any) => {
 		const cn = [ 'item' ];
+		const canEdit = item.id && !item.noEdit && config.experimental;
 
 		let symbols = item.symbols || [];
 		let onClickHandler = () => {};
 
-		if (item.id && !item.noEdit) {
+		if (canEdit) {
 			cn.push('canEdit');
 
 			if (editingId == item.id) {
@@ -211,7 +213,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						<Select id={`${id}-section`} options={sections} value={page} onChange={id => setPage(id)} />
 					</div>
 					<div className="side right">
-						<Icon className="more withBackground" />
+						{config.experimental ? <Icon className="more withBackground" /> : ''}
 						<Icon className="close withBackground" tooltip={translate('commonClose')} onClick={() => close()} />
 					</div>
 				</div>
