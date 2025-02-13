@@ -63,7 +63,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
 			{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
 			{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
-			{ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph },
 		];
 
 		if (withGraph) {

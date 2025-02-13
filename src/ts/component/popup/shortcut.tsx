@@ -6,11 +6,12 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { getId, close } = props;
 	const [ page, setPage ] = useState('');
+	const [ filter, setFilter ] = useState('');
 	const [ editingId, setEditingId ] = useState('');
 	const [ editingKeys, setEditingKeys ] = useState([]);
 	const sections = J.Shortcut.getSections();
 	const current = page || sections[0].id;
-	const section = sections.find(it => it.id == current);
+	const section = U.Common.objectCopy(sections.find(it => it.id == current));
 	const timeout = useRef(0);
 	const id = getId();
 
@@ -68,6 +69,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				{item.text ? <Label className="text" text={item.text} /> : ''}
 			</div>
 		);
+	};
+
+	const onFilterChange = (value: string) => {
+		setFilter(value);
 	};
 
 	useEffect(() => {
@@ -128,6 +133,33 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	}, [ editingId ]);
 
+	if (filter) {
+		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+
+		section.children = section.children.filter((s: any) => {
+			s.children = s.children.filter((c: any) => {
+				if (c.name && c.name.match(reg)) {
+					return true;
+				};
+
+				for (const symbol of c.symbols || []) {
+					if (symbol.match(reg)) {
+						return true;
+					};
+				};
+
+				for (const key of c.keys || []) {
+					if (key.match(reg)) {
+						return true;
+					};
+				};
+
+				return false;
+			});
+			return s.children.length > 0;
+		});
+	};
+
 	return (
 		<>
 			<div className="head">
@@ -141,7 +173,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					</div>
 				</div>
 				<div className="filterWrap">
-					<Filter className="outlined" />
+					<Filter className="outlined" onChange={onFilterChange} />
 				</div>
 			</div>
 
