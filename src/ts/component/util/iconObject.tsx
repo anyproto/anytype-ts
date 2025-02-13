@@ -302,16 +302,29 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		return ret;
 	};
 
-	const defaultIcon = (type: string) => {
-		if (!DefaultIcons.includes(type)) {
-			return;
-		};
+	const defaultIcon = (id: string) => {
+		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'iconName' ], true);
 
-		const src = require(`img/icon/default/${type}.svg`);
+		let src = '';
+		if (type.iconName) {
+			// TODO: put colored type icon
+			// src = drawIcon(type.iconName, iconSize, 0);
+		} else {
+			src = require(`img/icon/default/${id}.svg`);
+		};
 
 		cn.push('withDefault');
 		icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 		icon = <img src={src} className={icn.join(' ')} />;
+	};
+
+	const drawIcon = (id: string, size: number, color: string) => {
+		const src = require(`img/icon/default/${icon}.svg`);
+		const obj = $(src);
+
+		obj.attr({ width: size, height: size, fill: color });
+
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
 	};
 
 	switch (layout) {
