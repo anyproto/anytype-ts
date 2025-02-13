@@ -388,8 +388,9 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const length = (list[I.SelectType.Block] || []).length;
+		const param = U.Router.getParam(U.Router.getRoute());
 
-		if ((target.current.length === 0 && !allowRect.current) || (target.current[0] && target.current[0].id.includes('dataview'))){
+		if ((target.current.length === 0 && !allowRect.current) || (param.page === 'main' && param.action === 'set')){
 			allowRect.current = true;
 		};
 
