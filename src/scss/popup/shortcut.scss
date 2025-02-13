@@ -38,7 +38,7 @@
 					min-height: 36px;
 				}
 				.item.canEdit:not(.isEditing) {
-					&:hover, &.hover { background: var(--color-shape-highlight-medium); }
+					&:hover, &.hover { background: var(--color-shape-highlight-light); }
 				}
 				.item.isEditing { box-shadow: 0px 0px 0px 2px var(--color-system-accent-100) inset; }
 

@@ -90,6 +90,9 @@ const getSections = () => {
 
 				{ 
 					name: translate('popupShortcutEditor'), children: [
+						{ name: translate('popupShortcutMainActions1'), keys: [ '/' ] },
+						{ name: translate('popupShortcutMainActions2'), keys: [ cmdKey, '/' ] },
+
 						{ name: translate('popupShortcutMainStructuring1'), keys: [ 'enter' ] },
 						{ name: translate('popupShortcutMainStructuring2'), keys: [ 'shift', 'enter' ] },
 						{ name: translate('popupShortcutMainStructuring3'), keys: [ 'delete' ] },
@@ -99,6 +102,8 @@ const getSections = () => {
 						{ name: translate('popupShortcutMainSelection1'), text: translate('popupShortcutMainSelectionDblClick') },
 						{ name: translate('popupShortcutMainSelection2'), text: translate('popupShortcutMainSelectionTplClick') },
 						{ name: translate('popupShortcutMainSelection3'), keys: [ cmdKey, 'a' ] },
+						{ name: translate('popupShortcutMainActions7'), keys: [ cmdKey, 'd' ] },
+						{ name: translate('popupShortcutMainActions8'), keys: [ cmdKey, 'e' ] },
 						{ name: translate('popupShortcutMainSelection4'), keys: [ 'shift', '↑' ] },
 						{ name: translate('popupShortcutMainSelection7'), keys: [ 'shift', '↓' ] },
 						{ name: translate('popupShortcutMainSelection5'), keys: [ cmdKey, 'click' ] },
@@ -114,6 +119,14 @@ const getSections = () => {
 						{ name: translate('popupShortcutNavigationPage8'), keys: [ cmdKey, 'shift', '↑' ] },
 						{ name: translate('popupShortcutNavigationPage10'), keys: [ cmdKey, 'shift', '↓' ] },
 						{ name: translate('popupShortcutNavigationPage10'), keys: [ cmdKey, 'enter' ] },
+					]
+				},
+
+				{
+					name: translate('popupShortcutChat'), children: [
+						{ name: translate('popupShortcutChat1'), keys: [ cmdKey, 'a' ] },
+						{ name: translate('popupShortcutChat2'), keys: [ cmdKey, 'e' ] },
+						{ name: translate('popupShortcutChat3'), keys: [ cmdKey, 'm' ] },
 					]
 				},
 
@@ -185,6 +198,8 @@ const getSections = () => {
 						{ name: translate('popupShortcutCommandText3'), text: '/h2' },
 						{ name: translate('popupShortcutCommandText4'), text: '/h3' },
 						{ name: translate('popupShortcutCommandText5'), text: '/high' },
+						{ name: translate('popupShortcutCommandText6'), text: '/callout' },
+						{ name: translate('popupShortcutCommandText7'), text: '/code' },
 					]
 				},
 
@@ -207,10 +222,13 @@ const getSections = () => {
 						{ name: translate('popupShortcutCommandObjects5'), text: '/video' },
 						{ name: translate('popupShortcutCommandObjects6'), text: '/bookmark' },
 						{ name: translate('popupShortcutCommandObjects7'), text: '/link' },
+						{ name: translate('popupShortcutCommandObjects9'), text: '/audio' },
+						{ name: translate('popupShortcutCommandObjects10'), text: '/table' },
+						{ name: translate('popupShortcutCommandObjects11'), text: '/inline' },
 					]
 				},
 
-				{
+			{
 					name: translate('popupShortcutCommandOther'), children: [
 						{ name: translate('popupShortcutCommandOther1'), text: '/line' },
 						{ name: translate('popupShortcutCommandOther2'), text: '/dots' },
@@ -259,8 +277,6 @@ const getItems = () => {
 						{ com: `${cmd} + C`,			 name: translate('popupShortcutMainActions4') },
 						{ com: `${cmd} + X`,			 name: translate('popupShortcutMainActions5') },
 						{ com: `${cmd} + V`,			 name: translate('popupShortcutMainActions6') },
-						{ com: `${cmd} + D`,			 name: translate('popupShortcutMainActions7') },
-						{ com: `${cmd} + E`,			 name: translate('popupShortcutMainActions8') + ' 🏄‍♂' },
 					]
 				},
 			],

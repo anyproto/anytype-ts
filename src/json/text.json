@@ -1240,6 +1240,16 @@
 	"popupShortcutMainSelectionDblClick": "Double Click",
 	"popupShortcutMainSelectionTplClick": "Triple Click",
 
+	"popupShortcutMainActions1": "Command menu",
+	"popupShortcutMainActions2": "Action menu",
+	"popupShortcutMainActions7": "Duplicate selected blocks",
+	"popupShortcutMainActions8": "Emoji picker",
+
+	"popupShortcutChat": "Chat",
+	"popupShortcutChat1": "Attach an object",
+	"popupShortcutChat2": "Pick Emoji",
+	"popupShortcutChat3": "Mention",
+
 	"popupShortcutNavigation": "Navigation",
 	"popupShortcutObject": "Object Actions",
 	"popupShortcutEditor": "Editor",
@@ -1303,7 +1313,9 @@
 	"popupShortcutCommandText2": "Large heading",
 	"popupShortcutCommandText3": "Medium-sized heading",
 	"popupShortcutCommandText4": "Small heading",
-	"popupShortcutCommandText5": "Highlighted block of larger text",
+	"popupShortcutCommandText5": "Highlighted block",
+	"popupShortcutCommandText6": "Callout",
+	"popupShortcutCommandText7": "Code snippet",
 
 	"popupShortcutCommandLists": "Lists",
 	"popupShortcutCommandLists1": "To-do list with checkboxes",
@@ -1320,6 +1332,9 @@
 	"popupShortcutCommandObjects6": "Bookmark",
 	"popupShortcutCommandObjects7": "Link to Object",
 	"popupShortcutCommandObjects8": "Also available",
+	"popupShortcutCommandObjects9": "Audio",
+	"popupShortcutCommandObjects10": "Table",
+	"popupShortcutCommandObjects11": "Inline set",
 
 	"popupShortcutCommandOther": "Other",
 	"popupShortcutCommandOther1": "Line divider",
