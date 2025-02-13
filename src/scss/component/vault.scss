@@ -27,7 +27,7 @@
 	.item {
 		.iconWrap { 
 			width: 100%; height: 100%; border-radius: 4px; background-repeat: no-repeat; background-position: center; 
-			transition: background-color 0.2s $easeInQuint; overflow: hidden;
+			transition: background-color 0.2s $easeInQuint; overflow: hidden; background-color: var(--color-shape-highlight-dark);
 		}
 		.iconObject { width: 100% !important; height: 100% !important; border-radius: inherit !important; }
 	}
@@ -37,10 +37,6 @@
 	}
 
 	.item:hover, .item.hover { padding: 0px; }
-
-	.item.isButton {
-		.iconWrap { background-color: var(--color-shape-highlight-dark); }
-	}
 
 	.item.isActive::after { opacity: 1; }
 
