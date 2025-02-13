@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
-import { Filter, Icon, Select, Label } from 'Component';
+import { Filter, Icon, Select, Label, Error } from 'Component';
 import { I, U, J, translate, keyboard, Key, Storage } from 'Lib';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
@@ -7,12 +7,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const { getId, close } = props;
 	const [ page, setPage ] = useState('');
 	const [ filter, setFilter ] = useState('');
+	const [ dummy, setDummy ] = useState(0);
 	const [ editingId, setEditingId ] = useState('');
 	const [ editingKeys, setEditingKeys ] = useState([]);
 	const sections = J.Shortcut.getSections();
 	const current = page || sections[0].id;
 	const section = U.Common.objectCopy(sections.find(it => it.id == current));
 	const timeout = useRef(0);
+	const error = useRef({});
 	const id = getId();
 
 	const onClick = (item: any) => {
@@ -56,23 +58,52 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				cn.push('isEditing');
 				symbols = keyboard.getSymbolsFromKeys(editingKeys);
 			};
+
+			if (error.current[item.id]) {
+				cn.push('hasError');
+			};
 		};
 
 		return (
 			<div className={cn.join(' ')} onClick={() => onClick(item)}>
-				<div className="name">{item.name}</div>
-				{symbols.length ? (
-					<div className="symbols">
-						{symbols.map((item: any, i: number) => <Symbol key={i} text={item} />)}
-					</div>
-				) : ''}
-				{item.text ? <Label className="text" text={item.text} /> : ''}
+				<div className="flex">
+					<div className="name">{item.name}</div>
+					{symbols.length ? (
+						<div className="symbols">
+							{symbols.map((item: any, i: number) => <Symbol key={i} text={item} />)}
+						</div>
+					) : ''}
+					{item.text ? <Label className="text" text={item.text} /> : ''}
+				</div>
+				{error.current[item.id] ? <Error text={error.current[item.id]} /> : ''}
 			</div>
 		);
 	};
 
 	const onFilterChange = (value: string) => {
 		setFilter(value);
+	}; 
+
+	const checkConflicts = (id: string, pressed: string[]) => {
+		const items = J.Shortcut.getItems();
+
+		for (const i in items) {
+			const item = items[i];
+
+			if (!item.keys) {
+				continue;
+			};
+
+			const isEqual = U.Common.objectCompare(item.keys, pressed);
+			if (isEqual) {
+				error.current[id] = U.Common.sprintf(item.id ? translate('popupShortcutResetKey') : translate('popupShortcutConflict'), item.name);
+				if (item.id) {
+					Storage.updateShortcuts(item.id, []);
+				};
+
+				setDummy(dummy + 1);
+			};
+		};
 	};
 
 	useEffect(() => {
@@ -86,7 +117,6 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	useEffect(() => {
 		const win = $(window);
-		const shortcuts = Storage.getShortcuts();
 		const setTimeout = () => {
 			window.clearTimeout(timeout.current);
 			timeout.current = window.setTimeout(() => {
@@ -133,7 +163,9 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 				pressed = U.Common.arrayUnique(pressed);
 
-				Storage.setShortcuts({ ...shortcuts, [editingId]: pressed });
+				checkConflicts(editingId, pressed);
+
+				Storage.updateShortcuts(editingId, pressed);
 				setEditingKeys(pressed);
 				setTimeout();
 			});

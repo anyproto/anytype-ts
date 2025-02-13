@@ -1188,6 +1188,8 @@
 	"popupIndexComponentNotFound": "Component %s not found",
 
 	"popupShortcutKeyboard": "Keyboard Shortcuts",
+	"popupShortcutResetKey": "Conflicts with %s. It has been set to blank.",
+	"popupShortcutConflict": "Conflicts with %s",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutInterface": "Interface",

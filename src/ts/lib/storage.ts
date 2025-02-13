@@ -499,6 +499,11 @@ class Storage {
 	setShortcuts (data: any) {
 		this.set('shortcuts', data);
 	};
+
+	updateShortcuts (id: string, keys: string[]) {
+		const list = this.getShortcuts();
+		this.setShortcuts({ ...list, [id]: keys });
+	};
 	
 };
 

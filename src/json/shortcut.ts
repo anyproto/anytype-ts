@@ -250,12 +250,23 @@ const getItems = () => {
 	const sections = getSections();
 	const ret = {};
 
+	let s = 0;
+
 	sections.forEach(section => {
+		s++;
+		
+		let c = 0;
+
 		section.children.forEach(sub => {
+			c++;
+
+			let i = 0;
+
 			sub.children.forEach(item => {
-				if (item.id) {
-					ret[item.id] = item;
-				};
+				i++;
+
+				const key = item.id || [s, c, i].join('-');
+				ret[key] = item;
 			});
 		});
 	});
