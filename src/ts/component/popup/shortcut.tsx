@@ -50,8 +50,9 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		const cn = [ 'item' ];
 
 		let symbols = item.symbols || [];
+		let onClickHandler = () => {};
 
-		if (item.id) {
+		if (item.id && !item.noEdit) {
 			cn.push('canEdit');
 
 			if (editingId == item.id) {
@@ -62,10 +63,12 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			if (error.current[item.id]) {
 				cn.push('hasError');
 			};
+
+			onClickHandler = () => onClick(item);
 		};
 
 		return (
-			<div className={cn.join(' ')} onClick={() => onClick(item)}>
+			<div className={cn.join(' ')} onClick={onClickHandler}>
 				<div className="flex">
 					<div className="name">{item.name}</div>
 					{symbols.length ? (

@@ -1243,7 +1243,15 @@ class Keyboard {
 	getCaption (id: string) {
 		let ret = '';
 		if (this.shortcuts[id]) {
-			ret = this.shortcuts[id].symbols.join(' + ');
+			ret = (this.shortcuts[id].symbols || []).join(' + ');
+		};
+		return ret;
+	};
+
+	getKeys (id: string) {
+		let ret = '';
+		if (this.shortcuts[id]) {
+			ret = (this.shortcuts[id].keys || []).join('+');
 		};
 		return ret;
 	};

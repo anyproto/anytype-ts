@@ -96,8 +96,8 @@ const getSections = () => {
 						{ name: translate('popupShortcutMainStructuring1'), keys: [ 'enter' ] },
 						{ name: translate('popupShortcutMainStructuring2'), keys: [ 'shift', 'enter' ] },
 						{ name: translate('popupShortcutMainStructuring3'), keys: [ 'delete' ] },
-						{ name: translate('popupShortcutMainStructuring4'), keys: [ 'tab' ] },
-						{ name: translate('popupShortcutMainStructuring5'), keys: [ 'shift', 'tab' ] },
+						{ id: 'indent', name: translate('popupShortcutMainStructuring4'), keys: [ 'tab' ], noEdit: true },
+						{ id: 'outdent', name: translate('popupShortcutMainStructuring5'), keys: [ 'shift', 'tab' ], noEdit: true },
 
 						{ name: translate('popupShortcutMainSelection1'), text: translate('popupShortcutMainSelectionDblClick') },
 						{ name: translate('popupShortcutMainSelection2'), text: translate('popupShortcutMainSelectionTplClick') },
