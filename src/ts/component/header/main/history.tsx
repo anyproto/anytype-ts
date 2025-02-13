@@ -11,8 +11,6 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 	const { rootId, renderLeftIcons, onRelation } = props;
 	const [ version, setVersion ] = useState<I.HistoryVersion | null>(null);
 	const [ dummyState, setDummyState ] = useState(0);
-	const cmd = keyboard.cmdSymbol();
-	const shift = keyboard.shiftSymbol();
 	const object = S.Detail.get(rootId, rootId, []);
 	const showMenu = !U.Object.isTypeOrRelationLayout(object.layout);
 

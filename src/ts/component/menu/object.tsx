@@ -92,9 +92,6 @@ class MenuObject extends React.Component<I.Menu> {
 		const { blockId, rootId, isFilePreview } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
-		const cmd = keyboard.cmdSymbol();
-		const alt = keyboard.altSymbol();
-		const shift = keyboard.shiftSymbol();
 		const isTemplate = U.Object.isTemplate(object.type);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isChat = U.Object.isChatLayout(object.layout);
