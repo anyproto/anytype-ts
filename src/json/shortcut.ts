@@ -263,40 +263,4 @@ const getItems = () => {
 	return ret;
 };
 
-	/*
-	return [
-		{
-			id: 'main',
-			name: translate('popupShortcutMain'),
-			children: [
-				{
-					name: translate('commonActions'), children: [
-						{ com: '/',						 name: translate('popupShortcutMainActions1') },
-						{ com: `${cmd} + /`,			 name: translate('popupShortcutMainActions2') },
-						{ mac: `${cmd} + Delete`,		 com: 'Ctrl + Backspace',	 name: translate('popupShortcutMainActions3') },
-						{ com: `${cmd} + C`,			 name: translate('popupShortcutMainActions4') },
-						{ com: `${cmd} + X`,			 name: translate('popupShortcutMainActions5') },
-						{ com: `${cmd} + V`,			 name: translate('popupShortcutMainActions6') },
-					]
-				},
-			],
-		},
-
-		{
-			id: 'command',
-			name: translate('popupShortcutCommand'),
-			children: [
-				{
-					name: translate('commonMenu'), children: [
-						{ com: '/',					 name: translate('popupShortcutCommandMenu1') },
-						{ com: '↓ & ↑',				 name: translate('popupShortcutCommandMenu2') },
-						{ com: '→ & ←',				 name: translate('popupShortcutCommandMenu3') },
-						{ com: 'Esc or Clear /',	 name: translate('popupShortcutCommandMenu4') },
-					]
-				},
-			],
-		},
-	];
-	*/
-
 export { getSections, getItems };

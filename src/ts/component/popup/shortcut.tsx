@@ -92,7 +92,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			timeout.current = window.setTimeout(() => {
 				keyboard.initShortcuts();
 				setEditingId('');
-			}, 1000);
+			}, 2000);
 		};
 
 		win.off('keyup.shortcut keydown.shortcut');
@@ -107,6 +107,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 				const metaKeys = keyboard.metaKeys(e);
 				const key = keyboard.eventKey(e);
+				const code = String(e.code || '').toLowerCase();
 				const skip = [ Key.meta, Key.ctrl ];
 
 				if (key == Key.escape) {
@@ -120,7 +121,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				};
 
 				if (!skip.includes(key)) {
-					pressed.push(key);
+					if (code.startsWith('key')) {
+						pressed.push(code.replace('key', ''));
+					} else 
+					if (code.startsWith('digit')) {
+						pressed.push(code.replace('digit', ''));
+					} else {
+						pressed.push(key);
+					};
 				};
 
 				pressed = U.Common.arrayUnique(pressed);
