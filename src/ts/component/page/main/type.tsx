@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Header, Footer, Loader, ListPreviewObject, ListObject, Select, Deleted, HeadSimple, EditorControls, Block } from 'Component';
+import { Icon, Header, Footer, Loader, ListPreviewObject, Select, Deleted, HeadSimple, EditorControls, Block } from 'Component';
 import { I, C, S, U, J, focus, Action, analytics, Relation, translate } from 'Lib';
 
 interface State {
@@ -210,17 +210,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<div className="section set">
 							<div className="title">{totalObject} {U.Common.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
-								<ListObject 
-									{...this.props} 
-									sources={[ rootId ]} 
-									spaceId={this.getSpaceId()}
-									subId={subIdObject} 
-									rootId={rootId} 
-									columns={columns} 
-									relationKeys={recommendedKeys}
-									route={analytics.route.screenType}
-								/>
-
 								{children.map((block: I.Block, i: number) => (
 									<Block
 										{...this.props}
