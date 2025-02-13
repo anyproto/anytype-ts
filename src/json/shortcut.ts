@@ -90,8 +90,8 @@ const getSections = () => {
 
 				{ 
 					name: translate('popupShortcutEditor'), children: [
-						{ name: translate('popupShortcutMainActions1'), keys: [ '/' ] },
-						{ name: translate('popupShortcutMainActions2'), keys: [ cmdKey, '/' ] },
+						{ id: 'menuAdd', name: translate('popupShortcutMainActions1'), keys: [ '/' ] },
+						{ id: 'menuAction', name: translate('popupShortcutMainActions2'), keys: [ cmdKey, '/' ] },
 
 						{ name: translate('popupShortcutMainStructuring1'), keys: [ 'enter' ] },
 						{ name: translate('popupShortcutMainStructuring2'), keys: [ 'shift', 'enter' ] },
@@ -101,9 +101,9 @@ const getSections = () => {
 
 						{ name: translate('popupShortcutMainSelection1'), text: translate('popupShortcutMainSelectionDblClick') },
 						{ name: translate('popupShortcutMainSelection2'), text: translate('popupShortcutMainSelectionTplClick') },
-						{ name: translate('popupShortcutMainSelection3'), keys: [ cmdKey, 'a' ] },
-						{ name: translate('popupShortcutMainActions7'), keys: [ cmdKey, 'd' ] },
-						{ name: translate('popupShortcutMainActions8'), keys: [ cmdKey, 'e' ] },
+						{ id: 'selectAll', name: translate('popupShortcutMainSelection3'), keys: [ cmdKey, 'a' ] },
+						{ id: 'duplicate', name: translate('popupShortcutMainActions7'), keys: [ cmdKey, 'd' ] },
+						{ id: 'menuSmile', name: translate('popupShortcutMainActions8'), keys: [ cmdKey, 'e' ] },
 						{ name: translate('popupShortcutMainSelection4'), keys: [ 'shift', '↑' ] },
 						{ name: translate('popupShortcutMainSelection7'), keys: [ 'shift', '↓' ] },
 						{ name: translate('popupShortcutMainSelection5'), keys: [ cmdKey, 'click' ] },
