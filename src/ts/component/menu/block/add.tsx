@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, C, S, U, J, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation } from 'Lib';
+import { I, C, S, U, J, M, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation } from 'Lib';
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
@@ -574,8 +574,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			if (item.isBlock) {
 				const param: any = {
 					type: item.type,
-					bgColor: block.bgColor,
-					hAlign: block.hAlign,
 					vAlign: block.vAlign,
 					content: {},
 				};
@@ -613,6 +611,25 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 				if (item.type == I.BlockType.Embed) {
 					param.content.processor = item.itemId;
+				};
+
+				const newBlock = new M.Block(param);
+				if (newBlock.canHaveAlign()) {
+					const restricted = [];
+
+					if (!newBlock.isText()) {
+						restricted.push(I.BlockHAlign.Justify);
+					};
+					if (newBlock.isTextQuote()) {
+						restricted.push(I.BlockHAlign.Center);
+					};
+					if (!restricted.includes(block.hAlign)) {
+						param.hAlign = block.hAlign;
+					};
+				};
+
+				if (newBlock.canHaveBackground()) {
+					param.bgColor = block.bgColor;
 				};
 
 				if (item.type == I.BlockType.Table) {

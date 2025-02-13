@@ -65,6 +65,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const checkRtl = keyboard.isRtl || U.Common.checkRtl(text);
 
 		let marker: any = null;
+		let markerIcon = null;
 		let placeholder = translate('placeholderBlock');
 		let additional = null;
 		let spellcheck = true;
@@ -89,7 +90,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				placeholder = translate('defaultNamePage');
 
 				if (root && U.Object.isTaskLayout(root.layout)) {
-					marker = { type: I.MarkerType.Task, className: 'check', active: checked, onClick: this.onCheckbox };
+					markerIcon = (
+						<IconObject 
+							object={{ id: rootId, layout: root.layout, done: checked }} 
+							size={30} 
+							iconSize={30}
+							canEdit={!readonly}
+							onCheckbox={this.onCheckbox}
+						/>
+					);
 				};
 				break;
 			};
@@ -175,6 +184,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			>
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
+					{markerIcon}
 				</div>
 
 				{additional ? <div className="additional">{additional}</div> : ''}

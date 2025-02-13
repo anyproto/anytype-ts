@@ -23,6 +23,16 @@ class DetailStore {
 		});
 	};
 
+	private createListItem (k: string, v: any): Detail {
+		const el = { relationKey: k, value: v };
+
+		makeObservable(el, { value: observable });
+		intercept(el as any, (change: any) => {
+			return (change.newValue === el[change.name] ? null : change); 
+		});
+		return el;
+	}; 
+
 	/** Idempotent. adds details to the detail store. */
 	public set (rootId: string, items: Item[]) {
 		if (!rootId) {
@@ -36,15 +46,7 @@ class DetailStore {
 			const list: Detail[] = [];
 
 			for (const k in item.details) {
-				const el = { relationKey: k, value: item.details[k] };
-
-				makeObservable(el, { value: observable });
-
-				intercept(el as any, (change: any) => { 
-					return (change.newValue === el[change.name] ? null : change); 
-				});
-
-				list.push(el);
+				list.push(this.createListItem(k, item.details[k]));
 			};
 
 			map.set(item.id, list);
@@ -85,19 +87,16 @@ class DetailStore {
 		};
 
 		for (const k in item.details) {
-			let el = list.find(it => it.relationKey == k);
+			if (clear) {
+				list.push(this.createListItem(k, item.details[k]));
+				continue;
+			};
+
+			const el = list.find(it => it.relationKey == k);
 			if (el) {
-				set(el, { value: item.details[k] });
+				el.value = item.details[k];
 			} else {
-				el = { relationKey: k, value: item.details[k] };
-
-				makeObservable(el, { value: observable });
-
-				list.push(el);
-
-				intercept(el as any, (change: any) => { 
-					return (change.newValue === el[change.name] ? null : change); 
-				});
+				list.push(this.createListItem(k, item.details[k]));
 			};
 		};
 

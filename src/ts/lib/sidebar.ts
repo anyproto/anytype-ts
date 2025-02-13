@@ -137,6 +137,7 @@ class Sidebar {
 		const { width, isClosed } = this.data;
 		
 		isClosed ? this.open(width) : this.close();
+		S.Menu.closeAll();
 	};
 
 	setElementsWidth (width: any): void {
@@ -419,6 +420,10 @@ class Sidebar {
 
 	rightPanelSetState (v: any) {
 		S.Common.getRef('sidebarRight')?.setState(v);
+	};
+
+	settingsOpen (id?: string) {
+		U.Router.go(`/main/settings/${id || ''}`, {});
 	};
 
 };

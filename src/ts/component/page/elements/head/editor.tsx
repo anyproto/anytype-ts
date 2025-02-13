@@ -30,7 +30,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 			return null;
 		};
 
-		const check = U.Data.checkDetails(rootId);
+		const check = U.Data.checkDetails(rootId, rootId, [ 'layout', 'layoutAlign' ]);
 		const header = S.Block.getLeaf(rootId, 'header');
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });

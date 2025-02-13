@@ -36,6 +36,7 @@
 	@import "./sidebar/widget";
 	@import "./sidebar/object";
 	@import "./sidebar/page";
+	@import "./sidebar/settings";
 	
 	.resize-h { width: 10px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -5px; top: 0px; }
 	.resize-h {

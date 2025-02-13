@@ -41,7 +41,7 @@ class Dataview {
 		const ret = relations.filter(it => it).map(relation => {
 			const vr = (view.relations || []).filter(it => it).find(it => it.relationKey == relation.relationKey) || {};
 
-			if (relation.relationKey == 'name') {
+			if ((view.type != I.ViewType.Gallery) && (relation.relationKey == 'name')) {
 				vr.isVisible = true;
 			};
 

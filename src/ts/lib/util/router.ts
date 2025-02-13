@@ -186,7 +186,7 @@ class UtilRouter {
 
 					analytics.removeContext();
 					S.Block.clear(S.Block.widgets);
-					S.Common.defaultType = '';
+					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
 
 					U.Data.onInfo(message.info);

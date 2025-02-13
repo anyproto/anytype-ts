@@ -1,9 +1,10 @@
-import React, { FC, forwardRef, MouseEvent } from 'react';
+import React, { FC, MouseEvent } from 'react';
 import { U, translate } from 'Lib';
 
 interface Props {
 	object: any;
 	className?: string;
+	withLatex?: boolean;
 	onClick? (e: MouseEvent): void;
 	onMouseDown? (e: MouseEvent): void;
 	onMouseEnter? (e: MouseEvent): void;
@@ -13,6 +14,7 @@ interface Props {
 const ObjectName: FC<Props> = ({
 	object = {},
 	className = 'name',
+	withLatex = false,
 	onClick,
 	onMouseDown,
 	onMouseEnter,
@@ -25,10 +27,14 @@ const ObjectName: FC<Props> = ({
 	let name = String(object.name || '');
 	if (!isDeleted) {
 		if (U.Object.isNoteLayout(layout)) {
-			name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
+			name = snippet || `<span class="empty">${translate('commonEmpty')}</span>`;
 		} else {
 			name = U.Object.name(object);
 		};
+	};
+
+	if (withLatex) {
+		name = U.Common.getLatex(name);
 	};
 
 	return (
@@ -39,7 +45,7 @@ const ObjectName: FC<Props> = ({
 			onMouseEnter={onMouseEnter} 
 			onMouseLeave={onMouseLeave}
 		>
-			<span>{name}</span>
+			<span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
 		</div>
 	);
 

@@ -231,9 +231,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
-				if (!S.Popup.isOpen('settings')) {
-					S.Popup.open('settings', {});
-				};
+				sidebar.settingsOpen();
 			});
 
 			// Create relation
@@ -278,7 +276,7 @@ class Keyboard {
 				if (!S.Popup.isOpen('search')) {
 					this.shortcut(`${cmd}+n`, e, () => {
 						e.preventDefault();
-						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 					});
 				};
 

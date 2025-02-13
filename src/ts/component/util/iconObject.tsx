@@ -341,20 +341,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			defaultIcon('date');
 			break;
 
-		case I.ObjectLayout.Collection:
-		case I.ObjectLayout.Set: {
-			if (iconImage) {
-				cn.push('withImage');
-			};
-
-			if (iconEmoji || iconImage) {
-				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-			} else {
-				defaultIcon('set');
-			};
-			break;
-		};
-
 		case I.ObjectLayout.Human: 
 		case I.ObjectLayout.Participant: {
 			icn = icn.concat([ 'iconImage', 'c' + size ]);
@@ -404,7 +390,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		case I.ObjectLayout.Bookmark: {
 			if (iconImage) {
-				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 			} else {
 				defaultIcon('bookmark');

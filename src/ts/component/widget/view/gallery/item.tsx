@@ -23,16 +23,22 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	const nodeRef = useRef(null);
 	const view = getView();
 	const rootId = keyboard.getRootId();
-	const object = S.Detail.get(subId, id, J.Relation.sidebar.concat(J.Relation.cover));
+	const object = S.Detail.get(subId, id, J.Relation.sidebar.concat(J.Relation.cover).concat(view.coverRelationKey));
 	const { isReadonly, isArchived, restrictions } = object;
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const cn = [ 'item' ];
 	const cover = view ? Dataview.getCoverObject(subId, object, view.coverRelationKey) : null;
+	const nameRelation = view.getRelation('name');
+	const withName = !cover || (cover && nameRelation.isVisible);
 
 	if (cover) {
 		cn.push('withCover');
+	};
+
+	if (!withName) {
+		cn.push('withoutName');
 	};
 
 	const onClick = (e: React.MouseEvent) => {
@@ -97,10 +103,12 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		<div className="inner" onMouseDown={onClick}>
 			<ObjectCover object={cover} />
 
-			<div className="info">
-				{icon}
-				<ObjectName object={object} />
-			</div>
+			{withName ? (
+				<div className="info">
+					{icon}
+					<ObjectName object={object} />
+				</div>
+			) : ''}
 		</div>
 	);
 

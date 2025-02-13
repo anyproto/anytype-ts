@@ -227,6 +227,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		if (canAdd && canWrite) {
 			let name = '';
 			let icon = 'plus';
+			let arrow = false;
 
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
@@ -235,9 +236,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				if (addParam.name) {
 					name = addParam.name;
 				};
-
 				if (addParam.icon) {
 					icon = addParam.icon;
+				};
+				if (addParam.arrow) {
+					arrow = true;
 				};
 			};
 
@@ -250,7 +253,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					items.unshift({ isDiv: true });
 				};
 
-				items.unshift({ id: 'add', icon, name, isAdd: true });
+				items.unshift({ id: 'add', icon, name, arrow, isAdd: true });
 			};
 		};
 

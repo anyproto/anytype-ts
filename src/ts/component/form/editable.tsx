@@ -69,7 +69,8 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	const cnp = [ 'placeholder', classNamePlaceholder ];
 
 	const placeholderCheck = () => {
-		getTextValue() ? placeholderHide() : placeholderShow();	
+		const text = getTextValue();
+		text && !/^\r?\n$/.test(text) ? placeholderHide() : placeholderShow();
 	};
 
 	const placeholderSet = (v: string) => {

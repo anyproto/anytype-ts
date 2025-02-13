@@ -26,13 +26,12 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 		const { rootId, onCopy } = this.props;
 		const root = S.Block.getLeaf(rootId, rootId);
 		const childrenIds = S.Block.getChildrenIds(rootId, rootId);
-		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, []);
+		const check = U.Data.checkDetails(rootId, rootId, [ 'layout', 'layoutAlign' ]);
 		const icon = new M.Block({ id: `${rootId}-icon`, type: I.BlockType.IconPage, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: `${rootId}-cover`, type: I.BlockType.Cover, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];
-		const isSet = U.Object.isSetLayout(object.layout);
-		const isCollection = U.Object.isCollectionLayout(object.layout);
+		const isSet = U.Object.isSetLayout(check.layout);
+		const isCollection = U.Object.isCollectionLayout(check.layout);
 
 		let head = null;
 		let children = S.Block.getChildren(rootId, rootId);
@@ -53,7 +52,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 			children = children.filter(it => it.isDataview());
 			check.withIcon = false;
 		} else
-		if (U.Object.isInHumanLayouts(object.layout)) {
+		if (U.Object.isInHumanLayouts(check.layout)) {
 			icon.type = I.BlockType.IconUser;
 		};
 

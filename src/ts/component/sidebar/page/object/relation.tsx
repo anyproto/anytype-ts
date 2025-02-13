@@ -91,7 +91,8 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 			.map((it) => ({ ...it, onMore: this.onConflict }));
 		const conflictingKeys = conflicts.map(it => it.relationKey);
 
-		let items = (type.recommendedRelations || []).map(it => S.Record.getRelationById(it)).filter(it => it && it.relationKey);
+		let items = (type.recommendedRelations || []).map(it => S.Record.getRelationById(it))
+		items = items.filter(it => it && it.relationKey && !it.isArchived);
 		items = S.Record.checkHiddenObjects(items);
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 

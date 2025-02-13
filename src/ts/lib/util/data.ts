@@ -577,15 +577,17 @@ class UtilData {
 			sorts,
 			keys,
 			limit: J.Constant.limit.menuRecords,
+			noDeps: true,
 		}, callBack);
 	};
 
-	checkDetails (rootId: string, blockId?: string) {
+	checkDetails (rootId: string, blockId?: string, keys?: string[]) {
 		blockId = blockId || rootId;
+		keys = keys || [];
 
 		const object = S.Detail.get(rootId, blockId, [ 
 			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled', 'featuredRelations',
-		].concat(J.Relation.cover), true);
+		].concat(J.Relation.cover).concat(keys), true);
 		const type = S.Record.getTypeById(object.type);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
@@ -614,6 +616,7 @@ class UtilData {
 				ret.withIcon = object.iconEmoji || object.iconImage;
 				break;
 
+			case I.ObjectLayout.Note:
 			case I.ObjectLayout.Bookmark:
 			case I.ObjectLayout.Task: {
 				break;
@@ -1053,14 +1056,10 @@ class UtilData {
 			};
 
 			const membership = new M.Membership(message.membership);
-			const { status, tier } = membership;
+			const { tier } = membership;
 
 			S.Auth.membershipSet(membership);
 			analytics.setTier(tier);
-
-			if (status && (status == I.MembershipStatus.Finalization)) {
-				S.Popup.open('membershipFinalization', { data: { tier } });
-			};
 
 			if (callBack) {
 				callBack(membership);

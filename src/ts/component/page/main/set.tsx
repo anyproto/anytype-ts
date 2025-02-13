@@ -36,7 +36,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	render () {
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const check = U.Data.checkDetails(rootId);
+		const check = U.Data.checkDetails(rootId, rootId, [ 'layout' ]);
 
 		let content = null;
 		if (isDeleted) {
@@ -45,8 +45,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
-			const isCollection = U.Object.isCollectionLayout(object.layout);
+			const isCollection = U.Object.isCollectionLayout(check.layout);
 			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');

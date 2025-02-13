@@ -89,7 +89,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 						compact={this.compact}
 						onClick={e => this.onClick(e, item)}
 						onContext={() => this.onContext(item)}
-						onMouseEnter={() => this.onOver(item)}
+						onMouseEnter={() => this.onOver(item, param.index)}
 						onMouseLeave={() => this.onOut()}
 					/>
 				);
@@ -249,7 +249,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		this.setActive();
+		this.setActive(items[this.n]);
 		this.checkTabButtons();
 	};
 
@@ -561,6 +561,11 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			};
 		};
 
+		let flags = [];
+		if (![ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(this.type)) {
+			flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+		};
+
 		if (this.type == I.ObjectContainerType.Bookmark) {
 			this.onBookmarkMenu(details, cb);
 		} else
@@ -569,8 +574,8 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		} else 
 		if (this.type == I.ObjectContainerType.Type) {
 			sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });
-		}else {
-			keyboard.pageCreate(details, analytics.route.allObjects, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
+		} else {
+			keyboard.pageCreate(details, analytics.route.allObjects, flags, (message: any) => {
 				cb(message.targetId);
 			});
 		};
@@ -719,8 +724,9 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		});
 	};
 
-	onOver (item: any) {
+	onOver (item: any, index: number) {
 		if (!keyboard.isMouseDisabled) {
+			this.n = index;
 			this.setActive(item);
 		};
 	};
@@ -864,7 +870,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 				scrollTo = this.currentIndex;
 			} else {
-				this.setActive();
+				this.setActive(items[this.n]);
 				scrollTo = this.n;
 			};
 
@@ -952,16 +958,8 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		this.renderSelection();
 	};
 
-	setActive (item?: any) {
+	setActive (item: any) {
 		this.unsetActive();
-
-		const items = this.getItems();
-
-		if (!item) {
-			item = items[this.n];
-		} else {
-			this.n = items.findIndex(it => it.id == item.id);
-		};
 
 		if (item) {
 			$(this.node).find(`#item-${item.id}`).addClass('active');
