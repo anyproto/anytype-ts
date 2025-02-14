@@ -46,7 +46,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={this.onUpgrade} />;
 		};
 
-
 		const buttons: I.ButtonComponent[] = [
 			{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: this.onRemove }
 		];
@@ -112,8 +111,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 		const node = $(this.node);
 		const sc = U.Common.getScrollContainer(isPopup);
 		const height = sc.height() - J.Size.header - 36;
-
-		console.log(height);
 
 		node.css({ height });
 	};
