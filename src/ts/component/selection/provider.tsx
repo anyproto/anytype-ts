@@ -45,6 +45,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	const length = list.length;
 	const rectRef = useRef(null);
 	const allowRect = useRef(false);
+	const target = useRef(null);
 
 	const rebind = () => {
 		unbind();
@@ -131,11 +132,11 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		initNodes();
+		target.current = $(e.target).closest('.selectionTarget');
 
 		if (e.shiftKey && focused) {
-			const target = $(e.target).closest('.selectionTarget');
-			const type = target.attr('data-type') as I.SelectType;
-			const id = target.attr('data-id');
+			const type = target.current.attr('data-type') as I.SelectType;
+			const id = target.current.attr('data-id');
 			const ids = get(type);
 
 			if (!ids.length && (id != focused)) {
@@ -387,6 +388,13 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const length = (list[I.SelectType.Block] || []).length;
+		const isPopup = keyboard.isPopup();
+		const popupMatch = keyboard.getPopupMatch();
+		const isSet = !isPopup ? keyboard.isMainSet() : [ 'set' ].includes(popupMatch.params.action);
+
+		if ((!target.current.length && !allowRect.current) || isSet){
+			allowRect.current = true;
+		};
 
 		if (!length) {
 			renderSelection();
@@ -462,6 +470,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		range.current = null;
 		containerOffset.current = null;
 		allowRect.current = false;
+		target.current = null;
 	};
 
 	const set = (type: I.SelectType, list: string[]) => {
