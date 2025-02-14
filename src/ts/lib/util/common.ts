@@ -1106,8 +1106,7 @@ class UtilCommon {
 	drawIcon (id: string, size: number, color: string) {
 		const src = require(`img/icon/type/default/${id}.svg`);
 		const chunk = src.split('base64,')[1];
-		const decoded = atob(chunk);
-
+		const decoded = atob(chunk).replace(/_COLOR_VAR_/g, color);
 		const obj = $(decoded);
 
 		obj.attr({ width: size, height: size, fill: color, stroke: color });
