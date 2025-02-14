@@ -96,6 +96,7 @@ const Input = forwardRef<InputRef, Props>(({
 	const isFocused = useRef(false);
 	const rangeRef = useRef<I.TextRange | null>(null);
 	const cn = [ 'input', `input-${inputType}`, className ];
+	const initialRender = useRef(true);
 
 	if (readonly) {
 		cn.push('isReadonly');
@@ -264,7 +265,14 @@ const Input = forwardRef<InputRef, Props>(({
 		};
 	}, [ maskOptions, focusOnMount ]);
 
-	useEffect(() => onChange?.($.Event('change'), value), [ value ]);
+	useEffect(() => {
+		if (initialRender.current) {
+			initialRender.current = false;
+			return;
+		};
+
+		onChange?.($.Event('change'), value);
+	}, [ value ]);
 
 	useImperativeHandle(ref, () => ({
 		focus,
