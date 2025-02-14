@@ -392,7 +392,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		const popupMatch = keyboard.getPopupMatch();
 		const isSet = !isPopup ? keyboard.isMainSet() : [ 'set' ].includes(popupMatch.params.action);
 
-		if ((target.current.length === 0 && !allowRect.current) || (isSet)){
+		if ((!target.current.length && !allowRect.current) || isSet){
 			allowRect.current = true;
 		};
 
