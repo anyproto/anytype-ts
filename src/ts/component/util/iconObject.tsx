@@ -19,7 +19,6 @@ interface Props {
 	menuId?: string;
 	tooltip?: string;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
-	color?: string;
 	noGallery?: boolean;
 	noUpload?: boolean;
 	noRemove?: boolean;
@@ -97,7 +96,6 @@ const FontSize = {
 	128: 64,
 };
 
-const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type', 'date' ];
 const Ghost = require('img/icon/ghost.svg');
 
 const iconCache: Map<string, string> = new Map();
@@ -128,7 +126,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		noClick = false,
 		menuParam = {},
 		style = {},
-		color = '',
 		getObject,
 		onSelect,
 		onUpload,
@@ -151,7 +148,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
-	const { id, name, iconEmoji, iconImage, iconOption, done, relationFormat, isDeleted } = object || {};
+	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, isDeleted } = object || {};
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
 
@@ -271,7 +268,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	const userSvg = (): string => {
 		const color = J.Theme[theme]?.iconUser;
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${color.bg}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${iconName()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
 				${circle}
@@ -282,11 +279,14 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	const spaceSvg = (option: number): string => {
-		const { bg, list } = J.Theme.iconSpace;
-		const bgColor = bg[list[option - 1]];
+	const bgByOption = (option: number) => {
+		const { bg, list } = J.Theme.icon;
+		return bg[list[option - 1]];
+	};
 
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${iconName()}</text>`;
+	const spaceSvg = (option: number): string => {
+		const bgColor = bgByOption(option);
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
 				<rect width="${size}" height="${size}" fill="${bgColor}"/>
@@ -297,7 +297,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	const iconName = (): string => {
+	const nameString = (): string => {
 		let ret = String(name || translate('defaultNamePage'));
 		ret = U.Smile.strip(ret);
 		ret = ret.trim().substring(0, 1).toUpperCase();
@@ -310,8 +310,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		let src = '';
 		if (type.iconName) {
-			// TODO: put colored type icon
-			// src = U.Common.drawIcon(type.iconName, '#ff0000', iconSize);
+			src = typeIcon(type.iconName, 0);
 		} else {
 			src = require(`img/icon/default/${id}.svg`);
 		};
@@ -321,14 +320,15 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		icon = <img src={src} className={icn.join(' ')} />;
 	};
 
-	const drawIcon = (id: string, color: string, size: number) => {
-		const cacheId = U.Common.toCamelCase(`${id}-${color}-${size}`);
+	const typeIcon = (id: string, option: number) => {
+		const key = [ id, iconSize, option ].join('-');
 
 		let ret = '';
-		if (iconCache.has(cacheId)) {
-			ret = iconCache.get(cacheId);
+		if (iconCache.has(key)) {
+			ret = iconCache.get(key);
 		} else {
 			try {
+				const color = bgByOption(option);
 				const src = require(`img/icon/type/default/${id}.svg`);
 				const chunk = src.split('base64,')[1];
 				const decoded = atob(chunk).replace(/_COLOR_VAR_/g, color);
@@ -337,7 +337,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				obj.attr({ width: size, height: size, fill: color, stroke: color });
 
 				ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
-				iconCache.set(cacheId, ret);
+				iconCache.set(key, ret);
+
 			} catch (e) { /**/ };
 		};
 
@@ -400,8 +401,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.Type: {
-			if (object.iconName) {
-				const src = drawIcon(object.iconName, object.iconOption, iconSize);
+			if (iconName) {
+				const src = typeIcon(iconName, object.iconOption);
 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={src} className={icn.join(' ')} />;

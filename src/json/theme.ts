@@ -1,5 +1,5 @@
 export default {
-	iconSpace: {
+	icon: {
 		text: '#fff',
 		bg: {
 			grey: '#949494',
