@@ -99,6 +99,8 @@ export default {
 		'sourceObject',
 		'uniqueKey',
 		'defaultTemplateId',
+		'iconName',
+		'iconOption',
 	],
 
 	graph: [
