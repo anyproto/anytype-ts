@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.settingsPageContainer { width: calc(100% - 64px); margin: 0 auto; padding: 36px 0px 60px; min-width: 300px; max-width: 640px; }
+.settingsPageContainer { width: calc(100% - 64px); margin: 0 auto; min-width: 300px; max-width: 640px; }
 .settingsPageContainer {
     .title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
     .title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
@@ -90,6 +90,8 @@
         .item::after { content: ', '; }
         .item:last-of-type::after { display: none; }
     }
+
+	> .settingsPage { padding: 36px 0px 60px; }
 
     > .pageSettingsIndex,
     > .pageSettingsAccount {
@@ -377,7 +379,7 @@
         }
     }
 
-    > .pageSettingsSpaceStorageManager { padding: 0px !important; }
+    > .pageSettingsSpaceStorageManager { padding-bottom: 0px; }
     > .pageSettingsSpaceStorageManager {
         > .wrap { height: 100%; display: flex; flex-direction: column; }
 
@@ -387,20 +389,26 @@
             .bar { height: 32px; }
         }
 
-        .objectManagerWrapper {
-            .items {
-                .row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }
+		.fileManagerWrapper { flex-grow: 1; display: flex; flex-direction: column; }
+		.fileManagerWrapper {
+			.title { flex-shrink: 0; }
 
-                .item { gap: 0px 12px; margin-bottom: 0px; }
-                .item {
-                    .objectClickArea { width: calc(100% - 24px); }
-                    .checkbox { margin-right: 6px; }
-                    .iconObject { flex-shrink: 0; }
-                    .name { @include text-overflow-nw; @include text-common; width: 100%; }
-                    .label { @include text-overflow-nw; @include text-small; width: 100%; color: var(--color-text-secondary); margin-bottom: 0px; }
-                }
-            }
-        }
+			.objectManagerWrapper { flex-grow: 1; height: auto; }
+			.objectManagerWrapper {
+				.items {
+					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }
+
+					.item { gap: 0px 12px; margin-bottom: 0px; }
+					.item {
+						.objectClickArea { width: calc(100% - 24px); }
+						.checkbox { margin-right: 6px; }
+						.iconObject { flex-shrink: 0; }
+						.name { @include text-overflow-nw; @include text-common; width: 100%; }
+						.label { @include text-overflow-nw; @include text-small; width: 100%; color: var(--color-text-secondary); margin-bottom: 0px; }
+					}
+				}
+			}
+		}
     }
 
     > .pageSettingsSpaceShare {

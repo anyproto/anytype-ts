@@ -7,6 +7,7 @@ const STORAGE_FULL = 0.7;
 
 const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageManager extends React.Component<I.PageSettingsComponent, {}> {
 
+	node = null;
 	refManager = null;
 
 	constructor (props: I.PageSettingsComponent) {
@@ -57,7 +58,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 		];
 
 		return (
-			<div className="wrap">
+			<div ref={ref => this.node = ref} className="wrap">
 				<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 				<Label text={U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit))} />
 
@@ -104,6 +105,17 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 	onRemove () {
 		Action.delete(this.refManager.getSelected(), analytics.route.settings, () => this.refManager?.selectionClear());
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const node = $(this.node);
+		const sc = U.Common.getScrollContainer(isPopup);
+		const height = sc.height() - J.Size.header - 36;
+
+		console.log(height);
+
+		node.css({ height });
 	};
 
 });
