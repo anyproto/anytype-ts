@@ -19,6 +19,8 @@
 			.icon.dnd { background-image: url('~img/icon/sidebar/dnd.svg'); cursor: grab; }
 			.icon.eye { background-image: url('~img/icon/sidebar/eye0.svg'); }
 			.icon.eye.active { background-image: url('~img/icon/sidebar/eye1.svg'); }
+			.icon.fav { background-image: url('~img/icon/menu/action/fav0.svg'); }
+			.icon.fav.active { background-image: url('~img/icon/menu/action/unfav0.svg'); }
 
 			.iconObject { margin: 0px 6px 0px 0px; flex-shrink: 0; }
 

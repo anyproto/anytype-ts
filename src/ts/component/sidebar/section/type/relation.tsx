@@ -26,12 +26,17 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		));
 
 		const Item = SortableElement((item: any) => {
+			const cf = [ 'fav' ];
 			const ce = [ 'eye' ];
-			const isActive = item.container == 'section-relation-featured';
 			const canDrag = !readonly;
 			const canHide = !readonly;
+			const canFav = !readonly;
 
-			if (isActive) {
+			if (item.container == 'section-relation-featured') {
+				cf.push('active');
+			};
+
+			if (item.container == 'section-relation-hidden') {
 				ce.push('active');
 			};
 
@@ -47,7 +52,8 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 						<ObjectName object={item} />
 					</div>
 					<div className="side right">
-						{canHide ? <Icon className={ce.join(' ')} onClick={e => this.onToggle(e, item.container, item.id)} /> : ''}
+						{canFav ? <Icon className={cf.join(' ')} onClick={e => this.onToggleFav(e, item.container, item.id)} /> : ''}
+						{canHide ? <Icon className={ce.join(' ')} onClick={e => this.onToggleHide(e, item.container, item.id)} /> : ''}
 					</div>
 				</div>
 			);
@@ -116,12 +122,12 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		keyboard.disableSelection(false);
 	};
 
-	onToggle (e: any, container: string, id: string) {
+	onToggleFav (e: any, container: string, id: string) {
 		e.stopPropagation();
 
 		const { object, onChange } = this.props;
 
-		let { recommendedFeaturedRelations, recommendedRelations } = object;
+		let { recommendedFeaturedRelations, recommendedHiddenRelations, recommendedRelations } = object;
 
 		switch (container) {
 			case 'section-relation-featured': {
@@ -135,10 +141,52 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				recommendedFeaturedRelations.unshift(id);
 				break;
 			};
+
+			case 'section-relation-hidden': {
+				recommendedHiddenRelations = recommendedHiddenRelations.filter(it => it != id);
+				recommendedFeaturedRelations.unshift(id);
+				break;
+			};
+
 		};
 
 		onChange({
 			recommendedFeaturedRelations,
+			recommendedHiddenRelations,
+			recommendedRelations,
+		});
+	};
+
+	onToggleHide (e: any, container: string, id: string) {
+		e.stopPropagation();
+
+		const { object, onChange } = this.props;
+
+		let { recommendedFeaturedRelations, recommendedHiddenRelations, recommendedRelations } = object;
+
+		switch (container) {
+			case 'section-relation-featured': {
+				recommendedFeaturedRelations = recommendedFeaturedRelations.filter(it => it != id);
+				recommendedHiddenRelations.unshift(id);
+				break;
+			};
+
+			case 'section-relation-recommended': {
+				recommendedRelations = recommendedRelations.filter(it => it != id);
+				recommendedHiddenRelations.unshift(id);
+				break;
+			};
+
+			case 'section-relation-hidden': {
+				recommendedHiddenRelations = recommendedHiddenRelations.filter(it => it != id);
+				recommendedRelations.unshift(id);
+				break;
+			};
+		};
+
+		onChange({
+			recommendedFeaturedRelations,
+			recommendedHiddenRelations,
 			recommendedRelations,
 		});
 	};

@@ -98,6 +98,7 @@ export default {
 		'featuredRelations',
 		'recommendedRelations',
 		'recommendedFeaturedRelations',
+		'recommendedHiddenRelations',
 		'recommendedLayout',
 		'sourceObject',
 		'uniqueKey',

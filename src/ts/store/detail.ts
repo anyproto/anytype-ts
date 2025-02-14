@@ -240,6 +240,7 @@ class DetailStore {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		object.recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
+		object.recommendedHiddenRelations = Relation.getArrayValue(object.recommendedHiddenRelations);
 		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
