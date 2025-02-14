@@ -48,9 +48,10 @@
             }
         }
 
-        .logout { display: flex; align-content: center; justify-content: center; gap: 0px 8px; }
+        .logout { display: flex; align-items: center; justify-content: center; gap: 0px 8px; border-radius: 8px; padding: 4px 0px; }
         .logout {
-            .icon { width: 20px; height: 20px; background-size: 20px; margin-left: -8px; background-image: url('~img/icon/popup/settings/logout.svg'); }
+            .icon { width: 20px; height: 20px; background-size: 20px; background-image: url('~img/icon/popup/settings/logout.svg'); }
         }
+		.logout:hover { background-color: var(--color-shape-highlight-medium); }
     }
 }

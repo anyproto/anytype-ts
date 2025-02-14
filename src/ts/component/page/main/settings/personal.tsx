@@ -112,7 +112,13 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 					{canHideMenu ? (
 						<div className="item">
 							<Label text={translate('electronMenuShowMenu')} />
-							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)} />
+							<Switch 
+								className="big" 
+								value={!hideMenuBar} 
+								onChange={(e: any, v: boolean) => {
+									Renderer.send('setMenuBarVisibility', v);
+								}} 
+							/>
 						</div>
 					) : ''}
 				</div>

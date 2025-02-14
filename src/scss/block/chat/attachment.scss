@@ -91,9 +91,9 @@
 	}
 }
 
-.attachments.layout-1 { max-width: 360px; }
+.attachments.layout-1 { max-width: 360px; max-height: 360px; }
 .attachments.layout-1 {
-	.attachment { max-width: 360px; max-height: 360px; aspect-ratio: unset; }
+	.attachment { max-width: 100%; max-height: 100%; aspect-ratio: unset; }
 	.attachment {
 		.image { aspect-ratio: unset; }
 	}

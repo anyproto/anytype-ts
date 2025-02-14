@@ -11,26 +11,12 @@ const PageMainSettingsSpacesList = observer(class PageMainSettingsSpacesList ext
 
 		const Row = (space: any) => {
 			const participant = U.Space.getMyParticipant(space.targetSpaceId);
-			const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
-
-			let creatorElement = null;
-			if (participant && !participant.isOwner && !creator._empty_) {
-				creatorElement = (
-					<div className="creator">
-						<IconObject object={creator} size={16} />
-						<ObjectName object={creator} />
-					</div>
-				);
-			};
 
 			return (
 				<div className="row">
 					<div className="col colObject" onClick={() => this.onClick(space)}>
 						<IconObject object={space} size={40} />
-						<div className="info">
-							<ObjectName object={space} />
-							{creatorElement}
-						</div>
+						<ObjectName object={space} />
 					</div>
 					<div className="col">{participant ? translate(`participantPermissions${participant.permissions}`) : ''}</div>
 					<div className="col">{translate(`spaceStatus${space.spaceAccountStatus}`)}</div>

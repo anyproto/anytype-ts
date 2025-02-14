@@ -44,21 +44,25 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 
 	const finalise = () => {
 		S.Popup.closeAll(null, () => {
-			if (status == I.MembershipStatus.Finalization) {
-				S.Popup.open('membershipFinalization', { data: { tier } });
-			} else {
-				S.Popup.open('membership', {
-					onClose: () => {
-						sidebar.settingsOpen('membership');
-					},
-					data: {
-						tier: membership.tier,
-						success: true,
-					},
-				});
+			U.Data.getMembershipStatus((membership: I.Membership) => {
+				const { status, tier } = membership;
 
-				analytics.event('ChangePlan', { params: { tier }});
-			};
+				if (status == I.MembershipStatus.Finalization) {
+					S.Popup.open('membershipFinalization', { data: { tier } });
+				} else {
+					S.Popup.open('membership', {
+						onClose: () => {
+							sidebar.settingsOpen('membership');
+						},
+						data: {
+							tier: membership.tier,
+							success: true,
+						},
+					});
+
+					analytics.event('ChangePlan', { params: { tier }});
+				};
+			});
 		});
 	};
 

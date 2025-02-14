@@ -88,7 +88,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					const routeParam = {
 						replace: true, 
 						onRouteChange: () => {
-							S.Common.fullscreenObjectSet(true);
 							S.Common.showRelativeDatesSet(true);
 
 							U.Space.initSpaceState();

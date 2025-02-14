@@ -1002,7 +1002,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	canSend (): boolean {
-		return !this.isLoading.length && Boolean(this.editingId || this.getTextValue() || this.state.attachments.length || this.marks.length);
+		return !this.isLoading.length && Boolean(this.editingId || this.getTextValue().trim().length || this.state.attachments.length || this.marks.length);
 	};
 
 	hasSelection (): boolean {
