@@ -23,9 +23,17 @@
 			.inner { height: 35px; }
 		}
 
-		.body.smile, .body.library { display: flex; flex-direction: column; height: 100%; }
-		.body.smile, .body.library {
+		.body.smile, .body.icon, .body.library { display: flex; flex-direction: column; height: 100%; }
+		.body.smile, .body.icon, .body.library {
 			.items { height: 100%; }
+		}
+
+		.body.icon {
+			.row { padding: 0px 12px; display: grid; grid-template-columns: repeat(9, 1fr); }
+
+			.item { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; position: relative; border-radius: 6px; padding: 0px; }
+			.item::before { display: none; }
+			.item.active { background: var(--color-shape-highlight-medium); }
 		}
 
 		.body.smile {

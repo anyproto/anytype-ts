@@ -100,6 +100,8 @@ const FontSize = {
 const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type', 'date' ];
 const Ghost = require('img/icon/ghost.svg');
 
+const cacheIcon: Map<string, string> = new Map();
+
 const CheckboxTask = {
 	'': {
 		0: require('img/icon/object/checkbox0.svg'),
@@ -303,28 +305,25 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const defaultIcon = (id: string) => {
-		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'iconName' ], true);
-
 		let src = '';
-		if (type.iconName) {
-			// TODO: put colored type icon
-			// src = drawIcon(type.iconName, iconSize, 0);
+		if (cacheIcon[id]) {
+			src = cacheIcon[id];
 		} else {
-			src = require(`img/icon/default/${id}.svg`);
+			const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'iconName' ], true);
+
+			if (type.iconName) {
+				// TODO: put colored type icon
+				// src = U.Common.drawIcon(type.iconName, iconSize, '#ff0000');
+			} else {
+				src = require(`img/icon/default/${id}.svg`);
+			};
+
+			cacheIcon.set(id, src);
 		};
 
 		cn.push('withDefault');
 		icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 		icon = <img src={src} className={icn.join(' ')} />;
-	};
-
-	const drawIcon = (id: string, size: number, color: string) => {
-		const src = require(`img/icon/default/${icon}.svg`);
-		const obj = $(src);
-
-		obj.attr({ width: size, height: size, fill: color });
-
-		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
 	};
 
 	switch (layout) {

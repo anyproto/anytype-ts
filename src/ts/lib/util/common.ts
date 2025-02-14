@@ -1103,6 +1103,18 @@ class UtilCommon {
 		return text;
 	};
 
+	drawIcon (id: string, size: number, color: string) {
+		const src = require(`img/icon/type/default/${id}.svg`);
+		const chunk = src.split('base64,')[1];
+		const decoded = atob(chunk);
+
+		const obj = $(decoded);
+
+		obj.attr({ width: size, height: size, fill: color, stroke: color });
+
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+	};
+
 };
 
 export default new UtilCommon();
