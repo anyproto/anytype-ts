@@ -6,7 +6,6 @@ import { I, S, U, J, Preview, translate, Relation } from 'Lib';
 
 interface Props {
 	id?: string;
-	iconId?: string;
 	layout?: I.ObjectLayout;
 	object?: any;
 	className?: string;
@@ -101,7 +100,7 @@ const FontSize = {
 const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type', 'date' ];
 const Ghost = require('img/icon/ghost.svg');
 
-const cacheIcon: Map<string, string> = new Map();
+const iconCache: Map<string, string> = new Map();
 
 const CheckboxTask = {
 	'': {
@@ -118,7 +117,6 @@ const CheckboxTask = {
 
 const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) => {
 	const {
-		iconId = '',
 		className = '',
 		canEdit = false,
 		size = 20,
@@ -313,7 +311,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		let src = '';
 		if (type.iconName) {
 			// TODO: put colored type icon
-			// src = U.Common.drawIcon(type.iconName, iconSize, '#ff0000');
+			// src = U.Common.drawIcon(type.iconName, '#ff0000', iconSize);
 		} else {
 			src = require(`img/icon/default/${id}.svg`);
 		};
@@ -323,19 +321,27 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		icon = <img src={src} className={icn.join(' ')} />;
 	};
 
-	const drawIcon = (id: string, size: number, color: string) => {
-		const src = cacheIcon[id] ? cacheIcon[id] : require(`img/icon/type/default/${id}.svg`);
-		const chunk = src.split('base64,')[1];
-		const decoded = atob(chunk).replace(/_COLOR_VAR_/g, color);
-		const obj = $(decoded);
+	const drawIcon = (id: string, color: string, size: number) => {
+		const cacheId = U.Common.toCamelCase(`${id}-${color}-${size}`);
 
-		obj.attr({ width: size, height: size, fill: color, stroke: color });
+		let ret = '';
+		if (iconCache.has(cacheId)) {
+			ret = iconCache.get(cacheId);
+		} else {
+			try {
+				const src = require(`img/icon/type/default/${id}.svg`);
+				const chunk = src.split('base64,')[1];
+				const decoded = atob(chunk).replace(/_COLOR_VAR_/g, color);
+				const obj = $(decoded);
 
-		if (!cacheIcon[id]) {
-			cacheIcon.set(id, src);
+				obj.attr({ width: size, height: size, fill: color, stroke: color });
+
+				ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+				iconCache.set(cacheId, ret);
+			} catch (e) { /**/ };
 		};
 
-		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+		return ret;
 	};
 
 	switch (layout) {
@@ -394,6 +400,12 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.Type: {
+			if (object.iconName) {
+				const src = drawIcon(object.iconName, object.iconOption, iconSize);
+
+				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+				icon = <img src={src} className={icn.join(' ')} />;
+			} else
 			if (iconEmoji) {
 				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 			} else {
@@ -460,13 +472,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	if (isDeleted) {
 		icon = <img src={Ghost} className={[ 'iconCommon', `c${iconSize}` ].join(' ')} />;
-	};
-
-	if (iconId) {
-		const src = drawIcon(iconId, iconSize, color);
-
-		icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-		icon = <img src={src} className={icn.join(' ')} />;
 	};
 
 	useImperativeHandle(ref, () => ({
