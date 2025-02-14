@@ -85,8 +85,9 @@
     }
 
     #select-spellcheck {
-        .currentSelected { display: flex; flex-wrap: wrap; gap: 0px 4px; }
-        .item::after { content: ','; }
+		.currentSelected { @include text-overflow-nw; }
+        .currentSelected * { display: inline; }
+        .item::after { content: ', '; }
         .item:last-of-type::after { display: none; }
     }
 
@@ -520,6 +521,10 @@
             .icon.arrow { right: 3px !important; }
         }
     }
+
+	> .pageSettingsLanguage {
+		.title { margin-bottom: 32px !important; }
+	}
 
     > .pageSettingsPersonal {
         .title { margin-bottom: 32px !important; }
