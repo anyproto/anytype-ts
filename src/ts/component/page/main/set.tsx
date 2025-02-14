@@ -263,7 +263,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		// History
-		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
+		keyboard.shortcut(`${cmd}+alt+h`, e, () => {
 			e.preventDefault();
 			U.Object.openAuto({ layout: I.ObjectLayout.History, id: rootId });
 		});

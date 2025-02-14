@@ -21,7 +21,7 @@ interface Props {
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, v: string): void;
 	onKeyUp?(e: any, v: string): void;
-	onChange?(value: string): void;
+	onChange?(v: string): void;
 	onSelect?(e: any): void;
 	onClear?(): void;
 	onIconClick?(e: any): void;

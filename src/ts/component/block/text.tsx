@@ -385,11 +385,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
 			{ key: `${cmd}+shift+arrowleft` },
 			{ key: `${cmd}+shift+arrowright` },
-			{ key: `${cmd}+shift+r` },
+			{ key: keyboard.getKeys('relation') },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
-			{ key: `${cmd}+d`, preventDefault: true },
-			{ key: `${cmd}+a`, preventDefault: true },
+			{ key: keyboard.getKeys('duplicate'), preventDefault: true },
+			{ key: keyboard.getKeys('selectAll'), preventDefault: true },
 			{ key: `${cmd}+[` },
 			{ key: `${cmd}+]` },
 			{ key: `${cmd}+=` },
@@ -404,11 +404,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+7` },
 			{ key: `${cmd}+8` },
 			{ key: `${cmd}+9` },
-			{ key: `${cmd}+z`, preventDefault: true },
-			{ key: `${cmd}+shift+z`, preventDefault: true },
-			{ key: `${cmd}+/` },
-			{ key: `tab`, preventDefault: true },
-			{ key: `shift+tab`, preventDefault: true },
+			{ key: keyboard.getKeys('undo'), preventDefault: true },
+			{ key: keyboard.getKeys('redo'), preventDefault: true },
+			{ key: keyboard.getKeys('menuAction') },
+			{ key: keyboard.getKeys('indent'), preventDefault: true },
+			{ key: keyboard.getKeys('outdent'), preventDefault: true },
 			{ key: `shift+space` },
 			{ key: `shift+arrowleft` },
 			{ key: `shift+arrowright` },
@@ -437,10 +437,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (range.to == value.length) {
 				saveKeys.push({ key: `arrowright, arrowdown` });
 			};
-		};
-		
-		for (let i = 0; i < 9; ++i) {
-			saveKeys.push({ key: `${cmd}+${i}` });
 		};
 
 		// Make div

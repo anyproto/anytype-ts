@@ -59,21 +59,14 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const renderLeftIcons = (withGraph?: boolean, onOpen?: () => void) => {
-		const cmd = keyboard.cmdSymbol();
-		const alt = keyboard.altSymbol();
-		const isWin = U.Common.isPlatformWindows();
-		const isLinux = U.Common.isPlatformLinux();
-		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
-		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
-
 		const buttons: any[] = [
 			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
-			{ id: 'back', name: translate('commonBack'), caption: cb, onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
-			{ id: 'forward', name: translate('commonForward'), caption: cf, onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
+			{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
+			{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
 		];
 
 		if (withGraph) {
-			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: onGraph });
+			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph });
 		};
 
 		return (
@@ -86,7 +79,13 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 					};
 
 					return (
-						<Icon key={item.id} className={cn.join(' ')} onClick={e => item.onClick(e)} />
+						<Icon 
+							key={item.id} 
+							tooltip={item.name} 
+							tooltipCaption={item.caption} 
+							className={cn.join(' ')} 
+							onClick={e => item.onClick(e)} 
+						/>
 					);
 				})}
 			</>
