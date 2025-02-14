@@ -19,6 +19,7 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 		const { readonly } = this.props;
 		const featured = this.getFeatured();
 		const recommended = this.getRecommended();
+		const hidden = this.getHidden();
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -95,6 +96,9 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 
 				<Label text={translate('sidebarTypeRelationSidebar')} />
 				<List data={recommended} container="section-relation-recommended" relationKey="recommendedRelations" />
+
+				<Label text={translate('sidebarTypeRelationHidden')} />
+				<List data={hidden} container="section-relation-hidden" relationKey="recommendedHiddenRelations" />
 			</div>
 		);
     };
@@ -145,6 +149,10 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 
 	getRecommended () {
 		return Relation.getArrayValue(this.props.object.recommendedRelations).map(id => S.Record.getRelationById(id)).filter(it => it);
+	};
+
+	getHidden () {
+		return Relation.getArrayValue(this.props.object.recommendedHiddenRelations).map(id => S.Record.getRelationById(id)).filter(it => it);
 	};
 
 	onAdd (e: any) {

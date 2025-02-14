@@ -1890,6 +1890,7 @@
 	"sidebarTypeRelation": "Fields",
 	"sidebarTypeRelationHeader": "Header",
 	"sidebarTypeRelationSidebar": "Sidebar",
+	"sidebarTypeRelationHidden": "Hidden",
 	"sidebarObjectRelationSetUp": "Set up",
 	"sidebarTypeRelationEmpty": "There are no fields yet",
 
