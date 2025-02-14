@@ -11,8 +11,19 @@ class Dataview {
 		};
 
 		const order: any = {};
+		const object = S.Detail.get(rootId, rootId, [ 'recommendedRelations', 'recommendedFeaturedRelations', 'recommendedFeaturedRelations' ]);
+		const isType = U.Object.isTypeLayout(object.layout);
 
-		let relations = U.Common.objectCopy(S.Record.getDataviewRelations(rootId, blockId)).filter(it => it);
+		let relations = [];
+		if (isType) {
+			const typeIds = (object.recommendedRelations || []).concat(object.recommendedFeaturedRelations || []).concat(object.recommendedFeaturedRelations || []);
+
+			relations = J.Relation.default.map(it => S.Record.getRelationByKey(it)).concat(typeIds.map(it => S.Record.getRelationById(it)));
+		} else {
+			relations = S.Record.getDataviewRelations(rootId, blockId);
+		};
+		relations = U.Common.objectCopy(relations).filter(it => it);
+
 		let o = 0;
 
 		if (!config.debug.hiddenObject) {
