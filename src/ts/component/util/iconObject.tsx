@@ -6,6 +6,7 @@ import { I, S, U, J, Preview, translate, Relation } from 'Lib';
 
 interface Props {
 	id?: string;
+	iconId?: string;
 	layout?: I.ObjectLayout;
 	object?: any;
 	className?: string;
@@ -117,6 +118,7 @@ const CheckboxTask = {
 
 const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) => {
 	const {
+		iconId = '',
 		className = '',
 		canEdit = false,
 		size = 20,
@@ -128,6 +130,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		noClick = false,
 		menuParam = {},
 		style = {},
+		color = '',
 		getObject,
 		onSelect,
 		onUpload,
@@ -326,6 +329,21 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		icon = <img src={src} className={icn.join(' ')} />;
 	};
 
+	const drawIcon = (id: string, size: number, color: string) => {
+		const src = cacheIcon[id] ? cacheIcon[id] : require(`img/icon/type/default/${id}.svg`);
+		const chunk = src.split('base64,')[1];
+		const decoded = atob(chunk).replace(/_COLOR_VAR_/g, color);
+		const obj = $(decoded);
+
+		obj.attr({ width: size, height: size, fill: color, stroke: color });
+
+		if (!cacheIcon[id]) {
+			cacheIcon.set(id, src);
+		};
+
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+	};
+
 	switch (layout) {
 		default:
 		case I.ObjectLayout.Chat:
@@ -448,6 +466,13 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	if (isDeleted) {
 		icon = <img src={Ghost} className={[ 'iconCommon', `c${iconSize}` ].join(' ')} />;
+	};
+
+	if (iconId) {
+		const src = drawIcon(iconId, iconSize, color);
+
+		icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+		icon = <img src={src} className={icn.join(' ')} />;
 	};
 
 	useImperativeHandle(ref, () => ({

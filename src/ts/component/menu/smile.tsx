@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
+import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader, IconObject } from 'Component';
 import { I, C, S, U, J, keyboard, translate, analytics, Preview, Action } from 'Lib';
 
 enum Tab {
@@ -89,22 +89,18 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 					break;
 				};
 
-				const Item = (item: any) => {
-					const src = U.Common.drawIcon(item.id, 30, 'grey');
-
-					return (
-						<div
-							id={`item-${item.id}`}
-							className="item"
-							onMouseEnter={e => this.onMouseEnter(e, item)}
-							onMouseLeave={() => this.onMouseLeave()}
-							onMouseDown={e => this.onMouseDown(e, item)}
-							onContextMenu={e => this.onSkin(e, item)}
-						>
-							<img src={src} />
-						</div>
-					);
-				};
+				const Item = (item: any) => (
+					<div
+						id={`item-${item.id}`}
+						className="item"
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onMouseLeave={() => this.onMouseLeave()}
+						onMouseDown={e => this.onMouseDown(e, item)}
+						onContextMenu={e => this.onSkin(e, item)}
+					>
+						<IconObject iconId={item.id} color={'grey'} iconSize={30} />
+					</div>
+				);
 
 				const rowRenderer = (param: any) => (
 					<CellMeasurer

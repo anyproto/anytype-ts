@@ -28,12 +28,17 @@
 			.items { height: 100%; }
 		}
 
+		.body.icon { padding-top: 8px; }
 		.body.icon {
 			.row { padding: 0px 12px; display: grid; grid-template-columns: repeat(9, 1fr); }
 
 			.item { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; position: relative; border-radius: 6px; padding: 0px; }
 			.item::before { display: none; }
 			.item.active { background: var(--color-shape-highlight-medium); }
+
+			.item {
+				.iconObject { margin: 0px; }
+			}
 		}
 
 		.body.smile {
