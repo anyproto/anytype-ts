@@ -16,6 +16,11 @@ import MenuButton from './button';
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
 
+import MenuCalendar from './calendar';
+import MenuCalendarDay from './calendar/day';
+
+import MenuObjectContext from './object/context';
+
 import MenuSearchText from './search/text';
 import MenuSearchObject from './search/object';
 
@@ -37,7 +42,6 @@ import MenuBlockLatex from './block/latex';
 import MenuBlockLinkSettings from './block/link/settings';
 
 import MenuBlockRelationEdit from './block/relation/edit';
-import MenuBlockRelationView from './block/relation/view';
 
 import MenuRelationSuggest from './relation/suggest';
 import MenuTypeSuggest from './type/suggest';
@@ -60,13 +64,10 @@ import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
 import MenuDataviewViewSettings from './dataview/view/settings';
 import MenuDataviewViewLayout from './dataview/view/layout';
-import MenuDataviewCalendar from './dataview/calendar';
-import MenuDataviewCalendarDay from './dataview/calendar/day';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
 import MenuDataviewText from './dataview/text';
 import MenuDataviewSource from './dataview/source';
-import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 import MenuDataviewTemplateContext from './dataview/template/context';
 import MenuDataviewTemplateList from './dataview/template/list';
@@ -95,6 +96,11 @@ const Components: any = {
 	smile:					 MenuSmile,
 	smileSkin:				 MenuSmileSkin,
 
+	calendar:				 MenuCalendar,
+	calendarDay:			 MenuCalendarDay,
+
+	objectContext:			 MenuObjectContext,
+
 	searchText:				 MenuSearchText,
 	searchObject:			 MenuSearchObject,
 
@@ -116,7 +122,6 @@ const Components: any = {
 	blockLinkSettings:		 MenuBlockLinkSettings,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
-	blockRelationView:		 MenuBlockRelationView,
 
 	relationSuggest:		 MenuRelationSuggest,
 	typeSuggest:			 MenuTypeSuggest,
@@ -141,11 +146,8 @@ const Components: any = {
 	dataviewViewList:		 MenuDataviewViewList,
 	dataviewViewSettings:	 MenuDataviewViewSettings,
 	dataviewViewLayout:	 	 MenuDataviewViewLayout,
-	dataviewCalendar:		 MenuDataviewCalendar,
-	dataviewCalendarDay:	 MenuDataviewCalendarDay,
 	dataviewText:			 MenuDataviewText,
 	dataviewSource:			 MenuDataviewSource,
-	dataviewContext:		 MenuDataviewContext,
 	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
 	dataviewTemplateContext: MenuDataviewTemplateContext,
 	dataviewTemplateList:	 MenuDataviewTemplateList,
@@ -868,7 +870,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			if ((item.isDiv || item.isSection) && (items.length > 1)) {
+			if ((item.isDiv || item.isSection || item.isEmpty) && (items.length > 1)) {
 				onArrow(dir);
 				return;
 			};
@@ -974,9 +976,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if (next.isDiv || next.isSection) {
+		if (next.isDiv || next.isSection || next.isEmpty) {
 			index += dir;
 			this.setIndex(index);
+
 			if (items[index]) {
 				this.setActive(items[index], scroll);
 			};

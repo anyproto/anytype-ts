@@ -188,7 +188,7 @@ class UtilObject {
 				typeKey = type.uniqueKey;
 
 				if (!templateId) {
-					templateId = type.defaultTemplateId || J.Constant.templateId.blank;
+					templateId = type.defaultTemplateId || '';
 				};
 			};
 		};
@@ -242,11 +242,6 @@ class UtilObject {
 
 	setDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'done', value: Boolean(done) } ], callBack);
-	};
-
-	setLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		S.Block.update(rootId, rootId, { layout });
-		C.ObjectSetLayout(rootId, layout, callBack);
 	};
 
 	setAlign (rootId: string, align: I.BlockHAlign, callBack?: (message: any) => void) {
@@ -418,7 +413,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {

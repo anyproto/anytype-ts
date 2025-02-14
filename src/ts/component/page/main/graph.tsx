@@ -63,7 +63,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 	const resize = () => {
 		const win = $(window);
-		const obj = U.Common.getPageContainer(isPopup);
+		const obj = U.Common.getPageFlexContainer(isPopup);
 		const node = $(nodeRef.current);
 		const wrapper = obj.find('.wrapper');
 		const oh = obj.height();

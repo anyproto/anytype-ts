@@ -240,7 +240,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		let filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 		];
 		if (data.filters) {
 			filters = filters.concat(data.filters);
@@ -437,7 +437,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				menuParam.className = className.join(' ');
 
 				let filters: I.Filter[] = [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 				];
 				if (data.filters) {

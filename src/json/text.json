@@ -161,6 +161,7 @@
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObjectTypeWithName": "Create Object Type \"%s\"",
 	"commonCreateObject": "Create Object",
+	"commonCreateNewTemplate": "Create new Template",
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
 	"commonShare": "Share",
@@ -190,7 +191,8 @@
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
 	"pluralLCObject": "object|objects",
-	"pluralTemplate": "template|templates",
+	"pluralTemplate": "Template|Templates",
+	"pluralLCTemplate": "template|templates",
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
 	"pluralObjectType": "Object Type|Object Types",
@@ -469,7 +471,6 @@
 
 	"pageMainNavigationItemEmptyTitle": "Object can not be shown",
 
-	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
 
@@ -543,10 +544,14 @@
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
 
-	"editorControlIcon": "Icon",
-	"editorControlCover": "Cover",
-	"editorControlLayout": "Layout",
+	"editorControlIcon0": "Add icon",
+	"editorControlIcon1": "Icon",
+	"editorControlCover0": "Add cover",
+	"editorControlCover1": "Cover",
+	"editorControlLayout": "Settings",
 	"editorControlRelation": "Relations",
+	"editorControlDescription0": "Add description",
+	"editorControlDescription1": "Hide description",
 
 	"editorPagePasteLink": "Paste as link",
 	"editorPageCreateBookmarkObject": "Create Bookmark Object",
@@ -1131,6 +1136,8 @@
 	"popupConfirmSpeedLimitTitle": "Hold up! Turbo typing detected!",
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 
+	"popupConfirmLocalFieldsTitle": "Add Local Fields to current type?",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1444,10 +1451,6 @@
 	"menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
 	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
-	"menuBlockRelationViewFeaturedRelations": "Featured Relations",
-	"menuBlockRelationViewInThisObject": "In this Object",
-	"menuBlockRelationViewFromType": "From Type %s",
-
 	"menuBlockStyleTurnText": "Turn into text",
 	"menuBlockStyleTurnList": "Turn into list",
 	"menuBlockStyleTurnDiv": "Turn into divider",
@@ -1471,10 +1474,10 @@
 	"menuDataviewUrlActionGo9": "Call to",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
-	"menuDataviewContextNoAvailableActions": "No available actions",
-	"menuDataviewContextUnlinkFromCollection": "Unlink from collection",
-	"menuDataviewContextTryAgain": "Please try again",
-	"menuDataviewContextEditRelations": "Edit relations",
+	"menuObjectContextNoAvailableActions": "No available actions",
+	"menuObjectContextUnlinkFromCollection": "Unlink from collection",
+	"menuObjectContextTryAgain": "Please try again",
+	"menuObjectContextEditRelations": "Edit relations",
 
 	"menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
 
@@ -1584,9 +1587,6 @@
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
-
-	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
-	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",
@@ -1875,6 +1875,31 @@
 	"sidebarObjectSortCreated": "Date created",
 	"sidebarObjectSortUpdated": "Date updated",
 	"sidebarObjectSortLastUsed": "Date last used",
+
+	"sidebarTypeTitle": "Editing type",
+	"sidebarSectionLayoutName": "Layout",
+	"sidebarSectionLayoutFormat": "Format",
+	"sidebarSectionLayoutFormatPage": "Page",
+	"sidebarSectionLayoutFormatList": "List",
+	"sidebarSectionLayoutType": "Layout type",
+	"sidebarSectionLayoutAlign": "Header position",
+	"sidebarSectionLayoutWidth": "Layout width",
+	"sidebarSectionLayoutDefaultView": "Default view",
+	"sidebarSectionLayoutDefaultType": "Default type",
+
+	"sidebarTypeRelation": "Fields",
+	"sidebarTypeRelationHeader": "Header",
+	"sidebarTypeRelationSidebar": "Sidebar",
+	"sidebarTypeRelationHidden": "Hidden",
+	"sidebarObjectRelationSetUp": "Set up",
+	"sidebarTypeRelationEmpty": "There are no fields yet",
+
+	"sidebarRelationLocal": "Local Fields",
+	"sidebarTypeRelationLocalDescription": "Some fields are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
+
+	"sidebarRelationLocalAddToCurrentType": "Add to the current type",
+	"sidebarRelationLocalRemoveFromObject": "Remove from object",
+	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

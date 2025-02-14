@@ -137,10 +137,10 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (canDrag) {
 		inner = (
-			<React.Fragment>
+			<>
 				<Handle />
 				{inner}
-			</React.Fragment>
+			</>
 		);
 	};
 

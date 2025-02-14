@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.dragLayer { position: fixed; z-index: 1000; left: -100000px; top: -100000px; }
+.dragLayer { position: fixed; z-index: 1000; left: -1000000px; top: -1000000px; }
 .dragLayer {
 	.blocks { margin: 0px !important; }
 	.blocks {
@@ -36,5 +36,10 @@
 
 	.menus {
 		.menu { position: relative; opacity: 1; transform: none; width: 100%; }
+	}
+
+	.sidebar { position: relative; background: none; }
+	.sidebar {
+		> .sidebarPage { background: none; }
 	}
 }

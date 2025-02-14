@@ -98,7 +98,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		if (!isInline) {
 			node.css({ width: 0, height: 0, marginLeft: 0 });
 
-			const container = U.Common.getPageContainer(isPopup);
+			const container = U.Common.getPageFlexContainer(isPopup);
 			const cw = container.width();
 			const ch = container.height();
 			const mw = cw - PADDING * 2;

@@ -253,7 +253,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const value = Relation.getArrayValue(data.value);
 
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },

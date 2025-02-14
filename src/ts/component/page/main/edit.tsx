@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, S, U, Onboarding, analytics } from 'Lib';
+import { I, S, U, Onboarding, analytics, sidebar } from 'Lib';
 
 const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -14,6 +14,7 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		headerRef.current?.forceUpdate();
+		sidebar.rightPanelSetState({ rootId });
 
 		if (home && (rootId != home.id)) {
 			let key = '';

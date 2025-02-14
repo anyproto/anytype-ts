@@ -74,3 +74,8 @@ export enum ObjectOrigin {
 	Bookmark		 = 8,
 	Api				 = 9,
 };
+
+export enum LayoutFormat {
+	Page = 0,
+	List = 1,
+};

@@ -119,9 +119,9 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		if (isInline) {
 			const records = this.getRecords();
 			content = (
-				<React.Fragment>
+				<>
 					{records.map(id => row(id))}
-				</React.Fragment>
+				</>
 			);
 		} else {
 			content = (

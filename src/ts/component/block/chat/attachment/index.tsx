@@ -294,7 +294,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			return;
 		};
 
-		S.Menu.open('dataviewContext', {
+		S.Menu.open('objectContext', {
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
