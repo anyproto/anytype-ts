@@ -1,17 +1,16 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { IconObject } from 'Component';
-import { I, U, keyboard } from 'Lib';
+import { I, U, keyboard, J } from 'Lib';
 import $ from 'jquery';
 
-const SKINS = [ 1, 2, 3, 4, 5, 6 ];
-
-const MenuSmileSkin = forwardRef<{}, I.Menu>((props, ref) => {
+const MenuSmileColor = forwardRef<{}, I.Menu>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const n = useRef(0);
 	const { param, close } = props;
 	const { data } = param;
-	const { smileId, onSelect } = data;
+	const { itemId, isEmoji, onSelect } = data;
+	const colors = isEmoji ? [ 1, 2, 3, 4, 5, 6 ] : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
 
 	const rebind = () => {
 		unbind();
@@ -32,7 +31,7 @@ const MenuSmileSkin = forwardRef<{}, I.Menu>((props, ref) => {
 
 	const onMouseEnter = (e: any, id: number) => {
 		if (!keyboard.isMouseDisabled) {
-			n.current = SKINS.indexOf(id);
+			n.current = colors.indexOf(id);
 			setActive();
 		};
 	};
@@ -45,9 +44,9 @@ const MenuSmileSkin = forwardRef<{}, I.Menu>((props, ref) => {
 
 			n.current += dir;
 			if (n.current < 0) {
-				n.current = SKINS.length - 1;
+				n.current = colors.length - 1;
 			} else
-			if (n.current >= SKINS.length) {
+			if (n.current >= colors.length) {
 				n.current = 0;
 			};
 
@@ -58,8 +57,8 @@ const MenuSmileSkin = forwardRef<{}, I.Menu>((props, ref) => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			if (SKINS[n.current]) {
-				onSelect(SKINS[n.current]);
+			if (colors[n.current]) {
+				onSelect(colors[n.current]);
 				close();
 			};
 		});
@@ -69,17 +68,21 @@ const MenuSmileSkin = forwardRef<{}, I.Menu>((props, ref) => {
 		const node = $(nodeRef.current);
 
 		node.find('.active').removeClass('active');
-		node.find(`#skin-${SKINS[n.current]}`).addClass('active');
+		node.find(`#color-${colors[n.current]}`).addClass('active');
 	};
 	
 	const Item = (item: any) => (
 		<div 
-			id={`skin-${item.skin}`} 
+			id={`color-${item.color}`}
 			className="item" 
-			onMouseDown={e => onClick(e, item.skin)}
-			onMouseEnter={e => onMouseEnter(e, item.skin)}
+			onMouseDown={e => onClick(e, item.color)}
+			onMouseEnter={e => onMouseEnter(e, item.color)}
 		>
-			<IconObject size={32} object={{ iconEmoji: U.Smile.nativeById(smileId, item.skin) }} />
+			{isEmoji ? (
+				<IconObject size={32} object={{ iconEmoji: U.Smile.nativeById(itemId, item.color) }} />
+			) : (
+				<IconObject iconSize={30} object={{ iconName: itemId, iconOption: item.color, layout: I.ObjectLayout.Type }} />
+			)}
 		</div>
 	);
 
@@ -98,12 +101,12 @@ const MenuSmileSkin = forwardRef<{}, I.Menu>((props, ref) => {
 
 	return (
 		<div ref={nodeRef}>
-			{SKINS.map((skin: any, i: number) => (
-				<Item key={i} skin={skin} />
+			{colors.map((color: any, i: number) => (
+				<Item key={i} color={color} />
 			))}
 		</div>
 	);
 
 });
 
-export default MenuSmileSkin;
+export default MenuSmileColor;

@@ -338,7 +338,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 				ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
 				iconCache.set(key, ret);
-
 			} catch (e) { /**/ };
 		};
 

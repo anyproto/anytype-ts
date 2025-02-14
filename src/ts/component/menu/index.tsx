@@ -15,6 +15,7 @@ import MenuButton from './button';
 
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
+import MenuSmileColor from './smile/color';
 
 import MenuSearchText from './search/text';
 import MenuSearchObject from './search/object';
@@ -94,6 +95,7 @@ const Components: any = {
 
 	smile:					 MenuSmile,
 	smileSkin:				 MenuSmileSkin,
+	smileColor:				 MenuSmileColor,
 
 	searchText:				 MenuSearchText,
 	searchObject:			 MenuSearchObject,

@@ -49,6 +49,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 	id = '';
 	skin = 1;
+	iconColor = 1;
 	cache: any = null;
 	groupCache: any[] = [];
 	row = -1;
@@ -98,7 +99,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 						onMouseDown={e => this.onMouseDown(e, item)}
 						onContextMenu={e => this.onSkin(e, item)}
 					>
-						<IconObject object={{ iconName: item.id, iconOption: 1, layout: I.ObjectLayout.Type }} iconSize={30} />
+						<IconObject object={item} iconSize={30} />
 					</div>
 				);
 
@@ -698,7 +699,15 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		let row = { children: [] };
 
 		for (let i = 0; i < items.length; i++) {
-			row.children.push({ id: items[i] });
+			const id =items[i];
+
+			row.children.push({
+				id,
+				itemId: id,
+				iconName: id,
+				iconOption: this.iconColor,
+				layout: I.ObjectLayout.Type
+			});
 			n++;
 
 			if (n == LIMIT_SMILE_ROW) {
@@ -997,22 +1006,27 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 	};
 
+	onIconColor (e: any, item: any) {
+
+	};
+
 	onSkin (e: any, item: any) {
-		const el = J.Emoji.emojis[item.itemId];
-		if (el.skins.length <= 1) {
+		if (item.layout != I.ObjectLayout.Type && (!item.skins || item.skins.length < 2)) {
 			return;
 		};
 
 		const { getId, close, param } = this.props;
+		const element = `#${getId()} #item-${$.escapeSelector(item.id)}`;
 
-		S.Menu.open('smileSkin', {
+		S.Menu.open('smileColor', {
 			...param,
+			element,
 			type: I.MenuType.Horizontal,
-			element: `#${getId()} #item-${$.escapeSelector(item.id)}`,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			data: {
-				smileId: item.itemId,
+				itemId: item.itemId,
+				isEmoji: item.skins,
 				onSelect: (skin: number) => {
 					this.onSmileSelect(item.itemId, skin);
 					close();

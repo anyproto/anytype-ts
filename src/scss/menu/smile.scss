@@ -34,7 +34,8 @@
 
 			.item { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; position: relative; border-radius: 6px; padding: 0px; }
 			.item::before { display: none; }
-			.item.active { background: var(--color-shape-highlight-medium); }
+			.item.active,
+			.item.hover { background: var(--color-shape-highlight-medium); }
 
 			.item {
 				.iconObject { margin: 0px; }
@@ -135,9 +136,11 @@
 			}
 		}
 	}
-	
-	.menu.menuSmileSkin { padding: 4px 10px; white-space: nowrap; }
-	.menu.menuSmileSkin {
+
+	.menu.menuSmileSkin,
+	.menu.menuSmileColor { padding: 4px 10px; white-space: nowrap; }
+	.menu.menuSmileSkin,
+	.menu.menuSmileColor {
 		.item { display: inline-block; vertical-align: top; width: 40px; height: 40px; position: relative; border-radius: 6px; }
 		.item {
 			.iconObject { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
