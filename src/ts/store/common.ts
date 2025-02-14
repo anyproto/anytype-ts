@@ -216,7 +216,14 @@ class CommonStore {
 	};
 
 	get fullscreenObject (): boolean {
-		return this.boolGet('fullscreenObject');
+		let ret = this.fullscreenObjectValue;
+		if (ret === null) {
+			ret = Storage.get('fullscreenObject');
+		};
+		if (ret === undefined) {
+			ret = true;
+		};
+		return ret;
 	};
 
 	get hideSidebar (): boolean {
