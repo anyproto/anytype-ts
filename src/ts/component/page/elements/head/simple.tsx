@@ -11,6 +11,7 @@ interface Props {
 	noIcon?: boolean;
 	relationKey?: string;
 	onCreate?: () => void;
+	onEdit?: () => void;
 	getDotMap?: (start: number, end: number, callback: (res: Map<string, boolean>) => void) => void;
 };
 
@@ -37,7 +38,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon } = this.props;
+		const { rootId, isContextMenuDisabled, readonly, noIcon, onEdit } = this.props;
 		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
@@ -46,15 +47,17 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+		const isType = U.Object.isTypeLayout(object.layout);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
-		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
+		const canEditIcon = allowDetails && !isRelation;
 		const cn = [ 'headSimple', check.className ];
 
 		const placeholder = {
 			title: this.props.placeholder,
 			description: translate('placeholderBlockDescription'),
 		};
+		const buttons = [];
 
 		const Editor = (item: any) => (
 			<Editable
@@ -74,7 +77,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			/>
 		);
 
-		let button: React.ReactElement = null;
+		let buttonEdit = null;
+		let buttonCreate = null;
 		let descr = null;
 		let featured = null;
 
@@ -82,6 +86,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			if (featuredRelations.includes('description')) {
 				descr = <Editor className="descr" id="description" />;
 			};
+
 			featured = (
 				<Block 
 					{...this.props} 
@@ -99,14 +104,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if (isTypeOrRelation) {
 			if (object.isInstalled) {
-				const text = isRelation ? translate('pageHeadSimpleCreateSet') : translate('commonCreate');
-				const arrow = !isRelation;
-
-				button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
+				if (isType && allowDetails) {
+					buttonEdit = <Button id="button-edit" color="blank" className="c28" text={translate('commonEdit')} onClick={onEdit} />;
+				};
 			} else {
 				const cn = [ 'c36' ];
 				const isInstalled = this.isInstalled();
-
 				const onClick = isInstalled ? null : this.onInstall;
 				const color = isInstalled ? 'blank' : 'black';
 
@@ -114,22 +117,30 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					cn.push('disabled');
 				};
 
-				button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
+				buttonCreate = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 			};
 
 			if (!canWrite) {
-				button = null;
+				buttonCreate = null;
+				buttonEdit = null;
 			};
 		};
 
 		if (isDate) {
-			button = (
-				<React.Fragment>
+			buttonCreate = (
+				<>
 					<Icon className="arrow left withBackground" onClick={() => this.changeDate(-1)} />
 					<Icon className="arrow right withBackground" onClick={() => this.changeDate(1)}/>
 					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
-				</React.Fragment>
+				</>
 			);
+		};
+
+		if (buttonEdit) {
+			buttons.push(() => buttonEdit);
+		};
+		if (buttonCreate) {
+			buttons.push(() => buttonCreate);
 		};
 
 		return (
@@ -152,8 +163,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					{featured}
 				</div>
 
-				{button ? (
-					<div className="side right">{button}</div>
+				{buttons.length ? (
+					<div className="side right">
+						{buttons.map((Component, i) => <Component key={i} />)}
+					</div>
 				) : ''}
 			</div>
 		);
@@ -262,18 +275,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	placeholderCheck (id: string) {
 		if (this.refEditable[id]) {
 			this.refEditable[id].placeholderCheck();
-		};		
-	};
-
-	placeholderHide (id: string) {
-		if (this.refEditable[id]) {
-			this.refEditable[id].placeholderHide();
-		};
-	};
-	
-	placeholderShow (id: string) {
-		if (this.refEditable[id]) {
-			this.refEditable[id].placeholderShow();
 		};
 	};
 
@@ -309,7 +310,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId, getDotMap, relationKey } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
-		S.Menu.open('dataviewCalendar', {
+		S.Menu.open('calendar', {
 			element: '#calendar-icon',
 			horizontal: I.MenuDirection.Center,
 			data: {

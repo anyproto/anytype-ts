@@ -9,7 +9,7 @@ type State = {
 	previewId: string;
 };
 
-const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, State> {
+const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<{}, State> {
 		
 	state: State = {
 		isEditing: false,
@@ -40,11 +40,18 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const cn = [ 'list' ];
-		const bodyCn = [ 'body' ];
+		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const hasShareBanner = U.Space.hasShareBanner();
+
+		if (isEditing) {
+			cn.push('isEditing');
+		};
+
+		if (hasShareBanner) {
+			cn.push('withShareBanner');
+		};
 
 		let content = null;
 
@@ -104,10 +111,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			};
 
 			if (isEditing) {
-				cn.push('isEditing');
-			};
-
-			if (isEditing) {
 				if (blocks.length <= J.Constant.limit.widgets) {
 					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetEditor) });
 				};
@@ -122,9 +125,9 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			};
 
 			content = (
-				<React.Fragment>
+				<>
 					{space && !space._empty_ ? (
-						<React.Fragment>
+						<>
 							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
 
 							<DropTarget 
@@ -145,7 +148,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 									isEditing={isEditing}
 								/>
 							</DropTarget>
-						</React.Fragment>
+						</>
 					) : ''}
 
 					{blocks.map((block, i) => (
@@ -186,12 +189,8 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
 						))}
 					</div>
-				</React.Fragment>
+				</>
 			);
-		};
-
-		if (hasShareBanner) {
-			bodyCn.push('withShareBanner');
 		};
 
 		return (
@@ -205,17 +204,12 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				</div>
 				<div
 					id="body"
-					className={bodyCn.join(' ')}
+					className={cn.join(' ')}
 					onScroll={this.onScroll}
+					onDrop={this.onDrop}
+					onDragOver={e => e.preventDefault()}
 				>
-					<div 
-						id="list"
-						className={cn.join(' ')}
-						onDrop={this.onDrop}
-						onDragOver={e => e.preventDefault()}
-					>
-						{content}
-					</div>
+					{content}
 				</div>
 			</div>
 		);
@@ -276,8 +270,8 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			data: {
 				route: analytics.route.addWidget,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				canAdd: true,
 				addParam: {
@@ -475,4 +469,4 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 });
 
-export default SidebarWidget;
+export default SidebarPageWidget;

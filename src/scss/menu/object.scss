@@ -1,0 +1,10 @@
+@import "~scss/_mixins";
+
+.menus {
+
+	.menu.menuObjectContext { width: var(--menu-width-icon); }
+	.menu.menuObjectContext {
+		.content { max-height: unset; }
+	}
+
+}

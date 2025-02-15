@@ -308,8 +308,12 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const settings = S.Common.getGraph(storageKey);
 		const { id, data } = e.data;
 		const node = $(nodeRef.current);
-		const { left, top } = node.offset();
 
+		if (!node || !node.length) {
+			return;
+		};
+
+		const { left, top } = node.offset();
 		const menuParam = {
 			onOpen: () => isPreviewDisabled.current = true,
 			onClose: () => isPreviewDisabled.current = false,
@@ -430,7 +434,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const onContextMenu = (id: string, param: any) => {
 		const selected = ids.current.length ? ids.current : [ id ];
 
-		S.Menu.open('dataviewContext', {
+		S.Menu.open('objectContext', {
 			...param,
 			data: {
 				route: analytics.route.graph,

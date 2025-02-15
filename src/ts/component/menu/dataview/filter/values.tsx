@@ -122,10 +122,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				list = Relation.getOptions(item.value);
 
 				value = (
-					<React.Fragment>
+					<>
 						{!isReadonly ? <ItemAdd onClick={this.onTag} /> : ''}
 						{list.map(element => <Item key={element.id} {...element} />)}
-					</React.Fragment>
+					</>
 				);
 				break;
 			};
@@ -159,10 +159,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				list = list.filter(it => !it._empty_);
 
 				value = (
-					<React.Fragment>
+					<>
 						{!isReadonly ? <ItemAdd onClick={e => this.onObject(e, item)} /> : ''}
 						{list.map((item: any, i: number) => <Item key={i} {...item} />)}
-					</React.Fragment>
+					</>
 				);
 				break;
 			};
@@ -188,7 +188,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			case I.RelationType.Date: {
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(item.quickOption)) {
 					value = (
-						<React.Fragment>
+						<>
 							<Input 
 								key="filter-value-date-days-input"
 								ref={ref => this.refInput = ref} 
@@ -200,12 +200,12 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								readonly={isReadonly}
 							/>
 							<Icon className="clear" onClick={this.onClear} />
-						</React.Fragment>
+						</>
 					);
 				} else
 				if ([ I.FilterQuickOption.ExactDate ].includes(item.quickOption)) {
 					value = (
-						<React.Fragment>
+						<>
 							<Input 
 								key="filter-value-date-exact-input"
 								ref={ref => this.refInput = ref} 
@@ -217,7 +217,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								readonly={isReadonly}
 							/>
 							<Icon className="clear" onClick={this.onClear} />
-						</React.Fragment>
+						</>
 					);
 					onSubmit = this.onSubmitDate;
 				};
@@ -227,7 +227,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 			default: {
 				value = (
-					<React.Fragment>
+					<>
 						<Input 
 							ref={ref => this.refInput = ref} 
 							value={item.value} 
@@ -238,7 +238,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							readonly={isReadonly}
 						/>
 						<Icon className="clear" onClick={this.onClear} />
-					</React.Fragment>
+					</>
 				);
 				wrapValue = true;
 				break;
@@ -477,7 +477,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					noVirtualisation: true,
 					rebind: this.rebind,
 					value: item[item.id],
-					options,
+					options: U.Menu.prepareForSelect(options),
 					onSelect: (e: any, el: any) => {
 						this.onChange(item.id, el.id);
 					}
@@ -613,8 +613,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const value = item.value || U.Date.now();
 
 		S.Menu.closeAll([ 'select' ], () => {
-			if (S.Menu.isOpen('dataviewCalendar')) {
-				S.Menu.updateData('dataviewCalendar', { value });
+			if (S.Menu.isOpen('calendar')) {
+				S.Menu.updateData('calendar', { value });
 			} else {
 				this.onCalendar(value);
 			};
@@ -634,7 +634,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
 
-		S.Menu.open('dataviewCalendar', {
+		S.Menu.open('calendar', {
 			element: `#${getId()} #value`,
 			horizontal: I.MenuDirection.Center,
 			data: { 
@@ -695,7 +695,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const filters = [];
 
 		if (relation.format == I.RelationType.File) {
-			filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() });
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() });
 		};
 
 		S.Menu.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {

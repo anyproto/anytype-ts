@@ -110,18 +110,6 @@
 		.item:hover { background: var(--color-shape-highlight-medium); }
 	}
 
-    /* BlockRelationView */
-
-    .menu.menuBlockRelationView {
-		.item {
-			.icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
-		}
-
-        .item.add:hover { 
-			.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
-        }
-    }
-
 	/* DataviewRelationEdit */
 
 	.menu.menuDataviewRelationEdit {
@@ -142,9 +130,9 @@
 		.item:hover::before { background: var(--color-shape-highlight-medium); }
     }
 
-    /* DataviewCalendar */
+    /* Calendar */
 
-    .menu.menuDataviewCalendar {
+    .menu.menuCalendar {
 		.head {
 			.side.right {
 				.btn { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }

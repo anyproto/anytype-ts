@@ -588,10 +588,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { space } = S.Common;
 		const { backlink } = this.state;
 		const filter = this.filter;
-		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -769,10 +768,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		if (canWrite) {
 			items.push({ name: translate('commonActions'), isSection: true });
 			items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ], isSmall: true });
-
-			if (hasRelations) {
-				items.push({ id: 'relation', name: translate('commonAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ], isSmall: true });
-			};
 		};
 
 		return items.map(it => {
@@ -848,12 +843,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						break;
 					};
 
-					case 'relation': {
-						$('#button-header-relation').trigger('click');
-						window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), S.Menu.getTimeout() * 2);
-						break;
-					};
-
 					case 'graph':
 					case 'navigation': {
 						U.Object.openEvent(e, { id: rootId, layout: item.layout });
@@ -871,7 +860,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { data } = param;
 		const { route } = data;
 
-		S.Menu.open('dataviewContext', {
+		S.Menu.open('objectContext', {
 			element: `#${getId()} #item-${item.id}`,
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;

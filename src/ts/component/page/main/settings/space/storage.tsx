@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, ListManager, Label, Button, ProgressBar } from 'Component';
+import { Title, ListObjectManager, Label, Button, ProgressBar } from 'Component';
 import { I, J, translate, Action, analytics, U, S } from 'Lib';
 
 const STORAGE_FULL = 0.7;
@@ -71,7 +71,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 					<div className="fileManagerWrapper">
 						<Title className="sub" text={translate('popupSettingsSpaceStorageManagerTitle')} />
 
-						<ListManager
+						<ListObjectManager
 							ref={ref => this.refManager = ref}
 							subId={J.Constant.subId.fileManager}
 							rowLength={2}

@@ -607,7 +607,6 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			help:				 'MenuHelp',
-			blockRelationView:	 'ScreenObjectRelation',
 		};
 
 		return map[id] || '';

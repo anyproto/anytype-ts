@@ -11,7 +11,7 @@ interface State {
 	isEditing: boolean;
 };
 
-const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
+const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
 
@@ -363,4 +363,4 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 
 });
 
-export default pageMainSettingsSpaceIndex;
+export default PageMainSettingsSpaceIndex;

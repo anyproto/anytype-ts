@@ -1106,6 +1106,10 @@ class Dispatcher {
 				S.Block.update(rootId, rootId, { layout: details.layout });
 			};
 
+			if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
+				S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
+			};
+
 			S.Block.checkBlockType(rootId);
 		};
 
@@ -1189,16 +1193,6 @@ class Dispatcher {
 			id: J.Constant.blockId.type,
 			parentId: J.Constant.blockId.header,
 			type: I.BlockType.Type,
-			fields: {},
-			childrenIds: [],
-			content: {}
-		}));
-
-		// BlockChat
-		blocks.push(new M.Block({
-			id: J.Constant.blockId.chat,
-			parentId: rootId,
-			type: I.BlockType.Chat,
 			fields: {},
 			childrenIds: [],
 			content: {}

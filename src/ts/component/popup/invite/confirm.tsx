@@ -61,7 +61,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			spaceId,
 			keys: U.Data.participantRelationKeys(),
 			filters: [
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 			],
 			ignoreHidden: false,
 			ignoreDeleted: true,

@@ -64,19 +64,19 @@ const Pager: FC<Props> = ({
 
 	if (!isShort && (start > 1)) {
 		startPage = (
-			<React.Fragment>
+			<>
 				<Item id="1" />
 				<div className="dots">...</div>
-			</React.Fragment>
+			</>
 		);
 	};
 
 	if (!isShort && (end < pages)) {
 		endPage = (
-			<React.Fragment>
+			<>
 				<div className="dots">...</div>
 				<Item id={pages} />
-			</React.Fragment>
+			</>
 		);
 	};
 
@@ -84,11 +84,11 @@ const Pager: FC<Props> = ({
 		list = <div className="pageItem list">{page} of {pages}</div>;
 	} else {
 		list = (
-			<React.Fragment>
+			<>
 				{items.map((item, i) => (
 					<Item key={i} {...item} />
 				))}
-			</React.Fragment>
+			</>
 		);
 	};
 	

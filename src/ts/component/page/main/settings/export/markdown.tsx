@@ -18,7 +18,7 @@ const PageMainSettingsExportMarkdown = observer(class PageMainSettingsExportMark
 		this.init();
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsExportMarkdownTitle')} />
 
 				<div className="labels">
@@ -50,7 +50,7 @@ const PageMainSettingsExportMarkdown = observer(class PageMainSettingsExportMark
 						onClick={() => onExport(I.ExportType.Markdown, this.data)} 
 					/>
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 
