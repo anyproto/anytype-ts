@@ -225,8 +225,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	const onEmoji = (e: any) => {
 		e.stopPropagation();
 
-		const noGallery = props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human ].includes(object.layout);
+		const noGallery = props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human, I.ObjectLayout.Type ].includes(object.layout);
 		const noUpload = props.noUpload || [ I.ObjectLayout.Type ].includes(object.layout);
+		const withIcons = U.Object.isTypeLayout(object.layout);
 
 		S.Menu.open('smile', { 
 			element: `#${props.id}`,
@@ -237,6 +238,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				spaceId: object.spaceId,
 				noGallery,
 				noUpload,
+				withIcons,
 				noRemove,
 				onSelect: (icon: string) => {
 					if (onSelect) {
@@ -244,6 +246,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 					} else {
 						U.Object.setIcon(object.id, icon, '');
 					};
+				},
+				onIconSelect: (iconName: string, iconOption: number) => {
+					U.Object.setTypeIcon(object.id, iconName, iconOption);
 				},
 				onUpload: (objectId: string) => {
 					if (onUpload) {

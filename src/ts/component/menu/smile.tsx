@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader, IconObject } from 'Component';
 import { I, C, S, U, J, keyboard, translate, analytics, Preview, Action } from 'Lib';
+import { number } from '@rspack/core/compiled/zod';
 
 enum Tab {
 	None	 = 0,
@@ -425,11 +426,12 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		const items = this.getItems();
 		const tabs = this.getTabs();
 		const storage = storageGet();
-		const { tab, skin } = storage;
+		const { tab, skin, iconColor } = storage;
 		
 		this.rebind();
 
 		this.skin = Number(skin) || 1;
+		this.iconColor = Number(iconColor) || 1;
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_SECTION,
@@ -465,7 +467,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		window.clearTimeout(this.timeoutFilter);
 
 		keyboard.setFocus(false);
-		S.Menu.close('smileSkin');
+		S.Menu.close('smileColor');
 
 		this.unbind();
 	};
@@ -746,7 +748,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onKeyDown (e: any) {
-		if (S.Menu.isOpen('smileSkin')) {
+		if (S.Menu.isOpen('smileColor')) {
 			return;
 		};
 
@@ -909,25 +911,37 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		this.setActive(current.children[this.coll], this.row);
 	};
 
-	onSmileSelect (id: string, skin: number) {
-		skin = Number(skin) || 1;
+	onSmileSelect (id: string, color: number) {
+		color = Number(color) || 1;
 
+		const { tab } = this.state;
 		const { param, storageSet } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
-		const value = id ? U.Smile.nativeById(id, skin) : '';
+		const { onSelect, onIconSelect } = data;
 
-		data.value = value;
-		
-		if (value) {
-			this.skin = skin;
-			this.setLastIds(id, skin);
+		if (tab == Tab.Icon) {
+			this.iconColor = color;
 
-			storageSet({ skin });
-		};
+			storageSet({ iconColor: color });
 
-		if (onSelect) {
-			onSelect(value);
+			if (onIconSelect) {
+				onIconSelect(id, color);
+			};
+		} else {
+			const value = id ? U.Smile.nativeById(id, color) : '';
+
+			data.value = value;
+
+			if (value) {
+				this.skin = color;
+				this.setLastIds(id, color);
+
+				storageSet({ skin: color });
+			};
+
+			if (onSelect) {
+				onSelect(value);
+			};
 		};
 
 		analytics.event(id ? 'SetIcon' : 'RemoveIcon');
@@ -965,37 +979,43 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		const { tab } = this.state;
 		const win = $(window);
 
-		switch (tab) {
-			case Tab.Smile: {
-				const { itemId, skin } = item;
+		const callBack = (id, color) => {
+			this.id = id;
+			window.clearTimeout(this.timeoutMenu);
 
-				this.id = itemId;
-				window.clearTimeout(this.timeoutMenu);
+			if (e.button) {
+				return;
+			};
 
-				if (e.button) {
+			if (tab == Tab.Icon || (item && item.skins && (item.skins.length > 1))) {
+				this.timeoutMenu = window.setTimeout(() => {
+					win.off('mouseup.smile');
+					this.onSkin(e, item);
+				}, 200);
+			};
+
+			win.off('mouseup.smile').on('mouseup.smile', () => {
+				if (S.Menu.isOpen('smileColor')) {
 					return;
 				};
 
-				if (item && item.skins && (item.skins.length > 1)) {
-					this.timeoutMenu = window.setTimeout(() => {
-						win.off('mouseup.smile');
-						this.onSkin(e, item);
-					}, 200);
+				if (this.id) {
+					this.onSmileSelect(id, color);
+					close();
 				};
 
-				win.off('mouseup.smile').on('mouseup.smile', () => {
-					if (S.Menu.isOpen('smileSkin')) {
-						return;
-					};
+				window.clearTimeout(this.timeoutMenu);
+				win.off('mouseup.smile');
+			});
+		};
 
-					if (this.id) {
-						this.onSmileSelect(itemId, skin);
-						close();
-					};
-
-					window.clearTimeout(this.timeoutMenu);
-					win.off('mouseup.smile');
-				});
+		switch (tab) {
+			case Tab.Icon: {
+				callBack(item.itemId, this.iconColor);
+ 				break;
+			};
+			case Tab.Smile: {
+				callBack(item.itemId, item.skin);
 				break;
 			};
 
@@ -1006,12 +1026,10 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 	};
 
-	onIconColor (e: any, item: any) {
-
-	};
-
 	onSkin (e: any, item: any) {
-		if (item.layout != I.ObjectLayout.Type && (!item.skins || item.skins.length < 2)) {
+		const { tab } = this.state;
+
+		if (tab != Tab.Icon && (!item.skins || item.skins.length < 2)) {
 			return;
 		};
 
@@ -1201,7 +1219,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	getTabs () {
 		const { param } = this.props;
 		const { data } = param;
-		const { noHead, noGallery, noUpload, noIcons } = data;
+		const { noHead, noGallery, noUpload, withIcons } = data;
 
 		if (noHead) {
 			return [];
@@ -1209,7 +1227,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 		let tabs: any[] = [];
 
-		if (!noIcons) {
+		if (withIcons) {
 			tabs.push({ id: Tab.Icon, text: translate('menuSmileIcons') });
 		};
 
