@@ -39,7 +39,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = false; //S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const type = S.Record.getTypeById(object.type);
-		const recommended = Relation.getArrayValue(type?.recommendedRelations);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -54,10 +53,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return null;
 		};
 
-		const typeRelations = recommended.map(it => S.Record.getRelationById(it)).filter(it => it);
-		const objectRelations = S.Detail.getKeys(rootId, rootId).map(it => S.Record.getRelationByKey(it)).filter(it => it && !recommended.includes(it.id));
-
-		const relations = typeRelations.concat(objectRelations).filter(it => {
+		const relations = Relation.getArrayValue(type?.recommendedFileRelations).map(it => S.Record.getRelationById(it)).filter(it => it).filter(it => {
 			if (it.relationKey == 'description') {
 				return false;
 			};

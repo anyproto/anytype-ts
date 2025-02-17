@@ -99,6 +99,7 @@ export default {
 		'recommendedRelations',
 		'recommendedFeaturedRelations',
 		'recommendedHiddenRelations',
+		'recommendedFileRelations',
 		'recommendedLayout',
 		'sourceObject',
 		'uniqueKey',
