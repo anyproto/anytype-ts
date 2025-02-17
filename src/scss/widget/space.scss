@@ -21,7 +21,7 @@
 				.icon { width: 28px !important; height: 28px !important; flex-shrink: 0; }
 				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
 
-				.plusWrapper { box-shadow: 0 0 0 1px var(--color-shape-secondary); border-radius: 6px; overflow: hidden; }
+				.plusWrapper { border: 0px 0px 0px 1px var(--color-shape-secondary) inset; border-radius: 6px; overflow: hidden; }
 				.plusWrapper {
 					.icon { border-radius: 0; }
 				}
