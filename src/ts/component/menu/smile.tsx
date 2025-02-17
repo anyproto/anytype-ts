@@ -701,7 +701,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		let row = { children: [] };
 
 		for (let i = 0; i < items.length; i++) {
-			const id =items[i];
+			const id = items[i].id;
 
 			row.children.push({
 				id,
@@ -1012,7 +1012,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		switch (tab) {
 			case Tab.Icon: {
 				callBack(item.itemId, this.iconColor);
- 				break;
+				break;
 			};
 			case Tab.Smile: {
 				callBack(item.itemId, item.skin);

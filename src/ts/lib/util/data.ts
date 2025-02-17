@@ -617,7 +617,7 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Type: {
-				ret.withIcon = iconName;
+				ret.withIcon = iconName || iconEmoji;
 				break;
 			};
 
