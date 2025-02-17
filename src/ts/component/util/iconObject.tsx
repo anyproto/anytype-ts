@@ -315,7 +315,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		let src = '';
 		if (type.iconName) {
-			src = typeIcon(type.iconName, 0);
+			src = typeIcon(type.iconName, 1, J.Theme.icon.bg.default);
 		} else {
 			src = require(`img/icon/default/${id}.svg`);
 		};
@@ -325,7 +325,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		icon = <img src={src} className={icn.join(' ')} />;
 	};
 
-	const typeIcon = (id: string, option: number) => {
+	const typeIcon = (id: string, option: number, color?: string) => {
 		const key = [ id, iconSize, option ].join('-');
 
 		let ret = '';
@@ -333,13 +333,13 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			ret = iconCache.get(key);
 		} else {
 			try {
-				const color = bgByOption(option);
+				const newColor = color || bgByOption(option);
 				const src = require(`img/icon/type/default/${id}.svg`);
 				const chunk = src.split('base64,')[1];
-				const decoded = atob(chunk).replace(/_COLOR_VAR_/g, color);
+				const decoded = atob(chunk).replace(/_COLOR_VAR_/g, newColor);
 				const obj = $(decoded);
 
-				obj.attr({ width: size, height: size, fill: color, stroke: color });
+				obj.attr({ width: size, height: size, fill: newColor, stroke: newColor });
 
 				ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
 				iconCache.set(key, ret);

@@ -12,6 +12,7 @@ export default {
 			ice: '#2aa7ee',
 			teal: '#0fc8ba',
 			lime: '#5dd400',
+			default: '#e3e3e3',
 		},
 
 		list: [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],

@@ -100,7 +100,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 						onMouseDown={e => this.onMouseDown(e, item)}
 						onContextMenu={e => this.onSkin(e, item)}
 					>
-						<IconObject object={item} iconSize={30} />
+						<IconObject object={item} size={30} iconSize={30} />
 					</div>
 				);
 

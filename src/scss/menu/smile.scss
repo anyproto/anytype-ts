@@ -28,8 +28,9 @@
 			.items { height: 100%; }
 		}
 
-		.body.icon { padding-top: 8px; }
 		.body.icon {
+			.ReactVirtualized__List { padding-top: 8px; }
+
 			.row { padding: 0px 12px; display: grid; grid-template-columns: repeat(9, 1fr); }
 
 			.item { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; position: relative; border-radius: 6px; padding: 0px; }
