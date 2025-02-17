@@ -16,7 +16,7 @@
 				.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
 			}
 
-			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 6px; }
+			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 4px; }
 			.side.right {
 				.icon { width: 28px !important; height: 28px !important; flex-shrink: 0; }
 				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
