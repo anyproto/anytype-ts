@@ -587,9 +587,11 @@ class UtilData {
 		blockId = blockId || rootId;
 		keys = keys || [];
 
-		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover).concat(keys), true);
+		const object = S.Detail.get(rootId, blockId, [ 
+			'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 'templateIsBundled',
+		].concat(J.Relation.cover).concat(keys), true);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
-		const { iconEmoji, iconImage, coverType, coverId } = object;
+		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
 		const ret = {
 			withCover: false,
 			withIcon: false,
@@ -611,6 +613,11 @@ class UtilData {
 			case I.ObjectLayout.Note:
 			case I.ObjectLayout.Bookmark:
 			case I.ObjectLayout.Task: {
+				break;
+			};
+
+			case I.ObjectLayout.Type: {
+				ret.withIcon = iconName || iconEmoji;
 				break;
 			};
 

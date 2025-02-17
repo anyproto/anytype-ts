@@ -19,7 +19,6 @@ interface Props {
 	menuId?: string;
 	tooltip?: string;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
-	color?: string;
 	noGallery?: boolean;
 	noUpload?: boolean;
 	noRemove?: boolean;
@@ -97,8 +96,9 @@ const FontSize = {
 	128: 64,
 };
 
-const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type', 'date' ];
 const Ghost = require('img/icon/ghost.svg');
+
+const iconCache: Map<string, string> = new Map();
 
 const CheckboxTask = {
 	'': {
@@ -148,7 +148,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
-	const { id, name, iconEmoji, iconImage, iconOption, done, relationFormat, isDeleted } = object || {};
+	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, isDeleted } = object || {};
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
 
@@ -225,8 +225,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	const onEmoji = (e: any) => {
 		e.stopPropagation();
 
-		const noGallery = props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human ].includes(object.layout);
+		const noGallery = props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human, I.ObjectLayout.Type ].includes(object.layout);
 		const noUpload = props.noUpload || [ I.ObjectLayout.Type ].includes(object.layout);
+		const withIcons = U.Object.isTypeLayout(object.layout);
 
 		S.Menu.open('smile', { 
 			element: `#${props.id}`,
@@ -237,6 +238,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				spaceId: object.spaceId,
 				noGallery,
 				noUpload,
+				withIcons,
 				noRemove,
 				onSelect: (icon: string) => {
 					if (onSelect) {
@@ -244,6 +246,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 					} else {
 						U.Object.setIcon(object.id, icon, '');
 					};
+				},
+				onIconSelect: (iconName: string, iconOption: number) => {
+					U.Object.setTypeIcon(object.id, iconName, iconOption);
 				},
 				onUpload: (objectId: string) => {
 					if (onUpload) {
@@ -268,7 +273,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	const userSvg = (): string => {
 		const color = J.Theme[theme]?.iconUser;
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${color.bg}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${iconName()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
 				${circle}
@@ -279,11 +284,14 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	const spaceSvg = (option: number): string => {
-		const { bg, list } = J.Theme.iconSpace;
-		const bgColor = bg[list[option - 1]];
+	const bgByOption = (option: number) => {
+		const { bg, list } = J.Theme.icon;
+		return bg[list[option - 1]];
+	};
 
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${iconName()}</text>`;
+	const spaceSvg = (option: number): string => {
+		const bgColor = bgByOption(option);
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
 				<rect width="${size}" height="${size}" fill="${bgColor}"/>
@@ -294,7 +302,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	const iconName = (): string => {
+	const nameString = (): string => {
 		let ret = String(name || translate('defaultNamePage'));
 		ret = U.Smile.strip(ret);
 		ret = ret.trim().substring(0, 1).toUpperCase();
@@ -302,16 +310,43 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		return ret;
 	};
 
-	const defaultIcon = (type: string) => {
-		if (!DefaultIcons.includes(type)) {
-			return;
-		};
+	const defaultIcon = (id: string) => {
+		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'iconName' ], true);
 
-		const src = require(`img/icon/default/${type}.svg`);
+		let src = '';
+		if (type.iconName) {
+			src = typeIcon(type.iconName, 1, J.Theme.icon.bg.default);
+		} else {
+			src = require(`img/icon/default/${id}.svg`);
+		};
 
 		cn.push('withDefault');
 		icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 		icon = <img src={src} className={icn.join(' ')} />;
+	};
+
+	const typeIcon = (id: string, option: number, color?: string) => {
+		const key = [ id, iconSize, option ].join('-');
+
+		let ret = '';
+		if (iconCache.has(key)) {
+			ret = iconCache.get(key);
+		} else {
+			try {
+				const newColor = color || bgByOption(option);
+				const src = require(`img/icon/type/default/${id}.svg`);
+				const chunk = src.split('base64,')[1];
+				const decoded = atob(chunk).replace(/_COLOR_VAR_/g, newColor);
+				const obj = $(decoded);
+
+				obj.attr({ width: size, height: size, fill: newColor, stroke: newColor });
+
+				ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+				iconCache.set(key, ret);
+			} catch (e) { /**/ };
+		};
+
+		return ret;
 	};
 
 	switch (layout) {
@@ -370,6 +405,12 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.Type: {
+			if (iconName) {
+				const src = typeIcon(iconName, object.iconOption);
+
+				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+				icon = <img src={src} className={icn.join(' ')} />;
+			} else
 			if (iconEmoji) {
 				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 			} else {
