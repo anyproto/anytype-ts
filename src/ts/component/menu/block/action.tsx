@@ -330,7 +330,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 		
-		const { param, close, getId, setActive } = this.props;
+		const { id, param, close, getId, setActive } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -360,11 +360,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			offsetY: node.offset().top - el.offset().top - 40,
 			isSub: true,
 			noFlipX: true,
+			rebind: this.rebind,
+			parentId: id,
 			data: {
 				rootId,
 				blockId,
 				blockIds,
-				rebind: this.rebind,
 			},
 		};
 
