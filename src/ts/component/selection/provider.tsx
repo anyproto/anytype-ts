@@ -364,6 +364,11 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		return list;
 	};
+
+	const isAllowedRect = () => {
+		const match = keyboard.getMatch();
+		return [ 'set', 'type', 'relation' ].includes(match.params.action);
+	};
 	
 	const checkNodes = (e: any) => {
 		const recalc = recalcCoords(e.pageX, e.pageY);
@@ -388,11 +393,8 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const length = (list[I.SelectType.Block] || []).length;
-		const isPopup = keyboard.isPopup();
-		const popupMatch = keyboard.getPopupMatch();
-		const isSet = !isPopup ? keyboard.isMainSet() : [ 'set' ].includes(popupMatch.params.action);
 
-		if ((!target.current.length && !allowRect.current) || isSet){
+		if ((!target.current.length && !allowRect.current) || isAllowedRect()) {
 			allowRect.current = true;
 		};
 
