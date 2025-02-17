@@ -21,9 +21,10 @@
 				.icon { width: 28px !important; height: 28px !important; flex-shrink: 0; }
 				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
 
-				.plusWrapper { border: 0px 0px 0px 1px var(--color-shape-secondary) inset; border-radius: 6px; overflow: hidden; }
+				.plusWrapper { box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; border-radius: 6px; }
 				.plusWrapper {
-					.icon { border-radius: 0; }
+					.icon:first-child { border-radius: 6px 0px 0px 6px; }
+					.icon:last-child { border-radius: 0px 6px 6px 0px; }
 				}
 
 				.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); border-right: 1px solid var(--color-shape-secondary); }
