@@ -56,12 +56,14 @@ const Select = forwardRef<SelectRefProps, Props>(({
 	};
 
 	let val = Relation.getArrayValue(value);
-	val.forEach((id: string) => {
-		const option = options.find(item => item.id == id);
+
+	if (val.length) {
+		const option = options.find(item => item.id == val[0]);
 		if (option) {
-			current.push(option);
+			const more = val.length > 1 ? ` +${val.length - 1}` : '';
+			current.push({ ...option, name: option.name + more });
 		};
-	});
+	};
 
 	if (!current.length && options.length) {
 		current.push(options[0]);

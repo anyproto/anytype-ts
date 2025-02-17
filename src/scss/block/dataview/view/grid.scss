@@ -61,7 +61,9 @@
 
 		.cellFoot { height: 48px; @include text-common; color: var(--color-text-primary); }
 		.cellFoot {
-			.flex { justify-content: flex-end; }
+			&.align1 .flex { justify-content: center; }
+			&.align2 .flex { justify-content: flex-end; }
+
 			.result { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; max-width: 100%; }
 			.result {
 				.value { @include text-overflow-nw; }

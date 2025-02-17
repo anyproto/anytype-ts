@@ -151,15 +151,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		const addParam: any = {};
-		const menuParam: any = {
-			menuKey: item.id,
-			element: `#${this.menuContext.getId()} #item-${item.id}`,
-			offsetX: this.menuContext.getSize().width,
-			vertical: I.MenuDirection.Center,
-			isSub: true,
-			data: {},
-		};
-
 		const onCreate = (message: any, isNew: boolean) => {
 			if (message.views && message.views.length) {
 				window.setTimeout(() => loadData(message.views[0].id, 0, true), 50);
@@ -175,6 +166,14 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		let filters: I.Filter[] = [];
 		let menuId = '';
+		let menuParam: any = {
+			menuKey: item.id,
+			element: `#${this.menuContext.getId()} #item-${item.id}`,
+			offsetX: this.menuContext.getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {},
+		};
 
 		if (isCollection) {
 			filters = filters.concat([
@@ -211,14 +210,19 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		switch (item.id) {
 			case 'sourceChange':
 				menuId = 'searchObject';
-				menuParam.className = 'single';
+
+				menuParam = Object.assign(menuParam, {
+					className: 'single',
+					rebind: this.menuContext.ref.rebind,
+					parentId: this.menuContext.props.id,
+				});
+
 				menuParam.data = Object.assign(menuParam.data, {
 					rootId,
 					blockId: block.id,
 					blockIds: [ block.id ],
 					filters,
 					canAdd: true,
-					rebind: this.menuContext.ref.rebind,
 					value: [ targetObjectId ],
 					addParam,
 					onSelect: (item: any) => {

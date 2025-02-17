@@ -161,7 +161,7 @@ export interface PageComponent extends RouteComponentProps<any> {
 	storageSet?(data: any): void;
 };
 
-export interface PageSettingsComponent extends RouteComponentProps<any> {
+export interface PageSettingsComponent extends PageComponent, RouteComponentProps<any> {
 	onPage: (id: string, data?: any) => void;
 	setConfirmPin: (v: () => void) => void;
 	onConfirmPin: () => void;

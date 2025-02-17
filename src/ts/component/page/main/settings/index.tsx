@@ -110,13 +110,12 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		};
 
 		const Component = Components[id];
-
 		return (
 			<>
 				<Header {...this.props} component="mainSettings" />
 				<div className="settingsPageContainer" id="settingsPageContainer">
 
-					<div className={this.getId()} id={this.getId()}>
+					<div id={this.getId()} className={[ 'settingsPage', this.getId() ].join(' ')} >
 						<Component
 							ref={ref => this.ref = ref}
 							{...this.props}
@@ -213,6 +212,12 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		const id = param.id || 'account';
 
 		return SPACE_PAGES.includes(id);
+	};
+
+	resize () {
+		if (this.ref && this.ref.resize) {
+			this.ref.resize();
+		};
 	};
 
 });

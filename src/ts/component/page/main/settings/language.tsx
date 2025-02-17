@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { Title, Label, Select, Switch } from 'Component';
 import { I, S, U, translate, Action, analytics } from 'Lib';
 import { observer } from 'mobx-react';
@@ -8,14 +8,29 @@ const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent
 	const { config, interfaceLang, showRelativeDates, dateFormat, timeFormat, } = S.Common;
 	const { languages } = config;
 	const interfaceLanguages = U.Menu.getInterfaceLanguages();
-	const spellingLanguages = U.Menu.getSpellingLanguages();
+	const spellingRef = useRef(null);
+
+	const getSpellingLanguages = () => {
+		const { languages } = config;
+
+		return U.Menu.getSpellingLanguages().sort((c1, c2) => {
+			const idx1 = languages.indexOf(c1.id) >= 0;
+			const idx2 = languages.indexOf(c2.id) >= 0;
+
+			if (!c1.id && c2.id) return -1;
+			if (c1.id && !c2.id) return 1;
+
+			if (idx1 && !idx2) return -1;
+			if (!idx1 && idx2) return 1; 
+			return 0;
+		});
+	};
 
 	return (
 		<>
 			<Title text={translate('pageSettingsLanguageTitle')} />
 
 			<Label className="section" text={translate('popupSettingsPersonalSectionLanguage')} />
-
 			<div className="actionItems">
 
 				<div className="item">
@@ -23,9 +38,18 @@ const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent
 
 					<Select
 						id="spellcheck"
+						ref={spellingRef}
 						value={languages}
-						options={spellingLanguages}
-						onChange={v => Action.setSpellingLang(v)}
+						options={getSpellingLanguages()}
+						onChange={v => {
+							config.languages = v;
+							Action.setSpellingLang(v);
+
+							const options = getSpellingLanguages();
+
+							spellingRef.current?.setOptions(options);
+							S.Menu.updateData('select', { options });
+						}}
 						arrowClassName="black"
 						isMultiple={true}
 						noFilter={false}
@@ -48,7 +72,6 @@ const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent
 			</div>
 
 			<Label className="section" text={translate('popupSettingsPersonalSectionDateTime')} />
-
 			<div className="actionItems">
 
 				<div className="item">
