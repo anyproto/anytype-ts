@@ -900,7 +900,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			return;
 		};
 
-		const { getId, close, param } = this.props;
+		const { id, getId, close, param } = this.props;
 
 		S.Menu.open('smileSkin', {
 			...param,
@@ -908,13 +908,14 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			element: `#${getId()} #item-${$.escapeSelector(item.id)}`,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
+			rebind: this.rebind,
+			parentId: id,
 			data: {
 				smileId: item.itemId,
 				onSelect: (skin: number) => {
 					this.onSmileSelect(item.itemId, skin);
 					close();
 				},
-				rebind: this.rebind
 			},
 			onClose: () => {
 				this.id = '';

@@ -292,7 +292,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	onOver (e: any, item: any) {
-		const { param, getId, getSize } = this.props;
+		const { id, param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, isInline } = data;
 		const isReadonly = this.isReadonly();
@@ -314,8 +314,9 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			isSub: true,
 			onOpen: () => $(element).addClass('active'),
 			onClose: () => $(element).removeClass('active'),
+			rebind: this.rebind,
+			parentId: id,
 			data: {
-				rebind: this.rebind,
 				value: this.param[item.id],
 				onSelect: (e: any, el: any) => {
 					this.param[item.id] = el.id;

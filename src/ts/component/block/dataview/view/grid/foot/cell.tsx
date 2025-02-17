@@ -185,10 +185,11 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				offsetX: this.menuContext.getSize().width,
 				vertical: I.MenuDirection.Center,
 				isSub: true,
+				rebind: this.menuContext.ref?.rebind,
+				parentId: this.menuContext.props.id,
 				data: {
 					rootId,
 					options,
-					rebind: this.menuContext.ref?.rebind,
 					onSelect: (e: any, item: any) => {
 						this.onChange(item.id);
 						this.menuContext.close();
