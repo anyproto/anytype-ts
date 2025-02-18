@@ -849,13 +849,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'type', 'layout', 'featuredRelations' ], true);
+		const keys = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
 
 		let ret = [];
 
-		if (U.Object.isInPageLayouts(short.layout)) {
+		if (U.Object.isInPageLayouts(short.layout) && !keys.length) {
 			ret = S.Record.getTypeFeaturedRelations(short.type);
 		} else {
-			ret = Relation.getArrayValue(short.featuredRelations).map(it => S.Record.getRelationByKey(it));
+			ret = keys.map(it => S.Record.getRelationByKey(it));
 		};
 
 		return ret.filter(it => it);
