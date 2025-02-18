@@ -783,6 +783,11 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			e.preventDefault();
 
 			switch (tab) {
+				case Tab.Icon: {
+					this.onSmileSelect(this.active.itemId, 1);
+					break;
+				};
+
 				case Tab.Smile: {
 					this.onSmileSelect(this.active.itemId, this.skin);
 					break;
@@ -804,6 +809,11 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			e.preventDefault();
 
 			switch (tab) {
+				case Tab.Icon: {
+					this.onSkin(e, this.active);
+					break;
+				};
+
 				case Tab.Smile: {
 					const item = J.Emoji.emojis[this.active.itemId];
 					if (item.skins && (item.skins.length > 1)) {
@@ -987,7 +997,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				return;
 			};
 
-			if (tab == Tab.Icon || (item && item.skins && (item.skins.length > 1))) {
+			if (this.hasSkins(item)) {
 				this.timeoutMenu = window.setTimeout(() => {
 					win.off('mouseup.smile');
 					this.onSkin(e, item);
@@ -1026,9 +1036,13 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 	};
 
-	onSkin (e: any, item: any) {
+	hasSkins (item: any) {
 		const { tab } = this.state;
-		const hasSkins = (tab == Tab.Icon) || ((tab == Tab.Smile) && (item.skins && item.skins.length > 1));
+		return (tab == Tab.Icon) || ((tab == Tab.Smile) && (item.skins && item.skins.length > 1));
+	};
+
+	onSkin (e: any, item: any) {
+		const hasSkins = this.hasSkins(item);
 
 		if (!hasSkins) {
 			return;
