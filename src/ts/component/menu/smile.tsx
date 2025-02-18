@@ -426,7 +426,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		const tabs = this.getTabs();
 		const storage = storageGet();
 		const { tab, skin, iconColor } = storage;
-		
+
 		this.rebind();
 
 		this.skin = Number(skin) || 1;
