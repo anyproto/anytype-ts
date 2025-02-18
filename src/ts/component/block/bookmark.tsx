@@ -254,8 +254,9 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	
 	onChangeUrl (e: any, url: string) {
 		const { rootId, block } = this.props;
+		const bookmark = S.Record.getBookmarkType();
 
-		C.BlockBookmarkFetch(rootId, block.id, url);
+		C.BlockBookmarkFetch(rootId, block.id, url, bookmark?.defaultTemplateId);
 	};
 	
 	resize () {

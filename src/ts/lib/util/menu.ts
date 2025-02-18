@@ -1155,7 +1155,9 @@ class UtilMenu {
 				};
 
 				if (url) {
-					C.ObjectCreateBookmark({ ...details, source: url }, S.Common.space, (message: any) => {
+					const bookmark = S.Record.getBookmarkType();
+
+					C.ObjectCreateBookmark({ ...details, source: url }, S.Common.space, bookmark?.defaultTemplateId, (message: any) => {
 						cb(message.details, message.middleTime);
 					});
 				} else {
