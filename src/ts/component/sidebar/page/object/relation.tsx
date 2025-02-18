@@ -1,14 +1,26 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
 import { I, S, U, sidebar, translate, keyboard, Relation, C } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 
-const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent> {
+interface State {
+	showHidden: boolean;
+};
+
+const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, State> {
 	
 	sectionRefs: Map<string, any> = new Map();
 	id = '';
+	toggleVisible: any = {
+		hidden: false,
+	};
+
+	state = {
+		showHidden: false,
+	};
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -16,10 +28,12 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		this.onSetUp = this.onSetUp.bind(this);
 		this.getObject = this.getObject.bind(this);
 		this.onConflict = this.onConflict.bind(this);
+		this.onToggle = this.onToggle.bind(this);
 	};
 
     render () {
 		const { rootId, readonly } = this.props;
+		const { showHidden } = this.state;
 		const object = this.getObject();
 		const sections = this.getSections();
 		const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
@@ -41,35 +55,48 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				</div>
 
 				<div className="body customScrollbar">
-					{sections.map((section, i) => (
-						<div className="group" key={section.id}>
-							{section.name ? (
-								<div className="sectionName">
-									<Label text={section.name} />
+					{sections.map((section, i) => {
+						const { id, name, description } = section;
+						const toggleCn = [ 'sectionContent', 'withToggle', showHidden ? 'visible' : '' ];
 
-									{section.description ? (
-										<div className="groupDescription">
-											<Icon className="question" />
-											<Label text={section.description} />
-										</div>
-									) : null}
+						return (
+							<div className="group" key={id}>
+								{name ? (
+									<div className="sectionName">
+										<Label text={name} />
+
+										{description ? (
+											<div className="groupDescription">
+												<Icon className="question" />
+												<Label text={description} />
+											</div>
+										) : null}
+									</div>
+								) : null}
+								{id == 'hidden' ? (
+									<Label
+										onClick={() => this.onToggle(id)}
+										className="sectionToggle"
+										text={showHidden ? translate('commonShowLess') : translate('commonShowMore')} />
+								) : null}
+								<div className={id == 'hidden' ? toggleCn.join(' ') : 'sectionContent'}>
+									{section.children.map((item, i) => (
+										<Section
+											{...this.props}
+											ref={ref => this.sectionRefs.set(item.id, ref)}
+											key={item.id}
+											component="object/relation"
+											rootId={rootId}
+											object={object}
+											item={item}
+											readonly={isReadonly}
+											onDragStart={e => this.onDragStart(e, item)}
+										/>
+									))}
 								</div>
-							) : null}
-							{section.children.map((item, i) => (
-								<Section 
-									{...this.props} 
-									ref={ref => this.sectionRefs.set(item.id, ref)}
-									key={item.id} 
-									component="object/relation"
-									rootId={rootId}
-									object={object}
-									item={item} 
-									readonly={isReadonly}
-									onDragStart={e => this.onDragStart(e, item)}
-								/>
-							))}
-						</div>
-					))}
+							</div>
+						);
+					})}
 				</div>
 			</>
 		);
@@ -77,7 +104,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 	getObject () {
 		const { rootId } = this.props;
-		return S.Detail.get(rootId, rootId);
+		return S.Detail.get(rootId, rootId, [ 'recommendedHiddenRelations' ]);
 	};
 
 	getSections () {
@@ -96,8 +123,12 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		items = S.Record.checkHiddenObjects(items);
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
+		let hidden = (type.recommendedHiddenRelations || []).map(it => S.Record.getRelationById(it));
+		hidden = hidden.filter(it => it && !it.isReadonlyValue && !Relation.isEmpty(object[it.relationKey]));
+
 		const sections = [
 			{ id: 'object', children: items },
+			{ id: 'hidden', children: hidden },
 			{ id: 'conflicts', name: translate('sidebarRelationLocal'), children: conflicts, description: translate('sidebarTypeRelationLocalDescription') }
 		];
 
@@ -163,6 +194,12 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				},
 			},
 		});
+	};
+
+	onToggle (id) {
+		const { showHidden } = this.state;
+
+		this.setState({ showHidden: !showHidden });
 	};
 
 });

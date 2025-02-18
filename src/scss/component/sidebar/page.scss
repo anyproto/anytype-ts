@@ -18,6 +18,10 @@
 	}
 	.body {
 		.group { display: flex; flex-direction: column; gap: 12px 0px; margin-bottom: 10px; }
+
+		.sectionToggle { padding-left: 12px; font-weight: 500; color: var(--color-text-secondary); }
+		.sectionContent.withToggle { overflow: hidden; height: 0px; }
+		.sectionContent.withToggle.visible { height: unset; }
 	}
 
 	.section { background: var(--color-bg-primary); border-radius: 12px; padding: 8px 0px; }

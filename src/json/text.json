@@ -187,6 +187,8 @@
 	"commonManage": "Manage",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
+	"commonShowMore": "Show more",
+	"commonShowLess": "Show less",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
