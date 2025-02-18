@@ -266,6 +266,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			offsetY: -4,
 			vertical: I.MenuDirection.Top,
 			onOpen: context => menuContext = context,
+			subIds: J.Menu.widgetAdd,
 			data: {
 				route: analytics.route.addWidget,
 				filters: [
@@ -291,7 +292,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				},
 				onOver: (e, context: any, item: any) => {
 					if (!item.isAdd) {
-						S.Menu.closeAll([ 'typeSuggest', 'select' ]);
+						S.Menu.closeAll(J.Menu.widgetAdd);
 						return;
 					};
 

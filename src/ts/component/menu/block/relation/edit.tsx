@@ -331,10 +331,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			classNameWrap,
-		});
-
-		options.data = Object.assign(options.data, {
 			rebind: this.rebind,
+			parentId: this.props.id,
 		});
 
 		if (!S.Menu.isOpen(id) && !S.Menu.isAnimating(id)) {

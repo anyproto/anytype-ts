@@ -1009,17 +1009,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onCheckbox () {
 		const { rootId, block, readonly } = this.props;
-		const { id, content } = block;
-		const { checked } = content;
 
 		if (readonly) {
 			return;
 		};
+
+		const { id, content } = block;
+		const { checked } = content;
 		
 		focus.clear(true);
-		U.Data.blockSetText(rootId, block.id, this.getValue(), this.marks, true, () => {
-			C.BlockTextSetChecked(rootId, id, !checked);
-		});
+		C.BlockTextSetChecked(rootId, id, !checked);
 	};
 	
 	onLang (v: string) {

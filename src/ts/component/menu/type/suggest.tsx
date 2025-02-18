@@ -404,7 +404,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			return;
 		};
 
-		const { getId, getSize, param } = this.props;
+		const { id, getId, getSize, param } = this.props;
 		const { data, classNameWrap } = param;
 		const sources = this.getLibrarySources();
 		const className = [ param.className ];
@@ -418,9 +418,9 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			vertical: I.MenuDirection.Top,
 			isSub: true,
 			noFlipY: true,
-			data: {
-				rebind: this.rebind,
-			},
+			rebind: this.rebind,
+			parentId: id,
+			data: {},
 		};
 
 		let menuId = '';
@@ -546,7 +546,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 16 + (noFilter ? 0 : 42);
-		const buttonHeight = buttons.reduce((res: number, current: any) => res + this.getRowHeight(current), 16)
+		const buttonHeight = buttons.length ? buttons.reduce((res: number, current: any) => res + this.getRowHeight(current), 16) : 0;
 
 		let height = offset + buttonHeight;
 		if (!items.length) {

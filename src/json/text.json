@@ -514,7 +514,7 @@
 	"pageAuthSetupEntering": "Entering the Vault...",
 
 	"pageAuthMigrateTitle": "Migration is in progress...",
-	"pageAuthMigrateText": "This shouldn’t take long. Thanks for your patience.",
+	"pageAuthMigrateText": "It can take some time. Thanks for your patience.",
 	"pageAuthMigrateErrorTitle": "Not enough space",
 	"pageAuthMigrateErrorText": "Please clear some space and run the process again.",
 	"pageAuthMigrateTryAgain": "Try again",
@@ -1382,6 +1382,7 @@
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
 	"menuSmileRandom": "Random emoji",
+	"menuSmileIcons": "Icons",
 
 	"menuBlockCoverEdit": "Reposition",
 	"menuBlockCoverEmpty": "There are no covers found",

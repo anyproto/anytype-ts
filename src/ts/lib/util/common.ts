@@ -1094,7 +1094,7 @@ class UtilCommon {
 			};
 
 			// Skip Brazilian Real
-			if (/R$/.test(m1) || /R$/.test(m2)) {
+			if (!/^\\/.test(m2) && (/R$/.test(m1) || /R$/.test(m2))) {
 				return;
 			};
 

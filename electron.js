@@ -131,7 +131,7 @@ function createWindow () {
 		const onClose = () => {
 			const { config } = ConfigManager;
 
-			if (config.hideTray) {
+			if (config.hideTray && (WindowManager.list.size <= 1)) {
 				Api.exit(mainWindow, '', false);
 			} else {
 				mainWindow.hide();

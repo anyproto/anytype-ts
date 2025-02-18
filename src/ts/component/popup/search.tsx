@@ -311,6 +311,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.range = { from: 0, to: filter.length };
 			this.refFilter.setValue(filter);
 			this.refFilter.setRange(this.range);
+			this.reload();
 		};
 
 		this._isMounted = true;
