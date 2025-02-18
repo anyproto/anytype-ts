@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
 import { I, S, U, sidebar, translate, keyboard, Relation, C } from 'Lib';
@@ -12,11 +13,8 @@ interface State {
 
 const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, State> {
 	
+	node = null;
 	sectionRefs: Map<string, any> = new Map();
-	id = '';
-	toggleVisible: any = {
-		hidden: false,
-	};
 
 	state = {
 		showHidden: false,
@@ -38,10 +36,11 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const sections = this.getSections();
 		const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const type = S.Record.getTypeById(object.type);
-		const allowDetails = !readonly && S.Block.isAllowed(type.restrictions, [ I.RestrictionObject.Details ]);
+		const restrictions = Relation.getArrayValue(type?.restrictions);
+		const allowDetails = !readonly && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 
         return (
-			<>
+			<div ref={ref => this.node = ref}>
 				<div className="head">
 					<div className="side left">
 						<Label text={translate('sidebarTypeRelation')} />
@@ -56,13 +55,12 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 				<div className="body customScrollbar">
 					{sections.map((section, i) => {
-						const { id, name, description } = section;
-						const withToggle = id == 'hidden';
+						const { id, name, description, withToggle } = section;
 
 						return (
-							<div id={U.Common.toCamelCase(`relationGroup-${id}`)} className="group" key={id}>
+							<div id={`relationGroup-${id}`} className="group" key={id}>
 								{name ? (
-									<div className="sectionName">
+									<div className="titleWrap">
 										<Label text={name} />
 
 										{description ? (
@@ -70,43 +68,43 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 												<Icon className="question" />
 												<Label text={description} />
 											</div>
-										) : null}
+										) : ''}
 									</div>
-								) : null}
+								) : ''}
+
 								{withToggle ? (
 									<Label
-										onClick={this.onToggle}
+										onClick={() => this.onToggle(id)}
 										className="sectionToggle"
 										text={showHidden ? translate('commonShowLess') : translate('commonShowMore')} />
-								) : null}
-								<div className={[ 'sectionOuter', withToggle ? 'withToggle' : '' ].join(' ')}>
-									<div className="sectionInner">
-										{section.children.map((item, i) => (
-											<Section
-												{...this.props}
-												ref={ref => this.sectionRefs.set(item.id, ref)}
-												key={item.id}
-												component="object/relation"
-												rootId={rootId}
-												object={object}
-												item={item}
-												readonly={isReadonly}
-												onDragStart={e => this.onDragStart(e, item)}
-											/>
-										))}
-									</div>
+								) : ''}
+
+								<div className={[ 'list', (withToggle ? 'withToggle' : '') ].join(' ')}>
+									{section.children.map((item, i) => (
+										<Section
+											{...this.props}
+											ref={ref => this.sectionRefs.set(item.id, ref)}
+											key={item.id}
+											component="object/relation"
+											rootId={rootId}
+											object={object}
+											item={item}
+											readonly={isReadonly}
+											onDragStart={e => this.onDragStart(e, item)}
+										/>
+									))}
 								</div>
 							</div>
 						);
 					})}
 				</div>
-			</>
+			</div>
 		);
 	};
 
 	getObject () {
 		const { rootId } = this.props;
-		return S.Detail.get(rootId, rootId, [ 'recommendedHiddenRelations' ]);
+		return S.Detail.get(rootId, rootId);
 	};
 
 	getSections () {
@@ -120,13 +118,15 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 			.sort(U.Data.sortByName)
 			.map((it) => ({ ...it, onMore: this.onConflict }));
 		const conflictingKeys = conflicts.map(it => it.relationKey);
+		const recommended = Relation.getArrayValue(type.recommendedRelations);
+		const recommendedHidden = Relation.getArrayValue(type.recommendedHiddenRelations);
 
-		let items = (type.recommendedRelations || []).map(it => S.Record.getRelationById(it))
+		let items = recommended.map(it => S.Record.getRelationById(it));
 		items = items.filter(it => it && it.relationKey && !it.isArchived);
 		items = S.Record.checkHiddenObjects(items);
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
-		let hidden = (type.recommendedHiddenRelations || []).map(it => S.Record.getRelationById(it));
+		let hidden = recommendedHidden.map(it => S.Record.getRelationById(it));
 		hidden = hidden.filter(it => {
 			if (!it) {
 				return false;
@@ -135,12 +135,12 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				return false;
 			};
 
-			return config.debug.hiddenObject ? it.isHidden : true;
+			return !config.debug.hiddenObject ? !it.isHidden : true;
 		});
 
 		const sections = [
 			{ id: 'object', children: items },
-			{ id: 'hidden', children: hidden },
+			{ id: 'hidden', children: hidden, withToggle: true },
 			{ id: 'conflicts', name: translate('sidebarRelationLocal'), children: conflicts, description: translate('sidebarTypeRelationLocalDescription') }
 		];
 
@@ -208,18 +208,13 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		});
 	};
 
-	onToggle () {
+	onToggle (id: string) {
 		const { showHidden } = this.state;
-		const outer = $('#relationGroupHidden .sectionOuter');
-		const inner = $('#relationGroupHidden .sectionInner');
+		const node = $(this.node);
+		const obj = node.find(`#relationGroup-${id}`);
 
-		if (showHidden) {
-			outer.css({ height: 0 });
-		} else {
-			outer.css({ height: inner.height() });
-		};
-
-		this.setState({ showHidden: !showHidden });
+		U.Common.toggle(obj.find('> .list'), 200);
+		window.setTimeout(() => this.setState({ showHidden: !showHidden }), 200);
 	};
 
 });
