@@ -481,9 +481,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = S.Detail.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
-
-		console.log(this.menuContext);
-
 		const menuParam = {
 			menuId: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
