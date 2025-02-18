@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader, IconObject } from 'Component';
 import { I, C, S, U, J, keyboard, translate, analytics, Preview, Action } from 'Lib';
-import { number } from '@rspack/core/compiled/zod';
 
 enum Tab {
 	None	 = 0,
@@ -707,7 +706,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				id,
 				itemId: id,
 				iconName: id,
-				iconOption: this.iconColor,
+				iconOption: 1,
 				layout: I.ObjectLayout.Type
 			});
 			n++;
@@ -978,6 +977,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		const { close } = this.props;
 		const { tab } = this.state;
 		const win = $(window);
+		const timeout = tab == Tab.Icon ? 0 : 200;
 
 		const callBack = (id, color) => {
 			this.id = id;
@@ -991,7 +991,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				this.timeoutMenu = window.setTimeout(() => {
 					win.off('mouseup.smile');
 					this.onSkin(e, item);
-				}, 200);
+				}, timeout);
 			};
 
 			win.off('mouseup.smile').on('mouseup.smile', () => {
@@ -1028,8 +1028,9 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 	onSkin (e: any, item: any) {
 		const { tab } = this.state;
+		const hasSkins = (tab == Tab.Icon) || ((tab == Tab.Smile) && (item.skins && item.skins.length > 1));
 
-		if (tab != Tab.Icon && (!item.skins || item.skins.length < 2)) {
+		if (!hasSkins) {
 			return;
 		};
 
