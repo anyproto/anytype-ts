@@ -57,10 +57,10 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				<div className="body customScrollbar">
 					{sections.map((section, i) => {
 						const { id, name, description } = section;
-						const toggleCn = [ 'sectionContent', 'withToggle', showHidden ? 'visible' : '' ];
+						const withToggle = id == 'hidden';
 
 						return (
-							<div className="group" key={id}>
+							<div id={U.Common.toCamelCase(`relationGroup-${id}`)} className="group" key={id}>
 								{name ? (
 									<div className="sectionName">
 										<Label text={name} />
@@ -73,26 +73,28 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 										) : null}
 									</div>
 								) : null}
-								{id == 'hidden' ? (
+								{withToggle ? (
 									<Label
-										onClick={() => this.onToggle(id)}
+										onClick={this.onToggle}
 										className="sectionToggle"
 										text={showHidden ? translate('commonShowLess') : translate('commonShowMore')} />
 								) : null}
-								<div className={id == 'hidden' ? toggleCn.join(' ') : 'sectionContent'}>
-									{section.children.map((item, i) => (
-										<Section
-											{...this.props}
-											ref={ref => this.sectionRefs.set(item.id, ref)}
-											key={item.id}
-											component="object/relation"
-											rootId={rootId}
-											object={object}
-											item={item}
-											readonly={isReadonly}
-											onDragStart={e => this.onDragStart(e, item)}
-										/>
-									))}
+								<div className={[ 'sectionOuter', withToggle ? 'withToggle' : '' ].join(' ')}>
+									<div className="sectionInner">
+										{section.children.map((item, i) => (
+											<Section
+												{...this.props}
+												ref={ref => this.sectionRefs.set(item.id, ref)}
+												key={item.id}
+												component="object/relation"
+												rootId={rootId}
+												object={object}
+												item={item}
+												readonly={isReadonly}
+												onDragStart={e => this.onDragStart(e, item)}
+											/>
+										))}
+									</div>
 								</div>
 							</div>
 						);
@@ -108,6 +110,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
 	getSections () {
+		const { config } = S.Common;
 		const { rootId } = this.props;
 		const object = this.getObject();
 		const isTemplate = U.Object.isTemplate(object.type);
@@ -124,7 +127,16 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
 		let hidden = (type.recommendedHiddenRelations || []).map(it => S.Record.getRelationById(it));
-		hidden = hidden.filter(it => it && !it.isReadonlyValue && !Relation.isEmpty(object[it.relationKey]));
+		hidden = hidden.filter(it => {
+			if (!it) {
+				return false;
+			};
+			if (it.isReadonlyValue && Relation.isEmpty(object[it.relationKey])) {
+				return false;
+			};
+
+			return config.debug.hiddenObject ? it.isHidden : true;
+		});
 
 		const sections = [
 			{ id: 'object', children: items },
@@ -196,8 +208,16 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		});
 	};
 
-	onToggle (id) {
+	onToggle () {
 		const { showHidden } = this.state;
+		const outer = $('#relationGroupHidden .sectionOuter');
+		const inner = $('#relationGroupHidden .sectionInner');
+
+		if (showHidden) {
+			outer.css({ height: 0 });
+		} else {
+			outer.css({ height: inner.height() });
+		};
 
 		this.setState({ showHidden: !showHidden });
 	};
