@@ -1427,6 +1427,8 @@
 
 	"menuBlockLayoutSetLayoutWidth": "Set layout width",
 	"menuBlockLayoutChooseLayoutType": "Choose layout type",
+	"menuBlockLayoutConflict": "This layout differs from the type's default. Reset to match?",
+	"menuBlockLayoutReset": "Reset to default",
 
 	"menuBlockLinkSettingsStyleText": "Text",
 	"menuBlockLinkSettingsStyleCard": "Card",
