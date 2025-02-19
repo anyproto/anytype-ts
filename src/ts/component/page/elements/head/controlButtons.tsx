@@ -49,10 +49,9 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const isBookmark = U.Object.isBookmarkLayout(root.layout);
 		const isChat = U.Object.isChatLayout(root.layout);
 		const isType = U.Object.isTypeLayout(root.layout);
-		const isTemplate = U.Object.isTemplate(object.type);
 		const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
 
-		let allowedLayout = !checkType && allowedDetails && !isInSets && !isChat && !isType && !isTemplate/* && U.Object.hasLayoutConflict(object)*/;
+		let allowedLayout = !checkType && allowedDetails && !isInSets && !isChat && !isType/* && U.Object.hasLayoutConflict(object)*/;
 		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark;
 		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
 		let allowedDescription = !checkType && allowedDetails && !isNote;
