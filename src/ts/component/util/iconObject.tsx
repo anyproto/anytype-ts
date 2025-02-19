@@ -479,6 +479,16 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		icon = <img src={Ghost} className={[ 'iconCommon', `c${iconSize}` ].join(' ')} />;
 	};
 
+	useEffect(() => {
+		const node = $(nodeRef.current);
+		const img = node.find('img');
+
+		img.off('error').on('error', () => {
+			node.addClass('withImageError');
+			img.hide();
+		});
+	}, []);
+
 	useImperativeHandle(ref, () => ({
 		setObject: object => setStateObject(object),
 	}));
