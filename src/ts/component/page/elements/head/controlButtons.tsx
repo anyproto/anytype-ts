@@ -92,6 +92,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				{allowedLayout ? (
 					<div id="button-layout" className="btn white withIcon small" onClick={this.onLayout}>
 						<Icon className="layout" />
+						<div className="dot" />
 					</div>
 				) : ''}
 			</div>
