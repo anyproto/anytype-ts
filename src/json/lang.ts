@@ -7,6 +7,7 @@ export default {
 		'de-DE',
 		'en-US',
 		'es-ES',
+		'fa-IR',
 		'fr-FR',
 		'hi-IN',
 		'id-ID',
