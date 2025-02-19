@@ -92,6 +92,7 @@ export default {
 		'de-DE': 'de-DE',
 		'en-US': 'en',
 		'es-ES': 'es',
+		'fa-IR': 'fa',
 		'fr-FR': 'fr-FR',
 		'hi-IN': 'hi',
 		'id-ID': 'id',
