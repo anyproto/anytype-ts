@@ -262,22 +262,23 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { config } = S.Common;
 		const object = S.Detail.get(rootId, rootId);
 		const isTemplate = U.Object.isTemplate(object.type);
-		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
-		const relationKeys = S.Detail.getKeys(rootId, rootId);
-		const relations = relationKeys.map(it => S.Record.getRelationByKey(it)).filter(it => it);
+		const objectKeys = S.Detail.getKeys(rootId, rootId);
+		const objectRelations = objectKeys.map(it => S.Record.getRelationByKey(it)).filter(it => it);
+		const typeIds = S.Detail.getTypeRelationIds(isTemplate ? object.targetObjectType : object.type);
+		const typeRelations = typeIds.map(it => S.Record.getRelationById(it)).filter(it => it);
+		
+		let ret = typeRelations;
+		if (!isTemplate) {
+			ret = ret.concat(objectRelations);
+		};
 
-		const typeRelations = (type ? type.recommendedRelations || [] : []).
-			map(it => S.Record.getRelationById(it)).
-			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
+		ret = S.Record.checkHiddenObjects(ret.filter(it => it.isInstalled)).sort(U.Data.sortByName);
 
-		const ret = relations.concat(typeRelations).
-			filter(it => !config.debug.hiddenObject && it.isHidden ? false : it.isInstalled).
-			sort(U.Data.sortByName);
-
-		ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
+		if (!isTemplate) {
+			ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
+		};
 
 		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true }));
 	};
@@ -381,6 +382,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		let menuId = '';
+
 		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,

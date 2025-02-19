@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, sidebar } from 'Lib';
@@ -1107,6 +1108,24 @@ class UtilCommon {
 		});
 
 		return text;
+	};
+
+	toggle (obj: any, delay: number) {
+		const isOpen = obj.hasClass('isOpen');
+
+		if (isOpen) {
+			obj.addClass('anim').removeClass('isOpen').css({ height: 0 });
+			window.setTimeout(() => obj.removeClass('anim'), delay);
+		} else {
+			obj.css({ height: 'auto' });
+
+			const height = obj.outerHeight();
+
+			obj.addClass('anim isOpen').css({ height: 0 });
+
+			raf(() => obj.css({ height }));
+			window.setTimeout(() => obj.removeClass('anim'), delay);
+		};
 	};
 
 };

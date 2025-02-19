@@ -1,14 +1,16 @@
 import * as React from 'react';
+import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, sidebar, translate, keyboard, Relation, C } from 'Lib';
+import { I, S, U, sidebar, translate, keyboard, Relation, C, Preview } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 
-const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent> {
+const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, {}> {
 	
+	node = null;
 	sectionRefs: Map<string, any> = new Map();
-	id = '';
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -16,6 +18,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		this.onSetUp = this.onSetUp.bind(this);
 		this.getObject = this.getObject.bind(this);
 		this.onConflict = this.onConflict.bind(this);
+		this.onToggle = this.onToggle.bind(this);
 	};
 
     render () {
@@ -24,10 +27,11 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const sections = this.getSections();
 		const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const type = S.Record.getTypeById(object.type);
-		const allowDetails = !readonly && S.Block.isAllowed(type.restrictions, [ I.RestrictionObject.Details ]);
+		const restrictions = Relation.getArrayValue(type?.restrictions);
+		const allowDetails = !readonly && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 
         return (
-			<>
+			<div ref={ref => this.node = ref}>
 				<div className="head">
 					<div className="side left">
 						<Label text={translate('sidebarTypeRelation')} />
@@ -41,37 +45,48 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				</div>
 
 				<div className="body customScrollbar">
-					{sections.map((section, i) => (
-						<div className="group" key={section.id}>
-							{section.name ? (
-								<div className="sectionName">
-									<Label text={section.name} />
+					{sections.map((section, i) => {
+						const { id, name, description, withToggle } = section;
 
-									{section.description ? (
-										<div className="groupDescription">
-											<Icon className="question" />
-											<Label text={section.description} />
-										</div>
-									) : null}
+						return (
+							<div id={`relationGroup-${id}`} className="group" key={id}>
+								{name ? (
+									<div className="titleWrap">
+
+										{withToggle ? (
+											<Label text={name} onClick={() => this.onToggle(id)} className="sectionToggle" />
+										) : <Label text={name} />}
+
+										{description ? (
+											<Icon
+												className="groupDescription"
+												onMouseEnter={() => this.onShowDescription(id, description)}
+												onMouseLeave={() => Preview.tooltipHide()}
+											/>
+										) : ''}
+									</div>
+								) : ''}
+
+								<div className={[ 'list', (withToggle ? 'withToggle' : '') ].join(' ')}>
+									{section.children.map((item, i) => (
+										<Section
+											{...this.props}
+											ref={ref => this.sectionRefs.set(item.id, ref)}
+											key={item.id}
+											component="object/relation"
+											rootId={rootId}
+											object={object}
+											item={item}
+											readonly={isReadonly}
+											onDragStart={e => this.onDragStart(e, item)}
+										/>
+									))}
 								</div>
-							) : null}
-							{section.children.map((item, i) => (
-								<Section 
-									{...this.props} 
-									ref={ref => this.sectionRefs.set(item.id, ref)}
-									key={item.id} 
-									component="object/relation"
-									rootId={rootId}
-									object={object}
-									item={item} 
-									readonly={isReadonly}
-									onDragStart={e => this.onDragStart(e, item)}
-								/>
-							))}
-						</div>
-					))}
+							</div>
+						);
+					})}
 				</div>
-			</>
+			</div>
 		);
 	};
 
@@ -81,6 +96,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
 	getSections () {
+		const { config } = S.Common;
 		const { rootId } = this.props;
 		const object = this.getObject();
 		const isTemplate = U.Object.isTemplate(object.type);
@@ -90,14 +106,21 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 			.sort(U.Data.sortByName)
 			.map((it) => ({ ...it, onMore: this.onConflict }));
 		const conflictingKeys = conflicts.map(it => it.relationKey);
+		const recommendedIds = Relation.getArrayValue(type.recommendedRelations);
+		const hiddenIds = Relation.getArrayValue(type.recommendedHiddenRelations);
 
-		let items = (type.recommendedRelations || []).map(it => S.Record.getRelationById(it))
+		let items = recommendedIds.map(it => S.Record.getRelationById(it));
 		items = items.filter(it => it && it.relationKey && !it.isArchived);
 		items = S.Record.checkHiddenObjects(items);
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
+		let hidden = hiddenIds.map(it => S.Record.getRelationById(it));
+		hidden = S.Record.checkHiddenObjects(hidden);
+		hidden = hidden.filter(it => it && !(it.isReadonlyValue && Relation.isEmpty(object[it.relationKey])));
+
 		const sections = [
 			{ id: 'object', children: items },
+			{ id: 'hidden', name: translate('commonShowMore'), children: hidden, withToggle: true },
 			{ id: 'conflicts', name: translate('sidebarRelationLocal'), children: conflicts, description: translate('sidebarTypeRelationLocalDescription') }
 		];
 
@@ -162,6 +185,30 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 					};
 				},
 			},
+		});
+	};
+
+	onToggle (id: string) {
+		const node = $(this.node);
+		const obj = node.find(`#relationGroup-${id}`);
+		const toggle = obj.find('.sectionToggle');
+		const list = obj.find('> .list');
+		const isOpen = list.hasClass('isOpen');
+
+		U.Common.toggle(list, 200);
+		toggle.text(isOpen ? translate('commonShowMore') : translate('commonShowLess'));
+	};
+
+	onShowDescription (id: string, text: string) {
+		const node = $(this.node);
+		const element = node.find(`#relationGroup-${id} .groupDescription`);
+		Preview.tooltipShow({
+			text,
+			element,
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			className: 'relationGroupDescription',
+			offsetX: 28,
 		});
 	};
 

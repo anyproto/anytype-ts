@@ -1,20 +1,4 @@
 > .sidebarPage.pageObjectRelation {
-	.sectionName { display: flex; align-items: center; justify-content: space-between; }
-	.sectionName {
-		> .label { font-weight: 600; padding-left: 4px; }
-		.groupDescription { position: relative; margin-right: 3px; }
-		.groupDescription {
-			.icon.question { width: 20px; height: 20px; background: url('~img/icon/question.svg'); }
-			.label {
-				display: none; position: absolute; z-index: 1; right: 100%; top: 50%; transform: translateY(-50%); background: var(--color-bg-primary);
-				width: 280px; padding: 13px 16px; margin-right: 8px; border-radius: 8px; box-shadow: 0px 2px 28px 0px rgba(0, 0, 0, 0.20);
-			}
-		}
-		.groupDescription:hover {
-			.label { display: block; }
-		}
-	}
-
 	.section.objectRelation { padding: 12px 16px; }
 	.section.objectRelation {
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 0px 10px; }

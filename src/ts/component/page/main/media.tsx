@@ -39,6 +39,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = false; //S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const type = S.Record.getTypeById(object.type);
+		const skipKeys = [ 'description' ];
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -53,13 +54,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return null;
 		};
 
-		const relations = Relation.getArrayValue(type?.recommendedFileRelations).map(it => S.Record.getRelationById(it)).filter(it => it).filter(it => {
-			if (it.relationKey == 'description') {
-				return false;
-			};
+		let relations = Relation.getArrayValue(type?.recommendedFileRelations).
+			map(it => S.Record.getRelationById(it)).
+			filter(it => it && !skipKeys.includes(it.relationKey));
 
-			return !config.debug.hiddenObject ? !it.isHidden : true;
-		}).sort((c1, c2) => U.Data.sortByFormat(c1, c2));
+		relations = S.Record.checkHiddenObjects(relations);
+		relations.sort((c1, c2) => U.Data.sortByFormat(c1, c2));
 
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();

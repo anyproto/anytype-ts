@@ -17,7 +17,20 @@
 		scrollbar-gutter: stable both-edges; flex-grow: 1;
 	}
 	.body {
-		.group { display: flex; flex-direction: column; gap: 12px 0px; margin-bottom: 10px; }
+		.group { display: flex; flex-direction: column; }
+		.group {
+			> .titleWrap { padding: 12px 4px; display: flex; align-items: center; justify-content: space-between; }
+			> .titleWrap {
+				> .label { @include text-paragraph; font-weight: 600; }
+				> .label.sectionToggle { padding-left: 12px; font-weight: 500; @include text-common; color: var(--color-text-secondary); }
+
+				.groupDescription { position: relative; width: 20px; height: 20px; background: url('~img/icon/question.svg'); }
+			}
+
+			> .list { display: flex; flex-direction: column; gap: 12px 0px; }
+			> .list.anim { transition: height 0.2s $easeInQuint; }
+			> .list.withToggle { overflow: hidden; height: 0px; }
+		}
 	}
 
 	.section { background: var(--color-bg-primary); border-radius: 12px; padding: 8px 0px; }
