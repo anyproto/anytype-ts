@@ -48,7 +48,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 								<Icon className="ghost" />
 								{translate('commonDeletedRelation')}
 							</>
-						) : 'New relation'} 
+						) : translate('menuBlockAddNewRelation')} 
 					</div>
 				</div>
 			);

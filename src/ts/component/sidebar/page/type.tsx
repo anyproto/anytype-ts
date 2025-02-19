@@ -12,7 +12,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	update: any = {};
 	sectionRefs: Map<string, any> = new Map();
 	previewRef: any = null;
-	conflicts: string[] = [];
+	conflictIds: string[] = [];
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -197,7 +197,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				return;
 			};
 
-			this.conflicts = Relation.getArrayValue(message.conflictRelationIds)
+			this.conflictIds = Relation.getArrayValue(message.conflictRelationIds)
 				.map(id => S.Record.getRelationById(id))
 				.filter(it => it && !Relation.isSystem(it.relationKey))
 				.map(it => it.id);
@@ -207,8 +207,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	getConflicts () {
-		const keys = S.Detail.getTypeRelationKeys(this.object.id);
-		return this.conflicts.slice(0).filter(it => !keys.includes(it));
+		const relationIds = S.Detail.getTypeRelationIds(this.object.id);
+		return this.conflictIds.slice(0).filter(it => !relationIds.includes(it));
 	};
 
 });

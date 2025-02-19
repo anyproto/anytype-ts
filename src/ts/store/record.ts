@@ -336,26 +336,27 @@ class RecordStore {
 	};
 
 	getConflictRelations (rootId: string, blockId: string, typeId: string): any[] {
-		const relationKeys = S.Detail.getKeys(rootId, blockId);
-		const typeRelationKeys = S.Detail.getTypeRelationKeys(typeId).
+		const objectKeys = S.Detail.getKeys(rootId, blockId);
+		const typeKeys = S.Detail.getTypeRelationIds(typeId).
 			map(it => S.Record.getRelationById(it)).
 			filter(it => it && it.relationKey).
 			map(it => it.relationKey);
 
-		let conflicts = [];
 
-		if (typeRelationKeys.length) {
-			relationKeys.forEach((key) => {
-				if (!typeRelationKeys.includes(key)) {
-					conflicts.push(key);
+		let conflictKeys = [];
+
+		if (typeKeys.length) {
+			objectKeys.forEach((key) => {
+				if (!typeKeys.includes(key)) {
+					conflictKeys.push(key);
 				};
 			});
 		} else {
-			conflicts = relationKeys;
+			conflictKeys = objectKeys;
 		};
 
-		conflicts = conflicts.map(it => this.getRelationByKey(it)).filter(it => it && !Relation.isSystem(it.relationKey));
-		return this.checkHiddenObjects(conflicts);
+		conflictKeys = conflictKeys.map(it => this.getRelationByKey(it)).filter(it => it && !Relation.isSystem(it.relationKey));
+		return this.checkHiddenObjects(conflictKeys);
 	};
 
 	getRelationByKey (relationKey: string): any {

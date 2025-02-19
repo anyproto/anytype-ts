@@ -370,7 +370,7 @@ class DetailStore {
 		return object;
 	};
 
-	public getTypeRelationKeys (id: string): string[] {
+	public getTypeRelationIds (id: string): string[] {
 		const type = S.Record.getTypeById(id);
 		if (!type) {
 			return [];
