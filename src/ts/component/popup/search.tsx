@@ -48,7 +48,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.onBacklink = this.onBacklink.bind(this);
 		this.onClearSearch = this.onClearSearch.bind(this);
 		this.onContext = this.onContext.bind(this);
-		this.filterMapper = this.filterMapper.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
@@ -650,11 +649,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	getItems () {
-		const { config } = S.Common;
 		const { backlink } = this.state;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 		const filter = this.getFilter();
 		const lang = J.Constant.default.interfaceLang;
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -666,7 +663,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			name = translate('commonCreateObject');
 		};
 
-		let items = this.items.filter(it => this.filterMapper(it, config));
+		let items = S.Record.checkHiddenObjects(this.items);
 
 		if (backlink) {
 			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlink.name), isSection: true, withClear: true });
@@ -779,10 +776,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	pageCreate (name: string) {
 		keyboard.pageCreate({ name }, analytics.route.search, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
-	};
-
-	filterMapper (it: any, config: any) {
-		return !(it.isHidden && !config.debug.hiddenObject);
 	};
 
 	onOver (e: any, item: any) {

@@ -118,25 +118,17 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 			.sort(U.Data.sortByName)
 			.map((it) => ({ ...it, onMore: this.onConflict }));
 		const conflictingKeys = conflicts.map(it => it.relationKey);
-		const recommended = Relation.getArrayValue(type.recommendedRelations);
-		const recommendedHidden = Relation.getArrayValue(type.recommendedHiddenRelations);
+		const recommendedIds = Relation.getArrayValue(type.recommendedRelations);
+		const hiddenIds = Relation.getArrayValue(type.recommendedHiddenRelations);
 
-		let items = recommended.map(it => S.Record.getRelationById(it));
+		let items = recommendedIds.map(it => S.Record.getRelationById(it));
 		items = items.filter(it => it && it.relationKey && !it.isArchived);
 		items = S.Record.checkHiddenObjects(items);
 		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
 
-		let hidden = recommendedHidden.map(it => S.Record.getRelationById(it));
-		hidden = hidden.filter(it => {
-			if (!it) {
-				return false;
-			};
-			if (it.isReadonlyValue && Relation.isEmpty(object[it.relationKey])) {
-				return false;
-			};
-
-			return !config.debug.hiddenObject ? !it.isHidden : true;
-		});
+		let hidden = hiddenIds.map(it => S.Record.getRelationById(it));
+		hidden = S.Record.checkHiddenObjects(hidden);
+		hidden = hidden.filter(it => it && !(it.isReadonlyValue && Relation.isEmpty(object[it.relationKey])));
 
 		const sections = [
 			{ id: 'object', children: items },

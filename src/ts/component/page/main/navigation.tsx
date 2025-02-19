@@ -425,8 +425,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				return;
 			};
 
-			const pagesIn = message.object.links.inbound.map(this.getPage).filter(this.filterMapper);
-			const pagesOut = message.object.links.outbound.map(this.getPage).filter(this.filterMapper);
+			const pagesIn = S.Record.checkHiddenObjects(message.object.links.inbound.map(this.getPage)).filter(this.filterMapper);
+			const pagesOut = S.Record.checkHiddenObjects(message.object.links.outbound.map(this.getPage)).filter(this.filterMapper);
 
 			this.panel = Panel.Center;
 
@@ -440,17 +440,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	filterMapper (it: any) {
-		const { config } = S.Common;
-
-		if (!it.id) {
-			return false;
-		};
-
-		let ret = !it.isDeleted;
-		if (!config.debug.hiddenObject) {
-			ret = ret && !it.isHidden;
-		};
-		return ret;
+		return it.id && !it.isDeleted;
 	};
 
 	getPage (item: any) {
