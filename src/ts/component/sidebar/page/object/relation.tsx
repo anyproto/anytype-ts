@@ -3,22 +3,14 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, sidebar, translate, keyboard, Relation, C } from 'Lib';
+import { I, S, U, sidebar, translate, keyboard, Relation, C, Preview } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 
-interface State {
-	showHidden: boolean;
-};
-
-const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, State> {
+const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, {}> {
 	
 	node = null;
 	sectionRefs: Map<string, any> = new Map();
-
-	state = {
-		showHidden: false,
-	};
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -31,7 +23,6 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
     render () {
 		const { rootId, readonly } = this.props;
-		const { showHidden } = this.state;
 		const object = this.getObject();
 		const sections = this.getSections();
 		const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
@@ -61,22 +52,19 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 							<div id={`relationGroup-${id}`} className="group" key={id}>
 								{name ? (
 									<div className="titleWrap">
-										<Label text={name} />
+
+										{withToggle ? (
+											<Label text={name} onClick={() => this.onToggle(id)} className="sectionToggle" />
+										) : <Label text={name} />}
 
 										{description ? (
-											<div className="groupDescription">
-												<Icon className="question" />
-												<Label text={description} />
-											</div>
+											<Icon
+												className="groupDescription"
+												onMouseEnter={() => this.onShowDescription(id, description)}
+												onMouseLeave={() => Preview.tooltipHide()}
+											/>
 										) : ''}
 									</div>
-								) : ''}
-
-								{withToggle ? (
-									<Label
-										onClick={() => this.onToggle(id)}
-										className="sectionToggle"
-										text={showHidden ? translate('commonShowLess') : translate('commonShowMore')} />
 								) : ''}
 
 								<div className={[ 'list', (withToggle ? 'withToggle' : '') ].join(' ')}>
@@ -132,7 +120,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 		const sections = [
 			{ id: 'object', children: items },
-			{ id: 'hidden', children: hidden, withToggle: true },
+			{ id: 'hidden', name: translate('commonShowMore'), children: hidden, withToggle: true },
 			{ id: 'conflicts', name: translate('sidebarRelationLocal'), children: conflicts, description: translate('sidebarTypeRelationLocalDescription') }
 		];
 
@@ -201,12 +189,30 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
 	onToggle (id: string) {
-		const { showHidden } = this.state;
 		const node = $(this.node);
 		const obj = node.find(`#relationGroup-${id}`);
+		const toggle = obj.find('.sectionToggle');
+		const list = obj.find('> .list');
+		const isOpen = list.hasClass('isOpen');
 
-		U.Common.toggle(obj.find('> .list'), 200);
-		window.setTimeout(() => this.setState({ showHidden: !showHidden }), 200);
+		U.Common.toggle(list, 200);
+
+		window.setTimeout(() => {
+			toggle.text(isOpen ? translate('commonShowMore') : translate('commonShowLess'));
+		}, 200);
+	};
+
+	onShowDescription (id: string, text: string) {
+		const node = $(this.node);
+		const element = node.find(`#relationGroup-${id} .groupDescription`);
+		Preview.tooltipShow({
+			text,
+			element,
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			className: 'relationGroupDescription',
+			offsetX: 28,
+		});
 	};
 
 });

@@ -27,3 +27,8 @@
 .tooltip.fromVault {
 	.txt { @include text-overflow-nw; width: 100%; }
 }
+
+.tooltip.relationGroupDescription {
+	width: 280px; padding: 13px 16px; border-radius: 8px; box-shadow: 0px 2px 28px 0px rgba(0, 0, 0, 0.20);
+	background: var(--color-bg-primary); color: var(--color-text-primary); white-space: normal;
+}
