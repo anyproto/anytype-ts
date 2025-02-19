@@ -586,12 +586,12 @@ class UtilData {
 		keys = keys || [];
 
 		const object = S.Detail.get(rootId, blockId, [ 
-			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled', 'featuredRelations',
+			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 'templateIsBundled', 'featuredRelations',
 		].concat(J.Relation.cover).concat(keys), true);
 		const type = S.Record.getTypeById(object.type);
-		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
-
+		const checkType = S.Block.checkBlockTypeExists(rootId);
+		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
 		const ret = {
 			withCover: false,
 			withIcon: false,
@@ -622,9 +622,13 @@ class UtilData {
 				break;
 			};
 
+			case I.ObjectLayout.Type: {
+				ret.withIcon = iconName || iconEmoji || true;
+				break;
+			};
+
 			case I.ObjectLayout.Human:
 			case I.ObjectLayout.Participant:
-			case I.ObjectLayout.Type:
 			case I.ObjectLayout.Relation: {
 				ret.withIcon = true;
 				break;

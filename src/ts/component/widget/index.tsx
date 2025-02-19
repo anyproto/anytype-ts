@@ -352,7 +352,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const space = U.Space.getSpaceview();
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		let limit = getLimit(block.content);

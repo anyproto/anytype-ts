@@ -224,7 +224,7 @@ class MenuContext extends React.Component<I.Menu> {
 	};
 
 	onOver (e: any, item: any) {
-		const { param, getId, getSize, close } = this.props;
+		const { id, param, getId, getSize, close } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { onLinkTo, route } = data;
 		const objectIds = this.getObjectIds();
@@ -248,9 +248,9 @@ class MenuContext extends React.Component<I.Menu> {
 			noAutoHover: true,
 			className,
 			classNameWrap,
-			data: {
-				rebind: this.rebind,
-			}
+			rebind: this.rebind,
+			parentId: id,
+			data: {},
 		};
 
 		let menuId = '';

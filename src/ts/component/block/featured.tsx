@@ -451,19 +451,19 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = S.Detail.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
-
 		const menuParam = {
 			menuId: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			rebind: this.menuContext.ref.rebind,
+			parentId: this.menuContext.props.id,
 			data: {
 				isBig: true,
 				rootId: rootId,
 				blockId: block.id,
 				blockIds: [ block.id ],
-				rebind: this.menuContext.ref.rebind,
 			}
 		};
 
@@ -846,13 +846,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'type', 'layout', 'featuredRelations' ], true);
+		const keys = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
+		const layouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
 
 		let ret = [];
 
-		if (U.Object.isInPageLayouts(short.layout)) {
+		if (layouts.includes(short.layout) && !keys.length) {
 			ret = S.Record.getTypeFeaturedRelations(short.type);
 		} else {
-			ret = Relation.getArrayValue(short.featuredRelations).map(it => S.Record.getRelationByKey(it));
+			ret = keys.map(it => S.Record.getRelationByKey(it));
 		};
 
 		return ret.filter(it => it);

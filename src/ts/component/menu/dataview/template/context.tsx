@@ -64,8 +64,6 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { template, onSetDefault, onArchive, onDuplicate, route, typeId } = data;
 
-		close();
-
 		switch (item.id) {
 			case 'default': {
 				if (onSetDefault) {
@@ -104,6 +102,8 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 				break;
 			};
 		};
+
+		close();
 	};
 
 	onMouseEnter (e: any, item: any) {

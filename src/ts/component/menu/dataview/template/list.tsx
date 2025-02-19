@@ -142,7 +142,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const items = this.getItems();
 
 		this.n = items.findIndex(it => it.id == templateId);
-		this.rebind();
 	};
 
 	load () {
@@ -206,7 +205,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	onMore (e: any, template: any) {
-		const { param, getId } = this.props;
+		const { id, param, getId } = this.props;
 		const { data } = param;
 		const { onSetDefault, route, typeId, getView } = data;
 		const item = U.Common.objectCopy(template);
@@ -238,8 +237,9 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				onClose: () => {
 					node.removeClass('active');
 				},
+				rebind: this.rebind,
+				parentId: id,
 				data: {
-					rebind: this.rebind,
 					template: item,
 					isView: !!getView,
 					typeId,

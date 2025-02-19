@@ -338,6 +338,7 @@ class App extends React.Component<object, State> {
 						S.Common.redirectSet(route);
 						S.Common.configSet(account.config, false);
 
+						const spaceId = Storage.get('spaceId');
 						const routeParam = { 
 							replace: true, 
 							onRouteChange: hide,

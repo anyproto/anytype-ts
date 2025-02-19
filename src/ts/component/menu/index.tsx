@@ -15,6 +15,7 @@ import MenuButton from './button';
 
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
+import MenuSmileColor from './smile/color';
 
 import MenuCalendar from './calendar';
 import MenuCalendarDay from './calendar/day';
@@ -95,6 +96,7 @@ const Components: any = {
 
 	smile:					 MenuSmile,
 	smileSkin:				 MenuSmileSkin,
+	smileColor:				 MenuSmileColor,
 
 	calendar:				 MenuCalendar,
 	calendarDay:			 MenuCalendarDay,
@@ -374,16 +376,24 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	rebindPrevious () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
+		const { id, param } = this.props;
+		const { data, rebind, parentId } = param;
+		const canRebind = parentId ? S.Menu.isOpen(parentId) : true;
 
 		if (this.ref && this.ref.unbind) {
 			this.ref.unbind();
 		};
 
+		if (!canRebind) {
+			return;
+		};
+
 		if (rebind) {
 			rebind();
+		} else
+		if (data.rebind) {
+			data.rebind();
+			console.error(`[Menu].rebindPrevious uses data.rebind in ${id}`);
 		};
 	};
 
@@ -712,7 +722,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	close (callBack?: () => void) {
 		S.Menu.close(this.props.id, () => {
-			window.setTimeout(() => this.rebindPrevious(), J.Constant.delay.menu);
+			window.setTimeout(() => this.rebindPrevious(), S.Menu.getTimeout());
 
 			if (callBack) {
 				callBack();

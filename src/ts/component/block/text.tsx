@@ -888,6 +888,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 	onSmile () {
 		const { rootId, block } = this.props;
+		const { iconEmoji, iconImage } = block.content;
 		const win = $(window);
 		const range = this.getRange();
 
@@ -904,6 +905,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			data: {
+				value: (iconEmoji || iconImage || ''),
 				noHead: true,
 				rootId,
 				blockId: block.id,
@@ -1009,17 +1011,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onCheckbox () {
 		const { rootId, block, readonly } = this.props;
-		const { id, content } = block;
-		const { checked } = content;
 
 		if (readonly) {
 			return;
 		};
+
+		const { id, content } = block;
+		const { checked } = content;
 		
 		focus.clear(true);
-		U.Data.blockSetText(rootId, block.id, this.getValue(), this.marks, true, () => {
-			C.BlockTextSetChecked(rootId, id, !checked);
-		});
+		C.BlockTextSetChecked(rootId, id, !checked);
 	};
 	
 	onLang (v: string) {

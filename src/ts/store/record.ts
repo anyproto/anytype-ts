@@ -336,17 +336,11 @@ class RecordStore {
 	};
 
 	getConflictRelations (rootId: string, blockId: string, typeId: string): any[] {
-		const type = S.Record.getTypeById(typeId);
-
-		if (!type) {
-			return [];
-		};
-
 		const relationKeys = S.Detail.getKeys(rootId, blockId);
-		const typeRelationKeys = type.recommendedRelations.concat(type.recommendedFeaturedRelations)
-			.map(it => S.Record.getRelationById(it))
-			.filter(it => it && it.relationKey)
-			.map(it => it.relationKey);
+		const typeRelationKeys = S.Detail.getTypeRelationKeys(typeId).
+			map(it => S.Record.getRelationById(it)).
+			filter(it => it && it.relationKey).
+			map(it => it.relationKey);
 
 		let conflicts = [];
 

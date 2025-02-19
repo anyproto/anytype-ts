@@ -79,7 +79,7 @@ class UtilRouter {
 		S.Popup.closeAll();
 
 		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, J.Constant.blankRouteId, space ].includes(routeParam.spaceId)) {
-			this.switchSpace(routeParam.spaceId, route, false, routeParam);
+			this.switchSpace(routeParam.spaceId, route, false, param);
 			return;
 		};
 

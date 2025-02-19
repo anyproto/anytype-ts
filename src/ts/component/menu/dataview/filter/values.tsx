@@ -416,7 +416,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onOver (e: any, item: any) {
-		const { getId, getSize, setActive, param } = this.props;
+		const { id, getId, getSize, setActive, param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const view = getView();
@@ -472,10 +472,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		S.Menu.closeAll([ 'select' ], () => {
 			S.Menu.open('select', {
 				...menuParam,
+				rebind: this.rebind,
+				parentId: id,
 				data: {
 					noFilter: true,
 					noVirtualisation: true,
-					rebind: this.rebind,
 					value: item[item.id],
 					options: U.Menu.prepareForSelect(options),
 					onSelect: (e: any, el: any) => {
@@ -629,7 +630,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onCalendar (value: number) {
-		const { getId, param } = this.props;
+		const { id, getId, param } = this.props;
 		const { data } = param;
 		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
@@ -637,8 +638,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		S.Menu.open('calendar', {
 			element: `#${getId()} #value`,
 			horizontal: I.MenuDirection.Center,
+			rebind: this.rebind,
+			parentId: id,
 			data: { 
-				rebind: this.rebind,
 				value, 
 				canEdit: true,
 				relationKey: item.relationKey,
@@ -655,7 +657,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		const { param, getId, getSize } = this.props;
+		const { id, param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
@@ -668,8 +670,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				width: getSize().width,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
+				rebind: this.rebind,
+				parentId: id,
 				data: { 
-					rebind: this.rebind,
 					rootId: rootId,
 					blockId: blockId,
 					value: item.value || [], 
@@ -688,7 +691,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		const { param, getId, getSize } = this.props;
+		const { id, param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const relation = S.Record.getRelationByKey(item.relationKey);
@@ -705,8 +708,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				width: getSize().width,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
+				rebind: this.rebind,
+				parentId: id,
 				data: { 
-					rebind: this.rebind,
 					rootId,
 					blockId,
 					value: item.value, 
