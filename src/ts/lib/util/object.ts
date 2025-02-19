@@ -512,6 +512,63 @@ class UtilObject {
 		});
 	};
 
+	hasEqualLayoutAlign (object: any, type: any): boolean {
+		if (!object || !type) {
+			return true;
+		};
+		return (undefined === object.layoutAlign) || (object.layoutAlign === type.layoutAlign);
+	};
+
+	hasEqualLayoutWidth (object: any, type: any): boolean {
+		const root = S.Block.getLeaf(object.id, object.id);
+
+		if (!object || !type || !root) {
+			return true;
+		};
+
+		const width = (root?.fields || {}).width;
+		return !width || (width == type.layoutWidth);
+	};
+
+	hasLayoutConflict (object: any): boolean {
+		const type = S.Record.getTypeById(object.type);
+		const root = S.Block.getLeaf(object.id, object.id);
+
+		if (!type || !root) {
+			return false;
+		};
+
+		if (object.layout != type.recommendedLayout) {
+			console.log('[hasLayoutConflict] layout', object.layout, type.recommendedLayout);
+			return true;
+		};
+
+		if (!this.hasEqualLayoutAlign(object, type)) {
+			console.log('[hasLayoutConflict] layoutAlign', object.layoutAlign, type.layoutAlign);
+			return true;
+		};
+
+		if (!this.hasEqualLayoutWidth(object, type)) {
+			console.log('[hasLayoutConflict] layoutWidth', type.layoutWidth);
+			return true;
+		};
+
+		return false;
+	};
+
+	resetLayout (id: string) {
+		const root = S.Block.getLeaf(id, id);
+		const fields = root.fields || {};
+
+		C.ObjectListSetDetails([ id ], [ 
+			{ key: 'layout', value: null },
+			{ key: 'layoutAlign', value: null },
+		]);
+
+		delete(fields.width);
+		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
+	};
+
 };
 
 export default new UtilObject();
