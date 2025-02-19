@@ -560,10 +560,7 @@ class UtilObject {
 		const root = S.Block.getLeaf(id, id);
 		const fields = root.fields || {};
 
-		C.ObjectListSetDetails([ id ], [ 
-			{ key: 'layout', value: null },
-			{ key: 'layoutAlign', value: null },
-		]);
+		C.ObjectRelationDelete(id, [ 'layout', 'layoutAlign' ]);
 
 		delete(fields.width);
 		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
