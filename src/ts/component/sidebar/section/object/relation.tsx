@@ -60,7 +60,7 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 						readonly={!canEdit}
 						idPrefix={PREFIX}
 						menuClassNameWrap="fromSidebar"
-						menuClassName="fixed"
+						menuClassName="fromSidebar fixed"
 						onCellChange={this.onCellChange}
 						pageContainer={container}
 					/>
