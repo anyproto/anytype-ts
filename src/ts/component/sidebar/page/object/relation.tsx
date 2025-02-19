@@ -196,10 +196,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const isOpen = list.hasClass('isOpen');
 
 		U.Common.toggle(list, 200);
-
-		window.setTimeout(() => {
-			toggle.text(isOpen ? translate('commonShowMore') : translate('commonShowLess'));
-		}, 200);
+		toggle.text(isOpen ? translate('commonShowMore') : translate('commonShowLess'));
 	};
 
 	onShowDescription (id: string, text: string) {
