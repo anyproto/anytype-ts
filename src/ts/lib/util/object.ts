@@ -531,7 +531,7 @@ class UtilObject {
 	};
 
 	hasLayoutConflict (object: any): boolean {
-		const type = S.Record.getTypeById(object.type);
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const root = S.Block.getLeaf(object.id, object.id);
 
 		if (!type || !root) {

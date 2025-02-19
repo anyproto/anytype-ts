@@ -72,7 +72,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { rootId } = data;
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = S.Detail.get(rootId, rootId);
-		const type = S.Record.getTypeById(object.type);
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const hasConflict = U.Object.hasLayoutConflict(object);
 		
 		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
