@@ -8,7 +8,7 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 	render () {
 		const { getId } = this.props;
 		const { config, linkStyle, fullscreenObject, hideSidebar, showVault } = S.Common;
-		const { hideTray, hideMenuBar } = config;
+		const { hideTray, showMenuBar } = config;
 		const { theme } = S.Common;
 
 		const themes: any[] = [
@@ -114,7 +114,7 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 							<Label text={translate('electronMenuShowMenu')} />
 							<Switch 
 								className="big" 
-								value={!hideMenuBar} 
+								value={showMenuBar} 
 								onChange={(e: any, v: boolean) => {
 									Renderer.send('setMenuBarVisibility', v);
 								}} 

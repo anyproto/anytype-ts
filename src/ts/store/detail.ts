@@ -370,6 +370,18 @@ class DetailStore {
 		return object;
 	};
 
+	public getTypeRelationKeys (id: string): string[] {
+		const type = S.Record.getTypeById(id);
+		if (!type) {
+			return [];
+		};
+
+		return [].
+			concat(type.recommendedRelations).
+			concat(type.recommendedFeaturedRelations).
+			concat(type.recommendedHiddenRelations);
+	};
+
 };
 
 export const Detail: DetailStore = new DetailStore();

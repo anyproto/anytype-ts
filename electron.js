@@ -51,7 +51,7 @@ powerMonitor.on('suspend', () => {
 });
 
 powerMonitor.on('resume', () => {
-	WindowManager.reloadAll();
+	WindowManager.sendToAll('reload');
 	Util.log('info', '[PowerMonitor] resume');
 });
 

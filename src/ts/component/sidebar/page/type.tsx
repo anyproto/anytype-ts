@@ -207,9 +207,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	getConflicts () {
-		const relations = (this.object.recommendedRelations || []).concat(this.object.recommendedFeaturedRelations || []);
-
-		return this.conflicts.slice(0).filter(it => !relations.includes(it));
+		const keys = S.Detail.getTypeRelationKeys(this.object.id);
+		return this.conflicts.slice(0).filter(it => !keys.includes(it));
 	};
 
 });

@@ -888,6 +888,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 	onSmile () {
 		const { rootId, block } = this.props;
+		const { iconEmoji, iconImage } = block.content;
 		const win = $(window);
 		const range = this.getRange();
 
@@ -904,6 +905,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			data: {
+				value: (iconEmoji || iconImage || ''),
 				noHead: true,
 				rootId,
 				blockId: block.id,
