@@ -675,6 +675,26 @@ class Keyboard {
 				break;
 			};
 
+			case 'releaseChannel': {
+				const cb = () => Renderer.send('setChannel', arg);
+
+				if (arg == 'latest') {
+					cb();
+				} else {
+					S.Popup.open('confirm', {
+						className: 'isLeft',
+						data: {
+							icon: 'warning',
+							bgColor: 'red',
+							title: translate('commonWarning'),
+							text: translate('popupConfirmReleaseChannelText'),
+							onConfirm: () => cb(),
+						},
+					});
+				};
+				break;
+			};
+
 		};
 	};
 
