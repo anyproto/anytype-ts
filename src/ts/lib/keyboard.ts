@@ -949,15 +949,7 @@ class Keyboard {
 	};
 
 	getMatch () {
-		const ret = (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
-
-		for (const k in ret.params) {
-			if (ret.params[k] == J.Constant.blankRouteId) {
-				ret.params[k] = '';
-			};
-		};
-
-		return ret;
+		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
 	};
 
 	isMain () {
