@@ -340,7 +340,7 @@ class Sidebar {
 		ref.setState({ page });
 	};
 
-	settingsOpen (id?: string, isSpace?: boolean) {
+	settingsOpen (id?: string) {
 		U.Router.go(`/main/settings/${id || ''}`, {});
 	};
 

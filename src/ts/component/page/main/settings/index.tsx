@@ -152,6 +152,9 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 	init () {
 		if (this.isSpace()) {
+			if (!U.Space.canMyParticipantWrite()) {
+				return;
+			};
 			sidebar.objectContainerSwitch('settingsSpace');
 		} else {
 			S.Common.getRef('vault')?.setActive('settings');
