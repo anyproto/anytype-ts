@@ -55,3 +55,9 @@
 		.logout:hover { background-color: var(--color-shape-highlight-medium); }
     }
 }
+
+> #containerSettings.spaceSettings {
+    > .body {
+        > .list { height: 100%; }
+    }
+}

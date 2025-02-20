@@ -94,7 +94,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		);
 
 		return (
-			<div id="containerSettings">
+			<div id="containerSettings" className={isSpace ? 'spaceSettings' : 'appSettings'}>
 				<div className="head" />
 
 				<div className="body">
@@ -126,6 +126,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	componentDidMount () {
 		const history = U.Router.history;
 
+		console.log('ITEMS: ', this.getItems())
+
 		this.routeBack = history.entries[history.index - 1];
 	};
 
@@ -145,14 +147,15 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const appSettings = [
 			{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
 			{
-				name: translate('popupSettingsApplicationTitle'), children: [
+				id: 'basicSettings', name: translate('popupSettingsApplicationTitle'), children: [
 					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 					{ id: 'language', name: translate('pageSettingsLanguageTitle') },
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 				]
 			},
-			{ name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
+			{ id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
 		];
+
 		const importExport = [{
 			id: 'exportIndex', icon: 'export', name: translate('commonExport'),
 			subPages: [ 'exportProtobuf', 'exportMarkdown' ]
@@ -166,16 +169,29 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		};
 
 		const spaceSettings = [
-			{ name: translate('commonPreferences'), children: [
+			{ id: 'common', name: translate('commonPreferences'), children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
 					{ id: 'spaceShare', icon: 'members', name: translate('commonMembers') },
 					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
 				]
 			},
-			{ name: translate('pageSettingsSpaceIntegrations'), children: importExport },
+			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
+	};
+
+	getItems () {
+		const sections = this.getSections();
+
+		let items: any[] = [];
+		for (const section of sections) {
+			if (section.name) {
+				items.push({ id: section.id, name: section.name, isSection: true });
+			};
+			items = items.concat(section.children);
+		};
+		return items;
 	};
 
 	withMembership () {
