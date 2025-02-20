@@ -207,6 +207,10 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
+
+		window.setTimeout(() => {
+			sidebar.settingsOpen('spaceIndex')
+		}, 1500);
 	};
 
 	init () {

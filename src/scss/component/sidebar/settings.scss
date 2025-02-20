@@ -23,13 +23,23 @@
             .section {
                 > .name { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 4px 0px; padding: 0px 8px; }
             }
+            .section.isLabel {
+                > .name { margin-bottom: -4px; }
+            }
+            .section.isOpen {
+                .toggle {
+                    .icon { transform: rotate(0deg); }
+                }
+            }
 
             .items { display: flex; flex-direction: column; }
 
+            .toggle,
             .item {
-                display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px;
+                display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 6px; padding: 4px 8px; border-radius: 8px;
                 transition: background-color $transitionCommon;
             }
+            .toggle:hover,
             .item:hover, .item.active { background-color: var(--color-shape-highlight-medium); }
             .item {
                 .icon { width: 20px; height: 20px; flex-shrink: 0; }
@@ -46,6 +56,11 @@
                 .iconObject { flex-shrink: 0; }
                 .name { @include text-common; @include text-overflow-nw; font-weight: 600; }
             }
+
+            .toggle { padding-left: 4px; }
+            .toggle {
+                .icon { width: 20px; height: 20px; flex-shrink: 0; background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
+            }
         }
 
         .logout { display: flex; align-items: center; justify-content: center; gap: 0px 8px; border-radius: 8px; padding: 4px 0px; }
@@ -58,6 +73,6 @@
 
 > #containerSettings.spaceSettings {
     > .body {
-        > .list { height: 100%; }
+        > .list { height: 100%; overflow: auto; }
     }
 }

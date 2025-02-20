@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { S, sidebar, translate, U } from 'Lib';
 import { Icon, IconObject, ObjectName } from 'Component';
@@ -9,6 +10,7 @@ interface Props extends React.Component {
 
 const SidebarSettings = observer(class SidebarSettings extends React.Component<Props, {}> {
 
+	node: any = null;
 	routeBack: any = null;
 
 	render () {
@@ -67,11 +69,15 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				};
 			};
 
+			if (action.isToggle) {
+				cn.push('isToggle');
+			};
+
 			return (
 				<div
 					id={`item-${action.id}`}
 					className={cn.join(' ')}
-					onClick={() => this.onPage(action.id)}
+					onClick={() => this.onClick(action)}
 				>
 					{icon}
 					<div className="name">{name}</div>
@@ -81,20 +87,39 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			);
 		};
 
-		const Section = (item: any) => (
-			<div className={[ 'section', String(item.id || '') ].join(' ')}>
-				{item.name ? <div className="name">{item.name}</div> : ''}
+		const Section = (item: any) => {
+			const cn = [ 'section', String(item.id || ''), item.isLabel ? 'isLabel' : '' ];
 
-				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<Item key={i} {...action} />
-					))}
+			let name = null;
+			if (item.isToggle) {
+				name = (
+					<div className="toggle" onClick={() => this.onToggle(item)}>
+						<Icon />
+						{item.name}
+					</div>
+				);
+			} else
+			if (item.name) {
+				name = <div className="name">{item.name}</div>;
+			};
+
+			return (
+				<div id={`settings-section-${item.id}`} className={cn.join(' ')}>
+					{name}
+
+					{item.children ? (
+						<div className="items">
+							{item.children.map((action: any, i: number) => (
+								<Item key={i} {...action} />
+							))}
+						</div>
+					) : ''}
 				</div>
-			</div>
-		);
+			);
+		};
 
 		return (
-			<div id="containerSettings" className={isSpace ? 'spaceSettings' : 'appSettings'}>
+			<div ref={ref => this.node = ref} id="containerSettings" className={isSpace ? 'spaceSettings' : 'appSettings'}>
 				<div className="head" />
 
 				<div className="body">
@@ -176,6 +201,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				]
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
+
+			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
+			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: [] },
+			{ id: 'contentModelFields', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: [] },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
@@ -198,8 +227,26 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		return S.Common.isOnline && U.Data.isAnytypeNetwork();
 	};
 
+	onClick (item) {
+		if (item.isToggle) {
+			return;
+		};
+
+		this.onPage(item.id);
+	};
+
 	onPage (page) {
 		sidebar.settingsOpen(page);
+	};
+
+	onToggle (item) {
+		const obj = $(this.node).find(`#settings-section-${item.id}`);
+
+		if (obj.hasClass('isOpen')) {
+			obj.removeClass('isOpen');
+		} else {
+			obj.addClass('isOpen');
+		};
 	};
 
 });
