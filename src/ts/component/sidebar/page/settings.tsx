@@ -258,16 +258,23 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	};
 
 	onClick (item) {
-		if (U.Object.isTypeLayout(item.layout)) {
-			//U.Object.openAuto(item);
-			U.Router.go(`/main/settings/type/objectId/${item.id}`, {});
-		} else {
-			this.onPage(item.id);
+		let param = {
+			id: item.id,
+			layout: I.ObjectLayout.Settings, 
 		};
-	};
 
-	onPage (page) {
-		sidebar.settingsOpen(page);
+		if (U.Object.isTypeOrRelationLayout(item.layout)) {
+			param = Object.assign(param, {
+				id: 'type',
+				_routeParam_: { 
+					additional: [ 
+						{ key: 'objectId', value: item.id } 
+					],
+				},
+			});
+		};
+
+		U.Object.openAuto(param);
 	};
 
 	onToggle (item) {
