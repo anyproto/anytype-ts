@@ -227,7 +227,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
-				sidebar.settingsOpen();
+				U.Object.openAuto({ id: 'account', layout: I.ObjectLayout.Settings });
 			});
 
 			// Create relation

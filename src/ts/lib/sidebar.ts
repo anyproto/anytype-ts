@@ -340,10 +340,6 @@ class Sidebar {
 		ref.setState({ page });
 	};
 
-	settingsOpen (id?: string) {
-		U.Object.openAuto({ id: id || 'index', layout: I.ObjectLayout.Settings });
-	};
-
 };
 
 export const sidebar: Sidebar = new Sidebar();

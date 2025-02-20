@@ -209,7 +209,7 @@ class App extends React.Component<object, State> {
 		this.init();
 
 		window.setTimeout(() => {
-			sidebar.settingsOpen('spaceIndex');
+			U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 		}, 1500);
 	};
 

@@ -52,7 +52,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 				} else {
 					S.Popup.open('membership', {
 						onClose: () => {
-							sidebar.settingsOpen('membership');
+							U.Object.openAuto({ id: 'membership', layout: I.ObjectLayout.Settings });
 						},
 						data: {
 							tier: membership.tier,

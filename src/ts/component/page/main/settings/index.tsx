@@ -99,7 +99,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 		this.getId = this.getId.bind(this);
 		this.isSpace = this.isSpace.bind(this);
-		this.onPage = this.onPage.bind(this);
 		this.onExport = this.onExport.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.onSpaceTypeTooltip = this.onSpaceTypeTooltip.bind(this);
@@ -124,7 +123,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 					ref={ref => this.ref = ref}
 					{...this.props}
 					getId={this.getId}
-					onPage={this.onPage}
+					onPage={id => U.Object.openAuto({ id, layout: I.ObjectLayout.Settings })}
 					onExport={this.onExport}
 					onConfirmPin={this.onConfirmPin}
 					setConfirmPin={this.setConfirmPin}
@@ -175,10 +174,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			S.Common.getRef('vault')?.setActive('settings');
 			sidebar.objectContainerSwitch('settings');
 		};
-	};
-
-	onPage (id: string) {
-		sidebar.settingsOpen(id);
 	};
 
 	onExport (type: I.ExportType, param: any) {

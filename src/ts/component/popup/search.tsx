@@ -834,7 +834,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			// Settings item
 			if (item.isSettings) {
-				sidebar.settingsOpen(item.id);
+				U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Settings });
 			} else 
 
 			// Import action

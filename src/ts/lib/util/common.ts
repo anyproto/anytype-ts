@@ -625,7 +625,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					sidebar.settingsOpen('spaceList');
+					U.Object.openAuto({ id: 'spaceList', layout: I.ObjectLayout.Settings });
 				},
 			},
 		});
