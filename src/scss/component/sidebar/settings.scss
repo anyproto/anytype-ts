@@ -26,10 +26,15 @@
             .section.isLabel {
                 > .name { margin-bottom: -4px; }
             }
-            .section.isOpen {
+
+            .section.isToggle {
+                .items { display: none; padding-left: 18px; }
+            }
+            .section.isToggle.isOpen {
                 .toggle {
                     .icon { transform: rotate(0deg); }
                 }
+                .items { display: flex; }
             }
 
             .items { display: flex; flex-direction: column; }

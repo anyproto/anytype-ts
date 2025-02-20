@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { S, sidebar, translate, U } from 'Lib';
+import { I, J, S, sidebar, translate, U } from 'Lib';
 import { Icon, IconObject, ObjectName } from 'Component';
 
 interface Props extends React.Component {
@@ -12,6 +12,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 	node: any = null;
 	routeBack: any = null;
+
+	types: any[] = [];
 
 	render () {
 		const space = U.Space.getSpaceview();
@@ -69,8 +71,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				};
 			};
 
-			if (action.isToggle) {
-				cn.push('isToggle');
+			if (action.layout && action.layout == I.ObjectLayout.Type) {
+				icon = <IconObject object={action} />;
 			};
 
 			return (
@@ -89,6 +91,13 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 		const Section = (item: any) => {
 			const cn = [ 'section', String(item.id || ''), item.isLabel ? 'isLabel' : '' ];
+
+			if (item.isLabel) {
+				cn.push('isLabel');
+			} else
+			if (item.isToggle) {
+				cn.push('isToggle');
+			};
 
 			let name = null;
 			if (item.isToggle) {
@@ -151,9 +160,28 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	componentDidMount () {
 		const history = U.Router.history;
 
-		console.log('ITEMS: ', this.getItems())
-
 		this.routeBack = history.entries[history.index - 1];
+
+		this.load();
+	};
+
+	load () {
+		U.Data.search({
+			sorts: [
+				{ type: I.SortType.Desc, relationKey: 'createdDate' },
+				{ type: I.SortType.Asc, relationKey: 'name' },
+			],
+			filters: [{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type }],
+			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
+			noDeps: true,
+			ignoreHidden: true,
+			ignoreDeleted: true,
+		}, (message: any) => {
+			if (!message.error.code) {
+				this.types = message.records;
+				this.forceUpdate();
+			};
+		});
 	};
 
 	getSections () {
@@ -203,7 +231,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
-			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: [] },
+			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: this.types },
 			{ id: 'contentModelFields', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: [] },
 		];
 
@@ -228,7 +256,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	};
 
 	onClick (item) {
-		if (item.isToggle) {
+		if (item.layout && item.layout == I.ObjectLayout.Type) {
+			U.Object.openAuto(item);
 			return;
 		};
 
