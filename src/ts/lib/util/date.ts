@@ -161,7 +161,8 @@ class UtilDate {
 				return d.getDay();
 			},
 			N: () => {
-				return (f.w() + 6) % 7;
+				const w = f.w();
+				return w == 0 ? 7 : w;
 			},
 			l: () => {
 				return translate(`day${f.N() + 1}`);
@@ -355,12 +356,8 @@ class UtilDate {
 			ny = y + 1;
 		};
 
-		console.log('1. first', wdf, 'last', wdl);
-
 		wdf = (wdf - firstDay + 7) % 7; 
 		wdl = (wdl - firstDay + 7) % 7;
-
-		console.log('2. first', wdf, 'last', wdl);
 
 		const days = [];
 		for (let i = 1; i <= wdf; ++i) {
