@@ -171,7 +171,9 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				{ type: I.SortType.Desc, relationKey: 'createdDate' },
 				{ type: I.SortType.Asc, relationKey: 'name' },
 			],
-			filters: [{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type }],
+			filters: [
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type }
+			],
 			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
 			noDeps: true,
 			ignoreHidden: true,
@@ -256,12 +258,12 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	};
 
 	onClick (item) {
-		if (item.layout && item.layout == I.ObjectLayout.Type) {
-			U.Object.openAuto(item);
-			return;
+		if (U.Object.isTypeLayout(item.layout)) {
+			//U.Object.openAuto(item);
+			U.Router.go(`/main/settings/type/objectId/${item.id}`, {});
+		} else {
+			this.onPage(item.id);
 		};
-
-		this.onPage(item.id);
 	};
 
 	onPage (page) {

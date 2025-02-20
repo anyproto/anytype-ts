@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding, sidebar, Storage } from 'Lib';
+import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage } from 'Lib';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -29,6 +29,9 @@ import PageSpaceIndex from './space/index';
 import PageSpaceStorageManager from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
+
+import PageMainType from '../type';
+import PageMainRelation from '../relation';
 
 import PageMembership from './membership';
 import $ from 'jquery';
@@ -68,14 +71,17 @@ const Components: any = {
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
-};
 
+	type:				 PageMainType,
+	relation:			 PageMainRelation,
+};
 
 const SPACE_PAGES = [
 	'spaceIndex', 'spaceStorageManager', 'spaceShare',
-	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'exportIndex', 'exportProtobuf', 'exportMarkdown',
+	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 
+	'exportIndex', 'exportProtobuf', 'exportMarkdown',
+	'type', 'relation',
 ];
-
 
 const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
 
@@ -106,7 +112,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		const id = param.id || 'account';
 
 		if (!Components[id]) {
-			return;
+			return null;
 		};
 
 		const Component = Components[id];

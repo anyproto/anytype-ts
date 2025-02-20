@@ -551,6 +551,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	getRootId () {
 		const { rootId, match } = this.props;
+
+		if (match.params.value) {
+			return match.params.value;
+		};
+
 		return rootId ? rootId : match?.params?.id;
 	};
 
