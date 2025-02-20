@@ -1,4 +1,6 @@
 import * as React from 'react';
+import $ from 'jquery';
+import { Header } from 'Component';
 import { observer } from 'mobx-react';
 import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage } from 'Lib';
 
@@ -34,8 +36,6 @@ import PageMainType from '../type';
 import PageMainRelation from '../relation';
 
 import PageMembership from './membership';
-import $ from 'jquery';
-import { Header } from 'Component';
 
 interface State {
 	loading: boolean;
@@ -83,6 +83,8 @@ const SPACE_PAGES = [
 	'type', 'relation',
 ];
 
+const SKIP_CONTAINER = [ 'type', 'relation' ];
+
 const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
 
 	ref: any = null;
@@ -107,8 +109,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	};
 
 	render () {
-		const pathname = U.Router.getRoute();
-		const param = U.Router.getParam(pathname);
+		const param = U.Router.getParam(U.Router.getRoute());
 		const id = param.id || 'account';
 
 		if (!Components[id]) {
@@ -116,29 +117,37 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		};
 
 		const Component = Components[id];
-		return (
-			<>
-				<Header {...this.props} component="mainSettings" />
-				<div className="settingsPageContainer" id="settingsPageContainer">
 
-					<div id={this.getId()} className={[ 'settingsPage', this.getId() ].join(' ')} >
-						<Component
-							ref={ref => this.ref = ref}
-							{...this.props}
-							getId={this.getId}
-							onPage={this.onPage}
-							onExport={this.onExport}
-							onConfirmPin={this.onConfirmPin}
-							setConfirmPin={this.setConfirmPin}
-							setLoading={this.setLoading}
-							onSpaceTypeTooltip={this.onSpaceTypeTooltip}
-							storageGet={this.storageGet}
-							storageSet={this.storageSet}
-						/>
-					</div>
-				</div>
-			</>
+		let content = (
+			<div id={this.getId()} className={[ 'settingsPage', this.getId() ].join(' ')} >
+				<Component
+					ref={ref => this.ref = ref}
+					{...this.props}
+					getId={this.getId}
+					onPage={this.onPage}
+					onExport={this.onExport}
+					onConfirmPin={this.onConfirmPin}
+					setConfirmPin={this.setConfirmPin}
+					setLoading={this.setLoading}
+					onSpaceTypeTooltip={this.onSpaceTypeTooltip}
+					storageGet={this.storageGet}
+					storageSet={this.storageSet}
+				/>
+			</div>
 		);
+
+		if (!SKIP_CONTAINER.includes(id)) {
+			content = (
+				<>
+					<Header {...this.props} component="mainSettings" />
+					<div className="settingsPageContainer" id="settingsPageContainer">
+						{content}
+					</div>
+				</>
+			);
+		};
+
+		return content;
 	};
 
 	componentDidMount () {

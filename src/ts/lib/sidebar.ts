@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { U, S, J, Storage, keyboard } from 'Lib';
+import { I, U, S, J, Storage, keyboard } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -341,7 +341,7 @@ class Sidebar {
 	};
 
 	settingsOpen (id?: string) {
-		U.Router.go(`/main/settings/${id || ''}`, {});
+		U.Object.openAuto({ id: id || 'index', layout: I.ObjectLayout.Settings });
 	};
 
 };

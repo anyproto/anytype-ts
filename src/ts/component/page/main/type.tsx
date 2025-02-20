@@ -550,13 +550,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
+		const { rootId, } = this.props;
+		const param = U.Router.getParam(U.Router.getRoute());
 
-		if (match.params.value) {
-			return match.params.value;
-		};
-
-		return rootId ? rootId : match?.params?.id;
+		return rootId || param.objectId || param.id;
 	};
 
 	getSpaceId () {

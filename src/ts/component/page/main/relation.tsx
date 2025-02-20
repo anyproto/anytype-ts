@@ -172,8 +172,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		const { rootId, } = this.props;
+		const param = U.Router.getParam(U.Router.getRoute());
+
+		return rootId || param.objectId || param.id;
 	};
 
 	onCreate () {

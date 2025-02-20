@@ -6,7 +6,7 @@ export default [
 	'/:page/:action/:id?/spaceId/:spaceId?/viewId/:viewId?',
 	'/:page/:action/:id?/spaceId/:spaceId?/relationKey/:relationKey?',
 	'/:page/:action/:id?/spaceId/:spaceId?/viewId/:viewId?/relationKey/:relationKey?',
-	'/:page/:action/:id?/:key?/:value?',
+	'/:page/:action/:id?/*',
 	'/object',
 	'/invite',
 	'/membership'
