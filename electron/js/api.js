@@ -184,6 +184,11 @@ class Api {
 		Server.stop(signal).then(() => this.shutdown(win, relaunch));
 	};
 
+	setChannel (win, id) {
+		UpdateManager.setChannel(id); 
+		this.setConfig(win, { channel: id });
+	};
+
 	setInterfaceLang (win, lang) {
 		ConfigManager.set({ interfaceLang: lang }, () => {
 			WindowManager.reloadAll();
