@@ -649,7 +649,6 @@ class Action {
 			return;
 		};
 
-		const { space } = S.Common;
 		const isOwner = U.Space.isMyOwner(id);
 		const name = U.Common.shorten(deleted.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';

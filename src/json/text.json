@@ -779,6 +779,7 @@
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
+	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
