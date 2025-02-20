@@ -1,4 +1,4 @@
-import { I, U, J, translate } from 'Lib';
+import { I, U, J, S, translate } from 'Lib';
 
 class UtilDate {
 
@@ -329,6 +329,7 @@ class UtilDate {
 	};
 
 	getCalendarMonth (value: number) {
+		const { firstDay } = S.Common;
 		const { m, y } = this.getCalendarDateParam(value);
 		const md = {...J.Constant.monthDays};
 		
@@ -337,8 +338,8 @@ class UtilDate {
 			md[2] = 29;
 		};
 		
-		const wdf = Number(this.date('N', this.timestamp(y, m, 1)));
-		const wdl = Number(this.date('N', this.timestamp(y, m, md[m])));
+		let wdf = Number(this.date('N', this.timestamp(y, m, 1)));
+		let wdl = Number(this.date('N', this.timestamp(y, m, md[m])));
 		let pm = m - 1;
 		let nm = m + 1;
 		let py = y;
@@ -354,6 +355,13 @@ class UtilDate {
 			ny = y + 1;
 		};
 
+		console.log('1. first', wdf, 'last', wdl);
+
+		wdf = (wdf - firstDay + 7) % 7; 
+		wdl = (wdl - firstDay + 7) % 7;
+
+		console.log('2. first', wdf, 'last', wdl);
+
 		const days = [];
 		for (let i = 1; i <= wdf; ++i) {
 			days.push({ d: md[pm] - (wdf - i), m: pm, y: py });
@@ -361,8 +369,7 @@ class UtilDate {
 		for (let i = 1; i <= md[m]; ++i) {
 			days.push({ y: y, m: m, d: i });
 		};
-
-		for (let i = 1; i < 7 - wdl; ++i) {
+		for (let i = 1; i <= (6 - wdl); ++i) {
 			days.push({ d: i, m: nm, y: ny });
 		};
 
@@ -390,10 +397,17 @@ class UtilDate {
 	};
 
 	getWeekDays (): { id: number, name: string }[] {
+		const { firstDay } = S.Common;
 		const ret = [];
-		for (let i = 1; i <= 7; ++i) {
+
+		for (let i = firstDay; i <= 7; ++i) {
 			ret.push({ id: i, name: translate(`day${i}`) });
 		};
+
+		for (let i = 1; i < firstDay; ++i) {
+			ret.push({ id: i, name: translate(`day${i}`) });
+		};
+
 		return ret;
 	};
 
