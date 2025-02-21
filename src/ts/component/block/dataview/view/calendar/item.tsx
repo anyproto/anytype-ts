@@ -203,8 +203,6 @@ const Item = observer(class Item extends React.Component<Props> {
 		};
 
 		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
-
-		console.log(isAllowedObject(), groupRelation);
 		return groupRelation && !groupRelation.isReadonlyValue && isAllowedObject();
 	};
 
