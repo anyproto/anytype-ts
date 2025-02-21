@@ -37,13 +37,9 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const now = U.Date.now();
 		const tomorrow = now + 86400;
 		const dayToday = U.Date.today();
-		const days = [];
+		const days = U.Date.getWeekDays();
 		const months = [];
 		const years = [];
-
-		for (let i = 1; i <= 7; ++i) {
-			days.push({ id: i, name: translate('day' + i) });
-		};
 
 		for (let i = 1; i <= 12; ++i) {
 			months.push({ id: i, name: translate('month' + i) });

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Input, IconObject, Button, Loader, Error } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Storage } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, analytics, Storage, sidebar } from 'Lib';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 
@@ -80,13 +80,17 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					return;
 				};
 
+				const ids = [ message.objectId ].concat(U.Menu.getVaultItems().map(it => it.id));
+
+				Storage.set('spaceOrder', ids);
+
 				U.Router.switchSpace(message.objectId, '', true, { 
 					onRouteChange: () => {
 						U.Space.initSpaceState();
 
 						if (withImport) {
 							close(() => {
-								S.Popup.open('settings', { data: { isSpace: true, page: 'importIndex' }, className: 'isSpace' });
+								sidebar.settingsOpen('importIndex');
 							});
 						};
 

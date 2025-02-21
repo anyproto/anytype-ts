@@ -152,8 +152,8 @@ const PageMainDate = observer(class PageMainDate extends React.Component<I.PageC
 	};
 
 	componentDidMount () {
-		const match = keyboard.getMatch();
-		const { relationKey } = match.params;
+		const param = U.Router.getParam(U.Router.getRoute());
+		const { relationKey } = param;
 
 		this._isMounted = true;
 

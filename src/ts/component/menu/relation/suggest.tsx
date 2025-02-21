@@ -157,7 +157,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	componentDidUpdate () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const filter = String(data.filter || '');
 		const items = this.getItems();
 
 		if (filter != this.filter) {
@@ -324,10 +324,12 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	onFilterChange (v: string) {
-		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			this.props.param.data.filter = this.refFilter.getValue();
-		}, J.Constant.delay.keyboard);
+		if (v != this.filter) {
+			window.clearTimeout(this.timeoutFilter);
+			this.timeoutFilter = window.setTimeout(() => {
+				this.props.param.data.filter = this.refFilter.getValue();
+			}, J.Constant.delay.keyboard);
+		};
 	};
 
 	onMouseEnter (e: any, item: any) {
@@ -349,11 +351,11 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			return;
 		};
 
-		const { getId, getSize, param, close } = this.props;
+		const { id, getId, getSize, param, close } = this.props;
 		const { classNameWrap, data } = param;
 		const skipKeys = data.skipKeys || [];
-
 		const sources = this.getLibrarySources();
+
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -363,9 +365,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			isSub: true,
 			noFlipY: true,
 			classNameWrap,
-			data: {
-				rebind: this.rebind,
-			},
+			rebind: this.rebind,
+			parentId: id,
+			data: {},
 		};
 
 		let menuId = '';
@@ -418,7 +420,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			return;
 		};
 
-		const { close, param, getId, getSize } = this.props;
+		const { id, close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
@@ -439,9 +441,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				offsetY: -80,
 				noAnimation: true,
 				classNameWrap,
+				rebind: this.rebind,
+				parentId: id,
 				data: {
 					...data,
-					rebind: this.rebind,
 					onChange: () => close(),
 					addCommand: (rootId: string, blockId: string, item: any) => onAdd(item),
 				}

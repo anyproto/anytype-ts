@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
+import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader, IconObject } from 'Component';
 import { I, C, S, U, J, keyboard, translate, analytics, Preview, Action } from 'Lib';
 
 enum Tab {
@@ -10,6 +10,7 @@ enum Tab {
 	Library	 = 1,
 	Smile	 = 2,
 	Upload	 = 3,
+	Icon 	 = 4,
 };
 
 interface State {
@@ -44,9 +45,11 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	refFilter = null;
 	refList = null;
 	refItems = null;
+	refIcons = null;
 
 	id = '';
 	skin = 1;
+	iconColor = 1;
 	cache: any = null;
 	groupCache: any[] = [];
 	row = -1;
@@ -82,6 +85,76 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		let content = null;
 
 		switch (tab) {
+			case Tab.Icon: {
+				if (!this.cache) {
+					break;
+				};
+
+				const Item = (item: any) => (
+					<div
+						id={`item-${item.id}`}
+						className="item"
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onMouseLeave={() => this.onMouseLeave()}
+						onMouseDown={e => this.onMouseDown(e, item)}
+						onContextMenu={e => this.onSkin(e, item)}
+					>
+						<IconObject object={item} size={30} iconSize={30} />
+					</div>
+				);
+
+				const rowRenderer = (param: any) => (
+					<CellMeasurer
+						key={param.key}
+						parent={param.parent}
+						cache={this.cache}
+						columnIndex={0}
+						rowIndex={param.index}
+					>
+						<div style={param.style}>
+							<div className="row">
+								{items[param.index].children.map((item: any, i: number) => (
+									<Item key={item.id} {...item} />
+								))}
+							</div>
+						</div>
+					</CellMeasurer>
+				);
+
+				content = (
+					<React.Fragment>
+						<div ref={ref => this.refIcons = ref} className="items">
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={({ index }) => !!items[index]}
+							>
+								{({ onRowsRendered }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={ref => this.refList = ref}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={HEIGHT_SMILE_ITEM}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												onScroll={this.onScroll}
+												scrollToAlignment="center"
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+						</div>
+					</React.Fragment>
+				);
+				break;
+			};
+
 			case Tab.Smile: {
 				if (!this.cache) {
 					break;
@@ -352,11 +425,12 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		const items = this.getItems();
 		const tabs = this.getTabs();
 		const storage = storageGet();
-		const { tab, skin } = storage;
-		
+		const { tab, skin, iconColor } = storage;
+
 		this.rebind();
 
 		this.skin = Number(skin) || 1;
+		this.iconColor = Number(iconColor) || 1;
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_SECTION,
@@ -392,7 +466,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		window.clearTimeout(this.timeoutFilter);
 
 		keyboard.setFocus(false);
-		S.Menu.close('smileSkin');
+		S.Menu.close('smileColor');
 
 		this.unbind();
 	};
@@ -511,6 +585,11 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		let ret = [];
 
 		switch (tab) {
+			case Tab.Icon: {
+				ret = this.getIconItems();
+				break;
+			};
+
 			case Tab.Smile: {
 				ret = this.getSmileItems();
 				break;
@@ -612,6 +691,39 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 		return ret;
 	};
+
+	getIconItems () {
+		const ret: any[] = [];
+		const items = J.Icon;
+
+		let n = 0;
+		let row = { children: [] };
+
+		for (let i = 0; i < items.length; i++) {
+			const id = items[i].id;
+
+			row.children.push({
+				id,
+				itemId: id,
+				iconName: id,
+				iconOption: 1,
+				layout: I.ObjectLayout.Type
+			});
+			n++;
+
+			if (n == LIMIT_SMILE_ROW) {
+				ret.push(row);
+				row = { children: [] };
+				n = 0;
+			};
+		};
+
+		if (row.children.length && (row.children.length < LIMIT_SMILE_ROW)) {
+			ret.push(row);
+		};
+
+		return ret;
+	};
 	
 	getRowHeight (item: any) {
 		if (item.isSection) {
@@ -619,6 +731,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 
 		switch (this.state.tab) {
+			case Tab.Icon:
 			case Tab.Smile: return HEIGHT_SMILE_ITEM;
 			case Tab.Library: return HEIGHT_LIBRARY_ITEM;
 		};
@@ -634,7 +747,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onKeyDown (e: any) {
-		if (S.Menu.isOpen('smileSkin')) {
+		if (S.Menu.isOpen('smileColor')) {
 			return;
 		};
 
@@ -670,6 +783,11 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			e.preventDefault();
 
 			switch (tab) {
+				case Tab.Icon: {
+					this.onSmileSelect(this.active.itemId, 1);
+					break;
+				};
+
 				case Tab.Smile: {
 					this.onSmileSelect(this.active.itemId, this.skin);
 					break;
@@ -691,6 +809,11 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			e.preventDefault();
 
 			switch (tab) {
+				case Tab.Icon: {
+					this.onSkin(e, this.active);
+					break;
+				};
+
 				case Tab.Smile: {
 					const item = J.Emoji.emojis[this.active.itemId];
 					if (item.skins && (item.skins.length > 1)) {
@@ -797,25 +920,37 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		this.setActive(current.children[this.coll], this.row);
 	};
 
-	onSmileSelect (id: string, skin: number) {
-		skin = Number(skin) || 1;
+	onSmileSelect (id: string, color: number) {
+		color = Number(color) || 1;
 
+		const { tab } = this.state;
 		const { param, storageSet } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
-		const value = id ? U.Smile.nativeById(id, skin) : '';
+		const { onSelect, onIconSelect } = data;
 
-		data.value = value;
-		
-		if (value) {
-			this.skin = skin;
-			this.setLastIds(id, skin);
+		if (tab == Tab.Icon) {
+			this.iconColor = color;
 
-			storageSet({ skin });
-		};
+			storageSet({ iconColor: color });
 
-		if (onSelect) {
-			onSelect(value);
+			if (onIconSelect) {
+				onIconSelect(id, color);
+			};
+		} else {
+			const value = id ? U.Smile.nativeById(id, color) : '';
+
+			data.value = value;
+
+			if (value) {
+				this.skin = color;
+				this.setLastIds(id, color);
+
+				storageSet({ skin: color });
+			};
+
+			if (onSelect) {
+				onSelect(value);
+			};
 		};
 
 		analytics.event(id ? 'SetIcon' : 'RemoveIcon');
@@ -852,38 +987,45 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		const { close } = this.props;
 		const { tab } = this.state;
 		const win = $(window);
+		const timeout = tab == Tab.Icon ? 0 : 200;
 
-		switch (tab) {
-			case Tab.Smile: {
-				const { itemId, skin } = item;
+		const callBack = (id, color) => {
+			this.id = id;
+			window.clearTimeout(this.timeoutMenu);
 
-				this.id = itemId;
-				window.clearTimeout(this.timeoutMenu);
+			if (e.button) {
+				return;
+			};
 
-				if (e.button) {
+			if (this.hasSkins(item)) {
+				this.timeoutMenu = window.setTimeout(() => {
+					win.off('mouseup.smile');
+					this.onSkin(e, item);
+				}, timeout);
+			};
+
+			win.off('mouseup.smile').on('mouseup.smile', () => {
+				if (S.Menu.isOpen('smileColor')) {
 					return;
 				};
 
-				if (item && item.skins && (item.skins.length > 1)) {
-					this.timeoutMenu = window.setTimeout(() => {
-						win.off('mouseup.smile');
-						this.onSkin(e, item);
-					}, 200);
+				if (this.id) {
+					this.onSmileSelect(id, color);
+					close();
 				};
 
-				win.off('mouseup.smile').on('mouseup.smile', () => {
-					if (S.Menu.isOpen('smileSkin')) {
-						return;
-					};
+				window.clearTimeout(this.timeoutMenu);
+				win.off('mouseup.smile');
+			});
+		};
 
-					if (this.id) {
-						this.onSmileSelect(itemId, skin);
-						close();
-					};
-
-					window.clearTimeout(this.timeoutMenu);
-					win.off('mouseup.smile');
-				});
+		switch (tab) {
+			case Tab.Icon: {
+				callBack(item.itemId, this.iconColor);
+				break;
+			};
+			case Tab.Smile: {
+				callBack(item.itemId, item.skin);
 				break;
 			};
 
@@ -894,27 +1036,36 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 	};
 
+	hasSkins (item: any) {
+		const { tab } = this.state;
+		return (tab == Tab.Icon) || ((tab == Tab.Smile) && (item.skins && item.skins.length > 1));
+	};
+
 	onSkin (e: any, item: any) {
-		const el = J.Emoji.emojis[item.itemId];
-		if (el.skins.length <= 1) {
+		const hasSkins = this.hasSkins(item);
+
+		if (!hasSkins) {
 			return;
 		};
 
-		const { getId, close, param } = this.props;
+		const { id, getId, close, param } = this.props;
+		const element = `#${getId()} #item-${$.escapeSelector(item.id)}`;
 
-		S.Menu.open('smileSkin', {
+		S.Menu.open('smileColor', {
 			...param,
+			element,
 			type: I.MenuType.Horizontal,
-			element: `#${getId()} #item-${$.escapeSelector(item.id)}`,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
+			rebind: this.rebind,
+			parentId: id,
 			data: {
-				smileId: item.itemId,
+				itemId: item.itemId,
+				isEmoji: item.skins,
 				onSelect: (skin: number) => {
 					this.onSmileSelect(item.itemId, skin);
 					close();
 				},
-				rebind: this.rebind
 			},
 			onClose: () => {
 				this.id = '';
@@ -1084,13 +1235,17 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	getTabs () {
 		const { param } = this.props;
 		const { data } = param;
-		const { noHead, noGallery, noUpload } = data;
+		const { noHead, noGallery, noUpload, withIcons } = data;
 
 		if (noHead) {
 			return [];
 		};
 
 		let tabs: any[] = [];
+
+		if (withIcons) {
+			tabs.push({ id: Tab.Icon, text: translate('menuSmileIcons') });
+		};
 
 		if (!noGallery) {
 			tabs.push({ id: Tab.Smile, text: translate('menuSmileGallery') });

@@ -179,7 +179,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					};
 
 					details.layout = type.recommendedLayout;
-					flags = flags.concat([ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ]);
+					flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 					typeKey = type.uniqueKey;
 					templateId = type.defaultTemplateId;
 					break;
@@ -353,7 +353,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const templateType = S.Record.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
 		let limit = getLimit(block.content);

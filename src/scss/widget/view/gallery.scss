@@ -12,7 +12,7 @@
 			.inner { display: flex; flex-direction: column; height: 100%; align-items: stretch; }
 
 			.cover { 
-				position: relative; height: 80px; background-position: top center; display: flex; align-items: center; flex-shrink: 0px;
+				position: relative; height: 80px; background-position: top center; display: flex; align-items: center; flex-shrink: 0;
 				background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 8px 8px 0px 0px; overflow: hidden;
 			}
 
@@ -48,6 +48,10 @@
 			.info {
 				.iconObject { top: 8px; }
 			}
+		}
+
+		.item.withoutName {
+			.cover { border-radius: 8px; }
 		}
 
 		.item:hover, .item.active { background: var(--color-shape-highlight-light); }

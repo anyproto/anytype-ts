@@ -682,6 +682,19 @@ export const Mapper = {
 			return reactions;
 		},
 
+		PublishState: (obj: Rpc.Publishing.PublishState): I.PublishState => {
+			return {
+				spaceId: obj.getSpaceid(),
+				objectId: obj.getObjectid(),
+				uri: obj.getUri(),
+				status: obj.getStatus() as number,
+				version: obj.getVersion(),
+				timestamp: obj.getTimestamp(),
+				size: obj.getSize(),
+				details: Decode.struct(obj.getDetails()),
+			};
+		},
+
 	},
 
 	//------------------------------------------------------------
@@ -1085,6 +1098,7 @@ export const Mapper = {
 			if (v == V.ACCOUNTUPDATE)				 t = 'AccountUpdate';
 			if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'AccountConfigUpdate';
 			if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'AccountLinkChallenge';
+			if (v == V.ACCOUNTLINKCHALLENGEHIDE)	 t = 'AccountLinkChallengeHide';
 
 			if (v == V.BLOCKADD)					 t = 'BlockAdd';
 			if (v == V.BLOCKDELETE)					 t = 'BlockDelete';
@@ -1191,6 +1205,12 @@ export const Mapper = {
 		},
 
 		AccountLinkChallenge: (obj: Events.Event.Account.LinkChallenge) => {
+			return {
+				challenge: obj.getChallenge(),
+			};
+		},
+
+		AccountLinkChallengeHide: (obj: Events.Event.Account.LinkChallengeHide) => {
 			return {
 				challenge: obj.getChallenge(),
 			};

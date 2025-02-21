@@ -30,20 +30,15 @@ const Vault = observer(class Vault extends React.Component {
 	render () {
 		const items = this.getSortedItems();
 
-		const Item = item => {
-			const onContextMenu = item.isButton ? null : e => this.onContextMenu(e, item);
-
-			return (
-				<VaultItem 
-					id={item.id}
-					isButton={item.isButton}
-					onClick={e => this.onClick(e, item)}
-					onMouseEnter={e => this.onMouseEnter(e, item)}
-					onMouseLeave={() => this.onMouseLeave()}
-					onContextMenu={onContextMenu}
-				/>
-			);
-		};
+		const Item = item => (
+			<VaultItem 
+				item={item}
+				onClick={e => this.onClick(e, item)}
+				onMouseEnter={e => this.onMouseEnter(e, item)}
+				onMouseLeave={() => this.onMouseLeave()}
+				onContextMenu={item.isButton ? null : e => this.onContextMenu(e, item)}
+			/>
+		);
 
 		const ItemSortable = SortableElement(it => <Item {...it} index={it.index} />);
 
@@ -229,7 +224,7 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			case 'settings': {
-				S.Popup.open('settings', {});
+				U.Router.go('/main/settings/index', {});
 				break;
 			};
 

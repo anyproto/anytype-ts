@@ -41,8 +41,7 @@
 			.label { margin: 0px !important; }
 		}
 
-		ul { padding-left: 1.25em; }
-
+		ul { padding-left: 1.25em; margin: 0.75em 0px; }
 		.error { margin-bottom: 0px; }
 	}
 
@@ -64,6 +63,15 @@
 			dl { display: flex; justify-content: space-between; }
 			dt { width: 120px; flex-shrink: 0; text-align: left; }
 			dd { text-align: right; color: var(--color-text-secondary); }
+		}
+	}
+
+	.popup.popupConfirm.spaceInfo {
+		.title { margin-bottom: 9px; }
+		.label {
+			dl { margin-bottom: 16px; }
+			dt { text-align: left; }
+			dd { text-align: left; color: var(--color-text-secondary); }
 		}
 	}
 

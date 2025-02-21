@@ -68,7 +68,6 @@
 		}
 	}
 
-	.block.blockMedia > .wrapContent { border-radius: 8px; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); }
 	.block.blockMedia.isAudio > .wrapContent  { border: 1px solid var(--color-shape-secondary); }
 	.block.blockMedia.isAudio > .wrapContent > .selectionTarget > .dropTarget > .focusable > .wrap { width: 100%; padding: 12px 12px 7px 14px; }
 

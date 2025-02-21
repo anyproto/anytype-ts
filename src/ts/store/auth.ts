@@ -67,7 +67,7 @@ class AuthStore {
 	};
 
 	networkConfigSet (obj: NetworkConfig) {
-		Storage.set('networkConfig', obj, true);
+		Storage.set('networkConfig', obj);
 	};
 
 	appKeySet (v: string) {
@@ -174,7 +174,6 @@ class AuthStore {
 		keyboard.setPinChecked(false);
 
 		S.Common.spaceSet('');
-		S.Common.typeSet('');
 
 		S.Block.clearAll();
 		S.Detail.clearAll();

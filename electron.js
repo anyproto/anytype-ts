@@ -10,6 +10,8 @@ const remote = require('@electron/remote/main');
 const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 const Store = require('electron-store');
+const suffix = app.isPackaged ? '' : 'dev';
+const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
 
 // Fix notifications app name
 if (is.windows) {
@@ -17,7 +19,7 @@ if (is.windows) {
 };
 
 storage.setDataPath(app.getPath('userData'));
-Store.initRenderer();
+//Store.initRenderer();
 
 const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');
@@ -49,8 +51,18 @@ powerMonitor.on('suspend', () => {
 });
 
 powerMonitor.on('resume', () => {
-	WindowManager.reloadAll();
+	WindowManager.sendToAll('reload');
 	Util.log('info', '[PowerMonitor] resume');
+});
+
+ipcMain.on('storeGet', (e, key) => {
+	e.returnValue = store.get(key);
+});
+ipcMain.on('storeSet', (e, key, value) => {
+	e.returnValue = store.set(key, value);
+});
+ipcMain.on('storeDelete', (e, key) => {
+	e.returnValue = store.delete(key);
 });
 
 let deeplinkingUrl = '';
@@ -119,7 +131,7 @@ function createWindow () {
 		const onClose = () => {
 			const { config } = ConfigManager;
 
-			if (config.hideTray) {
+			if (config.hideTray && (WindowManager.list.size <= 1)) {
 				Api.exit(mainWindow, '', false);
 			} else {
 				mainWindow.hide();

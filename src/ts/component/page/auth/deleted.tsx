@@ -125,7 +125,7 @@ const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
 			</Frame>
 
 			<div className="animation small bottom" onClick={onLogout}>
-				{translate('popupSettingsLogout')}
+				{translate('commonLogout')}
 			</div>
 		</>
 	) : null;

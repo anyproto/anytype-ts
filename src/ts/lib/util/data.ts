@@ -563,35 +563,37 @@ class UtilData {
 		return items;
 	};
 
-	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
-		const templateType = S.Record.getTemplateType();
+	countTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
+		if (!typeId) {
+			return;
+		};
+
 		const filters: I.Filter[] = [
-			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.Equal, value: J.Constant.typeKey.template },
 			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
-		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
-		];
-		const keys = J.Relation.default.concat([ 'targetObjectType' ]);
 
 		this.search({
 			filters,
-			sorts,
-			keys,
-			limit: J.Constant.limit.menuRecords,
+			keys: [ 'id' ],
+			noDeps: true,
 		}, callBack);
 	};
 
-	checkDetails (rootId: string, blockId?: string) {
+	checkDetails (rootId: string, blockId?: string, keys?: string[]) {
 		blockId = blockId || rootId;
+		keys = keys || [];
 
-		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover), true);
+		const object = S.Detail.get(rootId, blockId, [ 
+			'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 'templateIsBundled',
+		].concat(J.Relation.cover).concat(keys), true);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
-		const { iconEmoji, iconImage, coverType, coverId } = object;
+		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
 		const ret = {
 			withCover: false,
 			withIcon: false,
 			className: '',
+			object,
 		};
 
 		let className = [];
@@ -605,8 +607,14 @@ class UtilData {
 				ret.withIcon = iconEmoji || iconImage;
 				break;
 
+			case I.ObjectLayout.Note:
 			case I.ObjectLayout.Bookmark:
 			case I.ObjectLayout.Task: {
+				break;
+			};
+
+			case I.ObjectLayout.Type: {
+				ret.withIcon = iconName || iconEmoji;
 				break;
 			};
 
@@ -622,7 +630,7 @@ class UtilData {
 			ret.withIcon = true;
 		};
 
-		if (checkType) {
+		if (checkType && !keyboard.isMainHistory()) {
 			className.push('noSystemBlocks');
 		};
 
@@ -1045,14 +1053,10 @@ class UtilData {
 			};
 
 			const membership = new M.Membership(message.membership);
-			const { status, tier } = membership;
+			const { tier } = membership;
 
 			S.Auth.membershipSet(membership);
 			analytics.setTier(tier);
-
-			if (status && (status == I.MembershipStatus.Finalization)) {
-				S.Popup.open('membershipFinalization', { data: { tier } });
-			};
 
 			if (callBack) {
 				callBack(membership);

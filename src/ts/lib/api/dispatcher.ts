@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, J, translate, analytics, Renderer, Action, Dataview, Mapper, Storage, keyboard } from 'Lib';
+import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 
@@ -162,10 +162,19 @@ class Dispatcher {
 					};
 
 					Renderer.send('showChallenge', {
-						challenge: mapped.challenge,
+						...mapped,
 						theme: S.Common.getThemeClass(),
 						lang: S.Common.interfaceLang,
 					});
+					break;
+				};
+
+				case 'AccountLinkChallengeHide': {
+					if (!isMainWindow) {
+						break;
+					};
+
+					Renderer.send('hideChallenge', mapped);
 					break;
 				};
 
@@ -910,6 +919,13 @@ class Dispatcher {
 							analytics.createObject(object.type, object.layout, analytics.route.webclipper, 0);
 							break;
 						};
+
+						case 'analyticsEvent': {
+							const { code, param } = payload;
+
+							analytics.event(code, param);
+							break;
+						};
 					};
 					break;
 				};
@@ -1142,7 +1158,7 @@ class Dispatcher {
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
 
 		if (root && root.fields.analyticsContext) {
-			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
+			analytics.setContext(root.fields.analyticsContext);
 		} else {
 			analytics.removeContext();
 		};

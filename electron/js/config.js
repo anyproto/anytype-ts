@@ -20,6 +20,11 @@ class ConfigManager {
 	init (callBack) {
 		storage.get(CONFIG_NAME, (error, data) => {
 			this.config = data || {};
+
+			if (undefined === this.config.showMenuBar) {
+				this.config.showMenuBar = true;
+			};
+
 			this.checkChannel();
 			this.checkTheme();
 
