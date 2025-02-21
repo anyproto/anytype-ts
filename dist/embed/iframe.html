@@ -257,13 +257,13 @@
 					$.ajax({
 						url: html,
 						dataType: 'text',
-						timeout: 1000,
+						timeout: 3000,
 						success: (data) => {
 							root.html(data);
 
 							root.find('a').off('click').on('click', function (e) {
 								e.preventDefault();
-								window.parent.postMessage({ type: 'openUrl', url: $(this).attr('href') }, '*');
+								window.parent.postMessage({ type: 'openUrl', url: $(this).attr('href'), blockId }, '*');
 							});
 						}
 					});

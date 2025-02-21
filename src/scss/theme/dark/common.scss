@@ -237,6 +237,18 @@ html.themeDark {
 
 	.icon.ghost { background-image: url('#{$themePath}/icon/ghost.svg'); }
 
+	.icon.settings-personal { background-image: url('#{$themePath}/icon/settings/personal.svg'); }
+	.icon.settings-storage { background-image: url('#{$themePath}/icon/settings/storage.svg'); }
+	.icon.settings-phrase { background-image: url('#{$themePath}/icon/settings/phrase.svg'); }
+	.icon.settings-pin { background-image: url('#{$themePath}/icon/settings/pin.svg'); }
+	.icon.settings-spaces { background-image: url('#{$themePath}/icon/settings/spaces.svg'); }
+	.icon.settings-membership { background-image: url('#{$themePath}/icon/settings/membership.svg'); }
+	.icon.settings-language { background-image: url('#{$themePath}/icon/settings/language.svg'); }
+	.icon.settings-space { background-image: url('#{$themePath}/icon/settings/space/overview.svg'); }
+	.icon.settings-members { background-image: url('#{$themePath}/icon/settings/space/members.svg'); }
+	.icon.settings-import { background-image: url('#{$themePath}/icon/settings/space/import.svg'); }
+	.icon.settings-export { background-image: url('#{$themePath}/icon/settings/space/export.svg'); }
+
 	/* Editor */
 
 	.editorWrapper {

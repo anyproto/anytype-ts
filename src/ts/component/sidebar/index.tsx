@@ -7,6 +7,7 @@ import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 
 import SidebarWidget from './page/widget';
 import SidebarObject from './page/object';
+import SidebarSettings from './page/settings';
 
 interface State {
 	page: string;
@@ -15,6 +16,8 @@ interface State {
 const Components = {
 	object: SidebarObject,
 	widget: SidebarWidget,
+	settings: SidebarSettings,
+	settingsSpace: SidebarSettings,
 };
 
 const Sidebar = observer(class Sidebar extends React.Component<{}, State> {
@@ -68,7 +71,8 @@ const Sidebar = observer(class Sidebar extends React.Component<{}, State> {
 					id="sidebar" 
 					className="sidebar"
 				>
-					<Component ref={ref => this.refChild = ref} {...this.props} />
+					<Component ref={ref => this.refChild = ref} {...this.props} page={page} />
+
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>

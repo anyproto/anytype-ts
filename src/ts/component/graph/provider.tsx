@@ -42,6 +42,8 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const isPreviewDisabled = useRef(false);
 	const ids = useRef([]);
 	const zoom = useRef(null);
+	const isDraggingToSelect = useRef(false);
+	const nodesSelectedByDragToSelect = useRef([]);
 
 	const send = (id: string, param: any, transfer?: any[]) => {
 		if (worker.current) {
@@ -73,7 +75,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const settings = S.Common.getGraph(storageKey);
 
 		images.current = {};
-		zoom.current = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => onZoom(e));
+		zoom.current = d3.zoom().scaleExtent([ 0.05, 10 ])
+			.on('start', e => onZoomStart(e))
+			.on('zoom', e => onZoom(e))
+			.on('end', e => onZoomEnd(e));
 		edges.current = (data.edges || []).map(edgeMapper);
 		nodes.current = (data.nodes || []).map(nodeMapper);
 
@@ -227,8 +232,36 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		send('onDragEnd', { active: e.active });
 	};
 
-	const onZoom = ({ transform }) => {
-		send('onZoom', { transform });
+	const onZoomStart = ({ sourceEvent }) => {
+		if (sourceEvent && (sourceEvent.type == 'mousedown') && sourceEvent.shiftKey) {
+			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
+			const node = $(nodeRef.current);
+			const { left, top } = node.offset();
+
+			isDraggingToSelect.current = true;
+			send('onDragToSelectStart', { x: p[0] - left, y: p[1] - top });
+		};
+	};
+
+	const onZoom = ({ transform, sourceEvent }) => {
+		if (isDraggingToSelect.current && sourceEvent) {
+			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
+			const node = $(nodeRef.current);
+			const { left, top } = node.offset();
+
+			send('onDragToSelectMove', { x: p[0] - left, y: p[1] - top });
+		} else {
+			send('onZoom', { transform });
+		};
+	};
+
+	const onZoomEnd = (e: any) => {
+		if (isDraggingToSelect.current){
+			send('onDragToSelectEnd', {});
+			nodesSelectedByDragToSelect.current = [];
+		};
+
+		isDraggingToSelect.current = false;
 	};
 
 	const onPreviewShow = (data: any) => {
@@ -292,7 +325,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		switch (id) {
 			case 'onClick': {
-				onClickObject(data.node);
+				if (data.node){
+					onClickObject(data.node);
+				} else {
+					setSelected([]);
+				};
 				break;
 			};
 
@@ -344,8 +381,31 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 			case 'setRootId': {
 				$(window).trigger('updateGraphRoot', { id: data.node });
+				break;
 			};
 
+			case 'onSelectByDragToSelect': {
+				const currentSelected = data.selected;
+
+				setSelected(ids.current.filter((id: string) => {
+					if (!nodesSelectedByDragToSelect.current.includes(id)){
+						return true;
+					};
+					return currentSelected.includes(id);
+				}));
+
+				nodesSelectedByDragToSelect.current = nodesSelectedByDragToSelect.current.filter(id => currentSelected.includes(id));
+
+
+				currentSelected.forEach((id: string) => {
+					if (ids.current.includes(id)){
+						return;
+					};
+
+					setSelected(ids.current.concat([id]));
+					nodesSelectedByDragToSelect.current = nodesSelectedByDragToSelect.current.concat([id]);
+				});
+			};
 		};
 	};
 
@@ -364,7 +424,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		keyboard.shortcut('backspace, delete', e, () => {
 			Action.archive(ids.current, analytics.route.graph, () => {
 				nodes.current = nodes.current.filter(d => !ids.current.includes(d.id));
-				send('onRemoveNode', { ids: ids });
+				send('onRemoveNode', { ids: ids.current });
 			});
 		});
 	};

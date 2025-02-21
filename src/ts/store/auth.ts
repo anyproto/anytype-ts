@@ -174,7 +174,6 @@ class AuthStore {
 		keyboard.setPinChecked(false);
 
 		S.Common.spaceSet('');
-		S.Common.typeSet('');
 
 		S.Block.clearAll();
 		S.Detail.clearAll();

@@ -5,7 +5,6 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { I, S, U, J, keyboard } from 'Lib';
 
 const katex = require('katex');
-
 require('katex/dist/contrib/mhchem');
 
 const HEIGHT_SECTION = 28;

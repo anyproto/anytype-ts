@@ -186,12 +186,8 @@ class MenuStore {
 			return;
 		};
 
-		if (timeout) {
-			this.clearTimeout();
-			this.timeout = window.setTimeout(() => callBack(), timeout);
-		} else {
-			callBack();
-		};
+		this.clearTimeout();
+		this.timeout = window.setTimeout(() => callBack(), timeout);
 	};
 
 	getTimeout (ids?: string[]): number {
@@ -201,6 +197,7 @@ class MenuStore {
 		for (const item of items) {
 			if (!item.param.noAnimation) {
 				t = J.Constant.delay.menu;
+				break;
 			};
 		};
 		return t;

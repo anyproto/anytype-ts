@@ -312,7 +312,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		const { space } = S.Common;
-		const { param, getId } = this.props;
+		const { id, param, getId } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		const { from } = S.Common.filter;
@@ -348,8 +348,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			S.Menu.open('dataviewCalendar', {
 				element: `#${getId()} #item-${item.id}`,
 				horizontal: I.MenuDirection.Center,
+				rebind: this.rebind,
+				parentId: id,
 				data: { 
-					rebind: this.rebind,
 					canEdit: true,
 					canClear: false,
 					value: U.Date.now(),

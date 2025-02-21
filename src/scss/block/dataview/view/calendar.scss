@@ -6,19 +6,19 @@
 		.viewContent.viewCalendar {
 			.table { display: flex; flex-flow: column; height: 100%; }
 			.table {
-				.head, .body { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-				.head { flex-shrink: 0; padding-right: 6px; }
-				.head {
+				> .head, > .body { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+				> .head { flex-shrink: 0; padding-right: 6px; }
+				> .head {
 					.item { 
 						@include text-small; padding: 2px 10px; border-color: var(--color-shape-secondary); border-style: solid;
 						border-right-width: 1px; border-bottom-width: 1px; text-align: right;
 					}
 				}
 
-				.body { overflow: scroll; border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px;  }
-				.body::-webkit-scrollbar { width: 6px; height: 0px; }
-				.body::-webkit-scrollbar-track { background: transparent; }
-				.body::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 3px; }
+				> .body { overflow: scroll; border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px;  }
+				> .body::-webkit-scrollbar { width: 6px; height: 0px; }
+				> .body::-webkit-scrollbar-track { background: transparent; }
+				> .body::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 3px; }
 			}
 
 			.day { 
@@ -28,11 +28,13 @@
 			.day.first { border-top-width: 0px; }
 
 			.day.active {
-				.number { padding: 0px; color: var(--color-text-inversion); }
-				.number {
-					.inner { 
-						background-color: var(--color-system-accent-100); border-radius: 12px; padding: 0px 8px; align-self: flex-end; min-width: 24px; text-align: center; 
-						transition: $transitionAllCommon;
+				.head {
+					.number { padding: 0px; color: var(--color-text-inversion); }
+					.number {
+						.inner { 
+							background-color: var(--color-system-accent-100); border-radius: 12px; padding: 0px 8px; align-self: flex-end; min-width: 24px; text-align: center; 
+							transition: $transitionAllCommon;
+						}
 					}
 				}
 			}
@@ -42,9 +44,14 @@
 			}
 
 			.day {
-				.number { @include text-paragraph; text-align: right; padding: 0px 8px; }
-				.number {
-					.inner { display: inline-block; }
+				.head { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }
+				.head {
+					.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; opacity: 0; transition: opacity $transitionCommon; }
+
+					.number { @include text-paragraph; text-align: right; }
+					.number {
+						.inner { display: inline-block; }
+					}
 				}
 
 				.item { 
@@ -62,6 +69,12 @@
 				.item:hover::before { background: var(--color-shape-highlight-medium); }
 
 				.item.more { display: block; color: var(--color-text-secondary); }
+			}
+
+			.day:hover {
+				.head {
+					.icon { opacity: 1; }
+				}
 			}
         }
     }

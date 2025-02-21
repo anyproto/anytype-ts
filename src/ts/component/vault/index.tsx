@@ -152,7 +152,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			case 'settings': {
-				S.Popup.open('settings', {});
+				U.Router.go('/main/settings/index', {});
 				break;
 			};
 

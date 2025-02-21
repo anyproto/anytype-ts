@@ -689,10 +689,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
 						const oe = e.originalEvent as any;
 						const { type, height, blockId, url } = oe.data;
+						if (blockId != block.id) {
+							return;
+						};
 
 						switch (type) {
 							case 'resize': {
-								if (allowIframeResize && (blockId == block.id)) {
+								if (allowIframeResize) {
 									iframe.css({ height: Math.max(80, height) });
 								};
 								break;

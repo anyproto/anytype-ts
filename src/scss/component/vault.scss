@@ -30,6 +30,7 @@
 			transition: background-color 0.2s $easeInQuint; overflow: hidden;
 		}
 		.iconObject { width: 100% !important; height: 100% !important; border-radius: inherit !important; }
+		.iconObject.withImageError { background-color: var(--color-shape-highlight-dark) !important; }
 	}
 	.item::after {
 		content: ''; position: absolute; width: 4px; height: 4px; background-color: var(--color-control-accent); left: -10px; top: 50%; margin-top: -2px;
@@ -37,10 +38,6 @@
 	}
 
 	.item:hover, .item.hover { padding: 0px; }
-
-	.item.isButton {
-		.iconWrap { background-color: var(--color-shape-highlight-dark); }
-	}
 
 	.item.isActive::after { opacity: 1; }
 
@@ -55,6 +52,7 @@
 	.item.settings {
 		.iconWrap { background-color: unset; background-image: url('~img/icon/vault/settings.svg'); }
 	}
+	.item.settings.isActive,
 	.item.settings:hover {
 		.iconWrap { background-color: var(--color-shape-highlight-dark); }
 	}
