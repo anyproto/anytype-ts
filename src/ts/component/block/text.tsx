@@ -972,8 +972,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					if (position == I.BlockPosition.Bottom) {
 						U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
 							window.setTimeout(() => {
-								console.log('focus set', block.id, from);
-
 								focus.set(block.id, { from, to: from });
 								focus.apply();
 							}, 15);
