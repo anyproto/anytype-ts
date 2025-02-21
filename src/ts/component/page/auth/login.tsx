@@ -32,6 +32,10 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			return;
 		};
 
+		if (submitRef.current?.isLoading()) {
+			return;
+		};
+
 		submitRef.current?.setLoading(true);
 		
 		C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
@@ -96,6 +100,11 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 
 		if (code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
 			U.Router.go('/auth/setup/select', {});
+			return;
+		};
+
+		if (code == J.Error.Code.ACCOUNT_STORE_NOT_MIGRATED) {
+			U.Router.go('/auth/migrate', {});
 			return;
 		};
 

@@ -7,8 +7,10 @@ import { I, S, U, C, J, Storage, keyboard, translate } from 'Lib';
 const Progress: FC = observer(() => {
 
 	const { show } = S.Progress;
-	const list = S.Progress.getList();
-	const percent = S.Progress.getPercent();
+	const skipState = [ I.ProgressState.Done, I.ProgressState.Canceled ];
+	const skipType = [ I.ProgressType.Migrate ];
+	const list = S.Progress.getList(it => !skipType.includes(it.type) && !skipState.includes(it.state));
+	const percent = S.Progress.getPercent(list);
 	const nodeRef = useRef(null);
 	const innerRef = useRef(null);
 	const dx = useRef(0);
@@ -61,12 +63,13 @@ const Progress: FC = observer(() => {
 	};
 
 	const onDragMove = (e: any) => {
+		const obj = Storage.get('progress') || {};
 		const win = $(window);
 		const x = e.pageX - dx.current - win.scrollLeft();
 		const y = e.pageY - dy.current - win.scrollTop();
 
 		setStyle(x, y);
-		Storage.set('progress', { x, y }, true);
+		Storage.set('progress', { ...obj, x, y });
 	};
 
 	const onDragEnd = (e: any) => {

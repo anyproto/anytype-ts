@@ -1,5 +1,5 @@
-@import "~scss/_vars";
-@import "~scss/_mixins";
+@import "~./_vars";
+@import "~./_mixins";
 
 * { padding: 0px; margin: 0px; border: 0px; box-sizing: border-box; }
 html, body { height: 100%; }
@@ -59,6 +59,8 @@ input, textarea, select { font-family: 'Inter'; }
 #graphPreview { position: fixed; z-index: 1000; }
 
 .onboardingDimmer { content: ''; position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.4); -webkit-app-region: no-drag; z-index: 999; pointer-events: none; }
+
+.ReactVirtualized__List { overscroll-behavior: none; }
 
 html.platformWindows {
 	body { overflow-y: overlay; }
@@ -216,5 +218,17 @@ a { color: var(--color-text-primary); }
 	.icon.download { display: none; }
 }
 
-@import "scss/debug";
-@import "scss/font";
+@import "./debug";
+@import "./font";
+@import "./component/common.scss";
+@import "./page/common.scss";
+@import "./block/common.scss";
+@import "./form/common.scss";
+@import "./list/common.scss";
+@import "./widget/common.scss";
+@import "./popup/common.scss";
+@import "./menu/common.scss";
+@import "./notification/common.scss";
+
+@import "./media/print.scss";
+@import "./theme/dark/common.scss";

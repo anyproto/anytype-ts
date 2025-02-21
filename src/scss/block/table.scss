@@ -129,10 +129,6 @@
 			.handleRow, .handleColumn { opacity: 1; pointer-events: all; }
 		}
 
-		.cell.align-h0 .value { text-align: left; }
-		.cell.align-h1 .value { text-align: right; }
-		.cell.align-h2 .value { text-align: center; }
-
 		.cell.align-v0 { 
 			.block #value { vertical-align: top; }
 		}

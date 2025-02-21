@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from 'react';
 import { Icon, Label } from 'Component';
-import { S, translate, Storage, analytics } from 'Lib';
+import { S, translate, Storage, analytics, sidebar } from 'Lib';
 
 interface Props {
 	onClose?: () => void;
@@ -11,13 +11,7 @@ const ShareBanner: FC<Props> = ({
 }) => {
 
 	const onClickHandler = () => {
-		S.Popup.open('settings', { 
-			className: 'isSpace',
-			data: { 
-				page: 'spaceShare', 
-				isSpace: true,
-			},
-		});
+		sidebar.settingsOpen('spaceShare');
 
 		analytics.event('ClickOnboardingTooltip', { id: 'SpaceShare', type: 'OpenSettings' });
 	};

@@ -21,7 +21,12 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	render (): any {
-		const { block } = this.props;
+		const { block, readonly } = this.props;
+
+		if (readonly) {
+			return null;
+		};
+
 		const items = this.getItems();
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 

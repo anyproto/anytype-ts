@@ -13,11 +13,12 @@ const HEIGHT_LIST = 64;
 
 const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
 
-	const { parent, block, isPreview, subId, getRecordIds, addGroupLabels } = props;
+	const { parent, block, isPreview, subId, getRecordIds, addGroupLabels, getView } = props;
 	const cache = useRef({});
 	const nodeRef =	useRef(null);
 	const listRef = useRef(null);
 	const top = useRef(0);
+	const view = getView();
 	const { total } = S.Record.getMeta(subId, '');
 	const isCompact = [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(parent.content.layout);
 
@@ -62,6 +63,10 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 	};
 
 	const getItems = () => {
+		if (!block) {
+			return [];
+		};
+
 		const { targetBlockId } = block.content;
 		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
@@ -153,6 +158,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 					style={style} 
 					index={index}
 					isCompact={isCompact}
+					hideIcon={view?.hideIcon}
 				/>
 			</CellMeasurer>
 		);
@@ -213,6 +219,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 						subId={subId} 
 						id={item.id} 
 						isCompact={isCompact}
+						hideIcon={view?.hideIcon}
 					/>
 				))}
 			</React.Fragment>

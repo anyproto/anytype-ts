@@ -5,10 +5,22 @@ import { observer } from 'mobx-react';
 import { Icon, Sync } from 'Component';
 import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 
-import SidebarWidget from './widget';
-import SidebarObject from './object';
+import SidebarWidget from './page/widget';
+import SidebarObject from './page/object';
+import SidebarSettings from './page/settings';
 
-const Sidebar = observer(class Sidebar extends React.Component {
+interface State {
+	page: string;
+};
+
+const Components = {
+	object: SidebarObject,
+	widget: SidebarWidget,
+	settings: SidebarSettings,
+	settingsSpace: SidebarSettings,
+};
+
+const Sidebar = observer(class Sidebar extends React.Component<{}, State> {
 	
 	private _isMounted = false;
 	node = null;
@@ -18,8 +30,11 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	frame = 0;
 	width = 0;
 	movedX = false;
-	refWidget = null;
-	refObject = null;
+	refChild = null;
+
+	state = {
+		page: 'widget'
+	};
 
 	constructor (props) {
 		super(props);
@@ -33,8 +48,10 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	};
 
 	render() {
-		const { showVault, showObject } = S.Common;
+		const { showVault } = S.Common;
+		const page = this.state.page || 'widget';
 		const cmd = keyboard.cmdSymbol();
+		const Component = Components[page];
 
 		return (
 			<React.Fragment>
@@ -54,7 +71,8 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebar" 
 					className="sidebar"
 				>
-					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : <SidebarWidget {...this.props} ref={ref => this.refWidget = ref} />}
+					<Component ref={ref => this.refChild = ref} {...this.props} page={page} />
+
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
@@ -85,13 +103,8 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		const node = $(this.node);
 		const vault = $(S.Common.getRef('vault').node);
 
-		if (showVault) {
-			node.addClass('withVault');
-			vault.removeClass('isHidden');
-		} else {
-			node.removeClass('withVault');
-			vault.addClass('isHidden');
-		};
+		node.toggleClass('withVault', showVault);
+		vault.toggleClass('isHidden', !showVault);
 	};
 
 	setActive (id: string): void {
@@ -173,7 +186,9 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			this.width = w;
-			this.refObject?.resize();
+			if (this.refChild.resize) {
+				this.refChild.resize();
+			};
 		});
 	};
 

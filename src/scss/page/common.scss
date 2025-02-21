@@ -1,4 +1,5 @@
 @import "./auth";
+@import "./authMigrate";
 @import "./main/edit";
 @import "./main/graph";
 @import "./main/history";
@@ -17,3 +18,4 @@
 @import "./main/chat";
 @import "./main/void";
 @import "./main/date";
+@import "./main/settings";

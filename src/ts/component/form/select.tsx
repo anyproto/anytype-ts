@@ -23,6 +23,7 @@ interface SelectRefProps {
 	getValue: () => any;
 	setValue: (v: any) => void;
 	setOptions: (options: I.Option[]) => void;
+	show: (e: MouseEvent) => void;
 };
 
 const Select = forwardRef<SelectRefProps, Props>(({
@@ -55,12 +56,14 @@ const Select = forwardRef<SelectRefProps, Props>(({
 	};
 
 	let val = Relation.getArrayValue(value);
-	val.forEach((id: string) => {
-		const option = options.find(item => item.id == id);
+
+	if (val.length) {
+		const option = options.find(item => item.id == val[0]);
 		if (option) {
-			current.push(option);
+			const more = val.length > 1 ? ` +${val.length - 1}` : '';
+			current.push({ ...option, name: option.name + more });
 		};
-	});
+	};
 
 	if (!current.length && options.length) {
 		current.push(options[0]);
@@ -198,6 +201,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 		getValue: () => getValue(val),
 		setValue: setValueHandler,
 		setOptions: (options: I.Option[]) => setOptions(options),
+		show,
 	}));
 
 	return (
@@ -210,9 +214,11 @@ const Select = forwardRef<SelectRefProps, Props>(({
 		>
 			{current ? (
 				<>
-					{current.map((item: any, i: number) => (
-						<MenuItemVertical key={i} {...item} />
-					))}
+					<div className="currentSelected">
+						{current.map((item: any, i: number) => (
+							<MenuItemVertical key={i} {...item} />
+						))}
+					</div>
 					<Icon className={acn.join(' ')} />
 				</>
 			) : ''}

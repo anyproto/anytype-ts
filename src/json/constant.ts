@@ -4,7 +4,6 @@ export default {
 	googleMaps:			 'AIzaSyAgXu3wCb6mPJv4wNWKe2E3YycaYuqFm9o',
 	protocol:			 'anytype',
 	appName:			 'Anytype',
-	blankRouteId:		 '_blank_',
 	storeSpaceId:		 '_anytype_marketplace',
 	anytypeProfileId:	 '_anytype_profile',
 	fontCode:			 'plex',
@@ -132,6 +131,8 @@ export default {
 		date:			 'ot-date',
 		profile:		 'ot-profile',
 		chat:			 'ot-chat',
+		project:		 'ot-project',
+		human:			 'ot-human',
 	},
 
 	templateId: {

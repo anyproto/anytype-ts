@@ -299,6 +299,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		e.stopPropagation();
 
 		const { object, subId } = this.props;
+		
+		if (object.isTmp) {
+			return;
+		};
 
 		S.Menu.open('dataviewContext', {
 			recalcRect: () => { 

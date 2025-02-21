@@ -21,8 +21,7 @@ class WindowManager {
 	list = new Set();
 
 	create (options, param) {
-		const { route, isChild } = options;
-		const { hideMenuBar } = ConfigManager.config;
+		const { showMenuBar } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
@@ -45,8 +44,7 @@ class WindowManager {
 
 		remote.enable(win.webContents);
 
-		win.isChild = isChild;
-		win.route = route;
+		win = Object.assign(win, options);
 		win.windowId = win.id;
 
 		this.list.add(win);
@@ -71,10 +69,8 @@ class WindowManager {
 			Util.send(win, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
 		});
 
-		if (hideMenuBar) {
-			win.setMenuBarVisibility(false);
-			win.setAutoHideMenuBar(true);
-		};
+		win.setMenuBarVisibility(showMenuBar);
+		win.setAutoHideMenuBar(!showMenuBar);
 
 		return win;
 	};
@@ -144,33 +140,39 @@ class WindowManager {
 	createChallenge (options) {
 		const { screen } = require('electron');
 		const primaryDisplay = screen.getPrimaryDisplay();
-		const { width } = primaryDisplay.workAreaSize;
+		const { width, height } = primaryDisplay.workAreaSize;
 
-		const win = this.create({}, {
+		const win = this.create({ ...options, isChallenge: true }, {
 			backgroundColor: '',
 			width: 424, 
 			height: 232,
 			x: Math.floor(width / 2 - 212),
-			y: 50,
+			y: Math.floor(height - 282),
 			titleBarStyle: 'hidden',
+			alwaysOnTop: true,
+			focusable: true,
+			skipTaskbar: true,
 		});
 
-		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
+		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', 'index.html'));
 		win.setMenu(null);
-
-		is.windows || is.linux ? win.showInactive() : win.show();
-		win.focus();
+		win.showInactive(); // show inactive to prevent focus loose from other app
 
 		win.webContents.once('did-finish-load', () => {
 			win.webContents.postMessage('challenge', options);
 		});
 
-		setTimeout(() => {
-			if (win && !win.isDestroyed()) {
+		setTimeout(() => this.closeChallenge(options), 30000);
+		return win;
+	};
+
+	closeChallenge (options) {
+		for (const win of this.list) {
+			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
 				win.close();
 			};
-		}, 30000);
-		return win;
+		};
 	};
 
 	command (win, cmd, param) {

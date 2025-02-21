@@ -11,6 +11,7 @@ import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
+import PageAuthMigrate from './auth/migrate';
 
 import PageMainBlank from './main/blank';
 import PageMainEmpty from './main/empty';
@@ -31,6 +32,7 @@ import PageMainObject from './main/object';
 import PageMainOnboarding from './main/onboarding';
 import PageMainChat from './main/chat';
 import PageMainDate from './main/date';
+import PageMainSettings from './main/settings';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -41,6 +43,7 @@ const Components = {
 	'auth/setup':			 PageAuthSetup,
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
+	'auth/migrate':			 PageAuthMigrate,
 
 	'main/blank':			 PageMainBlank,		
 	'main/empty':			 PageMainEmpty,		
@@ -61,6 +64,7 @@ const Components = {
 	'main/chat':			 PageMainChat,
 	'main/void':			 PageMainVoid,
 	'main/date':			 PageMainDate,
+	'main/settings':		 PageMainSettings,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
@@ -148,7 +152,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const ret = (isPopup ? matchPopup : match) || { params: {} };
 
 		// Universal object route
-		if (pathname.match('/object')) {
+		if (pathname.match(/^\/object/)) {
 			ret.params.page = 'main';
 			ret.params.action = 'object';
 			ret.params.id = data.objectId;
@@ -158,13 +162,13 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		// Invite route
-		if (pathname.match('/invite')) {
+		if (pathname.match(/^\/invite/)) {
 			ret.params.page = 'main';
 			ret.params.action = 'invite';
 		};
 
 		// Membership route
-		if (pathname.match('/membership')) {
+		if (pathname.match(/^\/membership/)) {
 			ret.params.page = 'main';
 			ret.params.action = 'membership';
 		};
