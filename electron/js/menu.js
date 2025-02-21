@@ -276,8 +276,7 @@ class MenuManager {
 		const channels = ConfigManager.getChannels().map(it => {
 			it.click = () => { 
 				if (!UpdateManager.isUpdating) {
-					UpdateManager.setChannel(it.id); 
-					Api.setConfig(this.win, { channel: it.id });
+					Util.send(this.win, 'commandGlobal', 'releaseChannel', it.id);
 				};
 			};
 			return it;
@@ -442,9 +441,11 @@ class MenuManager {
 				} 
 			},
 
-			(is.windows || is.linux) ? {
-				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: config.hideMenuBar, click: () => {
-					Api.setMenuBarVisibility(this.win, config.hideMenuBar);
+			(is.windows || is.linux || is.macos) ? {
+				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: config.showMenuBar, click: () => {
+					const { config } = ConfigManager;
+
+					Api.setMenuBarVisibility(this.win, !config.showMenuBar);
 					this.initTray();
 				}
 			} : null,

@@ -1108,7 +1108,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			S.Popup.open('settings', { data: { page: 'importIndex', isSpace: true }, className: 'isSpace' });
+			sidebar.settingsOpen('importIndex');
 		};
 
 		const getClipboardData = async () => {

@@ -129,7 +129,6 @@
 	"commonCreateNew": "Create new",
 	"commonSetName": "Set of %s",
 	"commonClear": "Clear",
-	"commonNewObject": "New Object",
 	"commonNewSpace": "New Space",
 	"commonSelectObject": "Select Object",
 	"commonCopyLink": "Copy Link",
@@ -186,6 +185,7 @@
 	"commonManage": "Manage",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
+	"commonWarning": "Warning",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -512,6 +512,12 @@
 	"pageAuthSetupImportBackup": "Import backup",
 	"pageAuthSetupEntering": "Entering the Vault...",
 
+	"pageAuthMigrateTitle": "Migration is in progress...",
+	"pageAuthMigrateText": "It can take some time. Thanks for your patience.",
+	"pageAuthMigrateErrorTitle": "Not enough space",
+	"pageAuthMigrateErrorText": "Please clear some space and run the process again.",
+	"pageAuthMigrateTryAgain": "Try again",
+
 	"pageHeadControlButtonsChangeCover": "Change cover",
 	"pageHeadControlButtonsReposition": "Reposition",
 
@@ -766,6 +772,7 @@
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
+	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
@@ -1124,6 +1131,7 @@
 
 	"popupConfirmSpeedLimitTitle": "Hold up! Turbo typing detected!",
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
+	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1389,6 +1397,7 @@
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
 	"menuSmileRandom": "Random emoji",
+	"menuSmileIcons": "Icons",
 
 	"menuBlockCoverEdit": "Reposition",
 	"menuBlockCoverEmpty": "There are no covers found",
@@ -2183,7 +2192,7 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
-	"errorPublishingCreate103": "Looks like some files are over 100 MB. Please remove or slim them down and try again.",
+	"errorPublishingCreate103": "Looks like some files are over 10MB. Please remove or slim them down and try again.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 

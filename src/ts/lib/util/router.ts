@@ -46,16 +46,21 @@ class UtilRouter {
 
 	build (param: Partial<RouteParam>): string {
 		const { page, action } = param;
-		const id = String(param.id || J.Constant.blankRouteId);
-		const spaceId = String(param.spaceId || J.Constant.blankRouteId);
-		const viewId = String(param.viewId || J.Constant.blankRouteId);
-		const relationKey = String(param.relationKey || J.Constant.blankRouteId);
+		const id = String(param.id || '');
+		const spaceId = String(param.spaceId || '');
+		const viewId = String(param.viewId || '');
+		const relationKey = String(param.relationKey || '');
 
 		let route = [ page, action, id ];
-		route = route.concat([ 'spaceId', spaceId ]);
-		route = route.concat([ 'viewId', viewId ]);
-		route = route.concat([ 'relationKey', relationKey ]);
-
+		if (spaceId) {
+			route = route.concat([ 'spaceId', spaceId ]);
+		};
+		if (viewId) {
+			route = route.concat([ 'viewId', viewId ]);
+		};
+		if (relationKey) {
+			route = route.concat([ 'relationKey', relationKey ]);
+		};
 		return route.join('/');
 	};
 
@@ -78,8 +83,8 @@ class UtilRouter {
 		S.Menu.closeAll();
 		S.Popup.closeAll();
 
-		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, J.Constant.blankRouteId, space ].includes(routeParam.spaceId)) {
-			this.switchSpace(routeParam.spaceId, route, false, routeParam);
+		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
+			this.switchSpace(routeParam.spaceId, route, false, param);
 			return;
 		};
 

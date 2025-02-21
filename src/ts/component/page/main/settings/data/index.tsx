@@ -108,9 +108,8 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 			data: {
 				title: translate('commonAreYouSure'),
 				text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
-				textConfirm: isLocalNetwork ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
-				canCancel: isLocalNetwork,
-				textCancel: translate('popupSettingsDataRemoveFiles'),
+				textConfirm: isLocalNetwork ? translate('popupSettingsDataRemoveFiles') : translate('commonConfirm'),
+				textCancel: isLocalNetwork ? translate('popupSettingsDataKeepFiles') : translate('commonCancel'),
 				onConfirm: () => {
 					setLoading(true);
 					analytics.event('SettingsStorageOffload');
@@ -133,7 +132,7 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 						analytics.event('FileOffload', { middleTime: message.middleTime });
 					});
 				},
-			}
+			},
 		});
 	};
 

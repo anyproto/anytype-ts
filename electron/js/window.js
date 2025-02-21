@@ -21,7 +21,7 @@ class WindowManager {
 	list = new Set();
 
 	create (options, param) {
-		const { hideMenuBar } = ConfigManager.config;
+		const { showMenuBar } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
@@ -69,10 +69,8 @@ class WindowManager {
 			Util.send(win, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
 		});
 
-		if (hideMenuBar) {
-			win.setMenuBarVisibility(false);
-			win.setAutoHideMenuBar(true);
-		};
+		win.setMenuBarVisibility(showMenuBar);
+		win.setAutoHideMenuBar(!showMenuBar);
 
 		return win;
 	};

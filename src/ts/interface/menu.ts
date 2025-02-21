@@ -28,6 +28,7 @@ export interface MenuParam {
 	initialTab?: string;
 	data?: any;
 	isSub?: boolean;
+	parentId?: string;
 	subIds?: string[];
 	passThrough?: boolean;
 	commonFilter?: boolean;
@@ -46,6 +47,7 @@ export interface MenuParam {
 	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;
+	rebind?(): void;
 	onBack?(id: string): void;
 	getTabs?(): I.MenuTab[];
 };

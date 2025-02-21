@@ -13,6 +13,7 @@ import * as Shortcut from './shortcut';
 
 const Emoji = require('./emoji.json');
 const Latex = require('./latex.json');
+const Icon = require('./icon.json');
 
 export {
 	Constant,
@@ -29,4 +30,5 @@ export {
 	Menu,
 	Size,
 	Shortcut,
+	Icon,
 };

@@ -257,7 +257,7 @@
 		.dataviewControls::after { display: none !important; }
 
 		.dataviewControls.small {
-			.side.right { display: none; }
+			.side.right { visibility: hidden; }
 		}
 
 		.dataviewSelection {

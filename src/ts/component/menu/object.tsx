@@ -291,7 +291,7 @@ class MenuObject extends React.Component<I.Menu> {
 			return;
 		};
 
-		const { param, getId, getSize, close } = this.props;
+		const { id, param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 
@@ -303,8 +303,8 @@ class MenuObject extends React.Component<I.Menu> {
 			isSub: true,
 			className: param.className,
 			classNameWrap: param.classNameWrap,
+			rebind: this.rebind,
 			data: {
-				rebind: this.rebind,
 				rootId,
 				blockId: rootId,
 				blockIds: [ blockId ],

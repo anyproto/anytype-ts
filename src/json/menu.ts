@@ -64,6 +64,7 @@ export default {
 	dataviewHead: [ 'dataviewSource', 'searchObject' ],
 	store: [ 'typeSuggest', 'relationSuggest' ],
 	widget: [ 'searchObject', 'select' ],
+	widgetAdd: [ 'typeSuggest', 'select' ],
 	dataviewTemplate: [ 'previewObject' ],
 	table: [ 'select2', 'blockColor', 'blockBackground' ],
 	dataviewContext: [ 'typeSuggest', 'searchObject' ],
