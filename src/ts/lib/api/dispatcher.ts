@@ -919,6 +919,13 @@ class Dispatcher {
 							analytics.createObject(object.type, object.layout, analytics.route.webclipper, 0);
 							break;
 						};
+
+						case 'analyticsEvent': {
+							const { code, param } = payload;
+
+							analytics.event(code, param);
+							break;
+						};
 					};
 					break;
 				};

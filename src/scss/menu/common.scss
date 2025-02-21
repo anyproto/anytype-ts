@@ -187,7 +187,7 @@
 
 			.caption { 
 				@include text-overflow-nw; display: inline-block; vertical-align: top; color: var(--color-text-secondary); @include text-small; text-align: right;
-				flex-shrink: 0; line-height: 20px;
+				flex-shrink: 0; line-height: 20px; max-width: 40%;
 			}
 
 			.highlightMark { position: relative; top: auto; right: auto; margin: 0px 0px 0px 10px; }

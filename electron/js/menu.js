@@ -58,8 +58,8 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
-					{ label: Util.translate('electronMenuExport'), click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex') },
+					{ label: Util.translate('electronMenuExport'), click: () => this.openSettings('exportIndex') },
 					{ label: Util.translate('electronMenuSaveAs'), click: () => Util.send(this.win, 'commandGlobal', 'save') },
 
 					Separator,
@@ -131,7 +131,11 @@ class MenuManager {
 					{ label: Util.translate('electronMenuPaste'), role: 'paste' },
 					{ 
 						label: Util.translate('electronMenuPastePlain'), accelerator: 'CmdOrCtrl+Shift+V',
-						click: () => Util.send(this.win, 'commandEditor', 'pastePlain'),
+						click: () => {
+							if (is.macos) {
+								Util.send(this.win, 'commandEditor', 'pastePlain');
+							};
+						},
 					},
 
 					Separator,
@@ -272,8 +276,7 @@ class MenuManager {
 		const channels = ConfigManager.getChannels().map(it => {
 			it.click = () => { 
 				if (!UpdateManager.isUpdating) {
-					UpdateManager.setChannel(it.id); 
-					Api.setConfig(this.win, { channel: it.id });
+					Util.send(this.win, 'commandGlobal', 'releaseChannel', it.id);
 				};
 			};
 			return it;
@@ -408,7 +411,7 @@ class MenuManager {
 			{ 
 				label: Util.translate('electronMenuSpaceSettings'), click: () => { 
 					this.winShow(); 
-					this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }); 
+					this.openSettings('spaceIndex');
 				}
 			},
 
@@ -417,13 +420,13 @@ class MenuManager {
 			{ 
 				label: Util.translate('electronMenuImport'), click: () => { 
 					this.winShow(); 
-					this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }); 
+					this.openSettings('importIndex');
 				} 
 			},
 			{ 
 				label: Util.translate('electronMenuExport'), click: () => { 
 					this.winShow(); 
-					this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }); 
+					this.openSettings('exportIndex');
 				} 
 			},
 
@@ -438,9 +441,11 @@ class MenuManager {
 				} 
 			},
 
-			(is.windows || is.linux) ? {
-				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: config.hideMenuBar, click: () => {
-					Api.setMenuBarVisibility(this.win, config.hideMenuBar);
+			(is.windows || is.linux || is.macos) ? {
+				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: config.showMenuBar, click: () => {
+					const { config } = ConfigManager;
+
+					Api.setMenuBarVisibility(this.win, !config.showMenuBar);
 					this.initTray();
 				}
 			} : null,
@@ -456,17 +461,11 @@ class MenuManager {
 		].filter(it => it);
 	};
 
-	openSettings (page, param) {
-		param = param || {};
-		param.data = param.data || {};
-
+	openSettings (page) {
 		const Api = require('./api.js');
 
 		if (Api.isPinChecked) {
-			const popupParam = Object.assign({}, param);
-			popupParam.data = Object.assign({ page }, param.data);
-
-			Util.send(this.win, 'popup', 'settings', popupParam, true); 
+			Util.send(this.win, 'route', '/main/settings/' + page);
 		};
 	};
 

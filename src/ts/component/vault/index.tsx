@@ -211,7 +211,7 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			case 'settings': {
-				S.Popup.open('settings', {});
+				U.Router.go('/main/settings/index', {});
 				break;
 			};
 

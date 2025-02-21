@@ -227,9 +227,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
-				if (!S.Popup.isOpen('settings')) {
-					S.Popup.open('settings', {});
-				};
+				sidebar.settingsOpen();
 			});
 
 			// Create relation
@@ -274,7 +272,7 @@ class Keyboard {
 				if (!S.Popup.isOpen('search')) {
 					this.shortcut(`${cmd}+n`, e, () => {
 						e.preventDefault();
-						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 					});
 				};
 
@@ -677,6 +675,26 @@ class Keyboard {
 				break;
 			};
 
+			case 'releaseChannel': {
+				const cb = () => Renderer.send('setChannel', arg);
+
+				if (arg == 'latest') {
+					cb();
+				} else {
+					S.Popup.open('confirm', {
+						className: 'isLeft',
+						data: {
+							icon: 'warning',
+							bgColor: 'red',
+							title: translate('commonWarning'),
+							text: translate('popupConfirmReleaseChannelText'),
+							onConfirm: () => cb(),
+						},
+					});
+				};
+				break;
+			};
+
 		};
 	};
 
@@ -931,15 +949,7 @@ class Keyboard {
 	};
 
 	getMatch () {
-		const ret = (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
-
-		for (const k in ret.params) {
-			if (ret.params[k] == J.Constant.blankRouteId) {
-				ret.params[k] = '';
-			};
-		};
-
-		return ret;
+		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
 	};
 
 	isMain () {
@@ -972,6 +982,10 @@ class Keyboard {
 
 	isMainVoid () {
 		return this.isMain() && (this.match?.params?.action == 'void');
+	};
+
+	isMainType () {
+		return this.isMain() && (this.match?.params?.action == 'type');
 	};
 
 	isAuth () {

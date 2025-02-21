@@ -26,16 +26,16 @@ export default [
 	text(''),
 
 	h2(`Highlights`),
+	h3(`Web Publishing`),
+	text(`You can now publish Objects as static web pages (HTTPS links) on your personal subdomain if you have *any name. These pages are uploaded to our servers as unencrypted HTML files.`),
+	text(`This is an early version — mobile optimization, linked Objects, and blocks like Sets and Collections aren’t supported yet. Multi-page publishing and other enhancements are on the way, and we’d love your feedback to guide these improvements.`),
+	img(`45/2.png`),
+	text(``),
+
 	h3(`Redesigned Space Panel & Navigation`),
 	text(`We’ve relocated the navigation controls to the Space Panel for a smoother experience. You can now navigate back and forth, search for Objects, and create new ones from a familiar place.`),
 	text(`Pro tip: if your sidebar is hidden, press ${hl(`${cmd} + S`)} to open Global Search or ${hl(`${cmd} + N`)} to create a new Object.`),
 	img(`45/1.png`),
-	text(``),
-
-	h3(`Web Publishing`),
-	text(`You can now publish Objects as static web pages (HTTPS links) on your personal subdomain if you have *any name. These pages are uploaded to our servers as unencrypted HTML files.`),
-	text(`This is an early version — mobile optimization, linked Objects, and blocks like Sets, Collections and Relations aren’t supported yet. Multi-page publishing and other enhancements are on the way, and we’d love your feedback to guide these improvements.`),
-	img(`45/2.png`),
 	text(``),
 
 	h3(`Raycast Extension (macOS)`),
@@ -88,6 +88,10 @@ export default [
 	text(`All QR codes in Anytype now follow a consistent style.`),
 	text(``),
 
+	h3(`Improved LaTeX Support`),
+	text(`Inline LaTeX is now rendered in the Table of Contents block and in link blocks, including titles and descriptions. Thanks to @${link('https://community.anytype.io/t/inline-latex-not-applied-in-table-of-contents/24056', 'mewald')}!`),
+	text(``),
+
 	h2(`Bug Fixes`),
 	bullet(`Making changes to Kanban in the Version History is now disabled. Thanks, @${link('https://community.anytype.io/t/making-changes-to-kanban-in-version-history-breaks-all-versions/26141', 'HeavensRegent')}!`),
 	bullet(`Resolved an issue that could cause the App to freeze.`),
@@ -120,6 +124,7 @@ export default [
 	bullet(`Fixed an issue with fast-clicking on inline object links. Thanks, @${link('https://community.anytype.io/t/fast-click-on-inline-object-link-does-not-work-on-macos/23818', 'aytigra')}!`),
 	bullet(`Fixed an issue that could prevent title input in newly created Objects. Thanks, @${link('https://community.anytype.io/t/cannot-type-title-in-newly-created-object/22494', 'reachar')}!`),
 	bullet(`Webclipper's authorisation process has been reworked to eliminate issues with pop-ups.`),
+	bullet(`The selection rectangle now correctly toggles off when selecting text.`),
 
 	div(),
 	// --------------------------------------------//

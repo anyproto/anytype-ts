@@ -325,7 +325,6 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 			animate: true,
 			onFadeIn: () => {
 				Storage.initPinnedTypes();
-				S.Common.fullscreenObjectSet(true);
 			},
 		};
 

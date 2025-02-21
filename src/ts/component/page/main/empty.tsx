@@ -7,6 +7,7 @@ const PageMainEmpty = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const space = U.Space.getSpaceview();
 	const home = U.Space.getDashboard();
+	const canWrite = U.Space.canMyParticipantWrite();
 
 	const onDashboard = () => {
 		U.Menu.dashboardSelect('.pageMainEmpty #empty-dashboard-select', true);
@@ -24,24 +25,28 @@ const PageMainEmpty = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			<div className="wrapper">
 				<IconObject object={space} size={96} />
 				<ObjectName className="title" object={space} />
-				<Label text={translate('pageMainEmptyDescription')} />
-						
-				<div className="row">
-					<div className="side left">
-						<Label text={translate('commonHomepage')} />
-					</div>
 
-					<div className="side right">
-						<div id="empty-dashboard-select" className="select" onClick={onDashboard}>
-							<div className="item">
-								<div className="name">
-									{home ? home.name : translate('commonSelect')}
+				{canWrite ? (
+					<>
+						<Label text={translate('pageMainEmptyDescription')} />
+						<div className="row">
+							<div className="side left">
+								<Label text={translate('commonHomepage')} />
+							</div>
+
+							<div className="side right">
+								<div id="empty-dashboard-select" className="select" onClick={onDashboard}>
+									<div className="item">
+										<div className="name">
+											{home ? home.name : translate('commonSelect')}
+										</div>
+									</div>
+									<Icon className="arrow light" />
 								</div>
 							</div>
-							<Icon className="arrow light" />
 						</div>
-					</div>
-				</div>
+					</>
+				) : ''}
 			</div>
 
 			<Footer component="mainObject" />

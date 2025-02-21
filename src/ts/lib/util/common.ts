@@ -1,6 +1,10 @@
 import $ from 'jquery';
 import DOMPurify from 'dompurify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action } from 'Lib';
+import slugify from '@sindresorhus/slugify';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, sidebar } from 'Lib';
+
+const katex = require('katex');
+require('katex/dist/contrib/mhchem');
 
 const TEST_HTML = /<[^>]*>/;
 
@@ -621,7 +625,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					window.setTimeout(() => { S.Popup.open('settings', { data: { page: 'spaceList' } }); }, S.Popup.getTimeout());
+					sidebar.settingsOpen('spaceList');
 				},
 			},
 		});
@@ -1036,11 +1040,67 @@ class UtilCommon {
 	};
 
 	slug (s: string): string {
-		return String(s || '').toLowerCase().trim().normalize('NFD')
-			.replace(/[\u0300-\u036f]/g, '')
-			.replace(/[^a-z0-9\s\-]/g, '')
-			.replace(/\s+/g, '-')
-			.replace(/-+/g, '-');
+		return slugify(String(s || ''));
+	};
+
+	getLatex (html: string): string {
+		if (!/\$[^\$]+\$/.test(html)) {
+			return html;
+		};
+
+		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
+		const tag = Mark.getTag(I.MarkType.Latex);
+		const code = Mark.getTag(I.MarkType.Code);
+		const regCode = new RegExp(`^${code}|${code}$`, 'i');
+		const match = html.matchAll(reg);
+		const render = (s: string) => {
+			s = this.fromHtmlSpecialChars(s);
+
+			let ret = s;
+			try {
+				ret = katex.renderToString(s, { 
+					displayMode: false, 
+					throwOnError: false,
+					output: 'html',
+					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
+				});
+
+				ret = ret ? ret : s;
+			} catch (e) {};
+			return ret;
+		};
+
+		let text = html;
+
+		if (!match) {
+			return text;
+		};
+
+		match.forEach((m: any) => {
+			const m0 = String(m[0] || '');
+			const m1 = String(m[1] || '');
+			const m2 = String(m[2] || '');
+			const m3 = String(m[3] || '');
+
+			// Skip inline code marks
+			if (regCode.test(m1) || regCode.test(m3)) {
+				return;
+			};
+
+			// Skip Brazilian Real
+			if (!/^\\/.test(m2) && (/R$/.test(m1) || /R$/.test(m2))) {
+				return;
+			};
+
+			// Escaped $ sign
+			if (/\\$/.test(m1) || /\\$/.test(m2)) {
+				return;
+			};
+
+			text = text.replace(m0, `${m1}<${tag}>${render(m2)}</${tag}>${m3}`);
+		});
+
+		return text;
 	};
 
 };
