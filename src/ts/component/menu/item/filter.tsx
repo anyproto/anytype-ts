@@ -169,8 +169,8 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 
 				{!readonly ? (
 					<div className="buttons">
-						<Icon className="more" onClick={onClick} />
-						<Icon className="delete" onClick={onRemove} />
+						<Icon className="more withBackground" onClick={onClick} />
+						<Icon className="delete withBackground" onClick={onRemove} />
 					</div>
 				) : ''}
 			</div>

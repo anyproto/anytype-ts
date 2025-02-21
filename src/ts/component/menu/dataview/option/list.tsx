@@ -346,7 +346,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			return;
 		};
 
-		const { param, getId, getSize } = this.props;
+		const { id, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 
@@ -362,9 +362,10 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			noFlipY: true,
 			noAnimation: true,
 			classNameWrap: classNameWrap,
+			rebind: this.rebind,
+			parentId: id,
 			data: {
 				...data,
-				rebind: this.rebind,
 				option: item,
 			}
 		});

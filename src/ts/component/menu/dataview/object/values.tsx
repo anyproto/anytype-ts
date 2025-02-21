@@ -55,7 +55,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 						<IconObject object={item} />
 						<ObjectName object={item} />
 					</span>
-					{canEdit ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
+					{canEdit ? <Icon className="delete withBackground" onClick={e => this.onRemove(e, item)} /> : ''}
 				</div>
 			);
 		});
@@ -243,7 +243,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	onAdd () {
-		const { param, getId, getSize } = this.props;
+		const { id, param, getId, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { width } = getSize();
 
@@ -256,10 +256,11 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			noAnimation: true,
 			className,
 			classNameWrap,
+			rebind: this.rebind,
+			parentId: id,
 			data: {
 				...data,
 				canAdd: true,
-				rebind: this.rebind,
 			},
 		});
 	};

@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { forwardRef } from 'react';
 import { Title, Icon, Label, Button } from 'Component';
 import { I, U, translate } from 'Lib';
 
-const PopupAbout: FC<I.Popup> = () => {
+const PopupAbout = forwardRef<{}, I.Popup>(() => {
 
 	const version = U.Common.getElectron().version.app;
 
@@ -27,6 +27,6 @@ const PopupAbout: FC<I.Popup> = () => {
 		</>
 	);
 
-};
+});
 
 export default PopupAbout;

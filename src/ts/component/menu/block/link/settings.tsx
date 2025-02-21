@@ -85,7 +85,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			return;
 		};
 
-		const { getId, getSize } = this.props;
+		const { id, getId, getSize } = this.props;
 		const content = this.getContent();
 		const menuId = 'select';
 
@@ -95,8 +95,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			rebind: this.rebind,
+			parentId: id,
 			data: {
-				rebind: this.rebind,
 				value: String(content[item.itemId]),
 				options: [],
 				onSelect: (e: any, el: any) => {

@@ -215,16 +215,17 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const relation = this.getRelation();
 
 		if (!relation) {
-			return;
+			return [];
 		};
 
 		const viewRelation = this.getViewRelation();
 		const object = S.Detail.get(rootId, rootId);
 		const isFile = relation && (relation.format == I.RelationType.File);
+		const isName = relation && (relation.relationKey == 'name');
 		const canFilter = !isFile;
 		const canSort = !isFile;
-		const canHide = relation && (relation.relationKey != 'name');
-		const canAlign = relation; 
+		const canHide = !isName;
+		const canAlign = !isName; 
 		const canCalculate = relation;
 		
 		let unlinkText = translate('commonUnlink');
@@ -270,22 +271,23 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						{ id: 'insert-left', icon: 'relation-insert-left', name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
 						{ id: 'insert-right', icon: 'relation-insert-right', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
 						canHide ? { id: 'hide', icon: 'relation-hide', name: translate('menuDataviewRelationEditHideRelation') } : null,
-						canAlign ? { id: 'align', icon: U.Data.alignHIcon(viewRelation?.align), name: translate('commonAlign'), arrow: true } : null,
 					]
 				},
 				{
 					children: [
+						canAlign ? { id: 'align', icon: U.Data.alignHIcon(viewRelation?.align), name: translate('commonAlign'), arrow: true } : null,
 						canCalculate ? { id: 'calculate', icon: 'relation c-number', name: translate('commonCalculate'), arrow: true } : null,
 					]
 				},
 			]);
 		};
 
-		sections = sections.filter((s: any) => {
+		sections = sections.map(s => {
 			s.children = s.children.filter(c => c);
-			return s.children.length > 0;
+			return s;
 		});
 
+		sections = sections.filter(s => s.children.length);
 		return sections;
 	};
 
@@ -312,7 +314,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			return;
 		};
 
-		const { getId, getSize, param, close } = this.props;
+		const { id, getId, getSize, param, close } = this.props;
 		const { classNameWrap, data } = param;
 		const { rootId } = data;
 		const relation = this.getRelation();
@@ -335,6 +337,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			offsetX: getSize().width,
 			classNameWrap,
 			onOpen: context => menuContext = context,
+			rebind: this.rebind,
+			parentId: id,
 			data: {},
 		};
 
@@ -380,10 +384,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
+								rebind: menuContext.ref?.rebind,
+								parentId: menuContext.props.id,
 								data: {
 									rootId,
 									options,
-									rebind: menuContext.ref?.rebind,
 									onSelect: (e: any, item: any) => {
 										save(item.id);
 										menuContext.close();
@@ -624,10 +629,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			classNameWrap,
-		});
-
-		options.data = Object.assign(options.data, {
 			rebind: this.rebind,
+			parentId: this.props.id,
 		});
 
 		if (!S.Menu.isOpen(id)) {

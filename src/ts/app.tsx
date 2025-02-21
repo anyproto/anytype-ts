@@ -23,18 +23,6 @@ import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
 import 'scss/common.scss';
-import 'scss/component/common.scss';
-import 'scss/page/common.scss';
-import 'scss/block/common.scss';
-import 'scss/form/common.scss';
-import 'scss/list/common.scss';
-import 'scss/widget/common.scss';
-import 'scss/popup/common.scss';
-import 'scss/menu/common.scss';
-import 'scss/notification/common.scss';
-
-import 'scss/media/print.scss';
-import 'scss/theme/dark/common.scss';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -139,7 +127,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 
-					<Sidebar key="sidebar" {...this.props} />
+					<Sidebar ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebar" {...this.props} />
 					<Page {...this.props} isPopup={false} />
 				</DragProvider>
 			</SelectionProvider>
@@ -350,6 +338,7 @@ class App extends React.Component<object, State> {
 						S.Common.redirectSet(route);
 						S.Common.configSet(account.config, false);
 
+						const spaceId = Storage.get('spaceId');
 						const routeParam = { 
 							replace: true, 
 							onRouteChange: hide,

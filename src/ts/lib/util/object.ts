@@ -217,6 +217,13 @@ class UtilObject {
 			{ key: 'iconImage', value: String(image || '') },
 		], callBack);
 	};
+
+	setTypeIcon (rootId: string, iconName: string, iconOption: number, callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [
+			{ key: 'iconName', value: String(iconName || '') },
+			{ key: 'iconOption', value: Number(iconOption || 1) },
+		], callBack);
+	};
 	
 	setName (rootId: string, name: string, callBack?: (message: any) => void) {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'name', value: String(name || '') } ], callBack);

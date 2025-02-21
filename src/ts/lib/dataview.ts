@@ -41,7 +41,7 @@ class Dataview {
 		const ret = relations.filter(it => it).map(relation => {
 			const vr = (view.relations || []).filter(it => it).find(it => it.relationKey == relation.relationKey) || {};
 
-			if (relation.relationKey == 'name') {
+			if ((view.type != I.ViewType.Gallery) && (relation.relationKey == 'name')) {
 				vr.isVisible = true;
 			};
 
@@ -590,7 +590,7 @@ class Dataview {
 			return map.length ? Math.max(...map.map(it => Number(it || 0))) : null;
 		};
 		const float = (v: any): string => {
-			return (v === null) ? null : U.Common.formatNumber(U.Common.sprintf('%0.3f', v)).replace(/\.0+?$/, '');
+			return (v === null) ? null : U.Common.formatNumber(U.Common.round(v, 3));
 		};
 		const filtered = (filterEmpty: boolean) => {
 			return records.filter(it => {

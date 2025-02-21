@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, S, U, J, Storage, Relation } from 'Lib';
+import { I, C, S, U, J, Relation } from 'Lib';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
@@ -7,13 +7,12 @@ const KEYS = [
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
 	'processor', 'emptyType', 'status', 'sort',
 ];
-const KEY_CONTEXT = 'analyticsContext';
-const KEY_ORIGINAL_ID = 'analyticsOriginalId';
 const URL = 'amplitude.anytype.io';
 
 class Analytics {
 	
 	instance: any = null;
+	contextId: string = '';
 
 	public route = {
 		block: 'Block',
@@ -52,6 +51,7 @@ class Analytics {
 		archive: 'Bin',
 		toast: 'Toast',
 		share: 'Share',
+		navigation: 'Navigation',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',
@@ -173,16 +173,13 @@ class Analytics {
 		};
 	};
 
-	setContext (context: string, id: string) {
-		Storage.set(KEY_CONTEXT, context);
-		Storage.set(KEY_ORIGINAL_ID, id);
-
+	setContext (context: string) {
+		this.contextId = context;
 		this.log(`[Analytics].setContext: ${context}`);
 	};
 
 	removeContext () {
-		Storage.delete(KEY_CONTEXT);
-		Storage.delete(KEY_ORIGINAL_ID);
+		this.contextId = '';
 	};
 
 	setTier (tier: I.TierType) {
@@ -380,6 +377,7 @@ class Analytics {
 				break;
 			};
 
+			case 'ShowDataviewRelation':
 			case 'DeleteRelationValue':
 			case 'ChangeRelationValue':
 			case 'FeatureRelation':
@@ -528,8 +526,7 @@ class Analytics {
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
-		param.context = String(Storage.get(KEY_CONTEXT) || '');
-		param.originalId = String(Storage.get(KEY_ORIGINAL_ID) || '');
+		param.context = String(this.contextId || '');
 
 		for (const k of KEYS) {
 			if (undefined !== data[k]) {

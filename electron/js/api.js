@@ -95,7 +95,7 @@ class Api {
 	};
 
 	setMenuBarVisibility (win, show) {
-		ConfigManager.set({ hideMenuBar: !show }, () => {
+		ConfigManager.set({ showMenuBar: show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
 			win.setMenuBarVisibility(show);
@@ -184,6 +184,11 @@ class Api {
 		Server.stop(signal).then(() => this.shutdown(win, relaunch));
 	};
 
+	setChannel (win, id) {
+		UpdateManager.setChannel(id); 
+		this.setConfig(win, { channel: id });
+	};
+
 	setInterfaceLang (win, lang) {
 		ConfigManager.set({ interfaceLang: lang }, () => {
 			WindowManager.reloadAll();
@@ -215,6 +220,10 @@ class Api {
 
 	showChallenge (win, param) {
 		WindowManager.createChallenge(param);
+	};
+
+	hideChallenge (win, param) {
+		WindowManager.closeChallenge(param);
 	};
 
 	reload (win, route) {

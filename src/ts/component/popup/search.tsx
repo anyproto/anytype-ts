@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, EmptySearch, Label, Filter } from 'Component';
-import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark, sidebar } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -311,6 +311,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.range = { from: 0, to: filter.length };
 			this.refFilter.setValue(filter);
 			this.refFilter.setRange(this.range);
+			this.reload();
 		};
 
 		this._isMounted = true;
@@ -436,6 +437,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				this.onClick(e, item);
 			};
 		});
+
+		keyboard.shortcut(`${cmd}+n`, e, () => {
+			e.preventDefault();
+
+			this.pageCreate(filter);
+		})
 	};
 
 	onArrow (dir: number) {
@@ -722,11 +729,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					] 
 				},
 				{ 
-					id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsColorMode'), 
+					id: 'personal', icon: 'settings-personal', name: translate('pageSettingsColorMode'),
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
 				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
-				{ id: 'dataManagement', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
+				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
 				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
 			];
 
@@ -773,6 +780,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			it.shortcut = it.shortcut || [];
 			return it;
 		});
+	};
+
+	pageCreate (name: string) {
+		keyboard.pageCreate({ name }, analytics.route.search, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 	};
 
 	filterMapper (it: any, config: any) {
@@ -823,7 +834,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			// Settings item
 			if (item.isSettings) {
-				S.Popup.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
+				sidebar.settingsOpen(item.id);
 			} else 
 
 			// Import action
@@ -834,7 +845,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			} else {
 				switch (item.id) {
 					case 'add': {
-						keyboard.pageCreate({ name: filter }, 'Search');
+						this.pageCreate(filter)
 						break;
 					};
 

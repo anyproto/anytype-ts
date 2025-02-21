@@ -14,12 +14,12 @@ const SHOW_DIMMER = [
 	'usecase',
 	'inviteRequest',
 	'inviteConfirm',
-	'inviteQr',
 	'usecase',
 	'membership',
 	'membershipFinalization',
 	'share',
 	'spaceCreate',
+	'logout',
 ];
 
 class PopupStore {

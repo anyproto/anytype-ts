@@ -62,6 +62,12 @@ export const DebugNetCheck = (response: Rpc.Debug.NetCheck.Response) => {
 	};
 };
 
+export const DebugRunProfiler = (response: Rpc.Debug.RunProfiler.Response) => {
+	return {
+		path: response.getPath(),
+	};
+};
+
 export const Export = (response: any) => {
 	return {
 		path: response.getPath(),
@@ -197,14 +203,6 @@ export const ObjectShow = (response: Rpc.Object.Show.Response) => {
 		objectView: Mapper.From.ObjectView(response.getObjectview()),
 	};
 };
-
-/*
-export const PublishingCreate = (response: Rpc.Publishing.Create.Response) => {
-	return { 
-		url: response.getUri(),
-	};
-};
-*/
 
 export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
 	return {
@@ -611,5 +609,29 @@ export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Respo
 				counter: it.getCounter(),
 			};
 		}),
+	};
+};
+
+export const PublishingCreate = (response: Rpc.Publishing.Create.Response) => {
+	return { 
+		url: response.getUri(),
+	};
+};
+
+export const PublishingList = (response: Rpc.Publishing.List.Response) => {
+	return {
+		list: (response.getPublishesList() || []).map(Mapper.From.PublishState),
+	};
+};
+
+export const PublishingResolveUri = (response: Rpc.Publishing.ResolveUri.Response) => {
+	return {
+		state: response.hasPublish() ? Mapper.From.PublishState(response.getPublish()) : null,
+	};
+};
+
+export const PublishingGetStatus = (response: Rpc.Publishing.GetStatus.Response) => {
+	return {
+		state: response.hasPublish() ? Mapper.From.PublishState(response.getPublish()) : null,
 	};
 };

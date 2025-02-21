@@ -12,7 +12,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(onOpen)}</div>
+			<div className="side left">{renderLeftIcons(true, onOpen)}</div>
 			<div className="side center" />
 			<div className="side right" />
 		</>

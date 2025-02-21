@@ -64,7 +64,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 		filterRef.current.focus();
 	};
 
-	const onFilterChange = () => {
+	const onFilterChange = (v: string) => {
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => load(), J.Constant.delay.keyboard);
 	};

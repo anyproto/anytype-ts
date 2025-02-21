@@ -9,11 +9,11 @@
 			.card { 
 				width: 100%; border: 1px solid var(--color-shape-highlight-medium); transition-property: border-color, background; transition-duration: 0.1s; 
 				transition-timing-function: $easeInQuint; border-radius: 8px; display: inline-block; background: var(--color-bg-primary);
-				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative; overflow: hidden;
+				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative;
 			}
 
 			.card.add { box-shadow: 0px 0px; }
-			.card.add::after {
+			.card.add::before {
 				content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); margin: -10px 0px 0px -10px;
 			}
 
@@ -26,6 +26,8 @@
 
 				.selectionTarget { height: 100%; }
 				.selectionTarget.isSelectionSelected::after { border-radius: 8px; }
+
+				.inner:empty { display: none; }
 			}
 			.card:hover { border-color: var(--color-shape-secondary); }
 			.card:hover {
