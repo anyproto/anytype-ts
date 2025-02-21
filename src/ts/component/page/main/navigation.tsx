@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
 import { I, C, S, U, keyboard, focus, translate } from 'Lib';
 
-import Item from 'Component/sidebar/object/item';
+import Item from 'Component/sidebar/page/object/item';
 
 interface State {
 	loading: boolean;
@@ -42,6 +42,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	focus = false;
 	select = false;
 	refHeader: any = null;
+	refList = { [ Panel.Left ]: null, [ Panel.Right ]: null };
 	
 	constructor (props: I.PageComponent) {
 		super (props);
@@ -152,7 +153,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 									<AutoSizer className="scrollArea">
 										{({ width, height }) => (
 											<List
-												ref={registerChild}
+												ref={ref => this.refList[Panel.Left] = ref}
 												width={width + 20}
 												height={height - 35}
 												deferredMeasurmentCache={this.cacheIn}
@@ -164,7 +165,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 												}}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
-												scrollToAlignment="start"
+												scrollToAlignment="center"
 											/>
 										)}
 									</AutoSizer>
@@ -191,7 +192,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 									<AutoSizer className="scrollArea">
 										{({ width, height }) => (
 											<List
-												ref={registerChild}
+												ref={ref => this.refList[Panel.Right] = ref}
 												width={width + 20}
 												height={height - 35}
 												deferredMeasurmentCache={this.cacheOut}
@@ -203,7 +204,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 												}}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
-												scrollToAlignment="start"
+												scrollToAlignment="center"
 											/>
 										)}
 									</AutoSizer>
@@ -312,7 +313,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			if (this.n > l - 1) {
 				this.n = 0;
 			};
-			this.setActive();
+			
+			this.refList[this.panel]?.scrollToRow(this.n);
+			window.setTimeout(() => this.setActive(), 0);
 		});
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {

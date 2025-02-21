@@ -129,6 +129,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		};
 
 		const { id, param, getId, getSize, close } = this.props;
+
 		if (S.Menu.isAnimating(id)) {
 			return;
 		};
@@ -145,9 +146,10 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			isSub: true,
 			className: param.className,
 			classNameWrap: param.classNameWrap,
+			rebind: this.rebind,
+			parentId: id,
 			data: {
 				rootId: rootId,
-				rebind: this.rebind,
 			},
 		};
 

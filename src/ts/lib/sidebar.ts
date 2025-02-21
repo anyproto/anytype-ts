@@ -129,6 +129,7 @@ class Sidebar {
 		const { width, isClosed } = this.data;
 		
 		isClosed ? this.open(width) : this.close();
+		S.Menu.closeAll();
 	};
 
 	setElementsWidth (width: any): void {
@@ -234,7 +235,7 @@ class Sidebar {
 			syncX = 120;
 
 			if (width) {
-				syncX = J.Size.vault.width + width - 40;
+				syncX = vw + width - 40;
 			};
 		};
 
@@ -330,8 +331,17 @@ class Sidebar {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
-	objectContainerToggle () {
-		S.Common.showObjectSet(!S.Common.showObject);
+	objectContainerSwitch (page: string) {
+		const ref = S.Common.getRef('sidebarLeft');
+		if (!ref) {
+			return;
+		};
+
+		ref.setState({ page });
+	};
+
+	settingsOpen (id?: string, isSpace?: boolean) {
+		U.Router.go(`/main/settings/${id || ''}`, {});
 	};
 
 };

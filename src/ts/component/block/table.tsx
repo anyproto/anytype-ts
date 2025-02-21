@@ -367,9 +367,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						vertical: I.MenuDirection.Center,
 						isSub: true,
 						onOpen: context => menuSubContext = context,
+						rebind: menuContext.ref.rebind,
+						parentId: menuContext.props.id,	
 						data: {
 							rootId, 
-							rebind: menuContext.ref.rebind,
 						}
 					};
 

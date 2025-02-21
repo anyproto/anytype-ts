@@ -198,7 +198,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	init () {
 		const { focused } = focus.state;
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId, [ 'name' ], true);
 
 		this.setValue();
 
@@ -257,7 +257,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	setValue () {
 		const { dateFormat } = S.Common;
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		for (const item of EDITORS) {
 			if (!this.refEditable[item.blockId]) {

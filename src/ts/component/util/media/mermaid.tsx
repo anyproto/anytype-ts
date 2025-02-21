@@ -20,10 +20,8 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 	const themeClass = S.Common.getThemeClass();
 
 	const init = () => {
-		const themeVariables = (J.Theme[themeClass] || {}).mermaid;
-		if (!themeVariables) {
-			return;
-		};
+		const obj = $(chartRef.current);
+		const themeVariables = (J.Theme[themeClass] || {}).mermaid || {};
 
 		for (const k in themeVariables) {
 			if (!themeVariables[k]) {
@@ -31,7 +29,7 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 			};
 		};
 
-		$(chartRef.current).removeAttr('data-processed');
+		obj.text(chart).removeAttr('data-processed');
 		$(errorRef.current).text('');
 
 		try {
@@ -52,7 +50,7 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 	return (
 		<div id={id} ref={nodeRef} className="mermaidWrapper">
 			<div ref={errorRef} className="error" />
-			<div ref={chartRef} className="mermaid">{chart}</div>
+			<div ref={chartRef} className="mermaid" />
 		</div>
 	);
 

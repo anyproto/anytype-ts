@@ -7,6 +7,7 @@ export default {
 		'snippet',
 		'iconEmoji',
 		'iconImage',
+		'iconName',
 		'iconOption',
 		'relationFormat',
 		'type',
@@ -37,6 +38,7 @@ export default {
 		'type',
 		'iconEmoji',
 		'iconImage',
+		'iconName',
 		'iconOption',
 		'isReadonly',
 		'isHidden',
@@ -100,6 +102,8 @@ export default {
 		'sourceObject',
 		'uniqueKey',
 		'defaultTemplateId',
+		'iconName',
+		'iconOption',
 	],
 
 	graph: [
@@ -109,6 +113,7 @@ export default {
 		'description',
 		'iconEmoji',
 		'iconImage',
+		'iconName',
 		'iconOption',
 		'relationFormat',
 		'type',

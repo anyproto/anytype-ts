@@ -49,32 +49,27 @@ class ProgressStore {
 		this.showValue = Boolean(v);
 	};
 
-	getList () {
+	getList (filter?: (it: I.Progress) => boolean) {
 		const { space } = S.Common;
-		const skip = [ I.ProgressState.Done, I.ProgressState.Canceled ];
 
-		return this.list.filter(it => (!it.spaceId || (it.spaceId == space)) && !skip.includes(it.state));
+		return this.list.filter(it => {
+			let ret = true;
+
+			if (filter) {
+				ret = filter(it);
+			};
+
+			return ret && (!it.spaceId || (it.spaceId == space));
+		});
 	};
 
 	getItem (id: string): I.Progress {
 		return this.getList().find(it => it.id == id);
 	};
 
-	getField (field: string): number {
-		return this.getList().reduce((acc, it) => acc + (Number(it[field]) || 0), 0);
-	};
-
-	getCurrent (): number {
-		return this.getField('current');
-	};
-
-	getTotal (): number {
-		return this.getField('total');
-	};
-
-	getPercent (): number {
-		const current = this.getCurrent();
-		const total = this.getTotal();
+	getPercent (list: I.Progress[]): number {
+		const current = list.reduce((acc, it) => acc + (Number(it.current) || 0), 0);
+		const total = list.reduce((acc, it) => acc + (Number(it.total) || 0), 0);
 
 		return total > 0 ? Math.min(100, Math.ceil(current / total * 100)) : 0;
 	};

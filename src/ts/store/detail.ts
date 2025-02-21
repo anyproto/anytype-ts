@@ -23,6 +23,16 @@ class DetailStore {
 		});
 	};
 
+	private createListItem (k: string, v: any): Detail {
+		const el = { relationKey: k, value: v };
+
+		makeObservable(el, { value: observable });
+		intercept(el as any, (change: any) => {
+			return (change.newValue === el[change.name] ? null : change); 
+		});
+		return el;
+	}; 
+
 	/** Idempotent. adds details to the detail store. */
 	public set (rootId: string, items: Item[]) {
 		if (!rootId) {
@@ -36,15 +46,7 @@ class DetailStore {
 			const list: Detail[] = [];
 
 			for (const k in item.details) {
-				const el = { relationKey: k, value: item.details[k] };
-
-				makeObservable(el, { value: observable });
-
-				intercept(el as any, (change: any) => { 
-					return (change.newValue === el[change.name] ? null : change); 
-				});
-
-				list.push(el);
+				list.push(this.createListItem(k, item.details[k]));
 			};
 
 			map.set(item.id, list);
@@ -85,19 +87,16 @@ class DetailStore {
 		};
 
 		for (const k in item.details) {
-			let el = list.find(it => it.relationKey == k);
+			if (clear) {
+				list.push(this.createListItem(k, item.details[k]));
+				continue;
+			};
+
+			const el = list.find(it => it.relationKey == k);
 			if (el) {
-				set(el, { value: item.details[k] });
+				el.value = item.details[k];
 			} else {
-				el = { relationKey: k, value: item.details[k] };
-
-				makeObservable(el, { value: observable });
-
-				list.push(el);
-
-				intercept(el as any, (change: any) => { 
-					return (change.newValue === el[change.name] ? null : change); 
-				});
+				list.push(this.createListItem(k, item.details[k]));
 			};
 		};
 
@@ -136,14 +135,13 @@ class DetailStore {
 			return;
 		};
 
-		if (keys && keys.length) {
-			const item = { id, details: {} };
-			keys.forEach(key => item.details[key] = null);
+		let list = [];
 
-			this.update(rootId, item, false);
-		} else {
-			map.set(id, []);
+		if (keys && keys.length) {
+			list = (map.get(id) || []).filter(it => !keys.includes(it.relationKey));
 		};
+
+		map.set(id, list);
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */

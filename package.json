@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.44.4-alpha",
+	"version": "0.45.0-migration1",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -68,7 +68,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^33.2.1",
+		"electron": "^34.1.1",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -94,6 +94,7 @@
 		"@emoji-mart/data": "^1.1.2",
 		"@sentry/browser": "^7.39.0",
 		"@sentry/cli": "^2.18.1",
+		"@sindresorhus/slugify": "^2.2.1",
 		"@types/emoji-mart": "^3.0.13",
 		"@viz-js/viz": "^3.2.4",
 		"amplitude-js": "^5.11.0",
@@ -201,19 +202,7 @@
 			"node_modules/p-finally",
 			"node_modules/file-type",
 			"node_modules/regedit",
-			"node_modules/mime-types",
-			"node_modules/electron-store",
-			"node_modules/conf",
-			"node_modules/dot-prop",
-			"node_modules/is-obj",
-			"node_modules/pkg-up",
-			"node_modules/env-paths",
-			"node_modules/atomically",
-			"node_modules/fast-deep-equal",
-			"node_modules/fast-uri",
-			"node_modules/ajv-formats",
-			"node_modules/debounce-fn",
-			"node_modules/semver"
+			"node_modules/mime-types"
 		],
 		"extraResources": [
 			{
