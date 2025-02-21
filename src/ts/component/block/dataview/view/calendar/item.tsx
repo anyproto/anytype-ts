@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName } from 'Component';
-import { I, S, U, C, translate, Preview } from 'Lib';
+import { IconObject, ObjectName, Icon } from 'Component';
+import { I, S, U, translate, Preview } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -25,7 +25,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		this.onMore = this.onMore.bind(this);
 		this.onContext = this.onContext.bind(this);
 		this.canCreate = this.canCreate.bind(this);
-		this.onDoubleClick = this.onDoubleClick.bind(this);
+		this.onCreate = this.onCreate.bind(this);
 	};
 
 	render () {
@@ -35,6 +35,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		const slice = items.slice(0, LIMIT);
 		const length = items.length;
 		const cn = [ 'day' ];
+		const canCreate = this.canCreate();
 
 		if (className) {
 			cn.push(className);
@@ -72,11 +73,23 @@ const Item = observer(class Item extends React.Component<Props> {
 				ref={node => this.node = node}
 				className={cn.join(' ')}
 				onContextMenu={this.onContext}
-				onDoubleClick={this.onDoubleClick}
+				onDoubleClick={this.onCreate}
 			>
-				<div className="number" onClick={this.onOpenDate}>
-					<div className="inner">{d}</div>
+				<div className="head">
+					{canCreate ? (
+						<Icon 
+							className="plus withBackground" 
+							tooltip={translate(`commonNewObject`)} 
+							tooltipY={I.MenuDirection.Top}
+							onClick={this.onCreate} 
+						/> 
+					) : ''}
+
+					<div className="number" onClick={this.onOpenDate}>
+						<div className="inner">{d}</div>
+					</div>
 				</div>
+
 				<div className="items">
 					{slice.map((item, i) => (
 						<Item key={[ y, m, d, item.id ].join('-')} {...item} />
@@ -122,12 +135,13 @@ const Item = observer(class Item extends React.Component<Props> {
 					relationKey: view.groupRelationKey,
 					hideIcon: view.hideIcon,
 					readonly,
+					onCreate: this.onCreate,
 				}
 			});
 		});
 	};
 
-	onContext () {
+	onContext (e: any) {
 		const node = $(this.node);
 		const options = [
 			{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }
@@ -151,20 +165,20 @@ const Item = observer(class Item extends React.Component<Props> {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'open': this.onOpenDate(); break;
-						case 'add': this.onCreate(); break;
+						case 'add': this.onCreate(e); break;
 					};
 				},
 			}
 		});
 	};
 
-	onDoubleClick () {
-		if (this.canCreate()) {
-			this.onCreate();
+	onCreate (e: any) {
+		if (!this.canCreate()) {
+			return;
 		};
-	};
 
-	onCreate () {
+		e?.stopPropagation();
+
 		const { d, m, y, getView, onCreate } = this.props;
 		const view = getView();
 		const details = {};
@@ -190,6 +204,7 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
 
+		console.log(isAllowedObject(), groupRelation);
 		return groupRelation && !groupRelation.isReadonlyValue && isAllowedObject();
 	};
 
