@@ -33,22 +33,21 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const canTurn = block.canTurn() && !isInsideTable;
 		const hasMore = !isInsideTable;
 		const canHaveMarks = block.canHaveMarks();
-		const cmd = keyboard.cmdSymbol();
 
 		const color = (
-			<div className={[ 'inner', 'textColor', 'textColor-' + (colorMark.param || 'default') ].join(' ')} />
+			<div className={[ 'inner', 'textColor', `textColor-${(colorMark.param || 'default')}` ].join(' ')} />
 		);
 		const background = (
-			<div className={[ 'inner', 'bgColor', 'bgColor-' + (bgMark.param || 'default') ].join(' ')} />
+			<div className={[ 'inner', 'bgColor', `bgColor-${(bgMark.param || 'default')}` ].join(' ')} />
 		);
 		
 		let markActions = [
-			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: `${cmd} + B` },
-			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: `${cmd} + I` },
-			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + Shift + S` },
-			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: `${cmd} + U` },
-			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: `${cmd} + K` },
-			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: `${cmd} + L` },
+			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: keyboard.getCaption('textBold') },
+			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
+			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
+			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
+			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: keyboard.getCaption('textLink') },
+			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: keyboard.getCaption('textCode') },
 		];
 
 		// You can't make headers bold, since they are already bold
@@ -111,7 +110,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								className="color"
 								inner={color}
 								tooltip={translate('commonColor')}
-								tooltipCaption={`${cmd} + Shift + C`}
+								tooltipCaption={keyboard.getCaption('textColor')}
 								tooltipY={I.MenuDirection.Top}
 								onMouseDown={e => this.onMark(e, I.MarkType.Color)} 
 							/>
@@ -121,7 +120,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								className="color"
 								inner={background} 
 								tooltip={translate('commonBackground')}
-								tooltipCaption={`${cmd} + Shift + H`}
+								tooltipCaption={keyboard.getCaption('textBackground')}
 								tooltipY={I.MenuDirection.Top}
 								onMouseDown={e => this.onMark(e, I.MarkType.BgColor)} 
 							/>

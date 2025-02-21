@@ -55,6 +55,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	render () {
 		const { isLoading } = this.state;
 		const items = this.getItems();
+		const shift = keyboard.shiftSymbol();
 
 		const Context = (meta: any): any => {
 			const { highlight, relationKey, ranges } = meta;
@@ -144,7 +145,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						<Icon
 							className="advanced"
 							tooltip={translate('popupSearchTooltipSearchByBacklinks')}
-							tooltipCaption="Shift + Enter"
+							tooltipCaption={`${shift} + Enter`}
 							tooltipY={I.MenuDirection.Top}
 							onClick={e => this.onBacklink(e, item)}
 						/>
@@ -655,6 +656,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { backlink } = this.state;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
+		const shift = keyboard.shiftSymbol();
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 		const filter = this.getFilter();
 		const lang = J.Constant.default.interfaceLang;
@@ -772,7 +774,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ], isSmall: true });
 
 			if (hasRelations) {
-				items.push({ id: 'relation', name: translate('commonAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ], isSmall: true });
+				items.push({ id: 'relation', name: translate('commonAddRelation'), icon: 'relation', shortcut: [ cmd, shift, 'R' ], isSmall: true });
 			};
 		};
 

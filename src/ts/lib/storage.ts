@@ -491,6 +491,19 @@ class Storage {
 		const map = this.get('chat') || {};
 		return map[id] || {};
 	};
+
+	getShortcuts () {
+		return this.get('shortcuts') || {};
+	};
+
+	setShortcuts (data: any) {
+		this.set('shortcuts', data);
+	};
+
+	updateShortcuts (id: string, keys: string[]) {
+		const list = this.getShortcuts();
+		this.setShortcuts({ ...list, [id]: keys });
+	};
 	
 };
 

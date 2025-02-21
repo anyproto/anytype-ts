@@ -87,13 +87,11 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	getSections () {
-		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, isFilePreview } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
-		const cmd = keyboard.cmdSymbol();
 		const isTemplate = U.Object.isTemplate(object.type);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isChat = U.Object.isChatLayout(object.layout);
@@ -114,11 +112,11 @@ class MenuObject extends React.Component<I.Menu> {
 		let template = null;
 		let setDefaultTemplate = null;
 
-		let print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
+		let print = { id: 'print', name: translate('menuObjectPrint'), caption: keyboard.getCaption('print') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
-		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
-		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
+		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
@@ -144,9 +142,9 @@ class MenuObject extends React.Component<I.Menu> {
 
 		if (block) {
 			if (block.isLocked()) {
-				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: `Ctrl + Shift + L` };
+				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: keyboard.getCaption('pageLock') };
 			} else {
-				pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: `Ctrl + Shift + L` };
+				pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: keyboard.getCaption('pageLock') };
 			};
 		};
 
