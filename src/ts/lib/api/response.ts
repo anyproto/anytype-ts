@@ -601,6 +601,12 @@ export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 	};
 };
 
+export const AIWritingTools = (response: Rpc.AI.WritingTools.Response) => {
+	return {
+		text: response.getText(),
+	};
+};
+
 export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response) => {
 	return {
 		relations: (response.getListList() || []).map(it => {

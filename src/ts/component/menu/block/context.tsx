@@ -1,12 +1,19 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, Select, Loader } from 'Component';
 import { I, C, S, U, J, Mark, focus, keyboard, Storage, translate, analytics } from 'Lib';
+
+interface State {
+	isLoading: boolean;
+};
 
 const MenuBlockContext = observer(class MenuBlockContext extends React.Component<I.Menu> {
 	
 	menuContext = null;
+	state = {
+		isLoading: false,
+	};
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -15,10 +22,12 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 	};
 
 	render () {
-		const { param } = this.props;
+		const { config } = S.Common;
+		const { param, getId } = this.props;
+		const { isLoading } = this.state;
 		const { data } = param;
 		const { range } = focus.state;
-		const { blockId, rootId, marks, isInsideTable } = data;
+		const { blockId, rootId, marks, isInsideTable, onAi } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -34,6 +43,15 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const hasMore = !isInsideTable;
 		const canHaveMarks = block.canHaveMarks();
 		const cmd = keyboard.cmdSymbol();
+		const aiModes = [];
+
+		for (const i in I.AIMode) {
+			if (isNaN(Number(i))) {
+				continue;
+			};
+
+			aiModes.push({ id: i, name: I.AIMode[i] });
+		};
 
 		const color = (
 			<div className={[ 'inner', 'textColor', 'textColor-' + (colorMark.param || 'default') ].join(' ')} />
@@ -58,6 +76,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		return (
 			<div className="flex">
+				{isLoading ? <Loader /> : ''}
+
 				{canTurn ? (
 					<div className="section">
 						<Icon 
@@ -102,6 +122,18 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 										/>
 									);
 								})}
+							</div>
+						) : ''}
+
+						{config.experimental ? (
+							<div className="section">
+								<Select
+									id={`${getId()}-ai-mode`}
+									options={aiModes}
+									value={''}
+									initial="Ask AI"
+									onChange={id => onAi(id, range)}
+								/>
 							</div>
 						) : ''}
 
@@ -157,7 +189,13 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 		obj.off('click mousedown').on('click mousedown', (e: any) => {
 			const target = $(e.target);
-			if (!target.hasClass('icon') && !target.hasClass('inner')) {
+
+			if (
+				!target.hasClass('icon') && 
+				!target.hasClass('inner') && 
+				!target.hasClass('select') &&
+				!target.parents('.select').length
+			) {
 				e.preventDefault();
 				e.stopPropagation();
 			};
@@ -464,6 +502,10 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				S.Menu.open(menuId, menuParam);
 			});
 		};
+	};
+
+	setLoading (v: boolean) {
+		this.setState({ isLoading: v });
 	};
 	
 });
