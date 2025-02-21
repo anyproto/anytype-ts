@@ -679,6 +679,26 @@ class Keyboard {
 				break;
 			};
 
+			case 'releaseChannel': {
+				const cb = () => Renderer.send('setChannel', arg);
+
+				if (arg == 'latest') {
+					cb();
+				} else {
+					S.Popup.open('confirm', {
+						className: 'isLeft',
+						data: {
+							icon: 'warning',
+							bgColor: 'red',
+							title: translate('commonWarning'),
+							text: translate('popupConfirmReleaseChannelText'),
+							onConfirm: () => cb(),
+						},
+					});
+				};
+				break;
+			};
+
 		};
 	};
 
@@ -933,12 +953,15 @@ class Keyboard {
 	};
 
 	getMatch () {
-		const ret = (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
+		let ret: any = { params: {} };
+		if (this.isPopup()) {
+			ret = Object.assign(ret, this.getPopupMatch());
+		} else {
+			const match = this.match;
+			const param = U.Router.getParam(U.Router.getRoute());
 
-		for (const k in ret.params) {
-			if (ret.params[k] == J.Constant.blankRouteId) {
-				ret.params[k] = '';
-			};
+			ret = Object.assign(ret, match);
+			ret.params = Object.assign(ret.params, param);
 		};
 
 		return ret;

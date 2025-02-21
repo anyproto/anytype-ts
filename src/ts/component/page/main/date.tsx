@@ -9,11 +9,12 @@ const SUB_ID = 'dateListObject';
 const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
 
 	const { space, config } = S.Common;
-	const { isPopup, match } = props;
+	const { isPopup } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ relations, setRelations ] = useState([]);
-	const [ relationKey, setRelationKey ] = useState('');
-	const rootId = props.rootId || match?.params?.id;
+	const match = keyboard.getMatch();
+	const [ relationKey, setRelationKey ] = useState(match.params.relationKey);
+	const rootId = match.params.id;
 	const object = S.Detail.get(rootId, rootId, []);
 	const headerRef = useRef(null);
 	const headRef = useRef(null);
@@ -55,7 +56,7 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 			return;
 		};
 
-		const close = !(isPopup && (match?.params?.id == idRef.current));
+		const close = !(isPopup && (rootId == idRef.current));
 
 		if (close) {
 			Action.pageClose(idRef.current, true);
@@ -281,13 +282,6 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 	};
 
 	useEffect(() => {
-		const match = keyboard.getMatch();
-		const { relationKey } = match.params;
-
-		if (relationKey) {
-			setRelationKey(relationKey);
-		};
-
 		return () => close();
 	}, []);
 

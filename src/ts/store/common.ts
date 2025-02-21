@@ -45,6 +45,7 @@ class CommonStore {
 	public showSidebarRightValue = { full: false, popup: false };
 	public hideSidebarValue = null;
 	public pinValue = null;
+	public firstDayValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -108,6 +109,7 @@ class CommonStore {
 			dateFormatValue: observable,
 			timeFormatValue: observable,
 			pinValue: observable,
+			firstDayValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -123,6 +125,7 @@ class CommonStore {
 			dateFormat: computed,
 			timeFormat: computed,
 			pin: computed,
+			firstDay: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -143,6 +146,7 @@ class CommonStore {
 			showSidebarRightSet: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
+			firstDaySet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -313,6 +317,14 @@ class CommonStore {
 			ret = true;
 		};
 		return ret;
+	};
+
+	get firstDay (): number {
+		if (this.firstDayValue === null) {
+			this.firstDayValue = Storage.get('firstDay');
+		};
+
+		return Number(this.firstDayValue) || 1;
 	};
 
 	gatewaySet (v: string) {
@@ -535,6 +547,11 @@ class CommonStore {
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
 		console.log('[Online status]:', v);
+	};
+
+	firstDaySet (v: number) {
+		this.firstDayValue = Number(v) || 1;
+		Storage.set('firstDay', this.firstDayValue);
 	};
 
 	configSet (config: any, force: boolean) {

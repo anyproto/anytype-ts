@@ -71,19 +71,28 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { data } = param;
 		const { rootId } = data;
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ]);
+		const object = S.Detail.get(rootId, rootId);
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
+		const hasConflict = U.Object.hasLayoutConflict(object);
 		
 		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
-		if (!allowedDetails || U.Object.isTaskLayout(object.layout)) {
+		if (U.Object.hasEqualLayoutAlign(object, type) || !allowedDetails || U.Object.isTaskLayout(object.layout)) {
 			align = null;
 		};
-		if (!allowedDetails) {
+		if (U.Object.hasEqualLayoutWidth(object, type) || !allowedDetails) {
 			resize = null;
 		};
 
-		let sections = [ { children: [ resize, align ] } ];
+		let sections: any[] = [ { children: [ resize, align ] } ];
+
+		if (hasConflict) {
+			sections.unshift({
+				name: translate('menuBlockLayoutConflict'),
+				children: [ { id: 'reset', icon: 'reload', name: translate('menuBlockLayoutReset') } ]
+			})
+		};
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -169,7 +178,9 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { close } = this.props;
+		const { close, param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
 
 		if (item.arrow) {
 			return;
@@ -177,10 +188,16 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 		close();
 
-		if (item.id == 'resize') {
-			this.onResize(e);
+		switch (item.id) {
+			case 'reset': {
+				U.Object.resetLayout(rootId);
+				break;
+			};
 
-			analytics.event('SetLayoutWidth');
+			case 'resize': {
+				this.onResize(e);
+				break;
+			};
 		};
 	};
 
@@ -196,6 +213,8 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				container.off('mousedown.editorSize');
 			};
 		});
+
+		analytics.event('SetLayoutWidth');
 	};
 	
 };

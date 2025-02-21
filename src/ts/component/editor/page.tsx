@@ -2003,7 +2003,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						case 'block': {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, (message: any) => {
+							const bookmark = S.Record.getBookmarkType();
+
+							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, bookmark?.defaultTemplateId, (message: any) => {
 								if (!message.error.code) {
 									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
 								};

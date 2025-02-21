@@ -847,11 +847,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'type', 'layout', 'featuredRelations' ], true);
 		const keys = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
-		const layouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
 
 		let ret = [];
-
-		if (layouts.includes(short.layout) && !keys.length) {
+		if (!keys.length) {
 			ret = S.Record.getTypeFeaturedRelations(short.type);
 		} else {
 			ret = keys.map(it => S.Record.getRelationByKey(it));

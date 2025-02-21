@@ -246,13 +246,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	componentDidMount () {
 		const { block, isInline, isPopup } = this.props;
-		const { viewId } = block.content;
 		const match = keyboard.getMatch();
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
+		const viewId = match.params.viewId || block.content.viewId;
 
-		if (match.params.viewId || viewId) {
-			S.Record.metaSet(subId, '', { viewId: match.params.viewId || viewId });
+		if (viewId) {
+			S.Record.metaSet(subId, '', { viewId });
 		};
 
 		this.reloadData(() => {

@@ -482,23 +482,25 @@ export const BlockSplit = (contextId: string, blockId: string, range: I.TextRang
 	dispatcher.request(BlockSplit.name, request, callBack);
 };
 
-export const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, callBack?: (message: any) => void) => {
+export const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockBookmark.Fetch.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setUrl(url);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(BlockBookmarkFetch.name, request, callBack);
 };
 
-export const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
+export const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockBookmark.CreateAndFetch.Request();
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setPosition(position as number);
 	request.setUrl(url);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(BlockBookmarkCreateAndFetch.name, request, callBack);
 };
@@ -1280,16 +1282,17 @@ export const ObjectCreateSet = (sources: string[], details: any, templateId: str
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
-export const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectCreateBookmark = (details: any, spaceId: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateBookmark.Request();
 
 	request.setDetails(Encode.struct(details));
 	request.setSpaceid(spaceId);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
-export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, withContent: boolean, callBack?: (message: any) => void) => {
+export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, withContent: boolean, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateFromUrl.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1297,6 +1300,7 @@ export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: stri
 	request.setObjecttypeuniquekey(typeKey);
 	request.setUrl(url);
 	request.setAddpagecontent(withContent);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
 };

@@ -13,12 +13,6 @@
 			> .icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 
 			.cell { line-height: 22px; transition: background $transitionCommon; position: relative; flex-grow: 1; max-width: 100%; }
-			.cell.canEdit {
-				.cellContent {
-					.empty { display: block; }
-				}
-			}
-
 			.cell.c-select, 
 			.cell.c-object, 
 			.cell.c-file {
@@ -58,6 +52,7 @@
 
 			.cellContent { min-height: 22px; max-width: 100%; display: flex; align-items: center; }
 			.cellContent {
+				.empty { display: block; }
 				.name, .more { line-height: 22px; }
 				.wrap { display: flex; align-items: center; max-width: 100%; }
 			}
