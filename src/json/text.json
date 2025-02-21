@@ -129,7 +129,6 @@
 	"commonCreateNew": "Create new",
 	"commonSetName": "Set of %s",
 	"commonClear": "Clear",
-	"commonNewObject": "New Object",
 	"commonNewSpace": "New Space",
 	"commonSelectObject": "Select Object",
 	"commonCopyLink": "Copy Link",
@@ -156,6 +155,7 @@
 	"commonAddRelation": "Add Relation",
 	"commonCollection": "Collection",
 	"commonSet": "Set",
+	"commonNewObject" : "New Object",
 	"commonCreateNewObject": "Create new Object",
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObjectTypeWithName": "Create Object Type \"%s\"",
@@ -184,6 +184,8 @@
 	"commonOpenType": "Open Type",
 	"commonManage": "Manage",
 	"commonSize": "Size",
+	"commonLogout": "Log out",
+	"commonWarning": "Warning",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -510,11 +512,36 @@
 	"pageAuthSetupImportBackup": "Import backup",
 	"pageAuthSetupEntering": "Entering the Vault...",
 
+	"pageAuthMigrateTitle": "Migration is in progress...",
+	"pageAuthMigrateText": "It can take some time. Thanks for your patience.",
+	"pageAuthMigrateErrorTitle": "Not enough space",
+	"pageAuthMigrateErrorText": "Please clear some space and run the process again.",
+	"pageAuthMigrateTryAgain": "Try again",
+
 	"pageHeadControlButtonsChangeCover": "Change cover",
 	"pageHeadControlButtonsReposition": "Reposition",
 
 	"pageHeadSimpleCreateSet": "Create Set",
 	"pageHeadSimpleInstall": "Install",
+
+	"pageSettingsLanguageTitle": "Language & Region",
+
+	"pageSettingsColorMode": "Color mode",
+	"pageSettingsColorModeButtonLight": "Light Mode",
+	"pageSettingsColorModeButtonDark": "Dark Mode",
+	"pageSettingsColorModeButtonSystem": "Auto Mode",
+
+	"pageSettingsSpaceGeneral": "General",
+	"pageSettingsSpaceRemoteStorage": "Remote Storage",
+	"pageSettingsSpaceIntegrations": "Integrations",
+	"pageSettingsSpaceManageContent": "Manage Content",
+
+	"pageSettingsSpaceIndexEditInfo": "Edit info",
+	"pageSettingsSpaceIndexInvitePeople": "Invite People",
+	"pageSettingsSpaceIndexQRCode": "QR code",
+	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
+
+	"pageSettingsSpaceDeleteSpace": "Delete Space",
 
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
@@ -744,18 +771,14 @@
 	"popupSettingsPersonalLinkStyle": "Link to object style",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
-	"popupSettingsPersonalRelativeDates": "Display relative dates",
+	"popupSettingsPersonalRelativeDates": "Use relative dates",
+	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
 	"popupSettingsPersonalTimeFormat": "Time format",
-
-	"popupSettingsColorMode": "Color mode",
-	"popupSettingsColorModeButtonLight": "Light",
-	"popupSettingsColorModeButtonDark": "Dark",
-	"popupSettingsColorModeButtonSystem": "System",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
@@ -822,12 +845,10 @@
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
-	"popupSettingsSpaceIndexRemoteStorageTitle": "Remote Storage",
 	"popupSettingsSpaceIndexRemoteStorageUpgradeText": "✦ Upgrade to add more storage",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
-	"popupSettingsSpaceIndexIntegrations": "Integrations",
 	"popupSettingsSpaceIndexImport": "Import to Space",
 	"popupSettingsSpaceIndexExport": "Export Space",
 	"popupSettingsSpaceIndexSpaceInfoTitle": "Space information",
@@ -861,8 +882,6 @@
 
 	"popupSettingsExportProtobufTitle": "Export Space to Any-Block",
 	"popupSettingsExportProtobufFormat": "File Format",
-
-	"popupSettingsLogout": "Log out",
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
@@ -981,6 +1000,11 @@
 	"popupSettingsImportNotionIntegrationList32": "Select document → ... → Add Connections → Confirm Integration",
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
+
+	"popupLogoutTitle": "Make sure you saved your login ley",
+	"popupLogoutText": "We have no way to recover your login key— it’s yours alone. Please save it before logging out.",
+	"popupLogoutCopyButton": "Reveal and copy key",
+	"popupLogoutLogoutButton": "I saved it, logout",
 
 	"popupSpaceCreateLabel": "Encrypted & local-first",
 	"popupSpaceCreateCreate": "Create from scratch",
@@ -1107,6 +1131,7 @@
 
 	"popupConfirmSpeedLimitTitle": "Hold up! Turbo typing detected!",
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
+	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1352,6 +1377,7 @@
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
 	"menuSmileRandom": "Random emoji",
+	"menuSmileIcons": "Icons",
 
 	"menuBlockCoverEdit": "Reposition",
 	"menuBlockCoverEmpty": "There are no covers found",
@@ -1785,7 +1811,7 @@
 	"widget2Description": "Widget with a list view",
 	"widget3Name": "Compact list",
 	"widget3Description": "Widget with a compact list view",
-	"widget4Name": "View",
+	"widget4Name": "List View",
 	"widget4Description": "Widget with a Set or Collection layout",
 
 	"widgetFavorite": "Favorites",
@@ -2146,7 +2172,7 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
-	"errorPublishingCreate103": "Looks like some files are over 100 MB. Please remove or slim them down and try again.",
+	"errorPublishingCreate103": "Looks like some files are over 10MB. Please remove or slim them down and try again.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 

@@ -129,6 +129,7 @@ class Sidebar {
 		const { width, isClosed } = this.data;
 		
 		isClosed ? this.open(width) : this.close();
+		S.Menu.closeAll();
 	};
 
 	setElementsWidth (width: any): void {
@@ -337,6 +338,10 @@ class Sidebar {
 		};
 
 		ref.setState({ page });
+	};
+
+	settingsOpen (id?: string, isSpace?: boolean) {
+		U.Router.go(`/main/settings/${id || ''}`, {});
 	};
 
 };

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, S, U, J, translate, analytics } from 'Lib';
+import { I, S, U, J, translate, analytics, sidebar } from 'Lib';
 
 const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -44,21 +44,25 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 
 	const finalise = () => {
 		S.Popup.closeAll(null, () => {
-			if (status == I.MembershipStatus.Finalization) {
-				S.Popup.open('membershipFinalization', { data: { tier } });
-			} else {
-				S.Popup.open('membership', {
-					onClose: () => {
-						window.setTimeout(() => S.Popup.open('settings', { data: { page: 'membership' } }), J.Constant.delay.popup * 2);
-					},
-					data: {
-						tier: membership.tier,
-						success: true,
-					},
-				});
+			U.Data.getMembershipStatus((membership: I.Membership) => {
+				const { status, tier } = membership;
 
-				analytics.event('ChangePlan', { params: { tier }});
-			};
+				if (status == I.MembershipStatus.Finalization) {
+					S.Popup.open('membershipFinalization', { data: { tier } });
+				} else {
+					S.Popup.open('membership', {
+						onClose: () => {
+							sidebar.settingsOpen('membership');
+						},
+						data: {
+							tier: membership.tier,
+							success: true,
+						},
+					});
+
+					analytics.event('ChangePlan', { params: { tier }});
+				};
+			});
 		});
 	};
 

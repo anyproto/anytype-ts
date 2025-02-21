@@ -247,12 +247,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	componentDidMount () {
 		const { block, isInline, isPopup } = this.props;
 		const { viewId } = block.content;
-		const match = keyboard.getMatch();
+		const param = U.Router.getParam(U.Router.getRoute());
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 
-		if (match.params.viewId || viewId) {
-			S.Record.metaSet(subId, '', { viewId: match.params.viewId || viewId });
+		if (param.viewId || viewId) {
+			S.Record.metaSet(subId, '', { viewId: param.viewId || viewId });
 		};
 
 		this.reloadData(() => {
@@ -521,9 +521,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return {};
 		};
 
-		const keys = this.getKeys(view.id);
+		const skip = [ 'restrictions' ];
+		const keys = this.getKeys(view.id).filter(it => !skip.includes(it));
 		const subId = this.getSubId();
-		const item = S.Detail.get(subId, id, keys);
+		const item = S.Detail.get(subId, id, keys, true);
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
 		if (item.name == translate('defaultNamePage')) {

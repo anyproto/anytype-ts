@@ -314,7 +314,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			return;
 		};
 
-		const { getId, getSize, param, close } = this.props;
+		const { id, getId, getSize, param, close } = this.props;
 		const { classNameWrap, data } = param;
 		const { rootId } = data;
 		const relation = this.getRelation();
@@ -337,6 +337,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			offsetX: getSize().width,
 			classNameWrap,
 			onOpen: context => menuContext = context,
+			rebind: this.rebind,
+			parentId: id,
 			data: {},
 		};
 
@@ -382,10 +384,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
+								rebind: menuContext.ref?.rebind,
+								parentId: menuContext.props.id,
 								data: {
 									rootId,
 									options,
-									rebind: menuContext.ref?.rebind,
 									onSelect: (e: any, item: any) => {
 										save(item.id);
 										menuContext.close();
@@ -626,10 +629,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			classNameWrap,
-		});
-
-		options.data = Object.assign(options.data, {
 			rebind: this.rebind,
+			parentId: this.props.id,
 		});
 
 		if (!S.Menu.isOpen(id)) {

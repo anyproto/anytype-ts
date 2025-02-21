@@ -62,14 +62,16 @@ class Util {
 	};
 
 	arrowHead (x, y, angle, width, height, color) {
+		const halfWidth = width / 2;
+
 		this.ctx.save();
 		this.ctx.translate(x, y);
 		this.ctx.rotate(angle);
 
 		this.ctx.beginPath();
 		this.ctx.moveTo(0, 0);
-		this.ctx.lineTo(height, -width / 2);
-		this.ctx.lineTo(height, width / 2);
+		this.ctx.lineTo(height, -halfWidth);
+		this.ctx.lineTo(height, halfWidth);
 		this.ctx.lineTo(0, 0);
 		this.ctx.closePath();
 		
