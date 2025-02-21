@@ -126,10 +126,7 @@ const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent
 						id="firstDay"
 						value={String(firstDay)}
 						options={firstDayOptions}
-						onChange={v => {
-							console.log(v);
-							S.Common.firstDaySet(v);
-						}}
+						onChange={v => S.Common.firstDaySet(v)}
 						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
