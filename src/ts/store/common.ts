@@ -474,7 +474,9 @@ class CommonStore {
 	};
 
 	refSet (id: string, ref: any) {
-		this.refs.set(id, ref);
+		if (id && ref) {
+			this.refs.set(id, ref);
+		};
 	};
 
 	boolGet (k: string) {

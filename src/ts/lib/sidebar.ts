@@ -332,12 +332,7 @@ class Sidebar {
 	};
 
 	objectContainerSwitch (page: string) {
-		const ref = S.Common.getRef('sidebarLeft');
-		if (!ref) {
-			return;
-		};
-
-		ref.setState({ page });
+		S.Common.getRef('sidebarLeft')?.setState({ page });
 	};
 
 };

@@ -211,7 +211,7 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			case 'settings': {
-				U.Router.go('/main/settings/index', {});
+				U.Object.openAuto({ id: 'index', layout: I.ObjectLayout.Settings });
 				break;
 			};
 

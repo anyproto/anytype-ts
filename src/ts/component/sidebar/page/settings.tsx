@@ -128,7 +128,11 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		};
 
 		return (
-			<div ref={ref => this.node = ref} id="containerSettings" className={isSpace ? 'spaceSettings' : 'appSettings'}>
+			<div 
+				ref={ref => this.node = ref} 
+				id="containerSettings" 
+				className={isSpace ? 'spaceSettings' : 'appSettings'}
+			>
 				<div className="head" />
 
 				<div className="body">
