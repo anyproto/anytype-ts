@@ -6,7 +6,6 @@ import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { config } = S.Common;
 	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, onRelation, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
@@ -99,11 +98,11 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	};
 
 	const updateTemplatesCnt = () => {
-		if (!allowedTemplateSelect || !object.type) {
+		if (!allowedTemplateSelect) {
 			return;
 		};
 
-		U.Data.getTemplatesByTypeId(object.type, (message: any) => {
+		U.Data.countTemplatesByTypeId(object.type, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -114,7 +113,8 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		});
 	};
 
-	useEffect(() => updateTemplatesCnt());
+	useEffect(() => updateTemplatesCnt(), []);
+	useEffect(() => updateTemplatesCnt(), [ object.type ]);
 
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),

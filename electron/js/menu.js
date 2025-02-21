@@ -276,8 +276,7 @@ class MenuManager {
 		const channels = ConfigManager.getChannels().map(it => {
 			it.click = () => { 
 				if (!UpdateManager.isUpdating) {
-					UpdateManager.setChannel(it.id); 
-					Api.setConfig(this.win, { channel: it.id });
+					Util.send(this.win, 'commandGlobal', 'releaseChannel', it.id);
 				};
 			};
 			return it;

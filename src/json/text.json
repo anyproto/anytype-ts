@@ -129,7 +129,6 @@
 	"commonCreateNew": "Create new",
 	"commonSetName": "Set of %s",
 	"commonClear": "Clear",
-	"commonNewObject": "New Object",
 	"commonNewSpace": "New Space",
 	"commonSelectObject": "Select Object",
 	"commonCopyLink": "Copy Link",
@@ -189,6 +188,7 @@
 	"commonLogout": "Log out",
 	"commonShowMore": "Show more",
 	"commonShowLess": "Show less",
+	"commonWarning": "Warning",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1138,6 +1138,7 @@
 
 	"popupConfirmSpeedLimitTitle": "Hold up! Turbo typing detected!",
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
+	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
 	"popupConfirmLocalFieldsTitle": "Add Local Fields to current type?",
 
