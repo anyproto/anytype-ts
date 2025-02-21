@@ -563,22 +563,19 @@ class UtilData {
 		return items;
 	};
 
-	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
-		const templateType = S.Record.getTemplateType();
+	countTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
+		if (!typeId) {
+			return;
+		};
+
 		const filters: I.Filter[] = [
-			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.Equal, value: J.Constant.typeKey.template },
 			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
-		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
-		];
-		const keys = J.Relation.default.concat([ 'targetObjectType' ]);
 
 		this.search({
 			filters,
-			sorts,
-			keys,
-			limit: J.Constant.limit.menuRecords,
+			keys: [ 'id' ],
 			noDeps: true,
 		}, callBack);
 	};
