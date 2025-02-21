@@ -58,7 +58,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
-		initRootId(rootId)
+		initRootId(rootId);
 		rebind();
 
 		return () => unbind();
@@ -66,7 +66,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons()}</div>
+			<div className="side left">{renderLeftIcons(true)}</div>
 			<div className="side center">{renderTabs()}</div>
 
 			<div className="side right">

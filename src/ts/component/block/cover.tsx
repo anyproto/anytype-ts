@@ -312,7 +312,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
-		const { coverId, coverType, coverScale } = object;
+		const { coverId, coverType } = object;
 		const node = $(this.node);
 		const isImage = U.Data.coverIsImage(coverType);
 		
@@ -328,13 +328,12 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 
 		const cb = () => {
-			if (this.refDrag) {
-				this.refDrag.setValue(coverScale);
-			};
+			const object = S.Detail.get(rootId, rootId, [ 'coverScale' ], true);
 
 			this.rect = (node.get(0) as Element).getBoundingClientRect();
-			this.onScaleMove($.Event('resize'), coverScale);
+			this.onScaleMove($.Event('resize'), object.coverScale);
 			this.cover.css({ opacity: 1 });
+			this.refDrag?.setValue(object.coverScale);
 
 			if (!this.loaded) {
 				this.setLoading(false);
