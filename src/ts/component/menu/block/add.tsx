@@ -378,7 +378,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			return;
 		};
 
-		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
@@ -406,6 +405,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				},
 			},
 		};
+
+		let menuId = '';
 
 		switch (item.itemId) {	
 			case 'move': {
