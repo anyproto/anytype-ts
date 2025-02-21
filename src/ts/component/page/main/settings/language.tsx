@@ -5,10 +5,14 @@ import { observer } from 'mobx-react';
 
 const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, interfaceLang, showRelativeDates, dateFormat, timeFormat, } = S.Common;
+	const { config, interfaceLang, showRelativeDates, dateFormat, timeFormat, firstDay } = S.Common;
 	const { languages } = config;
 	const interfaceLanguages = U.Menu.getInterfaceLanguages();
 	const spellingRef = useRef(null);
+	const firstDayOptions = [
+		{ id: 1, name: translate('day1') },
+		{ id: 7, name: translate('day7') },
+	];
 
 	const getSpellingLanguages = () => {
 		const { languages } = config;
@@ -113,6 +117,18 @@ const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent
 							S.Common.showRelativeDatesSet(v);
 							analytics.event('RelativeDates', { type: v });
 						}}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalFirstDay')} />
+					<Select
+						id="firstDay"
+						value={String(firstDay)}
+						options={firstDayOptions}
+						onChange={v => S.Common.firstDaySet(v)}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
 				</div>
 

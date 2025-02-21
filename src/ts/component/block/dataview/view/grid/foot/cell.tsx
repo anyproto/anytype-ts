@@ -32,7 +32,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { relationKey, rootId, block } = this.props;
+		const { relationKey, rootId, block, getView } = this.props;
 		const { result } = this.state;
 		const relation = S.Record.getRelationByKey(relationKey);
 
@@ -40,7 +40,9 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			return <div />;
 		};
 
-		const cn = [ 'cellFoot' ];
+		const view = getView();
+		const viewRelation = view?.getRelation(relationKey);
+		const cn = [ 'cellFoot', `align${viewRelation?.align}` ];
 		const formulaType = this.getFormulaType();
 		const option: any = this.getOption() || {};
 		const name = option.short || option.name || '';
@@ -183,10 +185,11 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 				offsetX: this.menuContext.getSize().width,
 				vertical: I.MenuDirection.Center,
 				isSub: true,
+				rebind: this.menuContext.ref?.rebind,
+				parentId: this.menuContext.props.id,
 				data: {
 					rootId,
 					options,
-					rebind: this.menuContext.ref?.rebind,
 					onSelect: (e: any, item: any) => {
 						this.onChange(item.id);
 						this.menuContext.close();

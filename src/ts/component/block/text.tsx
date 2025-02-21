@@ -631,7 +631,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp } = this.props;
 		const { filter } = S.Common;
-		const { id, content, fields } = block;
+		const { id, content } = block;
 		const range = this.getRange();
 		const langCodes = Object.keys(Prism.languages).join('|');
 		const langKey = '```(' + langCodes + ')?';
@@ -666,9 +666,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const menuOpenAdd = S.Menu.isOpen('blockAdd');
 		const menuOpenMention = S.Menu.isOpen('blockMention');
+		const menuOpenLink = S.Menu.isOpen('searchObject', 'link');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const isRtl = U.Common.checkRtl(value);
+
+		console.log(menuOpenLink);
 
 		keyboard.setRtl(isRtl);
 
@@ -682,6 +685,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
+		const canOpenMenuLink = !menuOpenLink && (oneSymbolBefore == '[') && (twoSymbolBefore == '[') && isAllowedMenu;
 
 		this.preventMenu = false;
 
@@ -722,6 +726,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		// Open mention menu
 		if (canOpenMenuMention) {
 			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention());
+			return;
+		};
+
+		// Open link menu
+		if (canOpenMenuLink) {
+			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onLink());
 			return;
 		};
 
@@ -888,6 +898,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 	onSmile () {
 		const { rootId, block } = this.props;
+		const { iconEmoji, iconImage } = block.content;
 		const win = $(window);
 		const range = this.getRange();
 
@@ -904,6 +915,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			data: {
+				value: (iconEmoji || iconImage || ''),
 				noHead: true,
 				rootId,
 				blockId: block.id,
@@ -923,6 +935,48 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						focus.set(block.id, { from: to, to });
 						focus.apply();
 					});
+				},
+			},
+		});
+	};
+
+	onLink () {
+		const { rootId, block } = this.props;
+		const win = $(window);
+		const range = this.getRange();
+		const from = range.from - 2;
+		
+		let value = this.getValue();
+		value = U.Common.stringCut(value, range.from - 2, range.from);
+
+		const position = value.length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
+
+		S.Menu.open('searchObject', {
+			menuKey: 'link',
+			element: `#block-${block.id}`,
+			recalcRect: () => {
+				const rect = U.Common.getSelectionRect();
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+			},
+			offsetX: () => {
+				const rect = U.Common.getSelectionRect();
+				return rect ? 0 : J.Size.blockMenu;
+			},
+			data: {
+				rootId,
+				blockId: block.id,
+				canAdd: true,
+				type: I.NavigationType.Link,
+				position,
+				onSelect: () => {
+					if (position == I.BlockPosition.Bottom) {
+						U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
+							window.setTimeout(() => {
+								focus.set(block.id, { from, to: from });
+								focus.apply();
+							}, 15);
+						});
+					};
 				},
 			},
 		});
@@ -1009,17 +1063,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onCheckbox () {
 		const { rootId, block, readonly } = this.props;
-		const { id, content } = block;
-		const { checked } = content;
 
 		if (readonly) {
 			return;
 		};
+
+		const { id, content } = block;
+		const { checked } = content;
 		
 		focus.clear(true);
-		U.Data.blockSetText(rootId, block.id, this.getValue(), this.marks, true, () => {
-			C.BlockTextSetChecked(rootId, id, !checked);
-		});
+		C.BlockTextSetChecked(rootId, id, !checked);
 	};
 	
 	onLang (v: string) {
