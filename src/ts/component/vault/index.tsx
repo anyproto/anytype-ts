@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
+import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
+import { I, U, S, C, Key, keyboard, translate, analytics, Preview, sidebar, Action } from 'Lib';
 
 import VaultItem from './item';
 
@@ -17,6 +17,7 @@ const Vault = observer(class Vault extends React.Component {
 	timeoutHover = 0;
 	pressed = new Set();
 	n = -1;
+	sortIds = [];
 
 	constructor (props) {
 		super(props);
@@ -27,7 +28,7 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	render () {
-		const items = U.Menu.getVaultItems();
+		const items = this.getSortedItems();
 
 		const Item = item => (
 			<VaultItem 
@@ -104,6 +105,18 @@ const Vault = observer(class Vault extends React.Component {
 		win.on('resize.vault', () => this.resize());
 		win.on('keydown.vault', e => this.onKeyDown(e));
 		win.on('keyup.vault', e => this.onKeyUp(e));
+	};
+
+	getSortedItems () {
+		return U.Menu.getVaultItems().sort((c1, c2) => {
+			const i1 = this.sortIds.indexOf(c1.id);
+			const i2 = this.sortIds.indexOf(c2.id);
+
+			if (i1 > i2) return 1; 
+			if (i1 < i2) return -1;
+
+			return 0;
+		});
 	};
 
 	getSpaceItems () {
@@ -302,10 +315,17 @@ const Vault = observer(class Vault extends React.Component {
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
+		const items = this.getSpaceItems();
+		const item = items[oldIndex];
+		const ids: string[] = arrayMove(items.map(it => it.id), oldIndex, newIndex);
 
-		let ids = U.Menu.getVaultItems().map(it => it.id);
-		ids = arrayMove(ids, oldIndex, newIndex);
-		Storage.set('spaceOrder', ids);
+		console.log('old', oldIndex, 'new', newIndex, item.id);
+		console.log('IDS:', JSON.stringify(ids, null, 3));
+
+		this.sortIds = ids;
+		this.forceUpdate();
+
+		C.SpaceSetOrder(item.id, ids, () => this.sortIds = []);
 
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
