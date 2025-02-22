@@ -20,7 +20,7 @@ interface Props {
 	sources?: string[];
 	filters?: I.Filter[];
 	relationKeys?: string[];
-	route: string;
+	route?: string;
 };
 
 interface ListObjectRefProps {
