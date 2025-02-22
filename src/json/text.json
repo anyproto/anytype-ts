@@ -174,6 +174,8 @@
 	"commonProgress": "Progress",
 	"commonMainChat": "Chat",
 	"commonMenu": "Menu",
+	"commonDateCreated": "Date created",
+	"commonDateUpdated": "Date updated",
 	"commonSignUp": "Sign Up",
 	"commonNotFound": "Not found",
 	"commonCalculate": "Calculate",
@@ -497,6 +499,7 @@
 	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
 	"pageMainVoidCreateSpace": "Create space",
 
+	"pageMainTagTagColor": "Tag color",
 	"pageMainDateEmptyText" : "There is nothing here for this date yet",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
@@ -1777,6 +1780,7 @@
 	"defaultNameRelation": "New Relation",
 	"defaultNameBookmark": "Paste Link",
 	"defaultNameView": "New View",
+	"defaultNameTag": "New Tag",
 
 	"placeholderBlock": "Type text or \/ for commands",
 	"placeholderBlockDescription": "Add a description",
@@ -1895,8 +1899,6 @@
 	"sidebarObjectOrphanLabel": "Unlinked objects that do not have a direct link or backlink with other objects in the graph.",
 	"sidebarObjectEmpty": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
 
-	"sidebarObjectSortCreated": "Date created",
-	"sidebarObjectSortUpdated": "Date updated",
 	"sidebarObjectSortLastUsed": "Date last used",
 
 	"unsplashString": "Photo by %s on %s",
