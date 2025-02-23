@@ -274,6 +274,10 @@ class UtilMenu {
 		});
 	};
 
+	getLayoutIcon (layout: I.ObjectLayout) {
+		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
+	};
+
 	getLayouts () {
 		return [
 			{ id: I.ObjectLayout.Page },
@@ -290,7 +294,7 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Note },
 		].map(it => ({ 
 			...it,
-			icon: `layout c-${I.ObjectLayout[it.id].toLowerCase()}`,
+			icon: this.getLayoutIcon(it.id),
 			name: translate(`layout${it.id}`),
 		}));
 	};
