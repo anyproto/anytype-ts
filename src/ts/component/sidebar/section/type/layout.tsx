@@ -96,6 +96,9 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 				if (!object.isNew) {
 					ret = ret.filter(id => id != I.ObjectLayout.Note);
 				};
+				if (U.Object.isNoteLayout(object.layout)) {
+					ret = [ I.ObjectLayout.Note ];
+				};
 				break;
 			};
 
