@@ -35,9 +35,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<{}, I.SidebarSectionCompo
 	
 	const onSortEnd = (event) => {
         const { active, over } = event;
-
-		console.log(active, over);
-
         if (!over || (active.id == over.id)) {
 			return;
 		};
