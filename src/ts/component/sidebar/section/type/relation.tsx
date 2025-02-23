@@ -68,7 +68,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<{}, I.SidebarSectionCompo
 
 	const onAdd = (e: any, id: string) => {
 		const list = lists.find(it => it.id == id);
-		const keys = list.data.map(it => it.relationKey);
+		const keys = lists.reduce((acc, it) => acc.concat(it.data.map(it => it.relationKey)), []);
 		const ids = list.data.map(it => it.id);
 
 		S.Menu.open('relationSuggest', { 
@@ -193,7 +193,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<{}, I.SidebarSectionCompo
 			<DndContext 
 				sensors={sensors} 
 				collisionDetection={closestCenter} 
-				modifiers={[ restrictToVerticalAxis ]} 
+				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]} 
 				onDragStart={onSortStart} 
 				onDragEnd={onSortEnd}
 			>
