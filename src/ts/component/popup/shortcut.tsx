@@ -1,4 +1,5 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
+import $ from 'jquery';
 import { Filter, Icon, Select, Label, Error } from 'Component';
 import { I, U, J, S, translate, keyboard, Key, Storage } from 'Lib';
 
@@ -11,6 +12,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const [ editingId, setEditingId ] = useState('');
 	const [ editingKeys, setEditingKeys ] = useState([]);
+	const bodyRef = useRef(null);
 	const sections = J.Shortcut.getSections();
 	const current = page || sections[0].id;
 	const section = U.Common.objectCopy(sections.find(it => it.id == current));
@@ -178,6 +180,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	}, [ editingId ]);
 
+	useEffect(() => {
+		$(bodyRef.current).scrollTop(0);
+	}, [ page ]);
+
 	if (filter) {
 		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 
@@ -222,7 +228,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				</div>
 			</div>
 
-			<div className="body customScrollbar">
+			<div ref={bodyRef} className="body customScrollbar">
 				{(section.children || []).map((item: any, i: number) => (
 					<Section key={i} {...item} />
 				))}
