@@ -40,7 +40,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		};
 
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'type', 'layoutAlign', 'featuredRelations' ]);
+		const object = S.Detail.get(rootId, rootId);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const isInSets = U.Object.isInSetLayouts(root.layout);
