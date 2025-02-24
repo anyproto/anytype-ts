@@ -94,7 +94,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<{}, I.SidebarSectionCompo
 		const ids = Relation.getArrayValue(object[list.relationKey]);
 		
 		S.Menu.open('blockRelationEdit', { 
-			element: `#sidebarRight #${listId} #item-${id}`,
+			element: `#sidebarRight #item-${id}`,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: 'fromSidebar',
 			className: 'fixed',
