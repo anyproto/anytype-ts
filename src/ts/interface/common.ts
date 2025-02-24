@@ -214,6 +214,10 @@ export interface SidebarSectionComponent extends SidebarPageComponent {
 	onDragStart?: (e: React.DragEvent) => void;
 };
 
+export interface SidebarSectionRef {
+	forceUpdate(): void;
+};
+
 export enum SurveyType {
 	Register		 = 0,
 	Delete			 = 1,

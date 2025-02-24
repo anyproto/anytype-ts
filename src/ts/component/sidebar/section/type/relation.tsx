@@ -1,16 +1,17 @@
-import React, { forwardRef, useRef, useState } from 'react';
+import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
 import { I, S, Relation, translate, keyboard } from 'Lib';
-import { DndContext, closestCenter, useSensors, useSensor, useDroppable, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 
-const SidebarSectionTypeRelation = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { readonly, object, onChange } = props;
 	const [ active, setActive ] = useState(null);
+	const [ dummy, setDummy ] = useState(0);
 	const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -181,6 +182,10 @@ const SidebarSectionTypeRelation = observer(forwardRef<{}, I.SidebarSectionCompo
 			</SortableContext>
 		);
 	};
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
 
 	return (
 		<div className="wrap">
