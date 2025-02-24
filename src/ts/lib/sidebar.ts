@@ -362,15 +362,6 @@ class Sidebar {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
-	objectContainerSwitch (page: string) {
-		const ref = S.Common.getRef('sidebarLeft');
-		if (!ref) {
-			return;
-		};
-
-		ref.setState({ page });
-	};
-
 	rightPanelToggle (v: boolean, animate: boolean, isPopup: boolean, page?: string, param?: any) {
 		if (v) {
 			S.Common.showSidebarRightSet(isPopup, v);
@@ -418,6 +409,10 @@ class Sidebar {
 
 			$(window).trigger('resize');
 		}, animate ? J.Constant.delay.sidebar : 0);
+	};
+
+	leftPanelSetState (v: any) {
+		S.Common.getRef('sidebarLeft')?.setState(v);
 	};
 
 	rightPanelSetState (v: any) {

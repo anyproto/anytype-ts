@@ -69,7 +69,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			};
 
 			case 'all': {
-				sidebar.objectContainerSwitch('object');
+				sidebar.leftPanelSetState({ page: 'object' });
 				break;
 			};
 
