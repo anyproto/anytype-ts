@@ -1309,6 +1309,18 @@ class Keyboard {
 			if (key == 'delete') {
 				return 'Del';
 			};
+			if (key == 'arrowleft') {
+				return '←';
+			};
+			if (key == 'arrowup') {
+				return '↑';
+			};
+			if (key == 'arrowright') {
+				return '→';
+			};
+			if (key == 'arrowdown') {
+				return '↓';
+			};
 			return U.Common.ucFirst(key);
 		});
 	};
