@@ -1,130 +1,148 @@
-import { U, translate, keyboard } from 'Lib';
+import { U, translate, keyboard, Storage } from 'Lib';
 
-export default () => {
-	const cmd = keyboard.cmdSymbol();
-	const alt = keyboard.altSymbol();
+const getSections = () => {
+	const isMac = U.Common.isPlatformMac();
+	const cmdKey = keyboard.cmdKey();
+	const or = translate('commonOr');
+	const storage = Storage.getShortcuts();
+
+	const mapper = (item: any) => {
+		if (!item.keys) {
+			return item;
+		};
+
+		if (item.id) {
+			storage[item.id] = storage[item.id] || [];
+			if (storage[item.id].length) {
+				item.keys = storage[item.id];
+			};
+		};
+
+		item.symbols = keyboard.getSymbolsFromKeys(item.keys);
+		return item;
+	};
 
 	return [
 		{
-			id: 'main',
-			name: translate('popupShortcutMain'),
+			id: 'shortcut',
+			name: translate('popupShortcutKeyboard'),
 			children: [
 				{
 					name: translate('popupShortcutBasics'), children: [
-						{ com: `${cmd} + N`,			 name: translate('popupShortcutMainBasics1') },
-						{ com: `${cmd} + ${alt} + N`,	 name: translate('popupShortcutMainBasics19') },
-						{ com: `${cmd} + Shift + N`,	 name: translate('popupShortcutMainBasics2') },
-						{ com: `${cmd} + Enter`,		 name: translate('popupShortcutMainBasics4') },
-						{ mac: `${cmd} + Ctrl + F`,		 com: `${cmd} + ${alt} + F`,	 name: translate('popupShortcutMainBasics5') },
-						{ com: `${cmd} + Z`,			 name: translate('popupShortcutMainBasics6') },
-						{ com: `${cmd} + Shift + Z`,	 name: translate('popupShortcutMainBasics7') },
-						{ com: `${cmd} + P`,			 name: translate('popupShortcutMainBasics8') },
-						{ com: `${cmd} + F`,			 name: translate('popupShortcutMainBasics9') },
-						{ com: `${cmd} + Q`,			 name: translate('popupShortcutMainBasics10') },
-						{ mac: `${cmd} + Y`,			 com: 'Ctrl + H',			 name: translate('popupShortcutMainBasics11') },
-						{ com: 'Shift + Click',			 name: translate('popupShortcutMainBasics12') },
-						{ com: `${cmd} + Click`,		 name: translate('popupShortcutMainBasics13') },
-						{ com: 'Ctrl + Space',		 	 name: translate('popupShortcutMainBasics14') },
-						{ com: `${cmd} + \\, ${cmd} + .`, name: translate('popupShortcutMainBasics15') },
-						{ com: `${cmd} + =`,			 name: translate('popupShortcutMainBasics16') },
-						{ com: `${cmd} + Minus`,		 name: translate('popupShortcutMainBasics17') },
-						{ com: `${cmd} + 0`,			 name: translate('popupShortcutMainBasics18') },
-						{ com: `Ctrl + Tab, Ctrl + Shift + Tab`, name: translate('popupShortcutMainBasics20') },
-						{ com: `${cmd} + Shift + M`, name: translate('popupShortcutMainBasics21') },
-						{ com: `${cmd} + ${alt} + L`, name: translate('popupShortcutMainBasics22') },
+						{ id: 'createObject', name: translate('popupShortcutMainBasics1'), keys: [ cmdKey, 'n' ] },
+						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, 'alt', 'n' ] },
+						{ id: 'newWindow', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 'shift', 'n' ] },
+						{ id: 'close', name: translate('popupShortcutMainBasics10'), keys: [ cmdKey, 'q' ] },
+						{ id: 'lock', name: translate('popupShortcutMainBasics22'), keys: [ cmdKey, 'alt', 'l' ] },
+						{ id: 'undo', name: translate('popupShortcutMainBasics6'), keys: [ cmdKey, 'z' ] },
+						{ id: 'redo', name: translate('popupShortcutMainBasics7'), keys: [ cmdKey, 'shift', 'z' ] },
 					]
 				},
 
 				{
-					name: translate('popupShortcutMainStructuring'), children: [
-						{ com: 'Enter',				 name: translate('popupShortcutMainStructuring1') },
-						{ com: 'Shift + Enter',		 name: translate('popupShortcutMainStructuring2') },
-						{ com: 'Delete',			 name: translate('popupShortcutMainStructuring3') },
-						{ com: 'Tab',				 name: translate('popupShortcutMainStructuring4') },
-						{ com: 'Shift + Tab',		 name: translate('popupShortcutMainStructuring5') },
+					name: translate('popupShortcutInterface'), children: [
+						{ id: 'toggleSidebar', name: translate('popupShortcutMainBasics15'), keys: [ cmdKey, '.' ] },
+						{ id: 'toggleFullscreen', name: translate('popupShortcutMainBasics5'), keys: [ cmdKey, 'shift', 'f' ] },
+						{ id: 'zoomIn', name: translate('popupShortcutMainBasics16'), keys: [ cmdKey, '=' ] },
+						{ id: 'zoomOut', name: translate('popupShortcutMainBasics17'), keys: [ cmdKey, '-' ] },
+						{ id: 'zoomReset', name: translate('popupShortcutMainBasics18'), keys: [ cmdKey, '0' ] },
+						{ id: 'theme', name: translate('popupShortcutMainBasics21'), keys: [ cmdKey, 'shift', 'm' ] },
 					]
 				},
 
 				{
-					name: translate('popupShortcutMainSelection'), children: [
-						{ com: 'Double Click',			 name: translate('popupShortcutMainSelection1') },
-						{ com: 'Triple Click',			 name: translate('popupShortcutMainSelection2') },
-						{ com: `${cmd} + A`,			 name: translate('popupShortcutMainSelection3') },
-						{ com: 'Shift + ↑ or ↓',		 name: translate('popupShortcutMainSelection4') },
-						{ com: `${cmd} + Click`,		 name: translate('popupShortcutMainSelection5') },
-						{ com: 'Shift + Click',			 name: translate('popupShortcutMainSelection6') },
-					]
-				},
-
-				{
-					name: translate('commonActions'), children: [
-						{ com: '/',						 name: translate('popupShortcutMainActions1') },
-						{ com: `${cmd} + /`,			 name: translate('popupShortcutMainActions2') },
-						{ mac: `${cmd} + Delete`,		 com: 'Ctrl + Backspace',	 name: translate('popupShortcutMainActions3') },
-						{ com: `${cmd} + C`,			 name: translate('popupShortcutMainActions4') },
-						{ com: `${cmd} + X`,			 name: translate('popupShortcutMainActions5') },
-						{ com: `${cmd} + V`,			 name: translate('popupShortcutMainActions6') },
-						{ com: `${cmd} + D`,			 name: translate('popupShortcutMainActions7') },
-						{ com: `${cmd} + E`,			 name: translate('popupShortcutMainActions8') + ' 🏄‍♂' },
-					]
-				},
-
-				{
-					name: translate('popupShortcutMainTextStyle'), children: [
-						{ com: `${cmd} + B`,			 name: translate('popupShortcutMainTextStyle1') },
-						{ com: `${cmd} + I`,			 name: translate('popupShortcutMainTextStyle2') },
-						{ com: `${cmd} + U`,			 name: translate('popupShortcutMainTextStyle3') },
-						{ com: `${cmd} + Shift +S`,		 name: translate('popupShortcutMainTextStyle4') },
-						{ com: `${cmd} + K`,			 name: translate('popupShortcutMainTextStyle5') },
-						{ com: `${cmd} + L`,			 name: translate('popupShortcutMainTextStyle6') },
-						{ com: `${cmd} + Shift + C`,	 name: translate('popupShortcutMainTextStyle7') },
-						{ com: `${cmd} + Shift + H`,	 name: translate('popupShortcutMainTextStyle8') },
-					]
-				},
-			],
-		},
-
-		{
-			id: 'navigation',
-			name: translate('popupShortcutNavigation'),
-			children: [
-				{
-					name: translate('popupShortcutBasics'), children: [
-						{ com: `${cmd} + ,(comma)`,		 name: translate('popupShortcutNavigationBasics1') },
-						{ com: `${cmd} + O`,			 name: translate('popupShortcutNavigationBasics2') },
-						{ com: `${cmd} + ${alt} + O`,	 name: translate('popupShortcutNavigationBasics3') },
-						{ com: `${cmd} + S, ${cmd} + K`, name: translate('popupShortcutNavigationBasics4') },
-						{ com: `${alt} + H`,			 name: translate('popupShortcutNavigationBasics6') },
-						{ mac: `${cmd} + [, ${cmd} + ←`, com: 'Alt + ←',			 name: translate('popupShortcutNavigationBasics7') },
-						{ mac: `${cmd} + ], ${cmd} + →`, com: 'Alt + →',			 name: translate('popupShortcutNavigationBasics8') },
+					name: translate('popupShortcutNavigation'), children: [
+						{ id: 'settings', name: translate('popupShortcutNavigationBasics1'), keys: [ cmdKey, ',' ] },
+						{ id: 'navigation', name: translate('popupShortcutNavigationBasics2'), keys: [ cmdKey, 'o' ] },
+						{ id: 'graph', name: translate('popupShortcutNavigationBasics3'), keys: [ cmdKey, 'alt', 'o' ] },
+						{ id: 'search', name: translate('popupShortcutNavigationBasics4'), keys: [ cmdKey, 's' ] },
+						{ id: 'home', name: translate('popupShortcutNavigationBasics6'), keys: [ 'alt', 'h' ] },
+						{ id: 'back', name: translate('popupShortcutNavigationBasics7'), keys: isMac ? [ cmdKey, '[' ] : [ 'alt', '←' ] },
+						{ id: 'forward', name: translate('popupShortcutNavigationBasics8'), keys: isMac ? [ cmdKey, ']' ] : [ 'alt', '→' ] },
+						{ id: 'shortcut', name: translate('popupShortcutMainBasics14'), keys: [ 'ctrl', 'space' ] },
+						{ id: 'bin', name: translate('popupShortcutMainBasics14'), keys: [ cmdKey, 'alt', 'b' ] },
+						{ name: translate('popupShortcutMainBasics20'), keys: [ 'ctrl', 'tab' ] },
+						{ name: translate('popupShortcutMainBasics23'), keys: [ 'ctrl', 'shift', 'tab' ] },
+						{ name: translate('popupShortcutMainBasics12'), keys: [ 'shift', 'click' ] },
+						{ name: translate('popupShortcutMainBasics13'), keys: [ cmdKey, 'click' ] },
 					]
 				},
 
 				{
 					name: translate('popupShortcutNavigationMenu'), children: [
-						{ com: '↓ or Tab',			 name: translate('popupShortcutNavigationMenu1') },
-						{ com: '↑ or Shift + Tab',	 name: translate('popupShortcutNavigationMenu2') },
-						{ com: '←',					 name: translate('popupShortcutNavigationMenu3') },
-						{ com: '→',					 name: translate('popupShortcutNavigationMenu4') },
-						{ com: 'Enter',				 name: translate('popupShortcutNavigationMenu5') },
+						{ name: translate('popupShortcutNavigationMenu1'), keys: [ '↓', '[,]', 'tab' ] },
+						{ name: translate('popupShortcutNavigationMenu2'), keys: [ '↑', '[,]', 'shift', 'tab' ] },
+						{ name: translate('popupShortcutNavigationMenu3'), keys: [ '←' ] },
+						{ name: translate('popupShortcutNavigationMenu4'), keys: [ '→' ] },
+						{ name: translate('popupShortcutNavigationMenu5'), keys: [ 'enter' ] },
+					]
+				},
+
+				{ 
+					name: translate('popupShortcutObject'), children: [
+						{ id: 'relation', name: translate('popupShortcutNavigationPage9'), keys: [ cmdKey, 'shift', 'r' ] },
+						{ id: 'print', name: translate('popupShortcutMainBasics8'), keys: [ cmdKey, 'p' ] },
+						{ id: 'history', name: translate('popupShortcutMainBasics11'), keys: [ cmdKey, 'alt', 'h' ] },
+						{ id: 'searchText', name: translate('popupShortcutMainBasics9'), keys: [ cmdKey, 'f' ] },
+						{ id: 'pageLock', name: translate('popupShortcutMainBasics24'), keys: [ 'ctrl', 'shift', 'l' ] },
+					]
+				},
+
+				{ 
+					name: translate('popupShortcutEditor'), children: [
+						{ id: 'menuAdd', name: translate('popupShortcutMainActions1'), keys: [ '/' ] },
+						{ id: 'menuAction', name: translate('popupShortcutMainActions2'), keys: [ cmdKey, '/' ] },
+
+						{ name: translate('popupShortcutMainStructuring1'), keys: [ 'enter' ] },
+						{ name: translate('popupShortcutMainStructuring2'), keys: [ 'shift', 'enter' ] },
+						{ name: translate('popupShortcutMainStructuring3'), keys: [ 'delete' ] },
+						{ id: 'indent', name: translate('popupShortcutMainStructuring4'), keys: [ 'tab' ], noEdit: true },
+						{ id: 'outdent', name: translate('popupShortcutMainStructuring5'), keys: [ 'shift', 'tab' ], noEdit: true },
+
+						{ name: translate('popupShortcutMainSelection1'), text: translate('popupShortcutMainSelectionDblClick') },
+						{ name: translate('popupShortcutMainSelection2'), text: translate('popupShortcutMainSelectionTplClick') },
+						{ id: 'selectAll', name: translate('popupShortcutMainSelection3'), keys: [ cmdKey, 'a' ] },
+						{ id: 'duplicate', name: translate('popupShortcutMainActions7'), keys: [ cmdKey, 'd' ] },
+						{ id: 'menuSmile', name: translate('popupShortcutMainActions8'), keys: [ cmdKey, 'e' ] },
+						{ name: translate('popupShortcutMainSelection4'), keys: [ 'shift', '↑' ] },
+						{ name: translate('popupShortcutMainSelection7'), keys: [ 'shift', '↓' ] },
+						{ name: translate('popupShortcutMainSelection5'), keys: [ cmdKey, 'click' ] },
+						{ name: translate('popupShortcutMainSelection6'), keys: [ 'shift', 'click' ] },
+
+						{ name: translate('popupShortcutNavigationPage1'), keys: [ cmdKey, 'shift', 't' ] },
+						{ name: translate('popupShortcutNavigationPage2'), keys: [ '↓' ] },
+						{ name: translate('popupShortcutNavigationPage3'), keys: [ '↑' ] },
+						{ name: translate('popupShortcutNavigationPage4'), keys: [ cmdKey, '←' ] },
+						{ name: translate('popupShortcutNavigationPage5'), keys: [ cmdKey, '→' ] },
+						{ name: translate('popupShortcutNavigationPage6'), keys: [ cmdKey, '↑' ] },
+						{ name: translate('popupShortcutNavigationPage7'), keys: [ cmdKey, '↓' ] },
+						{ name: translate('popupShortcutNavigationPage8'), keys: [ cmdKey, 'shift', '↑' ] },
+						{ name: translate('popupShortcutNavigationPage10'), keys: [ cmdKey, 'shift', '↓' ] },
+						{ name: translate('popupShortcutNavigationPage10'), keys: [ cmdKey, 'enter' ] },
 					]
 				},
 
 				{
-					name: translate('popupShortcutNavigationPage'), children: [
-						{ com: `${cmd} + Shift + T`, name: translate('popupShortcutNavigationPage1') },
-						{ com: '↓',				 name: translate('popupShortcutNavigationPage2') },
-						{ com: '↑',				 name: translate('popupShortcutNavigationPage3') },
-						{ com: `${cmd} + ←`,	 name: translate('popupShortcutNavigationPage4') },
-						{ com: `${cmd} + →`,	 name: translate('popupShortcutNavigationPage5') },
-						{ com: `${cmd} + ↑`,	 name: translate('popupShortcutNavigationPage6') },
-						{ com: `${cmd} + ↓`,	 name: translate('popupShortcutNavigationPage7') },
-						{ com: `${cmd} + Shift + ↑↓`, name: translate('popupShortcutNavigationPage8') },
-						{ com: `${cmd} + Shift + R`, name: translate('popupShortcutNavigationPage9') },
-						{ com: `${cmd} + Enter`, name: translate('popupShortcutNavigationPage10') },
+					name: translate('popupShortcutChat'), children: [
+						{ name: translate('popupShortcutChat1'), keys: [ cmdKey, 'a' ] },
+						{ name: translate('popupShortcutChat2'), keys: [ cmdKey, 'e' ] },
+						{ name: translate('popupShortcutChat3'), keys: [ cmdKey, 'm' ] },
 					]
 				},
-			],
+
+				{
+					name: translate('popupShortcutMainTextStyle'), children: [
+						{ id: 'textBold', name: translate('popupShortcutMainTextStyle1'), keys: [ cmdKey, 'b' ] },
+						{ id: 'textItalic', name: translate('popupShortcutMainTextStyle2'), keys: [ cmdKey, 'i' ] },
+						{ id: 'textUnderlined', name: translate('popupShortcutMainTextStyle3'), keys: [ cmdKey, 'u' ] },
+						{ id: 'textStrike', name: translate('popupShortcutMainTextStyle4'), keys: [ cmdKey, 'shift', 's' ] },
+						{ id: 'textLink', name: translate('popupShortcutMainTextStyle5'), keys: [ cmdKey, 'k' ] },
+						{ id: 'textCode', name: translate('popupShortcutMainTextStyle6'), keys: [ cmdKey, 'l' ] },
+						{ id: 'textColor', name: translate('popupShortcutMainTextStyle7'), keys: [ cmdKey, 'shift', 'c' ] },
+						{ id: 'textBackground', name: translate('popupShortcutMainTextStyle8'), keys: [ cmdKey, 'shift', 'h' ] },
+					]
+				},
+			]
 		},
 
 		{
@@ -134,38 +152,39 @@ export default () => {
 				{
 					name: translate('popupShortcutMarkdownWhileTyping'),
 					children: [
-						{ com: '`',					 name: translate('popupShortcutMarkdownWhileTyping1') },
-						{ com: '** or __',			 name: translate('popupShortcutMarkdownWhileTyping2') },
-						{ com: '* or _',			 name: translate('popupShortcutMarkdownWhileTyping3') },
-						{ com: '~~',				 name: translate('popupShortcutMarkdownWhileTyping4') },
-						{ com: '-->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟶') },
-						{ com: '<--',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟵') },
-						{ com: '<-->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟷') },
-						{ com: '->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '→') },
-						{ com: '<-',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '←') },
-						{ com: '--',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '—') },
-						{ com: '(r)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '®') },
-						{ com: '(tm)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '™') },
-						{ com: '...',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '…') },
+						{ name: translate('popupShortcutMarkdownWhileTyping1'), text: '` `' },
+						{ name: translate('popupShortcutMarkdownWhileTyping2'), text: `_ _ ${or} * *` },
+						{ name: translate('popupShortcutMarkdownWhileTyping3'), text: `_ ${or} *` },
+						{ name: translate('popupShortcutMarkdownWhileTyping4'), text: '~ ~' },
+
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟶'), text: '-->' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟵'), text: '<--' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟷'), text: '<-->' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '→'), text: '->' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '←'), text: '<-' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '—'), text: '--' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '®'), text: '(r)' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '™'), text: '(tm)' },
+						{ name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '…'), text: '...' },
 					]
 				},
 				{
 					name: translate('popupShortcutMarkdownBeginningOfLine'),
 					children: [
-						{ com: '# + Space',			 name: translate('popupShortcutMarkdownBeginningOfLine1') },
-						{ com: '# # + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine2') },
-						{ com: '# # # + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine3') },
-						{ com: '" + Space',			 name: translate('popupShortcutMarkdownBeginningOfLine4') },
-						{ com: '* or + or - and Space',	 name: translate('popupShortcutMarkdownBeginningOfLine5') },
-						{ com: '[] + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine6') },
-						{ com: '1. + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine7') },
-						{ com: '>  + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine8') },
-						{ com: '``` + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine9') },
-						{ com: '--- + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine10') },
-						{ com: '*** + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine11') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine1'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '#') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine2'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '##') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine3'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '###') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine4'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '"') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine5'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), `* ${or} + ${or} -`) },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine6'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '[]') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine7'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '1.') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine8'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '>') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine9'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '```') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine10'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '---') },
+						{ name: translate('popupShortcutMarkdownBeginningOfLine11'), text: U.Common.sprintf(translate('popupShortcutMarkdownBeginningOfLineKey'), '***') },
 					]
 				},
-			],
+			]
 		},
 
 		{
@@ -173,54 +192,86 @@ export default () => {
 			name: translate('popupShortcutCommand'),
 			children: [
 				{
-					name: translate('commonMenu'), children: [
-						{ com: '/',					 name: translate('popupShortcutCommandMenu1') },
-						{ com: '↓ & ↑',				 name: translate('popupShortcutCommandMenu2') },
-						{ com: '→ & ←',				 name: translate('popupShortcutCommandMenu3') },
-						{ com: 'Esc or Clear /',	 name: translate('popupShortcutCommandMenu4') },
-					]
-				},
-
-				{ description: translate('popupShortcutCommandDescription'), children: [], className: 'separator' },
-				{
 					name: translate('popupShortcutCommandText'), children: [
-						{ com: '/text',			 name: translate('popupShortcutCommandText1') },
-						{ com: '/h1',			 name: translate('popupShortcutCommandText2') },
-						{ com: '/h2',			 name: translate('popupShortcutCommandText3') },
-						{ com: '/h3',			 name: translate('popupShortcutCommandText4') },
-						{ com: '/high',			 name: translate('popupShortcutCommandText5') },
+						{ name: translate('popupShortcutCommandText1'), text: '/text' },
+						{ name: translate('popupShortcutCommandText2'), text: '/h1' },
+						{ name: translate('popupShortcutCommandText3'), text: '/h2' },
+						{ name: translate('popupShortcutCommandText4'), text: '/h3' },
+						{ name: translate('popupShortcutCommandText5'), text: '/high' },
+						{ name: translate('popupShortcutCommandText6'), text: '/callout' },
+						{ name: translate('popupShortcutCommandText7'), text: '/code' },
 					]
 				},
 
 				{
 					name: translate('popupShortcutCommandLists'), children: [
-						{ com: '/todo',			 name: translate('popupShortcutCommandLists1') },
-						{ com: '/bullet',		 name: translate('popupShortcutCommandLists2') },
-						{ com: '/num',			 name: translate('popupShortcutCommandLists3') },
-						{ com: '/toggle',		 name: translate('popupShortcutCommandLists4') },
+						{ name: translate('popupShortcutCommandLists1'), text: '/todo' },
+						{ name: translate('popupShortcutCommandLists2'), text: '/bullet' },
+						{ name: translate('popupShortcutCommandLists3'), text: '/num' },
+						{ name: translate('popupShortcutCommandLists4'), text: '/toggle' },
 					]
 				},
 
 				{
 					name: translate('popupShortcutCommandObjects'), children: [
-						{ com: '@today, @tomorrow',	name: translate('popupShortcutCommandObjects1') },
-						{ com: '/page',			 	name: translate('popupShortcutCommandObjects2') },
-						{ com: '/file',			 	name: translate('popupShortcutCommandObjects3') },
-						{ com: '/image',		 	name: translate('popupShortcutCommandObjects4') },
-						{ com: '/video',		 	name: translate('popupShortcutCommandObjects5') },
-						{ com: '/bookmark',		 	name: translate('popupShortcutCommandObjects6') },
-						{ com: '/link',			 	name: translate('popupShortcutCommandObjects7') },
+						{ name: translate('popupShortcutCommandObjects1'), text: '@today, @tomorrow' },
+						{ name: translate('popupShortcutCommandObjects8'), text: '@three days ago, @last month, @2016-05-12' },
+						{ name: translate('popupShortcutCommandObjects2'), text: '/page' },
+						{ name: translate('popupShortcutCommandObjects3'), text: '/file' },
+						{ name: translate('popupShortcutCommandObjects4'), text: '/image' },
+						{ name: translate('popupShortcutCommandObjects5'), text: '/video' },
+						{ name: translate('popupShortcutCommandObjects6'), text: '/bookmark' },
+						{ name: translate('popupShortcutCommandObjects7'), text: '/link' },
+						{ name: translate('popupShortcutCommandObjects9'), text: '/audio' },
+						{ name: translate('popupShortcutCommandObjects10'), text: '/table' },
+						{ name: translate('popupShortcutCommandObjects11'), text: '/inline' },
 					]
 				},
 
-				{
+			{
 					name: translate('popupShortcutCommandOther'), children: [
-						{ com: '/line',			 name: translate('popupShortcutCommandOther1') },
-						{ com: '/dots',			 name: translate('popupShortcutCommandOther2') },
-						{ com: '/code',			 name: translate('popupShortcutCommandOther3') },
+						{ name: translate('popupShortcutCommandOther1'), text: '/line' },
+						{ name: translate('popupShortcutCommandOther2'), text: '/dots' },
+						{ name: translate('popupShortcutCommandOther3'), text: '/code' },
 					]
 				},
-			],
+			]
 		},
-	];
+	].map(s => {
+		s.children = s.children.map(sub => {
+			sub.children = sub.children.map(mapper);
+			return sub;
+		});
+		return s;
+	});
 };
+
+const getItems = () => {
+	const sections = getSections();
+	const ret = {};
+
+	let s = 0;
+
+	sections.forEach(section => {
+		s++;
+		
+		let c = 0;
+
+		section.children.forEach(sub => {
+			c++;
+
+			let i = 0;
+
+			sub.children.forEach(item => {
+				i++;
+
+				const key = item.id || [s, c, i].join('-');
+				ret[key] = item;
+			});
+		});
+	});
+
+	return ret;
+};
+
+export { getSections, getItems };

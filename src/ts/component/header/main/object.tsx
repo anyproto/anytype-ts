@@ -19,6 +19,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isTypeOrRelation && !isDeleted;
 	const cmd = keyboard.cmdSymbol();
+	const shift = keyboard.shiftSymbol();
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 
@@ -145,7 +146,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon 
 						id="button-header-relation" 
 						tooltip={translate('commonRelations')}
-						tooltipCaption={`${cmd} + Shift + R`}
+						tooltipCaption={keyboard.getCaption('relation')}
 						className="relation withBackground"
 						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
 					/> 

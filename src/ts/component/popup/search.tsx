@@ -54,6 +54,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	render () {
 		const { isLoading } = this.state;
 		const items = this.getItems();
+		const shift = keyboard.shiftSymbol();
 
 		const Context = (meta: any): any => {
 			const { highlight, relationKey, ranges } = meta;
@@ -143,7 +144,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						<Icon
 							className="advanced"
 							tooltip={translate('popupSearchTooltipSearchByBacklinks')}
-							tooltipCaption="Shift + Enter"
+							tooltipCaption={`${shift} + Enter`}
 							tooltipY={I.MenuDirection.Top}
 							onClick={e => this.onBacklink(e, item)}
 						/>
@@ -650,8 +651,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	getItems () {
 		const { backlink } = this.state;
-		const cmd = keyboard.cmdSymbol();
-		const alt = keyboard.altSymbol();
 		const filter = this.getFilter();
 		const lang = J.Constant.default.interfaceLang;
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -734,8 +733,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			];
 
 			const pageItems: any[] = [
-				{ id: 'graph', icon: 'graph', name: translate('commonGraph'), shortcut: [ cmd, alt, 'O' ], layout: I.ObjectLayout.Graph },
-				{ id: 'navigation', icon: 'navigation', name: translate('commonFlow'), shortcut: [ cmd, 'O' ], layout: I.ObjectLayout.Navigation },
+				{ id: 'graph', icon: 'graph', name: translate('commonGraph'), shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('graph')), layout: I.ObjectLayout.Graph },
+				{ id: 'navigation', icon: 'navigation', name: translate('commonFlow'), shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('navigation')), layout: I.ObjectLayout.Navigation },
 			].map(it => ({ ...it, isSmall: true }));
 
 			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true, isSmall: true }));
@@ -765,7 +764,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		if (canWrite) {
 			items.push({ name: translate('commonActions'), isSection: true });
-			items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ], isSmall: true });
+			items.push({ id: 'add', name, icon: 'plus', shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')), isSmall: true });
 		};
 
 		return items.map(it => {
