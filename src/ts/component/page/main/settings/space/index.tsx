@@ -11,7 +11,7 @@ interface State {
 	isEditing: boolean;
 };
 
-const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
+const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
 
@@ -76,7 +76,7 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<div className={[ 'spaceHeader', isEditing? 'isEditing' : '' ].join(' ')}>
 					{canWrite ? (
 						<div className="buttons">
@@ -180,8 +180,7 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 						</div>
 					)}
 				</div>
-
-			</React.Fragment>
+			</>
 		);
 	};
 
@@ -266,6 +265,8 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 
 	onClick (e: React.MouseEvent, item: any) {
 		const { cid, key } = this.state;
+		const space = U.Space.getSpaceview();
+		const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
 		switch (item.id) {
 			case 'invite': {
@@ -291,7 +292,7 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 					data: {
 						options: [
 							{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-							{ id: 'delete', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' },
+							{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
 						],
 						onSelect: (e: React.MouseEvent, option: any) => {
 							switch (option.id) {
@@ -363,4 +364,4 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 
 });
 
-export default pageMainSettingsSpaceIndex;
+export default PageMainSettingsSpaceIndex;

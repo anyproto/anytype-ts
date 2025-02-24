@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation, analytics } from 'Lib';
+import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -39,8 +39,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = false; //S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const type = S.Record.getTypeById(object.type);
-		const recommended = Relation.getArrayValue(type?.recommendedRelations);
-		const system = Relation.systemKeys();
+		const skipKeys = [ 'description' ];
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -55,16 +54,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return null;
 		};
 
-		const relations = S.Record.getObjectRelations(rootId, rootId).filter(it => {
-			if (!it) {
-				return false;
-			};
-			if (!recommended.includes(it.id) || (it.relationKey == 'description')) {
-				return false;
-			};
+		let relations = Relation.getArrayValue(type?.recommendedFileRelations).
+			map(it => S.Record.getRelationById(it)).
+			filter(it => it && !skipKeys.includes(it.relationKey));
 
-			return !config.debug.hiddenObject ? !it.isHidden : true;
-		}).sort((c1, c2) => U.Data.sortByFormat(c1, c2));
+		relations = S.Record.checkHiddenObjects(relations);
+		relations.sort((c1, c2) => U.Data.sortByFormat(c1, c2));
 
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
@@ -129,7 +124,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 				<div id="blocks" className={cn.join(' ')}>
 					{file ? (
-						<React.Fragment>
+						<>
 							<div className="side left">
 								<div id="inner" className="inner">
 									{content}
@@ -175,7 +170,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 									) : ''}
 								</div>
 							</div>
-						</React.Fragment>
+						</>
 					) : (
 						<div id="empty" className="empty">{translate('pageMainMediaNotFound')}</div>
 					)}
@@ -227,6 +222,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
+			sidebar.rightPanelSetState({ rootId });
 			this.setState({ isLoading: false });
 		});
 	};
@@ -290,7 +286,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 	onRelationAdd (e: any) {
 		const { isPopup } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, []);
 		const type = S.Record.getTypeById(object.type);
@@ -303,7 +299,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: S.Record.getObjectRelationKeys(rootId, rootId),
+				skipKeys: S.Record.getObjectRelations(rootId, object.type).map(it => it.relationKey),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					if (type && !type.recommendedRelations.includes(relation.relationKey)) {
 						C.ObjectTypeRelationAdd(type.id, [ relation.relationKey ]);

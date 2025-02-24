@@ -262,20 +262,23 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { config } = S.Common;
-		const object = S.Detail.get(rootId, rootId, [ 'targetObjectType' ]);
+		const object = S.Detail.get(rootId, rootId);
 		const isTemplate = U.Object.isTemplate(object.type);
-		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
+		const objectKeys = S.Detail.getKeys(rootId, rootId);
+		const objectRelations = objectKeys.map(it => S.Record.getRelationByKey(it)).filter(it => it);
+		const typeIds = S.Detail.getTypeRelationIds(isTemplate ? object.targetObjectType : object.type);
+		const typeRelations = typeIds.map(it => S.Record.getRelationById(it)).filter(it => it);
+		
+		let ret = typeRelations;
+		if (!isTemplate) {
+			ret = ret.concat(objectRelations);
+		};
 
-		const relations = S.Record.getObjectRelations(rootId, rootId);
-		const relationKeys = relations.map(it => it.relationKey);
-		const typeRelations = (type ? type.recommendedRelations || [] : []).
-			map(it => S.Record.getRelationById(it)).
-			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
+		ret = S.Record.checkHiddenObjects(ret.filter(it => it.isInstalled)).sort(U.Data.sortByName);
 
-		const ret = relations.concat(typeRelations).filter(it => !config.debug.hiddenObject && it.isHidden ? false : it.isInstalled).sort(U.Data.sortByName);
-
-		ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
+		if (!isTemplate) {
+			ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
+		};
 
 		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true }));
 	};
@@ -416,14 +419,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 				});
 				break;
 			};
 
 			case 'date': {
-				menuId = 'dataviewCalendar';
+				menuId = 'calendar';
 				menuParam.data = Object.assign(menuParam.data, {
 					canEdit: true,
 					value: U.Date.now(),
@@ -467,7 +470,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					canAdd: true,
 					type: I.NavigationType.Link,
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 				});
 				break;

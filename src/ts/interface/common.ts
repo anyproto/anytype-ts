@@ -150,7 +150,7 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
 	onBanner?: (e: any) => void;
 	onBannerClose?: (e: any) => void;
-	onRelation?: (param?: Partial<I.MenuParam>, data?: any) => void;
+	onRelation?: (data?: any) => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {
@@ -196,6 +196,26 @@ export interface ButtonComponent {
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
+};
+
+export interface SidebarPageComponent {
+	rootId?: string;
+	isPopup?: boolean;
+	readonly?: boolean;
+	details?: any;
+	noPreview?: boolean;
+};
+
+export interface SidebarSectionComponent extends SidebarPageComponent {
+	object: any;
+	item?: any;
+	readonly?: boolean;
+	onChange?(update: any): void;
+	onDragStart?: (e: React.DragEvent) => void;
+};
+
+export interface SidebarSectionRef {
+	forceUpdate(): void;
 };
 
 export enum SurveyType {

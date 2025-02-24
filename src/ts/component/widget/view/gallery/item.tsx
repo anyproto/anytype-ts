@@ -59,7 +59,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 
 		const node = $(nodeRef.current);
 
-		S.Menu.open('dataviewContext', {
+		S.Menu.open('objectContext', {
 			element: node,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',

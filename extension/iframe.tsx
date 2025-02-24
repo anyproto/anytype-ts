@@ -38,11 +38,11 @@ class RoutePage extends React.Component<RouteComponentProps> {
 		const Component = Components[page];
 
 		return (
-			<React.Fragment>
+			<>
 				<ListMenu key="listMenu" {...this.props} />
 
 				{Component ? <Component /> : null}
-			</React.Fragment>
+			</>
 		);
 	};
 

@@ -141,7 +141,7 @@ class UtilMenu {
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
 			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable', aliases: [ 'table' ] },
-			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'inline collection' ] },
+			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'graph', 'inline collection' ] },
 			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'inline set' ] },
 		].map(this.mapperBlock);
 	};
@@ -274,6 +274,10 @@ class UtilMenu {
 		});
 	};
 
+	getLayoutIcon (layout: I.ObjectLayout) {
+		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
+	};
+
 	getLayouts () {
 		return [
 			{ id: I.ObjectLayout.Page },
@@ -290,7 +294,7 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Note },
 		].map(it => ({ 
 			...it,
-			icon: `layout c-${I.ObjectLayout[it.id].toLowerCase()}`,
+			icon: this.getLayoutIcon(it.id),
 			name: translate(`layout${it.id}`),
 		}));
 	};
@@ -560,7 +564,6 @@ class UtilMenu {
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
 		const { spaceview } = S.Block;
-		const templateType = S.Record.getTemplateType();
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
@@ -619,8 +622,8 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant) },
-										{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+										{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant) },
+										{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 									],
 									canAdd: true,
 									onSelect: el => {
@@ -977,7 +980,7 @@ class UtilMenu {
 								if (isClosed) {
 									sidebar.open(width);
 								} else {
-									sidebar.resizePage(width, false);
+									sidebar.resizePage(width, null, false);
 								};
 								break;
 							};
@@ -1108,7 +1111,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			sidebar.settingsOpen('importIndex');
+			U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
 		};
 
 		const getClipboardData = async () => {
@@ -1155,7 +1158,9 @@ class UtilMenu {
 				};
 
 				if (url) {
-					C.ObjectCreateBookmark({ ...details, source: url }, S.Common.space, (message: any) => {
+					const bookmark = S.Record.getBookmarkType();
+
+					C.ObjectCreateBookmark({ ...details, source: url }, S.Common.space, bookmark?.defaultTemplateId, (message: any) => {
 						cb(message.details, message.middleTime);
 					});
 				} else {

@@ -12,7 +12,13 @@
 				@include text-overflow-nw;
 			}
 			.cell {
-				.name { display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; @include text-overflow-nw; }
+				.name { 
+					display: flex; flex-direction: row; align-items: center; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
+					@include text-overflow-nw;
+				}
+
+				.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/sortArrow.svg'); }
+				.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 			}
 
 			.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/sortArrow.svg'); }
@@ -37,7 +43,7 @@
 				.empty { display: block; }
 			}
 
-			.cellContent.isName {
+			.cellContent {
 				.flex { gap: 0px 6px; }
 			}
 

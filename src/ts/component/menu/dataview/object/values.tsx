@@ -211,8 +211,10 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				return false;
 			};
 
-			return config.debug.hiddenObject ? true : !it.isHidden;
+			return true;
 		});
+
+		value = S.Record.checkHiddenObjects(value);
 		
 		if (!value.length) {
 			value.push({ isEmpty: true });

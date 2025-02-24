@@ -263,6 +263,15 @@ export interface Cell {
 	elementMapper?(relation: any, item: any): any;
 };
 
+export interface CellRef {
+	onClick?(e: any): void;
+	onBlur?(): void;
+	setEditing?(v: boolean): void;
+	isEditing?(): boolean;
+	onChange?(value: any): void;
+	getValue?(): any;
+};
+
 export interface BoardGroup {
 	id: string;
 	value: any;

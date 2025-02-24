@@ -107,7 +107,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: (el: any) => {
@@ -129,7 +129,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					skipIds: [ typeId ],
 					onClick: type => {
 						data.typeId = type.id;
-						data.templateId = type.defaultTemplateId || J.Constant.templateId.blank;
+						data.templateId = type.defaultTemplateId;
 
 						loadTemplate();
 
@@ -183,7 +183,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		switch (item.id) {
 			case 'new': {
 				if (onSelect) {
-					onSelect(template ? template : { id: J.Constant.templateId.blank });
+					onSelect(template ? template : { id: '' });
 				};
 				break;
 			};

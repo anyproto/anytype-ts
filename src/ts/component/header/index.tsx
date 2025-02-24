@@ -59,21 +59,14 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const renderLeftIcons = (withGraph?: boolean, onOpen?: () => void) => {
-		const cmd = keyboard.cmdSymbol();
-		const alt = keyboard.altSymbol();
-		const isWin = U.Common.isPlatformWindows();
-		const isLinux = U.Common.isPlatformLinux();
-		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
-		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
-
 		const buttons: any[] = [
 			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
-			{ id: 'back', name: translate('commonBack'), caption: cb, onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
-			{ id: 'forward', name: translate('commonForward'), caption: cf, onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
+			{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
+			{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
 		];
 
 		if (withGraph) {
-			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: onGraph });
+			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph });
 		};
 
 		return (
@@ -86,7 +79,13 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 					};
 
 					return (
-						<Icon key={item.id} className={cn.join(' ')} onClick={e => item.onClick(e)} />
+						<Icon 
+							key={item.id} 
+							tooltip={item.name} 
+							tooltipCaption={item.caption} 
+							className={cn.join(' ')} 
+							onClick={e => item.onClick(e)} 
+						/>
 					);
 				})}
 			</>
@@ -152,29 +151,8 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
 	};
 
-	const onRelation = (param?: Partial<I.MenuParam>, data?: any) => {
-		param = param || {};
-		data = data || {};
-
-		const cnw = [ 'fixed' ];
-
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		menuOpen('blockRelationView', '#button-header-relation', {
-			noFlipX: true,
-			noFlipY: true,
-			horizontal: I.MenuDirection.Right,
-			subIds: J.Menu.cell,
-			classNameWrap: cnw.join(' '),
-			...param,
-			data: {
-				isPopup,
-				rootId,
-				...data,
-			},
-		});
+	const onRelation = (data) => {
+		sidebar.rightPanelToggle(!S.Common.getShowSidebarRight(isPopup), true, isPopup, 'object/relation', { ...data, rootId });
 	};
 
 	const getContainer = () => {
@@ -182,7 +160,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	useEffect(() => {
-		sidebar.resizePage(null, false);
+		sidebar.resizePage(null, null, false);
 	});
 
 	useImperativeHandle(ref, () => ({

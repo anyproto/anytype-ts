@@ -66,7 +66,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 				case I.FileState.Error:
 				case I.FileState.Empty: {
 					element = (
-						<React.Fragment>
+						<>
 							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
 							<InputWithFile 
 								block={block} 
@@ -77,7 +77,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 								onChangeFile={this.onChangeFile} 
 								readonly={readonly} 
 							/>
-						</React.Fragment>
+						</>
 					);
 					break;
 				};

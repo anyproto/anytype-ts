@@ -73,7 +73,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 			if (!showVault) {
 				S.Common.showVaultSet(true);
-				sidebar.resizePage(width, false);
+				sidebar.resizePage(width, null, false);
 				closeVault.current = true;
 			};
 
@@ -120,7 +120,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		if (!sidebar.isAnimating) {
 			if (closeVault.current) {
 				S.Common.showVaultSet(false);
-				sidebar.resizePage(width, false);
+				sidebar.resizePage(width, null, false);
 				closeVault.current = false;
 			};
 
@@ -152,7 +152,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			case 'settings': {
-				U.Router.go('/main/settings/index', {});
+				U.Object.openAuto({ id: 'index', layout: I.ObjectLayout.Settings });
 				break;
 			};
 

@@ -45,7 +45,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 				case I.BookmarkState.Error:
 				case I.BookmarkState.Empty: {
 					element = (
-						<React.Fragment>
+						<>
 							{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
 							<InputWithFile 
 								block={block} 	
@@ -55,7 +55,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 								onChangeUrl={this.onChangeUrl} 
 								readonly={readonly} 
 							/>
-						</React.Fragment>
+						</>
 					);
 					break;
 				};
@@ -254,8 +254,9 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	
 	onChangeUrl (e: any, url: string) {
 		const { rootId, block } = this.props;
+		const bookmark = S.Record.getBookmarkType();
 
-		C.BlockBookmarkFetch(rootId, block.id, url);
+		C.BlockBookmarkFetch(rootId, block.id, url, bookmark?.defaultTemplateId);
 	};
 	
 	resize () {

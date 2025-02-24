@@ -57,6 +57,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 		const { onSubmit, route } = data;
 		const value = this.ref.getValue();
 		const details = data.details || {};
+		const bookmark = S.Record.getBookmarkType();
 
 		if (!value) {
 			return;
@@ -64,14 +65,14 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectCreateBookmark({ ...details, source: value }, S.Common.space, (message: any) => {
+		C.ObjectCreateBookmark({ ...details, source: value }, S.Common.space, bookmark?.defaultTemplateId, (message: any) => {
 			this.setState({ loading: false });
 
 			if (message.error.code) {
 				S.Popup.open('confirm', {
 					data: {
 						title: translate('menuDataviewCreateSomethingWentWrong'),
-						text: translate('menuDataviewContextTryAgain'),
+						text: translate('menuObjectContextTryAgain'),
 						textConfirm: translate('commonOk'),
 						canCancel: false,
 					},

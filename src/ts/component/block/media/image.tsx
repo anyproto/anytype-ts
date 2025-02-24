@@ -50,7 +50,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 				default:
 				case I.FileState.Empty: {
 					element = (
-						<React.Fragment>
+						<>
 							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
 							<InputWithFile 
 								block={block} 
@@ -61,7 +61,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 								onChangeFile={this.onChangeFile} 
 								readonly={readonly} 
 							/>
-						</React.Fragment>
+						</>
 					);
 					break;
 				};

@@ -211,7 +211,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data } = param;
 		const filter = String(data.filter || '');
 		const filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 			{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: data.skipKeys || [] },
 		];
 		const sorts = [
@@ -378,7 +378,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				menuParam.className = 'single';
 
 				const filters: I.Filter[] = [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
 					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 					{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
 				];

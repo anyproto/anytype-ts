@@ -171,7 +171,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
 		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(view.filters as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
@@ -303,20 +303,20 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		wrap.css({ width: 0, height: 0, marginLeft: 0 });
 
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const cw = container.width();
 		const ch = container.height();
 		const mw = cw - PADDING * 2;
 		const margin = (cw - mw) / 2;
 		const { top } = node.offset();
 		const day = node.find('.day').first();
-		const menu = S.Menu.get('dataviewCalendarDay');
+		const menu = S.Menu.get('calendarDay');
 
 		wrap.css({ width: cw, height: Math.max(600, ch - top - 130), marginLeft: -margin - 2 });
-		win.trigger('resize.menuDataviewCalendarDay');
+		win.trigger('resize.menuCalendarDay');
 
 		if (menu && !menu.param.data.fromWidget && day.length) {
-			S.Menu.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
+			S.Menu.update('calendarDay', { width: day.outerWidth() + 8 });
 		};
 	};
 
