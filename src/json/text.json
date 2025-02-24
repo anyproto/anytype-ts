@@ -1365,7 +1365,14 @@
 	"popupShortcutCommandObjects8": "Also available",
 	"popupShortcutCommandObjects9": "Audio",
 	"popupShortcutCommandObjects10": "Table",
-	"popupShortcutCommandObjects11": "Inline set",
+	"popupShortcutCommandObjects11": "Inline set or collection",
+
+	"popupShortcutCommandView0": "Inline set with a grid view",
+	"popupShortcutCommandView1": "Inline set with a list view",
+	"popupShortcutCommandView2": "Inline set with a gallery view",
+	"popupShortcutCommandView3": "Inline set with a board view",
+	"popupShortcutCommandView4": "Inline set with a calendar view",
+	"popupShortcutCommandView5": "Inline set with a graph view",
 
 	"popupShortcutCommandOther": "Other",
 	"popupShortcutCommandOther1": "Line divider",

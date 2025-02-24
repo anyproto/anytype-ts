@@ -236,6 +236,15 @@ const getSections = () => {
 						{ name: translate('popupShortcutCommandObjects9'), text: '/audio' },
 						{ name: translate('popupShortcutCommandObjects10'), text: '/table' },
 						{ name: translate('popupShortcutCommandObjects11'), text: '/inline' },
+
+						/*
+						{ name: translate('popupShortcutCommandView0'), text: '/grid' },
+						{ name: translate('popupShortcutCommandView1'), text: '/list' },
+						{ name: translate('popupShortcutCommandView2'), text: '/gallery' },
+						{ name: translate('popupShortcutCommandView3'), text: '/kanban' },
+						{ name: translate('popupShortcutCommandView4'), text: '/calendar' },
+						{ name: translate('popupShortcutCommandView5'), text: '/graph' },
+						*/
 					]
 				},
 
