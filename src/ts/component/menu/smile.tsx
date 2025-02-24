@@ -122,7 +122,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				);
 
 				content = (
-					<React.Fragment>
+					<>
 						<div ref={ref => this.refIcons = ref} className="items">
 							<InfiniteLoader
 								rowCount={items.length}
@@ -150,7 +150,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 								)}
 							</InfiniteLoader>
 						</div>
-					</React.Fragment>
+					</>
 				);
 				break;
 			};

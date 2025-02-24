@@ -76,7 +76,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<div className={[ 'spaceHeader', isEditing? 'isEditing' : '' ].join(' ')}>
 					{canWrite ? (
 						<div className="buttons">
@@ -180,8 +180,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						</div>
 					)}
 				</div>
-
-			</React.Fragment>
+			</>
 		);
 	};
 
