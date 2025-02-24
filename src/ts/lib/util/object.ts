@@ -1,4 +1,4 @@
-import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics } from 'Lib';
+import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation } from 'Lib';
 
 class UtilObject {
 
@@ -513,7 +513,7 @@ class UtilObject {
 	};
 
 	hasEqualLayoutAlign (object: any, type: any): boolean {
-		if (!object || !type) {
+		if (!object || object._empty || !type) {
 			return true;
 		};
 		return (undefined === object.layoutAlign) || (object.layoutAlign === type.layoutAlign);
@@ -522,7 +522,7 @@ class UtilObject {
 	hasEqualLayoutWidth (object: any, type: any): boolean {
 		const root = S.Block.getLeaf(object.id, object.id);
 
-		if (!object || !type || !root) {
+		if (!object || object._empty || !type || !root) {
 			return true;
 		};
 
@@ -530,11 +530,17 @@ class UtilObject {
 		return !width || (width == type.layoutWidth);
 	};
 
+	hasEqualFeaturedRelations (object: any): boolean {
+		if (!object || object._empty) {
+			return true;
+		};
+
+		return Relation.getArrayValue(object.featuredRelations).filter(it => ![ 'description' ].includes(it)).length == 0;
+	};
+
 	hasLayoutConflict (object: any): boolean {
 		const type = S.Record.getTypeById(object.targetObjectType || object.type);
-		const root = S.Block.getLeaf(object.id, object.id);
-
-		if (!type || !root) {
+		if (!type) {
 			return false;
 		};
 
@@ -553,16 +559,29 @@ class UtilObject {
 			return true;
 		};
 
+		if (!this.hasEqualFeaturedRelations(object)) {
+			console.log('[hasLayoutConflict] featuredRelations', JSON.stringify(object.featuredRelations, null, 3), JSON.stringify(type.recommendedFeaturedRelations, null, 3));
+			return true;
+		};
+
 		return false;
 	};
 
 	resetLayout (id: string) {
+		const object = S.Detail.get(id, id);
+
+		if (object._empty_) {
+			return;
+		};
+
 		const root = S.Block.getLeaf(id, id);
 		const fields = root.fields || {};
-
-		C.ObjectRelationDelete(id, [ 'layout', 'layoutAlign' ]);
+		const featured = Relation.getArrayValue(object.featuredRelations).filter(it => [ 'description' ].includes(it));
 
 		delete(fields.width);
+
+		C.ObjectRelationDelete(id, [ 'layout', 'layoutAlign' ]);
+		C.ObjectListSetDetails([ id ], [ { key: 'featuredRelations', value: featured } ]);
 		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
 	};
 
