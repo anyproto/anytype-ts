@@ -325,10 +325,8 @@ class Keyboard {
 	};
 
 	getRootId (): string {
-		const isPopup = this.isPopup();
-		const popupMatch = this.getPopupMatch();
-
-		return isPopup ? popupMatch.params.id : (this.match?.params?.id);
+		const match = this.getMatch();
+		return match.params?.objectId || match.params?.id;
 	};
 
 	onKeyUp (e: any) {

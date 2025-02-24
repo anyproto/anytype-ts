@@ -208,8 +208,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		return keyboard.getRootId();
 	};
 
 	onScroll () {

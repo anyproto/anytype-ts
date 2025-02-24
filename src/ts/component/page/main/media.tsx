@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar } from 'Lib';
+import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar, keyboard } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -32,7 +32,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	render () {
-		const { config } = S.Common;
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
@@ -312,8 +311,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		return keyboard.getRootId();
 	};
 
 	resize () {

@@ -7,10 +7,10 @@ import { I, C, S, U, J, focus, Action, analytics, Relation, translate, sidebar, 
 const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const match = keyboard.getMatch();
 	const [ isLoading, setIsLoading ] = useState(false);
 	const headerRef = useRef(null);
 	const headRef = useRef(null);
+	const match = keyboard.getMatch();
 	const rootId = match.params?.objectId || match.params?.id;
 	const type = S.Detail.get(rootId, rootId, U.Data.typeRelationKeys());
 	const subIdTemplate = S.Record.getSubId(rootId, 'templates');

@@ -88,8 +88,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const getRootId = () => {
-		const { rootId, match } = props;
-		return rootIdRef.current || (rootId ? rootId : match?.params?.id);
+		return rootIdRef.current || keyboard.getRootId();
 	};
 
 	const rootId = getRootId();

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple } from 'Component';
-import { I, C, S, U, Action, translate, analytics, sidebar } from 'Lib';
+import { I, C, S, U, Action, translate, analytics, sidebar, keyboard } from 'Lib';
 
 interface State {
 	isDeleted: boolean;
@@ -193,10 +193,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	getRootId () {
-		const { rootId, } = this.props;
-		const param = U.Router.getParam(U.Router.getRoute());
-
-		return rootId || param.objectId || param.id;
+		return keyboard.getRootId();
 	};
 
 	getObject () {
