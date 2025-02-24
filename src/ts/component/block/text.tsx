@@ -671,8 +671,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const isRtl = U.Common.checkRtl(value);
 
-		console.log(menuOpenLink);
-
 		keyboard.setRtl(isRtl);
 
 		if (isRtl) {

@@ -247,7 +247,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const isAllowedTemplate = type?.isInstalled && isAllowedObject() && canShowTemplates;
 	const templates = S.Record.getRecordIds(subIdTemplate, '');
 	const totalObject = S.Record.getMeta(subIdObject, '').total;
-	const totalTemplate = templates.length + (isAllowedTemplate ? 1 : 0);
+	const totalTemplate = templates.length;
 	const isFileType = U.Object.isInFileLayouts(type.recommendedLayout);
 	const columns: any[] = [
 		{
@@ -309,7 +309,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 								</div>
 							</div>
 
-							{totalTemplate ? (
+							{totalTemplate || isAllowedTemplate ? (
 								<div className="content">
 									<ListObjectPreview
 										key="listTemplate"

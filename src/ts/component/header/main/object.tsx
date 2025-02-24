@@ -31,7 +31,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	if (U.Object.isTemplate(object.type)) {
 		bannerProps.type = I.BannerType.IsTemplate;
 	} else
-	if (allowedTemplateSelect && templatesCnt) {
+	if (allowedTemplateSelect && (templatesCnt > 1)) {
 		bannerProps.type = I.BannerType.TemplateSelect;
 		bannerProps.count = templatesCnt;
 	};
