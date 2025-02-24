@@ -54,9 +54,11 @@ const SidebarSectionTypeRelation = observer(forwardRef<{}, I.SidebarSectionCompo
         if (from.id == to.id) {
             onChange({ [from.relationKey]: arrayMove(fromItems, oldIndex, newIndex) });
         } else {
+			toItems.splice(newIndex, 0, active.id);
+
             onChange({
-                [from.relationKey]: fromItems.filter(id => id !== active.id),
-                [to.relationKey]: [ active.id, ...toItems ],
+                [from.relationKey]: fromItems.filter(id => id != active.id),
+                [to.relationKey]: toItems,
             });
         };
 
