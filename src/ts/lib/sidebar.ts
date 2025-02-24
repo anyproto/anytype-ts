@@ -74,7 +74,7 @@ class Sidebar {
 		this.syncButton = $('#sidebarSync');
 
 		if (vault) {
-			this.vault = $(vault.node);
+			this.vault = $(vault.getNode());
 		};
 	};
 
