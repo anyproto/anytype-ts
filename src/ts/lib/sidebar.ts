@@ -20,6 +20,7 @@ class Sidebar {
 	dummyRight: JQuery<HTMLElement> = null
 
 	page: JQuery<HTMLElement> = null;
+	pageFlex: JQuery<HTMLElement> = null;
 	header: JQuery<HTMLElement> = null;
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
@@ -62,6 +63,7 @@ class Sidebar {
 
 		this.objLeft = $('#sidebarLeft');
 		this.objRight = $('#sidebarRight');
+		this.pageFlex = $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
 		this.page = $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
@@ -252,7 +254,7 @@ class Sidebar {
 			widthRight = 0;
 		};
 
-		const pageWidth = (!isPopup ? ww : this.page.width()) - widthLeft - widthRight;
+		const pageWidth = (!isPopup ? ww : this.pageFlex.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 
 		if ((widthLeft && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {

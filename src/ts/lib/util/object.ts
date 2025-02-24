@@ -560,7 +560,7 @@ class UtilObject {
 		};
 
 		if (!this.hasEqualFeaturedRelations(object)) {
-			console.log('[hasLayoutConflict] featuredRelations', JSON.stringify(object.featuredRelations, null, 3), JSON.stringify(type.recommendedFeaturedRelations, null, 3));
+			console.log('[hasLayoutConflict] featuredRelations');
 			return true;
 		};
 
