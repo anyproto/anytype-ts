@@ -18,7 +18,7 @@
 		> .descr { @include text-paragraph; }
 	}
 
-	.side.right { text-align: right; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
+	.side.right { text-align: right; display: flex; flex-direction: row; gap: 0px 16px; align-items: center; justify-content: flex-end; }
 	.side.right {
 		.button { white-space: nowrap; }
 	}

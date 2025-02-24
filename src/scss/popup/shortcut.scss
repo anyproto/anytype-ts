@@ -41,7 +41,7 @@
 				.item.hasError { box-shadow: 0px 0px 0px 2px var(--color-red) inset; }
 
 				.item {
-					.flex { flex-direction: row; align-items: center; }
+					.flex { flex-direction: row; align-items: center; line-height: 24px; }
 					.name { flex-grow: 1; }
 					.error { margin: 0.5em 0px 0px 0px; @include text-small; }
 

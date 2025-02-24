@@ -262,7 +262,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			data = {
 				skipIds: attachments.map(it => it.id),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 				],
 				onSelect: (item: any) => {
 					onChatButtonSelect(I.ChatButton.Object, item);
@@ -270,7 +270,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			};
 
 			if (menu == 'object') {
-				data.filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() });
+				data.filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() });
 			} else
 			if ([ 'file', 'media' ].includes(menu)) {
 				const layouts = {
@@ -278,7 +278,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					file: [ I.ObjectLayout.File, I.ObjectLayout.Pdf ],
 				};
 
-				data.filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: layouts[menu] });
+				data.filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: layouts[menu] });
 				data = Object.assign(data, {
 					canAdd: true,
 					addParam: {

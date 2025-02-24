@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, translate, analytics } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, translate, analytics, sidebar } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -45,15 +45,14 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const object = check.object;
-			const isCollection = U.Object.isCollectionLayout(object.layout);
+			const isCollection = U.Object.isCollectionLayout(check.layout);
 			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 			const readonly = this.isReadonly();
 
 			content = (
-				<React.Fragment>
+				<>
 					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} readonly={readonly} /> : ''}
 
 					<div className="blocks wrapper">
@@ -88,7 +87,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 							/>
 						))}
 					</div>
-				</React.Fragment>
+				</>
 			);
 		};
 
@@ -189,6 +188,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
 			this.refControls?.forceUpdate();
+			sidebar.rightPanelSetState({ rootId });
 			this.setState({ isLoading: false });
 			this.resize();
 		});
@@ -208,8 +208,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		return keyboard.getRootId();
 	};
 
 	onScroll () {

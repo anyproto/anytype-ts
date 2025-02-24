@@ -39,6 +39,10 @@ const BlockIconUser = observer(forwardRef<BlockIconUserRefProps, I.BlockComponen
 				onSelect={onSelect}
 				onUpload={onUpload}
 				size={128}
+				iconSize={128}
+				menuParam={{
+					horizontal: I.MenuDirection.Center,
+				}}
 			/>
 		</div>
 	);

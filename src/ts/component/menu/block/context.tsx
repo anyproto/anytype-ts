@@ -71,7 +71,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				) : ''}
 				
 				{canHaveMarks ? (
-					<React.Fragment>
+					<>
 						{markActions.length ? (
 							<div className="section">
 								{markActions.map((action: any, i: number) => {
@@ -125,7 +125,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								onMouseDown={e => this.onMark(e, I.MarkType.BgColor)} 
 							/>
 						</div>
-					</React.Fragment>
+					</>
 				) : ''}
 				
 				{hasMore ? (
@@ -413,7 +413,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],

@@ -160,6 +160,7 @@
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObjectTypeWithName": "Create Object Type \"%s\"",
 	"commonCreateObject": "Create Object",
+	"commonCreateNewTemplate": "Create new Template",
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
 	"commonShare": "Share",
@@ -185,15 +186,19 @@
 	"commonManage": "Manage",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
+	"commonShowMore": "Show more",
+	"commonShowLess": "Show less",
 	"commonWarning": "Warning",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
 	"pluralLCObject": "object|objects",
-	"pluralTemplate": "template|templates",
+	"pluralTemplate": "Template|Templates",
+	"pluralLCTemplate": "template|templates",
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
 	"pluralObjectType": "Object Type|Object Types",
+	"pluralField": "Field|Fields",
 	"pluralLinks": "link|links",
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
@@ -469,7 +474,6 @@
 
 	"pageMainNavigationItemEmptyTitle": "Object can not be shown",
 
-	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
 
@@ -543,10 +547,14 @@
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
 
-	"editorControlIcon": "Icon",
-	"editorControlCover": "Cover",
-	"editorControlLayout": "Layout",
+	"editorControlIcon0": "Add icon",
+	"editorControlIcon1": "Icon",
+	"editorControlCover0": "Add cover",
+	"editorControlCover1": "Cover",
+	"editorControlLayout": "Settings",
 	"editorControlRelation": "Relations",
+	"editorControlDescription0": "Add description",
+	"editorControlDescription1": "Hide description",
 
 	"editorPagePasteLink": "Paste as link",
 	"editorPageCreateBookmarkObject": "Create Bookmark Object",
@@ -1133,6 +1141,8 @@
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
+	"popupConfirmLocalFieldsTitle": "Add Local Fields to current type?",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1275,6 +1285,17 @@
 	"popupShortcutNavigationBasics11": "Open Bin",
 	"popupShortcutNavigationPage9": "Open Relations",
 
+	"popupShortcutEditorTurn0": "Turn block into a text block",
+	"popupShortcutEditorTurn1": "Turn block into a H1 heading",
+	"popupShortcutEditorTurn2": "Turn block into a H2 heading",	
+	"popupShortcutEditorTurn3": "Turn block into a H3 heading",
+	"popupShortcutEditorTurn4": "Turn block into a checkbox block",
+	"popupShortcutEditorTurn5": "Turn block into a bulleted list",
+	"popupShortcutEditorTurn6": "Turn block into a numbered list",
+	"popupShortcutEditorTurn7": "Turn block into a toggle",
+	"popupShortcutEditorTurn8": "Turn block into a code block",
+	"popupShortcutEditorTurn9": "Turn block into a page",
+
 	"popupShortcutNavigationMenu": "Menu, Search",
 	"popupShortcutNavigationMenu1": "Go to the next option",
 	"popupShortcutNavigationMenu2": "Go to the previous option",
@@ -1344,7 +1365,14 @@
 	"popupShortcutCommandObjects8": "Also available",
 	"popupShortcutCommandObjects9": "Audio",
 	"popupShortcutCommandObjects10": "Table",
-	"popupShortcutCommandObjects11": "Inline set",
+	"popupShortcutCommandObjects11": "Inline set or collection",
+
+	"popupShortcutCommandView0": "Inline set with a grid view",
+	"popupShortcutCommandView1": "Inline set with a list view",
+	"popupShortcutCommandView2": "Inline set with a gallery view",
+	"popupShortcutCommandView3": "Inline set with a board view",
+	"popupShortcutCommandView4": "Inline set with a calendar view",
+	"popupShortcutCommandView5": "Inline set with a graph view",
 
 	"popupShortcutCommandOther": "Other",
 	"popupShortcutCommandOther1": "Line divider",
@@ -1440,6 +1468,8 @@
 
 	"menuBlockLayoutSetLayoutWidth": "Set layout width",
 	"menuBlockLayoutChooseLayoutType": "Choose layout type",
+	"menuBlockLayoutConflict": "This layout differs from the type's default. Reset to match?",
+	"menuBlockLayoutReset": "Reset to default",
 
 	"menuBlockLinkSettingsStyleText": "Text",
 	"menuBlockLinkSettingsStyleCard": "Card",
@@ -1467,10 +1497,6 @@
 	"menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
 	"menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created",
 
-	"menuBlockRelationViewFeaturedRelations": "Featured Relations",
-	"menuBlockRelationViewInThisObject": "In this Object",
-	"menuBlockRelationViewFromType": "From Type %s",
-
 	"menuBlockStyleTurnText": "Turn into text",
 	"menuBlockStyleTurnList": "Turn into list",
 	"menuBlockStyleTurnDiv": "Turn into divider",
@@ -1494,10 +1520,10 @@
 	"menuDataviewUrlActionGo9": "Call to",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
-	"menuDataviewContextNoAvailableActions": "No available actions",
-	"menuDataviewContextUnlinkFromCollection": "Unlink from collection",
-	"menuDataviewContextTryAgain": "Please try again",
-	"menuDataviewContextEditRelations": "Edit relations",
+	"menuObjectContextNoAvailableActions": "No available actions",
+	"menuObjectContextUnlinkFromCollection": "Unlink from collection",
+	"menuObjectContextTryAgain": "Please try again",
+	"menuObjectContextEditRelations": "Edit relations",
 
 	"menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
 
@@ -1607,9 +1633,6 @@
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
-
-	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
-	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",
@@ -1898,6 +1921,31 @@
 	"sidebarObjectSortCreated": "Date created",
 	"sidebarObjectSortUpdated": "Date updated",
 	"sidebarObjectSortLastUsed": "Date last used",
+
+	"sidebarTypeTitle": "Editing type",
+	"sidebarSectionLayoutName": "Layout",
+	"sidebarSectionLayoutFormat": "Format",
+	"sidebarSectionLayoutFormatPage": "Page",
+	"sidebarSectionLayoutFormatList": "List",
+	"sidebarSectionLayoutType": "Layout type",
+	"sidebarSectionLayoutAlign": "Header position",
+	"sidebarSectionLayoutWidth": "Layout width",
+	"sidebarSectionLayoutDefaultView": "Default view",
+	"sidebarSectionLayoutDefaultType": "Default type",
+
+	"sidebarTypeRelation": "Fields",
+	"sidebarTypeRelationHeader": "Header",
+	"sidebarTypeRelationSidebar": "Sidebar",
+	"sidebarTypeRelationHidden": "Hidden",
+	"sidebarObjectRelationSetUp": "Set up",
+	"sidebarTypeRelationEmpty": "There are no fields yet",
+
+	"sidebarRelationLocal": "Local Fields",
+	"sidebarTypeRelationLocalDescription": "Some fields are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
+
+	"sidebarRelationLocalAddToCurrentType": "Add to the current type",
+	"sidebarRelationLocalRemoveFromObject": "Remove from object",
+	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

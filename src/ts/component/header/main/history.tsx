@@ -20,7 +20,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 	}));
 
 	return (
-		<React.Fragment>
+		<>
 			<div className="side left">{renderLeftIcons(true)}</div>
 
 			<div className="side center">
@@ -36,11 +36,11 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 						tooltip={translate('commonRelations')}
 						tooltipCaption={keyboard.getCaption('relation')} 
 						className="relation withBackground"
-						onClick={() => onRelation({}, { readonly: true })} 
+						onClick={() => onRelation({ readonly: true })} 
 					/> 
 				) : ''}
 			</div>
-		</React.Fragment>
+		</>
 	);
 
 }));

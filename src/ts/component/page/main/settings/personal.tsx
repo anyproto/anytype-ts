@@ -25,7 +25,7 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 		const sidebarMode = showVault ? translate('sidebarMenuAll') : translate('sidebarMenuSidebar');
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
 				<Label className="section" text={translate('commonAppearance')} />
@@ -123,7 +123,7 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 					) : ''}
 				</div>
 
-			</React.Fragment>
+			</>
 		);
 	};
 

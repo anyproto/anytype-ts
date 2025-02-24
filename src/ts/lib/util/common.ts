@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, sidebar } from 'Lib';
@@ -625,7 +626,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					sidebar.settingsOpen('spaceList');
+					U.Object.openAuto({ id: 'spaceList', layout: I.ObjectLayout.Settings });
 				},
 			},
 		});
@@ -648,25 +649,31 @@ class UtilCommon {
 		return (isPopup ? $('#popupPage-innerWrap') : $(window)) as JQuery<HTMLElement>;
 	};
 
+	getPageFlexContainer (isPopup: boolean) {
+		return $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
+	};
+
 	getPageContainer (isPopup: boolean) {
-		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
+		return $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
 	};
 
 	getCellContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
-				return '#page.isFull';
+				return '#pageFlex.isFull';
 
 			case 'popup':
-				return '#popupPage-innerWrap';
+				return '#pageFlex.isPopup';
 
 			case 'menuBlockAdd':
-			case 'menuBlockRelationView':
 				return `#${type}`;
 
 			case 'popupRelation':
 				return `#${type}-innerWrap`;
+
+			case 'sidebarRight':
+				return `#sidebarRight`;
 		};
 	};
 
@@ -1101,6 +1108,24 @@ class UtilCommon {
 		});
 
 		return text;
+	};
+
+	toggle (obj: any, delay: number) {
+		const isOpen = obj.hasClass('isOpen');
+
+		if (isOpen) {
+			obj.addClass('anim').removeClass('isOpen').css({ height: 0 });
+			window.setTimeout(() => obj.removeClass('anim'), delay);
+		} else {
+			obj.css({ height: 'auto' });
+
+			const height = obj.outerHeight();
+
+			obj.addClass('anim isOpen').css({ height: 0 });
+
+			raf(() => obj.css({ height }));
+			window.setTimeout(() => obj.removeClass('anim'), delay);
+		};
 	};
 
 };

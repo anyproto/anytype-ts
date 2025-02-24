@@ -1,8 +1,9 @@
 @import "~scss/_mixins";
 
-.pageMainType {
-	.wrapper { width: 704px; margin: 0px auto; padding: 0px 0px 80px 0px; user-select: none; }
-
+.pageMainType, 
+.settingsPage.pageSettingsType,
+.pageMainRelation {
+	.wrapper { width: 704px; margin: 0px auto; padding: 40px 0px 90px 0px; user-select: none; }
 	.wrapper.withIcon {
 		.editorControls {
 			#button-icon { display: none; }
@@ -16,68 +17,32 @@
 		}
 		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; }
 
-		.section { margin-bottom: 32px; }
+		.section { margin-bottom: 44px; }
 		.section:last-child { margin: 0px; }
 
 		.editorControls { margin-bottom: 8px; }
 
 		.section {
-			.title { @include text-header3; margin-bottom: 14px; position: relative; }
+			.title { 
+				@include text-paragraph; margin-bottom: 14px; position: relative; display: flex; flex-direction: row; align-items: center; 
+				justify-content: space-between;
+			}
+			.title {
+				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
+				.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; }
+
+				.icon.plus { background-image: url('~img/icon/plus/template.svg'); }
+				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+
+				.cnt { color: var(--color-text-secondary); }
+			}
 		}
 
 		.section.template {
-			.btn { 
-				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: var(--color-text-secondary); 
-				transition: $transitionAllCommon;
-			}
-			.btn {
-				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
-			}
-			.btn:hover { color: var(--color-text-primary); }
-			.btn:hover {
-				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
-			}
-
-			.listPreviewObject {
+			.listObjectPreview {
 				.icon.arrow.left { left: -32px; }
 				.icon.arrow.right { right: -32px; }
 			}
-		}
-
-		.section.relation {
-			.item { display: flex; }
-			.item {
-				.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
-
-				.clickable { width: 228px; padding: 4px; display: flex; transition: $transitionAllCommon; border-radius: 4px; }
-
-				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
-				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: var(--color-text-secondary); }
-			}
-			.item.canEdit {
-				.clickable:hover { background: var(--color-shape-highlight-light); }
-			}
-
-			.item.add { line-height: 20px; }
-			.item.add {
-				.icon { transition: $transitionAllCommon; }
-				.name { color: var(--color-text-secondary); transition: $transitionAllCommon; }
-
-				.clickable:hover {
-					.name { color: var(--color-text-primary); } 
-					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
-				}
-			}
-		}
-
-		.section.layout {
-			.title { margin-bottom: 10px; }
-			.content { line-height: 20px; color: var(--color-text-secondary); }
-			.select { border: 0px; padding: 3px 20px 3px 4px; cursor: default; }
-			.select:hover, .select.isFocused { background: var(--color-shape-highlight-light); }
-
-			.icon { width: 20px; height: 20px; margin-right: 6px; }
-			.name { display: inline-block; vertical-align: middle; }
 		}
 	}
 }

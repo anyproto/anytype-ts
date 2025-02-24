@@ -72,7 +72,7 @@
 		.titleWrapper { display: flex; gap: 0 6px; padding: 8px 14px 0px; align-items: center; }
 		.titleWrapper {
 			.icon.back { width: 20px; height: 20px; background-image: url('~img/arrow/menu.svg'); transform: rotateZ(180deg); }
-			.title { @include text-common; font-weight: 600; color: var(--color-text-primary); padding: 0; }
+			.title { @include text-common; @include text-overflow-nw; font-weight: 600; color: var(--color-text-primary); padding: 0; }
 		}
 		
 		.inputWrap { padding: 0px 14px 8px 14px; }
@@ -160,18 +160,8 @@
 		}
 
 		.item.withNote {
-			.info { display: flex; align-items: center; gap: 0px 20px; }
-
-			.note { position: relative; flex-shrink: 0; width: 20px; height: 20px; background: url('~img/icon/menu/important.svg'); }
-			.note {
-				.noteMessage {
-					display: none; position: absolute; z-index: 2; bottom: 24px; right: 0px; width: 196px; padding: 4px 8px; border-radius: 4px;
-					@include text-small; background-color: var(--color-bg-secondary); color: var(--color-text-inversion);
-				}
-			}
-			.note:hover {
-				.noteMessage { display: block; }
-			}
+			.info { display: flex; align-items: center; gap: 0px 20px; width: 100%; }
+			.icon.note { position: relative; flex-shrink: 0; width: 20px; height: 20px; margin: 0px; background: url('~img/icon/menu/important.svg'); }
 		}
 
 		.item.withCaption { display: flex; align-items: center; justify-content: space-between; gap: 0px 6px; }
@@ -277,6 +267,10 @@ html.platformWindows {
 @import "./search/object";
 @import "./search/text";
 
+
+@import "./calendar";
+@import "./object";
+
 @import "./preview/object";
 
 @import "./block/common";
@@ -289,7 +283,6 @@ html.platformWindows {
 @import "./block/mention";
 @import "./block/relation";
 
-@import "./dataview/calendar";
 @import "./dataview/common";
 @import "./dataview/create/bookmark";
 @import "./dataview/file";

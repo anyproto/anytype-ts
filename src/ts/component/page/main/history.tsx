@@ -390,7 +390,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const sideRight = node.find('#historySideRight');
 		const editorWrapper = node.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const sc = U.Common.getScrollContainer(isPopup);
 		const header = container.find('#header');
 		const height = sc.height();
@@ -413,10 +413,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	getWrapperWidth (): number {
-		const rootId = this.getRootId();
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		return this.getWidth(root?.fields?.width);
+		return this.getWidth(U.Data.getLayoutWidth(this.props.rootId));
 	};
 
 	getWidth (w: number) {
@@ -447,8 +444,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		return keyboard.getRootId();
 	};
 
 	isSetOrCollection (): boolean {

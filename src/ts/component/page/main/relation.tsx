@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, ListObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, U, Action, translate, analytics } from 'Lib';
+import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple } from 'Component';
+import { I, C, S, U, Action, translate, analytics, sidebar, keyboard } from 'Lib';
 
 interface State {
 	isDeleted: boolean;
@@ -24,7 +24,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	constructor (props: I.PageComponent) {
 		super(props);
 
-		this.onCreate = this.onCreate.bind(this);
+		this.onMore = this.onMore.bind(this);
 	};
 
 	render () {
@@ -35,7 +35,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId);
+		const object = this.getObject();
 		const subIdType = S.Record.getSubId(rootId, 'type');
 		const totalType = S.Record.getMeta(subIdType, '').total;
 		const subIdObject = S.Record.getSubId(rootId, 'object');
@@ -49,7 +49,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		];
 
 		const filtersType: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 			{ relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
 		];
 
@@ -69,13 +69,19 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						{...this.props} 
 						ref={ref => this.refHead = ref} 
 						placeholder={translate('defaultNameRelation')} 
-						rootId={rootId} onCreate={this.onCreate} 
+						rootId={rootId}
 					/>
 
 					{!object._empty_ ? (
-						<React.Fragment>
+						<>
 							<div className="section set">
-								<div className="title">{totalType} {U.Common.plural(totalType, translate('pluralObjectType'))}</div>
+								<div className="title">
+									<div className="side left">
+										{U.Common.plural(totalType, translate('pluralObjectType'))}
+										<span className="cnt">{totalType}</span>
+									</div>
+								</div>
+
 								<div className="content">
 									<ListObject 
 										ref={ref => this.refListType = ref}
@@ -92,7 +98,21 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 							{object.isInstalled ? (
 								<div className="section set">
-									<div className="title">{totalObject} {U.Common.sprintf(translate('pageMainRelationObjectsCreated'), U.Common.plural(totalObject, translate('pluralObject')))}</div>
+									<div className="title">
+										<div className="side left">
+											{U.Common.plural(totalObject, translate('pluralObject'))}
+											<span className="cnt">{totalObject}</span>
+										</div>
+
+										<div className="side right">
+											<Icon 
+												id="button-create"
+												className="more withBackground" 
+												onClick={this.onMore} 
+											/>
+										</div>
+									</div>
+
 									<div className="content">
 										<ListObject 
 											ref={ref => this.refListObject = ref}
@@ -107,7 +127,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 									</div>
 								</div>
 							) : ''}
-						</React.Fragment>
+						</>
 					) : ''}
 				</div>
 
@@ -152,6 +172,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
+			sidebar.rightPanelSetState({ rootId });
 			this.setState({ isLoading: false });
 
 			analytics.event('ScreenRelation', { relationKey: object.relationKey });
@@ -172,18 +193,43 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		return keyboard.getRootId();
 	};
 
-	onCreate () {
+	getObject () {
 		const rootId = this.getRootId();
-		const object = S.Detail.get(rootId, rootId);
+		return S.Detail.get(rootId, rootId);
+	};
 
-		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', S.Common.space, (message: any) => {
+	onSetAdd () {
+		const object = this.getObject();
+
+		C.ObjectCreateSet([ object.id ], { name: object.name + ' set' }, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				U.Object.openConfig(message.details);
 			};
+		});
+	};
+
+	onMore () {
+		const options = [
+			{ id: 'set', name: translate('pageMainTypeNewSetOfObjects') }
+		];
+
+		S.Menu.open('select', { 
+			element: `#button-create`,
+			offsetY: 8,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'set':
+							this.onSetAdd();
+							break;
+					};
+				},
+			},
 		});
 	};
 

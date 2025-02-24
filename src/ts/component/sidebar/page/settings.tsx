@@ -1,6 +1,7 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { S, sidebar, translate, U } from 'Lib';
+import { I, J, S, sidebar, translate, U } from 'Lib';
 import { Icon, IconObject, ObjectName } from 'Component';
 
 interface Props extends React.Component {
@@ -9,7 +10,10 @@ interface Props extends React.Component {
 
 const SidebarSettings = observer(class SidebarSettings extends React.Component<Props, {}> {
 
+	node: any = null;
 	routeBack: any = null;
+
+	types: any[] = [];
 
 	render () {
 		const space = U.Space.getSpaceview();
@@ -67,11 +71,15 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				};
 			};
 
+			if (action.layout && action.layout == I.ObjectLayout.Type) {
+				icon = <IconObject object={action} />;
+			};
+
 			return (
 				<div
 					id={`item-${action.id}`}
 					className={cn.join(' ')}
-					onClick={() => this.onPage(action.id)}
+					onClick={() => this.onClick(action)}
 				>
 					{icon}
 					<div className="name">{name}</div>
@@ -81,20 +89,50 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			);
 		};
 
-		const Section = (item: any) => (
-			<div className={[ 'section', String(item.id || '') ].join(' ')}>
-				{item.name ? <div className="name">{item.name}</div> : ''}
+		const Section = (item: any) => {
+			const cn = [ 'section', String(item.id || ''), item.isLabel ? 'isLabel' : '' ];
 
-				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<Item key={i} {...action} />
-					))}
+			if (item.isLabel) {
+				cn.push('isLabel');
+			} else
+			if (item.isToggle) {
+				cn.push('isToggle');
+			};
+
+			let name = null;
+			if (item.isToggle) {
+				name = (
+					<div className="toggle" onClick={() => this.onToggle(item)}>
+						<Icon />
+						{item.name}
+					</div>
+				);
+			} else
+			if (item.name) {
+				name = <div className="name">{item.name}</div>;
+			};
+
+			return (
+				<div id={`settings-section-${item.id}`} className={cn.join(' ')}>
+					{name}
+
+					{item.children ? (
+						<div className="items">
+							{item.children.map((action: any, i: number) => (
+								<Item key={i} {...action} />
+							))}
+						</div>
+					) : ''}
 				</div>
-			</div>
-		);
+			);
+		};
 
 		return (
-			<div id="containerSettings">
+			<div 
+				ref={ref => this.node = ref} 
+				id="containerSettings" 
+				className={isSpace ? 'spaceSettings' : 'appSettings'}
+			>
 				<div className="head" />
 
 				<div className="body">
@@ -127,6 +165,29 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const history = U.Router.history;
 
 		this.routeBack = history.entries[history.index - 1];
+
+		this.load();
+	};
+
+	load () {
+		U.Data.search({
+			sorts: [
+				{ type: I.SortType.Desc, relationKey: 'createdDate' },
+				{ type: I.SortType.Asc, relationKey: 'name' },
+			],
+			filters: [
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type }
+			],
+			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
+			noDeps: true,
+			ignoreHidden: true,
+			ignoreDeleted: true,
+		}, (message: any) => {
+			if (!message.error.code) {
+				this.types = message.records;
+				this.forceUpdate();
+			};
+		});
 	};
 
 	getSections () {
@@ -145,14 +206,15 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const appSettings = [
 			{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
 			{
-				name: translate('popupSettingsApplicationTitle'), children: [
+				id: 'basicSettings', name: translate('popupSettingsApplicationTitle'), children: [
 					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 					{ id: 'language', name: translate('pageSettingsLanguageTitle') },
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 				]
 			},
-			{ name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
+			{ id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
 		];
+
 		const importExport = [{
 			id: 'exportIndex', icon: 'export', name: translate('commonExport'),
 			subPages: [ 'exportProtobuf', 'exportMarkdown' ]
@@ -166,24 +228,67 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		};
 
 		const spaceSettings = [
-			{ name: translate('commonPreferences'), children: [
+			{ id: 'common', name: translate('commonPreferences'), children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
 					{ id: 'spaceShare', icon: 'members', name: translate('commonMembers') },
 					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
 				]
 			},
-			{ name: translate('pageSettingsSpaceIntegrations'), children: importExport },
+			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
+
+			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
+			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: this.types },
+			{ id: 'contentModelFields', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: [] },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
+	};
+
+	getItems () {
+		const sections = this.getSections();
+
+		let items: any[] = [];
+		for (const section of sections) {
+			if (section.name) {
+				items.push({ id: section.id, name: section.name, isSection: true });
+			};
+			items = items.concat(section.children);
+		};
+		return items;
 	};
 
 	withMembership () {
 		return S.Common.isOnline && U.Data.isAnytypeNetwork();
 	};
 
-	onPage (page) {
-		sidebar.settingsOpen(page);
+	onClick (item) {
+		let param = {
+			id: item.id,
+			layout: I.ObjectLayout.Settings, 
+		};
+
+		if (U.Object.isTypeOrRelationLayout(item.layout)) {
+			param = Object.assign(param, {
+				id: 'type',
+				_routeParam_: { 
+					additional: [ 
+						{ key: 'objectId', value: item.id } 
+					],
+				},
+			});
+		};
+
+		U.Object.openAuto(param);
+	};
+
+	onToggle (item) {
+		const obj = $(this.node).find(`#settings-section-${item.id}`);
+
+		if (obj.hasClass('isOpen')) {
+			obj.removeClass('isOpen');
+		} else {
+			obj.addClass('isOpen');
+		};
 	};
 
 });

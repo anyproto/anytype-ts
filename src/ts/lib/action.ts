@@ -835,6 +835,21 @@ class Action {
 		analytics.event('ThemeSet', { id });
 	};
 
+	toggleFeatureRelation (rootId: string, relationKey: string) {
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
+		const featured = U.Common.objectCopy(object.featuredRelations || []);
+		const relation = S.Record.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return null;
+		};
+
+		if (!featured.includes(relationKey)) {
+			C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation', { relationKey, format: relation.format }));
+		} else {
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey, format: relation.format }));
+		};
+	};
 };
 
 export default new Action();

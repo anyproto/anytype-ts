@@ -23,7 +23,7 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsImportTitle')} />
 				<Label className="description" text={translate('popupSettingsImportText')} />
 
@@ -32,7 +32,7 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 						<Item key={i} {...item} />
 					))}
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

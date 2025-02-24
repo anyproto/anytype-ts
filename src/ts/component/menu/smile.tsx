@@ -122,7 +122,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				);
 
 				content = (
-					<React.Fragment>
+					<>
 						<div ref={ref => this.refIcons = ref} className="items">
 							<InfiniteLoader
 								rowCount={items.length}
@@ -150,7 +150,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 								)}
 							</InfiniteLoader>
 						</div>
-					</React.Fragment>
+					</>
 				);
 				break;
 			};
@@ -220,7 +220,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				};
 
 				content = (
-					<React.Fragment>
+					<>
 						<Filter 
 							ref={ref => this.refFilter = ref}
 							value={filter}
@@ -280,7 +280,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 								/>
 							</div>
 						) : ''}
-					</React.Fragment>
+					</>
 				);
 				break;
 			};
@@ -320,7 +320,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				};
 
 				content = (
-					<React.Fragment>
+					<>
 						<Filter 
 							ref={ref => this.refFilter = ref}
 							value={filter}
@@ -360,7 +360,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 							): ''}
 						</div>
 
-					</React.Fragment>
+					</>
 				);
 				break;
 			};
@@ -488,7 +488,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		switch (tab) {
 			case Tab.Library: {
 				const filters: I.Filter[] = [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },

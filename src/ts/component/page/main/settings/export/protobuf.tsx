@@ -22,7 +22,7 @@ const PageMainSettingsExportProtobuf = observer(class PageMainSettingsExportProt
 		this.init();
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsExportProtobufTitle')} />
 
 				<div className="actionItems">
@@ -63,7 +63,7 @@ const PageMainSettingsExportProtobuf = observer(class PageMainSettingsExportProt
 						onClick={() => onExport(I.ExportType.Protobuf, this.data)} 
 					/>
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

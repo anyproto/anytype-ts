@@ -30,7 +30,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
 			onClick: () => {
-				sidebar.settingsOpen('spaceShare');
+				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				close();
 
 				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });

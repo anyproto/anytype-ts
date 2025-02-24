@@ -120,7 +120,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							</div>
 						</div>
 						{!readonly ? (
-							<React.Fragment>
+							<>
 								<div id="plus-v" className="plusButton vertical" onClick={this.onPlusV}>
 									<Icon />
 								</div>
@@ -130,7 +130,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								<div id="plus-c" className="plusButton circle" onClick={this.onPlus}>
 									<Icon />
 								</div>
-							</React.Fragment>
+							</>
 						) : ''}
 					</div>
 				</div>
@@ -1539,7 +1539,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		obj.css({ width: 'auto' });
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
-			const container = U.Common.getPageContainer(isPopup);
+			const container = U.Common.getPageFlexContainer(isPopup);
 
 			maxWidth = container.width() - PADDING;
 			wrapperWidth = getWrapperWidth() + J.Size.blockMenu;

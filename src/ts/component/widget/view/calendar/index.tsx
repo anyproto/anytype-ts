@@ -63,8 +63,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 	const onClick = (d: number, m: number, y: number) => {
 		const element = `#day-${d}-${m}-${y}`;
 
-		S.Menu.closeAll([ 'dataviewCalendarDay' ], () => {
-			S.Menu.open('dataviewCalendarDay', {
+		S.Menu.closeAll([ 'calendarDay' ], () => {
+			S.Menu.open('calendarDay', {
 				element,
 				className: 'fixed fromWidget',
 				classNameWrap: 'fromSidebar',

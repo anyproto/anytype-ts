@@ -125,6 +125,7 @@ class Keyboard {
 	
 	onKeyDown (e: any) {
 		const { theme, pin } = S.Common;
+		const isPopup = this.isPopup();
 		const isMac = U.Common.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
@@ -152,6 +153,9 @@ class Keyboard {
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
+			if (S.Common.getShowSidebarRight(isPopup)) {
+				sidebar.rightPanelToggle(false, true, isPopup);
+			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
 
@@ -230,7 +234,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
-				sidebar.settingsOpen();
+				U.Object.openAuto({ id: 'account', layout: I.ObjectLayout.Settings });
 			});
 
 			// Create relation
@@ -321,10 +325,8 @@ class Keyboard {
 	};
 
 	getRootId (): string {
-		const isPopup = this.isPopup();
-		const popupMatch = this.getPopupMatch();
-
-		return isPopup ? popupMatch.params.id : (this.match?.params?.id);
+		const match = this.getMatch();
+		return match.params?.objectId || match.params?.id;
 	};
 
 	onKeyUp (e: any) {
@@ -965,7 +967,18 @@ class Keyboard {
 	};
 
 	getMatch () {
-		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
+		let ret: any = { params: {} };
+		if (this.isPopup()) {
+			ret = Object.assign(ret, this.getPopupMatch());
+		} else {
+			const match = this.match;
+			const param = U.Router.getParam(U.Router.getRoute());
+
+			ret = Object.assign(ret, match);
+			ret.params = Object.assign(ret.params, param);
+		};
+
+		return ret;
 	};
 
 	isMain () {
@@ -1265,11 +1278,11 @@ class Keyboard {
 	};
 
 	getKeys (id: string) {
-		let ret = '';
-		if (this.shortcuts[id]) {
-			ret = (this.shortcuts[id].keys || []).join('+');
-		};
-		return ret;
+		return this.shortcuts[id].keys || [];
+	};
+
+	getKeysString (id: string) {
+		return this.getKeys(id).join('+');
 	};
 
 	getSymbolsFromKeys (keys: string[]) {
@@ -1293,6 +1306,18 @@ class Keyboard {
 			};
 			if (key == 'delete') {
 				return 'Del';
+			};
+			if (key == 'arrowleft') {
+				return '←';
+			};
+			if (key == 'arrowup') {
+				return '↑';
+			};
+			if (key == 'arrowright') {
+				return '→';
+			};
+			if (key == 'arrowdown') {
+				return '↓';
 			};
 			return U.Common.ucFirst(key);
 		});

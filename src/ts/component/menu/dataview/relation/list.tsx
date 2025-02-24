@@ -4,8 +4,8 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Switch } from 'Component';
-import { I, C, S, J, Relation, keyboard, Dataview, translate, analytics } from 'Lib';
+import { Icon, IconObject, Switch } from 'Component';
+import { I, C, S, J, keyboard, Dataview, translate, analytics } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -66,7 +66,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				>
 					{!isReadonly ? <Handle /> : ''}
 					<span className="clickable" onClick={e => this.onClick(e, item)}>
-						<Icon className={`relation ${Relation.className(item.relation.format)}`} />
+						<IconObject object={item.relation} />
 						<div className="name">{item.relation.name}</div>
 					</span>
 					{canHide ? (

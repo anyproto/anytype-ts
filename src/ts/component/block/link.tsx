@@ -20,7 +20,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
-	render() {
+	render () {
 		const { rootId, block } = this.props;
 		const object = S.Detail.get(rootId, block.getTargetObjectId(), J.Relation.cover);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;

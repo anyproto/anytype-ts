@@ -33,6 +33,10 @@
 	.menu.menuDataviewText.fromFeatured {
 		.content { padding: 8px 14px; }
 	}
+
+	.menu.menuDataviewText.fromSidebar {
+		#input { min-height: 48px; }
+	}
 }
 
 html.platformWindows {

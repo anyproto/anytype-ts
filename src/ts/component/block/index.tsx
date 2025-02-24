@@ -72,17 +72,26 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, onMouseEnter, onMouseLeave } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, blockContextParam, onMouseEnter, onMouseLeave } = this.props;
 		
 		if (!block) {
 			return null;
 		};
 
-		const { id, type, fields, content, hAlign, bgColor } = block;
+		const { id, type, fields, content, bgColor } = block;
 
 		if (!id) {
 			return null;
 		};
+
+		let hAlign = null;
+		if (blockContextParam && (block.isTextTitle() || block.isTextDescription() || block.isFeatured())) {
+			hAlign = blockContextParam.hAlign;
+		} else {
+			hAlign = block.hAlign;
+		};
+
+		hAlign = hAlign || I.BlockHAlign.Left;
 
 		const index = Number(this.props.index) || 0;
 		const { style, checked } = content;
@@ -228,7 +237,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					<BlockChat 
 						key={key} 
 						ref={setRef} 
-						{...this.props} 
+						{...this.props}
 						renderLinks={this.renderLinks} 
 						renderMentions={this.renderMentions}
 						renderObjects={this.renderObjects}

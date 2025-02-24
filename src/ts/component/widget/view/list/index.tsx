@@ -84,7 +84,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		const length = getItems().length;
 
 		raf(() => {
-			const container = $('#sidebar #containerWidget #list');
+			const container = $('#sidebarLeft #containerWidget #body');
 			const obj = $(`#widget-${parent.id}`);
 			const node = $(nodeRef.current);
 			const head = obj.find('.head');
@@ -210,7 +210,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		);
 	} else {
 		content = (
-			<React.Fragment>
+			<>
 				{items.map((item: any) => (
 					<WidgetListItem 
 						key={`widget-${block.id}-${item.id}`} 
@@ -222,7 +222,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 						hideIcon={view?.hideIcon}
 					/>
 				))}
-			</React.Fragment>
+			</>
 		);
 	};
 

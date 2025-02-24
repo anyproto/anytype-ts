@@ -88,7 +88,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return null;
 		};
 		
-		const width = root.fields?.width;
+		const width = U.Data.getLayoutWidth(rootId);
 		const readonly = this.isReadonly();
 
 		return (
@@ -167,7 +167,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
-		sidebar.resizePage(null, false);
+		sidebar.resizePage(null, null, false);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -198,10 +198,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	getWrapperWidth (): number {
-		const { rootId } = this.props;
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		return this.getWidth(root?.fields?.width);
+		return this.getWidth(U.Data.getLayoutWidth(this.props.rootId));
 	};
 
 	checkDeleted () {
@@ -2006,7 +2003,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						case 'block': {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, (message: any) => {
+							const bookmark = S.Record.getBookmarkType();
+
+							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, bookmark?.defaultTemplateId, (message: any) => {
 								if (!message.error.code) {
 									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
 								};
@@ -2317,13 +2316,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const last = node.find('#blockLast');
 			const size = node.find('#editorSize');
 			const cover = node.find('.block.blockCover');
-			const pageContainer = U.Common.getPageContainer(this.props.isPopup);
+			const pageContainer = U.Common.getPageFlexContainer(this.props.isPopup);
 			const header = pageContainer.find('#header');
 			const root = S.Block.getLeaf(rootId, rootId);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const hh = isPopup ? header.height() : J.Size.header;
 
-			this.setLayoutWidth(root?.fields?.width);
+			this.setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
 			if (blocks.length && last.length && scrollContainer.length) {
 				const ct = isPopup ? scrollContainer.offset().top : 0;
@@ -2377,7 +2376,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		v = Number(v) || 0;
 
 		const { isPopup, rootId } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const cw = container.width();
 		const node = $(this.node);
 		const width = this.getWidth(v);
@@ -2399,7 +2398,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		w = Number(w) || 0;
 
 		const { isPopup, rootId } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		let mw = container.width();
