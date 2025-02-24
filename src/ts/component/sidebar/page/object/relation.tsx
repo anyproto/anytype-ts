@@ -1,6 +1,5 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
 import { I, S, U, sidebar, translate, keyboard, Relation, C, Preview } from 'Lib';
