@@ -20,6 +20,18 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 	const headRef = useRef(null);
 	const listRef = useRef(null);
 	const idRef = useRef(null);
+	const relation = S.Record.getRelationByKey(relationKey);
+	const dayName = [];
+
+	if (!object._empty_) {
+		const dayString = U.Date.dayString(object.timestamp);
+
+		if (dayString) {
+			dayName.push(dayString);
+		};
+
+		dayName.push(U.Date.date('l', object.timestamp));
+	};
 
 	const open = () => {
 		if (idRef.current == rootId) {
@@ -166,18 +178,10 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 		});
 	};
 
-	const relation = S.Record.getRelationByKey(relationKey);
-	const dayString = U.Date.dayString(object.timestamp);
-	const dayName = [ U.Date.date('l', object.timestamp) ];
-
-	if (dayString) {
-		dayName.unshift(dayString);
-	};
-
 	let content = null;
 	let inner = null;
 
-	if (isLoading) {
+	if (isLoading || object._empty_) {
 		inner = <Loader id="loader" />;
 	} else
 	if (!relations.length || !relation) {

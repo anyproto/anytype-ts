@@ -165,7 +165,7 @@ class UtilDate {
 				return w == 0 ? 7 : w;
 			},
 			l: () => {
-				return translate(`day${f.N() + 1}`);
+				return translate(`day${f.N()}`);
 			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {

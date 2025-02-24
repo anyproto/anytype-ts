@@ -4,7 +4,10 @@
 .pageMainDate {
 	.wrapper { width: 704px; margin: 0px auto; padding: 52px 0px 80px 0px; user-select: none; }
 
-	.dayName { @include text-common; color: var(--color-text-secondary); margin: 0px 0px 8px 0px; display: flex; flex-direction: row; gap: 8px; align-items: center; }
+	.dayName { 
+		@include text-common; color: var(--color-text-secondary); margin: 0px 0px 8px 0px; display: flex; flex-direction: row; gap: 8px; 
+		align-items: center; min-height: 22px;
+	}
 	.dayName {
 		div { display: flex; flex-direction: row; gap: 8px; align-items: center; }
 		div::after { content: ''; width: 3px; height: 3px; border-radius: 50%; background: var(--color-control-active); }
@@ -32,9 +35,9 @@
 		.iconObject { display: none; }
 	}
 
-	.emptyContainer { 
+	.emptyContainer, #loader { 
 		text-align: center; align-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: var(--color-text-secondary); 
 	}
 
-	#loader { position: fixed; top: 50% !important; transform: translateY(-50%); }
+	/*#loader { position: relative; width: auto !important; }*/
 }
