@@ -2,15 +2,16 @@ import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, U, J, focus, Action, analytics, Relation, translate, sidebar } from 'Lib';
+import { I, C, S, U, J, focus, Action, analytics, Relation, translate, sidebar, keyboard } from 'Lib';
 
 const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	const { isPopup, match } = props;
+	const { isPopup } = props;
+	const match = keyboard.getMatch();
 	const [ isLoading, setIsLoading ] = useState(false);
 	const headerRef = useRef(null);
 	const headRef = useRef(null);
-	const rootId = props.rootId || match?.params?.id;
+	const rootId = match.params?.objectId || match.params?.id;
 	const type = S.Detail.get(rootId, rootId, U.Data.typeRelationKeys());
 	const subIdTemplate = S.Record.getSubId(rootId, 'templates');
 	const subIdObject = S.Record.getSubId(rootId, 'data');

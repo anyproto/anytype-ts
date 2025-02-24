@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, U, S, J, Storage, keyboard } from 'Lib';
+import { U, S, J, Storage, keyboard } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -417,10 +417,6 @@ class Sidebar {
 
 	rightPanelSetState (v: any) {
 		S.Common.getRef('sidebarRight')?.setState(v);
-	};
-
-	settingsOpen (id?: string) {
-		U.Router.go(`/main/settings/${id || ''}`, {});
 	};
 
 };

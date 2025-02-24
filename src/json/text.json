@@ -198,6 +198,7 @@
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
 	"pluralObjectType": "Object Type|Object Types",
+	"pluralField": "Field|Fields",
 	"pluralLinks": "link|links",
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",

@@ -8,6 +8,7 @@ interface RouteParam {
 	spaceId: string; 
 	viewId: string; 
 	relationKey: string;
+	additional: { key: string, value: string }[];
 };
 
 class UtilRouter {
@@ -50,6 +51,7 @@ class UtilRouter {
 		const spaceId = String(param.spaceId || '');
 		const viewId = String(param.viewId || '');
 		const relationKey = String(param.relationKey || '');
+		const additional = param.additional || [];
 
 		let route = [ page, action, id ];
 		if (spaceId) {
@@ -60,6 +62,11 @@ class UtilRouter {
 		};
 		if (relationKey) {
 			route = route.concat([ 'relationKey', relationKey ]);
+		};
+		if (additional.length) {
+			additional.forEach((it: any) => {
+				route = route.concat([ it.key, it.value ]);
+			});
 		};
 		return route.join('/');
 	};

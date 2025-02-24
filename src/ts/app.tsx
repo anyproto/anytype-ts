@@ -207,6 +207,10 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
+
+		window.setTimeout(() => {
+			U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+		}, 1500);
 	};
 
 	init () {

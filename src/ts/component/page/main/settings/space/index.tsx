@@ -265,6 +265,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	onClick (e: React.MouseEvent, item: any) {
 		const { cid, key } = this.state;
+		const space = U.Space.getSpaceview();
+		const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
 		switch (item.id) {
 			case 'invite': {
@@ -290,7 +292,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 					data: {
 						options: [
 							{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-							{ id: 'delete', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' },
+							{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
 						],
 						onSelect: (e: React.MouseEvent, option: any) => {
 							switch (option.id) {

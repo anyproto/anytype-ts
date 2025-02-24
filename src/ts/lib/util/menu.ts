@@ -1111,7 +1111,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			sidebar.settingsOpen('importIndex');
+			U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
 		};
 
 		const getClipboardData = async () => {

@@ -1,6 +1,8 @@
 import * as React from 'react';
+import $ from 'jquery';
+import { Header } from 'Component';
 import { observer } from 'mobx-react';
-import { I, S, U, analytics, Action, keyboard, translate, Preview, Onboarding, sidebar, Storage } from 'Lib';
+import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage } from 'Lib';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -30,9 +32,10 @@ import PageSpaceStorageManager from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
 
+import PageMainType from '../type';
+import PageMainRelation from '../relation';
+
 import PageMembership from './membership';
-import $ from 'jquery';
-import { Header } from 'Component';
 
 interface State {
 	loading: boolean;
@@ -68,14 +71,19 @@ const Components: any = {
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
-};
 
+	type:				 PageMainType,
+	relation:			 PageMainRelation,
+};
 
 const SPACE_PAGES = [
 	'spaceIndex', 'spaceStorageManager', 'spaceShare',
-	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'exportIndex', 'exportProtobuf', 'exportMarkdown',
+	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 
+	'exportIndex', 'exportProtobuf', 'exportMarkdown',
+	'type', 'relation',
 ];
 
+const SKIP_CONTAINER = [ 'type', 'relation' ];
 
 const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
 
@@ -91,7 +99,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 		this.getId = this.getId.bind(this);
 		this.isSpace = this.isSpace.bind(this);
-		this.onPage = this.onPage.bind(this);
 		this.onExport = this.onExport.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.onSpaceTypeTooltip = this.onSpaceTypeTooltip.bind(this);
@@ -101,38 +108,45 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	};
 
 	render () {
-		const pathname = U.Router.getRoute();
-		const param = U.Router.getParam(pathname);
+		const param = U.Router.getParam(U.Router.getRoute());
 		const id = param.id || 'account';
 
 		if (!Components[id]) {
-			return;
+			return null;
 		};
 
 		const Component = Components[id];
-		return (
-			<>
-				<Header {...this.props} component="mainSettings" />
-				<div className="settingsPageContainer" id="settingsPageContainer">
 
-					<div id={this.getId()} className={[ 'settingsPage', this.getId() ].join(' ')} >
-						<Component
-							ref={ref => this.ref = ref}
-							{...this.props}
-							getId={this.getId}
-							onPage={this.onPage}
-							onExport={this.onExport}
-							onConfirmPin={this.onConfirmPin}
-							setConfirmPin={this.setConfirmPin}
-							setLoading={this.setLoading}
-							onSpaceTypeTooltip={this.onSpaceTypeTooltip}
-							storageGet={this.storageGet}
-							storageSet={this.storageSet}
-						/>
-					</div>
-				</div>
-			</>
+		let content = (
+			<div id={this.getId()} className={[ 'settingsPage', this.getId() ].join(' ')} >
+				<Component
+					ref={ref => this.ref = ref}
+					{...this.props}
+					getId={this.getId}
+					onPage={id => U.Object.openAuto({ id, layout: I.ObjectLayout.Settings })}
+					onExport={this.onExport}
+					onConfirmPin={this.onConfirmPin}
+					setConfirmPin={this.setConfirmPin}
+					setLoading={this.setLoading}
+					onSpaceTypeTooltip={this.onSpaceTypeTooltip}
+					storageGet={this.storageGet}
+					storageSet={this.storageSet}
+				/>
+			</div>
 		);
+
+		if (!SKIP_CONTAINER.includes(id)) {
+			content = (
+				<>
+					<Header {...this.props} component="mainSettings" />
+					<div className="settingsPageContainer" id="settingsPageContainer">
+						{content}
+					</div>
+				</>
+			);
+		};
+
+		return content;
 	};
 
 	componentDidMount () {
@@ -152,15 +166,15 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 	init () {
 		if (this.isSpace()) {
+			if (!U.Space.canMyParticipantWrite()) {
+				return;
+			};
+
 			sidebar.leftPanelSetState({ page: 'settingsSpace' });
 		} else {
 			S.Common.getRef('vault')?.setActive('settings');
 			sidebar.leftPanelSetState({ page: 'settings' });
 		};
-	};
-
-	onPage (id: string) {
-		sidebar.settingsOpen(id);
 	};
 
 	onExport (type: I.ExportType, param: any) {
