@@ -12,8 +12,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 	node: any = null;
 	routeBack: any = null;
-
-	types: any[] = [];
+	toggle: any = {
+		contentModelTypes: false,
+		contentModelFields: false,
+	};
 
 	render () {
 		const space = U.Space.getSpaceview();
@@ -71,7 +73,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				};
 			};
 
-			if (action.layout && action.layout == I.ObjectLayout.Type) {
+			if (U.Object.isTypeOrRelationLayout(action.layout)) {
 				icon = <IconObject object={action} />;
 			};
 
@@ -97,6 +99,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			} else
 			if (item.isToggle) {
 				cn.push('isToggle');
+
+				if (this.toggle[item.id]) {
+					cn.push('isOpen');
+				};
 			};
 
 			let name = null;
@@ -165,29 +171,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const history = U.Router.history;
 
 		this.routeBack = history.entries[history.index - 1];
-
-		this.load();
-	};
-
-	load () {
-		U.Data.search({
-			sorts: [
-				{ type: I.SortType.Desc, relationKey: 'createdDate' },
-				{ type: I.SortType.Asc, relationKey: 'name' },
-			],
-			filters: [
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type }
-			],
-			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
-			noDeps: true,
-			ignoreHidden: true,
-			ignoreDeleted: true,
-		}, (message: any) => {
-			if (!message.error.code) {
-				this.types = message.records;
-				this.forceUpdate();
-			};
-		});
 	};
 
 	getSections () {
@@ -237,8 +220,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
-			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: this.types },
-			{ id: 'contentModelFields', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: [] },
+			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: S.Record.getTypes() },
+			{ id: 'contentModelFields', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: S.Record.getRelations() },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
@@ -286,8 +269,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 		if (obj.hasClass('isOpen')) {
 			obj.removeClass('isOpen');
+			this.toggle[item.id] = false;
 		} else {
 			obj.addClass('isOpen');
+			this.toggle[item.id] = true;
 		};
 	};
 
