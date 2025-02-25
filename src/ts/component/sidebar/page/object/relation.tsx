@@ -3,12 +3,10 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
 import { I, S, U, sidebar, translate, keyboard, Relation, C, Preview } from 'Lib';
-
 import Section from 'Component/sidebar/section';
 
 const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, {}> {
 	
-	node = null;
 	sectionRefs: Map<string, any> = new Map();
 
 	constructor (props: I.SidebarPageComponent) {
@@ -30,7 +28,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const allowDetails = !readonly && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 
         return (
-			<div ref={ref => this.node = ref}>
+			<>
 				<div className="head">
 					<div className="side left">
 						<Label text={translate('sidebarTypeRelation')} />
@@ -85,7 +83,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 						);
 					})}
 				</div>
-			</div>
+			</>
 		);
 	};
 
@@ -189,7 +187,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
 	onToggle (id: string) {
-		const node = $(this.node);
+		const node = $('#sidebarRight');
 		const obj = node.find(`#relationGroup-${id}`);
 		const toggle = obj.find('.sectionToggle');
 		const list = obj.find('> .list');
@@ -200,8 +198,9 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
 	onShowDescription (id: string, text: string) {
-		const node = $(this.node);
+		const node = $('#sidebarRight');
 		const element = node.find(`#relationGroup-${id} .groupDescription`);
+
 		Preview.tooltipShow({
 			text,
 			element,
