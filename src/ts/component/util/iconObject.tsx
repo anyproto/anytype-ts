@@ -27,6 +27,7 @@ interface Props {
 	style?: any;
 	getObject?(): any;
 	onSelect?(id: string): void;
+	onIconSelect?(id: string, color: number): void;
 	onUpload?(objectId: string): void;
 	onClick?(e: any): void;
 	onCheckbox?(e: any): void;
@@ -128,6 +129,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		style = {},
 		getObject,
 		onSelect,
+		onIconSelect,
 		onUpload,
 		onClick,
 		onCheckbox,
@@ -248,7 +250,11 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 					};
 				},
 				onIconSelect: (iconName: string, iconOption: number) => {
-					U.Object.setTypeIcon(object.id, iconName, iconOption);
+					if (onIconSelect) {
+						onIconSelect(iconName, iconOption);
+					} else {
+						U.Object.setTypeIcon(object.id, iconName, iconOption);
+					};
 				},
 				onUpload: (objectId: string) => {
 					if (onUpload) {
