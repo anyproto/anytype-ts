@@ -156,7 +156,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			for (const key in this.update) {
 				update.push({ key, value: this.object[key] });
 			};
-			C.ObjectListSetDetails([ rootId ], update);
+			if (update.length) {
+				C.ObjectListSetDetails([ rootId ], update);
+			};
 		} else {
 			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
 				if (!message.error.code) {

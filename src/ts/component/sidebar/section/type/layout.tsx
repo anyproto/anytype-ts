@@ -94,10 +94,11 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 				];
 
 				if (!object.isNew) {
-					ret = ret.filter(id => id != I.ObjectLayout.Note);
-				};
-				if (U.Object.isNoteLayout(object.layout)) {
-					ret = [ I.ObjectLayout.Note ];
+					if (U.Object.isNoteLayout(object.recommendedLayout)) {
+						ret = [ I.ObjectLayout.Note ];
+					} else {
+						ret = ret.filter(id => id != I.ObjectLayout.Note);
+					};
 				};
 				break;
 			};
