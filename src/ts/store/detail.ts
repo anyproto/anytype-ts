@@ -40,7 +40,7 @@ class DetailStore {
 			return;
 		};
 
-		const map = observable.map(new Map());
+		const map = observable.map(new Map(), { deep: false });
 
 		for (const item of items) {
 			const list: Detail[] = [];
@@ -72,7 +72,7 @@ class DetailStore {
 		let createList = false;
 
 		if (!map) {
-			map = observable.map(new Map());
+			map = observable.map(new Map(), { deep: false });
 			createMap = true;
 		};
 
@@ -135,13 +135,11 @@ class DetailStore {
 			return;
 		};
 
-		let list = [];
-
 		if (keys && keys.length) {
-			list = (map.get(id) || []).filter(it => !keys.includes(it.relationKey));
+			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
+		} else {
+			map.set(id, []);
 		};
-
-		map.set(id, list);
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
