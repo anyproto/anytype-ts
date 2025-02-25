@@ -444,7 +444,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	getRootId () {
-		return keyboard.getRootId();
+		return keyboard.getRootId(this.props.isPopup);
 	};
 
 	isSetOrCollection (): boolean {

@@ -462,7 +462,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	getRootId () {
-		let root = keyboard.getRootId();
+		let root = keyboard.getRootId(this.props.isPopup);
 		if (root == I.HomePredefinedId.Graph) {
 			root = U.Space.getLastOpened()?.id;
 		};

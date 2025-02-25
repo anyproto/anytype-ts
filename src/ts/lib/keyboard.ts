@@ -320,15 +320,6 @@ class Keyboard {
 		});
 	};
 
-	isPopup () {
-		return S.Popup.isOpen('page');
-	};
-
-	getRootId (): string {
-		const match = this.getMatch();
-		return match.params?.objectId || match.params?.id;
-	};
-
 	onKeyUp (e: any) {
 		this.pressed = this.pressed.filter(it => it != this.eventKey(e));
 	};
@@ -961,17 +952,28 @@ class Keyboard {
 		};
 	};
 
+	isPopup () {
+		return S.Popup.isOpen('page');
+	};
+
+	getRootId (isPopup?: boolean): string {
+		const match = this.getMatch(isPopup);
+		return match.params?.objectId || match.params?.id;
+	};
+
 	getPopupMatch () {
 		const popup = S.Popup.get('page');
 		return popup && popup?.param.data.matchPopup || {};
 	};
 
-	getMatch () {
+	getMatch (isPopup?: boolean) {
+		const popup = undefined == isPopup ? this.isPopup() : isPopup;
+
 		let ret: any = { params: {} };
-		if (this.isPopup()) {
+		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
-			const match = this.match;
+			const match = U.Common.objectCopy(this.match);
 			const param = U.Router.getParam(U.Router.getRoute());
 
 			ret = Object.assign(ret, match);
@@ -1049,7 +1051,7 @@ class Keyboard {
 	};
 
 	setMatch (match: any) {
-		this.match = match;
+		this.match = U.Common.objectCopy(match);
 	};
 
 	setSource (source: any) {

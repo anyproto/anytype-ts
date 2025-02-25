@@ -7,8 +7,7 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	const { isPopup } = props;
 	const headerRef = useRef(null);
-	const match = keyboard.getMatch();
-	const rootId = match.params?.objectId || match.params?.id;
+	const rootId = keyboard.getRootId(isPopup);
 
 	const onOpen = () => {
 		const home = U.Space.getDashboard();

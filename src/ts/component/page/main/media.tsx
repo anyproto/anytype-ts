@@ -231,8 +231,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return;
 		};
 
-		const { isPopup, match } = this.props;
-		const close = !(isPopup && (match?.params?.id == this.id));
+		const { isPopup } = this.props;
+		const close = !(isPopup && (this.getRootId() == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -311,7 +311,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	getRootId () {
-		return keyboard.getRootId();
+		return keyboard.getRootId(this.props.isPopup);
 	};
 
 	resize () {

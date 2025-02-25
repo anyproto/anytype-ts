@@ -184,8 +184,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			return;
 		};
 
-		const { isPopup, match } = this.props;
-		const close = !(isPopup && (match?.params?.id == this.id));
+		const { isPopup } = this.props;
+		const close = !(isPopup && (this.getRootId() == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -193,7 +193,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	getRootId () {
-		return keyboard.getRootId();
+		return keyboard.getRootId(this.props.isPopup);
 	};
 
 	getObject () {

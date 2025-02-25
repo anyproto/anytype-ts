@@ -10,15 +10,18 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const headerRef = useRef(null);
 	const headRef = useRef(null);
-	const match = keyboard.getMatch();
-	const rootId = match.params?.objectId || match.params?.id;
+	const idRef = useRef(null);
+
+	const getRootId = () => keyboard.getRootId(isPopup);
+	const rootId = getRootId();
 	const type = S.Detail.get(rootId, rootId, U.Data.typeRelationKeys());
 	const subIdTemplate = S.Record.getSubId(rootId, 'templates');
 	const subIdObject = S.Record.getSubId(rootId, 'data');
-	const idRef = useRef(null);
 	const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(type.recommendedLayout) && (type.uniqueKey != J.Constant.typeKey.template);
 
 	const open = () => {
+		const rootId = getRootId();
+
 		if (idRef.current == rootId) {
 			return;
 		};
@@ -53,7 +56,8 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		const close = !(isPopup && (match?.params?.id == idRef.current));
+		const rootId = getRootId();
+		const close = !(isPopup && (rootId == idRef.current));
 
 		if (close) {
 			Action.pageClose(idRef.current, true);

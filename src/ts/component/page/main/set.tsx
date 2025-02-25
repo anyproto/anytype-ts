@@ -199,8 +199,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			return;
 		};
 
-		const { isPopup, match } = this.props;
-		const close = !(isPopup && (match?.params?.id == this.id));
+		const { isPopup } = this.props;
+		const close = !(isPopup && (this.getRootId() == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -208,7 +208,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	getRootId () {
-		return keyboard.getRootId();
+		return keyboard.getRootId(this.props.isPopup);
 	};
 
 	onScroll () {

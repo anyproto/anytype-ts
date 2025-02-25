@@ -246,7 +246,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	componentDidMount () {
 		const { block, isInline, isPopup } = this.props;
-		const match = keyboard.getMatch();
+		const match = keyboard.getMatch(isPopup);
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		const viewId = match.params.viewId || block.content.viewId;
