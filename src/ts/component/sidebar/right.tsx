@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { U, S } from 'Lib';
 
@@ -7,6 +7,10 @@ import PageObjectRelation from './page/object/relation';
 
 interface Props {
 	isPopup?: boolean;
+};
+
+interface SidebarRightRefProps {
+	setState: (state: State) => void;
 };
 
 interface State {
@@ -22,62 +26,55 @@ const Components = {
 	'object/relation': PageObjectRelation,
 };
 
-const SidebarRight = observer(class SidebarRight extends React.Component<Props, State> {
+
+const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
-	node = null;
-	refChild = null;
-	state = {
+	const { isPopup } = props;
+	const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
+	const childRef = useRef(null);
+	const [ state, setState ] = useState<State>({
 		page: '',
 		rootId: '',
 		details: {},
 		readonly: false,
 		noPreview: false,
+	});
+
+	const { page = '' } = state;
+	const Component = Components[page];
+	const cn = [ 'sidebar', 'right' ];
+	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
+	const withPreview = [ 'type' ].includes(page);
+
+	if (withPreview) {
+		cn.push('withPreview');
 	};
 
-    render () {
-		const { isPopup } = this.props;
-		const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
+	useEffect(() => {
+		childRef.current?.forceUpdate();
+	});
 
-		if (!showSidebarRight) {
-			return null;
-		};
+	useImperativeHandle(ref, () => ({
+		setState,
+	}));
 
-		const { page, rootId, details, readonly, noPreview } = this.state;
-		const Component = Components[page];
-		const cn = [ 'sidebar', 'right' ];
-		const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
-		const withPreview = [ 'type' ].includes(page);
+	return showSidebarRight ? (
+		<div 
+			id="sidebarRight"
+			className={cn.join(' ')}
+		>
+			{Component ? (
+				<div className={cnp.join(' ')}>
+					<Component 
+						ref={childRef} 
+						{...props} 
+						{...state}
+					/> 
+				</div>
+			): ''}
+		</div>
+	) : null;
 
-		if (withPreview) {
-			cn.push('withPreview');
-		};
-
-        return (
-			<div 
-				ref={node => this.node = node}
-				id="sidebarRight"
-				className={cn.join(' ')}
-			>
-				{Component ? (
-					<div className={cnp.join(' ')}>
-						<Component 
-							ref={ref => this.refChild = ref} 
-							{...this.props} 
-							rootId={rootId}
-							details={details}
-							readonly={readonly}
-							noPreview={noPreview}
-						/> 
-					</div>
-				): ''}
-			</div>
-		);
-    };
-
-	componentDidUpdate (): void {
-		this.refChild?.forceUpdate();	
-	};
-
-});
+}));
 
 export default SidebarRight;
