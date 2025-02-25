@@ -485,7 +485,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		img.off('error').on('error', () => {
 			node.addClass('withImageError');
-			img.hide();
+			img.attr({ src: './img/icon/error.svg', class: `iconCommon c${IconSize[size]}` });
 		});
 	}, []);
 
