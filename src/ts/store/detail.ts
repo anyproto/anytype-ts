@@ -40,7 +40,7 @@ class DetailStore {
 			return;
 		};
 
-		const map = observable.map(new Map(), { deep: false });
+		const map = observable.map(new Map());
 
 		for (const item of items) {
 			const list: Detail[] = [];
@@ -72,7 +72,7 @@ class DetailStore {
 		let createList = false;
 
 		if (!map) {
-			map = observable.map(new Map(), { deep: false });
+			map = observable.map(new Map());
 			createMap = true;
 		};
 

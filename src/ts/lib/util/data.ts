@@ -611,7 +611,7 @@ class UtilData {
 
 		switch (object.layout) {
 			default:
-				ret.withIcon = object.iconEmoji || object.iconImage;
+				ret.withIcon = Boolean(object.iconEmoji || object.iconImage);
 				break;
 
 			case I.ObjectLayout.Note:
@@ -621,7 +621,7 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Type: {
-				ret.withIcon = iconName || iconEmoji || true;
+				ret.withIcon = Boolean(iconName || iconEmoji) || true;
 				break;
 			};
 
@@ -660,6 +660,7 @@ class UtilData {
 		};
 
 		ret.className = className.join(' ');
+
 		return ret;
 	};
 
