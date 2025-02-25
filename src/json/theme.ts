@@ -22,6 +22,8 @@ export default {
 
 	'': {
 
+		error: '#000',
+
 		color: {
 			default: '#252525',
 			grey: '#b6b6b6',
@@ -69,6 +71,8 @@ export default {
 	},
 
 	dark: {
+
+		error: '#fff',
 
 		color: {
 			default: '#f8f8f8',

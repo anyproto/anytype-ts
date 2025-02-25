@@ -334,14 +334,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		} else {
 			try {
 				const newColor = color || bgByOption(option);
-				const src = require(`img/icon/type/default/${id}.svg`);
-				const chunk = src.split('base64,')[1];
-				const decoded = atob(chunk).replace(/_COLOR_VAR_/g, newColor);
-				const obj = $(decoded);
 
-				obj.attr({ width: size, height: size, fill: newColor, stroke: newColor });
-
-				ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+				ret = U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { size, fill: newColor, stroke: newColor });
 				iconCache.set(key, ret);
 			} catch (e) { /**/ };
 		};
@@ -479,25 +473,39 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		icon = <img src={Ghost} className={[ 'iconCommon', `c${iconSize}` ].join(' ')} />;
 	};
 
+	const setErrorIcon = () => {
+		const node = $(nodeRef.current);
+		const img = node.find('img');
+
+		img.attr({ 
+			src: U.Common.updateSvg(require('img/icon/error.svg'), { size, fill: J.Theme[theme]?.error }), 
+			class: `iconCommon c${IconSize[size]}`
+		});
+	};
+
 	useEffect(() => {
 		const node = $(nodeRef.current);
 		const img = node.find('img');
 
 		img.off('error').on('error', () => {
 			node.addClass('withImageError');
-			img.attr({ src: './img/icon/error.svg', class: `iconCommon c${IconSize[size]}` });
+			setErrorIcon();
 		});
 	}, []);
+
+	useEffect(() => {
+		const node = $(nodeRef.current);
+
+		if (node.hasClass('withImageError')) {
+			setErrorIcon();
+		};
+	}, [ theme ]);
 
 	useImperativeHandle(ref, () => ({
 		setObject: object => setStateObject(object),
 	}));
 
-	if (!icon) {
-		return null;
-	};
-
-	return (
+	return icon ? (
 		<div 
 			ref={nodeRef}
 			id={props.id} 
@@ -515,7 +523,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		>
 			{icon}
 		</div>
-	);
+	) : null;
 
 }));
 

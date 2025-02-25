@@ -1128,6 +1128,33 @@ class UtilCommon {
 		};
 	};
 
+	updateSvg (src: string, param: any) {
+		const { size, fill, stroke } = param;
+		const chunk = src.split('base64,')[1];
+		const decoded = atob(chunk).replace(/_COLOR_VAR_/g, fill);
+		const obj = $(decoded);
+		const attr: any = {};
+
+		if (size) {
+			attr.width = size;
+			attr.height = size;
+		};
+
+		if (fill) {
+			attr.fill = fill;
+		};
+
+		if (stroke) {
+			attr.stroke = stroke;
+		};
+
+		if (this.objectLength(attr)) {
+			obj.attr(attr);
+		};
+		
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+	};
+
 };
 
 export default new UtilCommon();
