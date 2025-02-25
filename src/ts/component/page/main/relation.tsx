@@ -149,6 +149,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	open () {
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -172,7 +173,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
-			sidebar.rightPanelSetState({ rootId });
+			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 
 			analytics.event('ScreenRelation', { relationKey: object.relationKey });

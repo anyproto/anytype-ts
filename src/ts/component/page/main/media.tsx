@@ -198,6 +198,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	open () {
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -221,7 +222,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
-			sidebar.rightPanelSetState({ rootId });
+			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 		});
 	};

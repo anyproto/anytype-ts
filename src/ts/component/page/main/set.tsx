@@ -164,6 +164,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	open () {
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -188,7 +189,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
 			this.refControls?.forceUpdate();
-			sidebar.rightPanelSetState({ rootId });
+			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 			this.resize();
 		});

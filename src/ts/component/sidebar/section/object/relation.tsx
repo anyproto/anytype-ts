@@ -32,8 +32,8 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 		const readonly = this.props.readonly || root.isLocked();
 		const canEdit = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const container = [ 
-			U.Common.getCellContainer('sidebarRight'), 
-			U.Common.getCellContainer(isPopup ? 'popup' : 'page') 
+			U.Common.getCellContainer(isPopup ? 'popup' : 'page'),
+			U.Common.getCellContainer('sidebarRight'),
 		].join(', ');
 
 		if (canEdit) {

@@ -45,7 +45,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-			sidebar.rightPanelSetState({ rootId });
+			sidebar.rightPanelSetState(isPopup, { rootId });
 			
 			loadTemplates();
 		});

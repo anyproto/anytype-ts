@@ -362,12 +362,17 @@ class Sidebar {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
+	rightPanelRef (isPopup: boolean) {
+		const namespace = U.Common.getEventNamespace(isPopup);
+		return S.Common.getRef(`sidebarRight${namespace}`);
+	};
+
 	rightPanelToggle (v: boolean, animate: boolean, isPopup: boolean, page?: string, param?: any) {
 		if (v) {
 			S.Common.showSidebarRightSet(isPopup, v);
 
 			if (page) {
-				this.rightPanelSetState({ page, ...param });
+				this.rightPanelSetState(isPopup, { page, ...param });
 			};
 		};
 
@@ -415,8 +420,8 @@ class Sidebar {
 		S.Common.getRef('sidebarLeft')?.setState(v);
 	};
 
-	rightPanelSetState (v: any) {
-		S.Common.getRef('sidebarRight')?.setState(v);
+	rightPanelSetState (isPopup: boolean, v: any) {
+		this.rightPanelRef(isPopup)?.setState(v);
 	};
 
 };

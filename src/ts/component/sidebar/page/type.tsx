@@ -72,7 +72,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const { isPopup } = this.props;
 		const container = U.Common.getPageFlexContainer(isPopup);
 
-		S.Common.getRef('sidebarRight')?.setState({ details: {}, rootId: ''});
+		sidebar.rightPanelRef(isPopup)?.setState({ details: {}, rootId: ''});
 		container.removeClass('overPopup');
 	};
 
