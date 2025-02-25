@@ -845,12 +845,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems (): any[] {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const short = S.Detail.get(rootId, storeId, [ 'type', 'layout', 'featuredRelations' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'type', 'targetObjectType', 'layout', 'featuredRelations' ], true);
 		const keys = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
 
 		let ret = [];
 		if (!keys.length) {
-			ret = S.Record.getTypeFeaturedRelations(short.type);
+			ret = S.Record.getTypeFeaturedRelations(short.targetObjectType || short.type);
 		} else {
 			ret = keys.map(it => S.Record.getRelationByKey(it));
 		};
