@@ -43,8 +43,8 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			headerRef.current.forceUpdate();
-			headRef.current.forceUpdate();
+			headerRef.current?.forceUpdate();
+			headRef.current?.forceUpdate();
 			sidebar.rightPanelSetState({ rootId });
 			
 			loadTemplates();
