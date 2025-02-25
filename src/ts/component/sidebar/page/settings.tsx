@@ -139,7 +139,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 					<div className="list">
 						{isSpace ? (
 							<div className="head" onClick={onBack}>
-								<Icon className="back" />
+								<Icon className="back withBackground" />
 								<ObjectName object={space} />
 							</div>
 						) : ''}
