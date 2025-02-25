@@ -24,7 +24,7 @@ const PageMainImport = forwardRef<{}, I.PageComponent>((props, ref) => {
 			if (message.error.code) {
 				setError(message.error.description);
 			} else {
-				U.Space.openDashboard('route');
+				U.Space.openDashboard();
 
 				window.setTimeout(() => {
 					S.Popup.open('usecase', { 
@@ -53,7 +53,7 @@ const PageMainImport = forwardRef<{}, I.PageComponent>((props, ref) => {
 							text={translate('commonBack')} 
 							color="blank" 
 							className="c36" 
-							onClick={() => U.Space.openDashboard('route')} 
+							onClick={() => U.Space.openDashboard()} 
 						/>
 					</div>
 				) : <Loader />}

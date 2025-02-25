@@ -582,7 +582,7 @@ class UtilMenu {
 
 				U.Data.createSubSpaceSubscriptions([ space ], () => {
 					if (openRoute) {
-						U.Space.openDashboard('route');
+						U.Space.openDashboard();
 					};
 				});
 			});

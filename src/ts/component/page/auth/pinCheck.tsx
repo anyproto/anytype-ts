@@ -31,7 +31,7 @@ const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			redirect ? U.Router.go(redirect, routeParam) : U.Space.openDashboard('route', routeParam);
+			redirect ? U.Router.go(redirect, routeParam) : U.Space.openDashboard(routeParam);
 		} else {
 			U.Router.go('/', routeParam);
 		};

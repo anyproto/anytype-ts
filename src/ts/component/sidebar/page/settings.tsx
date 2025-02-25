@@ -28,7 +28,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 		const onBack = () => {
 			if (!this.routeBack || !this.routeBack.pathname) {
-				U.Space.openDashboard('route');
+				U.Space.openDashboard();
 				return;
 			};
 

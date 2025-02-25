@@ -589,7 +589,7 @@ class UtilCommon {
 							};
 						});
 
-						U.Space.openDashboard('route', { replace: true });
+						U.Space.openDashboard({ replace: true });
 					}
 				},
 			});

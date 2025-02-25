@@ -188,7 +188,7 @@ class UtilData {
 						if (route) {
 							U.Router.go(route, routeParam);
 						} else {
-							U.Space.openDashboard('route', routeParam);
+							U.Space.openDashboard(routeParam);
 						};
 
 						S.Common.redirectSet('');

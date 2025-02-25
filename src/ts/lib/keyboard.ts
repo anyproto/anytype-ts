@@ -228,7 +228,7 @@ class Keyboard {
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
 				if (S.Auth.account && !S.Popup.isOpen('search')) {
-					U.Space.openDashboard('route');
+					U.Space.openDashboard();
 				};
 			});
 
@@ -346,7 +346,7 @@ class Keyboard {
 			let prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
-				U.Space.openDashboard('route');
+				U.Space.openDashboard();
 				return;
 			};
 

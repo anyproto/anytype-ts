@@ -22,7 +22,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 				return;
 			};
 
-			U.Space.openDashboard('route', {
+			U.Space.openDashboard({
 				replace: true,
 				animate: true,
 				onFadeIn: () => {
@@ -95,7 +95,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 							text={translate('commonBack')} 
 							color="blank" 
 							className="c36" 
-							onClick={() => U.Space.openDashboard('route')} 
+							onClick={() => U.Space.openDashboard()} 
 						/>
 					</div>
 				) : <Loader />}
