@@ -56,6 +56,8 @@
                 .caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
             }
 
+            .item.isTypeOrRelation { padding-left: 26px; }
+
             .item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; border-radius: 8px; }
             .item.itemAccount {
                 .iconObject { flex-shrink: 0; }
@@ -65,6 +67,9 @@
             .toggle { padding-left: 4px; }
             .toggle {
                 .icon { width: 20px; height: 20px; flex-shrink: 0; background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
+            }
+            .toggle.isOpen {
+                .icon { transform: rotate(0deg); }
             }
         }
 

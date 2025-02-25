@@ -20,13 +20,13 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	render () {
 		const space = U.Space.getSpaceview();
 		const { membership } = S.Auth;
-		const { membershipTiersList } = S.Common;
-		const sections = this.getSections();
 		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant() || profile;
 		const pathname = U.Router.getRoute();
 		const param = U.Router.getParam(pathname);
 		const isSpace = this.props.page == 'settingsSpace';
+
+		const items = this.getItems();
 
 		const onBack = () => {
 			if (!this.routeBack || !this.routeBack.pathname) {
@@ -37,18 +37,30 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			U.Router.go(this.routeBack.pathname, {});
 		};
 
-		const Item = (action: any) => {
+		const Item = (item: any) => {
 			const cn = [ 'item' ];
 
 			let icon = null;
 			let name = null;
 			let caption = null;
 
-			if (action.id == param.id || (action.subPages && action.subPages.includes(param.id))) {
+			if (item.isToggle) {
+				return (
+					<div className={[ 'toggle', this.toggle[item.id] ? 'isOpen' : '' ].join(' ')} onClick={() => this.onToggle(item)}>
+						<Icon />
+						{item.name}
+					</div>
+				);
+			} else
+			if (item.isSection) {
+				return <div className="section"><div className="name">{item.name}</div></div>;
+			};
+
+			if (item.id == param.id || (item.subPages && item.subPages.includes(param.id))) {
 				cn.push('active');
 			};
 
-			if (action.id == 'account') {
+			if (item.id == 'account') {
 				if ('index' == param.id) {
 					cn.push('active');
 				};
@@ -60,11 +72,11 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 				cn.push('itemAccount');
 			} else {
-				icon = <Icon className={`settings-${action.icon || action.id}`} />;
-				name = action.name;
+				icon = <Icon className={`settings-${item.icon || item.id}`} />;
+				name = item.name;
 			};
 
-			if (action.id == 'membership') {
+			if (item.id == 'membership') {
 				if (!membership.isNone) {
 					const tierItem = U.Data.getMembershipTier(membership.tier);
 					caption = <div className="caption">{tierItem.name}</div>;
@@ -73,62 +85,22 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				};
 			};
 
-			if (U.Object.isTypeOrRelationLayout(action.layout)) {
-				icon = <IconObject object={action} />;
+			if (U.Object.isTypeOrRelationLayout(item.layout)) {
+				cn.push('isTypeOrRelation');
+
+				icon = <IconObject object={item} />;
 			};
 
 			return (
 				<div
-					id={`item-${action.id}`}
+					id={`item-${item.id}`}
 					className={cn.join(' ')}
-					onClick={() => this.onClick(action)}
+					onClick={() => this.onClick(item)}
 				>
 					{icon}
 					<div className="name">{name}</div>
 
 					{caption}
-				</div>
-			);
-		};
-
-		const Section = (item: any) => {
-			const cn = [ 'section', String(item.id || ''), item.isLabel ? 'isLabel' : '' ];
-
-			if (item.isLabel) {
-				cn.push('isLabel');
-			} else
-			if (item.isToggle) {
-				cn.push('isToggle');
-
-				if (this.toggle[item.id]) {
-					cn.push('isOpen');
-				};
-			};
-
-			let name = null;
-			if (item.isToggle) {
-				name = (
-					<div className="toggle" onClick={() => this.onToggle(item)}>
-						<Icon />
-						{item.name}
-					</div>
-				);
-			} else
-			if (item.name) {
-				name = <div className="name">{item.name}</div>;
-			};
-
-			return (
-				<div id={`settings-section-${item.id}`} className={cn.join(' ')}>
-					{name}
-
-					{item.children ? (
-						<div className="items">
-							{item.children.map((action: any, i: number) => (
-								<Item key={i} {...action} />
-							))}
-						</div>
-					) : ''}
 				</div>
 			);
 		};
@@ -150,8 +122,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 							</div>
 						) : ''}
 						<div className="inner">
-							{sections.map((item: any, i: number) => (
-								<Section key={i} {...item} />
+							{items.map((item: any, i: number) => (
+								<Item key={i} {...item} />
 							))}
 						</div>
 					</div>
@@ -173,7 +145,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		this.routeBack = history.entries[history.index - 1];
 	};
 
-	getSections () {
+	getSections (): any[] {
 		const canWrite = U.Space.canMyParticipantWrite();
 		const isSpace = this.props.page == 'settingsSpace';
 		const settingsVault = [
@@ -233,9 +205,21 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		let items: any[] = [];
 		for (const section of sections) {
 			if (section.name) {
-				items.push({ id: section.id, name: section.name, isSection: true });
+				const item: any = { id: section.id, name: section.name, isSection: true };
+
+				if (section.isToggle) {
+					item.isToggle = true;
+				};
+
+				items.push(item);
 			};
-			items = items.concat(section.children);
+
+			let children = section.children ? section.children : [];
+			if (section.isToggle && !this.toggle[section.id]) {
+				children = [];
+			};
+
+			items = items.concat(children);
 		};
 		return items;
 	};
@@ -265,15 +249,13 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	};
 
 	onToggle (item) {
-		const obj = $(this.node).find(`#settings-section-${item.id}`);
-
-		if (obj.hasClass('isOpen')) {
-			obj.removeClass('isOpen');
+		if (this.toggle[item.id]) {
 			this.toggle[item.id] = false;
 		} else {
-			obj.addClass('isOpen');
 			this.toggle[item.id] = true;
 		};
+
+		this.forceUpdate();
 	};
 
 });
