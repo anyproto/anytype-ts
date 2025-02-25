@@ -10,7 +10,7 @@ platform=${3:-ubuntu-latest};
 arch=$4;
 folder="build";
 
-if [ "$platform" = "ubuntu-latest" || "$platform" = "ubuntu-22.04" ]; then
+if [ "$platform" = "ubuntu-latest" ] || [ "$platform" = "ubuntu-22.04" ]; then
   arch="linux-$arch";
   folder="$arch";
 elif [ "$platform" = "macos-13" ]; then
