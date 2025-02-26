@@ -18,7 +18,9 @@
                 .icon.back:hover { background-color: var(--color-shape-highlight-medium); }
             }
 
-            .inner { height: 100%; padding: 0px 8px; }
+			.ReactVirtualized__List { padding: 0px 8px; }
+
+            .inner { height: 100%; }
             .row {
                 > .section { padding-top: 16px; }
                 > .section.isFirst { padding-top: 12px; }
@@ -51,10 +53,11 @@
             .toggle:hover,
             .item:hover, .item.active { background-color: var(--color-shape-highlight-medium); }
             .item {
-                .icon { width: 20px; height: 20px; flex-shrink: 0; }
+				.icon, .iconObject { flex-shrink: 0; }
+                .icon { width: 20px; height: 20px; }
                 .icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
 
-                .name { @include text-overflow-nw; overflow: visible; flex-grow: 1; }
+                .name { @include text-overflow-nw; flex-grow: 1; }
 
                 .caption { color: var(--color-text-secondary); text-align: right; @include text-overflow-nw; }
                 .caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }

@@ -44,21 +44,41 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			U.Router.go(this.routeBack.pathname, {});
 		};
 
+		const ItemToggle = (item: any) => {
+			const cn = [ 'toggle' ];
+
+			if (this.toggle[item.id]) {
+				cn.push('isOpen');
+			};
+
+			return (
+				<div className={cn.join(' ')} onClick={() => this.onToggle(item)}>
+					<Icon />
+					{item.name}
+				</div>
+			);
+		};
+
+		const ItemSection = (item: any) => {
+			const cn = [ 'section' ];
+
+			if (item.isFirst) {
+				cn.push('isFirst');
+			};
+
+			return (
+				<div className={cn.join(' ')}>
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		};
+
 		const Item = (item: any) => {
 			if (item.isToggle) {
-				return (
-					<div className={[ 'toggle', this.toggle[item.id] ? 'isOpen' : '' ].join(' ')} onClick={() => this.onToggle(item)}>
-						<Icon />
-						{item.name}
-					</div>
-				);
+				return <ItemToggle {...item} />;
 			} else
 			if (item.isSection) {
-				return (
-					<div className={[ 'section', item.isFirst ? 'isFirst' : '' ].join(' ')}>
-						<div className="name">{item.name}</div>
-					</div>
-				);
+				return <ItemSection {...item} />;
 			};
 
 			const cn = [ 'item' ];
@@ -324,7 +344,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 	onToggle (item) {
 		this.toggle[item.id] = !this.toggle[item.id];
-
 		this.forceUpdate();
 	};
 
