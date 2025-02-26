@@ -18,7 +18,7 @@
                 .icon.back:hover { background-color: var(--color-shape-highlight-medium); }
             }
 
-            .inner { height: 100%; display: flex; flex-direction: column; padding: 0px 8px; }
+            .inner { height: 100%; padding: 0px 8px; }
             .row {
                 > .section { padding-top: 16px; }
                 > .section.isFirst { padding-top: 12px; }
@@ -87,8 +87,10 @@
 
 > #containerSettings.spaceSettings {
     > .body {
+        > .list { padding-bottom: 0px; }
         > .list {
             .inner { height: calc(100% - 45px); }
+            .ReactVirtualized__List { padding-bottom: 8px; }
         }
     }
 }

@@ -1,7 +1,6 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, J, S, sidebar, translate, U } from 'Lib';
+import { I, S, translate, U } from 'Lib';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -19,12 +18,11 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 	node: any = null;
 	routeBack: any = null;
+	cache: any = {};
 	toggle: any = {
 		contentModelTypes: false,
 		contentModelFields: false,
 	};
-
-	cache: any = {};
 
 	render () {
 		const space = U.Space.getSpaceview();
@@ -47,12 +45,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		};
 
 		const Item = (item: any) => {
-			const cn = [ 'item' ];
-
-			let icon = null;
-			let name = null;
-			let caption = null;
-
 			if (item.isToggle) {
 				return (
 					<div className={[ 'toggle', this.toggle[item.id] ? 'isOpen' : '' ].join(' ')} onClick={() => this.onToggle(item)}>
@@ -62,8 +54,18 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				);
 			} else
 			if (item.isSection) {
-				return <div className={[ 'section', item.isFirst ? 'isFirst' : '' ].join(' ')}><div className="name">{item.name}</div></div>;
+				return (
+					<div className={[ 'section', item.isFirst ? 'isFirst' : '' ].join(' ')}>
+						<div className="name">{item.name}</div>
+					</div>
+				);
 			};
+
+			const cn = [ 'item' ];
+
+			let icon = null;
+			let name = null;
+			let caption = null;
 
 			if (item.id == param.id || (item.subPages && item.subPages.includes(param.id))) {
 				cn.push('active');
@@ -85,19 +87,20 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				name = item.name;
 			};
 
-			if (item.id == 'membership') {
-				if (!membership.isNone) {
-					const tierItem = U.Data.getMembershipTier(membership.tier);
-					caption = <div className="caption">{tierItem.name}</div>;
-				} else {
-					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
-				};
-			};
-
 			if (U.Object.isTypeOrRelationLayout(item.layout)) {
 				cn.push('isTypeOrRelation');
 
 				icon = <IconObject object={item} />;
+			};
+
+			if (item.id == 'membership') {
+				if (!membership.isNone) {
+					const tierItem = U.Data.getMembershipTier(membership.tier);
+
+					caption = <div className="caption">{tierItem.name}</div>;
+				} else {
+					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
+				};
 			};
 
 			return (
@@ -107,6 +110,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 					onClick={() => this.onClick(item)}
 				>
 					{icon}
+
 					<div className="name">{name}</div>
 
 					{caption}
@@ -196,9 +200,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		this.routeBack = history.entries[history.index - 1];
 	};
 
-	componentDidUpdate () {
-	};
-
 	getSections (): any[] {
 		const canWrite = U.Space.canMyParticipantWrite();
 		const isSpace = this.props.page == 'settingsSpace';
@@ -257,10 +258,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const sections = this.getSections();
 
 		let items: any[] = [];
-
-		for (const section of sections) {
-
-		};
 
 		sections.forEach((section, idx) => {
 			if (section.name) {
@@ -326,11 +323,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	};
 
 	onToggle (item) {
-		if (this.toggle[item.id]) {
-			this.toggle[item.id] = false;
-		} else {
-			this.toggle[item.id] = true;
-		};
+		this.toggle[item.id] = !this.toggle[item.id];
 
 		this.forceUpdate();
 	};
