@@ -17,7 +17,6 @@ class Sidebar {
 	objLeft: JQuery<HTMLElement> = null;
 	objRight: JQuery<HTMLElement> = null;
 	dummyLeft: JQuery<HTMLElement> = null;
-	dummyRight: JQuery<HTMLElement> = null
 
 	page: JQuery<HTMLElement> = null;
 	pageFlex: JQuery<HTMLElement> = null;
@@ -62,14 +61,13 @@ class Sidebar {
 		const vault = S.Common.getRef('vault');
 
 		this.objLeft = $('#sidebarLeft');
-		this.objRight = $('#sidebarRight');
-		this.pageFlex = $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
-		this.page = $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
+		this.pageFlex = U.Common.getPageFlexContainer(isPopup);
+		this.page = U.Common.getPageContainer(isPopup);
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
+		this.objRight = this.pageFlex.find('#sidebarRight');
 		this.dummyLeft = $('#sidebarDummyLeft');
-		this.dummyRight = $('#sidebarDummyRight');
 		this.toggleButton = $('#sidebarToggle');
 		this.syncButton = $('#sidebarSync');
 
