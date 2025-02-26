@@ -254,6 +254,7 @@ class Sidebar {
 			widthRight = 0;
 		};
 
+		const container = U.Common.getScrollContainer(isPopup);
 		const pageWidth = (!isPopup ? ww : this.pageFlex.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 
@@ -265,6 +266,8 @@ class Sidebar {
 				syncX = widthLeft - 40;
 			};
 		};
+
+		this.objRight.css({ height: container.height() });
 
 		this.header.css({ width: '' });
 		this.footer.css({ width: '' });
@@ -279,8 +282,8 @@ class Sidebar {
 		
 		if (!isPopup) {
 			this.dummyLeft.css({ width: widthLeft });
-
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
+
 			this.toggleButton.toggleClass('sidebarAnimation', animate);
 			this.syncButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
