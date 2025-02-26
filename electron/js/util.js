@@ -1,6 +1,6 @@
 const { app, shell, nativeTheme } = require('electron');
 const { is } = require('electron-util');
-const log = require('electron-log');
+const logger = require('electron-log');
 const path = require('path');
 const fs = require('fs');
 const sanitize = require('sanitize-filename');
@@ -8,8 +8,9 @@ const protocol = 'anytype';
 const ConfigManager = require('./config.js');
 const Constant = require('../json/constant.json');
 
-log.initialize();
-log.transports.console.level = 'error';
+logger.initialize();
+logger.transports.console.level = 'error';
+logger.transports.file.resolvePathFn = () => path.join(app.getPath('userData'), 'logs', 'log.log');
 
 class Util {
 
@@ -25,12 +26,16 @@ class Util {
 		};
 	};
 
+	getLogger () {
+		return logger;
+	};
+
 	log (method, text) {
-		if (!log[method]) {
+		if (!logger[method]) {
 			method = 'info';
 		};
 
-		log[method](text);
+		logger[method](text);
 		console.log(text);
 	};
 
