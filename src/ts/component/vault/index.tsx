@@ -15,6 +15,7 @@ interface VaultRefProps {
 const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 	const nodeRef = useRef(null);
+	const { showVault } = S.Common;
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
 	const closeVault = useRef(false);
@@ -24,10 +25,15 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const n = useRef(-1);
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
+	const cn = [ 'vault' ];
 	const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
+
+	if (!showVault) {
+		cn.push('isHidden');
+	};
 
 	const unbind = () => {
 		const events = [ 'resize', 'keydown', 'keyup' ];
@@ -100,8 +106,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		) {
 			return;
 		};
-
-		checkKeyUp.current = false;
 
 		const { width } = sidebar.data;
 		const node = $(nodeRef.current);
@@ -313,7 +317,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		<div 
 			ref={nodeRef}
 			id="vault"
-			className="vault"
+			className={cn.join(' ')}
 		>
 			<div className="head" />
 			<div className="body">

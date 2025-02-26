@@ -33,7 +33,7 @@ class Sidebar {
 		this.initObjects();
 
 		const stored = Storage.get('sidebar');
-		const vault = $(S.Common.getRef('vault').node);
+		const vault = $(S.Common.getRef('vault')?.getNode());
 
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
