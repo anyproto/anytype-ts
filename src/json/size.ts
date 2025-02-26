@@ -14,7 +14,7 @@ export default {
 	},
 
 	history: {
-		panel: 336,
+		panel: 348,
 	},
 
 	sidebar: {
