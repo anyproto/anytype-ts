@@ -333,6 +333,14 @@ html.themeDark {
 				}
 			}
 		}
+
+		> #containerSettings {
+			> .body {
+				.logout {
+					.icon { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
+				}
+			}
+		}
 	}
 
 	/* Notifications */

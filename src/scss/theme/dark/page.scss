@@ -173,4 +173,10 @@
 			.icon { background-image: url('#{$themePath}/icon/payment/hyperlink.svg'); }
 		}
 	}
+
+	.pageSettingsDataIndex {
+		.icon.drive { background-image: url('#{$themePath}/icon/settings/data/drive.svg'); }
+		.icon.sites { background-image: url('#{$themePath}/icon/settings/data/sites.svg'); }
+		.icon.location { background-image: url('#{$themePath}/icon/settings/data/location.svg'); }
+	}
 }
