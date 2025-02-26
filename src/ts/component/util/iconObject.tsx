@@ -99,8 +99,6 @@ const FontSize = {
 
 const Ghost = require('img/icon/ghost.svg');
 
-const iconCache: Map<string, string> = new Map();
-
 const CheckboxTask = {
 	'': {
 		0: require('img/icon/object/checkbox0.svg'),
@@ -332,21 +330,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const typeIcon = (id: string, option: number, color?: string) => {
-		const key = [ id, iconSize, option ].join('-');
-
-		let ret = '';
-		if (iconCache.has(key)) {
-			ret = iconCache.get(key);
-		} else {
-			try {
-				const newColor = color || bgByOption(option);
-
-				ret = U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { size, fill: newColor, stroke: newColor });
-				iconCache.set(key, ret);
-			} catch (e) { /**/ };
-		};
-
-		return ret;
+		const newColor = color || bgByOption(option);
+		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor, stroke: newColor });
 	};
 
 	switch (layout) {
@@ -484,7 +469,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const img = node.find('img');
 
 		img.attr({ 
-			src: U.Common.updateSvg(require('img/icon/error.svg'), { size, fill: J.Theme[theme]?.error }), 
+			src: U.Common.updateSvg(require('img/icon/error.svg'), { id: 'error', size, fill: J.Theme[theme]?.error }), 
 			class: `iconCommon c${IconSize[size]}`
 		});
 	};

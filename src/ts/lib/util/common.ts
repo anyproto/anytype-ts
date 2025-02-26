@@ -8,6 +8,7 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 const TEST_HTML = /<[^>]*>/;
+const iconCache: Map<string, string> = new Map();
 
 class UtilCommon {
 
@@ -1129,30 +1130,45 @@ class UtilCommon {
 	};
 
 	updateSvg (src: string, param: any) {
-		const { size, fill, stroke } = param;
-		const chunk = src.split('base64,')[1];
-		const decoded = atob(chunk).replace(/_COLOR_VAR_/g, fill);
-		const obj = $(decoded);
-		const attr: any = {};
+		const id = String(param.id || '');
+		const size = Number(param.size) || 0;
+		const fill = String(param.fill || '');
+		const stroke = String(param.stroke || '');
+		const key = [ id, size, fill, stroke ].join('-');
 
-		if (size) {
-			attr.width = size;
-			attr.height = size;
+		if (iconCache[key]) {
+			return iconCache[key];
 		};
 
-		if (fill) {
-			attr.fill = fill;
-		};
+		let ret = '';
+		try {
+			const chunk = src.split('base64,')[1];
+			const decoded = atob(chunk).replace(/_COLOR_VAR_/g, fill);
+			const obj = $(decoded);
+			const attr: any = {};
 
-		if (stroke) {
-			attr.stroke = stroke;
-		};
+			if (size) {
+				attr.width = size;
+				attr.height = size;
+			};
 
-		if (this.objectLength(attr)) {
-			obj.attr(attr);
-		};
-		
-		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+			if (fill) {
+				attr.fill = fill;
+			};
+
+			if (stroke) {
+				attr.stroke = stroke;
+			};
+
+			if (this.objectLength(attr)) {
+				obj.attr(attr);
+			};
+			
+			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+		} catch (e) { /**/ };
+
+		iconCache[key] = ret;
+		return ret;
 	};
 
 };
