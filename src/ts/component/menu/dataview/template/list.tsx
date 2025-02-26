@@ -285,7 +285,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const items = this.getItems();
 		const length = items.length;
 		const isPopup = keyboard.isPopup();
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const ww = container.width();
 
 		let columns = Math.max(1, Math.floor(ww / TEMPLATE_WIDTH));

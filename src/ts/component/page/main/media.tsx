@@ -286,7 +286,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 	onRelationAdd (e: any) {
 		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, []);
 		const type = S.Record.getTypeById(object.type);

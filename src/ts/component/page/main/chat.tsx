@@ -71,7 +71,7 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		raf(() => {
 			const node = $(nodeRef.current);
 			const cover = node.find('.block.blockCover');
-			const pageContainer = U.Common.getPageFlexContainer(isPopup);
+			const pageContainer = U.Common.getPageContainer(isPopup);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const header = pageContainer.find('#header');
 			const headerHeight = isPopup ? header.height() : J.Size.header;

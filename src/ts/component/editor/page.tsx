@@ -2317,7 +2317,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const last = node.find('#blockLast');
 			const size = node.find('#editorSize');
 			const cover = node.find('.block.blockCover');
-			const pageContainer = U.Common.getPageFlexContainer(this.props.isPopup);
+			const pageContainer = U.Common.getPageContainer(isPopup);
 			const header = pageContainer.find('#header');
 			const root = S.Block.getLeaf(rootId, rootId);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
@@ -2376,8 +2376,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	setLayoutWidth (v: number) {
 		v = Number(v) || 0;
 
-		const { isPopup, rootId } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const { isPopup } = this.props;
+		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
 		const node = $(this.node);
 		const width = this.getWidth(v);
@@ -2399,7 +2399,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		w = Number(w) || 0;
 
 		const { isPopup, rootId } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		let mw = container.width();
