@@ -67,6 +67,13 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		$(window).off(events.map(it => `${it}.graph`).join(' '));
 	};
 
+	const getTouchDistance = (touches: { clientX: number, clientY: number }[]): number => {
+		const dx = touches[0].clientX - touches[1].clientX;
+		const dy = touches[0].clientY - touches[1].clientY;
+
+		return Math.sqrt(dx * dx + dy * dy);
+	};
+
 	const init = () => {
 		const node = $(nodeRef.current);
 		const density = window.devicePixelRatio;
@@ -88,6 +95,33 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		.attr('width', (width * density) + 'px')
 		.attr('height', (height * density) + 'px')
 		.node();
+
+		let touchStartDist = null;
+		let touchStartZoom = null;
+
+		canvas.current.addEventListener('touchstart', e => {
+			if (e.touches.length != 2) {
+				return;
+			};
+
+			e.preventDefault();
+			touchStartDist = getTouchDistance(e.touches);
+			touchStartZoom = d3.zoomTransform(canvas.current).k;
+		});
+
+		canvas.current.addEventListener('touchmove', e => {
+			e.preventDefault();
+
+			if (!touchStartDist || (e.touches.length != 2)) {
+				return;
+			};
+
+			const newDist = getTouchDistance(e.touches);
+			const scaleChange = newDist / touchStartDist;
+			const newZoom = touchStartZoom * scaleChange;
+
+			d3.select(canvas.current).call(zoom.current.scaleTo, newZoom);
+		});
 
 		const transfer = canvas.current.transferControlToOffscreen();
 
