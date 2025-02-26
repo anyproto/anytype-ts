@@ -21,7 +21,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	cache: any = {};
 	toggle: any = {
 		contentModelTypes: false,
-		contentModelFields: false,
+		contentModelRelations: false,
 	};
 
 	render () {
@@ -274,7 +274,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
 			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: S.Record.getTypes() },
-			{ id: 'contentModelFields', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: S.Record.getRelations() },
+			{ id: 'contentModelRelations', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: S.Record.getRelations() },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
@@ -395,7 +395,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });
 				break;
 			};
-			case 'contentModelFields': {
+
+			case 'contentModelRelations': {
 				const node = $(this.node);
 				const width = node.width() - 32;
 
@@ -406,13 +407,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 					className: 'fixed',
 					classNameWrap: 'fromSidebar',
 					horizontal: I.MenuDirection.Right,
-					data: {
-						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-							// callback?
-						},
-						deleteCommand: () => {
-						},
-					}
 				});
 
 				break;
