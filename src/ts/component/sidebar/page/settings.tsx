@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, S, translate, U } from 'Lib';
+import { analytics, I, J, keyboard, S, sidebar, translate, U } from 'Lib';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -21,7 +21,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	cache: any = {};
 	toggle: any = {
 		contentModelTypes: false,
-		contentModelFields: false,
+		contentModelRelations: false,
 	};
 
 	render () {
@@ -52,9 +52,14 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			};
 
 			return (
-				<div className={cn.join(' ')} onClick={() => this.onToggle(item)}>
-					<Icon />
-					{item.name}
+				<div id={`item-toggle-${item.id}`} className={cn.join(' ')} onClick={() => this.onToggle(item)}>
+					<div className="left">
+						<Icon className="arrow" />
+						{item.name}
+					</div>
+					<div className="right">
+						<Icon className="plus" onClick={e => this.onAdd(e, item)} />
+					</div>
 				</div>
 			);
 		};
@@ -127,6 +132,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				<div
 					id={`item-${item.id}`}
 					className={cn.join(' ')}
+					onContextMenu={() => this.onContext(item)}
 					onClick={() => this.onClick(item)}
 				>
 					{icon}
@@ -268,7 +274,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
 			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: S.Record.getTypes() },
-			{ id: 'contentModelFields', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: S.Record.getRelations() },
+			{ id: 'contentModelRelations', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: S.Record.getRelations() },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
@@ -342,9 +348,70 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		U.Object.openAuto(param);
 	};
 
+	onContext (item) {
+		if (!U.Object.isTypeOrRelationLayout(item.layout)) {
+			return;
+		};
+
+		const { x, y } = keyboard.mouse.page;
+
+		S.Menu.open('objectContext', {
+			element: `#containerSettings #item-${item.id}`,
+			rect: { width: 0, height: 0, x: x + 4, y },
+			data: {
+				objectIds: [ item.id ],
+				getObject: () => {
+					return item;
+				},
+			}
+		});
+	};
+
 	onToggle (item) {
 		this.toggle[item.id] = !this.toggle[item.id];
 		this.forceUpdate();
+	};
+	
+	onAdd (e, item) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const isPopup = keyboard.isPopup();
+
+		switch (item.id) {
+			case 'contentModelTypes': {
+				const type = S.Record.getTypeType();
+				const featured = [ 'type', 'tag', 'backlinks' ];
+				const recommended = [];
+				const mapper = it => S.Record.getRelationByKey(it)?.id;
+				const details: any = {
+					isNew: true,
+					type: type.id,
+					layout: I.ObjectLayout.Type,
+					recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
+					recommendedRelations: recommended.map(mapper).filter(it => it),
+				};
+
+				sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });
+				break;
+			};
+
+			case 'contentModelRelations': {
+				const node = $(this.node);
+				const width = node.width() - 32;
+
+				S.Menu.open('blockRelationEdit', {
+					element: `#containerSettings #item-toggle-${item.id} .plus`,
+					offsetY: 4,
+					width,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+					horizontal: I.MenuDirection.Right,
+				});
+
+				break;
+			};	
+		};
 	};
 
 });
