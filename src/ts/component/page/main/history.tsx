@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader } from 'Component';
+import { Loader } from 'Component';
 import { I, S, U, J, keyboard, Action, focus } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
@@ -58,8 +58,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						setLoading={this.setLoading}
 					/>
 				</div>
-
-				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};
