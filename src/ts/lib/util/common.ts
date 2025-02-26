@@ -1136,8 +1136,8 @@ class UtilCommon {
 		const stroke = String(param.stroke || '');
 		const key = [ id, size, fill, stroke ].join('-');
 
-		if (iconCache[key]) {
-			return iconCache[key];
+		if (iconCache.has(key)) {
+			return iconCache.get(key);
 		};
 
 		let ret = '';
@@ -1167,7 +1167,7 @@ class UtilCommon {
 			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
 		} catch (e) { /**/ };
 
-		iconCache[key] = ret;
+		iconCache.set(key, ret);
 		return ret;
 	};
 
