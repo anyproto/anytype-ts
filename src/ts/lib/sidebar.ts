@@ -17,7 +17,6 @@ class Sidebar {
 	objLeft: JQuery<HTMLElement> = null;
 	objRight: JQuery<HTMLElement> = null;
 	dummyLeft: JQuery<HTMLElement> = null;
-	dummyRight: JQuery<HTMLElement> = null
 
 	page: JQuery<HTMLElement> = null;
 	pageFlex: JQuery<HTMLElement> = null;
@@ -69,7 +68,6 @@ class Sidebar {
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
 		this.dummyLeft = $('#sidebarDummyLeft');
-		this.dummyRight = $('#sidebarDummyRight');
 		this.toggleButton = $('#sidebarToggle');
 		this.syncButton = $('#sidebarSync');
 
@@ -254,6 +252,7 @@ class Sidebar {
 			widthRight = 0;
 		};
 
+		const container = U.Common.getScrollContainer(isPopup);
 		const pageWidth = (!isPopup ? ww : this.pageFlex.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 
@@ -276,20 +275,24 @@ class Sidebar {
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: pageWidth - ho });
 		this.footer.css({ width: pageWidth - ho });
+
+		const pageCss: any = { height: container.height() };
 		
 		if (!isPopup) {
 			this.dummyLeft.css({ width: widthLeft });
-
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
+
 			this.toggleButton.toggleClass('sidebarAnimation', animate);
 			this.syncButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
 
-			this.page.css({ width: pageWidth });
 			this.toggleButton.css({ left: toggleX });
 			this.syncButton.css({ left: syncX });
+
+			pageCss.width = pageWidth;
 		};
 
+		this.page.css(pageCss);
 		$(window).trigger('sidebarResize');
 	};
 

@@ -3,7 +3,7 @@
 .pageFlex { display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; transition: transform 0.2s $easeInQuint; }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
-	#page { width: 100%; position: relative; }
+	#page { width: 100%; position: relative; overflow-x: hidden; overflow-y: auto; }
 }
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
@@ -61,6 +61,7 @@
 }
 
 html.platformWindows {
+	.pageFlex #page { overflow-y: overlay; }
 	.sidebar {
 		> .containerWidget > .body { overflow-y: overlay; }
 	}
