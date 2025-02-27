@@ -2319,7 +2319,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const cover = node.find('.block.blockCover');
 			const pageContainer = U.Common.getPageContainer(isPopup);
 			const header = pageContainer.find('#header');
-			const root = S.Block.getLeaf(rootId, rootId);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const hh = isPopup ? header.height() : J.Size.header;
 
@@ -2393,6 +2392,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.refHeader.refDrag.setValue(v);
 			this.refHeader.setPercent(v);
 		};
+
+		$('.resizable').trigger('resizeInit');
 	};
 
 	getWidth (w: number) {
