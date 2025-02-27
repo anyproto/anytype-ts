@@ -112,13 +112,7 @@ class UpdateManager {
 	};
 
 	checkUpdate (auto) {
-		if (!this.isAllowed()) {
-			return;
-		};
-
-		Util.log('info', 'isUpdating: ' + this.isUpdating);
-
-		if (this.isUpdating) {
+		if (!this.isAllowed() || this.isUpdating) {
 			return;
 		};
 
