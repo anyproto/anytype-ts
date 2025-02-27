@@ -34,7 +34,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const childRef = useRef<I.CellRef>(null);
 
 	const checkIcon = () => {
-		
 		const node = $(nodeRef.current);
 		const icon = node.find('.iconObject');
 
