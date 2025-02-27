@@ -68,7 +68,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 	const onAdd = (e: any, id: string) => {
 		const list = lists.find(it => it.id == id);
-		const keys = lists.reduce((acc, it) => acc.concat(it.data.map(it => it.relationKey)), []);
+		const keys = lists.reduce((acc, it) => acc.concat(it.data.map(it => it.relationKey)), []).concat('description');
 		const ids = list.data.map(it => it.id);
 
 		S.Menu.open('relationSuggest', { 
