@@ -81,6 +81,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const path = [ page, action ].join('/');
 		const isMain = this.isMain();
 		const Component = Components[path];
+		const namespace = U.Common.getEventNamespace(isPopup);
 
 		if (account) {
 			const { status } = account || {};
@@ -106,9 +107,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 						</Frame>
 					)}
 				</div>
-				<div id="sidebarDummyRight" className="sidebarDummy" />
 				<SidebarRight 
-					ref={ref => S.Common.refSet('sidebarRight', ref)} 
+					ref={ref => S.Common.refSet(`sidebarRight${namespace}`, ref)} 
 					key="sidebarRight" 
 					{...this.props} 
 				/>
@@ -204,11 +204,12 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
 		const routeParam = { replace: true };
-		const refSidebar = S.Common.getRef('sidebarRight');
+		const refSidebar = sidebar.rightPanelRef(isPopup);
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
+		sidebar.rightPanelToggle(false, false, isPopup);
 
 		if (!Component) {
 			return;

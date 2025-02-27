@@ -228,7 +228,7 @@ class Keyboard {
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
 				if (S.Auth.account && !S.Popup.isOpen('search')) {
-					U.Space.openDashboard('route');
+					U.Space.openDashboard();
 				};
 			});
 
@@ -320,17 +320,6 @@ class Keyboard {
 		});
 	};
 
-	isPopup () {
-		return S.Popup.isOpen('page');
-	};
-
-	getRootId (): string {
-		const isPopup = this.isPopup();
-		const popupMatch = this.getPopupMatch();
-
-		return isPopup ? popupMatch.params.id : (this.match?.params?.id);
-	};
-
 	onKeyUp (e: any) {
 		this.pressed = this.pressed.filter(it => it != this.eventKey(e));
 	};
@@ -357,7 +346,7 @@ class Keyboard {
 			let prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
-				U.Space.openDashboard('route');
+				U.Space.openDashboard();
 				return;
 			};
 
@@ -963,17 +952,28 @@ class Keyboard {
 		};
 	};
 
+	isPopup () {
+		return S.Popup.isOpen('page');
+	};
+
+	getRootId (isPopup?: boolean): string {
+		const match = this.getMatch(isPopup);
+		return match.params?.objectId || match.params?.id;
+	};
+
 	getPopupMatch () {
 		const popup = S.Popup.get('page');
 		return popup && popup?.param.data.matchPopup || {};
 	};
 
-	getMatch () {
+	getMatch (isPopup?: boolean) {
+		const popup = undefined == isPopup ? this.isPopup() : isPopup;
+
 		let ret: any = { params: {} };
-		if (this.isPopup()) {
+		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
-			const match = this.match;
+			const match = U.Common.objectCopy(this.match);
 			const param = U.Router.getParam(U.Router.getRoute());
 
 			ret = Object.assign(ret, match);
@@ -1051,7 +1051,7 @@ class Keyboard {
 	};
 
 	setMatch (match: any) {
-		this.match = match;
+		this.match = U.Common.objectCopy(match);
 	};
 
 	setSource (source: any) {

@@ -72,16 +72,15 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { rootId } = data;
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = S.Detail.get(rootId, rootId);
-		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const hasConflict = U.Object.hasLayoutConflict(object);
 		
 		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
-		if (U.Object.hasEqualLayoutAlign(object, type) || !allowedDetails || U.Object.isTaskLayout(object.layout)) {
+		if (!allowedDetails || U.Object.isTaskLayout(object.layout)) {
 			align = null;
 		};
-		if (U.Object.hasEqualLayoutWidth(object, type) || !allowedDetails) {
+		if (!allowedDetails) {
 			resize = null;
 		};
 

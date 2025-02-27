@@ -70,7 +70,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 				<div className="wrap">
 					<div className={cn.join(' ')}>
-						<div className="table">
+						<div className="table customScrollbar">
 							<div className="head">
 								{days.map((item, i) => (
 									<div key={i} className="item">
@@ -303,7 +303,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		wrap.css({ width: 0, height: 0, marginLeft: 0 });
 
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
 		const ch = container.height();
 		const mw = cw - PADDING * 2;

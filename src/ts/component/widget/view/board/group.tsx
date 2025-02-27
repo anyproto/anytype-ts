@@ -14,7 +14,7 @@ interface Props extends I.WidgetViewComponent {
 const Group = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const nodeRef = useRef(null);
-	const { rootId, block, parent, id, value, canCreate, getView, getViewLimit, getObject } = props;
+	const { rootId, block, parent, id, value, canCreate, onCreate, getView, getViewLimit, getObject } = props;
 	const view = getView();
 	const subId = S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id);
 	const object = getObject();
@@ -113,17 +113,14 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		Storage.setToggle(subKey, id, !isOpen);
 	};
 
-	const onCreate = (e: any) => {
+	const onCreateHandler = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const view = getView();
 		const isOpen = Storage.checkToggle(getToggleKey(), id);
-		const details = {};
 
-		details[view.groupRelationKey] = value;
-
-		onCreate({ details });
+		onCreate({ details: { [view.groupRelationKey]: value } });
 
 		if (!isOpen) {
 			onToggle();
@@ -170,7 +167,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 					withName={true}
 					placeholder={translate('commonUncategorized')}
 				/>
-				{canCreate ? <Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreate} /> : ''}
+				{canCreate ? <Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreateHandler} /> : ''}
 			</div>
 
 			<div id={`item-${id}-children`} className="items">

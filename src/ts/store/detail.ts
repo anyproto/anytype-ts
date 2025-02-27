@@ -135,13 +135,11 @@ class DetailStore {
 			return;
 		};
 
-		let list = [];
-
 		if (keys && keys.length) {
-			list = (map.get(id) || []).filter(it => !keys.includes(it.relationKey));
+			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
+		} else {
+			map.set(id, []);
 		};
-
-		map.set(id, list);
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */

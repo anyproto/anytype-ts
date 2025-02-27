@@ -15,6 +15,7 @@ interface VaultRefProps {
 const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 	const nodeRef = useRef(null);
+	const { showVault } = S.Common;
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
 	const closeVault = useRef(false);
@@ -24,10 +25,15 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const n = useRef(-1);
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
+	const cn = [ 'vault' ];
 	const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
-        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-    );
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
+
+	if (!showVault) {
+		cn.push('isHidden');
+	};
 
 	const unbind = () => {
 		const events = [ 'resize', 'keydown', 'keyup' ];
@@ -101,8 +107,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			return;
 		};
 
-		checkKeyUp.current = false;
-
 		const { width } = sidebar.data;
 		const node = $(nodeRef.current);
 		const items = getSpaceItems();
@@ -152,7 +156,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			case 'settings': {
-				U.Object.openAuto({ id: 'index', layout: I.ObjectLayout.Settings });
+				U.Router.go('/main/settings/index', {});
 				break;
 			};
 
@@ -313,21 +317,21 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		<div 
 			ref={nodeRef}
 			id="vault"
-			className="vault"
+			className={cn.join(' ')}
 		>
 			<div className="head" />
 			<div className="body">
 				<DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
+					sensors={sensors}
+					collisionDetection={closestCenter}
 					onDragStart={onSortStart}
-                    onDragEnd={onSortEnd}
+					onDragEnd={onSortEnd}
 					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
-                >
-                    <SortableContext
-                        items={items.map((item) => item.id)}
-                        strategy={verticalListSortingStrategy}
-                    >
+				>
+					<SortableContext
+						items={items.map((item) => item.id)}
+						strategy={verticalListSortingStrategy}
+					>
 						<div id="scroll" className="side top" onScroll={onScroll}>
 							{items.map((item, i) => (
 								<VaultItem 

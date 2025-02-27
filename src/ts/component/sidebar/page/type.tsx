@@ -72,7 +72,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const { isPopup } = this.props;
 		const container = U.Common.getPageFlexContainer(isPopup);
 
-		S.Common.getRef('sidebarRight')?.setState({ details: {}, rootId: ''});
+		sidebar.rightPanelRef(isPopup)?.setState({ details: {}, rootId: ''});
 		container.removeClass('overPopup');
 	};
 
@@ -156,7 +156,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			for (const key in this.update) {
 				update.push({ key, value: this.object[key] });
 			};
-			C.ObjectListSetDetails([ rootId ], update);
+			if (update.length) {
+				C.ObjectListSetDetails([ rootId ], update);
+			};
 		} else {
 			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
 				if (!message.error.code) {

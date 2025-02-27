@@ -40,7 +40,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		};
 
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'type', 'featuredRelations' ]);
+		const object = S.Detail.get(rootId, rootId);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const isInSets = U.Object.isInSetLayouts(root.layout);
@@ -50,8 +50,9 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const isChat = U.Object.isChatLayout(root.layout);
 		const isType = U.Object.isTypeLayout(root.layout);
 		const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
+		const hasConflict = U.Object.hasLayoutConflict(object);
 
-		let allowedLayout = !checkType && allowedDetails && !isInSets && !isChat && !isType && U.Object.hasLayoutConflict(object);
+		let allowedLayout = !checkType && allowedDetails && !isInSets && !isChat && !isType;
 		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark;
 		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
 		let allowedDescription = !checkType && allowedDetails && !isNote;
@@ -92,7 +93,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				{allowedLayout ? (
 					<div id="button-layout" className="btn white withIcon small" onClick={this.onLayout}>
 						<Icon className="layout" />
-						<div className="dot" />
+						{hasConflict ? <div className="dot" /> : ''}
 					</div>
 				) : ''}
 			</div>

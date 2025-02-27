@@ -27,6 +27,7 @@ interface Props {
 	style?: any;
 	getObject?(): any;
 	onSelect?(id: string): void;
+	onIconSelect?(id: string, color: number): void;
 	onUpload?(objectId: string): void;
 	onClick?(e: any): void;
 	onCheckbox?(e: any): void;
@@ -98,8 +99,6 @@ const FontSize = {
 
 const Ghost = require('img/icon/ghost.svg');
 
-const iconCache: Map<string, string> = new Map();
-
 const CheckboxTask = {
 	'': {
 		0: require('img/icon/object/checkbox0.svg'),
@@ -128,6 +127,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		style = {},
 		getObject,
 		onSelect,
+		onIconSelect,
 		onUpload,
 		onClick,
 		onCheckbox,
@@ -246,7 +246,11 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 					};
 				},
 				onIconSelect: (iconName: string, iconOption: number) => {
-					U.Object.setTypeIcon(object.id, iconName, iconOption);
+					if (onIconSelect) {
+						onIconSelect(iconName, iconOption);
+					} else {
+						U.Object.setTypeIcon(object.id, iconName, iconOption);
+					};
 				},
 				onUpload: (objectId: string) => {
 					if (onUpload) {
@@ -324,27 +328,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const typeIcon = (id: string, option: number, color?: string) => {
-		const key = [ id, iconSize, option ].join('-');
-
-		let ret = '';
-		if (iconCache.has(key)) {
-			ret = iconCache.get(key);
-		} else {
-			try {
-				const newColor = color || bgByOption(option);
-				const src = require(`img/icon/type/default/${id}.svg`);
-				const chunk = src.split('base64,')[1];
-				const decoded = atob(chunk).replace(/_COLOR_VAR_/g, newColor);
-				const obj = $(decoded);
-
-				obj.attr({ width: size, height: size, fill: newColor, stroke: newColor });
-
-				ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
-				iconCache.set(key, ret);
-			} catch (e) { /**/ };
-		};
-
-		return ret;
+		const newColor = color || bgByOption(option);
+		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor, stroke: newColor });
 	};
 
 	switch (layout) {
@@ -477,25 +462,39 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		icon = <img src={Ghost} className={[ 'iconCommon', `c${iconSize}` ].join(' ')} />;
 	};
 
+	const setErrorIcon = () => {
+		const node = $(nodeRef.current);
+		const img = node.find('img');
+
+		img.attr({ 
+			src: U.Common.updateSvg(require('img/icon/error.svg'), { id: 'error', size, fill: J.Theme[theme]?.error }), 
+			class: `iconCommon c${IconSize[size]}`
+		});
+	};
+
 	useEffect(() => {
 		const node = $(nodeRef.current);
 		const img = node.find('img');
 
 		img.off('error').on('error', () => {
 			node.addClass('withImageError');
-			img.hide();
+			setErrorIcon();
 		});
 	}, []);
+
+	useEffect(() => {
+		const node = $(nodeRef.current);
+
+		if (node.hasClass('withImageError')) {
+			setErrorIcon();
+		};
+	}, [ theme ]);
 
 	useImperativeHandle(ref, () => ({
 		setObject: object => setStateObject(object),
 	}));
 
-	if (!icon) {
-		return null;
-	};
-
-	return (
+	return icon ? (
 		<div 
 			ref={nodeRef}
 			id={props.id} 
@@ -513,7 +512,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		>
 			{icon}
 		</div>
-	);
+	) : null;
 
 }));
 

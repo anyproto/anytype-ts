@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
 import { I, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
+import { Pagination, Autoplay, Mousewheel, Navigation } from 'swiper/modules';
 
 const PageMainSettingsMembership = observer(class PageMainSettingsMembership extends React.Component<I.PageSettingsComponent> {
 
@@ -135,7 +135,8 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 								disableOnInteraction: true,
 							}}
 							mousewheel={true}
-							modules={[ Pagination, Autoplay, Mousewheel ]}
+							navigation={true}
+							modules={[ Pagination, Autoplay, Mousewheel, Navigation ]}
 							centeredSlides={true}
 							loop={true}
 							onSwiper={this.onSwiper}

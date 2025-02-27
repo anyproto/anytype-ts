@@ -346,7 +346,9 @@ class MenuManager {
 			return;
 		};
 
-		this.tray = new Tray (this.getTrayIcon());
+		const icon = this.getTrayIcon();
+
+		this.tray = new Tray (icon);
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
 			{ label: Util.translate('electronMenuOpenApp'), click: () => this.winShow() },
@@ -471,7 +473,10 @@ class MenuManager {
 
 	updateTrayIcon () {
 		if (this.tray && this.tray.setImage) {
-			this.tray.setImage(this.getTrayIcon());
+			const icon = this.getTrayIcon();
+			if (icon) {
+				this.tray.setImage(icon);
+			};
 		};
 	};
 
@@ -493,11 +498,12 @@ class MenuManager {
             } else {
                 icon = 'iconTrayBlack.png';
             };
-		} else {
+		} else 
+		if (is.macos) {
 			icon = `iconTrayTemplate.png`;
 		};
 
-		return path.join(Util.imagePath(), icon);
+		return icon ? path.join(Util.imagePath(), icon) : '';
 	};
 
 	destroy () {

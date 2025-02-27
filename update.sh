@@ -8,7 +8,7 @@ platform=${1:-ubuntu-latest};
 arch=$2;
 folder="build";
 
-if [ "$platform" = "ubuntu-latest" || "$platform" = "ubuntu-22.04" ]; then
+if [ "$platform" = "ubuntu-latest" ] || [ "$platform" = "ubuntu-22.04" ]; then
   arch="linux-$arch";
   folder="$arch";
 elif [ "$platform" = "macos-13" ] || [ "$platform" = "macos-latest" ]; then
@@ -20,6 +20,7 @@ elif [ "$platform" = "windows-latest" ]; then
   FILE="addon.zip"
 fi;
 
+echo "Platform: $platform"
 echo "Arch: $arch"
 echo "Folder: $folder"
 echo ""
@@ -36,7 +37,7 @@ version=`curl -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/re
 tag=`echo $version | jq ".tag_name"`
 asset_id=`echo $version | jq ".assets | map(select(.name | match(\"js_v[0-9]+.[0-9]+.[0-9]+([^_]+)?_$arch\";\"i\")))[0].id"`
 
-if [ "$asset_id" = "" ]; then
+if [ "$asset_id" = null ]; then
   echo "ERROR: version not found"
   exit 1
 fi;

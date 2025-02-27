@@ -17,7 +17,6 @@ class Sidebar {
 	objLeft: JQuery<HTMLElement> = null;
 	objRight: JQuery<HTMLElement> = null;
 	dummyLeft: JQuery<HTMLElement> = null;
-	dummyRight: JQuery<HTMLElement> = null
 
 	page: JQuery<HTMLElement> = null;
 	pageFlex: JQuery<HTMLElement> = null;
@@ -34,7 +33,7 @@ class Sidebar {
 		this.initObjects();
 
 		const stored = Storage.get('sidebar');
-		const vault = S.Common.getRef('vault');
+		const vault = $(S.Common.getRef('vault')?.getNode());
 
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
@@ -62,14 +61,13 @@ class Sidebar {
 		const vault = S.Common.getRef('vault');
 
 		this.objLeft = $('#sidebarLeft');
-		this.objRight = $('#sidebarRight');
-		this.pageFlex = $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
-		this.page = $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
+		this.pageFlex = U.Common.getPageFlexContainer(isPopup);
+		this.page = U.Common.getPageContainer(isPopup);
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
+		this.objRight = this.pageFlex.find('#sidebarRight');
 		this.dummyLeft = $('#sidebarDummyLeft');
-		this.dummyRight = $('#sidebarDummyRight');
 		this.toggleButton = $('#sidebarToggle');
 		this.syncButton = $('#sidebarSync');
 
@@ -254,6 +252,7 @@ class Sidebar {
 			widthRight = 0;
 		};
 
+		const container = U.Common.getScrollContainer(isPopup);
 		const pageWidth = (!isPopup ? ww : this.pageFlex.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 
@@ -265,6 +264,8 @@ class Sidebar {
 				syncX = widthLeft - 40;
 			};
 		};
+
+		this.objRight.css({ height: container.height() });
 
 		this.header.css({ width: '' });
 		this.footer.css({ width: '' });
@@ -279,8 +280,8 @@ class Sidebar {
 		
 		if (!isPopup) {
 			this.dummyLeft.css({ width: widthLeft });
-
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
+
 			this.toggleButton.toggleClass('sidebarAnimation', animate);
 			this.syncButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
@@ -362,12 +363,17 @@ class Sidebar {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
+	rightPanelRef (isPopup: boolean) {
+		const namespace = U.Common.getEventNamespace(isPopup);
+		return S.Common.getRef(`sidebarRight${namespace}`);
+	};
+
 	rightPanelToggle (v: boolean, animate: boolean, isPopup: boolean, page?: string, param?: any) {
 		if (v) {
 			S.Common.showSidebarRightSet(isPopup, v);
 
 			if (page) {
-				this.rightPanelSetState({ page, ...param });
+				this.rightPanelSetState(isPopup, { page, ...param });
 			};
 		};
 
@@ -415,8 +421,8 @@ class Sidebar {
 		S.Common.getRef('sidebarLeft')?.setState(v);
 	};
 
-	rightPanelSetState (v: any) {
-		S.Common.getRef('sidebarRight')?.setState(v);
+	rightPanelSetState (isPopup: boolean, v: any) {
+		this.rightPanelRef(isPopup)?.setState(v);
 	};
 
 };

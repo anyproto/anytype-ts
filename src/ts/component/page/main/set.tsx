@@ -164,6 +164,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	open () {
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -188,7 +189,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
 			this.refControls?.forceUpdate();
-			sidebar.rightPanelSetState({ rootId });
+			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 			this.resize();
 		});
@@ -199,8 +200,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			return;
 		};
 
-		const { isPopup, match } = this.props;
-		const close = !(isPopup && (match?.params?.id == this.id));
+		const { isPopup } = this.props;
+		const close = !(isPopup && (this.getRootId() == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -208,8 +209,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		return keyboard.getRootId(this.props.isPopup);
 	};
 
 	onScroll () {

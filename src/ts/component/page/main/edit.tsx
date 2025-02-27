@@ -1,20 +1,20 @@
 import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, S, U, Onboarding, analytics, sidebar } from 'Lib';
+import { I, S, U, Onboarding, analytics, sidebar, keyboard } from 'Lib';
 
 const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const headerRef = useRef(null);
+	const rootId = keyboard.getRootId(isPopup);
 
 	const onOpen = () => {
-		const rootId = getRootId();
 		const home = U.Space.getDashboard();
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		headerRef.current?.forceUpdate();
-		sidebar.rightPanelSetState({ rootId });
+		sidebar.rightPanelSetState(isPopup, { rootId });
 
 		if (home && (rootId != home.id)) {
 			let key = '';
@@ -31,13 +31,6 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 		analytics.event('ScreenObject', { objectType: object.type });
 	};
-
-	const getRootId = () => {
-		const { rootId, match } = props;
-		return rootId ? rootId : match?.params?.id;
-	};
-
-	const rootId = getRootId();
 
 	return (
 		<>

@@ -636,7 +636,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 				type = S.Record.getTypeType();
 				layout = I.ObjectLayout.Type;
 
-				const featured = [ 'type' ];
+				const featured = [ 'type', 'tag', 'backlinks' ];
 				const recommended = [];
 				const mapper = it => S.Record.getRelationByKey(it)?.id;
 

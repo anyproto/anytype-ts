@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Block, HeadSimple } from 'Component';
+import { Header, Footer, Block, HeadSimple } from 'Component';
 import { I, M, S, U, translate } from 'Lib';
 
 interface Props extends I.PageComponent {
@@ -89,6 +89,8 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 						</div>
 					</div>
 				</div>
+
+				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};

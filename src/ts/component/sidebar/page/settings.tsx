@@ -1,52 +1,102 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, J, S, sidebar, translate, U } from 'Lib';
+import { analytics, I, J, keyboard, S, sidebar, translate, U } from 'Lib';
 import { Icon, IconObject, ObjectName } from 'Component';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends React.Component {
 	page: string;
 };
 
+const LIMIT = 30;
+const HEIGHT_ITEM = 28;
+const HEIGHT_SECTION = 38;
+const HEIGHT_SECTION_FIRST = 34;
+const HEIGHT_ACCOUNT = 56;
+
 const SidebarSettings = observer(class SidebarSettings extends React.Component<Props, {}> {
 
 	node: any = null;
 	routeBack: any = null;
-
-	types: any[] = [];
+	cache: any = {};
+	toggle: any = {
+		contentModelTypes: false,
+		contentModelRelations: false,
+	};
 
 	render () {
 		const space = U.Space.getSpaceview();
 		const { membership } = S.Auth;
-		const { membershipTiersList } = S.Common;
-		const sections = this.getSections();
 		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant() || profile;
 		const pathname = U.Router.getRoute();
 		const param = U.Router.getParam(pathname);
 		const isSpace = this.props.page == 'settingsSpace';
 
+		const items = this.getItems();
+
 		const onBack = () => {
 			if (!this.routeBack || !this.routeBack.pathname) {
-				U.Space.openDashboard('route');
+				U.Space.openDashboard();
 				return;
 			};
 
 			U.Router.go(this.routeBack.pathname, {});
 		};
 
-		const Item = (action: any) => {
+		const ItemToggle = (item: any) => {
+			const cn = [ 'toggle' ];
+
+			if (this.toggle[item.id]) {
+				cn.push('isOpen');
+			};
+
+			return (
+				<div id={`item-toggle-${item.id}`} className={cn.join(' ')} onClick={() => this.onToggle(item)}>
+					<div className="left">
+						<Icon className="arrow" />
+						{item.name}
+					</div>
+					<div className="right">
+						<Icon className="plus" onClick={e => this.onAdd(e, item)} />
+					</div>
+				</div>
+			);
+		};
+
+		const ItemSection = (item: any) => {
+			const cn = [ 'section' ];
+
+			if (item.isFirst) {
+				cn.push('isFirst');
+			};
+
+			return (
+				<div className={cn.join(' ')}>
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		};
+
+		const Item = (item: any) => {
+			if (item.isToggle) {
+				return <ItemToggle {...item} />;
+			} else
+			if (item.isSection) {
+				return <ItemSection {...item} />;
+			};
+
 			const cn = [ 'item' ];
 
 			let icon = null;
 			let name = null;
 			let caption = null;
 
-			if (action.id == param.id || (action.subPages && action.subPages.includes(param.id))) {
+			if (item.id == param.id || (item.subPages && item.subPages.includes(param.id))) {
 				cn.push('active');
 			};
 
-			if (action.id == 'account') {
+			if (item.id == 'account') {
 				if ('index' == param.id) {
 					cn.push('active');
 				};
@@ -58,30 +108,35 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 				cn.push('itemAccount');
 			} else {
-				icon = <Icon className={`settings-${action.icon || action.id}`} />;
-				name = action.name;
+				icon = <Icon className={`settings-${item.icon || item.id}`} />;
+				name = item.name;
 			};
 
-			if (action.id == 'membership') {
+			if (U.Object.isTypeOrRelationLayout(item.layout)) {
+				cn.push('isTypeOrRelation');
+
+				icon = <IconObject object={item} />;
+			};
+
+			if (item.id == 'membership') {
 				if (!membership.isNone) {
 					const tierItem = U.Data.getMembershipTier(membership.tier);
+
 					caption = <div className="caption">{tierItem.name}</div>;
 				} else {
 					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
 				};
 			};
 
-			if (action.layout && action.layout == I.ObjectLayout.Type) {
-				icon = <IconObject object={action} />;
-			};
-
 			return (
 				<div
-					id={`item-${action.id}`}
+					id={`item-${item.id}`}
 					className={cn.join(' ')}
-					onClick={() => this.onClick(action)}
+					onContextMenu={() => this.onContext(item)}
+					onClick={() => this.onClick(item)}
 				>
 					{icon}
+
 					<div className="name">{name}</div>
 
 					{caption}
@@ -89,43 +144,19 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			);
 		};
 
-		const Section = (item: any) => {
-			const cn = [ 'section', String(item.id || ''), item.isLabel ? 'isLabel' : '' ];
-
-			if (item.isLabel) {
-				cn.push('isLabel');
-			} else
-			if (item.isToggle) {
-				cn.push('isToggle');
-			};
-
-			let name = null;
-			if (item.isToggle) {
-				name = (
-					<div className="toggle" onClick={() => this.onToggle(item)}>
-						<Icon />
-						{item.name}
-					</div>
-				);
-			} else
-			if (item.name) {
-				name = <div className="name">{item.name}</div>;
-			};
-
-			return (
-				<div id={`settings-section-${item.id}`} className={cn.join(' ')}>
-					{name}
-
-					{item.children ? (
-						<div className="items">
-							{item.children.map((action: any, i: number) => (
-								<Item key={i} {...action} />
-							))}
-						</div>
-					) : ''}
+		const rowRenderer = ({ index, key, parent, style }) => (
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={this.cache}
+				columnIndex={0}
+				rowIndex={index}
+			>
+				<div className="row" style={style}>
+					<Item {...items[index]} />
 				</div>
-			);
-		};
+			</CellMeasurer>
+		);
 
 		return (
 			<div 
@@ -139,23 +170,44 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 					<div className="list">
 						{isSpace ? (
 							<div className="head" onClick={onBack}>
-								<Icon className="back" />
+								<Icon className="back withBackground" />
 								<ObjectName object={space} />
 							</div>
 						) : ''}
 						<div className="inner">
-							{sections.map((item: any, i: number) => (
-								<Section key={i} {...item} />
-							))}
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={() => true}
+								threshold={LIMIT}
+							>
+								{({ onRowsRendered }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={({ index }) => this.getRowHeight(items[index])}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToAlignment="center"
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
 						</div>
-					</div>
 
-					{!isSpace ? (
-						<div className="logout" onClick={() => S.Popup.open('logout', {})}>
-							<Icon />
-							{translate('commonLogout')}
-						</div>
-					) : ''}
+						{!isSpace ? (
+							<div className="logout" onClick={() => S.Popup.open('logout', {})}>
+								<Icon />
+								{translate('commonLogout')}
+							</div>
+						) : ''}
+					</div>
 				</div>
 			</div>
 		);
@@ -163,34 +215,18 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 	componentDidMount () {
 		const history = U.Router.history;
+		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: i => this.getRowHeight(items[i]),
+			keyMapper: i => (items[i] || {}).id,
+		});
 
 		this.routeBack = history.entries[history.index - 1];
-
-		this.load();
 	};
 
-	load () {
-		U.Data.search({
-			sorts: [
-				{ type: I.SortType.Desc, relationKey: 'createdDate' },
-				{ type: I.SortType.Asc, relationKey: 'name' },
-			],
-			filters: [
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type }
-			],
-			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
-			noDeps: true,
-			ignoreHidden: true,
-			ignoreDeleted: true,
-		}, (message: any) => {
-			if (!message.error.code) {
-				this.types = message.records;
-				this.forceUpdate();
-			};
-		});
-	};
-
-	getSections () {
+	getSections (): any[] {
 		const canWrite = U.Space.canMyParticipantWrite();
 		const isSpace = this.props.page == 'settingsSpace';
 		const settingsVault = [
@@ -237,8 +273,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
-			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: this.types },
-			{ id: 'contentModelFields', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: [] },
+			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: S.Record.getTypes() },
+			{ id: 'contentModelRelations', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: S.Record.getRelations() },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
@@ -248,13 +284,44 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const sections = this.getSections();
 
 		let items: any[] = [];
-		for (const section of sections) {
+
+		sections.forEach((section, idx) => {
 			if (section.name) {
-				items.push({ id: section.id, name: section.name, isSection: true });
+				const item: any = { id: section.id, name: section.name, isSection: true };
+
+				if (section.isToggle) {
+					item.isToggle = true;
+				};
+
+				if (idx == 0) {
+					item.isFirst = true;
+				};
+
+				items.push(item);
 			};
-			items = items.concat(section.children);
-		};
+
+			let children = section.children ? section.children : [];
+			if (section.isToggle && !this.toggle[section.id]) {
+				children = [];
+			};
+
+			items = items.concat(children);
+		});
+
 		return items;
+	};
+
+	getRowHeight (item: any) {
+		if (item.isToggle) {
+			return HEIGHT_ITEM;
+		};
+		if (item.isSection) {
+			return item.isFirst ? HEIGHT_SECTION_FIRST : HEIGHT_SECTION;
+		};
+		if (item.id == 'account') {
+			return HEIGHT_ACCOUNT;
+		};
+		return HEIGHT_ITEM;
 	};
 
 	withMembership () {
@@ -281,13 +348,69 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		U.Object.openAuto(param);
 	};
 
-	onToggle (item) {
-		const obj = $(this.node).find(`#settings-section-${item.id}`);
+	onContext (item) {
+		if (!U.Object.isTypeOrRelationLayout(item.layout)) {
+			return;
+		};
 
-		if (obj.hasClass('isOpen')) {
-			obj.removeClass('isOpen');
-		} else {
-			obj.addClass('isOpen');
+		const { x, y } = keyboard.mouse.page;
+
+		S.Menu.open('objectContext', {
+			element: `#containerSettings #item-${item.id}`,
+			rect: { width: 0, height: 0, x: x + 4, y },
+			data: {
+				objectIds: [ item.id ],
+				getObject: () => {
+					return item;
+				},
+			}
+		});
+	};
+
+	onToggle (item) {
+		this.toggle[item.id] = !this.toggle[item.id];
+		this.forceUpdate();
+	};
+	
+	onAdd (e, item) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const isPopup = keyboard.isPopup();
+
+		switch (item.id) {
+			case 'contentModelTypes': {
+				const type = S.Record.getTypeType();
+				const featured = [ 'type', 'tag', 'backlinks' ];
+				const recommended = [];
+				const mapper = it => S.Record.getRelationByKey(it)?.id;
+				const details: any = {
+					isNew: true,
+					type: type.id,
+					layout: I.ObjectLayout.Type,
+					recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
+					recommendedRelations: recommended.map(mapper).filter(it => it),
+				};
+
+				sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });
+				break;
+			};
+
+			case 'contentModelRelations': {
+				const node = $(this.node);
+				const width = node.width() - 32;
+
+				S.Menu.open('blockRelationEdit', {
+					element: `#containerSettings #item-toggle-${item.id} .plus`,
+					offsetY: 4,
+					width,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+					horizontal: I.MenuDirection.Right,
+				});
+
+				break;
+			};	
 		};
 	};
 

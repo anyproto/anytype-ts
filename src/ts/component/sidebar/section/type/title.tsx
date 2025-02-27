@@ -25,7 +25,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 					object={object} 
 					size={24} 
 					canEdit={!readonly}
-					onSelect={this.onSelect}
+					onIconSelect={this.onSelect}
 					menuParam={{
 						horizontal: I.MenuDirection.Center,
 						className: 'fixed',
@@ -64,8 +64,8 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		this.refName.placeholderCheck();
 	};
 
-	onSelect (icon: string) {
-		this.props.onChange({ iconEmoji: icon });
+	onSelect (id: string, color: number) {
+		this.props.onChange({ iconName: id, iconOption: color });
 	};
 
 	onChange () {

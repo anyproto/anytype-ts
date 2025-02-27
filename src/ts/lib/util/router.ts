@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, keyboard } from 'Lib';
 
 interface RouteParam {
 	page: string; 
@@ -89,6 +89,7 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
+		sidebar.rightPanelToggle(false, false, keyboard.isPopup());
 
 		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route, false, param);

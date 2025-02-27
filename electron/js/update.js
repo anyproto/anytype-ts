@@ -1,7 +1,6 @@
 const { app } = require('electron');
 const { is } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
-const log = require('electron-log');
 
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
@@ -24,7 +23,7 @@ class UpdateManager {
 
 		console.log('[UpdateManager].init, channel: ', channel);
 
-		autoUpdater.logger = log;
+		autoUpdater.logger = Util.getLogger();
 		autoUpdater.logger.transports.file.level = 'debug';
 		autoUpdater.autoDownload = false;
 		autoUpdater.autoInstallOnAppQuit = false;
@@ -113,13 +112,7 @@ class UpdateManager {
 	};
 
 	checkUpdate (auto) {
-		if (!this.isAllowed()) {
-			return;
-		};
-
-		Util.log('info', 'isUpdating: ' + this.isUpdating);
-
-		if (this.isUpdating) {
+		if (!this.isAllowed() || this.isUpdating) {
 			return;
 		};
 

@@ -17,7 +17,7 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 		C.ObjectShow(id, '', spaceId, (message: any) => {
 			if (message.error.code) {
-				U.Space.openDashboard('route');
+				U.Space.openDashboard();
 				return;
 			};
 

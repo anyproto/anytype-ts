@@ -1539,7 +1539,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		obj.css({ width: 'auto' });
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
-			const container = U.Common.getPageFlexContainer(isPopup);
+			const container = U.Common.getPageContainer(isPopup);
 
 			maxWidth = container.width() - PADDING;
 			wrapperWidth = getWrapperWidth() + J.Size.blockMenu;
