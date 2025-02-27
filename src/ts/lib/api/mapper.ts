@@ -682,7 +682,7 @@ export const Mapper = {
 			return reactions;
 		},
 
-		PublishState: (obj: Rpc.Publishing.PublishState): I.PublishState => {
+		PublishState: (obj: Rpc.Publishing.PublishState): any => {
 			return {
 				spaceId: obj.getSpaceid(),
 				objectId: obj.getObjectid(),
@@ -691,7 +691,7 @@ export const Mapper = {
 				version: obj.getVersion(),
 				timestamp: obj.getTimestamp(),
 				size: obj.getSize(),
-				details: Decode.struct(obj.getDetails()),
+				//details: Decode.struct(obj.getDetails()),
 			};
 		},
 

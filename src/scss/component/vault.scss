@@ -37,6 +37,10 @@
 		border-radius: 50%; opacity: 0; transition: opacity 0.2s $easeInQuint; opacity: 0;
 	}
 
+	.item.isButton {
+		.iconWrap { background-color: var(--color-shape-highlight-dark); }
+	}
+
 	.item:hover, .item.hover { padding: 0px; }
 
 	.item.isActive::after { opacity: 1; }

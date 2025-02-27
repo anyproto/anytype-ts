@@ -177,20 +177,20 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		if (isCollection) {
 			filters = filters.concat([
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', J.Constant.typeKey.collection, S.Common.space, (message: any) => { 
+				C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};
 		} else {
 			filters = filters.concat([
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 

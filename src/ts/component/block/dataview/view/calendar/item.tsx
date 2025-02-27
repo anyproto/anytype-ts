@@ -121,8 +121,8 @@ const Item = observer(class Item extends React.Component<Props> {
 		const node = $(this.node);
 		const view = getView();
 
-		S.Menu.closeAll([ 'dataviewCalendarDay' ], () => {
-			S.Menu.open('dataviewCalendarDay', {
+		S.Menu.closeAll([ 'calendarDay' ], () => {
+			S.Menu.open('calendarDay', {
 				element: node,
 				horizontal: I.MenuDirection.Center,
 				width: node.outerWidth() + 8,

@@ -40,6 +40,7 @@ export default {
 		notification:	 20,
 		space:			 50,
 		graphDepth:		 5,
+		cellEntry:		 320,
 		listObject:		 50,
 
 		chat: {
@@ -136,7 +137,6 @@ export default {
 	},
 
 	templateId: {
-		blank:			 'blank',
 		new:			 'newTemplate'
 	},
 

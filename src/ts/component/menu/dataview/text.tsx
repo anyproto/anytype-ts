@@ -62,7 +62,7 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	};
 
 	onBlur (e: any) {
-		this.save();
+		// this.save();
 	};
 
 	save () {

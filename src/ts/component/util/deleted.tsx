@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
-import { S, U, translate } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 
 interface Props {
 	className?: string;
@@ -14,7 +14,30 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 }, ref) => {
 
 	const nodeRef = useRef<HTMLDivElement>(null);
-	const onClick = isPopup ? () => S.Popup.close('page') : () => U.Space.openDashboard('route');
+	const onClick = () => {
+		if (isPopup) {
+			S.Popup.close('page');
+		} else {
+			const home = U.Space.getDashboard();
+
+			let last = null;
+			if (home && (home.id == I.HomePredefinedId.Last)) {
+				last = U.Space.getLastObject();
+			};
+
+			if (last) {
+				U.Object.getById(home.id, {}, object => {
+					if (!object || object.isDeleted) {
+						U.Object.openRoute({ layout: I.ObjectLayout.Empty }, { replace: true });
+					} else {
+						U.Space.openDashboard();
+					};
+				});
+			} else {
+				U.Space.openDashboard();
+			};
+		};
+	};
 	const textButton = isPopup ? translate('commonClose') : translate('utilDeletedBackToDashboard');
 
 	const unbind = () => {

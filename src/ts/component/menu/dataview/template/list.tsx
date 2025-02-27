@@ -29,37 +29,9 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	render () {
 		const { param, setHover } = this.props;
 		const { data } = param;
-		const { typeId } = data;
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
-		const isAllowed = U.Object.isAllowedTemplate(typeId);
-
-		const ItemBlank = (item: any) => {
-			const cn = [ 'previewObject', 'blank', I.PreviewSize[previewSize].toLowerCase() ];
-
-			if (item.id == templateId) {
-				cn.push('isDefault');
-			};
-
-			return (
-				<div className={cn.join(' ')}>
-					{isAllowed ? (
-						<div id={`item-more-${item.id}`} className="moreWrapper" onClick={e => this.onMore(e, item)}>
-							<Icon className="more" />
-						</div>
-					) : ''}
-
-					<div className="scroller">
-						<div className="heading">
-							<div className="name">{translate('commonBlank')}</div>
-							<div className="featured" />
-						</div>
-					</div>
-					<div className="border" />
-				</div>
-			);
-		};
 
 		const ItemAdd = () => (
 			<div className="previewObject small">
@@ -71,9 +43,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const Item = (item: any) => {
 			let content = null;
 
-			if (item.id == J.Constant.templateId.blank) {
-				content = <ItemBlank {...item} />;
-			} else
 			if (item.id == J.Constant.templateId.new) {
 				content = <ItemAdd {...item} />;
 			} else {
@@ -179,10 +148,9 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
-		const templateType = S.Record.getTemplateType();
 
 		const filters: I.Filter[] = [
-			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.Equal, value: J.Constant.typeKey.template },
 			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
 		const sorts = [
@@ -219,7 +187,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			};
 		};
 
-		return ret || templateId || J.Constant.templateId.blank;
+		return ret || templateId || '';
 	};
 
 	getItems () {
@@ -228,8 +196,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { noAdd, typeId } = data;
 		const items = S.Record.getRecords(this.getSubId());
 		const isAllowed = U.Object.isAllowedTemplate(typeId);
-
-		items.unshift({ id: J.Constant.templateId.blank });
 
 		if (!noAdd && isAllowed) {
 			items.push({ id: J.Constant.templateId.new });

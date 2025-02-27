@@ -29,7 +29,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 			setError(translate('pageMainInviteErrorData'));
 		} else {
 			C.SpaceInviteView(data.cid, data.key, (message: any) => {
-				U.Space.openDashboard('route', { replace: true });
+				U.Space.openDashboard({ replace: true });
 
 				S.Popup.closeAll(null, () => {
 					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
@@ -87,7 +87,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 
 	const resize = () => {
 		const win = $(window);
-		const obj = U.Common.getPageContainer(isPopup);
+		const obj = U.Common.getPageFlexContainer(isPopup);
 		const node = $(nodeRef.current);
 		const oh = obj.height();
 		const wh = isPopup ? oh : win.height();
@@ -118,7 +118,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 							text={translate('commonBack')} 
 							color="blank" 
 							className="c36" 
-							onClick={() => U.Space.openDashboard('route')} 
+							onClick={() => U.Space.openDashboard()} 
 						/>
 					</div>
 				) : <Loader />}

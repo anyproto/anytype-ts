@@ -24,7 +24,7 @@ class PageMainSettingsImportNotion extends React.Component<I.PageSettingsCompone
 		const { error } = this.state;
 
 		return (
-			<React.Fragment>
+			<>
 				<Icon className="logo" />
 				<Title text="Notion" />
 				<Label className="description" text={translate('popupSettingsImportNotionDescription')} />
@@ -65,7 +65,7 @@ class PageMainSettingsImportNotion extends React.Component<I.PageSettingsCompone
 						<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList32')} />
 					</li>
 				</ol>
-			</React.Fragment>
+			</>
 		);
 	};
 	

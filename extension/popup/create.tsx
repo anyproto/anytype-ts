@@ -413,11 +413,11 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.setState({ isLoading: true, error: '' });
 
 		const details = Object.assign({ name: this.refName?.getValue(), origin: I.ObjectOrigin.Webclipper }, this.details);
-		const type = details.type;
+		const type = S.Record.getTypeByKey(details.type);
 
 		delete(details.type);
 
-		C.ObjectCreateFromUrl(details, S.Common.space, type, this.url, withContent, (message: any) => {
+		C.ObjectCreateFromUrl(details, S.Common.space, type?.uniqueKey, this.url, withContent, type?.defaultTemplateId, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (message.error.code) {

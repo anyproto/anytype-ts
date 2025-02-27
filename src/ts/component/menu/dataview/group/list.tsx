@@ -1,206 +1,60 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
 import { Icon, Switch, Cell } from 'Component';
 import { I, C, S, J, Dataview, keyboard, translate } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Menu> {
-	
-	node: any = null;
-	n = -1;
-	top = 0;
-	cache: any = {};
-	refList: any = null;
+const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onSwitch = this.onSwitch.bind(this);
-		this.onScroll = this.onScroll.bind(this);
+	const { param, getId, setActive, onKeyDown, position } = props;
+	const { data } = param;
+	const { readonly, rootId, blockId, getView } = data;
+	const view = getView();
+	const items = Dataview.getGroups(rootId, blockId, view.id, true);
+	const block = S.Block.getLeaf(rootId, blockId);
+	const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+	const cache = useRef({});
+	const listRef = useRef(null);
+	const top = useRef(0);
+	const n = useRef(-1);
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
+
+	cache.current = new CellMeasurerCache({
+		fixedWidth: true,
+		defaultHeight: HEIGHT,
+		keyMapper: i => (items[i] || {}).id,
+	});
+
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	render () {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { readonly, rootId, blockId, getView } = data;
-		const items = this.getItems();
-		const view = getView();
-		const block = S.Block.getLeaf(rootId, blockId);
-		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-
-		const Handle = SortableHandle(() => (
-			<Icon className="dnd" />
-		));
-
-		const Item = SortableElement((item: any) => {
-			const canHide = allowedView;
-			const canEdit = !readonly && allowedView;
-			const subId = S.Record.getSubId(rootId, [ blockId, item.id ].join(':'));
-			const cn = [ 'item' ];
-			const head = {};
-
-			head[view.groupRelationKey] = item.value;
-			
-			if (!canEdit) {
-				cn.push('isReadonly');
-			};
-
-			return (
-				<div 
-					ref={node => this.node = node}
-					id={'item-' + item.id} 
-					className={cn.join(' ')} 
-					onMouseEnter={e => this.onMouseEnter(e, item)}
-					style={item.style}
-				>
-					{allowedView ? <Handle /> : ''}
-					<span className="clickable">
-						<Cell 
-							id={'menu-group-' + item.id} 
-							rootId={rootId}
-							subId={subId}
-							block={block}
-							relationKey={view.groupRelationKey} 
-							viewType={I.ViewType.Board}
-							getRecord={() => head}
-							readonly={true} 
-							arrayLimit={4}
-							withName={true}
-							placeholder={translate('commonUncategorized')}
-						/>
-					</span>
-					{canHide ? (
-						<Switch 
-							value={!item.isHidden} 
-							onChange={(e: any, v: boolean) => { this.onSwitch(e, item, v); }} 
-						/>
-					) : ''}
-				</div>
-			);
-		});
-		
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					<Item key={item.id} {...item} index={param.index} style={param.style} />
-				</CellMeasurer>
-			);
-		};
-		
-		const List = SortableContainer(() => (
-			<div className="items">
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => true}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<VList
-									ref={ref => this.refList = ref}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={LIMIT}
-									onScroll={this.onScroll}
-									scrollToAlignment="center"
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
-			</div>
-		));
-		
-		return (
-			<div className="wrap">
-				<List 
-					axis="y" 
-					lockAxis="y"
-					lockToContainerEdges={true}
-					transitionDuration={150}
-					distance={10}
-					onSortStart={this.onSortStart}
-					onSortEnd={this.onSortEnd}
-					useDragHandle={true}
-					helperClass="isDragging"
-					helperContainer={() => $(`#${getId()} .items`).get(0)}
-				/>
-			</div>
-		);
-	};
-
-	componentDidMount() {
-		const items = this.getItems();
-
-		this.rebind();
-		this.resize();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (items[i] || {}).id,
-		});
-	};
-	
-	componentDidUpdate () {
-		this.resize();
-		this.rebind();
-
-		this.props.setActive(null, true);
-		this.props.position();
-
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-		S.Menu.closeAll(J.Menu.cell);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onKeyDown (e: any) {
+	const onKeyDownHandler = (e: any) => {
+		const item = items[n.current];
+
 		let ret = false;
-		const items = this.getItems();
-		const item = items[this.n];
 
 		keyboard.shortcut('space', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.onSwitch(e, item, !item.isVisible);
+			onSwitch(e, item, !item.isVisible);
 			ret = true;
 		});
 
@@ -208,80 +62,215 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 			return;
 		};
 
-		this.props.onKeyDown(e);
+		onKeyDown(e);
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 	
-	onSortStart () {
+	const onSortStart = () => {
 		keyboard.disableSelection(true);
 	};
 
-	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
+	const onSortEnd = (result: any) => {
+		const { active, over } = result;
+		const ids = items.map(it => it.id);
+		const oldIndex = ids.indexOf(active.id);
+		const newIndex = ids.indexOf(over.id);
 			
-		S.Record.groupsSet(rootId, blockId, arrayMove(this.getItems(), oldIndex, newIndex));
-		this.save();
+		S.Record.groupsSet(rootId, blockId, arrayMove(items, oldIndex, newIndex));
+		save();
 
 		keyboard.disableSelection(false);
 	};
 
-	onSwitch (e: any, item: any, v: boolean) {
-		const groups = this.getItems();
-		const group = groups.find(it => it.id == item.id);
+	const onSwitch = (e: any, item: any, v: boolean) => {
+		const current = items.find(it => it.id == item.id);
 
-		group.isHidden = !v;
-		this.save();
+		current.isHidden = !v;
+		save();
 	};
 
-	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
+	const save = () => {
 		const view = getView();
-		const groups = this.getItems();
+		const items = S.Record.getGroups(rootId, blockId);
 		const update: any[] = [];
 
-		groups.forEach((it: any, i: number) => {
+		items.forEach((it: any, i: number) => {
 			update.push({ ...it, groupId: it.id, index: i });
 		});
 
-		S.Record.groupsSet(rootId, blockId, groups);
+		S.Record.groupsSet(rootId, blockId, items);
 		Dataview.groupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			top.current = scrollTop;
 		};
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-
-		return S.Record.getGroups(rootId, blockId);
-	};
-
-	resize () {
-		const { getId, position } = this.props;
-		const items = this.getItems();
+	const resize = () => {
 		const obj = $(`#${getId()} .content`);
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
 
 		obj.css({ height });
 		position();
 	};
+
+	const Handle = () => (
+		<Icon className="dnd" />
+	);
+
+	const Item = (item: any) => {
+		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: !allowedView });
+		const canHide = allowedView;
+		const canEdit = !readonly && allowedView;
+		const subId = S.Record.getSubId(rootId, [ blockId, item.id ].join(':'));
+		const cn = [ 'item' ];
+		const head = {};
+		const style = {
+			transform: CSS.Transform.toString(transform),
+			transition,
+		};
+
+		head[view.groupRelationKey] = item.value;
+		
+		if (!canEdit) {
+			cn.push('isReadonly');
+		};
+
+		return (
+			<div 
+				id={'item-' + item.id} 
+				className={cn.join(' ')} 
+				onMouseEnter={e => onMouseEnter(e, item)}
+				ref={setNodeRef}
+				{...attributes}
+				{...listeners}
+				style={style}
+			>
+				{allowedView ? <Icon className="dnd" /> : ''}
+				<span className="clickable">
+					<Cell 
+						id={'menu-group-' + item.id} 
+						rootId={rootId}
+						subId={subId}
+						block={block}
+						relationKey={view.groupRelationKey} 
+						viewType={I.ViewType.Board}
+						getRecord={() => head}
+						readonly={true} 
+						arrayLimit={4}
+						withName={true}
+						placeholder={translate('commonUncategorized')}
+					/>
+				</span>
+				{canHide ? (
+					<Switch 
+						value={!item.isHidden} 
+						onChange={(e: any, v: boolean) => onSwitch(e, item, v)} 
+					/>
+				) : ''}
+			</div>
+		);
+	};
 	
-});
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				<Item key={item.id} {...item} index={param.index} style={param.style} />
+			</CellMeasurer>
+		);
+	};
+	
+	useEffect(() => {
+		rebind();
+		resize();
+
+		return () => {
+			unbind();
+			S.Menu.closeAll(J.Menu.cell);
+		};
+	}, []);
+
+	useEffect(() => {
+		resize();
+		rebind();
+		setActive(null, true);
+		position();
+
+		if (top.current) {
+			listRef.current?.scrollToPosition(top.current);
+		};
+	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems: () => items,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+	}), []);
+	
+	return (
+		<div className="wrap">
+			<DndContext
+				sensors={sensors}
+				collisionDetection={closestCenter}
+				onDragStart={onSortStart}
+				onDragEnd={onSortEnd}
+				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
+			>
+				<SortableContext
+					items={items.map((item) => item.id)}
+					strategy={verticalListSortingStrategy}
+				>
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => true}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<VList
+											ref={listRef}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={cache.current}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											onScroll={onScroll}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
+				</SortableContext>
+			</DndContext>
+		</div>
+	);
+
+}));
 
 export default MenuGroupList;

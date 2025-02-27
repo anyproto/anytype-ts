@@ -17,15 +17,17 @@ import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 import ListNotification from './list/notification';
 import ListChildren from './list/children';
-import ListPreviewObject from './list/previewObject';
 import ListObject from './list/object';
-import ListManager from './list/objectManager';
+import ListObjectManager from './list/objectManager';
+import ListObjectPreview from './list/objectPreview';
 
 import Header from './header';
 import Footer from './footer';
-import Sidebar from './sidebar';
 import Vault from './vault';
 import Widget from './widget';
+
+import SidebarLeft from './sidebar/left';
+import SidebarRight from './sidebar/right';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -58,6 +60,7 @@ import DragVertical from './form/drag/vertical';
 import Pin from './form/pin';
 import Filter from './form/filter';
 import Phrase from './form/phrase';
+import TabSwitch from './form/tabSwitch';
 import EmailCollection from './form/emailCollection';
 import HeadSimple from './page/elements/head/simple';
 import EditorControls from './page/elements/head/controls';
@@ -79,7 +82,7 @@ import PreviewLink from './preview/link';
 import PreviewObject from './preview/object';
 import PreviewDefault from './preview/default';
 
-import Cell from './block/dataview/cell';
+import Cell from './cell';
 
 import ObjectName from './util/object/name';
 import ObjectDescription from './util/object/description';
@@ -117,9 +120,9 @@ export {
 	ListPopup,
 	ListMenu,
 	ListChildren,
-	ListPreviewObject,
 	ListObject,
-	ListManager,
+	ListObjectManager,
+	ListObjectPreview,
 	ListNotification,
 
 	Header,
@@ -149,6 +152,8 @@ export {
 	Progress,
 	DotIndicator,
 	Phrase,
+	TabSwitch,
+
 	EmptySearch,
 	Popup,
 	Frame,
@@ -169,7 +174,9 @@ export {
 
 	Cell,
 
-	Sidebar,
+	SidebarLeft,
+	SidebarRight,
+
 	Vault,
 	Widget,
 

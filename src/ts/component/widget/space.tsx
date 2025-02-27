@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, C, J, translate, sidebar, keyboard, analytics, Storage, Action, Preview } from 'Lib';
+import { I, S, U, translate, sidebar, keyboard, analytics, Preview } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -25,13 +25,9 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		cn.push('withCnt');
 	};
 
-	const openSettings = (page: string) => {
-		sidebar.settingsOpen(page);
-	};
-
 	const onSettings = (e: MouseEvent) => {
 		e.stopPropagation();
-		openSettings('spaceIndex');
+		U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 	};
 
 	const onSearch = (e: MouseEvent) => {
@@ -64,12 +60,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'member': {
-				sidebar.settingsOpen('spaceShare');
+				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				break;
 			};
 
 			case 'all': {
-				sidebar.objectContainerSwitch('object');
+				sidebar.leftPanelSetState({ page: 'object' });
 				break;
 			};
 
@@ -105,7 +101,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					</div>
 				</div>
 				<div className="side right">
-					<Icon className="search withBackground" onClick={onSearch} tooltip={translate('commonSearch')} tooltipCaption={`${cmd} + S`} />
+					<Icon className="search withBackground" onClick={onSearch} tooltip={translate('commonSearch')} tooltipCaption={keyboard.getCaption('search')} />
 
 					{canWrite ? (
 						<div className="plusWrapper" onMouseEnter={onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>

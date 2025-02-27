@@ -220,7 +220,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		];
 
 		let filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() }
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() }
 		];
 		if (data.filters) {
 			filters = Object.assign(data.filters);

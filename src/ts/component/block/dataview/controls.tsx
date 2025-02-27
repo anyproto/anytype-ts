@@ -153,7 +153,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search withBackground"
 							tooltip={translate('commonSearch')}
-							tooltipCaption={`${cmd} + F`}
+							tooltipCaption={keyboard.getCaption('searchText')}
 							onChange={onFilterChange}
 							onIconClick={this.onFilterShow}
 						/>
@@ -198,7 +198,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this._isMounted = false;
 
 		const { isPopup } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		container.off('mousedown.filter');
@@ -387,12 +387,19 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const sources = getSources();
 		const object = getTarget();
 		const view = getView();
+		const type = S.Record.getTypeById(object.type);
+		
+		let viewType = I.ViewType.Grid;
+		if (type && (undefined !== type.defaultViewType)) {
+			viewType = type.defaultViewType;
+		};
+
 		const newView = {
 			...view,
 			id: '',
-			name: translate(`viewName${I.ViewType.Grid}`),
-			type: I.ViewType.Grid,
-			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, view.type, '')?.id,
+			name: translate(`viewName${viewType}`),
+			type: viewType,
+			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
 			filters: [],
 			sorts: [],
@@ -492,7 +499,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		const { isPopup, isInline } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		this.refFilter.setActive(true);

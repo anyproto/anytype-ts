@@ -266,6 +266,16 @@ class RecordStore {
 		return id ? this.getTypeById(id) : null;
 	};
 
+	getTypeFeaturedRelations (id: string) {
+		const type = this.getTypeById(id);
+		return (type?.recommendedFeaturedRelations || []).map(it => this.getRelationById(it)).filter(it => it);
+	};
+
+	getTypeRecommendedRelations (id: string) {
+		const type = this.getTypeById(id);
+		return (type?.recommendedRelations || []).map(it => this.getRelationById(it)).filter(it => it);
+	};
+
 	getTemplateType () {
 		return this.getTypeByKey(J.Constant.typeKey.template);
 	};
@@ -308,8 +318,12 @@ class RecordStore {
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
-	getObjectRelationKeys (rootId: string, blockId: string): any[] {
+	getDataviewRelationKeys (rootId: string, blockId: string): any[] {
 		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => it.relationKey);
+	};
+
+	getDataviewRelations (rootId: string, blockId: string): any[] {
+		return this.getDataviewRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
 	};
 
 	getObjectRelations (rootId: string, typeId: string): any[] {
@@ -321,12 +335,28 @@ class RecordStore {
 		return this.checkHiddenObjects(typeRelations.concat(objectRelations));
 	};
 
-	getDataviewRelationKeys (rootId: string, blockId: string): any[] {
-		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => it.relationKey);
-	};
+	getConflictRelations (rootId: string, blockId: string, typeId: string): any[] {
+		const objectKeys = S.Detail.getKeys(rootId, blockId);
+		const typeKeys = S.Detail.getTypeRelationIds(typeId).
+			map(it => S.Record.getRelationById(it)).
+			filter(it => it && it.relationKey).
+			map(it => it.relationKey);
 
-	getDataviewRelations (rootId: string, blockId: string): any[] {
-		return this.getDataviewRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
+
+		let conflictKeys = [];
+
+		if (typeKeys.length) {
+			objectKeys.forEach((key) => {
+				if (!typeKeys.includes(key)) {
+					conflictKeys.push(key);
+				};
+			});
+		} else {
+			conflictKeys = objectKeys;
+		};
+
+		conflictKeys = conflictKeys.map(it => this.getRelationByKey(it)).filter(it => it && !Relation.isSystem(it.relationKey));
+		return this.checkHiddenObjects(conflictKeys);
 	};
 
 	getRelationByKey (relationKey: string): any {
@@ -372,7 +402,7 @@ class RecordStore {
 	};
 
 	getRecords (subId: string, keys?: string[], forceKeys?: boolean): any[] {
-		return this.getRecordIds(subId, '').map(id => S.Detail.get(subId, id, keys));
+		return this.getRecordIds(subId, '').map(id => S.Detail.get(subId, id, keys, forceKeys));
 	};
 
 	getGroups (rootId: string, blockId: string) {
@@ -396,13 +426,14 @@ class RecordStore {
 	};
 
 	checkHiddenObjects (records: any[]): any[] {
-		const isHidden = S.Common.config.debug.hiddenObject;
+		const { config } = S.Common;
+		const { hiddenObject } = config.debug;
 
 		if (!Array.isArray(records)) {
 			return [];
 		};
 
-		return records.filter(it => isHidden ? true : !it.isHidden);
+		return records.filter(it => hiddenObject ? true : !it.isHidden);
 	};
 
 };

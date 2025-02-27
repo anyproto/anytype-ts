@@ -1,7 +1,9 @@
 @import "~scss/_mixins";
 
-.bodyMainVoid {
-	#sidebar { display: none; }
+.bodyMain.bodyMainVoid {
+	#sidebarToggle,
+	.sidebar,
+    .sidebarDummy { display: none; }
 }
 
 .pageMainVoid {
