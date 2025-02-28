@@ -130,6 +130,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 								onSwiper={swiper => this.refSwiper = swiper}
 								direction={'horizontal'}
 								slidesPerView={'auto'}
+								slidesPerGroupAuto={true}
 								spaceBetween={12}
 								mousewheel={true}
 								navigation={true}
