@@ -1084,7 +1084,7 @@ class UtilCommon {
 			return text;
 		};
 
-		match.forEach((m: any) => {
+		Array.from(match).forEach((m: any) => {
 			const m0 = String(m[0] || '');
 			const m1 = String(m[1] || '');
 			const m2 = String(m[2] || '');

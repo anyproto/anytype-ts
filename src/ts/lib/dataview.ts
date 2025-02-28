@@ -11,13 +11,12 @@ class Dataview {
 		};
 
 		const order: any = {};
-		const object = S.Detail.get(rootId, rootId, [ 'recommendedRelations', 'recommendedFeaturedRelations', 'recommendedFeaturedRelations' ]);
+		const object = S.Detail.get(rootId, rootId, []);
 		const isType = U.Object.isTypeLayout(object.layout);
 
 		let relations = [];
 		if (isType) {
-			const typeIds = (object.recommendedRelations || []).concat(object.recommendedFeaturedRelations || []).concat(object.recommendedFeaturedRelations || []);
-
+			const typeIds = U.Object.getTypeRelationIds(object.type);
 			relations = J.Relation.default.map(it => S.Record.getRelationByKey(it)).concat(typeIds.map(it => S.Record.getRelationById(it)));
 		} else {
 			relations = S.Record.getDataviewRelations(rootId, blockId);

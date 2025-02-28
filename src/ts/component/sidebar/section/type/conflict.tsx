@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Icon, ObjectName, IconObject } from 'Component';
-import { I, C, S, Relation, translate, keyboard } from 'Lib';
+import { I, C, S, U, Relation, translate, keyboard } from 'Lib';
 
 const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 
@@ -30,10 +30,10 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 	};
 
 	const getItems = () => {
-		const relations = Relation.getArrayValue(object.recommendedRelations).concat(Relation.getArrayValue(object.recommendedFeaturedRelations));
+		const typeIds = U.Object.getTypeRelationIds(object.type);
 
 		return conflictIds
-			.filter(it => !relations.includes(it))
+			.filter(it => !typeIds.includes(it))
 			.map(id => S.Record.getRelationById(id));
 	};
 

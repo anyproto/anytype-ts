@@ -586,6 +586,18 @@ class UtilObject {
 		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
 	};
 
+	getTypeRelationIds (id: string) {
+		const type = S.Record.getTypeById(id);
+		if (!type) {
+			return [];
+		};
+
+		return Relation.getArrayValue(type.recommendedRelations).
+			concat(Relation.getArrayValue(type.recommendedFeaturedRelations)).
+			concat(Relation.getArrayValue(type.recommendedHiddenRelations)).
+			concat(Relation.getArrayValue(type.recommendedFileRelations));
+	};
+
 };
 
 export default new UtilObject();
