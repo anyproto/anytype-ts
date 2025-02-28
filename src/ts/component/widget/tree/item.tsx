@@ -31,7 +31,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const rootId = keyboard.getRootId();
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
-	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
+	const paddingLeft = depth > 1 ? depth * 6 : 6;
 	const hasMore = U.Space.canMyParticipantWrite();
 	const [ dummy, setDummy ] = useState(0);
 
@@ -67,14 +67,10 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let more = null;
 	let inner = null;
 
-	if (U.Object.isSetLayout(layout) || (U.Object.isCollectionLayout(layout) && !numChildren)) {
-		arrow = <Icon className="set" />;
-	} else
 	if (numChildren > 0) {
+		cn.push('withArrow');
 		onArrowClick = onToggleHandler;
 		arrow = <Icon className="arrow" />;
-	} else {
-		arrow = <Icon className="blank" />;
 	};
 
 	if (arrow) {

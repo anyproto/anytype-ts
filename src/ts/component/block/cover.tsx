@@ -186,7 +186,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			onOpen: () => elements.addClass('hover'),
 			onClose: () => elements.removeClass('hover'),
 			data: {
-				value: (object.iconEmoji || object.iconImage || ''),
+				value: U.Object.getIcon(object),
 				onSelect: (icon: string) => {
 					U.Object.setIcon(rootId, icon, '', cb);
 				},

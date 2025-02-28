@@ -199,7 +199,7 @@
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
 	"pluralObjectType": "Object Type|Object Types",
-	"pluralField": "Field|Fields",
+	"pluralField": "Property|Properties",
 	"pluralLinks": "link|links",
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
@@ -1142,7 +1142,7 @@
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
-	"popupConfirmLocalFieldsTitle": "Add Local Fields to current type?",
+	"popupConfirmLocalFieldsTitle": "Add Local Properties to current type?",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1934,14 +1934,14 @@
 	"sidebarSectionLayoutDefaultView": "Default view",
 	"sidebarSectionLayoutDefaultType": "Default type",
 
-	"sidebarTypeRelation": "Fields",
+	"sidebarTypeRelation": "Propertis",
 	"sidebarTypeRelationHeader": "Header",
 	"sidebarTypeRelationSidebar": "Sidebar",
 	"sidebarTypeRelationHidden": "Hidden",
 	"sidebarObjectRelationSetUp": "Set up",
 	"sidebarTypeRelationEmpty": "There are no fields yet",
 
-	"sidebarRelationLocal": "Local Fields",
+	"sidebarRelationLocal": "Local Properties",
 	"sidebarTypeRelationLocalDescription": "Some fields are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
 
 	"sidebarRelationLocalAddToCurrentType": "Add to the current type",

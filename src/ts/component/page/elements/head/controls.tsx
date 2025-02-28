@@ -111,7 +111,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				noUpload: isType,
 				noGallery: isType,
 				withIcons: isType,
-				value: (object.iconEmoji || object.iconImage || ''),
+				value: U.Object.getIcon(object),
 				onSelect: (icon: string) => {
 					U.Object.setIcon(rootId, icon, '', cb);
 				},
