@@ -591,12 +591,10 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			return;
 		};
 
-		const storage = this.storageGet();
-
+		this.top = 0;
 		this.type = id as I.ObjectContainerType;
-		storage.type = this.type;
 
-		this.storageSet(storage);
+		this.storageSet({ ...this.storageGet(), type: this.type });
 		this.initStorage();
 		this.load(true);
 
