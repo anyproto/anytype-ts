@@ -61,6 +61,7 @@
 			.item:hover::before { background: var(--color-shape-highlight-medium); }
 
 			.icon { flex-shrink: 0; }
+			.icon.link { background-image: url('~img/icon/widget/button/link.svg'); }
 			.icon.space { background-image: url('~img/icon/widget/button/member.svg'); }
 			.icon.export { background-image: url('~img/icon/widget/button/export.svg'); }
 			.icon.arrow { background-size: 6px 10px; background-image: url('~img/icon/popup/settings/forward.svg'); right: 12px; }

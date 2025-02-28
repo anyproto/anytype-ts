@@ -119,7 +119,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
-		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
+		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyDeeplink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
@@ -486,24 +486,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				const link = `${J.Constant.protocol}://${U.Object.universalRoute(object)}`;
-				const cb = (link: string) => {
-					U.Common.copyToast(translate('commonLink'), link);
-					analytics.event('CopyLink', { route });
-				};
-
-				if (space.isShared) {
-					U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
-						if (cid && key) {
-							cb(link + `&cid=${cid}&key=${key}`);
-						} else {
-							cb(link);
-						};
-					});
-				} else {
-					cb(link);
-				};
-
+				U.Object.copyLink(object, space, 'deeplink', '');
 				break;
 			};
 
