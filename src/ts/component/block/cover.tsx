@@ -90,7 +90,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			cn.push('active');
 
 			elements = (
-				<React.Fragment>
+				<>
 					<div key="btn-drag" className="btn black drag withIcon">
 						<Icon />
 						<div className="txt">{translate('blockCoverDrag')}</div>
@@ -110,7 +110,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 						<div className="btn white" onMouseDown={this.onSave}>{translate('commonSave')}</div>
 						<div className="btn white" onMouseDown={this.onCancel}>{translate('commonCancel')}</div>
 					</div>
-				</React.Fragment>
+				</>
 			);
 		} else {
 			elements = (
@@ -197,25 +197,18 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		});
 	};
 	
-	onLayout (e: any) {
+	onLayout () {
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
-		const object = S.Detail.get(rootId, rootId, []);
 		
 		S.Menu.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
-			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				elements.addClass('hover');
-			},
-			onClose: () => {
-				elements.removeClass('hover');
-			},
+			onOpen: () => elements.addClass('hover'),
+			onClose: () => elements.removeClass('hover'),
 			subIds: J.Menu.layout,
 			data: {
 				rootId: rootId,
-				value: object.layout,
 			}
 		});
 	};
@@ -501,10 +494,10 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
 
-		const px = x / this.rect.cw * 100;
-		const py = y / this.rect.ch * 100;
+		const px = Math.min(0, x / this.rect.cw * 100);
+		const py = Math.min(0, y / this.rect.ch * 100);
 		const css: any = { transform: `translate3d(${px}%,${py}%,0px)` };
-		
+
 		if (this.rect.ch < this.rect.height) {
 			css.transform = 'translate3d(0px,0px,0px)';
 			css.height = this.rect.height;

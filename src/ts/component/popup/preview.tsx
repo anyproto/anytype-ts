@@ -78,7 +78,7 @@ class PopupPreview extends React.Component<I.Popup> {
 			<div id="wrap" className="wrap">
 				<div className="galleryHeader">
 					{current ? (
-						<React.Fragment>
+						<>
 							<div className="side left" />
 							<div className="side center">
 								<ObjectName object={current} />
@@ -86,7 +86,7 @@ class PopupPreview extends React.Component<I.Popup> {
 							<div className="side right">
 								<Icon id="button-header-more" tooltip={translate('commonMenu')} className="more" onClick={this.onMore} />
 							</div>
-						</React.Fragment>
+						</>
 					) : ''}
 				</div>
 

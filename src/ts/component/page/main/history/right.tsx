@@ -7,6 +7,7 @@ import { I, C, S, U, translate, analytics, dispatcher } from 'Lib';
 
 interface Props {
 	rootId: string;
+	isPopup?: boolean;
 	renderDiff: (previousId: string, events: any[]) => void;
 	setVersion: (version: I.HistoryVersion) => void;
 	setLoading: (v: boolean) => void;
@@ -43,10 +44,21 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	};
 
 	render () {
+		const { isPopup } = this.props;
 		const groups = this.groupData();
 		const year = U.Date.date('Y', U.Date.now());
 		const canWrite = U.Space.canMyParticipantWrite();
 		const showButtons = this.showButtons();
+		const showSidebar = S.Common.getShowSidebarRight(isPopup);
+		const cn = [];
+
+		if (showSidebar) {
+			cn.push('withSidebar');
+		};
+
+		if (showButtons) {
+			cn.push('withButtons');
+		};
 
 		const Section = (item: any) => {
 			const y = U.Date.date('Y', item.time);
@@ -139,7 +151,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			<div 
 				ref={ref => this.node = ref} 
 				id="historySideRight" 
-				className={showButtons ? 'withButtons' : ''}
+				className={cn.join(' ')}
 			>
 				<div className="head">
 					<div className="name">{translate('commonVersionHistory')}</div>

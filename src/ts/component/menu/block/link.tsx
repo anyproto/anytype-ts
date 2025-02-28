@@ -292,7 +292,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { skipIds, filter } = data;
 
 		const filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
@@ -358,6 +358,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		if (item.itemId == 'link') {
 			let url = filter;
+
 			if (item.isLocal && url && !url.match(/^file:/)) {
 				url = `file://${url}`;
 			};

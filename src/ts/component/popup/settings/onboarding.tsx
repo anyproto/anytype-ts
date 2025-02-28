@@ -36,21 +36,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		const { interfaceLang } = S.Common;
 		const interfaceLanguages = U.Menu.getInterfaceLanguages();
 		const isDefault = path == U.Common.getElectron().defaultPath();
-		const networkModes: any[] = ([
-			{ id: I.NetworkMode.Default },
-			{ id: I.NetworkMode.Local },
-			{ id: I.NetworkMode.Custom },
-		] as any[]).map(it => {
-			it.name = translate(`networkMode${it.id}Title`);
-			it.description = translate(`networkMode${it.id}Text`);
-			it.withDescription = true;
-
-			if (it.id == I.NetworkMode.Local) {
-				it.note = translate('popupSettingsOnboardingLocalOnlyNote');
-			};
-
-			return it;
-		});
+		const networkModes = this.getNetworkModes();
 
 		return (
 			<div className="mainSides">
@@ -122,6 +108,24 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		);
 	};
 
+	getNetworkModes () {
+		return ([
+			{ id: I.NetworkMode.Default },
+			{ id: I.NetworkMode.Local },
+			{ id: I.NetworkMode.Custom },
+		] as any[]).map(it => {
+			it.name = translate(`networkMode${it.id}Title`);
+			it.description = translate(`networkMode${it.id}Text`);
+			it.withDescription = true;
+
+			if (it.id == I.NetworkMode.Local) {
+				it.note = translate('popupSettingsOnboardingLocalOnlyNote');
+			};
+
+			return it;
+		});
+	};
+
 	onChange (key: string, value: any) {
 		this.config[key] = value;
 		this.forceUpdate();
@@ -151,7 +155,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 			};
 
 			S.Auth.networkConfigSet(this.config);
-			this.props.close();
+			window.setTimeout(() => this.props.close(), S.Popup.getTimeout());
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {

@@ -29,6 +29,7 @@ export enum ObjectLayout {
 	History		 = 103,
 	Archive		 = 104,
 	Block		 = 105,
+	Settings	 = 106,
 };
 
 export enum RelationType { 
@@ -73,4 +74,9 @@ export enum ObjectOrigin {
 	Builtin			 = 7,
 	Bookmark		 = 8,
 	Api				 = 9,
+};
+
+export enum LayoutFormat {
+	Page = 0,
+	List = 1,
 };

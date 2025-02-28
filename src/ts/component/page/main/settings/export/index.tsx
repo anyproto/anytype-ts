@@ -24,7 +24,7 @@ const PageMainSettingsExportIndex = observer(class PageMainSettingsExportIndex e
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsExportTitle')} />
 				<Label className="description" text={translate('popupSettingsExportText')} />
 
@@ -33,7 +33,7 @@ const PageMainSettingsExportIndex = observer(class PageMainSettingsExportIndex e
 						<Item key={i} {...item} />
 					))}
 				</div>
-			</React.Fragment>
+			</>
 		);
 	};
 

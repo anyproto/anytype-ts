@@ -15,6 +15,7 @@ html.themeDark {
 	--color-shape-primary: #313131;
 	--color-shape-secondary: #292929;
 	--color-shape-tertiary: #232323;
+	--color-shape-transparent-tertiary: rgba(255,255,255,0.03);
 
 	--color-shape-highlight-dark: rgba(255, 255, 255, 0.11);
 	--color-shape-highlight-medium: rgba(255, 255, 255, 0.05);
@@ -181,7 +182,7 @@ html.themeDark {
 		.number { color: var(--color-text-primary); }
 	}
 
-	.listPreviewObject {
+	.listObjectPreview {
 		.icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
 		.icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
 		.icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
@@ -329,6 +330,14 @@ html.themeDark {
 					.titleWrap {
 						.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
 					}
+				}
+			}
+		}
+
+		> #containerSettings {
+			> .body {
+				.logout {
+					.icon { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
 				}
 			}
 		}

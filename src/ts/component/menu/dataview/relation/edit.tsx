@@ -89,7 +89,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						readonly={readonly}
 						withSwitch={true}
 						switchValue={viewRelation?.includeTime}
-						onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
+						onSwitch={(e: any, v: boolean) => this.onChangeTime(v)}
 					/>
 				</div>
 			);
@@ -599,7 +599,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				value: this.objectTypes, 
 				types: [ S.Record.getTypeType()?.id ],
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 				],
 				relation: observable.box(relation),
@@ -712,7 +712,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const relation = this.getViewRelation();
 		const view = getView();
 
-		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relation.relationKey, { ...relation, [k]: v });
+		if (view && relation) {
+			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relation.relationKey, { ...relation, [k]: v });
+		};
 	};
 
 	save () {

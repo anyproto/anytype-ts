@@ -19,7 +19,7 @@ const PageMainSettingsPinConfirm = observer(class PageMainSettingsPinConfirm ext
 		const { error } = this.state;
 
 		return (
-			<React.Fragment>
+			<>
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinVerify')} />
 				<Pin 
@@ -29,7 +29,7 @@ const PageMainSettingsPinConfirm = observer(class PageMainSettingsPinConfirm ext
 					onError={this.onError} 
 				/>
 				<Error text={error} />
-			</React.Fragment>
+			</>
 		);
 	};
 

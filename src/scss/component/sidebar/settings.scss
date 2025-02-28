@@ -8,50 +8,89 @@
         gap: 0px 8px; overflow: hidden;
     }
 
-    > .body { display: flex; flex-direction: column; justify-content: space-between; height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: scroll; overscroll-behavior: none; }
+    > .body { display: flex; flex-direction: column; justify-content: space-between; height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overscroll-behavior: none; }
     > .body {
-        .list { border-radius: 12px; background: var(--color-bg-primary); padding: 8px 0px; }
+        .list { display: flex; flex-direction: column; justify-content: space-between;  height: 100%; border-radius: 12px; background: var(--color-bg-primary); padding: 8px 0px; }
         .list {
-            > .head { display: flex; gap: 0px 8px; align-items: center; border-bottom: 1px solid var(--color-shape-secondary); @include text-paragraph; font-weight: 600; padding: 4px 16px 12px 8px; margin-bottom: 12px; }
+            > .head { display: flex; gap: 0px 8px; align-items: center; border-bottom: 1px solid var(--color-shape-secondary); @include text-paragraph; font-weight: 600; padding: 4px 16px 12px 8px; }
             > .head {
-                .icon.back { background-image: url('~img/icon/widget/back.svg'); width: 28px; height: 28px; background-size: 20px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-                .icon.back:hover { background-color: var(--color-shape-highlight-medium); }
+                .icon.back { background-image: url('~img/icon/widget/back.svg'); flex-shrink: 0; }
+				.name { @include text-overflow-nw; }
             }
 
-            .inner { display: flex; flex-direction: column; gap: 12px 0px; padding: 0px 8px; }
+			.ReactVirtualized__List { padding: 0px 8px; }
+
+            .inner { height: 100%; }
+            .row {
+                > .section { padding-top: 16px; }
+                > .section.isFirst { padding-top: 12px; }
+            }
 
             .section {
-                > .name { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 4px 0px; padding: 0px 8px; }
+                > .name { @include text-small; color: var(--color-text-secondary); margin: 0px; padding: 0px 8px; }
             }
 
             .items { display: flex; flex-direction: column; }
 
+            .toggle,
             .item {
-                display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px;
+                display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 6px; padding: 3px 8px; border-radius: 8px;
                 transition: background-color $transitionCommon;
             }
-            .item:hover, .item.active { background-color: var(--color-shape-highlight-medium); }
+            .toggle:hover,
+            .item:hover, .item.hover, .item.active { background-color: var(--color-shape-highlight-medium); }
+
             .item {
-                .icon { width: 20px; height: 20px; flex-shrink: 0; }
+				.icon, .iconObject { flex-shrink: 0; }
+                .icon { width: 20px; height: 20px; }
                 .icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
 
-                .name { @include text-overflow-nw; overflow: visible; flex-grow: 1; }
+                .name { @include text-overflow-nw; flex-grow: 1; }
 
                 .caption { color: var(--color-text-secondary); text-align: right; @include text-overflow-nw; }
                 .caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
             }
+
+            .item.isTypeOrRelation { padding-left: 26px; }
 
             .item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; border-radius: 8px; }
             .item.itemAccount {
                 .iconObject { flex-shrink: 0; }
                 .name { @include text-common; @include text-overflow-nw; font-weight: 600; }
             }
+
+            .toggle { padding-left: 4px; justify-content: space-between; }
+            .toggle {
+                .left { display: flex; justify-content: flex-start; gap: 0px 6px; align-items: center; }
+                .right { display: flex; align-items: center; }
+
+                .icon { width: 20px; height: 20px; }
+                .icon.arrow { flex-shrink: 0; background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
+                .icon.plus { opacity: 0.8; border-radius: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
+            }
+            .toggle:hover {
+                .icon.plus { opacity: 1; }
+                .icon.plus:hover { background-color: var(--color-shape-secondary); }
+            }
+            .toggle.isOpen {
+                .icon.arrow { transform: rotate(0deg); }
+            }
         }
 
-        .logout { display: flex; align-items: center; justify-content: center; gap: 0px 8px; border-radius: 8px; padding: 4px 0px; }
+        .logout { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 0px 8px; border-radius: 8px; padding: 4px 0px; margin: 0px 8px; }
         .logout {
             .icon { width: 20px; height: 20px; background-size: 20px; background-image: url('~img/icon/popup/settings/logout.svg'); }
         }
 		.logout:hover { background-color: var(--color-shape-highlight-medium); }
+    }
+}
+
+> #containerSettings.spaceSettings {
+    > .body {
+        > .list { padding-bottom: 0px; }
+        > .list {
+            .inner { height: calc(100% - 45px); }
+            .ReactVirtualized__List { padding-bottom: 8px; }
+        }
     }
 }

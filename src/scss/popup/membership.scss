@@ -34,7 +34,7 @@
                 .title.step2 { margin-bottom: 10px; }
                 .label { margin-bottom: 14px; }
 
-                .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 6px; border-radius: 7px; border: 1px solid var(--color-shape-secondary); }
+                .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 6px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
                 .inputWrapper {
                     .input { @include text-common; border: 0; height: 36px; padding: 6px 0px; }
                     .ns { flex-shrink: 0; width: 27px; }
@@ -59,7 +59,7 @@
 
                 .pin { margin: 26px 0px 6px; }
                 .pin {
-                    .input { @include text-header1; width: 48px; height: 64px; border-radius: 7px; border-color: var(--color-shape-secondary); }
+                    .input { @include text-header1; width: 48px; height: 64px; border-radius: 6px; border-color: var(--color-shape-secondary); }
                 }
 
                 .resend { font-weight: 500; color: var(--color-text-secondary); }
@@ -149,7 +149,7 @@
             .title { margin-bottom: 10px; @include text-header2; }
             .label { margin-bottom: 14px; }
 
-            .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 4px; border-radius: 7px; border: 1px solid var(--color-shape-secondary); }
+            .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 4px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
             .inputWrapper {
                 .input { @include text-common; border: 0; height: 36px; padding: 6px 0px; }
                 .ns { flex-shrink: 0; width: 27px; }

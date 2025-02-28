@@ -199,6 +199,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		const { getMarksAndRange } = this.props;
 		const { marks, range } = getMarksAndRange();
 		const cmd = keyboard.cmdSymbol();
+		const shift = keyboard.shiftSymbol();
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 
@@ -210,14 +211,14 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		);
 
 		return [
-			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: `${cmd} + B` },
-			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: `${cmd} + I` },
-			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + Shift + S` },
-			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: `${cmd} + U` },
-			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: `${cmd} + K` },
-			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: `${cmd} + L` },
-			//{ type: I.MarkType.Color, icon: 'color', name: translate('commonColor'), caption: `${cmd} + Shift + C`, inner: color },
-			//{ type: I.MarkType.BgColor, icon: 'color', name: translate('commonBackground'), caption: `${cmd} + Shift + H`, inner: background },
+			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: keyboard.getCaption('textBold') },
+			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
+			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
+			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
+			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: keyboard.getCaption('textLink') },
+			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: keyboard.getCaption('textCode') },
+			//{ type: I.MarkType.Color, icon: 'color', name: translate('commonColor'), caption: keyboard.getCaption('textColor'), inner: color },
+			//{ type: I.MarkType.BgColor, icon: 'color', name: translate('commonBackground'), caption: keyboard.getCaption('textBackground'), inner: background },
 		].map((it: any) => {
 			it.isActive = false;
 			if (it.type == I.MarkType.Link) {
@@ -261,7 +262,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			data = {
 				skipIds: attachments.map(it => it.id),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 				],
 				onSelect: (item: any) => {
 					onChatButtonSelect(I.ChatButton.Object, item);
@@ -269,7 +270,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			};
 
 			if (menu == 'object') {
-				data.filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() });
+				data.filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() });
 			} else
 			if ([ 'file', 'media' ].includes(menu)) {
 				const layouts = {
@@ -277,7 +278,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					file: [ I.ObjectLayout.File, I.ObjectLayout.Pdf ],
 				};
 
-				data.filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: layouts[menu] });
+				data.filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: layouts[menu] });
 				data = Object.assign(data, {
 					canAdd: true,
 					addParam: {

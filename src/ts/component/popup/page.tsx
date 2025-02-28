@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect } from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { I, S, J, history as historyPopup, keyboard } from 'Lib';

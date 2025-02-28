@@ -30,13 +30,12 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 			return null;
 		};
 
-		const check = U.Data.checkDetails(rootId, rootId, [ 'layout', 'layoutAlign' ]);
-		const object = check.object;
+		const check = U.Data.checkDetails(rootId, rootId, []);
 		const header = S.Block.getLeaf(rootId, 'header');
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
 
-		if (U.Object.isInHumanLayouts(object.layout)) {
+		if (U.Object.isInHumanLayouts(check.layout)) {
 			icon.type = I.BlockType.IconUser;
 		};
 
@@ -45,7 +44,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 				<div id="editorSize" className="dragWrap">
 					<DragHorizontal 
 						ref={ref => this.refDrag = ref} 
-						value={root.fields.width}
+						value={check.layoutWidth}
 						snaps={[ 0.25, 0.5, 0.75 ]}
 						onStart={this.onScaleStart} 
 						onMove={this.onScaleMove} 
@@ -63,12 +62,13 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 					readonly={readonly}
 					index={0}
 					block={header}
+					blockContextParam={{ hAlign: check.layoutAlign }}
 					onKeyDown={onKeyDown}
 					onKeyUp={onKeyUp}  
 					onMenuAdd={onMenuAdd}
 					onPaste={onPaste}
-					onMouseEnter={() => { $(`#editor-controls-${rootId}`).addClass('hover'); }}
-					onMouseLeave={() => { $(`#editor-controls-${rootId}`).removeClass('hover'); }}
+					onMouseEnter={() => $(`#editor-controls-${rootId}`).addClass('hover')}
+					onMouseLeave={() => $(`#editor-controls-${rootId}`).removeClass('hover')}
 				/>
 			</div>
 		);

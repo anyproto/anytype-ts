@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
 import { I, C, S, U, keyboard, focus, translate } from 'Lib';
 
-import Item from 'Component/sidebar/page/object/item';
+import Item from 'Component/sidebar/page/allObject/item';
 
 interface State {
 	loading: boolean;
@@ -425,8 +425,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				return;
 			};
 
-			const pagesIn = message.object.links.inbound.map(this.getPage).filter(this.filterMapper);
-			const pagesOut = message.object.links.outbound.map(this.getPage).filter(this.filterMapper);
+			const pagesIn = S.Record.checkHiddenObjects(message.object.links.inbound.map(this.getPage)).filter(this.filterMapper);
+			const pagesOut = S.Record.checkHiddenObjects(message.object.links.outbound.map(this.getPage)).filter(this.filterMapper);
 
 			this.panel = Panel.Center;
 
@@ -440,17 +440,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	filterMapper (it: any) {
-		const { config } = S.Common;
-
-		if (!it.id) {
-			return false;
-		};
-
-		let ret = !it.isDeleted;
-		if (!config.debug.hiddenObject) {
-			ret = ret && !it.isHidden;
-		};
-		return ret;
+		return it.id && !it.isDeleted;
 	};
 
 	getPage (item: any) {
@@ -472,9 +462,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-
-		let root = rootId ? rootId : match?.params?.id;
+		let root = keyboard.getRootId(this.props.isPopup);
 		if (root == I.HomePredefinedId.Graph) {
 			root = U.Space.getLastOpened()?.id;
 		};

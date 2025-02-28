@@ -88,7 +88,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return null;
 		};
 		
-		const width = root.fields?.width;
+		const width = U.Data.getLayoutWidth(rootId);
 		const readonly = this.isReadonly();
 
 		return (
@@ -167,7 +167,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
-		sidebar.resizePage(null, false);
+		sidebar.resizePage(null, null, false);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -198,10 +198,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	getWrapperWidth (): number {
-		const { rootId } = this.props;
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		return this.getWidth(root?.fields?.width);
+		return this.getWidth(U.Data.getLayoutWidth(this.props.rootId));
 	};
 
 	checkDeleted () {
@@ -273,7 +270,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const { isPopup, match } = this.props;
+		const { isPopup } = this.props;
+		const match = keyboard.getMatch(isPopup);
 
 		let close = true;
 		if (isPopup && (match?.params?.id == this.id)) {
@@ -296,7 +294,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 		const menuOpen = this.menuCheck();
 
-		if (isPopup !== keyboard.isPopup()) {
+		if ((isPopup !== keyboard.isPopup()) || keyboard.isShortcutEditing) {
 			return;
 		};
 
@@ -622,7 +620,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// History
-		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+alt+h`, e, () => {
 			e.preventDefault();
 			this.onHistory(e);
 
@@ -894,7 +892,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		// History
-		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
+		keyboard.shortcut(`${cmd}+alt+h`, e, () => {
 			e.preventDefault();
 			this.onHistory(e);
 		});
@@ -2006,7 +2004,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						case 'block': {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, (message: any) => {
+							const bookmark = S.Record.getBookmarkType();
+
+							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, bookmark?.defaultTemplateId, (message: any) => {
 								if (!message.error.code) {
 									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
 								};
@@ -2317,13 +2317,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const last = node.find('#blockLast');
 			const size = node.find('#editorSize');
 			const cover = node.find('.block.blockCover');
-			const pageContainer = U.Common.getPageContainer(this.props.isPopup);
+			const pageContainer = U.Common.getPageContainer(isPopup);
 			const header = pageContainer.find('#header');
-			const root = S.Block.getLeaf(rootId, rootId);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const hh = isPopup ? header.height() : J.Size.header;
 
-			this.setLayoutWidth(root?.fields?.width);
+			this.setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
 			if (blocks.length && last.length && scrollContainer.length) {
 				const ct = isPopup ? scrollContainer.offset().top : 0;
@@ -2376,7 +2375,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	setLayoutWidth (v: number) {
 		v = Number(v) || 0;
 
-		const { isPopup, rootId } = this.props;
+		const { isPopup } = this.props;
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
 		const node = $(this.node);
@@ -2393,6 +2392,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.refHeader.refDrag.setValue(v);
 			this.refHeader.setPercent(v);
 		};
+
+		$('.resizable').trigger('resizeInit');
 	};
 
 	getWidth (w: number) {

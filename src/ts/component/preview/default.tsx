@@ -31,6 +31,8 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const load = () => {
+		console.log(rootId, idRef.current);
+
 		if (isLoading || (idRef.current == rootId)) {
 			return;
 		};
@@ -49,6 +51,8 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	useEffect(() => {
+		console.log(initialObject);
+
 		if (initialObject) {
 			setObject(initialObject);
 		};

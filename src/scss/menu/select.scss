@@ -4,7 +4,6 @@
 	.menu.menuSelect {
 		.content { transition: none; overflow: hidden; padding: 0px; }
 		.items { height: 100%; overflow: auto; }
-		.item.empty { margin-top: 8px; }
 
 		.item { display: flex; align-items: center; }
 		.item {
@@ -43,7 +42,7 @@
 	}
 
 	.menu.menuSelect.withFullDescripion {
-		.content { overflow: auto; padding: 8px 0px; }
+		.content { overflow: auto; padding: 0px; }
 
 		.item.withDescription { height: auto; }
 		.item.withDescription {
