@@ -566,14 +566,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			node.removeClass('small');
 		};
 
-		const width = sideLeft.outerWidth() + sideRight.outerWidth();
+		const width = sideLeft.outerWidth() + sideRight.outerWidth() + 16;
 		const offset = isPopup ? container.offset().left : 0;
 
-		if (left + width - offset - sw + 50 >= cw) {
-			add = true;
-		};
-		if (isInline && (width >= nw)) {
-			add = true;
+		if (isInline) {
+			add = width > nw;
+		} else {
+			add = left + width - offset - sw + 50 >= cw;
 		};
 
 		if (add) {

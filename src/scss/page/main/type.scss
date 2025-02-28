@@ -44,6 +44,12 @@
 				.icon.arrow.right { right: -32px; }
 			}
 		}
+
+		.section.set {
+			.block.blockDataview {
+				.dataviewHead { display: none; }
+			}
+		}
 	}
 }
 

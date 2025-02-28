@@ -416,6 +416,7 @@ class UtilMenu {
 		if (id) {
 			if (!isSystem) {
 				const isSet = U.Object.isInSetLayouts(layout);
+				const isType = U.Object.isTypeLayout(layout);
 				const setLayouts = U.Object.getSetLayouts();
 				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 
@@ -423,7 +424,7 @@ class UtilMenu {
 				if (treeSkipLayouts.includes(layout)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
-				if (!isSet) {
+				if (!isSet && !isType) {
 					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
 				} else {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
@@ -863,8 +864,8 @@ class UtilMenu {
 	getFixedWidgets () {
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
-			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
-			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
+			//{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
+			//{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
 		].filter(it => it);
