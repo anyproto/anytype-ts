@@ -76,7 +76,7 @@ class Server {
 					};
 					
 					this.lastErrors.push(chunk);
-					Util.log('warn', chunk);
+					console.log(chunk);
 				});
 				
 				this.cp.on('exit', () => {

@@ -246,13 +246,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	componentDidMount () {
 		const { block, isInline, isPopup } = this.props;
-		const { viewId } = block.content;
-		const param = U.Router.getParam(U.Router.getRoute());
+		const match = keyboard.getMatch(isPopup);
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
+		const viewId = match.params.viewId || block.content.viewId;
 
-		if (param.viewId || viewId) {
-			S.Record.metaSet(subId, '', { viewId: param.viewId || viewId });
+		if (viewId) {
+			S.Record.metaSet(subId, '', { viewId });
 		};
 
 		this.reloadData(() => {
@@ -617,7 +617,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (type && type.defaultTemplateId) {
 			return type.defaultTemplateId;
 		};
-		return J.Constant.templateId.blank;
+		return '';
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string, idx?: number) {
@@ -632,14 +632,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const details = this.getDetails(groupId);
-		const flags: I.ObjectFlag[] = [];
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const isViewGraph = view.type == I.ViewType.Graph;
 		const isViewCalendar = view.type == I.ViewType.Calendar;
 		
 		let typeId = '';
 		let templateId = '';
-
-		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
 			templateId = template.id;
@@ -759,7 +757,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			groupId = 'empty';
 		};
 
-		if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
+		if (type && U.Object.isBookmarkLayout(type.recommendedLayout)) {
 			this.onBookmarkMenu(e, dir, groupId, menuParam);
 		} else {
 			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);
@@ -842,9 +840,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				onTypeChange: (id) => {
 					if (id != this.getTypeId()) {
 						const newType = S.Record.getTypeById(id);
-						const newTemplateId = newType?.defaultTemplateId || J.Constant.templateId.blank;
 
-						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: newTemplateId });
+						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: newType?.defaultTemplateId });
 						analytics.event('DefaultTypeChange', { route });
 					};
 				},
@@ -938,7 +935,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if ((relationKey == 'name') && (!ref.ref.state.isEditing)) {
+		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing()) {
 			const ids = selection?.get(I.SelectType.Record) || [];
 
 			if (keyboard.withCommand(e)) {
@@ -994,7 +991,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			objectIds = [ id ];
 		};
 
-		S.Menu.open('dataviewContext', {
+		S.Menu.open('objectContext', {
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
@@ -1026,17 +1023,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		
 		if (isCollection) {
 			filters = filters.concat([
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
+				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
 			};
 		} else {
 			filters = filters.concat([
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
@@ -1305,7 +1302,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
 		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
-		const templateType = S.Record.getTemplateType();
 
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {
@@ -1313,7 +1309,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 			};
 
-			if (templateType && (type.id == templateType.id)) {
+			if (type.uniqueKey == J.Constant.typeKey.template) {
 				isAllowed = false;
 				break;
 			};

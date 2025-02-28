@@ -168,7 +168,7 @@ class MenuManager {
 					{ label: Util.translate('electronMenuZoomOut'), accelerator: 'CmdOrCtrl+-', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
 					{ label: Util.translate('electronMenuZoomDefault'), accelerator: 'CmdOrCtrl+0', click: () => Api.setZoom(this.win, 0) },
 					{
-						label: Util.translate('electronMenuFullscreen'), accelerator: (is.macos ? 'Cmd+Ctrl+F' : 'Ctrl+Alt+F'), type: 'checkbox', checked: this.win.isFullScreen(),
+						label: Util.translate('electronMenuFullscreen'), accelerator: 'CmdOrCtrl+Shift+F', type: 'checkbox', checked: this.win.isFullScreen(),
 						click: () => this.win.setFullScreen(!this.win.isFullScreen())
 					},
 					{ label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
@@ -183,7 +183,7 @@ class MenuManager {
 					},
 					{
 						label: Util.translate('electronMenuShortcuts'), accelerator: 'Ctrl+Space',
-						click: () => Util.send(this.win, 'popup', 'shortcut', {})
+						click: () => Util.send(this.win, 'commandGlobal', 'shortcut')
 					},
 
 					Separator,
@@ -346,7 +346,9 @@ class MenuManager {
 			return;
 		};
 
-		this.tray = new Tray (this.getTrayIcon());
+		const icon = this.getTrayIcon();
+
+		this.tray = new Tray (icon);
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
 			{ label: Util.translate('electronMenuOpenApp'), click: () => this.winShow() },
@@ -471,7 +473,10 @@ class MenuManager {
 
 	updateTrayIcon () {
 		if (this.tray && this.tray.setImage) {
-			this.tray.setImage(this.getTrayIcon());
+			const icon = this.getTrayIcon();
+			if (icon) {
+				this.tray.setImage(icon);
+			};
 		};
 	};
 
@@ -493,11 +498,12 @@ class MenuManager {
             } else {
                 icon = 'iconTrayBlack.png';
             };
-		} else {
+		} else 
+		if (is.macos) {
 			icon = `iconTrayTemplate.png`;
 		};
 
-		return path.join(Util.imagePath(), icon);
+		return icon ? path.join(Util.imagePath(), icon) : '';
 	};
 
 	destroy () {

@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, Cell } from 'Component';
 import { I, S, U, J, translate, Dataview, Storage } from 'Lib';
-import Cell from 'Component/block/dataview/cell';
 import Item from './item';
 
 const ANIMATION = 200;
@@ -15,7 +14,7 @@ interface Props extends I.WidgetViewComponent {
 const Group = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const nodeRef = useRef(null);
-	const { rootId, block, parent, id, value, canCreate, getView, getViewLimit, getObject } = props;
+	const { rootId, block, parent, id, value, canCreate, onCreate, getView, getViewLimit, getObject } = props;
 	const view = getView();
 	const subId = S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id);
 	const object = getObject();
@@ -35,7 +34,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
@@ -114,17 +113,14 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		Storage.setToggle(subKey, id, !isOpen);
 	};
 
-	const onCreate = (e: any) => {
+	const onCreateHandler = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const view = getView();
 		const isOpen = Storage.checkToggle(getToggleKey(), id);
-		const details = {};
 
-		details[view.groupRelationKey] = value;
-
-		onCreate({ details });
+		onCreate({ details: { [view.groupRelationKey]: value } });
 
 		if (!isOpen) {
 			onToggle();
@@ -171,14 +167,14 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 					withName={true}
 					placeholder={translate('commonUncategorized')}
 				/>
-				{canCreate ? <Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreate} /> : ''}
+				{canCreate ? <Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreateHandler} /> : ''}
 			</div>
 
 			<div id={`item-${id}-children`} className="items">
 				{!items.length ? (
 					<div className="item empty">{translate('commonNoObjects')}</div>
 				) : (
-					<React.Fragment>
+					<>
 						{items.map(id => (
 							<Item 
 								{...props}
@@ -189,7 +185,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 							/>
 						))}
 						{total > limit ? <div className="item more" onClick={onAll}>{translate('widgetShowAll')}</div> : ''}
-					</React.Fragment>
+					</>
 				)}
 			</div>
 		</div>

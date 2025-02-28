@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, sidebar } from 'Lib';
@@ -7,6 +8,7 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 const TEST_HTML = /<[^>]*>/;
+const iconCache: Map<string, string> = new Map();
 
 class UtilCommon {
 
@@ -588,7 +590,7 @@ class UtilCommon {
 							};
 						});
 
-						U.Space.openDashboard('route', { replace: true });
+						U.Space.openDashboard({ replace: true });
 					}
 				},
 			});
@@ -625,7 +627,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					sidebar.settingsOpen('spaceList');
+					U.Object.openAuto({ id: 'spaceList', layout: I.ObjectLayout.Settings });
 				},
 			},
 		});
@@ -648,25 +650,31 @@ class UtilCommon {
 		return (isPopup ? $('#popupPage-innerWrap') : $(window)) as JQuery<HTMLElement>;
 	};
 
+	getPageFlexContainer (isPopup: boolean) {
+		return $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
+	};
+
 	getPageContainer (isPopup: boolean) {
-		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
+		return $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
 	};
 
 	getCellContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
-				return '#page.isFull';
+				return '#pageFlex.isFull';
 
 			case 'popup':
-				return '#popupPage-innerWrap';
+				return '#pageFlex.isPopup';
 
 			case 'menuBlockAdd':
-			case 'menuBlockRelationView':
 				return `#${type}`;
 
 			case 'popupRelation':
 				return `#${type}-innerWrap`;
+
+			case 'sidebarRight':
+				return `#sidebarRight`;
 		};
 	};
 
@@ -1076,7 +1084,7 @@ class UtilCommon {
 			return text;
 		};
 
-		match.forEach((m: any) => {
+		Array.from(match).forEach((m: any) => {
 			const m0 = String(m[0] || '');
 			const m1 = String(m[1] || '');
 			const m2 = String(m[2] || '');
@@ -1101,6 +1109,66 @@ class UtilCommon {
 		});
 
 		return text;
+	};
+
+	toggle (obj: any, delay: number) {
+		const isOpen = obj.hasClass('isOpen');
+
+		if (isOpen) {
+			obj.addClass('anim').removeClass('isOpen').css({ height: 0 });
+			window.setTimeout(() => obj.removeClass('anim'), delay);
+		} else {
+			obj.css({ height: 'auto' });
+
+			const height = obj.outerHeight();
+
+			obj.addClass('anim isOpen').css({ height: 0 });
+
+			raf(() => obj.css({ height }));
+			window.setTimeout(() => obj.removeClass('anim'), delay);
+		};
+	};
+
+	updateSvg (src: string, param: any) {
+		const id = String(param.id || '');
+		const size = Number(param.size) || 0;
+		const fill = String(param.fill || '');
+		const stroke = String(param.stroke || '');
+		const key = [ id, size, fill, stroke ].join('-');
+
+		if (iconCache.has(key)) {
+			return iconCache.get(key);
+		};
+
+		let ret = '';
+		try {
+			const chunk = src.split('base64,')[1];
+			const decoded = atob(chunk).replace(/_COLOR_VAR_/g, fill);
+			const obj = $(decoded);
+			const attr: any = {};
+
+			if (size) {
+				attr.width = size;
+				attr.height = size;
+			};
+
+			if (fill) {
+				attr.fill = fill;
+			};
+
+			if (stroke) {
+				attr.stroke = stroke;
+			};
+
+			if (this.objectLength(attr)) {
+				obj.attr(attr);
+			};
+			
+			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+		} catch (e) { /**/ };
+
+		iconCache.set(key, ret);
+		return ret;
 	};
 
 };

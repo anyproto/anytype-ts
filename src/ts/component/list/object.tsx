@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
+import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon } from 'Component';
 import { I, C, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
-import { Icon, IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
 
 interface Column {
 	relationKey: string;
@@ -61,7 +61,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		const limit = J.Constant.limit.listObject
 		const offset = (page - 1) * limit;
 		const fl = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(filters || []);
 
 		S.Record.metaSet(subId, '', { offset });
@@ -91,7 +91,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 			objectIds = [ id ];
 		};
 		
-		S.Menu.open('dataviewContext', {
+		S.Menu.open('objectContext', {
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
@@ -169,48 +169,47 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 					let content = null;
 					let onClick = null;
 
-					if (value) {
-						if (column.isObject) {
-							let object = null;
+					if (column.isObject) {
+						let object = null;
 
-							if (column.relationKey == 'name') {
-								object = item;
-								cn.push('isName');
-								cnc.push('isName');
-							} else {
-								object = S.Detail.get(subId, value, []);
-							};
+						if (column.relationKey == 'name') {
+							object = item;
 
-							if (!object._empty_) {
-								onClick = () => U.Object.openConfig(object);
-								content = (
-									<div className="flex">
-										<IconObject object={object} />
-										<ObjectName object={object} />
-									</div>
-								);
-							};
-						} else 
-						if (column.isCell) {
-							content = (
-								<Cell
-									elementId={Relation.cellId(PREFIX, column.relationKey, item.id)}
-									rootId={rootId}
-									subId={subId}
-									block={null}
-									relationKey={column.relationKey}
-									getRecord={() => item}
-									viewType={I.ViewType.Grid}
-									idPrefix={PREFIX}
-									iconSize={20}
-									readonly={true}
-									arrayLimit={2}
-									textLimit={150}
-								/>
-							);
+							cn.push('isName');
+							cnc.push('isName');
 						} else {
-							content = column.mapper ? column.mapper(value) : value;
+							object = S.Detail.get(subId, value, []);
 						};
+
+						if (!object._empty_) {
+							onClick = () => U.Object.openConfig(object);
+							content = (
+								<div className="flex">
+									<IconObject object={object} />
+									<ObjectName object={object} />
+								</div>
+							);
+						};
+					} else 
+					if (column.isCell) {
+						content = (
+							<Cell
+								elementId={Relation.cellId(PREFIX, column.relationKey, item.id)}
+								rootId={rootId}
+								subId={subId}
+								block={null}
+								relationKey={column.relationKey}
+								getRecord={() => item}
+								viewType={I.ViewType.Grid}
+								idPrefix={PREFIX}
+								iconSize={20}
+								readonly={true}
+								arrayLimit={2}
+								textLimit={150}
+							/>
+						);
+					} else {
+						content = column.mapper ? column.mapper(value) : value;
 					};
 
 					return (

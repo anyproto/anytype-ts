@@ -212,7 +212,6 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 		const newItem = { 
 			relationKey: first.id, 
-			
 			condition: condition as I.FilterCondition,
 			value: Relation.formatValue(first, null, false),
 		};

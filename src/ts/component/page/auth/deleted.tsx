@@ -40,7 +40,7 @@ const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
 	const onCancel = () => {
 		C.AccountRevertDeletion((message) => {
 			S.Auth.accountSetStatus(message.status);	
-			U.Space.openDashboard('route');
+			U.Space.openDashboard();
 			analytics.event('CancelDeletion');
 		});
 	};

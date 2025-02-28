@@ -596,7 +596,6 @@ class Analytics {
 	popupMapper (params: any): string {
 		const { id } = params;
 		const map = {
-			inviteRequest:		 'ScreenInviteRequest',
 			spaceCreate:		 'ScreenSettingsSpaceCreate',
 		};
 
@@ -607,7 +606,6 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			help:				 'MenuHelp',
-			blockRelationView:	 'ScreenObjectRelation',
 		};
 
 		return map[id] || '';

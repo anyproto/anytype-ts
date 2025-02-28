@@ -45,7 +45,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let sectionPage = null;
 		if (block && block.isPage() && config.sudo && restrictions.length) {
 			sectionPage = (
-				<React.Fragment>
+				<>
 					<div className="section">
 						<div className="name">Restrictions</div>
 						<div className="items">
@@ -54,7 +54,7 @@ class MenuObject extends React.Component<I.Menu> {
 							))}
 						</div>
 					</div>
-				</React.Fragment>
+				</>
 			);
 		};
 
@@ -87,13 +87,11 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	getSections () {
-		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, isFilePreview } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
-		const cmd = keyboard.cmdSymbol();
 		const isTemplate = U.Object.isTemplate(object.type);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isChat = U.Object.isChatLayout(object.layout);
@@ -114,14 +112,14 @@ class MenuObject extends React.Component<I.Menu> {
 		let template = null;
 		let setDefaultTemplate = null;
 
-		let print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
+		let print = { id: 'print', name: translate('menuObjectPrint'), caption: keyboard.getCaption('print') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
-		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
-		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
+		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
-		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
+		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyDeeplink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
@@ -144,9 +142,9 @@ class MenuObject extends React.Component<I.Menu> {
 
 		if (block) {
 			if (block.isLocked()) {
-				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: `Ctrl + Shift + L` };
+				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: keyboard.getCaption('pageLock') };
 			} else {
-				pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: `Ctrl + Shift + L` };
+				pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: keyboard.getCaption('pageLock') };
 			};
 		};
 
@@ -320,7 +318,7 @@ class MenuObject extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: () => close(),
@@ -337,7 +335,7 @@ class MenuObject extends React.Component<I.Menu> {
 				menuParam.className = 'single';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: (el: any) => {
@@ -349,7 +347,7 @@ class MenuObject extends React.Component<I.Menu> {
 						name: translate('blockDataviewCreateNewCollection'),
 						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
 						onClick: (details: any) => {
-							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, [ rootId ]);
 								U.Object.openAuto(message.details);
 							});
@@ -488,24 +486,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				const link = `${J.Constant.protocol}://${U.Object.universalRoute(object)}`;
-				const cb = (link: string) => {
-					U.Common.copyToast(translate('commonLink'), link);
-					analytics.event('CopyLink', { route });
-				};
-
-				if (space.isShared) {
-					U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
-						if (cid && key) {
-							cb(link + `&cid=${cid}&key=${key}`);
-						} else {
-							cb(link);
-						};
-					});
-				} else {
-					cb(link);
-				};
-
+				U.Object.copyLink(object, space, 'deeplink', '');
 				break;
 			};
 

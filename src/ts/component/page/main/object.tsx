@@ -1,12 +1,12 @@
 import React, { forwardRef, useEffect } from 'react';
-import { I, C, U } from 'Lib';
+import { I, C, U, analytics } from 'Lib';
 
 const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { match } = props;
 
 	useEffect(() => {
-		const { id, spaceId, cid, key } = match.params || {};
+		const { id, spaceId, cid, key, route } = match.params || {};
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
 
 		// Redirect to invite page when invite parameters are present
@@ -17,7 +17,7 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 		C.ObjectShow(id, '', spaceId, (message: any) => {
 			if (message.error.code) {
-				U.Space.openDashboard('route');
+				U.Space.openDashboard();
 				return;
 			};
 
@@ -29,7 +29,10 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			U.Object.openRoute(item.details);
+			const object = item.details;
+
+			U.Object.openRoute(object);
+			analytics.event('OpenObjectByLink', { route, objectType: object.type });
 		});
 
 	}, []);

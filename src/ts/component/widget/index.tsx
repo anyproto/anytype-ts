@@ -129,13 +129,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const onCreate = (param?: any): void => {
 		param = param || {};
 
-		const { viewId, layout } = block.content;
-		const route = param.route || analytics.route.widget;
-
 		if (!object) {
 			return;
 		};
 
+		const route = param.route || analytics.route.widget;
 		const isSetOrCollection = U.Object.isInSetLayouts(object.layout);
 		const isFavorite = object.id == J.Constant.widgetId.favorite;
 
@@ -187,12 +185,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 				case J.Constant.widgetId.set: {
 					details.layout = I.ObjectLayout.Set;
+					flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 					typeKey = J.Constant.typeKey.set;
 					break;
 				};
 
 				case J.Constant.widgetId.collection: {
 					details.layout = I.ObjectLayout.Collection;
+					flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 					typeKey = J.Constant.typeKey.collection;
 					break;
 				};
@@ -350,11 +350,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		subId.current = subscriptionId;
 
 		const space = U.Space.getSpaceview();
-		const templateType = S.Record.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		let limit = getLimit(block.content);
 
@@ -381,12 +380,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 
 			case J.Constant.widgetId.set: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set });
 				break;
 			};
 
 			case J.Constant.widgetId.collection: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
 				break;
 			};
 		};
@@ -535,7 +534,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
 		};
 
-		S.Menu.open('dataviewContext', menuParam);
+		S.Menu.open('objectContext', menuParam);
 	};
 
 	const canCreate = canCreateHandler();

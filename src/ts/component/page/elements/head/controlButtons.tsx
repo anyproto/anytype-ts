@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, J, translate, analytics, focus, Renderer } from 'Lib';
+import { I, S, U, J, translate, analytics, focus, Renderer, Relation, Action } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -28,6 +28,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		this.onIcon = this.onIcon.bind(this);
 		this.onCover = this.onCover.bind(this);
 		this.onLayout = this.onLayout.bind(this);
+		this.onDescription = this.onDescription.bind(this);
 	};
 
 	render (): any {
@@ -38,6 +39,8 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			return null;
 		};
 
+		const check = U.Data.checkDetails(rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const isInSets = U.Object.isInSetLayouts(root.layout);
@@ -46,15 +49,19 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const isBookmark = U.Object.isBookmarkLayout(root.layout);
 		const isChat = U.Object.isChatLayout(root.layout);
 		const isType = U.Object.isTypeLayout(root.layout);
+		const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
+		const hasConflict = U.Object.hasLayoutConflict(object);
 
 		let allowedLayout = !checkType && allowedDetails && !isInSets && !isChat && !isType;
 		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark;
 		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
+		let allowedDescription = !checkType && allowedDetails && !isNote;
 
 		if (root.isLocked() || readonly) {
 			allowedIcon = false;
 			allowedLayout = false;
 			allowedCover = false;
+			allowedDescription = false;
 		};
 
 		return (
@@ -65,21 +72,28 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				{allowedIcon ? (
 					<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
 						<Icon className="icon" />
-						<div className="txt">{translate('editorControlIcon')}</div>
+						<div className="txt">{translate(`editorControlIcon${Number(check.withIcon)}`)}</div>
 					</div>
 				) : ''}
 
 				{allowedCover ? (
 					<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
 						<Icon className="addCover" />
-						<div className="txt">{translate('editorControlCover')}</div>
+						<div className="txt">{translate(`editorControlCover${Number(check.withCover)}`)}</div>
+					</div>
+				) : ''}
+
+				{allowedDescription ? (
+					<div id="button-description" className="btn white withIcon" onClick={this.onDescription}>
+						<Icon className="description" />
+						<div className="txt">{translate(`editorControlDescription${Number(hasDescription)}`)}</div>
 					</div>
 				) : ''}
 
 				{allowedLayout ? (
-					<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
+					<div id="button-layout" className="btn white withIcon small" onClick={this.onLayout}>
 						<Icon className="layout" />
-						<div className="txt">{translate('editorControlLayout')}</div>
+						{hasConflict ? <div className="dot" /> : ''}
 					</div>
 				) : ''}
 			</div>
@@ -118,6 +132,10 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 
 		focus.clear(true);
 		this.props.onLayout(e);
+	};
+
+	onDescription (e: any) {
+		Action.toggleFeatureRelation(this.props.rootId, 'description');
 	};
 
 	onCover (e: any) {

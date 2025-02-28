@@ -10,7 +10,7 @@ export default {
 		'dataviewOptionEdit',
 		'dataviewFileList',
 		'dataviewFileValues',
-		'dataviewCalendar',
+		'calendar',
 		'relationSuggest'
 	],
 	cellAdd: [
@@ -37,7 +37,7 @@ export default {
 		'searchObject', 
 		'blockRelationEdit', 
 		'typeSuggest', 
-		'dataviewCalendar',
+		'calendar',
 	],
 	action: [
 		'blockStyle',
@@ -49,6 +49,7 @@ export default {
 		'typeSuggest'
 	],
 	object: [ 'select', 'searchObject' ],
+	objectContext: [ 'typeSuggest', 'searchObject' ],
 	index: [ 'searchObject' ],
 	relationEdit: [
 		'select',
@@ -67,6 +68,5 @@ export default {
 	widgetAdd: [ 'typeSuggest', 'select' ],
 	dataviewTemplate: [ 'previewObject' ],
 	table: [ 'select2', 'blockColor', 'blockBackground' ],
-	dataviewContext: [ 'typeSuggest', 'searchObject' ],
 	dataviewNew: [ 'searchObject', 'typeSuggest', 'dataviewTemplateList' ]
 };

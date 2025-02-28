@@ -44,11 +44,11 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 				<div className="sides">
 					<div className={[ 'info', 'noValue', (!readonly ? 'canEdit' : '') ].join(' ')} onClick={this.onMenu}>
 						{relation ? (
-							<React.Fragment>
+							<>
 								<Icon className="ghost" />
 								{translate('commonDeletedRelation')}
-							</React.Fragment>
-						) : 'New relation'} 
+							</>
+						) : translate('menuBlockAddNewRelation')} 
 					</div>
 				</div>
 			);
