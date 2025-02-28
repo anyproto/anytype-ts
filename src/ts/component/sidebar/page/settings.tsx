@@ -274,7 +274,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
 			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: S.Record.getTypes() },
-			{ id: 'contentModelRelations', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: S.Record.getRelations() },
+			{ id: 'contentModelRelations', isToggle: true, name: U.Common.plural(10, translate('pluralProperty')), children: S.Record.getRelations() },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
