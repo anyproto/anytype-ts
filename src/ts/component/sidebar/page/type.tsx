@@ -209,7 +209,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	getConflicts () {
-		const relationIds = S.Detail.getTypeRelationIds(this.object.id);
+		const relationIds = U.Object.getTypeRelationIds(this.object.id);
 		return this.conflictIds.slice(0).filter(it => !relationIds.includes(it));
 	};
 
