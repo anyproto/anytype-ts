@@ -2,7 +2,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Icon, Button, Label, EmptySearch } from 'Component';
-import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action, Relation } from 'Lib';
+import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Mousewheel, Navigation } from 'swiper/modules';
 
 import Item from './allObject/item';
 
@@ -23,6 +25,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	node = null;
 	refFilter = null;
 	refList = null;
+	refSwiper = null;
 	cache: any = {};
 	offset = 0;
 	sortId: I.SortId = I.SortId.Updated;
@@ -50,9 +53,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
-		this.onTabOver = this.onTabOver.bind(this);
-		this.onTabLeave = this.onTabLeave.bind(this);
-		this.onTabScroll = this.onTabScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
@@ -125,25 +125,25 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 							</div>
 						</div>
 
-						<div 
-							id="tabs" 
-							className="tabs" 
-							onMouseEnter={this.onTabOver} 
-							onMouseLeave={this.onTabLeave}
-						>
-							<div 
-								className="scrollWrap"
-								onScroll={this.onTabScroll}
+						<div id="tabs" className="tabs">
+							<Swiper
+								onSwiper={swiper => this.refSwiper = swiper}
+								direction={'horizontal'}
+								slidesPerView={'auto'}
+								spaceBetween={12}
+								mousewheel={true}
+								navigation={true}
+								modules={[ Mousewheel, Navigation ]}
 							>
-								<div className="scroll">
-									{typeOptions.map((it: any, i: number) => {
-										const cn = [ 'tab' ];
+								{typeOptions.map((it: any, i: number) => {
+									const cn = [ 'tab' ];
 
-										if (this.type == it.id) {
-											cn.push('active');
-										};
+									if (this.type == it.id) {
+										cn.push('active');
+									};
 
-										return (
+									return (
+										<SwiperSlide key={it.id}>
 											<div 
 												key={it.id} 
 												className={cn.join(' ')} 
@@ -151,22 +151,10 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 											>
 												{it.name}
 											</div>
-										);
-									})}
-								</div>
-							</div>
-
-							<div className="controls">
-								<div className="side left">
-									<Icon className="arrow withBackground" onClick={() => this.onTabArrow(-1)} />
-									<div className="gradient" />
-								</div>
-
-								<div className="side right">
-									<Icon className="arrow withBackground" onClick={() => this.onTabArrow(1)} />
-									<div className="gradient" />
-								</div>
-							</div>
+										</SwiperSlide>
+									);
+								})}
+							</Swiper>
 						</div>
 
 						<div className="sides sidesFilter">
@@ -235,7 +223,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		this.load(true);
 
 		const idx = Math.max(0, this.getTypeOptions().findIndex(it => it.id == this.type));
-		this.scrollToTab(idx, false);
+		this.refSwiper?.slideTo(idx);
 
 		analytics.event('ScreenLibrary');
 	};
@@ -250,7 +238,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		});
 
 		this.setActive(items[this.n]);
-		this.checkTabButtons();
 	};
 
 	componentWillUnmount(): void {
@@ -985,123 +972,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		return [ I.SortId.Created, I.SortId.Updated ].includes(this.sortId);
 	};
 
-	onTabOver () {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const controls = tabs.find('.controls');
-		const sideLeft = controls.find('.side.left');
-		const sideRight = controls.find('.side.right');
-		const width = tabs.outerWidth();
-		const cx = tabs.offset().left;
-		const half = width / 2;
-
-		this.onTabLeave();
-
-		const check = () => {
-			const x = keyboard.mouse.page.x - cx;
-
-			if ((x >= 0) && (x <= half)) {
-				sideLeft.addClass('hover');
-			};
-			if ((x > half) && (x <= width)) {
-				sideRight.addClass('hover');
-			};
-		};
-
-		check();
-		$(window).off('mousemove.sidebarObject').on('mousemove.sidebarObject', e => check());
-	};
-
-	onTabLeave () {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const controls = tabs.find('.controls');
-		const sideLeft = controls.find('.side.left');
-		const sideRight = controls.find('.side.right');
-
-		sideLeft.removeClass('hover');
-		sideRight.removeClass('hover');
-
-		$(window).off('mousemove.sidebarObject');
-	};
-
-	onTabArrow (dir: number) {
-		this.tabIndex += dir;
-		this.checkTabIndex();
-		this.scrollToTab(this.tabIndex, true);
-	};
-
-	onTabScroll () {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const scroll = tabs.find('.scrollWrap');
-
-		this.x = scroll.scrollLeft();
-
-		for (const item of this.tabArray) {
-			if ((this.x >= item.x) && (this.x <= item.x + item.w)) {
-				this.tabIndex = item.i;
-				break;
-			};
-		};
-
-		this.checkTabX();
-		this.checkTabIndex();
-		this.checkTabButtons();
-	};
-
-	scrollToTab (idx: number, animate: boolean) {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const scroll = tabs.find('.scrollWrap');
-
-		this.fillTabArray();
-
-		this.tabIndex = idx;
-		this.checkTabIndex();
-
-		this.x = this.tabArray[this.tabIndex].x;
-		this.checkTabX();
-
-		if (animate) {
-			scroll.animate({ scrollLeft: this.x }, 200);
-		} else {
-			scroll.scrollLeft(this.x);
-		};
-		this.checkTabButtons();
-	};
-
-	checkTabX () {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const scroll = tabs.find('.scroll');
-		const max = this.getMaxWidth();
-		const sw = scroll.width();
-
-		this.x = Math.floor(this.x);
-		this.x = Math.max(0, this.x);
-		this.x = Math.min(max - sw, this.x);
-	};
-
-	checkTabIndex () {
-		this.tabIndex = Math.max(0, this.tabIndex);
-		this.tabIndex = Math.min(this.tabArray.length - 1, this.tabIndex);
-	};
-
-	checkTabButtons () {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const scroll = tabs.find('.scroll');
-		const controls = node.find('.controls');
-		const sideLeft = controls.find('.side.left');
-		const sideRight = controls.find('.side.right');
-		const max = this.getMaxWidth();
-		const sw = scroll.width();
-
-		sideLeft.toggleClass('hide', this.x <= 0);
-		sideRight.toggleClass('hide', this.x >= max - sw - 1);
-	};
-
 	getMaxWidth () {
 		const node = $(this.node);
 		const tabs = node.find('#tabs');
@@ -1128,10 +998,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 			this.tabArray.push({ i, x, w });
 		};
-	};
-
-	resize () {
-		this.scrollToTab(0, false);
 	};
 
 });
