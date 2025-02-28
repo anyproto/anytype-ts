@@ -31,7 +31,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const rootId = keyboard.getRootId();
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
-	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
+	const paddingLeft = depth > 1 ? depth * 6 : 6;
 	const hasMore = U.Space.canMyParticipantWrite();
 	const [ dummy, setDummy ] = useState(0);
 

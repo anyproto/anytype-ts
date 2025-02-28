@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget } from 'Component';
+import { Icon, IconObject, ObjectName, DropTarget } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
 
 import WidgetSpace from './space';
@@ -592,18 +592,13 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	} else {
 		buttons = (
 			<div className="buttons">
-				{isEditing ? (
-					<div className="iconWrap more">
-						<Icon className="options" tooltip={translate('widgetOptions')} onClick={onOptions} />
-					</div>
-				) : ''}
 				{canCreate ? (
 					<div className="iconWrap create">
 						<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreateClick} />
 					</div>
 				) : ''}
-				<div className="iconWrap collapse">
-					<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={onToggle} />
+				<div className="iconWrap more">
+					<Icon className="more" tooltip={translate('widgetOptions')} onClick={onOptions} />
 				</div>
 			</div>
 		);
@@ -616,6 +611,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="head" onClick={onClickHandler}>
 				{back}
 				<div className="clickable">
+					<div className="iconWrap collapse">
+						<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={onToggle} />
+					</div>
+					<IconObject object={object} />
 					<ObjectName object={object} />
 					{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
 				</div>

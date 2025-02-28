@@ -18,11 +18,14 @@
 		}
 		.inner:hover::before, .inner.hover::before { opacity: 1; }
 
-		.dropTarget { border-radius: 4px; }
+		.dropTarget { border-radius: 6px; }
 
-		.iconObject { flex-shrink: 0; flex-basis: 20px; margin-right: 6px; }
+		.iconObject { flex-shrink: 0; flex-basis: 20px; margin-right: 6px; transition: opacity 0.15s ease-in; }
 
-		.arrowWrap { width: 24px; height: 24px; position: absolute; z-index: 2; left: -2px; top: -2px; opacity: 0; cursor: default; display: flex; align-items: center; justify-content: center; }
+		.arrowWrap { 
+			width: 20px; height: 20px; cursor: default; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 6px;
+			transition: opacity 0.15s ease-in; opacity: 0; position: absolute; left: 0px; top: 0px; z-index: 1;
+		}
 		.arrowWrap:hover {
 			.icon.arrow { background-color: var(--color-shape-highlight-medium); }
 		}
@@ -63,10 +66,6 @@
 		.icon.arrow { transform: rotate(0deg); }
 	}
 
-	.item.withArrow {
-		.arrowWrap,
-		.iconObject { transition: opacity 0.15s ease-in; }
-	}
 	.item.withArrow:hover, .item.withArrow.isOpen {
 		.arrowWrap { opacity: 1; }
 		.iconObject { opacity: 0; }

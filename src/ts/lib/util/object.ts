@@ -513,6 +513,10 @@ class UtilObject {
 		});
 	};
 
+	getIcon (object: any): string {
+		return object ? (object.iconEmoji || object.iconImage || '') : '';
+	};
+
 	hasEqualLayoutAlign (object: any, type: any): boolean {
 		if (!object || object._empty || !type) {
 			return true;

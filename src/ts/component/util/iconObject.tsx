@@ -234,7 +234,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			offsetX,
 			offsetY,
 			data: {
-				value: (object.iconEmoji || object.iconImage || ''),
+				value: U.Object.getIcon(object),
 				spaceId: object.spaceId,
 				noGallery,
 				noUpload,
