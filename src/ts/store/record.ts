@@ -337,11 +337,7 @@ class RecordStore {
 
 	getConflictRelations (rootId: string, blockId: string, typeId: string): any[] {
 		const objectKeys = S.Detail.getKeys(rootId, blockId);
-		const typeKeys = S.Detail.getTypeRelationIds(typeId).
-			map(it => S.Record.getRelationById(it)).
-			filter(it => it && it.relationKey).
-			map(it => it.relationKey);
-
+		const typeKeys = U.Object.getTypeRelationKeys(typeId);
 
 		let conflictKeys = [];
 

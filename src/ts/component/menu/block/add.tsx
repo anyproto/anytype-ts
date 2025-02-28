@@ -266,7 +266,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const isTemplate = U.Object.isTemplate(object.type);
 		const objectKeys = S.Detail.getKeys(rootId, rootId);
 		const objectRelations = objectKeys.map(it => S.Record.getRelationByKey(it)).filter(it => it);
-		const typeIds = S.Detail.getTypeRelationIds(isTemplate ? object.targetObjectType : object.type);
+		const typeIds = U.Object.getTypeRelationIds(isTemplate ? object.targetObjectType : object.type);
 		const typeRelations = typeIds.map(it => S.Record.getRelationById(it)).filter(it => it);
 		
 		let ret = typeRelations;

@@ -598,6 +598,13 @@ class UtilObject {
 			concat(Relation.getArrayValue(type.recommendedFileRelations));
 	};
 
+	getTypeRelationKeys (id: string) {
+		return this.getTypeRelationIds(id).
+			map(it => S.Record.getRelationById(it)).
+			filter(it => it && it.relationKey).
+			map(it => it.relationKey);
+	};
+
 };
 
 export default new UtilObject();
