@@ -95,11 +95,6 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 				<div className="line" />
 
-				<div id="item-add" className="item add" onClick={this.onAdd}>
-					<Icon className="plus" />
-					{translate('commonAddRelation')}
-				</div>
-
 				<div className="buttons">
 					<Button text="Save" className="c28" onClick={this.save} />
 					<Button text="Cancel" className="c28" color="blank" onClick={() => close()} />

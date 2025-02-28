@@ -520,6 +520,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				route: analytics.route.widget,
 				objectIds: [ objectId ],
 				subId,
+				noRelation: true,
 			},
 		};
 
