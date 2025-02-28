@@ -92,6 +92,7 @@ class Preview {
 			switch (typeX) {
 				default:
 				case I.MenuDirection.Left: {
+					x += ew;
 					break;
 				};
 
@@ -101,7 +102,7 @@ class Preview {
 				};
 
 				case I.MenuDirection.Right: {
-					x += ow - ew;
+					x -= ow;
 					break;
 				};
 			};
