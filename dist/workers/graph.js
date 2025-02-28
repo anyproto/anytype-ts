@@ -220,7 +220,7 @@ updateForces = () => {
 
 	// Filter links
 	if (!settings.link) {
-		edges = edges.filter(d => d.type != EdgeType.Link);
+		edges = edges.filter(d => (d.type != EdgeType.Link) || (d.isDouble && !(d.types || []).includes(EdgeType.Link)));
 
 		const ids = nodeIdsFromEdges(edges);
 		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
@@ -228,7 +228,7 @@ updateForces = () => {
 
 	// Filter relations
 	if (!settings.relation) {
-		edges = edges.filter(d => d.type != EdgeType.Relation);
+		edges = edges.filter(d => (d.type != EdgeType.Relation) || (d.isDouble && !(d.types || []).includes(EdgeType.Relation)));
 
 		const ids = nodeIdsFromEdges(edges);
 		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
