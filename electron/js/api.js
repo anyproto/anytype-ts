@@ -245,6 +245,20 @@ class Api {
 		});
 	};
 
+	moveNetworkConfig (win, src) {
+		if (path.extname(src) != 'yml') {
+			return { err: 'Invalid file' };
+		};
+
+		const dst = path.join(Util.defaultUserDataPath(), 'config.yaml');
+		try {
+			fs.copyFileSync(src, dst);
+			return { path: dst };
+		} catch (err) {
+			return { err };
+		};
+	};
+
 };
 
 module.exports = new Api();
