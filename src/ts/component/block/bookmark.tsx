@@ -88,7 +88,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 					};
 
 					element = (
-						<div 
+						<a 
+							href={url}
 							className={cni.join(' ')} 
 							onClick={this.onClick} 
 							onMouseDown={this.onMouseDown}
@@ -107,7 +108,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 							<div className="side right">
 								{picture ? <img src={S.Common.imageUrl(picture, 500)} className="img" /> : ''}
 							</div>
-						</div>
+						</a>
 					);
 					break;
 				};
@@ -195,6 +196,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		if (e.button) {
 			return;
 		};
+
+		e.preventDefault();
 
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
