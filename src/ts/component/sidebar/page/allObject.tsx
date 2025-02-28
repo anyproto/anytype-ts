@@ -43,6 +43,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	tabIndex = 0;
 	tabArray = [];
 	x = 0;
+	top = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -56,7 +57,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
-	render() {
+	render () {
 		const { isLoading } = this.state;
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
@@ -190,7 +191,14 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 									threshold={LIMIT}
 								>
 									{({ onRowsRendered }) => (
-										<AutoSizer className="scrollArea">
+										<AutoSizer 
+											className="scrollArea" 
+											onResize={() => {
+												if (this.top) {
+													this.refList?.scrollToPosition(this.top);
+												};
+											}}
+										>
 											{({ width, height }) => (
 												<List
 													ref={ref => this.refList = ref}
@@ -778,7 +786,10 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		};
 	};
 
-	onScroll () {
+	onScroll ({ scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
 		this.renderSelection();
 	};
 
