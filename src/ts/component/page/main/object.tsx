@@ -12,6 +12,7 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 		// Redirect to invite page when invite parameters are present
 		if ((!space || !space.isAccountActive) && cid && key) {
 			U.Router.go(`/main/invite/?cid=${cid}&key=${key}`, { replace: true });
+			analytics.event('OpenObjectByLink', { route, type: 'Invite' });
 			return;
 		};
 
@@ -32,7 +33,7 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 			const object = item.details;
 
 			U.Object.openRoute(object);
-			analytics.event('OpenObjectByLink', { route, objectType: object.type });
+			analytics.event('OpenObjectByLink', { route, objectType: object.type, type: 'Object' });
 		});
 
 	}, []);
