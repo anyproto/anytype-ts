@@ -29,8 +29,10 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			U.Object.openRoute(item.details);
-			analytics.event('OpenAppByLink', { route });
+			const object = item.details;
+
+			U.Object.openRoute(object);
+			analytics.event('OpenObjectByLink', { route, objectType: object.type });
 		});
 
 	}, []);

@@ -162,6 +162,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (pathname.match(/^\/invite/)) {
 			ret.params.page = 'main';
 			ret.params.action = 'invite';
+			ret.params.cid = data.cid;
+			ret.params.key = data.key;
+			ret.params.route = data.route;
 		};
 
 		// Membership route
