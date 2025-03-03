@@ -786,7 +786,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let ret = false;
 
-		keyboard.shortcut(`shift+space`, e, () => {
+		keyboard.shortcut('shift+space', e, () => {
 			e.preventDefault();
 
 			ret = true;

@@ -237,7 +237,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const count = ids.length;
 		const rootId = this.getRootId();
 
-		keyboard.shortcut(`${cmd}+f`, e, () => {
+		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
 			node.find('#dataviewControls .filter .icon.search').trigger('click');
@@ -263,7 +263,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		// History
-		keyboard.shortcut(`${cmd}+alt+h`, e, () => {
+		keyboard.shortcut('history', e, () => {
 			e.preventDefault();
 			U.Object.openAuto({ layout: I.ObjectLayout.History, id: rootId });
 		});

@@ -84,7 +84,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			e.preventDefault();
 		});
 
-		keyboard.shortcut(`${cmd}+f`, e, () => {
+		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 			e.stopPropagation();
 

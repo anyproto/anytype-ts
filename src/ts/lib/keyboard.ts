@@ -126,7 +126,6 @@ class Keyboard {
 	onKeyDown (e: any) {
 		const { theme, pin } = S.Common;
 		const isPopup = this.isPopup();
-		const isMac = U.Common.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -135,15 +134,15 @@ class Keyboard {
 
 		this.pressed.push(key);
 
-		this.shortcut(`${cmd}+\\, ${cmd}+dot`, e, (pressed: string) => {
+		this.shortcut('toggleSidebar', e, (pressed: string) => {
 			e.preventDefault();
 			sidebar.toggleOpenClose();
 		});
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			this.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
-			this.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
+			this.shortcut('back', e, () => this.onBack());
+			this.shortcut('forward', e, () => this.onForward());
 		};
 
 		// Close popups and menus
@@ -186,13 +185,13 @@ class Keyboard {
 		if (isMain) {
 
 			// Print
-			this.shortcut(`${cmd}+p`, e, () => {
+			this.shortcut('print', e, () => {
 				e.preventDefault();
 				this.onPrint(analytics.route.shortcut);
 			});
 
 			// Navigation search
-			this.shortcut(`${cmd}+s`, e, (pressed: string) => {
+			this.shortcut('search', e, (pressed: string) => {
 				if (S.Popup.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
 					return;
 				};
@@ -201,44 +200,44 @@ class Keyboard {
 			});
 
 			// Text search
-			this.shortcut(`${cmd}+f`, e, () => {
+			this.shortcut('searchText', e, () => {
 				if (!this.isFocused) {
 					this.onSearchMenu('', analytics.route.shortcut);
 				};
 			});
 
 			// Navigation links
-			this.shortcut(`${cmd}+o`, e, () => {
+			this.shortcut('navigation', e, () => {
 				e.preventDefault();
 				U.Object.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
-			this.shortcut(`${cmd}+alt+o`, e, () => {
+			this.shortcut('graph', e, () => {
 				e.preventDefault();
 				U.Object.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
 			// Archive
-			this.shortcut(`${cmd}+alt+b`, e, () => {
+			this.shortcut('bin', e, () => {
 				e.preventDefault();
 				U.Object.openAuto({ layout: I.ObjectLayout.Archive });
 			});
 
 			// Go to dashboard
-			this.shortcut('alt+h', e, () => {
+			this.shortcut('history', e, () => {
 				if (S.Auth.account && !S.Popup.isOpen('search')) {
 					U.Space.openDashboard();
 				};
 			});
 
 			// Settings
-			this.shortcut(`${cmd}+comma`, e, () => {
+			this.shortcut('settings', e, () => {
 				U.Object.openAuto({ id: 'account', layout: I.ObjectLayout.Settings });
 			});
 
-			// Create relation
-			this.shortcut(`${cmd}+shift+r`, e, () => {
+			// Relation panel
+			this.shortcut('relation', e, () => {
 				$('#button-header-relation').trigger('click');
 			});
 
@@ -248,12 +247,12 @@ class Keyboard {
 			});
 
 			// Switch dark/light mode
-			this.shortcut(`${cmd}+shift+m`, e, () => {
+			this.shortcut('theme', e, () => {
 				Action.themeSet(!theme ? 'dark' : '');
 			});
 
 			// Lock the app
-			this.shortcut(`${cmd}+alt+l`, e, () => {
+			this.shortcut('lock', e, () => {
 				if (pin) {
 					Renderer.send('pinCheck');
 				};
@@ -284,7 +283,7 @@ class Keyboard {
 				};
 
 				// Lock/Unlock
-				this.shortcut(`ctrl+shift+l`, e, () => {
+				this.shortcut('pageLock', e, () => {
 					this.onToggleLock();
 				});
 			};

@@ -578,7 +578,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e`, e, () => {
+		keyboard.shortcut('menuSmile', e, () => {
 			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};
