@@ -260,7 +260,10 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 					if (isType) {
 						const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).concat(relation.id));
-						C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], cb);
+
+						C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], () => {
+							S.Record.viewUpdate(rootId, blockId, view);
+						});
 					} else {
 						Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), cb);
 					};

@@ -4,12 +4,11 @@ import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 class Dataview {
 
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
-		const { config } = S.Common;
-
 		if (!view) {
 			return [];
 		};
 
+		const { config } = S.Common;
 		const order: any = {};
 		const object = S.Detail.get(rootId, rootId, []);
 		const isType = U.Object.isTypeLayout(object.layout);
