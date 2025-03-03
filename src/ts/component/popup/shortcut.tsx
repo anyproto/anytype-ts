@@ -24,6 +24,39 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		setEditingId(item.id);
 	};
 
+	const onMenu = () => {
+		const options = [
+			{ id: 'export', name: translate('popupShortcutExport') },
+			{ id: 'import', name: translate('popupShortcutImport') },
+			{ id: 'reset', name: translate('popupShortcutReset') },
+		];
+
+		S.Menu.open('select', {
+			element: `#${getId()} #icon-more`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'export': {
+							break;
+						};
+
+						case 'import': {
+							break;
+						};
+
+						case 'reset': {
+							Storage.resetShortcuts();
+							setDummy(dummy + 1);
+							break;
+						};
+					};
+				},
+			}
+		});
+	};
+
 	const Section = (item: any) => {
 		const cn = [ 'section' ];
 
@@ -219,7 +252,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						<Select id={`${id}-section`} options={sections} value={page} onChange={id => setPage(id)} />
 					</div>
 					<div className="side right">
-						{config.experimental ? <Icon className="more withBackground" /> : ''}
+						{config.experimental ? <Icon id="icon-more" className="more withBackground" onClick={onMenu} /> : ''}
 						<Icon className="close withBackground" tooltip={translate('commonClose')} onClick={() => close()} />
 					</div>
 				</div>

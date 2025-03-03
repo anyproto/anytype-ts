@@ -1209,6 +1209,9 @@
 	"popupShortcutKeyboard": "Keyboard Shortcuts",
 	"popupShortcutResetKey": "Conflicts with %s. It has been set to blank.",
 	"popupShortcutConflict": "Conflicts with %s",
+	"popupShortcutImport": "Import Shortcuts Mapping",
+	"popupShortcutExport": "Export Shortcuts Mapping",
+	"popupShortcutReset": "Reset All To Default",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutInterface": "Interface",

@@ -504,6 +504,10 @@ class Storage {
 		const list = this.getShortcuts();
 		this.setShortcuts({ ...list, [id]: keys });
 	};
+
+	resetShortcuts () {
+		this.delete('shortcuts');
+	};
 	
 };
 
