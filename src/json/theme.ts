@@ -22,7 +22,7 @@ export default {
 	'': {
 
 		error: '#000',
-		iconDefault: 'rgba(0,0,0,0.11)',
+		iconDefault: '#e3e3e3',
 
 		color: {
 			default: '#252525',
@@ -73,7 +73,7 @@ export default {
 	dark: {
 
 		error: '#fff',
-		iconDefault: 'rgba(255,255,255,0.11)',
+		iconDefault: '#323232',
 
 		color: {
 			default: '#f8f8f8',
