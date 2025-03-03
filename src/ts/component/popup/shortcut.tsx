@@ -164,6 +164,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		return () => {
 			window.clearTimeout(timeout.current);
 			keyboard.setShortcutEditing(false);
+			$(window).off('keyup.shortcut keydown.shortcut');
 		};
 
 	}, []);
