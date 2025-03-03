@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Filter, Icon, Select, Label, Error } from 'Component';
-import { I, U, J, S, translate, keyboard, Key, Storage } from 'Lib';
+import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action } from 'Lib';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -39,10 +39,23 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'export': {
+							Action.openDirectoryDialog({}, paths => {
+								if (paths.length) {
+									Renderer.send('shortcutExport', paths[0], Storage.getShortcuts());
+								};
+							});
 							break;
 						};
 
 						case 'import': {
+							Action.openFileDialog({ extensions: [ 'json' ] }, paths => {
+								if (paths.length) {
+									Renderer.send('shortcutImport', paths[0]).then((data: any) => {
+										Storage.setShortcuts(data || {});
+										setDummy(dummy + 1);
+									});
+								};
+							});
 							break;
 						};
 
