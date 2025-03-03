@@ -529,7 +529,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		keyboard.shortcut('backspace', e, () => {
-			if (keyboard.pressed.includes(Key.enter)) {
+			if (keyboard.pressed.has(Key.enter)) {
 				ret = true;
 				return;
 			};

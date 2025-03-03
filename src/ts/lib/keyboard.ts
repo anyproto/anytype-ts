@@ -9,7 +9,7 @@ class Keyboard {
 	};
 	timeoutPin = 0;
 	timeoutSidebarHide = 0;
-	pressed: string[] = [];
+	pressed = new Set();
 	match: any = {};
 	matchPopup: any = {};
 	source: any = null;
@@ -64,7 +64,7 @@ class Keyboard {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
 
-			this.pressed = [];
+			this.pressed.clear();
 
 			S.Menu.closeAll([ 'blockContext' ]);
 
@@ -132,9 +132,9 @@ class Keyboard {
 		const canWrite = U.Space.canMyParticipantWrite();
 		const selection = S.Common.getRef('selectionProvider');
 
-		this.pressed.push(key);
+		this.pressed.add(key);
 
-		this.shortcut('toggleSidebar', e, (pressed: string) => {
+		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
 			sidebar.toggleOpenClose();
 		});
@@ -192,7 +192,7 @@ class Keyboard {
 
 			// Navigation search
 			this.shortcut('search', e, (pressed: string) => {
-				if (S.Popup.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
+				if (S.Popup.isOpen('search') || !this.isPinChecked) {
 					return;
 				};
 
@@ -320,7 +320,10 @@ class Keyboard {
 	};
 
 	onKeyUp (e: any) {
-		this.pressed = this.pressed.filter(it => it != this.eventKey(e));
+		if (e.metaKey) {
+			this.pressed.clear();
+		};
+		this.pressed.delete(this.eventKey(e));
 	};
 
 	onBack () {
@@ -1258,10 +1261,12 @@ class Keyboard {
 				};
 			};
 
-			const check = U.Common.arrayUnique(pressed).sort().join('+');
+			const ks = keys.join('+');
+			const check1 = U.Common.arrayUnique(pressed).sort().join('+');
+			const check2 = Array.from(this.pressed).sort().join('+');
 
-			if (check == keys.join('+')) {
-				res = check;
+			if ((check1 == ks) || (check2 == ks)) {
+				res = ks;
 			};
 		};
 
