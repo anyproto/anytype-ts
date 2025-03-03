@@ -173,10 +173,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		const win = $(window);
 		const setTimeout = () => {
 			window.clearTimeout(timeout.current);
-			timeout.current = window.setTimeout(() => {
-				keyboard.initShortcuts();
-				setEditingId('');
-			}, 2000);
+			timeout.current = window.setTimeout(() => setEditingId(''), 2000);
 		};
 
 		win.off('keyup.shortcut keydown.shortcut');
