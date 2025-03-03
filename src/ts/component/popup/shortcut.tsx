@@ -97,7 +97,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const Item = (item: any) => {
 		const cn = [ 'item' ];
-		const canEdit = item.id && !item.noEdit && config.experimental;
+		const canEdit = item.id && !item.noEdit;
 
 		let symbols = item.symbols || [];
 		let onClickHandler = () => {};
@@ -266,7 +266,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						<Select id={`${id}-section`} options={sections} value={page} onChange={id => setPage(id)} />
 					</div>
 					<div className="side right">
-						{config.experimental ? <Icon id="icon-more" className="more withBackground" onClick={onMenu} /> : ''}
+						<Icon id="icon-more" className="more withBackground" onClick={onMenu} />
 						<Icon className="close withBackground" tooltip={translate('commonClose')} onClick={() => close()} />
 					</div>
 				</div>
