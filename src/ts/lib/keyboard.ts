@@ -225,7 +225,7 @@ class Keyboard {
 			});
 
 			// Go to dashboard
-			this.shortcut('history', e, () => {
+			this.shortcut('home', e, () => {
 				if (S.Auth.account && !S.Popup.isOpen('search')) {
 					U.Space.openDashboard();
 				};

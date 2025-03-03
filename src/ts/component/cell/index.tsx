@@ -254,6 +254,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				const hh = J.Size.header;
 				const height = Math.min(wh - hh - 20, cell.outerHeight());
 
+				console.log(width);
+
 				param = Object.assign(param, {
 					noFlipX: true,
 					noFlipY: true,

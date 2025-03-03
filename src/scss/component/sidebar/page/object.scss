@@ -4,6 +4,11 @@
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 2px 10px; align-items: center; position: relative; }
 		> .wrap.c-longText { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; }
 
+		> .wrap.c-longText {
+			.name { width: 100%; }
+			.cell { width: 100%; }
+		}
+
 		> .wrap.hasMore {
 			.name { width: calc(100% - 28px); }
 		}
