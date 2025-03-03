@@ -12,7 +12,6 @@ export default {
 			ice: '#2aa7ee',
 			teal: '#0fc8ba',
 			lime: '#5dd400',
-			default: '#e3e3e3',
 		},
 
 		list: [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
@@ -23,6 +22,7 @@ export default {
 	'': {
 
 		error: '#000',
+		iconDefault: 'rgba(0,0,0,0.11)',
 
 		color: {
 			default: '#252525',
@@ -73,6 +73,7 @@ export default {
 	dark: {
 
 		error: '#fff',
+		iconDefault: 'rgba(255,255,255,0.11)',
 
 		color: {
 			default: '#f8f8f8',

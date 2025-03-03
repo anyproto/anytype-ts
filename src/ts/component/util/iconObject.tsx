@@ -319,7 +319,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		let src = '';
 		if (type.iconName) {
-			src = typeIcon(type.iconName, 1, J.Theme.icon.bg.default);
+			src = typeIcon(type.iconName, 1, J.Theme[theme].iconDefault);
 		} else {
 			src = require(`img/icon/default/${id}.svg`);
 		};
@@ -331,7 +331,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const typeIcon = (id: string, option: number, color?: string) => {
 		const newColor = color || bgByOption(option);
-		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor, stroke: newColor });
+		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor });
 	};
 
 	switch (layout) {
@@ -391,10 +391,10 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		case I.ObjectLayout.Type: {
 			if (iconName) {
-				const src = typeIcon(iconName, object.iconOption);
+				const src = typeIcon(iconName, iconOption);
 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-				icon = <img src={src} className={icn.join(' ')} />;
+				icon = <img src={src} className={icn.join(' ')} data-id={iconName} />;
 			} else
 			if (iconEmoji) {
 				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
@@ -469,7 +469,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const img = node.find('img');
 
 		img.attr({ 
-			src: U.Common.updateSvg(require('img/icon/error.svg'), { id: 'error', size, fill: J.Theme[theme]?.error }), 
+			src: U.Common.updateSvg(require('img/icon/error.svg'), { id: 'error', size, fill: J.Theme[theme]?.iconDefault }), 
 			class: `iconCommon c${IconSize[size]}`
 		});
 	};
