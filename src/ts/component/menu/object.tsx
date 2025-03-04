@@ -226,7 +226,7 @@ class MenuObject extends React.Component<I.Menu> {
 			sections = sections.concat([
 				{ children: [ openObject ] },
 				{ children: [ createWidget, fav, pageLock, history ] },
-				{ children: [ linkTo, addCollection ] },
+				{ children: [ linkTo, addCollection, template ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 				{ children: [ openFile, downloadFile ] },
