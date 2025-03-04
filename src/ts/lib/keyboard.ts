@@ -275,7 +275,7 @@ class Keyboard {
 
 			if (canWrite) {
 				// Create new page
-				if (!S.Popup.isOpen('search')) {
+				if (!S.Popup.isOpen('search') && !this.isMainSet()) {
 					this.shortcut('createObject', e, () => {
 						e.preventDefault();
 						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
@@ -283,9 +283,7 @@ class Keyboard {
 				};
 
 				// Lock/Unlock
-				this.shortcut('pageLock', e, () => {
-					this.onToggleLock();
-				});
+				this.shortcut('pageLock', e, () => this.onToggleLock());
 			};
 		};
 

@@ -189,6 +189,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
 			this.refControls?.forceUpdate();
+
 			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 			this.resize();
@@ -236,11 +237,18 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
 		const rootId = this.getRootId();
+		const ref = this.blockRefs[J.Constant.blockId.dataview];
 
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
 			node.find('#dataviewControls .filter .icon.search').trigger('click');
+		});
+
+		keyboard.shortcut('createObject', e, () => {
+			e.preventDefault();
+
+			ref?.ref?.onRecordAdd(e, -1);
 		});
 
 		if (!keyboard.isFocused) {
