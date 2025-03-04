@@ -212,7 +212,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 		};
 		if (rl) {
-			setOfString.push(`${U.Common.plural(rl, translate('pluralRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
+			setOfString.push(`${U.Common.plural(rl, translate('pluralProperties'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
