@@ -195,8 +195,11 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onCancel () {
-		S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
-		this.updateLayout(this.backup.recommendedLayout);
+		if (U.Common.objectLength(this.update)) {
+			S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
+			this.updateLayout(this.backup.recommendedLayout);
+		};
+
 		this.close();
 	};
 
