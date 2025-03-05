@@ -1,7 +1,7 @@
-import React, { forwardRef, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
-import { I, S, Relation, translate, keyboard } from 'Lib';
+import { I, S, C, Relation, translate, keyboard } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -9,9 +9,13 @@ import { CSS } from '@dnd-kit/utilities';
 
 const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
-	const { readonly, object, onChange } = props;
+	const { readonly, rootId, object, onChange } = props;
+	const { space } = S.Common;
+	const nodeRef = useRef(null);
 	const [ active, setActive ] = useState(null);
 	const [ dummy, setDummy ] = useState(0);
+	const [ isLoaded, setIsLoaded ] = useState(false);
+	const [ conflictIds, setConflictIds ] = useState([]);
 	const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -23,11 +27,82 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	const featured = recommendedFeaturedRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
 	const recommended = recommendedRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
 	const hidden = recommendedHiddenRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
-	const lists = [
+	const lists: any[] = [
 		{ id: 'featured', name: translate('sidebarTypeRelationHeader'), data: featured, relationKey: 'recommendedFeaturedRelations' },
 		{ id: 'recommended', name: translate('sidebarTypeRelationSidebar'), data: recommended, relationKey: 'recommendedRelations' },
 		{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), data: hidden, relationKey: 'recommendedHiddenRelations' },
 	];
+
+	const onMore = (e: MouseEvent, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		S.Menu.open('select', {
+			element: $(nodeRef.current).find(`#item-${item.id} .icon.more`),
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			data: {
+				options: [
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType') },
+				],
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'addToType': {
+							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+
+							onChange({ recommendedRelations: recommendedRelations.concat([ item.id ]) });
+							break;
+						};
+					};
+				},
+			},
+		});
+	};
+
+	if (conflictIds.length) {
+		const ids = [].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
+		const cids = conflictIds.filter(it => !ids.includes(it));
+
+		lists.push({
+			id: 'conflict', name: translate('sidebarRelationLocal'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
+			onInfo: () => {
+				S.Popup.open('confirm', {
+					data: {
+						title: translate('popupConfirmLocalFieldsTitle'),
+						textConfirm: translate('commonAdd'),
+						colorCancel: 'blank',
+						onConfirm: () => {
+							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+
+							onChange({ recommendedRelations: recommendedRelations.concat(conflictIds) });
+						},
+					},
+				});
+			},
+			onMore,
+		});
+	};
+
+	const loadConflicts = () => {
+		if (isLoaded) {
+			return;
+		};
+
+		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const ids = Relation.getArrayValue(message.conflictRelationIds)
+				.map(id => S.Record.getRelationById(id))
+				.filter(it => it && !Relation.isSystem(it.relationKey))
+				.map(it => it.id);
+
+			setIsLoaded(true);
+			setConflictIds(ids);
+		});
+	};
 
 	const onSortStart = (e: any) => {
 		setActive(e.active);
@@ -57,17 +132,22 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         } else {
 			toItems.splice(newIndex, 0, active.id);
 
-            onChange({
-                [from.relationKey]: fromItems.filter(id => id != active.id),
-                [to.relationKey]: toItems,
-            });
+			const update: any = {};
+
+			if (from.relationKey) {
+				update[from.relationKey] = fromItems.filter(id => id != active.id);
+			};
+			if (to.relationKey) {
+				update[to.relationKey] = toItems;
+			};
+
+            onChange(update);
         };
 
 		keyboard.disableSelection(false);
     };
 
-	const onAdd = (e: any, id: string) => {
-		const list = lists.find(it => it.id == id);
+	const onAdd = (e: any, list: any) => {
 		const keys = lists.reduce((acc, it) => acc.concat(it.data.map(it => it.relationKey)), []).concat('description');
 		const ids = list.data.map(it => it.id);
 
@@ -89,8 +169,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		});
 	};
 
-	const onEdit = (e: any, listId: string, id: string) => {
-		const list = lists.find(it => it.id == listId);
+	const onEdit = (e: any, list: any, id: string) => {
 		const allowed = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Relation ]);
 		const ids = Relation.getArrayValue(object[list.relationKey]);
 		
@@ -115,6 +194,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	};
 
 	const Item = (item: any) => {
+		const list = item.list;
 		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, data: item, disabled: item.disabled });
 		const canDrag = !item.disabled;
 		const cn = [ 'item' ];
@@ -123,10 +203,10 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			transition,
 		};
 
-		let onClick = e => onEdit(e, item.list, item.id);
+		let onClick = e => onEdit(e, list, item.id);
 		if (item.isEmpty) {
 			cn.push('empty');
-			onClick = e => onAdd(e, item.list);
+			onClick = e => onAdd(e, list);
 		};
 
 		return (
@@ -146,6 +226,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					</>
 				) : ''}
 				<ObjectName object={item} />
+				{list.onMore ? <Icon className="more" onClick={e => list.onMore(e, item)} /> : ''}
 			</div>
 		);
 	};
@@ -156,15 +237,18 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				items={list.data.map(it => it.id)} 
 				strategy={verticalListSortingStrategy}
 			>
-				<Label text={list.name} />
+				<div className="sectionNameWrap">
+					<Label text={list.name} />
+					{list.onInfo ? <Icon className="question withBackground" onClick={list.onInfo} /> : ''}
+				</div>
 				<div className="items">
 					{list.data.length ? (
 						<>
 							{list.data.map((item, i) => (
 								<Item 
-									key={[ list.list, item.id ].join('-')} 
+									key={[ list.id, item.id ].join('-')} 
 									{...item} 
-									list={list.list}
+									list={list}
 									index={i}
 									disabled={readonly}
 								/>
@@ -172,7 +256,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 						</>
 					) : (
 						<Item 
-							key={[ list.list, 'empty' ].join('-')} 
+							key={[ list.id, 'empty' ].join('-')} 
 							{...{ id: 'empty', name: translate('sidebarTypeRelationEmpty'), isEmpty: true }} 
 							list={list.list}
 							disabled={true}
@@ -187,8 +271,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
+	useEffect(() => {
+		loadConflicts();
+	});
+
 	return (
-		<div className="wrap">
+		<div ref={nodeRef} className="wrap">
 			<div className="titleWrap">
 				<Title text={translate('sidebarTypeRelation')} />
 				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, 'recommended')} />
