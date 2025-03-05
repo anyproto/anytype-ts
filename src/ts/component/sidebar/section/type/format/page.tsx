@@ -17,6 +17,11 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 	render () {
 		const { object, onChange, layoutOptions, readonly } = this.props;
 		const alignOptions = U.Menu.prepareForSelect(U.Menu.getHAlign([ I.BlockHAlign.Justify ]));
+		const snaps = [];
+
+		for (let i = 0; i <= 10; i ++) {
+			snaps.push(i / 10);
+		};
 
 		return (
 			<div ref={node => this.node = node} className="items">
@@ -80,6 +85,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 							onEnd={(e, v) => this.onWidthEnd(v)}
 							readonly={readonly}
 							iconIsOutside={false}
+							snaps={snaps}
 						/>
 					</div>
 				</div>

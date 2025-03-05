@@ -27,6 +27,7 @@ interface ButtonRef {
 	setLoading: (v: boolean) => void;
 	setDisabled: (v: boolean) => void;
 	isDisabled: () => boolean;
+	getNode: () => HTMLDivElement | HTMLInputElement;
 };
 
 const Button = forwardRef<ButtonRef, ButtonProps>(({
@@ -97,6 +98,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		setDisabled: (v: boolean) => $(nodeRef.current).toggleClass('disabled', v),
 		isDisabled: () => $(nodeRef.current).hasClass('disabled'),
 		isLoading: () => isLoading,
+		getNode: () => nodeRef.current,
 	}));
 
 	switch (type) {

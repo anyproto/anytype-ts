@@ -12,6 +12,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	update: any = {};
 	sectionRefs: Map<string, any> = new Map();
 	previewRef: any = null;
+	buttonSaveRef: any = null;
 	conflictIds: string[] = [];
 	backup: any = {};
 
@@ -37,8 +38,19 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					</div>
 
 					<div className="side right">
-						<Button color="blank" text={translate('commonCancel')} className="c28" onClick={this.onCancel} />
-						<Button text={type ? translate('commonSave') : translate('commonCreate')} className="c28" onClick={this.onSave} />
+						<Button 
+							color="blank" 
+							text={translate('commonCancel')}
+							className="c28"
+							onClick={this.onCancel}
+						/>
+
+						<Button 
+							ref={ref => this.buttonSaveRef = ref} 
+							text={type ? translate('commonSave') : translate('commonCreate')}
+							className="c28" 
+							onClick={this.onSave}
+						/>
 					</div>
 				</div>
 
@@ -96,8 +108,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.backup = U.Common.objectCopy(this.object);
 
 		sections.forEach(it => this.updateObject(it.id));
-
 		container.addClass('overPopup');
+
+		$(this.buttonSaveRef.getNode()).addClass('disabled');
 	};
 	
 	getObject () {
@@ -152,6 +165,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			this.updateObject(it.id);
 			this.forceUpdate();
 		});
+
+		$(this.buttonSaveRef.getNode()).toggleClass('disabled', !U.Common.objectLength(this.update));
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
@@ -169,6 +184,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onSave () {
+		if (!U.Common.objectLength(this.update)) {
+			return;
+		};
+
 		const { space } = S.Common;
 		const { rootId } = this.props;
 		const type = S.Record.getTypeType();
