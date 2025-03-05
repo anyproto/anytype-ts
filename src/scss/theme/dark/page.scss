@@ -179,4 +179,14 @@
 		.icon.sites { background-image: url('#{$themePath}/icon/settings/data/sites.svg'); }
 		.icon.location { background-image: url('#{$themePath}/icon/settings/data/location.svg'); }
 	}
+
+	.pageSettingsSpaceIndex {
+		> .buttons {
+			.btn {
+				.icon.invite { background: url('#{$themePath}/icon/settings/space/invite.svg'); }
+				.icon.qr { background: url('#{$themePath}/icon/settings/space/qr.svg'); }
+				.icon.more { background: url('#{$themePath}/icon/settings/space/more.svg'); }
+			}
+		}
+	}
 }
