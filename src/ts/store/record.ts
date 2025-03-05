@@ -257,11 +257,19 @@ class RecordStore {
 	};
 
 	getTypeById (id: string) {
+		if (!id) {
+			return null;
+		};
+
 		const object = S.Detail.get(J.Constant.subId.type, id, J.Relation.type);
 		return object._empty_ ? null : object;
 	};
 
 	getTypeByKey (key: string): any {
+		if (!key) {
+			return null;
+		};
+
 		const id = this.typeKeyMapGet(key);
 		return id ? this.getTypeById(id) : null;
 	};
@@ -302,6 +310,10 @@ class RecordStore {
 
 	getBookmarkType () {
 		return this.getTypeByKey(J.Constant.typeKey.bookmark);
+	};
+
+	getPageType () {
+		return this.getTypeByKey(J.Constant.typeKey.page);
 	};
 
 	getFileType () {

@@ -10,6 +10,8 @@
 
 	.section.typeRelation,
 	.section.typeConflict {
+		.titleWrap { margin-top: 4px; padding-right: 4px; }
+
 		.items { margin: 0px 0px 8px 0px; }
 		.items:last-child { margin: 0px; }
 

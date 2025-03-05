@@ -636,6 +636,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 				details.recommendedFeaturedRelations = featured.map(mapper).filter(it => it);
 				details.recommendedRelations = recommended.map(mapper).filter(it => it);
+				details.defaultTypeId = S.Record.getPageType().id;
 				break;
 			};
 

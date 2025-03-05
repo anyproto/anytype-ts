@@ -119,7 +119,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 
 	getPercent (v: number): string {
 		v = Number(v) || 0;
-		return U.Common.sprintf('%0.2f', (1 + v) * 100);
+		return Math.floor((1 + v) * 100).toString();
 	};
 });
 

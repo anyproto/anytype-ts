@@ -390,6 +390,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 					layout: I.ObjectLayout.Type,
 					recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
 					recommendedRelations: recommended.map(mapper).filter(it => it),
+					defaultTypeId: String(S.Record.getPageType()?.id || ''),
 				};
 
 				sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });
