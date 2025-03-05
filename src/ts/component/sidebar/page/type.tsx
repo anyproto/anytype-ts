@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, J, Relation, translate, sidebar } from 'Lib';
+import { I, S, C, U, J, Relation, translate, sidebar, keyboard } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
@@ -13,6 +13,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	sectionRefs: Map<string, any> = new Map();
 	previewRef: any = null;
 	conflictIds: string[] = [];
+	backup: any = {};
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -50,7 +51,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							component={item.component}
 							object={this.object} 
 							withState={true}
-							onChange={update => this.onChange(item.id, update)}
+							onChange={this.onChange}
 							readonly={readonly}
 						/>
 					))}
@@ -92,6 +93,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		}, details);
 
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
+		this.backup = U.Common.objectCopy(this.object);
 
 		sections.forEach(it => this.updateObject(it.id));
 
@@ -123,7 +125,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		return sections;
 	};
 
-	onChange (section: string, update: any) {
+	onChange (update: any) {
+		const sections = this.getSections();
 		const skipFormat = [ 'defaultTypeId' ];
 
 		for (const relationKey in update) {
@@ -138,11 +141,30 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		this.object = Object.assign(this.object, update);
 		this.update = Object.assign(this.update, update);
-		this.updateObject(section);
 
-		if (section == 'conflict') {
-			this.updateObject('relation');
+		S.Detail.update(J.Constant.subId.type, { id: this.object.id, details: update }, false);
+
+		if (undefined !== update.recommendedLayout) {
+			this.updateLayout(update.recommendedLayout);
+		};
+
+		sections.forEach(it => {
+			this.updateObject(it.id);
 			this.forceUpdate();
+		});
+	};
+
+	updateLayout (layout: I.ObjectLayout) {
+		const rootId = keyboard.getRootId();
+		const root = S.Block.getLeaf(rootId, rootId);
+		const current = S.Detail.get(rootId, rootId);
+
+		if (root) {
+			S.Block.update(rootId, rootId, { layout });
+		};
+
+		if (!current._empty_) {
+			S.Detail.update(rootId, { id: rootId, details: { resolvedLayout: layout } }, false);
 		};
 	};
 
@@ -173,6 +195,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onCancel () {
+		S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
+		this.updateLayout(this.backup.recommendedLayout);
 		this.close();
 	};
 
