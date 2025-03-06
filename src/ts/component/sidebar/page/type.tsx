@@ -186,9 +186,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		if (rootId) {
 			const update = [];
+
 			for (const key in this.update) {
-				update.push({ key, value: this.object[key] });
+				const value = Relation.formatValue(S.Record.getRelationByKey(key), this.update[key], true);
+				update.push({ key, value });
 			};
+
 			if (update.length) {
 				C.ObjectListSetDetails([ rootId ], update);
 			};
