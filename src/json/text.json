@@ -62,7 +62,7 @@
 	"commonUnlink": "Unlink",
 	"commonUnlinkFromType": "Unlink from Type",
 	"commonUnlinkFromObject": "Unlink from Object",
-	"commonUnlinkFromSet": "Unlink from Set",
+	"commonUnlinkFromSet": "Unlink from Query",
 	"commonUnlinkFromCollection": "Unlink from Collection",
 	"commonDeletedObject": "Non-existent object",
 	"commonDeletedType": "Deleted type",
@@ -127,7 +127,7 @@
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
 	"commonCreateNew": "Create new",
-	"commonSetName": "Set of %s",
+	"commonSetName": "Query of %s",
 	"commonClear": "Clear",
 	"commonNewSpace": "New Space",
 	"commonSelectObject": "Select Object",
@@ -155,7 +155,7 @@
 	"commonActions": "Actions",
 	"commonAddRelation": "Add Property",
 	"commonCollection": "Collection",
-	"commonSet": "Set",
+	"commonSet": "Query",
 	"commonNewObject" : "New Object",
 	"commonCreateNewObject": "Create new Object",
 	"commonCreateObjectWithName": "Create Object \"%s\"",
@@ -474,7 +474,7 @@
 
 	"pageMainNavigationItemEmptyTitle": "Object can not be shown",
 
-	"pageMainTypeNewSetOfObjects": "New Set of Objects",
+	"pageMainTypeNewSetOfObjects": "New Query of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
 
 	"pageMainIndexComponentNotFound": "Page component &quot;%s&quot; not found",
@@ -525,7 +525,7 @@
 	"pageHeadControlButtonsChangeCover": "Change cover",
 	"pageHeadControlButtonsReposition": "Reposition",
 
-	"pageHeadSimpleCreateSet": "Create Set",
+	"pageHeadSimpleCreateSet": "Create Query",
 	"pageHeadSimpleInstall": "Install",
 
 	"pageSettingsLanguageTitle": "Language & Region",
@@ -561,9 +561,6 @@
 	"editorPagePasteText": "Paste as text",
 	"editorPagePasteEmbed": "Paste as embed",
 
-	"setTitle": "New Set",
-	"setText": "Choose an Object Type for this Set",
-
 	"blockNameParagraph": "Text",
 	"blockNameHeader1": "Title",
 	"blockNameHeader2": "Heading",
@@ -591,7 +588,7 @@
 	"blockNameNewRelation": "New Property",
 	"blockNameSimpleTable": "Table 3x3",
 	"blockNameTableOfContents": "Table of Contents",
-	"blockNameSet": "Inline set",
+	"blockNameSet": "Inline Query",
 	"blockNameCollection": "Inline Collection",
 	"blockNameDate": "Date",
 
@@ -622,7 +619,7 @@
 	"blockTextNewRelation": "Meaningful connection between Objects",
 	"blockTextSimpleTable": "Create a Simple Table",
 	"blockTextTableOfContents": "Create a Table of Contents",
-	"blockTextSet": "Add existing or create new Inline Set to this Object",
+	"blockTextSet": "Add existing or create new Inline Query to this Object",
 	"blockTextCollection": "Add inline Collection of Objects with different properties",
 	"blockTextToggleEmpty": "Empty toggle. Click or drop Block inside",
 	"blockTextWrap": "Wrap",
@@ -635,14 +632,14 @@
 
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewCollectionWithName": "Create new Collection \"%s\"",
-	"blockDataviewCreateNewSet": "Create new Set",
-	"blockDataviewCreateNewSetWithName": "Create new Set \"%s\"",
+	"blockDataviewCreateNewSet": "Create new Query",
+	"blockDataviewCreateNewSetWithName": "Create new Query \"%s\"",
 	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
 	"blockDataviewCreateNewTooltipType": "Create new %s object",
 	"blockDataviewShowTemplates": "Show Templates",
 	"blockDataviewSearch": "Search",
 
-	"blockDataviewEmptyTargetSets": "Sets",
+	"blockDataviewEmptyTargetSets": "Queries",
 	"blockDataviewEmptyTargetCollections": "Collections",
 	"blockDataviewEmptyTargetTitle": "No data Source",
 	"blockDataviewEmptyTargetDescription": "Connect one of your %s or create a new<br/>one to continue",
@@ -706,10 +703,10 @@
 
 	"blockFeaturedTypeMenuOpenType": "Open type",
 	"blockFeaturedTypeMenuChangeType": "Change type",
-	"blockFeaturedTypeMenuTurnSetIntoCollection": "Turn set into collection",
-	"blockFeaturedTypeMenuOpenSet": "Open set",
-	"blockFeaturedTypeMenuOpenSetOf": "Open set of %s",
-	"blockFeaturedTypeMenuCreateSetOf": "Create set of %s",
+	"blockFeaturedTypeMenuTurnSetIntoCollection": "Turn Query into collection",
+	"blockFeaturedTypeMenuOpenSet": "Open Query",
+	"blockFeaturedTypeMenuOpenSetOf": "Open Query of %s",
+	"blockFeaturedTypeMenuCreateSetOf": "Create Query of %s",
 
 	"blockTableRow": "Row",
 	"blockTableColumn": "Column",
@@ -1366,14 +1363,14 @@
 	"popupShortcutCommandObjects8": "Also available",
 	"popupShortcutCommandObjects9": "Audio",
 	"popupShortcutCommandObjects10": "Table",
-	"popupShortcutCommandObjects11": "Inline set or collection",
+	"popupShortcutCommandObjects11": "Inline Query or Collection",
 
-	"popupShortcutCommandView0": "Inline set with a grid view",
-	"popupShortcutCommandView1": "Inline set with a list view",
-	"popupShortcutCommandView2": "Inline set with a gallery view",
-	"popupShortcutCommandView3": "Inline set with a board view",
-	"popupShortcutCommandView4": "Inline set with a calendar view",
-	"popupShortcutCommandView5": "Inline set with a graph view",
+	"popupShortcutCommandView0": "Inline Query with a grid view",
+	"popupShortcutCommandView1": "Inline Query with a list view",
+	"popupShortcutCommandView2": "Inline Query with a gallery view",
+	"popupShortcutCommandView3": "Inline Query with a board view",
+	"popupShortcutCommandView4": "Inline Query with a calendar view",
+	"popupShortcutCommandView5": "Inline Query with a graph view",
 
 	"popupShortcutCommandOther": "Other",
 	"popupShortcutCommandOther1": "Line divider",
@@ -1784,7 +1781,7 @@
 	"layout0": "Basic",
 	"layout1": "Profile",
 	"layout2": "Action",
-	"layout3": "Set",
+	"layout3": "Query",
 	"layout4": "Object type",
 	"layout5": "Property",
 	"layout6": "File",
@@ -1794,7 +1791,7 @@
 	"layout20": "Database",
 
 	"defaultNamePage": "Untitled",
-	"defaultNameSet": "New Set",
+	"defaultNameSet": "New Query",
 	"defaultNameCollection": "New Collection",
 	"defaultNameSpace": "Untitled space",
 	"defaultNameType": "New Type",
@@ -1856,12 +1853,12 @@
 	"widget3Name": "Compact list",
 	"widget3Description": "Widget with a compact list view",
 	"widget4Name": "List View",
-	"widget4Description": "Widget with a Set or Collection layout",
+	"widget4Description": "Widget with a Query or Collection layout",
 
 	"widgetFavorite": "Favorites",
 	"widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",
-	"widgetSet": "Sets",
+	"widgetSet": "Queries",
 	"widgetCollection": "Collections",
 	"widgetEdit": "Edit widgets",
 	"widgetAdd": "Add widget",
@@ -1998,15 +1995,15 @@
 	"onboardingTypeDeleted1Description": "If you want to keep using this Object, change this Object Type.",
 
 	"onboardingSourceDeleted1Title": "Please check your Installed Types & Properties",
-	"onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Properties that have been removed from your Space. Visit the Library to re-install these entities and continue using your Set.",
+	"onboardingSourceDeleted1Description": "Some Objects in this Query use Types or Properties that have been removed from your Space. Visit the Library to re-install these entities and continue using your Set.",
 
-	"onboardingInlineSet1Title": "This is Inline Set",
+	"onboardingInlineSet1Title": "This is Inline Query",
 	"onboardingInlineSet1Description": "Congratulations! You can embed a Set or Collection and modify it using Filters and Views without altering the original instance.",
 	"onboardingInlineSet2Title": "Views",
 	"onboardingInlineSet2Description": "Adjust rules and views to suit the current context.",
 
 	"onboardingInlineCollection1Title": "This is Inline Collection",
-	"onboardingInlineCollection1Description": "Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.",
+	"onboardingInlineCollection1Description": "Congratulations! You can embed a Query or Collection and modify it using filters and views without altering the original instance.",
 	"onboardingInlineCollection2Title": "Views",
 	"onboardingInlineCollection2Description": "Adjust rules and views to suit the current context.",
 
@@ -2037,8 +2034,8 @@
 	"onboardingMobileText": "<b>Sync to your mobile devices locally.</b> Scan the QR code to download the iOS or Android App and make use of peer-to-peer sync.",
 	"onboardingMobileButton": "Great",
 
-	"onboardingSetsTitle": "Sets",
-	"onboardingSetsText": "<b>A set gathers all objects of a certain type in your space.</b> Explore what's already here or add more by clicking +New Object.",
+	"onboardingSetsTitle": "Queries",
+	"onboardingSetsText": "<b>A Query gathers all objects of a certain type in your space.</b> Explore what's already here or add more by clicking +New Object.",
 	"onboardingSetsButton": "Perfect",
 
 	"onboardingCollectionsTitle": "Collections",
