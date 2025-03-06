@@ -248,7 +248,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
 
-			ref?.ref?.onRecordAdd(e, -1);
+			const { ww, wh } = U.Common.getWindowDimensions();
+
+			ref?.ref?.onRecordAdd(e, -1, '', {
+				horizontal: I.MenuDirection.Center,
+				vertical: I.MenuDirection.Center,
+				rect: { x: ww / 2, y: wh / 2, width: 0, height: 0 },
+			});
 		});
 
 		if (!keyboard.isFocused) {

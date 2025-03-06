@@ -785,9 +785,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					if (this.isCollection()) {
 						C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
 					};
-
-					
-				}
+				},
 			},
 			...param,
 		});
