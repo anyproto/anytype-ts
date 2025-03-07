@@ -5,6 +5,7 @@ import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, Ob
 import { I, S, U, J, translate } from 'Lib';
 
 interface Props {
+	isPopup?: boolean;
 	subId?: string;
 	rowLength?: number;
 	buttons: I.ButtonComponent[];
@@ -45,6 +46,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	isReadonly = false,
 	ignoreArchived = true,
 	ignoreHidden = true,
+	isPopup = false,
 	resize,
 	onAfterLoad
 }, ref) => {
@@ -58,6 +60,8 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	const cache = useRef(new CellMeasurerCache());
 	const [ selected, setSelected ] = useState<string[]>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const recordIds = S.Record.getRecordIds(subId, '');
+	const records = S.Record.getRecords(subId);
 
 	const onFilterShow = () => {
 		$(filterWrapperRef.current).addClass('active');
@@ -77,12 +81,10 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	const onClick = (e: React.MouseEvent, item: any) => {
 		e.stopPropagation();
 
-		const records = S.Record.getRecordIds(subId, '');
-		
 		let ids = selected;
 
 		if (e.shiftKey) {
-			const idx = records.findIndex(id => id == item.id);
+			const idx = recordIds.findIndex(id => id == item.id);
 
 			if ((idx >= 0) && (ids.length > 0)) {
 				const indexes = getSelectedIndexes().filter(i => i != idx);
@@ -90,7 +92,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 
 				if (isFinite(closest)) {
 					const [ start, end ] = getSelectionRange(closest, idx);
-					ids = ids.concat(records.slice(start, end));
+					ids = ids.concat(recordIds.slice(start, end));
 				};
 			};
 		} else {
@@ -101,9 +103,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	};
 
 	const getSelectedIndexes = () => {
-		const records = S.Record.getRecordIds(subId, '');
-		const indexes = selected.map(id => records.findIndex(it => it == id));
-
+		const indexes = selected.map(id => recordIds.findIndex(it => it == id));
 		return indexes.filter(idx => idx >= 0);
 	};
 
@@ -113,13 +113,11 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	};
 
 	const setSelectedRange = (start: number, end: number) => {
-		const records = S.Record.getRecordIds(subId, '');
-
-		if (end > records.length) {
-			end = records.length;
+		if (end > recordIds.length) {
+			end = recordIds.length;
 		};
 
-		setSelection(selected.concat(records.slice(start, end)));
+		setSelection(selected.concat(recordIds.slice(start, end)));
 	};
 
 	const setSelection = (ids: string[]) => {
@@ -171,7 +169,6 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 
 	const getItems = () => {
 		const ret: any[] = [];
-		const records = S.Record.getRecords(subId);
 
 		let row = { children: [] };
 		let n = 0;
@@ -323,6 +320,9 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 
 		content = <EmptySearch text={textEmpty} />;
 	} else {
+		console.log(items);
+		console.log(items.length);
+
 		content = (
 			<div className="items">
 				{isLoading ? <Loader /> : (
@@ -332,14 +332,15 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 						isRowLoaded={({ index }) => true}
 					>
 						{({ onRowsRendered }) => (
-							<WindowScroller scrollElement={$('#popupPage-innerWrap').get(0)}>
-								{({ height, isScrolling, registerChild, scrollTop }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
+							<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+								{({ height }) => (
+									<AutoSizer disableHeight={true}>
+										{({ width }) => (
 											<List
+												autoHeight={true}
 												ref={listRef}
-												width={width}
-												height={height}
+												height={Number(height) || 0}
+												width={Number(width) || 0}
 												deferredMeasurmentCache={cache.current}
 												rowCount={items.length}
 												rowHeight={rowHeight || 64}

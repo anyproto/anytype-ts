@@ -42,10 +42,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		let object = null;
 		if (isSystemTargetId(targetId)) {
-			object = { 
-				id: targetId, 
-				name: translate(U.Common.toCamelCase(`widget-${targetId}`)),
-			};
+			object = U.Menu.getFixedWidgets().find(it => it.id == targetId);
 		} else {
 			object = S.Detail.get(widgets, targetId);
 		};
@@ -183,19 +180,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					break;
 				};
 
-				case J.Constant.widgetId.set: {
-					details.layout = I.ObjectLayout.Set;
-					flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
-					typeKey = J.Constant.typeKey.set;
-					break;
-				};
-
-				case J.Constant.widgetId.collection: {
-					details.layout = I.ObjectLayout.Collection;
-					flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
-					typeKey = J.Constant.typeKey.collection;
-					break;
-				};
 			};
 		};
 
@@ -364,6 +348,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		let limit = getLimit(block.content);
+		let ignoreArchived = true;
 
 		if (targetId != J.Constant.widgetId.recentOpen) {
 			sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
@@ -387,13 +372,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				break;
 			};
 
-			case J.Constant.widgetId.set: {
-				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set });
-				break;
-			};
-
-			case J.Constant.widgetId.collection: {
-				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
+			case J.Constant.widgetId.bin: {
+				filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true });
+				ignoreArchived = false;
 				break;
 			};
 		};
@@ -404,6 +385,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			sorts,
 			limit,
 			keys: J.Relation.sidebar,
+			ignoreArchived,
 		}, () => {
 			if (callBack) {
 				callBack();
@@ -466,9 +448,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(layout);
-		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
+		const isRestricted = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit, J.Constant.widgetId.bin ].includes(targetId);
 
-		if (isRecent || !layoutWithPlus) {
+		if (isRestricted || !layoutWithPlus) {
 			return false;
 		};
 
@@ -619,7 +601,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasChild) {
-		const onClickHandler = isSystemTarget() ? onSetPreview : onClick;
+		let onClickHandler = isSystemTarget() ? onSetPreview : onClick;
+
+		if (targetId == J.Constant.widgetId.bin) {
+			onClickHandler = () => U.Object.openAuto({ layout: I.ObjectLayout.Archive });
+		};
 
 		head = (
 			<div className="head" onClick={onClickHandler}>

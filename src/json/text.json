@@ -190,6 +190,8 @@
 	"commonShowMore": "Show more",
 	"commonShowLess": "Show less",
 	"commonWarning": "Warning",
+	"commonSuggested": "Suggested",
+	"commonExistingObjects": "Existing Objects",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
