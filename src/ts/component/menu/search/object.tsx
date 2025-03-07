@@ -67,7 +67,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			const cn = [];
 			const props = {
 				...item,
-				object: (item.isAdd || item.isSection ? undefined : item),
+				object: (item.isAdd || item.isSection || item.isSystem ? undefined : item),
 			};
 
 			if (item.isAdd) {

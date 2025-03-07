@@ -32,21 +32,10 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		const win = $(window);
 		const container = U.Common.getPageFlexContainer(isPopup);
 		const node = $(nodeRef.current);
-		const content = $('#popupPage .content');
-		const body = node.find('.body');
-		const hh = J.Size.header;
 		const wh = isPopup ? container.height() : win.height();
 		const rl = getRowLength();
 
-		node.css({ height: wh });
-		
-		if (isPopup) {
-			body.css({ height: wh - hh });
-			content.css({ minHeight: 'unset', height: '100%' });
-		} else {
-			body.css({ height: '' });
-			content.css({ minHeight: '', height: '' });
-		};
+		node.css({ height: wh - J.Size.header });
 
 		if (rowLength != rl) {
 			setRowLength(rl);
@@ -74,26 +63,25 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			<Header {...props} component="mainEmpty" />
 
 			<div ref={nodeRef} className="wrapper">
-				<div className="body">
-					<div className="titleWrapper">
-						<Icon className="archive" />
-						<Title text={translate('commonBin')} />
-					</div>
-
-					<ListObjectManager
-						ref={managerRef}
-						subId={J.Constant.subId.archive}
-						filters={filters}
-						sorts={sorts}
-						rowLength={getRowLength()}
-						ignoreArchived={false}
-						buttons={buttons}
-						iconSize={48}
-						resize={resize}
-						textEmpty={translate('pageMainArchiveEmpty')}
-						isReadonly={!U.Space.canMyParticipantWrite()}
-					/>
+				<div className="titleWrapper">
+					<Icon className="archive" />
+					<Title text={translate('commonBin')} />
 				</div>
+
+				<ListObjectManager
+					isPopup={isPopup}
+					ref={managerRef}
+					subId={J.Constant.subId.archive}
+					filters={filters}
+					sorts={sorts}
+					rowLength={getRowLength()}
+					ignoreArchived={false}
+					buttons={buttons}
+					iconSize={48}
+					resize={resize}
+					textEmpty={translate('pageMainArchiveEmpty')}
+					isReadonly={!U.Space.canMyParticipantWrite()}
+				/>
 			</div>
 
 			<Footer {...props} component="mainObject" />

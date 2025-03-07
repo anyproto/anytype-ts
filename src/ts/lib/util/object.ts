@@ -586,6 +586,25 @@ class UtilObject {
 		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
 	};
 
+	getTypeRelationIds (id: string) {
+		const type = S.Record.getTypeById(id);
+		if (!type) {
+			return [];
+		};
+
+		return Relation.getArrayValue(type.recommendedRelations).
+			concat(Relation.getArrayValue(type.recommendedFeaturedRelations)).
+			concat(Relation.getArrayValue(type.recommendedHiddenRelations)).
+			concat(Relation.getArrayValue(type.recommendedFileRelations));
+	};
+
+	getTypeRelationKeys (id: string) {
+		return this.getTypeRelationIds(id).
+			map(it => S.Record.getRelationById(it)).
+			filter(it => it && it.relationKey).
+			map(it => it.relationKey);
+	};
+
 	copyLink (object: any, space: any, type: string, route: string) {
 		const cb = (link: string) => {
 			U.Common.copyToast(translate('commonLink'), link);

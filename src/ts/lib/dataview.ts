@@ -4,15 +4,24 @@ import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 class Dataview {
 
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
-		const { config } = S.Common;
-
 		if (!view) {
 			return [];
 		};
 
+		const { config } = S.Common;
 		const order: any = {};
+		const object = S.Detail.get(rootId, rootId, []);
+		const isType = U.Object.isTypeLayout(object.layout);
 
-		let relations = U.Common.objectCopy(S.Record.getDataviewRelations(rootId, blockId)).filter(it => it);
+		let relations = [];
+		if (isType) {
+			const typeIds = U.Object.getTypeRelationIds(object.type);
+			relations = J.Relation.default.map(it => S.Record.getRelationByKey(it)).concat(typeIds.map(it => S.Record.getRelationById(it)));
+		} else {
+			relations = S.Record.getDataviewRelations(rootId, blockId);
+		};
+		relations = U.Common.objectCopy(relations).filter(it => it);
+
 		let o = 0;
 
 		if (!config.debug.hiddenObject) {
