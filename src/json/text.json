@@ -1930,7 +1930,7 @@
 	"sidebarSectionLayoutAlign": "Header position",
 	"sidebarSectionLayoutWidth": "Layout width",
 	"sidebarSectionLayoutDefaultView": "Default view",
-	"sidebarSectionLayoutDefaultType": "Default type",
+	"sidebarSectionLayoutDefaultType": "Default Object Type",
 
 	"sidebarTypeRelation": "Properties",
 	"sidebarTypeRelationHeader": "Shown in object header",
