@@ -115,8 +115,8 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			return;
 		};
 
-		const from = lists.find(it => it.id == active.data.current.list);
-		const to = lists.find(it => it.id == over.data.current.list);
+		const from = lists.find(it => it.id == active.data.current.list.id);
+		const to = lists.find(it => it.id == over.data.current.list.id);
 
         if (!from || !to) {
 			return;
@@ -279,7 +279,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		<div ref={nodeRef} className="wrap">
 			<div className="titleWrap">
 				<Title text={translate('sidebarTypeRelation')} />
-				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, 'recommended')} />
+				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, lists.find(it => it.id == 'recommended'))} />
 			</div>
 
 			<DndContext 
