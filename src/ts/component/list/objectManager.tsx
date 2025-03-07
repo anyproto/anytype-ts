@@ -320,9 +320,6 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 
 		content = <EmptySearch text={textEmpty} />;
 	} else {
-		console.log(items);
-		console.log(items.length);
-
 		content = (
 			<div className="items">
 				{isLoading ? <Loader /> : (
