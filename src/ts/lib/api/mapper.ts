@@ -95,7 +95,7 @@ export const Mapper = {
 				analyticsId: obj.getAnalyticsid(),
 				networkId: obj.getNetworkid(),
 				workspaceObjectId: obj.getWorkspaceobjectid(),
-				ethereumAddress: '', //obj.getEthereumaddress(),
+				ethereumAddress: obj.getEthereumaddress(),
 			};
 		},
 
