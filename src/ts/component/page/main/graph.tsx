@@ -27,9 +27,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const onKeyDown = (e: any) => {
-		const cmd = keyboard.cmdKey();
-
-		keyboard.shortcut(`${cmd}+f`, e, () => $('#button-header-search').trigger('click'));
+		keyboard.shortcut('searchText', e, () => $('#button-header-search').trigger('click'));
 	};
 
 	const load = () => {

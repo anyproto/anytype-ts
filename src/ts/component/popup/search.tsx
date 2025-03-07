@@ -438,7 +438,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+n`, e, () => {
+		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
 
 			this.pageCreate(filter);

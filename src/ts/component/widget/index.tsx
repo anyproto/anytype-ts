@@ -220,6 +220,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 			U.Object.openConfig(newObject);
 			analytics.createObject(newObject.type, newObject.layout, route, message.middleTime);
+
+			if (layout == I.WidgetLayout.Tree) {
+				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(newObject.id, newObject.layout, true), (message: any) => {
+					if (!message.error.code) {
+						analytics.event('CreateLink');
+					};
+				});
+			};
 		});
 	};
 
@@ -520,6 +528,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				route: analytics.route.widget,
 				objectIds: [ objectId ],
 				subId,
+				noRelation: true,
 			},
 		};
 

@@ -334,7 +334,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e`, e, () => {
+		keyboard.shortcut('menuSmile', e, () => {
 			if (!S.Menu.isOpen('smile')) {
 				e.preventDefault();
 				this.refButtons.onChatButton(e, I.ChatButton.Emoji);

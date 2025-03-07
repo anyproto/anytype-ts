@@ -89,8 +89,6 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 						</div>
 					</div>
 				</div>
-
-				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};

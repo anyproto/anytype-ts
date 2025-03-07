@@ -31,6 +31,7 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 		const cn = [ 'cell', rc ];
 		const readonly = this.props.readonly || root.isLocked();
 		const canEdit = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const hasMore = canEdit && relation.onMore;
 		const container = [ 
 			U.Common.getCellContainer(isPopup ? 'popup' : 'page'),
 			U.Common.getCellContainer('sidebarRight'),
@@ -38,6 +39,10 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 
 		if (canEdit) {
 			cn.push('canEdit');
+		};
+
+		if (hasMore) {
+			cw.push('hasMore');
 		};
 
         return (
@@ -66,7 +71,9 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 					/>
 				</div>
 
-				{relation.onMore ? <Icon className="more" onClick={e => relation.onMore(e, relation)} /> : ''}
+				{hasMore ? (
+					<Icon className="more" onClick={e => relation.onMore(e, relation)} /> 
+				) : ''}
 			</div>
 		);
     };

@@ -57,7 +57,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 										{description ? (
 											<Icon
 												className="groupDescription"
-												onMouseEnter={() => this.onShowDescription(id, description)}
+												onMouseEnter={e => this.onShowDescription(e, id, description)}
 												onMouseLeave={() => Preview.tooltipHide()}
 											/>
 										) : ''}
@@ -187,8 +187,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	};
 
 	onToggle (id: string) {
-		const node = $('#sidebarRight');
-		const obj = node.find(`#relationGroup-${id}`);
+		const obj = $(`#sidebarRight #relationGroup-${id}`);
 		const toggle = obj.find('.sectionToggle');
 		const list = obj.find('> .list');
 		const isOpen = list.hasClass('isOpen');
@@ -197,17 +196,14 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		toggle.text(isOpen ? translate('commonShowMore') : translate('commonShowLess'));
 	};
 
-	onShowDescription (id: string, text: string) {
-		const node = $('#sidebarRight');
-		const element = node.find(`#relationGroup-${id} .groupDescription`);
-
+	onShowDescription (e: any, id: string, text: string) {
 		Preview.tooltipShow({
 			text,
-			element,
-			typeX: I.MenuDirection.Left,
+			element: $(e.currentTarget),
+			typeX: I.MenuDirection.Right,
 			typeY: I.MenuDirection.Center,
 			className: 'relationGroupDescription',
-			offsetX: 28,
+			offsetX: -8,
 		});
 	};
 

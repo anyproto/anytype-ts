@@ -133,7 +133,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{showShare ? (
 					<Button 
 						id="button-header-share" 
-						text="Share" 
+						text={translate('commonShare')} 
 						color="blank" 
 						className="c28" 
 						onClick={onShare}

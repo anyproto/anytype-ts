@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, J, Relation, translate, sidebar } from 'Lib';
+import { I, S, C, U, J, Relation, translate, sidebar, keyboard } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
@@ -12,7 +12,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	update: any = {};
 	sectionRefs: Map<string, any> = new Map();
 	previewRef: any = null;
-	conflictIds: string[] = [];
+	buttonSaveRef: any = null;
+	backup: any = {};
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -36,8 +37,19 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					</div>
 
 					<div className="side right">
-						<Button color="blank" text={translate('commonCancel')} className="c28" onClick={this.onCancel} />
-						<Button text={type ? translate('commonSave') : translate('commonCreate')} className="c28" onClick={this.onSave} />
+						<Button 
+							color="blank" 
+							text={translate('commonCancel')}
+							className="c28"
+							onClick={this.onCancel}
+						/>
+
+						<Button 
+							ref={ref => this.buttonSaveRef = ref} 
+							text={type ? translate('commonSave') : translate('commonCreate')}
+							className="c28" 
+							onClick={this.onSave}
+						/>
 					</div>
 				</div>
 
@@ -50,7 +62,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							component={item.component}
 							object={this.object} 
 							withState={true}
-							onChange={update => this.onChange(item.id, update)}
+							onChange={this.onChange}
 							readonly={readonly}
 						/>
 					))}
@@ -63,7 +75,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	componentDidMount (): void {
 		this.init();
-		this.loadConflicts();
 
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 	};
@@ -92,10 +103,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		}, details);
 
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
+		this.backup = U.Common.objectCopy(this.object);
 
 		sections.forEach(it => this.updateObject(it.id));
-
 		container.addClass('overPopup');
+
+		$(this.buttonSaveRef.getNode()).addClass('disabled');
 	};
 	
 	getObject () {
@@ -110,20 +123,15 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	getSections () {
-		const sections = [
+		return [
 			{ id: 'title', component: 'type/title' },
 			{ id: 'layout', component: 'type/layout' },
 			{ id: 'relation', component: 'type/relation' },
 		];
-
-		if (this.getConflicts().length) {
-			sections.push({ id: 'conflict', component: 'type/conflict' });
-		};
-
-		return sections;
 	};
 
-	onChange (section: string, update: any) {
+	onChange (update: any) {
+		const sections = this.getSections();
 		const skipFormat = [ 'defaultTypeId' ];
 
 		for (const relationKey in update) {
@@ -138,24 +146,52 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		this.object = Object.assign(this.object, update);
 		this.update = Object.assign(this.update, update);
-		this.updateObject(section);
 
-		if (section == 'conflict') {
-			this.updateObject('relation');
+		S.Detail.update(J.Constant.subId.type, { id: this.object.id, details: update }, false);
+
+		if (undefined !== update.recommendedLayout) {
+			this.updateLayout(update.recommendedLayout);
+		};
+
+		sections.forEach(it => {
+			this.updateObject(it.id);
 			this.forceUpdate();
+		});
+
+		$(this.buttonSaveRef.getNode()).toggleClass('disabled', !U.Common.objectLength(this.update));
+	};
+
+	updateLayout (layout: I.ObjectLayout) {
+		const rootId = keyboard.getRootId();
+		const root = S.Block.getLeaf(rootId, rootId);
+		const current = S.Detail.get(rootId, rootId);
+
+		if (root) {
+			S.Block.update(rootId, rootId, { layout });
+		};
+
+		if (!current._empty_) {
+			S.Detail.update(rootId, { id: rootId, details: { resolvedLayout: layout } }, false);
 		};
 	};
 
 	onSave () {
+		if (!U.Common.objectLength(this.update)) {
+			return;
+		};
+
 		const { space } = S.Common;
 		const { rootId } = this.props;
 		const type = S.Record.getTypeType();
 
 		if (rootId) {
 			const update = [];
+
 			for (const key in this.update) {
-				update.push({ key, value: this.object[key] });
+				const value = Relation.formatValue(S.Record.getRelationByKey(key), this.update[key], true);
+				update.push({ key, value });
 			};
+
 			if (update.length) {
 				C.ObjectListSetDetails([ rootId ], update);
 			};
@@ -173,6 +209,11 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onCancel () {
+		if (U.Common.objectLength(this.update)) {
+			S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
+			this.updateLayout(this.backup.recommendedLayout);
+		};
+
 		this.close();
 	};
 
@@ -184,33 +225,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	updateObject (id: string) {
 		this.sectionRefs.get(id)?.setObject(this.object);
 		this.previewRef?.update(this.object);
-	};
-
-	loadConflicts () {
-		const { space } = S.Common;
-		const type = this.getObject();
-
-		if (!type) {
-			return;
-		};
-
-		C.ObjectTypeListConflictingRelations(type.id, space, (message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			this.conflictIds = Relation.getArrayValue(message.conflictRelationIds)
-				.map(id => S.Record.getRelationById(id))
-				.filter(it => it && !Relation.isSystem(it.relationKey))
-				.map(it => it.id);
-
-			this.forceUpdate();
-		});
-	};
-
-	getConflicts () {
-		const relationIds = U.Object.getTypeRelationIds(this.object.id);
-		return this.conflictIds.slice(0).filter(it => !relationIds.includes(it));
 	};
 
 });

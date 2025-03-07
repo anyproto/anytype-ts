@@ -358,6 +358,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		if (item.itemId == 'link') {
 			let url = filter;
+
 			if (item.isLocal && url && !url.match(/^file:/)) {
 				url = `file://${url}`;
 			};

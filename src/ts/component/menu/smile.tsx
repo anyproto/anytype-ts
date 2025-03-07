@@ -99,7 +99,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 						onMouseDown={e => this.onMouseDown(e, item)}
 						onContextMenu={e => this.onSkin(e, item)}
 					>
-						<IconObject object={item} size={30} iconSize={30} />
+						<IconObject object={item} size={30} iconSize={30} tooltip={item.id} />
 					</div>
 				);
 
@@ -123,6 +123,14 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 				content = (
 					<>
+						<Filter 
+							ref={ref => this.refFilter = ref}
+							value={filter}
+							className={[ 'outlined', (!noHead ? 'withHead' : '') ].join(' ')}
+							onChange={e => this.onKeyUp(e, false)} 
+							focusOnMount={true}
+						/>
+
 						<div ref={ref => this.refIcons = ref} className="items">
 							<InfiniteLoader
 								rowCount={items.length}
@@ -537,7 +545,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	
 	getSmileSections () {
 		const { filter } = this.state;
-		const reg = new RegExp(filter, 'gi');
+		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 
 		let sections: any[] = [];
 
@@ -693,8 +701,14 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	getIconItems () {
+		const { filter } = this.state;
 		const ret: any[] = [];
-		const items = J.Icon;
+		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+
+		let items = U.Common.objectCopy(J.Icon);
+		if (filter) {
+			items = items.filter(it => it.id.match(reg));
+		};
 
 		let n = 0;
 		let row = { children: [] };

@@ -134,10 +134,10 @@ class ScrollOnMove {
 		const edgeLeft = BORDER;
 		const edgeBottom = this.viewportHeight - BORDER;
 		const edgeRight = this.viewportWidth - BORDER;
-	
-		const isInLeftEdge = x < edgeLeft;
+
+		const isInLeftEdge = (x > 0) && (x < edgeLeft);
 		const isInRightEdge = x > edgeRight;
-		const isInTopEdge = y < edgeTop;
+		const isInTopEdge = (y > 0) && (y < edgeTop);
 		const isInBottomEdge = y > edgeBottom;
 
 		if (!(isInLeftEdge || isInRightEdge || isInTopEdge || isInBottomEdge)) {

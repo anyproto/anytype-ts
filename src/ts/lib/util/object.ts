@@ -605,6 +605,49 @@ class UtilObject {
 			map(it => it.relationKey);
 	};
 
+	copyLink (object: any, space: any, type: string, route: string) {
+		const cb = (link: string) => {
+			U.Common.copyToast(translate('commonLink'), link);
+			analytics.event('CopyLink', { route });
+		};
+
+		let link = '';
+
+		switch (type) {
+			case 'deeplink': {
+				link = `${J.Constant.protocol}://${U.Object.universalRoute(object)}`;
+				break;
+			};
+
+			case 'web': {
+				link = `https://object.any.coop/${object.id}?spaceId=${space.targetSpaceId}`;
+				break;
+			};
+		};
+		
+		if (space.isShared) {
+			U.Space.getInvite(space.targetSpaceId, (cid: string, key: string) => {
+				if (cid && key) {
+					switch (type) {
+						case 'deeplink': {
+							cb(link + `&cid=${cid}&key=${key}`);
+							break;
+						};
+
+						case 'web': {
+							cb(link + `&inviteID=${cid}#${key}`);
+							break;
+						};
+					};
+				} else {
+					cb(link);
+				};
+			});
+		} else {
+			cb(link);
+		};
+	};
+
 };
 
 export default new UtilObject();

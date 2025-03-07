@@ -529,7 +529,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		keyboard.shortcut('backspace', e, () => {
-			if (keyboard.pressed.includes(Key.enter)) {
+			if (keyboard.pressed.has(Key.enter)) {
 				ret = true;
 				return;
 			};
@@ -578,7 +578,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e`, e, () => {
+		keyboard.shortcut('menuSmile', e, () => {
 			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};

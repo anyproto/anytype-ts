@@ -61,7 +61,7 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 							<div className="item">
 								<div className="name">{type?.name || translate('commonSelect')}</div>
 							</div>
-							<Icon className="arrow black" />
+							<Icon className="arrow light" />
 						</div>
 					</div>
 				</div>

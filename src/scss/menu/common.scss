@@ -200,7 +200,7 @@
 		.item.withSortArrow { padding-right: 10px; }
 
 		.line { height: 1px; margin: 8px 14px 7px 14px; background: var(--color-shape-secondary); }
-		.sectionName { padding: 5px 14px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
+		.sectionName { padding: 5px 14px; @include text-small; color: var(--color-text-secondary); font-weight: 500; @include text-overflow-nw; }
 		
 		.section { padding: 8px 0px 0px 0px; }
 		.section::after { content: ""; height: 1px; margin: 8px 14px 0px 14px; background: var(--color-shape-secondary); display: block; }

@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Filter, Icon, Select, Label, Error } from 'Component';
-import { I, U, J, S, translate, keyboard, Key, Storage } from 'Lib';
+import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action } from 'Lib';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -22,6 +22,52 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onClick = (item: any) => {
 		setEditingId(item.id);
+	};
+
+	const onMenu = () => {
+		const options = [
+			{ id: 'export', name: translate('popupShortcutExport') },
+			{ id: 'import', name: translate('popupShortcutImport') },
+			{ id: 'reset', name: translate('popupShortcutReset') },
+		];
+
+		S.Menu.open('select', {
+			element: `#${getId()} #icon-more`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'export': {
+							Action.openDirectoryDialog({}, paths => {
+								if (paths.length) {
+									Renderer.send('shortcutExport', paths[0], Storage.getShortcuts());
+								};
+							});
+							break;
+						};
+
+						case 'import': {
+							Action.openFileDialog({ extensions: [ 'json' ] }, paths => {
+								if (paths.length) {
+									Renderer.send('shortcutImport', paths[0]).then((data: any) => {
+										Storage.setShortcuts(data || {});
+										setDummy(dummy + 1);
+									});
+								};
+							});
+							break;
+						};
+
+						case 'reset': {
+							Storage.resetShortcuts();
+							setDummy(dummy + 1);
+							break;
+						};
+					};
+				},
+			}
+		});
 	};
 
 	const Section = (item: any) => {
@@ -51,7 +97,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const Item = (item: any) => {
 		const cn = [ 'item' ];
-		const canEdit = item.id && !item.noEdit && config.experimental;
+		const canEdit = item.id && !item.noEdit;
 
 		let symbols = item.symbols || [];
 		let onClickHandler = () => {};
@@ -118,6 +164,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		return () => {
 			window.clearTimeout(timeout.current);
 			keyboard.setShortcutEditing(false);
+			$(window).off('keyup.shortcut keydown.shortcut');
 		};
 
 	}, []);
@@ -126,10 +173,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		const win = $(window);
 		const setTimeout = () => {
 			window.clearTimeout(timeout.current);
-			timeout.current = window.setTimeout(() => {
-				keyboard.initShortcuts();
-				setEditingId('');
-			}, 2000);
+			timeout.current = window.setTimeout(() => setEditingId(''), 2000);
 		};
 
 		win.off('keyup.shortcut keydown.shortcut');
@@ -219,7 +263,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						<Select id={`${id}-section`} options={sections} value={page} onChange={id => setPage(id)} />
 					</div>
 					<div className="side right">
-						{config.experimental ? <Icon className="more withBackground" /> : ''}
+						<Icon id="icon-more" className="more withBackground" onClick={onMenu} />
 						<Icon className="close withBackground" tooltip={translate('commonClose')} onClick={() => close()} />
 					</div>
 				</div>

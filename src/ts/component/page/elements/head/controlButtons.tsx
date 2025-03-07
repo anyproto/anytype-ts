@@ -52,10 +52,14 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
 		const hasConflict = U.Object.hasLayoutConflict(object);
 
-		let allowedLayout = !checkType && allowedDetails && !isInSets && !isChat && !isType;
+		let allowedLayout = !checkType && allowedDetails && !isChat && !isType;
 		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark;
 		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
 		let allowedDescription = !checkType && allowedDetails && !isNote;
+
+		if (isInSets && !hasConflict) {
+			allowedLayout = false;
+		};
 
 		if (root.isLocked() || readonly) {
 			allowedIcon = false;

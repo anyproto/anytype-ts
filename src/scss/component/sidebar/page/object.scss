@@ -1,15 +1,28 @@
 > .sidebarPage.pageObjectRelation {
 	.section.objectRelation { padding: 12px 16px; }
 	.section.objectRelation {
-		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 0px 10px; }
-		> .wrap.c-longText { flex-direction: column; flex-wrap: nowrap; position: relative; }
+		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 2px 10px; align-items: center; position: relative; }
+		> .wrap.c-longText { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; }
+
 		> .wrap.c-longText {
-			.icon.more { position: absolute; right: 0px; top: 0px; }
+			.name { width: 100%; }
+			.cell { width: 100%; }
+		}
+
+		> .wrap.hasMore {
+			.name { width: calc(100% - 28px); }
+		}
+
+		> .wrap:hover {
+			> .icon.more { opacity: 1; }
 		}
 
 		> .wrap {
-			> .name { color: var(--color-text-secondary); }
-			> .icon.more { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); }
+			> .name { @include text-overflow-nw; color: var(--color-text-secondary); }
+			> .icon.more { 
+				width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); position: absolute; right: 0px; top: 1px; opacity: 0; 
+				transition: $transitionAllCommon;
+			}
 			> .icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 
 			.cell { line-height: 22px; transition: background $transitionCommon; position: relative; flex-grow: 1; max-width: 100%; }

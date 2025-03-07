@@ -8,27 +8,27 @@ interface PageMainInviteRefProps {
 
 const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((props, ref) => {
 
-	const { isPopup } = props;
+	const { isPopup, match } = props;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
-	const cid = useRef('');
-	const key = useRef('');
+	const cidRef = useRef('');
+	const keyRef = useRef('');
 	const [ error, setError ] = useState('');
 
 	const init = () => {
-		const data = U.Common.searchParam(U.Router.history.location.search);
+		const { cid, key, route } = match.params || {};
 
-		if ((cid.current == data.cid) && (key.current == data.key)) {
+		if ((cidRef.current == cid) && (keyRef.current == key)) {
 			return;
 		};
 
-		cid.current = data.cid;
-		key.current = data.key;
+		cidRef.current = cid;
+		keyRef.current = key;
 
-		if (!data.cid || !data.key) {
+		if (!cid || !key) {
 			setError(translate('pageMainInviteErrorData'));
 		} else {
-			C.SpaceInviteView(data.cid, data.key, (message: any) => {
+			C.SpaceInviteView(cid, key, (message: any) => {
 				U.Space.openDashboard({ replace: true });
 
 				S.Popup.closeAll(null, () => {
@@ -75,10 +75,24 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 								},
 							});
 						} else {
-							S.Popup.open('inviteRequest', { data: { invite: message, ...data } });
+							S.Popup.open('inviteRequest', { 
+								data: { 
+									invite: message, 
+									cid, 
+									key, 
+									route,
+								},
+							});
 						};
 					} else {
-						S.Popup.open('inviteRequest', { data: { invite: message, ...data } });
+						S.Popup.open('inviteRequest', { 
+							data: { 
+								invite: message, 
+								cid, 
+								key, 
+								route,
+							},
+						});
 					};
 				});
 			});

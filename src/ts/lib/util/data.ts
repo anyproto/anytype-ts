@@ -584,9 +584,10 @@ class UtilData {
 		keys = keys || [];
 
 		const object = S.Detail.get(rootId, blockId, [ 
-			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 'templateIsBundled', 'featuredRelations',
+			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 
+			'templateIsBundled', 'featuredRelations', 'targetObjectType',
 		].concat(J.Relation.cover).concat(keys), true);
-		const type = S.Record.getTypeById(object.type);
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
