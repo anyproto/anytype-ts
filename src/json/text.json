@@ -12,7 +12,7 @@
 	"commonDelete": "Delete",
 	"commonDeleteImmediately": "Delete permanently",
 	"commonDefault": "Default",
-	"commonDefaultType": "Default type",
+	"commonDefaultType": "Default Object Type",
 	"commonSoon": "Soon",
 	"commonTitle": "anytype",
 	"commonSearch": "Search",
@@ -1493,7 +1493,7 @@
 	"menuBlockRelationEditRelationType": "Property Type",
 	"menuBlockRelationEditSelectRelationType": "Select Property Type",
 	"menuBlockRelationEditAddObjectType": "Add Object Type",
-	"menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
+	"menuBlockRelationEditFilterObjectTypes": "Filter Object Types...",
 	"menuBlockRelationEditToastOnCreate": "Property <b>%s</b> has been created",
 
 	"menuBlockStyleTurnText": "Turn into text",
@@ -1544,7 +1544,7 @@
 	"menuDataviewOptionListSetStatus": "Set status %s",
 	"menuDataviewOptionListCreateOption": "Create option %s",
 
-	"menuDataviewRelationEditSelectObjectType": "Select Object type",
+	"menuDataviewRelationEditSelectObjectType": "Select Object Type",
 	"menuDataviewRelationEditLimitObjectTypes": "Limit Object Types",
 	"menuDataviewRelationEditIncludeTime": "Include time",
 	"menuDataviewRelationEditRelationName": "Property name",
@@ -1556,8 +1556,8 @@
 	"menuDataviewRelationEditInsertLeft": "Insert left",
 	"menuDataviewRelationEditInsertRight": "Insert right",
 	"menuDataviewRelationEditHideRelation": "Hide Property",
-	"menuDataviewRelationEditAddObjectType": "Add Object type",
-	"menuDataviewRelationEditFilterObjectTypes": "Filter Object types...",
+	"menuDataviewRelationEditAddObjectType": "Add Object Type",
+	"menuDataviewRelationEditFilterObjectTypes": "Filter Object Types...",
 	"menuDataviewRelationEditToastOnCreate": "Property <b>%s</b> has been created",
 
 	"menuDataviewSortNoSortsApplied": "No sorts applied to this View",
@@ -1749,9 +1749,9 @@
 	"toastInviteGenerate": "Invite link has been created",
 	"toastInviteRevoke": "Invite link has been deleted",
 
-	"toastObjectTypeAdded": "Object type <b>%s</b> has been added to your Library",
+	"toastObjectTypeAdded": "Object Type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Property <b>%s</b> has been added to your Library",
-	"toastObjectTypeRemoved": "Object type <b>%s</b> has been removed from your Library",
+	"toastObjectTypeRemoved": "Object Type <b>%s</b> has been removed from your Library",
 	"toastRelationRemoved": "Property <b>%s</b> has been removed from your Library",
 	"toastSetDefaultTemplate": "This Template was set as default",
 
@@ -1783,7 +1783,7 @@
 	"layout1": "Profile",
 	"layout2": "Action",
 	"layout3": "Query",
-	"layout4": "Object type",
+	"layout4": "Object Type",
 	"layout5": "Property",
 	"layout6": "File",
 	"layout7": "Dashboard",
@@ -1933,11 +1933,11 @@
 	"sidebarSectionLayoutDefaultType": "Default type",
 
 	"sidebarTypeRelation": "Properties",
-	"sidebarTypeRelationHeader": "Header",
-	"sidebarTypeRelationSidebar": "Sidebar",
+	"sidebarTypeRelationHeader": "Shown in object header",
+	"sidebarTypeRelationSidebar": "Shown in Properties menu",
 	"sidebarTypeRelationHidden": "Hidden",
 	"sidebarObjectRelationSetUp": "Set up",
-	"sidebarTypeRelationEmpty": "There are no properties yet",
+	"sidebarTypeRelationEmpty": "There are no Properties yet",
 
 	"sidebarRelationLocal": "Local Properties",
 	"sidebarTypeRelationLocalDescription": "Some properties are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
