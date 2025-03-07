@@ -129,19 +129,13 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
         if (from.id == to.id) {
             onChange({ [from.relationKey]: arrayMove(fromItems, oldIndex, newIndex) });
-        } else {
+        } else 
+		if (from.relationKey && to.relationKey) {
 			toItems.splice(newIndex, 0, active.id);
-
-			const update: any = {};
-
-			if (from.relationKey) {
-				update[from.relationKey] = fromItems.filter(id => id != active.id);
-			};
-			if (to.relationKey) {
-				update[to.relationKey] = toItems;
-			};
-
-            onChange(update);
+			onChange({
+				[from.relationKey]: fromItems.filter(id => id != active.id),
+				[to.relationKey]: toItems,
+			});
         };
 
 		keyboard.disableSelection(false);
