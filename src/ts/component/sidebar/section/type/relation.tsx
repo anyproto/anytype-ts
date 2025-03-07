@@ -252,7 +252,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 						<Item 
 							key={[ list.id, 'empty' ].join('-')} 
 							{...{ id: 'empty', name: translate('sidebarTypeRelationEmpty'), isEmpty: true }} 
-							list={list.list}
+							list={list}
 							disabled={true}
 						/>
 					)}
