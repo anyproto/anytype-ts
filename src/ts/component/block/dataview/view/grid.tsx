@@ -41,12 +41,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
 
-		if (!length) {
-			return getEmpty('view');
-		};
-
 		let content = null;
-
+		if (!length) {
+			content = getEmpty('view');
+		} else
 		if (isInline) {
 			content = (
 				<div>
