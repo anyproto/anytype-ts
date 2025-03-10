@@ -6,10 +6,12 @@
 	.ReactVirtualized__List { overscroll-behavior: none; }
 
 	.head { 
-		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; justify-content: space-between; 
-		padding: 10px 16px 8px 12px;
+		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 10px 16px 8px 12px;
 	}
 	.head {
+		.side.left { flex-grow: 1; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+		.side.right { flex-shrink: 0; }	
+
 		.clickable { 
 			@include text-paragraph; font-weight: 600; display: flex; flex-direction: row; align-items: center; 
 			gap: 0px 8px; position: relative; overflow: hidden; padding: 2px 4px;
@@ -112,7 +114,8 @@
 
 .widget.widgetLink {
 	.head { padding-bottom: 12px; }
-	.iconWrap.collapse { display: none; }
+	.headerIcon { display: block !important; }
+	.iconWrap.collapse { display: none !important; }
 }
 
 @import "./space";
