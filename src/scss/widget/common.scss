@@ -95,6 +95,11 @@
 	.head { padding-right: 8px; }
 	.head {
 		.buttons { display: flex; }
+	}
+}
+
+.widget.active {
+	.head {
 		.iconWrap.more { background-color: var(--color-shape-highlight-medium); }
 	}
 }
