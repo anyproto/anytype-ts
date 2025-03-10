@@ -1853,8 +1853,8 @@
 	"widget2Description": "Widget with a list view",
 	"widget3Name": "Compact list",
 	"widget3Description": "Widget with a compact list view",
-	"widget4Name": "List View",
-	"widget4Description": "Widget with a Query or Collection layout",
+	"widget4Name": "View",
+	"widget4Description": "Same as in object view",
 
 	"widgetFavorite": "Favorites",
 	"widgetRecent": "Recently edited",
