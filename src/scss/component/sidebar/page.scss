@@ -24,7 +24,7 @@
 				> .label { @include text-paragraph; font-weight: 600; }
 				> .label.sectionToggle { padding-left: 12px; font-weight: 500; @include text-common; color: var(--color-text-secondary); }
 
-				.groupDescription { position: relative; width: 20px; height: 20px; background: url('~img/icon/question.svg'); }
+				.icon.question { background-image: url('~img/icon/question.svg'); }
 			}
 
 			> .list { display: flex; flex-direction: column; gap: 12px 0px; }
