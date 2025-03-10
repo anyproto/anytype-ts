@@ -152,7 +152,7 @@
         .fileInfo { display: flex; flex-direction: column; gap: 10px 0px; }
         .fileInfo {
             .title { @include text-paragraph; font-weight: 600; color: var(--color-text-secondary); }
-            
+
             dl { @include text-common; display: flex; align-items: center; justify-content: space-between; max-width: 284px; flex-wrap: nowrap; }
             dl {
                 dt { @include text-overflow-nw; }

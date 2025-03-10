@@ -115,11 +115,18 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	getSections () {
+		const type = S.Record.getTypeById(this.props.rootId);
+		if (!type) {
+			return null;
+		};
+
+		const isFile = U.Object.isInFileLayouts(type.recommendedLayout);
+
 		return [
 			{ id: 'title', component: 'type/title' },
-			{ id: 'layout', component: 'type/layout' },
+			!isFile ? { id: 'layout', component: 'type/layout' } : null,
 			{ id: 'relation', component: 'type/relation' },
-		];
+		].filter(it => it);
 	};
 
 	onChange (update: any) {
