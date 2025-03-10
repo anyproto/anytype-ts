@@ -67,9 +67,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const value = record[relation.relationKey] || '';
 		const canEdit = canCellEdit(relation, record);
 		const placeholder = getPlaceholder(relation, record);
+		const check = checkValue();
 
 		if (!canEdit) {
-			if (value) {
+			if (check && (relation.format != I.RelationType.Checkbox)) {
 				if (Relation.isUrl(relation.format)) {
 					Action.openUrl(Relation.checkUrlScheme(relation.format, value));
 					return;
@@ -79,9 +80,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					U.Object.openDateByTimestamp(relation.relationKey, value, 'config');
 					return;
 				};
-			};
-
-			if (relation.format == I.RelationType.Checkbox) {
+			} else {
 				return;
 			};
 		};
