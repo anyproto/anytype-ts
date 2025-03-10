@@ -32,6 +32,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	render () {
+		const { isPopup } = this.props;
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
@@ -39,6 +40,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const allowedRelation = false; //S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const type = S.Record.getTypeById(object.type);
 		const skipKeys = [ 'description' ];
+		const showSidebar = S.Common.getShowSidebarRight(isPopup);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -67,7 +69,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const cn = [ 'blocks' ];
 
 		if (isVideo || isImage || isAudio || isPdf) {
-			if (isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
+			if (showSidebar || isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
 				cn.push('horizontal');
 			} else {
 				cn.push('vertical');
@@ -86,6 +88,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			};
 		} else {
 			cn.push('horizontal');
+		};
+
+		if (showSidebar) {
+			cn.push('withSidebar');
 		};
 
 		if (file) {
