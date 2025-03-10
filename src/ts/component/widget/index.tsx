@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget } from 'Component';
+import { Icon, ObjectName, DropTarget, IconObject } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
 
 import WidgetSpace from './space';
@@ -565,6 +565,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let targetTop = null;
 	let targetBot = null;
 	let isDraggable = canWrite;
+	let collapse = null;
 
 	if (isPreview) {
 		back = (
@@ -593,24 +594,36 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 						<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreateClick} />
 					</div>
 				) : ''}
-				<div className="iconWrap collapse">
-					<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={onToggle} />
-				</div>
+			</div>
+		);
+
+		collapse = (
+			<div className="iconWrap collapse">
+				<Icon className="collapse" onClick={onToggle} />
 			</div>
 		);
 	};
 
 	if (hasChild) {
+		let icon = null;
 		let onClickHandler = isSystemTarget() ? onSetPreview : onClick;
 
 		if (targetId == J.Constant.widgetId.bin) {
 			onClickHandler = () => U.Object.openAuto({ layout: I.ObjectLayout.Archive });
 		};
 
+		if (object.isSystem) {
+			icon = <Icon className={object.icon} />;
+		} else {
+			icon = <IconObject object={object} size={18} />;
+		};
+
 		head = (
 			<div className="head" onClick={onClickHandler}>
 				{back}
+				{collapse}
 				<div className="clickable">
+					{icon}
 					<ObjectName object={object} />
 					{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
 				</div>

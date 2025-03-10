@@ -12,6 +12,8 @@
 	.head {
 		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; @include text-paragraph; font-weight: 600; width: 100%; }
 		.clickable {
+			.iconObject, .icon { flex-shrink: 0; }
+			.icon { width: 18px; height: 18px; background-size: 16px; }
 			.name { @include text-overflow-nw; }
 			.count { color: var(--color-text-secondary); }
 		}
@@ -23,8 +25,8 @@
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
 		.icon.options { background-image: url('~img/icon/widget/options.svg'); }
-		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
 		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
+		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; position: relative; z-index: 2; }
