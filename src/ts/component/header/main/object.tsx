@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Button, Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, S, U, J, keyboard, translate, analytics } from 'Lib';
@@ -22,7 +22,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 
 	let center = null;
-	let locked = '';
+	let label = '';
 
 	if (object.isArchived) {
 		bannerProps.type = I.BannerType.IsArchived;
@@ -36,27 +36,24 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	};
 
 	if (isLocked) {
-		locked = translate('headerObjectLocked');
+		label = translate('headerObjectLocked');
 	} else
 	if (U.Object.isTypeOrRelationLayout(object.layout) && !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
-		locked = translate('commonSystem');
+		label = translate('commonSystem');
 	};
 
 	if (!isDeleted) {
 		if (bannerProps.type == I.BannerType.None) {
 			center = (
 				<div
-					id="path"
 					className="path"
 					onClick={onSearch}
 					onMouseOver={e => onTooltipShow(e, translate('headerTooltipPath'))}
 					onMouseOut={onTooltipHide}
 				>
-					<div className="inner">
-						<IconObject object={object} size={18} />
-						<ObjectName object={object} />
-						{locked ? <Label text={locked} className="lock" /> : ''}
-					</div>
+					<IconObject object={object} size={18} />
+					<ObjectName object={object} />
+					{label ? <Label text={label} /> : ''}
 				</div>
 			);
 		} else {
