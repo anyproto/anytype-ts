@@ -84,28 +84,35 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 
 		let ret = [];
 
-		switch (format) {
-			case I.LayoutFormat.Page: {
-				ret = [
-					I.ObjectLayout.Page,
-					I.ObjectLayout.Human,
-					I.ObjectLayout.Task,
-					I.ObjectLayout.Note,
-				];
+		if (readonly) {
+			ret = [ object.recommendedLayout ];
+		} else {
+			switch (format) {
+				case I.LayoutFormat.Page: {
+					ret = [
+						I.ObjectLayout.Page,
+						I.ObjectLayout.Human,
+						I.ObjectLayout.Task,
+						I.ObjectLayout.Note,
+					];
 
-				if (!object.isNew) {
-					if (U.Object.isNoteLayout(object.recommendedLayout)) {
-						ret = [ I.ObjectLayout.Note ];
-					} else {
-						ret = ret.filter(id => id != I.ObjectLayout.Note);
+					if (!object.isNew) {
+						if (U.Object.isNoteLayout(object.recommendedLayout)) {
+							ret = [ I.ObjectLayout.Note ];
+						} else 
+						if (U.Object.isBookmarkLayout(object.recommendedLayout)) {
+							ret = [ I.ObjectLayout.Bookmark ];
+						} else {
+							ret = ret.filter(id => id != I.ObjectLayout.Note);
+						};
 					};
+					break;
 				};
-				break;
-			};
 
-			case I.LayoutFormat.List: {
-				ret = [ I.ObjectLayout.Collection ];			
-				break;
+				case I.LayoutFormat.List: {
+					ret = [ I.ObjectLayout.Collection ];			
+					break;
+				};
 			};
 		};
 
