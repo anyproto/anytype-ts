@@ -5,6 +5,8 @@ class ChatStore {
 
 	public messageMap: Map<string, any[]> = observable(new Map());
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
+	// stateMap
+	// map - not observable, item in map - observable
 
 	constructor () {
 		makeObservable(this, {
