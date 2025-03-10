@@ -131,7 +131,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const route = param.route || analytics.route.widget;
-		const isSetOrCollection = U.Object.isInSetLayouts(object.layout);
 		const isFavorite = object.id == J.Constant.widgetId.favorite;
 
 		let details: any = Object.assign({}, param.details || {});
@@ -144,7 +143,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			flags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
-		if (isSetOrCollection) {
+		if (U.Object.isInSetLayouts(object.layout) || U.Object.isTypeLayout(object.layout)) {
 			const rootId = getRootId();
 			if (!rootId) {
 				return;
@@ -454,7 +453,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return false;
 		};
 
-		if (U.Object.isInSetLayouts(object.layout)) {
+		if (U.Object.isInSetLayouts(object.layout) || U.Object.isTypeLayout(object.layout)) {
 			const rootId = getRootId();
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id);
 			const type = S.Record.getTypeById(typeId);
@@ -613,9 +612,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		if (object.isSystem) {
-			icon = <Icon className={object.icon} />;
+			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
-			icon = <IconObject object={object} size={18} />;
+			icon = <IconObject object={object} size={18} className="headerIcon" />;
 		};
 
 		head = (

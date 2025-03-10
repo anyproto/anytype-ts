@@ -6,11 +6,14 @@
 	.ReactVirtualized__List { overscroll-behavior: none; }
 
 	.head { 
-		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; justify-content: space-between; 
+		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; justify-content: space-between; 
 		padding: 12px 16px 10px 16px;
 	}
 	.head {
-		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; @include text-paragraph; font-weight: 600; width: 100%; }
+		.clickable { 
+			display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; @include text-paragraph; 
+			font-weight: 600; width: 100%; overflow: hidden;
+		}
 		.clickable {
 			.iconObject, .icon { flex-shrink: 0; }
 			.icon { width: 18px; height: 18px; background-size: 16px; }
@@ -21,6 +24,7 @@
 		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 		.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
 		.iconWrap.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
+		.iconWrap.collapse { display: none; width: 18px; height: 18px; }
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
@@ -34,6 +38,8 @@
 	}
 	.head:hover {
 		.iconWrap.back { background-color: var(--color-shape-highlight-medium); }
+		.iconWrap.collapse { display: flex; }
+		.headerIcon { display: none; }
 	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
