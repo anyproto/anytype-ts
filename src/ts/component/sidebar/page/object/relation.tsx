@@ -142,7 +142,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const object = this.getObject();
 		const rootId = object.targetObjectType || object.type;
 
-		sidebar.rightPanelSetState(isPopup, { page: 'type', rootId, noPreview: true });
+		sidebar.rightPanelSetState(isPopup, { page: 'type', rootId, noPreview: true, back: 'object/relation' });
 	};
 
 	onDragStart (e: any, item: any) {

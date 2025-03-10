@@ -79,14 +79,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 	};
 
-	componentWillUnmount () {
-		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
-
-		sidebar.rightPanelRef(isPopup)?.setState({ details: {}, rootId: ''});
-		container.removeClass('overPopup');
-	};
-
 	init () {
 		const { isPopup } = this.props;
 		const container = U.Common.getPageFlexContainer(isPopup);
@@ -181,7 +173,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 
 		const { space } = S.Common;
-		const { rootId } = this.props;
+		const { rootId, isPopup, previous } = this.props;
 		const type = S.Record.getTypeType();
 
 		if (rootId) {
@@ -194,6 +186,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 			if (update.length) {
 				C.ObjectListSetDetails([ rootId ], update);
+
+				if (previous) {
+					sidebar.rightPanelSetState(isPopup, previous);
+				} else {
+					this.close();
+				};
 			};
 		} else {
 			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
@@ -202,10 +200,11 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					S.Common.getRef('sidebarLeft')?.refChild?.refFilter?.setValue('');
 				};
 			});
+
+			this.close();
 		};
 
 		this.update = {};
-		this.close();
 	};
 
 	onCancel () {
