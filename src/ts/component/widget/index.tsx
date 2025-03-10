@@ -583,11 +583,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	} else {
 		buttons = (
 			<div className="buttons">
-				{isEditing ? (
-					<div className="iconWrap more">
-						<Icon className="options" tooltip={translate('widgetOptions')} onClick={onOptions} />
-					</div>
-				) : ''}
+				<div className="iconWrap more">
+					<Icon className="options" tooltip={translate('widgetOptions')} onClick={onOptions} />
+				</div>
 				{canCreate ? (
 					<div className="iconWrap create">
 						<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreateClick} />
@@ -611,7 +609,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			onClickHandler = () => U.Object.openAuto({ layout: I.ObjectLayout.Archive });
 		};
 
-		if (object.isSystem) {
+		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
 			icon = <IconObject object={object} size={18} className="headerIcon" />;
@@ -620,8 +618,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		head = (
 			<div className="head" onClick={onClickHandler}>
 				{back}
-				{collapse}
 				<div className="clickable">
+					{collapse}
 					{icon}
 					<ObjectName object={object} />
 					{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
