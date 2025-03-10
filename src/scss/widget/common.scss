@@ -27,7 +27,7 @@
 			pointer-events: none; position: absolute; transition: opacity $transitionCommon; background: var(--color-shape-highlight-medium);
 		}
 
-		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+		.iconWrap { width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 		.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
 		.iconWrap.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
 		.iconWrap.collapse { display: none; width: 18px; height: 18px; }
@@ -39,7 +39,7 @@
 		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
 
-		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; position: relative; z-index: 2; }
+		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; } 
 	}
 	.head:hover {
