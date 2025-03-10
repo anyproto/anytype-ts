@@ -190,6 +190,7 @@
 	"commonShowMore": "Show more",
 	"commonShowLess": "Show less",
 	"commonWarning": "Warning",
+	"commonFileInfo": "File Information",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -483,7 +484,6 @@
 	"pageMainBlockEmpty": "Block not found",
 	"pageMainRelationObjectsCreated": "%s created",
 
-	"pageMainMediaFileInfo": "File Information",
 	"pageMainMediaNotFound": "File not found",
 
 	"pageMainImportTitle": "Downloading manifest",

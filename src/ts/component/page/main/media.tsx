@@ -147,7 +147,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 								</div>
 
 								<div className="section">
-									<div className="title">{translate('pageMainMediaFileInfo')}</div>
+									<div className="title">{translate('commonFileInfo')}</div>
 
 									{relations.map((item: any) => (
 										<Block 
