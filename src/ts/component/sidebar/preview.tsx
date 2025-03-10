@@ -41,8 +41,11 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 			`defaultView${I.ViewType[viewType]}`,
 			U.Data.layoutClass('', recommendedLayout),
 			U.Common.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
-			isFile ? 'isFile' : '',
 		];
+
+		if (isFile) {
+			cn.push('isFile');
+		};
 
 		let icon = null;
 		if (!isFile) {
