@@ -204,6 +204,7 @@ export interface SidebarPageComponent {
 	readonly?: boolean;
 	details?: any;
 	noPreview?: boolean;
+	previous?: any;
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {

@@ -2,9 +2,6 @@
 
 .listObjectPreview { white-space: nowrap; position: relative; }
 .listObjectPreview {
-	.wrap { overflow: hidden; border-radius: 8px; }
-	.scroll { transition: transform 0.3s $easeInQuint; display: flex; flex-direction: row; gap: 0px 16px; }
-
 	.item { position: relative; flex-shrink: 0; }
 	.item {
 		.hoverArea { height: 100%; }
@@ -37,11 +34,17 @@
 
 	.item.add { border: 1px solid var(--color-shape-secondary); border-radius: 8px; width: 224px; height: 160px; }
 
-	.icon.arrow { 
+	.swiper { padding: 0px 32px; margin: 0px -32px; }
+
+	.swiper-button-prev, .swiper-button-next {
 		position: absolute; top: 0px; width: 32px; height: 160px; background-image: url('~img/arrow/template0.svg'); background-size: 8px 32px; z-index: 10;
+		background-repeat: no-repeat; background-position: center; transition: background-image 0.3s $easeInQuint; background-color: var(--color-bg-primary);
 	}
-	.icon.arrow:hover { background-image: url('~img/arrow/template1.svg'); }
-	.icon.arrow.disabled:hover { background-image: url('~img/arrow/template0.svg'); }
-	.icon.arrow.left { left: 0px; transform: rotateY(-180deg); }
-	.icon.arrow.right { right: 0px; }
+	.swiper-button-prev, .swiper-button-next {
+		&.swiper-button-disabled { display: none; }
+		&:hover { background-image: url('~img/arrow/template1.svg'); }
+		&.swiper-button-disabled:hover { background-image: url('~img/arrow/template0.svg'); }
+	}
+	.swiper-button-prev { left: 0px; transform: rotateY(-180deg); }
+	.swiper-button-next { right: 0px; }
 }

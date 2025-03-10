@@ -5,12 +5,12 @@
 		> .wrap.c-longText { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; }
 
 		> .wrap.c-longText {
-			.name { width: 100%; }
-			.cell { width: 100%; }
+			> .name { width: 100%; }
+			> .cell { width: 100%; }
 		}
 
 		> .wrap.hasMore {
-			.name { width: calc(100% - 28px); }
+			> .name { width: calc(100% - 28px); }
 		}
 
 		> .wrap:hover {

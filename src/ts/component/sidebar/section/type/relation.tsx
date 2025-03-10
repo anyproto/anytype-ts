@@ -115,8 +115,8 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			return;
 		};
 
-		const from = lists.find(it => it.id == active.data.current.list);
-		const to = lists.find(it => it.id == over.data.current.list);
+		const from = lists.find(it => it.id == active.data.current.list.id);
+		const to = lists.find(it => it.id == over.data.current.list.id);
 
         if (!from || !to) {
 			return;
@@ -129,19 +129,13 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
         if (from.id == to.id) {
             onChange({ [from.relationKey]: arrayMove(fromItems, oldIndex, newIndex) });
-        } else {
+        } else 
+		if ((from.relationKey && to.relationKey) || (from.id == 'conflict')) {
 			toItems.splice(newIndex, 0, active.id);
-
-			const update: any = {};
-
-			if (from.relationKey) {
-				update[from.relationKey] = fromItems.filter(id => id != active.id);
-			};
-			if (to.relationKey) {
-				update[to.relationKey] = toItems;
-			};
-
-            onChange(update);
+			onChange({
+				[from.relationKey]: fromItems.filter(id => id != active.id),
+				[to.relationKey]: toItems,
+			});
         };
 
 		keyboard.disableSelection(false);
@@ -258,7 +252,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 						<Item 
 							key={[ list.id, 'empty' ].join('-')} 
 							{...{ id: 'empty', name: translate('sidebarTypeRelationEmpty'), isEmpty: true }} 
-							list={list.list}
+							list={list}
 							disabled={true}
 						/>
 					)}
@@ -279,7 +273,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		<div ref={nodeRef} className="wrap">
 			<div className="titleWrap">
 				<Title text={translate('sidebarTypeRelation')} />
-				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, 'recommended')} />
+				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, lists.find(it => it.id == 'recommended'))} />
 			</div>
 
 			<DndContext 
