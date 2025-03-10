@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget } from 'Component';
+import { Icon, ObjectName, DropTarget, IconObject } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
 
 import WidgetSpace from './space';
@@ -131,7 +131,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const route = param.route || analytics.route.widget;
-		const isSetOrCollection = U.Object.isInSetLayouts(object.layout);
 		const isFavorite = object.id == J.Constant.widgetId.favorite;
 
 		let details: any = Object.assign({}, param.details || {});
@@ -144,7 +143,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			flags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
-		if (isSetOrCollection) {
+		if (U.Object.isInSetLayouts(object.layout) || U.Object.isTypeLayout(object.layout)) {
 			const rootId = getRootId();
 			if (!rootId) {
 				return;
@@ -454,7 +453,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return false;
 		};
 
-		if (U.Object.isInSetLayouts(object.layout)) {
+		if (U.Object.isInSetLayouts(object.layout) || U.Object.isTypeLayout(object.layout)) {
 			const rootId = getRootId();
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id);
 			const type = S.Record.getTypeById(typeId);
@@ -565,6 +564,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let targetTop = null;
 	let targetBot = null;
 	let isDraggable = canWrite;
+	let collapse = null;
 
 	if (isPreview) {
 		back = (
@@ -583,38 +583,52 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	} else {
 		buttons = (
 			<div className="buttons">
-				{isEditing ? (
-					<div className="iconWrap more">
-						<Icon className="options" tooltip={translate('widgetOptions')} onClick={onOptions} />
-					</div>
-				) : ''}
+				<div className="iconWrap more">
+					<Icon className="options" tooltip={translate('widgetOptions')} onClick={onOptions} />
+				</div>
 				{canCreate ? (
 					<div className="iconWrap create">
 						<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreateClick} />
 					</div>
 				) : ''}
-				<div className="iconWrap collapse">
-					<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={onToggle} />
-				</div>
+			</div>
+		);
+
+		collapse = (
+			<div className="iconWrap collapse">
+				<Icon className="collapse" onClick={onToggle} />
 			</div>
 		);
 	};
 
 	if (hasChild) {
+		let icon = null;
 		let onClickHandler = isSystemTarget() ? onSetPreview : onClick;
 
 		if (targetId == J.Constant.widgetId.bin) {
 			onClickHandler = () => U.Object.openAuto({ layout: I.ObjectLayout.Archive });
 		};
 
+		if (object?.isSystem) {
+			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
+		} else {
+			icon = <IconObject object={object} size={18} className="headerIcon" />;
+		};
+
 		head = (
 			<div className="head" onClick={onClickHandler}>
-				{back}
-				<div className="clickable">
-					<ObjectName object={object} />
-					{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
+				<div className="side left">
+					{back}
+					<div className="clickable">
+						{collapse}
+						{icon}
+						<ObjectName object={object} />
+						{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
+					</div>
 				</div>
-				{buttons}
+				<div className="side right">
+					{buttons}
+				</div>
 			</div>
 		);
 

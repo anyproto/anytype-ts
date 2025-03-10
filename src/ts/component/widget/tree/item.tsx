@@ -103,7 +103,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 					<IconObject 
 						id={`widget-icon-${treeKey}`}
 						object={object} 
-						size={20} 
+						size={18} 
 						canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
 						menuParam={{ 
 							className: 'fixed',
