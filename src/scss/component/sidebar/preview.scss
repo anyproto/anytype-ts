@@ -144,4 +144,20 @@
             .day { height: 136px; border-right: 1px solid var(--color-shape-secondary); border-bottom: 1px solid var(--color-shape-secondary); }
         }
     }
+
+    .layoutPreview.isFile {
+        .layoutHeader { margin-bottom: 16px; }
+        .filePreview { width: 90px; height: 36px; background: var(--color-shape-secondary); border-radius: 6px; margin-bottom: 38px;}
+
+        .fileInfo { display: flex; flex-direction: column; gap: 10px 0px; }
+        .fileInfo {
+            .title { @include text-paragraph; font-weight: 600; color: var(--color-text-secondary); }
+
+            dl { @include text-common; display: flex; align-items: center; justify-content: space-between; max-width: 284px; flex-wrap: nowrap; }
+            dl {
+                dt { @include text-overflow-nw; }
+                dd { width: 64px; height: 12px; border-radius: 2px; flex-shrink: 0; background: var(--color-shape-secondary); }
+            }
+        }
+    }
 }

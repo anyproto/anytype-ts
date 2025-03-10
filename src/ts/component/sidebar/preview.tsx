@@ -33,6 +33,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		const isTask = U.Object.isTaskLayout(recommendedLayout);
 		const isNote = U.Object.isNoteLayout(recommendedLayout);
 		const isList = layoutFormat == I.LayoutFormat.List;
+		const isFile = U.Object.isInFileLayouts(recommendedLayout);
 
 		const cn = [
 			'layoutPreview',
@@ -42,13 +43,26 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 			U.Common.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
 		];
 
+		if (isFile) {
+			cn.push('isFile');
+		};
+
+		let icon = null;
+		if (!isFile) {
+			if (isTask) {
+				icon = <Checkbox readonly={true} value={false} />;
+			} else {
+				icon = <div key={`sidebar-preview-icon-${layoutFormat}`} className="icon" />;
+			};
+		};
+
 		return (
 			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
 				<div ref={ref => this.refPreview = ref} className={cn.join(' ')}>
 					<div className="layoutHeader">
 						{isNote ? '' : (
 							<div className="titleWrapper">
-								{!isTask ? <div key={`sidebar-preview-icon-${layoutFormat}`} className="icon" /> : <Checkbox readonly={true} value={false} />}
+								{icon}
 								<Title text={name ? `${translate('commonNew')} ${name}` : translate('defaultNameType')} />
 							</div>
 						)}
@@ -64,6 +78,8 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 							))}
 						</div>
 					</div>
+
+					{isFile ? <div className="filePreview" /> : ''}
 
 					{isList ? (
 						<div className="listHeader">
@@ -126,11 +142,27 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	renderLayout () {
-		const { layoutFormat } = this.object;
+		const { layoutFormat, recommendedLayout } = this.object;
 		const viewType = this.getViewType();
 
 		let content = null;
 
+		if (U.Object.isInFileLayouts(recommendedLayout)) {
+			const fileRelations = Relation.getArrayValue(this.object.recommendedFileRelations).map(id => S.Record.getRelationById(id)).filter(it => it);
+
+			content = (
+				<div className="fileInfo">
+					<Title text={translate('commonFileInfo')} />
+
+					{fileRelations.map((relation, idx) => (
+						<dl key={idx}>
+							<dt>{relation.name}</dt>
+							<dd />
+						</dl>
+					))}
+				</div>
+			);
+		} else
 		if (layoutFormat == I.LayoutFormat.Page) {
 			content = this.insertEmtpyNodes('line', 5);
 		} else {
