@@ -130,7 +130,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         if (from.id == to.id) {
             onChange({ [from.relationKey]: arrayMove(fromItems, oldIndex, newIndex) });
         } else 
-		if (from.relationKey && to.relationKey) {
+		if ((from.relationKey && to.relationKey) || (from.id == 'conflict')) {
 			toItems.splice(newIndex, 0, active.id);
 			onChange({
 				[from.relationKey]: fromItems.filter(id => id != active.id),

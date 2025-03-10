@@ -1,10 +1,11 @@
-import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Mousewheel, Navigation } from 'swiper/modules';
 import { PreviewObject, Icon } from 'Component';
-import { I, U, keyboard, translate } from 'Lib';
+import { I, U, translate } from 'Lib';
 
 interface Props {
-	offsetX?: number;
 	canAdd?: boolean;
 	defaultId?: string;
 	getItems: () => any[];
@@ -14,15 +15,11 @@ interface Props {
 	onMenu?: (e: any, item: any) => void;
 };
 
-interface ListPreviewObjectRefProps {
+interface ListObjectPreviewRefProps {
 	updateItem: (id: string) => void;
-	onKeyUp: (e: any) => void;
 };
 
-const WIDTH = 224;
-
-const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
-	offsetX = 0,
+const ListObjectPreview = forwardRef<ListObjectPreviewRefProps, Props>(({
 	canAdd = false,
 	defaultId = '',
 	getItems,
@@ -33,9 +30,9 @@ const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 }, ref) => {
 
 	const nodeRef = useRef(null);
-	const page = useRef(0);
 	const n = useRef(0);
 	const objectRef = useRef(new Map());
+	const swiperRef = useRef(null);
 
 	const getItemsHandler = () => {
 		const items = U.Common.objectCopy(getItems());
@@ -44,14 +41,6 @@ const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 			items.push({ id: 'add' });
 		};
 		return items;
-	};
-
-	const getMaxPage = () => {
-		const node = $(nodeRef.current);
-		const items = getItemsHandler();
-		const cnt = Math.floor(node.width() / WIDTH);
-
-		return Math.max(0, Math.ceil(items.length / cnt) - 1);
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
@@ -84,67 +73,8 @@ const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 		node.find(`#item-${item.id} .hoverArea`).addClass('hover');
 	};
 
-	const onKeyUp = (e: any) => {
-		const items = getItemsHandler();
-
-		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
-			const dir = pressed == 'arrowleft' ? -1 : 1;
-			n.current += dir;
-
-			if (n.current < 0) {
-				n.current = items.length - 1;
-			};
-			if (n.current > items.length - 1) {
-				n.current = 0;
-			};
-
-			page.current = Math.floor(n.current / 2);
-			onArrow(0);
-			setActive();
-		});
-
-		keyboard.shortcut('enter, space', e, () => onClick(e, items[n.current]));
-	};
-
-	const onArrow = (dir: number) => {
-		const node = $(nodeRef.current);
-		const scroll = node.find('#scroll');
-		const arrowLeft = node.find('#arrowLeft');
-		const arrowRight = node.find('#arrowRight');
-		const w = node.width();
-		const max = getMaxPage();
-
-		page.current += dir;
-		page.current = Math.min(max, Math.max(0, page.current));
-
-		const x = -page.current * (w + 16 + offsetX);
-
-		arrowLeft.removeClass('dn');
-		arrowRight.removeClass('dn');
-
-		if (page.current == 0) {
-			arrowLeft.addClass('dn');
-		};
-		if (page.current == max) {
-			arrowRight.addClass('dn');
-		};
-
-		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
-	};
-
 	const updateItem = (id: string) => {
 		objectRef.current.get(id)?.update();
-	};
-
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const arrowLeft = node.find('#arrowLeft');
-		const arrowRight = node.find('#arrowRight');
-		const isFirst = page.current == 0;
-		const isLast = page.current == getMaxPage();
-
-		arrowLeft.toggleClass('dn', isFirst);
-		arrowRight.toggleClass('dn', isLast);
 	};
 
 	const items = getItemsHandler();
@@ -205,11 +135,8 @@ const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 		);
 	};
 
-	useEffect(() => resize());
-
 	useImperativeHandle(ref, () => ({
 		updateItem,
-		onKeyUp
 	}));
 
 	return (
@@ -217,19 +144,23 @@ const ListPreviewObject = forwardRef<ListPreviewObjectRefProps, Props>(({
 			ref={nodeRef}
 			className="listObjectPreview"
 		>
-			<div className="wrap">
-				<div id="scroll" className="scroll">
-					{items.map((item: any, i: number) => (
+			<Swiper
+				spaceBetween={16}
+				slidesPerView={3}
+				mousewheel={true}
+				navigation={true}
+				modules={[ Mousewheel, Navigation ]}
+				onSwiper={swiper => swiperRef.current = swiper}
+			>
+				{items.map((item: any, i: number) => (
+					<SwiperSlide key={i}>
 						<Item key={i} {...item} index={i} />
-					))}
-				</div>
-			</div>
-
-			<Icon id="arrowLeft" className="arrow left" onClick={() => onArrow(-1)} />
-			<Icon id="arrowRight" className="arrow right" onClick={() => onArrow(1)} />	
+					</SwiperSlide>
+				))}
+			</Swiper>
 		</div>
 	);
 
 });
 
-export default ListPreviewObject;
+export default ListObjectPreview;

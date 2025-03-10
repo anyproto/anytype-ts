@@ -372,6 +372,10 @@ class RecordStore {
 	};
 
 	getRelationByKey (relationKey: string): any {
+		if (!relationKey) {
+			return null;
+		};
+
 		const id = this.relationKeyMapGet(relationKey);
 		return id ? this.getRelationById(id) : null;
 	};

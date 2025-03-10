@@ -47,6 +47,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	timeoutMove = 0;
 	timeoutScreen = 0;
 	timeoutLoading = 0;
+	timeoutScroll = 0;
 
 	frameMove = 0;
 	frameResize = 0;
@@ -1781,7 +1782,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
 
-		Storage.setScroll('editor', rootId, top, isPopup);
+		window.clearTimeout(this.timeoutScroll);
+		this.timeoutScroll = window.setTimeout(() => {
+			Storage.setScroll('editor', rootId, top, isPopup);
+		}, 50);
+
 		Preview.previewHide(false);
 	};
 	
