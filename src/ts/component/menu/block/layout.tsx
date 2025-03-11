@@ -74,7 +74,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const object = S.Detail.get(rootId, rootId);
 		const hasConflict = U.Object.hasLayoutConflict(object);
 		
-		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let align = { id: 'align', name: translate('sidebarSectionLayoutAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
 		if (!allowedDetails || U.Object.isTaskLayout(object.layout) || U.Object.isInSetLayouts(object.layout)) {
@@ -162,7 +162,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 					onSelect: (align: I.BlockHAlign) => {
 						U.Object.setAlign(rootId, align);
 
-						analytics.event('SetLayoutAlign', { align });
+						analytics.event('SetLayoutAlign', { align, route: analytics.route.object });
 						close();
 					}
 				});

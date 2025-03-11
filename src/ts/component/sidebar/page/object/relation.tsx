@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, sidebar, translate, keyboard, Relation, C, Preview } from 'Lib';
+import { I, S, U, sidebar, translate, keyboard, Relation, C, Preview, analytics } from 'Lib';
 import Section from 'Component/sidebar/section';
 
 const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, {}> {
@@ -100,6 +100,10 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				</div>
 			</>
 		);
+	};
+
+	componentDidMount () {
+		analytics.event('ScreenObjectRelation');
 	};
 
 	getObject () {
@@ -208,6 +212,8 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 		U.Common.toggle(list, 200);
 		toggle.text(isOpen ? translate('commonShowMore') : translate('commonShowLess'));
+
+		analytics.event('ScreenObjectRelationToggle', { type: isOpen ? 'Collapse' : 'Extend' });
 	};
 
 });

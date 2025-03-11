@@ -219,6 +219,13 @@ export interface SidebarSectionRef {
 	forceUpdate(): void;
 };
 
+export enum SidebarRelationList {
+	Featured 		= 0,
+	Recommended 	= 1,
+	Hidden 			= 2,
+	Conflict 		= 3,
+};
+
 export enum SurveyType {
 	Register		 = 0,
 	Delete			 = 1,

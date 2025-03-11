@@ -584,6 +584,8 @@ class UtilObject {
 		C.ObjectRelationDelete(id, [ 'layout', 'layoutAlign' ]);
 		C.ObjectListSetDetails([ id ], [ { key: 'featuredRelations', value: featured } ]);
 		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
+
+		analytics.event('ResetToTypeDefault');
 	};
 
 	getTypeRelationIds (id: string) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, J, Relation, translate, sidebar, keyboard } from 'Lib';
+import { I, S, C, U, J, Relation, translate, sidebar, keyboard, analytics } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
@@ -74,9 +74,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidMount (): void {
+		const { noPreview } = this.props;
+
 		this.init();
 
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
+
+		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
 
 	init () {
@@ -158,6 +162,17 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		});
 
 		$(this.buttonSaveRef.getNode()).toggleClass('disabled', !U.Common.objectLength(this.update));
+
+		// analytics
+		let eventId = '';
+		if (update.recommendedLayout) {
+			eventId = 'ChangeRecommendedLayout';
+		} else
+		if (update.layoutAlign) {
+			eventId = 'SetLayoutAlign';
+		};
+
+		analytics.stackAdd(eventId, { route: analytics.route.type });
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
@@ -212,6 +227,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 
 		this.update = {};
+
+		analytics.event('ClickSaveEditType', { objectType: rootId });
+		analytics.stackSend();
 	};
 
 	onCancel () {
