@@ -1,15 +1,16 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
-import { I, S, C, Relation, translate, keyboard } from 'Lib';
+import { I, S, C, Relation, translate, keyboard, analytics } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
+import { SidebarRelationList } from 'Interface';
 
 const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
-	const { readonly, rootId, object, onChange } = props;
+	const { readonly, rootId, object, onChange, stackAnalytics } = props;
 	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const [ active, setActive ] = useState(null);
@@ -28,9 +29,9 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	const recommended = recommendedRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
 	const hidden = recommendedHiddenRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
 	const lists: any[] = [
-		{ id: 'featured', name: translate('sidebarTypeRelationHeader'), data: featured, relationKey: 'recommendedFeaturedRelations' },
-		{ id: 'recommended', name: translate('sidebarTypeRelationSidebar'), data: recommended, relationKey: 'recommendedRelations' },
-		{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), data: hidden, relationKey: 'recommendedHiddenRelations' },
+		{ id: I.SidebarRelationList.Featured, name: translate('sidebarTypeRelationHeader'), data: featured, relationKey: 'recommendedFeaturedRelations' },
+		{ id: I.SidebarRelationList.Recommended, name: translate('sidebarTypeRelationSidebar'), data: recommended, relationKey: 'recommendedRelations' },
+		{ id: I.SidebarRelationList.Hidden, name: translate('sidebarTypeRelationHidden'), data: hidden, relationKey: 'recommendedHiddenRelations' },
 	];
 
 	const onMore = (e: MouseEvent, item: any) => {
@@ -65,7 +66,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		const cids = conflictIds.filter(it => !ids.includes(it));
 
 		lists.push({
-			id: 'conflict', name: translate('sidebarRelationLocal'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
+			id: I.SidebarRelationList.Conflict, name: translate('sidebarRelationLocal'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
 			onInfo: () => {
 				S.Popup.open('confirm', {
 					data: {
@@ -76,9 +77,13 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
 							onChange({ recommendedRelations: recommendedRelations.concat(conflictIds) });
+
+							stackAnalytics({ id: 'AddConflictRelation', data: { count: cids.length } });
 						},
 					},
 				});
+
+				stackAnalytics({ id: 'ClickConflictFieldHelp' });
 			},
 			onMore,
 		});
@@ -127,18 +132,26 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         const oldIndex = fromItems.indexOf(active.id);
         const newIndex = toItems.indexOf(over.id);
 
+		let analyticsId = '';
+
         if (from.id == to.id) {
             onChange({ [from.relationKey]: arrayMove(fromItems, oldIndex, newIndex) });
+
+			analyticsId = 'SameGroup';
         } else 
-		if ((from.relationKey && to.relationKey) || (from.id == 'conflict')) {
+		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Conflict)) {
 			toItems.splice(newIndex, 0, active.id);
 			onChange({
 				[from.relationKey]: fromItems.filter(id => id != active.id),
 				[to.relationKey]: toItems,
 			});
+
+			analyticsId = I.SidebarRelationList[to.id];
         };
 
 		keyboard.disableSelection(false);
+
+		stackAnalytics({ id: 'ReorderRelation', data: {  id: analyticsId } });
     };
 
 	const onAdd = (e: any, list: any) => {
@@ -179,6 +192,8 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				ref: 'type',
 				addCommand: (rootId: string, blockId: string, relation: any) => {
 					onChange({ [list.relationKey]: [ id ].concat(ids) });
+
+					stackAnalytics({ id: 'AddConflictRelation' });
 				},
 				deleteCommand: () => {
 					onChange({ [list.relationKey]: ids.filter(it => it != id) });
@@ -273,7 +288,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		<div ref={nodeRef} className="wrap">
 			<div className="titleWrap">
 				<Title text={translate('sidebarTypeRelation')} />
-				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, lists.find(it => it.id == 'recommended'))} />
+				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} />
 			</div>
 
 			<DndContext 

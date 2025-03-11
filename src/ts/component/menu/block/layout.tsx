@@ -162,7 +162,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 					onSelect: (align: I.BlockHAlign) => {
 						U.Object.setAlign(rootId, align);
 
-						analytics.event('SetLayoutAlign', { align });
+						analytics.event('SetLayoutAlign', { align, route: 'Object' });
 						close();
 					}
 				});

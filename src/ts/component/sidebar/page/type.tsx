@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, J, Relation, translate, sidebar, keyboard } from 'Lib';
+import { I, S, C, U, J, Relation, translate, sidebar, keyboard, analytics } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
@@ -14,6 +14,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	previewRef: any = null;
 	buttonSaveRef: any = null;
 	backup: any = {};
+	analyticsStack: any[] = [];
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -21,6 +22,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.onChange = this.onChange.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
+		this.stackAnalytics = this.stackAnalytics.bind(this);
 	};
 
     render () {
@@ -64,6 +66,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							withState={true}
 							onChange={this.onChange}
 							readonly={readonly}
+							stackAnalytics={this.stackAnalytics}
 						/>
 					))}
 				</div>
@@ -74,9 +77,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidMount (): void {
+		const { noPreview } = this.props;
+
 		this.init();
 
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
+
+		analytics.event('ScreenEditType', { route: noPreview ? 'Object' : 'Type' });
 	};
 
 	init () {
@@ -158,6 +165,17 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		});
 
 		$(this.buttonSaveRef.getNode()).toggleClass('disabled', !U.Common.objectLength(this.update));
+
+		// analytics
+		if (update.recommendedLayout) {
+			this.stackAnalytics({ id: 'ChangeRecommendedLayout' });
+		} else
+		if (update.layoutAlign) {
+			this.stackAnalytics({ id: 'SetLayoutAlign', data: { route: 'Type' } });
+		} else
+		if (update.iconName) {
+			this.stackAnalytics({ id: 'SetIcon', data: { objectType: '_objectType', color: update.iconOption || 0 } });
+		};
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
@@ -212,6 +230,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 
 		this.update = {};
+
+		analytics.event('ClickSaveEditType', { objectType: rootId });
+
+		this.analyticsStack.forEach(({ id, data }) => {
+			analytics.event(id, data);
+		});
 	};
 
 	onCancel () {
@@ -231,6 +255,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	updateObject (id: string) {
 		this.sectionRefs.get(id)?.setObject(this.object);
 		this.previewRef?.update(this.object);
+	};
+
+	stackAnalytics (event: any) {
+		this.analyticsStack.push(event);
 	};
 
 });

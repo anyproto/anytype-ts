@@ -213,10 +213,18 @@ export interface SidebarSectionComponent extends SidebarPageComponent {
 	readonly?: boolean;
 	onChange?(update: any): void;
 	onDragStart?: (e: React.DragEvent) => void;
+	stackAnalytics?: (event: any) => void;
 };
 
 export interface SidebarSectionRef {
 	forceUpdate(): void;
+};
+
+export enum SidebarRelationList {
+	Featured 		= 0,
+	Recommended 	= 1,
+	Hidden 			= 2,
+	Conflict 		= 3,
 };
 
 export enum SurveyType {
