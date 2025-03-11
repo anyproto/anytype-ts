@@ -47,7 +47,7 @@ class Dataview {
 			return 0;
 		});
 
-		const ret = relations.filter(it => it).map(relation => {
+		const ret = relations.map(relation => {
 			const vr = (view.relations || []).filter(it => it).find(it => it.relationKey == relation.relationKey) || {};
 
 			if ((view.type != I.ViewType.Gallery) && (relation.relationKey == 'name')) {
