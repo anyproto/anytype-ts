@@ -235,6 +235,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (U.Object.isSetLayout(object.layout)) {
 			unlinkText = translate('commonUnlinkFromSet');
 		};
+		if (U.Object.isTypeLayout(object.layout)) {
+			unlinkText = translate('commonUnlinkFromType');
+		};
 
 		let canDuplicate = true;
 		let canDelete = true;
