@@ -164,12 +164,15 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		$(this.buttonSaveRef.getNode()).toggleClass('disabled', !U.Common.objectLength(this.update));
 
 		// analytics
+		let eventId = '';
 		if (update.recommendedLayout) {
-			analytics.stackAdd('ChangeRecommendedLayout');
+			eventId = 'ChangeRecommendedLayout';
 		} else
 		if (update.layoutAlign) {
-			analytics.stackAdd('SetLayoutAlign', { route: analytics.route.type });
+			eventId = 'SetLayoutAlign';
 		};
+
+		analytics.stackAdd(eventId, { route: analytics.route.type });
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
