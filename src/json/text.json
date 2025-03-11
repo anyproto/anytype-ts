@@ -1940,6 +1940,7 @@
 	"sidebarTypeRelationHidden": "Hidden",
 	"sidebarObjectRelationSetUp": "Set up",
 	"sidebarTypeRelationEmpty": "There are no Properties yet",
+	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
 	"sidebarRelationLocal": "Local Properties",
 	"sidebarTypeRelationLocalDescription": "Some properties are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
