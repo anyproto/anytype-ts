@@ -26,6 +26,7 @@ class UtilObject {
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 			case I.ObjectLayout.Space:
+			case I.ObjectLayout.ChatOld:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
