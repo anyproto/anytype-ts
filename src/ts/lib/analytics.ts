@@ -83,6 +83,8 @@ class Analytics {
 
 		usecaseApp: 'App',
 		usecaseSite: 'Site',
+
+		onboardingTooltip: 'OnboardingTooltip',
 	};
 
 	debug () {
