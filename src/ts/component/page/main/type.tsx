@@ -83,7 +83,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const onTemplateAdd = () => {
-		C.ObjectCreate({ targetObjectType: type.id }, [ I.ObjectFlag.DeleteEmpty ], '', J.Constant.typeKey.template, S.Common.space, message => {
+		C.ObjectCreate({ targetObjectType: type.id }, [], '', J.Constant.typeKey.template, S.Common.space, message => {
 			if (message.error.code) {
 				return;
 			};

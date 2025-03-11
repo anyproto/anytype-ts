@@ -224,13 +224,16 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.Dataview: {
 				const inSets = U.Object.isInSetLayouts(root.layout);
+				const isInline = !inSets;
 
-				canDrop = canDrop && !inSets;
-				canSelect = canSelect && !inSets;
-				if (canSelect) {
+				canDrop = canDrop && isInline;
+				canSelect = canSelect && isInline;
+
+				if (isInline) {
 					cn.push('isInline');
 				};
-				blockComponent = <BlockDataview key={key} ref={setRef} isInline={canSelect} {...this.props} />;
+
+				blockComponent = <BlockDataview key={key} ref={setRef} isInline={isInline} {...this.props} />;
 				break;
 			};
 
