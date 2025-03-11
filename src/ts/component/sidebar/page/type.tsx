@@ -14,7 +14,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	previewRef: any = null;
 	buttonSaveRef: any = null;
 	backup: any = {};
-	analyticsStack: any[] = [];
 
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
@@ -81,7 +80,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 
-		analytics.event('ScreenEditType', { route: noPreview ? 'Object' : 'Type' });
+		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
 
 	init () {
@@ -170,9 +169,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		} else
 		if (update.layoutAlign) {
 			analytics.stackAdd('SetLayoutAlign', { route: analytics.route.type });
-		} else
-		if (update.iconName) {
-			analytics.stackAdd('SetIcon', { objectType: '_objectType', color: update.iconOption || 0 });
 		};
 	};
 
