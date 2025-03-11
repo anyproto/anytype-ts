@@ -15,7 +15,7 @@ class Dataview {
 
 		let relations = [];
 		if (isType) {
-			const typeIds = U.Object.getTypeRelationIds(object.type);
+			const typeIds = U.Object.getTypeRelationIds(object.id);
 			relations = J.Relation.default.map(it => S.Record.getRelationByKey(it)).concat(typeIds.map(it => S.Record.getRelationById(it)));
 		} else {
 			relations = S.Record.getDataviewRelations(rootId, blockId);
@@ -64,41 +64,43 @@ class Dataview {
 		return U.Common.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
+	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view: I.View, callBack?: (message: any) => void) {
+		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
+			if (!message.error.code) {
+				this.viewRelationAdd(rootId, blockId, relationKey, index, view, callBack);
+			};
+		});
+	};
+
+	viewRelationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
 		if (!view) {
 			return;
 		};
 
-		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
-			if (message.error.code) {
-				return;
-			};
+		const rel: any = view.getRelation(relationKey) || {};
 
-			const rel: any = view.getRelation(relationKey) || {};
+		rel.relationKey = relationKey;
+		rel.width = rel.width || J.Size.dataview.cell.default;
+		rel.isVisible = true;
 
-			rel.relationKey = relationKey;
-			rel.width = rel.width || J.Size.dataview.cell.default;
-			rel.isVisible = true;
-
-			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
-				if (index >= 0) {
-					const newView = S.Record.getView(rootId, blockId, view.id);
-					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
-					
-					let keys = newView.relations.map(it => it.relationKey);
-					if (oldIndex < 0) {
-						keys.splice(index, 0, relationKey);
-					} else {
-						keys = arrayMove(keys, oldIndex, index);
-					};
-
-					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
+		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
+			if (index >= 0) {
+				const newView = S.Record.getView(rootId, blockId, view.id);
+				const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
+				
+				let keys = newView.relations.map(it => it.relationKey);
+				if (oldIndex < 0) {
+					keys.splice(index, 0, relationKey);
 				} else {
-					if (callBack) {
-						callBack(message);
-					};
+					keys = arrayMove(keys, oldIndex, index);
 				};
-			});
+
+				C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
+			} else {
+				if (callBack) {
+					callBack(message);
+				};
+			};
 		});
 	};
 
