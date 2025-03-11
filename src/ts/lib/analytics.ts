@@ -13,6 +13,7 @@ class Analytics {
 	
 	instance: any = null;
 	contextId: string = '';
+	stack: any[] = [];
 
 	public route = {
 		block: 'Block',
@@ -52,6 +53,7 @@ class Analytics {
 		toast: 'Toast',
 		share: 'Share',
 		navigation: 'Navigation',
+		object: 'Object',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',
@@ -671,6 +673,18 @@ class Analytics {
 			case I.NetworkMode.Custom: return 'SelfHost';
 		};
 		return '';
+	};
+
+	stackAdd (code: string, data?: any) {
+		this.stack.push({ code, data })
+	};
+
+	stackSend () {
+		this.stack.forEach(({ code, data }) => {
+			this.event(code, data);
+		});
+
+		this.stack = [];
 	};
 
 	log (...args: any[]) {

@@ -10,7 +10,7 @@ import { SidebarRelationList } from 'Interface';
 
 const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
-	const { readonly, rootId, object, onChange, stackAnalytics } = props;
+	const { readonly, rootId, object, onChange } = props;
 	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const [ active, setActive ] = useState(null);
@@ -78,12 +78,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 							onChange({ recommendedRelations: recommendedRelations.concat(conflictIds) });
 
-							stackAnalytics({ id: 'AddConflictRelation', data: { count: cids.length } });
+							analytics.stackAdd('AddConflictRelation', { count: cids.length });
 						},
 					},
 				});
 
-				stackAnalytics({ id: 'ClickConflictFieldHelp' });
+				analytics.stackAdd('ClickConflictFieldHelp');
 			},
 			onMore,
 		});
@@ -151,7 +151,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 		keyboard.disableSelection(false);
 
-		stackAnalytics({ id: 'ReorderRelation', data: {  id: analyticsId } });
+		analytics.stackAdd('ReorderRelation', {  id: analyticsId });
     };
 
 	const onAdd = (e: any, list: any) => {
@@ -193,7 +193,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				addCommand: (rootId: string, blockId: string, relation: any) => {
 					onChange({ [list.relationKey]: [ id ].concat(ids) });
 
-					stackAnalytics({ id: 'AddConflictRelation' });
+					analytics.stackAdd('AddConflictRelation');
 				},
 				deleteCommand: () => {
 					onChange({ [list.relationKey]: ids.filter(it => it != id) });

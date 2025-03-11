@@ -213,7 +213,6 @@ export interface SidebarSectionComponent extends SidebarPageComponent {
 	readonly?: boolean;
 	onChange?(update: any): void;
 	onDragStart?: (e: React.DragEvent) => void;
-	stackAnalytics?: (event: any) => void;
 };
 
 export interface SidebarSectionRef {
