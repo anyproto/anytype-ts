@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Editable } from 'Component';
-import { I, keyboard, translate } from 'Lib';
+import { analytics, I, keyboard, translate } from 'Lib';
 
 const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends React.Component<I.SidebarSectionComponent> {
 	
@@ -66,6 +66,8 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 	onSelect (id: string, color: number) {
 		this.props.onChange({ iconName: id, iconOption: color });
+
+		analytics.stackAdd('SetIcon', { objectType: '_objectType', color });
 	};
 
 	onChange () {
