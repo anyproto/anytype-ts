@@ -6,7 +6,6 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { SidebarRelationList } from 'Interface';
 
 const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
@@ -77,7 +76,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
 							onChange({ recommendedRelations: recommendedRelations.concat(conflictIds) });
-
 							analytics.stackAdd('AddConflictRelation', { count: cids.length });
 						},
 					},
@@ -150,8 +148,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         };
 
 		keyboard.disableSelection(false);
-
-		analytics.stackAdd('ReorderRelation', {  id: analyticsId });
+		analytics.stackAdd('ReorderRelation', { id: analyticsId });
     };
 
 	const onAdd = (e: any, list: any) => {
