@@ -60,6 +60,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						};
 
 						case 'reset': {
+							error.current = {};
 							Storage.resetShortcuts();
 							setDummy(dummy + 1);
 							break;
@@ -143,7 +144,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		for (const i in items) {
 			const item = items[i];
 
-			if (!item.keys) {
+			if (!item.keys || (item.id == id)) {
 				continue;
 			};
 
@@ -159,68 +160,85 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
-	useEffect(() => {
+	const clear = () => {
+		error.current = {};
+		setEditingId('');
+		setEditingKeys([]);
+		window.clearTimeout(timeout.current);
+	};
 
+	useEffect(() => {
 		return () => {
 			window.clearTimeout(timeout.current);
 			keyboard.setShortcutEditing(false);
 			$(window).off('keyup.shortcut keydown.shortcut');
 		};
-
 	}, []);
 
 	useEffect(() => {
 		const win = $(window);
+		const codeChecks = [ 'key', 'digit' ];
+		const codes = new Set();
 		const setTimeout = () => {
 			window.clearTimeout(timeout.current);
-			timeout.current = window.setTimeout(() => setEditingId(''), 2000);
+			timeout.current = window.setTimeout(() => clear(), 2000);
 		};
+
+		let pressed = [];
 
 		win.off('keyup.shortcut keydown.shortcut');
 		keyboard.setShortcutEditing(!!editingId);
 
-		if (editingId) {
-			let pressed = [];
-
-			win.on('keydown.shortcut', (e: any) => {
-				e.preventDefault();
-				e.stopPropagation();
-
-				const metaKeys = keyboard.metaKeys(e);
-				const key = keyboard.eventKey(e);
-				const code = String(e.code || '').toLowerCase();
-				const skip = [ Key.meta, Key.ctrl ];
-
-				if (key == Key.escape) {
-					setEditingId('');
-					window.clearTimeout(timeout.current);
-					return;
-				};
-
-				if (metaKeys.length) {
-					pressed = pressed.concat(metaKeys);
-				};
-
-				if (!skip.includes(key)) {
-					if (code.startsWith('key')) {
-						pressed.push(code.replace('key', ''));
-					} else 
-					if (code.startsWith('digit')) {
-						pressed.push(code.replace('digit', ''));
-					} else {
-						pressed.push(key);
-					};
-				};
-
-				pressed = U.Common.arrayUnique(pressed);
-
-				checkConflicts(editingId, pressed);
-
-				Storage.updateShortcuts(editingId, pressed);
-				setEditingKeys(pressed);
-				setTimeout();
-			});
+		if (!editingId) {
+			return;
 		};
+
+		win.on('keydown.shortcut', (e: any) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			const metaKeys = keyboard.metaKeys(e);
+			const key = keyboard.eventKey(e);
+			const code = String(e.code || '').toLowerCase();
+			const skip = [ Key.meta, Key.ctrl ];
+
+			if (key == Key.escape) {
+				clear();
+				return;
+			};
+
+			if (metaKeys.length) {
+				pressed = pressed.concat(metaKeys);
+			};
+
+			if (!skip.includes(key)) {
+				let parsedCode = false;
+
+				codeChecks.forEach(c => {
+					if (codes.has(c)) {
+						parsedCode = true;
+						return;
+					};
+
+					if (code.startsWith(c)) {
+						pressed.push(code.replace(c, ''));
+						codes.add(c);
+						parsedCode = true;
+					};
+				});
+
+				if (!parsedCode) {
+					pressed.push(key);
+				};
+			};
+
+			pressed = U.Common.arrayUnique(pressed);
+			checkConflicts(editingId, pressed);
+
+			Storage.updateShortcuts(editingId, pressed);
+			setEditingKeys(pressed);
+			setTimeout();
+		});
 
 	}, [ editingId ]);
 
