@@ -10,6 +10,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	node: any = null;
 	refPreview = null;
 	frame = 0;
+	timeout = 0;
 	object: any = {
 		recommendedLayout: I.ObjectLayout.Page,
 		layoutAlign: I.BlockHAlign.Left,
@@ -120,7 +121,16 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	show (v: boolean) {
-		$(this.node).toggleClass('show', v);
+		this.resize();
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			const node = $(this.node);
+
+			node.removeClass('in out');
+			v ? node.addClass('in') : node.addClass('out');
+			node.toggleClass('show', v);
+		}, 40);
 	};
 
 	getWidth () {
