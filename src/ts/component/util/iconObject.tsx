@@ -478,9 +478,15 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const node = $(nodeRef.current);
 		const img = node.find('img');
 
-		img.off('error').on('error', () => {
+		img.off('error load');
+
+		img.on('error', () => {
 			node.addClass('withImageError');
 			setErrorIcon();
+		});
+
+		img.on('load', () => {
+			node.removeClass('withImageError');
 		});
 	}, []);
 

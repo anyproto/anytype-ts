@@ -124,7 +124,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 		const node = $(this.node);
 		const value = node.find('#dragValue');
 
-		value.text(Math.ceil(v * 100) + '%');
+		value.text(Math.ceil((v + 1) * 100) + '%');
 	};
 
 });

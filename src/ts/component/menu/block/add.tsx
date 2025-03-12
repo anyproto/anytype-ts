@@ -269,14 +269,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const typeIds = S.Detail.getTypeRelationIds(isTemplate ? object.targetObjectType : object.type);
 		const typeRelations = typeIds.map(it => S.Record.getRelationById(it)).filter(it => it);
 		
-		let ret = typeRelations;
+		let ret = [].concat(typeRelations);
+
 		if (!isTemplate) {
 			ret = ret.concat(objectRelations);
 		};
 
 		ret = S.Record.checkHiddenObjects(ret.filter(it => it.isInstalled)).sort(U.Data.sortByName);
 
-		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true }));
+		if (!isTemplate) {
+			ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
+		};
+
+		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true, aliases: [ 'relation' ] }));
 	};
 	
 	getSections () {
@@ -348,6 +353,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 			items = items.concat(section.children);
 		};
+
 		return items;
 	};
 	

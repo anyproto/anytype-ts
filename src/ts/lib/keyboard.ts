@@ -851,6 +851,11 @@ class Keyboard {
 	onPrintToPDF (options: any) {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
+		const theme = S.Common.getThemeClass();
+
+		if (theme) {
+			options.printBackground = true;
+		};
 
 		this.printApply('print', false);
 		Renderer.send('winCommand', 'printPdf', { name: object.name, options });

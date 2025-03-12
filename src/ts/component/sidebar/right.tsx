@@ -19,6 +19,7 @@ interface State {
 	details: any;
 	readonly: boolean;
 	noPreview: boolean;
+	previous: State;
 };
 
 const Components = {
@@ -38,6 +39,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		details: {},
 		readonly: false,
 		noPreview: false,
+		previous: null,
 	});
 
 	const { page = '' } = state;
@@ -55,7 +57,14 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	});
 
 	useImperativeHandle(ref, () => ({
-		setState,
+		setState: (newState: State) => {
+			if (newState.page !== state.page) {
+				delete(state.previous);
+				newState.previous = U.Common.objectCopy(state);
+			};
+
+			setState(newState);
+		},
 	}));
 
 	return showSidebarRight ? (

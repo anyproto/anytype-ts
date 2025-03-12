@@ -584,6 +584,8 @@ class UtilObject {
 		C.ObjectRelationDelete(id, [ 'layout', 'layoutAlign' ]);
 		C.ObjectListSetDetails([ id ], [ { key: 'featuredRelations', value: featured } ]);
 		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
+
+		analytics.event('ResetToTypeDefault');
 	};
 
 	copyLink (object: any, space: any, type: string, route: string) {
@@ -616,7 +618,7 @@ class UtilObject {
 						};
 
 						case 'web': {
-							cb(link + `&inviteID=${cid}#${key}`);
+							cb(link + `&inviteId=${cid}#${key}`);
 							break;
 						};
 					};

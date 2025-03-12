@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, J, Relation, translate, sidebar, keyboard } from 'Lib';
+import { I, S, C, U, J, Relation, translate, sidebar, keyboard, analytics } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
@@ -74,17 +74,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidMount (): void {
+		const { noPreview } = this.props;
+
 		this.init();
 
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
-	};
 
-	componentWillUnmount () {
-		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
-
-		sidebar.rightPanelRef(isPopup)?.setState({ details: {}, rootId: ''});
-		container.removeClass('overPopup');
+		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
 
 	init () {
@@ -123,11 +119,14 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	getSections () {
+		const type = S.Record.getTypeById(this.props.rootId);
+		const isFile = type ? U.Object.isInFileLayouts(type?.recommendedLayout) : false;
+
 		return [
 			{ id: 'title', component: 'type/title' },
-			{ id: 'layout', component: 'type/layout' },
+			!isFile ? { id: 'layout', component: 'type/layout' } : null,
 			{ id: 'relation', component: 'type/relation' },
-		];
+		].filter(it => it);
 	};
 
 	onChange (update: any) {
@@ -159,6 +158,17 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		});
 
 		$(this.buttonSaveRef.getNode()).toggleClass('disabled', !U.Common.objectLength(this.update));
+
+		// analytics
+		let eventId = '';
+		if (update.recommendedLayout) {
+			eventId = 'ChangeRecommendedLayout';
+		} else
+		if (update.layoutAlign) {
+			eventId = 'SetLayoutAlign';
+		};
+
+		analytics.stackAdd(eventId, { route: analytics.route.type });
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
@@ -181,7 +191,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 
 		const { space } = S.Common;
-		const { rootId } = this.props;
+		const { rootId, isPopup, previous } = this.props;
 		const type = S.Record.getTypeType();
 
 		if (rootId) {
@@ -194,6 +204,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 			if (update.length) {
 				C.ObjectListSetDetails([ rootId ], update);
+
+				if (previous) {
+					sidebar.rightPanelSetState(isPopup, previous);
+				} else {
+					this.close();
+				};
 			};
 		} else {
 			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
@@ -202,10 +218,14 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					S.Common.getRef('sidebarLeft')?.refChild?.refFilter?.setValue('');
 				};
 			});
+
+			this.close();
 		};
 
 		this.update = {};
-		this.close();
+
+		analytics.event('ClickSaveEditType', { objectType: rootId });
+		analytics.stackSend();
 	};
 
 	onCancel () {

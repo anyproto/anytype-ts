@@ -39,9 +39,20 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'export': {
+							const ret = [];
+							const items = J.Shortcut.getItems();
+
+							for (const k in items) {
+								const item = items[k];
+
+								if (item.id) {
+									ret.push({ id: item.id, keys: item.keys	});
+								};
+							};
+
 							Action.openDirectoryDialog({}, paths => {
 								if (paths.length) {
-									Renderer.send('shortcutExport', paths[0], Storage.getShortcuts());
+									Renderer.send('shortcutExport', paths[0], ret);
 								};
 							});
 							break;

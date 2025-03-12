@@ -1171,6 +1171,48 @@ class UtilCommon {
 		return ret;
 	};
 
+	getRouteFromUrl (url: string): string {
+		url = String(url || '');
+
+		if (!url) {
+			return '';
+		};
+
+		let ret = '';
+
+		try {
+			const u = new URL(url);
+			const { hostname, pathname, hash, searchParams, protocol } = u;
+
+			if (protocol == `${J.Constant.protocol}:`) {
+				return url.replace(new RegExp(`^${J.Constant.protocol}://`), '/');
+			};
+
+			switch (hostname) {
+				case 'invite.any.coop': {
+					const cid = pathname.replace(/^\//, '');
+					const key = hash.replace(/^#/, '');
+
+					ret = `/invite/?cid=${cid}&key=${key}`;
+					break;
+				};
+
+				case 'object.any.coop': {
+					const objectId = pathname.replace(/^\//, '');
+					const spaceId = searchParams.get('spaceId');
+					const cid = searchParams.get('inviteId');
+					const key = hash.replace(/^#/, '');
+
+					ret = `/object/?objectId=${objectId}&spaceId=${spaceId}&cid=${cid}&key=${key}`;
+					break;
+				};
+
+			};
+		} catch (e) { /**/ };
+
+		return ret;
+	};
+
 };
 
 export default new UtilCommon();

@@ -24,11 +24,19 @@
 		> .side.right { padding-top: 0px; margin-top: 32px; border-top: 0px; }
 	}
 
+	.blocks.horizontal.withSidebar { width: 100%; padding: 16px 16px 80px 16px; }
+	.blocks.horizontal.withSidebar {
+		.inner { min-height: 0 !important; }
+		.block.blockMedia {
+			.mediaImage { width: auto; height: auto; max-width: 100%; display: inline-block; object-fit: contain; border-radius: 6px; }
+		}
+	}
+
 	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; gap: 0px 32px; }
 	.blocks.vertical {
 		> .side { width: 50%; }
 		> .side.left { min-width: 400px; }
-		> .side.left { 
+		> .side.left {
 			.inner { display: flex; flex-direction: row; align-items: flex-start; justify-content: center; }
 		}
 		> .side.right { padding-top: 25px; }
