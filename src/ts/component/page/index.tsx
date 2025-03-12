@@ -149,28 +149,29 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		// Universal object route
 		if (pathname.match(/^\/object/)) {
-			ret.params.page = 'main';
-			ret.params.action = 'object';
-			ret.params.id = data.objectId;
-			ret.params.spaceId = data.spaceId;
-			ret.params.cid = data.cid;
-			ret.params.key = data.key;
-			ret.params.route = data.route;
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'object',
+				...data,
+				id: data.objectId,
+			});
 		};
 
 		// Invite route
 		if (pathname.match(/^\/invite/)) {
-			ret.params.page = 'main';
-			ret.params.action = 'invite';
-			ret.params.cid = data.cid;
-			ret.params.key = data.key;
-			ret.params.route = data.route;
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'invite',
+				...data,
+			});
 		};
 
 		// Membership route
 		if (pathname.match(/^\/membership/)) {
-			ret.params.page = 'main';
-			ret.params.action = 'membership';
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'membership',
+			});
 		};
 
 		return ret;
