@@ -6,7 +6,6 @@ import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action } from 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { getId, close } = props;
-	const { config } = S.Common;
 	const [ page, setPage ] = useState('');
 	const [ filter, setFilter ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
@@ -154,7 +153,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		for (const i in items) {
 			const item = items[i];
 
-			if (!item.keys) {
+			if (!item.keys || (item.id == id)) {
 				continue;
 			};
 
