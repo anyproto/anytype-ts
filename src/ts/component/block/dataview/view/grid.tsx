@@ -466,7 +466,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 					const wrapper = $('.blocks');
 					const ww = wrapper.width();
 					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
-					const margin = (cw - ww) / 2;
+					const margin = Math.max(0, (cw - ww) / 2);
 					const offset = 8;
 
 					scroll.css({ width: cw, marginLeft: -margin });
