@@ -73,7 +73,7 @@ class ChatStore {
 	};
 
 	setState (rootId: string, state: any) {
-		this.stateMap.set(rootId, observable.box(state));
+		this.stateMap.set(rootId, state);
 	};
 
 	getState (rootId: string) {

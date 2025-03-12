@@ -661,6 +661,7 @@ export const Mapper = {
 		ChatState: (obj: Model.ChatState): any => {
 			return {
 				messages: Mapper.From.ChatStateUnreadMessages(obj.getMessages()),
+				dbTimestamp: obj.getDbtimestamp(),
 			};
 		},
 
@@ -668,7 +669,7 @@ export const Mapper = {
 			return {
 				orderId: obj.getOldestorderid(),
 				counter: obj.getCounter(),
-			}
+			};
 		},
 
 		ChatMessageContent (obj: Model.ChatMessage.MessageContent): I.ChatMessageContent {
