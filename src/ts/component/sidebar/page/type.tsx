@@ -77,7 +77,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const { noPreview } = this.props;
 
 		this.init();
-
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });

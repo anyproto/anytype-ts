@@ -7,12 +7,12 @@
 
 .layoutPreviewWrapper.in { opacity: 0; }
 .layoutPreviewWrapper.in {
-	.layoutPreview { transform: scale3d(0.8, 0.8, 1); opacity: 0; }
+	.layoutPreview { opacity: 0; }
 }
 
 .layoutPreviewWrapper.in.show { opacity: 1; }
 .layoutPreviewWrapper.in.show {
-	.layoutPreview { transform: scale3d(1, 1, 1); opacity: 1; }
+	.layoutPreview { opacity: 1; }
 }
 
 .layoutPreviewWrapper.out { opacity: 0; }
@@ -22,12 +22,12 @@
 
 .layoutPreviewWrapper.in.show { opacity: 1; }
 .layoutPreviewWrapper.in.show {
-	.layoutPreview { transform: scale3d(1, 1, 1); opacity: 1; }
+	.layoutPreview { opacity: 1; }
 }
 
 .layoutPreviewWrapper {
     .layoutPreview { 
-		transition: all 0.2s $easeInQuint;  margin: 0 auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary); 
+		transition: all 0.3s ease-in-out; margin: 0px auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary); 
 		transform-origin: 50% 50%; min-height: 100%;
 	}
     .layoutPreview {
