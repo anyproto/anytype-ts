@@ -658,6 +658,19 @@ export const Mapper = {
 			};
 		},
 
+		ChatState: (obj: Model.ChatState): any => {
+			return {
+				messages: Mapper.From.ChatStateUnreadMessages(obj.getMessages()),
+			};
+		},
+
+		ChatStateUnreadMessages (obj: any): any {
+			return {
+				orderId: obj.getOldestorderid(),
+				counter: obj.getCounter(),
+			}
+		},
+
 		ChatMessageContent (obj: Model.ChatMessage.MessageContent): I.ChatMessageContent {
 			return {
 				text: obj.getText(),

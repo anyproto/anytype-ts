@@ -5,8 +5,7 @@ class ChatStore {
 
 	public messageMap: Map<string, any[]> = observable(new Map());
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
-	// stateMap
-	// map - not observable, item in map - observable
+	public stateMap: Map<string, any> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -71,6 +70,14 @@ class ChatStore {
 		map.set(message.id, message);
 
 		this.replyMap.set(rootId, map);
+	};
+
+	setState (rootId: string, state: any) {
+		this.stateMap.set(rootId, observable.box(state));
+	};
+
+	getState (rootId: string) {
+		return this.stateMap.get(rootId);
 	};
 
 	clear (rootId: string) {
