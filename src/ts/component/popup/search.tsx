@@ -414,31 +414,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
-		keyboard.shortcut(`enter, ${cmd}+enter`, e, (pressed: string) => {
-			const regScheme = new RegExp(`^${J.Constant.protocol}:\/\/`);
-			const regInvite = /invite.any.coop\/([a-zA-Z0-9]+)#([a-zA-Z0-9]+)/;
+		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
+			const route = U.Common.getRouteFromUrl(filter);
 
-			if (regScheme.test(filter)) {
-				const route = filter.replace(regScheme, '');
-				if (route) {
-					U.Router.go(`/${route}`, {});
-				};
+			if (route) {
+				U.Router.go(route, {});
 				return;
 			};
-
-			try {
-				const url = new URL(filter);
-
-				if (url.hostname == 'invite.any.coop') {
-					const cid = url.pathname.replace('/', '');
-					const key = url.hash.replace('#', '');
-
-					if (cid && key) {
-						U.Router.go(`/invite/?cid=${cid}&key=${key}`, {});
-						return;
-					};
-				};
-			} catch (e) { /**/ };
 
 			const item = items[this.n];
 			if (item) {

@@ -171,6 +171,13 @@ class Action {
 
 		url = U.Common.urlFix(url);
 
+		const route = U.Common.getRouteFromUrl(url);
+		
+		if (route) {
+			U.Router.go(route, {});
+			return;
+		};
+
 		const scheme = U.Common.getScheme(url);
 		const cb = () => Renderer.send('openUrl', url);
 		const allowedSchemes = J.Constant.allowedSchemes.concat(J.Constant.protocol);

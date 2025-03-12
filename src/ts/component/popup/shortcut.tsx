@@ -6,7 +6,6 @@ import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action } from 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { getId, close } = props;
-	const { config } = S.Common;
 	const [ page, setPage ] = useState('');
 	const [ filter, setFilter ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
@@ -39,9 +38,20 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'export': {
+							const ret = [];
+							const items = J.Shortcut.getItems();
+
+							for (const k in items) {
+								const item = items[k];
+
+								if (item.id) {
+									ret.push({ id: item.id, keys: item.keys	});
+								};
+							};
+
 							Action.openDirectoryDialog({}, paths => {
 								if (paths.length) {
-									Renderer.send('shortcutExport', paths[0], Storage.getShortcuts());
+									Renderer.send('shortcutExport', paths[0], ret);
 								};
 							});
 							break;

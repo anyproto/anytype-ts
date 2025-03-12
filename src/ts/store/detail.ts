@@ -92,9 +92,11 @@ class DetailStore {
 				continue;
 			};
 
+			//console.log('[S.Detail].update: ', k, item.details[k]);
+
 			const el = list.find(it => it.relationKey == k);
 			if (el) {
-				el.value = item.details[k];
+				set(el, 'value', item.details[k]);
 			} else {
 				list.push(this.createListItem(k, item.details[k]));
 			};

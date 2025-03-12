@@ -120,11 +120,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	getSections () {
 		const type = S.Record.getTypeById(this.props.rootId);
-		if (!type) {
-			return [];
-		};
-
-		const isFile = U.Object.isInFileLayouts(type.recommendedLayout);
+		const isFile = type ? U.Object.isInFileLayouts(type.recommendedLayout) : false;
 
 		return [
 			{ id: 'title', component: 'type/title' },

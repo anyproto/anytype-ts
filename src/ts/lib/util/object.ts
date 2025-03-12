@@ -638,7 +638,7 @@ class UtilObject {
 						};
 
 						case 'web': {
-							cb(link + `&inviteID=${cid}#${key}`);
+							cb(link + `&inviteId=${cid}#${key}`);
 							break;
 						};
 					};
