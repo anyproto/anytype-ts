@@ -299,16 +299,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					}, { name: context.filter }, {}, analytics.route.addWidget, object => onSelect(object, true));
 				},
 				dataChange: (context: any, items: any[]) => {
-					const skipTypes = [ 
-						J.Constant.typeKey.space, 
-						J.Constant.typeKey.spaceview, 
-						J.Constant.typeKey.type, 
-						J.Constant.typeKey.template, 
-					];
+					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
 					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => it.name.match(reg));
-					const types = S.Record.getTypes().
-						filter(it => !targets.includes(it.id) && !skipTypes.includes(it.uniqueKey) && it.name.match(reg)).
+					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
+						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && it.name.match(reg)).
 						map(it => ({ ...it, caption: '' }));
 					const lists = [];
 
