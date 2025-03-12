@@ -9,7 +9,6 @@ class Keyboard {
 	};
 	timeoutPin = 0;
 	timeoutSidebarHide = 0;
-	pressed = new Set();
 	match: any = {};
 	matchPopup: any = {};
 	source: any = null;
@@ -63,8 +62,6 @@ class Keyboard {
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
-
-			this.pressed.clear();
 
 			S.Menu.closeAll([ 'blockContext' ]);
 
@@ -131,8 +128,6 @@ class Keyboard {
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const selection = S.Common.getRef('selectionProvider');
-
-		this.pressed.add(key);
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -318,10 +313,6 @@ class Keyboard {
 	};
 
 	onKeyUp (e: any) {
-		if (e.metaKey) {
-			this.pressed.clear();
-		};
-		this.pressed.delete(this.eventKey(e));
 	};
 
 	onBack () {
@@ -1265,10 +1256,9 @@ class Keyboard {
 			};
 
 			const ks = keys.join('+');
-			const check1 = U.Common.arrayUnique(pressed).sort().join('+');
-			const check2 = Array.from(this.pressed).sort().join('+');
+			const check = U.Common.arrayUnique(pressed).sort().join('+');
 
-			if ((check1 == ks) || (check2 == ks)) {
+			if (check == ks) {
 				res = ks;
 			};
 		};
@@ -1383,4 +1373,4 @@ export enum Key {
 	slash		 = '/',
 };
 
- export const keyboard: Keyboard = new Keyboard();
+export const keyboard: Keyboard = new Keyboard();

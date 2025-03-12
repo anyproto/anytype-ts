@@ -302,13 +302,11 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	useEffect(() => {
 		if (!isSystemTarget() && view && viewId && (viewId != view.id)) {
-			if (selectRef.current) {
-				if (viewId != selectRef.current.getValue()) {
-					selectRef.current.setValue(viewId);
-				};
+			if (selectRef.current && (viewId != selectRef.current.getValue())) {
+				selectRef.current.setValue(viewId);
+			} else {
+				load(viewId);
 			};
-
-			load(viewId);
 		};
 	});
 

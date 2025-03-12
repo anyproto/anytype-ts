@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
-import { I, S, C, Relation, translate, keyboard, analytics } from 'Lib';
+import { I, S, C, U, Relation, translate, keyboard, analytics } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -152,7 +152,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
     };
 
 	const onAdd = (e: any, list: any) => {
-		const keys = lists.reduce((acc, it) => acc.concat(it.data.map(it => it.relationKey)), []).concat('description');
+		const keys = U.Object.getTypeRelationKeys(object.id).concat('description');
 		const ids = list.data.map(it => it.id);
 
 		S.Menu.open('relationSuggest', { 

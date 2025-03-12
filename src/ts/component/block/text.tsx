@@ -529,11 +529,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		keyboard.shortcut('backspace', e, () => {
-			if (keyboard.pressed.has(Key.enter)) {
-				ret = true;
-				return;
-			};
-
 			if (range.to) {
 				const parsed = checkMarkOnBackspace(value, range, this.marks);
 

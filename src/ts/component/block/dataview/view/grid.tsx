@@ -30,7 +30,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { config } = S.Common;
 		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
@@ -464,7 +463,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		if (isInline) {
 			if (parent) {
 				if (parent.isPage() || parent.isLayoutDiv()) {
-					const wrapper = $('#editorWrapper');
+					const wrapper = $('.blocks');
 					const ww = wrapper.width();
 					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
 					const margin = (cw - ww) / 2;

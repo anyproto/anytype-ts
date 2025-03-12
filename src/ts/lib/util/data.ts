@@ -785,7 +785,7 @@ class UtilData {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = param.filters || [];
-		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
+		const skipLayouts = [ I.ObjectLayout.Chat ];
 
 		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });

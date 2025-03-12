@@ -26,6 +26,7 @@ class UtilObject {
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 			case I.ObjectLayout.Space:
+			case I.ObjectLayout.ChatOld:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
@@ -586,6 +587,25 @@ class UtilObject {
 		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
 
 		analytics.event('ResetToTypeDefault');
+	};
+
+	getTypeRelationIds (id: string) {
+		const type = S.Record.getTypeById(id);
+		if (!type) {
+			return [];
+		};
+
+		return Relation.getArrayValue(type.recommendedRelations).
+			concat(Relation.getArrayValue(type.recommendedFeaturedRelations)).
+			concat(Relation.getArrayValue(type.recommendedHiddenRelations)).
+			concat(Relation.getArrayValue(type.recommendedFileRelations));
+	};
+
+	getTypeRelationKeys (id: string) {
+		return this.getTypeRelationIds(id).
+			map(it => S.Record.getRelationById(it)).
+			filter(it => it && it.relationKey).
+			map(it => it.relationKey);
 	};
 
 	copyLink (object: any, space: any, type: string, route: string) {

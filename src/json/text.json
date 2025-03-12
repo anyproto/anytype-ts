@@ -190,6 +190,8 @@
 	"commonShowMore": "Show more",
 	"commonShowLess": "Show less",
 	"commonWarning": "Warning",
+	"commonSuggested": "Suggested",
+	"commonExistingObjects": "Existing Objects",
 	"commonFileInfo": "File Information",
 
 	"pluralDay": "day|days",
@@ -378,8 +380,8 @@
 	"authInviteEmpty": "Invite code is empty",
 
 	"authSelectLabel": "Create & collaborate in spaces you own.<br/>Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
-	"authSelectLogin": "I have a Key",
-	"authSelectSignup": "New Vault",
+	"authSelectLogin": "Already have a Key",
+	"authSelectSignup": "I am new here",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Enter my Vault",
@@ -413,11 +415,11 @@
 
 	"authOnboardSoulTitle": "Set your name",
 	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
-	"authOnboardSoulButton": "Enter my Vault",
 
 	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It cannot be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Show my Key",
+	"authOnboardPhraseLabel": "It gives you full ownership over your data and conversations.<br/>You can find this key later in app settings.<span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseSubmit": "Tap to Reveal",
+	"authOnboardPhraseNotNow": "Not now",
 
 	"onboardingExperienceSubTitle": "Build your first space",
 	"onboardingExperienceTypeTitle": "Who Will Use This Space?",
@@ -703,7 +705,7 @@
 
 	"blockFeaturedTypeMenuOpenType": "Open type",
 	"blockFeaturedTypeMenuChangeType": "Change type",
-	"blockFeaturedTypeMenuTurnSetIntoCollection": "Turn Query into collection",
+	"blockFeaturedTypeMenuTurnSetIntoCollection": "Turn Query into Collection",
 	"blockFeaturedTypeMenuOpenSet": "Open Query",
 	"blockFeaturedTypeMenuOpenSetOf": "Open Query of %s",
 	"blockFeaturedTypeMenuCreateSetOf": "Create Query of %s",
@@ -1520,9 +1522,9 @@
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
 	"menuObjectContextNoAvailableActions": "No available actions",
-	"menuObjectContextUnlinkFromCollection": "Unlink from collection",
+	"menuObjectContextUnlinkFromCollection": "Unlink from Collection",
 	"menuObjectContextTryAgain": "Please try again",
-	"menuObjectContextEditRelations": "Edit properties",
+	"menuObjectContextEditRelations": "Edit Properties",
 
 	"menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
 
@@ -1695,7 +1697,7 @@
 	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"menuPublishTitle": "Publish to web",
-	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as sets, collections, and relations.",
+	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties.",
 	"menuPublishLabelJoin": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
@@ -1734,7 +1736,7 @@
 	"toastTemplateCreate": "is saved as a Template!",
 	"toastCopy": "%s has been copied to clipboard",
 	"toastCopyBlock": "Block has been copied to clipboard",
-	"toastTurnIntoCollection": "%s is collection now!",
+	"toastTurnIntoCollection": "%s is a Collection now!",
 	"toastIsLocked": "is locked",
 	"toastIsUnlocked": "is unlocked",
 	"toastMovedTo": "%s moved to",
@@ -1866,7 +1868,6 @@
 	"widgetAdd": "Add widget",
 	"widgetLibrary": "Library",
 	"widgetOptions": "Options",
-	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here",
 	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
 	"widgetShowAll": "See all Objects",
@@ -1939,6 +1940,7 @@
 	"sidebarTypeRelationHidden": "Hidden",
 	"sidebarObjectRelationSetUp": "Set up",
 	"sidebarTypeRelationEmpty": "There are no Properties yet",
+	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
 	"sidebarRelationLocal": "Local Properties",
 	"sidebarTypeRelationLocalDescription": "Some properties are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
@@ -1964,7 +1966,7 @@
 	"onboardingStoreType22": "Now, let’s take a look at the Properties menu.",
 
 	"onboardingStoreRelation": "Library",
-	"onboardingStoreRelation11": "<b>Properties are reusable links with meaning.</b> Here you can see some examples of Properties, but the idea is that you can create your own Relations which are valuable to you and connect the Objects through them.",
+	"onboardingStoreRelation11": "<b>Properties are reusable links with meaning.</b> Here you can see some examples of Properties, but the idea is that you can create your own Properties which are valuable to you and connect the Objects through them.",
 	"onboardingStoreRelation1Button": "Go ahead",
 	"onboardingStoreRelation21": "<b>Establishing relations helps you to understand the graph</b> and its structure better. You can also create Collections or Sets based on the relationships for quick access.",
 	"onboardingStoreRelation2Button": "Great!",
@@ -2041,7 +2043,7 @@
 	"onboardingSetsButton": "Perfect",
 
 	"onboardingCollectionsTitle": "Collections",
-	"onboardingCollectionsText": "<b>Create an object in the collection.</b> Use collections to store and organise handpicked objects and files.",
+	"onboardingCollectionsText": "<b>Create an object in the Collection.</b> Use Collections to store and organise handpicked objects and files.",
 	"onboardingCollectionsButton": "Okay!",
 
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",

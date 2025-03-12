@@ -1,8 +1,8 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, U, J, focus, Action, analytics, Relation, translate, sidebar, keyboard } from 'Lib';
+import { Icon, Header, Footer, Loader, ListObjectPreview, Deleted, HeadSimple, Block } from 'Component';
+import { I, C, S, U, J, focus, Action, analytics, Relation, translate, keyboard, sidebar } from 'Lib';
 
 const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -83,7 +83,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const onTemplateAdd = () => {
-		C.ObjectCreate({ targetObjectType: type.id }, [ I.ObjectFlag.DeleteEmpty ], '', J.Constant.typeKey.template, S.Common.space, message => {
+		C.ObjectCreate({ targetObjectType: type.id }, [], '', J.Constant.typeKey.template, S.Common.space, message => {
 			if (message.error.code) {
 				return;
 			};
@@ -247,9 +247,10 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		});
 	};
 
-	const recommended = Relation.getArrayValue(type.recommendedRelations).map(id => S.Record.getRelationById(id)).filter(it => it).map(it => it.relationKey);
+	const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 	const allowedObject = isAllowedObject();
 	const isAllowedTemplate = type?.isInstalled && isAllowedObject() && canShowTemplates;
+	const allowedBlock = type.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 	const templates = S.Record.getRecordIds(subIdTemplate, '');
 	const totalObject = S.Record.getMeta(subIdObject, '').total;
 	const totalTemplate = templates.length;
@@ -359,16 +360,18 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 								</div>
 							</div>
 							<div className="content">
-								<ListObject
-									{...props}
-									sources={[ rootId ]}
-									spaceId={type.spaceId}
-									subId={subIdObject}
-									rootId={rootId}
-									columns={columns}
-									relationKeys={recommended}
-									route={analytics.route.screenType}
-								/>
+								{children.map((block: I.Block, i: number) => (
+									<Block
+										{...props}
+										key={block.id}
+										rootId={rootId}
+										iconSize={20}
+										block={block}
+										className="noPlus"
+										isSelectionDisabled={true}
+										readonly={allowedBlock}
+									/>
+								))}
 							</div>
 						</div>
 					) : ''}
