@@ -12,6 +12,7 @@ class Dataview {
 		const order: any = {};
 		const object = S.Detail.get(rootId, rootId, []);
 		const isType = U.Object.isTypeLayout(object.layout);
+		const viewRelations = (view.relations || []).filter(it => it);
 
 		let relations = [];
 		if (isType) {
@@ -22,15 +23,12 @@ class Dataview {
 		};
 		relations = U.Common.objectCopy(relations).filter(it => it);
 
-		let o = 0;
-
 		if (!config.debug.hiddenObject) {
 			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
 		};
 
-		(view.relations || []).filter(it => it).forEach(it => {
-			order[it.relationKey] = o++;
-		});
+		let o = 0;
+		viewRelations.forEach(it => order[it.relationKey] = o++);
 
 		relations.forEach(it => {
 			if (it && (undefined === order[it.relationKey])) {
@@ -48,7 +46,7 @@ class Dataview {
 		});
 
 		const ret = relations.map(relation => {
-			const vr = (view.relations || []).filter(it => it).find(it => it.relationKey == relation.relationKey) || {};
+			const vr = viewRelations.find(it => it.relationKey == relation.relationKey) || {};
 
 			if ((view.type != I.ViewType.Gallery) && (relation.relationKey == 'name')) {
 				vr.isVisible = true;

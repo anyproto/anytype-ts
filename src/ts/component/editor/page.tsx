@@ -2052,9 +2052,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	getClipboardData (e: any) {
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
-
-		console.log(cb.types);
-
 		const data: any = {
 			text: U.Common.normalizeLineEndings(String(cb.getData('text/plain') || '')),
 			html: String(cb.getData('text/html') || ''),

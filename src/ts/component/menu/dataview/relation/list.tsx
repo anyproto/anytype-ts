@@ -264,7 +264,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 						C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
 							if (!message.error.code) {
 								S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
-								Dataview.viewRelationAdd(rootId, blockId, relation.relationKey, object.recommendedRelations.length, view);
+
+								const list = Dataview.viewGetRelations(rootId, blockId, view);
+								Dataview.viewRelationAdd(rootId, blockId, relation.relationKey, list.length, view);
 							};
 						});
 					} else {
