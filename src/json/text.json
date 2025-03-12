@@ -380,8 +380,8 @@
 	"authInviteEmpty": "Invite code is empty",
 
 	"authSelectLabel": "Create & collaborate in spaces you own.<br/>Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
-	"authSelectLogin": "I have a Key",
-	"authSelectSignup": "New Vault",
+	"authSelectLogin": "Already have a Key",
+	"authSelectSignup": "I am new here",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Enter my Vault",
@@ -415,11 +415,11 @@
 
 	"authOnboardSoulTitle": "Set your name",
 	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
-	"authOnboardSoulButton": "Enter my Vault",
 
 	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It cannot be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Show my Key",
+	"authOnboardPhraseLabel": "It gives you full ownership over your data and conversations.<br/>You can find this key later in app settings.<span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseSubmit": "Tap to Reveal",
+	"authOnboardPhraseNotNow": "Not now",
 
 	"onboardingExperienceSubTitle": "Build your first space",
 	"onboardingExperienceTypeTitle": "Who Will Use This Space?",
