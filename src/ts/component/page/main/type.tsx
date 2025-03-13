@@ -15,7 +15,6 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const rootId = getRootId();
 	const type = S.Detail.get(rootId, rootId, U.Data.typeRelationKeys());
 	const subIdTemplate = S.Record.getSubId(rootId, 'templates');
-	const subIdObject = S.Record.getSubId(rootId, 'data');
 	const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(type.recommendedLayout) && (type.uniqueKey != J.Constant.typeKey.template);
 
 	const open = () => {
@@ -249,7 +248,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const isAllowedTemplate = type?.isInstalled && isAllowedObject() && canShowTemplates;
 	const allowedBlock = type.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 	const templates = S.Record.getRecordIds(subIdTemplate, '');
-	const totalObject = S.Record.getMeta(subIdObject, '').total;
+	const totalObject = S.Record.getMeta(S.Record.getSubId(rootId, J.Constant.blockId.dataview), '').total;
 	const totalTemplate = templates.length;
 	const isFileType = U.Object.isInFileLayouts(type.recommendedLayout);
 	const columns: any[] = [
