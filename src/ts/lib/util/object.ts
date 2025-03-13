@@ -16,7 +16,6 @@ class UtilObject {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
@@ -222,7 +221,8 @@ class UtilObject {
 	setTypeIcon (rootId: string, iconName: string, iconOption: number, callBack?: (message: any) => void) {
 		C.ObjectListSetDetails([ rootId ], [
 			{ key: 'iconName', value: String(iconName || '') },
-			{ key: 'iconOption', value: Number(iconOption || 1) },
+			{ key: 'iconOption', value: Number(iconOption) || 1 },
+			{ key: 'iconImage', value: '' },
 		], callBack);
 	};
 	
@@ -418,6 +418,7 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
+			I.ObjectLayout.Type,
 		];
 	};
 
@@ -479,12 +480,11 @@ class UtilObject {
 
 	isAllowedTemplate (typeId: string): boolean {
 		const type = S.Record.getTypeById(typeId);
-
-		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
+		if (!type || [ J.Constant.typeKey.template, J.Constant.typeKey.type ].includes(type.uniqueKey)) {
 			return false;
 		};
 
-		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+		return !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout);
 	};
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {

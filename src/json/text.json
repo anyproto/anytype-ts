@@ -164,6 +164,7 @@
 	"commonCreateNewTemplate": "Create new Template",
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
+	"commonEditType" : "Edit Type",
 	"commonShare": "Share",
 	"commonDoNotShowAgain": "Don’t show this again",
 	"commonObject": "Object",
@@ -478,8 +479,6 @@
 	"pageMainNavigationItemEmptyTitle": "Object can not be shown",
 
 	"pageMainTypeNewSetOfObjects": "New Query of Objects",
-	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
-
 	"pageMainIndexComponentNotFound": "Page component &quot;%s&quot; not found",
 
 	"pageMainArchiveEmpty": "Your Bin is empty",

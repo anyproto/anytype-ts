@@ -19,6 +19,11 @@
 				.icon.more { position: static; width: 20px; height: 20px; margin: 0px; opacity: 1; }
 				.icon.more:hover { background-color: unset; }
 
+				> .defaultLabel {
+					position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500; z-index: 2;
+					padding: 1px 4px; border-radius: 4px; background: var(--color-shape-tertiary); color: var(--color-text-secondary);
+				}
+
 				.previewObject {
 					.add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
 					.moreWrapper.hover { opacity: 1; }
@@ -31,8 +36,9 @@
 					background-color: var(--color-shape-highlight-light); opacity: 0; transition: $transitionAllCommon;
 				}
 			}
-			.item.hover {
+			.item.hover, .item.active {
 				.previewObject:before { opacity: 1; }
+				> .defaultLabel { opacity: 0; }
 			}
 		}
 

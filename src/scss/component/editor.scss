@@ -230,6 +230,7 @@
 
 .editorWrapper.isSet,
 .editorWrapper.isCollection,
+.editorWrapper.isType,
 .editorWrapper.isDate {
 	.blocks { width: calc(100% - 96px); margin: 0px auto; padding: 0px; user-select: none; }
 	.blocks {

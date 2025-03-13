@@ -143,7 +143,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			flags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
-		if (U.Object.isInSetLayouts(object.layout) || U.Object.isTypeLayout(object.layout)) {
+		if (U.Object.isInSetLayouts(object.layout)) {
 			const rootId = getRootId();
 			if (!rootId) {
 				return;
@@ -453,7 +453,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return false;
 		};
 
-		if (U.Object.isInSetLayouts(object.layout) || U.Object.isTypeLayout(object.layout)) {
+		if (U.Object.isInSetLayouts(object.layout)) {
 			const rootId = getRootId();
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id);
 			const type = S.Record.getTypeById(typeId);
