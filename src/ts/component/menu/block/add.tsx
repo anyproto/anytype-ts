@@ -116,9 +116,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 				if (item.isObject) {
 					item.object = { 
-						name: item.name,
-						iconEmoji: item.iconEmoji, 
-						decription: item.description,
+						...item,
 						layout: I.ObjectLayout.Type,
 					};
 					item.iconSize = 40;

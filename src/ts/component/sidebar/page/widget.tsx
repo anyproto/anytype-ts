@@ -301,9 +301,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				dataChange: (context: any, items: any[]) => {
 					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
-					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => it.name.match(reg));
+					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
 					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
-						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && it.name.match(reg)).
+						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplate(it.id) && it.name.match(reg)).
 						map(it => ({ ...it, caption: '' }));
 					const lists = [];
 

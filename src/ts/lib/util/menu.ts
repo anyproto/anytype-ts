@@ -125,6 +125,8 @@ class UtilMenu {
 				type: I.BlockType.Page, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
+				iconName: type.iconName,
+				iconOption: type.iconOption,
 				name: type.name || translate('defaultNamePage'), 
 				description: type.description,
 				isObject: true,
