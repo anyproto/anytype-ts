@@ -134,7 +134,7 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					{...props} 
 					component="mainChat" 
 					ref={headerRef} 
-					rootId={object.chatId} 
+					rootId={rootId} 
 				/>
 
 				<div id="bodyWrapper" className="wrapper">
