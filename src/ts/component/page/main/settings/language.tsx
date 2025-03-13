@@ -46,7 +46,6 @@ const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent
 						value={languages}
 						options={getSpellingLanguages()}
 						onChange={v => {
-							config.languages = v;
 							Action.setSpellingLang(v);
 
 							const options = getSpellingLanguages();
