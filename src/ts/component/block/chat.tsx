@@ -51,6 +51,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.getMessagesInViewport = this.getMessagesInViewport.bind(this);
 		this.getMessages = this.getMessages.bind(this);
 		this.getReplyContent = this.getReplyContent.bind(this);
+		this.loadMessagesByOrderId = this.loadMessagesByOrderId.bind(this);
 	};
 
 	render () {
@@ -124,7 +125,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					subId={subId}
 					scrollToBottom={this.scrollToBottomCheck}
 					scrollToMessage={this.scrollToMessage}
+					loadMessagesByOrderId={this.loadMessagesByOrderId}
 					getMessages={this.getMessages}
+					getMessagesInViewport={this.getMessagesInViewport}
+					getIsBottom={() => this.isBottom}
 					getReplyContent={this.getReplyContent}
 				/>
 			</div>
@@ -571,7 +575,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						};
 
 						case 'unread': {
-							C.ChatUnreadMessages(this.getRootId(), item.orderId);
+							this.onUndead(item.orderId);
 							break;
 						};
 					};
@@ -586,6 +590,21 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		S.Menu.open('select', menuParam);
+	};
+
+	onUndead (orderId: string) {
+		const rootId = this.getRootId();
+		const miv = this.getMessagesInViewport();
+
+
+		C.ChatUnreadMessages(rootId, orderId, () => {
+			const { dbTimestamp } = S.Chat.getState(rootId);
+			if (!miv) {
+				return;
+			};
+
+			C.ChatReadMessages(rootId, miv[0].orderId, miv[miv.length - 1].orderId, dbTimestamp);
+		});
 	};
 
 	onScroll (e: any) {
@@ -699,6 +718,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		C.ChatReadMessages(rootId, from, to, state.dbTimestamp);
 
+		this.refForm?.forceUpdate();
 		this.firstReadOrderId = '';
 	};
 

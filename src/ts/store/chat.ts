@@ -18,15 +18,17 @@ class ChatStore {
 	};
 
 	private createChatState (state: any) {
-		const { messages, dbTimestamp, messagesInViewport } = state;
+		const { messages, dbTimestamp } = state;
 		const el = {
 			messageOrderId: messages.orderId,
 			messageCounter: messages.counter,
 			dbTimestamp,
-			messagesInViewport: messagesInViewport || [],
 		};
 
-		makeObservable(el, { messageOrderId: observable, messageCounter: observable });
+		makeObservable(el, {
+			messageOrderId: observable,
+			messageCounter: observable
+		});
 		intercept(el as any, (change: any) => {
 			return (change.newValue === el[change.name] ? null : change);
 		});

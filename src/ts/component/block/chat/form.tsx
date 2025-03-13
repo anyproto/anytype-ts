@@ -16,7 +16,10 @@ interface Props extends I.BlockComponent {
 	subId: string;
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
+	loadMessagesByOrderId: (orderId: string) => void;
 	getMessages: () => I.ChatMessage[];
+	getMessagesInViewport: () => any[];
+	getIsBottom: () => boolean;
 	getReplyContent: (message: any) => any;
 };
 
@@ -39,8 +42,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	editingId: string = '';
 	replyingId: string = '';
 	swiper = null;
-	speedLimit = { last: 0, counter: 0 }
-	unreadMessageCounter = 0;
+	speedLimit = { last: 0, counter: 0 };
 	state = {
 		attachments: [],
 		charCounter: 0,
@@ -72,6 +74,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onReplyClear = this.onReplyClear.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
 		this.onSwiper = this.onSwiper.bind(this);
+		this.onNavigationClick = this.onNavigationClick.bind(this);
 		this.addAttachments = this.addAttachments.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
 		this.caretMenuParam = this.caretMenuParam.bind(this);
@@ -81,11 +84,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, readonly, getReplyContent } = this.props;
+		const { rootId, readonly, getReplyContent, getMessagesInViewport, getIsBottom } = this.props;
 		const { attachments, charCounter } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
 		const { messageCounter } = S.Chat.getState(rootId);
+		const messagesInViewport = getMessagesInViewport();
+		const isBottom = getIsBottom();
 
 		if (readonly) {
 			return (
@@ -137,16 +142,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			>
 
 				<div className="navigation">
-					<div className="btn">
-						<div className="bg" />
-						<Icon className="arrow" />
+					{!isBottom || messageCounter ? (
+						<div className="btn" onClick={this.onNavigationClick}>
+							<div className="bg" />
+							<Icon className="arrow" />
 
-						{messageCounter ? (
-							<div className="counter">
-								<Label text={String(messageCounter)} />
-							</div>
-						) : ''}
-					</div>
+							{messageCounter ? (
+								<div className="counter">
+									<Label text={String(messageCounter)} />
+								</div>
+							) : ''}
+						</div>
+					) : ''}
 				</div>
 
 				<div className="form">
@@ -842,6 +849,17 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onSwiper (swiper) {
 		this.swiper = swiper;
+	};
+
+	onNavigationClick () {
+		const { rootId, loadMessagesByOrderId, scrollToBottom } = this.props;
+		const { messageCounter, messageOrderId } = S.Chat.getState(rootId);
+
+		if (messageOrderId) {
+			loadMessagesByOrderId(messageOrderId);
+		} else {
+			scrollToBottom();
+		};
 	};
 
 	updateButtons () {
