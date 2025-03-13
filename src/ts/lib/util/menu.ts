@@ -418,7 +418,6 @@ class UtilMenu {
 
 		if (id && !isSystem) {
 			const isSet = U.Object.isInSetLayouts(layout);
-			const isType = U.Object.isTypeLayout(layout);
 			const setLayouts = U.Object.getSetLayouts();
 			const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 
@@ -426,7 +425,7 @@ class UtilMenu {
 			if (treeSkipLayouts.includes(layout)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
-			if (!isSet && !isType) {
+			if (!isSet) {
 				options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
 			} else {
 				options = options.filter(it => it != I.WidgetLayout.Tree);

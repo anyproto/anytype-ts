@@ -222,7 +222,8 @@ class UtilObject {
 	setTypeIcon (rootId: string, iconName: string, iconOption: number, callBack?: (message: any) => void) {
 		C.ObjectListSetDetails([ rootId ], [
 			{ key: 'iconName', value: String(iconName || '') },
-			{ key: 'iconOption', value: Number(iconOption || 1) },
+			{ key: 'iconOption', value: Number(iconOption) || 1 },
+			{ key: 'iconImage', value: '' },
 		], callBack);
 	};
 	
