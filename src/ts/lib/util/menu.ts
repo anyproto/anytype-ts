@@ -409,8 +409,11 @@ class UtilMenu {
 			I.WidgetLayout.List,
 			I.WidgetLayout.Tree,
 		];
-		if (!isSystem || (id == J.Constant.widgetId.bin)) {
+		if (!isSystem) {
 			options.push(I.WidgetLayout.Link);
+		} else
+		if (id == J.Constant.widgetId.bin) {
+			options.unshift(I.WidgetLayout.Link);
 		};
 
 		if (id && !isSystem) {
