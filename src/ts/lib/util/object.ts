@@ -418,6 +418,7 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
+			I.ObjectLayout.Type,
 		];
 	};
 
