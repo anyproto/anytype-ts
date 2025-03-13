@@ -114,17 +114,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	
 	const onSortEnd = (event) => {
         const { active, over } = event;
-
-		console.log(active.id, over.id);
-
         if (!over || (active.id == over.id)) {
 			return;
 		};
 
 		const from = lists.find(it => it.id == active.data.current.list.id);
 		const to = lists.find(it => it.id == over.data.current.list.id);
-
-		console.log('FROM', from.name, 'TO', to.name);
 
         if (!from || !to) {
 			return;
