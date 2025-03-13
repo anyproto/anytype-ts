@@ -1,13 +1,12 @@
-import React, { forwardRef, useState, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Header, Footer, Loader, ListObjectPreview, Deleted, HeadSimple, Block } from 'Component';
-import { I, C, S, U, J, focus, Action, analytics, Relation, translate, keyboard, sidebar } from 'Lib';
+import { Icon, Header, Footer, ListObjectPreview, Deleted, HeadSimple, Block } from 'Component';
+import { I, C, S, U, J, focus, Action, analytics, translate, keyboard, sidebar } from 'Lib';
 
 const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const [ isLoading, setIsLoading ] = useState(false);
 	const headerRef = useRef(null);
 	const headRef = useRef(null);
 	const idRef = useRef(null);
@@ -27,13 +26,10 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		close();
-		setIsLoading(true);
 
 		idRef.current = rootId;
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
-			setIsLoading(false);
-
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
@@ -65,6 +61,7 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const loadTemplates = () => {
+		const rootId = getRootId();
 		const type = S.Detail.get(rootId, rootId);
 
 		U.Data.searchSubscribe({
@@ -284,8 +281,6 @@ const PageMainType = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					ref={headerRef}
 					rootId={rootId}
 				/>
-
-				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className="blocks wrapper">
 					<HeadSimple

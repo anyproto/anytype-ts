@@ -11,11 +11,18 @@
 	}
 
 	.wrapper {
+		.headSimple { align-items: center; }
+		.headSimple {
+			.side.left {
+				.titleWrap { align-items: center; }
+			}
+		}
+
 		.block {
 			.wrapMenu { display: none; }
 			.wrapContent { width: 100%; }
 		}
-		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; }
+		.block.blockFeatured { display: none; }
 
 		.section { margin-bottom: 44px; }
 		.section:last-child { margin: 0px; }
@@ -25,7 +32,7 @@
 		.section {
 			.title { 
 				@include text-paragraph; margin-bottom: 14px; position: relative; display: flex; flex-direction: row; align-items: center; 
-				justify-content: space-between;
+				justify-content: space-between; height: 28px;
 			}
 			.title {
 				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
