@@ -336,7 +336,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 		if (U.Object.isTypeOrRelationLayout(item.layout)) {
 			param = Object.assign(param, {
-				id: 'type',
+				id: U.Object.actionByLayout(item.layout),
 				_routeParam_: { 
 					additional: [ 
 						{ key: 'objectId', value: item.id } 
