@@ -26,7 +26,11 @@
 			opacity: 0; content: ''; width: 100%; height: 100%; left: 0px; top: 0px; border-radius: 6px; z-index: 1;
 			pointer-events: none; position: absolute; transition: opacity $transitionCommon; background: var(--color-shape-highlight-medium);
 		}
-		.clickable:hover::after { opacity: 1; }
+		.clickable:hover {
+			&::after { opacity: 1; }
+			.iconWrap.collapse { display: flex; }
+			.headerIcon { display: none; }
+		}
 
 		.iconWrap { width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 		.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
@@ -45,8 +49,6 @@
 	}
 	.head:hover {
 		.iconWrap.back { background-color: var(--color-shape-highlight-medium); }
-		.iconWrap.collapse { display: flex; }
-		.headerIcon { display: none; }
 	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
@@ -107,7 +109,7 @@
 	.head { border-bottom: 1px solid var(--color-shape-secondary); padding: 20px 16px 16px 8px !important; }
 	.head::before { top: 18px; }
 	.head {
-		.headerIcon { display: block; }
+		.headerIcon { display: block !important; }
 		.clickable::after { display: none; }
 	}
 }
