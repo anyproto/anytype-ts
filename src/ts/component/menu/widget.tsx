@@ -192,7 +192,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(id, layout).map(it => it.id);
 
 		if (U.Menu.isSystemWidget(id)) {
-			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
+			if ((id != J.Constant.widgetId.bin) && [ null, I.WidgetLayout.Link ].includes(this.layout)) {
 				this.layout = id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
 			};
 		} else {
