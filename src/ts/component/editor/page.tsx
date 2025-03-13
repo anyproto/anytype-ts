@@ -1838,7 +1838,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		// Priorize HTML content
-		const hasHtml = data && data.html && data.html.length > 0;
+		const hasHtml = data && data.html;
 		
 		if (hasHtml) {
         	e.preventDefault();
