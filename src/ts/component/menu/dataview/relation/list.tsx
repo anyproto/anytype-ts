@@ -286,11 +286,32 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, rootId, getView } = data;
 		const relation = S.Record.getRelationByKey(item.relationKey);
+		const object = S.Detail.get(rootId, rootId);
+		const isType = U.Object.isTypeLayout(object.layout);
+		const view = getView();
 
-		if (!relation || readonly) {
+		if (!relation || readonly || !view) {
 			return;
+		};
+
+		let unlinkCommand = null;
+		if (isType) {
+			unlinkCommand = (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+				const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).filter(it => it != relation.id));
+
+				C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
+					if (!message.error.code) {
+						S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
+						C.BlockDataviewViewRelationRemove(rootId, blockId, view.id, [ relation.relationKey ]);
+
+						if (onChange) {
+							onChange(message);
+						};
+					};
+				});
+			};
 		};
 		
 		S.Menu.open('dataviewRelationEdit', { 
@@ -300,6 +321,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			data: {
 				...data,
 				relationId: relation.id,
+				unlinkCommand,
 			}
 		});
 	};
