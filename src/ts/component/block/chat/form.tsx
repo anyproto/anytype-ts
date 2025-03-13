@@ -3,7 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable, Icon, IconObject, Loader } from 'Component';
+import { Editable, Icon, IconObject, Label, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
@@ -40,6 +40,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	replyingId: string = '';
 	swiper = null;
 	speedLimit = { last: 0, counter: 0 }
+	unreadMessageCounter = 0;
 	state = {
 		attachments: [],
 		charCounter: 0,
@@ -84,6 +85,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { attachments, charCounter } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
+		const { messageCounter } = S.Chat.getState(rootId);
 
 		if (readonly) {
 			return (
@@ -133,6 +135,20 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				id="formWrapper" 
 				className="formWrapper"
 			>
+
+				<div className="navigation">
+					<div className="btn">
+						<div className="bg" />
+						<Icon className="arrow" />
+
+						{messageCounter ? (
+							<div className="counter">
+								<Label text={String(messageCounter)} />
+							</div>
+						) : ''}
+					</div>
+				</div>
+
 				<div className="form">
 					<Loader id="form-loader" />
 

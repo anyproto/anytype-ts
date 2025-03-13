@@ -2271,8 +2271,8 @@ export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOr
 	dispatcher.request(ChatGetMessages.name, request, callBack);
 };
 
-export const ChatReadMessages = (objectId: string, beforeOrderId: string, afterOrderId: string, dbTimestamp: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Chat.Read.Request();
+export const ChatReadMessages = (objectId: string, afterOrderId: string, beforeOrderId: string, dbTimestamp: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.ReadMessages.Request();
 
 	request.setChatobjectid(objectId);
 	request.setBeforeorderid(beforeOrderId);

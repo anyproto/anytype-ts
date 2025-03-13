@@ -993,6 +993,13 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatStateUpdate': {
+					S.Chat.setState(rootId, mapped.state);
+
+					$(window).trigger('chatStateUpdate');
+					break;
+				};
+
 				case 'ChatDelete': {
 					S.Chat.delete(rootId, mapped.id);
 					break;
