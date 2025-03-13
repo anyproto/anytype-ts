@@ -739,12 +739,6 @@ class UtilData {
 		});
 	};
 
-	// Check if there is at least 1 set for object types
-	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		const setType = S.Record.getTypeByKey(J.Constant.typeKey.set);
-		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
-	};
-
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,

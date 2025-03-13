@@ -706,9 +706,6 @@
 	"blockFeaturedTypeMenuOpenType": "Open type",
 	"blockFeaturedTypeMenuChangeType": "Change type",
 	"blockFeaturedTypeMenuTurnSetIntoCollection": "Turn Query into Collection",
-	"blockFeaturedTypeMenuOpenSet": "Open Query",
-	"blockFeaturedTypeMenuOpenSetOf": "Open Query of %s",
-	"blockFeaturedTypeMenuCreateSetOf": "Create Query of %s",
 
 	"blockTableRow": "Row",
 	"blockTableColumn": "Column",
