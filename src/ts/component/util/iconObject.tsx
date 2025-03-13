@@ -41,7 +41,6 @@ interface IconObjectRefProps {
 
 const LAYOUTS_WITH_EMOJI_GALLERY = [ 
 	I.ObjectLayout.Page, 
-	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
 	I.ObjectLayout.Human,
 	I.ObjectLayout.Chat,

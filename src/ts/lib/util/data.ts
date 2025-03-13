@@ -529,7 +529,7 @@ class UtilData {
 
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withCollection, limit } = param || {};
-		const { space, config } = S.Common;
+		const { space } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
 		const pinned = Storage.getPinnedTypes();

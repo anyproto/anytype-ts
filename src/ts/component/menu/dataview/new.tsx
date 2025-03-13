@@ -80,8 +80,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
-
 		const menuParam: I.MenuParam = {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
@@ -123,7 +121,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: allowedLayouts },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					skipIds: [ typeId ],

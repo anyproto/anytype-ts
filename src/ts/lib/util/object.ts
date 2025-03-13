@@ -422,6 +422,10 @@ class UtilObject {
 		];
 	};
 
+	getLayoutsForTypeSelection () {
+		return this.getPageLayouts().concat(this.getSetLayouts()).filter(it => !this.isTypeLayout(it));
+	};
+
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
 		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
 	};
