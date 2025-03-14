@@ -5,7 +5,6 @@ import { I, U } from 'Lib';
 import TypeTitle from './type/title';
 import TypeLayout from './type/layout';
 import TypeRelation from './type/relation';
-import TypeConflict from './type/conflict';
 
 import ObjectRelation from './object/relation';
 
@@ -13,7 +12,6 @@ const Components = {
 	'type/title': TypeTitle,
 	'type/layout': TypeLayout,
 	'type/relation': TypeRelation,
-	'type/conflict': TypeConflict,
 
 	'object/relation': ObjectRelation,
 };

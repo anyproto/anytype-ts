@@ -189,6 +189,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
 			this.refControls?.forceUpdate();
+
 			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 			this.resize();
@@ -236,11 +237,24 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
 		const rootId = this.getRootId();
+		const ref = this.blockRefs[J.Constant.blockId.dataview];
 
-		keyboard.shortcut(`${cmd}+f`, e, () => {
+		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
 			node.find('#dataviewControls .filter .icon.search').trigger('click');
+		});
+
+		keyboard.shortcut('createObject', e, () => {
+			e.preventDefault();
+
+			const { ww, wh } = U.Common.getWindowDimensions();
+
+			ref?.ref?.onRecordAdd(e, -1, '', {
+				horizontal: I.MenuDirection.Center,
+				vertical: I.MenuDirection.Center,
+				rect: { x: ww / 2, y: wh / 2, width: 0, height: 0 },
+			});
 		});
 
 		if (!keyboard.isFocused) {
@@ -263,7 +277,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		// History
-		keyboard.shortcut(`${cmd}+alt+h`, e, () => {
+		keyboard.shortcut('history', e, () => {
 			e.preventDefault();
 			U.Object.openAuto({ layout: I.ObjectLayout.History, id: rootId });
 		});

@@ -15,11 +15,6 @@
 			}
 		}
 
-		.item.add { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 3px 0px; }
-		.item.add {
-			.icon { width: 20px; height: 20px; }
-			.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
-		}
 		.item:hover, .item.active { background-color: var(--color-shape-highlight-light); }
 
 		.cellContent.isName {

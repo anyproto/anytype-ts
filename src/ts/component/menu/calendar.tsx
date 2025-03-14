@@ -156,18 +156,17 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data } = param;
 		const { value, noKeyboard } = data;
+		const selectedDate = U.Date.getCalendarDateParam(value);
 
 		this.originalValue = value;
 
-		const selectedDate = U.Date.getCalendarDateParam(value);
-		this.setState({
-			selectedDate,
-		});
-
+		this.setState({ selectedDate });
 		this.initDotMap();
+
 		if (!noKeyboard) {
 			this.rebind();
 		};
+
 		this.forceUpdate();
 	};
 
@@ -230,9 +229,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 			this.setValue(newDateValue, false, false);
 		};
 
-		this.setState({
-			selectedDate: newCalendarDate,
-		});
+		this.setState({ selectedDate: newCalendarDate });
 	};
 
 	componentDidUpdate () {
@@ -243,8 +240,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 		this.refMonth.setValue(m);
 		this.refYear.setValue(y);
-
-		this.props.position();
 	};
 
 	initDotMap () {

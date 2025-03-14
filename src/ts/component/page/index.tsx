@@ -19,7 +19,6 @@ import PageMainVoid from './main/void';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
-import PageMainType from './main/type';
 import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
 import PageMainGraph from './main/graph';
@@ -50,7 +49,6 @@ const Components = {
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
-	'main/type':			 PageMainType,
 	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
 	'main/graph':			 PageMainGraph,
@@ -149,24 +147,29 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		// Universal object route
 		if (pathname.match(/^\/object/)) {
-			ret.params.page = 'main';
-			ret.params.action = 'object';
-			ret.params.id = data.objectId;
-			ret.params.spaceId = data.spaceId;
-			ret.params.cid = data.cid;
-			ret.params.key = data.key;
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'object',
+				...data,
+				id: data.objectId,
+			});
 		};
 
 		// Invite route
 		if (pathname.match(/^\/invite/)) {
-			ret.params.page = 'main';
-			ret.params.action = 'invite';
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'invite',
+				...data,
+			});
 		};
 
 		// Membership route
 		if (pathname.match(/^\/membership/)) {
-			ret.params.page = 'main';
-			ret.params.action = 'membership';
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'membership',
+			});
 		};
 
 		return ret;

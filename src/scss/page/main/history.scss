@@ -8,8 +8,6 @@
 		background: var(--color-bg-primary); 
 	}
 
-	#footer { right: $sidebarRightWidth; position: sticky; }
-
 	#body {
 		> #historySideLeft { width: calc(100% - $sidebarRightWidth); overflow-x: hidden; overflow-y: auto; position: relative; }
 		> #historySideLeft {

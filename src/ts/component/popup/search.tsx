@@ -414,21 +414,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
-		keyboard.shortcut(`enter, ${cmd}+enter`, e, (pressed: string) => {
-			const regScheme = new RegExp(`^${J.Constant.protocol}:\/\/`);
-			const regUrl = /invite.any.coop\/([a-zA-Z0-9]+)#([a-zA-Z0-9]+)/;
+		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
+			const route = U.Common.getRouteFromUrl(filter);
 
-			if (regScheme.test(filter)) {
-				const route = filter.replace(regScheme, '');
-				if (route) {
-					U.Router.go(`/${route}`, {});
-				};
-				return;
-			};
-
-			if (filter.match(regUrl)) {
-				const [, cid, key] = filter.match(regUrl);
-				U.Router.go(`/invite/?cid=${cid}&key=${key}`, {});
+			if (route) {
+				U.Router.go(route, {});
 				return;
 			};
 
@@ -438,7 +428,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+n`, e, () => {
+		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
 
 			this.pageCreate(filter);

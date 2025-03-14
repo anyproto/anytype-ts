@@ -8,6 +8,7 @@ interface Props extends I.ViewComponent {
 	m: number;
 	y: number;
 	items: any[];
+	isToday: boolean;
 	onCreate: (details: any) => void;
 };
 
@@ -195,7 +196,7 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	canCreate (): boolean {
-		const { getView, isAllowedObject } = this.props;
+		const { isToday, getView, isAllowedObject } = this.props;
 		const view = getView();
 
 		if (!view) {
@@ -203,7 +204,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		};
 
 		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
-		return groupRelation && !groupRelation.isReadonlyValue && isAllowedObject();
+		return groupRelation && (!groupRelation.isReadonlyValue || isToday) && isAllowedObject();
 	};
 
 });

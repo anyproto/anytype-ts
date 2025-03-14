@@ -93,13 +93,30 @@ class UpdateManager {
 	};
 
 	isAllowed () {
-		const [ major, minor, patch ] = String(process.getSystemVersion() || '').split('.');
+		const { config } = ConfigManager;
 
-		if (is.windows && (major <= 8)) {
+		if (config.updateDisabled) {
+			console.log('[UpdateManager].isAllowed, updateDisabled');
 			return false;
 		};
 
-		if (is.macos && (major <= 10)) {
+		const [ osMajor, osMinor, osPatch ] = String(process.getSystemVersion() || '').split('.');
+		const [ appMajor, appMinor, appPatch ] = String(app.getVersion() || '').split('.');
+		
+		console.log('[UpdateManager].isAllowed, osVersion: ', [ osMajor, osMinor, osPatch ], 'appVersion', [ appMajor, appMinor, appPatch ]);
+
+		if (is.windows && (osMajor <= 8)) {
+			console.log('[UpdateManager].isAllowed, Windows version <= 8');
+			return false;
+		};
+
+		if (is.macos && (osMajor <= 10)) {
+			console.log('[UpdateManager].isAllowed, MacOS version <= 10');
+			return false;
+		};
+
+		if (!/-(alpha|beta)/.test(appPatch) && isNaN(appPatch)) {
+			console.log('[UpdateManager].isAllowed, App version is not valid');
 			return false;
 		};
 

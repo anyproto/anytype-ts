@@ -204,6 +204,7 @@ export interface SidebarPageComponent {
 	readonly?: boolean;
 	details?: any;
 	noPreview?: boolean;
+	previous?: any;
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {
@@ -216,6 +217,13 @@ export interface SidebarSectionComponent extends SidebarPageComponent {
 
 export interface SidebarSectionRef {
 	forceUpdate(): void;
+};
+
+export enum SidebarRelationList {
+	Featured 		= 1,
+	Recommended 	= 2,
+	Hidden 			= 3,
+	Conflict 		= 4,
 };
 
 export enum SurveyType {

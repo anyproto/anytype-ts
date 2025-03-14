@@ -1,4 +1,4 @@
-import { I, S, U, J } from 'Lib';
+import { I, S, U, J, keyboard } from 'Lib';
 
 const electron = U.Common.getElectron();
 
@@ -498,11 +498,17 @@ class Storage {
 
 	setShortcuts (data: any) {
 		this.set('shortcuts', data);
+		keyboard.initShortcuts();
 	};
 
 	updateShortcuts (id: string, keys: string[]) {
 		const list = this.getShortcuts();
 		this.setShortcuts({ ...list, [id]: keys });
+	};
+
+	resetShortcuts () {
+		this.delete('shortcuts');
+		keyboard.initShortcuts();
 	};
 	
 };

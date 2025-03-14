@@ -34,7 +34,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		const relation = this.getRelation();
 		const root = S.Block.getLeaf(rootId, rootId);
-		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
 
@@ -59,8 +58,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				canDuplicate = canDelete = false;
 			};
 		};
-		if (relation && Relation.isSystemWithoutUser(relation.relationKey)) {
-			canDelete = false;
+
+		if (relation) {
+			const allowedDelete = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]) : false;
+
+			canDelete = allowedDelete && Relation.isSystemWithoutUser(relation.relationKey);
 		};
 
 		switch (ref) {
@@ -155,7 +157,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="section">
 						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
 						{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete && unlinkText && !noUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
+						{unlinkText && !noUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
 						{canDelete ? <MenuItemVertical icon="remove" name={translate('commonDelete')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}

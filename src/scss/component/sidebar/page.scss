@@ -5,7 +5,7 @@
 		@include text-paragraph; font-weight: 600; flex-shrink: 0; padding: 12px 16px;
 	}
 	.head {
-		.side.left { flex-grow: 1; font-weight: 500; }
+		.side.left { flex-grow: 1; }
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; gap: 0px 8px; }
 
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
@@ -24,7 +24,7 @@
 				> .label { @include text-paragraph; font-weight: 600; }
 				> .label.sectionToggle { padding-left: 12px; font-weight: 500; @include text-common; color: var(--color-text-secondary); }
 
-				.groupDescription { position: relative; width: 20px; height: 20px; background: url('~img/icon/question.svg'); }
+				.icon.question { background-image: url('~img/icon/question.svg'); }
 			}
 
 			> .list { display: flex; flex-direction: column; gap: 12px 0px; }
@@ -34,7 +34,6 @@
 	}
 
 	.section { background: var(--color-bg-primary); border-radius: 12px; padding: 8px 0px; }
-
 	.section {
 		.titleWrap { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 8px 0px; padding: 0px 8px 0px 16px; }
 		.titleWrap {
@@ -44,6 +43,13 @@
 
 		.title { @include text-paragraph; font-weight: 600; }
 		.label { padding: 5px 16px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
+
+		.sectionNameWrap { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 5px 12px 5px 16px; }
+		.sectionNameWrap {
+			.label { padding: 0px; flex-grow: 1; }
+			.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; }
+			.icon.question { width: 20px; height: 20px; background-image: url('~img/icon/question.svg'); }
+		}
 
 		.items { padding: 0px 8px; }
 

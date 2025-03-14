@@ -40,7 +40,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		};
 
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const isInSets = U.Object.isInSetLayouts(root.layout);
@@ -52,10 +52,14 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
 		const hasConflict = U.Object.hasLayoutConflict(object);
 
-		let allowedLayout = !checkType && allowedDetails && !isInSets && !isChat && !isType;
-		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark;
+		let allowedLayout = !checkType && allowedDetails && !isChat && !isType;
+		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
 		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
 		let allowedDescription = !checkType && allowedDetails && !isNote;
+
+		if (isInSets && !hasConflict) {
+			allowedLayout = false;
+		};
 
 		if (root.isLocked() || readonly) {
 			allowedIcon = false;

@@ -4,9 +4,10 @@ import { I, S, U, keyboard } from 'Lib';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const { rootId, renderLeftIcons } = props;
-	const object = S.Detail.get(rootId, rootId, []);
 	
 	const onOpen = () => {
+		const object = S.Detail.get(rootId, rootId, []);
+
 		keyboard.disableClose(true);
 		S.Popup.closeAll(null, () => U.Object.openRoute(object));
 	};

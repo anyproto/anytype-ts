@@ -1044,7 +1044,7 @@ class UtilCommon {
 	};
 
 	checkRtl (s: string): boolean {
-		return /^[\u04c7-\u0591\u05D0-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
+		return /^[\u0591-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
 	};
 
 	slug (s: string): string {
@@ -1084,7 +1084,7 @@ class UtilCommon {
 			return text;
 		};
 
-		match.forEach((m: any) => {
+		Array.from(match).forEach((m: any) => {
 			const m0 = String(m[0] || '');
 			const m1 = String(m[1] || '');
 			const m2 = String(m[2] || '');
@@ -1168,6 +1168,48 @@ class UtilCommon {
 		} catch (e) { /**/ };
 
 		iconCache.set(key, ret);
+		return ret;
+	};
+
+	getRouteFromUrl (url: string): string {
+		url = String(url || '');
+
+		if (!url) {
+			return '';
+		};
+
+		let ret = '';
+
+		try {
+			const u = new URL(url);
+			const { hostname, pathname, hash, searchParams, protocol } = u;
+
+			if (protocol == `${J.Constant.protocol}:`) {
+				return url.replace(new RegExp(`^${J.Constant.protocol}://`), '/');
+			};
+
+			switch (hostname) {
+				case 'invite.any.coop': {
+					const cid = pathname.replace(/^\//, '');
+					const key = hash.replace(/^#/, '');
+
+					ret = `/invite/?cid=${cid}&key=${key}`;
+					break;
+				};
+
+				case 'object.any.coop': {
+					const objectId = pathname.replace(/^\//, '');
+					const spaceId = searchParams.get('spaceId');
+					const cid = searchParams.get('inviteId');
+					const key = hash.replace(/^#/, '');
+
+					ret = `/object/?objectId=${objectId}&spaceId=${spaceId}&cid=${cid}&key=${key}`;
+					break;
+				};
+
+			};
+		} catch (e) { /**/ };
+
 		return ret;
 	};
 

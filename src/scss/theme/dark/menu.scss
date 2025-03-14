@@ -24,8 +24,6 @@
             .inner.bgColor-default { background: transparent; }
         }
 
-		.icon.bin-black { background-image: url('#{$themePath}/icon/widget/button/bin.svg'); }
-
         .arrowDirection { background-image: url('#{$themePath}/arrow/menuDirection.svg'); }
     }
 
@@ -308,6 +306,7 @@
 		.input.isReadonly { background: rgba(255, 255, 255, 0.03); }
 
 		.outer {
+			.icon.link { background-image: url('#{$themePath}/icon/widget/button/link.svg'); }
 			.icon.space { background-image: url('#{$themePath}/icon/widget/button/member.svg'); }
 			.icon.export { background-image: url('#{$themePath}/icon/widget/button/export.svg'); }
 		}

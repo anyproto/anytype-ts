@@ -255,6 +255,7 @@ class Sidebar {
 		const container = U.Common.getScrollContainer(isPopup);
 		const pageWidth = (!isPopup ? ww : this.pageFlex.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
+		const hw = pageWidth - ho;
 
 		if ((widthLeft && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
 			toggleX = 84;
@@ -271,12 +272,13 @@ class Sidebar {
 		this.footer.css({ width: '' });
 
 		this.header.toggleClass('sidebarAnimation', animate);
+		this.header.toggleClass('isSmall', hw < 450);
 		this.footer.toggleClass('sidebarAnimation', animate);
-		this.page.toggleClass('sidebarAnimation', animate);
+		//this.page.toggleClass('sidebarAnimation', animate);
 
 		this.loader.css({ width: pageWidth, right: 0 });
-		this.header.css({ width: pageWidth - ho });
-		this.footer.css({ width: pageWidth - ho });
+		this.header.css({ width: hw });
+		this.footer.css({ width: hw });
 		
 		if (!isPopup) {
 			this.dummyLeft.css({ width: widthLeft });

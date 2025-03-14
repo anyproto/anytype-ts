@@ -273,8 +273,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
-			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: S.Record.getTypes() },
-			{ id: 'contentModelRelations', isToggle: true, name: U.Common.plural(10, translate('pluralField')), children: S.Record.getRelations() },
+			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: S.Record.checkHiddenObjects(S.Record.getTypes()) },
+			{ id: 'contentModelRelations', isToggle: true, name: U.Common.plural(10, translate('pluralProperty')), children: S.Record.checkHiddenObjects(S.Record.getRelations()) },
 		];
 
 		return isSpace ? spaceSettings : appSettings;
@@ -336,7 +336,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 		if (U.Object.isTypeOrRelationLayout(item.layout)) {
 			param = Object.assign(param, {
-				id: 'type',
+				id: U.Object.actionByLayout(item.layout),
 				_routeParam_: { 
 					additional: [ 
 						{ key: 'objectId', value: item.id } 
@@ -390,6 +390,7 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 					layout: I.ObjectLayout.Type,
 					recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
 					recommendedRelations: recommended.map(mapper).filter(it => it),
+					defaultTypeId: String(S.Record.getPageType()?.id || ''),
 				};
 
 				sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });

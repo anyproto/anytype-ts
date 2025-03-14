@@ -47,6 +47,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	timeoutMove = 0;
 	timeoutScreen = 0;
 	timeoutLoading = 0;
+	timeoutScroll = 0;
 
 	frameMove = 0;
 	frameResize = 0;
@@ -600,7 +601,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// Undo
-		keyboard.shortcut(`${cmd}+z`, e, () => {
+		keyboard.shortcut('undo', e, () => {
 			if (!readonly) {
 				e.preventDefault();
 				keyboard.onUndo(rootId, 'editor');
@@ -610,7 +611,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// Redo
-		keyboard.shortcut(`${cmd}+shift+z`, e, () => {
+		keyboard.shortcut('redo', e, () => {
 			if (readonly) {
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
@@ -620,7 +621,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// History
-		keyboard.shortcut(`${cmd}+alt+h`, e, () => {
+		keyboard.shortcut('history', e, () => {
 			e.preventDefault();
 			this.onHistory(e);
 
@@ -683,7 +684,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			// Duplicate
-			keyboard.shortcut(`${cmd}+d`, e, () => {
+			keyboard.shortcut('duplicate', e, () => {
 				if (readonly) {
 					return;
 				};
@@ -709,7 +710,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			// Open action menu
-			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, () => {
+			keyboard.shortcut('menuAction', e, () => {
 				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					S.Menu.open('blockAction', { 
 						element: `#block-${ids[0]}`,
@@ -860,19 +861,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			// Undo
-			keyboard.shortcut(`${cmd}+z`, e, () => {
+			keyboard.shortcut('undo', e, () => {
 				e.preventDefault();
 				keyboard.onUndo(rootId, 'editor');
 			});
 
 			// Redo
-			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
+			keyboard.shortcut('redo', e, () => {
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
 			});
 
 			// Search
-			keyboard.shortcut(`${cmd}+f`, e, () => {
+			keyboard.shortcut('searchText', e, () => {
 				keyboard.onSearchMenu(text.substring(range.from, range.to), 'editor');
 			});
 
@@ -892,19 +893,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		// History
-		keyboard.shortcut(`${cmd}+alt+h`, e, () => {
+		keyboard.shortcut('history', e, () => {
 			e.preventDefault();
 			this.onHistory(e);
 		});
 
 		// Duplicate
-		keyboard.shortcut(`${cmd}+d`, e, () => {
+		keyboard.shortcut('duplicate', e, () => {
 			e.preventDefault();
 			Action.duplicate(rootId, rootId, block.id, [ block.id ], I.BlockPosition.Bottom);
 		});
 
 		// Open action menu
-		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, () => {
+		keyboard.shortcut('menuAction', e, () => {
 			S.Menu.close('blockContext', () => {
 				S.Menu.open('blockAction', { 
 					element: `#block-${block.id}`,
@@ -942,7 +943,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (range.from == range.to) {
-			keyboard.shortcut(`${cmd}+k`, e, () => keyboard.onSearchPopup(analytics.route.shortcut));
+			keyboard.shortcut('search', e, () => keyboard.onSearchPopup(analytics.route.shortcut));
 		};
 
 		if (!isInsideTable && block.isText()) {
@@ -1022,16 +1023,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	getStyleParam () {
 		const cmd = keyboard.cmdKey();
 		return [
-			{ key: `${cmd}+0`, style: I.TextStyle.Paragraph },
-			{ key: `${cmd}+1`, style: I.TextStyle.Header1 },
-			{ key: `${cmd}+2`, style: I.TextStyle.Header2 },
-			{ key: `${cmd}+3`, style: I.TextStyle.Header3 },
-			{ key: `${cmd}+4`, style: I.TextStyle.Quote },
-			{ key: `${cmd}+5`, style: I.TextStyle.Callout },
-			{ key: `${cmd}+6`, style: I.TextStyle.Checkbox },
-			{ key: `${cmd}+7`, style: I.TextStyle.Bulleted },
-			{ key: `${cmd}+8`, style: I.TextStyle.Numbered },
-			{ key: `${cmd}+9`, style: I.TextStyle.Toggle },
+			{ key: 'turnBlock0', style: I.TextStyle.Paragraph },
+			{ key: 'turnBlock1', style: I.TextStyle.Header1 },
+			{ key: 'turnBlock2', style: I.TextStyle.Header2 },
+			{ key: 'turnBlock3', style: I.TextStyle.Header3 },
+			{ key: 'turnBlock4', style: I.TextStyle.Quote },
+			{ key: 'turnBlock5', style: I.TextStyle.Callout },
+			{ key: 'turnBlock6', style: I.TextStyle.Checkbox },
+			{ key: 'turnBlock7', style: I.TextStyle.Bulleted },
+			{ key: 'turnBlock8', style: I.TextStyle.Numbered },
+			{ key: 'turnBlock9', style: I.TextStyle.Toggle },
 		];
 	};
 
@@ -1781,7 +1782,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
 
-		Storage.setScroll('editor', rootId, top, isPopup);
+		window.clearTimeout(this.timeoutScroll);
+		this.timeoutScroll = window.setTimeout(() => {
+			Storage.setScroll('editor', rootId, top, isPopup);
+		}, 50);
+
 		Preview.previewHide(false);
 	};
 	
@@ -1832,13 +1837,23 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			data = this.getClipboardData(e);
 		};
 
-		if (files.length && !data.files.length) {
-			U.Common.saveClipboardFiles(files, data, data => this.onPasteEvent(e, props, data));
-			return;
-		};
-
-		e.preventDefault();
-		this.onPaste(data);
+		// Priorize HTML content
+		const hasHtml = data && data.html;
+		
+		if (hasHtml) {
+        	e.preventDefault();
+        	this.onPaste(data);
+	    } else {
+	        const clipboardItems = (e.clipboardData || e.originalEvent.clipboardData).items;
+	        const files = U.Common.getDataTransferFiles(clipboardItems);
+	        
+	        if (files.length && !data.files.length) {
+	            U.Common.saveClipboardFiles(files, data, data => this.onPasteEvent(e, props, data));
+	        } else {
+	            e.preventDefault();
+	            this.onPaste(data);
+	        };
+	    };
 	};
 
 	onPaste (data: any) {
@@ -2319,7 +2334,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const cover = node.find('.block.blockCover');
 			const pageContainer = U.Common.getPageContainer(isPopup);
 			const header = pageContainer.find('#header');
-			const root = S.Block.getLeaf(rootId, rootId);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const hh = isPopup ? header.height() : J.Size.header;
 
@@ -2393,6 +2407,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.refHeader.refDrag.setValue(v);
 			this.refHeader.setPercent(v);
 		};
+
+		$('.resizable').trigger('resizeInit');
 	};
 
 	getWidth (w: number) {

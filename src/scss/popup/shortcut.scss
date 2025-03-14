@@ -13,9 +13,8 @@
 		.head {
 			.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 16px; }
 			.side.left { flex-grow: 1; }
-			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; }
 
-			.icon.withBackground { width: 24px !important; height: 24px !important; }
 			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 			.icon.close { background-image: url('~img/icon/close.svg'); }
 

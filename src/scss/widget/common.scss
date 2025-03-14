@@ -6,28 +6,45 @@
 	.ReactVirtualized__List { overscroll-behavior: none; }
 
 	.head { 
-		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; justify-content: space-between; 
-		padding: 12px 16px 10px 16px;
+		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 10px 16px 8px 12px;
 	}
 	.head {
-		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; @include text-paragraph; font-weight: 600; width: 100%; }
+		.side.left { flex-grow: 1; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; overflow: hidden; }
+		.side.right { flex-shrink: 0; }	
+
+		.clickable { 
+			@include text-paragraph; font-weight: 600; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; position: relative; 
+			overflow: hidden; padding: 2px 4px;
+		}
 		.clickable {
+			.iconObject, .icon { flex-shrink: 0; }
+			.icon { width: 18px; height: 18px; background-size: 16px; }
 			.name { @include text-overflow-nw; }
 			.count { color: var(--color-text-secondary); }
 		}
+		.clickable::after { 
+			opacity: 0; content: ''; width: 100%; height: 100%; left: 0px; top: 0px; border-radius: 6px; z-index: 1;
+			pointer-events: none; position: absolute; transition: opacity $transitionCommon; background: var(--color-shape-highlight-medium);
+		}
+		.clickable:hover {
+			&::after { opacity: 1; }
+			.iconWrap.collapse { display: flex; }
+			.headerIcon { display: none; }
+		}
 
-		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+		.iconWrap { width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 		.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
 		.iconWrap.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
+		.iconWrap.collapse { display: none; width: 18px; height: 18px; }
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
 		.icon.options { background-image: url('~img/icon/widget/options.svg'); }
-		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
 		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
+		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
 
-		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; position: relative; z-index: 2; }
+		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; } 
 	}
 	.head:hover {
@@ -78,19 +95,23 @@
 .widget.active, .widget:hover {
 	.head { padding-right: 8px; }
 	.head {
-		.clickable { width: calc(100% - 60px); }
 		.buttons { display: flex; }
-		.iconWrap.options { background-color: var(--color-shape-highlight-medium); }
+	}
+}
+
+.widget.active {
+	.head {
+		.iconWrap.more { background-color: var(--color-shape-highlight-medium); }
 	}
 }
 
 .widget.isPreview {
 	.head { border-bottom: 1px solid var(--color-shape-secondary); padding: 20px 16px 16px 8px !important; }
 	.head::before { top: 18px; }
-	.head > .flex > .clickable { width: calc(100% - 30px); }
-}
-.widget.isPreview:hover {
-	.head > .flex > .clickable { width: calc(100% - 90px); }
+	.head {
+		.headerIcon { display: block !important; }
+		.clickable::after { display: none; }
+	}
 }
 
 .widget.isClosed {
@@ -100,19 +121,8 @@
 
 .widget.widgetLink {
 	.head { padding-bottom: 12px; }
-	.iconWrap.collapse { display: none; }
-}
-.widget.widgetLink:hover {
-	.head > .flex > .clickable { width: calc(100% - 36px); }
-}
-
-.button.widget { 
-	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; font-weight: 600; padding: 14px 16px;
-	display: flex; position: relative; gap: 0px 12px; justify-content: flex-start; text-align: left;
-}
-.button.widget {
-	.icon { height: 20px; width: 20px; margin: 0px; flex-shrink: 0; }
-	.icon.bin { background-image: url('~img/icon/widget/button/bin.svg'); }
+	.headerIcon { display: block !important; }
+	.iconWrap.collapse { display: none !important; }
 }
 
 @import "./space";

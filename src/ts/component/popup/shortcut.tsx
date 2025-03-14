@@ -1,12 +1,11 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Filter, Icon, Select, Label, Error } from 'Component';
-import { I, U, J, S, translate, keyboard, Key, Storage } from 'Lib';
+import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action } from 'Lib';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { getId, close } = props;
-	const { config } = S.Common;
 	const [ page, setPage ] = useState('');
 	const [ filter, setFilter ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
@@ -22,6 +21,64 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onClick = (item: any) => {
 		setEditingId(item.id);
+	};
+
+	const onMenu = () => {
+		const options = [
+			{ id: 'export', name: translate('popupShortcutExport') },
+			{ id: 'import', name: translate('popupShortcutImport') },
+			{ id: 'reset', name: translate('popupShortcutReset') },
+		];
+
+		S.Menu.open('select', {
+			element: `#${getId()} #icon-more`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'export': {
+							const ret = [];
+							const items = J.Shortcut.getItems();
+
+							for (const k in items) {
+								const item = items[k];
+
+								if (item.id) {
+									ret.push({ id: item.id, keys: item.keys	});
+								};
+							};
+
+							Action.openDirectoryDialog({}, paths => {
+								if (paths.length) {
+									Renderer.send('shortcutExport', paths[0], ret);
+								};
+							});
+							break;
+						};
+
+						case 'import': {
+							Action.openFileDialog({ extensions: [ 'json' ] }, paths => {
+								if (paths.length) {
+									Renderer.send('shortcutImport', paths[0]).then((data: any) => {
+										Storage.setShortcuts(data || {});
+										setDummy(dummy + 1);
+									});
+								};
+							});
+							break;
+						};
+
+						case 'reset': {
+							error.current = {};
+							Storage.resetShortcuts();
+							setDummy(dummy + 1);
+							break;
+						};
+					};
+				},
+			}
+		});
 	};
 
 	const Section = (item: any) => {
@@ -51,7 +108,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const Item = (item: any) => {
 		const cn = [ 'item' ];
-		const canEdit = item.id && !item.noEdit && config.experimental;
+		const canEdit = item.id && !item.noEdit;
 
 		let symbols = item.symbols || [];
 		let onClickHandler = () => {};
@@ -97,7 +154,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		for (const i in items) {
 			const item = items[i];
 
-			if (!item.keys) {
+			if (!item.keys || (item.id == id)) {
 				continue;
 			};
 
@@ -113,70 +170,85 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
-	useEffect(() => {
+	const clear = () => {
+		error.current = {};
+		setEditingId('');
+		setEditingKeys([]);
+		window.clearTimeout(timeout.current);
+	};
 
+	useEffect(() => {
 		return () => {
 			window.clearTimeout(timeout.current);
 			keyboard.setShortcutEditing(false);
+			$(window).off('keyup.shortcut keydown.shortcut');
 		};
-
 	}, []);
 
 	useEffect(() => {
 		const win = $(window);
+		const codeChecks = [ 'key', 'digit' ];
+		const codes = new Set();
 		const setTimeout = () => {
 			window.clearTimeout(timeout.current);
-			timeout.current = window.setTimeout(() => {
-				keyboard.initShortcuts();
-				setEditingId('');
-			}, 2000);
+			timeout.current = window.setTimeout(() => clear(), 2000);
 		};
+
+		let pressed = [];
 
 		win.off('keyup.shortcut keydown.shortcut');
 		keyboard.setShortcutEditing(!!editingId);
 
-		if (editingId) {
-			let pressed = [];
-
-			win.on('keydown.shortcut', (e: any) => {
-				e.preventDefault();
-				e.stopPropagation();
-
-				const metaKeys = keyboard.metaKeys(e);
-				const key = keyboard.eventKey(e);
-				const code = String(e.code || '').toLowerCase();
-				const skip = [ Key.meta, Key.ctrl ];
-
-				if (key == Key.escape) {
-					setEditingId('');
-					window.clearTimeout(timeout.current);
-					return;
-				};
-
-				if (metaKeys.length) {
-					pressed = pressed.concat(metaKeys);
-				};
-
-				if (!skip.includes(key)) {
-					if (code.startsWith('key')) {
-						pressed.push(code.replace('key', ''));
-					} else 
-					if (code.startsWith('digit')) {
-						pressed.push(code.replace('digit', ''));
-					} else {
-						pressed.push(key);
-					};
-				};
-
-				pressed = U.Common.arrayUnique(pressed);
-
-				checkConflicts(editingId, pressed);
-
-				Storage.updateShortcuts(editingId, pressed);
-				setEditingKeys(pressed);
-				setTimeout();
-			});
+		if (!editingId) {
+			return;
 		};
+
+		win.on('keydown.shortcut', (e: any) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			const metaKeys = keyboard.metaKeys(e);
+			const key = keyboard.eventKey(e);
+			const code = String(e.code || '').toLowerCase();
+			const skip = [ Key.meta, Key.ctrl ];
+
+			if (key == Key.escape) {
+				clear();
+				return;
+			};
+
+			if (metaKeys.length) {
+				pressed = pressed.concat(metaKeys);
+			};
+
+			if (!skip.includes(key)) {
+				let parsedCode = false;
+
+				codeChecks.forEach(c => {
+					if (codes.has(c)) {
+						parsedCode = true;
+						return;
+					};
+
+					if (code.startsWith(c)) {
+						pressed.push(code.replace(c, ''));
+						codes.add(c);
+						parsedCode = true;
+					};
+				});
+
+				if (!parsedCode) {
+					pressed.push(key);
+				};
+			};
+
+			pressed = U.Common.arrayUnique(pressed);
+			checkConflicts(editingId, pressed);
+
+			Storage.updateShortcuts(editingId, pressed);
+			setEditingKeys(pressed);
+			setTimeout();
+		});
 
 	}, [ editingId ]);
 
@@ -219,7 +291,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						<Select id={`${id}-section`} options={sections} value={page} onChange={id => setPage(id)} />
 					</div>
 					<div className="side right">
-						{config.experimental ? <Icon className="more withBackground" /> : ''}
+						<Icon id="icon-more" className="more withBackground" onClick={onMenu} />
 						<Icon className="close withBackground" tooltip={translate('commonClose')} onClick={() => close()} />
 					</div>
 				</div>

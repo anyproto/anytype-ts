@@ -10,8 +10,11 @@ interface Props {
 	tooltip?: string;
 	tooltipCaption?: string;
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
-	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
+	tooltipY?: I.MenuDirection.Top| I.MenuDirection.Center | I.MenuDirection.Bottom;
 	tooltipClassName?: string;
+	tooltipOffsetX?: number;
+	tooltipOffsetY?: number;
+	tooltipDelay?: number;
 	inner?: any;
 	draggable?: boolean;
 	style?: any;
@@ -34,6 +37,9 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	tooltipX = I.MenuDirection.Center,
 	tooltipY = I.MenuDirection.Bottom,
 	tooltipClassName = '',
+	tooltipOffsetX = 0,
+	tooltipOffsetY = 0,
+	tooltipDelay,
 	inner = null,
 	draggable = false,
 	style = {},
@@ -58,7 +64,16 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 		const t = Preview.tooltipCaption(tooltip, tooltipCaption);
 		
 		if (t) {
-			Preview.tooltipShow({ text: t, element: $(nodeRef.current), typeX: tooltipX, typeY: tooltipY, className: tooltipClassName });
+			Preview.tooltipShow({ 
+				text: t, 
+				element: $(nodeRef.current), 
+				typeX: tooltipX, 
+				typeY: tooltipY, 
+				className: tooltipClassName,
+				offsetX: tooltipOffsetX,
+				offsetY: tooltipOffsetY,
+				delay: tooltipDelay,
+			});
 		};
 		
 		if (onMouseEnter) {

@@ -448,12 +448,9 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	};
 
 	const onKeyDown = (e: any) => {
-		const cmd = keyboard.cmdKey();
-		const length = ids.current.length;
+		keyboard.shortcut('searchText', e, () => $('#button-header-search').trigger('click'));
 
-		keyboard.shortcut(`${cmd}+f`, e, () => $('#button-header-search').trigger('click'));
-
-		if (!length) {
+		if (!ids.current.length) {
 			return;
 		};
 

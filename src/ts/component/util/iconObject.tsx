@@ -41,7 +41,6 @@ interface IconObjectRefProps {
 
 const LAYOUTS_WITH_EMOJI_GALLERY = [ 
 	I.ObjectLayout.Page, 
-	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
 	I.ObjectLayout.Human,
 	I.ObjectLayout.Chat,
@@ -224,7 +223,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		e.stopPropagation();
 
 		const noGallery = props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human, I.ObjectLayout.Type ].includes(object.layout);
-		const noUpload = props.noUpload || [ I.ObjectLayout.Type ].includes(object.layout);
+		const noUpload = props.noUpload;
 		const withIcons = U.Object.isTypeLayout(object.layout);
 
 		S.Menu.open('smile', { 
@@ -317,7 +316,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		let src = '';
 		if (type.iconName) {
-			src = typeIcon(type.iconName, 1, J.Theme.icon.bg.default);
+			src = typeIcon(type.iconName, 1, J.Theme[theme].iconDefault);
 		} else {
 			src = require(`img/icon/default/${id}.svg`);
 		};
@@ -329,7 +328,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const typeIcon = (id: string, option: number, color?: string) => {
 		const newColor = color || bgByOption(option);
-		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor, stroke: newColor });
+		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor });
 	};
 
 	switch (layout) {
@@ -388,11 +387,16 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.Type: {
+			if (iconImage) {
+				icn = icn.concat([ 'iconImage', 'c' + size ]);
+				cn.push('withImage');
+				icon = <img src={S.Common.imageUrl(iconImage, size * 2)} className={icn.join(' ')} />;
+			} else
 			if (iconName) {
-				const src = typeIcon(iconName, object.iconOption);
+				const src = typeIcon(iconName, iconOption);
 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-				icon = <img src={src} className={icn.join(' ')} />;
+				icon = <img src={src} className={icn.join(' ')} data-id={iconName} />;
 			} else
 			if (iconEmoji) {
 				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
@@ -467,7 +471,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const img = node.find('img');
 
 		img.attr({ 
-			src: U.Common.updateSvg(require('img/icon/error.svg'), { id: 'error', size, fill: J.Theme[theme]?.error }), 
+			src: U.Common.updateSvg(require('img/icon/error.svg'), { id: 'error', size, fill: J.Theme[theme]?.iconDefault }), 
 			class: `iconCommon c${IconSize[size]}`
 		});
 	};
@@ -476,9 +480,15 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const node = $(nodeRef.current);
 		const img = node.find('img');
 
-		img.off('error').on('error', () => {
+		img.off('error load');
+
+		img.on('error', () => {
 			node.addClass('withImageError');
 			setErrorIcon();
+		});
+
+		img.on('load', () => {
+			node.removeClass('withImageError');
 		});
 	}, []);
 

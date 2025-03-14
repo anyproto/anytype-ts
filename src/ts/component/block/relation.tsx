@@ -96,7 +96,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 
 		let ret = false;
 
-		keyboard.shortcut(`${cmd}+z, ${cmd}+shift+z, ${cmd}+y, ${cmd}+v, ${cmd}+x`, e, () => {
+		keyboard.shortcut(`undo, redo, ${cmd}+v, ${cmd}+x`, e, () => {
 			ret = true;
 		});
 

@@ -16,7 +16,6 @@ class UtilObject {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
@@ -26,6 +25,7 @@ class UtilObject {
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 			case I.ObjectLayout.Space:
+			case I.ObjectLayout.ChatOld:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
@@ -221,7 +221,8 @@ class UtilObject {
 	setTypeIcon (rootId: string, iconName: string, iconOption: number, callBack?: (message: any) => void) {
 		C.ObjectListSetDetails([ rootId ], [
 			{ key: 'iconName', value: String(iconName || '') },
-			{ key: 'iconOption', value: Number(iconOption || 1) },
+			{ key: 'iconOption', value: Number(iconOption) || 1 },
+			{ key: 'iconImage', value: '' },
 		], callBack);
 	};
 	
@@ -417,7 +418,12 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
+			I.ObjectLayout.Type,
 		];
+	};
+
+	getLayoutsForTypeSelection () {
+		return this.getPageLayouts().concat(this.getSetLayouts()).filter(it => !this.isTypeLayout(it));
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
@@ -478,12 +484,11 @@ class UtilObject {
 
 	isAllowedTemplate (typeId: string): boolean {
 		const type = S.Record.getTypeById(typeId);
-
-		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
+		if (!type || [ J.Constant.typeKey.template, J.Constant.typeKey.type ].includes(type.uniqueKey)) {
 			return false;
 		};
 
-		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+		return !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout);
 	};
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
@@ -584,6 +589,70 @@ class UtilObject {
 		C.ObjectRelationDelete(id, [ 'layout', 'layoutAlign' ]);
 		C.ObjectListSetDetails([ id ], [ { key: 'featuredRelations', value: featured } ]);
 		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
+
+		analytics.event('ResetToTypeDefault');
+	};
+
+	getTypeRelationIds (id: string) {
+		const type = S.Record.getTypeById(id);
+		if (!type) {
+			return [];
+		};
+
+		return Relation.getArrayValue(type.recommendedRelations).
+			concat(Relation.getArrayValue(type.recommendedFeaturedRelations)).
+			concat(Relation.getArrayValue(type.recommendedHiddenRelations)).
+			concat(Relation.getArrayValue(type.recommendedFileRelations));
+	};
+
+	getTypeRelationKeys (id: string) {
+		return this.getTypeRelationIds(id).
+			map(it => S.Record.getRelationById(it)).
+			filter(it => it && it.relationKey).
+			map(it => it.relationKey);
+	};
+
+	copyLink (object: any, space: any, type: string, route: string) {
+		const cb = (link: string) => {
+			U.Common.copyToast(translate('commonLink'), link);
+			analytics.event('CopyLink', { route });
+		};
+
+		let link = '';
+
+		switch (type) {
+			case 'deeplink': {
+				link = `${J.Constant.protocol}://${U.Object.universalRoute(object)}`;
+				break;
+			};
+
+			case 'web': {
+				link = `https://object.any.coop/${object.id}?spaceId=${space.targetSpaceId}`;
+				break;
+			};
+		};
+		
+		if (space.isShared) {
+			U.Space.getInvite(space.targetSpaceId, (cid: string, key: string) => {
+				if (cid && key) {
+					switch (type) {
+						case 'deeplink': {
+							cb(link + `&cid=${cid}&key=${key}`);
+							break;
+						};
+
+						case 'web': {
+							cb(link + `&inviteId=${cid}#${key}`);
+							break;
+						};
+					};
+				} else {
+					cb(link);
+				};
+			});
+		} else {
+			cb(link);
+		};
 	};
 
 };

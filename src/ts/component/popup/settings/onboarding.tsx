@@ -1,11 +1,18 @@
 import * as React from 'react';
-import { Title, Label, Select, Button } from 'Component';
+import { Title, Label, Select, Button, Error } from 'Component';
 import { I, S, U, translate, Action, analytics, Renderer, Preview } from 'Lib';
 import { observer } from 'mobx-react';
+
+interface State {
+	error: string;
+};
 
 const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup> {
 
 	config: any = {};
+	state = {
+		error: '',
+	};
 	refMode = null;
 
 	constructor (props: I.Popup) {
@@ -32,6 +39,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	render () {
+		const { error } = this.state;
 		const { mode, path, userPath } = this.config;
 		const { interfaceLang } = S.Common;
 		const interfaceLanguages = U.Menu.getInterfaceLanguages();
@@ -103,6 +111,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 					<div className="buttons">
 						<Button text={translate('commonSave')} onClick={this.onSave} />
 					</div>
+
+					<Error text={error} />
 				</div>
 			</div>
 		);
@@ -132,7 +142,16 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onUpload () {
-		Action.openFileDialog({ extensions: [ 'yml', 'yaml' ] }, (paths: string[]) => this.onChange('path', paths[0]));
+		Action.openFileDialog({ extensions: [ 'yml', 'yaml' ] }, (paths: string[]) => {
+			Renderer.send('moveNetworkConfig', paths[0]).then(res => {
+				if (res.path) {
+					this.onChange('path', res.path);
+				} else 
+				if (res.error) {
+					this.setState({ error: res.error });
+				};
+			});
+		});
 	};
 
 	onSave () {

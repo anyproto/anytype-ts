@@ -92,9 +92,11 @@ class DetailStore {
 				continue;
 			};
 
+			//console.log('[S.Detail].update: ', k, item.details[k]);
+
 			const el = list.find(it => it.relationKey == k);
 			if (el) {
-				el.value = item.details[k];
+				set(el, 'value', item.details[k]);
 			} else {
 				list.push(this.createListItem(k, item.details[k]));
 			};
@@ -366,18 +368,6 @@ class DetailStore {
 		object.isCanceled = object.status == I.ParticipantStatus.Canceled;
 
 		return object;
-	};
-
-	public getTypeRelationIds (id: string): string[] {
-		const type = S.Record.getTypeById(id);
-		if (!type) {
-			return [];
-		};
-
-		return [].
-			concat(type.recommendedRelations).
-			concat(type.recommendedFeaturedRelations).
-			concat(type.recommendedHiddenRelations);
 	};
 
 };
