@@ -10,6 +10,7 @@
 
 		.objectManagerWrapper { flex-grow: 1; }
 
+		.items { overflow: hidden; }
 		.items {
 			.row { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: 32px; }
 

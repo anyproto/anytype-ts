@@ -45,6 +45,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 					collectionId={collectionId}
 					textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
 					onAfterLoad={this.onAfterLoad}
+					scrollElement={$(`#${getId()}-innerWrap`).get(0)}
 				/>
 
 				<div className="buttons">

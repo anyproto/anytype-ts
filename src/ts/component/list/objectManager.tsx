@@ -20,6 +20,8 @@ interface Props {
 	isReadonly?: boolean;
 	ignoreArchived?: boolean;
 	ignoreHidden?: boolean;
+	disableHeight?: boolean;
+	scrollElement?: HTMLElement;
 	resize?: () => void;
 	onAfterLoad?: (message: any) => void;
 };
@@ -47,6 +49,8 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	ignoreArchived = true,
 	ignoreHidden = true,
 	isPopup = false,
+	disableHeight = true,
+	scrollElement,
 	resize,
 	onAfterLoad
 }, ref) => {
@@ -62,6 +66,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	const [ isLoading, setIsLoading ] = useState(false);
 	const recordIds = S.Record.getRecordIds(subId, '');
 	const records = S.Record.getRecords(subId);
+	const scrollContainer = scrollElement || isPopup ? $('#popupPage-innerWrap').get(0) : window;
 
 	const onFilterShow = () => {
 		$(filterWrapperRef.current).addClass('active');
@@ -329,25 +334,33 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 						isRowLoaded={({ index }) => true}
 					>
 						{({ onRowsRendered }) => (
-							<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+							<WindowScroller scrollElement={scrollContainer}>
 								{({ height }) => (
-									<AutoSizer disableHeight={true}>
-										{({ width }) => (
-											<List
-												autoHeight={true}
-												ref={listRef}
-												height={Number(height) || 0}
-												width={Number(width) || 0}
-												deferredMeasurmentCache={cache.current}
-												rowCount={items.length}
-												rowHeight={rowHeight || 64}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												onScroll={onScroll}
-												scrollToAlignment="start"
-											/>
-										)}
+									<AutoSizer disableHeight={disableHeight}>
+										{({ width }) => {
+											const props: any = {};
+
+											if (disableHeight) {
+												props.autoHeight = true;
+											};
+
+											return (
+												<List
+													{...props}
+													ref={listRef}
+													height={Number(height) || 0}
+													width={Number(width) || 0}
+													deferredMeasurmentCache={cache.current}
+													rowCount={items.length}
+													rowHeight={rowHeight || 64}
+													rowRenderer={rowRenderer}
+													onRowsRendered={onRowsRendered}
+													overscanRowCount={10}
+													onScroll={onScroll}
+													scrollToAlignment="start"
+												/>
+											);
+										}}
 									</AutoSizer>
 								)}
 							</WindowScroller>
