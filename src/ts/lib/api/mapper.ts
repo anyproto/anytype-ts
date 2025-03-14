@@ -1693,11 +1693,17 @@ export const Mapper = {
 
 		ChatStateUpdate: (obj: Events.Event.Chat.UpdateState) => {
 			return {
-				state: Mapper.From.ChatState(obj.getState())
+				state: Mapper.From.ChatState(obj.getState()),
+				subIds: obj.getSubidsList(),
 			};
 		},
 
 		ChatUpdateReadStatus: (obj: Events.Event.Chat.UpdateReadStatus) => {
+			return {
+				ids: obj.getIdsList(),
+				isRead: obj.getIsread(),
+				subIds: obj.getSubidsList(),
+			};
 		},
 
 	},
