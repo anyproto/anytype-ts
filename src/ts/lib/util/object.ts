@@ -27,6 +27,7 @@ class UtilObject {
 			case I.ObjectLayout.Space:
 			case I.ObjectLayout.ChatOld:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
+			case I.ObjectLayout.Tag:		 r = 'tag'; break;
 			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
 		return r;
@@ -402,6 +403,10 @@ class UtilObject {
 		return layout == I.ObjectLayout.File;
 	};
 
+	isTagLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Tag;
+	};
+
 	// --------------------------------------------------------- //
 
 	getPageLayouts (): I.ObjectLayout[] {
@@ -427,7 +432,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Tag ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {

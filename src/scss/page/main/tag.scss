@@ -1,0 +1,27 @@
+@import "~scss/_mixins";
+
+.pageMainTag { user-select: none; }
+.pageMainTag {
+    .wrapper { width: 704px; margin: 0px auto; padding: 74px 0px 80px 0px; }
+    .wrapper {
+        .headSimple { margin-bottom: 52px; }
+
+        .block {
+            .wrapMenu { display: none; }
+            .wrapContent { width: 100%; }
+        }
+
+        .section {
+            .title { @include text-header2; margin-bottom: 14px; }
+        }
+
+        .listObject {
+            .table {
+                .row,
+                .row.isHead {
+                    .cell:first-child { padding-left: 0px; }
+                }
+            }
+        }
+    }
+}
