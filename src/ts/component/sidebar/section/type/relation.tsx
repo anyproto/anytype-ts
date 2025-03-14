@@ -37,11 +37,15 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		e.preventDefault();
 		e.stopPropagation();
 
+		const element = $(nodeRef.current).find(`#item-${item.id}`);
+
 		S.Menu.open('select', {
-			element: $(nodeRef.current).find(`#item-${item.id} .icon.more`),
+			element: element.find('.icon.more'),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
+			onOpen: () => element.addClass('active'),
+			onClose: () => element.removeClass('active'),
 			data: {
 				options: [
 					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType') },
