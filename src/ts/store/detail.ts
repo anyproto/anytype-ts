@@ -92,9 +92,11 @@ class DetailStore {
 				continue;
 			};
 
+			//console.log('[S.Detail].update: ', k, item.details[k]);
+
 			const el = list.find(it => it.relationKey == k);
 			if (el) {
-				el.value = item.details[k];
+				set(el, 'value', item.details[k]);
 			} else {
 				list.push(this.createListItem(k, item.details[k]));
 			};
@@ -135,13 +137,11 @@ class DetailStore {
 			return;
 		};
 
-		let list = [];
-
 		if (keys && keys.length) {
-			list = (map.get(id) || []).filter(it => !keys.includes(it.relationKey));
+			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
+		} else {
+			map.set(id, []);
 		};
-
-		map.set(id, list);
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
@@ -155,6 +155,10 @@ class DetailStore {
 		const object = { id };
 
 		if (withKeys) {
+			if (keys.has('layout')) {
+				keys.add('resolvedLayout');
+			};
+
 			list = list.filter(it => keys.has(it.relationKey));
 		};
 
@@ -192,11 +196,9 @@ class DetailStore {
 		object.name = Relation.getStringValue(object.name) || translate('defaultNamePage');
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 		object.type = Relation.getStringValue(object.type);
-		object.layout = Number(object.layout) || I.ObjectLayout.Page;
 		object.origin = Number(object.origin) || I.ObjectOrigin.None;
 		object.iconImage = Relation.getStringValue(object.iconImage);
 		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
-		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.coverX = Number(object.coverX) || 0;
 		object.coverY = Number(object.coverY) || 0;
 		object.coverScale = Number(object.coverScale) || 0;
@@ -206,6 +208,12 @@ class DetailStore {
 		object.isHidden = Boolean(object.isHidden);
 		object.isReadonly = Boolean(object.isReadonly);
 		object.isDeleted = Boolean(object.isDeleted);
+
+		if (undefined === object.layout) {
+			object.layout = object.resolvedLayout;
+		};
+
+		object.layout = Number(object.layout) || I.ObjectLayout.Page;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedObject');
@@ -231,10 +239,16 @@ class DetailStore {
 	private mapType (object: any) {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		object.recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
+		object.recommendedHiddenRelations = Relation.getArrayValue(object.recommendedHiddenRelations);
+		object.recommendedFileRelations = Relation.getArrayValue(object.recommendedFileRelations);
 		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
+		object.defaultTypeId = Relation.getStringValue(object.defaultTypeId);
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
+		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
+		object.layoutWidth = Number(object.layoutWidth) || 0;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');

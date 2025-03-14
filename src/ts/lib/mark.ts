@@ -635,7 +635,7 @@ class Mark {
 		
 		switch (type) {
 			case I.MarkType.Link: {
-				attr = `href="${param}"`;
+				attr = `href="${U.Common.urlFix(param)}"`;
 				break;
 			};
 
@@ -717,6 +717,10 @@ class Mark {
 	};
 
 	getTag (t: I.MarkType): string {
+		if (t == I.MarkType.Link) {
+			return 'a';
+		};
+
 		return I.MarkType[t] ? `markup${I.MarkType[t].toLowerCase()}` : '';
 	};
 

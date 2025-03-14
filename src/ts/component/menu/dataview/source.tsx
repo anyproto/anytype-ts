@@ -61,7 +61,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 							className="item add" 
 							onClick={this.onAdd} 
 							onMouseEnter={() => setHover({ id: 'add' })} 
-							onMouseLeave={() => setHover()}
+							//onMouseLeave={() => setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewSourceAddRelation')}</div>
@@ -106,7 +106,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			data: {
 				skipIds: value,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc }

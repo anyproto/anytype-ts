@@ -1,5 +1,5 @@
 .block.blockCover {
-    .loaderWrapper { background: rgba(0,0,0,0.3); }
+    .loaderWrapper { background: var(--color-shape-transparent-tertiary); }
 
 	.author, .author a { color: var(--color-text-primary); }
 

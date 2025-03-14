@@ -90,7 +90,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 						if (withImport) {
 							close(() => {
-								sidebar.settingsOpen('importIndex');
+								U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
 							});
 						};
 

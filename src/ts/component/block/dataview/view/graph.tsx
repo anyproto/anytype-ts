@@ -78,7 +78,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 			};
 
 			this.data.edges = message.edges;
-			this.data.nodes = message.nodes;
+			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 			this.forceUpdate();
 
 			if (this.refGraph) {

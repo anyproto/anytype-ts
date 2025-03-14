@@ -125,6 +125,8 @@ class UtilMenu {
 				type: I.BlockType.Page, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
+				iconName: type.iconName,
+				iconOption: type.iconOption,
 				name: type.name || translate('defaultNamePage'), 
 				description: type.description,
 				isObject: true,
@@ -136,13 +138,15 @@ class UtilMenu {
 	};
 
 	getBlockOther () {
+		const aliasInline = [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
+
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
 			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable', aliases: [ 'table' ] },
-			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'inline collection' ] },
-			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'inline set' ] },
+			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: aliasInline },
+			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: aliasInline },
 		].map(this.mapperBlock);
 	};
 
@@ -274,6 +278,10 @@ class UtilMenu {
 		});
 	};
 
+	getLayoutIcon (layout: I.ObjectLayout) {
+		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
+	};
+
 	getLayouts () {
 		return [
 			{ id: I.ObjectLayout.Page },
@@ -290,7 +298,7 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Note },
 		].map(it => ({ 
 			...it,
-			icon: `layout c-${I.ObjectLayout[it.id].toLowerCase()}`,
+			icon: this.getLayoutIcon(it.id),
 			name: translate(`layout${it.id}`),
 		}));
 	};
@@ -405,31 +413,25 @@ class UtilMenu {
 		];
 		if (!isSystem) {
 			options.push(I.WidgetLayout.Link);
+		} else
+		if (id == J.Constant.widgetId.bin) {
+			options.unshift(I.WidgetLayout.Link);
 		};
 
-		if (id) {
-			if (!isSystem) {
-				const isSet = U.Object.isInSetLayouts(layout);
-				const setLayouts = U.Object.getSetLayouts();
-				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
+		if (id && !isSystem) {
+			const isSet = U.Object.isInSetLayouts(layout);
+			const setLayouts = U.Object.getSetLayouts();
+			const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 
-				// Sets can only become Link and List layouts, non-sets can't become List
-				if (treeSkipLayouts.includes(layout)) {
-					options = options.filter(it => it != I.WidgetLayout.Tree);
-				};
-				if (!isSet) {
-					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
-				} else {
-					options = options.filter(it => it != I.WidgetLayout.Tree);
-					options.unshift(I.WidgetLayout.View);
-				};
-			};
-
-			if ([ 
-				J.Constant.widgetId.set, 
-				J.Constant.widgetId.collection,
-			].includes(id)) {
+			// Sets can only become Link and List layouts, non-sets can't become List
+			if (treeSkipLayouts.includes(layout)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
+			};
+			if (!isSet) {
+				options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
+			} else {
+				options = options.filter(it => it != I.WidgetLayout.Tree);
+				options.unshift(I.WidgetLayout.View);
 			};
 		};
 
@@ -560,7 +562,6 @@ class UtilMenu {
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
 		const { spaceview } = S.Block;
-		const templateType = S.Record.getTemplateType();
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
@@ -577,7 +578,7 @@ class UtilMenu {
 
 				U.Data.createSubSpaceSubscriptions([ space ], () => {
 					if (openRoute) {
-						U.Space.openDashboard('route');
+						U.Space.openDashboard();
 					};
 				});
 			});
@@ -619,8 +620,8 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant) },
-										{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+										{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant) },
+										{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 									],
 									canAdd: true,
 									onSelect: el => {
@@ -857,12 +858,11 @@ class UtilMenu {
 
 	getFixedWidgets () {
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
-			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
-			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
-			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },
-			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
-		].filter(it => it);
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-star' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
+			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin' },
+		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 
 	sortOrFilterRelationSelect (menuParam: any, param: any) {
@@ -977,7 +977,7 @@ class UtilMenu {
 								if (isClosed) {
 									sidebar.open(width);
 								} else {
-									sidebar.resizePage(width, false);
+									sidebar.resizePage(width, null, false);
 								};
 								break;
 							};
@@ -1108,7 +1108,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			sidebar.settingsOpen('importIndex');
+			U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
 		};
 
 		const getClipboardData = async () => {
@@ -1155,7 +1155,9 @@ class UtilMenu {
 				};
 
 				if (url) {
-					C.ObjectCreateBookmark({ ...details, source: url }, S.Common.space, (message: any) => {
+					const bookmark = S.Record.getBookmarkType();
+
+					C.ObjectCreateBookmark({ ...details, source: url }, S.Common.space, bookmark?.defaultTemplateId, (message: any) => {
 						cb(message.details, message.middleTime);
 					});
 				} else {
@@ -1256,7 +1258,7 @@ class UtilMenu {
 					onMore,
 					buttons: buttons.map(it => ({ ...it, isButton: true })),
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					onClick: (item: any) => {

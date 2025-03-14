@@ -37,11 +37,10 @@
 	.author a { color: var(--color-bg-primary); }
 
 	.elements {
-		.controlButtons { position: absolute; left: 0px; bottom: 18px; }
+		.controlButtons { position: absolute; left: 0px; bottom: 18px; display: flex; align-items: center; gap: 0px 8px; }
 		.controlButtons.small {
 			.btn { padding: 0px 6px; }
 			.btn {
-				.icon { margin: 0px; }
 				.txt { display: none; }
 			}
 		}
@@ -53,10 +52,9 @@
 		}
 	
 		.btn { 
-			font-weight: 500; font-size: var(--font-size-common); height: 28px; line-height: 28px; display: inline-block;
-			padding: 0px 8px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background $transitionCommon;
+			font-weight: 500; font-size: var(--font-size-common); height: 28px; line-height: 28px; display: flex; align-items: center; gap: 0px 4px;
+			padding: 0px 8px; border-radius: 6px; white-space: nowrap; transition: background $transitionCommon;
 		}
-		.btn:last-child { margin: 0px; }
 
 		.btn.white { background: rgba(255,255,255,0.7); }
 		.btn.white:hover, .btn.white.hover { background: rgba(255,255,255,0.9); }
@@ -64,14 +62,16 @@
 		.btn.black { color: var(--color-bg-primary); background: rgba(0,0,0,0.5); line-height: 22px; }
 		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
 
-		.btn.withIcon { padding: 0px 8px 0px 6px; line-height: 26px; }
+		.btn.withIcon { padding: 0px 8px 0px 6px; }
+		.btn.small { padding: 0px 6px; }
 
 		.btn {
-			.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: middle; }
+			.icon { width: 20px; height: 20px; }
 			.icon.icon { background-image: url('~img/icon/add/icon1.svg'); }
 			.icon.addCover { background-image: url('~img/icon/add/cover1.svg'); }
 			.icon.layout { background-image: url('~img/icon/add/layout1.svg'); }
 			.icon.relation { background-image: url('~img/icon/add/relation1.svg'); }
+			.icon.description { background-image: url('~img/icon/add/description1.svg'); }
 		}
 		
 		.btn.drag { position: absolute; cursor: grab; width: 210px; top: 50%; left: 50%; margin: -12px 0px 0px -105px; }
@@ -82,9 +82,3 @@
 }
 
 .block.blockCover > .wrapContent > .selectionTarget { height: 100%; }
-
-.sidebarAnimation {
-	.block.blockCover {
-		img.cover { transition: all $transitionSidebarTime linear; }
-	}
-}

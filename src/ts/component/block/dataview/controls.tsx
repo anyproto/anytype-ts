@@ -50,9 +50,14 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
-		const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
-		const cmd = keyboard.cmdSymbol();
 		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
+		
+		let isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
+
+		// Force disable for types
+		if (U.Object.isTypeLayout(target.layout)) {
+			isAllowedTemplate = false;
+		};
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
@@ -111,7 +116,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				{views.map((item: I.View, i: number) => (
 					<ViewItem key={i} {...item} index={i} disabled={readonly} />
 				))}
-				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip={translate('blockDataviewControlsViewAdd')} onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus withBackground" tooltip={translate('blockDataviewControlsViewAdd')} onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -153,7 +158,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search withBackground"
 							tooltip={translate('commonSearch')}
-							tooltipCaption={`${cmd} + F`}
+							tooltipCaption={keyboard.getCaption('searchText')}
 							onChange={onFilterChange}
 							onIconClick={this.onFilterShow}
 						/>
@@ -198,7 +203,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this._isMounted = false;
 
 		const { isPopup } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		container.off('mousedown.filter');
@@ -387,12 +392,19 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const sources = getSources();
 		const object = getTarget();
 		const view = getView();
+		const type = S.Record.getTypeById(object.type);
+		
+		let viewType = I.ViewType.Grid;
+		if (type && (undefined !== type.defaultViewType)) {
+			viewType = type.defaultViewType;
+		};
+
 		const newView = {
 			...view,
 			id: '',
-			name: translate(`viewName${I.ViewType.Grid}`),
-			type: I.ViewType.Grid,
-			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, view.type, '')?.id,
+			name: translate(`viewName${viewType}`),
+			type: viewType,
+			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
 			filters: [],
 			sorts: [],
@@ -492,7 +504,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		const { isPopup, isInline } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		this.refFilter.setActive(true);
@@ -559,14 +571,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			node.removeClass('small');
 		};
 
-		const width = sideLeft.outerWidth() + sideRight.outerWidth();
+		const width = sideLeft.outerWidth() + sideRight.outerWidth() + 16;
 		const offset = isPopup ? container.offset().left : 0;
 
-		if (left + width - offset - sw + 50 >= cw) {
-			add = true;
-		};
-		if (isInline && (width >= nw)) {
-			add = true;
+		if (isInline) {
+			add = width > nw;
+		} else {
+			add = left + width - offset - sw + 50 >= cw;
 		};
 
 		if (add) {

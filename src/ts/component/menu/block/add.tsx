@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, C, S, U, J, M, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation } from 'Lib';
+import { I, C, S, U, J, M, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation, Dataview } from 'Lib';
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
@@ -116,9 +116,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 				if (item.isObject) {
 					item.object = { 
-						name: item.name,
-						iconEmoji: item.iconEmoji, 
-						decription: item.description,
+						...item,
 						layout: I.ObjectLayout.Type,
 					};
 					item.iconSize = 40;
@@ -262,22 +260,26 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { config } = S.Common;
-		const object = S.Detail.get(rootId, rootId, [ 'targetObjectType' ]);
+		const object = S.Detail.get(rootId, rootId);
 		const isTemplate = U.Object.isTemplate(object.type);
-		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
+		const objectKeys = S.Detail.getKeys(rootId, rootId);
+		const objectRelations = objectKeys.map(it => S.Record.getRelationByKey(it)).filter(it => it);
+		const typeIds = U.Object.getTypeRelationIds(isTemplate ? object.targetObjectType : object.type);
+		const typeRelations = typeIds.map(it => S.Record.getRelationById(it)).filter(it => it);
+		
+		let ret = [].concat(typeRelations);
 
-		const relations = S.Record.getObjectRelations(rootId, rootId);
-		const relationKeys = relations.map(it => it.relationKey);
-		const typeRelations = (type ? type.recommendedRelations || [] : []).
-			map(it => S.Record.getRelationById(it)).
-			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
+		if (!isTemplate) {
+			ret = ret.concat(objectRelations);
+		};
 
-		const ret = relations.concat(typeRelations).filter(it => !config.debug.hiddenObject && it.isHidden ? false : it.isInstalled).sort(U.Data.sortByName);
+		ret = S.Record.checkHiddenObjects(ret.filter(it => it.isInstalled)).sort(U.Data.sortByName);
 
-		ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
+		if (!isTemplate) {
+			ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
+		};
 
-		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true }));
+		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true, aliases: [ 'relation' ] }));
 	};
 	
 	getSections () {
@@ -349,6 +351,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 			items = items.concat(section.children);
 		};
+
 		return items;
 	};
 	
@@ -416,14 +419,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 				});
 				break;
 			};
 
 			case 'date': {
-				menuId = 'dataviewCalendar';
+				menuId = 'calendar';
 				menuParam.data = Object.assign(menuParam.data, {
 					canEdit: true,
 					value: U.Date.now(),
@@ -467,7 +470,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					canAdd: true,
 					type: I.NavigationType.Link,
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 				});
 				break;

@@ -731,6 +731,11 @@
             .swiper-slide.swiper-slide-prev,
             .swiper-slide.swiper-slide-next { opacity: 0.2; }
             .swiper-slide.swiper-slide-active { opacity: 1; }
+
+            .swiper-button-prev,
+            .swiper-button-next { position: absolute; width: 100%; height: 100%; top: 0px; z-index: 2; }
+            .swiper-button-prev { left: -100%; }
+            .swiper-button-next { right: -100%; }
         }
 
         .slide {

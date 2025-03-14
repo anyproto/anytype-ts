@@ -1,4 +1,4 @@
-import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics } from 'Lib';
+import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation } from 'Lib';
 
 class UtilObject {
 
@@ -16,15 +16,16 @@ class UtilObject {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
+			case I.ObjectLayout.Settings:	 r = 'settings'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 			case I.ObjectLayout.Space:
+			case I.ObjectLayout.ChatOld:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 			case I.ObjectLayout.Tag:		 r = 'tag'; break;
 			case I.ObjectLayout.Date:		 r = 'date'; break;
@@ -189,7 +190,7 @@ class UtilObject {
 				typeKey = type.uniqueKey;
 
 				if (!templateId) {
-					templateId = type.defaultTemplateId || J.Constant.templateId.blank;
+					templateId = type.defaultTemplateId || '';
 				};
 			};
 		};
@@ -221,7 +222,8 @@ class UtilObject {
 	setTypeIcon (rootId: string, iconName: string, iconOption: number, callBack?: (message: any) => void) {
 		C.ObjectListSetDetails([ rootId ], [
 			{ key: 'iconName', value: String(iconName || '') },
-			{ key: 'iconOption', value: Number(iconOption || 1) },
+			{ key: 'iconOption', value: Number(iconOption) || 1 },
+			{ key: 'iconImage', value: '' },
 		], callBack);
 	};
 	
@@ -250,11 +252,6 @@ class UtilObject {
 
 	setDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'done', value: Boolean(done) } ], callBack);
-	};
-
-	setLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		S.Block.update(rootId, rootId, { layout });
-		C.ObjectSetLayout(rootId, layout, callBack);
 	};
 
 	setAlign (rootId: string, align: I.BlockHAlign, callBack?: (message: any) => void) {
@@ -426,11 +423,16 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
+			I.ObjectLayout.Type,
 		];
 	};
 
+	getLayoutsForTypeSelection () {
+		return this.getPageLayouts().concat(this.getSetLayouts()).filter(it => !this.isTypeLayout(it));
+	};
+
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Tag ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Tag ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -487,12 +489,11 @@ class UtilObject {
 
 	isAllowedTemplate (typeId: string): boolean {
 		const type = S.Record.getTypeById(typeId);
-
-		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
+		if (!type || [ J.Constant.typeKey.template, J.Constant.typeKey.type ].includes(type.uniqueKey)) {
 			return false;
 		};
 
-		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+		return !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout);
 	};
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
@@ -520,6 +521,143 @@ class UtilObject {
 				this[fn](object);
 			};
 		});
+	};
+
+	hasEqualLayoutAlign (object: any, type: any): boolean {
+		if (!object || object._empty || !type) {
+			return true;
+		};
+		return (undefined === object.layoutAlign) || (object.layoutAlign === type.layoutAlign);
+	};
+
+	hasEqualLayoutWidth (object: any, type: any): boolean {
+		const root = S.Block.getLeaf(object.id, object.id);
+
+		if (!object || object._empty || !type || !root) {
+			return true;
+		};
+
+		const width = (root?.fields || {}).width;
+		return !width || (width == type.layoutWidth);
+	};
+
+	hasEqualFeaturedRelations (object: any): boolean {
+		if (!object || object._empty) {
+			return true;
+		};
+
+		return Relation.getArrayValue(object.featuredRelations).filter(it => ![ 'description' ].includes(it)).length == 0;
+	};
+
+	hasLayoutConflict (object: any): boolean {
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
+		if (!type) {
+			return false;
+		};
+
+		if (object.layout != type.recommendedLayout) {
+			console.log('[hasLayoutConflict] layout', object.layout, type.recommendedLayout);
+			return true;
+		};
+
+		if (!this.hasEqualLayoutAlign(object, type)) {
+			console.log('[hasLayoutConflict] layoutAlign', object.layoutAlign, type.layoutAlign);
+			return true;
+		};
+
+		if (!this.hasEqualLayoutWidth(object, type)) {
+			console.log('[hasLayoutConflict] layoutWidth', type.layoutWidth);
+			return true;
+		};
+
+		if (!this.hasEqualFeaturedRelations(object)) {
+			console.log('[hasLayoutConflict] featuredRelations');
+			return true;
+		};
+
+		return false;
+	};
+
+	resetLayout (id: string) {
+		const object = S.Detail.get(id, id);
+
+		if (object._empty_) {
+			return;
+		};
+
+		const root = S.Block.getLeaf(id, id);
+		const fields = root.fields || {};
+		const featured = Relation.getArrayValue(object.featuredRelations).filter(it => [ 'description' ].includes(it));
+
+		delete(fields.width);
+
+		C.ObjectRelationDelete(id, [ 'layout', 'layoutAlign' ]);
+		C.ObjectListSetDetails([ id ], [ { key: 'featuredRelations', value: featured } ]);
+		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
+
+		analytics.event('ResetToTypeDefault');
+	};
+
+	getTypeRelationIds (id: string) {
+		const type = S.Record.getTypeById(id);
+		if (!type) {
+			return [];
+		};
+
+		return Relation.getArrayValue(type.recommendedRelations).
+			concat(Relation.getArrayValue(type.recommendedFeaturedRelations)).
+			concat(Relation.getArrayValue(type.recommendedHiddenRelations)).
+			concat(Relation.getArrayValue(type.recommendedFileRelations));
+	};
+
+	getTypeRelationKeys (id: string) {
+		return this.getTypeRelationIds(id).
+			map(it => S.Record.getRelationById(it)).
+			filter(it => it && it.relationKey).
+			map(it => it.relationKey);
+	};
+
+	copyLink (object: any, space: any, type: string, route: string) {
+		const cb = (link: string) => {
+			U.Common.copyToast(translate('commonLink'), link);
+			analytics.event('CopyLink', { route });
+		};
+
+		let link = '';
+
+		switch (type) {
+			case 'deeplink': {
+				link = `${J.Constant.protocol}://${U.Object.universalRoute(object)}`;
+				break;
+			};
+
+			case 'web': {
+				link = `https://object.any.coop/${object.id}?spaceId=${space.targetSpaceId}`;
+				break;
+			};
+		};
+		
+		if (space.isShared) {
+			U.Space.getInvite(space.targetSpaceId, (cid: string, key: string) => {
+				if (cid && key) {
+					switch (type) {
+						case 'deeplink': {
+							cb(link + `&cid=${cid}&key=${key}`);
+							break;
+						};
+
+						case 'web': {
+							cb(link + `&inviteId=${cid}#${key}`);
+							break;
+						};
+					};
+				} else {
+					cb(link);
+				};
+			});
+		} else {
+			cb(link);
+		};
 	};
 
 };

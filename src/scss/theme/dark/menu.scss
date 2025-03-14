@@ -24,8 +24,6 @@
             .inner.bgColor-default { background: transparent; }
         }
 
-		.icon.bin-black { background-image: url('#{$themePath}/icon/widget/button/bin.svg'); }
-
         .arrowDirection { background-image: url('#{$themePath}/arrow/menuDirection.svg'); }
     }
 
@@ -110,18 +108,6 @@
 		.item:hover { background: var(--color-shape-highlight-medium); }
 	}
 
-    /* BlockRelationView */
-
-    .menu.menuBlockRelationView {
-		.item {
-			.icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
-		}
-
-        .item.add:hover { 
-			.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
-        }
-    }
-
 	/* DataviewRelationEdit */
 
 	.menu.menuDataviewRelationEdit {
@@ -142,9 +128,9 @@
 		.item:hover::before { background: var(--color-shape-highlight-medium); }
     }
 
-    /* DataviewCalendar */
+    /* Calendar */
 
-    .menu.menuDataviewCalendar {
+    .menu.menuCalendar {
 		.head {
 			.side.right {
 				.btn { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }
@@ -320,6 +306,7 @@
 		.input.isReadonly { background: rgba(255, 255, 255, 0.03); }
 
 		.outer {
+			.icon.link { background-image: url('#{$themePath}/icon/widget/button/link.svg'); }
 			.icon.space { background-image: url('#{$themePath}/icon/widget/button/member.svg'); }
 			.icon.export { background-image: url('#{$themePath}/icon/widget/button/export.svg'); }
 		}

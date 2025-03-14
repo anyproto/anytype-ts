@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, Action, focus, keyboard, Relation, translate, analytics } from 'Lib';
+import { I, M, S, U, J, C, Action, focus, keyboard, Relation, translate, analytics, sidebar } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -12,6 +12,7 @@ interface Props {
 	withColorPicker?: boolean;
 	colorPickerTitle?: string;
 	relationKey?: string;
+	isPopup?: boolean;
 	onCreate?: () => void;
 	onColorChange?: (color: string) => void;
 	getDotMap?: (start: number, end: number, callback: (res: Map<string, boolean>) => void) => void;
@@ -38,12 +39,13 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		this.onInstall = this.onInstall.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onColorPicker = this.onColorPicker.bind(this);
+		this.onTemplates = this.onTemplates.bind(this);
 	};
 
 	render (): any {
-		const { rootId, onCreate, isContextMenuDisabled, readonly, noIcon, withColorPicker } = this.props;
+		const { rootId, isContextMenuDisabled, readonly, noIcon, withColorPicker } = this.props;
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -51,15 +53,17 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+		const isType = U.Object.isTypeLayout(object.layout);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
-		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
+		const canEditIcon = allowDetails && !isRelation;
 		const cn = [ 'headSimple', check.className ];
 		const titleCn = [ 'title' ];
 		const placeholder = {
 			title: this.props.placeholder,
 			description: translate('placeholderBlockDescription'),
 		};
+		const buttons = [];
 
 		const Editor = (item: any) => (
 			<Editable
@@ -79,7 +83,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			/>
 		);
 
-		let button: React.ReactElement = null;
+		let buttonEdit = null;
+		let buttonCreate = null;
+		let buttonTemplate = null;
 		let descr = null;
 		let featured = null;
 
@@ -87,6 +93,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			if (featuredRelations.includes('description')) {
 				descr = <Editor className="descr" id="description" />;
 			};
+
 			featured = (
 				<Block 
 					{...this.props} 
@@ -104,14 +111,38 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if (isTypeOrRelation) {
 			if (object.isInstalled) {
-				const text = isRelation ? translate('pageHeadSimpleCreateSet') : translate('commonCreate');
-				const arrow = !isRelation;
+				if (isType) {
+					const isTemplate = U.Object.isTemplate(object.id);
+					const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 
-				button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
+					if (canShowTemplates) {
+						buttonTemplate = (
+							<Button 
+								id="button-template" 
+								text={translate('commonTemplates')} 
+								color="blank" 
+								className="c28" 
+								onClick={this.onTemplates} 
+							/>
+						);
+					};
+
+					if (allowDetails) {
+						buttonEdit = (
+							<Button 
+								id="button-edit" 
+								color="blank" 
+								className="c28" 
+								text={translate('commonEditType')} 
+								onClick={() => sidebar.rightPanelToggle(true, true, isPopup, 'type', { rootId })} 
+							/>
+						);
+					};
+				};
+				
 			} else {
 				const cn = [ 'c36' ];
 				const isInstalled = this.isInstalled();
-
 				const onClick = isInstalled ? null : this.onInstall;
 				const color = isInstalled ? 'blank' : 'black';
 
@@ -119,21 +150,23 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					cn.push('disabled');
 				};
 
-				button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
+				buttonCreate = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 			};
 
 			if (!canWrite) {
-				button = null;
+				buttonCreate = null;
+				buttonEdit = null;
+				buttonTemplate = null;
 			};
 		};
 
 		if (isDate) {
-			button = (
-				<React.Fragment>
+			buttonCreate = (
+				<>
 					<Icon className="arrow left withBackground" onClick={() => this.changeDate(-1)} />
 					<Icon className="arrow right withBackground" onClick={() => this.changeDate(1)}/>
 					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
-				</React.Fragment>
+				</>
 			);
 		};
 
@@ -141,6 +174,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			cn.push('withColorPicker');
 			titleCn.push(`isMultiSelect`);
 			titleCn.push(`tagColor-${object.color || 'default'}`);
+		};
+
+		if (buttonTemplate) {
+			buttons.push(() => buttonTemplate);
+		};
+		if (buttonEdit) {
+			buttons.push(() => buttonEdit);
+		};
+		if (buttonCreate) {
+			buttons.push(() => buttonCreate);
 		};
 
 		return (
@@ -172,8 +215,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					{featured}
 				</div>
 
-				{button ? (
-					<div className="side right">{button}</div>
+				{buttons.length ? (
+					<div className="side right">
+						{buttons.map((Component, i) => <Component key={i} />)}
+					</div>
 				) : ''}
 			</div>
 		);
@@ -282,18 +327,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	placeholderCheck (id: string) {
 		if (this.refEditable[id]) {
 			this.refEditable[id].placeholderCheck();
-		};		
-	};
-
-	placeholderHide (id: string) {
-		if (this.refEditable[id]) {
-			this.refEditable[id].placeholderHide();
-		};
-	};
-	
-	placeholderShow (id: string) {
-		if (this.refEditable[id]) {
-			this.refEditable[id].placeholderShow();
 		};
 	};
 
@@ -302,6 +335,51 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const object = S.Detail.get(rootId, rootId);
 
 		Action.install(object, false, (message: any) => U.Object.openAuto(message.details));
+	};
+
+	onTemplates () {	
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId);
+		const node = $(this.node);
+
+		S.Menu.open('dataviewTemplateList', {
+			element: node.find('#button-template'),
+			horizontal: I.MenuDirection.Center,
+			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			data: {
+				withTypeSelect: false,
+				typeId: object.id,
+				previewSize: I.PreviewSize.Small,
+				defaultId: object.defaultTemplateId,
+				onSelect: item => {
+					if (item.id == J.Constant.templateId.new) {
+						this.onTemplateAdd();
+					} else {
+						U.Object.openPopup(item);
+					};
+				},
+			}
+		});
+	};
+
+	onTemplateAdd () {
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId);
+		const details: any = {
+			targetObjectType: object.id,
+			layout: object.recommendedLayout,
+		};
+
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const object = message.details;
+
+			analytics.event('CreateTemplate', { objectType: object.type, route: analytics.route.screenType });
+			U.Object.openConfig(object);
+		});
 	};
 
 	isInstalled () {
@@ -329,7 +407,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId, getDotMap, relationKey } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
-		S.Menu.open('dataviewCalendar', {
+		S.Menu.open('calendar', {
 			element: '#calendar-icon',
 			horizontal: I.MenuDirection.Center,
 			data: {

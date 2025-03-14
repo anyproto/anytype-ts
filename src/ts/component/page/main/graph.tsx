@@ -27,9 +27,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const onKeyDown = (e: any) => {
-		const cmd = keyboard.cmdKey();
-
-		keyboard.shortcut(`${cmd}+f`, e, () => $('#button-header-search').trigger('click'));
+		keyboard.shortcut('searchText', e, () => $('#button-header-search').trigger('click'));
 	};
 
 	const load = () => {
@@ -62,16 +60,14 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const resize = () => {
-		const win = $(window);
+		const container = U.Common.getScrollContainer(isPopup);
 		const obj = U.Common.getPageContainer(isPopup);
 		const node = $(nodeRef.current);
 		const wrapper = obj.find('.wrapper');
-		const oh = obj.height();
 		const header = node.find('#header');
-		const hh = header.height();
-		const wh = isPopup ? oh : win.height();
+		const height = container.height() - header.height();
 
-		wrapper.css({ height: wh - hh });
+		wrapper.css({ height });
 		
 		if (isPopup) {
 			const element = $('#popupPage .content');
@@ -88,8 +84,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const getRootId = () => {
-		const { rootId, match } = props;
-		return rootIdRef.current || (rootId ? rootId : match?.params?.id);
+		return rootIdRef.current || keyboard.getRootId(isPopup);
 	};
 
 	const rootId = getRootId();
@@ -114,6 +109,8 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		resize();
 		setLoading(false);
 	}, [ data ]);
+
+	useEffect(() => resize());
 
 	return (
 		<div 

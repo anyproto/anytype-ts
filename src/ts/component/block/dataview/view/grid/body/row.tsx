@@ -33,7 +33,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		};
 
 		let content = (
-			<React.Fragment>
+			<>
 				{relations.map((relation: any, i: number) => (
 					<Cell
 						key={[ 'grid', block.id, relation.relationKey, record.id ].join(' ')}
@@ -45,7 +45,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 					/>
 				))}
 				<div className="cell last" />
-			</React.Fragment>
+			</>
 		);
 
 		if (isInline) {
@@ -64,7 +64,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		if (isCollection && !isInline) {
 			content = (
-				<React.Fragment>
+				<>
 					{!readonly ? (
 						<Icon
 							className="drag"
@@ -74,11 +74,11 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 							onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 							onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 						/>
- 					) : ''}
+					) : ''}
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}
 					</DropTarget>
-				</React.Fragment>
+				</>
 			);
 		};
 

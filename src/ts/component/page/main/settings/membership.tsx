@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
 import { I, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
+import { Pagination, Autoplay, Mousewheel, Navigation } from 'swiper/modules';
 
 const PageMainSettingsMembership = observer(class PageMainSettingsMembership extends React.Component<I.PageSettingsComponent> {
 
@@ -115,14 +115,14 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				<Title 
 					className={cnt.join(' ')} 
 					text={!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')} 
 				/>
 
 				{(membership.isNone || membership.isExplorer) ? (
-					<React.Fragment>
+					<>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
 						<Swiper
@@ -135,7 +135,8 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 								disableOnInteraction: true,
 							}}
 							mousewheel={true}
-							modules={[ Pagination, Autoplay, Mousewheel ]}
+							navigation={true}
+							modules={[ Pagination, Autoplay, Mousewheel, Navigation ]}
 							centeredSlides={true}
 							loop={true}
 							onSwiper={this.onSwiper}
@@ -146,7 +147,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 								</SwiperSlide>
 							))}
 						</Swiper>
-					</React.Fragment>
+					</>
 				) : ''}
 
 				<div className="tiers">
@@ -163,7 +164,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				</div>
 
 				<Label className="special" text={translate('popupSettingsMembershipSpecial')} onClick={this.onContact} />
-			</React.Fragment>
+			</>
 		);
 	};
 

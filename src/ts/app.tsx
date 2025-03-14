@@ -8,8 +8,8 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, Sidebar, Vault, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, SidebarLeft, Vault, Loader } from 'Component';
+import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -127,7 +127,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 
-					<Sidebar ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebar" {...this.props} />
+					<SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} />
 					<Page {...this.props} isPopup={false} />
 				</DragProvider>
 			</SelectionProvider>
@@ -586,7 +586,7 @@ class App extends React.Component<object, State> {
 							};
 
 							case 'disable-spellcheck': {
-								Renderer.send('setSpellingLang', []);
+								Action.setSpellingLang([]);
 								break;
 							};
 						};

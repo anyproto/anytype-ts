@@ -9,7 +9,7 @@ type State = {
 	previewId: string;
 };
 
-const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, State> {
+const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<{}, State> {
 		
 	state: State = {
 		isEditing: false,
@@ -40,11 +40,18 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const cn = [ 'list' ];
-		const bodyCn = [ 'body' ];
+		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const hasShareBanner = U.Space.hasShareBanner();
+
+		if (isEditing) {
+			cn.push('isEditing');
+		};
+
+		if (hasShareBanner) {
+			cn.push('withShareBanner');
+		};
 
 		let content = null;
 
@@ -104,10 +111,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			};
 
 			if (isEditing) {
-				cn.push('isEditing');
-			};
-
-			if (isEditing) {
 				if (blocks.length <= J.Constant.limit.widgets) {
 					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetEditor) });
 				};
@@ -122,9 +125,9 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			};
 
 			content = (
-				<React.Fragment>
+				<>
 					{space && !space._empty_ ? (
-						<React.Fragment>
+						<>
 							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
 
 							<DropTarget 
@@ -145,7 +148,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 									isEditing={isEditing}
 								/>
 							</DropTarget>
-						</React.Fragment>
+						</>
 					) : ''}
 
 					{blocks.map((block, i) => (
@@ -162,36 +165,13 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						/>
 					))}
 
-					<DropTarget 
-						{...this.props} 
-						isTargetBottom={true}
-						rootId={S.Block.widgets} 
-						id={last?.id}
-						dropType={I.DropType.Widget} 
-						canDropMiddle={false}
-						className="lastTarget"
-						cacheKey="lastTarget"
-					>
-						<Button
-							text={translate('commonBin')}
-							color=""
-							className="widget"
-							icon="bin"
-							onClick={this.onArchive}
-						/>
-					</DropTarget>
-
 					<div className="buttons">
 						{buttons.map(button => (
 							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
 						))}
 					</div>
-				</React.Fragment>
+				</>
 			);
-		};
-
-		if (hasShareBanner) {
-			bodyCn.push('withShareBanner');
 		};
 
 		return (
@@ -205,17 +185,12 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				</div>
 				<div
 					id="body"
-					className={bodyCn.join(' ')}
+					className={cn.join(' ')}
 					onScroll={this.onScroll}
+					onDrop={this.onDrop}
+					onDragOver={e => e.preventDefault()}
 				>
-					<div 
-						id="list"
-						className={cn.join(' ')}
-						onDrop={this.onDrop}
-						onDragOver={e => e.preventDefault()}
-					>
-						{content}
-					</div>
+					{content}
 				</div>
 			</div>
 		);
@@ -232,11 +207,21 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 		analytics.event('ClickAddWidget', { route });
 
+		const { widgets } = S.Block;
+		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
+		const targets = [];
+
+		blocks.forEach(block => {
+			const children = S.Block.getChildren(widgets, block.id);
+			if (children.length) {
+				targets.push(children[0].getTargetObjectId());
+			};
+		});
+
 		const onSelect = (target: any, isNew: boolean) => {
 			const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
 			const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
 			const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
-
 			const newBlock = { 
 				type: I.BlockType.Link,
 				content: { 
@@ -256,7 +241,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				analytics.event('AddWidget', { type: I.WidgetLayout.Link, route });
 				analytics.event('ChangeWidgetSource', {
 					layout,
-					route: 'AddWidget',
+					route: analytics.route.addWidget,
 					params: { target },
 				});
 			});					
@@ -276,9 +261,10 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			data: {
 				route: analytics.route.addWidget,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
+				/*
 				canAdd: true,
 				addParam: {
 					name: translate('commonCreateNewObject'),
@@ -296,6 +282,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						});
 					},
 				},
+				*/
 				onOver: (e, context: any, item: any) => {
 					if (!item.isAdd) {
 						S.Menu.closeAll(J.Menu.widgetAdd);
@@ -312,10 +299,41 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 					}, { name: context.filter }, {}, analytics.route.addWidget, object => onSelect(object, true));
 				},
 				dataChange: (context: any, items: any[]) => {
+					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
-					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => it.name.match(reg));
+					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
+					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
+						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplate(it.id) && it.name.match(reg)).
+						map(it => ({ ...it, caption: '' }));
+					const lists = [];
 
-					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
+					if (types.length) {
+						lists.push([
+							{ name: translate('commonSuggested'), isSection: true }
+						].concat(types));
+					};
+
+					if (fixed.length) {
+						lists.push([
+							{ name: translate('commonSystem'), isSection: true }
+						].concat(fixed));
+					};
+
+					if (items.length) {
+						lists.push([
+							{ name: translate('commonExistingObjects'), isSection: true }
+						].concat(items));
+					};
+
+					let ret = [];
+					for (let i = 0; i < lists.length; ++i) {
+						if (i > 0) {
+							ret = ret.concat({ isDiv: true });
+						};
+						ret = ret.concat(lists[i]);
+					};
+
+					return ret;
 				},
 				onSelect,
 			},
@@ -475,4 +493,4 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 });
 
-export default SidebarWidget;
+export default SidebarPageWidget;

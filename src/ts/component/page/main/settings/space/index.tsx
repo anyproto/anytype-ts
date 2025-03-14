@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Tag } from 'Component';
-import { I, C, S, U, J, translate, Preview, analytics, Action } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 interface State {
 	error: string;
@@ -11,7 +11,7 @@ interface State {
 	isEditing: boolean;
 };
 
-const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
+const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
 
@@ -27,6 +27,7 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 
 		this.setName = this.setName.bind(this);
 		this.onSave = this.onSave.bind(this);
+		this.onCancel = this.onCancel.bind(this);
 		this.onDashboard = this.onDashboard.bind(this);
 		this.onType = this.onType.bind(this);
 		this.onSelect = this.onSelect.bind(this);
@@ -46,11 +47,16 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const maxIcons = 5;
 		const headerButtons = isEditing ? [
-			{ color: 'blank', text: translate('commonCancel'), onClick: () => this.setState({ isEditing: false }, this.setName) },
+			{ color: 'blank', text: translate('commonCancel'), onClick: () => this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave },
 		] : [
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: () => this.setState({ isEditing: true }) },
 		];
+		const cnh = [ 'spaceHeader' ];
+
+		if (isEditing) {
+			cnh.push('isEditing');
+		};
 
 		const Member = (item: any) => {
 			const isCurrent = item.id == participant?.id;
@@ -76,8 +82,8 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		};
 
 		return (
-			<React.Fragment>
-				<div className={[ 'spaceHeader', isEditing? 'isEditing' : '' ].join(' ')}>
+			<>
+				<div className={cnh.join(' ')}>
 					{canWrite ? (
 						<div className="buttons">
 							{headerButtons.map((el, idx) => <Button key={idx} text={el.text} className="c28" color={el.color} onClick={el.onClick} />)}
@@ -180,8 +186,7 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 						</div>
 					)}
 				</div>
-
-			</React.Fragment>
+			</>
 		);
 	};
 
@@ -205,14 +210,24 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 	};
 
 	init () {
-		const { cid, key } = this.state;
+		const { cid, key, isEditing } = this.state;
 		const space = U.Space.getSpaceview();
+		const win = $(window);
 
 		if (space.isShared && !cid && !key) {
 			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
 				if (cid && key) {
 					this.setInvite(cid, key);
 				};
+			});
+		};
+
+		win.off('keydown.settingsSpace');
+
+		if (isEditing) {
+			win.on('keydown.settingsSpace', (e: any) => {
+				keyboard.shortcut('enter', e, () => this.onSave());
+				keyboard.shortcut('escape', e, () => this.onCancel());
 			});
 		};
 	};
@@ -266,6 +281,8 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 
 	onClick (e: React.MouseEvent, item: any) {
 		const { cid, key } = this.state;
+		const space = U.Space.getSpaceview();
+		const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
 		switch (item.id) {
 			case 'invite': {
@@ -291,7 +308,7 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 					data: {
 						options: [
 							{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-							{ id: 'delete', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' },
+							{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
 						],
 						onSelect: (e: React.MouseEvent, option: any) => {
 							switch (option.id) {
@@ -343,6 +360,10 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 		this.setState({ isEditing: false });
 	};
 
+	onCancel () {
+		this.setState({ isEditing: false }, this.setName);
+	};
+
 	checkName (v: string): string {
 		if ([ 
 			translate('defaultNameSpace'), 
@@ -363,4 +384,4 @@ const pageMainSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extend
 
 });
 
-export default pageMainSettingsSpaceIndex;
+export default PageMainSettingsSpaceIndex;

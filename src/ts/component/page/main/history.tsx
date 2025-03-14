@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader } from 'Component';
+import { Loader } from 'Component';
 import { I, S, U, J, keyboard, Action, focus } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
@@ -58,8 +58,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						setLoading={this.setLoading}
 					/>
 				</div>
-
-				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};
@@ -413,10 +411,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	getWrapperWidth (): number {
-		const rootId = this.getRootId();
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		return this.getWidth(root?.fields?.width);
+		return this.getWidth(U.Data.getLayoutWidth(this.props.rootId));
 	};
 
 	getWidth (w: number) {
@@ -447,8 +442,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		return keyboard.getRootId(this.props.isPopup);
 	};
 
 	isSetOrCollection (): boolean {

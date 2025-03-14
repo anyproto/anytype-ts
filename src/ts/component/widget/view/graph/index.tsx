@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, Dataview } from 'Lib';
 import { GraphProvider } from 'Component';
@@ -7,7 +7,7 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 	
 	const { block, getView, getObject } = props;
 	const graphRef = useRef(null);
-	const data = useRef({} as any);
+	const [ data, setData ] = useState({ edges: [], nodes: [] });
 	const view = getView();
 
 	const load = () => {
@@ -20,12 +20,12 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? object.id : ''), object.setOf, (message: any) => {
-			data.current.edges = message.edges;
-			data.current.nodes = message.nodes;
+			setData({
+				edges: message.edges,
+				nodes: message.nodes.map(it => S.Detail.mapper(it))
+			});
 
-			if (graphRef.current) {
-				graphRef.current.init();
-			};
+			graphRef.current?.init();
 		});
 	};
 
@@ -34,7 +34,7 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 	};
 
 	useEffect(() => load(), []);
-	useEffect(() => resize());
+	useEffect(() => resize(), [ data ]);
 
 	return (
 		<div className="wrap">
@@ -44,7 +44,7 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 				ref={graphRef} 
 				id={block.id}
 				rootId="" 
-				data={data.current}
+				data={data}
 				storageKey={J.Constant.graphId.dataview}
 			/>
 		</div>

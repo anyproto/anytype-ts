@@ -111,7 +111,7 @@
 			}
 			.item::after {
 				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border-radius: 2px; opacity: 0;
-				transition: opacity 0.2s $easeInQuint; background: rgba(0,0,0,0.3);
+				transition: opacity 0.2s $easeInQuint; background: var(--color-shape-highlight-medium);
 			}
 			.item.active {
 				.name { opacity: 1; }

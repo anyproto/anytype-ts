@@ -80,8 +80,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts());
-
 		const menuParam: I.MenuParam = {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
@@ -107,7 +105,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: (el: any) => {
@@ -123,13 +121,13 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: allowedLayouts },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					skipIds: [ typeId ],
 					onClick: type => {
 						data.typeId = type.id;
-						data.templateId = type.defaultTemplateId || J.Constant.templateId.blank;
+						data.templateId = type.defaultTemplateId;
 
 						loadTemplate();
 
@@ -183,7 +181,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		switch (item.id) {
 			case 'new': {
 				if (onSelect) {
-					onSelect(template ? template : { id: J.Constant.templateId.blank });
+					onSelect(template ? template : { id: '' });
 				};
 				break;
 			};

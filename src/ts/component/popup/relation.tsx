@@ -95,11 +95,6 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 				<div className="line" />
 
-				<div id="item-add" className="item add" onClick={this.onAdd}>
-					<Icon className="plus" />
-					{translate('commonAddRelation')}
-				</div>
-
 				<div className="buttons">
 					<Button text="Save" className="c28" onClick={this.save} />
 					<Button text="Cancel" className="c28" color="blank" onClick={() => close()} />
@@ -261,7 +256,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { config } = S.Common;
 
 		let ret = this.getRelationKeys().map(relationKey => S.Record.getRelationByKey(relationKey));
-		ret = ret.filter(it => it && (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue);
+		ret = S.Record.checkHiddenObjects(ret);
+		ret = ret.filter(it => it && !it.isReadonlyValue);
 		ret = ret.sort(U.Data.sortByName);
 		return ret;
 	};
