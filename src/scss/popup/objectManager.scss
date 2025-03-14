@@ -2,15 +2,14 @@
 
 .popups {
     .popup.popupObjectManager {
-        .innerWrap { width: 548px; height: 472px; padding: 32px 32px 40px 32px; overflow: hidden; }
+        .innerWrap { width: 548px; height: 472px; padding: 32px 32px 40px 32px; }
         .content { height: 100%; display: flex; flex-direction: column; }
 
         .title { @include text-header3; flex-shrink: 0; margin: 0px 0px 24px 0px; }
 		.ReactVirtualized__List { padding: 8px 0px; }
 
-		.objectManagerWrapper { flex-grow: 1; overflow: hidden; }
+		.objectManagerWrapper { flex-grow: 1; }
 
-		.items { overflow: hidden; }
 		.items {
 			.row { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: 32px; }
 
