@@ -88,7 +88,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { attachments, charCounter } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
-		const { messageCounter } = S.Chat.getState(rootId);
+		const { messageOrderId, messageCounter } = S.Chat.getState(rootId);
 		const messagesInViewport = getMessagesInViewport();
 		const isBottom = getIsBottom();
 
@@ -143,7 +143,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 				<div className="navigation">
 					{!isBottom || messageCounter ? (
-						<div className="btn" onClick={this.onNavigationClick}>
+						<div className={[ 'btn', messagesInViewport[0] > messageOrderId ? 'up' : '' ].join(' ')} onClick={this.onNavigationClick}>
 							<div className="bg" />
 							<Icon className="arrow" />
 

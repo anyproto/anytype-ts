@@ -20,6 +20,9 @@
 				}
 			}
 		}
+		.btn.up {
+			.icon { transform: rotate(180deg); }
+		}
 		.btn:hover {
 			.bg { transform: scale(0.95); }
 		}
