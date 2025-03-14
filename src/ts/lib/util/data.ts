@@ -529,7 +529,7 @@ class UtilData {
 
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withCollection, limit } = param || {};
-		const { space, config } = S.Common;
+		const { space } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
 		const pinned = Storage.getPinnedTypes();
@@ -739,12 +739,6 @@ class UtilData {
 		});
 	};
 
-	// Check if there is at least 1 set for object types
-	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		const setType = S.Record.getTypeByKey(J.Constant.typeKey.set);
-		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
-	};
-
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
@@ -785,7 +779,7 @@ class UtilData {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = param.filters || [];
-		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
+		const skipLayouts = [ I.ObjectLayout.Chat ];
 
 		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });

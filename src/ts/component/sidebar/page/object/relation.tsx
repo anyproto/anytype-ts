@@ -34,7 +34,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 						<Label text={translate('sidebarTypeRelation')} />
 					</div>
 
-					{allowDetails ? (
+					{allowDetails && type ? (
 						<div className="side right">
 							<Button color="blank" text={translate('sidebarObjectRelationSetUp')} className="simple" onClick={this.onSetUp} />
 						</div>
@@ -42,6 +42,14 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				</div>
 
 				<div className="body customScrollbar">
+					{!type ? (
+						<div className="section">
+							<div className="item empty">
+								{translate('sidebarObjectRelationTypeDeleted')}
+							</div>
+						</div>
+					) : ''}
+
 					{sections.map((section, i) => {
 						const { id, name, description, withToggle } = section;
 						const lcn = [];

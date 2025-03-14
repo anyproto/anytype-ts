@@ -1,4 +1,6 @@
-import { I, C, S, U, J, focus, analytics, Onboarding, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
+import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
+
+const Diff = require('diff');
 
 class Action {
 
@@ -723,8 +725,18 @@ class Action {
 	};
 
 	setSpellingLang (langs: string[]) {
+		langs = langs || [];
+
+		const diff = Diff.diffArrays(S.Common.config.languages || [], langs);
+
+		S.Common.configSet({ languages: langs }, false);
 		Renderer.send('setSpellingLang', langs);
-		analytics.event('AddSpellcheckLanguage');
+
+		diff.forEach(it => {
+			if (it.added && it.value.length) {
+				analytics.event('AddSpellcheckLanguage', { type: it.value[0] });
+			};
+		});
 	};
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {

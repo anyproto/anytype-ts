@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Tag } from 'Component';
-import { I, C, S, U, J, translate, Preview, analytics, Action } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 interface State {
 	error: string;
@@ -27,6 +27,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		this.setName = this.setName.bind(this);
 		this.onSave = this.onSave.bind(this);
+		this.onCancel = this.onCancel.bind(this);
 		this.onDashboard = this.onDashboard.bind(this);
 		this.onType = this.onType.bind(this);
 		this.onSelect = this.onSelect.bind(this);
@@ -46,11 +47,16 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const maxIcons = 5;
 		const headerButtons = isEditing ? [
-			{ color: 'blank', text: translate('commonCancel'), onClick: () => this.setState({ isEditing: false }, this.setName) },
+			{ color: 'blank', text: translate('commonCancel'), onClick: () => this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave },
 		] : [
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: () => this.setState({ isEditing: true }) },
 		];
+		const cnh = [ 'spaceHeader' ];
+
+		if (isEditing) {
+			cnh.push('isEditing');
+		};
 
 		const Member = (item: any) => {
 			const isCurrent = item.id == participant?.id;
@@ -77,7 +83,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		return (
 			<>
-				<div className={[ 'spaceHeader', isEditing? 'isEditing' : '' ].join(' ')}>
+				<div className={cnh.join(' ')}>
 					{canWrite ? (
 						<div className="buttons">
 							{headerButtons.map((el, idx) => <Button key={idx} text={el.text} className="c28" color={el.color} onClick={el.onClick} />)}
@@ -204,14 +210,24 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	init () {
-		const { cid, key } = this.state;
+		const { cid, key, isEditing } = this.state;
 		const space = U.Space.getSpaceview();
+		const win = $(window);
 
 		if (space.isShared && !cid && !key) {
 			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
 				if (cid && key) {
 					this.setInvite(cid, key);
 				};
+			});
+		};
+
+		win.off('keydown.settingsSpace');
+
+		if (isEditing) {
+			win.on('keydown.settingsSpace', (e: any) => {
+				keyboard.shortcut('enter', e, () => this.onSave());
+				keyboard.shortcut('escape', e, () => this.onCancel());
 			});
 		};
 	};
@@ -342,6 +358,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	onSave () {
 		C.WorkspaceSetInfo(S.Common.space, { name: this.checkName(this.refName.getValue()) });
 		this.setState({ isEditing: false });
+	};
+
+	onCancel () {
+		this.setState({ isEditing: false }, this.setName);
 	};
 
 	checkName (v: string): string {

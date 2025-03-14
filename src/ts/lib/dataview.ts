@@ -4,24 +4,31 @@ import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 class Dataview {
 
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
-		const { config } = S.Common;
-
 		if (!view) {
 			return [];
 		};
 
+		const { config } = S.Common;
 		const order: any = {};
+		const object = S.Detail.get(rootId, rootId, []);
+		const isType = U.Object.isTypeLayout(object.layout);
+		const viewRelations = (view.relations || []).filter(it => it);
 
-		let relations = U.Common.objectCopy(S.Record.getDataviewRelations(rootId, blockId)).filter(it => it);
-		let o = 0;
+		let relations = [];
+		if (isType) {
+			const typeIds = U.Object.getTypeRelationIds(object.id);
+			relations = J.Relation.default.map(it => S.Record.getRelationByKey(it)).concat(typeIds.map(it => S.Record.getRelationById(it)));
+		} else {
+			relations = S.Record.getDataviewRelations(rootId, blockId);
+		};
+		relations = U.Common.objectCopy(relations).filter(it => it);
 
 		if (!config.debug.hiddenObject) {
 			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
 		};
 
-		(view.relations || []).filter(it => it).forEach(it => {
-			order[it.relationKey] = o++;
-		});
+		let o = 0;
+		viewRelations.forEach(it => order[it.relationKey] = o++);
 
 		relations.forEach(it => {
 			if (it && (undefined === order[it.relationKey])) {
@@ -38,8 +45,8 @@ class Dataview {
 			return 0;
 		});
 
-		const ret = relations.filter(it => it).map(relation => {
-			const vr = (view.relations || []).filter(it => it).find(it => it.relationKey == relation.relationKey) || {};
+		const ret = relations.map(relation => {
+			const vr = viewRelations.find(it => it.relationKey == relation.relationKey) || {};
 
 			if ((view.type != I.ViewType.Gallery) && (relation.relationKey == 'name')) {
 				vr.isVisible = true;
@@ -55,41 +62,43 @@ class Dataview {
 		return U.Common.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
+	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view: I.View, callBack?: (message: any) => void) {
+		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
+			if (!message.error.code) {
+				this.viewRelationAdd(rootId, blockId, relationKey, index, view, callBack);
+			};
+		});
+	};
+
+	viewRelationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
 		if (!view) {
 			return;
 		};
 
-		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
-			if (message.error.code) {
-				return;
-			};
+		const rel: any = view.getRelation(relationKey) || {};
 
-			const rel: any = view.getRelation(relationKey) || {};
+		rel.relationKey = relationKey;
+		rel.width = rel.width || J.Size.dataview.cell.default;
+		rel.isVisible = true;
 
-			rel.relationKey = relationKey;
-			rel.width = rel.width || J.Size.dataview.cell.default;
-			rel.isVisible = true;
-
-			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
-				if (index >= 0) {
-					const newView = S.Record.getView(rootId, blockId, view.id);
-					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
-					
-					let keys = newView.relations.map(it => it.relationKey);
-					if (oldIndex < 0) {
-						keys.splice(index, 0, relationKey);
-					} else {
-						keys = arrayMove(keys, oldIndex, index);
-					};
-
-					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
+		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
+			if (index >= 0) {
+				const newView = S.Record.getView(rootId, blockId, view.id);
+				const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
+				
+				let keys = newView.relations.map(it => it.relationKey);
+				if (oldIndex < 0) {
+					keys.splice(index, 0, relationKey);
 				} else {
-					if (callBack) {
-						callBack(message);
-					};
+					keys = arrayMove(keys, oldIndex, index);
 				};
-			});
+
+				C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
+			} else {
+				if (callBack) {
+					callBack(message);
+				};
+			};
 		});
 	};
 

@@ -37,7 +37,6 @@ const HeaderBanner: FC<Props> = ({
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,
 			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context) => {
 				menuContext = context;
@@ -57,7 +56,7 @@ const HeaderBanner: FC<Props> = ({
 				onSetDefault: item => {
 					U.Object.setDefaultTemplateId(type.id, item.id);
 				},
-				onSelect: (item: any) => {
+				onSelect: item => {
 					C.ObjectApplyTemplate(object.id, item.id);
 
 					analytics.event('SelectTemplate', { route: analytics.route.banner });

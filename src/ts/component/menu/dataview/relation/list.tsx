@@ -4,8 +4,8 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { I, C, S, J, U, Relation, keyboard, Dataview, translate, analytics } from 'Lib';
 import { Icon, IconObject, Switch } from 'Component';
-import { I, C, S, J, keyboard, Dataview, translate, analytics } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -231,6 +231,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { rootId, blockId, getView, onAdd } = data;
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
+		const object = S.Detail.get(rootId, rootId);
+		const isType = U.Object.isTypeLayout(object.layout);
 
 		S.Menu.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
@@ -246,7 +248,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				ref: 'dataview',
 				skipKeys: relations.map(it => it.relationKey),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), (message: any) => {
+					const cb = (message: any) => {
 						if (onAdd) {
 							onAdd();
 						};
@@ -254,7 +256,22 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 						if (onChange) {
 							onChange(message);
 						};
-					});
+					};
+
+					if (isType) {
+						const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).concat(relation.id));
+
+						C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
+							if (!message.error.code) {
+								S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
+
+								const list = Dataview.viewGetRelations(rootId, blockId, view);
+								Dataview.viewRelationAdd(rootId, blockId, relation.relationKey, list.length, view);
+							};
+						});
+					} else {
+						Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), cb);
+					};
 				},
 			}
 		});
@@ -269,11 +286,32 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, rootId, getView } = data;
 		const relation = S.Record.getRelationByKey(item.relationKey);
+		const object = S.Detail.get(rootId, rootId);
+		const isType = U.Object.isTypeLayout(object.layout);
+		const view = getView();
 
-		if (!relation || readonly) {
+		if (!relation || readonly || !view) {
 			return;
+		};
+
+		let unlinkCommand = null;
+		if (isType) {
+			unlinkCommand = (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+				const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).filter(it => it != relation.id));
+
+				C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
+					if (!message.error.code) {
+						S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
+						C.BlockDataviewViewRelationRemove(rootId, blockId, view.id, [ relation.relationKey ]);
+
+						if (onChange) {
+							onChange(message);
+						};
+					};
+				});
+			};
 		};
 		
 		S.Menu.open('dataviewRelationEdit', { 
@@ -283,6 +321,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			data: {
 				...data,
 				relationId: relation.id,
+				unlinkCommand,
 			}
 		});
 	};

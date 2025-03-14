@@ -220,10 +220,10 @@ export interface SidebarSectionRef {
 };
 
 export enum SidebarRelationList {
-	Featured 		= 0,
-	Recommended 	= 1,
-	Hidden 			= 2,
-	Conflict 		= 3,
+	Featured 		= 1,
+	Recommended 	= 2,
+	Hidden 			= 3,
+	Conflict 		= 4,
 };
 
 export enum SurveyType {

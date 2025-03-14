@@ -1,17 +1,24 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
-import { Frame, Label, Button, Header, Footer } from 'Component';
+import React, { forwardRef, useRef, useEffect, useState } from 'react';
+import { Frame, Label, Button, Header, Footer, Error } from 'Component';
 import { I, U, S, translate, Animation, analytics } from 'Lib';
 
 const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
+	const registerRef = useRef(null);
+	const [ error, setError ] = useState('');
 
 	const onLogin = () => {
 		Animation.from(() => U.Router.go('/auth/login', {}));
 	};
 
 	const onRegister = () => {
-		Animation.from(() => U.Router.go('/auth/onboard', {}));
+		registerRef.current.setLoading(true);
+
+		U.Data.accountCreate(error => {
+			registerRef.current.setLoading(false);
+			setError(error);
+		}, () => Animation.from(() => U.Router.go('/auth/onboard', {})));
 	};
 
 	useEffect(() => {
@@ -34,12 +41,14 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 				<div className="buttons">
 					<div className="animation">
-						<Button text={translate('authSelectSignup')} onClick={onRegister} />
+						<Button ref={registerRef} text={translate('authSelectSignup')} onClick={onRegister} />
 					</div>
 					<div className="animation">
 						<Button text={translate('authSelectLogin')} color="blank" onClick={onLogin} />
 					</div>
 				</div>
+
+				<Error text={error} />
 			</Frame>
 			<Footer {...props} className="animation" component="authDisclaimer" />
 		</div>

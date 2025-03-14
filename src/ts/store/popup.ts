@@ -20,6 +20,7 @@ const SHOW_DIMMER = [
 	'share',
 	'spaceCreate',
 	'logout',
+	'search',
 ];
 
 class PopupStore {

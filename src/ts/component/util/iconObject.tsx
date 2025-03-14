@@ -41,7 +41,6 @@ interface IconObjectRefProps {
 
 const LAYOUTS_WITH_EMOJI_GALLERY = [ 
 	I.ObjectLayout.Page, 
-	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
 	I.ObjectLayout.Human,
 	I.ObjectLayout.Chat,
@@ -226,7 +225,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		e.stopPropagation();
 
 		const noGallery = props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human, I.ObjectLayout.Type ].includes(object.layout);
-		const noUpload = props.noUpload || [ I.ObjectLayout.Type ].includes(object.layout);
+		const noUpload = props.noUpload;
 		const withIcons = U.Object.isTypeLayout(object.layout);
 
 		S.Menu.open('smile', { 
@@ -390,6 +389,11 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.Type: {
+			if (iconImage) {
+				icn = icn.concat([ 'iconImage', 'c' + size ]);
+				cn.push('withImage');
+				icon = <img src={S.Common.imageUrl(iconImage, size * 2)} className={icn.join(' ')} />;
+			} else
 			if (iconName) {
 				const src = typeIcon(iconName, iconOption);
 

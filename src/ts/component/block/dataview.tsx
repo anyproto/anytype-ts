@@ -455,8 +455,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getObjectId (): string {
-		const { rootId, block, isInline } = this.props;
-		return isInline ? block.getTargetObjectId() : rootId;
+		const { rootId, block } = this.props;
+		return block.getTargetObjectId() || rootId;
 	};
 
 	getKeys (id: string): string[] {
@@ -557,10 +557,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getTarget () {
-		const { rootId, block, isInline } = this.props;
-		const { targetObjectId } = block.content;
+		const { rootId } = this.props;
+		const targeId = this.getObjectId();
 
-		return S.Detail.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		return S.Detail.get(rootId, targeId, [ 'setOf' ]);
 	};
 
 	getTypeId (): string {
@@ -854,7 +854,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const typeId = this.getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
-					if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
+					if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
 						menuContext?.close();
 						this.onBookmarkMenu(e, dir, '', { element: `#button-${block.id}-add-record` });
 					} else
@@ -867,7 +867,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						menuContext?.close();
 						analytics.event('ChangeDefaultTemplate', { route });
 					};
-				}
+				},
 			}
 		});
 	};

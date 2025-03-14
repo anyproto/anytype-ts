@@ -405,41 +405,20 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 		};
 
-		const showMenu = () => {
-			S.Menu.open('select', {
-				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
-				offsetY: 4,
-				subIds: J.Menu.featuredType,
-				onOpen: context => this.menuContext = context,
-				data: {
-					options: options,
-					noClose: true,
-					onOver: this.onTypeOver,
-					onSelect: (e: any, item: any) => {
-						this.onTypeSelect(e, item);
-					},
+		S.Menu.open('select', {
+			element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
+			offsetY: 4,
+			subIds: J.Menu.featuredType,
+			onOpen: context => this.menuContext = context,
+			data: {
+				options,
+				noClose: true,
+				onOver: this.onTypeOver,
+				onSelect: (e: any, item: any) => {
+					this.onTypeSelect(e, item);
 				},
-			});
-		};
-
-		if (typeIsDeleted) {
-			showMenu();
-		} else {
-			U.Data.checkSetCnt([ object.type ], (message: any) => {
-				if (message.records.length == 1) {
-					this.setId = message.records[0].id;
-					options.push({ id: 'setOpen', name: U.Common.sprintf(translate('blockFeaturedTypeMenuOpenSetOf'), type.name) });
-				} else
-				if (message.records.length == 2) {
-					options.push({ id: 'setOpenMenu', name: translate('blockFeaturedTypeMenuOpenSet'), arrow: true });
-				} else
-				if (type && !type.isDeleted) {
-					options.push({ id: 'setCreate', name: U.Common.sprintf(translate('blockFeaturedTypeMenuCreateSetOf'), type.name) });
-				};
-
-				showMenu();
-			});
-		};
+			},
+		});
 	};
 
 	onTypeOver (e: any, item: any) {

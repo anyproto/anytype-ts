@@ -1,18 +1,34 @@
 @import "~scss/_mixins";
 
 .layoutPreviewWrapper {
-    position: absolute; top: 0px; right: 100%; opacity: 0; transition-property: opacity; transition-duration: 0.3s;
+    position: absolute; top: 0px; right: 100%; opacity: 0; transition-property: opacity; transition-duration: 0.1s;
 	transition-timing-function: linear; height: 100vh; background-color: var(--color-bg-primary); text-align: center; overflow: hidden;
 }
-.layoutPreviewWrapper.show { opacity: 1; }
-.layoutPreviewWrapper.show {
-    .layoutPreview { transform: scale3d(1, 1); opacity: 1; }
+
+.layoutPreviewWrapper.in { opacity: 0; }
+.layoutPreviewWrapper.in {
+	.layoutPreview { opacity: 0; }
+}
+
+.layoutPreviewWrapper.in.show { opacity: 1; }
+.layoutPreviewWrapper.in.show {
+	.layoutPreview { opacity: 1; }
+}
+
+.layoutPreviewWrapper.out { opacity: 0; }
+.layoutPreviewWrapper.out {
+	.layoutPreview { opacity: 0; }
+}
+
+.layoutPreviewWrapper.in.show { opacity: 1; }
+.layoutPreviewWrapper.in.show {
+	.layoutPreview { opacity: 1; }
 }
 
 .layoutPreviewWrapper {
     .layoutPreview { 
-		transform: scale3d(0.8, 08); opacity: 0; transition: 0.3s $easeInQuint;  margin: 0 auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary);
-		transform-origin: 50% 50%;
+		transition: all 0.3s ease-in-out; margin: 0px auto; padding-top: 128px; text-align: left; color: var(--color-text-tertiary); 
+		transform-origin: 50% 50%; min-height: 100%;
 	}
     .layoutPreview {
         .layoutHeader { margin-bottom: 44px; }

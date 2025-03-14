@@ -53,7 +53,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const hasConflict = U.Object.hasLayoutConflict(object);
 
 		let allowedLayout = !checkType && allowedDetails && !isChat && !isType;
-		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark;
+		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
 		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
 		let allowedDescription = !checkType && allowedDetails && !isNote;
 

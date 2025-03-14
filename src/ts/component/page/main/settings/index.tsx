@@ -32,7 +32,7 @@ import PageSpaceStorageManager from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
 
-import PageMainType from '../type';
+import PageMainSet from '../set';
 import PageMainRelation from '../relation';
 
 import PageMembership from './membership';
@@ -72,7 +72,7 @@ const Components: any = {
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
 
-	type:				 PageMainType,
+	set:				 PageMainSet,
 	relation:			 PageMainRelation,
 };
 
@@ -80,10 +80,10 @@ const SPACE_PAGES = [
 	'spaceIndex', 'spaceStorageManager', 'spaceShare',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
-	'type', 'relation',
+	'set', 'relation',
 ];
 
-const SKIP_CONTAINER = [ 'type', 'relation' ];
+const SKIP_CONTAINER = [ 'set', 'relation' ];
 
 const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
 

@@ -77,7 +77,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const { noPreview } = this.props;
 
 		this.init();
-
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
@@ -120,7 +119,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	getSections () {
 		const type = S.Record.getTypeById(this.props.rootId);
-		const isFile = type ? U.Object.isInFileLayouts(type?.recommendedLayout) : false;
+		const isFile = type ? U.Object.isInFileLayouts(type.recommendedLayout) : false;
 
 		return [
 			{ id: 'title', component: 'type/title' },
@@ -239,7 +238,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	close () {
 		this.previewRef?.show(false);
-		window.setTimeout(() => sidebar.rightPanelToggle(false, true, this.props.isPopup), J.Constant.delay.sidebar);
+		sidebar.rightPanelToggle(false, true, this.props.isPopup);
 	};
 
 	updateObject (id: string) {

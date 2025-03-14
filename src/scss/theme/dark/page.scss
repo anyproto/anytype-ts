@@ -10,35 +10,6 @@
     }
 }
 
-/* PageMainType */
-
-.pageMainType {
-    .wrapper {
-        .section.template {
-			.btn {
-				.icon.plus { background-image: url('#{$themePath}/icon/plus/template0.svg'); }
-			}
-
-			.btn:hover {
-				.icon.plus { background-image: url('#{$themePath}/icon/plus/template1.svg'); }
-			}
-
-			.listObjectPreview {
-				.icon.arrow.left { left: -32px; }
-				.icon.arrow.right { right: -32px; }
-			}
-		}
-
-        .section.relation {
-			.item.add {
-				.clickable:hover {
-					.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
-				}
-			}
-        }
-    }
-}
-
 /* PageMainNavigation */
 
 .pageMainNavigation {
