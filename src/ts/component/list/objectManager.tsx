@@ -333,38 +333,50 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => true}
 					>
-						{({ onRowsRendered }) => (
-							<WindowScroller scrollElement={scrollContainer}>
-								{({ height }) => (
-									<AutoSizer disableHeight={disableHeight}>
-										{({ width }) => {
-											const props: any = {};
+						{({ onRowsRendered }) => {
+							const Sizer = item => (
+								<AutoSizer disableHeight={disableHeight}>
+									{({ width, height }) => {
+										const listProps: any = {};
 
-											if (disableHeight) {
-												props.autoHeight = true;
-											};
+										if (disableHeight) {
+											listProps.autoHeight = true;
+											listProps.height = item.height;
+										} else {
+											listProps.height = height;
+										};
 
-											return (
-												<List
-													{...props}
-													ref={listRef}
-													height={Number(height) || 0}
-													width={Number(width) || 0}
-													deferredMeasurmentCache={cache.current}
-													rowCount={items.length}
-													rowHeight={rowHeight || 64}
-													rowRenderer={rowRenderer}
-													onRowsRendered={onRowsRendered}
-													overscanRowCount={10}
-													onScroll={onScroll}
-													scrollToAlignment="start"
-												/>
-											);
-										}}
-									</AutoSizer>
-								)}
-							</WindowScroller>
-						)}
+										return (
+											<List
+												{...listProps}
+												ref={listRef}
+												width={Number(width) || 0}
+												deferredMeasurmentCache={cache.current}
+												rowCount={items.length}
+												rowHeight={rowHeight || 64}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												onScroll={onScroll}
+												scrollToAlignment="start"
+											/>
+										);
+									}}
+								</AutoSizer>
+							);
+
+							console.log(disableHeight);
+
+							if (disableHeight) {
+								return (
+									<WindowScroller scrollElement={scrollContainer}>
+										{({ height }) => <Sizer height={height} />}
+									</WindowScroller>
+								);
+							} else {
+								return <Sizer />;
+							};
+						}}
 					</InfiniteLoader>
 				)}
 			</div>
