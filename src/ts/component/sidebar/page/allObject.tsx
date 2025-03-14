@@ -129,8 +129,8 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 						<div id="tabs" className="tabs">
 							<Swiper
 								onSwiper={swiper => this.refSwiper = swiper}
-								direction={'horizontal'}
-								slidesPerView={'auto'}
+								direction="horizontal"
+								slidesPerView="auto"
 								slidesPerGroupAuto={true}
 								spaceBetween={12}
 								mousewheel={true}

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
 import { I, C, S, U, translate, analytics, Onboarding } from 'Lib';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Mousewheel, Navigation } from 'swiper/modules';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
 
 interface State {
@@ -16,11 +18,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	node = null;
 	refList = null;
 	refFilter = null;
+	swiper: any = null;
 	cache: any = {};
 	timeoutResize = 0;
 	timeoutFilter = 0;
-	pages = 0;
-	page = 0;
 	state = {
 		isLoading: false,
 		category: null,
@@ -43,7 +44,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	render () {
 		const { getAuthor, onAuthor } = this.props;
 		const { isLoading, category } = this.state;
-		const { gallery } = S.Common;
+		const categories = this.getCategories();
 		const items = this.getItems();
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 
@@ -117,22 +118,23 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		return (
 			<div ref={ref => this.node = ref} className="wrap">
-				<div id="categories" className="categories">
-					<div id="inner" className="inner">
-						{gallery.categories.map((item: any, i: number) => (
-							<React.Fragment key={i}>
-								<Category {...item} />
-								{item.id == 'made-by-any' ? <div className="div" /> : ''}
-							</React.Fragment>
-						))}
-					</div>
-
-					<div id="gradientLeft" className="gradient left" />
-					<div id="gradientRight" className="gradient right" />
-
-					<Icon id="arrowLeft" className="arrow left" onClick={() => this.onArrow(-1)} />
-					<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />
-				</div>
+				<Swiper
+					direction="horizontal"
+					slidesPerView="auto"
+					slidesPerGroupAuto={true}
+					spaceBetween={8}
+					onSwiper={swiper => this.swiper = swiper}
+					navigation={true}
+					mousewheel={true}
+					modules={[ Navigation, Mousewheel ]}
+				>
+					{categories.map((item: any, i: number) => (
+						<SwiperSlide key={item.id}>
+							<Category {...item} />
+							{item.id == 'made-by-any' ? <div className="div" /> : ''}
+						</SwiperSlide>
+					))}
+				</Swiper>
 
 				<div className="mid">
 
@@ -189,7 +191,6 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 	componentDidUpdate (): void {
 		this.reset();
-		this.checkPage();
 		this.props.position();
 	};
 
@@ -229,14 +230,18 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		this.setState({ isLoading: true });
 
 		C.GalleryDownloadIndex((message: any) => {
-			S.Common.gallery = {
-				categories: (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
-				list: message.list || [],
-			};
+			const categories = (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) }));
+			const list = message.list || [];
 
+			S.Common.gallery = { categories, list };
 			Onboarding.start('collaboration', true, false);
 			this.setState({ isLoading: false });
 		});
+	};
+
+	getCategories () {
+		const { gallery } = S.Common;
+		return (gallery.categories || []).filter(it => it.list.length > 0);
 	};
 
 	getItems () {
@@ -282,59 +287,6 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 	categoryName (id: string) {
 		return translate(U.Common.toCamelCase(`usecaseCategory-${id}`));
-	};
-
-	calcPages () {
-		const { categories } = S.Common.gallery;
-		const node = $(this.node);
-		const width = node.width();
-		const items = node.find('#categories .item');
-
-		let iw = 0;
-		items.each((i, item) => {
-			iw += $(item).outerWidth(true);
-		});
-		iw += 8 * (categories.length + 1);
-
-		this.pages = Number(Math.ceil(iw / width)) || 1;
-	};
-
-	checkPage () {
-		const node = $(this.node);
-		const gradientLeft = node.find('#gradientLeft');
-		const gradientRight = node.find('#gradientRight');
-		const arrowLeft = node.find('#arrowLeft');
-		const arrowRight = node.find('#arrowRight');
-
-		this.calcPages();
-		this.page = Math.max(0, this.page);
-		this.page = Math.min(this.page, this.pages - 1);
-
-		if (!this.page) {
-			gradientLeft.hide();
-			arrowLeft.hide();
-		} else {
-			gradientLeft.show();
-			arrowLeft.show();
-		};
-
-		if (this.page == this.pages - 1) {
-			gradientRight.hide();
-			arrowRight.hide();
-		} else {
-			gradientRight.show();
-			arrowRight.show();
-		};
-	};
-
-	onArrow (dir: number) {
-		const node = $(this.node);
-		const inner = node.find('#categories #inner');
-
-		this.page += dir;
-		this.checkPage();
-
-		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
 	};
 
 };
