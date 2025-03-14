@@ -365,8 +365,6 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 								</AutoSizer>
 							);
 
-							console.log(disableHeight);
-
 							if (disableHeight) {
 								return (
 									<WindowScroller scrollElement={scrollContainer}>
