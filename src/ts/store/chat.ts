@@ -1,10 +1,11 @@
-import { observable, action, makeObservable, set } from 'mobx';
+import { observable, action, makeObservable, set, intercept } from 'mobx';
 import { I, U, M } from 'Lib';
 
 class ChatStore {
 
 	public messageMap: Map<string, any[]> = observable(new Map());
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
+	public stateMap: Map<string, any> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -12,7 +13,26 @@ class ChatStore {
 			update: action,
 			delete: action,
 			setReply: action,
+			setState: action,
 		});
+	};
+
+	private createChatState (state: any) {
+		const { messages, dbTimestamp } = state;
+		const el = {
+			messageOrderId: messages.orderId,
+			messageCounter: messages.counter,
+			dbTimestamp,
+		};
+
+		makeObservable(el, {
+			messageOrderId: observable,
+			messageCounter: observable
+		});
+		intercept(el as any, (change: any) => {
+			return (change.newValue === el[change.name] ? null : change);
+		});
+		return el;
 	};
 
 	set (rootId: string, list: I.ChatMessage[]): void {
@@ -69,6 +89,14 @@ class ChatStore {
 		map.set(message.id, message);
 
 		this.replyMap.set(rootId, map);
+	};
+
+	setState (rootId: string, state: any) {
+		this.stateMap.set(rootId, this.createChatState(state));
+	};
+
+	getState (rootId: string) {
+		return this.stateMap.get(rootId) || {};
 	};
 
 	clear (rootId: string) {

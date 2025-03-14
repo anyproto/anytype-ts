@@ -658,6 +658,20 @@ export const Mapper = {
 			};
 		},
 
+		ChatState: (obj: Model.ChatState): any => {
+			return {
+				messages: Mapper.From.ChatStateUnreadMessages(obj.getMessages()),
+				dbTimestamp: obj.getDbtimestamp(),
+			};
+		},
+
+		ChatStateUnreadMessages (obj: any): any {
+			return {
+				orderId: obj.getOldestorderid(),
+				counter: obj.getCounter(),
+			};
+		},
+
 		ChatMessageContent (obj: Model.ChatMessage.MessageContent): I.ChatMessageContent {
 			return {
 				text: obj.getText(),
@@ -1172,6 +1186,8 @@ export const Mapper = {
 			if (v == V.CHATUPDATE)					 t = 'ChatUpdate';
 			if (v == V.CHATDELETE)					 t = 'ChatDelete';
 			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
+			if (v == V.CHATSTATEUPDATE)			 	 t = 'ChatStateUpdate';
+			if (v == V.CHATUPDATEREADSTATUS)		 t = 'ChatUpdateReadStatus';
 
 			return t;
 		},
@@ -1673,6 +1689,15 @@ export const Mapper = {
 				id: obj.getId(),
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
 			};
+		},
+
+		ChatStateUpdate: (obj: Events.Event.Chat.UpdateState) => {
+			return {
+				state: Mapper.From.ChatState(obj.getState())
+			};
+		},
+
+		ChatUpdateReadStatus: (obj: Events.Event.Chat.UpdateReadStatus) => {
 		},
 
 	},
