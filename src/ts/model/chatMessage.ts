@@ -61,6 +61,7 @@ class ChatMessage implements I.ChatMessage {
 
 	isFirst = false;
 	isLast = false;
+	isRead = false;
 
 	constructor (props: I.ChatMessage) {
 
@@ -96,6 +97,7 @@ class ChatMessage implements I.ChatMessage {
 			content: observable,
 			attachments: observable,
 			reactions: observable,
+			isRead: observable,
 		});
 
 		intercept(this as any, change => U.Common.intercept(this, change));

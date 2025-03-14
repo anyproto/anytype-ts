@@ -17,24 +17,6 @@ class ChatStore {
 		});
 	};
 
-	private createChatState (state: any) {
-		const { messages, dbTimestamp } = state;
-		const el = {
-			messageOrderId: messages.orderId,
-			messageCounter: messages.counter,
-			dbTimestamp,
-		};
-
-		makeObservable(el, {
-			messageOrderId: observable,
-			messageCounter: observable
-		});
-		intercept(el as any, (change: any) => {
-			return (change.newValue === el[change.name] ? null : change);
-		});
-		return el;
-	};
-
 	set (rootId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
@@ -91,8 +73,36 @@ class ChatStore {
 		this.replyMap.set(rootId, map);
 	};
 
+	setReadStatus (rootId: string, ids: string[], isRead: boolean) {
+		(ids || []).forEach(id => this.update(rootId, { id, isRead }));
+	};
+
+	private createState (state: any) {
+		const { messages, dbTimestamp } = state;
+		const el = {
+			messageOrderId: messages.orderId,
+			messageCounter: messages.counter,
+			dbTimestamp,
+		};
+
+		makeObservable(el, {
+			messageOrderId: observable,
+			messageCounter: observable
+		});
+		intercept(el as any, (change: any) => {
+			return (change.newValue === el[change.name] ? null : change);
+		});
+		return el;
+	};
+
 	setState (rootId: string, state: any) {
-		this.stateMap.set(rootId, this.createChatState(state));
+		const map = this.stateMap.get(rootId);
+
+		if (map) {
+			set(map, state);
+		} else {
+			this.stateMap.set(rootId, this.createState(state));
+		};
 	};
 
 	getState (rootId: string) {

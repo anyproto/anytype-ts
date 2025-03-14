@@ -1000,6 +1000,11 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatUpdateReadStatus': {
+					S.Chat.setReadStatus(rootId, mapped.ids, mapped.isRead);
+					break;
+				};
+
 				case 'ChatDelete': {
 					S.Chat.delete(rootId, mapped.id);
 					break;
