@@ -852,11 +852,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onNavigationClick () {
-		const { rootId, loadMessagesByOrderId, scrollToBottom } = this.props;
+		const { rootId, loadMessagesByOrderId, getMessages, scrollToMessage, scrollToBottom } = this.props;
 		const { messageCounter, messageOrderId } = S.Chat.getState(rootId);
 
 		if (messageOrderId) {
-			loadMessagesByOrderId(messageOrderId);
+			const messages = getMessages();
+			const loaded = messages.find(it => it.orderId == messageOrderId);
+
+			if (loaded) {
+				scrollToMessage(loaded.id);
+			} else {
+				loadMessagesByOrderId(messageOrderId);
+			};
 		} else {
 			scrollToBottom();
 		};
