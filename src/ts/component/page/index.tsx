@@ -19,7 +19,6 @@ import PageMainVoid from './main/void';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
-import PageMainType from './main/type';
 import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
 import PageMainGraph from './main/graph';
@@ -50,7 +49,6 @@ const Components = {
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
-	'main/type':			 PageMainType,
 	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
 	'main/graph':			 PageMainGraph,

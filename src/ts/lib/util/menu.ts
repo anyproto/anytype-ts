@@ -125,6 +125,8 @@ class UtilMenu {
 				type: I.BlockType.Page, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
+				iconName: type.iconName,
+				iconOption: type.iconOption,
 				name: type.name || translate('defaultNamePage'), 
 				description: type.description,
 				isObject: true,
@@ -411,31 +413,25 @@ class UtilMenu {
 		];
 		if (!isSystem) {
 			options.push(I.WidgetLayout.Link);
+		} else
+		if (id == J.Constant.widgetId.bin) {
+			options.unshift(I.WidgetLayout.Link);
 		};
 
-		if (id) {
-			if (!isSystem) {
-				const isSet = U.Object.isInSetLayouts(layout);
-				const setLayouts = U.Object.getSetLayouts();
-				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
+		if (id && !isSystem) {
+			const isSet = U.Object.isInSetLayouts(layout);
+			const setLayouts = U.Object.getSetLayouts();
+			const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 
-				// Sets can only become Link and List layouts, non-sets can't become List
-				if (treeSkipLayouts.includes(layout)) {
-					options = options.filter(it => it != I.WidgetLayout.Tree);
-				};
-				if (!isSet) {
-					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
-				} else {
-					options = options.filter(it => it != I.WidgetLayout.Tree);
-					options.unshift(I.WidgetLayout.View);
-				};
-			};
-
-			if ([ 
-				J.Constant.widgetId.set, 
-				J.Constant.widgetId.collection,
-			].includes(id)) {
+			// Sets can only become Link and List layouts, non-sets can't become List
+			if (treeSkipLayouts.includes(layout)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
+			};
+			if (!isSet) {
+				options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
+			} else {
+				options = options.filter(it => it != I.WidgetLayout.Tree);
+				options.unshift(I.WidgetLayout.View);
 			};
 		};
 
@@ -862,12 +858,11 @@ class UtilMenu {
 
 	getFixedWidgets () {
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
-			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
-			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
-			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },
-			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
-		].filter(it => it);
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-star' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
+			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin' },
+		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 
 	sortOrFilterRelationSelect (menuParam: any, param: any) {
@@ -1263,7 +1258,7 @@ class UtilMenu {
 					onMore,
 					buttons: buttons.map(it => ({ ...it, isButton: true })),
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					onClick: (item: any) => {

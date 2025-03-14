@@ -301,16 +301,10 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, []);
 
 	useEffect(() => {
-		if (!isSystemTarget() && view && viewId && (viewId != view.id)) {
-			if (selectRef.current) {
-				if (viewId != selectRef.current.getValue()) {
-					selectRef.current.setValue(viewId);
-				};
-			};
-
+		if (!isSystemTarget()) {
 			load(viewId);
 		};
-	});
+	}, [ viewId ]);
 
 	useImperativeHandle(ref, () => ({
 		updateData,

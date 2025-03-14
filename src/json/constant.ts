@@ -116,6 +116,7 @@ export default {
 		page:			 'ot-page',
 		set:			 'ot-set',
 		space:			 'ot-space',
+		spaceview:		 'ot-spaceView',
 		template:		 'ot-template',
 		type:			 'ot-objectType',
 		image:			 'ot-image',
@@ -154,9 +155,7 @@ export default {
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
-		set:			 'set',
-		collection:		 'collection',
-		chat:			 'chat',
+		bin:			 'bin',
 	},
 
 	monthDays: {

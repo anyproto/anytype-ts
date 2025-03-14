@@ -19,7 +19,6 @@ import ListNotification from './list/notification';
 import ListChildren from './list/children';
 import ListObject from './list/object';
 import ListObjectManager from './list/objectManager';
-import ListObjectPreview from './list/objectPreview';
 
 import Header from './header';
 import Footer from './footer';
@@ -122,7 +121,6 @@ export {
 	ListChildren,
 	ListObject,
 	ListObjectManager,
-	ListObjectPreview,
 	ListNotification,
 
 	Header,

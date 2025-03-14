@@ -57,36 +57,34 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 					rowCount={total}
 					threshold={10}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-							{({ height, isScrolling, registerChild, scrollTop }) => {
-								return (
-									<AutoSizer disableHeight={true}>
-										{({ width }) => (
-											<List
-												ref={ref => this.ref = ref}
-												autoHeight={true}
-												height={Number(height) || 0}
-												width={Number(width) || 0}
-												isScrolling={isScrolling}
-												rowCount={records.length}
-												rowHeight={HEIGHT}
-												onRowsRendered={onRowsRendered}
-												rowRenderer={({ key, index, style }) => (
-													<div className="listItem" key={`grid-row-${view.id + index}`} style={style}>
-														<Row 
-															{...this.props} 
-															recordId={records[index]}
-															recordIdx={index}
-														/>
-													</div>
-												)}
-												scrollTop={scrollTop}
-											/>
-										)}
-									</AutoSizer>
-								);
-							}}
+							{({ height, isScrolling, scrollTop }) => (
+								<AutoSizer disableHeight={true}>
+									{({ width }) => (
+										<List
+											ref={ref => this.ref = ref}
+											autoHeight={true}
+											height={Number(height) || 0}
+											width={Number(width) || 0}
+											isScrolling={isScrolling}
+											rowCount={records.length}
+											rowHeight={HEIGHT}
+											onRowsRendered={onRowsRendered}
+											rowRenderer={({ key, index, style }) => (
+												<div className="listItem" key={`grid-row-${view.id + index}`} style={style}>
+													<Row 
+														{...this.props} 
+														recordId={records[index]}
+														recordIdx={index}
+													/>
+												</div>
+											)}
+											scrollTop={scrollTop}
+										/>
+									)}
+								</AutoSizer>
+							)}
 						</WindowScroller>
 					)}
 				</InfiniteLoader>
