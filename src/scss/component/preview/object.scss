@@ -19,11 +19,9 @@
 
 	.heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; }
 	.heading {
-		.iconObject { display: inline-block; background-color: var(--color-shape-tertiary); border-radius: 8px; margin: 0px 0px 2px 0px; box-shadow: 0px 0px 0px 2px var(--color-bg-primary) inset; }
-		.iconObject {
-			.iconImage { border: 2px solid var(--color-bg-primary); }
-		}
+		.iconObject { display: inline-block; background-color: var(--color-shape-tertiary); border-radius: 8px; margin: 0px 0px 6px 0px; box-shadow: 0px 0px 0px 2px var(--color-bg-primary); }
 		.iconObject.isTask { background: none; position: absolute; top: 2px; left: -24px; box-shadow: 0px 0px !important; }
+
 		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: 700; position: relative; width: 100%; }
 		.description { @include text-small; @include text-overflow-nw; }
 
@@ -195,7 +193,7 @@
 }
 
 /* PreviewObject Medium */
-.previewObject.medium { width: 224px; height: 158px; }
+.previewObject.medium { width: 224px; height: 160px; }
 .previewObject.medium {
 	.cover { height: 72px; }
 	.scroller { padding: 32px 24px; }

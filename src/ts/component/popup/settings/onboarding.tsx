@@ -1,11 +1,18 @@
 import * as React from 'react';
-import { Title, Label, Select, Button } from 'Component';
+import { Title, Label, Select, Button, Error } from 'Component';
 import { I, S, U, translate, Action, analytics, Renderer, Preview } from 'Lib';
 import { observer } from 'mobx-react';
+
+interface State {
+	error: string;
+};
 
 const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup> {
 
 	config: any = {};
+	state = {
+		error: '',
+	};
 	refMode = null;
 
 	constructor (props: I.Popup) {
@@ -32,25 +39,12 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	render () {
+		const { error } = this.state;
 		const { mode, path, userPath } = this.config;
 		const { interfaceLang } = S.Common;
 		const interfaceLanguages = U.Menu.getInterfaceLanguages();
 		const isDefault = path == U.Common.getElectron().defaultPath();
-		const networkModes: any[] = ([
-			{ id: I.NetworkMode.Default },
-			{ id: I.NetworkMode.Local },
-			{ id: I.NetworkMode.Custom },
-		] as any[]).map(it => {
-			it.name = translate(`networkMode${it.id}Title`);
-			it.description = translate(`networkMode${it.id}Text`);
-			it.withDescription = true;
-
-			if (it.id == I.NetworkMode.Local) {
-				it.note = translate('popupSettingsOnboardingLocalOnlyNote');
-			};
-
-			return it;
-		});
+		const networkModes = this.getNetworkModes();
 
 		return (
 			<div className="mainSides">
@@ -117,9 +111,29 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 					<div className="buttons">
 						<Button text={translate('commonSave')} onClick={this.onSave} />
 					</div>
+
+					<Error text={error} />
 				</div>
 			</div>
 		);
+	};
+
+	getNetworkModes () {
+		return ([
+			{ id: I.NetworkMode.Default },
+			{ id: I.NetworkMode.Local },
+			{ id: I.NetworkMode.Custom },
+		] as any[]).map(it => {
+			it.name = translate(`networkMode${it.id}Title`);
+			it.description = translate(`networkMode${it.id}Text`);
+			it.withDescription = true;
+
+			if (it.id == I.NetworkMode.Local) {
+				it.note = translate('popupSettingsOnboardingLocalOnlyNote');
+			};
+
+			return it;
+		});
 	};
 
 	onChange (key: string, value: any) {
@@ -128,7 +142,16 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onUpload () {
-		Action.openFileDialog({ extensions: [ 'yml', 'yaml' ] }, (paths: string[]) => this.onChange('path', paths[0]));
+		Action.openFileDialog({ extensions: [ 'yml', 'yaml' ] }, (paths: string[]) => {
+			Renderer.send('moveNetworkConfig', paths[0]).then(res => {
+				if (res.path) {
+					this.onChange('path', res.path);
+				} else 
+				if (res.error) {
+					this.setState({ error: res.error });
+				};
+			});
+		});
 	};
 
 	onSave () {
@@ -151,7 +174,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 			};
 
 			S.Auth.networkConfigSet(this.config);
-			this.props.close();
+			window.setTimeout(() => this.props.close(), S.Popup.getTimeout());
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {

@@ -1,4 +1,6 @@
-import { I, C, S, U, J, focus, analytics, Onboarding, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
+import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
+
+const Diff = require('diff');
 
 class Action {
 
@@ -170,6 +172,13 @@ class Action {
 		};
 
 		url = U.Common.urlFix(url);
+
+		const route = U.Common.getRouteFromUrl(url);
+		
+		if (route) {
+			U.Router.go(route, {});
+			return;
+		};
 
 		const scheme = U.Common.getScheme(url);
 		const cb = () => Renderer.send('openUrl', url);
@@ -716,8 +725,18 @@ class Action {
 	};
 
 	setSpellingLang (langs: string[]) {
+		langs = langs || [];
+
+		const diff = Diff.diffArrays(S.Common.config.languages || [], langs);
+
+		S.Common.configSet({ languages: langs }, false);
 		Renderer.send('setSpellingLang', langs);
-		analytics.event('AddSpellcheckLanguage');
+
+		diff.forEach(it => {
+			if (it.added && it.value.length) {
+				analytics.event('AddSpellcheckLanguage', { type: it.value[0] });
+			};
+		});
 	};
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
@@ -835,6 +854,21 @@ class Action {
 		analytics.event('ThemeSet', { id });
 	};
 
+	toggleFeatureRelation (rootId: string, relationKey: string) {
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
+		const featured = U.Common.objectCopy(object.featuredRelations || []);
+		const relation = S.Record.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return null;
+		};
+
+		if (!featured.includes(relationKey)) {
+			C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation', { relationKey, format: relation.format }));
+		} else {
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey, format: relation.format }));
+		};
+	};
 };
 
 export default new Action();

@@ -86,7 +86,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		return (
-			<React.Fragment>
+			<>
 				{!items.length && !isLoading ? (
 					<EmptySearch text={translate('commonNothingFound')} />
 				) : ''}
@@ -122,7 +122,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						)}
 					</div>
 				) : ''}
-			</React.Fragment>
+			</>
 		);
 	};
 	
@@ -244,7 +244,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		];
 
 		let filters: any[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts },
 		];
 
 		if (data.filters && data.filters.length) {
@@ -345,7 +345,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (item.id == 'selectDate') {
 			close = false;
 
-			S.Menu.open('dataviewCalendar', {
+			S.Menu.open('calendar', {
 				element: `#${getId()} #item-${item.id}`,
 				horizontal: I.MenuDirection.Center,
 				rebind: this.rebind,

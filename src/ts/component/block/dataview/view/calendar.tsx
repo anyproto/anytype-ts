@@ -70,7 +70,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 				<div className="wrap">
 					<div className={cn.join(' ')}>
-						<div className="table">
+						<div className="table customScrollbar">
 							<div className="head">
 								{days.map((item, i) => (
 									<div key={i} className="item">
@@ -84,11 +84,14 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 									const cn = [];
 									const current = [ item.d, item.m, item.y ].join('-');
 
+									let isToday = false;
+
 									if (m != item.m) {
 										cn.push('other');
 									};
 									if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
 										cn.push('active');
+										isToday = true;
 									};
 									if (i < 7) {
 										cn.push('first');
@@ -99,6 +102,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 											key={i}
 											{...this.props} 
 											{...item} 
+											isToday={isToday}
 											className={cn.join(' ')}
 											items={items.filter(it => it._date == current)}
 											onCreate={this.onCreate}
@@ -171,7 +175,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
 		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
 		const filters: I.Filter[] = [
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(view.filters as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
@@ -310,13 +314,13 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const margin = (cw - mw) / 2;
 		const { top } = node.offset();
 		const day = node.find('.day').first();
-		const menu = S.Menu.get('dataviewCalendarDay');
+		const menu = S.Menu.get('calendarDay');
 
 		wrap.css({ width: cw, height: Math.max(600, ch - top - 130), marginLeft: -margin - 2 });
-		win.trigger('resize.menuDataviewCalendarDay');
+		win.trigger('resize.menuCalendarDay');
 
 		if (menu && !menu.param.data.fromWidget && day.length) {
-			S.Menu.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
+			S.Menu.update('calendarDay', { width: day.outerWidth() + 8 });
 		};
 	};
 

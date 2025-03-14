@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, keyboard } from 'Lib';
 
 interface RouteParam {
 	page: string; 
@@ -8,6 +8,7 @@ interface RouteParam {
 	spaceId: string; 
 	viewId: string; 
 	relationKey: string;
+	additional: { key: string, value: string }[];
 };
 
 class UtilRouter {
@@ -50,6 +51,7 @@ class UtilRouter {
 		const spaceId = String(param.spaceId || '');
 		const viewId = String(param.viewId || '');
 		const relationKey = String(param.relationKey || '');
+		const additional = param.additional || [];
 
 		let route = [ page, action, id ];
 		if (spaceId) {
@@ -60,6 +62,11 @@ class UtilRouter {
 		};
 		if (relationKey) {
 			route = route.concat([ 'relationKey', relationKey ]);
+		};
+		if (additional.length) {
+			additional.forEach((it: any) => {
+				route = route.concat([ it.key, it.value ]);
+			});
 		};
 		return route.join('/');
 	};
@@ -82,6 +89,7 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
+		sidebar.rightPanelToggle(false, false, keyboard.isPopup());
 
 		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route, false, param);
@@ -159,6 +167,7 @@ class UtilRouter {
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
+		sidebar.rightPanelToggle(false, false, false);
 
 		if (sendEvent) {
 			analytics.event('SwitchSpace');
@@ -201,7 +210,7 @@ class UtilRouter {
 	};
 
 	getRoute () {
-		return String(this.history.location.pathname || '');
+		return String(this.history?.location?.pathname || '');
 	};
 
 	getRouteSpaceId () {

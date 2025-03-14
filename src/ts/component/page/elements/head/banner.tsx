@@ -24,7 +24,6 @@ const HeaderBanner: FC<Props> = ({
 	const onTemplateMenu = () => {
 		const { sourceObject } = object;
 		const type = S.Record.getTypeById(object.type);
-		const templateId = sourceObject || J.Constant.templateId.blank;
 		const node = $(nodeRef.current);
 
 		if (!type || S.Menu.isOpen('dataviewTemplateList')) {
@@ -38,7 +37,6 @@ const HeaderBanner: FC<Props> = ({
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,
 			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context) => {
 				menuContext = context;
@@ -53,12 +51,12 @@ const HeaderBanner: FC<Props> = ({
 				noAdd: true,
 				noTitle: true,
 				typeId: type.id,
-				templateId,
+				templateId: sourceObject,
 				previewSize: I.PreviewSize.Medium,
 				onSetDefault: item => {
 					U.Object.setDefaultTemplateId(type.id, item.id);
 				},
-				onSelect: (item: any) => {
+				onSelect: item => {
 					C.ObjectApplyTemplate(object.id, item.id);
 
 					analytics.event('SelectTemplate', { route: analytics.route.banner });
@@ -109,7 +107,7 @@ const HeaderBanner: FC<Props> = ({
 			cn.push('withMenu');
 
 			if (count) {
-				label = U.Common.sprintf(translate('selectTemplateBannerWithNumber'), count, U.Common.plural(count, translate('pluralTemplate')));
+				label = U.Common.sprintf(translate('selectTemplateBannerWithNumber'), count, U.Common.plural(count, translate('pluralLCTemplate')));
 			} else {
 				label = translate('selectTemplateBanner');
 			};

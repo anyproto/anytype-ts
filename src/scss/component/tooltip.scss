@@ -9,7 +9,7 @@
 .tooltip.anim { transition-duration: 0.25s; transition-timing-function: $easeInQuint; transition-property: opacity, transform; }
 .tooltip.show { transform: scale3d(1, 1, 1); opacity: 1; }
 .tooltip {
-	.txt { line-height: 1.2; list-style-position: inside; }
+	.txt { line-height: inherit; list-style-position: inside; }
 	.txt:empty { display: none; }
 	.caption { color: var(--color-text-secondary); }
 }
@@ -26,4 +26,9 @@
 .tooltip.fromVault { min-width: unset; max-width: 360px; transform: scale3d(1, 1, 1); }
 .tooltip.fromVault {
 	.txt { @include text-overflow-nw; width: 100%; }
+}
+
+.tooltip.relationGroupDescription {
+	width: 280px; padding: 13px 16px; border-radius: 8px; box-shadow: 0px 2px 28px 0px rgba(0, 0, 0, 0.20);
+	background: var(--color-bg-primary); color: var(--color-text-primary); white-space: normal; @include text-common;
 }

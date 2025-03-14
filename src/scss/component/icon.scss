@@ -22,6 +22,11 @@
 .icon.tex { width: 32px; height: 16px; background-image: url('~img/icon/tex.svg'); }
 .icon.ghost { background-image: url('~img/icon/ghost.svg'); }
 
+.icon.widget-star { background-image: url('~img/icon/widget/system/star.svg'); }
+.icon.widget-pencil { background-image: url('~img/icon/widget/system/pencil.svg'); }
+.icon.widget-eye { background-image: url('~img/icon/widget/system/eye.svg'); }
+.icon.widget-bin { background-image: url('~img/icon/widget/system/bin.svg'); }
+
 .icon.relation.default { background-image: url('~img/icon/menu/action/block/relation0.svg'); }
 .icon.relation.c-longText { background-image: url('~img/icon/relation/longText.svg'); }
 .icon.relation.c-shortText { background-image: url('~img/icon/relation/shortText.svg'); }
@@ -45,6 +50,7 @@
 .icon.layout.c-type { background-image: url('~img/icon/object/type.svg'); }
 .icon.layout.c-relation { background-image: url('~img/icon/object/relation.svg'); }
 .icon.layout.c-note { background-image: url('~img/icon/object/note.svg'); }
+.icon.layout.c-bookmark { background-image: url('~img/icon/object/bookmark.svg'); }
 
 .icon.settings-personal { background-image: url('~img/icon/settings/personal.svg'); }
 .icon.settings-storage { background-image: url('~img/icon/settings/storage.svg'); }

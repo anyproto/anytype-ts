@@ -14,7 +14,7 @@ html.printMedia {
 	.header, 
 	.footer,
 	.notifications,
-	#sidebar,
+	.sidebar,
 	.sidebarDummy,
 	.progress,
 	.toast,
@@ -24,7 +24,9 @@ html.printMedia {
 	#sidebarSync
 	{ display: none !important; }
 
-	#page.isFull { width: 100% !important; }
+	#pageFlex.isFull {
+		#page { width: 100% !important; }
+	}
 
 	.focusable.isFocused { background: none !important; }
 
@@ -49,7 +51,7 @@ html.printMedia {
 
 	#bodyWrapper { padding: 0px !important; }
 
-	.pageMainType, .pageMainRelation {
+	.pageMainRelation {
 		.wrapper { padding: 2cm 0px; }
 		.wrapper {
 			.head {
@@ -96,6 +98,17 @@ html.printMedia {
 		.block.blockText.textCode > .wrapContent > .selectionTarget > .dropTarget #value { white-space: pre-wrap; overflow-x: visible; }
 
 		.block.blockMedia.isAudio > .wrapContent { box-shadow: 0px 0px; }
+		.block.blockMedia.isAudio {
+			.mediaAudio {
+				.controlsWrapper {
+					.controls {
+						.input-drag-horizontal {
+							.back { width: 100% !important; }
+						}
+					}
+				}
+			}
+		}
 
 		.block.blockDataview.isInline {
 			.content {
@@ -152,7 +165,7 @@ html.printMedia.print {
 }
 
 html.printMedia.withPopup {
-	.page.isFull { display: none !important; }
+	#pageFlex.isFull { display: none !important; }
 }
 
 @media (max-width: 500px) {

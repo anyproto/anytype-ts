@@ -1,0 +1,13 @@
+@import "~scss/_vars";
+
+.tabSwitch {
+    position: relative; display: flex; flex-wrap: nowrap; justify-content: stretch; align-items: center;
+    background: var(--color-shape-tertiary); border-radius: 6px;
+}
+.tabSwitch {
+    .option { position: relative; z-index: 1; flex: 1 1 0; text-align: center; }
+    .highlight { 
+		position: absolute; z-index: 0; top: 0px; height: 100%; border-radius: inherit; transition: left 0.2s $easeInQuint; 
+		background: var(--color-bg-primary); box-shadow: inset 0px 0px 0px 1px var(--color-shape-primary); 
+	}
+}

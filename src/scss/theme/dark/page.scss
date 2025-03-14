@@ -10,35 +10,6 @@
     }
 }
 
-/* PageMainType */
-
-.pageMainType {
-    .wrapper {
-        .section.template {
-			.btn {
-				.icon.plus { background-image: url('#{$themePath}/icon/plus/template0.svg'); }
-			}
-
-			.btn:hover {
-				.icon.plus { background-image: url('#{$themePath}/icon/plus/template1.svg'); }
-			}
-
-			.listPreviewObject {
-				.icon.arrow.left { left: -32px; }
-				.icon.arrow.right { right: -32px; }
-			}
-		}
-
-        .section.relation {
-			.item.add {
-				.clickable:hover {
-					.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
-				}
-			}
-        }
-    }
-}
-
 /* PageMainNavigation */
 
 .pageMainNavigation {
@@ -171,6 +142,22 @@
 		}
 		.actionItems {
 			.icon { background-image: url('#{$themePath}/icon/payment/hyperlink.svg'); }
+		}
+	}
+
+	.pageSettingsDataIndex {
+		.icon.drive { background-image: url('#{$themePath}/icon/settings/data/drive.svg'); }
+		.icon.sites { background-image: url('#{$themePath}/icon/settings/data/sites.svg'); }
+		.icon.location { background-image: url('#{$themePath}/icon/settings/data/location.svg'); }
+	}
+
+	.pageSettingsSpaceIndex {
+		> .buttons {
+			.btn {
+				.icon.invite { background: url('#{$themePath}/icon/settings/space/invite.svg'); }
+				.icon.qr { background: url('#{$themePath}/icon/settings/space/qr.svg'); }
+				.icon.more { background: url('#{$themePath}/icon/settings/space/more.svg'); }
+			}
 		}
 	}
 }

@@ -16,7 +16,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onMembership = (type: string) => {
 		S.Popup.closeAll(null, () => {
-			sidebar.settingsOpen('membership');
+			U.Object.openAuto({ id: 'membership', layout: I.ObjectLayout.Settings });
 		});
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });
@@ -61,7 +61,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			spaceId,
 			keys: U.Data.participantRelationKeys(),
 			filters: [
-				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 			],
 			ignoreHidden: false,
 			ignoreDeleted: true,

@@ -6,8 +6,10 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const { rootId, renderLeftIcons } = props;
 	
 	const onOpen = () => {
+		const object = S.Detail.get(rootId, rootId, []);
+
 		keyboard.disableClose(true);
-		S.Popup.closeAll(null, () => U.Object.openRoute(S.Detail.get(rootId, rootId, [])));
+		S.Popup.closeAll(null, () => U.Object.openRoute(object));
 	};
 
 	return (

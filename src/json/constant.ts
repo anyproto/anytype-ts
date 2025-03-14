@@ -40,6 +40,7 @@ export default {
 		notification:	 20,
 		space:			 50,
 		graphDepth:		 5,
+		cellEntry:		 320,
 		listObject:		 50,
 
 		chat: {
@@ -115,6 +116,7 @@ export default {
 		page:			 'ot-page',
 		set:			 'ot-set',
 		space:			 'ot-space',
+		spaceview:		 'ot-spaceView',
 		template:		 'ot-template',
 		type:			 'ot-objectType',
 		image:			 'ot-image',
@@ -136,7 +138,6 @@ export default {
 	},
 
 	templateId: {
-		blank:			 'blank',
 		new:			 'newTemplate'
 	},
 
@@ -154,9 +155,7 @@ export default {
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
-		set:			 'set',
-		collection:		 'collection',
-		chat:			 'chat',
+		bin:			 'bin',
 	},
 
 	monthDays: {

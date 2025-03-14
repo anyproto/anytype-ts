@@ -1,55 +1,65 @@
 @import "~scss/_mixins";
 
 .popups {
-	.popup.popupShortcut * { user-select: text !important; }
+	.popup.popupShortcut * { user-select: text !important; user-select: none; }
 	.popup.popupShortcut {
-		.innerWrap { width: 1096px; height: calc(100% - 164px); padding: 48px 0px 0px 0px; overflow: visible; }
-
-		@media (max-width: 1128px) {
-			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
+		.innerWrap { 
+			width: 336px; height: 100%; overflow: visible; left: auto; top: 0px; right: 0px; border-radius: 0px; 
+			opacity: 1; transform: translate3d(100%,0px,0px); transition-duration: 0.2s; transition-timing-function: ease-in;
 		}
+		.content { display: flex; flex-direction: column; height: 100%; }
 
-		.content { position: relative; padding-top: 38px; height: 100%; }
-		.wrapper { height: 100%; }
-
-		.head { position: absolute; top: 0px; left: 0px; width: 100%; padding: 0px 48px; }
+		.head { display: flex; flex-direction: column; gap: 8px 0px; flex-shrink: 0; padding: 16px 16px 0px 16px; }
 		.head {
-			.tabs { @include text-header2; color: var(--color-control-active); }
-			.tabs {
-				.item { margin-right: 24px; display: inline-block; transition: $transitionAllCommon; cursor: default; }
-				.item:last-child { margin: 0px; }
-				.item:hover, .item.active { color: var(--color-text-primary); }
+			.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 16px; }
+			.side.left { flex-grow: 1; }
+			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; }
+
+			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+			.icon.close { background-image: url('~img/icon/close.svg'); }
+
+			.filter { padding: 0px; }
+			.filter {
+				.inner { height: 28px; }
 			}
+
+			.select { border: 0px; padding-left: 0px; cursor: default; @include text-paragraph; font-weight: 600; }
+			.select:hover, .select.hover { background: none; }
 		}
 
-		.body { overflow-y: auto; height: 100%; padding: 24px 48px 48px 48px; }
+		.body { padding: 12px 8px 16px 8px; flex-grow: 1; overflow: auto; }
 		.body {
-			.section { margin-bottom: 25px; }
-			.section:last-child { margin-bottom: 0px; }
 			.section {
-				.name { @include text-paragraph; font-weight: 700; padding-bottom: 12px; border-bottom: 1px solid var(--color-shape-secondary); }
+				> .name { padding: 9px 8px; @include text-small; color: var(--color-text-secondary); }
 
-				.items {
-					.item { display: flex; flex-direction: row; padding: 12px 0px; border-bottom: 1px solid var(--color-shape-secondary); }
-					.item {
-						.key { flex-basis: 30%; flex-shrink: 0; font-weight: 500; color: var(--color-control-active); }
-						.descr { flex: 1; padding-left: 14px; }
+				.item { padding: 6px 8px; border-radius: 6px; gap: 0px 8px; cursor: default; min-height: 36px; 	}
+				.item.canEdit:not(.isEditing) {
+					&:hover, &.hover { background: var(--color-shape-highlight-light); }
+				}
+				.item.isEditing { box-shadow: 0px 0px 0px 2px var(--color-system-accent-100) inset; }
+				.item.hasError { box-shadow: 0px 0px 0px 2px var(--color-red) inset; }
+
+				.item {
+					.flex { flex-direction: row; align-items: center; line-height: 24px; }
+					.name { flex-grow: 1; }
+					.error { margin: 0.5em 0px 0px 0px; @include text-small; }
+
+					.label { @include text-small; font-weight: 500; }
+					.label.text { text-align: right; }
+
+					.symbols { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+					.symbols {
+						.label { 
+							background: var(--color-shape-tertiary); border-radius: 4px; height: 24px; padding: 0px 4px; min-width: 24px;
+							display: flex; flex-direction: row; align-items: center; justify-content: center;
+						}
 					}
 				}
 			}
-
-			.section > .descr { padding-bottom: 12px; border-bottom: 1px solid var(--color-shape-secondary); }
-
-			.section.separator { padding-top: 27px; margin-bottom: 41px; }
-			.section.separator > .descr { border: 0px; }
 		}
 	}
-}
 
-html.platformWindows {
-	.popups {
-		.popup.popupShortcut {
-			.body { overflow-y: overlay; }
-		}
+	.popup.popupShortcut.show {
+		.innerWrap { opacity: 1; transform: translate3d(0px,0px,0px); }
 	}
 }

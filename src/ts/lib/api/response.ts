@@ -1,6 +1,10 @@
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import { S, Decode, Mapper } from 'Lib';
 
+const details = (o: any) => {
+	return o ? S.Detail.mapper(Decode.struct(o.getDetails())) : {};
+};
+
 export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
 	return {
 		details: response.getDetails(),
@@ -111,7 +115,7 @@ export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 export const FileUpload = (response: Rpc.File.Upload.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
@@ -145,35 +149,35 @@ export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response)
 export const ObjectCreate = (response: Rpc.Object.Create.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
 export const ObjectCreateSet = (response: Rpc.Object.CreateSet.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
 export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
 export const ObjectCreateFromUrl = (response: Rpc.Object.CreateFromUrl.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
 export const ObjectCreateObjectType = (response: Rpc.Object.CreateObjectType.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
@@ -181,14 +185,14 @@ export const ObjectCreateRelation = (response: Rpc.Object.CreateRelation.Respons
 	return {
 		objectId: response.getObjectid(),
 		relationKey: response.getKey(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
 export const ObjectCreateRelationOption = (response: Rpc.Object.CreateRelationOption.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
@@ -263,8 +267,11 @@ export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 	// Find backlinks
 	for (const edge of edges) {
 		const idx = edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
+		const double = edges[idx];
+
 		if (idx >= 0) {
 			edge.isDouble = true;
+			edge.types = [ edge.type, double.type ];
 			edges.splice(idx, 1);
 		};
 	};
@@ -312,7 +319,7 @@ export const ObjectChatAdd = (response: Rpc.Object.ChatAdd.Response) => {
 
 export const ObjectDateByTimestamp = (response: Rpc.Object.DateByTimestamp.Response) => {
 	return {
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
@@ -394,7 +401,7 @@ export const BlockLinkCreateWithObject = (response: Rpc.BlockLink.CreateWithObje
 	return {
 		blockId: response.getBlockid(),
 		targetId: response.getTargetid(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 
@@ -436,6 +443,12 @@ export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response)
 	};
 };
 
+export const ObjectTypeListConflictingRelations = (response: Rpc.ObjectType.ListConflictingRelations.Response) => {
+	return {
+		conflictRelationIds: response.getRelationidsList()
+	};
+};
+
 export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObjectInfoWithLinks.Response) => {
 	const object = response.getObject();
 	const links = object.getLinks();
@@ -473,7 +486,7 @@ export const WorkspaceOpen = (response: Rpc.Workspace.Open.Response) => {
 export const WorkspaceObjectAdd = (response: Rpc.Workspace.Object.Add.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		details: details(response),
 	};
 };
 

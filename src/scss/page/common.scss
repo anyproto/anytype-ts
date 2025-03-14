@@ -1,13 +1,10 @@
 @import "./auth";
-@import "./authMigrate";
 @import "./main/edit";
 @import "./main/graph";
 @import "./main/history";
 @import "./main/media";
 @import "./main/navigation";
-@import "./main/relation";
 @import "./main/set";
-@import "./main/type";
 @import "./main/archive";
 @import "./main/graph";
 @import "./main/empty";
@@ -19,4 +16,5 @@
 @import "./main/void";
 @import "./main/tag";
 @import "./main/date";
+@import "./main/settings";
 @import "./main/settings";

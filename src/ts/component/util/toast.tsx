@@ -132,7 +132,7 @@ const Toast: FC = observer(() => {
 			};
 
 			case 'manageStorage': {
-				sidebar.settingsOpen('storageManager');
+				U.Object.openAuto({ id: 'storageManager', layout: I.ObjectLayout.Settings });
 				S.Common.toastClear();
 			};
 		};

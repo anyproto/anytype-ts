@@ -2,11 +2,10 @@ import { I, C, S, U, J, Storage, translate } from 'Lib';
 
 class UtilSpace {
 
-	openDashboard (type: string, param?: any) {
+	openDashboard (param?: any) {
 		param = param || {};
 
 		const space = this.getSpaceview();
-		const fn = U.Common.toCamelCase(`open-${type}`);
 
 		if (!space || space._empty_ || space.isAccountDeleted || !space.isLocalOk) {
 			this.openFirstSpaceOrVoid(null, param);
@@ -14,25 +13,14 @@ class UtilSpace {
 		};
 		
 		let home = this.getDashboard();
-
 		if (home && (home.id == I.HomePredefinedId.Last)) {
-			home = Storage.getLastOpened(U.Common.getCurrentElectronWindowId());
-
-			// Invalid data protection
-			if (!home || !home.id) {
-				home = null;
-			};
-
-			if (home) {
-				home.spaceId = S.Common.space;
-			};
+			home = this.getLastObject();
 		};
 
 		if (!home) {
 			U.Object.openRoute({ layout: I.ObjectLayout.Empty }, param);
-		} else
-		if (U.Object[fn]) {
-			U.Object[fn](home, param);
+		} else {
+			U.Object.openRoute(home, param);
 		};
 	};
 
@@ -96,6 +84,21 @@ class UtilSpace {
 			id: I.HomePredefinedId.Last,
 			name: translate('spaceLast'),
 		};
+	};
+
+	getLastObject () {
+		let home = Storage.getLastOpened(U.Common.getCurrentElectronWindowId());
+
+		// Invalid data protection
+		if (!home || !home.id) {
+			home = null;
+		};
+
+		if (home) {
+			home.spaceId = S.Common.space;
+		};
+
+		return home;
 	};
 
 	getChat () {
@@ -260,7 +263,7 @@ class UtilSpace {
 
 			if (!object._empty_) {
 				Storage.setLastOpened(U.Common.getCurrentElectronWindowId(), { id: object.id, layout: object.layout });
-				U.Space.openDashboard('route');
+				U.Space.openDashboard();
 			};
 		};
 	};

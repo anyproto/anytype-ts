@@ -25,6 +25,7 @@ export interface AccountInfo {
 	analyticsId: string;
 	networkId: string;
 	workspaceObjectId: string;
+	ethereumAddress: string;
 };
 
 export interface AccountConfig {

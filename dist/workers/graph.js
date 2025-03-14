@@ -212,6 +212,14 @@ initForces = () => {
 
 updateForces = () => {
 	const old = getNodeMap();
+	
+	let types = [];
+	if (settings.link) {
+		types.push(EdgeType.Link);
+	};
+	if (settings.relation) {
+		types.push(EdgeType.Relation);
+	};
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
@@ -220,7 +228,7 @@ updateForces = () => {
 
 	// Filter links
 	if (!settings.link) {
-		edges = edges.filter(d => d.type != EdgeType.Link);
+		edges = edges.filter(d => d.isDouble ? intersect(d.types, types) : d.type != EdgeType.Link);
 
 		const ids = nodeIdsFromEdges(edges);
 		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
@@ -228,7 +236,7 @@ updateForces = () => {
 
 	// Filter relations
 	if (!settings.relation) {
-		edges = edges.filter(d => d.type != EdgeType.Relation);
+		edges = edges.filter(d => d.isDouble ? intersect(d.types, types) : d.type != EdgeType.Relation);
 
 		const ids = nodeIdsFromEdges(edges);
 		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
@@ -931,4 +939,9 @@ const getLineWidth = () => {
 
 const getBorderRadius = () => {
 	return 3.33 / transform.k;
+};
+
+const intersect = (arr1, arr2) => {
+	const set2 = new Set(arr2);
+	return arr1.filter(item => set2.has(item)).length > 0;
 };

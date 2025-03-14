@@ -334,7 +334,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e`, e, () => {
+		keyboard.shortcut('menuSmile', e, () => {
 			if (!S.Menu.isOpen('smile')) {
 				e.preventDefault();
 				this.refButtons.onChatButton(e, I.ChatButton.Emoji);
@@ -630,6 +630,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const bookmarks = list.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
+		const bookmark = S.Record.getBookmarkType();
 		const attachments = (this.state.attachments || []).filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
 		loader.addClass('active');
@@ -710,7 +711,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 			let n = 0;
 			for (const item of bookmarks) {
-				C.ObjectCreateFromUrl({ source: item.source }, S.Common.space, J.Constant.typeKey.bookmark, item.source, true, (message: any) => {
+				C.ObjectCreateFromUrl({ source: item.source }, S.Common.space, J.Constant.typeKey.bookmark, item.source, true, bookmark.defaultTemplateId, (message: any) => {
 					n++;
 
 					if (message.objectId) {
@@ -963,7 +964,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					marks: this.marks,
 					skipIds: [ S.Auth.account.id ],
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
 					],
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
 						S.Detail.update(rootId, { id: object.id, details: object }, false);

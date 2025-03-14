@@ -1,24 +1,26 @@
 @import "~scss/_mixins";
 
 .pageMainArchive {
-	.wrapper { width: calc(100% - 96px); margin: 0px auto; padding: 52px 0px 0px 0px; user-select: none; }
+	.wrapper { 
+		width: calc(100% - 96px); margin: 0px auto; padding: 52px 0px 80px 0px; user-select: none; 
+		height: 100%; display: flex; flex-direction: column; gap: 46px 0px;
+	}
 	.wrapper {
-		.body { height: 100%; display: flex; flex-direction: column; }
-
-		.titleWrapper { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; margin: 0px 0px 46px 0px; }
+		.titleWrapper { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; flex-shrink: 0; }
 		.titleWrapper {
 			.title { @include text-header1; font-weight: 700; }
 			.icon.archive { width: 32px; height: 32px; background-image: url('~img/icon/archive/logo.svg'); }
 		}
 
+		.objectManagerWrapper { flex-grow: 1; }
 		.objectManagerWrapper {
 			.controls {
 				.icon.restore { background-image: url('~img/icon/menu/action/restore0.svg'); }
 			}
 
-			.ReactVirtualized__List { padding: 12px 0px 80px 0px; }
+			.ReactVirtualized__List { padding: 12px 0px; }
 			
-			.items { height: 100%; }
+			.items { flex-grow: 1; }
 			.items {
 				.row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 

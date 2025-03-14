@@ -16,9 +16,6 @@
 				}
 
 				> .body { overflow: scroll; border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px;  }
-				> .body::-webkit-scrollbar { width: 6px; height: 0px; }
-				> .body::-webkit-scrollbar-track { background: transparent; }
-				> .body::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 3px; }
 			}
 
 			.day { 
@@ -48,7 +45,7 @@
 				.head {
 					.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; opacity: 0; transition: opacity $transitionCommon; }
 
-					.number { @include text-paragraph; text-align: right; }
+					.number { @include text-paragraph; text-align: right; width: 100%; }
 					.number {
 						.inner { display: inline-block; }
 					}

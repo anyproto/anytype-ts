@@ -275,6 +275,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 		return;
 	};
 
+	const { config } = S.Common;
 	const request = new Rpc.File.Upload.Request();
 
 	request.setSpaceid(spaceId);
@@ -282,6 +283,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setLocalpath(path);
 	request.setType(type as number);
 	request.setDetails(Encode.struct(details));
+	request.setCreatetypewidgetifmissing(config.experimental);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -482,23 +484,25 @@ export const BlockSplit = (contextId: string, blockId: string, range: I.TextRang
 	dispatcher.request(BlockSplit.name, request, callBack);
 };
 
-export const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, callBack?: (message: any) => void) => {
+export const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockBookmark.Fetch.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setUrl(url);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(BlockBookmarkFetch.name, request, callBack);
 };
 
-export const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
+export const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockBookmark.CreateAndFetch.Request();
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setPosition(position as number);
 	request.setUrl(url);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(BlockBookmarkCreateAndFetch.name, request, callBack);
 };
@@ -1246,9 +1250,19 @@ export const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: str
 	dispatcher.request(ObjectTypeRelationRemove.name, request, callBack);
 };
 
+export const ObjectTypeListConflictingRelations = (id: string, spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.ListConflictingRelations.Request();
+
+	request.setSpaceid(spaceId);
+	request.setTypeobjectid(id);
+
+	dispatcher.request(ObjectTypeListConflictingRelations.name, request, callBack);
+};
+
 // ---------------------- OBJECT ---------------------- //
 
 export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
+	const { config } = S.Common;
 	const request = new Rpc.Object.Create.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1256,6 +1270,7 @@ export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: st
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey || J.Constant.default.typeKey);
+	request.setCreatetypewidgetifmissing(config.experimental);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -1271,16 +1286,17 @@ export const ObjectCreateSet = (sources: string[], details: any, templateId: str
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
-export const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectCreateBookmark = (details: any, spaceId: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateBookmark.Request();
 
 	request.setDetails(Encode.struct(details));
 	request.setSpaceid(spaceId);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
-export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, withContent: boolean, callBack?: (message: any) => void) => {
+export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, withContent: boolean, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateFromUrl.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1288,6 +1304,7 @@ export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: stri
 	request.setObjecttypeuniquekey(typeKey);
 	request.setUrl(url);
 	request.setAddpagecontent(withContent);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
 };
@@ -1560,6 +1577,8 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 };
 
 export const ObjectSearch = (spaceId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.Search.Request();
 
 	request.setSpaceid(spaceId);
@@ -1574,6 +1593,8 @@ export const ObjectSearch = (spaceId: string, filters: I.Filter[], sorts: I.Sort
 };
 
 export const ObjectSearchWithMeta = (spaceId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.SearchWithMeta.Request();
 
 	request.setSpaceid(spaceId);
@@ -1588,6 +1609,8 @@ export const ObjectSearchWithMeta = (spaceId: string, filters: I.Filter[], sorts
 };
 
 export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	request.setSpaceid(spaceId);
@@ -1620,6 +1643,8 @@ export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKe
 };
 
 export const ObjectSubscribeIds = (spaceId: string, subId: string, ids: string[], keys: string[], noDeps: boolean, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.SubscribeIds.Request();
 
 	request.setSpaceid(spaceId);
@@ -1675,15 +1700,6 @@ export const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], 
 	dispatcher.request(ObjectRelationRemoveFeatured.name, request, callBack);
 };
 
-export const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SetLayout.Request();
-
-	request.setContextid(contextId);
-	request.setLayout(layout as number);
-
-	dispatcher.request(ObjectSetLayout.name, request, callBack);
-};
-
 export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetIsFavorite.Request();
 
@@ -1694,6 +1710,8 @@ export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, call
 };
 
 export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
 	const request = new Rpc.Object.Graph.Request();
 
 	request.setSpaceid(spaceId);

@@ -42,7 +42,7 @@ const EmailCollection: FC<Props> = ({
 		ref.current.toggle();
 
 		if (!val) {
-			analytics.event('ClickEmailCollection', { route: 'OnboardingTooltip', step: 1, type });
+			analytics.event('ClickEmailCollection', { route: analytics.route.onboardingTooltip, step: 1, type });
 		};
 	};
 
@@ -53,7 +53,7 @@ const EmailCollection: FC<Props> = ({
 
 		setStep(newStep);
 		onStepChange();
-		analytics.event('EmailCollection', { route: 'OnboardingTooltip', step: newStep });
+		analytics.event('EmailCollection', { route: analytics.route.onboardingTooltip, step: newStep });
 	};
 
 	const setStatusAndText = (status: string, statusText: string) => {
@@ -92,7 +92,7 @@ const EmailCollection: FC<Props> = ({
 			return;
 		};
 
-		analytics.event('ClickEmailCollection', { route: 'OnboardingTooltip', step: 1, type: 'SignUp' });
+		analytics.event('ClickEmailCollection', { route: analytics.route.onboardingTooltip, step: 1, type: 'SignUp' });
 
 		setEmail(emailRef.current?.getValue());
 		setSubscribeNews(checkboxNewsRef.current?.getValue());
@@ -140,7 +140,7 @@ const EmailCollection: FC<Props> = ({
 		};
 
 		verifyEmail();
-		analytics.event('ClickEmailCollection', { route: 'OnboardingTooltip', step: 2, type: 'Resend' });
+		analytics.event('ClickEmailCollection', { route: analytics.route.onboardingTooltip, step: 2, type: 'Resend' });
 	};
 
 	const startCountdown = (s: number) => {
@@ -167,7 +167,7 @@ const EmailCollection: FC<Props> = ({
 
 	useEffect(() => {
 		buttonRef.current?.setDisabled(true);
-		analytics.event('EmailCollection', { route: 'OnboardingTooltip', step: 1 });
+		analytics.event('EmailCollection', { route: analytics.route.onboardingTooltip, step: 1 });
 
 		return () => {
 			window.clearTimeout(timeout.current);

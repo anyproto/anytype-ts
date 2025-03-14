@@ -84,7 +84,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			e.preventDefault();
 		});
 
-		keyboard.shortcut(`${cmd}+f`, e, () => {
+		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -256,9 +256,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { isPopup } = data;
 
 		if (!isPopup) {
-			return $('#page.isFull');
+			return $('#pageFlex.isFull');
 		} else {
-			return $('.popup').last().find('.innerWrap');
+			return $('.popup').last().find('#pageFlex.isPopup');
 		};
 	};
 

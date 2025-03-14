@@ -14,11 +14,12 @@ export default {
 	},
 
 	history: {
-		panel: 336,
+		panel: 348,
 	},
 
 	sidebar: {
 		width: { min: 240, max: 500, default: 336, close: 180 },
+		right: 348,
 	},
 
 	table: {
@@ -46,7 +47,7 @@ export default {
 
 			min: 48,
 			max: 1000,
-			edit: 300,
+			edit: 240,
 			icon: 70
 		},
 	},

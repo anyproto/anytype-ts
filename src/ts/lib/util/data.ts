@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding, Preview } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Relation } from 'Lib';
 
 const SYSTEM_DATE_RELATION_KEYS = [
 	'lastModifiedDate', 
@@ -188,7 +188,7 @@ class UtilData {
 						if (route) {
 							U.Router.go(route, routeParam);
 						} else {
-							U.Space.openDashboard('route', routeParam);
+							U.Space.openDashboard(routeParam);
 						};
 
 						S.Common.redirectSet('');
@@ -268,7 +268,7 @@ class UtilData {
 				subId: J.Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
@@ -335,7 +335,6 @@ class UtilData {
 	};
 
 	createSpaceSubscriptions (callBack?: () => void): void {
-		const { space } = S.Common;
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.deleted,
@@ -350,7 +349,7 @@ class UtilData {
 				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
 					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
@@ -359,6 +358,7 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
+				withArchived: true,
 				onSubscribe: () => {
 					S.Record.getTypes().forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
@@ -368,7 +368,7 @@ class UtilData {
 				subId: J.Constant.subId.typeStore,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
 					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
@@ -382,11 +382,12 @@ class UtilData {
 				subId: J.Constant.subId.relation,
 				keys: J.Relation.relation,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
+				withArchived: true,
 				onSubscribe: () => {
 					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
@@ -396,7 +397,7 @@ class UtilData {
 				subId: J.Constant.subId.relationStore,
 				keys: J.Relation.relation,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -406,7 +407,7 @@ class UtilData {
 				subId: J.Constant.subId.option,
 				keys: J.Relation.option,
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
@@ -418,7 +419,7 @@ class UtilData {
 				subId: J.Constant.subId.participant,
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
@@ -528,7 +529,7 @@ class UtilData {
 
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withCollection, limit } = param || {};
-		const { space, config } = S.Common;
+		const { space } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
 		const pinned = Storage.getPinnedTypes();
@@ -555,9 +556,7 @@ class UtilData {
 		};
 
 		items = items.filter(it => it);
-		if (!config.debug.hiddenObject) {
-			items = items.filter(it => !it.isHidden);
-		};
+		items = S.Record.checkHiddenObjects(items);
 
 		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
 		return items;
@@ -585,26 +584,35 @@ class UtilData {
 		keys = keys || [];
 
 		const object = S.Detail.get(rootId, blockId, [ 
-			'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 'templateIsBundled',
+			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 
+			'templateIsBundled', 'featuredRelations', 'targetObjectType',
 		].concat(J.Relation.cover).concat(keys), true);
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
+		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
 		const ret = {
 			withCover: false,
 			withIcon: false,
 			className: '',
-			object,
+			layout: object.layout,
+			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
+			layoutWidth: this.getLayoutWidth(rootId),
+		};
+
+		if (undefined !== object.layoutAlign) {
+			ret.layoutAlign = object.layoutAlign;
 		};
 
 		let className = [];
 		if (!object._empty_) {
-			ret.withCover = Boolean((coverType != I.CoverType.None) && coverId);
-			className = [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ];
+			ret.withCover = Boolean((object.coverType != I.CoverType.None) && object.coverId);
+			className = [ this.layoutClass(object.id, object.layout), `align${ret.layoutAlign}` ];
 		};
 
 		switch (object.layout) {
 			default:
-				ret.withIcon = iconEmoji || iconImage;
+				ret.withIcon = Boolean(object.iconEmoji || object.iconImage);
 				break;
 
 			case I.ObjectLayout.Note:
@@ -615,7 +623,7 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Type: {
-				ret.withIcon = iconName || iconEmoji;
+				ret.withIcon = Boolean(iconName || iconEmoji) || true;
 				break;
 			};
 
@@ -635,7 +643,7 @@ class UtilData {
 			className.push('noSystemBlocks');
 		};
 
-		if ((object.featuredRelations || []).includes('description')) {
+		if (featuredRelations.includes('description')) {
 			className.push('withDescription');
 		};
 
@@ -654,6 +662,7 @@ class UtilData {
 		};
 
 		ret.className = className.join(' ');
+
 		return ret;
 	};
 
@@ -731,12 +740,6 @@ class UtilData {
 		});
 	};
 
-	// Check if there is at least 1 set for object types
-	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		const setType = S.Record.getTypeByKey(J.Constant.typeKey.set);
-		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
-	};
-
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
@@ -777,9 +780,9 @@ class UtilData {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = param.filters || [];
-		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
+		const skipLayouts = [ I.ObjectLayout.Chat ];
 
-		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
@@ -820,6 +823,20 @@ class UtilData {
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
+	mapKeys (param: Partial<I.SearchSubscribeParam>) {
+		const keys: string[] = [ ...new Set(param.keys as string[]) ];
+
+		if (!keys.includes(param.idField)) {
+			keys.push(param.idField);
+		};
+
+		if (keys.includes('layout')) {
+			keys.push('resolvedLayout');
+		};
+
+		return keys;
+	};
+
 	searchSubscribe (param: Partial<I.SearchSubscribeParam>, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
@@ -843,7 +860,7 @@ class UtilData {
 		}, param);
 
 		const { spaceId, subId, idField, sorts, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
-		const keys: string[] = [ ...new Set(param.keys as string[]) ];
+		const keys = this.mapKeys(param);
 		const filters = this.searchDefaultFilters(param);
 
 		if (!subId) {
@@ -862,10 +879,6 @@ class UtilData {
 				callBack({ error: { code: 1, description: 'spaceId is empty' } });
 			};
 			return;
-		};
-
-		if (!keys.includes(idField)) {
-			keys.push(idField);
 		};
 
 		C.ObjectSearchSubscribe(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
@@ -889,8 +902,9 @@ class UtilData {
 			idField: 'id',
 		}, param);
 
-		const { spaceId, subId, keys, noDeps, idField } = param;
+		const { spaceId, subId, noDeps } = param;
 		const ids = U.Common.arrayUnique(param.ids.filter(it => it));
+		const keys = this.mapKeys(param);
 
 		if (!subId) {
 			console.error('[U.Data].subscribeIds: subId is empty');
@@ -917,10 +931,6 @@ class UtilData {
 				callBack({ error: { code: 1, description: 'ids list is empty' } });
 			};
 			return;
-		};
-
-		if (!keys.includes(idField)) {
-			keys.push(idField);
 		};
 
 		C.ObjectSubscribeIds(spaceId, subId, ids, keys, noDeps, (message: any) => {
@@ -958,8 +968,8 @@ class UtilData {
 			skipLayoutFormat: null,
 		}, param);
 
-		const { spaceId, idField, sorts, offset, limit, skipLayoutFormat } = param;
-		const keys: string[] = [ ...new Set(param.keys as string[]) ];
+		const { spaceId, sorts, offset, limit, skipLayoutFormat } = param;
+		const keys = this.mapKeys(param);
 		const filters = this.searchDefaultFilters(param);
 
 		if (!spaceId) {
@@ -969,10 +979,6 @@ class UtilData {
 				callBack({ error: { code: 1, description: 'spaceId is empty' } });
 			};
 			return;
-		};
-
-		if (!keys.includes(idField)) {
-			keys.push(idField);
 		};
 
 		C.ObjectSearch(spaceId, filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
@@ -1014,20 +1020,15 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const templateType = S.Record.getTemplateType();
-		const filters: any[] = [
+		return [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
 		];
-
-		if (templateType) {
-			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType.id });
-		};
-		return filters;
 	};
 
 	moveToPage (rootId: string, ids: string[], typeId: string, route: string) {
@@ -1226,6 +1227,20 @@ class UtilData {
 			type: I.BlockType.Link,
 			content: { ...this.defaultLinkSettings(), targetBlockId: id },
 		};
+	};
+
+	getLayoutWidth (rootId: string): number {
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+		const type = S.Record.getTypeById(object.type);
+		const root = S.Block.getLeaf(rootId, rootId);
+
+		let ret = type?.layoutWidth;
+
+		if (undefined !== root?.fields?.width) {
+			ret = root?.fields?.width;
+		};
+
+		return Number(ret) || 0;
 	};
 
 	setRtl (rootId: string, blockId: string) {

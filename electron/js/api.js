@@ -245,6 +245,34 @@ class Api {
 		});
 	};
 
+	moveNetworkConfig (win, src) {
+		if (path.extname(src) != 'yml') {
+			return { err: 'Invalid file' };
+		};
+
+		const dst = path.join(Util.defaultUserDataPath(), 'config.yaml');
+		try {
+			fs.copyFileSync(src, dst);
+			return { path: dst };
+		} catch (err) {
+			return { err };
+		};
+	};
+
+	shortcutExport (win, dst, data) {
+		try {
+			fs.writeFileSync(path.join(dst, 'shortcut.json'), JSON.stringify(data, null, '\t'), 'utf8');
+		} catch (err) {};
+	};
+
+	shortcutImport (win, src) {
+		let data = {};
+		if (fs.existsSync(src)) {
+			try { data = JSON.parse(fs.readFileSync(src, 'utf8')); } catch (err) {};
+		};
+		return data;
+	};
+
 };
 
 module.exports = new Api();
