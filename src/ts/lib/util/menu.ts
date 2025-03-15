@@ -1002,33 +1002,20 @@ class UtilMenu {
 			{ isDiv: true },
 		];
 
-		let ret: any[] = [];
-		let sort = [];
-		let show = [];
+		const sort = [
+			{ name: translate('sidebarObjectSort'), isSection: true },
+			{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate', isSort: true, defaultType: I.SortType.Desc },
+			{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate', isSort: true, defaultType: I.SortType.Desc },
+			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true, defaultType: I.SortType.Asc },
+		];
+		const show = [
+			{ name: translate('sidebarObjectShow'), isSection: true },
+			{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
+			{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
+			{ isDiv: true },
+		];
 
-		if ([ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(type)) {
-			sort = [
-				{ name: translate('sidebarObjectSort'), isSection: true },
-				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true, defaultType: I.SortType.Asc },
-				{ id: I.SortId.LastUsed, name: translate('sidebarObjectSortLastUsed'), relationKey: 'lastUsedDate', isSort: true, defaultType: I.SortType.Desc },
-			];
-		} else {
-			show = [
-				{ name: translate('sidebarObjectShow'), isSection: true },
-				{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
-				{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
-				{ isDiv: true },
-			];
-
-			sort = [
-				{ name: translate('sidebarObjectSort'), isSection: true },
-				{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate', isSort: true, defaultType: I.SortType.Desc },
-				{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate', isSort: true, defaultType: I.SortType.Desc },
-				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true, defaultType: I.SortType.Asc },
-			];
-		};
-
-		ret = ret.concat(show).concat(appearance).concat(sort);
+		const ret = [].concat(show).concat(appearance).concat(sort);
 
 		return ret.map(it => {
 			it.type = I.SortType.Asc;
