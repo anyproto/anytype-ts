@@ -20,6 +20,8 @@ interface Props {
 	isReadonly?: boolean;
 	ignoreArchived?: boolean;
 	ignoreHidden?: boolean;
+	disableHeight?: boolean;
+	scrollElement?: HTMLElement;
 	resize?: () => void;
 	onAfterLoad?: (message: any) => void;
 };
@@ -47,6 +49,8 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	ignoreArchived = true,
 	ignoreHidden = true,
 	isPopup = false,
+	disableHeight = true,
+	scrollElement,
 	resize,
 	onAfterLoad
 }, ref) => {
@@ -62,6 +66,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	const [ isLoading, setIsLoading ] = useState(false);
 	const recordIds = S.Record.getRecordIds(subId, '');
 	const records = S.Record.getRecords(subId);
+	const scrollContainer = scrollElement || isPopup ? $('#popupPage-innerWrap').get(0) : window;
 
 	const onFilterShow = () => {
 		$(filterWrapperRef.current).addClass('active');
@@ -328,15 +333,23 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => true}
 					>
-						{({ onRowsRendered }) => (
-							<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-								{({ height }) => (
-									<AutoSizer disableHeight={true}>
-										{({ width }) => (
+						{({ onRowsRendered }) => {
+							const Sizer = item => (
+								<AutoSizer disableHeight={disableHeight}>
+									{({ width, height }) => {
+										const listProps: any = {};
+
+										if (disableHeight) {
+											listProps.autoHeight = true;
+											listProps.height = item.height;
+										} else {
+											listProps.height = height;
+										};
+
+										return (
 											<List
-												autoHeight={true}
+												{...listProps}
 												ref={listRef}
-												height={Number(height) || 0}
 												width={Number(width) || 0}
 												deferredMeasurmentCache={cache.current}
 												rowCount={items.length}
@@ -347,11 +360,21 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 												onScroll={onScroll}
 												scrollToAlignment="start"
 											/>
-										)}
-									</AutoSizer>
-								)}
-							</WindowScroller>
-						)}
+										);
+									}}
+								</AutoSizer>
+							);
+
+							if (disableHeight) {
+								return (
+									<WindowScroller scrollElement={scrollContainer}>
+										{({ height }) => <Sizer height={height} />}
+									</WindowScroller>
+								);
+							} else {
+								return <Sizer />;
+							};
+						}}
 					</InfiniteLoader>
 				)}
 			</div>
