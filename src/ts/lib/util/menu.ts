@@ -1161,7 +1161,7 @@ class UtilMenu {
 						cb(message.details, message.middleTime);
 					});
 				} else {
-					C.ObjectCreate(details, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, (message: any) => {
+					C.ObjectCreate(details, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -1240,7 +1240,7 @@ class UtilMenu {
 			});
 		};
 
-		const buttons = [
+		const buttons: any[] = [
 			flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport } : null,
 		].filter(it => it);
 
@@ -1250,6 +1250,8 @@ class UtilMenu {
 			if (items.length) {
 				buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste });
 			};
+
+			buttons.unshift({ id: 'add', icon: 'plus' });
 
 			S.Menu.open('typeSuggest', {
 				...param,
@@ -1264,14 +1266,11 @@ class UtilMenu {
 					onClick: (item: any) => {
 						const objectFlags: I.ObjectFlag[] = [];
 
-						if (!U.Object.isInSetLayouts(item.recommendedLayout)) {
-							objectFlags.push(I.ObjectFlag.SelectTemplate);
-						};
 						if (flags.deleteEmpty) {
 							objectFlags.push(I.ObjectFlag.DeleteEmpty);
 						};
 
-						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
+						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, true, (message: any) => {
 							if (message.error.code || !message.details) {
 								return;
 							};

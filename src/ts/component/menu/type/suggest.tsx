@@ -45,7 +45,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { filter, noFilter } = data;
 		const items = this.getItems();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const buttons = data.buttons || [];
+		const buttons = this.getButtons();
 
 		if (!this.cache) {
 			return null;
@@ -300,6 +300,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { filter, noStore } = data;
 		const pinned = Storage.getPinnedTypes();
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const buttons = data.buttons || [];
+		const add = buttons.find(it => it.id == 'add');
 
 		items.sort((c1, c2) => U.Data.sortByPinnedTypes(c1, c2, pinned));
 
@@ -317,8 +319,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 				sections = sections.concat([
 					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-					{ children: [ { id: 'add', name: U.Common.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
-				]);
+					!add ? { children: [ { id: 'add', name: U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) } ] } : null,
+				].filter(it => it));
 			} else {
 				sections = sections.concat([
 					{ 
@@ -376,12 +378,24 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		return items;
 	};
 
+	getButtons () {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+		const buttons = U.Common.objectCopy(data.buttons || []);
+		const add = buttons.find(it => it.id == 'add');
+
+		if (add) {
+			add.name = filter ? U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
+		};
+
+		return buttons;
+	};
+
 	onFilterChange (v: string) {
 		if (v != this.filter) {
 			window.clearTimeout(this.timeoutFilter);
-			this.timeoutFilter = window.setTimeout(() => {
-				this.props.param.data.filter = this.refFilter.getValue();
-			}, J.Constant.delay.keyboard);
+			this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, J.Constant.delay.keyboard);
 		};
 	};
 
@@ -487,7 +501,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		if (item.id == 'add') {
 			C.ObjectCreateObjectType({ name: filter }, [], S.Common.space, (message: any) => {
 				if (!message.error.code) {
-					cb(message.details);
+					U.Object.openAuto(message.details);
 					analytics.event('CreateType');
 				};
 			});
@@ -548,13 +562,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const offset = 16 + (noFilter ? 0 : 42);
 		const buttonHeight = buttons.length ? buttons.reduce((res: number, current: any) => res + this.getRowHeight(current), 16) : 0;
 
-		let height = offset + buttonHeight;
+		let height = 0;
 		if (!items.length) {
 			height = 160;
 		} else {
 			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
 		};
 
+		height += offset + buttonHeight;
 		height = Math.min(height, offset + buttonHeight + HEIGHT_ITEM * LIMIT);
 
 		obj.css({ height });

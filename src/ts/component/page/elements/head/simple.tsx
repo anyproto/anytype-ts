@@ -350,7 +350,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			layout: object.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, true, (message) => {
 			if (message.error.code) {
 				return;
 			};

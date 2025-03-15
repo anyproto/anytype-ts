@@ -186,7 +186,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, true, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

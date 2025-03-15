@@ -747,6 +747,20 @@ class Dataview {
 		return ret;
 	};
 
+	namePlaceholder (layout: I.ObjectLayout): string {
+		let ret = '';
+		if (U.Object.isCollectionLayout(layout)) {
+			ret = translate('defaultNameCollection');
+		} else 
+		if (U.Object.isTypeLayout(layout)) {
+			ret = translate('defaultNameType');
+		} else 
+		if (U.Object.isSetLayout(layout)) {
+			ret = translate('defaultNameSet');
+		};
+		return ret;
+	};
+
 };
 
 export default new Dataview();

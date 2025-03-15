@@ -1641,7 +1641,8 @@
 
 	"menuTypeSuggestFilterTypes": "Filter Types...",
 	"menuTypeSuggestMyTypes": "My Types",
-	"menuTypeSuggestCreateType": "Create type %s",
+	"menuTypeSuggestCreateType": "Create Type",
+	"menuTypeSuggestCreateTypeFilter": "Create Type %s",
 
 	"menuWidgetAddWidget": "Add Widget",
 	"menuWidgetWidgetType": "Widget type",
