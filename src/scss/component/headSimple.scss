@@ -18,6 +18,14 @@
 		}
 	}
 
+	&.withColorPicker {
+		.side.left {
+			.titleWrap { justify-content: space-between; align-items: center; }
+			.editableWrap { flex-grow: 0; font-weight: 400; padding: 0px 6px; border-radius: 8px; }
+			.colorPicker { width: 18px; height: 18px; border-radius: 50%; }
+		}
+	}
+
 	.side.left { width: 100%; flex-grow: 1; display: flex; flex-direction: column; gap: 6px 0px; }
 	.side.left {
 		.titleWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; justify-content: stretch; }

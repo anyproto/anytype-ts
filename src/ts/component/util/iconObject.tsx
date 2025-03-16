@@ -379,6 +379,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			break;
 		};
 
+		case I.ObjectLayout.Tag:
 		case I.ObjectLayout.Dashboard: {
 			break;
 		};
