@@ -9,7 +9,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 
 	render () {
 		const { 
-			icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore,
+			icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural,
 			className, style, iconSize, switchValue, selectValue, options, readonly, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
 			selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index
 		} = this.props;
@@ -73,7 +73,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 
 		if (object) {
 			iconMainElement = <IconObject object={object} size={iconSize} />;
-			nameElement = <ObjectName object={object} />;
+			nameElement = <ObjectName object={object} withPlural={withPlural} />;
 
 			if (object.isHidden) {
 				cn.push('isHidden');

@@ -250,6 +250,8 @@ class DetailStore {
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;
 
+		object.pluralName = object.name + 's';
+
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');
 		};

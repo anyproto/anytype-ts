@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, C, Action, focus, keyboard, Relation, translate, analytics, sidebar } from 'Lib';
+import { I, M, S, U, J, C, Action, focus, keyboard, Relation, translate, analytics, sidebar, Dataview } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -41,16 +41,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	render (): any {
 		const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup } = this.props;
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout' ], true);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
-		const isType = U.Object.isTypeLayout(object.layout);
+		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
+		const isType = U.Object.isTypeLayout(check.layout);
 		const isDate = U.Object.isDateLayout(object.layout);
-		const isRelation = U.Object.isRelationLayout(object.layout);
+		const isRelation = U.Object.isRelationLayout(check.layout);
 		const canEditIcon = allowDetails && !isRelation;
 		const cn = [ 'headSimple', check.className ];
 
@@ -65,7 +65,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				ref={ref => this.refEditable[item.id] = ref}
 				id={`editor-${item.id}`}
 				placeholder={placeholder[item.id]}
-				readonly={!allowDetails}
+				readonly={!allowDetails || isType}
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
@@ -295,7 +295,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				text = U.Date.dateWithFormat(dateFormat, object.timestamp);
 			};
 
-			if (text == translate('defaultNamePage')) {
+			if (item.blockId == J.Constant.blockId.title && U.Object.isTypeLayout(object.layout)) {
+				text = object.pluralName;
+			};
+
+			if ([ translate('defaultNamePage'), Dataview.namePlaceholder(object.layout) ].includes(text)) {
 				text = '';
 			};
 

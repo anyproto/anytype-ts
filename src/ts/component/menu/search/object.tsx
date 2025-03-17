@@ -44,7 +44,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { isLoading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, placeholder, label, isBig, noFilter, noIcon, onMore } = data;
+		const { filter, value, placeholder, label, isBig, noFilter, noIcon, onMore, withPlural } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
@@ -68,6 +68,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			const props = {
 				...item,
 				object: (item.isAdd || item.isSection || item.isSystem ? undefined : item),
+				withPlural
 			};
 
 			if (item.isAdd) {
@@ -104,7 +105,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					<MenuItemVertical
 						{...props}
 						index={param.index}
-						name={<ObjectName object={item} />}
+						name={<ObjectName object={item} withPlural={withPlural} />}
 						onMouseEnter={e => this.onMouseEnter(e, item)}
 						onClick={e => this.onClick(e, item)}
 						onMore={onMore ? e => onMore(e, item) : undefined}

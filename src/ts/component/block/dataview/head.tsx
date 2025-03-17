@@ -225,6 +225,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					canAdd: true,
 					value: [ targetObjectId ],
 					addParam,
+					withPlural: true,
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => onCreate(message, false));
 						this.menuContext.close();

@@ -84,6 +84,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 											{...this.props}
 											ref={ref => this.sectionRefs.set(item.id, ref)}
 											key={item.id}
+											id={item.id}
 											component="object/relation"
 											rootId={rootId}
 											object={object}

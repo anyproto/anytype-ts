@@ -192,6 +192,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			d.name = d.name || translate('defaultNamePage');
 		};
 
+		if (U.Object.isTypeLayout(d.layout)) {
+			d.name = d.pluralName || d.name;
+		};
+
 		d.name = U.Smile.strip(d.name);
 		d.shortName = U.Common.shorten(d.name, 24);
 		d.description = String(d.description || '');

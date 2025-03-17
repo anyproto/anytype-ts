@@ -622,7 +622,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					<div className="clickable">
 						{collapse}
 						{icon}
-						<ObjectName object={object} />
+						<ObjectName object={object} withPlural={true} />
 						{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
 					</div>
 				</div>

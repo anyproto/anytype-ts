@@ -59,6 +59,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							{...this.props} 
 							ref={ref => this.sectionRefs.set(item.id, ref)}
 							key={item.id} 
+							id={item.id}
 							component={item.component}
 							object={this.object} 
 							withState={true}
@@ -123,6 +124,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		return [
 			{ id: 'title', component: 'type/title' },
+			{ id: 'plural', component: 'type/title' },
 			!isFile ? { id: 'layout', component: 'type/layout' } : null,
 			{ id: 'relation', component: 'type/relation' },
 		].filter(it => it);

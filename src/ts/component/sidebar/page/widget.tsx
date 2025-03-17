@@ -260,6 +260,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			subIds: J.Menu.widgetAdd,
 			data: {
 				route: analytics.route.addWidget,
+				withPlural: true,
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
