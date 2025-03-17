@@ -564,7 +564,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			node.removeClass('small');
 		};
 
-		const width = sideLeft.outerWidth() + sideRight.outerWidth();
+		const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());
 
 		if (width + 16 > nw) {
 			node.addClass('small');
