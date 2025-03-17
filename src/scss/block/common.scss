@@ -101,6 +101,8 @@
 	
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }
 	.block.blockIconUser > .wrapMenu { visibility: hidden; }
+
+	@import "./markup";
 }
 
 #dragProvider.isDragging {
@@ -108,7 +110,6 @@
 	.block > .wrapMenu > .icon.dnd { opacity: 1; }
 }
 
-@import "./markup";
 @import "./bookmark";
 @import "./cover";
 @import "./dataview";
