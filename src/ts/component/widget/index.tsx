@@ -273,14 +273,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const open = () => {
 		const node = $(nodeRef.current);
 		const icon = node.find('.icon.collapse');
-		const innerWrap = node.find('#innerWrap').show();
+		const innerWrap = node.find('#innerWrap').show().css({ height: '', opacity: 0 });
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
 		const minHeight = getMinHeight();
-
-		if (childRef.current?.resize) {
-			childRef.current?.resize();
-		};
 
 		node.addClass('isClosed');
 		icon.removeClass('isClosed');
