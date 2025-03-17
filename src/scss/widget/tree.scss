@@ -2,9 +2,9 @@
 
 .widget.widgetTree {
 	.ReactVirtualized__List { padding: 0px 8px 12px 8px; }
-	.emptyWrap { padding-top: 6px; }
+	.emptyWrap { padding-top: 6px; padding-bottom: 8px; }
 
-	.head { padding-bottom: 4px; }
+	.head { padding-bottom: 2px; }
 
 	.item { position: relative; }
 	.item {

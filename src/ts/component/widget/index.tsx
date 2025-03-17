@@ -278,6 +278,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const height = wrapper.outerHeight();
 		const minHeight = getMinHeight();
 
+		if (childRef.current?.resize) {
+			childRef.current?.resize();
+		};
+
 		node.addClass('isClosed');
 		icon.removeClass('isClosed');
 		wrapper.css({ height: minHeight });
