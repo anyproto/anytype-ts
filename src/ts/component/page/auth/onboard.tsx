@@ -163,7 +163,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	let content = null;
 	let buttons = null;
-	let more = null;
 
 	switch (stage) {
 		case Stage.Phrase: {
@@ -193,10 +192,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					) : ''}
 				</>
 			);
-
-			if (!phraseVisible) {
-				more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
-			};
 			break;
 		};
 
@@ -260,7 +255,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 				<Error className="animation" text={error} />
 				<div className="buttons">{buttons}</div>
-				{more}
 			</Frame>
 
 			<CanvasWorkerBridge state={0} />
