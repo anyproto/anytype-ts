@@ -26,7 +26,7 @@ export default [
 	text(''),
 	text('Hi dear Anytypers!'),
 	text(`We\'re thrilled to announce a major update and introduce a project we call "<b>Primitives</b>" – a fundamental shift in Anytype\'s core organizing structure. With Primitives, we\'re streamlining our user experience by eliminating the current behavior and bringing a clearer, more intuitive way to use <b>Types</b>.`),
-	text('Primitives reimagine Types. Now, you can define layouts and fields within a Type and all associated objects will automatically inherit these settings.'),
+	text('Primitives reimagine Types. Now, you can define layouts and properties within a Type and all associated objects will automatically inherit these settings.'),
 	text('Along with this transformation, we’ve included many new improvements and bug fixes.'),
 	text(``),
 
@@ -47,7 +47,7 @@ export default [
 	text(``),
 
 	h3(`Templates for Queries and Collections`),
-	text(`You can save and reuse your configurations, including view settings, applied filters, cover and icon. Just like with regular objects, select “Use as Template” from the three-dots menu or add templates via the Query or Collection Type page.`),
+	text(`You can save and reuse your configurations, including view settings, applied filters, cover and icon. Just like with regular objects, select ${hl('Use as Template')} from the three-dots menu or add templates via the Query or Collection Type page.`),
 	text(``),
 
 	h3(`Right Sidebar and Set Up Menu`),
@@ -68,10 +68,12 @@ export default [
 	img(`46/2.png`, 'c70'),
 	text(``),
 
-	// h3(`Type Widgets`),
-	// text(`You can now add widgets based on object Types, making it easier to organize and display relevant content.`),
-	// img(`46/3.png`),
-	// text(``),
+	h3(`Type Widgets`),
+	text(`You can now add widgets based on object Types, making it easier to organize and display relevant content. We’ve also introduced <b>Automatic Widget</b> creation to help users seamlessly discover and adopt widgets, creating a more personalized and intuitive workspace.`),
+	bullet(`When a new object type (e.g., Document, Contact) is created, a dedicated widget is automatically added to the sidebar. This widget displays all objects of that Type from the space, providing quick access and better organization.`),
+	bullet(`<b>Widgets are optional</b> – you can remove any widget at any time via ${hl('Edit')} button or by right-clicking. Once removed, they won’t reappear unless manually added.`),
+	img(`46/3.png`, 'c70'),
+	text(``),
 
 	h3(`Settings Update`),
 	text(`Both General and Space Settings have been updated to a full-page layout instead of a pop-up, with sections now located in the left sidebar.`),
@@ -84,7 +86,7 @@ export default [
 	text(``),
 
 	h3(`Raycast Extension Updates`),
-	text(`We've introduced several enhancements based on your requests and feedback, plus Anytype for Raycast is now an <b>AI&nbsp;Extension</b> – search through spaces and objects using natural language or create new ones just by instructing @anytype.`),
+	text(`We've introduced several enhancements based on your requests and feedback, plus Anytype for Raycast is now an <b>AI&nbsp;Extension</b> – search through spaces and objects using natural language or create new ones just by instructing ${hl('@anytype')}.`),
 	bullet(`<b>Improved Pinning & Navigation</b>: Pin objects, types, members and spaces for quicker access. Objects of a certain Type now appear below their templates for better organization.`),
 	bullet(`<b>Better Collection Management</b>: Create objects directly within collections and browse collection items with ease.`),
 	bullet(`<b>Customization & Visibility</b>: Choose ${hl('Open Object in Anytype')} as the default action, show custom properties in the Detail sidebar, toggle metadata in object details and apply templates when creating new objects.`),
