@@ -82,6 +82,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
 
+	componentWillUnmount (): void {
+		const { isPopup } = this.props;
+		const container = U.Common.getPageFlexContainer(isPopup);
+
+		container.removeClass('overPopup');
+	}; 
+
 	init () {
 		const { isPopup } = this.props;
 		const container = U.Common.getPageFlexContainer(isPopup);
