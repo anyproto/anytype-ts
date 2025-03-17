@@ -6,6 +6,8 @@ smile {
 smile * { display: inline; vertical-align: middle; }
 smile .loaderWrapper { display: inline-block; }
 
+a.markuplink { color: inherit; }
+
 markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: var(--color-shape-secondary); padding: 1px 4px; }
 
 markupemoji { display: inline; user-select: all; }

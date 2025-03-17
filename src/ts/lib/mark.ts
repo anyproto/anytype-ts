@@ -635,7 +635,7 @@ class Mark {
 		
 		switch (type) {
 			case I.MarkType.Link: {
-				attr = `href="${U.Common.urlFix(param)}"`;
+				attr = `href="${U.Common.urlFix(param)}" class="markuplink"`;
 				break;
 			};
 

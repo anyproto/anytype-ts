@@ -13,6 +13,7 @@ const HEIGHT = 28; // Height of each row
 
 interface WidgetTreeRefProps {
 	updateData: () => void;
+	resize: () => void;
 };
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
@@ -389,6 +390,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	useImperativeHandle(ref, () => ({
 		updateData,
+		resize,
 	}));
 
 	return (

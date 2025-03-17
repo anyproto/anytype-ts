@@ -8,7 +8,7 @@ interface PageMainInviteRefProps {
 
 const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((props, ref) => {
 
-	const { isPopup, match } = props;
+	const { isPopup, match, location } = props;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const cidRef = useRef('');
@@ -16,7 +16,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	const [ error, setError ] = useState('');
 
 	const init = () => {
-		const { cid, key, route } = match.params || {};
+		const { cid, key, route } = U.Common.searchParam(location.search);
 
 		if ((cidRef.current == cid) && (keyRef.current == key)) {
 			return;
