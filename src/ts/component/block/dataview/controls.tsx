@@ -566,7 +566,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const width = sideLeft.outerWidth() + sideRight.outerWidth();
 
-		if (width > nw) {
+		if (width + 16 > nw) {
 			node.addClass('small');
 		} else {
 			S.Menu.closeAll([ 'dataviewViewList' ]);
