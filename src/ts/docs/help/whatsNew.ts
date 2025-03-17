@@ -152,7 +152,6 @@ export default [
 	bullet(`The last active Space opens when launching the App and after refresh. Thanks for flagging this, @${link('https://community.anytype.io/t/last-used-space-is-not-the-space-shown-at-application-startup-when-there-are-multiple-instances-of-anytype/27097', 'C.c')}!`),
 	bullet(`Exporting to PDF now consistently reflects the current color scheme in dark mode. If you need an object to be exported as a standard PDF document with a white background while dark mode is enabled, you can use the Printing option instead. Appreciate your report, @${link('https://community.anytype.io/t/exporting-to-pdf-in-dark-mode-creates-different-and-unexpected-results/26235', 'DennisG')}!`),
 	bullet(`The calendar selection menu no longer moves when switching months. Thanks to @${link('https://community.anytype.io/t/calendar-selection-menu-moves-when-changing-months/26982', 'Magiccheese1')}!`),
-	bullet(`Pressing ${hl('Enter')} at the beginning of a checkbox list now correctly creates a single new checkbox.`),
 
 	div(),
 	// --------------------------------------------//
