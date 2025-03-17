@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Header } from 'Component';
+import { Header, Footer } from 'Component';
 import { observer } from 'mobx-react';
 import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage } from 'Lib';
 
@@ -142,6 +142,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 					<div className="settingsPageContainer" id="settingsPageContainer">
 						{content}
 					</div>
+					<Footer component="mainObject" {...this.props} />
 				</>
 			);
 		};
