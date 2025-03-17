@@ -207,10 +207,6 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
-
-		window.setTimeout(() => {
-			U.Router.go('/auth/migrate', {});
-		}, 1500)
 	};
 
 	init () {
