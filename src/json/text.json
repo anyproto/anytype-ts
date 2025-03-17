@@ -515,8 +515,19 @@
 	"pageAuthSetupImportBackup": "Import backup",
 	"pageAuthSetupEntering": "Entering the Vault...",
 
-	"pageAuthMigrateTitle": "Migration is in progress...",
-	"pageAuthMigrateText": "It can take some time. Thanks for your patience.",
+	"pageAuthMigrateInitTitle": "New Version Update",
+	"pageAuthMigrateInitText": "We're laying the groundwork for our new chats. Including counters, notifications and other features needed for smooth chat experience. It might take a little while, but don't worry, your data is safe.",
+	"pageAuthMigrateInitButtonStartUpdate": "Start Update",
+	"pageAuthMigrateInitButtonReadMore": "Read More",
+
+	"pageAuthMigrateInfoProcessTitle": "What to Expect",
+	"pageAuthMigrateInfoProcessText": "You'll see a loading screen during the update. Once finished, you can continue using the app normally.",
+	"pageAuthMigrateInfoDataTitle": "Your Data Remains Safe",
+	"pageAuthMigrateInfoDataText1": "During this update, your data remains fully secure. The update is performed directly on your device, and your synced data remains unaffected. We’ll just copy it to a new format, and a local backup will be created on your device, containing all your data in the previous format.",
+	"pageAuthMigrateInfoDataText2": "The reason we’re retaining this backup is to debug and assist you, in case of unforeseen.",
+
+	"pageAuthMigrateTitle": "Update is in progress...",
+	"pageAuthMigrateText": "This may take some time. Please don’t close the app until the process is complete.",
 	"pageAuthMigrateErrorTitle": "Not enough space",
 	"pageAuthMigrateErrorText": "Please clear some space and run the process again.",
 	"pageAuthMigrateTryAgain": "Try again",

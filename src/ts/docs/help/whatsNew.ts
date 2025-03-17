@@ -26,7 +26,7 @@ export default [
 	text(''),
 	text('Hi dear Anytypers!'),
 	text(`We\'re thrilled to announce a major update and introduce a project we call "<b>Primitives</b>" – a fundamental shift in Anytype\'s core organizing structure. With Primitives, we\'re streamlining our user experience by eliminating the current behavior and bringing a clearer, more intuitive way to use <b>Types</b>.`),
-	text('Primitives reimagine Types. Now, you can define layouts and fields within a Type and all associated objects will automatically inherit these settings.'),
+	text('Primitives reimagine Types. Now, you can define layouts and properties within a Type and all associated objects will automatically inherit these settings.'),
 	text('Along with this transformation, we’ve included many new improvements and bug fixes.'),
 	text(``),
 
@@ -39,7 +39,7 @@ export default [
 	bullet(`<b>Properties</b> that were previously set at the object level are now defined by Type, including both featured properties, such as backlinks or tags, and specific ones, such as date or source.`),
 	bullet(`<b>Templates</b> will now focus only on the content of objects, primarily organizing blocks. Adding blocks, setting a cover or assigning an icon are now key aspects of creating a template. Properties are managed separately at the Type level. Changing a property at the Type level will affect all objects of that Type.`),
 	bullet(`<b>Layout</b> of an object is also defined by its Type. For example, all Task objects will follow the same layout, and you won’t be able to customize them individually. If you need a different layout with a center header position or increased width, you should create a new Type.`),
-	// video(`46/1.mp4`),
+	video(`46/1.mp4`),
 	text(``),
 
 	h3(`Queries for Types`),
@@ -47,7 +47,7 @@ export default [
 	text(``),
 
 	h3(`Templates for Queries and Collections`),
-	text(`You can save and reuse your configurations, including view settings, applied filters, cover and icon. Just like with regular objects, select “Use as Template” from the three-dots menu or add templates via the Query or Collection Type page.`),
+	text(`You can save and reuse your configurations, including view settings, applied filters, cover and icon. Just like with regular objects, select ${hl('Use as Template')} from the three-dots menu or add templates via the Query or Collection Type page.`),
 	text(``),
 
 	h3(`Right Sidebar and Set Up Menu`),
@@ -65,31 +65,32 @@ export default [
 
 	h3(`New Icons for Types`),
 	text(`Custom icons can now be assigned at the Type level, making it easier to identify whether you are working with Types or Objects. You can now choose from a dedicated collection of hundreds of fresh icons for a consistent and structured look.`),
-	// img(`46/2.png`),
+	img(`46/2.png`, 'c70'),
 	text(``),
 
-	// h3(`Type Widgets`),
-	// text(`You can now add widgets based on object Types, making it easier to organize and display relevant content.`),
-	// img(`46/3.png`),
-	// text(``),
+	h3(`Type Widgets`),
+	text(`You can now add widgets based on object Types, making it easier to organize and display relevant content. We’ve also introduced <b>Automatic Widget</b> creation to help users seamlessly discover and adopt widgets, creating a more personalized and intuitive workspace.`),
+	bullet(`When a new object type (e.g., Document, Contact) is created, a dedicated widget is automatically added to the sidebar. This widget displays all objects of that Type from the space, providing quick access and better organization.`),
+	bullet(`<b>Widgets are optional</b> – you can remove any widget at any time via ${hl('Edit')} button or by right-clicking. Once removed, they won’t reappear unless manually added.`),
+	img(`46/3.png`, 'c70'),
+	text(``),
 
 	h3(`Settings Update`),
 	text(`Both General and Space Settings have been updated to a full-page layout instead of a pop-up, with sections now located in the left sidebar.`),
-	// img(`46/4.png`),
+	img(`46/4.png`, 'c70'),
 	text(``),
 
 	h3(`Custom Shortcuts`),
 	text(`We've expanded the number of actions available for keyboard shortcuts, giving you more capabilities than ever before. Most shortcuts are customizable, and certain actions support two different key combinations for more flexibility.`),
-	// img(`46/5.png`),
+	img(`46/5.png`, 'c70'),
 	text(``),
 
 	h3(`Raycast Extension Updates`),
-	text(`We've introduced several enhancements based on your requests and feedback, plus Anytype for Raycast is now an <b>AI&nbsp;Extension</b> – search through spaces and objects using natural language or create new ones just by instructing @anytype.`),
+	text(`We've introduced several enhancements based on your requests and feedback, plus Anytype for Raycast is now an <b>AI&nbsp;Extension</b> – search through spaces and objects using natural language or create new ones just by instructing ${hl('@anytype')}.`),
 	bullet(`<b>Improved Pinning & Navigation</b>: Pin objects, types, members and spaces for quicker access. Objects of a certain Type now appear below their templates for better organization.`),
 	bullet(`<b>Better Collection Management</b>: Create objects directly within collections and browse collection items with ease.`),
 	bullet(`<b>Customization & Visibility</b>: Choose ${hl('Open Object in Anytype')} as the default action, show custom properties in the Detail sidebar, toggle metadata in object details and apply templates when creating new objects.`),
-	// img(`46/6.png`),
-	text(``),
+	img(`46/6.png`, 'c50'),
 
 	h3(`Choose your Week Start Day`),
 	text(`You can now choose whether your week starts on Sunday or Monday. Head to your updated settings to make the switch in the date picker.`),
@@ -153,7 +154,6 @@ export default [
 	bullet(`The last active Space opens when launching the App and after refresh. Thanks for flagging this, @${link('https://community.anytype.io/t/last-used-space-is-not-the-space-shown-at-application-startup-when-there-are-multiple-instances-of-anytype/27097', 'C.c')}!`),
 	bullet(`Exporting to PDF now consistently reflects the current color scheme in dark mode. If you need an object to be exported as a standard PDF document with a white background while dark mode is enabled, you can use the Printing option instead. Appreciate your report, @${link('https://community.anytype.io/t/exporting-to-pdf-in-dark-mode-creates-different-and-unexpected-results/26235', 'DennisG')}!`),
 	bullet(`The calendar selection menu no longer moves when switching months. Thanks to @${link('https://community.anytype.io/t/calendar-selection-menu-moves-when-changing-months/26982', 'Magiccheese1')}!`),
-	bullet(`Pressing ${hl('Enter')} at the beginning of a checkbox list now correctly creates a single new checkbox.`),
 
 	div(),
 	// --------------------------------------------//
