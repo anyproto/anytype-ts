@@ -39,7 +39,7 @@ export default [
 	bullet(`<b>Properties</b> that were previously set at the object level are now defined by Type, including both featured properties, such as backlinks or tags, and specific ones, such as date or source.`),
 	bullet(`<b>Templates</b> will now focus only on the content of objects, primarily organizing blocks. Adding blocks, setting a cover or assigning an icon are now key aspects of creating a template. Properties are managed separately at the Type level. Changing a property at the Type level will affect all objects of that Type.`),
 	bullet(`<b>Layout</b> of an object is also defined by its Type. For example, all Task objects will follow the same layout, and you won’t be able to customize them individually. If you need a different layout with a center header position or increased width, you should create a new Type.`),
-	// video(`46/1.mp4`),
+	video(`46/1.mp4`),
 	text(``),
 
 	h3(`Queries for Types`),
@@ -65,7 +65,7 @@ export default [
 
 	h3(`New Icons for Types`),
 	text(`Custom icons can now be assigned at the Type level, making it easier to identify whether you are working with Types or Objects. You can now choose from a dedicated collection of hundreds of fresh icons for a consistent and structured look.`),
-	// img(`46/2.png`),
+	img(`46/2.png`, 'c70'),
 	text(``),
 
 	// h3(`Type Widgets`),
@@ -75,12 +75,12 @@ export default [
 
 	h3(`Settings Update`),
 	text(`Both General and Space Settings have been updated to a full-page layout instead of a pop-up, with sections now located in the left sidebar.`),
-	// img(`46/4.png`),
+	img(`46/4.png`, 'c70'),
 	text(``),
 
 	h3(`Custom Shortcuts`),
 	text(`We've expanded the number of actions available for keyboard shortcuts, giving you more capabilities than ever before. Most shortcuts are customizable, and certain actions support two different key combinations for more flexibility.`),
-	// img(`46/5.png`),
+	img(`46/5.png`, 'c70'),
 	text(``),
 
 	h3(`Raycast Extension Updates`),
@@ -88,8 +88,7 @@ export default [
 	bullet(`<b>Improved Pinning & Navigation</b>: Pin objects, types, members and spaces for quicker access. Objects of a certain Type now appear below their templates for better organization.`),
 	bullet(`<b>Better Collection Management</b>: Create objects directly within collections and browse collection items with ease.`),
 	bullet(`<b>Customization & Visibility</b>: Choose ${hl('Open Object in Anytype')} as the default action, show custom properties in the Detail sidebar, toggle metadata in object details and apply templates when creating new objects.`),
-	// img(`46/6.png`),
-	text(``),
+	img(`46/6.png`, 'c50'),
 
 	h3(`Choose your Week Start Day`),
 	text(`You can now choose whether your week starts on Sunday or Monday. Head to your updated settings to make the switch in the date picker.`),
