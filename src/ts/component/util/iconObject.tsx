@@ -470,12 +470,20 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const setErrorIcon = () => {
 		const node = $(nodeRef.current);
-		const img = node.find('img');
+		const img = $('<img />');
 
 		img.attr({ 
 			src: U.Common.updateSvg(require('img/icon/error.svg'), { id: 'error', size, fill: J.Theme[theme]?.iconDefault }), 
-			class: `iconCommon c${IconSize[size]}`
+			class: `iconError c${IconSize[size]}`,
 		});
+		node.append(img).addClass('withImageError');
+	};
+
+	const unsetErrorIcon = () => {
+		const node = $(nodeRef.current);
+
+		node.find('.iconError').remove();
+		node.removeClass('withImageError');
 	};
 
 	useEffect(() => {
@@ -483,15 +491,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const img = node.find('img');
 
 		img.off('error load');
-
-		img.on('error', () => {
-			node.addClass('withImageError');
-			setErrorIcon();
-		});
-
-		img.on('load', () => {
-			node.removeClass('withImageError');
-		});
+		img.on('load', () => unsetErrorIcon());
+		img.on('error', () => setErrorIcon());
 	}, []);
 
 	useEffect(() => {
