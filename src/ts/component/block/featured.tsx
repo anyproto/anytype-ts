@@ -564,6 +564,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 					keyboard.disableClose(true);
 					U.Object.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
+					keyboard.disableClose(false);
 					window.setTimeout(() => { Preview.toastShow({ text: U.Common.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
 
 					analytics.event('SetTurnIntoCollection');
