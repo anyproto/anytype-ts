@@ -3,16 +3,18 @@ import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { I, S, U, translate, sidebar, keyboard, analytics, Preview } from 'Lib';
 
-const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
+interface Props extends I.WidgetComponent {
+	onToggle(e: any): void;
+};
 
-	const { parent } = props;
+const WidgetSpace = observer(forwardRef<{}, Props>((props, ref) => {
+
+	const { parent, onToggle } = props;
 	const space = U.Space.getSpaceview();
 	const plusRef = useRef(null);
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 	const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
-	const isSpaceOwner = U.Space.isMyOwner();
 	const canWrite = U.Space.canMyParticipantWrite();
-	const cn = [ 'body' ];
 	const cmd = keyboard.cmdSymbol();
 	const alt = keyboard.altSymbol();
 	const buttons = [
@@ -20,10 +22,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		space.isShared ? { id: 'member', name: translate('commonMembers') } : null,
 		{ id: 'all', name: translate('commonAllContent') },
 	].filter(it => it);
-
-	if (isSpaceOwner && requestCnt) {
-		cn.push('withCnt');
-	};
 
 	const onSettings = (e: MouseEvent) => {
 		e.stopPropagation();
@@ -83,13 +81,13 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	return (
-		<div 
-			className={cn.join(' ')}
-			onClick={onSettings}
-		>
-			<div className="sides">
+		<>
+			<div onClick={onSettings} className="head">
 				<div className="side left">
 					<div className="clickable">
+						<div className="iconWrap collapse">
+							<Icon className="collapse" onClick={onToggle} />
+						</div>
 						<IconObject 
 							id="widget-space-icon" 
 							object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
@@ -112,35 +110,39 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				</div>
 			</div>
 
-			<div className="buttons">
-				{buttons.map((item, i) => {
-					let cnt = null;
+			<div id="contentWrapper" className="contentWrapper">
+				<div id="innerWrap">
+					{buttons.map((item, i) => {
+						const cn = [ 'item' ];
 
-					if (item.id == 'member') {
-						cnt = <div className="cnt">{requestCnt}</div>;
-					};
+						let cnt = null;
+						if ((item.id == 'member') && requestCnt) {
+							cnt = <div className="cnt">{requestCnt}</div>;
+							cn.push('withCnt');
+						};
 
-					return (
-						<div 
-							key={i} 
-							id={`item-${item.id}`} 
-							className="item" 
-							onClick={e => onButtonClick(e, item)}
-						>
-							<div className="side left">
-								<Icon className={item.id} />
-								<div className="name">
-									{item.name}
+						return (
+							<div 
+								key={i} 
+								id={`item-${item.id}`} 
+								className={cn.join(' ')} 
+								onClick={e => onButtonClick(e, item)}
+							>
+								<div className="side left">
+									<Icon className={item.id} />
+									<div className="name">
+										{item.name}
+									</div>
+								</div>
+								<div className="side right">
+									{cnt}
 								</div>
 							</div>
-							<div className="side right">
-								{cnt}
-							</div>
-						</div>
-					);
-				})}
+						);
+					})}
+				</div>
 			</div>
-		</div>
+		</>
 	);
 
 }));
