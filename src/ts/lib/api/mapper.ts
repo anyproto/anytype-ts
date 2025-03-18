@@ -1669,6 +1669,7 @@ export const Mapper = {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
+				subIds: obj.getSubidsList(),
 			};
 		},
 
@@ -1676,12 +1677,14 @@ export const Mapper = {
 			return {
 				id: obj.getId(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
+				subIds: obj.getSubidsList(),
 			};
 		},
 
 		ChatDelete: (obj: Events.Event.Chat.Delete) => {
 			return {
 				id: obj.getId(),
+				subIds: obj.getSubidsList(),
 			};
 		},
 
@@ -1689,6 +1692,7 @@ export const Mapper = {
 			return {
 				id: obj.getId(),
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
+				subIds: obj.getSubidsList(),
 			};
 		},
 

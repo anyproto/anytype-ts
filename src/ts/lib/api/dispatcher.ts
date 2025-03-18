@@ -956,16 +956,19 @@ class Dispatcher {
 
 				case 'ChatAdd': {
 					const orderId = mapped.orderId;
-					const list = S.Chat.getList(rootId);
 					const message = new M.ChatMessage(mapped.message);
 					const author = U.Space.getParticipant(U.Space.getParticipantId(space, message.creator));
 
-					let idx = list.findIndex(it => it.orderId == orderId);
-					if (idx < 0) {
-						idx = list.length;
-					};
+					mapped.subIds.forEach((subId) => {
+						const list = S.Chat.getList(subId);
 
-					S.Chat.add(rootId, idx, message);
+						let idx = list.findIndex(it => it.orderId == orderId);
+						if (idx < 0) {
+							idx = list.length;
+						};
+
+						S.Chat.add(subId, idx, message);
+					});
 
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
 						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
@@ -987,34 +990,36 @@ class Dispatcher {
 				};
 
 				case 'ChatUpdate': {
-					S.Chat.update(rootId, mapped.message);
+					mapped.subIds.forEach(subId => S.Chat.update(subId, mapped.message));
 
 					$(window).trigger('messageUpdate', [ mapped.message ]);
 					break;
 				};
 
 				case 'ChatStateUpdate': {
-					S.Chat.setState(rootId, mapped.state);
+					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state));
 
 					$(window).trigger('chatStateUpdate');
 					break;
 				};
 
 				case 'ChatUpdateReadStatus': {
-					S.Chat.setReadStatus(rootId, mapped.ids, mapped.isRead);
+					mapped.subIds.forEach(subId => S.Chat.setReadStatus(subId, mapped.ids, mapped.isRead));
 					break;
 				};
 
 				case 'ChatDelete': {
-					S.Chat.delete(rootId, mapped.id);
+					mapped.subIds.forEach(subId => S.Chat.delete(subId, mapped.id));
 					break;
 				};
 
 				case 'ChatUpdateReactions': {
-					const message = S.Chat.getMessage(rootId, mapped.id);
-					if (message) {
-						set(message, { reactions: mapped.reactions });
-					};
+					mapped.subIds.forEach((subId) => {
+						const message = S.Chat.getMessage(subId, mapped.id);
+						if (message) {
+							set(message, { reactions: mapped.reactions });
+						};
+					});
 
 					$(window).trigger('reactionUpdate', [ message ]);
 					break;
