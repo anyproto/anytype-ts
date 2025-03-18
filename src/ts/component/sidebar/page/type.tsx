@@ -88,8 +88,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	}; 
 
 	init () {
-		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
 		const type = this.getObject();
 		const sections = this.getSections();
 		const details: any = this.props.details || {};
