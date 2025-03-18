@@ -24,12 +24,14 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 
 	let { m, y } = getDateParam(value);
 
+	const getElementId = (d: number, m: number, y: number) => [ 'day', block.id, d, m, y ].join('-');
+
 	const onContextMenu = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		S.Menu.open('select', {
-			element: '#' + [ 'day', item.d, item.m, item.y ].join('-'),
+			element: `#${getElementId(item.d, item.m, item.y)}`,
 			offsetY: 4,
 			noFlipY: true,
 			data: {
@@ -61,7 +63,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 	};
 
 	const onClick = (d: number, m: number, y: number) => {
-		const element = `#day-${d}-${m}-${y}`;
+		const element = `#${getElementId(d, m, y)}`;
 
 		S.Menu.closeAll([ 'calendarDay' ], () => {
 			S.Menu.open('calendarDay', {
@@ -212,7 +214,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 						const check = dotMap.get([ item.d, item.m, item.y ].join('-'));
 						return (
 							<div 
-								id={[ 'day', item.d, item.m, item.y ].join('-')}
+								id={getElementId(item.d, item.m, item.y)}
 								key={i}
 								className={cn.join(' ')} 
 								onClick={() => onClick(item.d, item.m, item.y)}

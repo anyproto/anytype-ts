@@ -186,7 +186,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, true, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -273,7 +273,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const open = () => {
 		const node = $(nodeRef.current);
 		const icon = node.find('.icon.collapse');
-		const innerWrap = node.find('#innerWrap').show();
+		const innerWrap = node.find('#innerWrap').show().css({ height: '', opacity: 0 });
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
 		const minHeight = getMinHeight();
@@ -622,7 +622,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					<div className="clickable">
 						{collapse}
 						{icon}
-						<ObjectName object={object} />
+						<ObjectName object={object} withPlural={true} />
 						{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
 					</div>
 				</div>

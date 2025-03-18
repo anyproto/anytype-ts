@@ -202,8 +202,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		let size = 0;
 		switch (view.cardSize) {
 			default:				 size = 224; break;
-			case I.CardSize.Medium:	 size = 284; break;
-			case I.CardSize.Large:	 size = 360; break;
+			case I.CardSize.Medium:	 size = 360; break;
+			case I.CardSize.Large:	 size = 480; break;
 		};
 
 		this.columnCount = Math.max(1, Math.floor((this.width - margin) / size));

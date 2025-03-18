@@ -679,16 +679,15 @@ class UtilCommon {
 	};
 
 	searchParam (url: string): any {
-		const a = String(url || '').replace(/^\?/, '').split('&');
 		const param: any = {};
-		
-		a.forEach((s) => {
-			const [ key, value ] = s.split('=');
 
-			if (key) {
-				param[key] = decodeURIComponent(value);
-			};
-		});
+		try {
+			const u = new URLSearchParams(String(url || ''));
+			u.forEach((v, k) => {
+				param[k] = v;
+			});
+
+		} catch (e) { /**/ };
 		return param;
 	};
 

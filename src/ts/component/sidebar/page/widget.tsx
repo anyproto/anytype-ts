@@ -260,29 +260,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			subIds: J.Menu.widgetAdd,
 			data: {
 				route: analytics.route.addWidget,
+				withPlural: true,
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
-				/*
-				canAdd: true,
-				addParam: {
-					name: translate('commonCreateNewObject'),
-					nameWithFilter: translate('commonCreateObjectWithName'),
-					arrow: true,
-					onClick: (details: any) => {
-						const types = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 1 });
-
-						if (!types.length) {
-							return;
-						};
-
-						C.ObjectCreate(details, [], '', types[0].uniqueKey, S.Common.space, (message: any) => {
-							onSelect(message.details, true);
-						});
-					},
-				},
-				*/
 				onOver: (e, context: any, item: any) => {
 					if (!item.isAdd) {
 						S.Menu.closeAll(J.Menu.widgetAdd);

@@ -938,6 +938,11 @@ class Dispatcher {
 
 				case 'ImportFinish': {
 					const { collectionId, count, type } = mapped;
+					const { account } = S.Auth;
+
+					if (!account) {
+						break;
+					};
 
 					if (collectionId) {
 						window.setTimeout(() => {

@@ -30,6 +30,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 				filters: U.Data.graphFilters(),
 				filter: S.Common.getGraph(J.Constant.graphId.global).filter,
 				canAdd: true,
+				withPlural: true,
 				onSelect: (item: any) => {
 					$(window).trigger('updateGraphRoot', { id: item.id });
 				},

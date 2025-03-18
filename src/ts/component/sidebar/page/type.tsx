@@ -59,6 +59,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							{...this.props} 
 							ref={ref => this.sectionRefs.set(item.id, ref)}
 							key={item.id} 
+							id={item.id}
 							component={item.component}
 							object={this.object} 
 							withState={true}
@@ -81,6 +82,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
+
+	componentWillUnmount (): void {
+		const { isPopup } = this.props;
+		const container = U.Common.getPageFlexContainer(isPopup);
+
+		container.removeClass('overPopup');
+	}; 
 
 	init () {
 		const { isPopup } = this.props;
@@ -123,6 +131,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		return [
 			{ id: 'title', component: 'type/title' },
+			{ id: 'plural', component: 'type/title' },
 			!isFile ? { id: 'layout', component: 'type/layout' } : null,
 			{ id: 'relation', component: 'type/relation' },
 		].filter(it => it);
@@ -211,7 +220,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				};
 			};
 		} else {
-			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
+			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, true, (message) => {
 				if (!message.error.code) {
 					U.Object.openRoute(message.details);
 					S.Common.getRef('sidebarLeft')?.refChild?.refFilter?.setValue('');

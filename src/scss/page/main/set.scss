@@ -1,6 +1,5 @@
 @import "~scss/_mixins";
 
 .pageMainSet {
-	#bodyWrapper { overflow: overlay; scrollbar-gutter: stable both-edges; }
-	#bodyWrapper > #loader { position: fixed; top: 0px; width: 100%; height: 100%; }
+	.editorWrapper > #loader { position: fixed; top: 0px; width: 100%; height: 100%; }
 }

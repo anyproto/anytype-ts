@@ -555,32 +555,18 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return;
 		};
 
-		const { isPopup, isInline } = this.props;
 		const node = $(this.node);
 		const sideLeft = node.find('#dataviewControlsSideLeft');
 		const sideRight = node.find('#dataviewControlsSideRight');
-		const container = U.Common.getPageContainer(isPopup);
-		const { left } = sideLeft.offset();
-		const sw = sidebar.getDummyWidth();
-		const cw = container.outerWidth();
 		const nw = node.outerWidth();
-
-		let add = false;
 
 		if (node.hasClass('small')) {
 			node.removeClass('small');
 		};
 
-		const width = sideLeft.outerWidth() + sideRight.outerWidth() + 16;
-		const offset = isPopup ? container.offset().left : 0;
+		const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());
 
-		if (isInline) {
-			add = width > nw;
-		} else {
-			add = left + width - offset - sw + 50 >= cw;
-		};
-
-		if (add) {
+		if (width + 16 > nw) {
 			node.addClass('small');
 		} else {
 			S.Menu.closeAll([ 'dataviewViewList' ]);

@@ -34,6 +34,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ 
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
+			arrow: true,
 			onClick: () => {
 				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				close();
@@ -44,6 +45,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ 
 			id: 'export', 
 			name: translate('popupExportTitle'), 
+			arrow: true,
 			onClick: () => {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
 				close();
@@ -224,7 +226,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div key={index} className="item" onClick={item.onClick}>
 						<Icon className={item.id} />
 						<div className="name">{item.name}</div>
-						<Icon className="arrow" />
+						{item.arrow ? <Icon className="arrow" /> : ''}
 					</div>
 				))}
 			</div>

@@ -158,14 +158,15 @@ class AuthStore {
 	};
 
 	logout (mainWindow: boolean, removeData: boolean) {
+		const cb = () => {
+			C.WalletCloseSession(this.token, () => this.tokenSet(''));
+		};
+
 		if (mainWindow) {
-			C.AccountStop(removeData, () => {
-				C.WalletCloseSession(this.token);
-
-				this.tokenSet('');
-			});
-
+			C.AccountStop(removeData, () => cb());
 			Renderer.send('logout');
+		} else {
+			cb();
 		};
 
 		analytics.profile('', '');

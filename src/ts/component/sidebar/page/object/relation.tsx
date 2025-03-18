@@ -24,8 +24,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const sections = this.getSections();
 		const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const type = S.Record.getTypeById(object.type);
-		const restrictions = Relation.getArrayValue(type?.restrictions);
-		const allowDetails = !readonly && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+		const allowTypeDetails = S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
 
         return (
 			<>
@@ -34,7 +33,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 						<Label text={translate('sidebarTypeRelation')} />
 					</div>
 
-					{allowDetails && type ? (
+					{allowTypeDetails ? (
 						<div className="side right">
 							<Button color="blank" text={translate('sidebarObjectRelationSetUp')} className="simple" onClick={this.onSetUp} />
 						</div>
@@ -85,6 +84,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 											{...this.props}
 											ref={ref => this.sectionRefs.set(item.id, ref)}
 											key={item.id}
+											id={item.id}
 											component="object/relation"
 											rootId={rootId}
 											object={object}

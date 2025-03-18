@@ -326,9 +326,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	onFilterChange (v: string) {
 		if (v != this.filter) {
 			window.clearTimeout(this.timeoutFilter);
-			this.timeoutFilter = window.setTimeout(() => {
-				this.props.param.data.filter = this.refFilter.getValue();
-			}, J.Constant.delay.keyboard);
+			this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, J.Constant.delay.keyboard);
 		};
 	};
 

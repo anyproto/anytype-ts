@@ -1261,8 +1261,7 @@ export const ObjectTypeListConflictingRelations = (id: string, spaceId: string, 
 
 // ---------------------- OBJECT ---------------------- //
 
-export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
-	const { config } = S.Common;
+export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, createWidget: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1270,7 +1269,7 @@ export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: st
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey || J.Constant.default.typeKey);
-	request.setCreatetypewidgetifmissing(config.experimental);
+	request.setCreatetypewidgetifmissing(createWidget);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
