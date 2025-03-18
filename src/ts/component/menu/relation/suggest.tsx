@@ -465,7 +465,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		e.stopPropagation();
 
 		const { param, getId, getSize } = this.props;
-		const { data, classNameWrap } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, menuIdEdit } = data;
 
 		S.Menu.open(menuIdEdit, { 
@@ -473,6 +473,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			noAnimation: true,
+			className,
 			classNameWrap,
 			data: {
 				...data,
