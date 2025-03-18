@@ -208,6 +208,7 @@ export interface SidebarPageComponent {
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {
+	id: string;
 	object: any;
 	item?: any;
 	readonly?: boolean;

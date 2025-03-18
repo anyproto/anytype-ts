@@ -1930,6 +1930,8 @@
 	"sidebarObjectSortLastUsed": "Date last used",
 
 	"sidebarTypeTitle": "Editing type",
+	"sidebarTypeTitleLabelName": "Type name and icon",
+	"sidebarTypeTitleLabelPlural": "Database name",
 	"sidebarSectionLayoutName": "Layout",
 	"sidebarSectionLayoutFormat": "Format",
 	"sidebarSectionLayoutFormatPage": "Page",
