@@ -5,6 +5,7 @@ interface Props {
 	object: any;
 	className?: string;
 	withLatex?: boolean;
+	withPlural?: boolean;
 	onClick? (e: MouseEvent): void;
 	onMouseDown? (e: MouseEvent): void;
 	onMouseEnter? (e: MouseEvent): void;
@@ -15,6 +16,7 @@ const ObjectName: FC<Props> = ({
 	object = {},
 	className = 'name',
 	withLatex = false,
+	withPlural = false,
 	onClick,
 	onMouseDown,
 	onMouseEnter,
@@ -31,6 +33,10 @@ const ObjectName: FC<Props> = ({
 		} else {
 			name = U.Object.name(object);
 		};
+	};
+
+	if (withPlural && U.Object.isTypeLayout(layout)) {
+		name = object.pluralName || name;
 	};
 
 	if (withLatex) {

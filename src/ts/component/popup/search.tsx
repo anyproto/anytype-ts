@@ -152,6 +152,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				};
 
 				let name = U.Object.name(item);
+				if (U.Object.isTypeLayout(item.layout)) {
+					name = item.pluralName || name;
+				};
+
 				if (meta.highlight && (meta.relationKey == 'name')) {
 					name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
 
@@ -579,8 +583,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { space } = S.Common;
 		const { backlink } = this.state;
 		const filter = this.filter;
+		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
 		const filters: any[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		const sorts = [

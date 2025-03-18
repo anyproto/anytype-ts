@@ -18,7 +18,7 @@
 		}
 		.clickable {
 			.iconObject, .icon { flex-shrink: 0; }
-			.icon { width: 18px; height: 18px; background-size: 16px; }
+			.icon { width: 18px; height: 18px; }
 			.name { @include text-overflow-nw; }
 			.count { color: var(--color-text-secondary); }
 		}
@@ -120,7 +120,7 @@
 }
 
 .widget.widgetLink {
-	.head { padding-bottom: 12px; }
+	.head { padding-bottom: 10px; }
 	.headerIcon { display: block !important; }
 	.iconWrap.collapse { display: none !important; }
 }

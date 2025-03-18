@@ -236,7 +236,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { data } = param;
 		const { skipIds } = data;
 		const filter = this.getFilter();
-		const skipLayouts = U.Object.getSystemLayouts().filter(it => it != I.ObjectLayout.Date);
+		const skipLayouts = U.Object.getSystemLayouts().filter(it => !U.Object.isDateLayout(it) && !U.Object.isTypeLayout(it));
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },

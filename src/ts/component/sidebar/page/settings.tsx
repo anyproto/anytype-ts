@@ -32,7 +32,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const pathname = U.Router.getRoute();
 		const param = U.Router.getParam(pathname);
 		const isSpace = this.props.page == 'settingsSpace';
-
 		const items = this.getItems();
 
 		const onBack = () => {
@@ -227,30 +226,11 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	};
 
 	getSections (): any[] {
+		return this.props.page == 'settingsSpace' ? this.getSpaceSettings() : this.getAppSettings();
+	};
+
+	getSpaceSettings () {
 		const canWrite = U.Space.canMyParticipantWrite();
-		const isSpace = this.props.page == 'settingsSpace';
-		const settingsVault = [
-			{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
-			{ id: 'dataIndex', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'dataPublish', 'delete' ] },
-			{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
-		];
-
-		if (this.withMembership()) {
-			settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') });
-		};
-
-		const appSettings = [
-			{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
-			{
-				id: 'basicSettings', name: translate('popupSettingsApplicationTitle'), children: [
-					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
-					{ id: 'language', name: translate('pageSettingsLanguageTitle') },
-					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-				]
-			},
-			{ id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
-		];
-
 		const importExport = [{
 			id: 'exportIndex', icon: 'export', name: translate('commonExport'),
 			subPages: [ 'exportProtobuf', 'exportMarkdown' ]
@@ -263,21 +243,44 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			});
 		};
 
-		const spaceSettings = [
-			{ id: 'common', name: translate('commonPreferences'), children: [
+		return [
+			{ 
+				id: 'common', name: translate('commonPreferences'), 
+				children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
 					{ id: 'spaceShare', icon: 'members', name: translate('commonMembers') },
 					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
-				]
+				],
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
-
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
 			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: S.Record.checkHiddenObjects(S.Record.getTypes()) },
 			{ id: 'contentModelRelations', isToggle: true, name: U.Common.plural(10, translate('pluralProperty')), children: S.Record.checkHiddenObjects(S.Record.getRelations()) },
 		];
+	};
 
-		return isSpace ? spaceSettings : appSettings;
+	getAppSettings () {
+		const settingsVault = [
+			{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
+			{ id: 'dataIndex', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'dataPublish', 'delete' ] },
+			{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+		];
+
+		if (this.withMembership()) {
+			settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') });
+		};
+
+		return [
+			{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
+			{
+				id: 'basicSettings', name: translate('popupSettingsApplicationTitle'), children: [
+					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
+					{ id: 'language', name: translate('pageSettingsLanguageTitle') },
+					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+				]
+			},
+			{ id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
+		];
 	};
 
 	getItems () {

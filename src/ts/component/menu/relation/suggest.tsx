@@ -350,7 +350,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		const { id, getId, getSize, param, close } = this.props;
-		const { classNameWrap, data } = param;
+		const { className, classNameWrap, data } = param;
 		const skipKeys = data.skipKeys || [];
 		const sources = this.getLibrarySources();
 
@@ -373,7 +373,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		switch (item.id) {
 			case 'store': {
 				menuId = 'searchObject';
-				menuParam.className = 'single';
+				menuParam.className = `${className} single`;
 
 				const filters: I.Filter[] = [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
@@ -465,7 +465,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		e.stopPropagation();
 
 		const { param, getId, getSize } = this.props;
-		const { data, classNameWrap } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, menuIdEdit } = data;
 
 		S.Menu.open(menuIdEdit, { 
@@ -473,6 +473,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			noAnimation: true,
+			className,
 			classNameWrap,
 			data: {
 				...data,

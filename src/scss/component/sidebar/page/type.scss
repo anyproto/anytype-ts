@@ -1,8 +1,11 @@
 > .sidebarPage.pageType {
 	.section.typeTitle { padding: 16px; }
 	.section.typeTitle {
-		> .wrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }
+		> .wrap { display: flex; flex-direction: column; }
 		> .wrap {
+			.label { padding: 5px 0px; }
+			.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }
+
 			.iconObject { flex-shrink: 0; }
 			.editableWrap { flex-grow: 1; @include text-overflow-nw; }
 		}

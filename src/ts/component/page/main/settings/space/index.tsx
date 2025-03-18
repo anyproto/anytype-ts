@@ -47,7 +47,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const maxIcons = 5;
 		const headerButtons = isEditing ? [
-			{ color: 'blank', text: translate('commonCancel'), onClick: () => this.onCancel },
+			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave },
 		] : [
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: () => this.setState({ isEditing: true }) },

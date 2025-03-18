@@ -112,6 +112,7 @@ export default {
 		'layoutWidth',
 		'iconName',
 		'iconOption',
+		'pluralName',
 	],
 
 	graph: [

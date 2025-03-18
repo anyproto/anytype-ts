@@ -108,7 +108,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			return (
 				<div id={`item-${id}`} className={cn.join(' ')}>
 					<IconObject object={item} size={48} iconSize={iconSize} />
-					<ObjectName object={item} />
+					<ObjectName object={item} withPlural={true} />
 					{description}
 					
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
@@ -444,7 +444,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	getPage (item: any) {
-		return { ...item.details };
+		return { ...S.Detail.mapper(item.details) };
 	};
 
 	onClick (e: any, item: I.PageInfo) {

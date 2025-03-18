@@ -59,6 +59,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							{...this.props} 
 							ref={ref => this.sectionRefs.set(item.id, ref)}
 							key={item.id} 
+							id={item.id}
 							component={item.component}
 							object={this.object} 
 							withState={true}
@@ -83,15 +84,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentWillUnmount (): void {
-		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
-
-		container.removeClass('overPopup');
+		this.disableScroll(false);
 	}; 
 
 	init () {
-		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
 		const type = this.getObject();
 		const sections = this.getSections();
 		const details: any = this.props.details || {};
@@ -108,9 +104,16 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.backup = U.Common.objectCopy(this.object);
 
 		sections.forEach(it => this.updateObject(it.id));
-		container.addClass('overPopup');
 
+		this.disableScroll(true);
 		$(this.buttonSaveRef.getNode()).addClass('disabled');
+	};
+
+	disableScroll (v: boolean) {
+		const { isPopup } = this.props;
+		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
+
+		container.toggleClass('overPopup', v);
 	};
 	
 	getObject () {
@@ -130,6 +133,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		return [
 			{ id: 'title', component: 'type/title' },
+			{ id: 'plural', component: 'type/title' },
 			!isFile ? { id: 'layout', component: 'type/layout' } : null,
 			{ id: 'relation', component: 'type/relation' },
 		].filter(it => it);
@@ -211,7 +215,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			if (update.length) {
 				C.ObjectListSetDetails([ rootId ], update);
 
-				if (previous) {
+				if (previous && previous.page) {
 					sidebar.rightPanelSetState(isPopup, previous);
 				} else {
 					this.close();

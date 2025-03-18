@@ -228,16 +228,10 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 	getNodeWidth (): number {
 		const { isPopup } = this.props;
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(isPopup);
+		const vw = isPopup ? 0 : J.Size.vault.width;
 
-		let width = container.width();
-		if (isPopup) {
-			width -= J.Size.sidebar.right;
-		} else {
-			const refSidebar = S.Common.getRef('sidebarLeft');
-			width += $(refSidebar?.node).width();
-		};
-		return width;
+		return container.width() - J.Size.sidebar.right - vw;
 	};
 
 	resize () {

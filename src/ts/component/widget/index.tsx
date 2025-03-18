@@ -609,7 +609,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
-			icon = <IconObject object={object} size={18} className="headerIcon" />;
+			icon = <IconObject object={object} size={18} iconSize={18} className="headerIcon" />;
 		};
 
 		head = (
@@ -619,7 +619,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					<div className="clickable">
 						{collapse}
 						{icon}
-						<ObjectName object={object} />
+						<ObjectName object={object} withPlural={true} />
 						{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
 					</div>
 				</div>
