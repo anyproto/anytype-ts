@@ -1222,6 +1222,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getEmpty (type: string) {
 		const { isInline, block } = this.props;
 		const isCollection = this.isCollection();
+		const view = this.getView();
 		const cn = [];
 
 		if (isInline) {
@@ -1253,7 +1254,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case 'view': {
-				cn.push('withHead');
+				if (view.type != I.ViewType.Grid) {
+					cn.push('withHead');
+				};
 
 				emptyProps.title = translate('commonNoObjects');
 

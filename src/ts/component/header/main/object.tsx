@@ -65,7 +65,10 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		const object = S.Detail.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		S.Popup.closeAll(null, () => U.Object.openRoute(object));
+		S.Popup.closeAll(null, () => {
+			U.Object.openRoute(object);
+			keyboard.disableClose(false);
+		});
 	};
 	
 	const onMore = () => {

@@ -1158,6 +1158,7 @@ class Keyboard {
 	// Flag to prevent document from sending close, to prevent deletion of drafts
 	disableClose (v: boolean) {
 		this.isCloseDisabled = v;
+		console.log('isCloseDisabled', v);
 	};
 
 	// Flag to prevent common paste handling in editor

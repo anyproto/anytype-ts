@@ -417,6 +417,7 @@ class MenuObject extends React.Component<I.Menu> {
 			case 'history': {
 				keyboard.disableClose(true);
 				U.Object.openAuto({ layout: I.ObjectLayout.History, id: object.id });
+				keyboard.disableClose(false);
 				break;
 			};
 			
