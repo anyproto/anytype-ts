@@ -2305,10 +2305,11 @@ export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId
 	dispatcher.request(ChatSubscribeLastMessages.name, request, callBack);
 };
 
-export const ChatUnsubscribe = (objectId: string, callBack?: (message: any) => void) => {
+export const ChatUnsubscribe = (objectId: string, subId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.Unsubscribe.Request();
 
 	request.setChatobjectid(objectId);
+	request.setSubid(subId);
 
 	dispatcher.request(ChatUnsubscribe.name, request, callBack);
 };
