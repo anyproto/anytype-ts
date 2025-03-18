@@ -112,11 +112,13 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	};
 
 	const onSortStart = (e: any) => {
-		setActive(e.active);
 		keyboard.disableSelection(true);
+		setActive(e.active);
 	};
 	
 	const onSortEnd = (event) => {
+		keyboard.disableSelection(false);
+
         const { active, over } = event;
         if (!over || (active.id == over.id)) {
 			return;
@@ -151,7 +153,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			analyticsId = I.SidebarRelationList[to.id];
         };
 
-		keyboard.disableSelection(false);
 		analytics.stackAdd('ReorderRelation', { id: analyticsId });
     };
 

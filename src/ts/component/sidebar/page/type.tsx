@@ -84,10 +84,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentWillUnmount (): void {
-		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
-
-		container.removeClass('overPopup');
+		this.disableScroll(false);
 	}; 
 
 	init () {
@@ -109,9 +106,16 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.backup = U.Common.objectCopy(this.object);
 
 		sections.forEach(it => this.updateObject(it.id));
-		container.addClass('overPopup');
 
+		this.disableScroll(true);
 		$(this.buttonSaveRef.getNode()).addClass('disabled');
+	};
+
+	disableScroll (v: boolean) {
+		const { isPopup } = this.props;
+		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
+
+		container.toggleClass('overPopup', v);
 	};
 	
 	getObject () {
@@ -212,8 +216,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 			if (update.length) {
 				C.ObjectListSetDetails([ rootId ], update);
-
-				console.log(JSON.stringify(previous, null, 3));
 
 				if (previous && previous.page) {
 					sidebar.rightPanelSetState(isPopup, previous);
