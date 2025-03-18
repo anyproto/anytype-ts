@@ -76,6 +76,7 @@ class ChatMessage implements I.ChatMessage {
 		this.reactions = props.reactions || [];
 		this.isFirst = Boolean(props.isFirst);
 		this.isLast = Boolean(props.isLast);
+		this.isRead = Boolean(props.isRead);
 
 		this.reactions.sort((c1, c2) => {
 			const l1 = c1.authors.length;
