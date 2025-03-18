@@ -172,6 +172,9 @@ class Keyboard {
 						S.Popup.close(last.id);
 					};
 				};
+			} else 
+			if (this.isMainSettings() && !this.isFocused) {
+				U.Space.openDashboard();
 			};
 			
 			Preview.previewHide(false);
@@ -1013,6 +1016,10 @@ class Keyboard {
 
 	isMainType () {
 		return this.isMain() && (this.match?.params?.action == 'type');
+	};
+
+	isMainSettings () {
+		return this.isMain() && (this.match?.params?.action == 'settings');
 	};
 
 	isAuth () {
