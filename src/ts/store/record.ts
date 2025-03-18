@@ -445,7 +445,7 @@ class RecordStore {
 			return [];
 		};
 
-		return records.filter(it => hiddenObject ? true : !it.isHidden);
+		return records.filter(it => it && (hiddenObject ? true : !it.isHidden));
 	};
 
 };
