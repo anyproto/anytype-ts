@@ -89,14 +89,14 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		>
 			<div className="sides">
 				<div className="side left">
-					<IconObject 
-						id="widget-space-icon" 
-						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
-						size={18}
-						iconSize={18}
-						menuParam={{ className: 'fixed' }}
-					/>
-					<div className="txt">
+					<div className="clickable">
+						<IconObject 
+							id="widget-space-icon" 
+							object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
+							size={20}
+							iconSize={18}
+							menuParam={{ className: 'fixed' }}
+						/>
 						<ObjectName object={space} />
 					</div>
 				</div>
