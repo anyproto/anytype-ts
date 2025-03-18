@@ -15,7 +15,7 @@
 			.clickable {
 				.iconObject, .icon { flex-shrink: 0; }
 				.iconWrap.collapse { width: 20px; height: 20px; }
-				.icon { width: 18px; height: 18px; background-size: 16px; }
+				.icon { width: 18px; height: 18px; }
 				.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
 
 				.name { flex-grow: 1; @include text-paragraph;  @include text-overflow-nw;  font-weight: 600; }
