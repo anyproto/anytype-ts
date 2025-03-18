@@ -70,7 +70,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 				<div className="wrap">
 					<div className={cn.join(' ')}>
-						<div className="table">
+						<div className="table customScrollbar">
 							<div className="head">
 								{days.map((item, i) => (
 									<div key={i} className="item">
@@ -84,11 +84,14 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 									const cn = [];
 									const current = [ item.d, item.m, item.y ].join('-');
 
+									let isToday = false;
+
 									if (m != item.m) {
 										cn.push('other');
 									};
 									if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
 										cn.push('active');
+										isToday = true;
 									};
 									if (i < 7) {
 										cn.push('first');
@@ -99,6 +102,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 											key={i}
 											{...this.props} 
 											{...item} 
+											isToday={isToday}
 											className={cn.join(' ')}
 											items={items.filter(it => it._date == current)}
 											onCreate={this.onCreate}
@@ -242,7 +246,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id), details);
 
-		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -303,7 +307,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		wrap.css({ width: 0, height: 0, marginLeft: 0 });
 
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
 		const ch = container.height();
 		const mw = cw - PADDING * 2;

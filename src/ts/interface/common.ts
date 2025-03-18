@@ -204,14 +204,27 @@ export interface SidebarPageComponent {
 	readonly?: boolean;
 	details?: any;
 	noPreview?: boolean;
+	previous?: any;
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {
+	id: string;
 	object: any;
 	item?: any;
 	readonly?: boolean;
 	onChange?(update: any): void;
 	onDragStart?: (e: React.DragEvent) => void;
+};
+
+export interface SidebarSectionRef {
+	forceUpdate(): void;
+};
+
+export enum SidebarRelationList {
+	Featured 		= 1,
+	Recommended 	= 2,
+	Hidden 			= 3,
+	Conflict 		= 4,
 };
 
 export enum SurveyType {

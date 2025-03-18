@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, Action, focus, keyboard, Relation, translate, analytics } from 'Lib';
+import { I, M, S, U, J, C, Action, focus, keyboard, Relation, translate, analytics, sidebar, Dataview } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -10,8 +10,8 @@ interface Props {
 	readonly?: boolean;
 	noIcon?: boolean;
 	relationKey?: string;
+	isPopup?: boolean;
 	onCreate?: () => void;
-	onEdit?: () => void;
 	getDotMap?: (start: number, end: number, callback: (res: Map<string, boolean>) => void) => void;
 };
 
@@ -35,21 +35,22 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		this.onInstall = this.onInstall.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onTemplates = this.onTemplates.bind(this);
 	};
 
 	render (): any {
-		const { rootId, isContextMenuDisabled, readonly, noIcon, onEdit } = this.props;
+		const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup } = this.props;
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout', 'pluralName' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
-		const isType = U.Object.isTypeLayout(object.layout);
+		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
+		const isType = U.Object.isTypeLayout(check.layout);
 		const isDate = U.Object.isDateLayout(object.layout);
-		const isRelation = U.Object.isRelationLayout(object.layout);
+		const isRelation = U.Object.isRelationLayout(check.layout);
 		const canEditIcon = allowDetails && !isRelation;
 		const cn = [ 'headSimple', check.className ];
 
@@ -64,7 +65,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				ref={ref => this.refEditable[item.id] = ref}
 				id={`editor-${item.id}`}
 				placeholder={placeholder[item.id]}
-				readonly={!allowDetails}
+				readonly={!allowDetails || isType}
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
@@ -79,6 +80,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		let buttonEdit = null;
 		let buttonCreate = null;
+		let buttonTemplate = null;
 		let descr = null;
 		let featured = null;
 
@@ -104,9 +106,35 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if (isTypeOrRelation) {
 			if (object.isInstalled) {
-				if (isType && allowDetails) {
-					buttonEdit = <Button id="button-edit" color="blank" className="c28" text={translate('commonEdit')} onClick={onEdit} />;
+				if (isType) {
+					const isTemplate = U.Object.isTemplate(object.id);
+					const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
+
+					if (canShowTemplates) {
+						buttonTemplate = (
+							<Button 
+								id="button-template" 
+								text={translate('commonTemplates')} 
+								color="blank" 
+								className="c28" 
+								onClick={this.onTemplates} 
+							/>
+						);
+					};
+
+					if (allowDetails) {
+						buttonEdit = (
+							<Button 
+								id="button-edit" 
+								color="blank" 
+								className="c28" 
+								text={translate('commonEditType')} 
+								onClick={() => sidebar.rightPanelToggle(true, true, isPopup, 'type', { rootId })} 
+							/>
+						);
+					};
 				};
+				
 			} else {
 				const cn = [ 'c36' ];
 				const isInstalled = this.isInstalled();
@@ -123,6 +151,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			if (!canWrite) {
 				buttonCreate = null;
 				buttonEdit = null;
+				buttonTemplate = null;
 			};
 		};
 
@@ -136,6 +165,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			);
 		};
 
+		if (buttonTemplate) {
+			buttons.push(() => buttonTemplate);
+		};
 		if (buttonEdit) {
 			buttons.push(() => buttonEdit);
 		};
@@ -263,7 +295,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				text = U.Date.dateWithFormat(dateFormat, object.timestamp);
 			};
 
-			if (text == translate('defaultNamePage')) {
+			if (item.blockId == J.Constant.blockId.title && U.Object.isTypeLayout(object.layout)) {
+				text = object.pluralName;
+			};
+
+			if ([ translate('defaultNamePage'), Dataview.namePlaceholder(object.layout) ].includes(text)) {
 				text = '';
 			};
 
@@ -283,6 +319,51 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const object = S.Detail.get(rootId, rootId);
 
 		Action.install(object, false, (message: any) => U.Object.openAuto(message.details));
+	};
+
+	onTemplates () {	
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId);
+		const node = $(this.node);
+
+		S.Menu.open('dataviewTemplateList', {
+			element: node.find('#button-template'),
+			horizontal: I.MenuDirection.Center,
+			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			data: {
+				withTypeSelect: false,
+				typeId: object.id,
+				previewSize: I.PreviewSize.Small,
+				defaultId: object.defaultTemplateId,
+				onSelect: item => {
+					if (item.id == J.Constant.templateId.new) {
+						this.onTemplateAdd();
+					} else {
+						U.Object.openPopup(item);
+					};
+				},
+			}
+		});
+	};
+
+	onTemplateAdd () {
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId);
+		const details: any = {
+			targetObjectType: object.id,
+			layout: object.recommendedLayout,
+		};
+
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, true, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const object = message.details;
+
+			analytics.event('CreateTemplate', { objectType: object.type, route: analytics.route.screenType });
+			U.Object.openConfig(object);
+		});
 	};
 
 	isInstalled () {

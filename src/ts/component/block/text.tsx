@@ -381,38 +381,39 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const menuOpenSmile = S.Menu.isOpen('smile');
 		const saveKeys: any[] = [
-			{ key: `${cmd}+shift+arrowup`, preventDefault: true },
-			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
+			{ key: keyboard.getKeysString('moveSelectionUp'), preventDefault: true },
+			{ key: keyboard.getKeysString('moveSelectionDown'), preventDefault: true },
+			{ key: keyboard.getKeysString('relation') },
+			{ key: keyboard.getKeysString('duplicate'), preventDefault: true },
+			{ key: keyboard.getKeysString('selectAll'), preventDefault: true },
+			{ key: keyboard.getKeysString('back') },
+			{ key: keyboard.getKeysString('forward') },
+			{ key: keyboard.getKeysString('zoomIn') },
+			{ key: keyboard.getKeysString('zoomOut') },
+			{ key: keyboard.getKeysString('zoomReset') },
+			{ key: keyboard.getKeysString('turnBlock0') },
+			{ key: keyboard.getKeysString('turnBlock1') },
+			{ key: keyboard.getKeysString('turnBlock2') },
+			{ key: keyboard.getKeysString('turnBlock3') },
+			{ key: keyboard.getKeysString('turnBlock4') },
+			{ key: keyboard.getKeysString('turnBlock5') },
+			{ key: keyboard.getKeysString('turnBlock6') },
+			{ key: keyboard.getKeysString('turnBlock7') },
+			{ key: keyboard.getKeysString('turnBlock8') },
+			{ key: keyboard.getKeysString('turnBlock9') },
+			{ key: keyboard.getKeysString('undo'), preventDefault: true },
+			{ key: keyboard.getKeysString('redo'), preventDefault: true },
+			{ key: keyboard.getKeysString('menuAction') },
+			{ key: keyboard.getKeysString('indent'), preventDefault: true },
+			{ key: keyboard.getKeysString('outdent'), preventDefault: true },
+			{ key: keyboard.getKeysString('pageLock') },
 			{ key: `${cmd}+shift+arrowleft` },
 			{ key: `${cmd}+shift+arrowright` },
-			{ key: `${cmd}+shift+r` },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
-			{ key: `${cmd}+d`, preventDefault: true },
-			{ key: `${cmd}+a`, preventDefault: true },
-			{ key: `${cmd}+[` },
-			{ key: `${cmd}+]` },
-			{ key: `${cmd}+=` },
-			{ key: `${cmd}+-` },
-			{ key: `${cmd}+0` },
-			{ key: `${cmd}+1` },
-			{ key: `${cmd}+2` },
-			{ key: `${cmd}+3` },
-			{ key: `${cmd}+4` },
-			{ key: `${cmd}+5` },
-			{ key: `${cmd}+6` },
-			{ key: `${cmd}+7` },
-			{ key: `${cmd}+8` },
-			{ key: `${cmd}+9` },
-			{ key: `${cmd}+z`, preventDefault: true },
-			{ key: `${cmd}+shift+z`, preventDefault: true },
-			{ key: `${cmd}+/` },
-			{ key: `tab`, preventDefault: true },
-			{ key: `shift+tab`, preventDefault: true },
 			{ key: `shift+space` },
 			{ key: `shift+arrowleft` },
 			{ key: `shift+arrowright` },
-			{ key: `ctrl+shift+l` },
 			{ key: `ctrl+shift+/` },
 		];
 		const twinePairs = {
@@ -437,10 +438,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (range.to == value.length) {
 				saveKeys.push({ key: `arrowright, arrowdown` });
 			};
-		};
-		
-		for (let i = 0; i < 9; ++i) {
-			saveKeys.push({ key: `${cmd}+${i}` });
 		};
 
 		// Make div
@@ -532,11 +529,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		keyboard.shortcut('backspace', e, () => {
-			if (keyboard.pressed.includes(Key.enter)) {
-				ret = true;
-				return;
-			};
-
 			if (range.to) {
 				const parsed = checkMarkOnBackspace(value, range, this.marks);
 
@@ -581,7 +573,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e`, e, () => {
+		keyboard.shortcut('menuSmile', e, () => {
 			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};
@@ -670,8 +662,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const isRtl = U.Common.checkRtl(value);
-
-		console.log(menuOpenLink);
 
 		keyboard.setRtl(isRtl);
 

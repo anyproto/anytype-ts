@@ -92,9 +92,11 @@ class DetailStore {
 				continue;
 			};
 
+			//console.log('[S.Detail].update: ', k, item.details[k]);
+
 			const el = list.find(it => it.relationKey == k);
 			if (el) {
-				el.value = item.details[k];
+				set(el, 'value', item.details[k]);
 			} else {
 				list.push(this.createListItem(k, item.details[k]));
 			};
@@ -135,13 +137,11 @@ class DetailStore {
 			return;
 		};
 
-		let list = [];
-
 		if (keys && keys.length) {
-			list = (map.get(id) || []).filter(it => !keys.includes(it.relationKey));
+			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
+		} else {
+			map.set(id, []);
 		};
-
-		map.set(id, list);
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
@@ -155,6 +155,10 @@ class DetailStore {
 		const object = { id };
 
 		if (withKeys) {
+			if (keys.has('name')) {
+				keys.add('pluralName');
+			};
+
 			if (keys.has('layout')) {
 				keys.add('resolvedLayout');
 			};
@@ -249,9 +253,14 @@ class DetailStore {
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;
+		object.pluralName = Relation.getStringValue(object.pluralName);
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');
+		};
+
+		if (!object.pluralName) {
+			object.pluralName = object.name;
 		};
 
 		return object;
@@ -368,18 +377,6 @@ class DetailStore {
 		object.isCanceled = object.status == I.ParticipantStatus.Canceled;
 
 		return object;
-	};
-
-	public getTypeRelationIds (id: string): string[] {
-		const type = S.Record.getTypeById(id);
-		if (!type) {
-			return [];
-		};
-
-		return [].
-			concat(type.recommendedRelations).
-			concat(type.recommendedFeaturedRelations).
-			concat(type.recommendedHiddenRelations);
 	};
 
 };

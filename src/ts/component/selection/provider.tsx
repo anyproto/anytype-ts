@@ -194,7 +194,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const onScroll = (e: any) => {
-		if (!isSelecting.current || !hasMoved.current) {
+		if (!isSelecting.current || !hasMoved.current || keyboard.isSelectionDisabled) {
 			return;
 		};
 

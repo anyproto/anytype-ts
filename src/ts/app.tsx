@@ -9,7 +9,7 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, SidebarLeft, Vault, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -586,7 +586,7 @@ class App extends React.Component<object, State> {
 							};
 
 							case 'disable-spellcheck': {
-								Renderer.send('setSpellingLang', []);
+								Action.setSpellingLang([]);
 								break;
 							};
 						};

@@ -49,7 +49,7 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		const close = !(isPopup && (match?.params?.id == id));
+		const close = !(isPopup && (rootId == id));
 
 		if (close) {
 			Action.pageClose(id, true);
@@ -71,7 +71,7 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		raf(() => {
 			const node = $(nodeRef.current);
 			const cover = node.find('.block.blockCover');
-			const pageContainer = U.Common.getPageFlexContainer(isPopup);
+			const pageContainer = U.Common.getPageContainer(isPopup);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const header = pageContainer.find('#header');
 			const headerHeight = isPopup ? header.height() : J.Size.header;
@@ -134,7 +134,7 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					{...props} 
 					component="mainChat" 
 					ref={headerRef} 
-					rootId={object.chatId} 
+					rootId={rootId} 
 				/>
 
 				<div id="bodyWrapper" className="wrapper">

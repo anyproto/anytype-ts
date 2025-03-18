@@ -8,10 +8,11 @@
 		background: var(--color-bg-primary); 
 	}
 
-	#footer { right: $sidebarRightWidth; }
-
 	#body {
-		> #historySideLeft { padding: 0px 0px 80px 0px; width: calc(100% - $sidebarRightWidth); overflow-x: hidden; overflow-y: auto; position: relative; }
+		> #historySideLeft { width: calc(100% - $sidebarRightWidth); overflow-x: hidden; overflow-y: auto; position: relative; }
+		> #historySideLeft {
+			#editorWrapper { padding: 0px 0px 80px 0px; }
+		}
 
 		> #historySideRight { width: $sidebarRightWidth; z-index: 20; background: var(--color-shape-tertiary); display: flex; flex-direction: column; position: relative; }
 		> #historySideRight {
@@ -103,6 +104,8 @@
 		> #historySideRight.withButtons {
 			.scroll { padding-bottom: 68px; }
 		}
+
+		> #historySideRight.withSidebar { border-right: 1px solid var(--color-shape-transparent-tertiary); }
 	}
 
 	.blockLast { height: 100px; }

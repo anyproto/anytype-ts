@@ -267,8 +267,11 @@ export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 	// Find backlinks
 	for (const edge of edges) {
 		const idx = edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
+		const double = edges[idx];
+
 		if (idx >= 0) {
 			edge.isDouble = true;
+			edge.types = [ edge.type, double.type ];
 			edges.splice(idx, 1);
 		};
 	};

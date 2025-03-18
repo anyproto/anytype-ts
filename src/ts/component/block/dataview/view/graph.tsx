@@ -78,7 +78,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 			};
 
 			this.data.edges = message.edges;
-			this.data.nodes = message.nodes;
+			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 			this.forceUpdate();
 
 			if (this.refGraph) {
@@ -98,7 +98,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		if (!isInline) {
 			node.css({ width: 0, height: 0, marginLeft: 0 });
 
-			const container = U.Common.getPageFlexContainer(isPopup);
+			const container = U.Common.getPageContainer(isPopup);
 			const cw = container.width();
 			const ch = container.height();
 			const mw = cw - PADDING * 2;

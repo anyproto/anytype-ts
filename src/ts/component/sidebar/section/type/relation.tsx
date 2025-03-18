@@ -1,216 +1,168 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import arrayMove from 'array-move';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
-import { I, C, S, Relation, translate, keyboard } from 'Lib';
+import { I, S, C, U, Relation, translate, keyboard, analytics } from 'Lib';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
 
-const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation extends React.Component<I.SidebarSectionComponent> {
+const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
-	constructor (props: I.SidebarSectionComponent) {
-		super(props);
+	const { readonly, rootId, object, onChange } = props;
+	const { space } = S.Common;
+	const nodeRef = useRef(null);
+	const [ active, setActive ] = useState(null);
+	const [ dummy, setDummy ] = useState(0);
+	const [ isLoaded, setIsLoaded ] = useState(false);
+	const [ conflictIds, setConflictIds ] = useState([]);
+	const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    );
 
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onAdd = this.onAdd.bind(this);
+	const recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
+	const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+	const recommendedHiddenRelations = Relation.getArrayValue(object.recommendedHiddenRelations);
+	const featured = recommendedFeaturedRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
+	const recommended = recommendedRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
+	const hidden = recommendedHiddenRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
+	const lists: any[] = [
+		{ id: I.SidebarRelationList.Featured, name: translate('sidebarTypeRelationHeader'), data: featured, relationKey: 'recommendedFeaturedRelations' },
+		{ id: I.SidebarRelationList.Recommended, name: translate('sidebarTypeRelationSidebar'), data: recommended, relationKey: 'recommendedRelations' },
+		{ id: I.SidebarRelationList.Hidden, name: translate('sidebarTypeRelationHidden'), data: hidden, relationKey: 'recommendedHiddenRelations' },
+	];
+
+	const onMore = (e: MouseEvent, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const element = $(nodeRef.current).find(`#item-${item.id}`);
+
+		S.Menu.open('select', {
+			element: element.find('.icon.more'),
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			onOpen: () => element.addClass('active'),
+			onClose: () => element.removeClass('active'),
+			data: {
+				options: [
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType') },
+				],
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'addToType': {
+							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+
+							onChange({ recommendedRelations: recommendedRelations.concat([ item.id ]) });
+							break;
+						};
+					};
+				},
+			},
+		});
 	};
 
-    render () {
-		const { readonly } = this.props;
-		const featured = this.getFeatured();
-		const recommended = this.getRecommended();
-		const hidden = this.getHidden();
+	if (conflictIds.length) {
+		const ids = [].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
+		const cids = conflictIds.filter(it => !ids.includes(it));
 
-		const Handle = SortableHandle(() => (
-			<Icon className="dnd" />
-		));
+		lists.push({
+			id: I.SidebarRelationList.Conflict, name: translate('sidebarRelationLocal'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
+			onInfo: () => {
+				S.Popup.open('confirm', {
+					data: {
+						title: translate('popupConfirmLocalFieldsTitle'),
+						textConfirm: translate('commonAdd'),
+						colorCancel: 'blank',
+						onConfirm: () => {
+							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
-		const Item = SortableElement((item: any) => {
-			const cf = [ 'fav' ];
-			const ce = [ 'eye' ];
-			const canDrag = !readonly;
-			const canHide = !readonly;
-			const canFav = !readonly;
+							onChange({ recommendedRelations: recommendedRelations.concat(conflictIds) });
+							analytics.stackAdd('AddConflictRelation', { count: cids.length });
+						},
+					},
+				});
 
-			if (item.container == 'section-relation-featured') {
-				cf.push('active');
-			};
-
-			if (item.container == 'section-relation-hidden') {
-				ce.push('active');
-			};
-
-			return (
-				<div 
-					id={`item-${item.id}`}
-					className="item" 
-					onClick={e => this.onEdit(e, item.container, item.id)}
-				>
-					<div className="side left">
-						{canDrag ? <Handle /> : ''}
-						<IconObject object={item} />
-						<ObjectName object={item} />
-					</div>
-					<div className="side right">
-						{canFav ? <Icon className={cf.join(' ')} onClick={e => this.onToggleFav(e, item.container, item.id)} /> : ''}
-						{canHide ? <Icon className={ce.join(' ')} onClick={e => this.onToggleHide(e, item.container, item.id)} /> : ''}
-					</div>
-				</div>
-			);
+				analytics.stackAdd('ClickConflictFieldHelp');
+			},
+			onMore,
 		});
+	};
 
-		const List = (list: any) => {
-			const SortableList = SortableContainer(() => (
-				<div id={list.container} className="items">
-					{list.data.map((item, i) => (
-						<Item 
-							key={[ list.container, item.id ].join('-')} 
-							{...item} 
-							container={list.container}
-							index={i} 
-						/>
-					))}
-				</div>
-			));
-
-			return list.data.length ? (
-				<SortableList
-					axis="y" 
-					transitionDuration={150}
-					distance={10}
-					useDragHandle={true}
-					onSortStart={this.onSortStart}
-					onSortEnd={result => this.onSortEnd(list.relationKey, result)}
-					helperClass="isDragging"
-					lockToContainerEdges={false}
-					helperContainer={() => $(`#sidebarRight #${list.container}`).get(0)}
-				/>
-			) : (
-				<div className="item empty">{translate('sidebarTypeRelationEmpty')}</div>
-			);
+	const loadConflicts = () => {
+		if (isLoaded) {
+			return;
 		};
 
-        return (
-			<div className="wrap">
-				<div className="titleWrap">
-					<Title text={translate('sidebarTypeRelation')} />
-					<Icon id="section-relation-plus" className="plus withBackground" onClick={this.onAdd} />
-				</div>
+		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
+			if (message.error.code) {
+				return;
+			};
 
-				<Label text={translate('sidebarTypeRelationHeader')} />
-				<List data={featured} container="section-relation-featured" relationKey="recommendedFeaturedRelations" />
+			const ids = Relation.getArrayValue(message.conflictRelationIds)
+				.map(id => S.Record.getRelationById(id))
+				.filter(it => it && !Relation.isSystem(it.relationKey))
+				.map(it => it.id);
 
-				<Label text={translate('sidebarTypeRelationSidebar')} />
-				<List data={recommended} container="section-relation-recommended" relationKey="recommendedRelations" />
+			setIsLoaded(true);
+			setConflictIds(ids);
+		});
+	};
 
-				<Label text={translate('sidebarTypeRelationHidden')} />
-				<List data={hidden} container="section-relation-hidden" relationKey="recommendedHiddenRelations" />
-			</div>
-		);
-    };
-
-	onSortStart () {
+	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
+		setActive(e.active);
 	};
 	
-	onSortEnd (relationKey: string, result: any) {
-		const { oldIndex, newIndex } = result;
-		const { object, onChange } = this.props;
-		const value = arrayMove(Relation.getArrayValue(object[relationKey]), oldIndex, newIndex);
-
-		onChange({ [relationKey]: value });
+	const onSortEnd = (event) => {
 		keyboard.disableSelection(false);
-	};
 
-	onToggleFav (e: any, container: string, id: string) {
-		e.stopPropagation();
-
-		const { object, onChange } = this.props;
-
-		let { recommendedFeaturedRelations, recommendedHiddenRelations, recommendedRelations } = object;
-
-		switch (container) {
-			case 'section-relation-featured': {
-				recommendedFeaturedRelations = recommendedFeaturedRelations.filter(it => it != id);
-				recommendedRelations.unshift(id);
-				break;
-			};
-
-			case 'section-relation-recommended': {
-				recommendedRelations = recommendedRelations.filter(it => it != id);
-				recommendedFeaturedRelations.unshift(id);
-				break;
-			};
-
-			case 'section-relation-hidden': {
-				recommendedHiddenRelations = recommendedHiddenRelations.filter(it => it != id);
-				recommendedFeaturedRelations.unshift(id);
-				break;
-			};
-
+        const { active, over } = event;
+        if (!over || (active.id == over.id)) {
+			return;
 		};
 
-		onChange({
-			recommendedFeaturedRelations,
-			recommendedHiddenRelations,
-			recommendedRelations,
-		});
-	};
+		const from = lists.find(it => it.id == active.data.current.list.id);
+		const to = lists.find(it => it.id == over.data.current.list.id);
 
-	onToggleHide (e: any, container: string, id: string) {
-		e.stopPropagation();
-
-		const { object, onChange } = this.props;
-
-		let { recommendedFeaturedRelations, recommendedHiddenRelations, recommendedRelations } = object;
-
-		switch (container) {
-			case 'section-relation-featured': {
-				recommendedFeaturedRelations = recommendedFeaturedRelations.filter(it => it != id);
-				recommendedHiddenRelations.unshift(id);
-				break;
-			};
-
-			case 'section-relation-recommended': {
-				recommendedRelations = recommendedRelations.filter(it => it != id);
-				recommendedHiddenRelations.unshift(id);
-				break;
-			};
-
-			case 'section-relation-hidden': {
-				recommendedHiddenRelations = recommendedHiddenRelations.filter(it => it != id);
-				recommendedRelations.unshift(id);
-				break;
-			};
+        if (!from || !to) {
+			return;
 		};
 
-		onChange({
-			recommendedFeaturedRelations,
-			recommendedHiddenRelations,
-			recommendedRelations,
-		});
-	};
+        const fromItems = Relation.getArrayValue(object[from.relationKey]);
+        const toItems = Relation.getArrayValue(object[to.relationKey]);
+        const oldIndex = fromItems.indexOf(active.id);
+        const newIndex = toItems.indexOf(over.id);
 
-	getFeatured () {
-		return Relation.getArrayValue(this.props.object.recommendedFeaturedRelations).map(key => S.Record.getRelationById(key)).filter(it => it);
-	};
+		let analyticsId = '';
 
-	getRecommended () {
-		return Relation.getArrayValue(this.props.object.recommendedRelations).map(id => S.Record.getRelationById(id)).filter(it => it);
-	};
+        if (from.id == to.id) {
+            onChange({ [from.relationKey]: arrayMove(fromItems, oldIndex, newIndex) });
 
-	getHidden () {
-		return Relation.getArrayValue(this.props.object.recommendedHiddenRelations).map(id => S.Record.getRelationById(id)).filter(it => it);
-	};
+			analyticsId = 'SameGroup';
+        } else 
+		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Conflict)) {
+			toItems.splice(newIndex, 0, active.id);
+			onChange({
+				[from.relationKey]: fromItems.filter(id => id != active.id),
+				[to.relationKey]: toItems,
+			});
 
-	onAdd (e: any) {
-		const { object, onChange } = this.props;
-		const recommendedKeys = this.getRecommended().map(it => it.relationKey);
-		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+			analyticsId = I.SidebarRelationList[to.id];
+        };
+
+		analytics.stackAdd('ReorderRelation', { id: analyticsId });
+    };
+
+	const onAdd = (e: any, list: any) => {
+		const keys = U.Object.getTypeRelationKeys(object.id).concat('description');
+		const ids = list.data.map(it => it.id);
 
 		S.Menu.open('relationSuggest', { 
-			element: '#sidebarRight #section-relation-plus',
-			horizontal: I.MenuDirection.Right,
+			element: $(e.currentTarget),
+			horizontal: I.MenuDirection.Center,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			data: {
@@ -218,22 +170,20 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				rootId: object.id,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: recommendedKeys,
+				skipKeys: keys,
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					onChange({ recommendedRelations: [ relation.id ].concat(recommendedRelations) });
+					onChange({ [list.relationKey]: [ relation.id ].concat(ids) });
 				},
 			}
 		});
 	};
 
-	onEdit (e: any, container: string, id: string) {
-		const { object, onChange } = this.props;
+	const onEdit = (e: any, list: any, id: string) => {
 		const allowed = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Relation ]);
-		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-		const relation = S.Record.getRelationById(id);
+		const ids = Relation.getArrayValue(object[list.relationKey]);
 		
 		S.Menu.open('blockRelationEdit', { 
-			element: `#sidebarRight #${container} #item-${id}`,
+			element: `#sidebarRight #item-${id}`,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: 'fromSidebar',
 			className: 'fixed',
@@ -243,15 +193,124 @@ const SidebarSectionTypeRelation = observer(class SidebarSectionTypeRelation ext
 				readonly: !allowed,
 				ref: 'type',
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					onChange({ recommendedRelations: [ relation.id ].concat(recommendedRelations) });
+					onChange({ [list.relationKey]: [ id ].concat(ids) });
+
+					analytics.stackAdd('AddConflictRelation');
 				},
 				deleteCommand: () => {
-					onChange({ recommendedRelations: recommendedRelations.filter(it => it != relation.id) });
+					onChange({ [list.relationKey]: ids.filter(it => it != id) });
 				},
 			}
 		});
 	};
 
-});
+	const Item = (item: any) => {
+		const list = item.list;
+		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, data: item, disabled: item.disabled });
+		const canDrag = !item.disabled;
+		const cn = [ 'item' ];
+		const style = {
+			transform: CSS.Transform.toString(transform),
+			transition,
+		};
+
+		let onClick = e => onEdit(e, list, item.id);
+		if (item.isEmpty) {
+			cn.push('empty');
+			onClick = e => onAdd(e, list);
+		};
+
+		return (
+			<div 
+				id={`item-${item.id}`}
+				ref={setNodeRef}
+				{...attributes}
+				{...listeners}
+				style={style}
+				className={cn.join(' ')}
+				onClick={onClick}
+			>
+				{!item.isEmpty ? (
+					<>
+						{canDrag ? <Icon className="dnd" /> : ''}
+						<IconObject object={item} />
+					</>
+				) : ''}
+				<ObjectName object={item} />
+				{list.onMore ? <Icon className="more" onClick={e => list.onMore(e, item)} /> : ''}
+			</div>
+		);
+	};
+
+	const emptyId = (id: I.SidebarRelationList) => {
+		return [ id, 'empty' ].join('-');
+	};
+
+	const List = (list: any) => (
+		<SortableContext 
+			items={list.data.map(it => it.id)} 
+			strategy={verticalListSortingStrategy}
+		>
+			<div className="sectionNameWrap">
+				<Label text={list.name} />
+				{list.onInfo ? <Icon className="question withBackground" onClick={list.onInfo} /> : ''}
+			</div>
+			<div className="items">
+				{list.data.length ? (
+					<>
+						{list.data.map((item, i) => (
+							<Item 
+								key={[ list.id, item.id ].join('-')} 
+								{...item} 
+								list={list}
+								index={i}
+								disabled={readonly}
+							/>
+						))}
+					</>
+				) : (
+					<Item 
+						key={emptyId(list.id)} 
+						{...{ id: emptyId(list.id), name: translate('sidebarTypeRelationEmpty'), isEmpty: true }} 
+						list={list}
+						disabled={true}
+					/>
+				)}
+			</div>
+		</SortableContext>
+	);
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
+
+	useEffect(() => {
+		loadConflicts();
+	});
+
+	return (
+		<div ref={nodeRef} className="wrap">
+			<div className="titleWrap">
+				<Title text={translate('sidebarTypeRelation')} />
+				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} />
+			</div>
+
+			<DndContext 
+				sensors={sensors} 
+				collisionDetection={closestCenter} 
+				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]} 
+				onDragStart={onSortStart} 
+				onDragEnd={onSortEnd}
+			>
+				{lists.map((list, i) => <List key={list.id} {...list} list={list.id} />)}
+
+				<DragOverlay>
+					{active ? <Item {...active.data.current} /> : null}
+				</DragOverlay>
+			</DndContext>
+		</div>
+	);
+
+}));
 
 export default SidebarSectionTypeRelation;

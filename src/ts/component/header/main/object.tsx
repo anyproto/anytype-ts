@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Button, Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, S, U, J, keyboard, translate, analytics } from 'Lib';
@@ -18,12 +18,11 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isTypeOrRelation && !isDeleted;
-	const cmd = keyboard.cmdSymbol();
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 
 	let center = null;
-	let locked = '';
+	let label = '';
 
 	if (object.isArchived) {
 		bannerProps.type = I.BannerType.IsArchived;
@@ -31,33 +30,30 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	if (U.Object.isTemplate(object.type)) {
 		bannerProps.type = I.BannerType.IsTemplate;
 	} else
-	if (allowedTemplateSelect && templatesCnt) {
+	if (allowedTemplateSelect && (templatesCnt > 1)) {
 		bannerProps.type = I.BannerType.TemplateSelect;
 		bannerProps.count = templatesCnt;
 	};
 
 	if (isLocked) {
-		locked = translate('headerObjectLocked');
+		label = translate('headerObjectLocked');
 	} else
 	if (U.Object.isTypeOrRelationLayout(object.layout) && !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
-		locked = translate('commonSystem');
+		label = translate('commonSystem');
 	};
 
 	if (!isDeleted) {
 		if (bannerProps.type == I.BannerType.None) {
 			center = (
 				<div
-					id="path"
 					className="path"
 					onClick={onSearch}
 					onMouseOver={e => onTooltipShow(e, translate('headerTooltipPath'))}
 					onMouseOut={onTooltipHide}
 				>
-					<div className="inner">
-						<IconObject object={object} size={18} />
-						<ObjectName object={object} />
-						{locked ? <Label text={locked} className="lock" /> : ''}
-					</div>
+					<IconObject object={object} size={18} />
+					<ObjectName object={object} />
+					{label ? <Label text={label} /> : ''}
 				</div>
 			);
 		} else {
@@ -134,7 +130,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{showShare ? (
 					<Button 
 						id="button-header-share" 
-						text="Share" 
+						text={translate('commonShare')} 
 						color="blank" 
 						className="c28" 
 						onClick={onShare}
@@ -145,7 +141,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon 
 						id="button-header-relation" 
 						tooltip={translate('commonRelations')}
-						tooltipCaption={`${cmd} + Shift + R`}
+						tooltipCaption={keyboard.getCaption('relation')}
 						className="relation withBackground"
 						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
 					/> 

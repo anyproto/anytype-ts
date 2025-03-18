@@ -61,7 +61,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 							className="item add" 
 							onClick={this.onAdd} 
 							onMouseEnter={() => setHover({ id: 'add' })} 
-							onMouseLeave={() => setHover()}
+							//onMouseLeave={() => setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewSourceAddRelation')}</div>

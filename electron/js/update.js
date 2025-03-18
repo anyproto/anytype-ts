@@ -1,7 +1,6 @@
 const { app } = require('electron');
 const { is } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
-const log = require('electron-log');
 
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
@@ -24,7 +23,7 @@ class UpdateManager {
 
 		console.log('[UpdateManager].init, channel: ', channel);
 
-		autoUpdater.logger = log;
+		autoUpdater.logger = Util.getLogger();
 		autoUpdater.logger.transports.file.level = 'debug';
 		autoUpdater.autoDownload = false;
 		autoUpdater.autoInstallOnAppQuit = false;
@@ -94,13 +93,30 @@ class UpdateManager {
 	};
 
 	isAllowed () {
-		const [ major, minor, patch ] = String(process.getSystemVersion() || '').split('.');
+		const { config } = ConfigManager;
 
-		if (is.windows && (major <= 8)) {
+		if (config.updateDisabled) {
+			console.log('[UpdateManager].isAllowed, updateDisabled');
 			return false;
 		};
 
-		if (is.macos && (major <= 10)) {
+		const [ osMajor, osMinor, osPatch ] = String(process.getSystemVersion() || '').split('.');
+		const [ appMajor, appMinor, appPatch ] = String(app.getVersion() || '').split('.');
+		
+		console.log('[UpdateManager].isAllowed, osVersion: ', [ osMajor, osMinor, osPatch ], 'appVersion', [ appMajor, appMinor, appPatch ]);
+
+		if (is.windows && (osMajor <= 8)) {
+			console.log('[UpdateManager].isAllowed, Windows version <= 8');
+			return false;
+		};
+
+		if (is.macos && (osMajor <= 10)) {
+			console.log('[UpdateManager].isAllowed, MacOS version <= 10');
+			return false;
+		};
+
+		if (!/-(alpha|beta)/.test(appPatch) && isNaN(appPatch)) {
+			console.log('[UpdateManager].isAllowed, App version is not valid');
 			return false;
 		};
 
@@ -113,13 +129,7 @@ class UpdateManager {
 	};
 
 	checkUpdate (auto) {
-		if (!this.isAllowed()) {
-			return;
-		};
-
-		Util.log('info', 'isUpdating: ' + this.isUpdating);
-
-		if (this.isUpdating) {
+		if (!this.isAllowed() || this.isUpdating) {
 			return;
 		};
 

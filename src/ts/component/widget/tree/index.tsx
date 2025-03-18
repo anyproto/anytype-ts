@@ -13,6 +13,7 @@ const HEIGHT = 28; // Height of each row
 
 interface WidgetTreeRefProps {
 	updateData: () => void;
+	resize: () => void;
 };
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
@@ -239,14 +240,14 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const nodes = loadTree();
 		const node = $(nodeRef.current);
 		const length = nodes.length;
-		const css: any = { height: getTotalHeight() + 16, paddingBottom: '' };
+		const css: any = { height: getTotalHeight() + 8, paddingBottom: '' };
 		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {
 			const head = $(`#widget-${parent.id} .head`);
 			const maxHeight = $('#sidebarLeft #containerWidget #body').height() - head.outerHeight(true);
 
-			css.height = Math.min(maxHeight, css.height);
+			css.height = Math.min(maxHeight, css.height + 8);
 		};
 
 		if (!length) {
@@ -389,6 +390,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	useImperativeHandle(ref, () => ({
 		updateData,
+		resize,
 	}));
 
 	return (

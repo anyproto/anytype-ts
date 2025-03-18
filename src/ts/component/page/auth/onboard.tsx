@@ -5,9 +5,8 @@ import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onb
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
-	Vault	 = 0,
-	Phrase	 = 1,
-	Soul	 = 2,
+	Phrase	 = 0,
+	Soul	 = 1,
 };
 
 const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
@@ -18,7 +17,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	const phraseRef = useRef(null);
 	const nextRef = useRef(null);
 	const nameRef = useRef(null);
-	const [ stage, setStage ] = useState(Stage.Vault);
+	const [ stage, setStage ] = useState(Stage.Phrase);
 	const [ phraseVisible, setPhraseVisible ] = useState(false);
 	const [ error, setError ] = useState('');
 	const cnb = [];
@@ -59,7 +58,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			return;
 		};
 
-		if (stage == Stage.Vault) {
+		if (stage == Stage.Phrase) {
 			const cb = () => {
 				Animation.from(() => {
 					nextRef.current?.setLoading(false);
@@ -125,7 +124,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			return;
 		};
 
-		if (stage == Stage.Vault) {
+		if (stage == Stage.Phrase) {
 			Animation.from(() => U.Router.go('/', { replace: true }));
 		} else {
 			setStage(stage - 1);
@@ -164,18 +163,8 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	let content = null;
 	let buttons = null;
-	let more = null;
 
 	switch (stage) {
-		case Stage.Vault: {
-			buttons = (
-				<div className="animation">
-					<Button ref={nextRef} className={cnb.join(' ')} text={translate('authOnboardVaultButton')} onClick={onForward} />
-				</div>
-			);
-			break;
-		};
-
 		case Stage.Phrase: {
 			const text = phraseVisible ? translate('commonNext') : translate('authOnboardPhraseSubmit');
 
@@ -198,15 +187,11 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 					{!phraseVisible ? (
 						<div className="animation">
-							<Button color="blank" text={translate('commonSkip')} onClick={onForward} />
+							<Button color="blank" text={translate('authOnboardPhraseNotNow')} onClick={onForward} />
 						</div>
 					) : ''}
 				</>
 			);
-
-			if (!phraseVisible) {
-				more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
-			};
 			break;
 		};
 
@@ -224,7 +209,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 			buttons = (
 				<div className="animation">
-					<Button ref={nextRef} className={cnb.join(' ')} text={translate('authOnboardSoulButton')} onClick={onForward} />
+					<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonDone')} onClick={onForward} />
 				</div>
 			);
 			break;
@@ -262,7 +247,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			{canMoveBack() ? <Icon className="arrow back" onClick={onBack} /> : ''}
 
 			<Frame ref={frameRef}>
-				<DotIndicator className="animation" index={stage} count={3} />
+				<DotIndicator className="animation" index={stage} count={2} />
 				<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
 				<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
 
@@ -270,7 +255,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 				<Error className="animation" text={error} />
 				<div className="buttons">{buttons}</div>
-				{more}
 			</Frame>
 
 			<CanvasWorkerBridge state={0} />

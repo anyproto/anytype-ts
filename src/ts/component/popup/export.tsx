@@ -15,6 +15,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	};
 
 	render() {
+		const theme = S.Common.getThemeClass();
 		const formats = this.getFormats();
 
 		const pageSize = [
@@ -115,10 +116,12 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				items = items.concat([
 					{ id: 'pageSize', name: translate('popupExportPageSize'), control: 'select', options: pageSize },
 					{ id: 'landscape', name: translate('popupExportLandscape'), control: 'switch' },
-					{ id: 'printBackground', name: translate('popupExportPrintBackground'), control: 'switch' },
+					(!theme ? { id: 'printBackground', name: translate('popupExportPrintBackground'), control: 'switch' } : null),
 				]);
 				break;
 		};
+
+		items = items.filter(it => it);
 
 		return (
 			<>

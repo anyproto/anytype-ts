@@ -80,27 +80,49 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 	};
 
 	getLayoutOptions (format: I.LayoutFormat): any[] {
-		if (format == I.LayoutFormat.List) {
-			const id = I.ObjectLayout.Collection;
+		const { object, readonly } = this.props;
 
-			return U.Menu.prepareForSelect([
-				{
-					id,
-					icon: `layout c-${I.ObjectLayout[id].toLowerCase()}`,
-					name: translate(`layout${id}`),
-				}
-			]);
+		let ret = [];
+
+		if (readonly) {
+			ret = [ object.recommendedLayout ];
+		} else {
+			switch (format) {
+				case I.LayoutFormat.Page: {
+					ret = [
+						I.ObjectLayout.Page,
+						I.ObjectLayout.Human,
+						I.ObjectLayout.Task,
+						I.ObjectLayout.Note,
+					];
+
+					if (!object.isNew) {
+						if (U.Object.isNoteLayout(object.recommendedLayout)) {
+							ret = [ I.ObjectLayout.Note ];
+						} else 
+						if (U.Object.isBookmarkLayout(object.recommendedLayout)) {
+							ret = [ I.ObjectLayout.Bookmark ];
+						} else {
+							ret = ret.filter(id => id != I.ObjectLayout.Note);
+						};
+					};
+					break;
+				};
+
+				case I.LayoutFormat.List: {
+					ret = [ I.ObjectLayout.Collection ];			
+					break;
+				};
+			};
 		};
 
-		const allowed = [
-			I.ObjectLayout.Page,
-			I.ObjectLayout.Human,
-			I.ObjectLayout.Task,
-			I.ObjectLayout.Note
-		];
-		const layouts = U.Menu.getLayouts().filter(it => allowed.includes(it.id));
-
-		return U.Menu.prepareForSelect(layouts);
+		return U.Menu.prepareForSelect(ret.map(id => {
+			return {
+				id,
+				icon: U.Menu.getLayoutIcon(id),
+				name: translate(`layout${id}`),
+			};
+		}));
 	};
 
 });

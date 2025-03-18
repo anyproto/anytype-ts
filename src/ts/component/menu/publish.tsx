@@ -25,12 +25,18 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const domain = U.Space.getPublishDomain();
 	const url = U.Space.getPublishUrl(slug);
 	const items = [
+		{ 
+			id: 'link', 
+			name: translate('commonCopyLink'), 
+			onClick: () => U.Object.copyLink(object, space, 'web', ''),
+		},
 		(!space.isPersonal ? 
 		{ 
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
+			arrow: true,
 			onClick: () => {
-				sidebar.settingsOpen('spaceShare');
+				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				close();
 
 				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });
@@ -39,6 +45,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ 
 			id: 'export', 
 			name: translate('popupExportTitle'), 
+			arrow: true,
 			onClick: () => {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
 				close();
@@ -219,7 +226,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div key={index} className="item" onClick={item.onClick}>
 						<Icon className={item.id} />
 						<div className="name">{item.name}</div>
-						<Icon className="arrow" />
+						{item.arrow ? <Icon className="arrow" /> : ''}
 					</div>
 				))}
 			</div>

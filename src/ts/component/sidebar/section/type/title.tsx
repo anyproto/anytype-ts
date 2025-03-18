@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Editable } from 'Component';
-import { I, keyboard, translate } from 'Lib';
+import { IconObject, Editable, Label } from 'Component';
+import { analytics, I, keyboard, translate } from 'Lib';
 
 const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends React.Component<I.SidebarSectionComponent> {
 	
@@ -16,30 +16,52 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
     render () {
-		const { object, readonly } = this.props;
+		const { id, object, readonly } = this.props;
+
+		let icon = null;
+		let label = '';
+
+		switch (id) {
+			case 'title': {
+				label = translate('sidebarTypeTitleLabelName');
+				icon = (
+					<IconObject 
+						id={`sidebar-icon-title-${object.id}`} 
+						object={object} 
+						size={24} 
+						canEdit={!readonly}
+						onIconSelect={this.onSelect}
+						menuParam={{
+							horizontal: I.MenuDirection.Center,
+							className: 'fixed',
+							classNameWrap: 'fromSidebar',
+						}}
+					/>
+				);
+				break;
+			};
+
+			case 'plural': {
+				label = translate('sidebarTypeTitleLabelPlural');
+				break;
+			};
+
+		};
 
         return (
 			<div className="wrap">
-				<IconObject 
-					id={`sidebar-icon-title-${object.id}`} 
-					object={object} 
-					size={24} 
-					canEdit={!readonly}
-					onSelect={this.onSelect}
-					menuParam={{
-						horizontal: I.MenuDirection.Center,
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-					}}
-				/>
+				<Label text={label} />
 
-				<Editable
-					ref={ref => this.refName = ref}
-					readonly={readonly}
-					onBlur={this.onChange}
-					onKeyDown={this.onKeyDown}
-					placeholder={translate('defaultNameType')} 
-				/>
+				<div className="flex">
+					{icon}
+					<Editable
+						ref={ref => this.refName = ref}
+						readonly={readonly}
+						onBlur={this.onChange}
+						onKeyDown={this.onKeyDown}
+						placeholder={translate('defaultNameType')} 
+					/>
+				</div>
 			</div>
 		);
     };
@@ -52,11 +74,22 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		this.setValue();
 	};
 
+	getRelationKey (): string {
+		const { id, object } = this.props;
+
+		switch (id) {
+			case 'title': return 'name';
+			case 'plural': return 'pluralName';
+		};
+
+		return '';
+	};
+
 	setValue () {
 		const { object } = this.props;
 
-		let text = String(object.name || '');
-		if (text == translate('defaultNamePage')) {
+		let text = String(object[this.getRelationKey()] || '');
+		if (text == translate('defaultNameType')) {
 			text = '';
 		};
 
@@ -64,12 +97,14 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		this.refName.placeholderCheck();
 	};
 
-	onSelect (icon: string) {
-		this.props.onChange({ iconEmoji: icon });
+	onSelect (id: string, color: number) {
+		this.props.onChange({ iconName: id, iconOption: color });
+
+		analytics.stackAdd('SetIcon', { objectType: '_objectType', color });
 	};
 
 	onChange () {
-		this.props.onChange({ name: this.refName?.getTextValue() });
+		this.props.onChange({ [this.getRelationKey()]: this.refName?.getTextValue() });
 	};
 
 	onKeyDown (e: any) {

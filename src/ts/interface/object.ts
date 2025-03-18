@@ -29,6 +29,7 @@ export enum ObjectLayout {
 	History		 = 103,
 	Archive		 = 104,
 	Block		 = 105,
+	Settings	 = 106,
 };
 
 export enum RelationType { 

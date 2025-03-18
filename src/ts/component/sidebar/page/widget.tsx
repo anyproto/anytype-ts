@@ -165,25 +165,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						/>
 					))}
 
-					<DropTarget 
-						{...this.props} 
-						isTargetBottom={true}
-						rootId={S.Block.widgets} 
-						id={last?.id}
-						dropType={I.DropType.Widget} 
-						canDropMiddle={false}
-						className="lastTarget"
-						cacheKey="lastTarget"
-					>
-						<Button
-							text={translate('commonBin')}
-							color=""
-							className="widget"
-							icon="bin"
-							onClick={this.onArchive}
-						/>
-					</DropTarget>
-
 					<div className="buttons">
 						{buttons.map(button => (
 							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
@@ -226,11 +207,21 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		analytics.event('ClickAddWidget', { route });
 
+		const { widgets } = S.Block;
+		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
+		const targets = [];
+
+		blocks.forEach(block => {
+			const children = S.Block.getChildren(widgets, block.id);
+			if (children.length) {
+				targets.push(children[0].getTargetObjectId());
+			};
+		});
+
 		const onSelect = (target: any, isNew: boolean) => {
 			const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
 			const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
 			const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
-
 			const newBlock = { 
 				type: I.BlockType.Link,
 				content: { 
@@ -250,7 +241,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				analytics.event('AddWidget', { type: I.WidgetLayout.Link, route });
 				analytics.event('ChangeWidgetSource', {
 					layout,
-					route: 'AddWidget',
+					route: analytics.route.addWidget,
 					params: { target },
 				});
 			});					
@@ -269,27 +260,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			subIds: J.Menu.widgetAdd,
 			data: {
 				route: analytics.route.addWidget,
+				withPlural: true,
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
-				canAdd: true,
-				addParam: {
-					name: translate('commonCreateNewObject'),
-					nameWithFilter: translate('commonCreateObjectWithName'),
-					arrow: true,
-					onClick: (details: any) => {
-						const types = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 1 });
-
-						if (!types.length) {
-							return;
-						};
-
-						C.ObjectCreate(details, [], '', types[0].uniqueKey, S.Common.space, (message: any) => {
-							onSelect(message.details, true);
-						});
-					},
-				},
 				onOver: (e, context: any, item: any) => {
 					if (!item.isAdd) {
 						S.Menu.closeAll(J.Menu.widgetAdd);
@@ -306,10 +281,41 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					}, { name: context.filter }, {}, analytics.route.addWidget, object => onSelect(object, true));
 				},
 				dataChange: (context: any, items: any[]) => {
+					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
-					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => it.name.match(reg));
+					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
+					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
+						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplate(it.id) && (it.name.match(reg) || it.pluralName.match(reg))).
+						map(it => ({ ...it, caption: '' }));
+					const lists = [];
 
-					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
+					if (types.length) {
+						lists.push([
+							{ name: translate('commonSuggested'), isSection: true }
+						].concat(types));
+					};
+
+					if (fixed.length) {
+						lists.push([
+							{ name: translate('commonSystem'), isSection: true }
+						].concat(fixed));
+					};
+
+					if (items.length) {
+						lists.push([
+							{ name: translate('commonExistingObjects'), isSection: true }
+						].concat(items));
+					};
+
+					let ret = [];
+					for (let i = 0; i < lists.length; ++i) {
+						if (i > 0) {
+							ret = ret.concat({ isDiv: true });
+						};
+						ret = ret.concat(lists[i]);
+					};
+
+					return ret;
 				},
 				onSelect,
 			},

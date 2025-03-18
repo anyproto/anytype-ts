@@ -212,7 +212,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 		};
 		if (rl) {
-			setOfString.push(`${U.Common.plural(rl, translate('pluralRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
+			setOfString.push(`${U.Common.plural(rl, translate('pluralProperty'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
@@ -405,41 +405,20 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 		};
 
-		const showMenu = () => {
-			S.Menu.open('select', {
-				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
-				offsetY: 4,
-				subIds: J.Menu.featuredType,
-				onOpen: context => this.menuContext = context,
-				data: {
-					options: options,
-					noClose: true,
-					onOver: this.onTypeOver,
-					onSelect: (e: any, item: any) => {
-						this.onTypeSelect(e, item);
-					},
+		S.Menu.open('select', {
+			element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
+			offsetY: 4,
+			subIds: J.Menu.featuredType,
+			onOpen: context => this.menuContext = context,
+			data: {
+				options,
+				noClose: true,
+				onOver: this.onTypeOver,
+				onSelect: (e: any, item: any) => {
+					this.onTypeSelect(e, item);
 				},
-			});
-		};
-
-		if (typeIsDeleted) {
-			showMenu();
-		} else {
-			U.Data.checkSetCnt([ object.type ], (message: any) => {
-				if (message.records.length == 1) {
-					this.setId = message.records[0].id;
-					options.push({ id: 'setOpen', name: U.Common.sprintf(translate('blockFeaturedTypeMenuOpenSetOf'), type.name) });
-				} else
-				if (message.records.length == 2) {
-					options.push({ id: 'setOpenMenu', name: translate('blockFeaturedTypeMenuOpenSet'), arrow: true });
-				} else
-				if (type && !type.isDeleted) {
-					options.push({ id: 'setCreate', name: U.Common.sprintf(translate('blockFeaturedTypeMenuCreateSetOf'), type.name) });
-				};
-
-				showMenu();
-			});
-		};
+			},
+		});
 	};
 
 	onTypeOver (e: any, item: any) {
@@ -845,12 +824,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems (): any[] {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const short = S.Detail.get(rootId, storeId, [ 'type', 'layout', 'featuredRelations' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'type', 'targetObjectType', 'layout', 'featuredRelations' ], true);
 		const keys = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
 
 		let ret = [];
 		if (!keys.length) {
-			ret = S.Record.getTypeFeaturedRelations(short.type);
+			ret = S.Record.getTypeFeaturedRelations(short.targetObjectType || short.type);
 		} else {
 			ret = keys.map(it => S.Record.getRelationByKey(it));
 		};

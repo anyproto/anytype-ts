@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar } from 'Lib';
+import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar, keyboard } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -32,7 +32,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	render () {
-		const { config } = S.Common;
+		const { isPopup } = this.props;
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
@@ -40,6 +40,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const allowedRelation = false; //S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const type = S.Record.getTypeById(object.type);
 		const skipKeys = [ 'description' ];
+		const showSidebar = S.Common.getShowSidebarRight(isPopup);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -60,6 +61,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 		relations = S.Record.checkHiddenObjects(relations);
 		relations.sort((c1, c2) => U.Data.sortByFormat(c1, c2));
+		relations.unshift(S.Record.getRelationByKey('description'));
 
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
@@ -68,7 +70,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const cn = [ 'blocks' ];
 
 		if (isVideo || isImage || isAudio || isPdf) {
-			if (isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
+			if (showSidebar || isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
 				cn.push('horizontal');
 			} else {
 				cn.push('vertical');
@@ -87,6 +89,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			};
 		} else {
 			cn.push('horizontal');
+		};
+
+		if (showSidebar) {
+			cn.push('withSidebar');
 		};
 
 		if (file) {
@@ -148,7 +154,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 								</div>
 
 								<div className="section">
-									<div className="title">{translate('pageMainMediaFileInfo')}</div>
+									<div className="title">{translate('commonFileInfo')}</div>
 
 									{relations.map((item: any) => (
 										<Block 
@@ -199,6 +205,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	open () {
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -222,7 +229,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
-			sidebar.rightPanelSetState({ rootId });
+			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 		});
 	};
@@ -232,8 +239,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return;
 		};
 
-		const { isPopup, match } = this.props;
-		const close = !(isPopup && (match?.params?.id == this.id));
+		const { isPopup } = this.props;
+		const close = !(isPopup && (this.getRootId() == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -286,7 +293,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 	onRelationAdd (e: any) {
 		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, []);
 		const type = S.Record.getTypeById(object.type);
@@ -312,8 +319,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		return keyboard.getRootId(this.props.isPopup);
 	};
 
 	resize () {

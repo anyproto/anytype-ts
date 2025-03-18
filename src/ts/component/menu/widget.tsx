@@ -57,7 +57,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 							return (
 								<div className={cn.join(' ')} key={i} onClick={e => this.onOptionClick(e, option, item)}>
-									{option.icon ? <Icon className={option.icon} tooltip={option.name} tooltipY={I.MenuDirection.Top} /> : option.name}
+									{option.icon ? <Icon className={option.icon} tooltip={option.description} tooltipY={I.MenuDirection.Top} /> : option.name}
 								</div>
 							);
 						})}
@@ -156,13 +156,15 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { isEditing } = data;
 		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || U.Menu.isSystemWidget(this.target?.id);
 
-		const sections: any[] = [{
-			id: 'layout',
-			name: translate('commonAppearance'),
-			children: [],
-			options: U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout)),
-			value: this.layout,
-		}];
+		const sections: any[] = [
+			{
+				id: 'layout',
+				name: translate('commonAppearance'),
+				children: [],
+				options: U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout)),
+				value: this.layout,
+			},
+		];
 
 		if (hasLimit) {
 			sections.push({
@@ -190,7 +192,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(id, layout).map(it => it.id);
 
 		if (U.Menu.isSystemWidget(id)) {
-			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
+			if ((id != J.Constant.widgetId.bin) && [ null, I.WidgetLayout.Link ].includes(this.layout)) {
 				this.layout = id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
 			};
 		} else {

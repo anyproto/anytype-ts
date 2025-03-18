@@ -275,6 +275,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 		return;
 	};
 
+	const { config } = S.Common;
 	const request = new Rpc.File.Upload.Request();
 
 	request.setSpaceid(spaceId);
@@ -282,6 +283,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setLocalpath(path);
 	request.setType(type as number);
 	request.setDetails(Encode.struct(details));
+	request.setCreatetypewidgetifmissing(config.experimental);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -1259,7 +1261,7 @@ export const ObjectTypeListConflictingRelations = (id: string, spaceId: string, 
 
 // ---------------------- OBJECT ---------------------- //
 
-export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, createWidget: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1267,6 +1269,7 @@ export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: st
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey || J.Constant.default.typeKey);
+	request.setCreatetypewidgetifmissing(createWidget);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };

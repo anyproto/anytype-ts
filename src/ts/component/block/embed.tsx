@@ -323,23 +323,22 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	onKeyDownBlock (e: any) {
 		const { rootId, onKeyDown } = this.props;
 		const node = $(this.node);
-		const cmd = keyboard.cmdKey();
 		const isEditing = node.hasClass('isEditing');
 
 		if (isEditing) {
 			// Undo
-			keyboard.shortcut(`${cmd}+z`, e, () => {
+			keyboard.shortcut('undo', e, () => {
 				e.preventDefault();
 				keyboard.onUndo(rootId, 'editor');
 			});
 
 			// Redo
-			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
+			keyboard.shortcut('redo', e, () => {
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
 			});
 
-			keyboard.shortcut(`tab`, e, () => {
+			keyboard.shortcut('tab', e, () => {
 				e.preventDefault();
 			});
 		};

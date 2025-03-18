@@ -27,6 +27,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	rowId = '';
 	cellId = '';
 	data: any = {};
+	frameResize = 0;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -165,6 +166,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	unbind () {
 		const { block } = this.props;
 		$(window).off(`resize.${block.id}`);
+		$(this.node).off('resizeInit resizeMove');
 	};
 
 	rebind () {
@@ -173,6 +175,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		this.unbind();
 		win.on(`resize.${block.id}`, () => raf(() => this.resize()));
+		$(this.node).on('resizeInit resizeMove', e => this.resize());
 	};
 
 	getData () {
@@ -783,7 +786,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let ret = false;
 
-		keyboard.shortcut(`shift+space`, e, () => {
+		keyboard.shortcut('shift+space', e, () => {
 			e.preventDefault();
 
 			ret = true;
@@ -1530,35 +1533,41 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const row = node.find(`#row-${rows[0].id}`);
 		const obj = $(`#block-${block.id}`);
 
-		let width = J.Size.blockMenu + 10;
-		let maxWidth = 0;
-		let wrapperWidth = 0;
-
-		String(row.css('grid-template-columns') || '').split(' ').forEach(it => width += parseInt(it));
-
-		obj.css({ width: 'auto' });
-
-		if (parent.isPage() || parent.isLayoutDiv()) {
-			const container = U.Common.getPageFlexContainer(isPopup);
-
-			maxWidth = container.width() - PADDING;
-			wrapperWidth = getWrapperWidth() + J.Size.blockMenu;
-
-			wrap.toggleClass('withScroll', width > maxWidth);
-			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
-
-			obj.css({
-				width: (width >= wrapperWidth) ? width : 'auto',
-				marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
-			});
-		} else {
-			const parentObj = $(`#block-${parent.id}`);
-			if (parentObj.length) {
-				maxWidth = parentObj.width() - J.Size.blockMenu;
-			};
-
-			wrap.toggleClass('withScroll', width > maxWidth);
+		if (this.frameResize) {
+			raf.cancel(this.frameResize);
 		};
+
+		this.frameResize = raf(() => {
+			let width = J.Size.blockMenu + 10;
+			let maxWidth = 0;
+			let wrapperWidth = 0;
+
+			String(row.css('grid-template-columns') || '').split(' ').forEach(it => width += parseInt(it));
+
+			obj.css({ width: 'auto', marginLeft: 0 });
+
+			if (parent.isPage() || parent.isLayoutDiv()) {
+				const container = U.Common.getPageContainer(isPopup);
+
+				maxWidth = container.width() - PADDING;
+				wrapperWidth = getWrapperWidth() + J.Size.blockMenu;
+
+				wrap.toggleClass('withScroll', width > maxWidth);
+				width = Math.max(wrapperWidth, Math.min(maxWidth, width));
+
+				obj.css({
+					width: (width >= wrapperWidth) ? width : 'auto',
+					marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
+				});
+			} else {
+				const parentObj = $(`#block-${parent.id}`);
+				if (parentObj.length) {
+					maxWidth = parentObj.width() - J.Size.blockMenu;
+				};
+
+				wrap.toggleClass('withScroll', width > maxWidth);
+			};
+		});
 	};
 
 });

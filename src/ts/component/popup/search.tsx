@@ -54,6 +54,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	render () {
 		const { isLoading } = this.state;
 		const items = this.getItems();
+		const shift = keyboard.shiftSymbol();
 
 		const Context = (meta: any): any => {
 			const { highlight, relationKey, ranges } = meta;
@@ -143,7 +144,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						<Icon
 							className="advanced"
 							tooltip={translate('popupSearchTooltipSearchByBacklinks')}
-							tooltipCaption="Shift + Enter"
+							tooltipCaption={`${shift} + Enter`}
 							tooltipY={I.MenuDirection.Top}
 							onClick={e => this.onBacklink(e, item)}
 						/>
@@ -151,6 +152,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				};
 
 				let name = U.Object.name(item);
+				if (U.Object.isTypeLayout(item.layout)) {
+					name = item.pluralName || name;
+				};
+
 				if (meta.highlight && (meta.relationKey == 'name')) {
 					name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
 
@@ -413,21 +418,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
-		keyboard.shortcut(`enter, ${cmd}+enter`, e, (pressed: string) => {
-			const regScheme = new RegExp(`^${J.Constant.protocol}:\/\/`);
-			const regUrl = /invite.any.coop\/([a-zA-Z0-9]+)#([a-zA-Z0-9]+)/;
+		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
+			const route = U.Common.getRouteFromUrl(filter);
 
-			if (regScheme.test(filter)) {
-				const route = filter.replace(regScheme, '');
-				if (route) {
-					U.Router.go(`/${route}`, {});
-				};
-				return;
-			};
-
-			if (filter.match(regUrl)) {
-				const [, cid, key] = filter.match(regUrl);
-				U.Router.go(`/invite/?cid=${cid}&key=${key}`, {});
+			if (route) {
+				U.Router.go(route, {});
 				return;
 			};
 
@@ -437,7 +432,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+n`, e, () => {
+		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
 
 			this.pageCreate(filter);
@@ -588,8 +583,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { space } = S.Common;
 		const { backlink } = this.state;
 		const filter = this.filter;
+		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
 		const filters: any[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		const sorts = [
@@ -650,8 +646,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	getItems () {
 		const { backlink } = this.state;
-		const cmd = keyboard.cmdSymbol();
-		const alt = keyboard.altSymbol();
 		const filter = this.getFilter();
 		const lang = J.Constant.default.interfaceLang;
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -734,8 +728,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			];
 
 			const pageItems: any[] = [
-				{ id: 'graph', icon: 'graph', name: translate('commonGraph'), shortcut: [ cmd, alt, 'O' ], layout: I.ObjectLayout.Graph },
-				{ id: 'navigation', icon: 'navigation', name: translate('commonFlow'), shortcut: [ cmd, 'O' ], layout: I.ObjectLayout.Navigation },
+				{ id: 'graph', icon: 'graph', name: translate('commonGraph'), shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('graph')), layout: I.ObjectLayout.Graph },
+				{ id: 'navigation', icon: 'navigation', name: translate('commonFlow'), shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('navigation')), layout: I.ObjectLayout.Navigation },
 			].map(it => ({ ...it, isSmall: true }));
 
 			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true, isSmall: true }));
@@ -765,7 +759,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		if (canWrite) {
 			items.push({ name: translate('commonActions'), isSection: true });
-			items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ], isSmall: true });
+			items.push({ id: 'add', name, icon: 'plus', shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')), isSmall: true });
 		};
 
 		return items.map(it => {
@@ -822,7 +816,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			// Settings item
 			if (item.isSettings) {
-				sidebar.settingsOpen(item.id);
+				U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Settings });
 			} else 
 
 			// Import action

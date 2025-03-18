@@ -1,25 +1,88 @@
-import React, { forwardRef, useState } from 'react';
-import { I, U, J } from 'Lib';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
+import $ from 'jquery';
+import { Filter, Icon, Select, Label, Error } from 'Component';
+import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action } from 'Lib';
 
-const PopupShortcut = forwardRef<{}, I.Popup>(() => {
+const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
-	const [ page, setPage ] = useState('main');
-	const isMac = U.Common.isPlatformMac();
-	const sections = J.Shortcut();
-	const section = sections.find(it => it.id == page);
+	const { getId, close } = props;
+	const [ page, setPage ] = useState('');
+	const [ filter, setFilter ] = useState('');
+	const [ dummy, setDummy ] = useState(0);
+	const [ editingId, setEditingId ] = useState('');
+	const [ editingKeys, setEditingKeys ] = useState([]);
+	const bodyRef = useRef(null);
+	const sections = J.Shortcut.getSections();
+	const current = page || sections[0].id;
+	const section = U.Common.objectCopy(sections.find(it => it.id == current));
+	const timeout = useRef(0);
+	const error = useRef({});
+	const id = getId();
 
-	const Tab = (item: any) => (
-		<div className={[ 'item', (item.id == page ? 'active' : '') ].join(' ')} onClick={() => setPage(item.id)}>
-			{item.name}
-		</div>
-	);
+	const onClick = (item: any) => {
+		setEditingId(item.id);
+	};
+
+	const onMenu = () => {
+		const options = [
+			{ id: 'export', name: translate('popupShortcutExport') },
+			{ id: 'import', name: translate('popupShortcutImport') },
+			{ id: 'reset', name: translate('popupShortcutReset') },
+		];
+
+		S.Menu.open('select', {
+			element: `#${getId()} #icon-more`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'export': {
+							const ret = [];
+							const items = J.Shortcut.getItems();
+
+							for (const k in items) {
+								const item = items[k];
+
+								if (item.id) {
+									ret.push({ id: item.id, keys: item.keys	});
+								};
+							};
+
+							Action.openDirectoryDialog({}, paths => {
+								if (paths.length) {
+									Renderer.send('shortcutExport', paths[0], ret);
+								};
+							});
+							break;
+						};
+
+						case 'import': {
+							Action.openFileDialog({ extensions: [ 'json' ] }, paths => {
+								if (paths.length) {
+									Renderer.send('shortcutImport', paths[0]).then((data: any) => {
+										Storage.setShortcuts(data || {});
+										setDummy(dummy + 1);
+									});
+								};
+							});
+							break;
+						};
+
+						case 'reset': {
+							error.current = {};
+							Storage.resetShortcuts();
+							setDummy(dummy + 1);
+							break;
+						};
+					};
+				},
+			}
+		});
+	};
 
 	const Section = (item: any) => {
 		const cn = [ 'section' ];
-
-		if (item.className) {
-			cn.push(item.className);
-		};
 
 		return (
 			<div className={cn.join(' ')}>
@@ -35,33 +98,214 @@ const PopupShortcut = forwardRef<{}, I.Popup>(() => {
 		);
 	};
 
+	const Symbol = (item: any) => {
+		if (item.text == '[,]') {
+			return <>,</>;
+		} else {
+			return <Label text={item.text} />;
+		};
+	};
+
 	const Item = (item: any) => {
-		const caption = isMac && item.mac ? item.mac : item.com;
+		const cn = [ 'item' ];
+		const canEdit = item.id && !item.noEdit;
+
+		let symbols = item.symbols || [];
+		let onClickHandler = () => {};
+
+		if (canEdit) {
+			cn.push('canEdit');
+
+			if (editingId == item.id) {
+				cn.push('isEditing');
+				symbols = keyboard.getSymbolsFromKeys(editingKeys);
+			};
+
+			if (error.current[item.id]) {
+				cn.push('hasError');
+			};
+
+			onClickHandler = () => onClick(item);
+		};
 
 		return (
-			<div className="item">
-				<div className="key" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(caption) }} />
-				<div className="descr">{item.name}</div>
+			<div className={cn.join(' ')} onClick={onClickHandler}>
+				<div className="flex">
+					<div className="name">{item.name}</div>
+					{symbols.length ? (
+						<div className="symbols">
+							{symbols.map((item: any, i: number) => <Symbol key={i} text={item} />)}
+						</div>
+					) : ''}
+					{item.text ? <Label className="text" text={item.text} /> : ''}
+				</div>
+				{error.current[item.id] ? <Error text={error.current[item.id]} /> : ''}
 			</div>
 		);
 	};
 
+	const onFilterChange = (value: string) => {
+		setFilter(value);
+	}; 
+
+	const checkConflicts = (id: string, pressed: string[]) => {
+		const items = J.Shortcut.getItems();
+
+		for (const i in items) {
+			const item = items[i];
+
+			if (!item.keys || (item.id == id)) {
+				continue;
+			};
+
+			const isEqual = U.Common.objectCompare(item.keys, pressed);
+			if (isEqual) {
+				error.current[id] = U.Common.sprintf(item.id ? translate('popupShortcutResetKey') : translate('popupShortcutConflict'), item.name);
+				if (item.id) {
+					Storage.updateShortcuts(item.id, []);
+				};
+
+				setDummy(dummy + 1);
+			};
+		};
+	};
+
+	const clear = () => {
+		error.current = {};
+		setEditingId('');
+		setEditingKeys([]);
+		window.clearTimeout(timeout.current);
+	};
+
+	useEffect(() => {
+		return () => {
+			window.clearTimeout(timeout.current);
+			keyboard.setShortcutEditing(false);
+			$(window).off('keyup.shortcut keydown.shortcut');
+		};
+	}, []);
+
+	useEffect(() => {
+		const win = $(window);
+		const codeChecks = [ 'key', 'digit' ];
+		const codes = new Set();
+		const setTimeout = () => {
+			window.clearTimeout(timeout.current);
+			timeout.current = window.setTimeout(() => clear(), 2000);
+		};
+
+		let pressed = [];
+
+		win.off('keyup.shortcut keydown.shortcut');
+		keyboard.setShortcutEditing(!!editingId);
+
+		if (!editingId) {
+			return;
+		};
+
+		win.on('keydown.shortcut', (e: any) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			const metaKeys = keyboard.metaKeys(e);
+			const key = keyboard.eventKey(e);
+			const code = String(e.code || '').toLowerCase();
+			const skip = [ Key.meta, Key.ctrl ];
+
+			if (key == Key.escape) {
+				clear();
+				return;
+			};
+
+			if (metaKeys.length) {
+				pressed = pressed.concat(metaKeys);
+			};
+
+			if (!skip.includes(key)) {
+				let parsedCode = false;
+
+				codeChecks.forEach(c => {
+					if (codes.has(c)) {
+						parsedCode = true;
+						return;
+					};
+
+					if (code.startsWith(c)) {
+						pressed.push(code.replace(c, ''));
+						codes.add(c);
+						parsedCode = true;
+					};
+				});
+
+				if (!parsedCode) {
+					pressed.push(key);
+				};
+			};
+
+			pressed = U.Common.arrayUnique(pressed);
+			checkConflicts(editingId, pressed);
+
+			Storage.updateShortcuts(editingId, pressed);
+			setEditingKeys(pressed);
+			setTimeout();
+		});
+
+	}, [ editingId ]);
+
+	useEffect(() => {
+		$(bodyRef.current).scrollTop(0);
+	}, [ page ]);
+
+	if (filter) {
+		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+
+		section.children = section.children.filter((s: any) => {
+			s.children = s.children.filter((c: any) => {
+				if (c.name && c.name.match(reg)) {
+					return true;
+				};
+
+				for (const symbol of c.symbols || []) {
+					if (symbol.match(reg)) {
+						return true;
+					};
+				};
+
+				for (const key of c.keys || []) {
+					if (key.match(reg)) {
+						return true;
+					};
+				};
+
+				return false;
+			});
+			return s.children.length > 0;
+		});
+	};
+
 	return (
-		<div className="wrapper">
+		<>
 			<div className="head">
-				<div className="tabs">
-					{sections.map((item: any, i: number) => (
-						<Tab key={i} {...item} />
-					))}
+				<div className="sides">
+					<div className="side left">
+						<Select id={`${id}-section`} options={sections} value={page} onChange={id => setPage(id)} />
+					</div>
+					<div className="side right">
+						<Icon id="icon-more" className="more withBackground" onClick={onMenu} />
+						<Icon className="close withBackground" tooltip={translate('commonClose')} onClick={() => close()} />
+					</div>
+				</div>
+				<div className="filterWrap">
+					<Filter className="outlined" onChange={onFilterChange} />
 				</div>
 			</div>
 
-			<div className="body scrollable">
+			<div ref={bodyRef} className="body customScrollbar">
 				{(section.children || []).map((item: any, i: number) => (
 					<Section key={i} {...item} />
 				))}
 			</div>
-		</div>
+		</>
 	);
 
 });

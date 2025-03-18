@@ -157,7 +157,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		if (focused || (!focused && keyboard.isFocused)) {
-			keyboard.shortcut(`${cmd}+d`, e, () => {
+			keyboard.shortcut('duplicate', e, () => {
 				Action.duplicate(rootId, rootId, blockIds[blockIds.length - 1], blockIds, I.BlockPosition.Bottom, () => { 
 					focus.clear(true); 
 				});
@@ -543,7 +543,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
-						C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, () => onCreate());
+						C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, true, () => onCreate());
 					};
 
 					filters = filters.concat([

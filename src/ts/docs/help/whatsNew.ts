@@ -2,6 +2,7 @@ import { I, J, keyboard } from 'Lib';
 
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
+const shift = keyboard.shiftSymbol();
 const hl = (t: string) => `<span class="highlight">${t}</span>`;
 const block = (style: I.TextStyle, text: string, align?: I.BlockHAlign, icon?: string) => ({ style, text, align, icon });
 const title = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Title, t, align);
@@ -20,6 +21,142 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 	//{ type: I.BlockType.IconPage, icon: '🎄' },
+
+	title(`Desktop 0.46.0 Released!`),
+	text(''),
+	text('Hi dear Anytypers!'),
+	text(`We\'re thrilled to announce a major update and introduce a project we call "<b>Primitives</b>" – a fundamental shift in Anytype\'s core organizing structure. With Primitives, we\'re streamlining our user experience by eliminating the current behavior and bringing a clearer, more intuitive way to use <b>Types</b>.`),
+	text('Primitives reimagine Types. Now, you can define layouts and properties within a Type and all associated objects will automatically inherit these settings.'),
+	text('Along with this transformation, we’ve included many new improvements and bug fixes.'),
+	text(``),
+
+	h2(`Meet Primitives`),
+	text(``),
+
+	bullet(`<b>Relations</b> are now called <b>Properties</b>.`),
+	bullet(`<b>Sets</b> are now called <b>Queries</b>.`),
+	bullet(`<b>Types</b> are now the primary structure of objects, determining all attached properties.`),
+	bullet(`<b>Properties</b> that were previously set at the object level are now defined by Type, including both featured properties, such as backlinks or tags, and specific ones, such as date or source.`),
+	bullet(`<b>Templates</b> will now focus only on the content of objects, primarily organizing blocks. Adding blocks, setting a cover or assigning an icon are now key aspects of creating a template. Properties are managed separately at the Type level. Changing a property at the Type level will affect all objects of that Type.`),
+	bullet(`<b>Layout</b> of an object is also defined by its Type. For example, all Task objects will follow the same layout, and you won’t be able to customize them individually. If you need a different layout with a center header position or increased width, you should create a new Type.`),
+	video(`46/1.mp4`),
+	text(``),
+
+	h3(`Queries for Types`),
+	text(`Each Type page now comes with a built-in inline Query, making it easier to access and organize related objects.`),
+	text(``),
+
+	h3(`Templates for Queries and Collections`),
+	text(`You can save and reuse your configurations, including view settings, applied filters, cover and icon. Just like with regular objects, select ${hl('Use as Template')} from the three-dots menu or add templates via the Query or Collection Type page.`),
+	text(``),
+
+	h3(`Right Sidebar and Set Up Menu`),
+	text(`The <b>Properties</b> icon lets you view, add and remove values to the properties of a specific object. `),
+	text(`The <b>Set up</b> menu allows you to manage the properties of its Type. From there you can add, remove and organize them into different sections:`),
+	bullet(`<b>Header</b> properties appear in the header part of every object of that Type.`),
+	bullet(`<b>Sidebar</b> properties are the ones you choose to show in the Properties menu by clicking the Properties icon.`),
+	bullet(`<b>Hidden</b> properties live under the ${hl('Show more')} button.`),
+	bullet(`<b>Local</b> properties: After updating to the new version or when changing an object’s Type, some properties (formerly relations) might not match the new Type’s predefined structure. Properties that were once unique to individual objects will now appear as local properties. You can either unify them by adding them to the Type or create a new Type, if you need.`),
+	text(``),
+	text(``),
+
+	h2(`Quality of Life Improvements`),
+	text(``),
+
+	h3(`New Icons for Types`),
+	text(`Custom icons can now be assigned at the Type level, making it easier to identify whether you are working with Types or Objects. You can now choose from a dedicated collection of hundreds of fresh icons for a consistent and structured look.`),
+	img(`46/2.png`, 'c70'),
+	text(``),
+
+	h3(`Type Widgets`),
+	text(`You can now add widgets based on object Types, making it easier to organize and display relevant content. We’ve also introduced <b>Automatic Widget</b> creation to help users seamlessly discover and adopt widgets, creating a more personalized and intuitive workspace.`),
+	bullet(`When a new object type (e.g., Document, Contact) is created, a dedicated widget is automatically added to the sidebar. This widget displays all objects of that Type from the space, providing quick access and better organization.`),
+	bullet(`<b>Widgets are optional</b> – you can remove any widget at any time via ${hl('Edit')} button or by right-clicking. Once removed, they won’t reappear unless manually added.`),
+	img(`46/3.png`, 'c70'),
+	text(``),
+
+	h3(`Settings Update`),
+	text(`Both General and Space Settings have been updated to a full-page layout instead of a pop-up, with sections now located in the left sidebar.`),
+	img(`46/4.png`, 'c70'),
+	text(``),
+
+	h3(`Custom Shortcuts`),
+	text(`We've expanded the number of actions available for keyboard shortcuts, giving you more capabilities than ever before. Most shortcuts are customizable, and certain actions support two different key combinations for more flexibility.`),
+	img(`46/5.png`, 'c70'),
+	text(``),
+
+	h3(`Raycast Extension Updates`),
+	text(`We've introduced several enhancements based on your requests and feedback, plus Anytype for Raycast is now an <b>AI&nbsp;Extension</b> – search through spaces and objects using natural language or create new ones just by instructing ${hl('@anytype')}.`),
+	bullet(`<b>Improved Pinning & Navigation</b>: Pin objects, types, members and spaces for quicker access. Objects of a certain Type now appear below their templates for better organization.`),
+	bullet(`<b>Better Collection Management</b>: Create objects directly within collections and browse collection items with ease.`),
+	bullet(`<b>Customization & Visibility</b>: Choose ${hl('Open Object in Anytype')} as the default action, show custom properties in the Detail sidebar, toggle metadata in object details and apply templates when creating new objects.`),
+	img(`46/6.png`, 'c50'),
+
+	h3(`Choose your Week Start Day`),
+	text(`You can now choose whether your week starts on Sunday or Monday. Head to your updated settings to make the switch in the date picker.`),
+	text(``),
+
+	h3(`Use [[ to Link in Editor`),
+	text(`The editor now supports the ${hl('[[')} syntax for linking. This Markdown pattern works similarly to ${hl('@mention')}, allowing you to reference other objects.`),
+	text(``),
+
+	h3(`HTTP Links for Objects`),
+	text(`You can now copy an HTTP link for any object via the sharing menu by selecting ${hl('Copy Deeplink')}. Users without the Anytype app can click on these links to download the app and access the object after installation. When opened inside the App, these links directly open the object without any redirection.`),
+	text(``),
+
+	h3(`Web Publishing Updates`),
+	text(`We continue to refine and optimize the rendering process and have also improved support for layouts including alignment, width and featured properties to align with the new Primitives structure.`),
+	text(``),
+
+	h3(`Alert when Switching to the Release Channel`),
+	text(`To prevent confusion when switching the release channel, an alert has been added. This alert clarifies that changing the release channel will store data in a separate sub-directory, which may cause unsynced files or objects to become inaccessible.`),
+	text(``),
+
+	h3(`Drag-to-Select on Graph Page`),
+	text(`Added a drag-to-select feature to the graph page, making it easier to select multiple items at once. Now you can grab and move a bunch of objects with just a simple drag. Many thanks for the contribution to @${link('https://github.com/anyproto/anytype-ts/pull/1211', 'ShirayukiRin')}!`),
+	text(``),
+
+	h3(`fa-IR Language`),
+	text(`Added support for Persian (fa-IR) language as part of our right-to-left language expansion.`),
+	text(``),
+	text(``),
+
+	h2(`Bug fixes`),
+	bullet(`Multiple open windows no longer revert to the login screen or display a black screen after the device resumes from suspension. Thanks to @${link('https://community.anytype.io/t/black-screen-multiple-windows-after-suspend/25878', 'krst')} & @${link('https://community.anytype.io/t/some-windows-returned-to-login-screen/20865', 'C.c')}!`),
+	bullet(`Default Object Type remains set. This issue was detected again and resolved after fixing the initialization problem. Thanks for the heads-up, @${link('https://community.anytype.io/t/default-object-type-keeps-changing-to-page/25748', 'zma17')}!`),
+	bullet(`Fixed an issue where the cursor keys could stop working after editing templates in Sets.`),
+	bullet(`The pop-up menu when adding a widget closes correctly.`),
+	bullet(`Fixed the Grid’s sum function to prevent unnecessary decimal places from appearing in calculations. Thanks for the feedback, @${link('https://community.anytype.io/t/calculating-a-sum-shows-one-zero-too-much/26363', 'Code-Jack')}!`),
+	bullet(`Fixed an issue where checking a checkbox would remove LaTeX formatting within the block. Thanks, @${link('https://community.anytype.io/t/inline-latex-breaks-when-placed-in-a-checkbox-that-is-then-checked/26610', 'personnotman')}!`),
+	bullet(`Inline LaTeX now correctly renders ${hl('$\\mathbb R$')}, which previously did not display while other letters worked. Double thanks, @${link('https://community.anytype.io/t/inline-latex-mathbb-r-doesnt-work/26781', 'personnotman')}!`),
+	bullet(`The ${hl('Show menu bar')} setting works correctly. Thanks, @${link('https://community.anytype.io/t/settings-show-menu-bar-works-incorrectly/25475', 'AndCycle')}!`),
+	bullet(`${hl(`${'&#8984;'} + W`)} now correctly closes only the active window on Mac. Thanks, @${link('https://community.anytype.io/t/command-w-closes-the-app-instead-of-the-active-window-mac/23099', 'Kite')}!`),
+	bullet(`Files added to Favorites are properly displayed in the widget.`),
+	bullet(`Embed Kroki Graphs now scale correctly, preventing them from being cut off. Thanks, @${link('https://community.anytype.io/t/kroki-graphs-cutoff-instead-of-scaled/26875', 'bartl')}!`),
+	bullet(`The ${hl('Create new Object')} button in the list view widget for Kanban boards is now working correctly. Thanks, @${link('https://community.anytype.io/t/button-create-new-object-in-list-view-widget-for-kanban-boards-stopped-working-in-anytype-desktop-0-45/26916', 'Self-Perfection')}!`),
+	bullet(`The nested long table, when moved inside a column, now displays correctly.`),
+	bullet(`Fixed the ${hl('Back to Dashboard')} button on deleted Objects.`),
+	bullet(`Fixed hyperlinks in PDF export.`),
+	bullet(`Embedded links in Bookmarks are now parsed and rendered correctly when an Object is exported to PDF.`),
+	bullet(`The Audio Player timeline is now resized properly in exported PDF.`),
+	bullet(`Tables in multiple-column layouts align properly in resized windows without overlapping adjacent columns. Thanks to @${link('https://community.anytype.io/t/issue-with-the-table-in-resized-window/19901', 'cpobharat')}!`),
+	bullet(`All Objects panel now remembers the last scroll position when reopened. Thanks, @${link('https://community.anytype.io/t/all-objects-doesnt-remember-the-last-scroll-position/24548', 'Code-Jack')}!`),
+	bullet(`Corrected forward navigation in All Objects to be consistently clickable.`),
+	bullet(`Horizontal scrolling in All Objects tabs works consistently with external mice.`),
+	bullet(`All Objects correctly display the selected tab when opened.`),
+	bullet(`Fixed filters in Graph, ensuring Objects with bi-directional links or relations are displayed correctly when the corresponding ${hl('Show on Graph')} option is enabled. Thanks for catching this, @${link('https://community.anytype.io/t/show-relations-filter-from-the-graph-doesnt-work-properly/25196', 'HoneycombGlasses')}!`),
+	bullet(`Moving a block out of the Anytype window no longer causes the view to scroll upwards.`),
+	bullet(`The ${hl('Create Object')} button in the widget now correctly links the newly created object to the target one.`),
+	bullet(`Relations are not displayed anymore after they have been moved to the Bin in the relations panel. Thanks for contributing, @${link('https://github.com/anyproto/anytype-ts/pull/1206', 'ShirayukiRin')}!`),
+	bullet(`The Drag-to-Select box has been improved to ensure it displays correctly in sets and collections. Additionally, it now appears when selecting a single block in the editor. Thanks again, @${link('https://github.com/anyproto/anytype-ts/pull/1221', 'ShirayukiRin')}!`),
+	bullet(`Fixed incorrect input direction switching on Armenian keyboard.`),
+	bullet(`Deleted objects are correctly displayed in the Bin. Thanks, @${link('https://community.anytype.io/t/deleted-objects-are-not-displayed-in-the-bin/27083', 'boots')}!`),
+	bullet(`The last active Space opens when launching the App and after refresh. Thanks for flagging this, @${link('https://community.anytype.io/t/last-used-space-is-not-the-space-shown-at-application-startup-when-there-are-multiple-instances-of-anytype/27097', 'C.c')}!`),
+	bullet(`Exporting to PDF now consistently reflects the current color scheme in dark mode. If you need an object to be exported as a standard PDF document with a white background while dark mode is enabled, you can use the Printing option instead. Appreciate your report, @${link('https://community.anytype.io/t/exporting-to-pdf-in-dark-mode-creates-different-and-unexpected-results/26235', 'DennisG')}!`),
+	bullet(`The calendar selection menu no longer moves when switching months. Thanks to @${link('https://community.anytype.io/t/calendar-selection-menu-moves-when-changing-months/26982', 'Magiccheese1')}!`),
+
+	div(),
+	// --------------------------------------------//
 
 	title(`Desktop 0.45.0 Released!`),
 	text('Hello Anytypers! We’re excited to share a major update you’ve been eagerly awaiting. Version 0.45.0 introduces Web Publishing, a Raycast extension, RTL support, and a host of quality-of-life improvements — all inspired by your requests and feedback. Thank you for helping us shape Anytype into a friendlier, more powerful tool for everyone.'),
@@ -232,7 +369,7 @@ export default [
 	text(``),
 
 	h2(`Quality-of-Life`),
-	bullet(`Pressing Enter inside empty list and toggle blocks behaves as Shift + Tab for that block: moves up a level. Thanks, @${link('https://community.anytype.io/t/move-indented-bullet-points-to-the-left-using-enter-key/12082', 'purplekiwi')} & @${link('https://community.anytype.io/t/move-indented-bullet-points-to-the-left-using-enter-key/12082', 'Shampra')}!`),
+	bullet(`Pressing Enter inside empty list and toggle blocks behaves as ${shift} + Tab for that block: moves up a level. Thanks, @${link('https://community.anytype.io/t/move-indented-bullet-points-to-the-left-using-enter-key/12082', 'purplekiwi')} & @${link('https://community.anytype.io/t/move-indented-bullet-points-to-the-left-using-enter-key/12082', 'Shampra')}!`),
 	bullet(`Updated batch relation editing to allow adding new options and removing existing ones: now, when editing tags/objects/files the values are added or deleted instead of replacing with a new value. Thanks, @${link('https://community.anytype.io/t/option-to-append-tags-instead-of-replacing-them-when-using-batch-editing-with-multi-select-relations/21362', 'Shampra')}!`),
 	bullet(`Created relations in batch editing are now automatically added to the Set or Collection view.`),
 	bullet(`Updated icons for multiple file formats, including generic files, images, videos and more.`),
@@ -247,7 +384,7 @@ export default [
 	bullet(`Relation cells in read-only Spaces or read-only objects now provide the ability to read the full value of that relation cell.`),
 	bullet(`Warning switch to ${hl('Local Only')} network: we've added a notification and additional confirmation before selection.`),
 	bullet(`Potentially harmful URLs have a warning before opening them.`),
-	bullet(`Create new objects in Sets faster by using ${hl('Shift + Enter')}. Thanks, @${link('https://community.anytype.io/t/paste-text-without-its-formatting/8810', 'Pretzel')}!`),
+	bullet(`Create new objects in Sets faster by using ${hl(`${shift} + Enter`)}. Thanks, @${link('https://community.anytype.io/t/paste-text-without-its-formatting/8810', 'Pretzel')}!`),
 	bullet(`Added an ability to multi-edit the Done relation.`),
 	bullet(`Added tooltips to the Calendar view that display the full name of an object when the cursor is briefly hovered over it. Thanks, @${link('https://community.anytype.io/t/tooltip-on-calendar/24086', 'MrDaisyBates')}!`),
 	bullet(`Updated the plus icon and block menu icon.`),
@@ -445,7 +582,7 @@ export default [
 	bullet(`<b>URL Relation Bug:</b> Resolved the issue with opening Windows Explorer when the URL is blank 🖥️ Thanks, @${link('https://community.anytype.io/t/pasting-a-url-in-url-relation-within-a-collection-press-enter-opens-this-pc-on-windows/11197', 'hexara')}`),
 	bullet(`<b>Emoji Markdown:</b> Fixed markdown sequence issues with text blocks starting with an emoji 😃 Thanks, @${link('https://community.anytype.io/t/13159', 'pavloUA')}`),
 	bullet(`<b>System Relations:</b> System relations can now be unlinked from Types 🔗 Thanks, @${link('https://community.anytype.io/t/16517', 'filip')}`),
-	bullet(`<b>Shift + Click:</b> Proper functionality for shift+click on Link/Bookmark blocks 🔍 Thanks, @${link('https://community.anytype.io/t/20194', 'siousu')}`),
+	bullet(`<b>${shift} + Click:</b> Proper functionality for shift+click on Link/Bookmark blocks 🔍 Thanks, @${link('https://community.anytype.io/t/20194', 'siousu')}`),
 	bullet(`<b>White Flash Issue:</b> Fixed the white flash when returning to the main screen from login/signup 💡`),
 	bullet(`<b>Settings Modal:</b> Now properly adjusts to window height 🖥️`),
 	bullet(`<b>Deeplink Routing:</b> Correct redirection after PIN check 🔒 Thanks, @${link('https://community.anytype.io/t/gallerys-open-in-app-button-failed-to-trigger-while-when-the-app-is-closed/12968', 'JorgeE')}`),
@@ -1098,7 +1235,7 @@ export default [
 	bullet(`<b>Everything as an Object</b><br/>...seriously, everything. Types &amp; Relations are now their own Objects, meaning that it's possible to create Relations and Sets of Types and…Relations. While you may already start experimenting with these features in the Library by opening each Type/Relation individually, this update also unblocks other highly-requested features such as grouping and tuning relation values.`),
 
 	h2(`⚡ Quality-of-Life Improvements`),
-	bullet(`<b>Multi-select, delete &amp; link from Graph</b><br/>Say goodbye to rogue Objects hanging around in your graph! It's now possible to right-click on Objects in the Graph to open a menu of operations, including Delete &amp; Link. Hit ${hl(`Shift + Click`)} to multi-select and bulk-manage these Objects.`),
+	bullet(`<b>Multi-select, delete &amp; link from Graph</b><br/>Say goodbye to rogue Objects hanging around in your graph! It's now possible to right-click on Objects in the Graph to open a menu of operations, including Delete &amp; Link. Hit ${hl(`${shift} + Click`)} to multi-select and bulk-manage these Objects.`),
 	bullet(`<b>Link-to Feature</b><br/>You now have an easy way to link Objects with each other, which doesn't require editor blocks. Use the &quot;Link to&quot; option in the Object 3-dots menu or in Graph to create direct links and quicker association between Objects.`),
 	img('link-to.png', 'full screen'),
 	bullet(`<b>Type creation on-the-fly (Desktop-only)</b><br/>It's now possible to create or install new Types in Editor without needing to visit the Library. Whether creating an Object for the first time or changing its Type, use the dropdown to turn your Objects into whatever's top of mind.`),
@@ -1244,7 +1381,7 @@ export default [
 	bullet(`Block links are now opening correctly from modal window`),
 	bullet(`Removed: Onboarding video popup was causing application crashes for new users`),
 	bullet(`Removed: Update progress bar from print version of Objects`),
-	bullet(`Bug that was preventing ${hl(`Shift + Space`)} combination from working`),
+	bullet(`Bug that was preventing ${hl(`${shift} + Space`)} combination from working`),
 	bullet(`Removed: Temporary files that were saved in .tmp folder inside application data, when pasting media or exporting files in external applications`),
 	bullet(`Number-of-days filter in Sets no longer prevents value removal`),
 	bullet(`Simple tables within columns are now being resized correctly`),
@@ -1331,7 +1468,7 @@ export default [
 
 	h2(`Multi-select in Sets`),
 	{ text: `We've brought multi-object selection to Sets! You can now perform bulk actions such as ${hl(`Duplicate`)}, ${hl(`Add to Favorites`)}, or ${hl(`Move to Bin`)}. Previously, it was challenging to work with several objects within a Set; now, you can manage them all with a single click.` },
-	text(`It also works with the keyboard. Selecting with Shift and then pressing Delete will move them all to the Bin.`),
+	text(`It also works with the keyboard. Selecting with ${shift} and then pressing Delete will move them all to the Bin.`),
 
 	h2(`Ludicrous-mode for Relations`),
 	text(`Organizing, filtering, and focusing on certain objects just became faster with our new Relations menu.`),
@@ -1449,7 +1586,7 @@ export default [
 	bullet(`Loading spinner for new profile picture was misaligned. Thanks, ${link('https://community.anytype.io/t/loading-spinner-for-new-profile-picture-misaligned', 'Sam')}`),
 	bullet(`If you type ${hl(`\\`)} and press Enter, the carriage jumps to the beginning of the LaTeX Block. Thanks, ${link('https://community.anytype.io/t/isnt-recognized-as-a-symbol-and-pressing-enter', 'nopapi')}`),
 	bullet(`The ${hl(`\\`)} command in LaTeX makes a newline. This command wasn't included in the LaTeX autocomplete menu. Thanks, ${link('https://community.anytype.io/t/double-backslash-command-missing-from-latex-autocomplete', 'Skyler')}`),
-	bullet(`After creating a new block and using ${hl(`${cmd}+Shift+Arrow`)} to move it, the text just typed could become deleted. Thanks, ${link('https://community.anytype.io/t/moving-a-newly-created-block-deletes-text/4642', 'QuantumJump')}`),
+	bullet(`After creating a new block and using ${hl(`${cmd}+${shift}+Arrow`)} to move it, the text just typed could become deleted. Thanks, ${link('https://community.anytype.io/t/moving-a-newly-created-block-deletes-text/4642', 'QuantumJump')}`),
 	bullet(`When hitting ${hl(`Ctrl+Alt+O`)} to open Graph view on Windows with a UK keyboard, with a textbox selected, Anytype typed a ó key. Thanks, ${link('https://community.anytype.io/t/opening-graph-view-types-o/4627', 'QuantumJump')}`),
 	bullet(`Sometimes two blocks weren't separated. Thanks, ${link('https://community.anytype.io/t/blocks-merge-together-bug', 'XxxBalCion')}`),
 	bullet(`${hl(`${cmd}+Click`)} on the empty part of the Link to object block open it instead of selecting.`),
@@ -1559,14 +1696,14 @@ export default [
 	h1(`Updates for 17 November, 2021`),
 
 	h2(`Enhancements`),
-	bullet(`You can use ${hl(`Shift`)} to select a range of items on Dashboard tabs. Thanks, sahilstudio`),
+	bullet(`You can use ${hl(`${shift}`)} to select a range of items on Dashboard tabs. Thanks, sahilstudio`),
 	bullet(`Refactoring of the transition area in submenus. Menus with submenus should become more responsive.`),
 
 	h2(`Bugs`),
 	bullet(`A newly created template and relations belonging to a type could no longer be opened and edited. Thanks, Sharky`),
 	bullet(`Object state might stop updating after re-opening from graph view. Thanks, WhereisJ9`),
 	bullet(`Dark mode — Discoloured three dots menu background for file relation values. Thanks, sahilstudio`),
-	bullet(`${hl(`Shift + Enter`)} to create a line break doesn't work. Thanks, Tim-Luca`),
+	bullet(`${hl(`${shift} + Enter`)} to create a line break doesn't work. Thanks, Tim-Luca`),
 	bullet(`Clear Search in Graph View on sidepanel close. Thanks, lynxlove`),
 	bullet(`Sometimes PDF may not be rendered in the preview`),
 	bullet(`App crashes when sync status is clicked in pages showing the status as Preparing. Thanks, lynxlove`),
@@ -1618,7 +1755,7 @@ export default [
 	bullet(`Anytype now shows object's preview when hovering the link and mention`),
 	bullet(`We've added brand new gradient wallpapers, that look very solid! `),
 	bullet(`Full-text search now works for pre-build objects`),
-	bullet(`You can now open URL by clicking with Shift being held. Thanks, ${link('https://community.anytype.io/d/1059-option-to-make-url-relations-easier-to-click-through-to/1', 'qualquertipo')}`),
+	bullet(`You can now open URL by clicking with ${shift} being held. Thanks, ${link('https://community.anytype.io/d/1059-option-to-make-url-relations-easier-to-click-through-to/1', 'qualquertipo')}`),
 	bullet(`Search box height is now adaptive fitting results with no extra space below`),
 	bullet(`Relation's name in Graph mode is now always readable in the normal direction. Thanks, ${link('https://community.anytype.io/d/1085-relations-name-in-graph-mode-should-always-be-readable-in-the-normal-direction/1', 'michaellw')}`),
 	bullet(`Make sidebar less wide in Graph View. Thanks, ${link('https://community.anytype.io/d/1102-sidebar-less-fullscreen-in-graph-view/1', 'lynxlove')}`),
@@ -1642,7 +1779,7 @@ export default [
 	bullet(`Image viewer showed scrollbar. Thanks, ${link('https://community.anytype.io/d/1072-image-viewer-showing-scrollbar/1', 'kEbZeCK')}`),
 	bullet(`When you pressed Enter to open a page using the navigation pane Anytype was inserting line breaks. Thanks, ${link('https://community.anytype.io/t/using-the-navigation-pane-inserts-unwanted-line-breaks', 'Tim-Luca')}`),
 	bullet(`An image added to the file relation could break the work of the file list in the relay.`),
-	bullet(`There was an inconsistent movement for nested blocks using ${hl(`${cmd} + Shift Up/Down`)}. Thanks, ${link('https://community.anytype.io/d/889-inconsistent-movement-for-nested-blocks-using-ctrlshift-updown/1', 'qualquertipo')}`),
+	bullet(`There was an inconsistent movement for nested blocks using ${hl(`${cmd} + ${shift} Up/Down`)}. Thanks, ${link('https://community.anytype.io/d/889-inconsistent-movement-for-nested-blocks-using-ctrlshift-updown/1', 'qualquertipo')}`),
 	bullet(`When creating a new object from a Set, edit its name. If the cursor was moved, the revised text was also moved in the direction of the cursor. Thanks, ${link('https://community.anytype.io/d/1136-ui-glitch-when-adding-a-new-object-from-a-set/1', 'lynxlove')}`),
 	bullet(`Relation Numbers could store non-numerical symbols.`),
 	bullet(`When switched the month in the calendar in the Date relation, the date could be reset to 1970-01-01`),
@@ -1698,7 +1835,7 @@ export default [
 	bullet(`Audio block content upload may show an infinite loading spinner`),
 	bullet(`Search on the page doesn't work in a modal view`),
 	bullet(`After changing the size of the image block it becomes selected and can't be un-selected`),
-	bullet(`Code snippet: Pressing Shift + Enter creates a new code line instead of the new text block.`),
+	bullet(`Code snippet: Pressing ${shift} + Enter creates a new code line instead of the new text block.`),
 	bullet(`The value at the width scale may not reset after using undo-redo`),
 	bullet(`Pressing ESC with an open full-screen image closes the modal in which it was opened`),
 	bullet(link('https://community.anytype.io/d/961-linked-page-title-gets-removed-on-appearance-change/1', 'Linked Page Title gets removed on appearance change')),
@@ -1747,7 +1884,7 @@ export default [
 
 	h2(`Enhancements`),
 	bullet(`New shortcut for Shortcuts - ${hl(`Ctrl + Space`)}. Thanks, ${link('https://community.anytype.io/d/602-shortcut-for-shortcuts/1', 'lynxlove')}`),
-	bullet(`Changing text color: remember last used color or background and add shortcut - ${hl(`${cmd} + Shift + C`)} or ${hl(`${cmd} + Shift + H`)}. Thanks, ${link('https://community.anytype.io/d/546-changing-text-color-remember-last-used-color-and-adding-shortcut/1', 'abstractgeek')}`),
+	bullet(`Changing text color: remember last used color or background and add shortcut - ${hl(`${cmd} + ${shift} + C`)} or ${hl(`${cmd} + ${shift} + H`)}. Thanks, ${link('https://community.anytype.io/d/546-changing-text-color-remember-last-used-color-and-adding-shortcut/1', 'abstractgeek')}`),
 	bullet(`Favorite &amp; unfavorite. You can't add an object to favorites multiple times anymore. Thanks, ${link('https://community.anytype.io/d/568-possible-to-mark-an-object-as-favorite-multiple-times/1', 'Isak')}`),
 	bullet(`Ability to clear the "Recent" list on the dashboard. Thanks, ${link('https://community.anytype.io/d/646-ability-to-clear-the-recent-list/1', 'ste')}`),
 	bullet(`Link to object — first result not highlighted visually. Thanks, ${link('https://community.anytype.io/d/696-link-to-object-first-result-not-visually-chosen/1', 'kEbZeCK')}`),
@@ -1813,7 +1950,7 @@ export default [
 	bullet(`2 new abstract covers related to the upcoming major relase`),
 
 	h2(`Fixes &amp; tech`),
-	bullet(`Item movement by ${hl(`${cmd} + Shift + Up/Down`)} would delete its content when not "saved". Thanks, Sven`),
+	bullet(`Item movement by ${hl(`${cmd} + ${shift} + Up/Down`)} would delete its content when not "saved". Thanks, Sven`),
 	bullet(`Hyperlink pop up window persisted across pages. Thanks, ${link('https://community.anytype.io/d/341-hyperlink-pop-up-window-persists-across-pages/1', 'jmsinnz')}.`),
 	bullet(`New Checkbox was created pre-checked if the one above was checked. Thanks, ${link('https://community.anytype.io/d/311-new-checkbox-pre-checked/1', 'bskinner')}.`),
 	bullet(`When you dragged pictures into a toggle, it resized to the width of the toggle. Thanks, ${link('https://community.anytype.io/d/461-when-you-drag-pictures-into-a-toggle-it-resizes-to-the-width-of-the-toggle/1', 'Inkqb')}.`),
@@ -2000,7 +2137,7 @@ export default [
 	bullet(`We now show the loading object state for pages that downloading from the remote node.`),
 
 	h3(`Bug fixes:`),
-	bullet(`${hl(`Shift + Enter`)} doesn't create a new line within a block. Thanks, Poochy!`),
+	bullet(`${hl(`${shift} + Enter`)} doesn't create a new line within a block. Thanks, Poochy!`),
 	bullet(`Markup menu remains open when click outside the editor container. Thanks, BGray!`),
 	bullet(`The text disappears if you type and press the system button back after typing and open the page again. Thanks, BGray!`),
 	bullet(`Markup menu remains open when click outside the editor container. Thanks, BGray!`),
@@ -2057,7 +2194,7 @@ export default [
 	text(`This is one for the history books. With Anytype 0.16, users can now travel through time to recover previous versions of their pages. Use ${hl(`History`)} on the page's menu in the top-right corner.`),
 
 	h3(`Enhancements:`),
-	bullet(`New page inside another one will open in modal view. All other pages can be opened this way with ${hl(`Shift + Click`)}.`),
+	bullet(`New page inside another one will open in modal view. All other pages can be opened this way with ${hl(`${shift} + Click`)}.`),
 	bullet(`Menu bar icons now alternate between light and dark.`),
 	bullet(`You can @mention new page just by pressing enter after writing a name.`),
 	bullet(`We've made the main logo clickable and display search as it works on other pages.`),
@@ -2156,8 +2293,8 @@ export default [
 	text(`You can use the navigation pane with keyboard keys:`),
 	bullet(`Easily switch pages with the arrow keys.`),
 	bullet(`${hl(`←`)} and ${hl(`→`)} arrow transfers the selection to links, ${hl(`↑`)} and ${hl(`↓`)} arrows transitions between the same level, and ${hl(`Enter`)} is confirmation.`),
-	bullet(`${hl(`Tab`)} &amp; ${hl(`Shift`)} + ${hl(`Tab`)} can also be used to select objects. This is similar to the browser's selection of elements.`),
-	bullet(`${hl(`↑`)} and ${hl(`↓`)} arrows, ${hl(`Tab`)} &amp; ${hl(`Shift`)} + ${hl(`Tab`)} nnow transition your selection between options in the search menu without needing any additional filtration.`),
+	bullet(`${hl(`Tab`)} &amp; ${hl(`${shift}`)} + ${hl(`Tab`)} can also be used to select objects. This is similar to the browser's selection of elements.`),
+	bullet(`${hl(`↑`)} and ${hl(`↓`)} arrows, ${hl(`Tab`)} &amp; ${hl(`${shift}`)} + ${hl(`Tab`)} nnow transition your selection between options in the search menu without needing any additional filtration.`),
 
 	h3(`🙏🏻 Acknowledgements`),
 
@@ -2180,7 +2317,7 @@ export default [
 	bullet(`App saves its size and position on exit. App window now has a minimum width.`),
 	
 	h3(`Sneaky bugs were fixed:`),
-	bullet(`Redo ${hl(`CMD + Shift + Z`)} is working properly now.`),
+	bullet(`Redo ${hl(`CMD + ${shift} + Z`)} is working properly now.`),
 	bullet(`Fixed shortcut for turn-into menu. It was launching with ${hl(`?`)}, ${hl(`,`)} in some keyboards.`),
 	bullet(`Splitting and merging blocks could lead to an unwanted state with disappearing symbols when typing fast. This problem was solved.`),
 	bullet(`Menu. Filtering. When using search the first element gets selected by default now.`),
@@ -2196,7 +2333,7 @@ export default [
 	h3(`Windows support is now (finally) available!`),
 	text(`Also we have a list of fixed bugs and features &amp; improvements implemented:`),
 	bullet(`Chinese symbols input issues. Tested on Pinyin and Cangjie. For now, we use space and enter as symbol insertion, later we would implement numbers.`),
-	bullet(`German keyboard shortcuts issue is now fixed. Try ${hl(`CMD + /`)} (${hl(`CMD + Shift + 7`)}) one more time.`),
+	bullet(`German keyboard shortcuts issue is now fixed. Try ${hl(`CMD + /`)} (${hl(`CMD + ${shift} + 7`)}) one more time.`),
 	bullet(`Phantom lists fixed: "Working with a list could lead to some elements disappearing when working with indentation".`),
 	bullet(`You can finally use tab in the code block.`),
 	bullet(`Code blocks now support even more languages!`),

@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, U, S, J, Storage, keyboard } from 'Lib';
+import { U, S, J, Storage, keyboard } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -17,9 +17,9 @@ class Sidebar {
 	objLeft: JQuery<HTMLElement> = null;
 	objRight: JQuery<HTMLElement> = null;
 	dummyLeft: JQuery<HTMLElement> = null;
-	dummyRight: JQuery<HTMLElement> = null
 
 	page: JQuery<HTMLElement> = null;
+	pageFlex: JQuery<HTMLElement> = null;
 	header: JQuery<HTMLElement> = null;
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
@@ -33,7 +33,7 @@ class Sidebar {
 		this.initObjects();
 
 		const stored = Storage.get('sidebar');
-		const vault = $(S.Common.getRef('vault').node);
+		const vault = $(S.Common.getRef('vault')?.getNode());
 
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
@@ -61,18 +61,18 @@ class Sidebar {
 		const vault = S.Common.getRef('vault');
 
 		this.objLeft = $('#sidebarLeft');
-		this.objRight = $('#sidebarRight');
-		this.page = $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
+		this.pageFlex = U.Common.getPageFlexContainer(isPopup);
+		this.page = U.Common.getPageContainer(isPopup);
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
+		this.objRight = this.pageFlex.find('#sidebarRight');
 		this.dummyLeft = $('#sidebarDummyLeft');
-		this.dummyRight = $('#sidebarDummyRight');
 		this.toggleButton = $('#sidebarToggle');
 		this.syncButton = $('#sidebarSync');
 
 		if (vault) {
-			this.vault = $(vault.node);
+			this.vault = $(vault.getNode());
 		};
 	};
 
@@ -252,8 +252,10 @@ class Sidebar {
 			widthRight = 0;
 		};
 
-		const pageWidth = (!isPopup ? ww : this.page.width()) - widthLeft - widthRight;
+		const container = U.Common.getScrollContainer(isPopup);
+		const pageWidth = (!isPopup ? ww : this.pageFlex.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
+		const hw = pageWidth - ho;
 
 		if ((widthLeft && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
 			toggleX = 84;
@@ -264,21 +266,24 @@ class Sidebar {
 			};
 		};
 
+		this.objRight.css({ height: container.height() });
+
 		this.header.css({ width: '' });
 		this.footer.css({ width: '' });
 
 		this.header.toggleClass('sidebarAnimation', animate);
+		this.header.toggleClass('isSmall', hw < 750);
 		this.footer.toggleClass('sidebarAnimation', animate);
-		this.page.toggleClass('sidebarAnimation', animate);
+		//this.page.toggleClass('sidebarAnimation', animate);
 
 		this.loader.css({ width: pageWidth, right: 0 });
-		this.header.css({ width: pageWidth - ho });
-		this.footer.css({ width: pageWidth - ho });
+		this.header.css({ width: hw });
+		this.footer.css({ width: hw });
 		
 		if (!isPopup) {
 			this.dummyLeft.css({ width: widthLeft });
-
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
+
 			this.toggleButton.toggleClass('sidebarAnimation', animate);
 			this.syncButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
@@ -360,13 +365,9 @@ class Sidebar {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
-	objectContainerSwitch (page: string) {
-		const ref = S.Common.getRef('sidebarLeft');
-		if (!ref) {
-			return;
-		};
-
-		ref.setState({ page });
+	rightPanelRef (isPopup: boolean) {
+		const namespace = U.Common.getEventNamespace(isPopup);
+		return S.Common.getRef(`sidebarRight${namespace}`);
 	};
 
 	rightPanelToggle (v: boolean, animate: boolean, isPopup: boolean, page?: string, param?: any) {
@@ -374,7 +375,7 @@ class Sidebar {
 			S.Common.showSidebarRightSet(isPopup, v);
 
 			if (page) {
-				this.rightPanelSetState({ page, ...param });
+				this.rightPanelSetState(isPopup, { page, ...param });
 			};
 		};
 
@@ -418,12 +419,12 @@ class Sidebar {
 		}, animate ? J.Constant.delay.sidebar : 0);
 	};
 
-	rightPanelSetState (v: any) {
-		S.Common.getRef('sidebarRight')?.setState(v);
+	leftPanelSetState (v: any) {
+		S.Common.getRef('sidebarLeft')?.setState(v);
 	};
 
-	settingsOpen (id?: string) {
-		U.Router.go(`/main/settings/${id || ''}`, {});
+	rightPanelSetState (isPopup: boolean, v: any) {
+		this.rightPanelRef(isPopup)?.setState(v);
 	};
 
 };

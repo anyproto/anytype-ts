@@ -153,25 +153,20 @@ class Popup extends React.Component<I.Popup> {
 	};
 	
 	animate () {
-		if (this.isAnimating) {
-			return;
-		};
-
-		this.isAnimating = true;
-		raf(() => {
+		window.setTimeout(() => {
 			if (!this._isMounted) {
 				return;
 			};
-			
-			const node = $(this.node); 
-			const wrap = node.find('.innerWrap');
 
-			node.addClass('show');
-			window.setTimeout(() => { 
-				wrap.css({ transform: 'none' }); 
-				this.isAnimating = false;
-			}, S.Popup.getTimeout());
-		});
+			if (this.isAnimating) {
+				return;
+			};
+			
+			this.isAnimating = true;
+
+			$(this.node).addClass('show');
+			window.setTimeout(() => { this.isAnimating = false; }, S.Popup.getTimeout());
+		}, 50);
 	};
 	
 	position () {

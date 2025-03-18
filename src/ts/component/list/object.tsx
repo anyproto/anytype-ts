@@ -27,11 +27,6 @@ interface ListObjectRefProps {
 	getData: (page: number, callBack?: (message: any) => void) => void;
 };
 
-interface State {
-	sortId: string;
-	sortType: I.SortType;
-};
-
 const PREFIX = 'listObject';
 
 const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
@@ -107,6 +102,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 				relationKeys: getKeys(),
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedRelation: true,
 			}
 		});
 	};

@@ -70,7 +70,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onReply = this.onReply.bind(this);
 		this.onReplyClear = this.onReplyClear.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
-		this.onSwiper = this.onSwiper.bind(this);
 		this.addAttachments = this.addAttachments.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
 		this.caretMenuParam = this.caretMenuParam.bind(this);
@@ -173,7 +172,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							<Swiper
 								slidesPerView={'auto'}
 								spaceBetween={8}
-								onSwiper={this.onSwiper}
+								onSwiper={swiper => this.swiper = swiper}
 								navigation={true}
 								modules={[ Navigation ]}
 							>
@@ -334,7 +333,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e`, e, () => {
+		keyboard.shortcut('menuSmile', e, () => {
 			if (!S.Menu.isOpen('smile')) {
 				e.preventDefault();
 				this.refButtons.onChatButton(e, I.ChatButton.Emoji);
@@ -822,10 +821,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onAttachmentRemove (id: string) {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
-	};
-
-	onSwiper (swiper) {
-		this.swiper = swiper;
 	};
 
 	updateButtons () {

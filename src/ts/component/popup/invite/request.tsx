@@ -50,6 +50,14 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		);
 	};
 
+	componentDidMount(): void {
+		const { param } = this.props;
+		const { data } = param;
+		const { route } = data;
+
+		analytics.event('ScreenInviteRequest', { route });	
+	};
+
 	onRequest () {
 		const { param, close } = this.props;
 		const { account } = S.Auth;

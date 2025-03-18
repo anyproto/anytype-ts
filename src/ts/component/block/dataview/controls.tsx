@@ -50,9 +50,14 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
-		const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
-		const cmd = keyboard.cmdSymbol();
 		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
+		
+		let isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
+
+		// Force disable for types
+		if (U.Object.isTypeLayout(target.layout)) {
+			isAllowedTemplate = false;
+		};
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
@@ -153,7 +158,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search withBackground"
 							tooltip={translate('commonSearch')}
-							tooltipCaption={`${cmd} + F`}
+							tooltipCaption={keyboard.getCaption('searchText')}
 							onChange={onFilterChange}
 							onIconClick={this.onFilterShow}
 						/>
@@ -550,33 +555,18 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return;
 		};
 
-		const { isPopup, isInline } = this.props;
 		const node = $(this.node);
 		const sideLeft = node.find('#dataviewControlsSideLeft');
 		const sideRight = node.find('#dataviewControlsSideRight');
-		const container = U.Common.getPageFlexContainer(isPopup);
-		const { left } = sideLeft.offset();
-		const sw = sidebar.getDummyWidth();
-		const cw = container.outerWidth();
 		const nw = node.outerWidth();
-
-		let add = false;
 
 		if (node.hasClass('small')) {
 			node.removeClass('small');
 		};
 
-		const width = sideLeft.outerWidth() + sideRight.outerWidth();
-		const offset = isPopup ? container.offset().left : 0;
+		const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());
 
-		if (left + width - offset - sw + 50 >= cw) {
-			add = true;
-		};
-		if (isInline && (width >= nw)) {
-			add = true;
-		};
-
-		if (add) {
+		if (width + 16 > nw) {
 			node.addClass('small');
 		} else {
 			S.Menu.closeAll([ 'dataviewViewList' ]);

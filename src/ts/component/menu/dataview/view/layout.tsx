@@ -356,6 +356,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'cardSize': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
+					value: String(this.param.cardSize),
 					options: Relation.getSizeOptions(),
 				});
 				break;

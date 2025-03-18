@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
 	item: any;
@@ -17,7 +19,13 @@ const VaultItem: FC<Props> = observer(({
 	onMouseLeave, 
 	onContextMenu,
 }) => {
+
 	const cn = [ 'item' ];
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
 
 	let icon = null;
 	if (!item.isButton) {
@@ -29,8 +37,12 @@ const VaultItem: FC<Props> = observer(({
 	return (
 		<div 
 			id={`item-${item.id}`}
+			ref={setNodeRef}
 			className={cn.join(' ')}
 			onClick={onClick}
+			{...attributes}
+			{...listeners}
+			style={style}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 			onContextMenu={onContextMenu}

@@ -8,6 +8,7 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 const TEST_HTML = /<[^>]*>/;
+const iconCache: Map<string, string> = new Map();
 
 class UtilCommon {
 
@@ -589,7 +590,7 @@ class UtilCommon {
 							};
 						});
 
-						U.Space.openDashboard('route', { replace: true });
+						U.Space.openDashboard({ replace: true });
 					}
 				},
 			});
@@ -626,7 +627,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					sidebar.settingsOpen('spaceList');
+					U.Object.openAuto({ id: 'spaceList', layout: I.ObjectLayout.Settings });
 				},
 			},
 		});
@@ -678,16 +679,15 @@ class UtilCommon {
 	};
 
 	searchParam (url: string): any {
-		const a = String(url || '').replace(/^\?/, '').split('&');
 		const param: any = {};
-		
-		a.forEach((s) => {
-			const [ key, value ] = s.split('=');
 
-			if (key) {
-				param[key] = decodeURIComponent(value);
-			};
-		});
+		try {
+			const u = new URLSearchParams(String(url || ''));
+			u.forEach((v, k) => {
+				param[k] = v;
+			});
+
+		} catch (e) { /**/ };
 		return param;
 	};
 
@@ -1043,7 +1043,7 @@ class UtilCommon {
 	};
 
 	checkRtl (s: string): boolean {
-		return /^[\u04c7-\u0591\u05D0-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
+		return /^[\u0591-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
 	};
 
 	slug (s: string): string {
@@ -1083,7 +1083,7 @@ class UtilCommon {
 			return text;
 		};
 
-		match.forEach((m: any) => {
+		Array.from(match).forEach((m: any) => {
 			const m0 = String(m[0] || '');
 			const m1 = String(m[1] || '');
 			const m2 = String(m[2] || '');
@@ -1126,6 +1126,90 @@ class UtilCommon {
 			raf(() => obj.css({ height }));
 			window.setTimeout(() => obj.removeClass('anim'), delay);
 		};
+	};
+
+	updateSvg (src: string, param: any) {
+		const id = String(param.id || '');
+		const size = Number(param.size) || 0;
+		const fill = String(param.fill || '');
+		const stroke = String(param.stroke || '');
+		const key = [ id, size, fill, stroke ].join('-');
+
+		if (iconCache.has(key)) {
+			return iconCache.get(key);
+		};
+
+		let ret = '';
+		try {
+			const chunk = src.split('base64,')[1];
+			const decoded = atob(chunk).replace(/_COLOR_VAR_/g, fill);
+			const obj = $(decoded);
+			const attr: any = {};
+
+			if (size) {
+				attr.width = size;
+				attr.height = size;
+			};
+
+			if (fill) {
+				attr.fill = fill;
+			};
+
+			if (stroke) {
+				attr.stroke = stroke;
+			};
+
+			if (this.objectLength(attr)) {
+				obj.attr(attr);
+			};
+			
+			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+		} catch (e) { /**/ };
+
+		iconCache.set(key, ret);
+		return ret;
+	};
+
+	getRouteFromUrl (url: string): string {
+		url = String(url || '');
+
+		if (!url) {
+			return '';
+		};
+
+		let ret = '';
+
+		try {
+			const u = new URL(url);
+			const { hostname, pathname, hash, searchParams, protocol } = u;
+
+			if (protocol == `${J.Constant.protocol}:`) {
+				return url.replace(new RegExp(`^${J.Constant.protocol}://`), '/');
+			};
+
+			switch (hostname) {
+				case 'invite.any.coop': {
+					const cid = pathname.replace(/^\//, '');
+					const key = hash.replace(/^#/, '');
+
+					ret = `/invite/?cid=${cid}&key=${key}`;
+					break;
+				};
+
+				case 'object.any.coop': {
+					const objectId = pathname.replace(/^\//, '');
+					const spaceId = searchParams.get('spaceId');
+					const cid = searchParams.get('inviteId');
+					const key = hash.replace(/^#/, '');
+
+					ret = `/object/?objectId=${objectId}&spaceId=${spaceId}&cid=${cid}&key=${key}`;
+					break;
+				};
+
+			};
+		} catch (e) { /**/ };
+
+		return ret;
 	};
 
 };

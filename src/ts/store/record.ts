@@ -257,11 +257,19 @@ class RecordStore {
 	};
 
 	getTypeById (id: string) {
+		if (!id) {
+			return null;
+		};
+
 		const object = S.Detail.get(J.Constant.subId.type, id, J.Relation.type);
 		return object._empty_ ? null : object;
 	};
 
 	getTypeByKey (key: string): any {
+		if (!key) {
+			return null;
+		};
+
 		const id = this.typeKeyMapGet(key);
 		return id ? this.getTypeById(id) : null;
 	};
@@ -304,6 +312,10 @@ class RecordStore {
 		return this.getTypeByKey(J.Constant.typeKey.bookmark);
 	};
 
+	getPageType () {
+		return this.getTypeByKey(J.Constant.typeKey.page);
+	};
+
 	getFileType () {
 		return this.getTypeByKey(J.Constant.typeKey.file);
 	};
@@ -337,11 +349,7 @@ class RecordStore {
 
 	getConflictRelations (rootId: string, blockId: string, typeId: string): any[] {
 		const objectKeys = S.Detail.getKeys(rootId, blockId);
-		const typeKeys = S.Detail.getTypeRelationIds(typeId).
-			map(it => S.Record.getRelationById(it)).
-			filter(it => it && it.relationKey).
-			map(it => it.relationKey);
-
+		const typeKeys = U.Object.getTypeRelationKeys(typeId);
 
 		let conflictKeys = [];
 
@@ -360,6 +368,10 @@ class RecordStore {
 	};
 
 	getRelationByKey (relationKey: string): any {
+		if (!relationKey) {
+			return null;
+		};
+
 		const id = this.relationKeyMapGet(relationKey);
 		return id ? this.getRelationById(id) : null;
 	};

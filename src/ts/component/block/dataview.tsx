@@ -246,7 +246,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	componentDidMount () {
 		const { block, isInline, isPopup } = this.props;
-		const match = keyboard.getMatch();
+		const match = keyboard.getMatch(isPopup);
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		const viewId = match.params.viewId || block.content.viewId;
@@ -455,8 +455,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getObjectId (): string {
-		const { rootId, block, isInline } = this.props;
-		return isInline ? block.getTargetObjectId() : rootId;
+		const { rootId, block } = this.props;
+		return block.getTargetObjectId() || rootId;
 	};
 
 	getKeys (id: string): string[] {
@@ -557,10 +557,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getTarget () {
-		const { rootId, block, isInline } = this.props;
-		const { targetObjectId } = block.content;
+		const { rootId } = this.props;
+		const targeId = this.getObjectId();
 
-		return S.Detail.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		return S.Detail.get(rootId, targeId, [ 'setOf' ]);
 	};
 
 	getTypeId (): string {
@@ -668,7 +668,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.creating = true;
 
-		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, true, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -785,9 +785,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					if (this.isCollection()) {
 						C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
 					};
-
-					
-				}
+				},
 			},
 			...param,
 		});
@@ -856,7 +854,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const typeId = this.getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
-					if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
+					if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
 						menuContext?.close();
 						this.onBookmarkMenu(e, dir, '', { element: `#button-${block.id}-add-record` });
 					} else
@@ -869,7 +867,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						menuContext?.close();
 						analytics.event('ChangeDefaultTemplate', { route });
 					};
-				}
+				},
 			}
 		});
 	};
@@ -882,7 +880,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, true, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1008,6 +1006,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				view,
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedRelation: true,
 			}
 		});
 	};
@@ -1029,7 +1028,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
+				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => onSelect(message.details, true));
 			};
 		} else {
 			filters = filters.concat([

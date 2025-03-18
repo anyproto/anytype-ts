@@ -188,7 +188,7 @@ class UtilData {
 						if (route) {
 							U.Router.go(route, routeParam);
 						} else {
-							U.Space.openDashboard('route', routeParam);
+							U.Space.openDashboard(routeParam);
 						};
 
 						S.Common.redirectSet('');
@@ -529,7 +529,7 @@ class UtilData {
 
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withCollection, limit } = param || {};
-		const { space, config } = S.Common;
+		const { space } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
 		const pinned = Storage.getPinnedTypes();
@@ -584,9 +584,10 @@ class UtilData {
 		keys = keys || [];
 
 		const object = S.Detail.get(rootId, blockId, [ 
-			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 'templateIsBundled', 'featuredRelations',
+			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 
+			'templateIsBundled', 'featuredRelations', 'targetObjectType',
 		].concat(J.Relation.cover).concat(keys), true);
-		const type = S.Record.getTypeById(object.type);
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
@@ -611,7 +612,7 @@ class UtilData {
 
 		switch (object.layout) {
 			default:
-				ret.withIcon = object.iconEmoji || object.iconImage;
+				ret.withIcon = Boolean(object.iconEmoji || object.iconImage);
 				break;
 
 			case I.ObjectLayout.Note:
@@ -621,7 +622,7 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Type: {
-				ret.withIcon = iconName || iconEmoji || true;
+				ret.withIcon = Boolean(iconName || iconEmoji) || true;
 				break;
 			};
 
@@ -660,6 +661,7 @@ class UtilData {
 		};
 
 		ret.className = className.join(' ');
+
 		return ret;
 	};
 
@@ -737,12 +739,6 @@ class UtilData {
 		});
 	};
 
-	// Check if there is at least 1 set for object types
-	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		const setType = S.Record.getTypeByKey(J.Constant.typeKey.set);
-		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
-	};
-
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
@@ -783,7 +779,7 @@ class UtilData {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = param.filters || [];
-		const skipLayouts = [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ];
+		const skipLayouts = [ I.ObjectLayout.Chat ];
 
 		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
@@ -831,6 +827,10 @@ class UtilData {
 
 		if (!keys.includes(param.idField)) {
 			keys.push(param.idField);
+		};
+
+		if (keys.includes('name')) {
+			keys.push('pluralName');
 		};
 
 		if (keys.includes('layout')) {
@@ -1023,12 +1023,14 @@ class UtilData {
 	};
 
 	graphFilters () {
+		const layouts = U.Object.getFileAndSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
+
 		return [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
 		];

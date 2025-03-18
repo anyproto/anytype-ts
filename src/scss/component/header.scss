@@ -20,7 +20,10 @@
 		@include text-overflow-nw; padding: 0px 6px; -webkit-app-region: no-drag;
 	}
 	.path {
-		.lock { @include text-small; color: var(--color-text-secondary); padding: 3px 6px 3px 20px; border-radius: 4px; background: var(--color-shape-tertiary) url('~img/icon/lock.svg') 6px 6px no-repeat;  }
+		.label { 
+			@include text-small; color: var(--color-text-secondary); padding: 3px 6px 3px 20px; border-radius: 4px; 
+			background: var(--color-shape-tertiary) url('~img/icon/lock.svg') 6px 6px no-repeat; @include text-overflow-nw;
+		}
 	}
 
 	.tabs { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; height: 100%; -webkit-app-region: no-drag; }
@@ -59,6 +62,9 @@
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
+}
+.header.isSmall {
+	.side.center { visibility: hidden; }
 }
 
 .header.sidebarAnimation {
@@ -99,11 +105,10 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 
 .header.isCommon { background: var(--color-bg-primary); height: 52px; }
 .header.isCommon {
-	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; }
+	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; }
 	.path {
-		.inner { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; }
-		.name { @include text-overflow-nw; }
 		.iconObject { flex-shrink: 0; }
+		.name { @include text-overflow-nw; }
 	}
 	.path:hover { border-color: var(--color-shape-secondary); }
 }
@@ -123,8 +128,6 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }
-
-.header.mainSettings { background: none; }
 
 .popup {
 	.header { position: sticky; padding: 0px; top: 0px !important; }

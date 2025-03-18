@@ -106,12 +106,13 @@ export default {
 		'sourceObject',
 		'uniqueKey',
 		'defaultTemplateId',
-		'defaulTypeId',
-		'defaultVewType',
+		'defaultTypeId',
+		'defaultViewType',
 		'layoutAlign',
 		'layoutWidth',
 		'iconName',
 		'iconOption',
+		'pluralName',
 	],
 
 	graph: [

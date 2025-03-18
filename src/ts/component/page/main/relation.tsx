@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple } from 'Component';
-import { I, C, S, U, Action, translate, analytics, sidebar } from 'Lib';
+import { I, C, S, U, Action, translate, analytics, sidebar, keyboard } from 'Lib';
 
 interface State {
 	isDeleted: boolean;
@@ -149,6 +149,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	open () {
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -172,7 +173,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 			this.refHeader?.forceUpdate();
 			this.refHead?.forceUpdate();
-			sidebar.rightPanelSetState({ rootId });
+			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 
 			analytics.event('ScreenRelation', { relationKey: object.relationKey });
@@ -184,8 +185,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			return;
 		};
 
-		const { isPopup, match } = this.props;
-		const close = !(isPopup && (match?.params?.id == this.id));
+		const { isPopup } = this.props;
+		const close = !(isPopup && (this.getRootId() == this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -193,8 +194,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match?.params?.id;
+		return keyboard.getRootId(this.props.isPopup);
 	};
 
 	getObject () {

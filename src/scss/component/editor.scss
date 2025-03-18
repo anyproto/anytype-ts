@@ -60,6 +60,7 @@
 	.btn.small { padding: 0px 6px; }
 
 	.btn {
+		.txt { white-space: nowrap; }
 		.dot { width: 6px; height: 6px; background: var(--color-red); border-radius: 50%; position: absolute; right: 6px; top: 6px; }
 
 		.icon { width: 20px; height: 20px; }
@@ -139,11 +140,16 @@
 
 /* Page */
 
+.editorWrapper.withIcon,
+.editorWrapper.withIconAndCover {
+	#button-icon { display: none; }
+	.controlButtons { left: 114px !important; text-align: left !important; } 
+}
+
 .editorWrapper.withIcon {
 	.editorControls { height: 120px; }
 	.blocks { margin-top: -78px; }
-	#button-icon { display: none; }
-	.controlButtons { left: 114px; bottom: 16px; text-align: left !important; } 
+	.controlButtons { bottom: 16px; } 
 }
 
 .editorWrapper.withCover { padding-top: 348px; }
@@ -154,8 +160,6 @@
 .editorWrapper.withIconAndCover { padding-top: 234px; }
 .editorWrapper.withIconAndCover {
 	.editorControls { display: none; }
-	#button-icon { display: none; }
-	.controlButtons { left: 114px !important; text-align: left !important; } 
 }
 
 /* Human */ 
@@ -226,6 +230,7 @@
 
 .editorWrapper.isSet,
 .editorWrapper.isCollection,
+.editorWrapper.isType,
 .editorWrapper.isDate {
 	.blocks { width: calc(100% - 96px); margin: 0px auto; padding: 0px; user-select: none; }
 	.blocks {

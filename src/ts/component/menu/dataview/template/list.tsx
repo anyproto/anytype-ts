@@ -29,6 +29,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	render () {
 		const { param, setHover } = this.props;
 		const { data } = param;
+		const { defaultId } = data;
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
@@ -64,6 +65,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					onMouseEnter={() => setHover(item)}
 					onMouseLeave={() => setHover(null)}
 				>
+					{defaultId == item.id ? <div className="defaultLabel">{translate('commonDefault')}</div> : ''}
 					{content}
 				</div>
 			);
@@ -285,7 +287,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const items = this.getItems();
 		const length = items.length;
 		const isPopup = keyboard.isPopup();
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const ww = container.width();
 
 		let columns = Math.max(1, Math.floor(ww / TEMPLATE_WIDTH));

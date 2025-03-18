@@ -19,7 +19,6 @@ import PageMainVoid from './main/void';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
-import PageMainType from './main/type';
 import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
 import PageMainGraph from './main/graph';
@@ -50,7 +49,6 @@ const Components = {
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
-	'main/type':			 PageMainType,
 	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
 	'main/graph':			 PageMainGraph,
@@ -81,6 +79,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const path = [ page, action ].join('/');
 		const isMain = this.isMain();
 		const Component = Components[path];
+		const namespace = U.Common.getEventNamespace(isPopup);
 
 		if (account) {
 			const { status } = account || {};
@@ -106,9 +105,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 						</Frame>
 					)}
 				</div>
-				<div id="sidebarDummyRight" className="sidebarDummy" />
 				<SidebarRight 
-					ref={ref => S.Common.refSet('sidebarRight', ref)} 
+					ref={ref => S.Common.refSet(`sidebarRight${namespace}`, ref)} 
 					key="sidebarRight" 
 					{...this.props} 
 				/>
@@ -149,24 +147,29 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		// Universal object route
 		if (pathname.match(/^\/object/)) {
-			ret.params.page = 'main';
-			ret.params.action = 'object';
-			ret.params.id = data.objectId;
-			ret.params.spaceId = data.spaceId;
-			ret.params.cid = data.cid;
-			ret.params.key = data.key;
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'object',
+				...data,
+				id: data.objectId,
+			});
 		};
 
 		// Invite route
 		if (pathname.match(/^\/invite/)) {
-			ret.params.page = 'main';
-			ret.params.action = 'invite';
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'invite',
+				...data,
+			});
 		};
 
 		// Membership route
 		if (pathname.match(/^\/membership/)) {
-			ret.params.page = 'main';
-			ret.params.action = 'membership';
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'membership',
+			});
 		};
 
 		return ret;
@@ -204,11 +207,12 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
 		const routeParam = { replace: true };
-		const refSidebar = S.Common.getRef('sidebarRight');
+		const refSidebar = sidebar.rightPanelRef(isPopup);
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
+		sidebar.rightPanelToggle(false, false, isPopup);
 
 		if (!Component) {
 			return;

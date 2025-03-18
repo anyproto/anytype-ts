@@ -99,7 +99,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedCollection = true;
 		let allowedUnlink = isCollection;
 		let allowedWidget = true;
-		let allowedRelation = true;
+		let allowedRelation = data.allowedRelation;
 		let allowedLink = true;
 
 		objectIds.forEach((it: string) => {
@@ -317,7 +317,7 @@ class MenuContext extends React.Component<I.Menu> {
 						name: translate('blockDataviewCreateNewCollection'),
 						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
 						onClick: (details: any) => {
-							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => {
 								Action.addToCollection(message.objectId, objectIds);
 								U.Object.openAuto(message.details);
 							});

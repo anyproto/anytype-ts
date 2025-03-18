@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, analytics, translate, Dataview } from 'Lib';
 
 interface State {
 	isEditing: boolean;
@@ -39,7 +39,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { targetObjectId } = block.content;
 		const object = getTarget();
 		const cn = [ 'dataviewHead' ];
-		const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
+		const placeholder = Dataview.namePlaceholder(object.layout);
 
 		if (className) {
 			cn.push(className);
@@ -184,7 +184,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, (message: any) => { 
+				C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, true, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};
@@ -225,6 +225,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					canAdd: true,
 					value: [ targetObjectId ],
 					addParam,
+					withPlural: true,
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => onCreate(message, false));
 						this.menuContext.close();
@@ -298,12 +299,12 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		const { getTarget } = this.props;
 		const object = getTarget();
+		const placeholder = Dataview.namePlaceholder(object.layout);
 
 		let name = String(object.name || '');
 		if ([ 
 			translate('defaultNamePage'), 
-			translate('defaultNameSet'), 
-			translate('defaultNameCollection'),
+			placeholder,
 		].includes(name)) {
 			name = '';
 		};
@@ -328,6 +329,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { block, getTarget } = this.props;
 		const { targetObjectId } = block.content;
 		const object = getTarget();
+		const placeholder = Dataview.namePlaceholder(object.layout);
 
 		if (!isEditing || !targetObjectId) {
 			return;
@@ -340,8 +342,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		if ([ 
 			translate('defaultNamePage'), 
-			translate('defaultNameSet'), 
-			translate('defaultNameCollection'),
+			placeholder,
 		].includes(value)) {
 			value = '';
 		};

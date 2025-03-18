@@ -14,7 +14,7 @@ export default {
 	},
 
 	history: {
-		panel: 336,
+		panel: 348,
 	},
 
 	sidebar: {
@@ -47,7 +47,7 @@ export default {
 
 			min: 48,
 			max: 1000,
-			edit: 300,
+			edit: 240,
 			icon: 70
 		},
 	},
