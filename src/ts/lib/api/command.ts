@@ -2295,11 +2295,12 @@ export const ChatUnreadMessages = (objectId: string, afterOrderId: string, callB
 	dispatcher.request(ChatUnreadMessages.name, request, callBack);
 };
 
-export const ChatSubscribeLastMessages = (objectId: string, limit: number, callBack?: (message: any) => void) => {
+export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.SubscribeLastMessages.Request();
 
 	request.setChatobjectid(objectId);
 	request.setLimit(limit);
+	request.setSubid(subId);
 
 	dispatcher.request(ChatSubscribeLastMessages.name, request, callBack);
 };

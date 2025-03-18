@@ -84,11 +84,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, readonly, getReplyContent, getMessagesInViewport, getIsBottom } = this.props;
+		const { rootId, subId, readonly, getReplyContent, getMessagesInViewport, getIsBottom } = this.props;
 		const { attachments, charCounter } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
-		const { messageOrderId, messageCounter } = S.Chat.getState(rootId);
+		const { messageOrderId, messageCounter } = S.Chat.getState(subId);
 		const messagesInViewport = getMessagesInViewport();
 		const isBottom = getIsBottom();
 
@@ -110,7 +110,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			onClear = this.onEditClear;
 		} else
 		if (this.replyingId) {
-			const message = S.Chat.getMessage(rootId, this.replyingId);
+			const message = S.Chat.getMessage(subId, this.replyingId);
 
 			if (message) {
 				const reply = getReplyContent(message);
@@ -650,7 +650,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, scrollToBottom, scrollToMessage } = this.props;
+		const { rootId, subId, scrollToBottom, scrollToMessage } = this.props;
 		const node = $(this.node);
 		const loader = node.find('#form-loader');
 		const list = this.state.attachments || [];
@@ -673,7 +673,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		
 		const callBack = () => {
 			if (this.editingId) {
-				const message = S.Chat.getMessage(rootId, this.editingId);
+				const message = S.Chat.getMessage(subId, this.editingId);
 				if (message) {
 					const { marks, text } = this.getMarksFromHtml();
 					const update = U.Common.objectCopy(message);
@@ -857,8 +857,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onNavigationClick () {
-		const { rootId, loadMessagesByOrderId, getMessages, scrollToMessage, scrollToBottom } = this.props;
-		const { messageCounter, messageOrderId } = S.Chat.getState(rootId);
+		const { subId, loadMessagesByOrderId, getMessages, scrollToMessage, scrollToBottom } = this.props;
+		const { messageCounter, messageOrderId } = S.Chat.getState(subId);
 
 		if (messageOrderId) {
 			const messages = getMessages();

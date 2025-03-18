@@ -30,7 +30,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const { rootId, id, isNew, readonly, subId, scrollToBottom, onContextMenu, onMore, onReplyEdit } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
-		const message = S.Chat.getMessage(rootId, id);
+		const message = S.Chat.getMessage(subId, id);
 		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isRead } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const attachments = this.getAttachments();
@@ -207,8 +207,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	init () {
-		const { rootId, id, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
-		const message = S.Chat.getMessage(rootId, id);
+		const { rootId, id, subId, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
+		const message = S.Chat.getMessage(subId, id);
 		const { creator, content } = message;
 		const { marks, text } = content;
 		const { account } = S.Auth;
@@ -313,16 +313,15 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	update (param: Partial<I.ChatMessage>) {
-		const { rootId, id } = this.props;
-		const message = Object.assign(S.Chat.getMessage(rootId, id), param);
+		const { rootId, id, subId } = this.props;
+		const message = Object.assign(S.Chat.getMessage(subId, id), param);
 
 		C.ChatEditMessageContent(rootId, id, message);
 	};
 
 	getAttachments (): any[] {
-		const { rootId, blockId, id } = this.props;
-		const subId = S.Record.getSubId(rootId, blockId);
-		const message = S.Chat.getMessage(rootId, id);
+		const { subId, id } = this.props;
+		const message = S.Chat.getMessage(subId, id);
 
 		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
 	};
@@ -344,8 +343,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 	canAddReaction (): boolean {
 		const { account } = S.Auth;
-		const { rootId, id } = this.props;
-		const message = S.Chat.getMessage(rootId, id);
+		const { id, subId } = this.props;
+		const message = S.Chat.getMessage(subId, id);
 		const reactions = message.reactions || [];
 		const { self, all } = J.Constant.limit.chat.reactions;
 

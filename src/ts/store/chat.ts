@@ -17,64 +17,64 @@ class ChatStore {
 		});
 	};
 
-	set (rootId: string, list: I.ChatMessage[]): void {
+	set (subId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
-		this.messageMap.set(rootId, observable.array(list));
+		this.messageMap.set(subId, observable.array(list));
 	};
 
-	prepend (rootId: string, add: I.ChatMessage[]): void {
+	prepend (subId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
 
-		let list = this.getList(rootId);
+		let list = this.getList(subId);
 		list.unshift(...add);
 		list = U.Common.arrayUniqueObjects(list, 'id');
-		this.set(rootId, list);
+		this.set(subId, list);
 	};
 
-	append (rootId: string, add: I.ChatMessage[]): void {
+	append (subId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
 
-		let list = this.getList(rootId);
+		let list = this.getList(subId);
 		list.push(...add);
 		list = U.Common.arrayUniqueObjects(list, 'id');
-		this.set(rootId, list);
+		this.set(subId, list);
 	};
 
-	add (rootId: string, idx: number, param: I.ChatMessage): void {
-		const list = this.getList(rootId);
-		const item = this.getMessage(rootId, param.id);
+	add (subId: string, idx: number, param: I.ChatMessage): void {
+		const list = this.getList(subId);
+		const item = this.getMessage(subId, param.id);
 		
 		if (item) {
 			return;
 		};
 
 		list.splice(idx, 0, param);
-		this.set(rootId, list);
+		this.set(subId, list);
 	};
 
-	update (rootId: string, param: Partial<I.ChatMessage>): void {
-		const item = this.getMessage(rootId, param.id);
+	update (subId: string, param: Partial<I.ChatMessage>): void {
+		const item = this.getMessage(subId, param.id);
 
 		if (item) {
 			set(item, param);
 		};
 	};
 
-	delete (rootId: string, id: string) {
-		this.set(rootId, this.getList(rootId).filter(it => it.id != id));
+	delete (subId: string, id: string) {
+		this.set(subId, this.getList(subId).filter(it => it.id != id));
 	};
 
-	setReply (rootId: string, message: I.ChatMessage) {
-		const map = this.replyMap.get(rootId) || new Map();
+	setReply (subId: string, message: I.ChatMessage) {
+		const map = this.replyMap.get(subId) || new Map();
 
 		map.set(message.id, message);
 
-		this.replyMap.set(rootId, map);
+		this.replyMap.set(subId, map);
 	};
 
-	setReadStatus (rootId: string, ids: string[], isRead: boolean) {
-		(ids || []).forEach(id => this.update(rootId, { id, isRead }));
+	setReadStatus (subId: string, ids: string[], isRead: boolean) {
+		(ids || []).forEach(id => this.update(subId, { id, isRead }));
 	};
 
 	private createState (state: any) {
@@ -95,23 +95,23 @@ class ChatStore {
 		return el;
 	};
 
-	setState (rootId: string, state: any) {
-		const map = this.stateMap.get(rootId);
+	setState (subId: string, state: any) {
+		const map = this.stateMap.get(subId);
 
 		if (map) {
 			set(map, state);
 		} else {
-			this.stateMap.set(rootId, this.createState(state));
+			this.stateMap.set(subId, this.createState(state));
 		};
 	};
 
-	getState (rootId: string) {
-		return this.stateMap.get(rootId) || {};
+	getState (subId: string) {
+		return this.stateMap.get(subId) || {};
 	};
 
-	clear (rootId: string) {
-		this.messageMap.delete(rootId);
-		this.replyMap.delete(rootId);
+	clear (subId: string) {
+		this.messageMap.delete(subId);
+		this.replyMap.delete(subId);
 	};
 
 	clearAll () {
@@ -119,16 +119,16 @@ class ChatStore {
 		this.replyMap.clear();
 	};
 
-	getList (rootId: string): any[] {
-		return this.messageMap.get(rootId) || [];
+	getList (subId: string): any[] {
+		return this.messageMap.get(subId) || [];
 	};
 
-	getMessage (rootId: string, id: string): I.ChatMessage {
-		return this.getList(rootId).find(it => it.id == id);
+	getMessage (subId: string, id: string): I.ChatMessage {
+		return this.getList(subId).find(it => it.id == id);
 	};
 
-	getReply (rootId: string, id: string): I.ChatMessage {
-		return this.replyMap.get(rootId)?.get(id);
+	getReply (subId: string, id: string): I.ChatMessage {
+		return this.replyMap.get(subId)?.get(id);
 	};
 
 };

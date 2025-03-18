@@ -135,14 +135,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 	
 	componentDidMount () {
-		const rootId = this.getRootId();
+		const subId = this.getSubId();
 
 		this._isMounted = true;
 		this.rebind();
 		this.setState({ isLoading: true });
 
 		this.loadMessages(1, true, () => {
-			const { messageOrderId } = S.Chat.getState(rootId);
+			const { messageOrderId } = S.Chat.getState(subId);
 
 			if (messageOrderId) {
 				this.loadMessagesByOrderId(messageOrderId, () => {
@@ -223,12 +223,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	subscribeMessages (clear: boolean, callBack?: () => void) {
 		const rootId = this.getRootId();
+		const subId = this.getSubId();
 
 		if (!rootId) {
 			return;
 		};
 
-		C.ChatSubscribeLastMessages(rootId, J.Constant.limit.chat.messages, (message: any) => {
+		C.ChatSubscribeLastMessages(rootId, J.Constant.limit.chat.messages, subId, (message: any) => {
 			if (message.error.code) {
 				if (callBack) {
 					callBack();
@@ -240,11 +241,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const state = message.state;
 
 			if (messages.length && clear) {
-				S.Chat.set(rootId, messages);
+				S.Chat.set(subId, messages);
 				this.forceUpdate();
 			};
 
-			S.Chat.setState(rootId, state);
+			S.Chat.setState(subId, state);
 
 			if (callBack) {
 				callBack();
@@ -254,6 +255,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	loadMessages (dir: number, clear: boolean, callBack?: () => void) {
 		const rootId = this.getRootId();
+		const subId = this.getSubId();
 
 		if (!rootId || this.isLoading) {
 			return;
@@ -317,7 +319,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				if (messages.length) {
 					const scrollTo = dir < 0 ? messages[0].id : messages[messages.length - 1].id;
 
-					S.Chat[(dir < 0 ? 'prepend' : 'append')](rootId, messages);
+					S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 					this.scrollToMessage(scrollTo);
 				};
 
@@ -330,6 +332,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	loadMessagesByOrderId (orderId: string, callBack?: () => void) {
 		const rootId = this.getRootId();
+		const subId = this.getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
 
 		let list = [];
@@ -344,7 +347,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					list = list.concat(message.messages);
 				};
 
-				S.Chat.set(rootId, list);
+				S.Chat.set(subId, list);
 
 				this.loadDepsAndReplies(() => {
 					const target = list.find(it => it.orderId == orderId);
@@ -359,7 +362,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getMessages () {
-		return S.Chat.getList(this.getRootId());
+		return S.Chat.getList(this.getSubId());
 	};
 
 	getDeps () {
@@ -424,6 +427,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	loadReplies (callBack?: () => void) {
 		const rootId = this.getRootId();
+		const subId = this.getSubId();
 		const replies = this.getReplies();
 
 		if (!replies.length) {
@@ -435,7 +439,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		C.ChatGetMessagesByIds(rootId, replies, (message: any) => {
 			if (!message.error.code) {
-				message.messages.forEach(it => S.Chat.setReply(rootId, it));
+				message.messages.forEach(it => S.Chat.setReply(subId, it));
 			};
 
 			if (callBack) {
@@ -577,11 +581,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onUndead (orderId: string) {
 		const rootId = this.getRootId();
+		const subId = this.getSubId();
 		const viewport = this.getMessagesInViewport();
 
 		C.ChatUnreadMessages(rootId, orderId, () => {
 			if (viewport.length) {
-				const { dbTimestamp } = S.Chat.getState(rootId);
+				const { dbTimestamp } = S.Chat.getState(subId);
 
 				C.ChatReadMessages(rootId, viewport[0].orderId, viewport[viewport.length - 1].orderId, dbTimestamp);
 			};
@@ -639,14 +644,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const first = this.scrolledOrderIds[0];
 		const last = this.scrolledOrderIds[this.scrolledOrderIds.length - 1];
 		const rootId = this.getRootId();
-		const state = S.Chat.getState(rootId);
+		const subId = this.getSubId();
+		const state = S.Chat.getState(subId);
 		const { messageOrderId, dbTimestamp } = state;
 
 		if (first && last) {
 			C.ChatReadMessages(rootId, first, last, dbTimestamp);
 		};
 
-		S.Chat.setReadStatus(rootId, this.scrolledOrderIds.map(it => it.id), true);
+		S.Chat.setReadStatus(subId, this.scrolledOrderIds.map(it => it.id), true);
 
 		this.refForm?.forceUpdate(); // TODO: remove
 		this.scrolledOrderIds = [];
@@ -722,6 +728,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.setIsBottom(false);
 
 		const rootId = this.getRootId();
+		const subId = this.getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
 
 		C.ChatGetMessagesByIds(rootId, [ item.replyToMessageId ], (message: any) => {
@@ -736,7 +743,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 			let list = [];
 
-			S.Chat.clear(rootId);
+			S.Chat.clear(subId);
 
 			this.loadMessagesByOrderId(reply.orderId);
 		});

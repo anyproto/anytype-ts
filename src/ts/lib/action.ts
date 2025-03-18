@@ -18,6 +18,7 @@ class Action {
 
 			for (const block of blocks) {
 				this.dbClearBlock(rootId, block.id);
+				S.Chat.clear(S.Record.getSubId(rootId, block.id));
 			};
 
 			this.dbClearRoot(rootId);
@@ -41,7 +42,6 @@ class Action {
 
 		if (U.Object.isChatLayout(object.layout)) {
 			C.ChatUnsubscribe(object.chatId);
-			S.Chat.clear(object.id);
 		};
 
 		S.Record.metaClear(rootId, '');
