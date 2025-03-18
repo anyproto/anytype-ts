@@ -68,7 +68,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			const props = {
 				...item,
 				object: (item.isAdd || item.isSection || item.isSystem ? undefined : item),
-				withPlural
+				withPlural,
 			};
 
 			if (item.isAdd) {
