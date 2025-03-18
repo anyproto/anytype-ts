@@ -61,7 +61,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 		const sections = this.getSections();
 		const subId = this.getSubId();
-		const length = messages.length;
 		const isNew = true;
 
 		const Section = (item: any) => {
@@ -150,14 +149,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					this.setState({ isLoading: false });
 				});
 			} else {
-				this.loadReplies(() => {
-					this.replies = this.getReplies();
-
-					this.loadDeps(() => {
-						this.deps = this.getDeps();
-						this.setState({ isLoading: false }, () => {
-							this.scrollToBottom();
-						});
+				this.loadDepsAndReplies(() => {
+					this.setState({ isLoading: false }, () => {
+						this.scrollToBottom();
 					});
 				});
 			};
@@ -213,6 +207,20 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 	};
 
+	loadDepsAndReplies = (callBack?: () => void) => {
+		this.loadReplies(() => {
+			this.replies = this.getReplies();
+
+			this.loadDeps(() => {
+				this.deps = this.getDeps();
+
+				if (callBack) {
+					callBack();
+				};
+			});
+		});
+	};
+
 	subscribeMessages (clear: boolean, callBack?: () => void) {
 		const rootId = this.getRootId();
 
@@ -261,6 +269,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		if (clear) {
 			this.subscribeMessages(clear, () => {
 				this.isLoading = false;
+				this.setIsBottom(true);
 
 				if (callBack) {
 					callBack();
@@ -337,19 +346,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 				S.Chat.set(rootId, list);
 
-				this.loadReplies(() => {
-					this.replies = this.getReplies();
+				this.loadDepsAndReplies(() => {
+					const target = list.find(it => it.orderId == orderId);
+					this.scrollToMessage(target?.id);
 
-					this.loadDeps(() => {
-						this.deps = this.getDeps();
-
-						const target = list.find(it => it.orderId == orderId);
-						this.scrollToMessage(target?.id);
-
-						if (callBack) {
-							callBack();
-						};
-					});
+					if (callBack) {
+						callBack();
+					};
 				});
 			});
 		});
