@@ -26,13 +26,15 @@ interface PhraseRefProps {
 };
 
 const COLORS = [
+	'pink',
+	/*
 	'orange',
 	'red',
-	'pink',
 	'purple',
 	'blue',
 	'ice',
 	'lime',
+	*/
 ];
 
 const Phrase = forwardRef<PhraseRefProps, Props>(({

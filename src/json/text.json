@@ -416,8 +416,8 @@
 	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
 
 	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "It gives you full ownership over your data and conversations. You can find this key later in app settings.<span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Reveal",
+	"authOnboardPhraseLabel": "Your key replaces login and password. Keep it safe &mdash; you control your data. Find it later in app settings.<span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseSubmit": "Reveal my key",
 	"authOnboardPhraseNotNow": "Not now",
 
 	"onboardingExperienceSubTitle": "Build your first space",
