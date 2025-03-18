@@ -829,6 +829,10 @@ class UtilData {
 			keys.push(param.idField);
 		};
 
+		if (keys.includes('name')) {
+			keys.push('pluralName');
+		};
+
 		if (keys.includes('layout')) {
 			keys.push('resolvedLayout');
 		};

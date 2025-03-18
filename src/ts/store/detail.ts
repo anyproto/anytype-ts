@@ -155,6 +155,10 @@ class DetailStore {
 		const object = { id };
 
 		if (withKeys) {
+			if (keys.has('name')) {
+				keys.add('pluralName');
+			};
+
 			if (keys.has('layout')) {
 				keys.add('resolvedLayout');
 			};
@@ -249,11 +253,14 @@ class DetailStore {
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;
-
-		object.pluralName = object.name + 's';
+		object.pluralName = Relation.getStringValue(object.pluralName);
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');
+		};
+
+		if (!object.pluralName) {
+			object.pluralName = object.name;
 		};
 
 		return object;
