@@ -285,7 +285,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
 					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
 					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
-						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplate(it.id) && it.name.match(reg)).
+						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplate(it.id) && (it.name.match(reg) || it.pluralName.match(reg))).
 						map(it => ({ ...it, caption: '' }));
 					const lists = [];
 
