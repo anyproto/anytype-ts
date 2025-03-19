@@ -1757,6 +1757,7 @@
 	"toastInviteCopy": "Invite link has been copied", 
 	"toastInviteGenerate": "Invite link has been created",
 	"toastInviteRevoke": "Invite link has been deleted",
+	"toastImportStart": "Import process has started and may take some time",
 
 	"toastObjectTypeAdded": "Object Type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Property <b>%s</b> has been added to your Library",

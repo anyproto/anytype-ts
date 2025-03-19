@@ -29,13 +29,15 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const { membership } = S.Auth;
 		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant() || profile;
-		const pathname = U.Router.getRoute();
-		const param = U.Router.getParam(pathname);
+		const param = keyboard.getMatch().params;
 		const isSpace = this.props.page == 'settingsSpace';
 		const items = this.getItems();
 
+
+		console.log(param);
+
 		const onBack = () => {
-			if (!this.routeBack || !this.routeBack.pathname) {
+			if (!this.routeBack || !this.routeBack.pathname || keyboard.isMainSettings() || (param.id == 'spaceIndex')) {
 				U.Space.openDashboard();
 				return;
 			};

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics, Preview } from 'Lib';
 
 class PageMainSettingsImportNotionWarning extends React.Component<I.PageSettingsComponent> {
 
@@ -30,6 +30,8 @@ class PageMainSettingsImportNotionWarning extends React.Component<I.PageSettings
 	};
 
 	onImport (): void {
+		Preview.toastShow({ text: translate('toastImportStart') });
+
 		C.ObjectImport(S.Common.space, { apiKey: S.Common.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, false);
 		U.Space.openDashboard();
 
