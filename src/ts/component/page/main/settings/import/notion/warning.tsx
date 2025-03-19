@@ -30,9 +30,10 @@ class PageMainSettingsImportNotionWarning extends React.Component<I.PageSettings
 	};
 
 	onImport (): void {
-		analytics.event('ImportNotionProceed');
-
 		C.ObjectImport(S.Common.space, { apiKey: S.Common.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, false);
+		U.Space.openDashboard();
+
+		analytics.event('ImportNotionProceed');
 	};
 
 };

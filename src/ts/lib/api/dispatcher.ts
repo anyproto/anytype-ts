@@ -944,6 +944,7 @@ class Dispatcher {
 						break;
 					};
 
+					/*
 					if (collectionId) {
 						window.setTimeout(() => {
 							S.Popup.open('objectManager', { 
@@ -954,6 +955,7 @@ class Dispatcher {
 							});
 						}, S.Popup.getTimeout() + 10);
 					};
+					*/
 
 					analytics.event('Import', { type, count });
 					break;
