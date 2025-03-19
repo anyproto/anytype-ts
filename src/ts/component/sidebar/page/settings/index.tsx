@@ -17,7 +17,6 @@ const HEIGHT_ACCOUNT = 56;
 const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.Component<Props, {}> {
 
 	node: any = null;
-	routeBack: any = null;
 	cache: any = {};
 
 	render () {
@@ -29,15 +28,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const param = U.Router.getParam(pathname);
 		const isSpace = this.props.page == 'settingsSpace';
 		const items = this.getItems();
-
-		const onBack = () => {
-			if (!this.routeBack || !this.routeBack.pathname) {
-				U.Space.openDashboard();
-				return;
-			};
-
-			U.Router.go(this.routeBack.pathname, {});
-		};
 
 		const ItemSection = (item: any) => {
 			const cn = [ 'section' ];
@@ -137,7 +127,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				<div className="body">
 					<div className="list">
 						{isSpace ? (
-							<div className="head" onClick={onBack}>
+							<div className="head" onClick={() => U.Space.openDashboard()}>
 								<Icon className="back withBackground" />
 								<ObjectName object={space} />
 							</div>
@@ -182,7 +172,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	componentDidMount () {
-		const history = U.Router.history;
 		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
@@ -190,8 +179,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			defaultHeight: i => this.getRowHeight(items[i]),
 			keyMapper: i => (items[i] || {}).id,
 		});
-
-		this.routeBack = history.entries[history.index - 1];
 	};
 
 	getSections (): any[] {

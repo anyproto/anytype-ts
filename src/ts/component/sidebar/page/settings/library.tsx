@@ -26,10 +26,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		const param = U.Router.getParam(pathname);
 		const items = this.getItems();
 
-		const onBack = () => {
-			sidebar.leftPanelSetState({ page: 'settingsSpace' });
-		};
-
 		const ItemSection = (item: any) => {
 			const cn = [ 'section' ];
 
@@ -99,7 +95,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 				<div className="body">
 					<div className="list">
-						<div className="head" onClick={onBack}>
+						<div className="head" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })}>
 							<Icon className="back withBackground" />
 							{title}
 						</div>
@@ -146,31 +142,8 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		});
 	};
 
-	getSections (): any[] {
-		return this.props.page == 'types' ? this.getTypes() : this.getRelations();
-	};
-
-	getTypes (): any[] {
-		const data = S.Record.checkHiddenObjects(S.Record.getTypes());
-
-		return [
-			{ id: 'installed', name: 'Installed', children: data.filter(it => it.isInstalled && !U.Object.isInSystemLayouts(it.recommendedLayout)) },
-			{ id: 'system', name: 'System', children: data.filter(it => U.Object.isInSystemLayouts(it.recommendedLayout)) },
-		];
-	};
-
-	getRelations (): any[] {
-		const data = S.Record.checkHiddenObjects(S.Record.getRelations());
-		const systemKeys = Relation.systemKeys();
-
-		return [
-			{ id: 'installed', name: 'Installed', children: data.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey)) },
-			{ id: 'system', name: 'System', children: data.filter(it => systemKeys.includes(it.relationKey)) },
-		];
-	};
-
 	getItems () {
-		const sections = this.getSections();
+		const sections = this.props.page == 'types' ? this.getTypes() : this.getRelations();
 
 		let items: any[] = [];
 
@@ -191,6 +164,25 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		});
 
 		return items;
+	};
+	
+	getTypes (): any[] {
+		const data = S.Record.checkHiddenObjects(S.Record.getTypes());
+
+		return [
+			{ id: 'installed', name: 'Installed', children: data.filter(it => it.isInstalled && !U.Object.isInSystemLayouts(it.recommendedLayout)) },
+			{ id: 'system', name: 'System', children: data.filter(it => U.Object.isInSystemLayouts(it.recommendedLayout)) },
+		];
+	};
+
+	getRelations (): any[] {
+		const data = S.Record.checkHiddenObjects(S.Record.getRelations());
+		const systemKeys = Relation.systemKeys();
+
+		return [
+			{ id: 'installed', name: 'Installed', children: data.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey)) },
+			{ id: 'system', name: 'System', children: data.filter(it => systemKeys.includes(it.relationKey)) },
+		];
 	};
 
 	getRowHeight (item: any) {
