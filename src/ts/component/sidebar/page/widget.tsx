@@ -214,8 +214,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const body = node.find('#body');
 		const position = body.outerHeight() + 350 > node.outerHeight() ? I.MenuDirection.Top : I.MenuDirection.Bottom;
 
-		console.log(body.outerHeight(), node.outerHeight());
-
 		blocks.forEach(block => {
 			const children = S.Block.getChildren(widgets, block.id);
 			if (children.length) {
