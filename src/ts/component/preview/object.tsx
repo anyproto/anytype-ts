@@ -427,7 +427,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 							) : ''}
 
 							<div className="heading">
-								<IconObject size={iconSize} object={object} />
+								{check.withIcon ? <IconObject size={iconSize} object={object} /> : ''}
 								<div className="name">{name}</div>
 								<div className="featured" />
 							</div>
