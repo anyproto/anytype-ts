@@ -14,15 +14,11 @@ const HEIGHT_SECTION = 38;
 const HEIGHT_SECTION_FIRST = 34;
 const HEIGHT_ACCOUNT = 56;
 
-const SidebarSettings = observer(class SidebarSettings extends React.Component<Props, {}> {
+const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.Component<Props, {}> {
 
 	node: any = null;
 	routeBack: any = null;
 	cache: any = {};
-	toggle: any = {
-		contentModelTypes: false,
-		contentModelRelations: false,
-	};
 
 	render () {
 		const space = U.Space.getSpaceview();
@@ -43,26 +39,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			U.Router.go(this.routeBack.pathname, {});
 		};
 
-		const ItemToggle = (item: any) => {
-			const cn = [ 'toggle' ];
-
-			if (this.toggle[item.id]) {
-				cn.push('isOpen');
-			};
-
-			return (
-				<div id={`item-toggle-${item.id}`} className={cn.join(' ')} onClick={() => this.onToggle(item)}>
-					<div className="left">
-						<Icon className="arrow" />
-						{item.name}
-					</div>
-					<div className="right">
-						<Icon className="plus" onClick={e => this.onAdd(e, item)} />
-					</div>
-				</div>
-			);
-		};
-
 		const ItemSection = (item: any) => {
 			const cn = [ 'section' ];
 
@@ -78,9 +54,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		};
 
 		const Item = (item: any) => {
-			if (item.isToggle) {
-				return <ItemToggle {...item} />;
-			} else
 			if (item.isSection) {
 				return <ItemSection {...item} />;
 			};
@@ -107,14 +80,10 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 
 				cn.push('itemAccount');
 			} else {
-				icon = <Icon className={`settings-${item.icon || item.id}`} />;
+				if (![ 'types', 'relations' ].includes(item.id)) {
+					icon = <Icon className={`settings-${item.icon || item.id}`} />;
+				};
 				name = item.name;
-			};
-
-			if (U.Object.isTypeOrRelationLayout(item.layout)) {
-				cn.push('isTypeOrRelation');
-
-				icon = <IconObject object={item} />;
 			};
 
 			if (item.id == 'membership') {
@@ -158,9 +127,9 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		);
 
 		return (
-			<div 
-				ref={ref => this.node = ref} 
-				id="containerSettings" 
+			<div
+				ref={ref => this.node = ref}
+				id="containerSettings"
 				className={isSpace ? 'spaceSettings' : 'appSettings'}
 			>
 				<div className="head" />
@@ -244,8 +213,8 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		};
 
 		return [
-			{ 
-				id: 'common', name: translate('commonPreferences'), 
+			{
+				id: 'common', name: translate('commonPreferences'),
 				children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
 					{ id: 'spaceShare', icon: 'members', name: translate('commonMembers') },
@@ -253,9 +222,11 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 				],
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
-			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), isLabel: true },
-			{ id: 'contentModelTypes', isToggle: true, name: U.Common.plural(10, translate('pluralObjectType')), children: S.Record.checkHiddenObjects(S.Record.getTypes()) },
-			{ id: 'contentModelRelations', isToggle: true, name: U.Common.plural(10, translate('pluralProperty')), children: S.Record.checkHiddenObjects(S.Record.getRelations()) },
+			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
+					{ id: 'types', name: U.Common.plural(10, translate('pluralObjectType')) },
+					{ id: 'relations', name: U.Common.plural(10, translate('pluralProperty')) },
+				],
+			},
 		];
 	};
 
@@ -292,10 +263,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			if (section.name) {
 				const item: any = { id: section.id, name: section.name, isSection: true };
 
-				if (section.isToggle) {
-					item.isToggle = true;
-				};
-
 				if (idx == 0) {
 					item.isFirst = true;
 				};
@@ -304,9 +271,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 			};
 
 			let children = section.children ? section.children : [];
-			if (section.isToggle && !this.toggle[section.id]) {
-				children = [];
-			};
 
 			items = items.concat(children);
 		});
@@ -315,9 +279,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	};
 
 	getRowHeight (item: any) {
-		if (item.isToggle) {
-			return HEIGHT_ITEM;
-		};
 		if (item.isSection) {
 			return item.isFirst ? HEIGHT_SECTION_FIRST : HEIGHT_SECTION;
 		};
@@ -332,30 +293,20 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 	};
 
 	onClick (item) {
-		let param = {
-			id: item.id,
-			layout: I.ObjectLayout.Settings, 
+		if ([ 'types', 'relations' ].includes(item.id)) {
+			sidebar.leftPanelSetState({ page: item.id, });
+			return;
 		};
 
-		if (U.Object.isTypeOrRelationLayout(item.layout)) {
-			param = Object.assign(param, {
-				id: U.Object.actionByLayout(item.layout),
-				_routeParam_: { 
-					additional: [ 
-						{ key: 'objectId', value: item.id } 
-					],
-				},
-			});
+		let param = {
+			id: item.id,
+			layout: I.ObjectLayout.Settings,
 		};
 
 		U.Object.openAuto(param);
 	};
 
 	onContext (item) {
-		if (!U.Object.isTypeOrRelationLayout(item.layout)) {
-			return;
-		};
-
 		const { x, y } = keyboard.mouse.page;
 
 		S.Menu.open('objectContext', {
@@ -370,54 +321,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		});
 	};
 
-	onToggle (item) {
-		this.toggle[item.id] = !this.toggle[item.id];
-		this.forceUpdate();
-	};
-	
-	onAdd (e, item) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const isPopup = keyboard.isPopup();
-
-		switch (item.id) {
-			case 'contentModelTypes': {
-				const type = S.Record.getTypeType();
-				const featured = [ 'type', 'tag', 'backlinks' ];
-				const recommended = [];
-				const mapper = it => S.Record.getRelationByKey(it)?.id;
-				const details: any = {
-					isNew: true,
-					type: type.id,
-					layout: I.ObjectLayout.Type,
-					recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
-					recommendedRelations: recommended.map(mapper).filter(it => it),
-					defaultTypeId: String(S.Record.getPageType()?.id || ''),
-				};
-
-				sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });
-				break;
-			};
-
-			case 'contentModelRelations': {
-				const node = $(this.node);
-				const width = node.width() - 32;
-
-				S.Menu.open('blockRelationEdit', {
-					element: `#containerSettings #item-toggle-${item.id} .plus`,
-					offsetY: 4,
-					width,
-					className: 'fixed',
-					classNameWrap: 'fromSidebar',
-					horizontal: I.MenuDirection.Right,
-				});
-
-				break;
-			};	
-		};
-	};
-
 });
 
-export default SidebarSettings
+export default SidebarSettingsIndex

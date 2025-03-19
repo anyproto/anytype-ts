@@ -170,8 +170,28 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			if (!U.Space.canMyParticipantWrite()) {
 				return;
 			};
+			const param = U.Router.getParam(U.Router.getRoute());
+			const id = param.id;
 
-			sidebar.leftPanelSetState({ page: 'settingsSpace' });
+			let page = '';
+			switch (id) {
+				case 'set': {
+					page = 'types';
+					break;
+				};
+
+				case 'relation': {
+					page = 'relations';
+					break;
+				};
+
+				default: {
+					page = 'settingsSpace';
+					break;
+				};
+			};
+
+			sidebar.leftPanelSetState({ page });
 		} else {
 			S.Common.getRef('vault')?.setActive('settings');
 			sidebar.leftPanelSetState({ page: 'settings' });
