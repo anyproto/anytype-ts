@@ -76,7 +76,7 @@ class UpdateManager {
 			Util.send(this.win, 'download-progress', progress);
 		});
 
-		autoUpdater.on('update-downloaded', (info) => {
+		autoUpdater.on('update-downloaded', info => {
 			const Api = require('./api.js');
 
 			this.isUpdating = false;
@@ -87,7 +87,7 @@ class UpdateManager {
 			if (!this.autoUpdate) {
 				Api.exit(this.win, '', true);
 			} else {
-				Util.send(this.win, 'update-confirm');
+				Util.send(this.win, 'update-confirm', info);
 			};
 		});
 	};

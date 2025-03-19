@@ -143,6 +143,7 @@ class App extends React.Component<object, State> {
 	};
 	node: any = null;
 	timeoutMaximize = 0;
+	updateInfo = null;
 
 	constructor (props: any) {
 		super(props);
@@ -234,7 +235,12 @@ class App extends React.Component<object, State> {
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => S.Progress.delete('update'));
+		Renderer.on('update-downloaded', info => {
+			this.updateInfo = info;
+			console.log('INFO', info);
+
+			S.Progress.delete('update');
+		});
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('spellcheck', this.onSpellcheck);
