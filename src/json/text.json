@@ -194,6 +194,9 @@
 	"commonSuggested": "Suggested",
 	"commonExistingObjects": "Existing Objects",
 	"commonFileInfo": "File Information",
+	"commonMyTypes": "My Types",
+	"commonMyRelations": "My Properties",
+	"commonSystemRelations": "System Properties",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -557,6 +560,8 @@
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
 
+	"pageSettingsLibrarySystemTypes": "System Types",
+
 	"editorControlIcon0": "Add icon",
 	"editorControlIcon1": "Icon",
 	"editorControlCover0": "Add cover",
@@ -738,8 +743,6 @@
 
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
-
-	"blockTypeMyTypes": "My Types",
 
 	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
 	"blockChatMessageExpand": "Expand",
@@ -1645,12 +1648,11 @@
 	"menuItemFilterTimeFromNow": "%d %s from now",
 
 	"menuRelationSuggestFilterOrCreateRelation": "Filter or create a Property...",
-	"menuRelationSuggestMyRelations": "My Properties",
-	"menuRelationSuggestSystem": "System Properties",
+	"commonMyRelations": "My Properties",
+	"commonSystemRelations": "System Properties",
 	"menuRelationSuggestCreateRelation": "Create Property %s",
 
 	"menuTypeSuggestFilterTypes": "Filter Types...",
-	"menuTypeSuggestMyTypes": "My Types",
 	"menuTypeSuggestCreateType": "Create Type",
 	"menuTypeSuggestCreateTypeFilter": "Create Type %s",
 

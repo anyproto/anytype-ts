@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { analytics, I, J, keyboard, Relation, S, sidebar, translate, U } from 'Lib';
-import { Icon, IconObject, ObjectName } from 'Component';
+import { analytics, I, J, keyboard, Relation, S, sidebar, Storage, translate, U } from 'Lib';
+import { Button, Filter, Icon, IconObject, Title } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends React.Component {
@@ -16,12 +16,27 @@ const HEIGHT_SECTION_FIRST = 34;
 const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends React.Component<Props, {}> {
 
 	node: any = null;
+	type: I.ObjectContainerType = I.ObjectContainerType.Type;
+	refFilter = null;
+	filter = '';
+	timeoutFilter = 0;
+	sortId: I.SortId = I.SortId.Updated;
+	sortType: I.SortType = I.SortType.Desc;
+	orphan = false;
+	compact = true;
 	cache: any = {};
+
+	constructor (props: any) {
+		super(props);
+
+		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
+		this.onAdd = this.onAdd.bind(this);
+		this.onMore = this.onMore.bind(this);
+	};
 
 	render () {
 		const space = U.Space.getSpaceview();
-		const profile = U.Space.getProfile();
-		const participant = U.Space.getParticipant() || profile;
 		const pathname = U.Router.getRoute();
 		const param = U.Router.getParam(pathname);
 		const items = this.getItems();
@@ -45,16 +60,10 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				return <ItemSection {...item} />;
 			};
 
-			const cn = [ 'item', 'isTypeOrRelation' ];
-
-			if (item.id == param?.objectId) {
-				cn.push('active');
-			};
-
 			return (
 				<div
 					id={`item-${item.id}`}
-					className={cn.join(' ')}
+					className={[ 'item', item.id == param?.objectId ? 'active' : '' ].join(' ')}
 					onClick={() => this.onClick(item)}
 				>
 					<IconObject object={item} />
@@ -89,15 +98,35 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			<div
 				ref={ref => this.node = ref}
 				id="containerSettings"
-				className="spaceSettings"
+				className="spaceSettingsLibrary"
 			>
 				<div className="head" />
 
 				<div className="body">
 					<div className="list">
-						<div className="head" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })}>
-							<Icon className="back withBackground" />
-							{title}
+						<div className="head">
+							<div className="left">
+								<Icon className="back withBackground" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
+								<Title text={title} />
+							</div>
+							<div className="side right">
+								<Icon id="button-object-more" className="more withBackground" onClick={this.onMore} />
+							</div>
+						</div>
+
+						<div className="filterWrapper">
+							<div className="side left">
+								<Filter
+									ref={ref => this.refFilter = ref}
+									icon="search"
+									placeholder={translate('commonSearch')}
+									onChange={this.onFilterChange}
+									onClear={this.onFilterClear}
+								/>
+							</div>
+							<div className="side right">
+								{U.Space.canMyParticipantWrite() ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
+							</div>
 						</div>
 
 						<div className="inner">
@@ -133,6 +162,10 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	componentDidMount () {
+		this.type = this.props.page == 'types' ? I.ObjectContainerType.Type : I.ObjectContainerType.Relation;
+		this.refFilter.focus();
+		this.initStorage();
+
 		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
@@ -140,6 +173,33 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			defaultHeight: i => this.getRowHeight(items[i]),
 			keyMapper: i => (items[i] || {}).id,
 		});
+	};
+
+	initStorage () {
+		const storage = this.storageGet();
+
+		this.orphan = storage.orphan || false;
+		this.compact = storage.compact || true;
+
+		this.initSort();
+	};
+
+	initSort () {
+		const storage = this.storageGet();
+		const sort = storage.sort[this.type];
+
+		if (!sort) {
+			const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact).filter(it => it.isSort);
+			if (options.length) {
+				this.sortId = options[0].id;
+				this.sortType = options[0].defaultType;
+			};
+		};
+
+		if (sort) {
+			this.sortId = sort.id;
+			this.sortType = sort.type;
+		};
 	};
 
 	getItems () {
@@ -165,13 +225,13 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 		return items;
 	};
-	
+
 	getTypes (): any[] {
 		const data = S.Record.checkHiddenObjects(S.Record.getTypes());
 
 		return [
-			{ id: 'installed', name: 'Installed', children: data.filter(it => it.isInstalled && !U.Object.isInSystemLayouts(it.recommendedLayout)) },
-			{ id: 'system', name: 'System', children: data.filter(it => U.Object.isInSystemLayouts(it.recommendedLayout)) },
+			{ id: 'installed', name: translate('commonMyTypes'), children: data.filter(it => it.isInstalled && !U.Object.isInSystemLayouts(it.recommendedLayout)) },
+			{ id: 'system', name: translate('pageSettingsLibrarySystemTypes'), children: data.filter(it => U.Object.isInSystemLayouts(it.recommendedLayout)) },
 		];
 	};
 
@@ -180,8 +240,8 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		const systemKeys = Relation.systemKeys();
 
 		return [
-			{ id: 'installed', name: 'Installed', children: data.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey)) },
-			{ id: 'system', name: 'System', children: data.filter(it => systemKeys.includes(it.relationKey)) },
+			{ id: 'installed', name: translate('commonMyRelations'), children: data.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey)) },
+			{ id: 'system', name: translate('commonSystemRelations'), children: data.filter(it => systemKeys.includes(it.relationKey)) },
 		];
 	};
 
@@ -190,6 +250,70 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			return item.isFirst ? HEIGHT_SECTION_FIRST : HEIGHT_SECTION;
 		};
 		return HEIGHT_ITEM;
+	};
+
+	onFilterChange (v: string) {
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			if (this.filter == v) {
+				return;
+			};
+
+			this.filter = v;
+
+		}, J.Constant.delay.keyboard);
+	};
+
+	onFilterClear () {
+
+	};
+
+	onMore (e) {
+		e.stopPropagation();
+
+		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
+
+		let menuContext = null;
+
+		S.Menu.open('select', {
+			element: '#sidebarLeft #containerSettings #button-object-more',
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			onOpen: context => menuContext = context,
+			data: {
+				options,
+				noClose: true,
+				onSelect: (e: any, item: any) => {
+					const storage = this.storageGet();
+
+					if ([ I.SortId.All, I.SortId.Orphan ].includes(item.id)) {
+						this.orphan = item.id == I.SortId.Orphan;
+						storage.orphan = this.orphan;
+
+						analytics.event('ChangeLibraryTypeLink', { type: item.id == I.SortId.Orphan ? 'Unlinked' : 'All' });
+					} else
+					if ([ I.SortId.List, I.SortId.Compact ].includes(item.id)) {
+						this.compact = item.id == I.SortId.Compact;
+						storage.compact = this.compact;
+					}else {
+						this.sortId = item.id;
+						this.sortType = item.type;
+
+						storage.sort[this.type] = { id: item.id, type: item.type };
+						analytics.event('ChangeLibrarySort', { type: item.id, sort: I.SortType[item.type] });
+					};
+
+					this.storageSet(storage);
+					this.initStorage();
+
+					const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
+
+					menuContext.ref.updateOptions(options);
+				},
+			}
+		});
 	};
 
 	onClick (item) {
@@ -206,14 +330,14 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		U.Object.openAuto(param);
 	};
 
-	onAdd (e, item) {
+	onAdd (e) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const isPopup = keyboard.isPopup();
 
-		switch (item.id) {
-			case 'types': {
+		switch (this.type) {
+			case I.ObjectContainerType.Type: {
 				const type = S.Record.getTypeType();
 				const featured = [ 'type', 'tag', 'backlinks' ];
 				const recommended = [];
@@ -231,22 +355,31 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				break;
 			};
 
-			case 'relations': {
+			case I.ObjectContainerType.Relation: {
 				const node = $(this.node);
 				const width = node.width() - 32;
 
 				S.Menu.open('blockRelationEdit', {
-					element: `#containerSettings #item-toggle-${item.id} .plus`,
+					element: `#containerSettings #button-object-create`,
 					offsetY: 4,
 					width,
 					className: 'fixed',
 					classNameWrap: 'fromSidebar',
 					horizontal: I.MenuDirection.Right,
 				});
-
 				break;
 			};
 		};
+	};
+
+	storageGet () {
+		const storage = Storage.get('settingsLibrary') || {};
+		storage.sort = storage.sort || {};
+		return storage;
+	};
+
+	storageSet (obj: any) {
+		Storage.set('settingsLibrary', obj);
 	};
 
 });

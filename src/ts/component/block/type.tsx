@@ -76,7 +76,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const object = S.Detail.get(rootId, rootId, []);
 		const items = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 }).filter(it => it.id != object.type);
 
-		items.push({ id: 'menu', icon: 'search', name: translate('blockTypeMyTypes') });
+		items.push({ id: 'menu', icon: 'search', name: translate('commonMyTypes') });
 
 		return items;
 	};

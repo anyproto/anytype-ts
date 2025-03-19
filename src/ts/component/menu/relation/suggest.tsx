@@ -274,8 +274,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
-			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
-			{ id: 'system', name: translate('menuRelationSuggestSystem'), children: system },
+			{ id: 'library', name: translate('commonMyRelations'), children: library },
+			{ id: 'system', name: translate('commonSystemRelations'), children: system },
 		];
 
 		if (canWrite) {
