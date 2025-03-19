@@ -27,7 +27,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 				rootId,
 				blockId: rootId,
 				blockIds: [ rootId ],
-				filters: U.Data.graphFilters(),
+				filters: U.Data.getGraphFilters(),
 				filter: S.Common.getGraph(J.Constant.graphId.global).filter,
 				canAdd: true,
 				withPlural: true,

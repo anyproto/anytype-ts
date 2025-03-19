@@ -300,6 +300,7 @@ export interface GraphSettings {
 	cluster: boolean;
 	filter: string;
 	depth: number;
+	filterTypes: string[];
 };
 
 export interface FocusState {
