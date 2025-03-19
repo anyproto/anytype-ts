@@ -292,16 +292,16 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						map(it => ({ ...it, caption: '' }));
 					const lists = [];
 
-					if (types.length) {
-						lists.push([
-							{ name: translate('commonSuggested'), isSection: true }
-						].concat(types));
-					};
-
 					if (fixed.length) {
 						lists.push([
 							{ name: translate('commonSystem'), isSection: true }
 						].concat(fixed));
+					};
+
+					if (types.length) {
+						lists.push([
+							{ name: translate('commonSuggested'), isSection: true }
+						].concat(types));
 					};
 
 					if (items.length) {
