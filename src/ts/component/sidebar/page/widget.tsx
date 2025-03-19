@@ -210,6 +210,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const { widgets } = S.Block;
 		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
 		const targets = [];
+		const node = $(this.node);
+		const body = node.find('#body');
+		const position = body.outerHeight() + 350 > node.outerHeight() ? I.MenuDirection.Top : I.MenuDirection.Bottom;
+
+		console.log(body.outerHeight(), node.outerHeight());
 
 		blocks.forEach(block => {
 			const children = S.Block.getChildren(widgets, block.id);
@@ -255,7 +260,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: -4,
-			vertical: I.MenuDirection.Top,
+			vertical: position,
 			onOpen: context => menuContext = context,
 			subIds: J.Menu.widgetAdd,
 			data: {
