@@ -40,6 +40,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
+		const { showVault } = S.Common;
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -194,6 +195,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 			</div>
 		);
+	};
+
+	componentDidUpdate (): void {
+		this.onScroll();
 	};
 
 	onEdit (e: any): void {
