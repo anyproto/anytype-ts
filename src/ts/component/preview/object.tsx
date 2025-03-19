@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Loader, IconObject, Cover, Icon } from 'Component';
+import { Loader, IconObject, Cover, Icon, ObjectName } from 'Component';
 import { I, C, S, U, J, Action, translate } from 'Lib';
 
 interface Props {
@@ -340,6 +340,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	const isTask = U.Object.isTaskLayout(object.layout);
 	const isBookmark = U.Object.isBookmarkLayout(object.layou);
 	const cn = [ 'previewObject' , check.className, className ];
+	const withName = !U.Object.isNoteLayout(object.layout);
 
 	switch (size) {
 		case I.PreviewSize.Large: {
@@ -428,7 +429,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 
 							<div className="heading">
 								{check.withIcon ? <IconObject size={iconSize} object={object} /> : ''}
-								<div className="name">{name}</div>
+								{withName ? <ObjectName object={object} /> : ''}
 								<div className="featured" />
 							</div>
 
