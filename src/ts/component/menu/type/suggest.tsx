@@ -382,14 +382,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const buttons = U.Common.objectCopy(data.buttons || []);
+		const buttons = [ ...data.buttons || [] ];
 		const add = buttons.find(it => it.id == 'add');
 
 		if (add) {
 			add.name = filter ? U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
 		};
 
-		return buttons;
+		return buttons.map(it => ({ ...it, isButton: true }));
 	};
 
 	onFilterChange (v: string) {
@@ -482,7 +482,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { data } = param;
 		const { filter, onClick, noInstall } = data;
 
+		console.log(item);
+
 		if (item.arrow) {
+			return;
+		};
+
+		if (item.isButton && item.onClick) {
+			item.onClick(e);
 			return;
 		};
 

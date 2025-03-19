@@ -1253,6 +1253,8 @@ class UtilMenu {
 
 			buttons.unshift({ id: 'add', icon: 'plus' });
 
+			console.log(buttons);
+
 			S.Menu.open('typeSuggest', {
 				...param,
 				data: {
