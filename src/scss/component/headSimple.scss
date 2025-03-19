@@ -2,7 +2,7 @@
 
 .headSimple { width: 100%; margin: 0px auto 24px auto; display: flex; align-items: flex-start; gap: 0px 32px; }
 .headSimple {
-	&.isSet, &.isType { padding: 0px 14px; }
+	&.isSet, &.isType { padding: 0px 0px 0px 14px; }
 	&.isCollection { padding: 0px 20px; }
 
 	&.isSet, &.isCollection {
@@ -34,7 +34,7 @@
 		> .descr { @include text-paragraph; }
 	}
 
-	.side.right { text-align: right; display: flex; flex-direction: row; gap: 0px 16px; align-items: center; justify-content: flex-end; }
+	.side.right { text-align: right; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: flex-end; }
 	.side.right {
 		.button { white-space: nowrap; }
 	}
