@@ -41,7 +41,7 @@ class UpdateManager {
 			this.clearTimeout();
 
 			Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
-			Util.send(this.win, 'update-available', this.autoUpdate);
+			Util.send(this.win, 'update-available', this.autoUpdate, info);
 
 			if (this.autoUpdate) {
 				this.download();
@@ -87,7 +87,7 @@ class UpdateManager {
 			if (!this.autoUpdate) {
 				Api.exit(this.win, '', true);
 			} else {
-				Util.send(this.win, 'update-confirm', info);
+				Util.send(this.win, 'update-confirm', this.autoUpdate, info);
 			};
 		});
 	};
