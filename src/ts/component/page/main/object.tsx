@@ -33,7 +33,7 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 			const object = item.details;
 
 			U.Object.openRoute(object);
-			analytics.event('OpenObjectByLink', { route, objectType: object.type, type: 'Object' });
+			analytics.event('OpenObjectByLink', { route: route || analytics.route.app, objectType: object.type, type: 'Object' });
 		});
 
 	}, []);
