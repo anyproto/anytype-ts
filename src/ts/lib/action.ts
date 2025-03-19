@@ -288,7 +288,7 @@ class Action {
 		});
 
 		U.Common.getElectron().showOpenDialog(options).then(({ filePaths }) => {
-			if ((filePaths == undefined) || !filePaths.length) {
+			if ((typeof filePaths === 'undefined') || !filePaths.length) {
 				return;
 			};
 
