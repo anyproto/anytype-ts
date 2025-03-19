@@ -5,9 +5,6 @@ const Diff = require('diff');
 class Action {
 
 	pageClose (rootId: string, withCommand: boolean) {
-		console.log('pageClose', rootId, withCommand, keyboard.isCloseDisabled);
-		console.trace();
-
 		if (keyboard.isCloseDisabled) {
 			return;
 		};

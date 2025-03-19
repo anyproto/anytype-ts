@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, J, keyboard, translate, analytics } from 'Lib';
+import { I, S, J, U, keyboard, translate, analytics } from 'Lib';
 import { MenuItemVertical, DragHorizontal } from 'Component';
 
 const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
@@ -25,40 +25,41 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			snaps.push(i / graphDepth);
 		};
 
+		const Item = (item: any) => {
+			if (item.withDrag) {
+				return (
+					<div id={`item-${item.id}`} className="item withDrag">
+						<div className="flex">
+							<div className="name">{item.name}</div>
+							<div id={`value-${item.id}`} className="value">{values[item.id]}</div>
+						</div>
+						<div className="drag">
+							<DragHorizontal 
+								value={values[item.id] / graphDepth} 
+								snaps={snaps}
+								strictSnap={true}
+								onMove={(e: any, v: number) => this.onDragMove(item.id, v)}
+								onEnd={(e: any, v: number) => this.onDragEnd(item.id, v)} 
+							/>
+						</div>
+					</div>
+				);
+			} else {
+				return (
+					<MenuItemVertical 
+						{...item} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onSwitch(item.id)} 
+					/>
+				);
+			};
+		};
+
 		const Section = (item: any) => (
 			<div className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
-					{item.children.map((item: any, i: number) => {
-						if (item.withDrag) {
-							return (
-								<div id={`item-${item.id}`} key={i} className="item withDrag">
-									<div className="flex">
-										<div className="name">{item.name}</div>
-										<div id={`value-${item.id}`} className="value">{values[item.id]}</div>
-									</div>
-									<div className="drag">
-										<DragHorizontal 
-											value={values[item.id] / graphDepth} 
-											snaps={snaps}
-											strictSnap={true}
-											onMove={(e: any, v: number) => this.onDragMove(item.id, v)}
-											onEnd={(e: any, v: number) => this.onDragEnd(item.id, v)} 
-										/>
-									</div>
-								</div>
-							);
-						} else {
-							return (
-								<MenuItemVertical 
-									key={i} 
-									{...item} 
-									onMouseEnter={e => this.onMouseEnter(e, item)} 
-									onClick={e => this.onSwitch(item.id)} 
-								/>
-							);
-						};
-					})}
+					{item.children.map((item: any, i: number) => <Item key={i} {...item} />)}
 				</div>
 			</div>
 		);
@@ -97,7 +98,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, true);
+			this.props.setActive(item);
 		};
 	};
 
@@ -147,14 +148,21 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getValues () {
-		return S.Common.getGraph(this.getKey());
+		const ret: any = S.Common.getGraph(this.getKey());
+
+		ret.filterTypes = ret.filterTypes || [];
+
+		return ret;
 	};
 
 	getSections (): any[] {
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { allowLocal } = data;
 		const values = this.getValues();
+		const layouts = U.Object.getGraphSkipLayouts();
+		const types = S.Record.getTypes().filter(it => !layouts.includes(it.recommendedLayout));
 
 		let sections: any[] = [
 			{ 
@@ -187,11 +195,28 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			sections.push({ children });
 		};
 
+		if (config.experimental && types.length) {
+			sections.push({ name: translate('menuGraphSettingsTypes'), children: types.map(it => ({ ...it, object: it, isType: true })) });
+		};
+
 		sections = sections.map(s => {
 			s.children = s.children.filter(it => it).map(c => {
-				c.switchValue = values[c.id];
 				c.withSwitch = true;
-				c.onSwitch = () => this.onSwitch(c.id);
+
+				if (c.isType) {
+					c.switchValue = !values.filterTypes.includes(c.id);
+					c.onSwitch = (e, v) => {
+						if (v) {
+							values.filterTypes = values.filterTypes.filter(it => it != c.id);
+						} else {
+							values.filterTypes.push(c.id);
+						};
+						this.save(values);
+					};
+				} else {
+					c.switchValue = values[c.id];
+					c.onSwitch = () => this.onSwitch(c.id);
+				};
 				return c;
 			});
 			return s;
