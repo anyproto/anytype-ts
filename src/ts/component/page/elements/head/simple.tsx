@@ -324,17 +324,20 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	onTemplates () {	
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId);
-		const node = $(this.node);
 
 		S.Menu.open('dataviewTemplateList', {
-			element: node.find('#button-template'),
+			element: '.headSimple #button-template',
 			horizontal: I.MenuDirection.Center,
 			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			data: {
 				withTypeSelect: false,
 				typeId: object.id,
 				previewSize: I.PreviewSize.Small,
-				defaultId: object.defaultTemplateId,
+				templateId: object.defaultTemplateId,
+				onSetDefault: item => {
+					S.Menu.updateData('dataviewTemplateList', { templateId: item.id });
+					U.Object.setDefaultTemplateId(rootId, item.id);
+				},
 				onSelect: item => {
 					if (item.id == J.Constant.templateId.new) {
 						this.onTemplateAdd();

@@ -51,6 +51,8 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 		const isDefault = template.id == templateId;
 		const defaultName = isView ? translate('menuDataviewTemplateSetDefaultForView') : translate('commonSetDefault');
 
+		console.log(templateId, template.id, onSetDefault);
+
 		return [
 			!isDefault && onSetDefault ? ({ id: 'default', name: defaultName }) : null,
 			{ id: 'edit', name: translate('menuDataviewTemplateEdit') },
