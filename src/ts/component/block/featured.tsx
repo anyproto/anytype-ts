@@ -53,6 +53,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const skipIds = [ 'type', 'description', 'setOf' ];
 		const list = items.filter(it => !skipIds.includes(it.relationKey));
 		const object = this.getObject();
+		const type = S.Detail.get(rootId, object.type, [ 'name', 'isDeleted' ]);
 
 		return (
 			<div 
@@ -63,7 +64,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyUp={this.onKeyUp}
 			>
 
-				{hasType ? this.renderType() : ''}
+				{hasType || type.isDeleted ? this.renderType() : ''}
 				{hasSetOf ? this.renderSetOf() : ''}
 				{this.renderIdentity()}
 
@@ -158,7 +159,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	renderType () {
 		const { rootId } = this.props;
 		const object = this.getObject();
-		const type = S.Detail.get(rootId, object.type, [ 'name', 'isDeleted' ]);
+		const type = S.Detail.get(rootId, object.type, []);
 		const name = (
 			<div className="name">
 				<ObjectType object={type} />
