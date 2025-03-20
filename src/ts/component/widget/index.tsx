@@ -73,6 +73,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const recordIds = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).map(it => it.id)
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
 	const favCnt = isFavorite ? recordIds.length : 0;
+	const isType = U.Object.isTypeLayout(object?.layout);
 
 	let layout = block.content.layout;
 	if (object) {
@@ -603,7 +604,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (hasChild) {
 		let icon = null;
-		let onClickHandler = isSystemTarget() ? onSetPreview : onClick;
+		let onClickHandler = isSystemTarget() || isType ? onSetPreview : onClick;
 
 		if (targetId == J.Constant.widgetId.bin) {
 			onClickHandler = () => U.Object.openAuto({ layout: I.ObjectLayout.Archive });
