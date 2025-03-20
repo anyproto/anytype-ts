@@ -60,7 +60,7 @@ const getSections = () => {
 						{ id: 'back', name: translate('popupShortcutNavigationBasics7'), keys: isMac ? [ cmdKey, '[' ] : [ 'alt', 'arrowleft' ] },
 						{ id: 'forward', name: translate('popupShortcutNavigationBasics8'), keys: isMac ? [ cmdKey, ']' ] : [ 'alt', 'arrowright' ] },
 						{ id: 'shortcut', name: translate('popupShortcutMainBasics14'), keys: [ 'ctrl', 'space' ] },
-						{ id: 'bin', name: translate('popupShortcutMainBasics14'), keys: [ cmdKey, 'alt', 'b' ] },
+						{ id: 'bin', name: translate('popupShortcutNavigationBasics11'), keys: [ cmdKey, 'alt', 'b' ] },
 						{ name: translate('popupShortcutMainBasics20'), keys: [ 'ctrl', 'tab' ] },
 						{ name: translate('popupShortcutMainBasics23'), keys: [ 'ctrl', 'shift', 'tab' ] },
 						{ name: translate('popupShortcutMainBasics12'), keys: [ 'shift', 'click' ] },
