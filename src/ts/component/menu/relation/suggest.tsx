@@ -233,22 +233,20 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			limit: J.Constant.limit.menuRecords,
 		};
 
-		this.loadRequest(requestParam, () => {
-			this.loadRequest({ ...requestParam, spaceId: J.Constant.storeSpaceId }, (message: any) => {
-				if (!this._isMounted) {
-					return;
-				};
+		this.loadRequest(requestParam, (message: any) => {
+			if (!this._isMounted) {
+				return;
+			};
 
-				if (callBack) {
-					callBack(message);
-				};
+			if (callBack) {
+				callBack(message);
+			};
 
-				if (clear) {
-					this.setState({ isLoading: false });
-				} else {
-					this.forceUpdate();
-				};
-			});
+			if (clear) {
+				this.setState({ isLoading: false });
+			} else {
+				this.forceUpdate();
+			};
 		});
 	};
 
@@ -270,7 +268,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
-		const librarySources = library.map(it => it.sourceObject);
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
@@ -278,22 +275,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			{ id: 'system', name: translate('menuRelationSuggestSystem'), children: system },
 		];
 
-		if (canWrite) {
-			if (filter) {
-				const store = items.filter(it => !it.isInstalled && !librarySources.includes(it.id) && !systemKeys.includes(it.relationKey));
-				sections = sections.concat([
-					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-					{ children: [ { id: 'add', name: U.Common.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
-				]);
-			} else {
-				sections = sections.concat([
-					{ 
-						children: [
-							{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
-						] 
-					},
-				]);
-			};
+		if (canWrite && filter) {
+			sections = sections.concat([
+				{ children: [ { id: 'add', name: U.Common.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
+			]);
 		};
 
 		sections = sections.filter((section: any) => {
@@ -335,76 +320,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		if (!keyboard.isMouseDisabled && !S.Menu.isAnimating(this.props.id)) {
 			this.props.setActive(item, false);
-			this.onOver(e, item);
 		};
 	};
 
-	onOver (e: any, item: any) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		if (!item.arrow) {
-			S.Menu.closeAll([ 'searchObject' ]);
-			return;
-		};
-
-		const { id, getId, getSize, param, close } = this.props;
-		const { className, classNameWrap, data } = param;
-		const skipKeys = data.skipKeys || [];
-		const sources = this.getLibrarySources();
-
-		const menuParam: I.MenuParam = {
-			menuKey: item.id,
-			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width,
-			offsetY: 36,
-			vertical: I.MenuDirection.Top,
-			isSub: true,
-			noFlipY: true,
-			classNameWrap,
-			rebind: this.rebind,
-			parentId: id,
-			data: {},
-		};
-
-		let menuId = '';
-
-		switch (item.id) {
-			case 'store': {
-				menuId = 'searchObject';
-				menuParam.className = `${className} single`;
-
-				const filters: I.Filter[] = [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
-					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
-					{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
-				];
-
-				menuParam.data = Object.assign(menuParam.data, {
-					keys: U.Data.typeRelationKeys(),
-					filters,
-					spaceId: J.Constant.storeSpaceId,
-					sorts: [
-						{ relationKey: 'name', type: I.SortType.Asc },
-					],
-					onSelect: (item: any) => {
-						this.onClick(e, S.Detail.mapper(item));
-						close();
-					},
-					dataMapper: it => S.Detail.mapper(it),
-				});
-				break;
-			};
-		};
-
-		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll([ 'searchObject' ], () => {
-				S.Menu.open(menuId, menuParam);
-			});
-		};
-	};
-	
 	onClick (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
