@@ -791,12 +791,14 @@ class UtilData {
 
 		if (ignoreDeleted) {
 			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
+		} else {
+			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.None, value: null });
 		};
 
 		if (ignoreArchived) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		} else {
-			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.In, value: [ true, false ] });
+			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.None, value: null });
 		};
 
 		return filters;
