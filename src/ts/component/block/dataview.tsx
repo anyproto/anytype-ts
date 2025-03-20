@@ -1220,7 +1220,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getEmpty (type: string) {
-		const { isInline, block } = this.props;
+		const { isInline, block, readonly } = this.props;
 		const isCollection = this.isCollection();
 		const view = this.getView();
 		const cn = [];
@@ -1274,7 +1274,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				{...this.props}
 				{...emptyProps}
 				className={cn.join(' ')}
-				withButton={emptyProps.button ? true : false}
+				withButton={emptyProps.button && !readonly ? true : false}
 			/>
 		);
 	};

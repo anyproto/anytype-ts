@@ -482,8 +482,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { data } = param;
 		const { filter, onClick, noInstall } = data;
 
-		console.log(item);
-
 		if (item.arrow) {
 			return;
 		};

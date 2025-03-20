@@ -106,7 +106,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		sections.forEach(it => this.updateObject(it.id));
 
 		this.disableScroll(true);
-		$(this.buttonSaveRef.getNode()).addClass('disabled');
+		if (!details.isNew) {
+			$(this.buttonSaveRef.getNode()).addClass('disabled');
+		};
 	};
 
 	disableScroll (v: boolean) {
@@ -196,7 +198,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onSave () {
-		if (!U.Common.objectLength(this.update)) {
+		const details: any = this.props.details || {};
+
+		if (!U.Common.objectLength(this.update) && !details.isNew) {
 			return;
 		};
 

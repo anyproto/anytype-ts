@@ -358,7 +358,7 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				withArchived: true,
+				ignoreArchived: false,
 				onSubscribe: () => {
 					S.Record.getTypes().forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
@@ -387,7 +387,7 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				withArchived: true,
+				ignoreArchived: true,
 				onSubscribe: () => {
 					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
@@ -433,11 +433,11 @@ class UtilData {
 		this.createSubscriptions(list, callBack);
 	};
 
-	createSubscriptions (list: any[], callBack?: () => void) {
+	createSubscriptions (list: I.SearchSubscribeParam[], callBack?: () => void) {
 		let cnt = 0;
-		const cb = (item: any) => {
+		const cb = (item: any, message: any) => {
 			if (item.onSubscribe) {
-				item.onSubscribe();
+				item.onSubscribe(message);
 			};
 
 			cnt++;
@@ -448,7 +448,7 @@ class UtilData {
 		};
 
 		for (const item of list) {
-			this.searchSubscribe(item, () => cb(item));
+			this.searchSubscribe(item, message => cb(item, message));
 		};
 	};
 
@@ -795,6 +795,8 @@ class UtilData {
 
 		if (ignoreArchived) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
+		} else {
+			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.In, value: [ true, false ] });
 		};
 
 		return filters;

@@ -33,9 +33,6 @@ const SidebarSettings = observer(class SidebarSettings extends React.Component<P
 		const isSpace = this.props.page == 'settingsSpace';
 		const items = this.getItems();
 
-
-		console.log(param);
-
 		const onBack = () => {
 			if (!this.routeBack || !this.routeBack.pathname || keyboard.isMainSettings() || (param.id == 'spaceIndex')) {
 				U.Space.openDashboard();

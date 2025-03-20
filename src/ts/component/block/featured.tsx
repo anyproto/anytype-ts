@@ -53,7 +53,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const skipIds = [ 'type', 'description', 'setOf' ];
 		const list = items.filter(it => !skipIds.includes(it.relationKey));
 		const object = this.getObject();
-		const type = S.Detail.get(rootId, object.type, [ 'name', 'isDeleted' ]);
+		const type = S.Detail.get(rootId, object.type, []);
 
 		return (
 			<div 
@@ -63,8 +63,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp}
 			>
-
-				{hasType || type.isDeleted ? this.renderType() : ''}
+				{hasType ? this.renderType() : ''}
 				{hasSetOf ? this.renderSetOf() : ''}
 				{this.renderIdentity()}
 
@@ -167,7 +166,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		);
 
 		let ret = null;
-
 		if (U.Object.isTemplate(object.type)) {
 			ret = (
 				<span className="cell">
@@ -389,7 +387,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = S.Detail.get(rootId, rootId, [ 'setOf' ]);
 		const type = S.Detail.get(rootId, object.type, []);
 		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
-		const typeIsDeleted = type._empty_ || type.isDeleted;
+		const typeIsDeleted = type._empty_ || type.isDeleted || type.isArchived;
 		const options: any[] = [];
 
 		if (!typeIsDeleted) {
@@ -828,6 +826,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'type', 'targetObjectType', 'layout', 'featuredRelations' ], true);
 		const keys = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
+		const type = S.Detail.get(rootId, short.type, []);
+
+		if (type.isDeleted || type.isArchived) {
+			keys.unshift('type');
+		};
 
 		let ret = [];
 		if (!keys.length) {
