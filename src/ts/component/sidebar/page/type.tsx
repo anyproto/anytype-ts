@@ -46,7 +46,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 						<Button 
 							ref={ref => this.buttonSaveRef = ref} 
-							text={type ? translate('commonSave') : translate('commonCreate')}
+							text={type ? translate('commonSave') : translate('commonApply')}
 							className="c28" 
 							onClick={this.onSave}
 						/>

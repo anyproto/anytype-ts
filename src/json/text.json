@@ -194,6 +194,7 @@
 	"commonSuggested": "Suggested",
 	"commonExistingObjects": "Existing Objects",
 	"commonFileInfo": "File Information",
+	"commonApply": "Apply",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1933,7 +1934,7 @@
 
 	"sidebarTypeTitle": "Editing type",
 	"sidebarTypeTitleLabelName": "Type name and icon",
-	"sidebarTypeTitleLabelPlural": "Database name",
+	"sidebarTypeTitleLabelPlural": "Plural name",
 	"sidebarSectionLayoutName": "Layout",
 	"sidebarSectionLayoutFormat": "Format",
 	"sidebarSectionLayoutFormatPage": "Page",

@@ -61,12 +61,12 @@
 
 		.item {
 			.name { flex-shrink: 0; }
-			.tabSwitch { width: 100%; margin-bottom: 12px; }
+			.tabSwitch { width: 100%; margin-bottom: 11px; }
 
 			.value { overflow: hidden; }
 			.value.flex { flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 8px; }
 
-			.select { border: 0px; color: var(--color-text-secondary); display: flex; }
+			.select { border: 0px; color: var(--color-text-secondary); display: flex; padding-top: 0px; padding-bottom: 0px; }
 			.select {
 				.item { @include text-overflow-nw; }
 				.item {
