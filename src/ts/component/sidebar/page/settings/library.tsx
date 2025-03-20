@@ -202,6 +202,10 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		};
 	};
 
+	load (clear: boolean, callBack?: (message: any) => void) {
+
+	};
+
 	getItems () {
 		const sections = this.props.page == 'types' ? this.getTypes() : this.getRelations();
 
@@ -228,20 +232,35 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 	getTypes (): any[] {
 		const data = S.Record.checkHiddenObjects(S.Record.getTypes());
+		const typeStore = S.Record.getRecordIds(J.Constant.subId.typeStore, '')
+			.map(id => S.Detail.get(J.Constant.subId.typeStore, id))
+			.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted)
+			.map(it => it.id);
+
+		const my = data.filter(it => it.isInstalled && !typeStore.includes(it.sourceObject));
+		const system = data.filter(it => U.Object.isInSystemLayouts(it.recommendedLayout) || typeStore.includes(it.sourceObject));
 
 		return [
-			{ id: 'installed', name: translate('commonMyTypes'), children: data.filter(it => it.isInstalled && !U.Object.isInSystemLayouts(it.recommendedLayout)) },
-			{ id: 'system', name: translate('pageSettingsLibrarySystemTypes'), children: data.filter(it => U.Object.isInSystemLayouts(it.recommendedLayout)) },
+			{ id: 'my', name: translate('commonMyTypes'), children: my },
+			{ id: 'system', name: translate('pageSettingsLibrarySystemTypes'), children: system },
 		];
 	};
 
 	getRelations (): any[] {
 		const data = S.Record.checkHiddenObjects(S.Record.getRelations());
 		const systemKeys = Relation.systemKeys();
+		const relationStore= S.Record.getRecordIds(J.Constant.subId.relationStore, '')
+			.map(id => S.Detail.get(J.Constant.subId.relationStore, id))
+			.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted)
+			.map(it => it.id);
+
+		const my = data.filter(it => it.isInstalled && !relationStore.includes(it.sourceObject));
+		const system = data.filter(it => systemKeys.includes(it.relationKey) || relationStore.includes(it.sourceObject));
+
 
 		return [
-			{ id: 'installed', name: translate('commonMyRelations'), children: data.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey)) },
-			{ id: 'system', name: translate('commonSystemRelations'), children: data.filter(it => systemKeys.includes(it.relationKey)) },
+			{ id: 'my', name: translate('commonMyRelations'), children: my },
+			{ id: 'system', name: translate('commonSystemRelations'), children: system },
 		];
 	};
 
@@ -380,6 +399,10 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 	storageSet (obj: any) {
 		Storage.set('settingsLibrary', obj);
+	};
+
+	getSubId () {
+		return this.props.page == 'types' ? J.Constant.subId.type : J.Constant.subId.relation;
 	};
 
 });
