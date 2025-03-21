@@ -839,7 +839,7 @@ class UtilMenu {
 		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
 
 		if (U.Space.canCreateSpace()) {
-			items.push({ id: 'add', name: translate('commonCreateNew'), isButton: true });
+			items.push({ id: 'add', name: translate('commonNewSpace'), isButton: true });
 		};
 
 		if (ids && (ids.length > 0)) {
