@@ -728,14 +728,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			return;
 		};
 
-		const relation = this.getViewRelation();
+		const relation = this.getRelation();
 		const item: any = { 
 			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
 		};
 
-		relation ? this.update(item) : this.add(item);
+		relation && relation.id ? this.update(item) : this.add(item);
 	};
 
 	add (item: any) {

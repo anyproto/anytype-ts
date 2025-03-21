@@ -417,12 +417,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		const relation = this.getRelation();
 		const item: any = { 
-			name: name, 
+			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
 		};
 
-		relation ? this.update(item) : this.add(item);
+		relation && relation.id ? this.update(item) : this.add(item);
 	};
 
 	add (item: any) {
