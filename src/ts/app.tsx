@@ -207,10 +207,6 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
-
-		window.setTimeout(() => {
-			U.Router.go('/main/settings/spaceIndex', {});
-		}, 1500);
 	};
 
 	init () {

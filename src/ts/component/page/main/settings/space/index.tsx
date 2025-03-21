@@ -374,7 +374,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onSave () {
-		C.WorkspaceSetInfo(S.Common.space, { name: this.checkName(this.refName.getValue()), description: this.refDescription.getHtmlValue() });
+		C.WorkspaceSetInfo(S.Common.space, {
+			name: this.checkName(this.refName.getValue()),
+			description: this.refDescription.getHtmlValue()
+		});
 		this.setState({ isEditing: false });
 	};
 
