@@ -251,7 +251,7 @@
 .editorWrapper.isSet, 
 .editorWrapper.isCollection {
 	&.withIcon {
-		.controlButtons { left: 14px; }
+		.controlButtons { left: 14px !important; }
 	}
 
 	&.withIcon,

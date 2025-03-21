@@ -15,7 +15,7 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 			return;
 		};
 
-		const filters = [].concat(view.filters).concat(U.Data.graphFilters()).map(it => Dataview.filterMapper(view, it));
+		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(it => Dataview.filterMapper(view, it));
 		const object = getObject();
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 

@@ -40,6 +40,7 @@
 	.day, .day .inner { display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	.day.today { color: var(--color-system-accent-125); font-weight: 500; }
 	.day.other { color: var(--color-text-secondary); }
+	.day.weekend { background-color: var(--color-shape-highlight-light); }
 
 	.day {
 		.inner { width: 100%; max-width: 28px; height: 28px; border-radius: 4px; transition: $transitionAllCommon; position: relative; }

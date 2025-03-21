@@ -462,6 +462,10 @@ class UtilObject {
 		];
 	};
 
+	getGraphSkipLayouts () {
+		return this.getFileAndSystemLayouts().filter(it => !this.isTypeLayout(it));
+	};
+
 	// --------------------------------------------------------- //
 
 	getFileTypeByLayout (layout: I.ObjectLayout): I.FileType {

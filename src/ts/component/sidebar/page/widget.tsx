@@ -40,6 +40,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
+		const { showVault } = S.Common;
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -196,6 +197,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		);
 	};
 
+	componentDidUpdate (): void {
+		this.onScroll();
+	};
+
 	onEdit (e: any): void {
 		e.stopPropagation();
 
@@ -210,6 +215,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const { widgets } = S.Block;
 		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
 		const targets = [];
+		const node = $(this.node);
+		const body = node.find('#body');
+		const position = body.outerHeight() + 350 > node.outerHeight() ? I.MenuDirection.Top : I.MenuDirection.Bottom;
 
 		blocks.forEach(block => {
 			const children = S.Block.getChildren(widgets, block.id);
@@ -255,7 +263,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: -4,
-			vertical: I.MenuDirection.Top,
+			vertical: position,
 			onOpen: context => menuContext = context,
 			subIds: J.Menu.widgetAdd,
 			data: {
@@ -289,16 +297,16 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						map(it => ({ ...it, caption: '' }));
 					const lists = [];
 
-					if (types.length) {
-						lists.push([
-							{ name: translate('commonSuggested'), isSection: true }
-						].concat(types));
-					};
-
 					if (fixed.length) {
 						lists.push([
 							{ name: translate('commonSystem'), isSection: true }
 						].concat(fixed));
+					};
+
+					if (types.length) {
+						lists.push([
+							{ name: translate('commonSuggested'), isSection: true }
+						].concat(types));
 					};
 
 					if (items.length) {

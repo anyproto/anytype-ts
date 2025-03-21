@@ -110,6 +110,7 @@ export default {
 		participant:	 'participant',
 		subSpace:		 'subSpace',
 		allObject:		 'allObject',
+		library: 		 'library',
 	},
 
 	typeKey: {

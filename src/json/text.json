@@ -194,6 +194,11 @@
 	"commonSuggested": "Suggested",
 	"commonExistingObjects": "Existing Objects",
 	"commonFileInfo": "File Information",
+	"commonMyTypes": "My Types",
+	"commonMyRelations": "My Properties",
+	"commonSystemTypes": "System Types",
+	"commonSystemRelations": "System Properties",
+	"commonApply": "Apply",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -739,8 +744,6 @@
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
 
-	"blockTypeMyTypes": "My Types",
-
 	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
 	"blockChatMessageExpand": "Expand",
 	"blockChatMessageCollapse": "Collapse",
@@ -783,6 +786,7 @@
 	"popupSettingsPersonalLinkStyle": "Link to object style",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
+	"popupSettingsPersonalWidgetPreview": "Open type widgets in sidebar",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
@@ -1609,6 +1613,7 @@
 	"menuGraphSettingsPreview": "Preview",
 	"menuGraphSettingsCluster": "Cluster by Type",
 	"menuGraphSettingsShowOnGraph": "Show on Graph",
+	"menuGraphSettingsTypes": "Types",
 	"menuGraphSettingsLinks": "Links",
 	"menuGraphSettingsRelations": "Relations",
 	"menuGraphSettingsUnlinkedObjects": "Unlinked Objects",
@@ -1644,12 +1649,10 @@
 	"menuItemFilterTimeFromNow": "%d %s from now",
 
 	"menuRelationSuggestFilterOrCreateRelation": "Filter or create a Property...",
-	"menuRelationSuggestMyRelations": "My Properties",
-	"menuRelationSuggestSystem": "System Properties",
 	"menuRelationSuggestCreateRelation": "Create Property %s",
+	"menuRelationSuggestCreateNew": "Create new Property",
 
 	"menuTypeSuggestFilterTypes": "Filter Types...",
-	"menuTypeSuggestMyTypes": "My Types",
 	"menuTypeSuggestCreateType": "Create Type",
 	"menuTypeSuggestCreateTypeFilter": "Create Type %s",
 
@@ -1756,6 +1759,7 @@
 	"toastInviteCopy": "Invite link has been copied", 
 	"toastInviteGenerate": "Invite link has been created",
 	"toastInviteRevoke": "Invite link has been deleted",
+	"toastImportStart": "Import process has started and may take some time",
 
 	"toastObjectTypeAdded": "Object Type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Property <b>%s</b> has been added to your Library",
@@ -1931,7 +1935,7 @@
 
 	"sidebarTypeTitle": "Editing type",
 	"sidebarTypeTitleLabelName": "Type name and icon",
-	"sidebarTypeTitleLabelPlural": "Database name",
+	"sidebarTypeTitleLabelPlural": "Plural name",
 	"sidebarSectionLayoutName": "Layout",
 	"sidebarSectionLayoutFormat": "Format",
 	"sidebarSectionLayoutFormatPage": "Page",

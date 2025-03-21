@@ -19,11 +19,6 @@
 				.icon.more { position: static; width: 20px; height: 20px; margin: 0px; opacity: 1; }
 				.icon.more:hover { background-color: unset; }
 
-				> .defaultLabel {
-					position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500; z-index: 2;
-					padding: 1px 4px; border-radius: 4px; background: var(--color-shape-tertiary); color: var(--color-text-secondary);
-				}
-
 				.previewObject {
 					.add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
 					.moreWrapper.hover { opacity: 1; }
@@ -38,7 +33,6 @@
 			}
 			.item.hover, .item.active {
 				.previewObject:before { opacity: 1; }
-				> .defaultLabel { opacity: 0; }
 			}
 		}
 
@@ -47,6 +41,7 @@
 			display: flex; align-items: center; justify-content: center;
 		}
     }
+
     .menu.menuDataviewTemplateList.fromBanner { background-color: transparent; box-shadow: none; width: auto; }
     .menu.menuDataviewTemplateList.fromBanner {
 		.content { overflow: auto; padding: 16px; max-height: 500px; }

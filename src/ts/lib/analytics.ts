@@ -16,6 +16,7 @@ class Analytics {
 	stack: any[] = [];
 
 	public route = {
+		app: 'App',
 		block: 'Block',
 		onboarding: 'Onboarding',
 		collection: 'Collection',

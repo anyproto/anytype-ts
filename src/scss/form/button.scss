@@ -22,6 +22,7 @@
 .button.pink:not(.disabled):hover { background: #e5374b; }
 
 .button.black { background: var(--color-control-accent); color: var(--color-bg-primary); }
+.button.black.disabled { opacity: 1; background-color: var(--color-shape-secondary); }
 .button.black:not(.disabled):hover, .button.black:not(.disabled).hover { background: #41403d; }
 .button.black {
 	.arrow { background-image: url('~img/arrow/button/white.svg'); }

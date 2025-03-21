@@ -45,7 +45,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
-
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
 		const isType = U.Object.isTypeLayout(check.layout);
@@ -53,6 +52,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isRelation = U.Object.isRelationLayout(check.layout);
 		const canEditIcon = allowDetails && !isRelation;
 		const cn = [ 'headSimple', check.className ];
+		const canEdit = allowDetails && !isType;
+
+		if (!canEdit) {
+			cn.push('isReadonly');
+		};
 
 		const placeholder = {
 			title: this.props.placeholder,
@@ -65,7 +69,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				ref={ref => this.refEditable[item.id] = ref}
 				id={`editor-${item.id}`}
 				placeholder={placeholder[item.id]}
-				readonly={!allowDetails || isType}
+				readonly={!canEdit}
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
@@ -324,17 +328,20 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	onTemplates () {	
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId);
-		const node = $(this.node);
 
 		S.Menu.open('dataviewTemplateList', {
-			element: node.find('#button-template'),
+			element: '.headSimple #button-template',
 			horizontal: I.MenuDirection.Center,
 			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			data: {
 				withTypeSelect: false,
 				typeId: object.id,
 				previewSize: I.PreviewSize.Small,
-				defaultId: object.defaultTemplateId,
+				templateId: object.defaultTemplateId,
+				onSetDefault: item => {
+					S.Menu.updateData('dataviewTemplateList', { templateId: item.id });
+					U.Object.setDefaultTemplateId(rootId, item.id);
+				},
 				onSelect: item => {
 					if (item.id == J.Constant.templateId.new) {
 						this.onTemplateAdd();

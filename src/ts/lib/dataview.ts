@@ -17,7 +17,7 @@ class Dataview {
 		let relations = [];
 		if (isType) {
 			const typeIds = U.Object.getTypeRelationIds(object.id);
-			relations = J.Relation.default.map(it => S.Record.getRelationByKey(it)).concat(typeIds.map(it => S.Record.getRelationById(it)));
+			relations = [ 'name' ].map(it => S.Record.getRelationByKey(it)).concat(typeIds.map(it => S.Record.getRelationById(it)));
 		} else {
 			relations = S.Record.getDataviewRelations(rootId, blockId);
 		};

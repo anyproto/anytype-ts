@@ -24,7 +24,6 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 		const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 		const type = S.Record.getTypeById(item.type);
 		const isFile = U.Object.isInFileLayouts(item.layout);
-		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(item.layout);
 		const canEdit = U.Object.isTaskLayout(item.layout) && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 
 		if (compact) {
@@ -48,10 +47,6 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 		if (isFile) {
 			cn.push('isFile');
 			description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
-		};
-
-		if (isTypeOrRelation) {
-			description = null;
 		};
 
 		if (!compact) {

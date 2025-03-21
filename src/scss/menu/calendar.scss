@@ -57,6 +57,7 @@
 		.day.active {
 			.bullet { background-color: var(--color-text-inversion); }
 		}
+		.day.weekend { background-color: var(--color-shape-highlight-light); }
 
 		.day.selected::before { 
 			content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border-radius: inherit; background-color: var(--color-shape-highlight-medium); 

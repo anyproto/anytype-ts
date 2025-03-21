@@ -226,6 +226,11 @@ updateForces = () => {
 
 	updateOrphans();
 
+	// Filter types
+	if (settings.filterTypes && settings.filterTypes.length) {
+		nodes = nodes.filter(d => !settings.filterTypes.includes(d.type));
+	};
+
 	// Filter links
 	if (!settings.link) {
 		edges = edges.filter(d => d.isDouble ? intersect(d.types, types) : d.type != EdgeType.Link);
@@ -299,7 +304,7 @@ updateForces = () => {
 };
 
 updateSettings = (param) => {
-	const updateKeys = [ 'link', 'relation', 'orphan', 'local', 'depth', 'cluster' ];
+	const updateKeys = [ 'link', 'relation', 'orphan', 'local', 'depth', 'cluster', 'filterTypes' ];
 	
 	let needUpdate = false;
 	let needFocus = false;

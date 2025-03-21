@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Title, Label, Checkbox, Icon } from 'Component';
+import { Title, Label, Checkbox, Icon, IconObject } from 'Component';
 import { I, S, U, J, Relation, translate } from 'Lib';
 
 const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.Component<I.SidebarPageComponent> {
@@ -32,6 +32,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		const withDescription = featured.map(it => it.relationKey).includes('description');
 		const filtered = featured.filter(it => it.relationKey != 'description');
 		const isTask = U.Object.isTaskLayout(recommendedLayout);
+		const isHuman = U.Object.isInHumanLayouts(recommendedLayout);
 		const isNote = U.Object.isNoteLayout(recommendedLayout);
 		const isList = layoutFormat == I.LayoutFormat.List;
 		const isFile = U.Object.isInFileLayouts(recommendedLayout);
@@ -52,8 +53,11 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		if (!isFile) {
 			if (isTask) {
 				icon = <Checkbox readonly={true} value={false} />;
+			} else
+			if (isHuman) {
+				icon = <IconObject object={{ name, layout: recommendedLayout }} size={96} />;
 			} else {
-				icon = <div key={`sidebar-preview-icon-${layoutFormat}`} className="icon" />;
+				icon = <Icon key={`sidebar-preview-icon-${layoutFormat}`} />;
 			};
 		};
 

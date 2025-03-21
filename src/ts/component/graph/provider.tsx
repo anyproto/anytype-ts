@@ -46,9 +46,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const nodesSelectedByDragToSelect = useRef([]);
 
 	const send = (id: string, param: any, transfer?: any[]) => {
-		if (worker.current) {
-			worker.current.postMessage({ id, ...param }, transfer);
-		};
+		try {
+			if (worker.current) {
+				worker.current.postMessage({ id, ...param }, transfer);
+			};
+		} catch (e) { /**/ };
 	};
 
 	const rebind = () => {
@@ -224,7 +226,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					send('image', { src: d.src, bitmap: res });
 				});
 			};
-			img.crossOrigin = '';
+			img.crossOrigin = 'anonymous';
 			img.src = d.src;
 		};
 
@@ -578,7 +580,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onClickObject = (id: string) => {
 		setSelected([]);
-		U.Object.openAuto(getNode(id));
+		U.Object.openConfig(getNode(id));
 	};
 
 	const addNewNode = (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => {

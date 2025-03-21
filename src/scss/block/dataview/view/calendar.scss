@@ -15,7 +15,8 @@
 					}
 				}
 
-				> .body { overflow: scroll; border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px;  }
+				> .body { overflow: scroll; border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px; }
+				> .body::-webkit-scrollbar { height: 0px; }
 			}
 
 			.day { 
@@ -35,6 +36,7 @@
 					}
 				}
 			}
+			.day.weekend { background-color: var(--color-shape-highlight-light); }
 
 			.day.other {
 				.number { color: var(--color-text-tertiary); }

@@ -88,6 +88,9 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onSwitch = (e: any, item: any, v: boolean) => {
+		e.stopPropagation();
+
+		const items = S.Record.getGroups(rootId, blockId);
 		const current = items.find(it => it.id == item.id);
 
 		current.isHidden = !v;
@@ -122,10 +125,6 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		position();
 	};
 
-	const Handle = () => (
-		<Icon className="dnd" />
-	);
-
 	const Item = (item: any) => {
 		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: !allowedView });
 		const canHide = allowedView;
@@ -134,6 +133,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const cn = [ 'item' ];
 		const head = {};
 		const style = {
+			...item.style,
 			transform: CSS.Transform.toString(transform),
 			transition,
 		};

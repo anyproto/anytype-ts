@@ -201,7 +201,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		const { isPopup } = this.props;
-		const close = !(isPopup && (this.getRootId() == this.id));
+		const close = !isPopup || (this.getRootId() == this.id);
 
 		if (close) {
 			Action.pageClose(this.id, true);

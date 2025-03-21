@@ -50,11 +50,10 @@
     }
 
     .layoutPreview:not(.isTask) {
-        .titleWrapper > .icon { width: 96px; height: 96px; border-radius: 20px; margin-bottom: 20px; background: var(--color-shape-tertiary) url('~img/icon/sidebar/preview/icon.svg') 50% 50% no-repeat; }
-    }
-
-    .layoutPreview.isHuman {
-        .titleWrapper > .icon { border-radius: 50%; }
+        .titleWrapper {
+			> .icon { width: 96px; height: 96px; border-radius: 20px; background: var(--color-shape-tertiary) url('~img/icon/sidebar/preview/icon.svg') 50% 50% no-repeat; }
+			> .icon, > .iconObject { margin: 0px 0px 20px 0px; }
+		}
     }
 
     .layoutPreview.isTask {

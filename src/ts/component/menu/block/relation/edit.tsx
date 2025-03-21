@@ -45,9 +45,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		if (relation) {
 			name = relation.name;
-		} else 
-		if (data.filter) {
-			name = data.filter;
 		};
 
 		if (readonly) {	
@@ -173,7 +170,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		if (relation) {
 			this.format = relation.format;
-			this.objectTypes = relation.objectTypes;
+			this.objectTypes = Relation.getArrayValue(relation.objectTypes);
 			this.forceUpdate();
 		};
 
@@ -293,7 +290,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				relation: observable.box(relation),
 				valueMapper: it => S.Record.getTypeById(it.id),
 				onChange: (value: any, callBack?: () => void) => {
-					this.objectTypes = value;
+					this.objectTypes = Relation.getArrayValue(value);
 					this.forceUpdate();
 
 					if (relation.id) {
@@ -472,12 +469,21 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		});
 	};
 
-	getRelation () {
+	getRelation (): any {
 		const { param } = this.props;
 		const { data } = param;
-		const { relationId } = data;
+		const { relationId, addParam } = data;
 
-		return S.Record.getRelationById(relationId);
+		let ret: any = null;
+
+		if (relationId) {
+			ret = S.Record.getRelationById(relationId);
+		} else 
+		if (addParam) {
+			ret = addParam;
+		};
+
+		return ret;
 	};
 
 	isAllowed () {

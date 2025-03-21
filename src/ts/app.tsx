@@ -403,24 +403,33 @@ class App extends React.Component<object, State> {
 		};
 	};
 
-	onUpdateConfirm (e: any, auto: boolean) {
+	onUpdateConfirm (e: any, auto: boolean, info: any) {
 		S.Progress.delete(I.ProgressType.UpdateCheck);
-		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
 			return;
+		};
+
+		console.log('[App.onUpdateConfirm]', info);
+
+		const title = [ translate('popupConfirmUpdatePromptTitle') ];
+		const version = info?.releaseName;
+
+		if (version) {
+			title.push(version);
 		};
 
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
-				title: translate('popupConfirmUpdatePromptTitle'),
+				title: title.join(' - '),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateConfirm');
+					this.checkUpdateVersion(version);
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
@@ -429,23 +438,33 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	onUpdateAvailable (e: any, auto: boolean) {
+	onUpdateAvailable (e: any, auto: boolean, info: any) {
 		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;
 		};
 
+		console.log('[App.onUpdateAvailable]', info);
+
+		const title = [ translate('popupConfirmUpdatePromptTitle') ];
+		const version = info?.version;
+
+		if (version) {
+			title.push(version);
+		};
+
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
-				title: translate('popupConfirmUpdatePromptTitle'),
+				title: title.join(' - '),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('commonUpdate'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');
+					this.checkUpdateVersion(version);
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
@@ -507,6 +526,18 @@ class App extends React.Component<object, State> {
 			current: progress.transferred, 
 			total: progress.total,
 		});
+	};
+
+	checkUpdateVersion (v: string) {
+		v = String(v || '');
+
+		const update = v.split('.');
+		const current = String(electron.version.app || '').split('.');
+
+		if ((update[0] != current[0]) || (update[1] != current[1])) {
+			Storage.set('whatsNew', true);
+			Storage.setHighlight('whatsNew', true);
+		};
 	};
 
 	onRoute (route: string) {

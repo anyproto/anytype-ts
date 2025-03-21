@@ -957,7 +957,7 @@ class Keyboard {
 
 	getRootId (isPopup?: boolean): string {
 		const match = this.getMatch(isPopup);
-		return match.params?.objectId || match.params?.id;
+		return match.params.objectId || match.params.id;
 	};
 
 	getPopupMatch () {
@@ -966,7 +966,7 @@ class Keyboard {
 	};
 
 	getMatch (isPopup?: boolean) {
-		const popup = undefined == isPopup ? this.isPopup() : isPopup;
+		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 
 		let ret: any = { params: {} };
 		if (popup) {

@@ -839,7 +839,7 @@ class UtilMenu {
 		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
 
 		if (U.Space.canCreateSpace()) {
-			items.push({ id: 'add', name: translate('commonCreateNew'), isButton: true });
+			items.push({ id: 'add', name: translate('commonNewSpace'), isButton: true });
 		};
 
 		if (ids && (ids.length > 0)) {
@@ -1031,6 +1031,23 @@ class UtilMenu {
 		ret = ret.concat(show).concat(appearance).concat(sort);
 
 		return ret.map(it => {
+			it.type = I.SortType.Asc;
+			if (it.id == sortId) {
+				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+				it.sortArrow = sortType;
+			};
+			return it;
+		});
+	};
+
+	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
+		const sort: any[] = [
+			{ name: translate('sidebarObjectSort'), isSection: true },
+			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true, defaultType: I.SortType.Asc },
+			{ id: I.SortId.LastUsed, name: translate('sidebarObjectSortLastUsed'), relationKey: 'lastUsedDate', isSort: true, defaultType: I.SortType.Desc },
+		];
+
+		return sort.map(it => {
 			it.type = I.SortType.Asc;
 			if (it.id == sortId) {
 				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
@@ -1261,7 +1278,7 @@ class UtilMenu {
 					buttons: buttons.map(it => ({ ...it, isButton: true })),
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
-						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
 						const objectFlags: I.ObjectFlag[] = [];

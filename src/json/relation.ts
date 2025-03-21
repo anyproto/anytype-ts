@@ -118,6 +118,7 @@ export default {
 	graph: [
 		'id',
 		'name',
+		'pluralName',
 		'snippet',
 		'description',
 		'iconEmoji',

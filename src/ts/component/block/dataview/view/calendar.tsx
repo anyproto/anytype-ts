@@ -89,9 +89,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 									if (m != item.m) {
 										cn.push('other');
 									};
-									if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
+									if (item.isToday) {
 										cn.push('active');
 										isToday = true;
+									};
+									if (item.isWeekend) {
+										cn.push('weekend');
 									};
 									if (i < 7) {
 										cn.push('first');
@@ -148,8 +151,10 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	getSubId () {
-		const { rootId, block } = this.props;
-		return S.Record.getSubId(rootId, block.id);
+		const { rootId, block, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
+
+		return S.Record.getSubId(rootId, block.id) + namespace;
 	};
 
 	load () {
@@ -316,7 +321,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const day = node.find('.day').first();
 		const menu = S.Menu.get('calendarDay');
 
-		wrap.css({ width: cw, height: Math.max(600, ch - top - 130), marginLeft: -margin - 2 });
+		wrap.css({ width: cw, height: ch - top - 44, marginLeft: -margin - 2 });
 		win.trigger('resize.menuCalendarDay');
 
 		if (menu && !menu.param.data.fromWidget && day.length) {

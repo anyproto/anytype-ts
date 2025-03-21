@@ -148,9 +148,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 		};
 
-		if (object.isInstalled) {
-			pageInstall = { id: 'pageUninstall', icon: 'remove', name: translate('commonDelete') };
-		} else {
+		if (isTypeOrRelationLayout && !object.isInstalled) {
 			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuObjectInstall') };
 		};
 

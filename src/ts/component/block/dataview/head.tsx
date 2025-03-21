@@ -105,7 +105,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { isEditing } = this.state;
 		const element = `#block-head-${block.id}`;
 		const object = S.Detail.get(rootId, targetObjectId);
-		const sourceName = isCollection ? 'collection' : 'set';
+		const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 		const canEdit = !readonly && !object.isDeleted;
 		const canSource = !readonly && !object.isDeleted;
 

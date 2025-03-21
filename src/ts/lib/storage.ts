@@ -374,10 +374,10 @@ class Storage {
 		return (this.get('onboarding') || []).includes(key);
 	};
 
-	getHighlight (key: string) {
+	getHighlight (key: string): boolean {
 		const highlights = this.get('highlights') || {};
 
-		return highlights[key] || false;
+		return Boolean(highlights[key]) || false;
 	};
 
 	setHighlight (key: string, value: boolean) {

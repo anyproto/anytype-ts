@@ -14,7 +14,7 @@
 
 		.inner { 
 			display: flex; border: 1px solid var(--color-shape-secondary); transition: border-color $transitionCommon; 
-			position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
+			position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); text-decoration: none;
 		}
 		.inner::after { 
 			content: ''; position: absolute; left: 0px; top: 0px; border-radius: inherit; width: 100%; height: 100%; 
