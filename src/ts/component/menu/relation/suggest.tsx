@@ -274,8 +274,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		let sections: any[] = [
 			canWrite ? { id: 'create', name: translate('menuRelationSuggestCreateNew'), children: types } : null,
-			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
-			{ id: 'system', name: translate('menuRelationSuggestSystem'), children: system },
+			{ id: 'library', name: translate('commonMyRelations'), children: library },
+			{ id: 'system', name: translate('commonSystemRelations'), children: system },
 		];
 
 		sections = sections.filter((section: any) => {
