@@ -295,7 +295,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
-			{ id: 'library', name: translate('menuTypeSuggestMyTypes'), children: library },
+			{ id: 'library', name: translate('commonMyTypes'), children: library },
 		];
 
 		if (canWrite) {
