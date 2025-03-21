@@ -608,7 +608,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.setState({ isLoading: true });
 		};
 
-		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'links', 'backlinks', '_score' ]), filter, this.offset, limit, (message) => {
+		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_score' ]), filter, this.offset, limit, (message) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
 				return;

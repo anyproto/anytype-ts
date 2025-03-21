@@ -1212,6 +1212,15 @@ class UtilCommon {
 		return ret;
 	};
 
+	iconBgByOption (o: number): string {
+		const { bg, list } = J.Theme.icon;
+
+		o = Number(o) || 0;
+		o = Math.max(0, Math.min(list.length, o));
+
+		return bg[list[o - 1]];
+	};
+
 };
 
 export default new UtilCommon();

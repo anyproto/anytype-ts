@@ -287,13 +287,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	const bgByOption = (option: number) => {
-		const { bg, list } = J.Theme.icon;
-		return bg[list[option - 1]];
-	};
-
 	const spaceSvg = (option: number): string => {
-		const bgColor = bgByOption(option);
+		const bgColor = U.Common.iconBgByOption(option);
 		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
@@ -329,7 +324,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const typeIcon = (id: string, option: number, color?: string) => {
-		const newColor = color || bgByOption(option);
+		const newColor = color || U.Common.iconBgByOption(option);
 		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor });
 	};
 
