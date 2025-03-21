@@ -198,7 +198,6 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedFav)			 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
-		if (allowedUninstall)		 archive = null;
 		if (!allowedWidget)			 createWidget = null;
 		if (!allowedLinkTo)			 linkTo = null;
 		if (!allowedPageLink)		 pageLink = null;

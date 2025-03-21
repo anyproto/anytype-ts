@@ -826,11 +826,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'type', 'targetObjectType', 'layout', 'featuredRelations' ], true);
 		const keys = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
-		const type = S.Detail.get(rootId, short.type, []);
-
-		if (type.isDeleted || type.isArchived) {
-			keys.unshift('type');
-		};
 
 		let ret = [];
 		if (!keys.length) {
