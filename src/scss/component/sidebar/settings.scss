@@ -21,7 +21,7 @@
                 .icon.back { background-image: url('~img/icon/widget/back.svg'); flex-shrink: 0; }
                 .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 
-				.name, .title { @include text-overflow-nw; }
+                .name, .title { @include text-overflow-nw; }
             }
 
 			.ReactVirtualized__List { padding: 0px 8px; }
