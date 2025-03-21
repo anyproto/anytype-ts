@@ -194,6 +194,10 @@
 	"commonSuggested": "Suggested",
 	"commonExistingObjects": "Existing Objects",
 	"commonFileInfo": "File Information",
+	"commonMyTypes": "My Types",
+	"commonMyRelations": "My Properties",
+	"commonSystemTypes": "System Types",
+	"commonSystemRelations": "System Properties",
 	"commonApply": "Apply",
 
 	"pluralDay": "day|days",
@@ -739,8 +743,6 @@
 
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
-
-	"blockTypeMyTypes": "My Types",
 
 	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
 	"blockChatMessageExpand": "Expand",
@@ -1647,13 +1649,10 @@
 	"menuItemFilterTimeFromNow": "%d %s from now",
 
 	"menuRelationSuggestFilterOrCreateRelation": "Filter or create a Property...",
-	"menuRelationSuggestMyRelations": "My Properties",
-	"menuRelationSuggestSystem": "System Properties",
 	"menuRelationSuggestCreateRelation": "Create Property %s",
 	"menuRelationSuggestCreateNew": "Create new Property",
 
 	"menuTypeSuggestFilterTypes": "Filter Types...",
-	"menuTypeSuggestMyTypes": "My Types",
 	"menuTypeSuggestCreateType": "Create Type",
 	"menuTypeSuggestCreateTypeFilter": "Create Type %s",
 
