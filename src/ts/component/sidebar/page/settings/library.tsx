@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { analytics, I, J, keyboard, Relation, S, sidebar, Storage, translate, U } from 'Lib';
+import { analytics, I, J, keyboard, C, S, sidebar, Storage, translate, U } from 'Lib';
 import { Button, Filter, Icon, IconObject, Title } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -186,6 +186,10 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			defaultHeight: i => this.getRowHeight(items[i]),
 			keyMapper: i => (items[i] || {}).id,
 		});
+	};
+
+	componentWillUnmount () {
+		C.ObjectSearchUnsubscribe([ J.Constant.subId.library ]);
 	};
 
 	initSort () {
