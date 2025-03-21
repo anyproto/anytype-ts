@@ -321,7 +321,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const day = node.find('.day').first();
 		const menu = S.Menu.get('calendarDay');
 
-		wrap.css({ width: cw, height: Math.max(600, ch - top - 130), marginLeft: -margin - 2 });
+		wrap.css({ width: cw, height: ch - top - 44, marginLeft: -margin - 2 });
 		win.trigger('resize.menuCalendarDay');
 
 		if (menu && !menu.param.data.fromWidget && day.length) {
