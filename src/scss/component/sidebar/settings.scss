@@ -33,7 +33,7 @@
             }
 
             .section {
-                > .name { @include text-small; color: var(--color-text-secondary); margin: 0px; padding: 0px 8px; }
+                > .name { @include text-small; font-weight: 500; color: var(--color-text-secondary); margin: 0px; padding: 0px 8px; }
             }
 
             .items { display: flex; flex-direction: column; }

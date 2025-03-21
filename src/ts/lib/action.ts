@@ -288,7 +288,7 @@ class Action {
 		});
 
 		U.Common.getElectron().showOpenDialog(options).then(({ filePaths }) => {
-			if ((filePaths == undefined) || !filePaths.length) {
+			if ((typeof filePaths === 'undefined') || !filePaths.length) {
 				return;
 			};
 
@@ -539,6 +539,7 @@ class Action {
 			};
 
 			analytics.event('ClickImportFile', { type });
+			Preview.toastShow({ text: translate('toastImportStart') });
 
 			C.ObjectImport(S.Common.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
 				if (message.error.code) {

@@ -20,6 +20,7 @@ interface Props extends I.WidgetComponent {
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
+	const { openWidgetPreview } = S.Common;
 	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview } = props;
 	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
@@ -73,6 +74,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const recordIds = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).map(it => it.id)
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
 	const favCnt = isFavorite ? recordIds.length : 0;
+	const isType = U.Object.isTypeLayout(object?.layout);
 
 	let layout = block.content.layout;
 	if (object) {
@@ -579,16 +581,24 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			</div>
 		);
 
+		buttons = (
+			<div className="buttons">
+				<div className="iconWrap expand" onClick={onClick}>
+					<Icon className="expand" tooltip={translate('commonOpenObject')} />
+				</div>
+			</div>
+		);
+
 		isDraggable = false;
 	} else {
 		buttons = (
 			<div className="buttons">
-				<div className="iconWrap more">
-					<Icon className="options" tooltip={translate('widgetOptions')} onClick={onOptions} />
+				<div className="iconWrap more" onClick={onOptions}>
+					<Icon className="options" tooltip={translate('widgetOptions')} />
 				</div>
 				{canCreate ? (
-					<div className="iconWrap create">
-						<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={onCreateClick} />
+					<div className="iconWrap create" onClick={onCreateClick}>
+						<Icon className="plus" tooltip={translate('commonCreateNewObject')} />
 					</div>
 				) : ''}
 			</div>
@@ -603,7 +613,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (hasChild) {
 		let icon = null;
-		let onClickHandler = isSystemTarget() ? onSetPreview : onClick;
+		let onClickHandler = isSystemTarget() || (isType && openWidgetPreview) ? onSetPreview : onClick;
 
 		if (targetId == J.Constant.widgetId.bin) {
 			onClickHandler = () => U.Object.openAuto({ layout: I.ObjectLayout.Archive });

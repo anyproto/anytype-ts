@@ -47,9 +47,6 @@
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; } 
 	}
-	.head:hover {
-		.iconWrap.back { background-color: var(--color-shape-highlight-medium); }
-	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 

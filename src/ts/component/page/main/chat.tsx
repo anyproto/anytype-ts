@@ -49,7 +49,7 @@ const PageMainChat = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		const close = !(isPopup && (rootId == id));
+		const close = !isPopup || (rootId == id);
 
 		if (close) {
 			Action.pageClose(id, true);

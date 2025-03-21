@@ -198,6 +198,7 @@
 	"commonMyRelations": "My Properties",
 	"commonSystemTypes": "System Types",
 	"commonSystemRelations": "System Properties",
+	"commonApply": "Apply",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -785,6 +786,7 @@
 	"popupSettingsPersonalLinkStyle": "Link to object style",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
+	"popupSettingsPersonalWidgetPreview": "Open type widgets in sidebar",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
@@ -1648,6 +1650,7 @@
 
 	"menuRelationSuggestFilterOrCreateRelation": "Filter or create a Property...",
 	"menuRelationSuggestCreateRelation": "Create Property %s",
+	"menuRelationSuggestCreateNew": "Create new Property",
 
 	"menuTypeSuggestFilterTypes": "Filter Types...",
 	"menuTypeSuggestCreateType": "Create Type",
@@ -1756,6 +1759,7 @@
 	"toastInviteCopy": "Invite link has been copied", 
 	"toastInviteGenerate": "Invite link has been created",
 	"toastInviteRevoke": "Invite link has been deleted",
+	"toastImportStart": "Import process has started and may take some time",
 
 	"toastObjectTypeAdded": "Object Type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Property <b>%s</b> has been added to your Library",
@@ -1931,7 +1935,7 @@
 
 	"sidebarTypeTitle": "Editing type",
 	"sidebarTypeTitleLabelName": "Type name and icon",
-	"sidebarTypeTitleLabelPlural": "Database name",
+	"sidebarTypeTitleLabelPlural": "Plural name",
 	"sidebarSectionLayoutName": "Layout",
 	"sidebarSectionLayoutFormat": "Format",
 	"sidebarSectionLayoutFormatPage": "Page",

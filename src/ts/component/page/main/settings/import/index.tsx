@@ -44,6 +44,8 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 
 		if (common.includes(item.format)) {
 			Action.import(item.format, J.Constant.fileExtension.import[item.format]);
+
+			U.Space.openDashboard();
 		} else {
 			onPage(U.Common.toCamelCase('import-' + item.id));
 		};

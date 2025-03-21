@@ -472,12 +472,21 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		});
 	};
 
-	getRelation () {
+	getRelation (): any {
 		const { param } = this.props;
 		const { data } = param;
-		const { relationId } = data;
+		const { relationId, addParam } = data;
 
-		return S.Record.getRelationById(relationId);
+		let ret: any = null;
+
+		if (relationId) {
+			ret = S.Record.getRelationById(relationId);
+		} else 
+		if (addParam) {
+			ret = addParam;
+		};
+
+		return ret;
 	};
 
 	isAllowed () {

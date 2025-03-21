@@ -61,6 +61,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getTarget = this.getTarget.bind(this);
 		this.getTypeId = this.getTypeId.bind(this);
 		this.getDefaultTemplateId = this.getDefaultTemplateId.bind(this);
+		this.getSubId = this.getSubId.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -166,6 +167,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getTypeId: this.getTypeId,
 			getTemplateId: this.getDefaultTemplateId,
 			getEmpty: this.getEmpty,
+			getSubId: this.getSubId,
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
@@ -420,6 +422,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			Dataview.getData({
 				rootId, 
+				subId,
 				blockId: block.id, 
 				newViewId: viewId, 
 				keys, 
@@ -503,9 +506,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getSubId (groupId?: string): string {
-		const { rootId, block } = this.props;
+		const { rootId, block, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
 
-		return groupId ? S.Record.getGroupSubId(rootId, block.id, groupId) : S.Record.getSubId(rootId, block.id);
+		let ret = '';
+		if (groupId) {
+			ret = S.Record.getGroupSubId(rootId, block.id, groupId);
+		} else {
+			ret = S.Record.getSubId(rootId, block.id);
+		};
+		return ret + namespace;
 	};
 
 	getRecords (groupId?: string): string[] {
@@ -1220,7 +1230,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getEmpty (type: string) {
-		const { isInline, block } = this.props;
+		const { isInline, block, readonly } = this.props;
 		const isCollection = this.isCollection();
 		const view = this.getView();
 		const cn = [];
@@ -1274,7 +1284,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				{...this.props}
 				{...emptyProps}
 				className={cn.join(' ')}
-				withButton={emptyProps.button ? true : false}
+				withButton={emptyProps.button && !readonly ? true : false}
 			/>
 		);
 	};

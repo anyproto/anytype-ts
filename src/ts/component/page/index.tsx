@@ -208,6 +208,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const Component = Components[path];
 		const routeParam = { replace: true };
 		const refSidebar = sidebar.rightPanelRef(isPopup);
+		const whatsNew = Storage.get('whatsNew');
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
@@ -246,6 +247,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		if (!isPopup) {
 			keyboard.setMatch(match);
+		};
+
+		if (whatsNew && !S.Popup.isOpen()) {
+			S.Popup.open('help', { data: { document: 'whatsNew' } });
+			Storage.set('whatsNew', false);
 		};
 
 		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);

@@ -580,7 +580,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onClickObject = (id: string) => {
 		setSelected([]);
-		U.Object.openAuto(getNode(id));
+		U.Object.openConfig(getNode(id));
 	};
 
 	const addNewNode = (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => {

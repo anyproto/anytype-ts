@@ -24,8 +24,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const { membership } = S.Auth;
 		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant() || profile;
-		const pathname = U.Router.getRoute();
-		const param = U.Router.getParam(pathname);
+		const param = keyboard.getMatch().params;
 		const isSpace = this.props.page == 'settingsSpace';
 		const items = this.getItems();
 

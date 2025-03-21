@@ -161,14 +161,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { param } = this.props;
-		const { data } = param;
-		const { noStore } = data;
-
-		if (noStore) {
-			this.n = 0;
-		};
-
+		this.n = 0;
 		this.rebind();
 		this.resize();
 		this.load(true);
@@ -177,13 +170,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	componentDidUpdate () {
 		const { param } = this.props;
 		const { data } = param;
-		const { noStore } = data;
 		const filter = String(data.filter || '');
 		const items = this.getItems();
 
 		if (filter != this.filter) {
 			this.filter = filter;
-			this.n = noStore ? 0 : 1;
+			this.n = 0;
 			this.offset = 0;
 			this.load(true);
 			return;
@@ -201,10 +193,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-
-		if (S.Menu.isOpen('searchObject', 'store')) {
-			S.Menu.closeAll([ 'searchObject' ]);
-		};
 		window.clearTimeout(this.timeoutFilter);
 	};
 
@@ -264,22 +252,20 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			limit: J.Constant.limit.menuRecords,
 		};
 
-		this.loadRequest(requestParam, () => {
-			this.loadRequest({ ...requestParam, spaceId: J.Constant.storeSpaceId }, (message: any) => {
-				if (!this._isMounted) {
-					return;
-				};
+		this.loadRequest(requestParam, (message: any) => {
+			if (!this._isMounted) {
+				return;
+			};
 
-				if (callBack) {
-					callBack(message);
-				};
+			if (callBack) {
+				callBack(message);
+			};
 
-				if (clear) {
-					this.setState({ isLoading: false });
-				} else {
-					this.forceUpdate();
-				};
-			});
+			if (clear) {
+				this.setState({ isLoading: false });
+			} else {
+				this.forceUpdate();
+			};
 		});
 	};
 
@@ -297,7 +283,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { space } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, noStore } = data;
+		const { filter } = data;
 		const pinned = Storage.getPinnedTypes();
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const buttons = data.buttons || [];
@@ -306,7 +292,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		items.sort((c1, c2) => U.Data.sortByPinnedTypes(c1, c2, pinned));
 
 		const library = items.filter(it => (it.spaceId == space));
-		const librarySources = library.map(it => it.sourceObject);
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
@@ -315,29 +300,10 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		if (canWrite) {
 			if (filter) {
-				const store = items.filter(it => (it.spaceId == J.Constant.storeSpaceId) && !librarySources.includes(it.id));
-
 				sections = sections.concat([
-					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
 					!add ? { children: [ { id: 'add', name: U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) } ] } : null,
 				].filter(it => it));
-			} else {
-				sections = sections.concat([
-					{ 
-						id: 'store', children: [
-							{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
-						]
-					},
-				]);
 			};
-		};
-
-		if (noStore) {
-			sections = sections.map(it => {
-				it.name = '';
-				return it;
-			});
-			sections = sections.filter(it => it.id != 'store');
 		};
 
 		sections = sections.filter((section: any) => {
@@ -382,14 +348,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const buttons = U.Common.objectCopy(data.buttons || []);
+		const buttons = [ ...data.buttons || [] ];
 		const add = buttons.find(it => it.id == 'add');
 
 		if (add) {
 			add.name = filter ? U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
 		};
 
-		return buttons;
+		return buttons.map(it => ({ ...it, isButton: true }));
 	};
 
 	onFilterChange (v: string) {
@@ -404,85 +370,20 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
-			this.onOver(e, item);
 		};
 	};
 
-	onOver (e: any, item: any) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		if (!item.arrow) {
-			S.Menu.closeAll([ 'searchObject' ]);
-			return;
-		};
-
-		const { id, getId, getSize, param } = this.props;
-		const { data, classNameWrap } = param;
-		const sources = this.getLibrarySources();
-		const className = [ param.className ];
-
-		const menuParam: I.MenuParam = {
-			menuKey: item.id,
-			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width,
-			offsetY: 36,
-			classNameWrap,
-			vertical: I.MenuDirection.Top,
-			isSub: true,
-			noFlipY: true,
-			rebind: this.rebind,
-			parentId: id,
-			data: {},
-		};
-
-		let menuId = '';
-
-		switch (item.id) {
-			case 'store': {
-				className.push('single');
-
-				if (param.className) {
-					className.push(param.className);
-				};
-
-				menuId = 'searchObject';
-				menuParam.className = className.join(' ');
-
-				let filters: I.Filter[] = [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
-				];
-				if (data.filters) {
-					filters = filters.concat(data.filters);
-				};
-
-				menuParam.data = Object.assign(menuParam.data, {
-					spaceId: J.Constant.storeSpaceId,
-					keys: U.Data.typeRelationKeys(),
-					filters,
-					sorts: [
-						{ relationKey: 'name', type: I.SortType.Asc },
-					],
-					onSelect: item => this.onClick(e, item),
-					dataMapper: it => S.Detail.mapper(it),
-				});
-				break;
-			};
-		};
-
-		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll([ 'searchObject' ], () => S.Menu.open(menuId, menuParam));
-		};
-	};
-	
 	onClick (e: any, item: any) {
 		const { close, param } = this.props;
 		const { data } = param;
 		const { filter, onClick, noInstall } = data;
 
 		if (item.arrow) {
+			return;
+		};
+
+		if (item.isButton && item.onClick) {
+			item.onClick(e);
 			return;
 		};
 
@@ -546,10 +447,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 	getRowHeight (item: any) {
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
-	};
-
-	getLibrarySources () {
-		return S.Record.getTypes().filter(it => (it.spaceId == S.Common.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {
