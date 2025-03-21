@@ -449,10 +449,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
-	getLibrarySources () {
-		return S.Record.getTypes().filter(it => (it.spaceId == S.Common.space)).map(it => it.sourceObject).filter(it => it);
-	};
-
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;

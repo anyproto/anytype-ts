@@ -264,24 +264,25 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 		const systemKeys = Relation.systemKeys();
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
+		const types = U.Menu.getRelationTypes().filter(it => it.name.match(reg)).map(it => ({ ...it, isType: true }));
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
+			canWrite ? { id: 'create', name: translate('menuRelationSuggestCreateNew'), children: types } : null,
 			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
 			{ id: 'system', name: translate('menuRelationSuggestSystem'), children: system },
 		];
 
-		if (canWrite && filter) {
-			sections = sections.concat([
-				{ children: [ { id: 'add', name: U.Common.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
-			]);
-		};
-
 		sections = sections.filter((section: any) => {
+			if (!section) {
+				return false;
+			};
+
 			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
 		});
@@ -338,7 +339,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { id, close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall, filter } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 		const onAdd = (item: any) => {
 			close();
@@ -350,7 +351,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			U.Object.setLastUsedDate(item.id, U.Date.now());
 		};
 
-		if (item.id == 'add') {
+		if (item.isType) {
 			S.Menu.open(menuIdEdit, { 
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: getSize().width,
@@ -361,6 +362,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				parentId: id,
 				data: {
 					...data,
+					addParam: { format: item.id, name: filter },
 					onChange: () => close(),
 					addCommand: (rootId: string, blockId: string, item: any) => onAdd(item),
 				}
@@ -405,10 +407,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	getRowHeight (item: any) {
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
-	};
-
-	getLibrarySources () {
-		return this.items.filter(it => (it.spaceId == S.Common.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

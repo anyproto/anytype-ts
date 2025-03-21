@@ -1650,6 +1650,7 @@
 	"menuRelationSuggestMyRelations": "My Properties",
 	"menuRelationSuggestSystem": "System Properties",
 	"menuRelationSuggestCreateRelation": "Create Property %s",
+	"menuRelationSuggestCreateNew": "Create new Property",
 
 	"menuTypeSuggestFilterTypes": "Filter Types...",
 	"menuTypeSuggestMyTypes": "My Types",
