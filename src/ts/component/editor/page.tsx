@@ -2100,7 +2100,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			if (param.type == I.BlockType.Dataview) {
-				event.id = param.content.isCollection ? 'Collection' : 'Set';
+				event.id = param.content.isCollection ? 'Collection' : 'Query';
 			};
 
 			analytics.event('CreateBlock', event);
