@@ -125,12 +125,24 @@
     }
 
     > .pageSettingsSpaceIndex {
-        .spaceHeader { position: relative; margin: 0px 0px 24px 0px; display: flex; flex-direction: column; align-items: center; width: 100%; gap: 8px 0px; }
         .spaceHeader {
-            .buttons { position: absolute; right: 0px; top: 0px; display: flex; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
-            .iconObject { margin-bottom: 8px; }
-            .input { @include text-title; text-align: center; height: 42px; border-bottom: 1px solid var(--color-shape-primary); padding-bottom: 6px; }
+            position: relative; margin: 0px 0px 8px 0px; padding: 16px 44px 32px; display: flex; flex-direction: column; align-items: center;
+            border: 1px solid var(--color-shape-secondary); border-radius: 16px; width: 100%; gap: 8px 0px;
+        }
+        .spaceHeader {
+            .spaceType { margin-bottom: 8px; @include text-small; color: var(--color-text-secondary); }
+            .buttons { position: absolute; right: 16px; top: 16px; display: flex; gap: 0px 16px; opacity: 0; transition: opacity $transitionCommon; }
+            .buttons {
+                .button { border: 0px; padding: 0px; height: unset; background: none; }
+                .button.blank { color: var(--color-text-secondary); }
+                .button.black { color: var(--color-text-primary); }
+                .button:hover { background: none; }
+            }
+            .iconObject { margin-bottom: 4px; border: 1px solid var(--color-shape-highlight-medium); }
+            .input { @include text-header1; text-align: center; height: 42px; border-bottom: 1px solid var(--color-shape-primary); padding-bottom: 0px; }
             .input.isReadonly { border-bottom-color: transparent; }
+
+            .spaceDescription { padding: 0px; text-align: center; width: 100%; }
         }
         .spaceHeader:hover,
         .spaceHeader.isEditing {
@@ -146,7 +158,7 @@
             }
         }
 
-        > .buttons { display: flex; gap: 0px 8px; padding-top: 24px; margin-bottom: 36px; }
+        > .buttons { display: flex; gap: 0px 8px; margin-bottom: 36px; }
         > .buttons {
             .btn {
                 height: 86px; flex: 1 0 0px; border: 1px solid var(--color-shape-secondary); border-radius: 16px; transition: $transitionAllCommon;
@@ -449,7 +461,10 @@
 
         .section.sectionMembers { min-height: 236px; }
         .section.sectionMembers {
-            .title { margin-bottom: 8px; }
+            .membersTitle { display: flex; gap: 0px 8px; margin-bottom: 8px; align-items: baseline; }
+            .membersTitle {
+                .label { color: var(--color-text-secondary); @include text-paragraph; }
+            }
 
             .row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px; }
             .row.payment { grid-template-columns: 1fr auto; @include text-small; margin: 0px 0px 14px 0px; }
@@ -606,7 +621,7 @@
             position: relative; display: flex; flex-direction: row; align-items: center; padding: 16px; gap: 0px 12px;
         }
 
-        .item:hover { border-color: var(--color-text-primary); }
+        .item:hover { background: var(--color-shape-highlight-medium); }
 
         .item {
             .icon { width: 40px; height: 40px; background-size: contain; background-position: top center; flex-shrink: 0; }
