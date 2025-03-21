@@ -196,6 +196,7 @@
 	"commonFileInfo": "File Information",
 	"commonMyTypes": "My Types",
 	"commonMyRelations": "My Properties",
+	"commonSystemTypes": "System Types",
 	"commonSystemRelations": "System Properties",
 
 	"pluralDay": "day|days",
@@ -559,8 +560,6 @@
 	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
-
-	"pageSettingsLibrarySystemTypes": "System Types",
 
 	"editorControlIcon0": "Add icon",
 	"editorControlIcon1": "Icon",
@@ -1648,8 +1647,6 @@
 	"menuItemFilterTimeFromNow": "%d %s from now",
 
 	"menuRelationSuggestFilterOrCreateRelation": "Filter or create a Property...",
-	"commonMyRelations": "My Properties",
-	"commonSystemRelations": "System Properties",
 	"menuRelationSuggestCreateRelation": "Create Property %s",
 
 	"menuTypeSuggestFilterTypes": "Filter Types...",

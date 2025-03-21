@@ -8,6 +8,10 @@ interface Props extends React.Component {
 	page: string;
 };
 
+interface State {
+	isLoading: boolean;
+};
+
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
@@ -15,16 +19,19 @@ const HEIGHT_SECTION_FIRST = 34;
 
 const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends React.Component<Props, {}> {
 
+	state = {
+		isLoading: false,
+	};
 	node: any = null;
+	cache: any = {};
 	type: I.ObjectContainerType = I.ObjectContainerType.Type;
 	refFilter = null;
 	filter = '';
 	timeoutFilter = 0;
 	sortId: I.SortId = I.SortId.Updated;
 	sortType: I.SortType = I.SortType.Desc;
-	orphan = false;
-	compact = true;
-	cache: any = {};
+	searchIds: string[] = null;
+	offset = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -33,10 +40,11 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
 	render () {
-		const space = U.Space.getSpaceview();
+		const { isLoading } = this.state;
 		const pathname = U.Router.getRoute();
 		const param = U.Router.getParam(pathname);
 		const items = this.getItems();
@@ -129,32 +137,34 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 							</div>
 						</div>
 
-						<div className="inner">
-							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={() => true}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												width={width}
-												height={height}
-												deferredMeasurmentCache={this.cache}
-												rowCount={items.length}
-												rowHeight={({ index }) => this.getRowHeight(items[index])}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</div>
+						{this.cache && items.length && !isLoading ? (
+							<div className="inner">
+								<InfiniteLoader
+									rowCount={items.length}
+									loadMoreRows={this.loadMoreRows}
+									isRowLoaded={() => true}
+									threshold={LIMIT}
+								>
+									{({ onRowsRendered }) => (
+										<AutoSizer className="scrollArea">
+											{({ width, height }) => (
+												<List
+													width={width}
+													height={height}
+													deferredMeasurmentCache={this.cache}
+													rowCount={items.length}
+													rowHeight={({ index }) => this.getRowHeight(items[index])}
+													rowRenderer={rowRenderer}
+													onRowsRendered={onRowsRendered}
+													overscanRowCount={10}
+													scrollToAlignment="center"
+												/>
+											)}
+										</AutoSizer>
+									)}
+								</InfiniteLoader>
+							</div>
+						) : ''}
 					</div>
 				</div>
 			</div>
@@ -164,8 +174,11 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	componentDidMount () {
 		this.type = this.props.page == 'types' ? I.ObjectContainerType.Type : I.ObjectContainerType.Relation;
 		this.refFilter.focus();
-		this.initStorage();
+		this.initSort();
+		this.load(true);
+	};
 
+	componentDidUpdate () {
 		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
@@ -175,21 +188,12 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		});
 	};
 
-	initStorage () {
-		const storage = this.storageGet();
-
-		this.orphan = storage.orphan || false;
-		this.compact = storage.compact || true;
-
-		this.initSort();
-	};
-
 	initSort () {
 		const storage = this.storageGet();
 		const sort = storage.sort[this.type];
 
 		if (!sort) {
-			const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact).filter(it => it.isSort);
+			const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType).filter(it => it.isSort);
 			if (options.length) {
 				this.sortId = options[0].id;
 				this.sortType = options[0].defaultType;
@@ -203,11 +207,103 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const limit = this.offset + J.Constant.limit.menuRecords;
+		const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType);
+		const option = options.find(it => it.id == this.sortId);
 
+		let sorts: I.Sort[] = [];
+		let filters: I.Filter[] = [];
+
+		if (option) {
+			sorts.push({ relationKey: option.relationKey, type: this.sortType });
+		} else {
+			sorts = sorts.concat([
+				{ type: I.SortType.Desc, relationKey: 'createdDate' },
+				{ type: I.SortType.Asc, relationKey: 'name' },
+			]);
+		};
+
+		if (this.searchIds) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
+		};
+
+		switch (this.type) {
+			case I.ObjectContainerType.Type: {
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type });
+				break;
+			};
+
+			case I.ObjectContainerType.Relation: {
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation });
+				break;
+			};
+		};
+
+		if (clear) {
+			this.setState({ isLoading: true });
+			S.Record.recordsSet(J.Constant.subId.library, '', []);
+		};
+
+		U.Data.searchSubscribe({
+			subId: J.Constant.subId.library,
+			filters,
+			sorts,
+			limit,
+			keys: J.Relation.default.concat([ 'lastModifiedDate', 'sourceObject' ]),
+			noDeps: true,
+			ignoreHidden: true,
+			ignoreDeleted: true,
+		}, (message: any) => {
+			this.setState({ isLoading: false });
+			if (callBack) {
+				callBack(message);
+			};
+		});
+	};
+
+	loadMoreRows ({ startIndex, stopIndex }) {
+		return new Promise((resolve, reject) => {
+			this.offset += J.Constant.limit.menuRecords;
+			this.load(false, resolve);
+		});
+	};
+
+	loadSearchIds (clear: boolean) {
+		if (this.filter) {
+			U.Data.search({
+				filters: [],
+				sorts: [],
+				fullText: this.filter,
+				keys: [ 'id' ],
+			}, (message: any) => {
+				this.searchIds = (message.records || []).map(it => it.id);
+				this.load(clear);
+			});
+		} else {
+			this.searchIds = null;
+			this.load(clear);
+		};
+	};
+
+	getSections () {
+		const isType = this.type == I.ObjectContainerType.Type;
+		const storeSubId = isType ? J.Constant.subId.typeStore : J.Constant.subId.relationStore;
+		const storeIds = S.Record.getRecordIds(storeSubId, '');
+		const records = S.Record.getRecords(J.Constant.subId.library);
+
+		return [
+			{
+				id: 'my', name: translate(`commonMy${isType ? 'Types' : 'Relations'}`),
+				children: records.filter(it => it.isInstalled && !storeIds.includes(it.sourceObject)) },
+			{
+				id: 'system', name: translate(`commonSystem${isType ? 'Types' : 'Relations'}`),
+				children: records.filter(it => storeIds.includes(it.sourceObject))
+			},
+		];
 	};
 
 	getItems () {
-		const sections = this.props.page == 'types' ? this.getTypes() : this.getRelations();
+		const sections = this.getSections();
 
 		let items: any[] = [];
 
@@ -230,40 +326,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		return items;
 	};
 
-	getTypes (): any[] {
-		const data = S.Record.checkHiddenObjects(S.Record.getTypes());
-		const typeStore = S.Record.getRecordIds(J.Constant.subId.typeStore, '')
-			.map(id => S.Detail.get(J.Constant.subId.typeStore, id))
-			.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted)
-			.map(it => it.id);
-
-		const my = data.filter(it => it.isInstalled && !typeStore.includes(it.sourceObject));
-		const system = data.filter(it => U.Object.isInSystemLayouts(it.recommendedLayout) || typeStore.includes(it.sourceObject));
-
-		return [
-			{ id: 'my', name: translate('commonMyTypes'), children: my },
-			{ id: 'system', name: translate('pageSettingsLibrarySystemTypes'), children: system },
-		];
-	};
-
-	getRelations (): any[] {
-		const data = S.Record.checkHiddenObjects(S.Record.getRelations());
-		const systemKeys = Relation.systemKeys();
-		const relationStore= S.Record.getRecordIds(J.Constant.subId.relationStore, '')
-			.map(id => S.Detail.get(J.Constant.subId.relationStore, id))
-			.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted)
-			.map(it => it.id);
-
-		const my = data.filter(it => it.isInstalled && !relationStore.includes(it.sourceObject));
-		const system = data.filter(it => systemKeys.includes(it.relationKey) || relationStore.includes(it.sourceObject));
-
-
-		return [
-			{ id: 'my', name: translate('commonMyRelations'), children: my },
-			{ id: 'system', name: translate('commonSystemRelations'), children: system },
-		];
-	};
-
 	getRowHeight (item: any) {
 		if (item.isSection) {
 			return item.isFirst ? HEIGHT_SECTION_FIRST : HEIGHT_SECTION;
@@ -279,18 +341,22 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			};
 
 			this.filter = v;
+			this.loadSearchIds(true);
 
 		}, J.Constant.delay.keyboard);
 	};
 
 	onFilterClear () {
+		this.searchIds = null;
+		this.load(true);
 
+		analytics.event('SearchInput', { route: analytics.route.allObjects });
 	};
 
 	onMore (e) {
 		e.stopPropagation();
 
-		const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
+		const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType);
 
 		let menuContext = null;
 
@@ -307,29 +373,17 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				onSelect: (e: any, item: any) => {
 					const storage = this.storageGet();
 
-					if ([ I.SortId.All, I.SortId.Orphan ].includes(item.id)) {
-						this.orphan = item.id == I.SortId.Orphan;
-						storage.orphan = this.orphan;
+					this.sortId = item.id;
+					this.sortType = item.type;
 
-						analytics.event('ChangeLibraryTypeLink', { type: item.id == I.SortId.Orphan ? 'Unlinked' : 'All' });
-					} else
-					if ([ I.SortId.List, I.SortId.Compact ].includes(item.id)) {
-						this.compact = item.id == I.SortId.Compact;
-						storage.compact = this.compact;
-					}else {
-						this.sortId = item.id;
-						this.sortType = item.type;
-
-						storage.sort[this.type] = { id: item.id, type: item.type };
-						analytics.event('ChangeLibrarySort', { type: item.id, sort: I.SortType[item.type] });
-					};
+					storage.sort[this.type] = { id: item.id, type: item.type };
+					analytics.event('ChangeLibrarySort', { type: item.id, sort: I.SortType[item.type] });
 
 					this.storageSet(storage);
-					this.initStorage();
+					this.initSort();
+					this.load(true);
 
-					const options = U.Menu.getObjectContainerSortOptions(this.type, this.sortId, this.sortType, this.orphan, this.compact);
-
-					menuContext.ref.updateOptions(options);
+					menuContext.ref.updateOptions(U.Menu.getLibrarySortOptions(this.sortId, this.sortType));
 				},
 			}
 		});
@@ -362,6 +416,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				const recommended = [];
 				const mapper = it => S.Record.getRelationByKey(it)?.id;
 				const details: any = {
+					name: this.filter,
 					isNew: true,
 					type: type.id,
 					layout: I.ObjectLayout.Type,
@@ -385,6 +440,15 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 					className: 'fixed',
 					classNameWrap: 'fromSidebar',
 					horizontal: I.MenuDirection.Right,
+					data: {
+						filter: this.filter,
+						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+							if (relation.id && this.filter && this.searchIds) {
+								this.searchIds = this.searchIds.concat(relation.id);
+								this.load(false);
+							};
+						},
+					},
 				});
 				break;
 			};
@@ -399,10 +463,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 	storageSet (obj: any) {
 		Storage.set('settingsLibrary', obj);
-	};
-
-	getSubId () {
-		return this.props.page == 'types' ? J.Constant.subId.type : J.Constant.subId.relation;
 	};
 
 });

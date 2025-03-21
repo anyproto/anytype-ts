@@ -1040,6 +1040,23 @@ class UtilMenu {
 		});
 	};
 
+	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
+		const sort: any[] = [
+			{ name: translate('sidebarObjectSort'), isSection: true },
+			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true, defaultType: I.SortType.Asc },
+			{ id: I.SortId.LastUsed, name: translate('sidebarObjectSortLastUsed'), relationKey: 'lastUsedDate', isSort: true, defaultType: I.SortType.Desc },
+		];
+
+		return sort.map(it => {
+			it.type = I.SortType.Asc;
+			if (it.id == sortId) {
+				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+				it.sortArrow = sortType;
+			};
+			return it;
+		});
+	};
+
 	dateFormatOptions () {
 		return ([
 			{ id: I.DateFormat.Default },
