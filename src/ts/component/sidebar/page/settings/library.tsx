@@ -234,6 +234,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		switch (this.type) {
 			case I.ObjectContainerType.Type: {
 				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type });
+				filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.type ] });
 				break;
 			};
 
