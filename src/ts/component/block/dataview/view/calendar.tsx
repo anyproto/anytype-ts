@@ -151,8 +151,10 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	getSubId () {
-		const { rootId, block } = this.props;
-		return S.Record.getSubId(rootId, block.id);
+		const { rootId, block, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
+
+		return S.Record.getSubId(rootId, block.id) + namespace;
 	};
 
 	load () {
