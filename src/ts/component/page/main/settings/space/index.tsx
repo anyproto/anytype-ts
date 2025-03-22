@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Tag } from 'Component';
+import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Tag, Editable } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 interface State {
@@ -14,6 +14,7 @@ interface State {
 const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
+	refDescription: any = null;
 
 	state = {
 		error: '',
@@ -81,6 +82,20 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			);
 		};
 
+		const membersIcons = canWrite ? (
+			<div className="membersIcons">
+				{members.map((el, idx) => {
+					if (idx < maxIcons) {
+						return <IconObject key={idx} size={36} object={el} />;
+					};
+					return null;
+				})}
+				{members.length > maxIcons ? (
+					<div className="membersMore">+{members.length - maxIcons}</div>
+				) : ''}
+			</div>
+		) : '';
+
 		return (
 			<>
 				<div className={cnh.join(' ')}>
@@ -90,10 +105,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						</div>
 					) : ''}
 
+					<Label className="spaceType" text={translate(`spaceAccessType${space.spaceAccessType || 0}`)} />
+
 					<IconObject
 						id="spaceIcon"
-						size={128}
-						iconSize={128}
+						size={96}
+						iconSize={96}
 						object={{ ...space, spaceId: S.Common.space }}
 						canEdit={canWrite}
 						menuParam={{ horizontal: I.MenuDirection.Center }}
@@ -106,21 +123,17 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						placeholder={translate('defaultNamePage')}
 						readonly={!canWrite || !isEditing}
 					/>
+
+					<Editable
+						classNameWrap="spaceDescription"
+						ref={ref => this.refDescription = ref}
+						placeholder={'Describe your space'}
+						readonly={!canWrite || !isEditing}
+						onKeyUp={() => this.refDescription?.placeholderCheck()}
+					/>
 				</div>
 
-				{canWrite ? (
-					<div className="membersIcons">
-						{members.map((el, idx) => {
-							if (idx < maxIcons) {
-								return <IconObject key={idx} size={36} object={el} />;
-							};
-							return null;
-						})}
-						{members.length > maxIcons ? (
-							<div className="membersMore">+{members.length - maxIcons}</div>
-						) : ''}
-					</div>
-				) : ''}
+				{/*{membersIcons}*/}
 
 				<div className="buttons">
 					{buttons.map((el, idx) => (
@@ -204,9 +217,14 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	setName () {
-		const space = U.Space.getSpaceview();
+		const { name, description } = U.Space.getSpaceview();
 
-		this.refName.setValue(space.name);
+		this.refName.setValue(name);
+
+		if (description) {
+			this.refDescription.setValue(description);
+			this.refDescription.placeholderCheck();
+		};
 	};
 
 	init () {
@@ -356,7 +374,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onSave () {
-		C.WorkspaceSetInfo(S.Common.space, { name: this.checkName(this.refName.getValue()) });
+		C.WorkspaceSetInfo(S.Common.space, {
+			name: this.checkName(this.refName.getValue()),
+			description: this.refDescription.getHtmlValue()
+		});
 		this.setState({ isEditing: false });
 	};
 

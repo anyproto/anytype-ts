@@ -204,7 +204,10 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 				</div>
 
 				<div id="sectionMembers" className="section sectionMembers">
-					<Title text={translate('commonMembers')} />
+					<div className="membersTitle">
+						<Title text={translate('commonMembers')} />
+						{length > 1 ? <Label text={String(length)} /> : ''}
+					</div>
 
 					{showLimit ? (
 						<div className="row payment">

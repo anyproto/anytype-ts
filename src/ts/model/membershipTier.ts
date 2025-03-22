@@ -4,6 +4,7 @@ const COLORS = [
 	'green',
 	'blue',
 	'red',
+	'ice',
 ];
 
 class MembershipTier implements I.MembershipTier {
