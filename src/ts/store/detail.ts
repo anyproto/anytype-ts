@@ -143,14 +143,13 @@ class DetailStore {
 		};
 
 		if (keys && keys.length) {
-			const list = map.get(id) || [];
-			keys.forEach(k => {
-				const idx = list.findIndex(it => it.relationKey == k);
 
-				if (idx >= 0) {
-					set(list[idx], { value: null, isDeleted: true });
-				};
-			});
+			// Workaround for internalFlags
+			if (U.Common.objectCompare(keys, [ 'internalFlags' ])) {
+				this.update(rootId, { id, details: { internalFlags: [] } }, false);
+			} else {
+				map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
+			};
 		} else {
 			map.set(id, []);
 		};

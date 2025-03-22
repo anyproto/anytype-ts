@@ -276,9 +276,6 @@ class RecordStore {
 
 	getTypeFeaturedRelations (id: string) {
 		const type = this.getTypeById(id);
-
-		console.log(id, console.log(type));
-
 		return (type?.recommendedFeaturedRelations || []).map(it => this.getRelationById(it)).filter(it => it);
 	};
 
