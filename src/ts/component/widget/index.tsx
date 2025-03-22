@@ -533,7 +533,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const childProps = {
 		...props,
 		ref: childRef,
-		key: childKey,
 		parent: block,
 		block: child,
 		canCreate,
@@ -685,7 +684,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	switch (layout) {
 		case I.WidgetLayout.Space: {
 			cn.push('widgetSpace');
-			content = <WidgetSpace {...childProps} />;
+			content = <WidgetSpace key={childKey} {...childProps} />;
 
 			isDraggable = false;
 			break;
@@ -698,7 +697,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		case I.WidgetLayout.Tree: {
 			cn.push('widgetTree');
-			content = <WidgetTree {...childProps} />;
+			content = <WidgetTree key={childKey} {...childProps} />;
 			break;
 		};
 
@@ -706,7 +705,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		case I.WidgetLayout.Compact:
 		case I.WidgetLayout.View: {
 			cn.push('widgetView');
-			content = <WidgetView {...childProps} />;
+			content = <WidgetView key={childKey} {...childProps} />;
 			break;
 		};
 
