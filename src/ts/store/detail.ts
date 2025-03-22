@@ -40,7 +40,8 @@ class DetailStore {
 			return;
 		};
 
-		const map = observable.map(new Map());
+		//const map = observable.map(new Map());
+		const map = new Map();
 
 		for (const item of items) {
 			const list: Detail[] = [];
@@ -72,7 +73,8 @@ class DetailStore {
 		let createList = false;
 
 		if (!map) {
-			map = observable.map(new Map());
+			//map = observable.map(new Map());
+			map = new Map();
 			createMap = true;
 		};
 
@@ -91,8 +93,6 @@ class DetailStore {
 				list.push(this.createListItem(k, item.details[k]));
 				continue;
 			};
-
-			//console.log('[S.Detail].update: ', k, item.details[k]);
 
 			const el = list.find(it => it.relationKey == k);
 			if (el) {
@@ -138,13 +138,7 @@ class DetailStore {
 		};
 
 		if (keys && keys.length) {
-
-			// Workaround for internalFlags
-			if (U.Common.objectCompare(keys, [ 'internalFlags' ])) {
-				this.update(rootId, { id, details: { internalFlags: [] } }, false);
-			} else {
-				map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
-			};
+			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
 		} else {
 			map.set(id, []);
 		};
