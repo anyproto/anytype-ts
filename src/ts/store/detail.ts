@@ -4,6 +4,7 @@ import { I, S, U, J, Relation, translate } from 'Lib';
 interface Detail {
 	relationKey: string;
 	value: unknown;
+	isDeleted: boolean;
 };
 
 interface Item {
@@ -24,9 +25,13 @@ class DetailStore {
 	};
 
 	private createListItem (k: string, v: any): Detail {
-		const el = { relationKey: k, value: v };
+		const el = { relationKey: k, value: v, isDeleted: false };
 
-		makeObservable(el, { value: observable });
+		makeObservable(el, { 
+			value: observable, 
+			isDeleted: observable,
+		});
+
 		intercept(el as any, (change: any) => {
 			return (change.newValue === el[change.name] ? null : change); 
 		});
@@ -96,7 +101,7 @@ class DetailStore {
 
 			const el = list.find(it => it.relationKey == k);
 			if (el) {
-				set(el, 'value', item.details[k]);
+				set(el, { value: item.details[k], isDeleted: false });
 			} else {
 				list.push(this.createListItem(k, item.details[k]));
 			};
@@ -138,7 +143,14 @@ class DetailStore {
 		};
 
 		if (keys && keys.length) {
-			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
+			const list = map.get(id) || [];
+			keys.forEach(k => {
+				const idx = list.findIndex(it => it.relationKey == k);
+
+				if (idx >= 0) {
+					set(list[idx], { value: null, isDeleted: true });
+				};
+			});
 		} else {
 			map.set(id, []);
 		};
@@ -153,6 +165,8 @@ class DetailStore {
 		
 		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? J.Relation.default : []) ] : []);
 		const object = { id };
+
+		list = list.filter(it => !it.isDeleted);
 
 		if (withKeys) {
 			if (keys.has('name')) {
