@@ -156,6 +156,8 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 						className="tiersList"
 						spaceBetween={16}
 						slidesPerView={3}
+						pagination={{ clickable: true }}
+						modules={[ Pagination ]}
 						onSwiper={this.onSwiper}
 					>
 
