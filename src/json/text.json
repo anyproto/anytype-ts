@@ -889,7 +889,7 @@
 	"popupSettingsImportMarkdownTitle": "Markdown Import",
 
 	"popupSettingsExportTitle": "Export Space",
-	"popupSettingsExportText": "Choose application or format of data source",
+	"popupSettingsExportText": "Choose the format for your data export",
 	"popupSettingsExportOk": "Export data",
 
 	"popupSettingsExportMarkdownTitle": "Export Space to Markdown",
