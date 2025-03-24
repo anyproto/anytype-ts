@@ -61,7 +61,7 @@
 		.title { margin-bottom: 9px; }
 		.label {
 			dl { display: flex; justify-content: space-between; }
-			dt { width: 120px; flex-shrink: 0; text-align: left; }
+			dt { flex-shrink: 0; text-align: left; }
 			dd { text-align: right; color: var(--color-text-secondary); }
 		}
 	}

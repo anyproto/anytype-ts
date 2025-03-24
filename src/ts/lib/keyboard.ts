@@ -737,6 +737,7 @@ class Keyboard {
 					[ translate('libKeyboardAccountId'), account.id ],
 					[ translate('libKeyboardAnalyticsId'), account.info.analyticsId ],
 					[ translate('libKeyboardDeviceId'), account.info.deviceId ],
+					[ translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress ],
 				]);
 			};
 
