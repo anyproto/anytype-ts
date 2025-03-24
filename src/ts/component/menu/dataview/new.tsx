@@ -9,8 +9,8 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { param, setActive, setHover, onKeyDown, getId, getSize, position } = props;
 	const { data } = param;
 	const { 
-		rootId, subId, blockId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect, isCollection, withTypeSelect, 
-		isAllowedObject,
+		subId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect, isCollection, withTypeSelect, 
+		isAllowedObject, targetId,
 	} = data;
 	const n = useRef(-1);
 	const [ template, setTemplate ] = useState(null);
@@ -88,8 +88,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			data: {
-				rootId,
-				blockId,
 				hasSources,
 				getView,
 				typeId,
@@ -109,9 +107,9 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: (el: any) => {
-						Action.addToCollection(rootId, [ el.id ]);
+						Action.addToCollection(targetId, [ el.id ]);
 					},
-					skipIds: [ ...S.Record.getRecordIds(subId, ''), rootId ],
+					skipIds: [ ...S.Record.getRecordIds(subId, ''), targetId ],
 				});
 				break;
 			};

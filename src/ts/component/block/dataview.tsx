@@ -834,9 +834,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.refControls?.toggleHoverArea(false);
 			},
 			data: {
-				rootId,
 				blockId: block.id,
 				subId: this.getSubId(),
+				targetId: this.getObjectId(),
 				hasSources,
 				getView: this.getView,
 				withTypeSelect: this.isAllowedDefaultType(),
