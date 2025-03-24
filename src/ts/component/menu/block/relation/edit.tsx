@@ -428,7 +428,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	add (item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, addCommand, onChange, ref } = data;
+		const { rootId, blockId, addCommand, onChange, ref, route } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		C.ObjectCreateRelation(item, S.Common.space, (message: any) => {
@@ -446,7 +446,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			};
 
 			Preview.toastShow({ text: U.Common.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
-			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type, route: route || '' });
 		});
 	};
 

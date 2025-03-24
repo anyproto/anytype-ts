@@ -71,6 +71,7 @@ class Analytics {
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
 
+		settingsSpace: 'SettingsSpace',
 		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
 		settingsMembership: 'ScreenSettingsMembership',

@@ -206,6 +206,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	componentDidMount (): void {
 		this.setName();
 		this.init();
+
+		analytics.event('ScreenSettingsSpaceIndex');
 	};
 
 	componentDidUpdate (): void {
@@ -309,6 +311,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			};
 			case 'qr': {
 				S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
+				analytics.event('ScreenQr', { route: analytics.route.settingsSpace });
 				break;
 			};
 			case 'more': {
@@ -371,6 +374,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				},
 			}
 		});
+
+		analytics.event('ScreenSpaceInfo');
 	};
 
 	onSave () {

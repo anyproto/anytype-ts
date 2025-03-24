@@ -90,6 +90,10 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 		);
 	};
 
+	componentDidMount () {
+		analytics.event('ScreenSettingsSpaceStorageManager');
+	};
+
 	onUpgrade () {
 		const { membership } = S.Auth;
 
