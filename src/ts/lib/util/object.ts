@@ -265,7 +265,7 @@ class UtilObject {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'lastUsedDate', value: timestamp } ], callBack);
 	};
 
-	name (object: any) {
+	name (object: any, withPlural?: boolean): string {
 		const { layout, snippet } = object;
 
 		let name = '';
@@ -274,11 +274,14 @@ class UtilObject {
 		} else 
 		if (this.isInFileLayouts(layout)) {
 			name = U.File.name(object);
+		} else
+		if (withPlural && this.isTypeLayout(layout)) {
+			name = object.pluralName;
 		} else {
-			name = object.name || translate('defaultNamePage');
+			name = object.name;
 		};
 
-		return name;
+		return name || translate('defaultNamePage');
 	};
 
 	getById (id: string, param: Partial<I.SearchSubscribeParam>, callBack: (object: any) => void) {

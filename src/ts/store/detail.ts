@@ -266,14 +266,10 @@ class DetailStore {
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;
-		object.pluralName = Relation.getStringValue(object.pluralName);
+		object.pluralName = Relation.getStringValue(object.pluralName) || object.name;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');
-		};
-
-		if (!object.pluralName) {
-			object.pluralName = object.name;
 		};
 
 		return object;

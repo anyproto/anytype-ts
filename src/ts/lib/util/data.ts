@@ -1007,7 +1007,7 @@ class UtilData {
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, [])));
+		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, []), true));
 	};
 
 	setWindowTitleText (name: string) {

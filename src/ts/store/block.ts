@@ -547,6 +547,9 @@ class BlockStore {
 				} else
 				if (U.Object.isInFileLayouts(object.layout)) {
 					name = U.File.name(object);
+				} else
+				if (U.Object.isTypeLayout(object.layout)) {
+					name = object.pluralName;
 				} else {
 					name = object.name;
 				};
