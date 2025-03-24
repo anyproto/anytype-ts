@@ -10,6 +10,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data } = param;
 	const { rootId } = data;
 	const { isOnline } = S.Common;
+	const { membership } = S.Auth;
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
@@ -137,6 +138,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		analytics.event('ShowShareObjectHelp', { objectType: object.type });
 	};
 
+	const onUpgrade = () => {
+		U.Router.go('/main/settings/membership', {});
+	};
+
 	const setSlugHander = v => setSlug(U.Common.slug(v));
 
 	let buttons = [];
@@ -204,6 +209,13 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="value">
 						<Switch ref={joinRef} value={true} onChange={(e, v) => onJoinSwitch(v)} />
 					</div>
+				</div>
+			) : ''}
+
+			{(membership.isNone || membership.isExplorer) ? (
+				<div className="incentiveBanner">
+					<Label text={translate('menuPublishBecomeMemberText')} />
+					<Button text={translate('menuPublishUpgrade')} onClick={onUpgrade} />
 				</div>
 			) : ''}
 
