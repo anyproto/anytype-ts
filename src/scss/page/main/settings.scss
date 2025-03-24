@@ -739,7 +739,7 @@
             span { text-decoration: underline; }
         }
 
-        .swiper { overflow: visible; flex-shrink: 0; }
+        .swiper { flex-shrink: 0; }
 
         .swiper.featuresList { margin: 0px 0px 8px 0px; }
         .swiper.featuresList {
@@ -791,11 +791,18 @@
         }
 
         .swiper.tiersList {
-            .swiper-wrapper { align-items: stretch; }
+            .swiper-wrapper { align-items: stretch; margin-bottom: 12px; }
             .swiper-slide { width: 208px; height: unset; }
+
+            .swiper-pagination { display: flex; height: 8px; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
+            .swiper-pagination {
+                .swiper-pagination-bullet { width: 6px; height: 6px; border-radius: 4px; background-color: var(--color-control-inactive); }
+                .swiper-pagination-bullet:hover { background-color: var(--color-control-active); }
+                .swiper-pagination-bullet.swiper-pagination-bullet-active { width: 40px; background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
+            }
         }
 
-        .tiers { padding-top: 22px; margin-bottom: 48px; }
+        .tiers { padding-top: 22px; margin-bottom: 44px; }
         .tiers {
             .tier { height: 100%; position: relative; display: flex; flex-direction: column; justify-content: space-between; text-align: left; border-radius: 16px; padding: 16px 16px 20px; }
             .tier {
