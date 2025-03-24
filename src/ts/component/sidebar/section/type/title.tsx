@@ -104,7 +104,9 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
 	onChange () {
-		this.props.onChange({ [this.getRelationKey()]: this.refName?.getTextValue() });
+		const value = this.refName?.getTextValue().trim();
+
+		this.props.onChange({ [this.getRelationKey()]: value });
 	};
 
 	onKeyDown (e: any) {
