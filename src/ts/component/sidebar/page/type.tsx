@@ -228,8 +228,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		} else {
 			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, true, (message) => {
 				if (!message.error.code) {
+					const route = details.data && details.data.route ? details.data.route : '';
+
 					U.Object.openRoute(message.details);
 					S.Common.getRef('sidebarLeft')?.refChild?.refFilter?.setValue('');
+
+					analytics.event('CreateObject', { objectType: '_objectType', route });
 				};
 			});
 

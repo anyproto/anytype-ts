@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
-import { I, C, S, U, translate, Preview, Action, analytics, sidebar, } from 'Lib';
+import { I, C, S, U, translate, Preview, Action, analytics, sidebar, keyboard, } from 'Lib';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 
 interface State {
@@ -259,6 +259,8 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 		this.init();
 		this.forceUpdate();
+
+		analytics.event('ScreenSettingsSpaceShare');
 	};
 
 	componentDidUpdate() {
