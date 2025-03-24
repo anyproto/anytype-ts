@@ -256,10 +256,6 @@
 		}
 		.dataviewControls::after { display: none !important; }
 
-		.dataviewControls.small {
-			.side.right { visibility: hidden; }
-		}
-
 		.dataviewSelection {
 			.side.left { @include text-paragraph; }
 		}
