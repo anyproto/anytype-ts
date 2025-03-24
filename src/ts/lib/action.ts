@@ -66,6 +66,7 @@ class Action {
 		S.Record.recordsClear(subId, '');
 		S.Record.recordsClear(`${subId}/dep`, '');
 		S.Record.viewsClear(rootId, blockId);
+		S.Record.groupsClear(rootId, blockId);
 
 		S.Detail.clear(subId);
 
