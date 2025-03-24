@@ -41,6 +41,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+		this.getAnalyticsSuffix = this.getAnalyticsSuffix.bind(this);
 	};
 
 	render () {
@@ -406,6 +407,8 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		};
 
 		U.Object.openAuto(param);
+
+		analytics.event(`Screen${this.getAnalyticsSuffix()}`, { route: 'SettingsSpace' });
 	};
 
 	onAdd (e) {
@@ -428,6 +431,9 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 					recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
 					recommendedRelations: recommended.map(mapper).filter(it => it),
 					defaultTypeId: String(S.Record.getPageType()?.id || ''),
+					data: {
+						route: analytics.route.settingsSpace,
+					}
 				};
 
 				sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });
@@ -453,11 +459,15 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 								this.load(false);
 							};
 						},
+						route: analytics.route.settingsSpace,
 					},
 				});
 				break;
 			};
 		};
+
+
+		analytics.event(`ScreenCreate${this.getAnalyticsSuffix()}`, { route: 'SettingsSpace' });
 	};
 
 	storageGet () {
@@ -468,6 +478,10 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 	storageSet (obj: any) {
 		Storage.set('settingsLibrary', obj);
+	};
+
+	getAnalyticsSuffix () {
+		return this.type == I.ObjectContainerType.Type ? 'Type' : 'Relation';
 	};
 
 });
