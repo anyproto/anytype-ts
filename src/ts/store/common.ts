@@ -46,7 +46,6 @@ class CommonStore {
 	public hideSidebarValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
-	public openWidgetPreviewValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -234,10 +233,6 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
-	};
-
-	get openWidgetPreview (): boolean {
-		return this.boolGet('openWidgetPreview');
 	};
 
 	get theme (): string {
@@ -454,10 +449,6 @@ class CommonStore {
 
 	showVaultSet (v: boolean) {
 		this.boolSet('showVault', v);
-	};
-
-	openWidgetPreviewSet (v: boolean) {
-		this.boolSet('openWidgetPreview', v);
 	};
 
 	themeSet (v: string) {

@@ -7,7 +7,7 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 
 	render () {
 		const { getId } = this.props;
-		const { config, linkStyle, fullscreenObject, hideSidebar, showVault, openWidgetPreview } = S.Common;
+		const { config, linkStyle, fullscreenObject, hideSidebar, showVault } = S.Common;
 		const { hideTray, showMenuBar } = config;
 		const { theme } = S.Common;
 
@@ -96,19 +96,6 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 							<Icon className="arrow black" />
 						</div>
 					</div>
-
-					{config.experimental ? (
-						<div className="item">
-							<Label text={translate('popupSettingsPersonalWidgetPreview')} />
-							<Switch
-								className="big"
-								value={openWidgetPreview}
-								onChange={(e: any, v: boolean) => {
-									S.Common.openWidgetPreviewSet(v);
-								}}
-							/>
-						</div>
-					) : ''}
 
 					<div className="item">
 						<Label text={translate('electronMenuShowTray')} />
