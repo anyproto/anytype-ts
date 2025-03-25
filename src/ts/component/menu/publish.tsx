@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Input, Label, Switch, Button, Icon, Error, Loader } from 'Component';
-import { C, U, I, S, Action, translate, analytics, Preview, sidebar } from 'Lib';
+import { C, U, I, S, J, Action, translate, analytics, Preview, sidebar } from 'Lib';
 import $ from 'jquery';
 
 const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -65,7 +65,14 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			publishRef.current?.setLoading(false);
 
 			if (message.error.code) {
-				setError(message.error.description);
+				if (message.error.code == J.Error.Code.Publish.PAGE_SIZE_EXCEEDED) {
+					const { membership } = S.Auth;
+					const limit = membership.isNone || membership.isExplorer ? 10 : 100;
+
+					setError(U.Common.sprintf(translate('errorPublishingCreate103'), limit));
+				} else {
+					setError(message.error.description);
+				}
 				return;
 			};
 
