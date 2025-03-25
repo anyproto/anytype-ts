@@ -660,11 +660,11 @@ class UtilObject {
 			};
 
 			S.Detail.update(J.Constant.subId.type, { id: typeId, details: { [key]: value } }, false);
-			C.BlockDataviewRelationSet(typeId, J.Constant.blockId.dataview, [ 'name' ].concat(U.Object.getTypeRelationKeys(typeId)));
-
-			if (onChange) {
-				onChange(message);
-			};
+			C.BlockDataviewRelationSet(typeId, J.Constant.blockId.dataview, [ 'name' ].concat(U.Object.getTypeRelationKeys(typeId)), (message: any) => {
+				if (onChange) {
+					onChange(message);
+				};
+			});
 		});
 	};
 
