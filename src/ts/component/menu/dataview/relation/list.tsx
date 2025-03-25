@@ -262,12 +262,15 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 						const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).concat(relation.id));
 
 						C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
-							if (!message.error.code) {
-								S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
-
-								const list = Dataview.viewGetRelations(rootId, blockId, view);
-								Dataview.viewRelationAdd(rootId, blockId, relation.relationKey, list.length, view);
+							if (message.error.code) {
+								return;
 							};
+
+							S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
+							C.BlockDataviewRelationSet(rootId, J.Constant.blockId.dataview, U.Object.getTypeRelationKeys(rootId));
+
+							const list = Dataview.viewGetRelations(rootId, blockId, view);
+							Dataview.viewRelationAdd(rootId, blockId, relation.relationKey, list.length, view);
 						});
 					} else {
 						Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), cb);
@@ -299,18 +302,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		let unlinkCommand = null;
 		if (isType) {
 			unlinkCommand = (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-				const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).filter(it => it != relation.id));
-
-				C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
-					if (!message.error.code) {
-						S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
-						C.BlockDataviewViewRelationRemove(rootId, blockId, view.id, [ relation.relationKey ]);
-
-						if (onChange) {
-							onChange(message);
-						};
-					};
-				});
+				U.Object.typeRelationUnlink(object.id, relation.id, onChange);
 			};
 		};
 		

@@ -600,6 +600,10 @@ class UtilObject {
 		analytics.event('ResetToTypeDefault');
 	};
 
+	getTypeRelationListsKeys () {
+		return [ 'recommendedRelations', 'recommendedFeaturedRelations', 'recommendedHiddenRelations', 'recommendedFileRelations' ];
+	};
+
 	getTypeRelationIds (id: string) {
 		const type = S.Record.getTypeById(id);
 		if (!type) {
@@ -612,11 +616,56 @@ class UtilObject {
 			concat(Relation.getArrayValue(type.recommendedFileRelations));
 	};
 
+	findInTypeRelations (typeId: string, relationId: string): string {
+		const type = S.Record.getTypeById(typeId);
+		if (!type) {
+			return '';
+		};
+
+		const keys = this.getTypeRelationListsKeys();
+
+		let ret = '';
+		for (const key of keys) {
+			const list = Relation.getArrayValue(type[key]);
+			if (list.includes(relationId)) {
+				ret = key;
+				break;
+			};
+		};
+		return ret;
+	};
+
 	getTypeRelationKeys (id: string) {
 		return this.getTypeRelationIds(id).
-			map(it => S.Record.getRelationById(it)).
-			filter(it => it && it.relationKey).
-			map(it => it.relationKey);
+			map(it => S.Record.getRelationById(it)?.relationKey).
+			filter(it => it);
+	};
+
+	typeRelationUnlink (typeId: string, relationId: string, onChange?: (message: any) => void) {
+		const key = this.findInTypeRelations(typeId, relationId);
+		if (!key) {
+			return;
+		};
+
+		const type = S.Record.getTypeById(typeId);
+		if (!type) {
+			return;
+		};
+
+		const value = U.Common.arrayUnique(Relation.getArrayValue(type[key]).filter(it => it != relationId));
+
+		C.ObjectListSetDetails([ typeId ], [ { key: key, value } ], (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			S.Detail.update(J.Constant.subId.type, { id: typeId, details: { [key]: value } }, false);
+			C.BlockDataviewRelationSet(typeId, J.Constant.blockId.dataview, U.Object.getTypeRelationKeys(typeId));
+
+			if (onChange) {
+				onChange(message);
+			};
+		});
 	};
 
 	copyLink (object: any, space: any, type: string, route: string) {

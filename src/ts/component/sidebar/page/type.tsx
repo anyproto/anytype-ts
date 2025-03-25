@@ -217,7 +217,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			};
 
 			if (update.length) {
-				C.ObjectListSetDetails([ rootId ], update);
+				C.ObjectListSetDetails([ rootId ], update, () => {
+					C.BlockDataviewRelationSet(rootId, J.Constant.blockId.dataview, U.Object.getTypeRelationKeys(rootId));
+				});
 
 				if (previous && previous.page) {
 					sidebar.rightPanelSetState(isPopup, previous);
