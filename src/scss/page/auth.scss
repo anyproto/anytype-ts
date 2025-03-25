@@ -148,7 +148,7 @@ html.bodyAuth {
 
 		.frame.init { padding: 67px 64px; }
 		.frame.init {
-			.iconBg { background: radial-gradient(50% 50% at 50% 50%, rgba(80, 101, 195, 0.40) 25%, rgba(80, 101, 195, 0.00) 100%); }
+			.iconBg { background: radial-gradient(50% 50% at 50% 50%, rgba(143, 157, 239, 0.10) 0%, rgba(143, 157, 239, 0.00) 100%); }
 			.icon { background-image: url('~img/icon/migration/init.png'); }
 
 			.title { @include text-header1; }
@@ -195,7 +195,7 @@ html.bodyAuth {
 		}
 
 		.frame.error {
-			.iconBg { background: radial-gradient(50% 50% at 50% 50%, #2D1D18 25%, rgba(45, 29, 24, 0.00) 100%); }
+			.iconBg { background: radial-gradient(50% 50% at 50% 50%, rgba(255, 157, 125, 0.10) 0%, rgba(255, 157, 125, 0.00) 100%); }
 			.icon { background-image: url('~img/icon/migration/error.svg'); }
 			.label { margin-bottom: 12px; }
 		}
