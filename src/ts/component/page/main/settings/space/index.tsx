@@ -401,11 +401,13 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	getButtons () {
+		const { cid, key } = this.state;
+
 		return [
 			{ id: 'invite', name: translate('pageSettingsSpaceIndexInvitePeople'), icon: 'invite' },
-			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
+			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
 			{ id: 'more', name: translate('commonMore'), icon: 'more' },
-		];
+		].filter(it => it);
 	};
 
 });
