@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, PreviewObject } from 'Component';
+import { Icon, PreviewObject, EmptySearch } from 'Component';
 import { I, C, S, U, J, translate, keyboard, sidebar } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -70,11 +70,13 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 		return (
 			<div ref={node => this.node = node}>
-				<div className="items">
-					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
-				</div>
+				{items.length ? (
+					<div className="items">
+						{items.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</div>
+				) : <EmptySearch className="noItems" text={translate('blockDataviewNoTemplates')} />}
 			</div>
 		);
 	};
