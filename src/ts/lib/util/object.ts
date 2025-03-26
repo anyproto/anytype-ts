@@ -1,4 +1,4 @@
-import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation } from 'Lib';
+import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 
 class UtilObject {
 
@@ -709,6 +709,28 @@ class UtilObject {
 		} else {
 			cb(link);
 		};
+	};
+
+	createType (details: any, isPopup: boolean) {
+		details = details || {};
+
+		const type = S.Record.getTypeType();
+		const featured = [ 'type', 'tag', 'backlinks' ];
+		const mapper = it => S.Record.getRelationByKey(it)?.id;
+		const newDetails: any = {
+			isNew: true,
+			type: type.id,
+			layout: I.ObjectLayout.Type,
+			recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
+			defaultTypeId: String(S.Record.getPageType()?.id) || '',
+			data: {
+				route: analytics.route.settingsSpace,
+			},
+			...details,
+		};
+
+		sidebar.rightPanelToggle(true, true, isPopup, 'type', { details: newDetails });
+
 	};
 
 };

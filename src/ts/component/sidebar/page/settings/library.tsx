@@ -421,24 +421,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 		switch (this.type) {
 			case I.ObjectContainerType.Type: {
-				const type = S.Record.getTypeType();
-				const featured = [ 'type', 'tag', 'backlinks' ];
-				const recommended = [];
-				const mapper = it => S.Record.getRelationByKey(it)?.id;
-				const details: any = {
-					name: this.filter,
-					isNew: true,
-					type: type.id,
-					layout: I.ObjectLayout.Type,
-					recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
-					recommendedRelations: recommended.map(mapper).filter(it => it),
-					defaultTypeId: String(S.Record.getPageType()?.id || ''),
-					data: {
-						route: analytics.route.settingsSpace,
-					}
-				};
-
-				sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });
+				U.Object.createType({ name: this.filter }, isPopup);
 				break;
 			};
 
