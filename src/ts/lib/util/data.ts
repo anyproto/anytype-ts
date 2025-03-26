@@ -387,7 +387,7 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				ignoreArchived: true,
+				ignoreArchived: false,
 				onSubscribe: () => {
 					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
