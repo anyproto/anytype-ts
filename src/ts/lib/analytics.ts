@@ -55,6 +55,7 @@ class Analytics {
 		share: 'Share',
 		navigation: 'Navigation',
 		object: 'Object',
+		library: 'Library',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',
