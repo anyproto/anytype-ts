@@ -199,6 +199,7 @@
 	"commonSystemTypes": "System Types",
 	"commonSystemRelations": "System Properties",
 	"commonApply": "Apply",
+	"commonDescription": "Description",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",

@@ -49,9 +49,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
 		const isType = U.Object.isTypeLayout(check.layout);
 		const isDate = U.Object.isDateLayout(object.layout);
-		const canEditIcon = allowDetails && !isTypeOrRelation;
+		const isRelation = U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
-		const canEdit = allowDetails && !isType;
+		const canEdit = allowDetails;
+		const canEditIcon = allowDetails && !isRelation;
 
 		if (!canEdit) {
 			cn.push('isReadonly');
@@ -59,7 +60,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		const placeholder = {
 			title: this.props.placeholder,
-			description: translate('placeholderBlockDescription'),
+			description: translate('commonDescription'),
 		};
 		const buttons = [];
 
@@ -87,11 +88,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let descr = null;
 		let featured = null;
 
-		if (!isTypeOrRelation && !isDate) {
-			if (featuredRelations.includes('description')) {
-				descr = <Editor className="descr" id="description" />;
-			};
+		if (isType || featuredRelations.includes('description')) {
+			descr = <Editor className="descr" id="description" />;
+		};
 
+		if (!isDate && !isTypeOrRelation) {
 			featured = (
 				<Block 
 					{...this.props} 
@@ -188,7 +189,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								size={32} 
 								iconSize={32}
 								object={object} 
-								canEdit={canEditIcon} 
+								canEdit={canEditIcon}
 							/>
 						) : ''}
 						<Editor className="title" id="title" />
