@@ -298,7 +298,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				text = U.Date.dateWithFormat(dateFormat, object.timestamp);
 			};
 
-			if (item.blockId == J.Constant.blockId.title && U.Object.isTypeLayout(object.layout)) {
+			if ((item.blockId == J.Constant.blockId.title) && U.Object.isTypeLayout(object.layout)) {
 				text = object.pluralName;
 			};
 

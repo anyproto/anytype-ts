@@ -600,6 +600,8 @@ class UtilData {
 			layoutWidth: this.getLayoutWidth(rootId),
 		};
 
+		console.log(object);
+
 		if (undefined !== object.layoutAlign) {
 			ret.layoutAlign = object.layoutAlign;
 		};

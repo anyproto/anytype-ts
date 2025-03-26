@@ -45,8 +45,7 @@ class DetailStore {
 			return;
 		};
 
-		//const map = observable.map(new Map());
-		const map = new Map();
+		const map = observable.map(new Map());
 
 		for (const item of items) {
 			const list: Detail[] = [];
@@ -78,8 +77,7 @@ class DetailStore {
 		let createList = false;
 
 		if (!map) {
-			//map = observable.map(new Map());
-			map = new Map();
+			map = observable.map(new Map());
 			createMap = true;
 		};
 
@@ -266,7 +264,7 @@ class DetailStore {
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;
-		object.pluralName = Relation.getStringValue(object.pluralName) || object.name;
+		object.pluralName = Relation.getStringValue(object.pluralName);
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');
