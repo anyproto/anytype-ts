@@ -778,7 +778,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'confirm',
-				bgColor: 'red',
 				title: translate('popupConfirmChatDeleteMessageTitle'),
 				text: translate('popupConfirmChatDeleteMessageText'),
 				textConfirm: translate('commonDelete'),
@@ -1088,7 +1087,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'warningInverted',
-					bgColor: 'red',
 					title: translate('popupConfirmSpeedLimitTitle'),
 					text: translate('popupConfirmSpeedLimitText'),
 					textConfirm: translate('commonOkay'),
