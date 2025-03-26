@@ -8,7 +8,8 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	const { dataPath } = S.Common;
 	const accountId = Storage.get('accountId');
 	const [ screen, setScreen ] = useState('init');
-	const [ errorCode, setErrorCode ] = useState('');
+	const [ errorTitle, setErrorTitle ] = useState('');
+	const [ errorText, setErrorText ] = useState('');
 	const types = [ I.ProgressType.Migrate ];
 	const list = S.Progress.getList(it => types.includes(it.type));
 	const progress = list.length ? list[0] : null;
@@ -24,8 +25,15 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		setScreen('migration');
 
 		C.AccountMigrate(accountId, dataPath, (message: any) => {
+			if (message.requiredSpace) {
+				setErrorTitle(translate('pageAuthMigrateErrorNotEnoughSpaceTitle'));
+				setErrorText(U.Common.sprintf(translate('pageAuthMigrateErrorNotEnoughSpaceText'), U.File.size(message.requiredSpace)));
+				setScreen('error');
+				return;
+			};
 			if (message.error.code) {
-				setErrorCode(message.error.description);
+				setErrorTitle(translate('commonError'));
+				setErrorText(message.error.description);
 				setScreen('error');
 				return;
 			};
@@ -37,7 +45,7 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	const onCancel = () => {
 		C.AccountMigrateCancel(accountId, (message: any) => {
 			if (message.error.code) {
-				setErrorCode(message.error.code);
+				setErrorText(message.error.description);
 			};
 		});
 	};
@@ -109,8 +117,8 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 					<div className="iconBg">
 						<Icon />
 					</div>
-					<Title text={translate('pageAuthMigrateErrorTitle')} />
-					<Label text={translate('pageAuthMigrateErrorText')} />
+					<Title text={errorTitle} />
+					<Label text={errorText} />
 					<Button text={translate('pageAuthMigrateTryAgain')} className="c36" color="none" onClick={onMigrate} />
 				</>
 			);
