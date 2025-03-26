@@ -51,10 +51,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
-		const canEdit = allowDetails;
 		const canEditIcon = allowDetails && !isRelation;
 
-		if (!canEdit) {
+		if (!allowDetails) {
 			cn.push('isReadonly');
 		};
 
@@ -69,7 +68,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				ref={ref => this.refEditable[item.id] = ref}
 				id={`editor-${item.id}`}
 				placeholder={placeholder[item.id]}
-				readonly={!canEdit}
+				readonly={item.readonly}
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
@@ -89,7 +88,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let featured = null;
 
 		if (isType || featuredRelations.includes('description')) {
-			descr = <Editor className="descr" id="description" />;
+			descr = <Editor className="descr" id="description" readonly={!allowDetails} />;
 		};
 
 		if (!isDate && !isTypeOrRelation) {
@@ -192,7 +191,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								canEdit={canEditIcon}
 							/>
 						) : ''}
-						<Editor className="title" id="title" />
+						<Editor className="title" id="title" readonly={isType || !allowDetails} />
 					</div>
 
 					{descr}
