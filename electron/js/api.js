@@ -247,7 +247,7 @@ class Api {
 
 	moveNetworkConfig (win, src) {
 		if (path.extname(src) != 'yml') {
-			Util.log('error', '[Api].moveNetworkConfig, Invalid file: ' + src);
+			Util.log('error', '[Api].moveNetworkConfig, Invalid file: ' + src + ' ' + path.extname(src));
 
 			return { error: 'Invalid file' };
 		};
