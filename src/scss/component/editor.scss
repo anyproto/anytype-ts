@@ -162,6 +162,23 @@
 	.editorControls { display: none; }
 }
 
+.editorWrapper.align1.withIcon,
+.editorWrapper.align1.withIconAndCover, {
+	.controlButtons { bottom: auto !important; top: 0px; left: 50% !important; transform: translateX(-50%); }
+}
+
+.editorWrapper.align1.withIcon {
+	.controlButtons { bottom: auto !important; top: 0px; }
+}
+.editorWrapper.align1.withIconAndCover, {
+	.controlButtons { bottom: auto !important; top: 184px; }
+}
+
+.editorWrapper.align2.withIcon,
+.editorWrapper.align2.withIconAndCover, {
+	.controlButtons { left: auto !important; right: 114px; }
+}
+
 /* Human */ 
 
 .editorWrapper.isHuman,
@@ -185,20 +202,45 @@
 .editorWrapper.isHuman.align1,
 .editorWrapper.isParticipant.align1 
 { 
-	.controlButtons { left: 0px !important; text-align: center; }
+	.controlButtons { left: 50% !important; text-align: center; transform: translateX(-50%); }
 }
 
-.editorWrapper.align2, 
+.editorWrapper.align2,
 .editorWrapper.isHuman.align2,
 .editorWrapper.isParticipant.align2
+{
+	.controlButtons { left: auto !important; right: 0px; }
+}
+
+.editorWrapper.withIcon.align2,
+.editorWrapper.isHuman.withIcon.align2,
+.editorWrapper.isParticipant.withIcon.align2
 { 
-	.controlButtons { left: 0px !important; }
+	.controlButtons { left: auto !important; right: 144px; }
 }
 
 /* Note */ 
 
 .editorWrapper.isNote {
 	.editorControls { height: 70px; margin-bottom: 8px; }
+}
+
+/* Task */
+
+.editorWrapper.isTask,
+.editorWrapper.isTask.withCover,
+.editorWrapper.isTask {
+	.controlButtons { bottom: 16px !important; top: auto !important; }
+
+	&.align0 {
+		.controlButtons { left: 0px !important; }
+	}
+	&.align1 {
+		.controlButtons { left: 50% !important; transform: translateX(-50%); }
+	}
+	&.align2 {
+		.controlButtons { left: auto !important; right: 0px; }
+	}
 }
 
 /* Chat */
