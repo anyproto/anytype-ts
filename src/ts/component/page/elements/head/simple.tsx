@@ -299,7 +299,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 
 			if ((item.blockId == J.Constant.blockId.title) && U.Object.isTypeLayout(object.layout)) {
-				text = object.pluralName;
+				text = object.pluralName || object.name;
 			};
 
 			if ([ translate('defaultNamePage'), Dataview.namePlaceholder(object.layout) ].includes(text)) {

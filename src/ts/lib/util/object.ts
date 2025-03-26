@@ -276,7 +276,7 @@ class UtilObject {
 			name = U.File.name(object);
 		} else
 		if (withPlural && this.isTypeLayout(layout)) {
-			name = object.pluralName;
+			name = object.pluralName || object.name;
 		} else {
 			name = object.name;
 		};
