@@ -533,8 +533,8 @@
 
 	"pageAuthMigrateTitle": "Update is in progress...",
 	"pageAuthMigrateText": "This may take some time. Please don’t close the app until the process is complete.",
-	"pageAuthMigrateErrorTitle": "Not enough space",
-	"pageAuthMigrateErrorText": "Please clear some space and run the process again.",
+	"pageAuthMigrateErrorNotEnoughSpaceTitle": "Not enough space",
+	"pageAuthMigrateErrorNotEnoughSpaceText": "Please clear approximately %s of space and run the process again.",
 	"pageAuthMigrateTryAgain": "Try again",
 
 	"pageHeadControlButtonsChangeCover": "Change cover",
