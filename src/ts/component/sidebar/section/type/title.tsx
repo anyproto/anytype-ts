@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Editable, Label } from 'Component';
-import { analytics, I, keyboard, translate } from 'Lib';
+import { J, analytics, I, keyboard, translate } from 'Lib';
 
 const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends React.Component<I.SidebarSectionComponent> {
 	
 	refName = null;
+	timeout = 0;
 
 	constructor (props: I.SidebarSectionComponent) {
 		super(props);
@@ -74,14 +75,15 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		this.setValue();
 	};
 
-	getRelationKey (): string {
-		const { id, object } = this.props;
+	componentWillUnmount(): void {
+		window.clearTimeout(this.timeout);	
+	};
 
-		switch (id) {
+	getRelationKey (): string {
+		switch (this.props.id) {
 			case 'title': return 'name';
 			case 'plural': return 'pluralName';
 		};
-
 		return '';
 	};
 
