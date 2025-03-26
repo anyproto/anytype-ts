@@ -74,6 +74,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 					id={`item-${item.id}`}
 					className={[ 'item', item.id == param?.objectId ? 'active' : '' ].join(' ')}
 					onClick={() => this.onClick(item)}
+					onContextMenu={() => this.onContext(item)}
 				>
 					<IconObject object={item} />
 
@@ -397,7 +398,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		});
 	};
 
-	onClick (item) {
+	onClick (item: any) {
 		const param = {
 			layout: I.ObjectLayout.Settings,
 			id: U.Object.actionByLayout(item.layout),
@@ -411,6 +412,21 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		U.Object.openAuto(param);
 
 		analytics.event(`Screen${this.getAnalyticsSuffix()}`, { route: 'SettingsSpace' });
+	};
+
+	onContext (item: any) {
+		const { x, y } = keyboard.mouse.page;
+
+		S.Menu.open('objectContext', {
+			element: `#sidebarLeft #containerObject #item-${item.id}`,
+			rect: { width: 0, height: 0, x: x + 4, y },
+			data: {
+				objectIds: [ item.id ],
+				subId: J.Constant.subId.library,
+				route: analytics.route.library,
+				allowedLinkTo: true,
+			}
+		});
 	};
 
 	onAdd (e) {
