@@ -684,6 +684,7 @@
 	"blockDataviewBoardColumnSettings": "Column settings",
 	"blockDataviewSelectTemplate": "Choose a template",
 	"blockDataviewNewTemplate": "New Template",
+	"blockDataviewNoTemplates": "No templates",
 
 	"blockCoverDrag": "Drag image to reposition",
 	"blockCoverSave": "Save changes",
