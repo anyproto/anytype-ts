@@ -14,7 +14,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
-	const joinRef = useRef(null);
+	const spaceInfoRef = useRef(null);
 	const space = U.Space.getSpaceview();
 	const object = S.Detail.get(rootId, rootId, []);
 	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
@@ -61,7 +61,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		publishRef.current?.setLoading(true);
 
-		C.PublishingCreate(S.Common.space, rootId, slug, joinRef.current?.getValue(), (message: any) => {
+		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), (message: any) => {
 			publishRef.current?.setLoading(false);
 
 			if (message.error.code) {
@@ -105,8 +105,8 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		analytics.event('ClickShareObjectUnpublish', { objectType: object.type });
 	};
 
-	const onJoinSwitch = (v: boolean) => {
-		analytics.event('JoinSpaceButtonToPublish', { objectType: object.type, type: v });
+	const onSpaceInfoSwitch = (v: boolean) => {
+		analytics.event('SpaceInfoToPublish', { objectType: object.type, type: v });
 	};
 
 	const loadStatus = () => {
@@ -212,9 +212,9 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			{space.isShared ? (
 				<div className="flex">
-					<Label text={translate('menuPublishLabelJoin')} />
+					<Label text={translate('menuPublishLabelSpaceInfo')} />
 					<div className="value">
-						<Switch ref={joinRef} value={true} onChange={(e, v) => onJoinSwitch(v)} />
+						<Switch ref={spaceInfoRef} value={true} onChange={(e, v) => onSpaceInfoSwitch(v)} />
 					</div>
 				</div>
 			) : ''}

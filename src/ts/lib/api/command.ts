@@ -2310,13 +2310,13 @@ export const RelationListWithValue = (spaceId: string, value: any, callBack?: (m
 
 // ---------------------- PUBLISHING ---------------------- //
 
-export const PublishingCreate = (spaceId: string, objectId: string, uri: string, joinSpace: boolean, callBack?: (message: any) => void) => {
+export const PublishingCreate = (spaceId: string, objectId: string, uri: string, includeSpaceInfo: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Publishing.Create.Request();
 
 	request.setObjectid(objectId);
 	request.setSpaceid(spaceId);
 	request.setUri(uri);
-	request.setJoinspace(joinSpace);
+	request.setIncludespaceinfo(includeSpaceInfo);
 
 	dispatcher.request(PublishingCreate.name, request, callBack);
 };
