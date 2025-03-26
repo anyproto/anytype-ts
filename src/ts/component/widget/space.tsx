@@ -17,7 +17,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const alt = keyboard.altSymbol();
 	const buttons = [
 		space.chatId || U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
-		space.isShared ? { id: 'member', name: translate('commonMembers') } : null,
+		space.isShared ? { id: 'member', name: participants.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') } : null,
 		{ id: 'all', name: translate('commonAllContent') },
 	].filter(it => it);
 

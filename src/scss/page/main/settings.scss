@@ -461,8 +461,9 @@
 
         .section.sectionMembers { min-height: 236px; }
         .section.sectionMembers {
-            .membersTitle { display: flex; gap: 0px 8px; margin-bottom: 8px; align-items: baseline; }
+            .membersTitle { display: flex; gap: 0px 8px; margin-bottom: 8px; align-items: baseline; padding: 7px 0px; }
             .membersTitle {
+                .title { margin-bottom: 0px; }
                 .label { color: var(--color-text-secondary); @include text-paragraph; }
             }
 
