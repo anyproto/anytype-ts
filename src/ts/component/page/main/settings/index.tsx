@@ -34,6 +34,7 @@ import PageSpaceList from './space/list';
 
 import PageMainSet from '../set';
 import PageMainRelation from '../relation';
+import PageMainArchive from '../archive';
 
 import PageMembership from './membership';
 
@@ -74,16 +75,17 @@ const Components: any = {
 
 	set:				 PageMainSet,
 	relation:			 PageMainRelation,
+	archive: 			 PageMainArchive,
 };
 
 const SPACE_PAGES = [
 	'spaceIndex', 'spaceStorageManager', 'spaceShare',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
-	'set', 'relation',
+	'set', 'relation', 'archive',
 ];
 
-const SKIP_CONTAINER = [ 'set', 'relation' ];
+const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
 
 const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
 

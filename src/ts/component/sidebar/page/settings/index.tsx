@@ -13,6 +13,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
 const HEIGHT_SECTION_FIRST = 34;
 const HEIGHT_ACCOUNT = 56;
+const HEIGHT_DIV = 12;
 
 const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.Component<Props, {}> {
 
@@ -45,6 +46,9 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const Item = (item: any) => {
 			if (item.isSection) {
 				return <ItemSection {...item} />;
+			};
+			if (item.isDiv) {
+				return <div />
 			};
 
 			const cn = [ 'item' ];
@@ -214,6 +218,10 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 					{ id: 'relations', name: U.Common.plural(10, translate('pluralProperty')) },
 				],
 			},
+			{ id: 'service', isDiv: true, children: [
+					{ id: 'archive', icon: 'bin', name: translate('commonBin') }
+				],
+			},
 		];
 	};
 
@@ -255,6 +263,8 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				};
 
 				items.push(item);
+			} else if (section.isDiv) {
+				items.push({ isDiv: true });
 			};
 
 			let children = section.children ? section.children : [];
@@ -266,6 +276,9 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	getRowHeight (item: any) {
+		if (item.isDiv) {
+			return HEIGHT_DIV;
+		};
 		if (item.isSection) {
 			return item.isFirst ? HEIGHT_SECTION_FIRST : HEIGHT_SECTION;
 		};
