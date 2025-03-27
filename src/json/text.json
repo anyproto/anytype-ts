@@ -1220,6 +1220,9 @@
 	"popupShortcutImport": "Import Shortcuts Mapping",
 	"popupShortcutExport": "Export Shortcuts Mapping",
 	"popupShortcutReset": "Reset All To Default",
+	"popupShortcutPress": "Press...",
+	"popupShortcutReassign": "Re-assign Shortcut",
+	"popupShortcutRemove": "Reset Shortcut",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutInterface": "Interface",

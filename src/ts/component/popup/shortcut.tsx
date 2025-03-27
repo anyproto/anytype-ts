@@ -23,6 +23,39 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		setEditingId(item.id);
 	};
 
+	const onContext = (item: any) => {
+		const list = Storage.getShortcuts();
+		const options = [
+			{ id: 'edit', name: translate('popupShortcutReassign') },
+		];
+
+		if (list[item.id]) {
+			options.push({ id: 'remove', name: translate('popupShortcutRemove') });
+		};
+
+		S.Menu.open('select', {
+			element: `#${getId()} #item-${item.id}`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				options,
+				onSelect: (e: any, el: any) => {
+					switch (el.id) {
+						case 'edit': {
+							setEditingId(item.id);
+							break;
+						};
+
+						case 'remove': {
+							Storage.removeShortcuts(item.id);
+							setDummy(dummy + 1);
+							break;
+						};
+					};
+				},
+			},
+		});
+	};
+
 	const onMenu = () => {
 		const options = [
 			{ id: 'export', name: translate('popupShortcutExport') },
@@ -112,11 +145,13 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let symbols = item.symbols || [];
 		let onClickHandler = () => {};
+		let onContextHandler = () => {};
+		let buttons = null;
 
 		if (canEdit) {
 			cn.push('canEdit');
 
-			if (editingId == item.id) {
+			if (editingId && (editingId == item.id)) {
 				cn.push('isEditing');
 				symbols = keyboard.getSymbolsFromKeys(editingKeys);
 			};
@@ -126,18 +161,36 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			onClickHandler = () => onClick(item);
+			onContextHandler = () => onContext(item);
+		};
+
+		if (editingId && (editingId == item.id) && !symbols.length) {
+			buttons = <Label className="text" text={translate('popupShortcutPress')} />;
+		} else
+		if (symbols.length) {
+			buttons = (
+				<div className="symbols">
+					{symbols.map((item: any, i: number) => <Symbol key={i} text={item} />)}
+				</div>
+			);
+		} else 
+		if (canEdit) {
+			buttons = <Label className="text grey" text={translate('commonAdd')} />;
+		} else 
+		if (item.text) {
+			buttons = <Label className="text" text={item.text} />;
 		};
 
 		return (
-			<div className={cn.join(' ')} onClick={onClickHandler}>
+			<div 
+				id={`item-${item.id}`}
+				className={cn.join(' ')} 
+				onClick={onClickHandler}
+				onContextMenu={onContextHandler}
+			>
 				<div className="flex">
 					<div className="name">{item.name}</div>
-					{symbols.length ? (
-						<div className="symbols">
-							{symbols.map((item: any, i: number) => <Symbol key={i} text={item} />)}
-						</div>
-					) : ''}
-					{item.text ? <Label className="text" text={item.text} /> : ''}
+					{buttons}
 				</div>
 				{error.current[item.id] ? <Error text={error.current[item.id]} /> : ''}
 			</div>
@@ -161,6 +214,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			const isEqual = U.Common.objectCompare(item.keys, pressed);
 			if (isEqual) {
 				error.current[id] = U.Common.sprintf(item.id ? translate('popupShortcutResetKey') : translate('popupShortcutConflict'), item.name);
+
 				if (item.id) {
 					Storage.updateShortcuts(item.id, []);
 				};
