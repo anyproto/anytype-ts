@@ -14,8 +14,9 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 		this.onSetUp = this.onSetUp.bind(this);
 		this.getObject = this.getObject.bind(this);
-		this.onConflict = this.onConflict.bind(this);
+		this.onLocal = this.onLocal.bind(this);
 		this.onToggle = this.onToggle.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 	};
 
     render () {
@@ -24,6 +25,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const sections = this.getSections();
 		const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const type = S.Record.getTypeById(object.type);
+		const allowObjectDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const allowTypeDetails = S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
 
         return (
@@ -58,27 +60,49 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 							lcn.push('sectionToggle');
 						};
 
+						let button = null;
+						if ((id == 'local') && allowObjectDetails && !readonly) {
+							button = (
+								<Icon 
+									className="plus withBackground" 
+									tooltip={translate('commonAddRelation')}
+									onClick={this.onAdd}
+								/>
+							);
+						};
+
 						return (
 							<div id={`relationGroup-${id}`} className="group" key={id}>
 								{name ? (
 									<div className="titleWrap">
-										<Label text={name} onClick={onToggle} className={lcn.join(' ')} />
+										<div className="side left">
+											<Label text={name} onClick={onToggle} className={lcn.join(' ')} />
+											{description ? (
+												<Icon
+													className="question withBackground"
+													tooltipClassName="relationGroupDescription"
+													tooltip={description}
+													tooltipX={I.MenuDirection.Right}
+													tooltipY={I.MenuDirection.Center}
+													tooltipOffsetX={-8}
+													tooltipDelay={0}
+												/>
+											) : ''}
+										</div>
 
-										{description ? (
-											<Icon
-												className="question withBackground"
-												tooltipClassName="relationGroupDescription"
-												tooltip={description}
-												tooltipX={I.MenuDirection.Right}
-												tooltipY={I.MenuDirection.Center}
-												tooltipOffsetX={-8}
-												tooltipDelay={0}
-											/>
-										) : ''}
+										<div className="side right">
+											{button}
+										</div>
 									</div>
 								) : ''}
 
 								<div className={[ 'list', (withToggle ? 'withToggle' : '') ].join(' ')}>
+									{!section.children.length ? (
+										<div className="item empty">
+											{translate('sidebarObjectRelationEmpty')}
+										</div>
+									) : ''}
+
 									{section.children.map((item, i) => (
 										<Section
 											{...this.props}
@@ -116,18 +140,18 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const object = this.getObject();
 		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type) || {};
-		const conflicts = S.Record
+		const local = S.Record
 			.getConflictRelations(rootId, rootId, type.id)
 			.sort(U.Data.sortByName)
-			.map((it) => ({ ...it, onMore: this.onConflict }));
-		const conflictingKeys = conflicts.map(it => it.relationKey);
+			.map((it) => ({ ...it, onMore: this.onLocal }));
+		const localKeys = local.map(it => it.relationKey);
 		const recommendedIds = Relation.getArrayValue(type.recommendedRelations);
 		const hiddenIds = Relation.getArrayValue(type.recommendedHiddenRelations);
 
 		let items = recommendedIds.map(it => S.Record.getRelationById(it));
 		items = items.filter(it => it && it.relationKey && !it.isArchived);
 		items = S.Record.checkHiddenObjects(items);
-		items = items.filter(it => !conflictingKeys.includes(it.relationKey));
+		items = items.filter(it => !localKeys.includes(it.relationKey));
 
 		let hidden = hiddenIds.map(it => S.Record.getRelationById(it));
 		hidden = S.Record.checkHiddenObjects(hidden);
@@ -135,11 +159,11 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 		const sections = [
 			{ id: 'object', children: items },
-			{ id: 'hidden', name: translate('commonShowMore'), children: hidden, withToggle: true },
-			{ id: 'conflicts', name: translate('sidebarRelationLocal'), children: conflicts, description: translate('sidebarTypeRelationLocalDescription') }
+			{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), children: hidden, withToggle: true },
+			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription') }
 		];
 
-		return sections.filter(it => it.children.length);
+		return sections;
 	};
 
 	getRelations () {
@@ -168,7 +192,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		dragProvider?.onDragStart(e, I.DropType.Relation, [ item.id ], this);
 	};
 
-	onConflict (e: React.MouseEvent, item: any) {
+	onLocal (e: React.MouseEvent, item: any) {
 		const { x, y } = keyboard.mouse.page;
 		const object = this.getObject();
 		const isTemplate = U.Object.isTemplate(object.type);
@@ -180,7 +204,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 			classNameWrap: 'fromSidebar',
 			data: {
 				options: [
-					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType'), icon: '' },
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
 					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'red' },
 				],
 				onSelect: (e, option) => {
@@ -204,6 +228,32 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		});
 	};
 
+	onAdd (e: any) {
+		const object = this.getObject();
+		const sections = this.getSections();
+		const keys = sections.reduce((acc, it) => {
+			const keys = it.children.map((it) => it.relationKey);
+			return acc.concat(keys);
+		}, []);
+
+		S.Menu.open('relationSuggest', { 
+			element: $(e.currentTarget),
+			horizontal: I.MenuDirection.Center,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			data: {
+				filter: '',
+				rootId: object.id,
+				ref: 'type',
+				menuIdEdit: 'blockRelationEdit',
+				skipKeys: keys,
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
+				},
+			}
+		});
+	};
+
 	onToggle (id: string) {
 		const obj = $(`#sidebarRight #relationGroup-${id}`);
 		const toggle = obj.find('.sectionToggle');
@@ -211,7 +261,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const isOpen = list.hasClass('isOpen');
 
 		U.Common.toggle(list, 200);
-		toggle.text(isOpen ? translate('commonShowMore') : translate('commonShowLess'));
+		toggle.toggleClass('isOpen', !isOpen);
 
 		analytics.event('ScreenObjectRelationToggle', { type: isOpen ? 'Collapse' : 'Extend' });
 	};

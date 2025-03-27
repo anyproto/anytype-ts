@@ -123,6 +123,7 @@
 	"commonRedo": "Redo",
 	"commonBlank": "Blank",
 	"commonSetDefault": "Set as default",
+	"commonUnsetDefault": "Unset as default",
 	"commonTemplate": "Template",
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
@@ -199,6 +200,7 @@
 	"commonSystemTypes": "System Types",
 	"commonSystemRelations": "System Properties",
 	"commonApply": "Apply",
+	"commonDescription": "Description",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -533,8 +535,8 @@
 
 	"pageAuthMigrateTitle": "Update is in progress...",
 	"pageAuthMigrateText": "This may take some time. Please don’t close the app until the process is complete.",
-	"pageAuthMigrateErrorTitle": "Not enough space",
-	"pageAuthMigrateErrorText": "Please clear some space and run the process again.",
+	"pageAuthMigrateErrorNotEnoughSpaceTitle": "Not enough space",
+	"pageAuthMigrateErrorNotEnoughSpaceText": "Please clear approximately %s of space and run the process again.",
 	"pageAuthMigrateTryAgain": "Try again",
 
 	"pageHeadControlButtonsChangeCover": "Change cover",
@@ -552,11 +554,12 @@
 
 	"pageSettingsSpaceGeneral": "General",
 	"pageSettingsSpaceRemoteStorage": "Remote Storage",
+	"pageSettingsSpaceCleanupSpaceFiles": "Clean up space files",
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
 	"pageSettingsSpaceIndexEditInfo": "Edit info",
-	"pageSettingsSpaceIndexInvitePeople": "Invite People",
+	"pageSettingsSpaceIndexInviteMembers": "Invite Members",
 	"pageSettingsSpaceIndexQRCode": "QR code",
 	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
 
@@ -684,6 +687,7 @@
 	"blockDataviewBoardColumnSettings": "Column settings",
 	"blockDataviewSelectTemplate": "Choose a template",
 	"blockDataviewNewTemplate": "New Template",
+	"blockDataviewNoTemplates": "No templates",
 
 	"blockCoverDrag": "Drag image to reposition",
 	"blockCoverSave": "Save changes",
@@ -786,7 +790,6 @@
 	"popupSettingsPersonalLinkStyle": "Link to object style",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
-	"popupSettingsPersonalWidgetPreview": "Open type widgets in sidebar",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
@@ -861,7 +864,7 @@
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
-	"popupSettingsSpaceIndexRemoteStorageUpgradeText": "✦ Upgrade to add more storage",
+	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
@@ -889,7 +892,7 @@
 	"popupSettingsImportMarkdownTitle": "Markdown Import",
 
 	"popupSettingsExportTitle": "Export Space",
-	"popupSettingsExportText": "Choose application or format of data source",
+	"popupSettingsExportText": "Choose the format for your data export",
 	"popupSettingsExportOk": "Export data",
 
 	"popupSettingsExportMarkdownTitle": "Export Space to Markdown",
@@ -904,6 +907,7 @@
 	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space. Once they request to join, you can set their access rights.",
+	"popupSettingsSpaceShareInviteLinkDisabled": "Invitations are disabled by the space owner. In order to have an ability to invite people. please ask space owner to generate an invite link.",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
@@ -1149,7 +1153,10 @@
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
-	"popupConfirmLocalFieldsTitle": "Add Local Properties to current type?",
+	"popupConfirmLocalFieldsTitleSingle": "Add Property to the Type?",
+	"popupConfirmLocalFieldsTextSingle": "This Property will be added to the Type and will appear in all objects of this specific Type.",
+	"popupConfirmLocalFieldsTitlePlural": "Add Properties to the Type?",
+	"popupConfirmLocalFieldsTextPlural": "These Properties will be added to the Type and will appear in all objects of this specific Type.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1217,7 +1224,16 @@
 	"popupShortcutConflict": "Conflicts with %s",
 	"popupShortcutImport": "Import Shortcuts Mapping",
 	"popupShortcutExport": "Export Shortcuts Mapping",
-	"popupShortcutReset": "Reset All To Default",
+	"popupShortcutResetAll": "Reset All To Default",
+	"popupShortcutPress": "Press...",
+	"popupShortcutReassign": "Re-assign Shortcut",
+	"popupShortcutRemove": "Remove Shortcut",
+	"popupShortcutReset": "Reset Shortcut",
+	"popupShortcutImportText": "Your current shortcut mapping will be overwritten.",
+	"popupShortcutResetAllText": "Your current shortcut mapping will be reset to default.",
+	"popupShortcutToastUpdated": "Shortcuts mapping updated",
+	"popupShortcutToastExported": "Shortcuts mapping exported",
+	"popupShortcutToastSaved": "Shortcut assigned",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutInterface": "Interface",
@@ -1602,7 +1618,8 @@
 	"menuDataviewViewListAddView": "Add a view",
 	"menuDataviewViewListViews": "Views",
 
-	"menuDataviewTemplateSetDefaultForView": "Default for this view",
+	"menuDataviewTemplateSetDefaultForView": "Set as default for this view",
+	"menuDataviewTemplateUnsetDefaultForView": "Unset as default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
 
 	"menuDataviewExistingObject": "Existing object",
@@ -1924,6 +1941,7 @@
 	"sidebarObjectTypeMedia": "Media",
 	"sidebarObjectTypeBookmark": "Bookmarks",
 	"sidebarObjectTypeRelation": "Properties",
+	"sidebarObjectRelationEmpty": "No Properties",
 
 	"sidebarObjectShow": "Show",
 	"sidebarObjectSort": "Sort",
@@ -1949,17 +1967,19 @@
 	"sidebarSectionLayoutDefaultType": "Default Object Type",
 
 	"sidebarTypeRelation": "Properties",
-	"sidebarTypeRelationHeader": "Shown in object header",
-	"sidebarTypeRelationSidebar": "Shown in Properties menu",
+	"sidebarTypeRelationHeader": "Header",
+	"sidebarTypeRelationSidebar": "Properties panel",
 	"sidebarTypeRelationHidden": "Hidden",
-	"sidebarObjectRelationSetUp": "Set up",
+	"sidebarTypeRelationFound": "Found in objects",
+	"sidebarObjectRelationSetUp": "Edit Type",
 	"sidebarTypeRelationEmpty": "There are no Properties yet",
 	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
 	"sidebarRelationLocal": "Local Properties",
-	"sidebarTypeRelationLocalDescription": "Some properties are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
+	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add to the type to use in all objects, or remove",
+	"sidebarTypeRelationLocalDescription": "These properties exist in this object but aren’t part of the Type. Add them to make them appear in all objects of this Type",
 
-	"sidebarRelationLocalAddToCurrentType": "Add to the current type",
+	"sidebarRelationLocalAddToType": "Add to the Type",
 	"sidebarRelationLocalRemoveFromObject": "Remove from object",
 	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 

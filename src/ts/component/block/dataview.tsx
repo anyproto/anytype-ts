@@ -834,9 +834,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.refControls?.toggleHoverArea(false);
 			},
 			data: {
-				rootId,
 				blockId: block.id,
 				subId: this.getSubId(),
+				targetId: this.getObjectId(),
 				hasSources,
 				getView: this.getView,
 				withTypeSelect: this.isAllowedDefaultType(),
@@ -853,8 +853,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						analytics.event('DefaultTypeChange', { route });
 					};
 				},
-				onSetDefault: (item) => {
-					Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
+				onSetDefault: id => {
+					Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: id });
 				},
 				onSelect: (item: any) => {
 					if (!view) {

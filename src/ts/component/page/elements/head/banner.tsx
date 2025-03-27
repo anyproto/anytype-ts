@@ -53,9 +53,7 @@ const HeaderBanner: FC<Props> = ({
 				typeId: type.id,
 				templateId: sourceObject,
 				previewSize: I.PreviewSize.Medium,
-				onSetDefault: item => {
-					U.Object.setDefaultTemplateId(type.id, item.id);
-				},
+				onSetDefault: id => U.Object.setDefaultTemplateId(type.id, id),
 				onSelect: item => {
 					C.ObjectApplyTemplate(object.id, item.id);
 

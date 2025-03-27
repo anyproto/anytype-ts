@@ -27,20 +27,17 @@ const ObjectName: FC<Props> = ({
 	const { layout, snippet, isDeleted } = object;
 
 	let name = String(object.name || '');
+
 	if (!isDeleted) {
 		if (U.Object.isNoteLayout(layout)) {
 			name = snippet || `<span class="empty">${translate('commonEmpty')}</span>`;
 		} else {
-			name = U.Object.name(object);
+			name = U.Object.name(object, withPlural);
 		};
-	};
 
-	if (withPlural && U.Object.isTypeLayout(layout)) {
-		name = object.pluralName || name;
-	};
-
-	if (withLatex) {
-		name = U.Common.getLatex(name);
+		if (withLatex) {
+			name = U.Common.getLatex(name);
+		};
 	};
 
 	return (

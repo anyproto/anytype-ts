@@ -82,7 +82,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 						id={item.id}
 						object={object}
 						icon={item.icon}
-						name={<ObjectName object={item} />}
+						name={<ObjectName object={item} withPlural={true} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
 						withDescription={item.isBig}
@@ -91,6 +91,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 						iconSize={40}
 						isDiv={item.isDiv}
 						className={cn.join(' ')}
+						withPlural={true}
 					/>
 				);
 			};
@@ -292,7 +293,9 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { skipIds, filter } = data;
 
 		const filters: any[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+			{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },

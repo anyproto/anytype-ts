@@ -45,8 +45,7 @@ class DetailStore {
 			return;
 		};
 
-		//const map = observable.map(new Map());
-		const map = new Map();
+		const map = observable.map(new Map());
 
 		for (const item of items) {
 			const list: Detail[] = [];
@@ -78,8 +77,7 @@ class DetailStore {
 		let createList = false;
 
 		if (!map) {
-			//map = observable.map(new Map());
-			map = new Map();
+			map = observable.map(new Map());
 			createMap = true;
 		};
 
@@ -270,10 +268,6 @@ class DetailStore {
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');
-		};
-
-		if (!object.pluralName) {
-			object.pluralName = object.name;
 		};
 
 		return object;

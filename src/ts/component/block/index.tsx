@@ -978,6 +978,7 @@ const Block = observer(class Block extends React.Component<Props> {
 						to: Number(range[1]) || 0, 
 					},
 					noUnlink: true,
+					withPlural: true,
 					marks,
 					onChange: marks => {
 						const parsed = Mark.fromHtml(getValue(), []);
@@ -1046,6 +1047,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					},
 					noUnlink: readonly,
 					noEdit: readonly,
+					withPlural: true,
 					onChange: marks => {
 						const parsed = Mark.fromHtml(getValue(), []);
 						this.setMarks(parsed.text, marks);

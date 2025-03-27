@@ -162,15 +162,15 @@ a { color: var(--color-text-primary); }
 .textColor-lime { color: var(--color-lime) !important; }
 
 .bgColor-grey { background: var(--color-shape-tertiary) !important; }
-.bgColor-yellow { background: #fcf8d6 !important; }
-.bgColor-orange { background: #fff2d7 !important; }
-.bgColor-red { background: #fee7e0 !important; }
-.bgColor-pink { background: #fbdff2 !important; }
-.bgColor-purple { background: #f3e7f8 !important; }
-.bgColor-blue { background: #e4e8fc !important; }
-.bgColor-ice { background: #ddf1fc !important; }
-.bgColor-teal { background: #d9f6f4 !important; }
-.bgColor-lime { background: #e5f8d6 !important; }
+.bgColor-yellow { background: var(--color-bg-yellow) !important; }
+.bgColor-orange { background: var(--color-bg-orange) !important; }
+.bgColor-red { background: var(--color-bg-red) !important; }
+.bgColor-pink { background: var(--color-bg-pink) !important; }
+.bgColor-purple { background: var(--color-bg-purple) !important; }
+.bgColor-blue { background: var(--color-bg-blue) !important; }
+.bgColor-ice { background: var(--color-bg-ice) !important; }
+.bgColor-teal { background: var(--color-bg-teal) !important; }
+.bgColor-lime { background: var(--color-bg-lime) !important; }
 
 .isMultiSelect.archive { color: var(--color-text-secondary); background: var(--color-shape-tertiary); }
 .isMultiSelect.tagColor-default { color: var(--color-text-primary) !important; background: var(--color-bg-primary) !important; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; }

@@ -33,6 +33,7 @@ export interface Preview {
 	noEdit?: boolean;
 	passThrough?: boolean;
 	noAnimation?: boolean;
+	withPlural?: boolean;
 	delay?: number;
 	x?: number;
 	y?: number;

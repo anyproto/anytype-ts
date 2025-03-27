@@ -506,6 +506,17 @@ class Storage {
 		this.setShortcuts({ ...list, [id]: keys });
 	};
 
+	resetShortcut (id: string) {
+		const list = this.getShortcuts();
+
+		delete(list[id]);
+		this.setShortcuts(list);
+	};
+
+	removeShortcut (id: string) {
+		this.updateShortcuts(id, []);
+	};
+
 	resetShortcuts () {
 		this.delete('shortcuts');
 		keyboard.initShortcuts();

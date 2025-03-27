@@ -30,6 +30,7 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 	};
 
 	render () {
+		const { config } = S.Common;
 		const { error, loading } = this.state;
 		const { account } = S.Auth;
 		const profile = U.Space.getProfile();
@@ -88,18 +89,20 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 					</div>
 				</div>
 
-				<div className="section">
-					<Title text={translate('popupSettingsEthereumIdentityTitle')} />
+				{config.experimental ? (
+					<div className="section">
+						<Title text={translate('popupSettingsEthereumIdentityTitle')} />
 
-					<div className="inputWrapper withIcon">
-						<Input
-							value={account.info.ethereumAddress}
-							readonly={true}
-							onClick={() => U.Common.copyToast(translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress)}
-						/>
-						<Icon className="copy" />
+						<div className="inputWrapper withIcon">
+							<Input
+								value={account.info.ethereumAddress}
+								readonly={true}
+								onClick={() => U.Common.copyToast(translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress)}
+							/>
+							<Icon className="copy" />
+						</div>
 					</div>
-				</div>
+				) : ''}
 			</div>
 		);
 	};

@@ -387,7 +387,7 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				ignoreArchived: true,
+				ignoreArchived: false,
 				onSubscribe: () => {
 					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
@@ -1007,7 +1007,7 @@ class UtilData {
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, [])));
+		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, []), true));
 	};
 
 	setWindowTitleText (name: string) {

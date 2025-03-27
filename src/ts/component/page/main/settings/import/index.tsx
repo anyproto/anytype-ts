@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, U, J, translate, Action } from 'Lib';
+import { I, U, J, translate, Action, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PageSettingsComponent {
@@ -34,6 +34,10 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 				</div>
 			</>
 		);
+	};
+
+	componentDidMount () {
+		analytics.event('ScreenSettingsImportIndex', { route: analytics.route.settingsSpaceIndex });
 	};
 
 	onClick (id: string) {

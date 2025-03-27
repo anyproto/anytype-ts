@@ -246,16 +246,16 @@ class Api {
 	};
 
 	moveNetworkConfig (win, src) {
-		if (path.extname(src) != 'yml') {
-			return { err: 'Invalid file' };
+		if (!path.extname(src).match(/yml|yaml/i)) {
+			return { error: `Invalid file extension: ${path.extname(src)}. Required YAML` };
 		};
 
 		const dst = path.join(Util.defaultUserDataPath(), 'config.yaml');
 		try {
 			fs.copyFileSync(src, dst);
 			return { path: dst };
-		} catch (err) {
-			return { err };
+		} catch (e) {
+			return { error: e.message };
 		};
 	};
 

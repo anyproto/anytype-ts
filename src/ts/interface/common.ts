@@ -224,7 +224,7 @@ export enum SidebarRelationList {
 	Featured 		= 1,
 	Recommended 	= 2,
 	Hidden 			= 3,
-	Conflict 		= 4,
+	Local 			= 4,
 };
 
 export enum SurveyType {

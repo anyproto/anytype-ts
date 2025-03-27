@@ -256,11 +256,16 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	initStorage () {
 		const storage = this.storageGet() || {};
+		const options = this.getTypeOptions();
 
 		this.type = storage.type || I.ObjectContainerType.Object;
-		this.orphan = storage.orphan || false;
+		this.orphan = Boolean(storage.orphan) || false;
+		this.compact = Boolean(storage.compact) || false;
 
-		this.compact = storage.compact || false;
+		if (options.length && !options.find(it => it.id == this.type)) {
+			this.type = options[0].id;
+		};
+
 		this.initSort();
 	};
 

@@ -198,15 +198,14 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onSave () {
+		const { space } = S.Common;
+		const { rootId, isPopup, previous } = this.props;
 		const details: any = this.props.details || {};
+		const type = S.Record.getTypeType();
 
 		if (!U.Common.objectLength(this.update) && !details.isNew) {
 			return;
 		};
-
-		const { space } = S.Common;
-		const { rootId, isPopup, previous } = this.props;
-		const type = S.Record.getTypeType();
 
 		if (rootId) {
 			const update = [];
@@ -217,7 +216,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			};
 
 			if (update.length) {
-				C.ObjectListSetDetails([ rootId ], update);
+				C.ObjectListSetDetails([ rootId ], update, () => {
+					C.BlockDataviewRelationSet(rootId, J.Constant.blockId.dataview, [ 'name' ].concat(U.Object.getTypeRelationKeys(rootId)));
+				});
 
 				if (previous && previous.page) {
 					sidebar.rightPanelSetState(isPopup, previous);
@@ -228,8 +229,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		} else {
 			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, true, (message) => {
 				if (!message.error.code) {
+					const route = details.data && details.data.route ? details.data.route : '';
+
 					U.Object.openRoute(message.details);
 					S.Common.getRef('sidebarLeft')?.refChild?.refFilter?.setValue('');
+
+					analytics.event('CreateObject', { objectType: '_objectType', route });
 				};
 			});
 

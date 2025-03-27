@@ -49,7 +49,7 @@ const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionCompo
 			onClose: () => node.removeClass('hover'),
 			data: {
 				options: [
-					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType') },
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {

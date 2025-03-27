@@ -197,8 +197,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	clear () {
-		const { getSubId } = this.props;
-		S.Record.recordsClear(getSubId(), '');
+		S.Record.recordsClear(this.props.getSubId(), '');
 	};
 
 	getItems () {
