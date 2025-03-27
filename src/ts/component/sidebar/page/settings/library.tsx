@@ -42,6 +42,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.onMore = this.onMore.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getAnalyticsSuffix = this.getAnalyticsSuffix.bind(this);
+		this.openFirst = this.openFirst.bind(this);
 	};
 
 	render () {
@@ -177,7 +178,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.type = this.props.page == 'types' ? I.ObjectContainerType.Type : I.ObjectContainerType.Relation;
 		this.refFilter.focus();
 		this.initSort();
-		this.load(true);
+		this.load(true, this.openFirst);
 	};
 
 	componentDidUpdate () {
@@ -486,7 +487,19 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	openFirst () {
+		const pathname = U.Router.getRoute();
+		const param = U.Router.getParam(pathname);
 
+		let records = [];
+		this.getSections().forEach((el) => {
+			records = records.concat(el.children);
+		});
+
+		if (records.find(it => it.id == param?.objectId) || !records.length) {
+			return;
+		};
+
+		this.onClick(records[0]);
 	};
 
 });
