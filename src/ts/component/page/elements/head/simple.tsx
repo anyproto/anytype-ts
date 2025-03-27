@@ -87,7 +87,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let descr = null;
 		let featured = null;
 
-		if (isType || featuredRelations.includes('description')) {
+		if (featuredRelations.includes('description')) {
 			descr = <Editor className="descr" id="description" readonly={!allowDetails} />;
 		};
 

@@ -55,7 +55,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		let allowedLayout = !checkType && allowedDetails && !isChat && !isType;
 		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
 		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
-		let allowedDescription = !checkType && allowedDetails && !isNote && !isType;
+		let allowedDescription = !checkType && allowedDetails && !isNote;
 
 		if (isInSets && !hasConflict) {
 			allowedLayout = false;
