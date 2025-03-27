@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, J, analytics, keyboard, translate, Action } from 'Lib';
+import { I, S, U, J, keyboard, translate, Action } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
 const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -138,22 +138,22 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'template': {
-				const update = (item) => {
-					data.templateId = item.id;
+				const update = id => {
+					data.templateId = id;
 					loadTemplate();
 				};
 
 				menuId = 'dataviewTemplateList';
 				menuParam.data = Object.assign(menuParam.data, {
-					onSetDefault: (item) => {
-						update(item);
+					onSetDefault: id => {
+						update(id);
 
 						if (onSetDefault) {
-							onSetDefault(item);
+							onSetDefault(id);
 						};
 					},
-					onSelect: (item) => {
-						update(item);
+					onSelect: item => {
+						update(item.id);
 
 						if (onSelect) {
 							onSelect(item);

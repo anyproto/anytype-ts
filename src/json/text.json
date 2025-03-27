@@ -123,6 +123,7 @@
 	"commonRedo": "Redo",
 	"commonBlank": "Blank",
 	"commonSetDefault": "Set as default",
+	"commonUnsetDefault": "Unset as default",
 	"commonTemplate": "Template",
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
@@ -1614,7 +1615,8 @@
 	"menuDataviewViewListAddView": "Add a view",
 	"menuDataviewViewListViews": "Views",
 
-	"menuDataviewTemplateSetDefaultForView": "Default for this view",
+	"menuDataviewTemplateSetDefaultForView": "Set as default for this view",
+	"menuDataviewTemplateUnsetDefaultForView": "Unset as default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
 
 	"menuDataviewExistingObject": "Existing object",

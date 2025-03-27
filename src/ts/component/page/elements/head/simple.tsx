@@ -336,9 +336,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				typeId: object.id,
 				previewSize: I.PreviewSize.Small,
 				templateId: object.defaultTemplateId,
-				onSetDefault: item => {
-					S.Menu.updateData('dataviewTemplateList', { templateId: item.id });
-					U.Object.setDefaultTemplateId(rootId, item.id);
+				onSetDefault: id => {
+					S.Menu.updateData('dataviewTemplateList', { templateId: id });
+					U.Object.setDefaultTemplateId(rootId, id);
 				},
 				onSelect: item => {
 					if (item.id == J.Constant.templateId.new) {

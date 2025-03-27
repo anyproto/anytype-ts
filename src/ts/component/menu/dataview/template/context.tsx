@@ -49,10 +49,12 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { template, isView, onSetDefault, templateId } = data;
 		const isDefault = template.id == templateId;
-		const defaultName = isView ? translate('menuDataviewTemplateSetDefaultForView') : translate('commonSetDefault');
+		const setDefaultName = isView ? translate('menuDataviewTemplateSetDefaultForView') : translate('commonSetDefault');
+		const unsetDefaultName = isView ? translate('menuDataviewTemplateUnsetDefaultForView') : translate('commonUnsetDefault');
 
 		return [
-			!isDefault && onSetDefault ? ({ id: 'default', name: defaultName }) : null,
+			!isDefault && onSetDefault ? ({ id: 'setDefault', name: setDefaultName }) : null,
+			isDefault && onSetDefault ? ({ id: 'unsetDefault', name: unsetDefaultName }) : null,
 			{ id: 'edit', name: translate('menuDataviewTemplateEdit') },
 			{ id: 'duplicate', name: translate('commonDuplicate') },
 			{ id: 'remove', name: translate('commonDelete'), color: 'red' },
@@ -62,15 +64,24 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { template, onSetDefault, onArchive, onDuplicate, route, typeId } = data;
+		const { template, onSetDefault, onArchive, onDuplicate, route } = data;
 
 		switch (item.id) {
-			case 'default': {
+			case 'setDefault': {
 				if (onSetDefault) {
-					onSetDefault(template);
+					onSetDefault(template.id);
 				};
 
 				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
+				analytics.event('ChangeDefaultTemplate', { route });
+				break;
+			};
+
+			case 'unsetDefault': {
+				if (onSetDefault) {
+					onSetDefault('');
+				};
+
 				analytics.event('ChangeDefaultTemplate', { route });
 				break;
 			};
