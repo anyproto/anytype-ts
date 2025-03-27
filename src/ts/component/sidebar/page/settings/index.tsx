@@ -73,9 +73,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 				cn.push('itemAccount');
 			} else {
-				if (![ 'types', 'relations' ].includes(item.id)) {
-					icon = <Icon className={`settings-${item.icon || item.id}`} />;
-				};
+				icon = <Icon className={`settings-${item.icon || item.id}`} />;
 				name = item.name;
 			};
 
@@ -214,12 +212,9 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
-					{ id: 'types', name: U.Common.plural(10, translate('pluralObjectType')) },
-					{ id: 'relations', name: U.Common.plural(10, translate('pluralProperty')) },
-				],
-			},
-			{ id: 'service', isDiv: true, children: [
-					{ id: 'archive', icon: 'bin', name: translate('commonBin') }
+					{ id: 'types', icon: 'type', name: U.Common.plural(10, translate('pluralObjectType')) },
+					{ id: 'relations', icon: 'relation', name: U.Common.plural(10, translate('pluralProperty')) },
+					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
 				],
 			},
 		];
