@@ -485,6 +485,10 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		return this.type == I.ObjectContainerType.Type ? 'Type' : 'Relation';
 	};
 
+	openFirst () {
+
+	};
+
 });
 
 export default SidebarSettingsLibrary
