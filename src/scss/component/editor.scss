@@ -246,6 +246,10 @@
 /* Chat */
 
 .editorWrapper.isChat {
+	&.withIcon {
+		.controlButtons { left: 0px; }
+	}
+
 	.blocks { max-width: 704px; width: calc(100% - 32px); margin: 0px auto; padding: 0px; user-select: none; }
 	.blocks {
 		.block {
@@ -259,12 +263,6 @@
 		.headSimple {
 			.side.right { display: none; }
 		}
-	}
-}
-
-.editorWrapper.isChat {
-	&.withIcon {
-		.controlButtons { left: 0px; }
 	}
 }
 
@@ -310,17 +308,16 @@
 	&.withIconAndCover {
 		.editorControls { display: none; }
 	}
+}
 
+.editorWrapper.isSet, 
+.editorWrapper.isCollection {
 	.blocks {
 		.headSimple {
 			.side.right { display: none; }
 		}
 	}
-}
 
-.editorWrapper.isSet, 
-.editorWrapper.isCollection,
-.editorWrapper.isChat {
 	&.withIconAndCover { padding-top: 356px; }
 	&.withIconAndCover {
 		.controlButtons { left: 0px !important; }
