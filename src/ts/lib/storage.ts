@@ -507,10 +507,7 @@ class Storage {
 	};
 
 	removeShortcuts (id: string) {
-		const list = this.getShortcuts();
-
-		delete(list[id]);
-		this.setShortcuts(list);
+		this.updateShortcuts(id, []);
 	};
 
 	resetShortcuts () {

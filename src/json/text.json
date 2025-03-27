@@ -1222,7 +1222,7 @@
 	"popupShortcutReset": "Reset All To Default",
 	"popupShortcutPress": "Press...",
 	"popupShortcutReassign": "Re-assign Shortcut",
-	"popupShortcutRemove": "Reset Shortcut",
+	"popupShortcutRemove": "Remove Shortcut",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutInterface": "Interface",

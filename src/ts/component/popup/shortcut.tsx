@@ -24,14 +24,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onContext = (item: any) => {
-		const list = Storage.getShortcuts();
 		const options = [
 			{ id: 'edit', name: translate('popupShortcutReassign') },
+			{ id: 'remove', name: translate('popupShortcutRemove') },
 		];
-
-		if (list[item.id]) {
-			options.push({ id: 'remove', name: translate('popupShortcutRemove') });
-		};
 
 		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id}`,
