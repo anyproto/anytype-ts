@@ -553,6 +553,7 @@
 
 	"pageSettingsSpaceGeneral": "General",
 	"pageSettingsSpaceRemoteStorage": "Remote Storage",
+	"pageSettingsSpaceCleanupSpaceFiles": "Clean up space files",
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
@@ -862,7 +863,7 @@
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
-	"popupSettingsSpaceIndexRemoteStorageUpgradeText": "✦ Upgrade to add more storage",
+	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
