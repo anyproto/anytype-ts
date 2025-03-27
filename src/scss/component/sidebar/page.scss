@@ -19,18 +19,39 @@
 	.body {
 		.group { display: flex; flex-direction: column; }
 		.group {
-			> .titleWrap { padding: 12px 4px; display: flex; align-items: center; justify-content: space-between; }
+			> .titleWrap { padding: 0px 4px 12px 4px; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }
 			> .titleWrap {
-				> .label { @include text-paragraph; font-weight: 600; }
-				> .label.sectionToggle { padding-left: 12px; font-weight: 500; @include text-common; color: var(--color-text-secondary); }
+				.icon.withBackground { width: 24px !important; height: 24px !important; }
+				.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
+
+				.side.left { display: flex; flex-direction: row; gap: 0px 4px; align-items: center; }
+				.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
+
+				.label { @include text-paragraph; font-weight: 600; }
+				.label.sectionToggle { 
+					font-weight: 500; @include text-common; color: var(--color-text-secondary); display: flex; flex-direction: row;
+					align-items: center; gap: 0px 4px;
+				}
+				.label.sectionToggle {
+					&::before { 
+						content: ''; width: 20px; height: 20px; background-image: url('~img/icon/widget/collapse.svg'); transform: rotateZ(-90deg); 
+						transition: $transitionAllCommon;
+					}
+					&.isOpen::before { transform: rotateZ(0deg); }
+				}
 
 				.icon.question { background-image: url('~img/icon/question.svg'); }
 			}
 
-			> .list { display: flex; flex-direction: column; gap: 12px 0px; }
-			> .list.anim { transition: height 0.2s $easeInQuint; }
-			> .list.withToggle { overflow: hidden; height: 0px; }
+			> .list { display: flex; flex-direction: column; gap: 8px 0px; }
+			> .list {
+				&.anim { transition: height 0.2s $easeInQuint; }
+				&.withToggle { overflow: hidden; height: 0px; }
+
+				> .empty { padding: 13px 4px; color: var(--color-text-tertiary); }
+			}
 		}
+		.group#relationGroup-hidden { margin-bottom: 10px; }
 	}
 
 	.section { background: var(--color-bg-primary); border-radius: 12px; padding: 8px 0px; }
