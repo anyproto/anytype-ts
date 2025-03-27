@@ -160,7 +160,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const sections = [
 			{ id: 'object', children: items },
 			{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), children: hidden, withToggle: true },
-			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarTypeRelationLocalDescription') }
+			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription') }
 		];
 
 		return sections;

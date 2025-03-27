@@ -69,7 +69,8 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		const cids = conflictIds.filter(it => !ids.includes(it));
 
 		lists.push({
-			id: I.SidebarRelationList.Conflict, name: translate('sidebarRelationLocal'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
+			id: I.SidebarRelationList.Local, name: translate('sidebarTypeRelationFound'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
+			description: translate('sidebarTypeRelationLocalDescription'),
 			onInfo: () => {
 				S.Popup.open('confirm', {
 					data: {
@@ -143,7 +144,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 			analyticsId = 'SameGroup';
         } else 
-		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Conflict)) {
+		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Local)) {
 			toItems.splice(newIndex, 0, active.id);
 			onChange({
 				[from.relationKey]: fromItems.filter(id => id != active.id),
@@ -252,8 +253,29 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			strategy={verticalListSortingStrategy}
 		>
 			<div className="sectionNameWrap">
-				<Label text={list.name} />
-				{list.onInfo ? <Icon className="question withBackground" onClick={list.onInfo} /> : ''}
+				<div className="side left">
+					<Label text={list.name} />
+					{list.description ? (
+						<Icon 
+							className="question withBackground"
+							tooltipClassName="relationGroupDescription"
+							tooltip={list.description}
+							tooltipX={I.MenuDirection.Center}
+							tooltipY={I.MenuDirection.Bottom}
+							tooltipOffsetX={-8}
+							tooltipDelay={0}
+						/> 
+					) : ''}
+				</div>
+				<div className="side right">
+					{list.onInfo ? (
+						<Icon 
+							className="more withBackground"
+							tooltip={translate('sidebarRelationLocalAddToCurrentType')}
+							onClick={list.onInfo}
+						/>
+					) : ''}
+				</div>
 			</div>
 			<div className="items">
 				{list.data.length ? (
