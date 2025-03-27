@@ -737,6 +737,7 @@ class Keyboard {
 					[ translate('libKeyboardAccountId'), account.id ],
 					[ translate('libKeyboardAnalyticsId'), account.info.analyticsId ],
 					[ translate('libKeyboardDeviceId'), account.info.deviceId ],
+					[ translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress ],
 				]);
 			};
 
@@ -1229,7 +1230,6 @@ class Keyboard {
 
 		const string = this.shortcuts[s] ? (this.shortcuts[s].keys || []).join('+') : s;
 		if (!string) {
-			console.log('[keyboard.shortcut] Empty string', s);
 			return;
 		};
 

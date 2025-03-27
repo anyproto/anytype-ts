@@ -28,7 +28,7 @@ const PreviewLink = forwardRef<{}, Props>(({ url = '', position }, ref: any) => 
 	};
 
 	const load = () => {
-		if (urlRef.current == url) {
+		if (isLoading || (urlRef.current == url)) {
 			return;
 		};
 		
@@ -58,7 +58,7 @@ const PreviewLink = forwardRef<{}, Props>(({ url = '', position }, ref: any) => 
 		if (position) {
 			position();
 		};
-	});
+	}, []);
 	
 	return (
 		<div className={cn.join(' ')}>

@@ -5,6 +5,7 @@
 	.icon.remove { display: none !important; }
 
 	.head { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 8px 4px 4px; }
+	.head { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 8px 4px 4px; }
 	.head {
 		.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; width: 100%; flex-grow: 1; overflow: hidden; }
 		.side.left {
@@ -34,15 +35,13 @@
 
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 4px; }
 		.side.right {
-			.icon { width: 28px !important; height: 28px !important; flex-shrink: 0; }
-			.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
-
 			.plusWrapper { box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; border-radius: 6px; }
 			.plusWrapper {
 				.icon:first-child { border-radius: 6px 0px 0px 6px; }
 				.icon:last-child { border-radius: 0px 6px 6px 0px; }
 			}
 
+			.icon { width: 28px !important; height: 28px !important; flex-shrink: 0; }
 			.icon.plus { background-image: url('~img/icon/widget/button/plus.svg'); border-right: 1px solid var(--color-shape-secondary); }
 			.icon.arrow { width: 23px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
 		}
@@ -83,6 +82,7 @@
 			.icon.member { background-image: url('~img/icon/widget/button/member.svg'); }
 			.icon.all { background-image: url('~img/icon/widget/button/all.svg'); }
 			.icon.chat { background-image: url('~img/icon/widget/button/chat.svg'); }
+			.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
 		}
 	}
 }

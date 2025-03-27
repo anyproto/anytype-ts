@@ -13,6 +13,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
 const HEIGHT_SECTION_FIRST = 34;
 const HEIGHT_ACCOUNT = 56;
+const HEIGHT_DIV = 12;
 
 const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.Component<Props, {}> {
 
@@ -46,6 +47,9 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			if (item.isSection) {
 				return <ItemSection {...item} />;
 			};
+			if (item.isDiv) {
+				return <div />
+			};
 
 			const cn = [ 'item' ];
 
@@ -69,9 +73,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 				cn.push('itemAccount');
 			} else {
-				if (![ 'types', 'relations' ].includes(item.id)) {
-					icon = <Icon className={`settings-${item.icon || item.id}`} />;
-				};
+				icon = <Icon className={`settings-${item.icon || item.id}`} />;
 				name = item.name;
 			};
 
@@ -186,6 +188,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	getSpaceSettings () {
 		const canWrite = U.Space.canMyParticipantWrite();
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing, I.ParticipantStatus.Active ]);
 		const importExport = [{
 			id: 'exportIndex', icon: 'export', name: translate('commonExport'),
 			subPages: [ 'exportProtobuf', 'exportMarkdown' ]
@@ -203,14 +206,15 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				id: 'common', name: translate('commonPreferences'),
 				children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
-					{ id: 'spaceShare', icon: 'members', name: translate('commonMembers') },
+					{ id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
 					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
 				],
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
-					{ id: 'types', name: U.Common.plural(10, translate('pluralObjectType')) },
-					{ id: 'relations', name: U.Common.plural(10, translate('pluralProperty')) },
+					{ id: 'types', icon: 'type', name: U.Common.plural(10, translate('pluralObjectType')) },
+					{ id: 'relations', icon: 'relation', name: U.Common.plural(10, translate('pluralProperty')) },
+					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
 				],
 			},
 		];
@@ -254,6 +258,8 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				};
 
 				items.push(item);
+			} else if (section.isDiv) {
+				items.push({ isDiv: true });
 			};
 
 			let children = section.children ? section.children : [];
@@ -265,6 +271,9 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	getRowHeight (item: any) {
+		if (item.isDiv) {
+			return HEIGHT_DIV;
+		};
 		if (item.isSection) {
 			return item.isFirst ? HEIGHT_SECTION_FIRST : HEIGHT_SECTION;
 		};

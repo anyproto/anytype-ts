@@ -126,6 +126,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
 						<Swiper
+							className="featuresList"
 							spaceBetween={16}
 							slidesPerView={1}
 							pagination={{ clickable: true }}
@@ -151,7 +152,21 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				) : ''}
 
 				<div className="tiers">
-					{membershipTiers.map(item => <TierItem key={item.id} item={item} />)}
+					<Swiper
+						className="tiersList"
+						spaceBetween={16}
+						slidesPerView={3}
+						pagination={membershipTiers.length > 3 ? { clickable: true } : false}
+						modules={[ Pagination ]}
+						onSwiper={this.onSwiper}
+					>
+
+						{membershipTiers.map((item) => (
+							<SwiperSlide key={item.id}>
+								<TierItem item={item} />
+							</SwiperSlide>
+						))}
+					</Swiper>
 				</div>
 
 				<div className="actionItems">

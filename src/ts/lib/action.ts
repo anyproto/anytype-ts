@@ -66,6 +66,7 @@ class Action {
 		S.Record.recordsClear(subId, '');
 		S.Record.recordsClear(`${subId}/dep`, '');
 		S.Record.viewsClear(rootId, blockId);
+		S.Record.groupsClear(rootId, blockId);
 
 		S.Detail.clear(subId);
 
@@ -259,9 +260,9 @@ class Action {
 		const properties = param.properties || [];
 		const extensions = param.extensions || [];
 
-		const options: any = { 
-			properties: [ 'openFile' ].concat(properties), 
-		};
+		const options: any = Object.assign(param, { 
+			properties: [ 'openFile' ].concat(properties),
+		});
 
 		if (extensions.length) {
 			options.filters = [ 

@@ -1,0 +1,42 @@
+.editorControls { width: 100%; height: 72px; margin: 0px auto; z-index: 1; position: relative; line-height: 16px; opacity: 0; }
+.editorControls {
+	.controlButtons { position: absolute; bottom: 0px; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+	.controlButtons.small {
+		.btn { padding: 0px 6px; }
+		.btn {
+			.icon { margin: 0px; }
+			.txt { display: none; }
+		}
+	}
+	
+	.btn { 
+		background: var(--color-bg-primary); font-weight: 500; font-size: var(--font-size-common); color: var(--color-control-active); display: flex; 
+		transition: background $transitionCommon, color $transitionCommon; height: 28px; padding: 0px 8px 0px 6px; border-radius: 6px;
+		flex-direction: row; align-items: center; gap: 0px 4px;
+	}
+	.btn:hover, .btn.hover { background: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
+	
+	.btn.small { padding: 0px 6px; }
+
+	.btn {
+		.txt { white-space: nowrap; }
+		.dot { width: 6px; height: 6px; background: var(--color-red); border-radius: 50%; position: absolute; right: 6px; top: 6px; }
+
+		.icon { width: 20px; height: 20px; }
+		.icon.icon { background-image: url('~img/icon/add/icon0.svg'); }
+		.icon.addCover { background-image: url('~img/icon/add/cover0.svg'); }
+		.icon.layout { background-image: url('~img/icon/add/layout0.svg'); }
+		.icon.relation { background-image: url('~img/icon/add/relation0.svg'); }
+		.icon.description { background-image: url('~img/icon/add/description0.svg'); }
+	}
+	.btn:hover, .btn.hover {
+		.icon.icon { background-image: url('~img/icon/add/icon1.svg'); }
+		.icon.addCover { background-image: url('~img/icon/add/cover1.svg'); }
+		.icon.layout { background-image: url('~img/icon/add/layout1.svg'); }
+		.icon.relation { background-image: url('~img/icon/add/relation1.svg'); }
+		.icon.description { background-image: url('~img/icon/add/description1.svg'); }
+	}
+
+	&.isDraggingOver { background: var(--color-system-drop-zone); }
+	&:hover, &.hover, &.active { opacity: 1; }
+}

@@ -102,13 +102,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				return true;
 			});
 
-			let last = null;
 			let first = null;
 			let buttons: I.ButtonComponent[] = [];
 
 			if (blocks.length) {
 				first = blocks[0];
-				last = blocks[blocks.length - 1];
 			};
 
 			if (isEditing) {

@@ -177,7 +177,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedLinkTo = canWrite && !object.isArchived;
 		const allowedAddCollection = canWrite && !object.isArchived;
 		const allowedPageLink = !object.isArchived;
-		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
+		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelationLayout;
 		const allowedReload = canWrite && object.source && isBookmark;
 		const allowedInstall = canWrite && !object.isInstalled && isTypeOrRelationLayout;
 		const allowedUninstall = canWrite && object.isInstalled && isTypeOrRelationLayout && canDelete;
@@ -198,7 +198,6 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedFav)			 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
-		if (allowedUninstall)		 archive = null;
 		if (!allowedWidget)			 createWidget = null;
 		if (!allowedLinkTo)			 linkTo = null;
 		if (!allowedPageLink)		 pageLink = null;

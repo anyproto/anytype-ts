@@ -90,7 +90,7 @@
 .message.isSelf {
 	> .flex { flex-direction: row-reverse; }
 	> .flex {
-		> .side.right { background: #e5f8d6; }
+		> .side.right { background: var(--color-bg-lime); }
 		> .controls { flex-direction: row-reverse; }
 	}
 

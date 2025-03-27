@@ -224,6 +224,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const canHide = !isName;
 		const canAlign = !isName; 
 		const canCalculate = relation;
+		const isType = U.Object.isTypeLayout(object.layout);
 		
 		let unlinkText = translate('commonUnlink');
 		if (U.Object.isCollectionLayout(object.layout)) {
@@ -232,7 +233,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (U.Object.isSetLayout(object.layout)) {
 			unlinkText = translate('commonUnlinkFromSet');
 		};
-		if (U.Object.isTypeLayout(object.layout)) {
+		if (isType) {
 			unlinkText = translate('commonUnlinkFromType');
 		};
 
@@ -241,11 +242,17 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let canUnlink = !noUnlink;
 
 		if (relation) {
-			canDuplicate = canDelete = canUnlink = relation && S.Block.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
+			canDuplicate = canDelete = canUnlink = S.Block.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
+
+			if (Relation.isSystem(relation.relationKey)) {
+				canDelete = false;
+			};
+
+			if (isType) {
+				canUnlink = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+			};
 		};
-		if (relation && Relation.isSystem(relation.relationKey)) {
-			canDelete = false;
-		};
+
 		if (!relation || readonly) {
 			canDuplicate = false;
 			canDelete = false;
@@ -728,14 +735,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			return;
 		};
 
-		const relation = this.getViewRelation();
+		const relation = this.getRelation();
 		const item: any = { 
 			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
 		};
 
-		relation ? this.update(item) : this.add(item);
+		relation && relation.id ? this.update(item) : this.add(item);
 	};
 
 	add (item: any) {

@@ -10,17 +10,9 @@ class Dataview {
 
 		const { config } = S.Common;
 		const order: any = {};
-		const object = S.Detail.get(rootId, rootId, []);
-		const isType = U.Object.isTypeLayout(object.layout);
 		const viewRelations = (view.relations || []).filter(it => it);
 
-		let relations = [];
-		if (isType) {
-			const typeIds = U.Object.getTypeRelationIds(object.id);
-			relations = [ 'name' ].map(it => S.Record.getRelationByKey(it)).concat(typeIds.map(it => S.Record.getRelationById(it)));
-		} else {
-			relations = S.Record.getDataviewRelations(rootId, blockId);
-		};
+		let relations = S.Record.getDataviewRelations(rootId, blockId);
 		relations = U.Common.objectCopy(relations).filter(it => it);
 
 		if (!config.debug.hiddenObject) {

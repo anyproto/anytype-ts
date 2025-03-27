@@ -73,13 +73,14 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						id={item.id}
 						object={object}
 						icon={item.icon}
-						name={<ObjectName object={item} />}
+						name={<ObjectName object={item} withPlural={true} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
 						caption={type?.name}
 						style={param.style}
 						isDiv={item.isDiv}
 						className={cn.join(' ')}
+						withPlural={true}
 					/>
 				</CellMeasurer>
 			);
@@ -318,7 +319,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = S.Common.filter;
 
 		const cb = (object: any) => {
-			const name = U.Common.shorten(String(object.name || translate('defaultNamePage')), 30);
+			const name = U.Common.shorten(String(U.Object.name(object, true)), 30);
 			const to = from + name.length;
 
 			let marks = U.Common.objectCopy(data.marks || []);

@@ -139,6 +139,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 									onMouseEnter={this.onMouseEnter} 
 									onMouseLeave={this.onMouseLeave} 
 									withLatex={true} 
+									withPlural={true}
 								/>
 							</div>
 

@@ -1140,6 +1140,16 @@ export const BlockRelationSetKey = (contextId: string, blockId: string, relation
 	dispatcher.request(BlockRelationSetKey.name, request, callBack);
 };
 
+export const BlockDataviewRelationSet = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.Relation.Set.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRelationkeysList(relationKeys);
+
+	dispatcher.request(BlockDataviewRelationSet.name, request, callBack);
+};
+
 export const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.Add.Request();
 

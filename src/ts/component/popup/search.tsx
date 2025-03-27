@@ -151,10 +151,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					);
 				};
 
-				let name = U.Object.name(item);
-				if (U.Object.isTypeLayout(item.layout)) {
-					name = item.pluralName || name;
-				};
+				let name = U.Object.name(item, true);
 
 				if (meta.highlight && (meta.relationKey == 'name')) {
 					name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));

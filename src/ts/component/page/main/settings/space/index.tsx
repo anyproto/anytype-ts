@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Tag } from 'Component';
+import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Tag, Editable } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 interface State {
@@ -14,6 +14,8 @@ interface State {
 const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
+	description: string = '';
+	refDescription: any = null;
 
 	state = {
 		error: '',
@@ -26,6 +28,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		super(props);
 
 		this.setName = this.setName.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 		this.onDashboard = this.onDashboard.bind(this);
@@ -50,7 +53,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave },
 		] : [
-			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: () => this.setState({ isEditing: true }) },
+			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
 
@@ -81,6 +84,20 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			);
 		};
 
+		const membersIcons = canWrite ? (
+			<div className="membersIcons">
+				{members.map((el, idx) => {
+					if (idx < maxIcons) {
+						return <IconObject key={idx} size={36} object={el} />;
+					};
+					return null;
+				})}
+				{members.length > maxIcons ? (
+					<div className="membersMore">+{members.length - maxIcons}</div>
+				) : ''}
+			</div>
+		) : '';
+
 		return (
 			<>
 				<div className={cnh.join(' ')}>
@@ -90,10 +107,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						</div>
 					) : ''}
 
+					<Label className="spaceType" text={translate(`spaceAccessType${space.spaceAccessType || 0}`)} />
+
 					<IconObject
 						id="spaceIcon"
-						size={128}
-						iconSize={128}
+						size={96}
+						iconSize={96}
 						object={{ ...space, spaceId: S.Common.space }}
 						canEdit={canWrite}
 						menuParam={{ horizontal: I.MenuDirection.Center }}
@@ -106,21 +125,19 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						placeholder={translate('defaultNamePage')}
 						readonly={!canWrite || !isEditing}
 					/>
+
+					{isEditing || this.checkDescription() ? (
+						<Editable
+							classNameWrap="spaceDescription"
+							ref={ref => this.refDescription = ref}
+							placeholder={'Describe your space'}
+							readonly={!canWrite || !isEditing}
+							onKeyUp={() => this.refDescription?.placeholderCheck()}
+						/>
+					) : ''}
 				</div>
 
-				{canWrite ? (
-					<div className="membersIcons">
-						{members.map((el, idx) => {
-							if (idx < maxIcons) {
-								return <IconObject key={idx} size={36} object={el} />;
-							};
-							return null;
-						})}
-						{members.length > maxIcons ? (
-							<div className="membersMore">+{members.length - maxIcons}</div>
-						) : ''}
-					</div>
-				) : ''}
+				{/*{membersIcons}*/}
 
 				<div className="buttons">
 					{buttons.map((el, idx) => (
@@ -193,6 +210,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	componentDidMount (): void {
 		this.setName();
 		this.init();
+
+		analytics.event('ScreenSettingsSpaceIndex');
 	};
 
 	componentDidUpdate (): void {
@@ -204,9 +223,15 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	setName () {
-		const space = U.Space.getSpaceview();
+		const { name, description } = U.Space.getSpaceview();
 
-		this.refName.setValue(space.name);
+		this.refName.setValue(name);
+
+		if (description) {
+			this.description = description;
+			this.refDescription?.setValue(description);
+			this.refDescription?.placeholderCheck();
+		};
 	};
 
 	init () {
@@ -291,6 +316,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			};
 			case 'qr': {
 				S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
+				analytics.event('ScreenQr', { route: analytics.route.settingsSpace });
 				break;
 			};
 			case 'more': {
@@ -353,10 +379,22 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				},
 			}
 		});
+
+		analytics.event('ScreenSpaceInfo');
+	};
+
+	onEdit () {
+		this.setState({ isEditing: true });
+		this.refName?.focus();
 	};
 
 	onSave () {
-		C.WorkspaceSetInfo(S.Common.space, { name: this.checkName(this.refName.getValue()) });
+		this.description = this.refDescription?.getTextValue();
+
+		C.WorkspaceSetInfo(S.Common.space, {
+			name: this.checkName(this.refName.getValue()),
+			description: this.description,
+		});
 		this.setState({ isEditing: false });
 	};
 
@@ -374,12 +412,18 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		return v;
 	};
 
+	checkDescription (): boolean {
+		return !/^\r?\n$/.test(this.description)
+	};
+
 	getButtons () {
+		const { cid, key } = this.state;
+
 		return [
-			{ id: 'invite', name: translate('pageSettingsSpaceIndexInvitePeople'), icon: 'invite' },
-			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite' },
+			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
 			{ id: 'more', name: translate('commonMore'), icon: 'more' },
-		];
+		].filter(it => it);
 	};
 
 });

@@ -33,7 +33,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const cn = [ 'viewContent', className ];
 		const data = this.getData();
 		const { m, y } = this.getDateParam(value);
-		const today = this.getDateParam(U.Date.now());
 		const days = U.Date.getWeekDays();
 		const months = U.Date.getMonths();
 		const years = U.Date.getYears(0, 3000);
@@ -70,10 +69,10 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 				<div className="wrap">
 					<div className={cn.join(' ')}>
-						<div className="table customScrollbar">
+						<div className="table">
 							<div className="head">
 								{days.map((item, i) => (
-									<div key={i} className="item">
+									<div key={i} className={`item c${i}`}>
 										{item.name.substring(0, 2)}
 									</div>
 								))}
@@ -81,7 +80,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 							<div className="body">
 								{data.map((item, i) => {
-									const cn = [];
+									const cn = [ `c${item.wd}` ];
 									const current = [ item.d, item.m, item.y ].join('-');
 
 									let isToday = false;
@@ -314,14 +313,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
-		const ch = container.height();
 		const mw = cw - PADDING * 2;
 		const margin = (cw - mw) / 2;
-		const { top } = node.offset();
 		const day = node.find('.day').first();
 		const menu = S.Menu.get('calendarDay');
 
-		wrap.css({ width: cw, height: ch - top - 44, marginLeft: -margin - 2 });
+		wrap.css({ width: cw, marginLeft: -margin - 2 });
 		win.trigger('resize.menuCalendarDay');
 
 		if (menu && !menu.param.data.fromWidget && day.length) {

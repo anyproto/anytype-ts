@@ -38,6 +38,7 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 		].join(', ');
 
 		if (canEdit) {
+			cw.push('canEdit');
 			cn.push('canEdit');
 		};
 

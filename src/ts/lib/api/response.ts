@@ -50,6 +50,12 @@ export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.S
 	};
 };
 
+export const AccountMigrate = (response: Rpc.Account.Migrate.Response) => {
+	return {
+		requiredSpace: response.getError().getRequiredspace()
+	};
+};
+
 export const DebugSpaceSummary = (response: Rpc.Debug.SpaceSummary.Response) => {
 	return response.toObject();
 };

@@ -1123,6 +1123,8 @@ class UtilMenu {
 		details = details || {};
 		flags = flags || {};
 
+		let menuContext = null;
+
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
 			U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
@@ -1268,10 +1270,16 @@ class UtilMenu {
 				buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste });
 			};
 
-			buttons.unshift({ id: 'add', icon: 'plus' });
+			buttons.unshift({ 
+				id: 'add', icon: 'plus', onClick: () => {
+					U.Object.createType({ name: menuContext.ref?.filter }, keyboard.isPopup());
+					menuContext.close();
+				}, 
+			});
 
 			S.Menu.open('typeSuggest', {
 				...param,
+				onOpen: context => menuContext = context,
 				data: {
 					noStore: true,
 					onMore,

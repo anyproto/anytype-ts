@@ -11,11 +11,8 @@ const getSections = () => {
 			return item;
 		};
 
-		if (item.id) {
-			storage[item.id] = storage[item.id] || [];
-			if (storage[item.id].length) {
-				item.keys = storage[item.id];
-			};
+		if (item.id && storage[item.id]) {
+			item.keys = storage[item.id] || [];
 		};
 
 		item.symbols = keyboard.getSymbolsFromKeys(item.keys);

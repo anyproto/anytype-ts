@@ -18,6 +18,12 @@
 		}
 
 		> .wrap {
+			&.canEdit::before { 
+				content: ''; border-radius: 12px; position: absolute; top: -12px; left: -16px; width: calc(100% + 32px); height: calc(100% + 24px); z-index: 20;
+				background-color: var(--color-shape-transparent-tertiary); pointer-events: none; opacity: 0; transition: opacity $transitionCommon;
+			}
+			&.canEdit:hover::before { opacity: 1; }
+
 			> .name { @include text-overflow-nw; color: var(--color-text-secondary); }
 			> .icon.more { 
 				width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); position: absolute; right: 0px; top: 1px; opacity: 0; 

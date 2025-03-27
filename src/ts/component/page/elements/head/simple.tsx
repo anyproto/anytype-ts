@@ -49,18 +49,17 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
 		const isType = U.Object.isTypeLayout(check.layout);
 		const isDate = U.Object.isDateLayout(object.layout);
-		const isRelation = U.Object.isRelationLayout(check.layout);
-		const canEditIcon = allowDetails && !isRelation;
+		const isRelation = U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
-		const canEdit = allowDetails && !isType;
+		const canEditIcon = allowDetails && !isRelation;
 
-		if (!canEdit) {
+		if (!allowDetails) {
 			cn.push('isReadonly');
 		};
 
 		const placeholder = {
 			title: this.props.placeholder,
-			description: translate('placeholderBlockDescription'),
+			description: translate('commonDescription'),
 		};
 		const buttons = [];
 
@@ -69,7 +68,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				ref={ref => this.refEditable[item.id] = ref}
 				id={`editor-${item.id}`}
 				placeholder={placeholder[item.id]}
-				readonly={!canEdit}
+				readonly={item.readonly}
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
@@ -88,11 +87,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let descr = null;
 		let featured = null;
 
-		if (!isTypeOrRelation && !isDate) {
-			if (featuredRelations.includes('description')) {
-				descr = <Editor className="descr" id="description" />;
-			};
+		if (featuredRelations.includes('description')) {
+			descr = <Editor className="descr" id="description" readonly={!allowDetails} />;
+		};
 
+		if (!isDate && !isTypeOrRelation) {
 			featured = (
 				<Block 
 					{...this.props} 
@@ -155,7 +154,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			if (!canWrite) {
 				buttonCreate = null;
 				buttonEdit = null;
-				buttonTemplate = null;
 			};
 		};
 
@@ -189,10 +187,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								size={32} 
 								iconSize={32}
 								object={object} 
-								canEdit={canEditIcon} 
+								canEdit={canEditIcon}
 							/>
 						) : ''}
-						<Editor className="title" id="title" />
+						<Editor className="title" id="title" readonly={isType || !allowDetails} />
 					</div>
 
 					{descr}
@@ -299,8 +297,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				text = U.Date.dateWithFormat(dateFormat, object.timestamp);
 			};
 
-			if (item.blockId == J.Constant.blockId.title && U.Object.isTypeLayout(object.layout)) {
-				text = object.pluralName;
+			if ((item.blockId == J.Constant.blockId.title) && U.Object.isTypeLayout(object.layout)) {
+				text = object.pluralName || object.name;
 			};
 
 			if ([ translate('defaultNamePage'), Dataview.namePlaceholder(object.layout) ].includes(text)) {
@@ -338,9 +336,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				typeId: object.id,
 				previewSize: I.PreviewSize.Small,
 				templateId: object.defaultTemplateId,
-				onSetDefault: item => {
-					S.Menu.updateData('dataviewTemplateList', { templateId: item.id });
-					U.Object.setDefaultTemplateId(rootId, item.id);
+				onSetDefault: id => {
+					S.Menu.updateData('dataviewTemplateList', { templateId: id });
+					U.Object.setDefaultTemplateId(rootId, id);
 				},
 				onSelect: item => {
 					if (item.id == J.Constant.templateId.new) {
