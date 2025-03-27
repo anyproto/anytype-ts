@@ -491,7 +491,10 @@ class UtilObject {
 
 	isAllowedTemplate (typeId: string): boolean {
 		const type = S.Record.getTypeById(typeId);
-		if (!type || [ J.Constant.typeKey.template, J.Constant.typeKey.type ].includes(type.uniqueKey)) {
+		if (!type
+			|| [ J.Constant.typeKey.template, J.Constant.typeKey.type ].includes(type.uniqueKey)
+			|| type.isArchived
+			|| !U.Space.canMyParticipantWrite()) {
 			return false;
 		};
 

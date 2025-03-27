@@ -154,7 +154,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			if (!canWrite) {
 				buttonCreate = null;
 				buttonEdit = null;
-				buttonTemplate = null;
 			};
 		};
 
