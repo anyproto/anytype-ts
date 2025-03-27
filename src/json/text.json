@@ -1724,7 +1724,7 @@
 
 	"menuPublishTitle": "Publish to web",
 	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties.",
-	"menuPublishLabelSpaceInfo": "Space info",
+	"menuPublishLabelSpaceInfo": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
 	"menuPublishButtonUpdate": "Update",

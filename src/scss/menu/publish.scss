@@ -17,6 +17,8 @@
 
 		.flex { padding: 3px 0px; align-items: center; gap: 0px 16px; justify-content: space-between; }
 		.flex {
+			.side.left {  display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+			.icon.joinSpace { width: 20px; height: 20px; background: url('~img/icon/plus/joinSpace.svg'); }
 			.value { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; flex-shrink: 0; }
 		}
 
