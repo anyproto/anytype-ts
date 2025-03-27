@@ -292,7 +292,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		<div ref={nodeRef} className="wrap">
 			<div className="titleWrap">
 				<Title text={translate('sidebarTypeRelation')} />
-				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} />
+				<Icon 
+					id="section-relation-plus" 
+					className="plus withBackground" 
+					tooltip={translate('commonAddRelation')}
+					onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} 
+				/>
 			</div>
 
 			<DndContext 

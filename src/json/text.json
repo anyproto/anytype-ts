@@ -1934,6 +1934,7 @@
 	"sidebarObjectTypeMedia": "Media",
 	"sidebarObjectTypeBookmark": "Bookmarks",
 	"sidebarObjectTypeRelation": "Properties",
+	"sidebarObjectRelationEmpty": "No Properties",
 
 	"sidebarObjectShow": "Show",
 	"sidebarObjectSort": "Sort",
@@ -1962,12 +1963,12 @@
 	"sidebarTypeRelationHeader": "Shown in object header",
 	"sidebarTypeRelationSidebar": "Shown in Properties menu",
 	"sidebarTypeRelationHidden": "Hidden",
-	"sidebarObjectRelationSetUp": "Set up",
+	"sidebarObjectRelationSetUp": "Edit Type",
 	"sidebarTypeRelationEmpty": "There are no Properties yet",
 	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
 	"sidebarRelationLocal": "Local Properties",
-	"sidebarTypeRelationLocalDescription": "Some properties are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
+	"sidebarTypeRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add to the type to use in all objects, or removes",
 
 	"sidebarRelationLocalAddToCurrentType": "Add to the current type",
 	"sidebarRelationLocalRemoveFromObject": "Remove from object",
