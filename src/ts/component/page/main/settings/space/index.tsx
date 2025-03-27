@@ -57,8 +57,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		];
 		const cnh = [ 'spaceHeader' ];
 
-		console.log('SPACE DESCRIPTION: ', space.description, this.checkDescription())
-
 		if (isEditing) {
 			cnh.push('isEditing');
 		};
