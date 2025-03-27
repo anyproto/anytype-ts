@@ -1153,7 +1153,10 @@
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
-	"popupConfirmLocalFieldsTitle": "Add Local Properties to current type?",
+	"popupConfirmLocalFieldsTitleSingle": "Add Property to the Type?",
+	"popupConfirmLocalFieldsTextSingle": "This Property will be added to the Type and will appear in all objects of this specific Type.",
+	"popupConfirmLocalFieldsTitlePlural": "Add Properties to the Type?",
+	"popupConfirmLocalFieldsTextPlural": "These Properties will be added to the Type and will appear in all objects of this specific Type.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1974,7 +1977,7 @@
 	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add to the type to use in all objects, or remove",
 	"sidebarTypeRelationLocalDescription": "These properties exist in this object but aren’t part of the Type. Add them to make them appear in all objects of this Type",
 
-	"sidebarRelationLocalAddToCurrentType": "Add to the current type",
+	"sidebarRelationLocalAddToType": "Add to the Type",
 	"sidebarRelationLocalRemoveFromObject": "Remove from object",
 	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 

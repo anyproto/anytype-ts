@@ -204,7 +204,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 			classNameWrap: 'fromSidebar',
 			data: {
 				options: [
-					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType'), icon: '' },
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
 					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'red' },
 				],
 				onSelect: (e, option) => {
@@ -248,7 +248,6 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: keys,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					console.log('addCommand', rootId, blockId, relation);
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
 			}

@@ -33,6 +33,34 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		{ id: I.SidebarRelationList.Hidden, name: translate('sidebarTypeRelationHidden'), data: hidden, relationKey: 'recommendedHiddenRelations' },
 	];
 
+	const addConfirm = (ids: string[]) => {
+		let title = '';
+		let text = '';
+		if (ids.length == 1) {
+			title = translate('popupConfirmLocalFieldsTitleSingle');
+			text = translate('popupConfirmLocalFieldsTextSingle');
+		} else {
+			title = translate('popupConfirmLocalFieldsTitlePlural');
+			text = translate('popupConfirmLocalFieldsTextPlural');
+		};
+
+		S.Popup.open('confirm', {
+			data: {
+				title,
+				text,
+				textConfirm: translate('commonAdd'),
+				colorConfirm: 'blank',
+				colorCancel: 'blank',
+				onConfirm: () => {
+					const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+
+					onChange({ recommendedRelations: recommendedRelations.concat(ids) });
+					analytics.stackAdd('AddConflictRelation', { count: ids.length });
+				},
+			},
+		});
+	};
+
 	const onMore = (e: MouseEvent, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -48,14 +76,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			onClose: () => element.removeClass('active'),
 			data: {
 				options: [
-					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType') },
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {
 						case 'addToType': {
-							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-
-							onChange({ recommendedRelations: recommendedRelations.concat([ item.id ]) });
+							addConfirm([ item.id ]);
 							break;
 						};
 					};
@@ -72,21 +98,25 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			id: I.SidebarRelationList.Local, name: translate('sidebarTypeRelationFound'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
 			description: translate('sidebarTypeRelationLocalDescription'),
 			onInfo: () => {
-				S.Popup.open('confirm', {
+				S.Menu.open('select', {
+					element: `#sidebarRight #button-more-${I.SidebarRelationList.Local}`,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+					horizontal: I.MenuDirection.Right,
 					data: {
-						title: translate('popupConfirmLocalFieldsTitle'),
-						textConfirm: translate('commonAdd'),
-						colorCancel: 'blank',
-						onConfirm: () => {
-							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-
-							onChange({ recommendedRelations: recommendedRelations.concat(conflictIds) });
-							analytics.stackAdd('AddConflictRelation', { count: cids.length });
+						options: [
+							{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+						],
+						onSelect: (e, option) => {
+							switch (option.id) {
+								case 'addToType': {
+									addConfirm(cids);
+									break;
+								};
+							};
 						},
-					},
+					}
 				});
-
-				analytics.stackAdd('ClickConflictFieldHelp');
 			},
 			onMore,
 		});
@@ -270,8 +300,9 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				<div className="side right">
 					{list.onInfo ? (
 						<Icon 
+							id={`button-more-${list.id}`}
 							className="more withBackground"
-							tooltip={translate('sidebarRelationLocalAddToCurrentType')}
+							tooltip={translate('commonActions')}
 							onClick={list.onInfo}
 						/>
 					) : ''}

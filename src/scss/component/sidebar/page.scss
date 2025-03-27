@@ -74,6 +74,7 @@
 			.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; }
 			.icon.question { background-image: url('~img/icon/question.svg'); }
 			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+			.icon.more:hover { background-color: unset; background-image: url('~img/icon/menu/action/more1.svg'); }
 		}
 
 		.items { padding: 0px 8px; }
