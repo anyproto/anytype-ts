@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Filter, Icon, Select, Label, Error } from 'Component';
-import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action } from 'Lib';
+import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action, Preview } from 'Lib';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -26,6 +26,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const onContext = (item: any) => {
 		const options = [
 			{ id: 'edit', name: translate('popupShortcutReassign') },
+			{ id: 'reset', name: translate('popupShortcutReset') },
 			{ id: 'remove', name: translate('popupShortcutRemove') },
 		];
 
@@ -41,8 +42,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 							break;
 						};
 
+						case 'reset': {
+							Storage.resetShortcut(item.id);
+							setDummy(dummy + 1);
+							break;
+						};
+
 						case 'remove': {
-							Storage.removeShortcuts(item.id);
+							Storage.removeShortcut(item.id);
 							setDummy(dummy + 1);
 							break;
 						};
@@ -56,7 +63,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		const options = [
 			{ id: 'export', name: translate('popupShortcutExport') },
 			{ id: 'import', name: translate('popupShortcutImport') },
-			{ id: 'reset', name: translate('popupShortcutReset') },
+			{ id: 'reset', name: translate('popupShortcutResetAll') },
 		];
 
 		S.Menu.open('select', {
@@ -78,30 +85,54 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 								};
 							};
 
-							Action.openDirectoryDialog({}, paths => {
+							Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 								if (paths.length) {
 									Renderer.send('shortcutExport', paths[0], ret);
+
+									Preview.toastShow({ text: translate('popupShortcutToastExported') });
 								};
 							});
 							break;
 						};
 
 						case 'import': {
-							Action.openFileDialog({ extensions: [ 'json' ] }, paths => {
-								if (paths.length) {
-									Renderer.send('shortcutImport', paths[0]).then((data: any) => {
-										Storage.setShortcuts(data || {});
-										setDummy(dummy + 1);
-									});
-								};
+							S.Popup.open('confirm', {
+								data: {
+									title: translate('commonAreYouSure'),
+									text: translate('popupShortcutImportText'),
+									textConfirm: translate('commonConfirm'),
+									onConfirm: () => {
+										Action.openFileDialog({ extensions: [ 'json' ], buttonLabel: translate('commonImport') }, paths => {
+											if (paths.length) {
+												Renderer.send('shortcutImport', paths[0]).then((data: any) => {
+													Storage.setShortcuts(data || {});
+													setDummy(dummy + 1);
+
+													Preview.toastShow({ text: translate('popupShortcutToastUpdated') });
+												});
+											};
+										});
+									},
+								},
 							});
 							break;
 						};
 
 						case 'reset': {
 							error.current = {};
-							Storage.resetShortcuts();
-							setDummy(dummy + 1);
+
+							S.Popup.open('confirm', {
+								data: {
+									title: translate('commonAreYouSure'),
+									text: translate('popupShortcutResetAllText'),
+									textConfirm: translate('commonConfirm'),
+									onConfirm: () => {
+										Storage.resetShortcuts();
+										setDummy(dummy + 1);
+									},
+								},
+							});
+
 							break;
 						};
 					};
@@ -241,7 +272,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		const codes = new Set();
 		const setTimeout = () => {
 			window.clearTimeout(timeout.current);
-			timeout.current = window.setTimeout(() => clear(), 2000);
+			timeout.current = window.setTimeout(() => {
+				clear();
+				Preview.toastShow({ text: translate('popupShortcutToastSaved') });
+			}, 2000);
 		};
 
 		let pressed = [];
