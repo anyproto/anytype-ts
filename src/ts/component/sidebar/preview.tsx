@@ -65,12 +65,12 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
 				<div ref={ref => this.refPreview = ref} className={cn.join(' ')}>
 					<div className="layoutHeader">
-						{isNote ? '' : (
+						{!isNote ? (
 							<div className="titleWrapper">
 								{icon}
-								<Title text={name ? `${translate('commonNew')} ${name}` : translate('defaultNameType')} />
+								<Title text={name || translate('defaultNameType')} />
 							</div>
-						)}
+						) : ''}
 
 						{withDescription ? <Label text={'Description'} className="description" /> : ''}
 
