@@ -1945,7 +1945,8 @@
 	"sidebarObjectSort": "Sort",
 	"sidebarObjectOrphan": "Only unlinked",
 	"sidebarObjectOrphanLabel": "Unlinked objects that do not have a direct link or backlink with other objects in the graph.",
-	"sidebarObjectEmpty": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
+	"sidebarObjectEmpty": "It’s empty here.",
+	"sidebarObjectEmptyCreate": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
 
 	"sidebarObjectSortCreated": "Date created",
 	"sidebarObjectSortUpdated": "Date updated",
