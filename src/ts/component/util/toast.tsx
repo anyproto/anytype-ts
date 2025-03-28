@@ -20,7 +20,7 @@ const Toast: FC = observer(() => {
 	const Element = (item: any) => (
 		<div className="chunk">
 			<IconObject object={item} size={18} />
-			<ObjectName object={item} />
+			<ObjectName object={item} withPlural={true} />
 		</div>
 	);
 
@@ -32,7 +32,12 @@ const Toast: FC = observer(() => {
 
 		case I.ToastAction.Lock: {
 			textObject = object ? <Element {...object} /> : translate('commonObject');
-			textAction = translate(value ? 'toastIsLocked' : 'toastIsUnlocked');
+			textAction = value ? translate('toastIsLocked') : translate('toastIsUnlocked');
+			break;
+		};
+
+		case I.ToastAction.Widget: {
+			textAction = U.Common.sprintf(translate('toastWidget'), U.Object.name(object, true));
 			break;
 		};
 
@@ -65,7 +70,7 @@ const Toast: FC = observer(() => {
 				break;
 			};
 
-			textAction = translate(action == I.ToastAction.Collection ? 'toastAddedToCollection' : 'toastLinkedTo');
+			textAction = action == I.ToastAction.Collection ? translate('toastAddedToCollection') : translate('toastLinkedTo');
 			textObject = <Element {...object} />;
 			textTarget = <Element {...target} />;
 
