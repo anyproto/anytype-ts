@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -42,7 +42,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		let object = null;
 		if (isSystemTargetId(targetId)) {
-			object = U.Menu.getFixedWidgets().find(it => it.id == targetId);
+			object = U.Menu.getSystemWidgets().find(it => it.id == targetId);
 		} else {
 			object = S.Detail.get(widgets, targetId);
 		};
@@ -608,6 +608,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		if (targetId == J.Constant.widgetId.bin) {
 			onClickHandler = () => U.Object.openAuto({ layout: I.ObjectLayout.Archive });
+		};
+
+		if (targetId == J.Constant.widgetId.allObject) {
+			onClickHandler = () => sidebar.leftPanelSetState({ page: 'object' });
 		};
 
 		if (object?.isSystem) {

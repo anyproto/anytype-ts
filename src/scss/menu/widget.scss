@@ -4,7 +4,6 @@
 	.menu.menuWidget { width: unset; min-width: var(--menu-width-common); }
 	.menu.menuWidget {
 		.section::after { display: none; }
-		.section:last-child::before { content: ''; display: block; height: 1px; margin: 0px 14px 8px; background-color: var(--color-shape-secondary); }
 
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 36px); }
