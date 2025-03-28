@@ -188,6 +188,8 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onClickHandler = (e: any, item: any) => {
+		item = U.Common.objectCopy(item);
+
 		if (item.arrow) {
 			return;
 		};
@@ -269,9 +271,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		obj.css({ height });
 		position();
-	};
-
-	const onSortStart = () => {
 	};
 
 	const onSortEnd = (result: any) => {
@@ -392,7 +391,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<DndContext
 					sensors={sensors}
 					collisionDetection={closestCenter}
-					onDragStart={onSortStart}
 					onDragEnd={onSortEnd}
 					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 				>
