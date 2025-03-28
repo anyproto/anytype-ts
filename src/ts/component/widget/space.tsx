@@ -19,7 +19,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		{ id: 'search', name: translate('commonSearch') },
 		space.chatId || U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
 		space.isShared ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
-		{ id: 'all', name: translate('commonAllContent') },
+		//{ id: 'all', name: translate('commonAllContent') },
 	].filter(it => it);
 
 	if (isSpaceOwner && requestCnt) {

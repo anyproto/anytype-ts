@@ -861,7 +861,7 @@ class UtilMenu {
 
 	getSystemWidgets () {
 		return [
-			{ id: J.Constant.widgetId.allObject, name: translate('widgetAllObject'), icon: 'widget-all-object' },
+			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-star' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
