@@ -591,10 +591,10 @@ class Action {
 
 		const range = U.Common.objectCopy(focus.state.range);
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
-		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
+		const tree = S.Block.wrapTree(rootId, rootId);
 
 		let next = null;
-		let blocks = S.Block.unwrapTree(tree).filter(it => ids.includes(it.id));
+		let blocks = S.Block.unwrapTree([ tree ]).filter(it => ids.includes(it.id));
 
 		ids.forEach((id: string) => {
 			const block = S.Block.getLeaf(rootId, id);
