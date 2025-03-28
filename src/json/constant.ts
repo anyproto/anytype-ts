@@ -153,6 +153,7 @@ export default {
 	},
 
 	widgetId: {
+		allObject:		 'allObject',
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',

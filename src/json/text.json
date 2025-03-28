@@ -1886,6 +1886,7 @@
 	"widget4Name": "View",
 	"widget4Description": "Same as in object view",
 
+	"widgetAllObject": "All Objects",
 	"widgetFavorite": "Favorites",
 	"widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",

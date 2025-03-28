@@ -42,7 +42,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		let object = null;
 		if (isSystemTargetId(targetId)) {
-			object = U.Menu.getFixedWidgets().find(it => it.id == targetId);
+			object = U.Menu.getSystemWidgets().find(it => it.id == targetId);
 		} else {
 			object = S.Detail.get(widgets, targetId);
 		};
