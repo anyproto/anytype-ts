@@ -6,8 +6,9 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 	const { match } = props;
 
 	useEffect(() => {
-		const { id, spaceId, cid, key, route } = match.params || {};
+		const { id, spaceId, cid, key } = match.params || {};
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
+		const route = match.params.route || analytics.route.app;
 
 		// Redirect to invite page when invite parameters are present
 		if ((!space || !space.isAccountActive) && cid && key) {
@@ -33,7 +34,7 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 			const object = item.details;
 
 			U.Object.openRoute(object);
-			analytics.event('OpenObjectByLink', { route: route || analytics.route.app, objectType: object.type, type: 'Object' });
+			analytics.event('OpenObjectByLink', { route, objectType: object.type, type: 'Object' });
 		});
 
 	}, []);
