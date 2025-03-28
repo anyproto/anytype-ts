@@ -34,6 +34,41 @@ html.themeDark {
 	--color-bg-secondary: #191919;
 	--color-bg-loader: rgba(0,0,0,0.7);
 
+	/* Tag */
+
+	--color-tag-grey: var(--color-text-secondary);
+	--color-tag-yellow: var(--color-yellow);
+	--color-tag-orange: var(--color-orange);
+	--color-tag-red: var(--color-red);
+	--color-tag-pink: var(--color-pink);
+	--color-tag-purple: var(--color-purple);
+	--color-tag-blue: var(--color-blue);
+	--color-tag-ice: var(--color-ice);
+	--color-tag-teal: var(--color-teal);
+	--color-tag-lime: var(--color-lime);
+
+	--color-bg-tag-grey: #3c3c3c;
+	--color-bg-tag-yellow: #55500d;
+	--color-bg-tag-orange: #5f430a;
+	--color-bg-tag-red: #74321e;
+	--color-bg-tag-pink: #712055;
+	--color-bg-tag-purple: #542663;
+	--color-bg-tag-blue: #20295c;
+	--color-bg-tag-ice: #19465f;
+	--color-bg-tag-teal: #16534e;
+	--color-bg-tag-lime: #36551d;
+
+	.isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: #3c3c3c !important; }
+	.isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: #55500d !important; }
+	.isMultiSelect.tagColor-orange { color: var(--color-orange) !important; }
+	.isMultiSelect.tagColor-red { color: var(--color-red) !important; }
+	.isMultiSelect.tagColor-pink { color: var(--color-pink) !important; }
+	.isMultiSelect.tagColor-purple { color: var(--color-purple) !important; }
+	.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; }
+	.isMultiSelect.tagColor-ice { color: var(--color-ice) !important; }
+	.isMultiSelect.tagColor-teal { color: var(--color-teal) !important; }
+	.isMultiSelect.tagColor-lime { color: var(--color-lime) !important; }
+
 	/* System */
 
 	--color-system-accent-125: #ffc83c;
