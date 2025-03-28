@@ -1494,7 +1494,7 @@
 
 	"menuBlockLayoutSetLayoutWidth": "Set layout width",
 	"menuBlockLayoutChooseLayoutType": "Choose layout type",
-	"menuBlockLayoutConflict": "This layout differs from the type's default. Reset to match?",
+	"menuBlockLayoutConflict": "This object has layout settings that differ from the type.",
 	"menuBlockLayoutReset": "Reset to default",
 
 	"menuBlockLinkSettingsStyleText": "Text",
@@ -1953,7 +1953,7 @@
 
 	"sidebarTypeTitle": "Editing type",
 	"sidebarTypeTitleLabelName": "Type name and icon",
-	"sidebarTypeTitleLabelPlural": "Plural name",
+	"sidebarTypeTitleLabelPlural": "Type List name",
 	"sidebarSectionLayoutName": "Layout",
 	"sidebarSectionLayoutFormat": "Format",
 	"sidebarSectionLayoutFormatPage": "Page",
