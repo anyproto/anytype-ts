@@ -260,6 +260,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				style={style}
 				className={cn.join(' ')}
 				onClick={onClick}
+				onContextMenu={onClick}
 			>
 				{!item.isEmpty ? (
 					<>
