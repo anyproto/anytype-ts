@@ -1976,7 +1976,7 @@
 
 	"sidebarRelationLocal": "Local Properties",
 	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add to the type to use in all objects, or remove",
-	"sidebarTypeRelationLocalDescription": "These properties exist in this object but aren’t part of the Type. Add them to make them appear in all objects of this Type",
+	"sidebarTypeRelationLocalDescription": "These properties exist in some objects but aren’t part of the Type. Add them to make them appear in all objects of this Type.",
 
 	"sidebarRelationLocalAddToType": "Add to the Type",
 	"sidebarRelationLocalRemoveFromObject": "Remove from object",
