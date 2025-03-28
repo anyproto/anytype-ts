@@ -451,8 +451,6 @@ class Storage {
 	};
 
 	setPinnedTypes (list: string[]) {
-		list = list.slice(0, 50);
-
 		this.set('pinnedTypes', this.checkArray([ ...new Set(list) ]));
 	};
 
