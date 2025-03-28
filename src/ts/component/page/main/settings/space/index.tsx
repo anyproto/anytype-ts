@@ -84,19 +84,22 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			);
 		};
 
-		const membersIcons = canWrite ? (
-			<div className="membersIcons">
-				{members.map((el, idx) => {
-					if (idx < maxIcons) {
-						return <IconObject key={idx} size={36} object={el} />;
-					};
-					return null;
-				})}
-				{members.length > maxIcons ? (
-					<div className="membersMore">+{members.length - maxIcons}</div>
-				) : ''}
-			</div>
-		) : '';
+		let membersIcons = null;
+		if (canWrite) {
+			membersIcons = (
+				<div className="membersIcons">
+					{members.map((el, idx) => {
+						if (idx < maxIcons) {
+							return <IconObject key={idx} size={36} object={el} />;
+						};
+						return null;
+					})}
+					{members.length > maxIcons ? (
+						<div className="membersMore">+{members.length - maxIcons}</div>
+					) : ''}
+				</div>
+			);
+		};
 
 		return (
 			<>
@@ -312,13 +315,17 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		switch (item.id) {
 			case 'invite': {
 				this.props.onPage('spaceShare');
+
+				analytics.event('ClickSettingsSpaceInvite', { route: analytics.route.settingsSpace });
 				break;
 			};
+
 			case 'qr': {
 				S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 				analytics.event('ScreenQr', { route: analytics.route.settingsSpace });
 				break;
 			};
+
 			case 'more': {
 				const element = `#${U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)}`;
 				S.Menu.open('select', {

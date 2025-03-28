@@ -252,11 +252,6 @@ class Analytics {
 		};
 
 		switch (code) {
-			case 'ScreenType': {
-				data.objectType = data.params.id;
-				break;
-			};
-
 			case 'ObjectInstall':
 			case 'ObjectUninstall':
 			case 'SelectGraphNode':
@@ -590,7 +585,6 @@ class Analytics {
 
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',
-			'main/type':		 'ScreenType',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 			'main/date':		 'ScreenDate',

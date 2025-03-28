@@ -422,8 +422,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		};
 
 		U.Object.openAuto(param);
-
-		analytics.event(`Screen${this.getAnalyticsSuffix()}`, { route: 'SettingsSpace' });
 	};
 
 	onContext (item: any) {
