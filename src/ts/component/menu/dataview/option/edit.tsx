@@ -161,7 +161,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
-					bgColor: 'red',
 					title: translate('commonAreYouSure'),
 					text: translate('popupConfirmRelationOptionRemoveText'),
 					textConfirm: translate('commonDelete'),

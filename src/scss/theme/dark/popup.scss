@@ -61,9 +61,6 @@
 
 	.popup.popupConfirm {
 		.iconWrapper { background: none; }
-		.icon.update { background-image: url('#{$themePath}/icon/popup/confirm/update.svg'); }
-		.icon.updated { background-image: url('#{$themePath}/icon/popup/confirm/updated.svg'); }
-		.icon.error { background-image: url('#{$themePath}/icon/popup/confirm/error.svg'); }
 		.icon.confirm { background-image: url('#{$themePath}/icon/popup/confirm/confirm.svg'); }
 	}
 

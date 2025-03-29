@@ -579,7 +579,6 @@ class UtilCommon {
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'error',
-					bgColor: 'red',
 					title: translate('commonError'),
 					text: translate('popupConfirmObjectOpenErrorText'),
 					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
@@ -603,7 +602,6 @@ class UtilCommon {
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
-				bgColor: 'green',
 				title: translate('popupConfirmNeedUpdateTitle'),
 				text: translate('popupConfirmNeedUpdateText'),
 				textConfirm: translate('commonUpdate'),

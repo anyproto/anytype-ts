@@ -208,7 +208,6 @@ class Action {
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
-					bgColor: 'red',
 					title: translate('popupConfirmOpenExternalLinkTitle'),
 					text: U.Common.sprintf(translate('popupConfirmOpenExternalLinkText'), U.Common.shorten(url, 120)),
 					textConfirm: translate('commonYes'),

@@ -680,7 +680,6 @@ class Keyboard {
 						className: 'isLeft',
 						data: {
 							icon: 'warning',
-							bgColor: 'red',
 							title: translate('commonWarning'),
 							text: translate('popupConfirmReleaseChannelText'),
 							onConfirm: () => cb(),
