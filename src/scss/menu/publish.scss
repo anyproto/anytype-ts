@@ -17,6 +17,8 @@
 
 		.flex { padding: 3px 0px; align-items: center; gap: 0px 16px; justify-content: space-between; }
 		.flex {
+			.side.left {  display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+			.icon.joinSpace { width: 20px; height: 20px; background: url('~img/icon/plus/joinSpace.svg'); }
 			.value { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; flex-shrink: 0; }
 		}
 
@@ -34,6 +36,11 @@
 		}
 		.urlWrapper:hover {
 			.button { display: block; }
+		}
+
+		.incentiveBanner { display: flex; gap: 0px 12px; align-items: center; padding: 12px 16px; background: var(--color-shape-tertiary); border-radius: 8px; margin-bottom: 8px; }
+		.incentiveBanner {
+			.button { flex-shrink: 0; padding: 0px 12px; height: 22px; border-radius: 11px; @include text-small; }
 		}
 
 		.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; justify-content: space-evenly; height: 36px; }
