@@ -77,7 +77,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 	};
 
-	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
+	const isSpace = layout == I.WidgetLayout.Space;
+	const hasChild = !isSpace;
 	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'widget' ];
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
@@ -212,11 +213,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!U.Space.canMyParticipantWrite()) {
-			return;
-		};
-
-		if (!object || object._empty_) {
+		if (!canWrite || !object || object._empty_) {
 			return;
 		};
 
@@ -267,8 +264,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const open = () => {
 		const node = $(nodeRef.current);
 		const icon = node.find('.icon.collapse');
+		const wrapper = node.find('#contentWrapper').css({ height: 'auto' });
 		const innerWrap = node.find('#innerWrap').show().css({ height: '', opacity: 0 });
-		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
 		const minHeight = getMinHeight();
 
@@ -299,8 +296,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const close = () => {
 		const node = $(nodeRef.current);
 		const icon = node.find('.icon.collapse');
+		const wrapper = node.find('#contentWrapper');
 		const innerWrap = node.find('#innerWrap');
-		const wrapper = node.find('#wrapper');
 		const minHeight = getMinHeight();
 
 		wrapper.css({ height: wrapper.outerHeight() });
@@ -436,7 +433,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const canCreateHandler = (): boolean => {
-		if (!object || isEditing || !U.Space.canMyParticipantWrite()) {
+		if (!canWrite || !object || isEditing) {
 			return false;
 		};
 
@@ -677,7 +674,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	switch (layout) {
 		case I.WidgetLayout.Space: {
 			cn.push('widgetSpace');
-			content = <WidgetSpace {...childProps} />;
+			content = <WidgetSpace {...childProps} onToggle={onToggle} />;
 
 			isDraggable = false;
 			break;
@@ -702,6 +699,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			break;
 		};
 
+	};
+
+	if (!isSpace) {
+		content = (
+			<div id="contentWrapper" className="contentWrapper">
+				{content}
+			</div>
+		);
 	};
 
 	useEffect(() => {
@@ -730,10 +735,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			<Icon className="remove" inner={<div className="inner" />} onClick={onRemove} />
 
 			{head}
-
-			<div id="wrapper" className="contentWrapper">
-				{content}
-			</div>
+			{content}
 
 			<div className="dimmer" />
 
