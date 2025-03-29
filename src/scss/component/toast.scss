@@ -12,6 +12,7 @@
 .toast {
 	.inner {
 		.icon { width: 20px; height: 20px; }
+		.icon.check { background: url('~img/icon/toast/check.svg'); }
 		.icon.notice { background: url('~img/icon/toast/notice.svg'); }
 
 		.message { display: flex; gap: 0px 4px; max-width: 100%; }

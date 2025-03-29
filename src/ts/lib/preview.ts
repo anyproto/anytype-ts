@@ -303,7 +303,6 @@ class Preview {
 	hideAll () {
 		this.tooltipHide(true);
 		this.previewHide(true);
-		this.toastHide(true);
 	};
 
 };

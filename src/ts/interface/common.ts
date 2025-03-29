@@ -55,14 +55,15 @@ export interface Toast {
 };
 
 export enum ToastAction {
-	None		 	= 0,
-	Move		 	= 1,
-	Link		 	= 2,
-	Lock 		 	= 3,
-	Collection	 	= 4,
-	StorageFull		= 5,
-	TemplateCreate	= 6,
-	Archive 		= 7,
+	None		 	 = 0,
+	Move		 	 = 1,
+	Link		 	 = 2,
+	Lock 		 	 = 3,
+	Collection	 	 = 4,
+	StorageFull		 = 5,
+	TemplateCreate	 = 6,
+	Archive 		 = 7,
+	Widget			 = 8,
 };
 
 export interface Option {
