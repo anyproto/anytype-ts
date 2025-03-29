@@ -569,7 +569,6 @@ class Dataview {
 
 		const { total } = S.Record.getMeta(subId, '');
 		const isDate = relation.format == I.RelationType.Date;
-
 		const isArray = Relation.isArrayType(relation.format);
 		const needRecords = ![ I.FormulaType.None, I.FormulaType.Count ].includes(formulaType);
 		const records = needRecords ? S.Record.getRecords(subId, [ relationKey ], true) : [];
