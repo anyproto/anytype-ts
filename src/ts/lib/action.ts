@@ -157,7 +157,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget', { layout, params: { target } });
+		analytics.event('DeleteWidget', { layout, widgetType: analytics.getWidgetType(block.content.autoAdded), params: { target } });
 	};
 
 	focusToEnd (rootId: string, id: string) {
@@ -795,7 +795,7 @@ class Action {
 		};
 
 		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, () => {
-			analytics.event('AddWidget', { type: layout, route });
+			analytics.createWidget(layout, route, analytics.widgetType.manual);
 		});
 	};
 

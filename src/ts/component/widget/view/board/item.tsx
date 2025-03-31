@@ -13,7 +13,7 @@ interface Props extends I.WidgetViewComponent {
 
 const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { subId, id, block, isEditing, hideIcon, onContext, getView } = props;
+	const { subId, id, parent, block, isEditing, hideIcon, onContext, getView } = props;
 	const nodeRef = useRef(null);
 	const moreRef = useRef(null);
 	const rootId = keyboard.getRootId();
@@ -34,7 +34,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.stopPropagation();
 
 		U.Object.openEvent(e, object);
-		analytics.event('OpenSidebarObject');
+		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
 	};
 
 	const onContextHandler = (e: SyntheticEvent, withElement: boolean) => {

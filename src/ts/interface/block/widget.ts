@@ -61,6 +61,7 @@ export interface ContentWidget {
 	layout: I.WidgetLayout;
 	limit: number;
 	viewId: string;
+	autoAdded: boolean;
 };
 
 export interface BlockWidget extends I.Block {

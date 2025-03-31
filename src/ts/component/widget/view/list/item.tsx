@@ -19,7 +19,7 @@ interface Props extends I.WidgetViewComponent {
 
 const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { subId, id, block, style, isCompact, isEditing, index, isPreview, isSection, hideIcon, onContext } = props;
+	const { subId, id, parent, block, style, isCompact, isEditing, index, isPreview, isSection, hideIcon, onContext } = props;
 	const rootId = keyboard.getRootId();
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
 	const { isReadonly, isArchived, isHidden, restrictions, source } = object;
@@ -48,7 +48,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.stopPropagation();
 
 		U.Object.openEvent(e, object);
-		analytics.event('OpenSidebarObject');
+		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
 	};
 
 	const onContextHandler = (e: React.SyntheticEvent, withElement: boolean) => {

@@ -596,21 +596,26 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasChild) {
-		let icon = null;
-		let onClickHandler = null;
+		const onClickHandler = (e: any) => {
+			e.preventDefault();
+			e.stopPropagation();
 
-		if (targetId == J.Constant.widgetId.bin) {
-			onClickHandler = () => U.Object.openAuto({ layout: I.ObjectLayout.Archive });
-		} else 
-		if (targetId == J.Constant.widgetId.allObject) {
-			onClickHandler = () => sidebar.leftPanelSetState({ page: 'object' });
-		} else 
-		if (isSystemTarget) {
-			onClickHandler = onSetPreview;
-		} else {
-			onClickHandler = onClick;
+			if (targetId == J.Constant.widgetId.bin) {
+				U.Object.openAuto({ layout: I.ObjectLayout.Archive });
+			} else 
+			if (targetId == J.Constant.widgetId.allObject) {
+				sidebar.leftPanelSetState({ page: 'object' });
+			} else 
+			if (isSystemTarget) {
+				onSetPreview();
+			} else {
+				onClick(e);
+			};
+
+			analytics.event('ClickWidgetTitle', { widgetType: analytics.getWidgetType(block.content.autoAdded) });
 		};
 
+		let icon = null;
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {

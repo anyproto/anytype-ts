@@ -244,7 +244,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					U.Object.openConfig(target);
 				};
 
-				analytics.event('AddWidget', { type: I.WidgetLayout.Link, route });
+				analytics.createWidget(I.WidgetLayout.Link, route, analytics.widgetType.manual);
 				analytics.event('ChangeWidgetSource', {
 					layout,
 					route: analytics.route.addWidget,

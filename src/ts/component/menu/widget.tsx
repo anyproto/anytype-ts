@@ -106,10 +106,18 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	}
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId } = data;
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, blockId);
+
 		this._isMounted = true;
 		this.checkButton();
 		this.rebind();
 		this.getTargetId();
+
+		analytics.event('ScreenWidgetMenu', { widgetType: analytics.getWidgetType(block?.content.autoAdded) });
 	};
 
 	componentDidUpdate () {
@@ -326,7 +334,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 
 			if (!isEditing) {
-				analytics.event('AddWidget', { type: this.layout, route: analytics.route.addWidgetMenu });
+				analytics.createWidget(this.layout, analytics.route.addWidgetMenu, analytics.widgetType.manual);
 			};
 		});
 

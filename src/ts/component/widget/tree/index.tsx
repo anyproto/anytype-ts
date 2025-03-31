@@ -221,7 +221,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		e.stopPropagation();
 
 		U.Object.openEvent(e, item);
-		analytics.event('OpenSidebarObject');
+		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
 	};
 
 	const getTotalHeight = () => {
