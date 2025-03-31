@@ -129,6 +129,22 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }
 
+.header.mainSettings {
+	.anyId { -webkit-app-region: no-drag; display: flex; gap: 0px 4px; align-items: center; height: 22px; padding: 0px 8px 0px 6px; border-radius: 11px; background: var(--color-shape-highlight-medium); }
+	.anyId {
+		.icon.anyName { width: 20px; height: 20px; background: url('~img/icon/header/settings/anyName.svg'); }
+		.icon.info { width: 16px; height: 16px; background: url('~img/icon/header/settings/info.svg'); }
+		> .label { @include text-very-small; font-weight: 500; color: var(--color-text-primary); }
+
+		.infoWrapper { padding: 16px 32px 24px; text-align: center; width: 360px; position: absolute; top: 100%; left: 50%; margin: -12px 0px 0px -180px; background: var(--color-bg-primary); border-radius: 12px; box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.20); }
+		.infoWrapper {
+			.iconWrapper { width: 48px; height: 48px; border-radius: 8px; margin: 0px auto 16px; display: flex; align-items: center; justify-content: center; background: var(--color-shape-highlight-medium); }
+			.title { @include text-paragraph; font-weight: 600; margin-bottom: 4px; }
+			.label { margin-bottom: 12px; }
+		}
+	}
+}
+
 .popup {
 	.header { position: sticky; padding: 0px; top: 0px !important; }
 	.header {

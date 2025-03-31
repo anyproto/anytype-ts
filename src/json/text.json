@@ -378,6 +378,10 @@
 	"headerGraphTooltipFilters": "Filters",
 	"headerGraphTooltipSettings": "Settings",
 
+	"headerSettingsAnyIdInfoTitle": "ANY Name",
+	"headerSettingsAnyIdInfoText": "Anytype Identity can be linked to your global name in the network. Become a member to select your custom name.",
+	"headerSettingsAnyIdInfoExplorePlans": "Explore plans",
+
 	"shareTooltipLabel": "<b>Share Anytype</b> with<br/>those you care about",
 	"shareBannerLabel": "<b>Share the space!</b> Invite your friends and build together.",
 
