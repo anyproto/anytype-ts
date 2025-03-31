@@ -51,7 +51,6 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 						S.Popup.open('confirm', {
 							data: {
 								icon,
-								bgColor: 'red',
 								title,
 								text,
 								textConfirm: translate('commonOkay'),

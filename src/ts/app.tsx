@@ -422,7 +422,6 @@ class App extends React.Component<object, State> {
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
-				bgColor: 'green',
 				title: title.join(' - '),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
@@ -457,7 +456,6 @@ class App extends React.Component<object, State> {
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
-				bgColor: 'green',
 				title: title.join(' - '),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('commonUpdate'),
@@ -483,7 +481,6 @@ class App extends React.Component<object, State> {
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'updated',
-				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: U.Common.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
@@ -504,7 +501,6 @@ class App extends React.Component<object, State> {
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'error',
-				bgColor: 'red',
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: U.Common.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
