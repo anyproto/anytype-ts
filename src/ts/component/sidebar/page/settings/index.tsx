@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { analytics, I, J, keyboard, S, sidebar, translate, U } from 'Lib';
+import { I, keyboard, S, sidebar, translate, U } from 'Lib';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -91,7 +91,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				<div
 					id={`item-${item.id}`}
 					className={cn.join(' ')}
-					onContextMenu={() => this.onContext(item)}
 					onClick={() => this.onClick(item)}
 				>
 					{icon}
@@ -293,27 +292,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			return;
 		};
 
-		let param = {
-			id: item.id,
-			layout: I.ObjectLayout.Settings,
-		};
-
-		U.Object.openAuto(param);
-	};
-
-	onContext (item) {
-		const { x, y } = keyboard.mouse.page;
-
-		S.Menu.open('objectContext', {
-			element: `#containerSettings #item-${item.id}`,
-			rect: { width: 0, height: 0, x: x + 4, y },
-			data: {
-				objectIds: [ item.id ],
-				getObject: () => {
-					return item;
-				},
-			}
-		});
+		U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Settings });
 	};
 
 });

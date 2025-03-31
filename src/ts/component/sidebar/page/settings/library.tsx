@@ -70,15 +70,19 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				return <ItemSection {...item} />;
 			};
 
+			const cn = [ 'item' ];
+			if (item.id == param?.objectId) {
+				cn.push('active');
+			};
+
 			return (
 				<div
 					id={`item-${item.id}`}
-					className={[ 'item', item.id == param?.objectId ? 'active' : '' ].join(' ')}
+					className={cn.join(' ')}
 					onClick={() => this.onClick(item)}
 					onContextMenu={() => this.onContext(item)}
 				>
 					<IconObject object={item} />
-
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -434,7 +438,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				objectIds: [ item.id ],
 				subId: J.Constant.subId.library,
 				route: analytics.route.library,
-				allowedLinkTo: true,
 			}
 		});
 	};
