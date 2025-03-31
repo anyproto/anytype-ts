@@ -270,7 +270,7 @@ export const Mapper = {
 				layout: obj.getLayout(),
 				limit: obj.getLimit(),
 				viewId: obj.getViewid(),
-				//autoAdded: obj.getAutoadded(),
+				autoAdded: obj.getAutoadded(),
 			};
 		},
 
