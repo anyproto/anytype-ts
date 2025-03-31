@@ -1724,7 +1724,7 @@
 
 	"menuPublishTitle": "Publish to web",
 	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties.",
-	"menuPublishLabelSpaceInfo": "Join Space Button",
+	"menuPublishLabelJoinSpace": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
 	"menuPublishButtonUpdate": "Update",
@@ -2276,7 +2276,7 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
-	"errorPublishingCreate103": "Looks like some files are over %s MB. Please remove or slim them down and try again.",
+	"errorPublishingCreate103": "Looks like some files are over %sMB. Please remove or slim them down and try again.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 
