@@ -1086,7 +1086,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 			S.Popup.open('confirm', {
 				data: {
-					icon: 'warningInverted',
+					icon: 'warning',
 					title: translate('popupConfirmSpeedLimitTitle'),
 					text: translate('popupConfirmSpeedLimitText'),
 					textConfirm: translate('commonOkay'),
