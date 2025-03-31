@@ -562,6 +562,7 @@
 	"pageSettingsSpaceIndexInviteMembers": "Invite Members",
 	"pageSettingsSpaceIndexQRCode": "QR code",
 	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
+	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br />Create a new one to invite<br />memebers.",
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
 

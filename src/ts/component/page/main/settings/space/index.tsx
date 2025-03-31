@@ -143,12 +143,21 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				{/*{membersIcons}*/}
 
 				<div className="buttons">
-					{buttons.map((el, idx) => (
-						<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className="btn" onClick={e => this.onClick(e, el)}>
-							<Icon className={el.icon} />
-							<Label text={el.name} />
-						</div>
-					))}
+					{buttons.map((el, idx) => {
+						const cn = [ 'btn' ];
+
+						if (el.isDisabled) {
+							cn.push('disabled');
+						};
+
+						return (
+							<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className={cn.join(' ')} onClick={e => this.onClick(e, el)}>
+								<Icon className={el.icon} />
+								<Label text={el.name} />
+								{el.tooltip ? <Icon className="tooltipOverlay" tooltip={el.tooltip} /> : ''}
+							</div>
+						);
+					})}
 				</div>
 
 				<div className="sections">
@@ -308,6 +317,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onClick (e: React.MouseEvent, item: any) {
+		if (item.isDisabled) {
+			return;
+		};
+
 		const { cid, key } = this.state;
 		const space = U.Space.getSpaceview();
 		const isOwner = U.Space.isMyOwner(space.targetSpaceId);
@@ -426,8 +439,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	getButtons () {
 		const { cid, key } = this.state;
 
+		const space = U.Space.getSpaceview();
+		const isDisabled = space.spaceAccessType == I.SpaceType.Personal;
+		const tooltip = isDisabled ? translate('pageSettingsSpaceIndexEntrySpaceTooltip') : '';
+
 		return [
-			{ id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite' },
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip },
 			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
 			{ id: 'more', name: translate('commonMore'), icon: 'more' },
 		].filter(it => it);
