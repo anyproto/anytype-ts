@@ -18,7 +18,7 @@ class UtilSpace {
 		};
 
 		if (!home) {
-			U.Object.openRoute({ layout: I.ObjectLayout.Empty }, param);
+			U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' }, param);
 		} else {
 			U.Object.openRoute(home, param);
 		};

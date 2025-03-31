@@ -396,7 +396,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			const home = U.Space.getDashboard();
 			if (home && (object.id == home.id)) {
-				U.Object.openRoute({ layout: I.ObjectLayout.Empty });
+				U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' });
 			} else {
 				keyboard.onBack();
 			};

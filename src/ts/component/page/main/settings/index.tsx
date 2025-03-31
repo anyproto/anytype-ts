@@ -69,6 +69,7 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
+	spaceIndexEmpty:			 PageSpaceIndex,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
@@ -79,7 +80,7 @@ const Components: any = {
 };
 
 const SPACE_PAGES = [
-	'spaceIndex', 'spaceStorageManager', 'spaceShare',
+	'spaceIndex', 'spaceIndexEmpty', 'spaceStorageManager', 'spaceShare',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
 	'set', 'relation', 'archive',
@@ -177,6 +178,11 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 			let page = '';
 			switch (id) {
+				case 'spaceIndexEmpty': {
+					page = 'widget';
+					break;
+				};
+
 				case 'set': {
 					page = 'types';
 					break;

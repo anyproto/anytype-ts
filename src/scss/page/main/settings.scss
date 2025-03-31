@@ -124,7 +124,8 @@
         }
     }
 
-    > .pageSettingsSpaceIndex {
+    > .pageSettingsSpaceIndex,
+    > .pageSettingsSpaceIndexEmpty {
         .spaceHeader {
             position: relative; margin: 0px 0px 8px 0px; padding: 16px 44px 32px; display: flex; flex-direction: column; align-items: center;
             border: 1px solid var(--color-shape-secondary); border-radius: 16px; width: 100%; gap: 8px 0px;
