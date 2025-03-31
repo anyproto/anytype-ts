@@ -39,7 +39,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const renderAnyId = () => {
 		const param = U.Router.getParam(U.Router.getRoute());
 		const id = param.id || 'account';
-		const showId = [ 'account' ];
+		const showId = [ 'account', 'index' ];
 
 		if (!showId.includes(id)) {
 			return '';
