@@ -360,7 +360,7 @@ class UtilData {
 				ignoreHidden: false,
 				ignoreArchived: false,
 				onSubscribe: () => {
-					S.Record.getTypes().forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
+					S.Record.getRecords(J.Constant.subId.type).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
 			},
 			{
@@ -377,11 +377,6 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				onSubscribe: () => {
-					S.Record.getRecords(J.Constant.subId.typeStore).forEach(it => {
-						S.Record.typeKeyMapSet(J.Constant.storeSpaceId, it.uniqueKey, it.id);
-					});
-				},
 			},
 			{
 				subId: J.Constant.subId.relation,
@@ -394,7 +389,7 @@ class UtilData {
 				ignoreHidden: false,
 				ignoreArchived: false,
 				onSubscribe: () => {
-					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
+					S.Record.getRecords(J.Constant.subId.relation).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
 			},
 			{
@@ -407,11 +402,6 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				onSubscribe: () => {
-					S.Record.getRecords(J.Constant.subId.relationStore).forEach(it => {
-						S.Record.relationKeyMapSet(J.Constant.storeSpaceId, it.relationKey, it.id);
-					});
-				},
 			},
 			{
 				subId: J.Constant.subId.option,

@@ -834,7 +834,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			ret = keys.map(it => S.Record.getRelationByKey(it));
 		};
 
-		return ret.filter(it => it);
+		return ret.filter(it => it && !it.isDeleted && !it.isArchived);
 	};
 	
 });
