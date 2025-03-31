@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard } from 'Lib';
+import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 
@@ -1055,6 +1055,12 @@ class Dispatcher {
 					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
+
+				case 'SpaceAutoWidgetAdded': {
+					Preview.toastShow({ objectId: mapped.targetId, action: I.ToastAction.Widget, icon: 'check' });
+					break;
+				};
+
 			};
 
 			if (needLog) {

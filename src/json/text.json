@@ -1789,6 +1789,7 @@
 	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
 
 	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
+	"toastWidget": "Widget <b>%s</b> has been added",
 
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",

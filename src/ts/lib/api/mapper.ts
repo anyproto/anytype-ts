@@ -1174,6 +1174,8 @@ export const Mapper = {
 			if (v == V.CHATDELETE)					 t = 'ChatDelete';
 			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
 
+			if (v == V.SPACEAUTOWIDGETADDED)		 t = 'SpaceAutoWidgetAdded';
+
 			return t;
 		},
 
@@ -1673,6 +1675,14 @@ export const Mapper = {
 			return {
 				id: obj.getId(),
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
+			};
+		},
+
+		SpaceAutoWidgetAdded: (obj: Events.Event.Space.AutoWidgetAdded) => {
+			return {
+				widgetId: obj.getWidgetblockid(),
+				targetId: obj.getTargetid(),
+				targetName: obj.getTargetname(),
 			};
 		},
 
