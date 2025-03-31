@@ -222,11 +222,9 @@ class Action {
 	};
 
 	openPath (path: string) {
-		if (!path) {
-			return;
+		if (path) {
+			Renderer.send('openPath', path);
 		};
-
-		Renderer.send('openPath', path);
 	};
 
 	openFile (id: string, route: string) {
@@ -234,9 +232,11 @@ class Action {
 			return;
 		};
 
-		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
-			this.openPath(message.path);
-			analytics.event('OpenMedia', { route });
+		C.FileDownload(id, '', (message: any) => {
+			if (message.path) {
+				this.openPath(message.path);
+				analytics.event('OpenMedia', { route });
+			};
 		});
 	};
 
