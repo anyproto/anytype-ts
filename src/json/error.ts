@@ -29,7 +29,11 @@ export default {
 			NOTION_RATE_LIMIT_EXCEEDED:					13,
 			FILE_IMPORT_NO_OBJECTS_IN_ZIP_ARCHIVE:		14,
 			FILE_IMPORT_NO_OBJECTS_IN_DIRECTORY:		17,
-		}
+		},
+
+		Publish: {
+			PAGE_SIZE_EXCEEDED: 	103
+		},
 	},
 
 	'Error: net::ERR_TIMED_OUT': 'Network time-out',
