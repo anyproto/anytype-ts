@@ -57,9 +57,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		};
 
 		if (relation) {
-			const allowedDelete = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]) : false;
-
-			canDelete = allowedDelete && Relation.isSystemWithoutUser(relation.relationKey);
+			canDelete = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]) : false;
 		};
 
 		switch (ref) {
