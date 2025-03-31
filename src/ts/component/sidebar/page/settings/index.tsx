@@ -186,6 +186,8 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	getSpaceSettings () {
+		const space = U.Space.getSpaceview();
+		const isEntrySpace = space.spaceAccessType == I.SpaceType.Personal;
 		const canWrite = U.Space.canMyParticipantWrite();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing, I.ParticipantStatus.Active ]);
 		const importExport = [{
@@ -205,9 +207,9 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				id: 'common', name: translate('commonPreferences'),
 				children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
-					{ id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
+					isEntrySpace ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
 					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
-				],
+				].filter(it => it),
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
