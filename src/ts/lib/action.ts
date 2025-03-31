@@ -232,7 +232,7 @@ class Action {
 			return;
 		};
 
-		C.FileDownload(id, '', (message: any) => {
+		C.FileDownload(id, U.Common.getElectron().downloadPath(), (message: any) => {
 			if (message.path) {
 				this.openPath(message.path);
 				analytics.event('OpenMedia', { route });

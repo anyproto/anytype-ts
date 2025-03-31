@@ -424,8 +424,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	};
 
 	const getPlaceholder = (relation: any, record: any): string => {
-		const canEdit = canCellEdit(relation, record);
+		if (!relation.id) {
+			return '';
+		};
 
+		const canEdit = canCellEdit(relation, record);
 		return !canEdit ? translate(`placeholderCellCommon`) : (placeholder || translate(`placeholderCell${relation.format}`));
 	};
 

@@ -377,6 +377,11 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
+				onSubscribe: () => {
+					S.Record.getRecords(J.Constant.subId.typeStore).forEach(it => {
+						S.Record.typeKeyMapSet(J.Constant.storeSpaceId, it.uniqueKey, it.id);
+					});
+				},
 			},
 			{
 				subId: J.Constant.subId.relation,
@@ -402,6 +407,11 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
+				onSubscribe: () => {
+					S.Record.getRecords(J.Constant.subId.relationStore).forEach(it => {
+						S.Record.relationKeyMapSet(J.Constant.storeSpaceId, it.relationKey, it.id);
+					});
+				},
 			},
 			{
 				subId: J.Constant.subId.option,
