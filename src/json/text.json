@@ -2317,7 +2317,7 @@
 	"notificationImportErrorText3": "Internal error during import. Please report it to Anytype devs using Help -> Report a Bug. We will check.",
 	"notificationImportErrorText5": "No objects found in the provided Notion integration. Open Notion and check that you have added the integration to the pages you want to export. Check our FAQ for more details.",
 	"notificationImportErrorText6": "The import was canceled by the user.",
-	"notificationImportErrorText7": "The number of lines of the CSV file exceeds 1000. Try splitting the file into smaller parts.",
+	"notificationImportErrorText7": "The number of lines of the CSV file exceeds limit of 1000 rows and 10 columns. Try splitting the file into smaller parts.",
 	"notificationImportErrorText8": "Error when uploading a file. Check if you have enough space and try again.",
 	"notificationImportErrorText9": "We don’t have permission to import into this Anytype space.",
 	"notificationImportErrorText10": "An error occurred during HTML rendering. Check the format of your HTML file.",
