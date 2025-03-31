@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -26,14 +26,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 	const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
 	const targetId = child ? child.getTargetObjectId() : '';
-
-	const isSystemTarget = (): boolean => {
-		return child ? isSystemTargetId(child.getTargetObjectId()) : false;
-	};
-
-	const isSystemTargetId = (id: string): boolean => {
-		return U.Menu.isSystemWidget(id);
-	};
+	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
 
 	const getObject = () => {
 		if (!child) {
@@ -41,8 +34,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		let object = null;
-		if (isSystemTargetId(targetId)) {
-			object = U.Menu.getFixedWidgets().find(it => it.id == targetId);
+		if (U.Menu.isSystemWidget(targetId)) {
+			object = U.Menu.getSystemWidgets().find(it => it.id == targetId);
 		} else {
 			object = S.Detail.get(widgets, targetId);
 		};
@@ -87,9 +80,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'widget' ];
-	const withSelect = !isSystemTarget() && (!isPreview || !U.Common.isPlatformMac());
+	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
-	const canDrop = object && !isSystemTarget() && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = object && !isSystemTarget && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
 	const unbind = () => {
 		const events = [ 'updateWidgetData', 'updateWidgetViews' ];
@@ -428,7 +421,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		if (!isPreview) {
 			blockId = block.id;
 			event = 'SelectHomeTab';
-			data.tab = isSystemTarget() ? object.name : analytics.typeMapper(object.type);
+			data.tab = isSystemTarget ? object.name : analytics.typeMapper(object.type);
 		};
 
 		setPreview(blockId);
@@ -536,7 +529,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		parent: block,
 		block: child,
 		canCreate,
-		isSystemTarget: isSystemTarget,
+		isSystemTarget,
 		getData,
 		getLimit,
 		getTraceId,
@@ -603,13 +596,26 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasChild) {
-		let icon = null;
-		let onClickHandler = isSystemTarget() ? onSetPreview : onClick;
+		const onClickHandler = (e: any) => {
+			e.preventDefault();
+			e.stopPropagation();
 
-		if (targetId == J.Constant.widgetId.bin) {
-			onClickHandler = () => U.Object.openAuto({ layout: I.ObjectLayout.Archive });
+			if (targetId == J.Constant.widgetId.bin) {
+				U.Object.openAuto({ layout: I.ObjectLayout.Archive });
+			} else 
+			if (targetId == J.Constant.widgetId.allObject) {
+				sidebar.leftPanelSetState({ page: 'object' });
+			} else 
+			if (isSystemTarget) {
+				onSetPreview();
+			} else {
+				onClick(e);
+			};
+
+			analytics.event('ClickWidgetTitle', { widgetType: analytics.getWidgetType(block.content.autoAdded) });
 		};
 
+		let icon = null;
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {

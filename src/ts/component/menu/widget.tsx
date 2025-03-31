@@ -106,10 +106,18 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	}
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId } = data;
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, blockId);
+
 		this._isMounted = true;
 		this.checkButton();
 		this.rebind();
 		this.getTargetId();
+
+		analytics.event('ScreenWidgetMenu', { widgetType: analytics.getWidgetType(block?.content.autoAdded) });
 	};
 
 	componentDidUpdate () {
@@ -154,17 +162,19 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { isEditing } = data;
-		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || U.Menu.isSystemWidget(this.target?.id);
+		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout));
+		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout);
+		const sections: any[] = [];
 
-		const sections: any[] = [
-			{
+		if (layoutOptions.length > 1) {
+			sections.push({
 				id: 'layout',
 				name: translate('commonAppearance'),
 				children: [],
 				options: U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout)),
 				value: this.layout,
-			},
-		];
+			});
+		};
 
 		if (hasLimit) {
 			sections.push({
@@ -177,11 +187,15 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		if (isEditing) {
-			sections.push({
-				children: [
-					{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' }
-				],
-			});
+			const children: any[] = [ 
+				{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' },
+			];
+
+			if (sections.length) {
+				children.unshift({ isDiv: true });
+			};
+
+			sections.push({ children });
 		};
 
 		return sections;
@@ -320,7 +334,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 
 			if (!isEditing) {
-				analytics.event('AddWidget', { type: this.layout, route: analytics.route.addWidgetMenu });
+				analytics.createWidget(this.layout, analytics.route.addWidgetMenu, analytics.widgetType.manual);
 			};
 		});
 

@@ -17,7 +17,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
 const HEIGHT_SECTION_FIRST = 34;
 
-const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends React.Component<Props, {}> {
+const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends React.Component<Props, State> {
 
 	state = {
 		isLoading: false,
@@ -42,6 +42,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.onMore = this.onMore.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getAnalyticsSuffix = this.getAnalyticsSuffix.bind(this);
+		this.openFirst = this.openFirst.bind(this);
 	};
 
 	render () {
@@ -69,14 +70,19 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				return <ItemSection {...item} />;
 			};
 
+			const cn = [ 'item' ];
+			if (item.id == param?.objectId) {
+				cn.push('active');
+			};
+
 			return (
 				<div
 					id={`item-${item.id}`}
-					className={[ 'item', item.id == param?.objectId ? 'active' : '' ].join(' ')}
+					className={cn.join(' ')}
 					onClick={() => this.onClick(item)}
+					onContextMenu={() => this.onContext(item)}
 				>
 					<IconObject object={item} />
-
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -176,7 +182,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.type = this.props.page == 'types' ? I.ObjectContainerType.Type : I.ObjectContainerType.Relation;
 		this.refFilter.focus();
 		this.initSort();
-		this.load(true);
+		this.load(true, this.openFirst);
 	};
 
 	componentDidUpdate () {
@@ -223,7 +229,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			sorts.push({ relationKey: option.relationKey, type: this.sortType });
 		} else {
 			sorts = sorts.concat([
-				{ type: I.SortType.Desc, relationKey: 'createdDate' },
+				{ type: I.SortType.Desc, relationKey: 'lastUsedDate' },
 				{ type: I.SortType.Asc, relationKey: 'name' },
 			]);
 		};
@@ -263,6 +269,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			ignoreDeleted: true,
 		}, (message: any) => {
 			this.setState({ isLoading: false });
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -299,13 +306,25 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		const storeIds = S.Record.getRecordIds(storeSubId, '');
 		const records = S.Record.getRecords(J.Constant.subId.library);
 
+		let myLabel = '';
+		let systemLabel = '';
+
+		if (isType) {
+			myLabel = translate('commonMyTypes');
+			systemLabel = translate('commonSystemTypes');
+		} else {
+			myLabel = translate('commonMyRelations');
+			systemLabel = translate('commonSystemRelations');
+		};
+
 		return [
 			{
-				id: 'my', name: translate(`commonMy${isType ? 'Types' : 'Relations'}`),
-				children: records.filter(it => it.isInstalled && !storeIds.includes(it.sourceObject)) },
+				id: 'my', name: myLabel,
+				children: records.filter(it => !storeIds.includes(it.sourceObject)),
+			},
 			{
-				id: 'system', name: translate(`commonSystem${isType ? 'Types' : 'Relations'}`),
-				children: records.filter(it => storeIds.includes(it.sourceObject))
+				id: 'system', name: systemLabel,
+				children: records.filter(it => storeIds.includes(it.sourceObject)),
 			},
 		];
 	};
@@ -326,9 +345,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				items.push(item);
 			};
 
-			let children = section.children ? section.children : [];
-
-			items = items.concat(children);
+			items = items.concat(section.children || []);
 		});
 
 		return items;
@@ -397,7 +414,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		});
 	};
 
-	onClick (item) {
+	onClick (item: any) {
 		const param = {
 			layout: I.ObjectLayout.Settings,
 			id: U.Object.actionByLayout(item.layout),
@@ -409,8 +426,20 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		};
 
 		U.Object.openAuto(param);
+	};
 
-		analytics.event(`Screen${this.getAnalyticsSuffix()}`, { route: 'SettingsSpace' });
+	onContext (item: any) {
+		const { x, y } = keyboard.mouse.page;
+
+		S.Menu.open('objectContext', {
+			element: `#sidebarLeft #containerSettings #item-${item.id}`,
+			rect: { width: 0, height: 0, x: x + 4, y },
+			data: {
+				objectIds: [ item.id ],
+				subId: J.Constant.subId.library,
+				route: analytics.route.library,
+			}
+		});
 	};
 
 	onAdd (e) {
@@ -430,7 +459,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				const width = node.width() - 32;
 
 				S.Menu.open('blockRelationEdit', {
-					element: `#containerSettings #button-object-create`,
+					element: `#sidebarLeft #containerSettings #button-object-create`,
 					offsetY: 4,
 					width,
 					className: 'fixed',
@@ -466,7 +495,23 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	getAnalyticsSuffix () {
-		return this.type == I.ObjectContainerType.Type ? 'Type' : 'Relation';
+		const map = {
+			[I.ObjectContainerType.Type]: 'Type',
+			[I.ObjectContainerType.Relation]: 'Relation',
+		};
+		return map[this.type];
+	};
+
+	openFirst () {
+		const pathname = U.Router.getRoute();
+		const param = U.Router.getParam(pathname);
+		const records = this.getSections().reduce((acc, el) => acc.concat(el.children), []);
+
+		if (records.find(it => it.id == param?.objectId) || !records.length) {
+			return;
+		};
+
+		this.onClick(records[0]);
 	};
 
 });

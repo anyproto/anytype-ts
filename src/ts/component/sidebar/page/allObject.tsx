@@ -179,7 +179,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 					<div className="body">
 						{!items.length && !isLoading ? (
-							<EmptySearch filter={this.filter} text={translate('sidebarObjectEmpty')} />
+							<EmptySearch filter={this.filter} text={isAllowedObject ? translate('sidebarObjectEmptyCreate') : translate('sidebarObjectEmpty')} />
 						) : ''}
 
 						{this.cache && items.length && !isLoading ? (

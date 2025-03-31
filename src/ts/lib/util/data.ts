@@ -1237,15 +1237,10 @@ class UtilData {
 	};
 
 	getLayoutWidth (rootId: string): number {
-		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
-		const type = S.Record.getTypeById(object.type);
+		const object = S.Detail.get(rootId, rootId, [ 'type', 'targetObjectType' ], true);
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const root = S.Block.getLeaf(rootId, rootId);
-
-		let ret = type?.layoutWidth;
-
-		if (undefined !== root?.fields?.width) {
-			ret = root?.fields?.width;
-		};
+		const ret = undefined !== root?.fields?.width ? root?.fields?.width : type?.layoutWidth;
 
 		return Number(ret) || 0;
 	};

@@ -33,6 +33,40 @@ html.themeDark {
 	--color-bg-primary: #171717;
 	--color-bg-secondary: #191919;
 	--color-bg-loader: rgba(0,0,0,0.7);
+	--color-bg-grey: #232323;
+	--color-bg-yellow: #242317;
+	--color-bg-orange: #262117;
+	--color-bg-red: #2d1d18;
+	--color-bg-pink: #2d1926;
+	--color-bg-purple: #281c2c;
+	--color-bg-blue: #1e2131;
+	--color-bg-ice: #17252d;
+	--color-bg-teal: #162827;
+	--color-bg-lime: #202919;
+
+	/* Tag */
+
+	--color-tag-grey: var(--color-text-secondary);
+	--color-tag-yellow: var(--color-yellow);
+	--color-tag-orange: var(--color-orange);
+	--color-tag-red: var(--color-red);
+	--color-tag-pink: var(--color-pink);
+	--color-tag-purple: var(--color-purple);
+	--color-tag-blue: var(--color-blue);
+	--color-tag-ice: var(--color-ice);
+	--color-tag-teal: var(--color-teal);
+	--color-tag-lime: var(--color-lime);
+
+	--color-bg-tag-grey: #3c3c3c;
+	--color-bg-tag-yellow: #55500d;
+	--color-bg-tag-orange: #5f430a;
+	--color-bg-tag-red: #74321e;
+	--color-bg-tag-pink: #712055;
+	--color-bg-tag-purple: #542663;
+	--color-bg-tag-blue: #20295c;
+	--color-bg-tag-ice: #19465f;
+	--color-bg-tag-teal: #16534e;
+	--color-bg-tag-lime: #36551d;
 
 	/* System */
 
@@ -51,27 +85,27 @@ html.themeDark {
 
 	::selection { background-color: var(--color-system-selection); }
 
-	.bgColor-grey { background: #232323 !important; }
-	.bgColor-yellow { background: #242317 !important; }
-	.bgColor-orange { background: #262117 !important; }
-	.bgColor-red { background: #2d1d18 !important; }
-	.bgColor-pink { background: #2d1926 !important; }
-	.bgColor-purple { background: #281c2c !important; }
-	.bgColor-blue { background: #1e2131 !important; }
-	.bgColor-ice { background: #17252d !important; }
-	.bgColor-teal { background: #162827 !important; }
-	.bgColor-lime { background: #202919 !important; }
+	.bgColor-grey { background: var(--color-bg-grey) !important; }
+	.bgColor-yellow { background: var(--color-bg-yellow) !important; }
+	.bgColor-orange { background: var(--color-bg-orange) !important; }
+	.bgColor-red { background: var(--color-bg-red) !important; }
+	.bgColor-pink { background: var(--color-bg-pink) !important; }
+	.bgColor-purple { background: var(--color-bg-purple) !important; }
+	.bgColor-blue { background: var(--color-bg-blue) !important; }
+	.bgColor-ice { background: var(--color-bg-ice) !important; }
+	.bgColor-teal { background: var(--color-bg-teal) !important; }
+	.bgColor-lime { background: var(--color-bg-lime) !important; }
 
-	.isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: #3c3c3c !important; }
-	.isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: #55500d !important; }
-	.isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: #5f430a !important; }
-	.isMultiSelect.tagColor-red { color: var(--color-red) !important; background: #74321e !important; }
-	.isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: #712055 !important; }
-	.isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: #542663 !important; }
-	.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #20295c !important; }
-	.isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: #19465f !important; }
-	.isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: #16534e !important; }
-	.isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: #36551d !important; }
+	.isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: var(--color-bg-tag-grey) !important; }
+	.isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: var(--color-bg-tag-yellow) !important; }
+	.isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: var(--color-bg-tag-orange) !important; }
+	.isMultiSelect.tagColor-red { color: var(--color-red) !important; background: var(--color-bg-tag-red) !important; }
+	.isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: var(--color-bg-tag-pink) !important; }
+	.isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: var(--color-bg-tag-purple) !important; }
+	.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: var(--color-bg-tag-blue) !important; }
+	.isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: var(--color-bg-tag-ice) !important; }
+	.isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: var(--color-bg-tag-teal) !important; }
+	.isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: var(--color-bg-tag-lime) !important; }
 
 	.selectionTarget.isSelectionSelected::after, 
 	.block.isSelectionSelected > .wrapContent > .selectionTarget::after 
@@ -249,6 +283,9 @@ html.themeDark {
 	.icon.settings-members { background-image: url('#{$themePath}/icon/settings/space/members.svg'); }
 	.icon.settings-import { background-image: url('#{$themePath}/icon/settings/space/import.svg'); }
 	.icon.settings-export { background-image: url('#{$themePath}/icon/settings/space/export.svg'); }
+	.icon.settings-type { background-image: url('#{$themePath}/icon/settings/space/type.svg'); }
+	.icon.settings-relation { background-image: url('#{$themePath}/icon/settings/space/relation.svg'); }
+	.icon.settings-bin { background-image: url('#{$themePath}/icon/settings/space/bin.svg'); }
 
 	/* Editor */
 

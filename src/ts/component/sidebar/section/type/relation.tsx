@@ -33,6 +33,34 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		{ id: I.SidebarRelationList.Hidden, name: translate('sidebarTypeRelationHidden'), data: hidden, relationKey: 'recommendedHiddenRelations' },
 	];
 
+	const addConfirm = (ids: string[]) => {
+		let title = '';
+		let text = '';
+		if (ids.length == 1) {
+			title = translate('popupConfirmLocalFieldsTitleSingle');
+			text = translate('popupConfirmLocalFieldsTextSingle');
+		} else {
+			title = translate('popupConfirmLocalFieldsTitlePlural');
+			text = translate('popupConfirmLocalFieldsTextPlural');
+		};
+
+		S.Popup.open('confirm', {
+			data: {
+				title,
+				text,
+				textConfirm: translate('commonAdd'),
+				colorConfirm: 'blank',
+				colorCancel: 'blank',
+				onConfirm: () => {
+					const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+
+					onChange({ recommendedRelations: recommendedRelations.concat(ids) });
+					analytics.stackAdd('AddConflictRelation', { count: ids.length });
+				},
+			},
+		});
+	};
+
 	const onMore = (e: MouseEvent, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -48,14 +76,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			onClose: () => element.removeClass('active'),
 			data: {
 				options: [
-					{ id: 'addToType', name: translate('sidebarRelationLocalAddToCurrentType') },
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {
 						case 'addToType': {
-							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-
-							onChange({ recommendedRelations: recommendedRelations.concat([ item.id ]) });
+							addConfirm([ item.id ]);
 							break;
 						};
 					};
@@ -69,23 +95,28 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		const cids = conflictIds.filter(it => !ids.includes(it));
 
 		lists.push({
-			id: I.SidebarRelationList.Conflict, name: translate('sidebarRelationLocal'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
+			id: I.SidebarRelationList.Local, name: translate('sidebarTypeRelationFound'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
+			description: translate('sidebarTypeRelationLocalDescription'),
 			onInfo: () => {
-				S.Popup.open('confirm', {
+				S.Menu.open('select', {
+					element: `#sidebarRight #button-more-${I.SidebarRelationList.Local}`,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+					horizontal: I.MenuDirection.Right,
 					data: {
-						title: translate('popupConfirmLocalFieldsTitle'),
-						textConfirm: translate('commonAdd'),
-						colorCancel: 'blank',
-						onConfirm: () => {
-							const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-
-							onChange({ recommendedRelations: recommendedRelations.concat(conflictIds) });
-							analytics.stackAdd('AddConflictRelation', { count: cids.length });
+						options: [
+							{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+						],
+						onSelect: (e, option) => {
+							switch (option.id) {
+								case 'addToType': {
+									addConfirm(cids);
+									break;
+								};
+							};
 						},
-					},
+					}
 				});
-
-				analytics.stackAdd('ClickConflictFieldHelp');
 			},
 			onMore,
 		});
@@ -143,7 +174,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 			analyticsId = 'SameGroup';
         } else 
-		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Conflict)) {
+		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Local)) {
 			toItems.splice(newIndex, 0, active.id);
 			onChange({
 				[from.relationKey]: fromItems.filter(id => id != active.id),
@@ -229,6 +260,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				style={style}
 				className={cn.join(' ')}
 				onClick={onClick}
+				onContextMenu={onClick}
 			>
 				{!item.isEmpty ? (
 					<>
@@ -252,8 +284,30 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			strategy={verticalListSortingStrategy}
 		>
 			<div className="sectionNameWrap">
-				<Label text={list.name} />
-				{list.onInfo ? <Icon className="question withBackground" onClick={list.onInfo} /> : ''}
+				<div className="side left">
+					<Label text={list.name} />
+					{list.description ? (
+						<Icon 
+							className="question withBackground"
+							tooltipClassName="relationGroupDescription"
+							tooltip={list.description}
+							tooltipX={I.MenuDirection.Center}
+							tooltipY={I.MenuDirection.Bottom}
+							tooltipOffsetX={-8}
+							tooltipDelay={0}
+						/> 
+					) : ''}
+				</div>
+				<div className="side right">
+					{list.onInfo ? (
+						<Icon 
+							id={`button-more-${list.id}`}
+							className="more withBackground"
+							tooltip={translate('commonActions')}
+							onClick={list.onInfo}
+						/>
+					) : ''}
+				</div>
 			</div>
 			<div className="items">
 				{list.data.length ? (
@@ -292,7 +346,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		<div ref={nodeRef} className="wrap">
 			<div className="titleWrap">
 				<Title text={translate('sidebarTypeRelation')} />
-				<Icon id="section-relation-plus" className="plus withBackground" onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} />
+				<Icon 
+					id="section-relation-plus" 
+					className="plus withBackground" 
+					tooltip={translate('commonAddRelation')}
+					onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} 
+				/>
 			</div>
 
 			<DndContext 

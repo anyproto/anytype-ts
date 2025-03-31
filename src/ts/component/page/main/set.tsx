@@ -192,6 +192,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 			this.resize();
+
+			if (U.Object.isTypeLayout(object.layout)) {
+				analytics.event('ScreenType', { objectType: object.id });
+			};
 		});
 	};
 

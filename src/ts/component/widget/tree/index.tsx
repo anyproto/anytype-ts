@@ -55,7 +55,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const updateData = () => {
-		if (isSystemTarget()) {
+		if (isSystemTarget) {
 			getData(getSubId(), initCache);
 		};
 	};
@@ -76,7 +76,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		branches.current = [];
 
 		let children = [];
-		if (isSystemTarget()) {
+		if (isSystemTarget) {
 			const subId = getSubId(targetId);
 			
 			let records = S.Record.getRecordIds(subId, '');
@@ -221,7 +221,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		e.stopPropagation();
 
 		U.Object.openEvent(e, item);
-		analytics.event('OpenSidebarObject');
+		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
 	};
 
 	const getTotalHeight = () => {
@@ -363,7 +363,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	useEffect(() => {
 		links.current = object.links;
 
-		if (isSystemTarget()) {
+		if (isSystemTarget) {
 			getData(getSubId(), initCache);
 		} else {
 			initCache();

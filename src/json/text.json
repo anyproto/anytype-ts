@@ -60,10 +60,10 @@
 	"commonAdd": "Add",
 	"commonDone": "Done",
 	"commonUnlink": "Unlink",
-	"commonUnlinkFromType": "Unlink from Type",
-	"commonUnlinkFromObject": "Unlink from Object",
-	"commonUnlinkFromSet": "Unlink from Query",
-	"commonUnlinkFromCollection": "Unlink from Collection",
+	"commonUnlinkFromType": "Remove from Type",
+	"commonUnlinkFromObject": "Remove from Object",
+	"commonUnlinkFromSet": "Remove from Query",
+	"commonUnlinkFromCollection": "Remove from Collection",
 	"commonDeletedObject": "Non-existent object",
 	"commonDeletedType": "Deleted type",
 	"commonDeletedRelation": "Deleted Relation",
@@ -123,6 +123,7 @@
 	"commonRedo": "Redo",
 	"commonBlank": "Blank",
 	"commonSetDefault": "Set as default",
+	"commonUnsetDefault": "Unset as default",
 	"commonTemplate": "Template",
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
@@ -553,6 +554,7 @@
 
 	"pageSettingsSpaceGeneral": "General",
 	"pageSettingsSpaceRemoteStorage": "Remote Storage",
+	"pageSettingsSpaceCleanupSpaceFiles": "Clean up space files",
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
@@ -862,7 +864,7 @@
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
-	"popupSettingsSpaceIndexRemoteStorageUpgradeText": "✦ Upgrade to add more storage",
+	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
@@ -1151,7 +1153,10 @@
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
-	"popupConfirmLocalFieldsTitle": "Add Local Properties to current type?",
+	"popupConfirmLocalFieldsTitleSingle": "Add Property to the Type?",
+	"popupConfirmLocalFieldsTextSingle": "This Property will be added to the Type and will appear in all objects of this specific Type.",
+	"popupConfirmLocalFieldsTitlePlural": "Add Properties to the Type?",
+	"popupConfirmLocalFieldsTextPlural": "These Properties will be added to the Type and will appear in all objects of this specific Type.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1219,7 +1224,16 @@
 	"popupShortcutConflict": "Conflicts with %s",
 	"popupShortcutImport": "Import Shortcuts Mapping",
 	"popupShortcutExport": "Export Shortcuts Mapping",
-	"popupShortcutReset": "Reset All To Default",
+	"popupShortcutResetAll": "Reset All To Default",
+	"popupShortcutPress": "Press...",
+	"popupShortcutReassign": "Re-assign Shortcut",
+	"popupShortcutRemove": "Remove Shortcut",
+	"popupShortcutReset": "Reset Shortcut",
+	"popupShortcutImportText": "Your current shortcut mapping will be overwritten.",
+	"popupShortcutResetAllText": "Your current shortcut mapping will be reset to default.",
+	"popupShortcutToastUpdated": "Shortcuts mapping updated",
+	"popupShortcutToastExported": "Shortcuts mapping exported",
+	"popupShortcutToastSaved": "Shortcut assigned",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutInterface": "Interface",
@@ -1480,7 +1494,7 @@
 
 	"menuBlockLayoutSetLayoutWidth": "Set layout width",
 	"menuBlockLayoutChooseLayoutType": "Choose layout type",
-	"menuBlockLayoutConflict": "This layout differs from the type's default. Reset to match?",
+	"menuBlockLayoutConflict": "This object has layout settings that differ from the type.",
 	"menuBlockLayoutReset": "Reset to default",
 
 	"menuBlockLinkSettingsStyleText": "Text",
@@ -1604,7 +1618,8 @@
 	"menuDataviewViewListAddView": "Add a view",
 	"menuDataviewViewListViews": "Views",
 
-	"menuDataviewTemplateSetDefaultForView": "Default for this view",
+	"menuDataviewTemplateSetDefaultForView": "Set as default for this view",
+	"menuDataviewTemplateUnsetDefaultForView": "Unset as default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
 
 	"menuDataviewExistingObject": "Existing object",
@@ -1709,7 +1724,7 @@
 
 	"menuPublishTitle": "Publish to web",
 	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties.",
-	"menuPublishLabelJoin": "Join Space Button",
+	"menuPublishLabelJoinSpace": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
 	"menuPublishButtonUpdate": "Update",
@@ -1717,6 +1732,8 @@
 	"menuPublishButtonOpen": "Open Object",
 	"menuPublishButtonCopy": "Copy Web Link",
 	"menuPublishLabelOffline": "No internet connection",
+	"menuPublishBecomeMemberText": "Become a member to get a domain name and remove watermark",
+	"menuPublishUpgrade": "✦ Upgrade",
 
 	"previewEdit": "Edit Link",
 
@@ -1924,12 +1941,14 @@
 	"sidebarObjectTypeMedia": "Media",
 	"sidebarObjectTypeBookmark": "Bookmarks",
 	"sidebarObjectTypeRelation": "Properties",
+	"sidebarObjectRelationEmpty": "No Properties",
 
 	"sidebarObjectShow": "Show",
 	"sidebarObjectSort": "Sort",
 	"sidebarObjectOrphan": "Only unlinked",
 	"sidebarObjectOrphanLabel": "Unlinked objects that do not have a direct link or backlink with other objects in the graph.",
-	"sidebarObjectEmpty": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
+	"sidebarObjectEmpty": "It’s empty here.",
+	"sidebarObjectEmptyCreate": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
 
 	"sidebarObjectSortCreated": "Date created",
 	"sidebarObjectSortUpdated": "Date updated",
@@ -1937,7 +1956,7 @@
 
 	"sidebarTypeTitle": "Editing type",
 	"sidebarTypeTitleLabelName": "Type name and icon",
-	"sidebarTypeTitleLabelPlural": "Plural name",
+	"sidebarTypeTitleLabelPlural": "Type List name",
 	"sidebarSectionLayoutName": "Layout",
 	"sidebarSectionLayoutFormat": "Format",
 	"sidebarSectionLayoutFormatPage": "Page",
@@ -1949,17 +1968,19 @@
 	"sidebarSectionLayoutDefaultType": "Default Object Type",
 
 	"sidebarTypeRelation": "Properties",
-	"sidebarTypeRelationHeader": "Shown in object header",
-	"sidebarTypeRelationSidebar": "Shown in Properties menu",
+	"sidebarTypeRelationHeader": "Header",
+	"sidebarTypeRelationSidebar": "Properties panel",
 	"sidebarTypeRelationHidden": "Hidden",
-	"sidebarObjectRelationSetUp": "Set up",
+	"sidebarTypeRelationFound": "Found in objects",
+	"sidebarObjectRelationSetUp": "Edit Type",
 	"sidebarTypeRelationEmpty": "There are no Properties yet",
 	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
 	"sidebarRelationLocal": "Local Properties",
-	"sidebarTypeRelationLocalDescription": "Some properties are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
+	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add to the type to use in all objects, or remove",
+	"sidebarTypeRelationLocalDescription": "These properties exist in some objects but aren’t part of the Type. Add them to make them appear in all objects of this Type.",
 
-	"sidebarRelationLocalAddToCurrentType": "Add to the current type",
+	"sidebarRelationLocalAddToType": "Add to the Type",
 	"sidebarRelationLocalRemoveFromObject": "Remove from object",
 	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 
@@ -2256,7 +2277,7 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
-	"errorPublishingCreate103": "Looks like some files are over 10MB. Please remove or slim them down and try again.",
+	"errorPublishingCreate103": "Looks like some files are over %sMB. Please remove or slim them down and try again.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 
@@ -2298,7 +2319,7 @@
 	"notificationImportErrorText3": "Internal error during import. Please report it to Anytype devs using Help -> Report a Bug. We will check.",
 	"notificationImportErrorText5": "No objects found in the provided Notion integration. Open Notion and check that you have added the integration to the pages you want to export. Check our FAQ for more details.",
 	"notificationImportErrorText6": "The import was canceled by the user.",
-	"notificationImportErrorText7": "The number of lines of the CSV file exceeds 1000. Try splitting the file into smaller parts.",
+	"notificationImportErrorText7": "The number of lines of the CSV file exceeds limit of 1000 rows and 10 columns. Try splitting the file into smaller parts.",
 	"notificationImportErrorText8": "Error when uploading a file. Check if you have enough space and try again.",
 	"notificationImportErrorText9": "We don’t have permission to import into this Anytype space.",
 	"notificationImportErrorText10": "An error occurred during HTML rendering. Check the format of your HTML file.",

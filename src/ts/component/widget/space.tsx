@@ -16,9 +16,10 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const cmd = keyboard.cmdSymbol();
 	const alt = keyboard.altSymbol();
 	const buttons = [
+		{ id: 'search', name: translate('commonSearch') },
 		space.chatId || U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
-		space.isShared ? { id: 'member', name: participants.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') } : null,
-		{ id: 'all', name: translate('commonAllContent') },
+		space.isShared ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
+		//{ id: 'all', name: translate('commonAllContent') },
 	].filter(it => it);
 
 	if (isSpaceOwner && requestCnt) {
@@ -28,11 +29,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const onSettings = (e: MouseEvent) => {
 		e.stopPropagation();
 		U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
-	};
-
-	const onSearch = (e: MouseEvent) => {
-		e.stopPropagation();
-		keyboard.onSearchPopup(analytics.route.widget);
 	};
 
 	const onCreate = (e: MouseEvent) => {
@@ -73,6 +69,11 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
 				break;
 			};
+
+			case 'search': {
+				keyboard.onSearchPopup(analytics.route.widget);
+				break;
+			};
 		};
 	};
 
@@ -101,8 +102,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					</div>
 				</div>
 				<div className="side right">
-					<Icon className="search withBackground" onClick={onSearch} tooltip={translate('commonSearch')} tooltipCaption={keyboard.getCaption('search')} />
-
 					{canWrite ? (
 						<div className="plusWrapper" onMouseEnter={onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
 							<Icon ref={plusRef} className="plus withBackground" onClick={onCreate} />

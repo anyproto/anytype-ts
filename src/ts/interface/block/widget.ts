@@ -16,7 +16,7 @@ export interface WidgetComponent {
 	isEditing?: boolean;
 	isPreview?: boolean;
 	canCreate?: boolean;
-	isSystemTarget?: () => boolean;
+	isSystemTarget?: boolean;
 	setPreview?: (id: string) => void;
 	setEditing?: (v: boolean) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
@@ -61,6 +61,7 @@ export interface ContentWidget {
 	layout: I.WidgetLayout;
 	limit: number;
 	viewId: string;
+	autoAdded: boolean;
 };
 
 export interface BlockWidget extends I.Block {

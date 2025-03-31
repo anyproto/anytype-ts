@@ -6,11 +6,13 @@ class BlockContentWidget implements I.ContentWidget {
 	layout: I.WidgetLayout = I.WidgetLayout.Link;
 	limit = 0;
 	viewId = '';
+	autoAdded = false;
 
 	constructor (props: I.ContentWidget) {
 		this.layout = Number(props.layout) || I.WidgetLayout.Link;
 		this.limit = Number(props.limit) || 0;
 		this.viewId = String(props.viewId || '');
+		this.autoAdded = Boolean(props.autoAdded);
 
 		makeObservable(this, {
 			layout: observable,

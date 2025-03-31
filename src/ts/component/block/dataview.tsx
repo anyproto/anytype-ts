@@ -252,6 +252,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		const viewId = match.params.viewId || block.content.viewId;
+		const object = this.getTarget();
 
 		if (viewId) {
 			S.Record.metaSet(subId, '', { viewId });
@@ -287,10 +288,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.resize();
 		this.rebind();
 
-		const view = this.getView();
-		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
+		if (!U.Object.isTypeLayout(object.layout)) {
+			const view = this.getView();
+			const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
 
-		analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view?.type });
+			analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view?.type });
+		};
 	};
 
 	componentDidUpdate () {
@@ -853,8 +856,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						analytics.event('DefaultTypeChange', { route });
 					};
 				},
-				onSetDefault: (item) => {
-					Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
+				onSetDefault: id => {
+					Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: id });
 				},
 				onSelect: (item: any) => {
 					if (!view) {

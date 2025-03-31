@@ -1229,7 +1229,6 @@ class Keyboard {
 
 		const string = this.shortcuts[s] ? (this.shortcuts[s].keys || []).join('+') : s;
 		if (!string) {
-			console.log('[keyboard.shortcut] Empty string', s);
 			return;
 		};
 

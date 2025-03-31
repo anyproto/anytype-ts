@@ -14,6 +14,7 @@ interface State {
 const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
+	description: string = '';
 	refDescription: any = null;
 
 	state = {
@@ -27,6 +28,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		super(props);
 
 		this.setName = this.setName.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 		this.onDashboard = this.onDashboard.bind(this);
@@ -51,7 +53,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave },
 		] : [
-			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: () => this.setState({ isEditing: true }) },
+			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
 
@@ -82,19 +84,22 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			);
 		};
 
-		const membersIcons = canWrite ? (
-			<div className="membersIcons">
-				{members.map((el, idx) => {
-					if (idx < maxIcons) {
-						return <IconObject key={idx} size={36} object={el} />;
-					};
-					return null;
-				})}
-				{members.length > maxIcons ? (
-					<div className="membersMore">+{members.length - maxIcons}</div>
-				) : ''}
-			</div>
-		) : '';
+		let membersIcons = null;
+		if (canWrite) {
+			membersIcons = (
+				<div className="membersIcons">
+					{members.map((el, idx) => {
+						if (idx < maxIcons) {
+							return <IconObject key={idx} size={36} object={el} />;
+						};
+						return null;
+					})}
+					{members.length > maxIcons ? (
+						<div className="membersMore">+{members.length - maxIcons}</div>
+					) : ''}
+				</div>
+			);
+		};
 
 		return (
 			<>
@@ -124,13 +129,15 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						readonly={!canWrite || !isEditing}
 					/>
 
-					<Editable
-						classNameWrap="spaceDescription"
-						ref={ref => this.refDescription = ref}
-						placeholder={'Describe your space'}
-						readonly={!canWrite || !isEditing}
-						onKeyUp={() => this.refDescription?.placeholderCheck()}
-					/>
+					{isEditing || this.checkDescription() ? (
+						<Editable
+							classNameWrap="spaceDescription"
+							ref={ref => this.refDescription = ref}
+							placeholder={'Describe your space'}
+							readonly={!canWrite || !isEditing}
+							onKeyUp={() => this.refDescription?.placeholderCheck()}
+						/>
+					) : ''}
 				</div>
 
 				{/*{membersIcons}*/}
@@ -224,8 +231,9 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		this.refName.setValue(name);
 
 		if (description) {
-			this.refDescription.setValue(description);
-			this.refDescription.placeholderCheck();
+			this.description = description;
+			this.refDescription?.setValue(description);
+			this.refDescription?.placeholderCheck();
 		};
 	};
 
@@ -307,13 +315,17 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		switch (item.id) {
 			case 'invite': {
 				this.props.onPage('spaceShare');
+
+				analytics.event('ClickSettingsSpaceInvite', { route: analytics.route.settingsSpace });
 				break;
 			};
+
 			case 'qr': {
 				S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 				analytics.event('ScreenQr', { route: analytics.route.settingsSpace });
 				break;
 			};
+
 			case 'more': {
 				const element = `#${U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)}`;
 				S.Menu.open('select', {
@@ -378,10 +390,17 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		analytics.event('ScreenSpaceInfo');
 	};
 
+	onEdit () {
+		this.setState({ isEditing: true });
+		this.refName?.focus();
+	};
+
 	onSave () {
+		this.description = this.refDescription?.getTextValue();
+
 		C.WorkspaceSetInfo(S.Common.space, {
 			name: this.checkName(this.refName.getValue()),
-			description: this.refDescription.getHtmlValue()
+			description: this.description,
 		});
 		this.setState({ isEditing: false });
 	};
@@ -398,6 +417,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			v = '';
 		};
 		return v;
+	};
+
+	checkDescription (): boolean {
+		return !/^\r?\n$/.test(this.description)
 	};
 
 	getButtons () {

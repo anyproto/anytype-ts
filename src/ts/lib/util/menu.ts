@@ -416,6 +416,9 @@ class UtilMenu {
 		} else
 		if (id == J.Constant.widgetId.bin) {
 			options.unshift(I.WidgetLayout.Link);
+		} else
+		if (id == J.Constant.widgetId.allObject) {
+			options = [ I.WidgetLayout.Link ];
 		};
 
 		if (id && !isSystem) {
@@ -856,8 +859,9 @@ class UtilMenu {
 		return items;
 	};
 
-	getFixedWidgets () {
+	getSystemWidgets () {
 		return [
+			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-star' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
@@ -1198,14 +1202,11 @@ class UtilMenu {
 			const { props } = context;
 			const { className, classNameWrap } = props.param;
 			const type = S.Record.getTypeById(item.id);
-			const isPinned = Storage.getPinnedTypes().includes(item.id);
-			const canPin = type.isInstalled;
 			const canDefault = type.isInstalled && !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
 			const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const route = '';
 
 			let options: any[] = [
-				canPin ? { id: 'pin', name: (isPinned ? translate('commonUnpin') : translate('commonPin')) } : null,
 				canDefault ? { id: 'default', name: translate('commonSetDefault') } : null,
 				{ id: 'open', name: translate('commonOpenType') },
 			];
@@ -1230,13 +1231,6 @@ class UtilMenu {
 
 							case 'open': {
 								U.Object.openAuto(item);
-								break;
-							};
-
-							case 'pin': {
-								isPinned ? Storage.removePinnedType(item.id) : Storage.addPinnedType(item.id);
-								analytics.event(isPinned ? 'UnpinObjectType' : 'PinObjectType', { objectType: item.uniqueKey, route });
-								context.forceUpdate();
 								break;
 							};
 

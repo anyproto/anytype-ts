@@ -46,7 +46,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		const formulaType = this.getFormulaType();
 		const option: any = this.getOption() || {};
 		const name = option.short || option.name || '';
-		const subId = S.Record.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const records = S.Record.getRecords(subId, [ relationKey ], true);
 
 		records.forEach(record => {
@@ -83,9 +83,15 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		this.calculate();
 	};
 
+	getSubId (): string {
+		const { rootId, block, isInline } = this.props;
+		return isInline ? [ rootId, block.id, 'total' ].join('-') : S.Record.getSubId(rootId, block.id);
+	};
+
 	calculate () {
-		const { rootId, block, relationKey, getView, isInline } = this.props;
+		const { relationKey, getView } = this.props;
 		const view = getView();
+
 		if (!view) {
 			return;
 		};
@@ -95,7 +101,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			return;
 		};
 
-		const subId = isInline ? [ rootId, block.id, 'total' ].join('-') : S.Record.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const result = Dataview.getFormulaResult(subId, viewRelation);
 
 		if (this.state.result !== result) {

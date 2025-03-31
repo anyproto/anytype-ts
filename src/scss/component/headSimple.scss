@@ -11,7 +11,7 @@
 		}
 	}
 
-	&.isType, &.isRelation { align-items: center; }
+	&.isRelation { align-items: center; }
 	&.isType, &.isRelation {
 		.side.left {
 			.titleWrap { align-items: center; }

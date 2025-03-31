@@ -36,7 +36,7 @@
 				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
 				background: var(--color-system-accent-100); transition: $transitionAllCommon;
 			}
-			.round:hover { background: #F09C0E; }
+			.round:hover { background: #f09c0e; }
 			.round {
 				.icon.arrow {
 					width: 20px; height: 20px; background-image: url('~img/arrow/onboarding.svg');

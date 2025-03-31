@@ -319,14 +319,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = S.Common.filter;
 
 		const cb = (object: any) => {
-			let name = U.Object.name(object);
-
-			if (U.Object.isTypeLayout(item.layout)) {
-				name = item.pluralName;
-			};
-
-			name = U.Common.shorten(String(name || translate('defaultNamePage')), 30);
-
+			const name = U.Common.shorten(String(U.Object.name(object, true)), 30);
 			const to = from + name.length;
 
 			let marks = U.Common.objectCopy(data.marks || []);

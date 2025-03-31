@@ -64,7 +64,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			let value: any = '';
 
 			if (relationKey) {
-				if ([ 'name', 'type' ].includes(relationKey)) {
+				if ([ 'name', 'pluralName', 'type' ].includes(relationKey)) {
 					return '';
 				} else {
 					const relation = S.Record.getRelationByKey(relationKey);
@@ -153,7 +153,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				let name = U.Object.name(item, true);
 
-				if (meta.highlight && (meta.relationKey == 'name')) {
+				if (meta.highlight && [ 'name', 'pluralName' ].includes(meta.relationKey)) {
 					name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
 
 					if (U.Object.isInFileLayouts(item.layout)) {

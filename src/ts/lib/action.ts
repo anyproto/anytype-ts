@@ -157,7 +157,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget', { layout, params: { target } });
+		analytics.event('DeleteWidget', { layout, widgetType: analytics.getWidgetType(block.content.autoAdded), params: { target } });
 	};
 
 	focusToEnd (rootId: string, id: string) {
@@ -259,9 +259,9 @@ class Action {
 		const properties = param.properties || [];
 		const extensions = param.extensions || [];
 
-		const options: any = { 
-			properties: [ 'openFile' ].concat(properties), 
-		};
+		const options: any = Object.assign(param, { 
+			properties: [ 'openFile' ].concat(properties),
+		});
 
 		if (extensions.length) {
 			options.filters = [ 
@@ -590,10 +590,10 @@ class Action {
 
 		const range = U.Common.objectCopy(focus.state.range);
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
-		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
+		const tree = S.Block.wrapTree(rootId, rootId);
 
 		let next = null;
-		let blocks = S.Block.unwrapTree(tree).filter(it => ids.includes(it.id));
+		let blocks = S.Block.unwrapTree([ tree ]).filter(it => ids.includes(it.id));
 
 		ids.forEach((id: string) => {
 			const block = S.Block.getLeaf(rootId, id);
@@ -794,7 +794,7 @@ class Action {
 		};
 
 		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, () => {
-			analytics.event('AddWidget', { type: layout, route });
+			analytics.createWidget(layout, route, analytics.widgetType.manual);
 		});
 	};
 

@@ -187,18 +187,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		d.layout = Number(d.layout) || 0;
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
-
-		if (U.Object.isNoteLayout(d.layout)) {
-			d.name = d.snippet || translate('commonEmpty');
-		} else {
-			d.name = d.name || translate('defaultNamePage');
-		};
-
-		if (U.Object.isTypeLayout(d.layout)) {
-			d.name = d.pluralName || d.name;
-		};
-
-		d.name = U.Smile.strip(d.name);
+		d.name = U.Smile.strip(U.Object.name(d, true));
 		d.shortName = U.Common.shorten(d.name, 24);
 		d.description = String(d.description || '');
 		d.snippet = String(d.snippet || '');
