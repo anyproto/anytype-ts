@@ -11,17 +11,6 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const participant = U.Space.getParticipant() || profile;
 	const anyName = participant?.globalName.toUpperCase();
 
-	const short = (id) => {
-		const l = id.length;
-
-		let ret = '';
-		ret += id.substring(0, 6);
-		ret += '...';
-		ret += id.substring(l - 6);
-
-		return ret;
-	};
-
 	const onAnyId = () => {
 		if (anyName) {
 			return;
@@ -48,7 +37,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		return (
 			<div className="anyId" onClick={onAnyId}>
 				<Icon className={anyName ? 'anyName' : 'info'} />
-				<Label text={anyName ? anyName : short(account.id)} />
+				<Label text={anyName ? anyName : U.Common.shortMask(account.id, 6)} />
 
 				{showInfo ? (
 					<div className="infoWrapper">
