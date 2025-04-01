@@ -27,17 +27,28 @@ const ObjectName: FC<Props> = ({
 	const { layout, snippet, isDeleted } = object;
 
 	let name = String(object.name || '');
+	let empty = null;
+	let latex = null;
+	let content = null;
 
 	if (!isDeleted) {
 		if (U.Object.isNoteLayout(layout)) {
-			name = snippet || `<span class="empty">${translate('commonEmpty')}</span>`;
+			name = snippet;
 		} else {
 			name = U.Object.name(object, withPlural);
 		};
 
 		if (withLatex) {
-			name = U.Common.getLatex(name);
+			latex = U.Common.getLatex(name);
 		};
+	};
+
+	if (!name) {
+		empty = <span className="empty">{translate('commonEmpty')}</span>;
+	};
+
+	if (!empty && !latex) {
+		content = <span>{name}</span>;
 	};
 
 	return (
@@ -48,7 +59,9 @@ const ObjectName: FC<Props> = ({
 			onMouseEnter={onMouseEnter} 
 			onMouseLeave={onMouseLeave}
 		>
-			<span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
+			{empty}
+			{latex}
+			{content}
 		</div>
 	);
 
