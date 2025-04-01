@@ -153,7 +153,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
 						{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{unlinkText && !noUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="remove" name={translate('commonDelete')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon="remove" name={translate('commonMoveToBin')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
 			</form>
@@ -383,8 +383,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { close, param } = this.props;
 		const { data } = param;
 		const { deleteCommand } = data;
+		const relation = this.getRelation();
 
-		Action.uninstall(this.getRelation(), true, '', () => {
+		Action.archive([ relation.id ], '', () => {
 			if (deleteCommand) {
 				deleteCommand();
 			};

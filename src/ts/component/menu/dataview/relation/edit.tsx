@@ -264,7 +264,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					relation ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
 					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
 					canUnlink ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
-					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonDelete') } : null,
+					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonMoveToBin') } : null,
 				]
 			}
 		];
@@ -465,7 +465,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			case 'remove': {
-				Action.uninstall(relation, true, '', () => {
+				Action.archive([ relation.id ], '', () => {
 					C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => this.props.close());
 				});
 				break;
