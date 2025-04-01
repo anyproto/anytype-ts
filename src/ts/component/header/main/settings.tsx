@@ -1,6 +1,6 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, keyboard, translate } from 'Lib';
+import { I, S, U, translate, Relation } from 'Lib';
 import { Icon, Label, Title, Button } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
@@ -9,14 +9,12 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const { account } = S.Auth;
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
-	const anyName = participant?.globalName.toUpperCase();
+	const anyName = Relation.getStringValue(participant?.globalName).toUpperCase();
 
 	const onIdentity = () => {
-		if (anyName) {
-			return;
+		if (!anyName) {
+			setShowInfo(!showInfo);
 		};
-
-		setShowInfo(!showInfo);
 	};
 
 	const onButton = () => {
