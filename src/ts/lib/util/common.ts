@@ -310,10 +310,7 @@ class UtilCommon {
 	};
 
 	shortMask (s: string, n: number): string {
-		if (!s) {
-			return '';
-		};
-		s = String(s);
+		s = String(s || '');
 
 		const l = s.length;
 
