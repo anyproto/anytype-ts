@@ -108,6 +108,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 													Storage.setShortcuts(data || {});
 													setDummy(dummy + 1);
 
+													Renderer.send('initMenu');
 													Preview.toastShow({ text: translate('popupShortcutToastUpdated') });
 												});
 											};
@@ -130,6 +131,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 										Storage.resetShortcuts();
 										setDummy(dummy + 1);
 
+										Renderer.send('initMenu');
 										Preview.toastShow({ text: translate('popupShortcutToastUpdated') });
 									},
 								},
