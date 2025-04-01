@@ -53,11 +53,13 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 					{sections.map((section, i) => {
 						const { id, name, description, withToggle } = section;
-						const lcn = [];
+						const cnlb = [];
+						const cnl = [ 'list' ];
 						const onToggle = withToggle ? () => this.onToggle(id) : null;
 
 						if (withToggle) {
-							lcn.push('sectionToggle');
+							cnl.push('withToggle');
+							cnlb.push('sectionToggle');
 						};
 
 						let button = null;
@@ -76,7 +78,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 								{name ? (
 									<div className="titleWrap">
 										<div className="side left">
-											<Label text={name} onClick={onToggle} className={lcn.join(' ')} />
+											<Label text={name} onClick={onToggle} className={cnlb.join(' ')} />
 											{description ? (
 												<Icon
 													className="question withBackground"
@@ -96,8 +98,8 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 									</div>
 								) : ''}
 
-								<div className={[ 'list', (withToggle ? 'withToggle' : '') ].join(' ')}>
-									{!section.children.length ? (
+								<div className={cnl.join(' ')}>
+									{!section.children.length && section.withEmpty ? (
 										<div className="item empty">
 											{translate('sidebarObjectRelationEmpty')}
 										</div>
@@ -159,8 +161,8 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 		const sections = [
 			{ id: 'object', children: items },
-			{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), children: hidden, withToggle: true },
-			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription') }
+			{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), children: hidden, withToggle: true, withEmpty: true },
+			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription'), withEmpty: true }
 		];
 
 		return sections;

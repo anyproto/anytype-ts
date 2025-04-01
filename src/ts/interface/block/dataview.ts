@@ -271,6 +271,7 @@ export interface CellRef {
 	isEditing?(): boolean;
 	onChange?(value: any): void;
 	getValue?(): any;
+	canEdit?(): boolean;
 };
 
 export interface BoardGroup {

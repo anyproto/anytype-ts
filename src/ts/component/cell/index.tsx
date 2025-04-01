@@ -512,6 +512,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		onClick: onClickHandler,
 		isEditing: () => childRef.current.isEditing(),
+		canEdit: () => canCellEdit(relation, record),
 	}));
 
 	return (

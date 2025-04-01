@@ -35,7 +35,7 @@
 			.cell.c-select, 
 			.cell.c-object, 
 			.cell.c-file {
-				.over { overflow: visible !important; width: 100%; flex-wrap: wrap; gap: 4px 6px; }
+				.over { width: 100%; flex-wrap: wrap; gap: 4px 6px; @include clamp5; }
 			}
 
 			.cell.c-shortText {
