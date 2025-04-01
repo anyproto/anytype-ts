@@ -304,6 +304,10 @@ class UtilObject {
 		param.filters = (param.filters || []).concat(filters);
 		param.keys = (param.keys || []).concat(J.Relation.default).concat([ 'links', 'backlinks' ]);
 
+		if (undefined === param.ignoreArchived) {
+			param.ignoreArchived = false;
+		};
+
 		U.Data.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));

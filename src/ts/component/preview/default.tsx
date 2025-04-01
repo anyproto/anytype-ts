@@ -40,9 +40,14 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 		idRef.current = rootId;
 		setIsLoading(true);
 
-		U.Object.getById(rootId, {}, (object) => {
-			setObject(object);
+		U.Object.getById(rootId, {}, object => {
 			setIsLoading(false);
+
+			if (!object) {
+				return;
+			};
+
+			setObject(object);
 
 			if (setParentObject) {
 				setParentObject(object);

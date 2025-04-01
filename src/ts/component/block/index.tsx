@@ -971,6 +971,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				};
 
 				Preview.previewShow({
+					target: object.id,
 					object,
 					element: name,
 					range: { 
