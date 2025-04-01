@@ -38,6 +38,8 @@
 						.symbols {
 							.label { background-color: var(--color-bg-blue); }
 						}
+
+						.label.grey { color: var(--color-blue); }
 					}
 				}
 				.item.hasError { box-shadow: 0px 0px 0px 2px var(--color-red) inset; }
