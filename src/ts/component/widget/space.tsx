@@ -57,6 +57,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		switch (item.id) {
 			case 'member': {
 				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
 				break;
 			};
 
