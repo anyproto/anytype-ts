@@ -793,8 +793,10 @@ class Action {
 			},
 		};
 
-		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, () => {
+		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, (message: any) => {
 			analytics.createWidget(layout, route, analytics.widgetType.manual);
+
+			Storage.setToggle('widget', message.blockId, true);
 		});
 	};
 

@@ -335,6 +335,12 @@ export const BlockCreate = (response: Rpc.Block.Create.Response) => {
 	};
 };
 
+export const BlockCreateWidget = (response: Rpc.Block.CreateWidget.Response) => {
+	return {
+		blockId: response.getBlockid(),
+	};
+};
+
 export const BlockTableCreate = (response: Rpc.BlockTable.Create.Response) => {
 	return {
 		blockId: response.getBlockid(),
