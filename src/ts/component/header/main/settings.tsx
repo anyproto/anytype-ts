@@ -11,7 +11,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const participant = U.Space.getParticipant() || profile;
 	const anyName = participant?.globalName.toUpperCase();
 
-	const onAnyId = () => {
+	const onIdentity = () => {
 		if (anyName) {
 			return;
 		};
@@ -25,7 +25,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		U.Object.openAuto({ id: 'membership', layout: I.ObjectLayout.Settings });
 	};
 
-	const renderAnyId = () => {
+	const renderIdentity = () => {
 		const param = U.Router.getParam(U.Router.getRoute());
 		const id = param.id || 'account';
 		const showId = [ 'account', 'index' ];
@@ -35,7 +35,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		};
 
 		return (
-			<div className="anyId" onClick={onAnyId}>
+			<div className="identity" onClick={onIdentity}>
 				<Icon className={anyName ? 'anyName' : 'info'} />
 				<Label text={anyName ? anyName : U.Common.shortMask(account.id, 6)} />
 
@@ -45,9 +45,9 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 							<Icon className="anyName" />
 						</div>
 
-						<Title text={translate('headerSettingsAnyIdInfoTitle')} />
-						<Label text={translate('headerSettingsAnyIdInfoText')} />
-						<Button className="c36" text={translate('headerSettingsAnyIdInfoExplorePlans')} onClick={onButton} />
+						<Title text={translate('headerSettingsIdentityInfoTitle')} />
+						<Label text={translate('headerSettingsIdentityInfoText')} />
+						<Button className="c36" text={translate('headerSettingsIdentityInfoExplorePlans')} onClick={onButton} />
 					</div>
 				) : ''}
 			</div>
@@ -57,7 +57,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	return (
 		<>
 			<div className="side left">{renderLeftIcons()}</div>
-			<div className="side center">{renderAnyId()}</div>
+			<div className="side center">{renderIdentity()}</div>
 			<div className="side right" />
 		</>
 	);
