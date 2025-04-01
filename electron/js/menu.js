@@ -6,6 +6,21 @@ const ConfigManager = require('./config.js');
 const Util = require('./util.js');
 const Separator = { type: 'separator' };
 
+const DEFAULT_SHORTCUTS = {
+	createObject: [ 'CmdOrCtrl', 'N' ],
+	undo: [ 'CmdOrCtrl', 'Z' ],
+	redo: [ 'CmdOrCtrl', 'Shift', 'Z' ],
+	selectAll: [ 'CmdOrCtrl', 'A' ],
+	searchText: [ 'CmdOrCtrl', 'F' ],
+	print: [ 'CmdOrCtrl', 'P' ],
+	newWindow: [ 'CmdOrCtrl', 'Shift', 'N' ],
+	zoomIn: [ 'CmdOrCtrl', '=' ],
+	zoomOut: [ 'CmdOrCtrl', '-' ],
+	zoomReset: [ 'CmdOrCtrl', '0' ],
+	toggleFullscreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
+	shortcut: [ 'Ctrl', 'Space' ],
+};
+
 class MenuManager {
 
 	win = null;
@@ -22,13 +37,15 @@ class MenuManager {
 	};
 
 	getAccelerator (id) {
-		const keys = this.shortcuts[id] || [];
-		if (!keys.length) {
-			return '';
+		let keys = this.shortcuts[id];
+
+		if (undefined === keys) {
+			return (DEFAULT_SHORTCUTS[id] || []).join('+');
 		};
 
-		const ret = [];
+		keys = keys || [];
 
+		const ret = [];
 		for (const key of keys) {
 			if (key == 'ctrl') {
 				ret.push('CmdOrCtrl');
