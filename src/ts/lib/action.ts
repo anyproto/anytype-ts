@@ -772,6 +772,7 @@ class Action {
 		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
+		let toggle = false;
 
 		if (object && !object._empty_) {
 			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
@@ -782,21 +783,22 @@ class Action {
 			} else
 			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;
+				toggle = true;
 			};
 		};
 
 		const limit = Number(U.Menu.getWidgetLimitOptions(layout)[0]?.id) || 0;
 		const newBlock = { 
 			type: I.BlockType.Link,
-			content: { 
-				targetBlockId: objectId, 
-			},
+			content: { targetBlockId: objectId },
 		};
 
 		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, (message: any) => {
 			analytics.createWidget(layout, route, analytics.widgetType.manual);
 
-			Storage.setToggle('widget', message.blockId, true);
+			if (toggle) {
+				Storage.setToggle('widget', message.blockId, true);
+			};
 		});
 	};
 
