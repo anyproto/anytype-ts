@@ -81,6 +81,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			/>
 		);
 
+		let buttonLayout = null;
 		let buttonEdit = null;
 		let buttonCreate = null;
 		let buttonTemplate = null;
@@ -112,6 +113,17 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				if (isType) {
 					const isTemplate = U.Object.isTemplate(object.id);
 					const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
+
+					if (U.Space.isMyOwner()) {
+						buttonLayout = (
+							<Button
+								id="button-layout"
+								color="blank"
+								className="c28 resetLayout"
+								onClick={this.onLayout}
+							/>
+						);
+					};
 
 					if (canShowTemplates) {
 						buttonTemplate = (
@@ -167,6 +179,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			);
 		};
 
+		if (buttonLayout) {
+			buttons.push(() => buttonLayout);
+		};
 		if (buttonTemplate) {
 			buttons.push(() => buttonTemplate);
 		};
@@ -418,6 +433,21 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		U.Object.openDateByTimestamp(relationKey, object.timestamp + dir * 86400);
 		analytics.event(dir > 0 ? 'ClickDateForward' : 'ClickDateBack');
+	};
+
+	onLayout = () => {
+		S.Menu.open('select', {
+			element: '.headSimple #button-layout',
+			horizontal: I.MenuDirection.Center,
+			className: 'menuTypeLayout',
+			data: {
+				sections: [{
+					name: translate('menuBlockLayoutConflict'),
+					children: [ { id: 'reset', icon: 'reset', name: translate('menuBlockLayoutReset') } ]
+				}],
+				noVirtualisation: true,
+			}
+		});
 	};
 
 });

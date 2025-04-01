@@ -102,8 +102,6 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 						} else 
 						if (U.Object.isBookmarkLayout(object.recommendedLayout)) {
 							ret = [ I.ObjectLayout.Bookmark ];
-						} else {
-							ret = ret.filter(id => id != I.ObjectLayout.Note);
 						};
 					};
 					break;
