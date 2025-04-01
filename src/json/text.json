@@ -518,7 +518,7 @@
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
-	"pageAuthOnboardPersonalSpace": "Personal Space",
+	"pageAuthOnboardPersonalSpace": "Entry Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
 	"pageAuthSetupImportTitle": "⚡️ Congratulations!",
@@ -1911,7 +1911,7 @@
 	"phrasePlaceholder": "Please enter your Key",
 
 	"spaceAccessType0": "Private Space",
-	"spaceAccessType1": "Personal Space",
+	"spaceAccessType1": "Entry Space",
 	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",
