@@ -18,7 +18,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const buttons = [
 		{ id: 'search', name: translate('commonSearch') },
 		space.chatId || U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
-		{ id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') },
+		!space.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
 		//{ id: 'all', name: translate('commonAllContent') },
 	].filter(it => it);
 
