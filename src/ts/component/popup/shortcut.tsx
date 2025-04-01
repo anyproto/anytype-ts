@@ -74,14 +74,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'export': {
-							const ret = [];
+							const ret = {};
 							const items = J.Shortcut.getItems();
 
 							for (const k in items) {
 								const item = items[k];
 
 								if (item.id) {
-									ret.push({ id: item.id, keys: item.keys	});
+									ret[item.id] = item.keys;
 								};
 							};
 
@@ -256,12 +256,13 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		setEditingId('');
 		setEditingKeys([]);
 		window.clearTimeout(timeout.current);
+		keyboard.setShortcutEditing(false);
+		Renderer.send('initMenu');
 	};
 
 	useEffect(() => {
 		return () => {
-			window.clearTimeout(timeout.current);
-			keyboard.setShortcutEditing(false);
+			clear();
 			$(window).off('keyup.shortcut keydown.shortcut');
 		};
 	}, []);

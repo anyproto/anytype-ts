@@ -89,8 +89,7 @@ class Api {
 		ConfigManager.set({ hideTray: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
-			MenuManager.initMenu();
-			MenuManager.initTray();
+			this.initMenu(win);
 		});
 	};
 
@@ -192,9 +191,13 @@ class Api {
 	setInterfaceLang (win, lang) {
 		ConfigManager.set({ interfaceLang: lang }, () => {
 			WindowManager.reloadAll();
-			MenuManager.initMenu();
-			MenuManager.initTray();
+			this.initMenu(win);
 		});
+	};
+
+	initMenu (win) {
+		MenuManager.initMenu();
+		MenuManager.initTray();
 	};
 
 	setSpellingLang (win, languages) {

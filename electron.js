@@ -19,7 +19,6 @@ if (is.windows) {
 };
 
 storage.setDataPath(app.getPath('userData'));
-//Store.initRenderer();
 
 const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');
@@ -30,6 +29,8 @@ const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 const Cors = require('./electron/json/cors.json');
 const csp = [];
+
+MenuManager.store = store;
 
 for (let i in Cors) {
 	csp.push([ i ].concat(Cors[i]).join(' '));
