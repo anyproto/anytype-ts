@@ -35,14 +35,14 @@
 			.cell.c-select, 
 			.cell.c-object, 
 			.cell.c-file {
-				.over { width: 100%; flex-wrap: wrap; gap: 4px 6px; @include clamp5; }
+				.over { width: 100%; flex-wrap: wrap; gap: 4px 6px; max-height: clamp(22px, 126px, 126px); }
 			}
 
 			.cell.c-shortText {
 				.name { width: 100%; }
 			}
 			.cell.c-longText {
-				.name, span { @include clamp3; word-wrap: break-word; line-height: 22px; }
+				.name, span { @include clamp5; word-wrap: break-word; line-height: 22px; }
 			}
 
 			.cell.isEditing { padding: 0px; }
