@@ -4,7 +4,7 @@
 
 .tooltip { 
 	position: absolute; border-radius: 4px; background: #373632; padding: 3px 7px; text-transform: none;
-	@include text-small; color: var(--color-bg-primary); white-space: nowrap; transform: scale3d(0.7, 0.7, 1); opacity: 0;
+	@include text-small; line-height: 16px; color: var(--color-bg-primary); white-space: nowrap; transform: scale3d(0.7, 0.7, 1); opacity: 0;
 }
 .tooltip.anim { transition-duration: 0.25s; transition-timing-function: $easeInQuint; transition-property: opacity, transform; }
 .tooltip.show { transform: scale3d(1, 1, 1); opacity: 1; }
