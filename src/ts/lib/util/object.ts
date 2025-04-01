@@ -265,6 +265,10 @@ class UtilObject {
 	};
 
 	name (object: any, withPlural?: boolean): string {
+		if (!object) {
+			return '';
+		};
+
 		const { layout, snippet } = object;
 
 		let name = '';
