@@ -300,12 +300,18 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		};
 
 		let unlinkCommand = null;
+		let noUnlink = false;
+
+		if ([ 'name', 'description' ].includes(relation.relationKey)) {
+			noUnlink = true;
+		};
+
 		if (isType) {
 			unlinkCommand = (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 				U.Object.typeRelationUnlink(object.id, relation.id, onChange);
 			};
 		};
-		
+
 		S.Menu.open('dataviewRelationEdit', { 
 			element: `#${getId()} #item-${item.relationKey}`,
 			horizontal: I.MenuDirection.Center,
@@ -314,6 +320,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				...data,
 				relationId: relation.id,
 				unlinkCommand,
+				noUnlink,
 			}
 		});
 	};
