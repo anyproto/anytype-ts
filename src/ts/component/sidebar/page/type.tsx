@@ -248,12 +248,18 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onCancel () {
+		const { isPopup, previous } = this.props;
+
 		if (U.Common.objectLength(this.update)) {
 			S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
 			this.updateLayout(this.backup.recommendedLayout);
 		};
 
-		this.close();
+		if (previous && previous.page) {
+			sidebar.rightPanelSetState(isPopup, previous);
+		} else {
+			this.close();
+		};
 	};
 
 	close () {
