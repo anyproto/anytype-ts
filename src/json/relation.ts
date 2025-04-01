@@ -113,6 +113,7 @@ export default {
 		'iconName',
 		'iconOption',
 		'pluralName',
+		'forceLayoutFromType',
 	],
 
 	graph: [
