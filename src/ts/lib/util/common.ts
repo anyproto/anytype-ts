@@ -317,7 +317,7 @@ class UtilCommon {
 
 		const l = s.length;
 
-		if (n <= l*2) {
+		if (l <= n*2) {
 			return s;
 		};
 
