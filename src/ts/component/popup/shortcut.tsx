@@ -129,6 +129,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 									onConfirm: () => {
 										Storage.resetShortcuts();
 										setDummy(dummy + 1);
+
+										Preview.toastShow({ text: translate('popupShortcutToastUpdated') });
 									},
 								},
 							});
