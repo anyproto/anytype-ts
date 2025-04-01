@@ -324,7 +324,7 @@ class UtilCommon {
 		let ret = '';
 		ret += s.substring(0, n);
 		ret += '...';
-		ret += s.substring(s.length - n);
+		ret += s.substring(l - n);
 
 		return ret;
 	};
