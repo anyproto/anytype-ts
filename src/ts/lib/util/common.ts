@@ -309,6 +309,23 @@ class UtilCommon {
 		return s;
 	};
 
+	shortMask (s: string, n: number): string {
+		s = String(s || '');
+
+		const l = s.length;
+
+		if (l <= n*2) {
+			return s;
+		};
+
+		let ret = '';
+		ret += s.substring(0, n);
+		ret += '...';
+		ret += s.substring(l - n);
+
+		return ret;
+	};
+
 	clipboardCopy (data: any, callBack?: () => void) {
 		const handler = (e: any) => {
 			e.preventDefault();

@@ -23,7 +23,6 @@ class UtilObject {
 			case I.ObjectLayout.History:	 r = 'history'; break;
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
-			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 			case I.ObjectLayout.Space:
 			case I.ObjectLayout.ChatOld:
 			case I.ObjectLayout.Chat:		 r = 'chat'; break;

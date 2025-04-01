@@ -14,7 +14,6 @@ import PageAuthDeleted from './auth/deleted';
 import PageAuthMigrate from './auth/migrate';
 
 import PageMainBlank from './main/blank';
-import PageMainEmpty from './main/empty';
 import PageMainVoid from './main/void';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
@@ -44,8 +43,7 @@ const Components = {
 	'auth/deleted':			 PageAuthDeleted,
 	'auth/migrate':			 PageAuthMigrate,
 
-	'main/blank':			 PageMainBlank,		
-	'main/empty':			 PageMainEmpty,		
+	'main/blank':			 PageMainBlank,
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,

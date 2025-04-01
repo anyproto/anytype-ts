@@ -34,7 +34,7 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 		const { error, loading } = this.state;
 		const { account } = S.Auth;
 		const profile = U.Space.getProfile();
-	
+
 		let name = profile.name;
 		if (name == translate('defaultNamePage')) {
 			name = '';
@@ -50,7 +50,7 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 						<IconObject
 							id="userpic"
 							object={profile}
-							size={108}
+							size={128}
 							canEdit={true}
 						/>
 					</div>
