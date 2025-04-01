@@ -666,7 +666,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const node = $(this.node);
 		const button = node.find('#button');
 
-		if (button.hasClass('grey')) {
+		if (button.hasClass('blank')) {
 			return;
 		};
 

@@ -278,6 +278,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			{ id: 'system', name: translate('commonSystemRelations'), children: system },
 		];
 
+		if (canWrite && filter) {
+			sections.unshift({ children: [ { id: 'add', name: U.Common.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] });
+		};
+
 		sections = sections.filter((section: any) => {
 			if (!section) {
 				return false;
@@ -351,7 +355,15 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			U.Object.setLastUsedDate(item.id, U.Date.now());
 		};
 
-		if (item.isType) {
+		if (item.isType || (item.id == 'add')) {
+			const addParam: any = { name: filter };
+
+			if (item.isType) {
+				addParam.format = item.id;
+			} else {
+				addParam.format = I.RelationType.LongText;
+			};
+
 			S.Menu.open(menuIdEdit, { 
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: getSize().width,
@@ -362,7 +374,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				parentId: id,
 				data: {
 					...data,
-					addParam: { format: item.id, name: filter },
+					addParam,
 					onChange: () => close(),
 					addCommand: (rootId: string, blockId: string, item: any) => onAdd(item),
 				}
