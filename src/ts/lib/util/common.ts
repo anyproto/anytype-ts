@@ -313,6 +313,13 @@ class UtilCommon {
 		if (!s) {
 			return '';
 		};
+		s = String(s);
+
+		const l = s.length;
+
+		if (n <= l*2) {
+			return s;
+		};
 
 		let ret = '';
 		ret += s.substring(0, n);
