@@ -32,7 +32,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	const cn = [ 'item' ];
 	const cover = view ? Dataview.getCoverObject(subId, object, view.coverRelationKey) : null;
 	const nameRelation = view.getRelation('name');
-	const withName = !cover || (cover && nameRelation.isVisible);
+	const withName = !cover || (cover && nameRelation?.isVisible);
 
 	if (cover) {
 		cn.push('withCover');

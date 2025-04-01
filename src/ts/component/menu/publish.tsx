@@ -25,7 +25,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const domain = U.Space.getPublishDomain();
 	const url = U.Space.getPublishUrl(slug);
-	const items = [
+	const items: any[] = [
 		{ 
 			id: 'link', 
 			name: translate('commonCopyLink'), 
@@ -35,7 +35,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ 
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
-			arrow: true,
 			onClick: () => {
 				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				close();
@@ -46,7 +45,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ 
 			id: 'export', 
 			name: translate('popupExportTitle'), 
-			arrow: true,
 			onClick: () => {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
 				close();

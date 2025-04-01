@@ -549,12 +549,20 @@ class UtilObject {
 		return !width || (width == type.layoutWidth);
 	};
 
-	hasEqualFeaturedRelations (object: any): boolean {
+	hasEqualFeaturedRelations (object: any, type: any): boolean {
 		if (!object || object._empty) {
 			return true;
 		};
 
-		return Relation.getArrayValue(object.featuredRelations).filter(it => ![ 'description' ].includes(it)).length == 0;
+		const listObject = Relation.getArrayValue(object.featuredRelations).
+			filter(it => ![ 'description' ].includes(it)).
+			map(it => S.Record.getRelationByKey(it)?.relationKey).
+			filter(it => it);
+		const listType = Relation.getArrayValue(type.recommendedFeaturedRelations).
+			map(it => S.Record.getRelationById(it)?.relationKey).
+			filter(it => it);
+
+		return !listObject.length || U.Common.compareJSON(listObject, listType);
 	};
 
 	hasLayoutConflict (object: any): boolean {
@@ -578,7 +586,7 @@ class UtilObject {
 			return true;
 		};
 
-		if (!this.hasEqualFeaturedRelations(object)) {
+		if (!this.hasEqualFeaturedRelations(object, type)) {
 			console.log('[hasLayoutConflict] featuredRelations');
 			return true;
 		};
@@ -666,7 +674,7 @@ class UtilObject {
 			};
 
 			S.Detail.update(J.Constant.subId.type, { id: typeId, details: { [key]: value } }, false);
-			C.BlockDataviewRelationSet(typeId, J.Constant.blockId.dataview, [ 'name' ].concat(U.Object.getTypeRelationKeys(typeId)), (message: any) => {
+			C.BlockDataviewRelationSet(typeId, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(typeId)), (message: any) => {
 				if (onChange) {
 					onChange(message);
 				};
@@ -736,7 +744,6 @@ class UtilObject {
 		};
 
 		sidebar.rightPanelToggle(true, true, isPopup, 'type', { details: newDetails });
-
 	};
 
 };

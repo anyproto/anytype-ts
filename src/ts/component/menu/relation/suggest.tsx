@@ -342,7 +342,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		const { id, close, param, getId, getSize } = this.props;
-		const { data, classNameWrap } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall, filter } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 		const onAdd = (item: any) => {
@@ -369,6 +369,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				offsetX: getSize().width,
 				offsetY: -80,
 				noAnimation: true,
+				className,
 				classNameWrap,
 				rebind: this.rebind,
 				parentId: id,

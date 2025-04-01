@@ -370,6 +370,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		if (component == 'dataviewSort') {
 			newItem.type = I.SortType.Asc;
+
 			onSortAdd(newItem, callBack);
 		} else
 		if (component == 'dataviewFilterList') {

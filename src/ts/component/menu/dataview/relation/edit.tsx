@@ -244,12 +244,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (relation) {
 			const isAllowedRelation = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 
-			canDuplicate = isAllowedRelation;
-			canDelete = S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]);
-			canUnlink = isAllowedRelation;
+			canDuplicate = canDuplicate && isAllowedRelation;
+			canDelete = canDelete && S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]);
 
 			if (isType) {
-				canUnlink = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+				canUnlink = canUnlink && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+			} else {
+				canUnlink = canUnlink && isAllowedRelation;
 			};
 		};
 

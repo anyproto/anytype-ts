@@ -6,6 +6,21 @@ const ConfigManager = require('./config.js');
 const Util = require('./util.js');
 const Separator = { type: 'separator' };
 
+const DEFAULT_SHORTCUTS = {
+	createObject: [ 'CmdOrCtrl', 'N' ],
+	undo: [ 'CmdOrCtrl', 'Z' ],
+	redo: [ 'CmdOrCtrl', 'Shift', 'Z' ],
+	selectAll: [ 'CmdOrCtrl', 'A' ],
+	searchText: [ 'CmdOrCtrl', 'F' ],
+	print: [ 'CmdOrCtrl', 'P' ],
+	newWindow: [ 'CmdOrCtrl', 'Shift', 'N' ],
+	zoomIn: [ 'CmdOrCtrl', '=' ],
+	zoomOut: [ 'CmdOrCtrl', '-' ],
+	zoomReset: [ 'CmdOrCtrl', '0' ],
+	toggleFullscreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
+	shortcut: [ 'Ctrl', 'Space' ],
+};
+
 class MenuManager {
 
 	win = null;
@@ -22,13 +37,15 @@ class MenuManager {
 	};
 
 	getAccelerator (id) {
-		const keys = this.shortcuts[id] || [];
-		if (!keys.length) {
-			return '';
+		let keys = this.shortcuts[id];
+
+		if (undefined === keys) {
+			return (DEFAULT_SHORTCUTS[id] || []).join('+');
 		};
 
-		const ret = [];
+		keys = keys || [];
 
+		const ret = [];
 		for (const key of keys) {
 			if (key == 'ctrl') {
 				ret.push('CmdOrCtrl');
@@ -84,7 +101,7 @@ class MenuManager {
 			{
 				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
-					{ label: Util.translate('commonNewObject'), accelerator: this.getAccelerator('createObject') || 'CmdOrCtrl+N', click: () => Util.send(this.win, 'commandGlobal', 'createObject') },
+					{ label: Util.translate('commonNewObject'), accelerator: this.getAccelerator('createObject'), click: () => Util.send(this.win, 'commandGlobal', 'createObject') },
 					{ label: Util.translate('commonNewSpace'), click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
 
 					Separator,
@@ -137,7 +154,7 @@ class MenuManager {
 				label: Util.translate('electronMenuEdit'),
 				submenu: [
 					{
-						label: Util.translate('electronMenuUndo'), accelerator: this.getAccelerator('undo') || 'CmdOrCtrl+Z',
+						label: Util.translate('electronMenuUndo'), accelerator: this.getAccelerator('undo'),
 						click: () => { 
 							if (this.win) {
 								this.win.webContents.undo();
@@ -146,7 +163,7 @@ class MenuManager {
 						}
 					},
 					{
-						label: Util.translate('electronMenuRedo'), accelerator: this.getAccelerator('redo') || 'CmdOrCtrl+Shift+Z',
+						label: Util.translate('electronMenuRedo'), accelerator: this.getAccelerator('redo'),
 						click: () => {
 							if (this.win) {
 								this.win.webContents.redo();
@@ -172,7 +189,7 @@ class MenuManager {
 					Separator,
 
 					{
-						label: Util.translate('electronMenuSelectAll'), accelerator: this.getAccelerator('selectAll') || 'CmdOrCtrl+A',
+						label: Util.translate('electronMenuSelectAll'), accelerator: this.getAccelerator('selectAll'),
 						click: () => {
 							if (this.win) {
 								this.win.webContents.selectAll();
@@ -180,26 +197,26 @@ class MenuManager {
 							};
 						}
 					},
-					{ label: Util.translate('electronMenuSearch'), accelerator: this.getAccelerator('searchText') || 'CmdOrCtrl+F', click: () => Util.send(this.win, 'commandGlobal', 'search') },
+					{ label: Util.translate('electronMenuSearch'), accelerator: this.getAccelerator('searchText'), click: () => Util.send(this.win, 'commandGlobal', 'search') },
 
 					Separator,
 
-					{ label: Util.translate('electronMenuPrint'), accelerator: this.getAccelerator('print') || 'CmdOrCtrl+P', click: () => Util.send(this.win, 'commandGlobal', 'print') },
+					{ label: Util.translate('electronMenuPrint'), accelerator: this.getAccelerator('print'), click: () => Util.send(this.win, 'commandGlobal', 'print') },
 				]
 			},
 			{
 				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
-					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow') || 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
+					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
 
 					Separator,
 
 					{ role: 'minimize', label: Util.translate('electronMenuMinimise') },
-					{ label: Util.translate('electronMenuZoomIn'), accelerator: this.getAccelerator('zoomIn') || 'CmdOrCtrl+=', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1) },
-					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut') || 'CmdOrCtrl+-', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
-					{ label: Util.translate('electronMenuZoomDefault'), accelerator: this.getAccelerator('zoomReset') || 'CmdOrCtrl+0', click: () => Api.setZoom(this.win, 0) },
+					{ label: Util.translate('electronMenuZoomIn'), accelerator: this.getAccelerator('zoomIn'), click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1) },
+					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut'), click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
+					{ label: Util.translate('electronMenuZoomDefault'), accelerator: this.getAccelerator('zoomReset'), click: () => Api.setZoom(this.win, 0) },
 					{
-						label: Util.translate('electronMenuFullscreen'), accelerator: this.getAccelerator('toggleFullscreen') || 'CmdOrCtrl+Shift+F', type: 'checkbox', checked: this.win.isFullScreen(),
+						label: Util.translate('electronMenuFullscreen'), accelerator: this.getAccelerator('toggleFullscreen'), type: 'checkbox', checked: this.win.isFullScreen(),
 						click: () => this.win.setFullScreen(!this.win.isFullScreen())
 					},
 					{ label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
@@ -213,7 +230,7 @@ class MenuManager {
 						click: () => Util.send(this.win, 'popup', 'help', { data: { document: 'whatsNew' } })
 					},
 					{
-						label: Util.translate('electronMenuShortcuts'), accelerator: this.getAccelerator('shortcut') || 'Ctrl+Space',
+						label: Util.translate('electronMenuShortcuts'), accelerator: this.getAccelerator('shortcut'),
 						click: () => Util.send(this.win, 'commandGlobal', 'shortcut')
 					},
 
@@ -386,7 +403,7 @@ class MenuManager {
 
 			Separator,
 
-			{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow') || 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
+			{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
 
 			Separator,
 
@@ -486,7 +503,7 @@ class MenuManager {
 			Separator,
 
 			{ 
-				label: Util.translate('commonNewObject'), accelerator:this.getAccelerator('createObject') || 'CmdOrCtrl+N', click: () => { 
+				label: Util.translate('commonNewObject'), accelerator:this.getAccelerator('createObject'), click: () => { 
 					this.winShow();
 					Util.send(this.win, 'commandGlobal', 'createObject'); 
 				} 

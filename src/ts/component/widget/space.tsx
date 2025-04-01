@@ -18,7 +18,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const buttons = [
 		{ id: 'search', name: translate('commonSearch') },
 		space.chatId || U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
-		space.isShared ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
+		!space.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
 		//{ id: 'all', name: translate('commonAllContent') },
 	].filter(it => it);
 
@@ -57,6 +57,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		switch (item.id) {
 			case 'member': {
 				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
 				break;
 			};
 

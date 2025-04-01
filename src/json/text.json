@@ -518,7 +518,7 @@
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
-	"pageAuthOnboardPersonalSpace": "Personal Space",
+	"pageAuthOnboardPersonalSpace": "Entry Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
 	"pageAuthSetupImportTitle": "⚡️ Congratulations!",
@@ -566,7 +566,7 @@
 	"pageSettingsSpaceIndexInviteMembers": "Invite Members",
 	"pageSettingsSpaceIndexQRCode": "QR code",
 	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
-	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br />Create a new one to invite<br />memebers.",
+	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br/>Create a new one to invite members.",
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
 
@@ -1737,7 +1737,7 @@
 	"menuPublishButtonOpen": "Open Object",
 	"menuPublishButtonCopy": "Copy Web Link",
 	"menuPublishLabelOffline": "No internet connection",
-	"menuPublishBecomeMemberText": "Become a member to get a domain name and remove watermark",
+	"menuPublishBecomeMemberText": "Become a member to get a domain and increase publishing limits",
 	"menuPublishUpgrade": "✦ Upgrade",
 
 	"previewEdit": "Edit Link",
@@ -1911,7 +1911,7 @@
 	"phrasePlaceholder": "Please enter your Key",
 
 	"spaceAccessType0": "Private Space",
-	"spaceAccessType1": "Personal Space",
+	"spaceAccessType1": "Entry Space",
 	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",

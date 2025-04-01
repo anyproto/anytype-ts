@@ -226,7 +226,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { data } = param;
 		const relation = this.getRelation();
 
-		if (relation || S.Menu.isAnimating(id)) {
+		if ((relation && relation.id) || S.Menu.isAnimating(id)) {
 			return;
 		};
 
