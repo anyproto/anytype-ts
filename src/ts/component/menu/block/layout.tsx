@@ -86,7 +86,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 		let sections: any[] = [ { children: [ resize, align ] } ];
 
-		if (!hasConflict) {
+		if (hasConflict) {
 			sections.unshift({
 				name: translate('menuBlockLayoutConflict'),
 				children: [ { id: 'reset', icon: 'reload', name: translate('menuBlockLayoutReset') } ]

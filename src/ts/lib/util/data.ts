@@ -585,12 +585,12 @@ class UtilData {
 
 		const object = S.Detail.get(rootId, blockId, [ 
 			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 
-			'templateIsBundled', 'featuredRelations', 'targetObjectType',
+			'templateIsBundled', 'featuredRelations', 'targetObjectType', 'forceLayoutFromType',
 		].concat(J.Relation.cover).concat(keys), true);
 		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
-		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
+		const { iconEmoji, iconImage, iconName, coverType, coverId, forceLayoutFromType } = object;
 		const ret = {
 			withCover: false,
 			withIcon: false,
@@ -598,6 +598,7 @@ class UtilData {
 			layout: object.layout,
 			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
 			layoutWidth: this.getLayoutWidth(rootId),
+			forceLayoutFromType: false,
 		};
 
 		if (undefined !== object.layoutAlign) {
@@ -623,6 +624,7 @@ class UtilData {
 
 			case I.ObjectLayout.Type: {
 				ret.withIcon = Boolean(iconName || iconEmoji) || true;
+				ret.forceLayoutFromType = Boolean(forceLayoutFromType) || false;
 				break;
 			};
 

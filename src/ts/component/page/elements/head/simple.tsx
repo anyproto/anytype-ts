@@ -114,7 +114,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					const isTemplate = U.Object.isTemplate(object.id);
 					const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 
-					if (U.Space.isMyOwner()) {
+					if (U.Space.isMyOwner() && !check.forceLayoutFromType) {
 						buttonLayout = (
 							<Button
 								id="button-layout"
@@ -436,16 +436,34 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	onLayout = () => {
+		const { rootId } = this.props;
+
 		S.Menu.open('select', {
 			element: '.headSimple #button-layout',
 			horizontal: I.MenuDirection.Center,
 			className: 'menuTypeLayout',
 			data: {
 				sections: [{
-					name: translate('menuBlockLayoutConflict'),
-					children: [ { id: 'reset', icon: 'reset', name: translate('menuBlockLayoutReset') } ]
+					name: translate('menuTypeLayoutDescription'),
+					children: [ { id: 'reset', icon: 'reset', name: translate('menuTypeLayoutReset') } ]
 				}],
 				noVirtualisation: true,
+				onSelect: () => {
+					S.Popup.open('confirm', {
+						data: {
+							title: translate('popupConfirmTypeLayoutResetTitle'),
+							text: translate('popupConfirmTypeLayoutResetText'),
+							textConfirm: translate('commonReset'),
+							colorConfirm: 'red',
+							colorCancel: 'blank',
+							onConfirm: () => {
+								C.ObjectListSetDetails([ rootId ], [
+									{ key: 'forceLayoutFromType', value: true },
+								]);
+							},
+						}
+					});
+				},
 			}
 		});
 	};
