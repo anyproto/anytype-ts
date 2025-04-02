@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, J, analytics, keyboard, translate, Action } from 'Lib';
+import { I, S, U, J, keyboard, translate, Action } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
 const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -9,8 +9,8 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { param, setActive, setHover, onKeyDown, getId, getSize, position } = props;
 	const { data } = param;
 	const { 
-		rootId, subId, blockId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect, isCollection, withTypeSelect, 
-		isAllowedObject,
+		subId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect, isCollection, withTypeSelect, 
+		isAllowedObject, targetId,
 	} = data;
 	const n = useRef(-1);
 	const [ template, setTemplate ] = useState(null);
@@ -88,8 +88,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			data: {
-				rootId,
-				blockId,
 				hasSources,
 				getView,
 				typeId,
@@ -109,9 +107,9 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: (el: any) => {
-						Action.addToCollection(rootId, [ el.id ]);
+						Action.addToCollection(targetId, [ el.id ]);
 					},
-					skipIds: [ ...S.Record.getRecordIds(subId, ''), rootId ],
+					skipIds: [ ...S.Record.getRecordIds(subId, ''), targetId ],
 				});
 				break;
 			};
@@ -122,7 +120,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
-						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					skipIds: [ typeId ],
 					onClick: type => {
@@ -140,22 +138,22 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'template': {
-				const update = (item) => {
-					data.templateId = item.id;
+				const update = id => {
+					data.templateId = id;
 					loadTemplate();
 				};
 
 				menuId = 'dataviewTemplateList';
 				menuParam.data = Object.assign(menuParam.data, {
-					onSetDefault: (item) => {
-						update(item);
+					onSetDefault: id => {
+						update(id);
 
 						if (onSetDefault) {
-							onSetDefault(item);
+							onSetDefault(id);
 						};
 					},
-					onSelect: (item) => {
-						update(item);
+					onSelect: item => {
+						update(item.id);
 
 						if (onSelect) {
 							onSelect(item);

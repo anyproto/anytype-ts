@@ -148,9 +148,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 		};
 
-		if (object.isInstalled) {
-			pageInstall = { id: 'pageUninstall', icon: 'remove', name: translate('commonDelete') };
-		} else {
+		if (isTypeOrRelationLayout && !object.isInstalled) {
 			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuObjectInstall') };
 		};
 
@@ -179,7 +177,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedLinkTo = canWrite && !object.isArchived;
 		const allowedAddCollection = canWrite && !object.isArchived;
 		const allowedPageLink = !object.isArchived;
-		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
+		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelationLayout;
 		const allowedReload = canWrite && object.source && isBookmark;
 		const allowedInstall = canWrite && !object.isInstalled && isTypeOrRelationLayout;
 		const allowedUninstall = canWrite && object.isInstalled && isTypeOrRelationLayout && canDelete;
@@ -200,7 +198,6 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedFav)			 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
-		if (allowedUninstall)		 archive = null;
 		if (!allowedWidget)			 createWidget = null;
 		if (!allowedLinkTo)			 linkTo = null;
 		if (!allowedPageLink)		 pageLink = null;
@@ -347,7 +344,7 @@ class MenuObject extends React.Component<I.Menu> {
 						name: translate('blockDataviewCreateNewCollection'),
 						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
 						onClick: (details: any) => {
-							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => {
 								Action.addToCollection(message.objectId, [ rootId ]);
 								U.Object.openAuto(message.details);
 							});
@@ -399,7 +396,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			const home = U.Space.getDashboard();
 			if (home && (object.id == home.id)) {
-				U.Object.openRoute({ layout: I.ObjectLayout.Empty });
+				U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' });
 			} else {
 				keyboard.onBack();
 			};
@@ -417,6 +414,7 @@ class MenuObject extends React.Component<I.Menu> {
 			case 'history': {
 				keyboard.disableClose(true);
 				U.Object.openAuto({ layout: I.ObjectLayout.History, id: object.id });
+				keyboard.disableClose(false);
 				break;
 			};
 			

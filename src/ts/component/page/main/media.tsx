@@ -56,9 +56,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		};
 
 		let relations = Relation.getArrayValue(type?.recommendedFileRelations).
-			map(it => S.Record.getRelationById(it)).
-			filter(it => it && !skipKeys.includes(it.relationKey));
+			map(it => S.Record.getRelationById(it));
 
+		relations.unshift(S.Record.getRelationByKey('description'));
+		relations = relations.filter(it => it && !skipKeys.includes(it.relationKey));
 		relations = S.Record.checkHiddenObjects(relations);
 		relations.sort((c1, c2) => U.Data.sortByFormat(c1, c2));
 
@@ -239,7 +240,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		};
 
 		const { isPopup } = this.props;
-		const close = !(isPopup && (this.getRootId() == this.id));
+		const close = !isPopup || (this.getRootId() == this.id);
 
 		if (close) {
 			Action.pageClose(this.id, true);

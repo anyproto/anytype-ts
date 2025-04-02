@@ -7,6 +7,7 @@ interface Props {
 	rootId?: string;
 	object?: any;
 	className?: string;
+	withPlural?: boolean;
 	position?: () => void;
 	setObject?: (object: any) => void;
 };
@@ -19,6 +20,7 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 		object: initialObject,
 		position,
 		setObject: setParentObject,
+		withPlural = false,
 	} = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ object, setObject ] = useState(initialObject);
@@ -38,9 +40,14 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 		idRef.current = rootId;
 		setIsLoading(true);
 
-		U.Object.getById(rootId, {}, (object) => {
-			setObject(object);
+		U.Object.getById(rootId, {}, object => {
 			setIsLoading(false);
+
+			if (!object) {
+				return;
+			};
+
+			setObject(object);
 
 			if (setParentObject) {
 				setParentObject(object);
@@ -64,7 +71,7 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 				<>
 					<div className="previewHeader">
 						<IconObject object={object} />
-						<ObjectName object={object} />
+						<ObjectName object={object} withPlural={withPlural} withLatex={true} />
 					</div>
 					<ObjectDescription object={object} />
 					<div className="featured">

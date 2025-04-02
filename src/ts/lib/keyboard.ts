@@ -172,6 +172,9 @@ class Keyboard {
 						S.Popup.close(last.id);
 					};
 				};
+			} else 
+			if (this.isMainSettings() && !this.isFocused) {
+				U.Space.openDashboard();
 			};
 			
 			Preview.previewHide(false);
@@ -677,7 +680,6 @@ class Keyboard {
 						className: 'isLeft',
 						data: {
 							icon: 'warning',
-							bgColor: 'red',
 							title: translate('commonWarning'),
 							text: translate('popupConfirmReleaseChannelText'),
 							onConfirm: () => cb(),
@@ -734,6 +736,7 @@ class Keyboard {
 					[ translate('libKeyboardAccountId'), account.id ],
 					[ translate('libKeyboardAnalyticsId'), account.info.analyticsId ],
 					[ translate('libKeyboardDeviceId'), account.info.deviceId ],
+					[ translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress ],
 				]);
 			};
 
@@ -954,7 +957,7 @@ class Keyboard {
 
 	getRootId (isPopup?: boolean): string {
 		const match = this.getMatch(isPopup);
-		return match.params?.objectId || match.params?.id;
+		return match.params.objectId || match.params.id;
 	};
 
 	getPopupMatch () {
@@ -963,7 +966,7 @@ class Keyboard {
 	};
 
 	getMatch (isPopup?: boolean) {
-		const popup = undefined == isPopup ? this.isPopup() : isPopup;
+		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 
 		let ret: any = { params: {} };
 		if (popup) {
@@ -1013,6 +1016,10 @@ class Keyboard {
 
 	isMainType () {
 		return this.isMain() && (this.match?.params?.action == 'type');
+	};
+
+	isMainSettings () {
+		return this.isMain() && (this.match?.params?.action == 'settings');
 	};
 
 	isAuth () {
@@ -1222,7 +1229,6 @@ class Keyboard {
 
 		const string = this.shortcuts[s] ? (this.shortcuts[s].keys || []).join('+') : s;
 		if (!string) {
-			console.log('[keyboard.shortcut] Empty string', s);
 			return;
 		};
 

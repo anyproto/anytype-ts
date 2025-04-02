@@ -45,9 +45,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		if (relation) {
 			name = relation.name;
-		} else 
-		if (data.filter) {
-			name = data.filter;
 		};
 
 		if (readonly) {	
@@ -60,9 +57,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		};
 
 		if (relation) {
-			const allowedDelete = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]) : false;
-
-			canDelete = allowedDelete && Relation.isSystemWithoutUser(relation.relationKey);
+			canDelete = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]) : false;
 		};
 
 		switch (ref) {
@@ -158,7 +153,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
 						{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{unlinkText && !noUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="remove" name={translate('commonDelete')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon="remove" name={translate('commonMoveToBin')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
 			</form>
@@ -173,7 +168,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		if (relation) {
 			this.format = relation.format;
-			this.objectTypes = relation.objectTypes;
+			this.objectTypes = Relation.getArrayValue(relation.objectTypes);
 			this.forceUpdate();
 		};
 
@@ -231,7 +226,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { data } = param;
 		const relation = this.getRelation();
 
-		if (relation || S.Menu.isAnimating(id)) {
+		if ((relation && relation.id) || S.Menu.isAnimating(id)) {
 			return;
 		};
 
@@ -293,7 +288,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				relation: observable.box(relation),
 				valueMapper: it => S.Record.getTypeById(it.id),
 				onChange: (value: any, callBack?: () => void) => {
-					this.objectTypes = value;
+					this.objectTypes = Relation.getArrayValue(value);
 					this.forceUpdate();
 
 					if (relation.id) {
@@ -388,8 +383,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { close, param } = this.props;
 		const { data } = param;
 		const { deleteCommand } = data;
+		const relation = this.getRelation();
 
-		Action.uninstall(this.getRelation(), true, '', () => {
+		Action.archive([ relation.id ], '', () => {
 			if (deleteCommand) {
 				deleteCommand();
 			};
@@ -420,18 +416,18 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		const relation = this.getRelation();
 		const item: any = { 
-			name: name, 
+			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
 		};
 
-		relation ? this.update(item) : this.add(item);
+		relation && relation.id ? this.update(item) : this.add(item);
 	};
 
 	add (item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, addCommand, onChange, ref } = data;
+		const { rootId, blockId, addCommand, onChange, ref, route } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		C.ObjectCreateRelation(item, S.Common.space, (message: any) => {
@@ -449,7 +445,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			};
 
 			Preview.toastShow({ text: U.Common.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
-			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type, route: route || '' });
 		});
 	};
 
@@ -472,12 +468,21 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		});
 	};
 
-	getRelation () {
+	getRelation (): any {
 		const { param } = this.props;
 		const { data } = param;
-		const { relationId } = data;
+		const { relationId, addParam } = data;
 
-		return S.Record.getRelationById(relationId);
+		let ret: any = null;
+
+		if (relationId) {
+			ret = S.Record.getRelationById(relationId);
+		} else 
+		if (addParam) {
+			ret = addParam;
+		};
+
+		return ret;
 	};
 
 	isAllowed () {

@@ -50,6 +50,12 @@ export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.S
 	};
 };
 
+export const AccountMigrate = (response: Rpc.Account.Migrate.Response) => {
+	return {
+		requiredSpace: response.getError().getRequiredspace()
+	};
+};
+
 export const DebugSpaceSummary = (response: Rpc.Debug.SpaceSummary.Response) => {
 	return response.toObject();
 };
@@ -324,6 +330,12 @@ export const ObjectDateByTimestamp = (response: Rpc.Object.DateByTimestamp.Respo
 };
 
 export const BlockCreate = (response: Rpc.Block.Create.Response) => {
+	return {
+		blockId: response.getBlockid(),
+	};
+};
+
+export const BlockCreateWidget = (response: Rpc.Block.CreateWidget.Response) => {
 	return {
 		blockId: response.getBlockid(),
 	};

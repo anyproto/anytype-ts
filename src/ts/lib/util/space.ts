@@ -16,12 +16,11 @@ class UtilSpace {
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = this.getLastObject();
 		};
-
 		if (!home) {
-			U.Object.openRoute({ layout: I.ObjectLayout.Empty }, param);
-		} else {
-			U.Object.openRoute(home, param);
+			home = { layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' };
 		};
+
+		U.Object.openRoute(home, param);
 	};
 
 	openFirstSpaceOrVoid (filter?: (it: any) => boolean, param?: Partial<I.RouteParam>) {

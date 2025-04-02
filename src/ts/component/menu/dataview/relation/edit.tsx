@@ -45,9 +45,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		if (relation) {
 			name = relation.name;
-		} else 
-		if (data.filter) {
-			name = data.filter;
 		};
 
 		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
@@ -167,7 +164,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		if (relation) {
 			this.format = relation.format;
-			this.objectTypes = relation.objectTypes;
+			this.objectTypes = Relation.getArrayValue(relation.objectTypes);
 			this.forceUpdate();
 		};
 
@@ -227,6 +224,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const canHide = !isName;
 		const canAlign = !isName; 
 		const canCalculate = relation;
+		const isType = U.Object.isTypeLayout(object.layout);
 		
 		let unlinkText = translate('commonUnlink');
 		if (U.Object.isCollectionLayout(object.layout)) {
@@ -235,7 +233,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (U.Object.isSetLayout(object.layout)) {
 			unlinkText = translate('commonUnlinkFromSet');
 		};
-		if (U.Object.isTypeLayout(object.layout)) {
+		if (isType) {
 			unlinkText = translate('commonUnlinkFromType');
 		};
 
@@ -244,11 +242,18 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let canUnlink = !noUnlink;
 
 		if (relation) {
-			canDuplicate = canDelete = canUnlink = relation && S.Block.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
+			const isAllowedRelation = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+
+			canDuplicate = canDuplicate && isAllowedRelation;
+			canDelete = canDelete && S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]);
+
+			if (isType) {
+				canUnlink = canUnlink && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+			} else {
+				canUnlink = canUnlink && isAllowedRelation;
+			};
 		};
-		if (relation && Relation.isSystem(relation.relationKey)) {
-			canDelete = false;
-		};
+
 		if (!relation || readonly) {
 			canDuplicate = false;
 			canDelete = false;
@@ -260,7 +265,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					relation ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
 					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
 					canUnlink ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
-					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonDelete') } : null,
+					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonMoveToBin') } : null,
 				]
 			}
 		];
@@ -461,7 +466,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			case 'remove': {
-				Action.uninstall(relation, true, '', () => {
+				Action.archive([ relation.id ], '', () => {
 					C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => this.props.close());
 				});
 				break;
@@ -613,7 +618,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				relation: observable.box(relation),
 				valueMapper: it => S.Record.getTypeById(it.id),
 				onChange: (value: any, callBack?: () => void) => {
-					this.objectTypes = value;
+					this.objectTypes = Relation.getArrayValue(value);
 					this.forceUpdate();
 
 					if (relation.id) {
@@ -662,7 +667,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const node = $(this.node);
 		const button = node.find('#button');
 
-		if (button.hasClass('grey')) {
+		if (button.hasClass('blank')) {
 			return;
 		};
 
@@ -731,14 +736,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			return;
 		};
 
-		const relation = this.getViewRelation();
+		const relation = this.getRelation();
 		const item: any = { 
 			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
 		};
 
-		relation ? this.update(item) : this.add(item);
+		relation && relation.id ? this.update(item) : this.add(item);
 	};
 
 	add (item: any) {
@@ -782,9 +787,18 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	getRelation (): any {
 		const { param } = this.props;
 		const { data } = param;
-		const { relationId } = data;
+		const { relationId, addParam } = data;
 
-		return S.Record.getRelationById(relationId);
+		let ret: any = null;
+
+		if (relationId) {
+			ret = S.Record.getRelationById(relationId);
+		} else 
+		if (addParam) {
+			ret = addParam;
+		};
+
+		return ret;
 	};
 
 	getViewRelation (): I.ViewRelation {

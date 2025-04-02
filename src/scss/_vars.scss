@@ -16,6 +16,7 @@
 	--color-shape-secondary-inversion: #292929;
 	--color-shape-tertiary: #f2f2f2;
 	--color-shape-transparent-tertiary: rgba(0,0,0,0.03);
+	--color-shape-transparent-tertiary-hex: #f8f8f8;
 
 	--color-shape-highlight-dark: rgba(0, 0, 0, 0.11);
 	--color-shape-highlight-medium: rgba(0, 0, 0, 0.05);
@@ -38,6 +39,15 @@
 	--color-bg-primary: #fff;
 	--color-bg-primary-inversion: #171717;
 	--color-bg-loader: rgba(255,255,255,0.7);
+	--color-bg-yellow: #fcf8d6;
+	--color-bg-orange: #fff2d7;
+	--color-bg-red: #fee7e0;
+	--color-bg-pink: #fbdff2;
+	--color-bg-purple: #f3e7f8;
+	--color-bg-blue: #e4e8fc;
+	--color-bg-ice: #ddf1fc;
+	--color-bg-teal: #d9f6f4;
+	--color-bg-lime: #e5f8d6;
 
 	/* System */
 
@@ -59,6 +69,30 @@
 	--color-ice: #2aa7ee;
 	--color-teal: #0fc8ba;
 	--color-lime: #5dd400;
+
+	/* Tag */
+
+	--color-tag-grey: #8c9ea5;
+	--color-tag-yellow: #b2a616;
+	--color-tag-orange: #d3720d;
+	--color-tag-red: #e2400c;
+	--color-tag-pink: #ca1b8e;
+	--color-tag-purple: #9e30c4;
+	--color-tag-blue: #3e58eb;
+	--color-tag-ice: #1c8bca;
+	--color-tag-teal: #0caaa3;
+	--color-tag-lime: #64b90f;
+
+	--color-bg-tag-grey: #e3e3e3;
+	--color-bg-tag-yellow: #f4eb91;
+	--color-bg-tag-orange: #fcdc9c;
+	--color-bg-tag-red: #fcd1c3;
+	--color-bg-tag-pink: #f8c2e5;
+	--color-bg-tag-purple: #e8d0f1;
+	--color-bg-tag-blue: #cbd2fa;
+	--color-bg-tag-ice: #b2dff9;
+	--color-bg-tag-teal: #a9ebe6;
+	--color-bg-tag-lime: #c5efa3;
 
 	/* Font */
 

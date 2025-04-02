@@ -28,7 +28,7 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 			if (last) {
 				U.Object.getById(home.id, {}, object => {
 					if (!object || object.isDeleted) {
-						U.Object.openRoute({ layout: I.ObjectLayout.Empty }, { replace: true });
+						U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' }, { replace: true });
 					} else {
 						U.Space.openDashboard();
 					};

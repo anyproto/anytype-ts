@@ -47,3 +47,4 @@ $vaultWidthCollapsed: 72px;
 @mixin clamp2 { @include clamp; -webkit-line-clamp: 2; }
 @mixin clamp3 { @include clamp; -webkit-line-clamp: 3; }
 @mixin clamp4 { @include clamp; -webkit-line-clamp: 4; }
+@mixin clamp5 { @include clamp; -webkit-line-clamp: 5; }

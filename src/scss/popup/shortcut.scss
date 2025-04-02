@@ -9,7 +9,7 @@
 		}
 		.content { display: flex; flex-direction: column; height: 100%; }
 
-		.head { display: flex; flex-direction: column; gap: 8px 0px; flex-shrink: 0; padding: 16px 16px 0px 16px; }
+		.head { display: flex; flex-direction: column; gap: 8px 0px; flex-shrink: 0; padding: 16px 16px 12px 16px; }
 		.head {
 			.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 16px; }
 			.side.left { flex-grow: 1; }
@@ -27,16 +27,21 @@
 			.select:hover, .select.hover { background: none; }
 		}
 
-		.body { padding: 12px 8px 16px 8px; flex-grow: 1; overflow: auto; }
+		.body { padding: 0px 8px 16px 8px; flex-grow: 1; overflow: auto; }
 		.body {
 			.section {
-				> .name { padding: 9px 8px; @include text-small; color: var(--color-text-secondary); }
+				> .name { padding: 9px 8px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
 
 				.item { padding: 6px 8px; border-radius: 6px; gap: 0px 8px; cursor: default; min-height: 36px; 	}
 				.item.canEdit:not(.isEditing) {
-					&:hover, &.hover { background: var(--color-shape-highlight-light); }
+					&:hover, &.hover {
+						.symbols {
+							.label { background-color: var(--color-bg-blue); }
+						}
+
+						.label.grey { color: var(--color-blue); }
+					}
 				}
-				.item.isEditing { box-shadow: 0px 0px 0px 2px var(--color-system-accent-100) inset; }
 				.item.hasError { box-shadow: 0px 0px 0px 2px var(--color-red) inset; }
 
 				.item {
@@ -44,8 +49,9 @@
 					.name { flex-grow: 1; }
 					.error { margin: 0.5em 0px 0px 0px; @include text-small; }
 
-					.label { @include text-small; font-weight: 500; }
+					.label { @include text-small; }
 					.label.text { text-align: right; }
+					.label.grey { color: var(--color-text-tertiary); }
 
 					.symbols { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 					.symbols {

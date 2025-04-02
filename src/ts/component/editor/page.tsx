@@ -151,8 +151,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.rebind();
 		this.open();
 		this.initNodes();
-
-		keyboard.disableClose(false);
 	};
 
 	componentDidUpdate () {
@@ -276,9 +274,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		let close = true;
 		if (isPopup && (match?.params?.id == this.id)) {
-			close = false;
-		};
-		if (keyboard.isCloseDisabled) {
 			close = false;
 		};
 

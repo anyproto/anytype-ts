@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Block, HeadSimple } from 'Component';
-import { I, M, S, U, translate } from 'Lib';
+import { Header, Block, HeadSimple } from 'Component';
+import { I, M, S, U, Dataview } from 'Lib';
 
 interface Props extends I.PageComponent {
 	rootId: string;
@@ -32,12 +32,13 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 		const cn = [ 'editorWrapper', check.className ];
 		const isSet = U.Object.isSetLayout(check.layout);
 		const isCollection = U.Object.isCollectionLayout(check.layout);
+		const isType = U.Object.isTypeLayout(check.layout);
 
 		let head = null;
 		let children = S.Block.getChildren(rootId, rootId);
 
-		if (isSet || isCollection) {
-			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
+		if (isSet || isCollection || isType) {
+			const placeholder = Dataview.namePlaceholder(check.layout);
 
 			head = (
 				<HeadSimple 

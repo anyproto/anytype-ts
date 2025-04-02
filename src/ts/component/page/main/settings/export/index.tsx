@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, U, translate } from 'Lib';
+import { I, U, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PageSettingsComponent {
@@ -35,6 +35,10 @@ const PageMainSettingsExportIndex = observer(class PageMainSettingsExportIndex e
 				</div>
 			</>
 		);
+	};
+
+	componentDidMount () {
+		analytics.event('ScreenSettingsExportIndex', { route: analytics.route.settingsSpaceIndex });
 	};
 
 	onClick (id: string) {

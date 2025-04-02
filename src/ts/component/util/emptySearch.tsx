@@ -6,6 +6,7 @@ interface Props {
 	filter?: string;
 	readonly?: boolean;
 	style?: any;
+	className?: string;
 };
 
 const EmptySearch = forwardRef<HTMLDivElement, Props>(({
@@ -13,6 +14,7 @@ const EmptySearch = forwardRef<HTMLDivElement, Props>(({
 	filter = '',
 	readonly = false,
 	style = {},
+	className= '',
 }, ref) => {
 	if (!text) {
 		if (filter) {
@@ -23,7 +25,7 @@ const EmptySearch = forwardRef<HTMLDivElement, Props>(({
 	};
 
 	return (
-		<div style={style} className="emptySearch">
+		<div className={[ 'emptySearch', className ].join(' ')} style={style}>
 			<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
 		</div>
 	);

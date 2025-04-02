@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, PreviewObject } from 'Component';
+import { Icon, PreviewObject, EmptySearch } from 'Component';
 import { I, C, S, U, J, translate, keyboard, sidebar } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -29,7 +29,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	render () {
 		const { param, setHover } = this.props;
 		const { data } = param;
-		const { defaultId } = data;
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
@@ -43,7 +42,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 		const Item = (item: any) => {
 			let content = null;
-
 			if (item.id == J.Constant.templateId.new) {
 				content = <ItemAdd {...item} />;
 			} else {
@@ -65,7 +63,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					onMouseEnter={() => setHover(item)}
 					onMouseLeave={() => setHover(null)}
 				>
-					{defaultId == item.id ? <div className="defaultLabel">{translate('commonDefault')}</div> : ''}
 					{content}
 				</div>
 			);
@@ -73,11 +70,13 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 		return (
 			<div ref={node => this.node = node}>
-				<div className="items">
-					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
-				</div>
+				{items.length ? (
+					<div className="items">
+						{items.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</div>
+				) : <EmptySearch className="noItems" text={translate('blockDataviewNoTemplates')} />}
 			</div>
 		);
 	};
@@ -233,12 +232,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				subIds: J.Menu.dataviewTemplate,
-				onOpen: () => {
-					node.addClass('active');
-				},
-				onClose: () => {
-					node.removeClass('active');
-				},
+				onOpen: () => node.addClass('active'),
+				onClose: () => node.removeClass('active'),
 				rebind: this.rebind,
 				parentId: id,
 				data: {

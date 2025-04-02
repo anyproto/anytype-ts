@@ -76,7 +76,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const object = S.Detail.get(rootId, rootId, []);
 		const items = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 }).filter(it => it.id != object.type);
 
-		items.push({ id: 'menu', icon: 'search', name: translate('blockTypeMyTypes') });
+		items.push({ id: 'menu', icon: 'search', name: translate('commonMyTypes') });
 
 		return items;
 	};
@@ -197,7 +197,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				filter: '',
 				filters: [
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
-					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 				],
 				onClick: (item: any) => {
 					this.onClick(e, item);

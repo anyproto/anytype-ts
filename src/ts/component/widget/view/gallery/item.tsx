@@ -14,6 +14,7 @@ interface Props extends I.WidgetViewComponent {
 const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	subId = '',
 	id = '',
+	parent,
 	block,
 	isEditing = false,
 	hideIcon = false,
@@ -31,7 +32,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	const cn = [ 'item' ];
 	const cover = view ? Dataview.getCoverObject(subId, object, view.coverRelationKey) : null;
 	const nameRelation = view.getRelation('name');
-	const withName = !cover || (cover && nameRelation.isVisible);
+	const withName = !cover || (cover && nameRelation?.isVisible);
 
 	if (cover) {
 		cn.push('withCover');
@@ -50,7 +51,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		e.stopPropagation();
 
 		U.Object.openEvent(e, object);
-		analytics.event('OpenSidebarObject');
+		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
 	};
 
 	const onContext = (e: React.MouseEvent) => {

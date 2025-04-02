@@ -540,18 +540,7 @@ class BlockStore {
 				};
 
 				const old = text.substring(from, to);
-
-				let name = '';
-				if (U.Object.isNoteLayout(object.layout)) {
-					name = object.name || translate('commonEmpty');
-				} else
-				if (U.Object.isInFileLayouts(object.layout)) {
-					name = U.File.name(object);
-				} else {
-					name = object.name;
-				};
-
-				name = U.Common.shorten(name.trim(), 30);
+				const name = U.Common.shorten(U.Object.name(object, true).trim(), 30);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;

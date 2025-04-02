@@ -460,6 +460,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					canAdd: true,
 					type: I.NavigationType.Link,
+					withPlural: true,
 				});
 				break;
 			};

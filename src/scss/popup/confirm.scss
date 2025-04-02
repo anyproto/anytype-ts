@@ -16,22 +16,19 @@
 		}
 		.iconObject { margin-bottom: 12px; }
 
-		.iconWrapper { display: flex; width: 320px; height: 104px; border-radius: 320px; margin: -16px auto 10px; align-items: center; justify-content: space-around; }
-		.iconWrapper.green { background: radial-gradient(50% 50% at 50% 50%, #a9f496 26.04%, rgba(188, 242, 175, 0.00) 100%); }
-		.iconWrapper.red { background: radial-gradient(50% 50% at 50% 50%, #ffbcbc 26.04%, rgba(255, 230, 230, 0.00) 100%); }
+		.iconWrapper { display: flex; width: 320px; border-radius: 320px; margin: 0px auto 10px; align-items: center; justify-content: space-around; }
 		.iconWrapper.yellow { background: radial-gradient(50% 50% at 50% 50%, #fff0c8 0%, rgba(255, 240, 200, 0.00) 100%); }
 		.iconWrapper.blue { background: radial-gradient(50% 50% at 50% 50%, #80d1ff 0%, rgba(187, 231, 255, 0.00) 100%); }
 
 		.iconWrapper {
-			.icon { width: 72px; height: 72px; }
+			.icon { width: 56px; height: 56px; }
 			.icon.update { background-image: url('~img/icon/popup/confirm/update.svg'); }
 			.icon.updated { background-image: url('~img/icon/popup/confirm/updated.svg'); }
 			.icon.error { display: block; background-image: url('~img/icon/popup/confirm/error.svg'); }
-			.icon.confirm { width: 96px; background-image: url('~img/icon/popup/confirm/confirm.svg'); }
-			.icon.invite { width: 68px; background-image: url('~img/icon/popup/confirm/invite.svg'); }
-			.icon.sad { width: 68px; background-image: url('~img/icon/popup/confirm/sad.svg'); }
-			.icon.warning { width: 96px; background-image: url('~img/icon/popup/confirm/warning.svg'); }
-			.icon.warningInverted { width: 96px; background-image: url('~img/icon/popup/confirm/warningInverted.svg'); }
+			.icon.confirm { background-image: url('~img/icon/popup/confirm/confirm.svg'); }
+			.icon.invite { background-image: url('~img/icon/popup/confirm/invite.svg'); }
+			.icon.sad { background-image: url('~img/icon/popup/confirm/sad.svg'); }
+			.icon.warning { background-image: url('~img/icon/popup/confirm/warning.svg'); }
 		}
 
 		.checkboxWrapper { 
@@ -61,7 +58,7 @@
 		.title { margin-bottom: 9px; }
 		.label {
 			dl { display: flex; justify-content: space-between; }
-			dt { width: 120px; flex-shrink: 0; text-align: left; }
+			dt { flex-shrink: 0; text-align: left; }
 			dd { text-align: right; color: var(--color-text-secondary); }
 		}
 	}

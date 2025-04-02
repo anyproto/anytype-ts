@@ -74,6 +74,7 @@ class CommonStore {
 		cluster: false,
 		filter: '',
 		depth: 1,
+		filterTypes: [],
 	};
 
 	public spaceStorageObj: SpaceStorage = {

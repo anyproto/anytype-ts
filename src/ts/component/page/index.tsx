@@ -14,7 +14,6 @@ import PageAuthDeleted from './auth/deleted';
 import PageAuthMigrate from './auth/migrate';
 
 import PageMainBlank from './main/blank';
-import PageMainEmpty from './main/empty';
 import PageMainVoid from './main/void';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
@@ -44,8 +43,7 @@ const Components = {
 	'auth/deleted':			 PageAuthDeleted,
 	'auth/migrate':			 PageAuthMigrate,
 
-	'main/blank':			 PageMainBlank,		
-	'main/empty':			 PageMainEmpty,		
+	'main/blank':			 PageMainBlank,
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
@@ -208,6 +206,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const Component = Components[path];
 		const routeParam = { replace: true };
 		const refSidebar = sidebar.rightPanelRef(isPopup);
+		const whatsNew = Storage.get('whatsNew');
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
@@ -246,6 +245,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		if (!isPopup) {
 			keyboard.setMatch(match);
+		};
+
+		if (whatsNew && !S.Popup.isOpen()) {
+			S.Popup.open('help', { data: { document: 'whatsNew' } });
+			Storage.set('whatsNew', false);
 		};
 
 		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);

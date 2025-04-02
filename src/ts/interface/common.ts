@@ -55,14 +55,15 @@ export interface Toast {
 };
 
 export enum ToastAction {
-	None		 	= 0,
-	Move		 	= 1,
-	Link		 	= 2,
-	Lock 		 	= 3,
-	Collection	 	= 4,
-	StorageFull		= 5,
-	TemplateCreate	= 6,
-	Archive 		= 7,
+	None		 	 = 0,
+	Move		 	 = 1,
+	Link		 	 = 2,
+	Lock 		 	 = 3,
+	Collection	 	 = 4,
+	StorageFull		 = 5,
+	TemplateCreate	 = 6,
+	Archive 		 = 7,
+	Widget			 = 8,
 };
 
 export interface Option {
@@ -208,10 +209,12 @@ export interface SidebarPageComponent {
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {
+	id: string;
 	object: any;
 	item?: any;
 	readonly?: boolean;
 	onChange?(update: any): void;
+	disableButton?(v: boolean): void;
 	onDragStart?: (e: React.DragEvent) => void;
 };
 
@@ -223,7 +226,7 @@ export enum SidebarRelationList {
 	Featured 		= 1,
 	Recommended 	= 2,
 	Hidden 			= 3,
-	Conflict 		= 4,
+	Local 			= 4,
 };
 
 export enum SurveyType {
@@ -299,6 +302,7 @@ export interface GraphSettings {
 	cluster: boolean;
 	filter: string;
 	depth: number;
+	filterTypes: string[];
 };
 
 export interface FocusState {

@@ -13,12 +13,15 @@
         .list { display: flex; flex-direction: column; justify-content: space-between;  height: 100%; border-radius: 12px; background: var(--color-bg-primary); padding: 8px 0px; }
         .list {
             > .head { 
-				display: flex; gap: 0px 8px; align-items: center; border-bottom: 1px solid var(--color-shape-secondary); @include text-paragraph; 
-				font-weight: 600; padding: 6px 16px 12px 8px; 
+				display: flex; gap: 0px 4px; align-items: center; border-bottom: 1px solid var(--color-shape-secondary); @include text-paragraph; 
+				font-weight: 600; padding: 4px 16px 11px 8px; 
 			}
             > .head {
-                .icon.back { width: 24px !important; height: 24px !important; background-image: url('~img/icon/widget/back.svg'); flex-shrink: 0; }
-				.name { @include text-overflow-nw; }
+                .icon { width: 24px !important; height: 24px !important; }
+                .icon.back { background-image: url('~img/icon/widget/back.svg'); flex-shrink: 0; }
+                .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+
+                .name, .title { @include text-overflow-nw; }
             }
 
 			.ReactVirtualized__List { padding: 0px 8px; }
@@ -30,17 +33,15 @@
             }
 
             .section {
-                > .name { @include text-small; color: var(--color-text-secondary); margin: 0px; padding: 0px 8px; }
+                > .name { @include text-small; font-weight: 500; color: var(--color-text-secondary); margin: 0px; padding: 0px 8px; }
             }
 
             .items { display: flex; flex-direction: column; }
 
-            .toggle,
             .item {
                 display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 6px; padding: 3px 8px; border-radius: 8px;
                 transition: background-color $transitionCommon;
             }
-            .toggle:hover,
             .item:hover, .item.hover, .item.active { background-color: var(--color-shape-highlight-medium); }
 
             .item {
@@ -56,27 +57,14 @@
 
             .item.isTypeOrRelation { padding-left: 26px; }
 
-            .item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; border-radius: 8px; }
+            .item.itemAccount { padding: 8px; gap: 0px 12px; align-items: center; border-radius: 8px; }
             .item.itemAccount {
                 .iconObject { flex-shrink: 0; }
-                .name { @include text-common; @include text-overflow-nw; font-weight: 600; }
-            }
-
-            .toggle { padding-left: 4px; justify-content: space-between; }
-            .toggle {
-                .left { display: flex; justify-content: flex-start; gap: 0px 6px; align-items: center; }
-                .right { display: flex; align-items: center; }
-
-                .icon { width: 20px; height: 20px; }
-                .icon.arrow { flex-shrink: 0; background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
-                .icon.plus { opacity: 0.8; border-radius: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
-            }
-            .toggle:hover {
-                .icon.plus { opacity: 1; }
-                .icon.plus:hover { background-color: var(--color-shape-secondary); }
-            }
-            .toggle.isOpen {
-                .icon.arrow { transform: rotate(0deg); }
+                .name { display: flex; flex-direction: column; justify-content: center; }
+                .name {
+                    .userName { @include text-common; @include text-overflow-nw; font-weight: 600; }
+                    .anyName { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
+                }
             }
         }
 
@@ -88,12 +76,50 @@
     }
 }
 
+> #containerSettings.spaceSettings,
+> #containerSettings.spaceSettingsLibrary {
+    > .body {
+        > .list {
+            > .head {
+                .icon { width: 28px !important; height: 28px !important; background-size: 20px !important; border-radius: 6px;}
+            }
+        }
+    }
+}
+
 > #containerSettings.spaceSettings {
     > .body {
         > .list { padding-bottom: 0px; }
         > .list {
             .inner { height: calc(100% - 45px); }
             .ReactVirtualized__List { padding-bottom: 8px; }
+        }
+    }
+}
+
+> #containerSettings.spaceSettingsLibrary {
+    > .body {
+        > .list { padding-bottom: 0px; justify-content: flex-start; }
+        > .list {
+            .inner { height: calc(100% - 87px); }
+            .ReactVirtualized__List { padding-bottom: 8px; padding-top: 2px; }
+
+            > .head { justify-content: space-between; }
+            > .head {
+                .left { display: flex; gap: 0px 8px; align-items: center; }
+                .title { @include text-paragraph; font-weight: 600; }
+            }
+        }
+
+        .filterWrapper { display: flex; gap: 0px 8px; padding: 16px 16px 0px; }
+        .filterWrapper {
+            .filter { padding: 0px 4px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
+            .filter {
+                .inner { height: 26px; gap: 0px; }
+                .line { display: none; }
+                .icon.search { background-size: 13px; }
+                .icon.clear { margin-left: 8px; }
+            }
         }
     }
 }

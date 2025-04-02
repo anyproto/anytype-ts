@@ -40,6 +40,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
+		const { showVault } = S.Common;
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -101,13 +102,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				return true;
 			});
 
-			let last = null;
 			let first = null;
 			let buttons: I.ButtonComponent[] = [];
 
 			if (blocks.length) {
 				first = blocks[0];
-				last = blocks[blocks.length - 1];
 			};
 
 			if (isEditing) {
@@ -196,6 +195,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		);
 	};
 
+	componentDidUpdate (): void {
+		this.onScroll();
+	};
+
 	onEdit (e: any): void {
 		e.stopPropagation();
 
@@ -210,6 +213,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const { widgets } = S.Block;
 		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
 		const targets = [];
+		const node = $(this.node);
+		const body = node.find('#body');
+		const position = body.outerHeight() + 350 > node.outerHeight() ? I.MenuDirection.Top : I.MenuDirection.Bottom;
 
 		blocks.forEach(block => {
 			const children = S.Block.getChildren(widgets, block.id);
@@ -238,7 +244,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					U.Object.openConfig(target);
 				};
 
-				analytics.event('AddWidget', { type: I.WidgetLayout.Link, route });
+				analytics.createWidget(I.WidgetLayout.Link, route, analytics.widgetType.manual);
 				analytics.event('ChangeWidgetSource', {
 					layout,
 					route: analytics.route.addWidget,
@@ -255,34 +261,16 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: -4,
-			vertical: I.MenuDirection.Top,
+			vertical: position,
 			onOpen: context => menuContext = context,
 			subIds: J.Menu.widgetAdd,
 			data: {
 				route: analytics.route.addWidget,
+				withPlural: true,
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
-				/*
-				canAdd: true,
-				addParam: {
-					name: translate('commonCreateNewObject'),
-					nameWithFilter: translate('commonCreateObjectWithName'),
-					arrow: true,
-					onClick: (details: any) => {
-						const types = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 1 });
-
-						if (!types.length) {
-							return;
-						};
-
-						C.ObjectCreate(details, [], '', types[0].uniqueKey, S.Common.space, (message: any) => {
-							onSelect(message.details, true);
-						});
-					},
-				},
-				*/
 				onOver: (e, context: any, item: any) => {
 					if (!item.isAdd) {
 						S.Menu.closeAll(J.Menu.widgetAdd);
@@ -301,22 +289,22 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				dataChange: (context: any, items: any[]) => {
 					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
-					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
+					const fixed: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
 					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
-						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplate(it.id) && it.name.match(reg)).
+						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplate(it.id) && (it.name.match(reg) || it.pluralName.match(reg))).
 						map(it => ({ ...it, caption: '' }));
 					const lists = [];
-
-					if (types.length) {
-						lists.push([
-							{ name: translate('commonSuggested'), isSection: true }
-						].concat(types));
-					};
 
 					if (fixed.length) {
 						lists.push([
 							{ name: translate('commonSystem'), isSection: true }
 						].concat(fixed));
+					};
+
+					if (types.length) {
+						lists.push([
+							{ name: translate('commonSuggested'), isSection: true }
+						].concat(types));
 					};
 
 					if (items.length) {

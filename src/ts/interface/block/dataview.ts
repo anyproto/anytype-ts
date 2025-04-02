@@ -165,6 +165,7 @@ export interface ViewComponent {
 	getTypeId?(): string;
 	getTemplateId?(): string;
 	getEmpty?(type: string): any;
+	getSubId?(): string;
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateAdd?: () => void;
 	onSortAdd?: (item: any, callBack?: () => void) => void;
@@ -270,6 +271,7 @@ export interface CellRef {
 	isEditing?(): boolean;
 	onChange?(value: any): void;
 	getValue?(): any;
+	canEdit?(): boolean;
 };
 
 export interface BoardGroup {

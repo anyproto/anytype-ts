@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, C, Action, focus, keyboard, Relation, translate, analytics, sidebar } from 'Lib';
+import { I, M, S, U, J, C, Action, focus, keyboard, Relation, translate, analytics, sidebar, Dataview } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -41,22 +41,25 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	render (): any {
 		const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup } = this.props;
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout', 'pluralName' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
-
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
-		const isType = U.Object.isTypeLayout(object.layout);
+		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
+		const isType = U.Object.isTypeLayout(check.layout);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
-		const canEditIcon = allowDetails && !isRelation;
 		const cn = [ 'headSimple', check.className ];
+		const canEditIcon = allowDetails && !isRelation && !isType;
+
+		if (!allowDetails) {
+			cn.push('isReadonly');
+		};
 
 		const placeholder = {
 			title: this.props.placeholder,
-			description: translate('placeholderBlockDescription'),
+			description: translate('commonDescription'),
 		};
 		const buttons = [];
 
@@ -65,7 +68,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				ref={ref => this.refEditable[item.id] = ref}
 				id={`editor-${item.id}`}
 				placeholder={placeholder[item.id]}
-				readonly={!allowDetails}
+				readonly={item.readonly}
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
@@ -84,11 +87,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let descr = null;
 		let featured = null;
 
-		if (!isTypeOrRelation && !isDate) {
-			if (featuredRelations.includes('description')) {
-				descr = <Editor className="descr" id="description" />;
-			};
+		if (featuredRelations.includes('description')) {
+			descr = <Editor className="descr" id="description" readonly={!allowDetails} />;
+		};
 
+		if (!isDate && !isTypeOrRelation) {
 			featured = (
 				<Block 
 					{...this.props} 
@@ -151,7 +154,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			if (!canWrite) {
 				buttonCreate = null;
 				buttonEdit = null;
-				buttonTemplate = null;
 			};
 		};
 
@@ -185,10 +187,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								size={32} 
 								iconSize={32}
 								object={object} 
-								canEdit={canEditIcon} 
+								canEdit={canEditIcon}
 							/>
 						) : ''}
-						<Editor className="title" id="title" />
+						<Editor className="title" id="title" readonly={isType || !allowDetails} />
 					</div>
 
 					{descr}
@@ -295,7 +297,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				text = U.Date.dateWithFormat(dateFormat, object.timestamp);
 			};
 
-			if (text == translate('defaultNamePage')) {
+			if ((item.blockId == J.Constant.blockId.title) && U.Object.isTypeLayout(object.layout)) {
+				text = object.pluralName || object.name;
+			};
+
+			if ([ translate('defaultNamePage'), Dataview.namePlaceholder(object.layout) ].includes(text)) {
 				text = '';
 			};
 
@@ -320,17 +326,20 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	onTemplates () {	
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId);
-		const node = $(this.node);
 
 		S.Menu.open('dataviewTemplateList', {
-			element: node.find('#button-template'),
+			element: '.headSimple #button-template',
 			horizontal: I.MenuDirection.Center,
 			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			data: {
 				withTypeSelect: false,
 				typeId: object.id,
 				previewSize: I.PreviewSize.Small,
-				defaultId: object.defaultTemplateId,
+				templateId: object.defaultTemplateId,
+				onSetDefault: id => {
+					S.Menu.updateData('dataviewTemplateList', { templateId: id });
+					U.Object.setDefaultTemplateId(rootId, id);
+				},
 				onSelect: item => {
 					if (item.id == J.Constant.templateId.new) {
 						this.onTemplateAdd();
@@ -350,7 +359,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			layout: object.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, true, (message) => {
 			if (message.error.code) {
 				return;
 			};

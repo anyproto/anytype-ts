@@ -2,6 +2,8 @@ import { I, S, U, J, Relation } from 'Lib';
 
 class UtilGraph {
 
+
+
 	imageSrc (d: any) {
 		let src = '';
 
@@ -47,6 +49,29 @@ class UtilGraph {
 			};
 
 			case I.ObjectLayout.Note: {
+				break;
+			};
+
+			case I.ObjectLayout.Type: {
+				if (d.iconImage) {
+					src = S.Common.imageUrl(d.iconImage, 100);
+				} else
+				if (d.iconName) {
+					src = U.Common.updateSvg(require(`img/icon/type/default/${d.iconName}.svg`), { 
+						id: d.iconName, 
+						size: 100, 
+						fill: U.Common.iconBgByOption(d.iconOption),
+					});
+				} else
+				if (d.iconEmoji) {
+					const code = U.Smile.getCode(d.iconEmoji);
+					if (code) {
+						src = U.Smile.srcFromColons(code);
+					};
+					src = src.replace(/^.\//, '');
+				} else {
+
+				};
 				break;
 			};
 

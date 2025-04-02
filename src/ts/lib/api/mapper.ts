@@ -270,6 +270,7 @@ export const Mapper = {
 				layout: obj.getLayout(),
 				limit: obj.getLimit(),
 				viewId: obj.getViewid(),
+				autoAdded: obj.getAutoadded(),
 			};
 		},
 
@@ -707,7 +708,7 @@ export const Mapper = {
 				version: obj.getVersion(),
 				timestamp: obj.getTimestamp(),
 				size: obj.getSize(),
-				//details: Decode.struct(obj.getDetails()),
+				details: Decode.struct(obj.getDetails()),
 			};
 		},
 
@@ -1189,6 +1190,8 @@ export const Mapper = {
 			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
 			if (v == V.CHATSTATEUPDATE)			 	 t = 'ChatStateUpdate';
 			if (v == V.CHATUPDATEREADSTATUS)		 t = 'ChatUpdateReadStatus';
+
+			if (v == V.SPACEAUTOWIDGETADDED)		 t = 'SpaceAutoWidgetAdded';
 
 			return t;
 		},
@@ -1708,6 +1711,14 @@ export const Mapper = {
 				ids: obj.getIdsList(),
 				isRead: obj.getIsread(),
 				subIds: obj.getSubidsList(),
+			};
+		},
+
+		SpaceAutoWidgetAdded: (obj: Events.Event.Space.AutoWidgetAdded) => {
+			return {
+				widgetId: obj.getWidgetblockid(),
+				targetId: obj.getTargetid(),
+				targetName: obj.getTargetname(),
 			};
 		},
 

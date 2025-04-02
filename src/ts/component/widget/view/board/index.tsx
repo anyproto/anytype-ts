@@ -27,6 +27,7 @@ const WidgetViewBoard = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 	};
 
 	useEffect(() => load(), []);
+	useEffect(() => load(), [ view?.id ]);
 
 	return (
 		<div className="body">

@@ -333,6 +333,7 @@ class UtilDate {
 		const { firstDay } = S.Common;
 		const { m, y } = this.getCalendarDateParam(value);
 		const md = {...J.Constant.monthDays};
+		const today = this.today();
 		
 		// February
 		if (this.isLeapYear(y)) {
@@ -359,7 +360,7 @@ class UtilDate {
 		wdf = (wdf - firstDay + 7) % 7; 
 		wdl = (wdl - firstDay + 7) % 7;
 
-		const days = [];
+		let days = [];
 		for (let i = 1; i <= wdf; ++i) {
 			days.push({ d: md[pm] - (wdf - i), m: pm, y: py });
 		};
@@ -369,6 +370,19 @@ class UtilDate {
 		for (let i = 1; i <= (6 - wdl); ++i) {
 			days.push({ d: i, m: nm, y: ny });
 		};
+
+		days = days.map(it => {
+			const ts = this.timestamp(it.y, it.m, it.d);
+			const wd = Number(this.date('N', ts));
+
+			return {
+				...it,
+				ts,
+				wd, 
+				isToday: ts == today,
+				isWeekend: wd >= 6,
+			};
+		});
 
 		return days;
 	};

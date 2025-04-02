@@ -32,7 +32,6 @@
 			.cellContent { height: 36px !important; overflow: visible !important; }
 			.flex { padding: 9px 14px; gap: 0px 6px; align-items: center; height: 100%; }
 			.iconObject { width: 20px; height: 20px; margin: 0px; vertical-align: top; flex-shrink: 0; display: none; }
-			.icon.lock { flex-shrink: 0; }
 
 			.name { 
 				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
@@ -51,7 +50,6 @@
 			.flex { display: inline-block; }
 			.iconObject { display: block; }
 			.name { display: none; }
-			.icon.lock { display: none; }
 		}
 
 		.cellHead.last, .cellFoot.last { overflow: visible; padding: 9px 14px; cursor: default; }

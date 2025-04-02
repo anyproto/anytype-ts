@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuBlockRelationEdit {
-		.content { padding: 0px; }
+		.content { padding: 0px; max-height: 400px; }
 		.form { padding: 8px 0px; }
 		.wrap { padding: 0px 16px 8px 16px; }
 		.line { height: 1px; margin: 8px 0px; background: var(--color-shape-secondary); }

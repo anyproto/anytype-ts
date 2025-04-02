@@ -46,9 +46,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const nodesSelectedByDragToSelect = useRef([]);
 
 	const send = (id: string, param: any, transfer?: any[]) => {
-		if (worker.current) {
-			worker.current.postMessage({ id, ...param }, transfer);
-		};
+		try {
+			if (worker.current) {
+				worker.current.postMessage({ id, ...param }, transfer);
+			};
+		} catch (e) { /**/ };
 	};
 
 	const rebind = () => {
@@ -185,14 +187,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		d.layout = Number(d.layout) || 0;
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
-
-		if (U.Object.isNoteLayout(d.layout)) {
-			d.name = d.snippet || translate('commonEmpty');
-		} else {
-			d.name = d.name || translate('defaultNamePage');
-		};
-
-		d.name = U.Smile.strip(d.name);
+		d.name = U.Smile.strip(U.Object.name(d, true));
 		d.shortName = U.Common.shorten(d.name, 24);
 		d.description = String(d.description || '');
 		d.snippet = String(d.snippet || '');
@@ -220,7 +215,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					send('image', { src: d.src, bitmap: res });
 				});
 			};
-			img.crossOrigin = '';
+			img.crossOrigin = 'anonymous';
 			img.src = d.src;
 		};
 
@@ -574,7 +569,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onClickObject = (id: string) => {
 		setSelected([]);
-		U.Object.openAuto(getNode(id));
+		U.Object.openConfig(getNode(id));
 	};
 
 	const addNewNode = (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => {

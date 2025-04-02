@@ -51,10 +51,8 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 					S.Popup.open('membershipFinalization', { data: { tier } });
 				} else {
 					S.Popup.open('membership', {
-						onClose: () => {
-							U.Object.openAuto({ id: 'membership', layout: I.ObjectLayout.Settings });
-						},
 						data: {
+							onContinue: () => U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings }),
 							tier: membership.tier,
 							success: true,
 						},

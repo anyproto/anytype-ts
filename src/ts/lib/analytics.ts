@@ -5,7 +5,7 @@ const KEYS = [
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor', 'emptyType', 'status', 'sort',
+	'processor', 'emptyType', 'status', 'sort', 'widgetType',
 ];
 const URL = 'amplitude.anytype.io';
 
@@ -16,6 +16,7 @@ class Analytics {
 	stack: any[] = [];
 
 	public route = {
+		app: 'App',
 		block: 'Block',
 		onboarding: 'Onboarding',
 		collection: 'Collection',
@@ -54,6 +55,7 @@ class Analytics {
 		share: 'Share',
 		navigation: 'Navigation',
 		object: 'Object',
+		library: 'Library',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',
@@ -70,6 +72,7 @@ class Analytics {
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
 
+		settingsSpace: 'SettingsSpace',
 		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
 		settingsMembership: 'ScreenSettingsMembership',
@@ -85,6 +88,11 @@ class Analytics {
 		usecaseSite: 'Site',
 
 		onboardingTooltip: 'OnboardingTooltip',
+	};
+
+	public widgetType = {
+		manual: 'Manual',
+		auto: 'Auto',
 	};
 
 	debug () {
@@ -249,11 +257,6 @@ class Analytics {
 		};
 
 		switch (code) {
-			case 'ScreenType': {
-				data.objectType = data.params.id;
-				break;
-			};
-
 			case 'ObjectInstall':
 			case 'ObjectUninstall':
 			case 'SelectGraphNode':
@@ -565,6 +568,14 @@ class Analytics {
 		this.event('CreateObject', { objectType, layout, route, middleTime: time });
 	};
 
+	createWidget (layout: I.WidgetLayout, route: string, type: string) {
+		analytics.event('AddWidget', { type: layout, route, widgetType: type });
+	};
+
+	getWidgetType (isAuto: boolean) {
+		return isAuto ? this.widgetType.auto : this.widgetType.manual;
+	};
+
 	changeRelationValue (relation: any, value: any, param: any) {
 		if (!relation) {
 			return;
@@ -587,7 +598,6 @@ class Analytics {
 
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',
-			'main/type':		 'ScreenType',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 			'main/date':		 'ScreenDate',

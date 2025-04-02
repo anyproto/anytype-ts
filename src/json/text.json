@@ -60,10 +60,10 @@
 	"commonAdd": "Add",
 	"commonDone": "Done",
 	"commonUnlink": "Unlink",
-	"commonUnlinkFromType": "Unlink from Type",
-	"commonUnlinkFromObject": "Unlink from Object",
-	"commonUnlinkFromSet": "Unlink from Query",
-	"commonUnlinkFromCollection": "Unlink from Collection",
+	"commonUnlinkFromType": "Remove from Type",
+	"commonUnlinkFromObject": "Remove from Object",
+	"commonUnlinkFromSet": "Remove from Query",
+	"commonUnlinkFromCollection": "Remove from Collection",
 	"commonDeletedObject": "Non-existent object",
 	"commonDeletedType": "Deleted type",
 	"commonDeletedRelation": "Deleted Relation",
@@ -123,6 +123,7 @@
 	"commonRedo": "Redo",
 	"commonBlank": "Blank",
 	"commonSetDefault": "Set as default",
+	"commonUnsetDefault": "Unset as default",
 	"commonTemplate": "Template",
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
@@ -194,6 +195,12 @@
 	"commonSuggested": "Suggested",
 	"commonExistingObjects": "Existing Objects",
 	"commonFileInfo": "File Information",
+	"commonMyTypes": "My Types",
+	"commonMyRelations": "My Properties",
+	"commonSystemTypes": "System Types",
+	"commonSystemRelations": "System Properties",
+	"commonApply": "Apply",
+	"commonDescription": "Description",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -371,6 +378,10 @@
 	"headerGraphTooltipFilters": "Filters",
 	"headerGraphTooltipSettings": "Settings",
 
+	"headerSettingsIdentityInfoTitle": "ANY Name",
+	"headerSettingsIdentityInfoText": "Anytype Identity can be linked to your global name in the network. Become a member to select your custom name.",
+	"headerSettingsIdentityInfoExplorePlans": "Explore plans",
+
 	"shareTooltipLabel": "<b>Share Anytype</b> with<br/>those you care about",
 	"shareBannerLabel": "<b>Share the space!</b> Invite your friends and build together.",
 
@@ -408,8 +419,6 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardMoreInfo": "You can find this key later in Anytype settings",
-
 	"authOnboardVaultTitle": "This is your Vault",
 	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It's local-first – everything works offline.<br/>Only you have the key.",
 	"authOnboardVaultButton": "Get my Key",
@@ -418,8 +427,8 @@
 	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
 
 	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "It gives you full ownership over your data and conversations.<br/>You can find this key later in app settings.<span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Tap to Reveal",
+	"authOnboardPhraseLabel": "Your key replaces login and password. Keep it safe &mdash; you control your data. Find it later in app settings.<span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseSubmit": "Reveal my key",
 	"authOnboardPhraseNotNow": "Not now",
 
 	"onboardingExperienceSubTitle": "Build your first space",
@@ -509,7 +518,7 @@
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
-	"pageAuthOnboardPersonalSpace": "Personal Space",
+	"pageAuthOnboardPersonalSpace": "Entry Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
 	"pageAuthSetupImportTitle": "⚡️ Congratulations!",
@@ -517,10 +526,21 @@
 	"pageAuthSetupImportBackup": "Import backup",
 	"pageAuthSetupEntering": "Entering the Vault...",
 
-	"pageAuthMigrateTitle": "Migration is in progress...",
-	"pageAuthMigrateText": "It can take some time. Thanks for your patience.",
-	"pageAuthMigrateErrorTitle": "Not enough space",
-	"pageAuthMigrateErrorText": "Please clear some space and run the process again.",
+	"pageAuthMigrateInitTitle": "New Version Update",
+	"pageAuthMigrateInitText": "We're laying the groundwork for our new chats. Including counters, notifications and other features needed for smooth chat experience. It might take a little while, but don't worry, your data is safe.",
+	"pageAuthMigrateInitButtonStartUpdate": "Start Update",
+	"pageAuthMigrateInitButtonReadMore": "Read More",
+
+	"pageAuthMigrateInfoProcessTitle": "What to Expect",
+	"pageAuthMigrateInfoProcessText": "You'll see a loading screen during the update. Once finished, you can continue using the app normally.",
+	"pageAuthMigrateInfoDataTitle": "Your Data Remains Safe",
+	"pageAuthMigrateInfoDataText1": "During this update, your data remains fully secure. The update is performed directly on your device, and your synced data remains unaffected. We’ll just copy it to a new format, and a local backup will be created on your device, containing all your data in the previous format.",
+	"pageAuthMigrateInfoDataText2": "The reason we’re retaining this backup is to debug and assist you, in case of unforeseen.",
+
+	"pageAuthMigrateTitle": "Update is in progress...",
+	"pageAuthMigrateText": "This may take some time. Please don’t close the app until the process is complete.",
+	"pageAuthMigrateErrorNotEnoughSpaceTitle": "Not enough space",
+	"pageAuthMigrateErrorNotEnoughSpaceText": "Please clear approximately %s of space and run the process again.",
 	"pageAuthMigrateTryAgain": "Try again",
 
 	"pageHeadControlButtonsChangeCover": "Change cover",
@@ -538,13 +558,15 @@
 
 	"pageSettingsSpaceGeneral": "General",
 	"pageSettingsSpaceRemoteStorage": "Remote Storage",
+	"pageSettingsSpaceCleanupSpaceFiles": "Clean up space files",
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
 	"pageSettingsSpaceIndexEditInfo": "Edit info",
-	"pageSettingsSpaceIndexInvitePeople": "Invite People",
+	"pageSettingsSpaceIndexInviteMembers": "Invite Members",
 	"pageSettingsSpaceIndexQRCode": "QR code",
 	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
+	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br/>Create a new one to invite members.",
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
 
@@ -670,6 +692,7 @@
 	"blockDataviewBoardColumnSettings": "Column settings",
 	"blockDataviewSelectTemplate": "Choose a template",
 	"blockDataviewNewTemplate": "New Template",
+	"blockDataviewNoTemplates": "No templates",
 
 	"blockCoverDrag": "Drag image to reposition",
 	"blockCoverSave": "Save changes",
@@ -729,8 +752,6 @@
 
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
-
-	"blockTypeMyTypes": "My Types",
 
 	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
 	"blockChatMessageExpand": "Expand",
@@ -847,8 +868,8 @@
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
-	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
-	"popupSettingsSpaceIndexRemoteStorageUpgradeText": "✦ Upgrade to add more storage",
+	"popupSettingsSpaceIndexManageSpaceTitle": "General Settings",
+	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
@@ -859,6 +880,8 @@
 	"popupSettingsSpaceIndexNetworkIdTitle": "Network ID",
 	"popupSettingsSpaceIndexCreatedByTitle": "Created by",
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
+	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
+	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
 
 	"popupSettingsSpaceStorageManagerTitle": "Synced files",
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
@@ -876,7 +899,7 @@
 	"popupSettingsImportMarkdownTitle": "Markdown Import",
 
 	"popupSettingsExportTitle": "Export Space",
-	"popupSettingsExportText": "Choose application or format of data source",
+	"popupSettingsExportText": "Choose the format for your data export",
 	"popupSettingsExportOk": "Export data",
 
 	"popupSettingsExportMarkdownTitle": "Export Space to Markdown",
@@ -891,6 +914,7 @@
 	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space. Once they request to join, you can set their access rights.",
+	"popupSettingsSpaceShareInviteLinkDisabled": "Invitations are disabled by the space owner. In order to have an ability to invite people. please ask space owner to generate an invite link.",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
@@ -1136,7 +1160,10 @@
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
 	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
-	"popupConfirmLocalFieldsTitle": "Add Local Properties to current type?",
+	"popupConfirmLocalFieldsTitleSingle": "Add Property to the Type?",
+	"popupConfirmLocalFieldsTextSingle": "This Property will be added to the Type and will appear in all objects of this specific Type.",
+	"popupConfirmLocalFieldsTitlePlural": "Add Properties to the Type?",
+	"popupConfirmLocalFieldsTextPlural": "These Properties will be added to the Type and will appear in all objects of this specific Type.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1204,7 +1231,16 @@
 	"popupShortcutConflict": "Conflicts with %s",
 	"popupShortcutImport": "Import Shortcuts Mapping",
 	"popupShortcutExport": "Export Shortcuts Mapping",
-	"popupShortcutReset": "Reset All To Default",
+	"popupShortcutResetAll": "Reset All To Default",
+	"popupShortcutPress": "Press...",
+	"popupShortcutReassign": "Re-assign Shortcut",
+	"popupShortcutRemove": "Remove Shortcut",
+	"popupShortcutReset": "Reset Shortcut",
+	"popupShortcutImportText": "Your current shortcut mapping will be overwritten.",
+	"popupShortcutResetAllText": "Your current shortcut mapping will be reset to default.",
+	"popupShortcutToastUpdated": "Shortcuts mapping updated",
+	"popupShortcutToastExported": "Shortcuts mapping exported",
+	"popupShortcutToastSaved": "Shortcut assigned",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutInterface": "Interface",
@@ -1465,7 +1501,7 @@
 
 	"menuBlockLayoutSetLayoutWidth": "Set layout width",
 	"menuBlockLayoutChooseLayoutType": "Choose layout type",
-	"menuBlockLayoutConflict": "This layout differs from the type's default. Reset to match?",
+	"menuBlockLayoutConflict": "This object has layout settings that differ from the type.",
 	"menuBlockLayoutReset": "Reset to default",
 
 	"menuBlockLinkSettingsStyleText": "Text",
@@ -1589,7 +1625,8 @@
 	"menuDataviewViewListAddView": "Add a view",
 	"menuDataviewViewListViews": "Views",
 
-	"menuDataviewTemplateSetDefaultForView": "Default for this view",
+	"menuDataviewTemplateSetDefaultForView": "Set as default for this view",
+	"menuDataviewTemplateUnsetDefaultForView": "Unset as default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
 
 	"menuDataviewExistingObject": "Existing object",
@@ -1600,6 +1637,7 @@
 	"menuGraphSettingsPreview": "Preview",
 	"menuGraphSettingsCluster": "Cluster by Type",
 	"menuGraphSettingsShowOnGraph": "Show on Graph",
+	"menuGraphSettingsTypes": "Types",
 	"menuGraphSettingsLinks": "Links",
 	"menuGraphSettingsRelations": "Relations",
 	"menuGraphSettingsUnlinkedObjects": "Unlinked Objects",
@@ -1635,13 +1673,12 @@
 	"menuItemFilterTimeFromNow": "%d %s from now",
 
 	"menuRelationSuggestFilterOrCreateRelation": "Filter or create a Property...",
-	"menuRelationSuggestMyRelations": "My Properties",
-	"menuRelationSuggestSystem": "System Properties",
 	"menuRelationSuggestCreateRelation": "Create Property %s",
+	"menuRelationSuggestCreateNew": "Create new Property",
 
 	"menuTypeSuggestFilterTypes": "Filter Types...",
-	"menuTypeSuggestMyTypes": "My Types",
-	"menuTypeSuggestCreateType": "Create type %s",
+	"menuTypeSuggestCreateType": "Create Type",
+	"menuTypeSuggestCreateTypeFilter": "Create Type %s",
 
 	"menuWidgetAddWidget": "Add Widget",
 	"menuWidgetWidgetType": "Widget type",
@@ -1694,7 +1731,7 @@
 
 	"menuPublishTitle": "Publish to web",
 	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties.",
-	"menuPublishLabelJoin": "Join Space Button",
+	"menuPublishLabelJoinSpace": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
 	"menuPublishButtonUpdate": "Update",
@@ -1702,6 +1739,8 @@
 	"menuPublishButtonOpen": "Open Object",
 	"menuPublishButtonCopy": "Copy Web Link",
 	"menuPublishLabelOffline": "No internet connection",
+	"menuPublishBecomeMemberText": "Become a member to get a domain and increase publishing limits",
+	"menuPublishUpgrade": "✦ Upgrade",
 
 	"previewEdit": "Edit Link",
 
@@ -1746,6 +1785,7 @@
 	"toastInviteCopy": "Invite link has been copied", 
 	"toastInviteGenerate": "Invite link has been created",
 	"toastInviteRevoke": "Invite link has been deleted",
+	"toastImportStart": "Import process has started and may take some time",
 
 	"toastObjectTypeAdded": "Object Type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Property <b>%s</b> has been added to your Library",
@@ -1756,6 +1796,7 @@
 	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
 
 	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
+	"toastWidget": "Widget <b>%s</b> has been added",
 
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
@@ -1908,18 +1949,22 @@
 	"sidebarObjectTypeMedia": "Media",
 	"sidebarObjectTypeBookmark": "Bookmarks",
 	"sidebarObjectTypeRelation": "Properties",
+	"sidebarObjectRelationEmpty": "No Properties",
 
 	"sidebarObjectShow": "Show",
 	"sidebarObjectSort": "Sort",
 	"sidebarObjectOrphan": "Only unlinked",
 	"sidebarObjectOrphanLabel": "Unlinked objects that do not have a direct link or backlink with other objects in the graph.",
-	"sidebarObjectEmpty": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
+	"sidebarObjectEmpty": "It’s empty here.",
+	"sidebarObjectEmptyCreate": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
 
 	"sidebarObjectSortCreated": "Date created",
 	"sidebarObjectSortUpdated": "Date updated",
 	"sidebarObjectSortLastUsed": "Date last used",
 
 	"sidebarTypeTitle": "Editing type",
+	"sidebarTypeTitleLabelName": "Type name and icon",
+	"sidebarTypeTitleLabelPlural": "Type List name",
 	"sidebarSectionLayoutName": "Layout",
 	"sidebarSectionLayoutFormat": "Format",
 	"sidebarSectionLayoutFormatPage": "Page",
@@ -1931,17 +1976,19 @@
 	"sidebarSectionLayoutDefaultType": "Default Object Type",
 
 	"sidebarTypeRelation": "Properties",
-	"sidebarTypeRelationHeader": "Shown in object header",
-	"sidebarTypeRelationSidebar": "Shown in Properties menu",
+	"sidebarTypeRelationHeader": "Header",
+	"sidebarTypeRelationSidebar": "Properties panel",
 	"sidebarTypeRelationHidden": "Hidden",
-	"sidebarObjectRelationSetUp": "Set up",
+	"sidebarTypeRelationFound": "Found in objects",
+	"sidebarObjectRelationSetUp": "Edit Type",
 	"sidebarTypeRelationEmpty": "There are no Properties yet",
 	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
 	"sidebarRelationLocal": "Local Properties",
-	"sidebarTypeRelationLocalDescription": "Some properties are not included in the object type. Please add them if you want to see them in all objects of this type, or remove them.",
+	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add to the type to use in all objects, or remove",
+	"sidebarTypeRelationLocalDescription": "These properties exist in some objects but aren’t part of the Type. Add them to make them appear in all objects of this Type.",
 
-	"sidebarRelationLocalAddToCurrentType": "Add to the current type",
+	"sidebarRelationLocalAddToType": "Add to the Type",
 	"sidebarRelationLocalRemoveFromObject": "Remove from object",
 	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 
@@ -2061,7 +2108,7 @@
 	"libRelationSmall": "Small",
 	"libRelationMedium": "Medium",
 	"libRelationLarge": "Large",
-	"libRelationPageCover": "Page cover",
+	"libRelationPageCover": "Object cover",
 
 	"libMenuClearStyle": "Clear style",
 	"libMenuRename": "Rename",
@@ -2238,7 +2285,7 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
-	"errorPublishingCreate103": "Looks like some files are over 10MB. Please remove or slim them down and try again.",
+	"errorPublishingCreate103": "Looks like some files are over %sMB. Please remove or slim them down and try again.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 
@@ -2280,7 +2327,7 @@
 	"notificationImportErrorText3": "Internal error during import. Please report it to Anytype devs using Help -> Report a Bug. We will check.",
 	"notificationImportErrorText5": "No objects found in the provided Notion integration. Open Notion and check that you have added the integration to the pages you want to export. Check our FAQ for more details.",
 	"notificationImportErrorText6": "The import was canceled by the user.",
-	"notificationImportErrorText7": "The number of lines of the CSV file exceeds 1000. Try splitting the file into smaller parts.",
+	"notificationImportErrorText7": "The number of lines of the CSV file exceeds limit of 1000 rows and 10 columns. Try splitting the file into smaller parts.",
 	"notificationImportErrorText8": "Error when uploading a file. Check if you have enough space and try again.",
 	"notificationImportErrorText9": "We don’t have permission to import into this Anytype space.",
 	"notificationImportErrorText10": "An error occurred during HTML rendering. Check the format of your HTML file.",

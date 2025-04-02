@@ -319,7 +319,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 							};
 
 							case 'reload': {
-								C.ObjectBookmarkFetch(rootId, value, () => analytics.event('ReloadSourceData'));
+								C.ObjectBookmarkFetch(recordId, value, () => analytics.event('ReloadSourceData'));
 								break;
 							};
 						};
@@ -424,8 +424,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	};
 
 	const getPlaceholder = (relation: any, record: any): string => {
-		const canEdit = canCellEdit(relation, record);
+		if (!relation.id) {
+			return '';
+		};
 
+		const canEdit = canCellEdit(relation, record);
 		return !canEdit ? translate(`placeholderCellCommon`) : (placeholder || translate(`placeholderCell${relation.format}`));
 	};
 
@@ -509,6 +512,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		onClick: onClickHandler,
 		isEditing: () => childRef.current.isEditing(),
+		canEdit: () => canCellEdit(relation, record),
 	}));
 
 	return (

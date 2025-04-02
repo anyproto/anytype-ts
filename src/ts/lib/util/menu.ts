@@ -416,6 +416,9 @@ class UtilMenu {
 		} else
 		if (id == J.Constant.widgetId.bin) {
 			options.unshift(I.WidgetLayout.Link);
+		} else
+		if (id == J.Constant.widgetId.allObject) {
+			options = [ I.WidgetLayout.Link ];
 		};
 
 		if (id && !isSystem) {
@@ -839,7 +842,7 @@ class UtilMenu {
 		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
 
 		if (U.Space.canCreateSpace()) {
-			items.push({ id: 'add', name: translate('commonCreateNew'), isButton: true });
+			items.push({ id: 'add', name: translate('commonNewSpace'), isButton: true });
 		};
 
 		if (ids && (ids.length > 0)) {
@@ -856,9 +859,10 @@ class UtilMenu {
 		return items;
 	};
 
-	getFixedWidgets () {
+	getSystemWidgets () {
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-star' },
+			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
 			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin' },
@@ -1040,6 +1044,23 @@ class UtilMenu {
 		});
 	};
 
+	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
+		const sort: any[] = [
+			{ name: translate('sidebarObjectSort'), isSection: true },
+			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true, defaultType: I.SortType.Asc },
+			{ id: I.SortId.LastUsed, name: translate('sidebarObjectSortLastUsed'), relationKey: 'lastUsedDate', isSort: true, defaultType: I.SortType.Desc },
+		];
+
+		return sort.map(it => {
+			it.type = I.SortType.Asc;
+			if (it.id == sortId) {
+				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+				it.sortArrow = sortType;
+			};
+			return it;
+		});
+	};
+
 	dateFormatOptions () {
 		return ([
 			{ id: I.DateFormat.Default },
@@ -1106,6 +1127,8 @@ class UtilMenu {
 		details = details || {};
 		flags = flags || {};
 
+		let menuContext = null;
+
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
 			U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
@@ -1161,7 +1184,7 @@ class UtilMenu {
 						cb(message.details, message.middleTime);
 					});
 				} else {
-					C.ObjectCreate(details, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, (message: any) => {
+					C.ObjectCreate(details, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -1179,14 +1202,11 @@ class UtilMenu {
 			const { props } = context;
 			const { className, classNameWrap } = props.param;
 			const type = S.Record.getTypeById(item.id);
-			const isPinned = Storage.getPinnedTypes().includes(item.id);
-			const canPin = type.isInstalled;
 			const canDefault = type.isInstalled && !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
 			const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const route = '';
 
 			let options: any[] = [
-				canPin ? { id: 'pin', name: (isPinned ? translate('commonUnpin') : translate('commonPin')) } : null,
 				canDefault ? { id: 'default', name: translate('commonSetDefault') } : null,
 				{ id: 'open', name: translate('commonOpenType') },
 			];
@@ -1214,13 +1234,6 @@ class UtilMenu {
 								break;
 							};
 
-							case 'pin': {
-								isPinned ? Storage.removePinnedType(item.id) : Storage.addPinnedType(item.id);
-								analytics.event(isPinned ? 'UnpinObjectType' : 'PinObjectType', { objectType: item.uniqueKey, route });
-								context.forceUpdate();
-								break;
-							};
-
 							case 'default': {
 								S.Common.typeSet(item.uniqueKey);
 								analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route });
@@ -1240,7 +1253,7 @@ class UtilMenu {
 			});
 		};
 
-		const buttons = [
+		const buttons: any[] = [
 			flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport } : null,
 		].filter(it => it);
 
@@ -1251,27 +1264,32 @@ class UtilMenu {
 				buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste });
 			};
 
+			buttons.unshift({ 
+				id: 'add', icon: 'plus', onClick: () => {
+					U.Object.createType({ name: menuContext.ref?.filter }, keyboard.isPopup());
+					menuContext.close();
+				}, 
+			});
+
 			S.Menu.open('typeSuggest', {
 				...param,
+				onOpen: context => menuContext = context,
 				data: {
 					noStore: true,
 					onMore,
 					buttons: buttons.map(it => ({ ...it, isButton: true })),
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
-						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
 						const objectFlags: I.ObjectFlag[] = [];
 
-						if (!U.Object.isInSetLayouts(item.recommendedLayout)) {
-							objectFlags.push(I.ObjectFlag.SelectTemplate);
-						};
 						if (flags.deleteEmpty) {
 							objectFlags.push(I.ObjectFlag.DeleteEmpty);
 						};
 
-						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
+						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, true, (message: any) => {
 							if (message.error.code || !message.details) {
 								return;
 							};

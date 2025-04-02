@@ -110,6 +110,7 @@ export default {
 		participant:	 'participant',
 		subSpace:		 'subSpace',
 		allObject:		 'allObject',
+		library: 		 'library',
 	},
 
 	typeKey: {
@@ -152,6 +153,7 @@ export default {
 	},
 
 	widgetId: {
+		allObject:		 'allObjects',
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',

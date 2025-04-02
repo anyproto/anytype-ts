@@ -10,17 +10,9 @@ class Dataview {
 
 		const { config } = S.Common;
 		const order: any = {};
-		const object = S.Detail.get(rootId, rootId, []);
-		const isType = U.Object.isTypeLayout(object.layout);
 		const viewRelations = (view.relations || []).filter(it => it);
 
-		let relations = [];
-		if (isType) {
-			const typeIds = U.Object.getTypeRelationIds(object.id);
-			relations = J.Relation.default.map(it => S.Record.getRelationByKey(it)).concat(typeIds.map(it => S.Record.getRelationById(it)));
-		} else {
-			relations = S.Record.getDataviewRelations(rootId, blockId);
-		};
+		let relations = S.Record.getDataviewRelations(rootId, blockId);
 		relations = U.Common.objectCopy(relations).filter(it => it);
 
 		if (!config.debug.hiddenObject) {
@@ -577,7 +569,6 @@ class Dataview {
 
 		const { total } = S.Record.getMeta(subId, '');
 		const isDate = relation.format == I.RelationType.Date;
-
 		const isArray = Relation.isArrayType(relation.format);
 		const needRecords = ![ I.FormulaType.None, I.FormulaType.Count ].includes(formulaType);
 		const records = needRecords ? S.Record.getRecords(subId, [ relationKey ], true) : [];
@@ -744,6 +735,20 @@ class Dataview {
 			};
 		};
 
+		return ret;
+	};
+
+	namePlaceholder (layout: I.ObjectLayout): string {
+		let ret = '';
+		if (U.Object.isCollectionLayout(layout)) {
+			ret = translate('defaultNameCollection');
+		} else 
+		if (U.Object.isTypeLayout(layout)) {
+			ret = translate('defaultNameType');
+		} else 
+		if (U.Object.isSetLayout(layout)) {
+			ret = translate('defaultNameSet');
+		};
 		return ret;
 	};
 

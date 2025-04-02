@@ -543,7 +543,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
-						C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, () => onCreate());
+						C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, true, () => onCreate());
 					};
 
 					filters = filters.concat([

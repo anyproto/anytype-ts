@@ -1,15 +1,18 @@
 > .sidebarPage.pageType {
 	.section.typeTitle { padding: 16px; }
 	.section.typeTitle {
-		> .wrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }
+		> .wrap { display: flex; flex-direction: column; gap: 5px 0px; }
 		> .wrap {
+			.label { padding: 0px; }
+			.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }
+
 			.iconObject { flex-shrink: 0; }
 			.editableWrap { flex-grow: 1; @include text-overflow-nw; }
 		}
 	}
 
 	.section.typeRelation {
-		.titleWrap { margin-top: 4px; padding-right: 4px; }
+		.titleWrap { margin-top: 4px; padding-right: 12px; }
 
 		.items { margin: 0px 0px 8px 0px; }
 		.items:last-child { margin: 0px; }
@@ -37,6 +40,6 @@
 			}
 		}
 
-		.item.empty { text-align: center; }
+		.item.empty { padding-top: 5px; padding-bottom: 5px; padding-left: 8px; color: var(--color-text-tertiary); @include text-small; }
 	}
 }

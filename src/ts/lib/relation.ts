@@ -423,11 +423,11 @@ class Relation {
 	};
 
 	public getSizeOptions () {
-		return [
+		return U.Menu.prepareForSelect([
 			{ id: I.CardSize.Small, name: translate('libRelationSmall') },
 			{ id: I.CardSize.Medium, name: translate('libRelationMedium') },
 			{ id: I.CardSize.Large, name: translate('libRelationLarge') },
-		];
+		]);
 	};
 
 	public getCoverOptions (rootId: string, blockId: string) {

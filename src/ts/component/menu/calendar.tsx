@@ -98,13 +98,15 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 						if (m != item.m) {
 							cn.push('other');
 						};
-						if (dayToday == U.Date.timestamp(item.y, item.m, item.d)) {
+						if (item.isToday) {
 							cn.push('today');
+						};
+						if (item.isWeekend) {
+							cn.push('weekend');
 						};
 						if (!isEmpty && (todayParam.d == item.d) && (todayParam.m == item.m) && (todayParam.y == item.y)) {
 							cn.push('active');
 						};
-
 						if (selectedDate && (selectedDate.d == item.d) && (selectedDate.m == item.m) && (selectedDate.y == item.y)) {
 							cn.push('selected');
 						};

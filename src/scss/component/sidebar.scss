@@ -15,7 +15,7 @@
 #sidebarToggle.sidebarAnimation, #sidebarSync.sidebarAnimation { transition: left $transitionSidebarTime linear; }
 #sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium) !important; background-image: url('~img/icon/widget/toggle1.svg'); }
 
-.sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-tertiary); }
+.sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-transparent-tertiary-hex); }
 .sidebar.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
 .sidebar.isClosed { left: 0px !important; overflow: hidden; }
 

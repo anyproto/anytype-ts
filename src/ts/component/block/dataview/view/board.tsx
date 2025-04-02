@@ -66,7 +66,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 									{...group}
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
-									getSubId={() => S.Record.getGroupSubId(rootId, block.id, group.id)}
+									getSubId={() => this.getSubId(group.id)}
 								/>
 							))}
 						</div>
@@ -87,17 +87,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	componentWillUnmount () {
-		const { rootId, block } = this.props;
 		const groups = this.getGroups(true);
-		const ids = [ S.Record.getGroupSubId(rootId, block.id, 'groups') ];
+		const ids = [ this.getSubId('groups') ];
 
 		groups.forEach((it: any) => {
-			ids.push(S.Record.getGroupSubId(rootId, block.id, it.id));
+			ids.push(this.getSubId(it.id));
 		});
 
 		C.ObjectSearchUnsubscribe(ids);
-		S.Record.groupsClear(rootId, block.id);
-
 		this.unbind();
 	};
 
@@ -496,6 +493,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				});
 			});
 		};
+	};
+
+	getSubId (id: string): string {
+		const { rootId, block, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
+
+		return S.Record.getGroupSubId(rootId, block.id, id) + namespace;
 	};
 
 	resize () {

@@ -262,12 +262,15 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 						const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).concat(relation.id));
 
 						C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
-							if (!message.error.code) {
-								S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
+							if (message.error.code) {
+								return;
+							};
 
+							S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
+							C.BlockDataviewRelationSet(rootId, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(rootId)), () => {
 								const list = Dataview.viewGetRelations(rootId, blockId, view);
 								Dataview.viewRelationAdd(rootId, blockId, relation.relationKey, list.length, view);
-							};
+							});
 						});
 					} else {
 						Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), cb);
@@ -297,23 +300,18 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		};
 
 		let unlinkCommand = null;
+		let noUnlink = false;
+
+		if ([ 'name', 'description' ].includes(relation.relationKey)) {
+			noUnlink = true;
+		};
+
 		if (isType) {
 			unlinkCommand = (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-				const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).filter(it => it != relation.id));
-
-				C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
-					if (!message.error.code) {
-						S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
-						C.BlockDataviewViewRelationRemove(rootId, blockId, view.id, [ relation.relationKey ]);
-
-						if (onChange) {
-							onChange(message);
-						};
-					};
-				});
+				U.Object.typeRelationUnlink(object.id, relation.id, onChange);
 			};
 		};
-		
+
 		S.Menu.open('dataviewRelationEdit', { 
 			element: `#${getId()} #item-${item.relationKey}`,
 			horizontal: I.MenuDirection.Center,
@@ -322,6 +320,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				...data,
 				relationId: relation.id,
 				unlinkCommand,
+				noUnlink,
 			}
 		});
 	};

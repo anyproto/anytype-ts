@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Header } from 'Component';
+import { Header, Footer } from 'Component';
 import { observer } from 'mobx-react';
 import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage } from 'Lib';
 
@@ -34,6 +34,7 @@ import PageSpaceList from './space/list';
 
 import PageMainSet from '../set';
 import PageMainRelation from '../relation';
+import PageMainArchive from '../archive';
 
 import PageMembership from './membership';
 
@@ -68,22 +69,24 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
+	spaceIndexEmpty:			 PageSpaceIndex,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
 
 	set:				 PageMainSet,
 	relation:			 PageMainRelation,
+	archive: 			 PageMainArchive,
 };
 
 const SPACE_PAGES = [
-	'spaceIndex', 'spaceStorageManager', 'spaceShare',
+	'spaceIndex', 'spaceIndexEmpty', 'spaceStorageManager', 'spaceShare',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
-	'set', 'relation',
+	'set', 'relation', 'archive',
 ];
 
-const SKIP_CONTAINER = [ 'set', 'relation' ];
+const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
 
 const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
 
@@ -142,6 +145,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 					<div className="settingsPageContainer" id="settingsPageContainer">
 						{content}
 					</div>
+					<Footer component="mainObject" {...this.props} />
 				</>
 			);
 		};
@@ -169,8 +173,33 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			if (!U.Space.canMyParticipantWrite()) {
 				return;
 			};
+			const param = U.Router.getParam(U.Router.getRoute());
+			const id = param.id;
 
-			sidebar.leftPanelSetState({ page: 'settingsSpace' });
+			let page = '';
+			switch (id) {
+				case 'spaceIndexEmpty': {
+					page = 'widget';
+					break;
+				};
+
+				case 'set': {
+					page = 'types';
+					break;
+				};
+
+				case 'relation': {
+					page = 'relations';
+					break;
+				};
+
+				default: {
+					page = 'settingsSpace';
+					break;
+				};
+			};
+
+			sidebar.leftPanelSetState({ page });
 		} else {
 			S.Common.getRef('vault')?.setActive('settings');
 			sidebar.leftPanelSetState({ page: 'settings' });
