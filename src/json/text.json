@@ -868,7 +868,7 @@
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
-	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
+	"popupSettingsSpaceIndexManageSpaceTitle": "General Settings",
 	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
@@ -880,6 +880,8 @@
 	"popupSettingsSpaceIndexNetworkIdTitle": "Network ID",
 	"popupSettingsSpaceIndexCreatedByTitle": "Created by",
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
+	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
+	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
 
 	"popupSettingsSpaceStorageManagerTitle": "Synced files",
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",

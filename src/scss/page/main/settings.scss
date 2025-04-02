@@ -198,6 +198,9 @@
                     }
 
                     > .item {
+						.icon { flex-shrink: 0; width: 20px; height: 20px; }
+						.icon.widget { background-image: url('~img/icon/settings/widget.svg'); }
+
                         .sides { display: flex; justify-content: space-between; gap: 0px 16px; }
                         .sides:not(.alignTop) { align-items: center; }
                         .sides {
