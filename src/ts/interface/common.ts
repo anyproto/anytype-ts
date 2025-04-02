@@ -214,6 +214,7 @@ export interface SidebarSectionComponent extends SidebarPageComponent {
 	item?: any;
 	readonly?: boolean;
 	onChange?(update: any): void;
+	disableButton?(v: boolean): void;
 	onDragStart?: (e: React.DragEvent) => void;
 };
 

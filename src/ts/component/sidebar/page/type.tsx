@@ -21,6 +21,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.onChange = this.onChange.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
+		this.disableButton = this.disableButton.bind(this);
 	};
 
     render () {
@@ -64,6 +65,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							object={this.object} 
 							withState={true}
 							onChange={this.onChange}
+							disableButton={this.disableButton}
 							readonly={readonly}
 						/>
 					))}
@@ -107,8 +109,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		this.disableScroll(true);
 		if (!details.isNew) {
-			$(this.buttonSaveRef.getNode()).addClass('disabled');
+			this.disableButton(true);
 		};
+	};
+
+	disableButton (v: boolean) {
+		$(this.buttonSaveRef.getNode()).toggleClass('disabled', v);
 	};
 
 	disableScroll (v: boolean) {
@@ -169,7 +175,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			this.forceUpdate();
 		});
 
-		$(this.buttonSaveRef.getNode()).toggleClass('disabled', !U.Common.objectLength(this.update));
+		this.disableButton(!U.Common.objectLength(this.update));
 
 		// analytics
 		let eventId = '';
