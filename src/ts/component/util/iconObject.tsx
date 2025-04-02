@@ -313,7 +313,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		let src = '';
 		if (type.iconName) {
-			src = typeIcon(type.iconName, 1, J.Theme[theme].iconDefault);
+			src = U.Object.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
 		} else {
 			src = require(`img/icon/default/${id}.svg`);
 		};
@@ -321,11 +321,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		cn.push('withDefault');
 		icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 		icon = <img src={src} className={icn.join(' ')} />;
-	};
-
-	const typeIcon = (id: string, option: number, color?: string) => {
-		const newColor = color || U.Common.iconBgByOption(option);
-		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor });
 	};
 
 	switch (layout) {
@@ -390,7 +385,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				icon = <img src={S.Common.imageUrl(iconImage, size * 2)} className={icn.join(' ')} />;
 			} else
 			if (iconName) {
-				const src = typeIcon(iconName, iconOption);
+				const src = U.Object.typeIcon(iconName, iconOption, size);
 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={src} className={icn.join(' ')} data-id={iconName} />;

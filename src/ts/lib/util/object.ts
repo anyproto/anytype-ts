@@ -750,6 +750,11 @@ class UtilObject {
 		sidebar.rightPanelToggle(true, true, isPopup, 'type', { details: newDetails });
 	};
 
+	typeIcon (id: string, option: number, size: number, color?: string): string {
+		const newColor = color || U.Common.iconBgByOption(option);
+		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor });
+	};
+
 };
 
 export default new UtilObject();
