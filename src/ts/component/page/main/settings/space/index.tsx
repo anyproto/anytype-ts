@@ -47,6 +47,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const buttons = this.getButtons();
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const widgets = S.Detail.get(S.Block.widgets, S.Block.widgets, [ 'autoWidgetDisabled' ], true);
 		const maxIcons = 5;
@@ -169,27 +170,30 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 							<div className="sectionContent">
 
-								<div className="item">
-									<div className="sides">
-										<Icon className="widget" />
+								{isOwner ? (
+									<div className="item">
+										<div className="sides">
+											<Icon className="widget" />
 
-										<div className="side left">
-											<Title text={translate('popupSettingsSpaceIndexAutoWidgetsTitle')} />
-											<Label text={translate('popupSettingsSpaceIndexAutoWidgetsText')} />
-										</div>
+											<div className="side left">
+												<Title text={translate('popupSettingsSpaceIndexAutoWidgetsTitle')} />
+												<Label text={translate('popupSettingsSpaceIndexAutoWidgetsText')} />
+											</div>
 
-										<div className="side right">
-											<Switch
-												value={!widgets.autoWidgetDisabled}
-												className="big"
-												onChange={(e: any, v: boolean) => {
-													C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ]);
-												}}
-											/>
+											<div className="side right">
+												<Switch
+													value={!widgets.autoWidgetDisabled}
+													className="big"
+													onChange={(e: any, v: boolean) => {
+														C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ], () => {
+															analytics.event('AutoCreateTypeWidgetToggle', { type: v ? 'true' : 'false' });
+														});
+													}}
+												/>
+											</div>
 										</div>
 									</div>
-								</div>
-
+								) : ''}
 
 								<div className="item">
 									<div className="sides">
