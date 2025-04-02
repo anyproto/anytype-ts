@@ -215,9 +215,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				readonly: !allowed,
 				ref: 'type',
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					onChange({ [list.relationKey]: [ id ].concat(ids) });
-
-					analytics.stackAdd('AddConflictRelation');
+					onChange({ [list.relationKey]: [ relation.id ].concat(ids) });
 				},
 				deleteCommand: () => {
 					onChange({ [list.relationKey]: ids.filter(it => it != id) });
