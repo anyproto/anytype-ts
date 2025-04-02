@@ -185,9 +185,9 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 													value={!widgets.autoWidgetDisabled}
 													className="big"
 													onChange={(e: any, v: boolean) => {
-														C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ], () => {
-															analytics.event('AutoCreateTypeWidgetToggle', { type: v ? 'true' : 'false' });
-														});
+														C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ]);
+
+														analytics.event('AutoCreateTypeWidgetToggle', { type: v ? 'true' : 'false' });
 													}}
 												/>
 											</div>
