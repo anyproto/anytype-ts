@@ -207,6 +207,10 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
+
+		window.setTimeout(() => {
+			S.Popup.open('onboarding', {});
+		},1500)
 	};
 
 	init () {
