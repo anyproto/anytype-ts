@@ -228,6 +228,20 @@ class UtilData {
 		this.getMembershipStatus();
 		this.createGlobalSubscriptions();
 
+		if (!Storage.get('primitivesOnboarding')) {
+			window.setTimeout(() => {
+				S.Popup.open('onboarding', {
+					onClose: () => {
+						Storage.set('primitivesOnboarding', true);
+
+						window.setTimeout(() => {
+							S.Popup.open('help', { data: { document: 'whatsNew' } });
+						}, 300);
+					}
+				});
+			}, 1000);
+		};
+
 		analytics.event('OpenAccount');
 	};
 
