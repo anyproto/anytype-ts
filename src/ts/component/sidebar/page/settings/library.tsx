@@ -426,6 +426,15 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		};
 
 		U.Object.openAuto(param);
+
+		let e = '';
+
+		switch (item.layout) {
+			case I.ObjectLayout.Type: e = 'ClickSettingsSpaceType'; break;
+			case I.ObjectLayout.Relation: e = 'ClickSettingsSpaceRelation'; break;
+		};
+
+		analytics.event(e, { route: analytics.route.library });
 	};
 
 	onContext (item: any) {
