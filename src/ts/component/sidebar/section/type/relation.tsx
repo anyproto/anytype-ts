@@ -127,16 +127,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			return;
 		};
 
-		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const ids = Relation.getArrayValue(message.conflictRelationIds)
-				.map(id => S.Record.getRelationById(id))
-				.filter(it => it && !Relation.isSystem(it.relationKey))
-				.map(it => it.id);
-
+		U.Data.getConflictRelations(rootId, ids => {
 			setIsLoaded(true);
 			setConflictIds(ids);
 		});

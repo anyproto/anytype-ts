@@ -356,7 +356,7 @@ class RecordStore {
 			conflictKeys = objectKeys;
 		};
 
-		conflictKeys = conflictKeys.map(it => this.getRelationByKey(it)).filter(it => it && !Relation.isSystem(it.relationKey));
+		conflictKeys = conflictKeys.map(it => this.getRelationByKey(it)).filter(it => it);
 		return this.checkHiddenObjects(conflictKeys);
 	};
 
