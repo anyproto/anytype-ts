@@ -734,13 +734,17 @@ class UtilObject {
 
 		const type = S.Record.getTypeType();
 		const featured = [ 'type', 'tag', 'backlinks' ];
+		const recommended = [ 'createdDate', 'creator', 'links' ];
+		const hidden = [ 'lastModifiedDate', 'lastModifiedBy', 'lastOpenedDate' ];
 		const mapper = it => S.Record.getRelationByKey(it)?.id;
 		const newDetails: any = {
 			isNew: true,
 			type: type.id,
 			layout: I.ObjectLayout.Type,
-			recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
 			defaultTypeId: String(S.Record.getPageType()?.id) || '',
+			recommendedRelations: recommended.map(mapper).filter(it => it),
+			recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
+			recommendedHiddenRelations: hidden.map(mapper).filter(it => it),
 			data: {
 				route: analytics.route.settingsSpace,
 			},
