@@ -4,7 +4,7 @@ $elementsTransition: opacity 0.2s linear;
 
 .popups {
     .popup.popupOnboarding {
-        .innerWrap { background: #cbd2fa; width: 768px; height: 600px; border-radius: 40px; overflow: hidden; }
+        .innerWrap { background: #cbd2fa; width: 768px; height: 600px; border-radius: 20px; overflow: hidden; }
 
         .steps { transition: margin-top 0.6s cubic-bezier(0.78, 0, 0.39, 1); display: flex; flex-direction: column; align-items: center; text-align: center; }
         .steps.s1 { margin-top: -600px; }
