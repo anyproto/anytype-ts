@@ -6,9 +6,9 @@ import { I, U, translate } from 'Lib';
 const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess extends React.Component<I.Popup> {
 
 	render () {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { tier, emailVerified } = data;
+		const { tier, emailVerified, onContinue } = data;
 		const tierItem = U.Data.getMembershipTier(tier);
 
 		let title = '';
@@ -32,7 +32,7 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 				<Icon className="tierIcon" />
 				<Label text={text} />
 
-				<Button onClick={() => close()} className="c36" color="blank" text={translate('commonContinue')} />
+				{onContinue ? <Button onClick={onContinue} className="c36" color="blank" text={translate('commonContinue')} /> : ''}
 			</>
 		);
 	};

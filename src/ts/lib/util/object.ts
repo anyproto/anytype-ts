@@ -89,6 +89,8 @@ class UtilObject {
 	};
 
 	openAuto (object: any, param?: any) {
+		console.trace();
+
 		if (!object) {
 			return;
 		};
@@ -527,10 +529,7 @@ class UtilObject {
 
 		C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
 			if (!message.error.code) {
-				const object = message.details;
-
-				object._routeParam_ = { relationKey };
-				this[fn](object);
+				this[fn]({ ...message.details, _routeParam_: { relationKey } });
 			};
 		});
 	};

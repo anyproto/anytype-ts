@@ -20,7 +20,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const onButton = () => {
 		setShowInfo(false);
 
-		U.Object.openAuto({ id: 'membership', layout: I.ObjectLayout.Settings });
+		U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
 	};
 
 	const renderIdentity = () => {

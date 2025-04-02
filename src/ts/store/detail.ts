@@ -141,13 +141,7 @@ class DetailStore {
 		};
 
 		if (keys && keys.length) {
-
-			// Workaround for internalFlags
-			if (U.Common.objectCompare(keys, [ 'internalFlags' ])) {
-				this.update(rootId, { id, details: { internalFlags: [] } }, false);
-			} else {
-				map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
-			};
+			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
 		} else {
 			map.set(id, []);
 		};
