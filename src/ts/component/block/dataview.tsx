@@ -267,9 +267,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			const isCompletedSets = Onboarding.isCompleted('sets');
 
 			window.setTimeout(() => {
-				if (!isCollection && !isCompletedSets) {
-					Onboarding.start('sets', isPopup);
-				} else 
 				if (isCollection && !total) {
 					Onboarding.start('collections', isPopup);
 				} else 

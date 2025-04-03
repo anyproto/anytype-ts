@@ -2079,10 +2079,6 @@
 	"onboardingMobileText": "<b>Sync to your mobile devices locally.</b> Scan the QR code to download the iOS or Android App and make use of peer-to-peer sync.",
 	"onboardingMobileButton": "Great",
 
-	"onboardingSetsTitle": "Queries",
-	"onboardingSetsText": "<b>A Query gathers all objects of a certain type in your space.</b> Explore what's already here or add more by clicking +New Object.",
-	"onboardingSetsButton": "Perfect",
-
 	"onboardingCollectionsTitle": "Collections",
 	"onboardingCollectionsText": "<b>Create an object in the Collection.</b> Use Collections to store and organise handpicked objects and files.",
 	"onboardingCollectionsButton": "Okay!",

@@ -210,23 +210,6 @@ export default {
 		]
 	}),
 
-	sets: () => ({
-		items: [
-			{
-				category: translate('onboardingSetsTitle'),
-				description: translate('onboardingSetsText'),
-				buttonText: translate('onboardingSetsButton'),
-				param: {
-					noArrow: true,
-					element: '#dataviewControlsSideRight',
-					vertical: I.MenuDirection.Bottom,
-					horizontal: I.MenuDirection.Right,
-					offsetY: 14,
-				}
-			}
-		]
-	}),
-
 	collections: () => ({
 		showDimmer: true,
 		param: {
