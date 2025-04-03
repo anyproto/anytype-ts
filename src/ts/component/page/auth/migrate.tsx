@@ -30,7 +30,7 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 				setErrorText(U.Common.sprintf(translate('pageAuthMigrateErrorNotEnoughSpaceText'), U.File.size(message.requiredSpace)));
 				setScreen('error');
 				return;
-			};
+			} else
 			if (message.error.code) {
 				setErrorTitle(translate('commonError'));
 				setErrorText(message.error.description);
