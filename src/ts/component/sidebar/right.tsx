@@ -47,26 +47,39 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const cn = [ 'sidebar', 'right' ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 	const withPreview = [ 'type' ].includes(page);
+	const timeout = useRef(0);
 
 	if (withPreview) {
 		cn.push('withPreview');
 	};
 
 	useEffect(() => {
+		return () => {
+			window.clearTimeout(timeout.current);
+			$(window).off('mousedown.sidebarRight');
+		};
+	}, []);
+
+	useEffect(() => {
+		const win = $(window);
+
 		childRef.current?.forceUpdate();
 
+		win.off('mousedown.sidebarRight');
+
 		if (showSidebarRight) {
-			const win = $(window);
+			window.clearTimeout(timeout.current);
+			timeout.current = window.setTimeout(() => {
+				win.on('mousedown.sidebarRight', (e: any) => {
+					if ($(e.target).parents(`#sidebarRight`).length > 0) {
+						return;
+					};
 
-			win.on('mousedown.sidebarRight', (e: any) => {
-				if ($(e.target).parents(`#sidebarRight`).length > 0) {
-					return;
-				};
-
-				e.stopPropagation();
-				sidebar.rightPanelToggle(false, true, isPopup);
-				win.off('mousedown.sidebarRight');
-			});
+					e.stopPropagation();
+					sidebar.rightPanelToggle(false, true, isPopup);
+					win.off('mousedown.sidebarRight');
+				});
+			}, J.Constant.delay.sidebar);
 		};
 	});
 
