@@ -136,10 +136,6 @@ export default {
 		chat:			 'ot-chat',
 		project:		 'ot-project',
 		human:			 'ot-human',
-		book:			 'ot-book',
-		goal:			 'ot-goal',
-		contact:		 'ot-contact',
-		movie:			 'ot-movie',
 	},
 
 	templateId: {
