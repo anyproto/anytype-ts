@@ -89,8 +89,6 @@ class UtilObject {
 	};
 
 	openAuto (object: any, param?: any) {
-		console.trace();
-
 		if (!object) {
 			return;
 		};
