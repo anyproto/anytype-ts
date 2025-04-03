@@ -209,7 +209,13 @@ class App extends React.Component<object, State> {
 		this.init();
 
 		window.setTimeout(() => {
-			S.Popup.open('onboarding', {});
+			S.Popup.open('onboarding', {
+				onClose: () => {
+					window.setTimeout(() => {
+						S.Popup.open('help', { data: { document: 'whatsNew' } });
+					}, 300);
+				}
+			});
 		},1500)
 	};
 

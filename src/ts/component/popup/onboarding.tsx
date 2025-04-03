@@ -13,7 +13,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	const [ step, setStep ] = useState(0);
 	const [ swiperControl, setSwiperControl ] = useState(null);
 	const [ activeSlide, setActiveSlide ] = useState(0);
-	const { theme } = S.Common;
+	const theme = S.Common.getThemeClass();
 	const types = [
 		{ id: 'page', name: translate('onboardingPrimitivesTypesPages'), icon: 'document' },
 		{ id: 'bookmark', name: translate('onboardingPrimitivesTypesBookmarks'), icon: 'bookmark' },
@@ -61,12 +61,6 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		}, 600);
 	};
 
-	const onUpdates = () => {
-		S.Popup.closeAll(null, () => {
-			S.Popup.open('help', { data: { document: 'whatsNew' } });
-		});
-	};
-
 	useEffect(() => initTypes(), []);
 
 	return (
@@ -99,9 +93,9 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 							{idx < 4 ? (
 								<>
 									<Label className="description hidden" text={translate(`onboardingPrimitivesSlide${idx}Text`)} />
-									<Label className="count hidden" text={`${idx + 1} / ${SLIDE_COUNT}`} />
+									<Label className="count hidden" text={`${idx + 1} / ${SLIDE_COUNT - 1}`} />
 								</>
-							) : <Button onClick={onUpdates} className="c36" text={translate('onboardingPrimitivesSlide4Button')} />}
+							) : <Button onClick={() => close()} className="c36" text={translate('onboardingPrimitivesSlide4Button')} />}
 						</div>
 					))}
 				</div>
