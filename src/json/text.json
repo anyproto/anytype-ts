@@ -2109,7 +2109,7 @@
 	"onboardingPrimitivesTypesVideo": "Video",
 	"onboardingPrimitivesTypesAudio": "Audio",
 
-	"onboardingPrimitivesSlide0Title": "Now Type is in Control",
+	"onboardingPrimitivesSlide0Title": "Now Type Is in Control",
 	"onboardingPrimitivesSlide0Text": "Object Types now define properties and layout. Any changes at<br/>the type level apply to all objects of that type",
 	"onboardingPrimitivesSlide1Title": "Relations Are Now Properties",
 	"onboardingPrimitivesSlide1Text": "Properties are now managed at the type level, while local<br/>properties stay on the object level",
@@ -2117,6 +2117,8 @@
 	"onboardingPrimitivesSlide2Text": "Every type has a built-in list of its objects. You can also auto-<br/>create a widget when a new object of this type is added.",
 	"onboardingPrimitivesSlide3Title": "Templates Are for Content",
 	"onboardingPrimitivesSlide3Text": "Templates no longer define properties or layout. They inherit object<br/>settings and only control content and default property values.",
+	"onboardingPrimitivesSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
+	"onboardingPrimitivesSlide4Button": "See updates",
 
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",

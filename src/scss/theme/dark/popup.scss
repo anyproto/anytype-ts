@@ -96,4 +96,24 @@
 		.content::before { display: none; }
 		.content::after { background-image: url('#{$themePath}/icon/popup/share/header.svg'); }
 	}
+
+	/* PopupOnboarding */
+
+	.popup.popupOnboarding {
+		.innerWrap { background: #20295c; }
+
+		.steps {
+			.step0 {
+				.types {
+					.type { color: rgba(32, 41, 92, 0.5); }
+				}
+			}
+
+			.step1 {
+				.swiper-button-prev,
+				.swiper-button-next,
+				.slideBack { background-image: url('#{$themePath}/icon/onboarding/primitives/arrow.svg'); }
+			}
+		}
+	}
 }
