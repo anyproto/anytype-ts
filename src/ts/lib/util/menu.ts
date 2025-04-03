@@ -1123,11 +1123,21 @@ class UtilMenu {
 		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: any, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean }, route: string, callBack?: (item: any) => void) {
 		details = details || {};
 		flags = flags || {};
 
 		let menuContext = null;
+
+		const objectFlags: I.ObjectFlag[] = [];
+
+		if (flags.selectTemplate) {
+			objectFlags.push(I.ObjectFlag.SelectTemplate);
+		};
+
+		if (flags.deleteEmpty) {
+			objectFlags.push(I.ObjectFlag.DeleteEmpty);
+		};
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
@@ -1184,7 +1194,7 @@ class UtilMenu {
 						cb(message.details, message.middleTime);
 					});
 				} else {
-					C.ObjectCreate(details, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
+					C.ObjectCreate(details, objectFlags, type?.defaultTemplateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -1283,12 +1293,6 @@ class UtilMenu {
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
-						const objectFlags: I.ObjectFlag[] = [];
-
-						if (flags.deleteEmpty) {
-							objectFlags.push(I.ObjectFlag.DeleteEmpty);
-						};
-
 						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, true, (message: any) => {
 							if (message.error.code || !message.details) {
 								return;

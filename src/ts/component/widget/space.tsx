@@ -45,7 +45,8 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 		}, {}, { 
-			deleteEmpty: true, 
+			deleteEmpty: true,
+			selectTemplate: true,
 			withImport: true,
 		}, analytics.route.widget, object => U.Object.openAuto(object));
 	};
