@@ -13,14 +13,11 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 	const onIdentity = () => {
 		if (!anyName) {
-			setShowInfo(!showInfo);
+			S.Menu.open('identity', {
+				element: '#settings-identity-badge',
+				horizontal: I.MenuDirection.Center,
+			});
 		};
-	};
-
-	const onButton = () => {
-		setShowInfo(false);
-
-		U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
 	};
 
 	const renderIdentity = () => {
@@ -33,21 +30,9 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		};
 
 		return (
-			<div className="identity" onClick={onIdentity}>
+			<div id="settings-identity-badge" className="identity" onClick={onIdentity}>
 				<Icon className={anyName ? 'anyName' : 'info'} />
 				<Label text={anyName ? anyName : U.Common.shortMask(account.id, 6)} />
-
-				{showInfo ? (
-					<div className="infoWrapper">
-						<div className="iconWrapper">
-							<Icon className="anyName" />
-						</div>
-
-						<Title text={translate('headerSettingsIdentityInfoTitle')} />
-						<Label text={translate('headerSettingsIdentityInfoText')} />
-						<Button className="c36" text={translate('headerSettingsIdentityInfoExplorePlans')} onClick={onButton} />
-					</div>
-				) : ''}
 			</div>
 		);
 	};
