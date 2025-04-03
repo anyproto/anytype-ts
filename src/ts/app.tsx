@@ -531,6 +531,9 @@ class App extends React.Component<object, State> {
 		const current = String(electron.version.app || '').split('.');
 
 		if ((update[0] != current[0]) || (update[1] != current[1])) {
+			if (!Storage.get('primitivesOnboarding')) {
+				return;
+			};
 			Storage.set('whatsNew', true);
 			Storage.setHighlight('whatsNew', true);
 		};

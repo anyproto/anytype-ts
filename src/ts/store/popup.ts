@@ -21,6 +21,7 @@ const SHOW_DIMMER = [
 	'spaceCreate',
 	'logout',
 	'search',
+	'onboarding',
 ];
 
 class PopupStore {
