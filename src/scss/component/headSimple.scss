@@ -15,6 +15,9 @@
 	&.isType, &.isRelation {
 		.side.left {
 			.titleWrap { align-items: center; }
+			.editableWrap.title {
+				.editable { @include text-overflow-nw; }
+			}
 		}
 	}
 
