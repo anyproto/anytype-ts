@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { U, S } from 'Lib';
+import { J, U, S, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
@@ -54,6 +54,20 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 	useEffect(() => {
 		childRef.current?.forceUpdate();
+
+		if (showSidebarRight) {
+			const win = $(window);
+
+			win.on('mousedown.sidebarRight', (e: any) => {
+				if ($(e.target).parents(`#sidebarRight`).length > 0) {
+					return;
+				};
+
+				e.stopPropagation();
+				sidebar.rightPanelToggle(false, true, isPopup);
+				win.off('mousedown.sidebarRight');
+			});
+		};
 	});
 
 	useImperativeHandle(ref, () => ({
