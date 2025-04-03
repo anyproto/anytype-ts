@@ -14,6 +14,9 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	const [ swiperControl, setSwiperControl ] = useState(null);
 	const [ activeSlide, setActiveSlide ] = useState(0);
 	const theme = S.Common.getThemeClass();
+	const interval = useRef(0);
+	const timeout = useRef(0);
+
 	const types = [
 		{ id: 'page', name: translate('onboardingPrimitivesTypesPages'), icon: 'document' },
 		{ id: 'bookmark', name: translate('onboardingPrimitivesTypesBookmarks'), icon: 'bookmark' },
@@ -35,18 +38,17 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		const wrapper = $(nodeRef.current).find('.step0');
 		const typeIds = types.map(it => it.id);
 
-		const interval = window.setInterval(() => {
+		interval.current = window.setInterval(() => {
 			const idx = Math.floor(Math.random() * typeIds.length);
 
 			wrapper.find(`#type-${typeIds[idx]}`).removeClass('hidden');
 			typeIds.splice(idx, 1);
 
 			if (!typeIds.length) {
-				clearInterval(interval);
+				window.clearInterval(interval.current);
+				window.clearTimeout(timeout.current);
 
-				window.setTimeout(() => {
-					wrapper.removeClass('init');
-				}, 300);
+				timeout.current = window.setTimeout(() => wrapper.removeClass('init'), 300);
 			};
 		}, 100);
 	};
@@ -55,13 +57,18 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		const wrapper = $(nodeRef.current).find('.step1');
 
 		setStep(1);
-
-		window.setTimeout(() => {
-			wrapper.removeClass('init');
-		}, 600);
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => wrapper.removeClass('init'), 600);
 	};
 
-	useEffect(() => initTypes(), []);
+	useEffect(() => {
+		initTypes();
+
+		return () => {
+			window.clearInterval(interval.current);
+			window.clearTimeout(timeout.current);
+		};
+	}, []);
 
 	return (
 		<div ref={nodeRef} className={[ 'steps', `s${step}` ].join(' ')}>

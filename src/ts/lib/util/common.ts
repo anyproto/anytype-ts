@@ -2,7 +2,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, sidebar } from 'Lib';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage } from 'Lib';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -1234,6 +1234,11 @@ class UtilCommon {
 		o = Math.max(0, Math.min(list.length, o));
 
 		return bg[list[o - 1]];
+	};
+
+	showWhatsNew () {
+		S.Popup.open('help', { data: { document: 'whatsNew' } });
+		Storage.set('whatsNew', false);
 	};
 
 };
