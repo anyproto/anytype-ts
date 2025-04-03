@@ -642,6 +642,7 @@ class Keyboard {
 
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
+				Storage.set('primitivesOnboarding', false);
 				break;
 			};
 
