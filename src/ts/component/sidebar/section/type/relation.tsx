@@ -10,7 +10,6 @@ import { CSS } from '@dnd-kit/utilities';
 const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { readonly, rootId, object, onChange } = props;
-	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const [ active, setActive ] = useState(null);
 	const [ dummy, setDummy ] = useState(0);
@@ -91,35 +90,37 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	};
 
 	if (conflictIds.length) {
-		const ids = [].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
+		const ids = [ 'name', 'description' ].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
 		const cids = conflictIds.filter(it => !ids.includes(it));
 
-		lists.push({
-			id: I.SidebarRelationList.Local, name: translate('sidebarTypeRelationFound'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
-			description: translate('sidebarTypeRelationLocalDescription'),
-			onInfo: () => {
-				S.Menu.open('select', {
-					element: `#sidebarRight #button-more-${I.SidebarRelationList.Local}`,
-					className: 'fixed',
-					classNameWrap: 'fromSidebar',
-					horizontal: I.MenuDirection.Right,
-					data: {
-						options: [
-							{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
-						],
-						onSelect: (e, option) => {
-							switch (option.id) {
-								case 'addToType': {
-									addConfirm(cids);
-									break;
+		if (cids.length) {
+			lists.push({
+				id: I.SidebarRelationList.Local, name: translate('sidebarTypeRelationFound'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
+				description: translate('sidebarTypeRelationLocalDescription'),
+				onInfo: () => {
+					S.Menu.open('select', {
+						element: `#sidebarRight #button-more-${I.SidebarRelationList.Local}`,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+						horizontal: I.MenuDirection.Right,
+						data: {
+							options: [
+								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+							],
+							onSelect: (e, option) => {
+								switch (option.id) {
+									case 'addToType': {
+										addConfirm(cids);
+										break;
+									};
 								};
-							};
-						},
-					}
-				});
-			},
-			onMore,
-		});
+							},
+						}
+					});
+				},
+				onMore,
+			});
+		};
 	};
 
 	const loadConflicts = () => {
