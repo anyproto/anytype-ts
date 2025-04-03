@@ -372,12 +372,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 					element,
 					offsetX: 16,
 					offsetY: -40,
-					onOpen: () => {
-						$(element).addClass('hover');
-					},
-					onClose: () => {
-						$(element).removeClass('hover');
-					},
+					onOpen: () => $(element).addClass('hover'),
+					onClose: () => $(element).removeClass('hover'),
 					data: {
 						options: [
 							{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },

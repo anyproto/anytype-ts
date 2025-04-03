@@ -105,9 +105,7 @@ export default {
 				'.shareBanner',
 			],
 			/*
-			onClose: () => {
-				Onboarding.start('emailCollection', false);
-			},
+			onClose: () => Onboarding.start('emailCollection', false),
 			*/
 		},
 		items: [

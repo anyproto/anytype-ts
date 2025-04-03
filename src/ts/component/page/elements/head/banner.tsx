@@ -42,9 +42,7 @@ const HeaderBanner: FC<Props> = ({
 				menuContext = context;
 				node.addClass('active');
 			},
-			onClose: () => {
-				node.removeClass('active');
-			},
+			onClose: () => node.removeClass('active'),
 			data: {
 				fromBanner: true,
 				withTypeSelect: false,
