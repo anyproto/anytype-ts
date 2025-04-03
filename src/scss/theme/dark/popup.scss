@@ -105,7 +105,9 @@
 		.steps {
 			.step0 {
 				.types {
-					.type { color: rgba(32, 41, 92, 0.5); }
+					.type {
+						.label { color: rgba(32, 41, 92, 0.5); }
+					}
 				}
 			}
 

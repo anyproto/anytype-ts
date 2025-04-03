@@ -230,7 +230,11 @@ class UtilData {
 
 		if (!Storage.get('primitivesOnboarding')) {
 			window.setTimeout(() => {
-				S.Popup.open('onboarding', {});
+				S.Popup.open('onboarding', {
+					onClose: () => {
+						Storage.set('primitivesOnboarding', true);
+					}
+				});
 			}, 1000);
 		};
 
