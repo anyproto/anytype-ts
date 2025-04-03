@@ -696,7 +696,7 @@ class UtilMenu {
 		r[I.ImportType.Markdown] = 'Markdown';
 		r[I.ImportType.Html] = 'HTML';
 		r[I.ImportType.Text] = 'TXT';
-		r[I.ImportType.Protobuf] = 'Any-Block';
+		r[I.ImportType.Protobuf] = 'Anytype';
 		r[I.ImportType.Csv] = 'CSV';
 		return r;
 	};
