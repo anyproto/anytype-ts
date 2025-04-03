@@ -5,11 +5,10 @@ import { Icon, Label, Title, Button } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const { renderLeftIcons } = props;
-	const [ showInfo, setShowInfo ] = useState(false);
 	const { account } = S.Auth;
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
-	const anyName = Relation.getStringValue(participant?.globalName).toUpperCase();
+	const anyName = Relation.getStringValue(participant?.globalName);
 
 	const onIdentity = () => {
 		if (!anyName) {

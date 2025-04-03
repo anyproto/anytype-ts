@@ -35,11 +35,15 @@
         .loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: var(--color-bg-loader); }
 
         .iconObject { flex-shrink: 0; }
-        .iconObject.canEdit::after {
-            content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: url('~img/icon/camera.svg') no-repeat center;
-            background-size: 40px 30px; transition: $transitionAllCommon; opacity: 0; background-color: rgba(0,0,0,0.1);
-        }
-        .iconObject.canEdit:hover:after { opacity: 1; }
+		.iconObject {
+			&.canEdit::after {
+				content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: url('~img/icon/camera.svg') no-repeat center;
+				background-size: 40px 30px; transition: $transitionAllCommon; opacity: 0; background-color: rgba(0,0,0,0.1);
+			}
+			&.canEdit:hover:after { opacity: 1; }
+
+			&.isHuman.canEdit::after { border-radius: 50%; }
+		}
     }
 
     .icon.logo { width: 54px; height: 54px; margin: 0px 0px 16px 0px; }

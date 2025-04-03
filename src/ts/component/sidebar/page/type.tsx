@@ -114,7 +114,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	disableButton (v: boolean) {
-		$(this.buttonSaveRef.getNode()).toggleClass('disabled', v);
+		if (this.buttonSaveRef) {
+			$(this.buttonSaveRef.getNode()).toggleClass('disabled', v);
+		};
 	};
 
 	disableScroll (v: boolean) {
