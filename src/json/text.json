@@ -2062,8 +2062,6 @@
 
 	"onboardingSpacesTitle": "Spaces",
 	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
-	"onboardingAllObjectTitle": "All Objects",
-	"onboardingAllObjectText": "<b>Everything in Anytype is an Object.</b> All objects is where all your content lives.",
 	"onboardingWidgetsTitle": "Widgets",
 	"onboardingWidgetsText": "<b>Use Widgets</b> to create custom views of your data. Add and adjust them to suit your workflow.",
 	"onboardingMultipleSpacesTitle": "Multiple Spaces",

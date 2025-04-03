@@ -117,13 +117,6 @@ export default {
 				}
 			},
 			{
-				category: translate('onboardingAllObjectTitle'),
-				description: translate('onboardingAllObjectText'),
-				param: {
-					element: '#widget-space #item-all',
-				}
-			},
-			{
 				category: translate('onboardingWidgetsTitle'),
 				description: translate('onboardingWidgetsText'),
 				param: {
