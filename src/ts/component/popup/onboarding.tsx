@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, U, S, J, translate } from 'Lib';
+import { I, U, S, translate } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Navigation } from 'swiper/modules';
 
@@ -114,7 +114,8 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 							<div className={[ 'slide', `slide${idx}` ].join(' ')}>
 								<img
 									onClick={() => swiperControl.slideNext()}
-									src={`./img/help/onboarding/primitives/${theme ? 'dark/' : ''}${idx}.png`} />
+									src={`./img/help/onboarding/primitives/${theme ? 'dark/' : ''}${idx}.png`}
+								/>
 							</div>
 						</SwiperSlide>
 					))}

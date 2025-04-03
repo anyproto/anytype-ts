@@ -207,16 +207,6 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
-
-		window.setTimeout(() => {
-			S.Popup.open('onboarding', {
-				onClose: () => {
-					window.setTimeout(() => {
-						S.Popup.open('help', { data: { document: 'whatsNew' } });
-					}, 300);
-				}
-			});
-		},1500)
 	};
 
 	init () {
@@ -541,7 +531,7 @@ class App extends React.Component<object, State> {
 		const current = String(electron.version.app || '').split('.');
 
 		if ((update[0] != current[0]) || (update[1] != current[1])) {
-			Storage.set('whatsNew', true);
+			// Storage.set('whatsNew', true);
 			Storage.setHighlight('whatsNew', true);
 		};
 	};

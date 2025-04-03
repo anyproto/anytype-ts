@@ -236,6 +236,7 @@ class UtilData {
 
 						window.setTimeout(() => {
 							S.Popup.open('help', { data: { document: 'whatsNew' } });
+							Storage.set('whatsNew', false);
 						}, 300);
 					}
 				});

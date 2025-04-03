@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
+import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -90,6 +90,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 							S.Common.showRelativeDatesSet(true);
 
 							U.Space.initSpaceState();
+							Storage.set('primitivesOnboarding', true);
 							Onboarding.start('basics', false);
 						},
 					};
