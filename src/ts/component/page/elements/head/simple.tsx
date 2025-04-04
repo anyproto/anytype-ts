@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
 import { I, M, S, U, J, C, Action, focus, keyboard, Relation, translate, analytics, sidebar, Dataview } from 'Lib';
+import { ObjectTypeResolveLayoutConflicts } from 'Lib/api/command';
 
 interface Props {
 	rootId: string;
@@ -457,9 +458,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 							colorConfirm: 'red',
 							colorCancel: 'blank',
 							onConfirm: () => {
-								C.ObjectListSetDetails([ rootId ], [
-									{ key: 'forceLayoutFromType', value: true },
-								]);
+								C.ObjectTypeResolveLayoutConflicts(rootId);
 							},
 						}
 					});

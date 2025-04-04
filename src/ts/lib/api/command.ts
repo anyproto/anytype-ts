@@ -1269,6 +1269,14 @@ export const ObjectTypeListConflictingRelations = (id: string, spaceId: string, 
 	dispatcher.request(ObjectTypeListConflictingRelations.name, request, callBack);
 };
 
+export const ObjectTypeResolveLayoutConflicts = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.ResolveLayoutConflicts.Request();
+
+	request.setTypeobjectid(id);
+
+	dispatcher.request(ObjectTypeResolveLayoutConflicts.name, request, callBack);
+};
+
 // ---------------------- OBJECT ---------------------- //
 
 export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, createWidget: boolean, callBack?: (message: any) => void) => {
