@@ -223,7 +223,7 @@ class MenuObject extends React.Component<I.Menu> {
 		advancedOptions.push(deepLink);
 		advancedOptions = advancedOptions.filter(it => it);
 		if (advancedOptions.length) {
-			advanced.children = advancedOptions
+			advanced.children = advancedOptions;
 		} else {
 			advanced = null;
 		};
@@ -271,6 +271,7 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		sections = sections.concat([ { children: [ advanced ] } ]);
+
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
