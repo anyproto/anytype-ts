@@ -147,6 +147,10 @@
             .input { @include text-header1; border-bottom: 0px;  text-align: center; height: 42px; padding-bottom: 0px; }
 
             .spaceDescription { padding: 0px; text-align: center; width: 100%; }
+            .spaceDescription {
+                .editable { position: relative; z-index: 1; }
+                .placeholder { z-index: 0; }
+            }
         }
         .spaceHeader:hover,
         .spaceHeader.isEditing {
