@@ -90,6 +90,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 							S.Common.showRelativeDatesSet(true);
 
 							U.Space.initSpaceState();
+							U.Space.openDashboard({ replace: true });
+
+							C.WorkspaceSetInfo(S.Common.space, { spaceDashboardId: I.HomePredefinedId.Last });
+
 							Storage.set('primitivesOnboarding', true);
 							Onboarding.start('basics', false);
 						},
@@ -103,7 +107,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 			const details = { 
 				name: translate('commonEntrySpace'), 
-				spaceDashboardId: I.HomePredefinedId.Last,
 				iconOption: U.Common.rand(1, J.Constant.count.icon),
 			};
 
