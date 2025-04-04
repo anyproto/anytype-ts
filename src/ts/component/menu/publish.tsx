@@ -146,8 +146,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onUpgrade = () => {
 		U.Object.openAuto(
 			{ id: 'membership', layout: I.ObjectLayout.Settings },
-			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: I.TierType.Builder } }) }
-			}
+			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: I.TierType.Builder }}) } },
 		);
 		analytics.event('ClickUpgradePlanTooltip');
 	};
