@@ -30,16 +30,19 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const cache = useRef(new CellMeasurerCache());
 	const canWrite = U.Space.canMyParticipantWrite();
+	const addName = filter ? U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
+	const buttons = (data.buttons || []).map(it => ({ ...it, isButton: true }));
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
+
 	const getSections = () => {
 		const { filter } = data;
 		const pinned = Storage.getPinnedTypes();
 		const items = U.Common.objectCopy(itemList.current || []).map(it => ({ ...it, object: it }));
-		const add = getButtons().find(it => it.id == 'add');
+		const add = buttons.find(it => it.id == 'add');
 
 		items.sort((c1, c2) => U.Data.sortByPinnedTypes(c1, c2, pinned));
 
@@ -97,19 +100,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return items;
 	};
 
-	const getButtons = () => {
-		const buttons = [ ...data.buttons || [] ];
-		const add = buttons.find(it => it.id == 'add');
-
-		if (add) {
-			add.name = filter ? U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
-		};
-
-		return buttons.map(it => ({ ...it, isButton: true }));
-	};
-
 	const items = getItems();
-	const buttons = getButtons();
 
 	cache.current = new CellMeasurerCache({
 		fixedWidth: true,
@@ -191,11 +182,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		item = U.Common.objectCopy(item);
 
 		if (item.arrow) {
-			return;
-		};
-
-		if (item.isButton && item.onClick) {
-			item.onClick(e);
 			return;
 		};
 
@@ -301,7 +287,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onClick={e => onClickHandler(e, item)} 
 				>
 					<Icon className="plus" />
-					<div className="name">{item.name}</div>
+					<div className="name">{addName}</div>
 				</div>
 			);
 		} else {
@@ -431,14 +417,20 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			{buttons.length ? (
 				<div className="bottom">
-					{buttons.map((item, i) => (
-						<MenuItemVertical 
-							key={item.id}
-							{...item}
-							onMouseEnter={e => setHover(item)} 
-							onClick={e => onClickHandler(e, item)}
-						/>
-					))}
+					{buttons.map((item, i) => {
+						if (item.id == 'add') {
+							item.name = addName;
+						};
+
+						return (
+							<MenuItemVertical 
+								key={item.id}
+								{...item}
+								onMouseEnter={() => setHover(item)} 
+								onClick={e => item.onClick ? item.onClick(e) : onClickHandler(e, item)}
+							/>
+						);
+					})}
 				</div>
 			) : ''}
 		</div>

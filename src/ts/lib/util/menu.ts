@@ -1264,7 +1264,7 @@ class UtilMenu {
 		};
 
 		const buttons: any[] = [
-			flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport } : null,
+			flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true } : null,
 		].filter(it => it);
 
 		const check = async () => {
@@ -1287,7 +1287,7 @@ class UtilMenu {
 				data: {
 					noStore: true,
 					onMore,
-					buttons: buttons.map(it => ({ ...it, isButton: true })),
+					buttons,
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
