@@ -289,9 +289,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				setIsLoading(false);
 
 				const view = getView();
-
-				console.log('VIEW', view);
-
 				if (view) {
 					load(view.id);
 				};
