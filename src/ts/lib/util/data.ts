@@ -579,7 +579,7 @@ class UtilData {
 		}, callBack);
 	};
 
-	checkDetails (rootId: string, blockId?: string, keys?: string[]) {
+	checkDetails (rootId: string, blockId?: string, keys?: string[]): any {
 		blockId = blockId || rootId;
 		keys = keys || [];
 

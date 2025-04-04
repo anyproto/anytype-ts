@@ -40,7 +40,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		};
 
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign', 'forceLayoutFromType' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const isInSets = U.Object.isInSetLayouts(root.layout);
@@ -51,15 +51,13 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const isType = U.Object.isTypeLayout(root.layout);
 		const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
 		const hasConflict = U.Object.hasLayoutConflict(object);
-		const objectType = S.Record.getTypeById(object.type);
 
 		let allowedLayout = !checkType && allowedDetails && !isChat && !isType;
 		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
 		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
 		let allowedDescription = !checkType && allowedDetails && !isNote;
-		let isReseted = isType ? object.forceLayoutFromType : objectType.forceLayoutFromType;
 
-		if ((isInSets && !hasConflict) || isReseted) {
+		if (isInSets && !hasConflict) {
 			allowedLayout = false;
 		};
 

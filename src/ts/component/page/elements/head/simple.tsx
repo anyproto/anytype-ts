@@ -53,6 +53,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isRelation = U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
 		const canEditIcon = allowDetails && !isRelation;
+		const isOwner = U.Space.isMyOwner();
 
 		if (!allowDetails) {
 			cn.push('isReadonly');
@@ -115,7 +116,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					const isTemplate = U.Object.isTemplate(object.id);
 					const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 
-					if (U.Space.isMyOwner() && !check.forceLayoutFromType) {
+					if (isOwner && !check.forceLayoutFromType) {
 						buttonLayout = (
 							<Button
 								id="button-layout"
@@ -444,10 +445,14 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			horizontal: I.MenuDirection.Center,
 			className: 'menuTypeLayout',
 			data: {
-				sections: [{
-					name: translate('menuTypeLayoutDescription'),
-					children: [ { id: 'reset', icon: 'reset', name: translate('menuTypeLayoutReset') } ]
-				}],
+				sections: [
+					{
+						name: translate('menuTypeLayoutDescription'),
+						children: [ 
+							{ id: 'reset', icon: 'reset', name: translate('menuTypeLayoutReset') },
+						]
+					}
+				],
 				noVirtualisation: true,
 				onSelect: () => {
 					S.Popup.open('confirm', {
