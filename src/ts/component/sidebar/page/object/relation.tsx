@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, sidebar, translate, keyboard, Relation, C, Preview, analytics } from 'Lib';
+import { I, S, U, sidebar, translate, keyboard, Relation, C, Storage, analytics } from 'Lib';
 import Section from 'Component/sidebar/section';
 
 const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, {}> {
@@ -130,6 +130,15 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 	componentDidMount () {
 		analytics.event('ScreenObjectRelation');
+
+		const { page } = this.props;
+		const sections = this.getSections().filter(it => it.withToggle);
+
+		sections.forEach(section => {
+			const toggle = Storage.checkToggle(page, section.id);
+
+			this.initToggle(section.id, toggle);
+		});
 	};
 
 	getObject () {
@@ -162,7 +171,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const sections = [
 			{ id: 'object', children: items },
 			{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), children: hidden, withToggle: true, withEmpty: true },
-			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription'), withEmpty: true }
+			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription'), withToggle: true, withEmpty: true }
 		];
 
 		return sections;
@@ -256,7 +265,17 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		});
 	};
 
+	initToggle (id: string, isOpen: boolean) {
+		const obj = $(`#sidebarRight #relationGroup-${id}`);
+		const toggle = obj.find('.sectionToggle');
+		const list = obj.find('> .list');
+
+		toggle.toggleClass('isOpen', isOpen);
+		list.toggleClass('isOpen', isOpen).css({ height: (isOpen ? 'auto': 0) });
+	};
+
 	onToggle (id: string) {
+		const { page } = this.props;
 		const obj = $(`#sidebarRight #relationGroup-${id}`);
 		const toggle = obj.find('.sectionToggle');
 		const list = obj.find('> .list');
@@ -264,6 +283,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 		U.Common.toggle(list, 200);
 		toggle.toggleClass('isOpen', !isOpen);
+		Storage.setToggle(page, id, !isOpen);
 
 		analytics.event('ScreenObjectRelationToggle', { type: isOpen ? 'Collapse' : 'Extend' });
 	};

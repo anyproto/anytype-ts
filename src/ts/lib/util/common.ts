@@ -1129,17 +1129,23 @@ class UtilCommon {
 		const isOpen = obj.hasClass('isOpen');
 
 		if (isOpen) {
-			obj.addClass('anim').removeClass('isOpen').css({ height: 0 });
-			window.setTimeout(() => obj.removeClass('anim'), delay);
+			const height = obj.outerHeight();
+
+			obj.css({ height });
+
+			raf(() => obj.addClass('anim').css({ height: 0 }));
+			window.setTimeout(() => obj.removeClass('isOpen anim'), delay);
 		} else {
 			obj.css({ height: 'auto' });
 
 			const height = obj.outerHeight();
 
-			obj.addClass('anim isOpen').css({ height: 0 });
+			obj.addClass('anim').css({ height: 0 });
+
+			console.log(height);
 
 			raf(() => obj.css({ height }));
-			window.setTimeout(() => obj.removeClass('anim'), delay);
+			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen'), delay);
 		};
 	};
 
