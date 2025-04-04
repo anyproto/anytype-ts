@@ -312,4 +312,12 @@
 		}
 	}
 
+	/* Identity */
+
+	.menu.menuIdentity {
+		.content {
+			.icon { background-image: url('#{$themePath}/icon/header/settings/anyName.svg'); }
+		}
+	}
+
 }

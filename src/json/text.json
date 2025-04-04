@@ -883,7 +883,6 @@
 	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
 	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
 
-	"popupSettingsSpaceStorageManagerTitle": "Synced files",
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
 	"popupSettingsImportTitle": "Import",

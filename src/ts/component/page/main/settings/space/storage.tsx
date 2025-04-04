@@ -60,7 +60,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 			<div ref={ref => this.node = ref} className="wrap">
 				{buttonUpgrade}
 
-				<Title text={translate(`pageSettingsSpaceCleanupSpaceFiles`)} />
+				<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 				<Label text={U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit))} />
 
 				<div className={usageCn.join(' ')}>
@@ -69,7 +69,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 				{canWrite ? (
 					<div className="fileManagerWrapper">
-						<Title className="sub" text={translate('popupSettingsSpaceStorageManagerTitle')} />
+						<Title className="sub" text={translate('pageSettingsSpaceCleanupSpaceFiles')} />
 
 						<ListObjectManager
 							ref={ref => this.refManager = ref}

@@ -329,6 +329,12 @@ html.themeDark {
 		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
 	}
 
+	.header.mainSettings {
+		.identity {
+			.icon.anyName { background-image: url('#{$themePath}/icon/header/settings/anyName.svg'); }
+		}
+	}
+
 	/* Vault */
 
 	.vault { background-color: #393939; }
