@@ -36,7 +36,7 @@
 .button.red:not(.disabled):hover,
 .button.red:not(.disabled).hover { background: var(--color-bg-red); border-color: #fcd1c3; }
 
-.button.dark { background: var(--color-shape-transparent-tertiary); color: var(--color-bg-primary); }
+.button.dark { background: var(--color-shape-highlight-light); color: var(--color-bg-primary); }
 .button.dark:not(.disabled):hover,
 .button.dark:not(.disabled).hover { background: rgba(0,0,0,0.4); }
 

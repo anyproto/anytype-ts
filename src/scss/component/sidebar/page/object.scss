@@ -2,25 +2,20 @@
 	.section.objectRelation { padding: 12px 16px; }
 	.section.objectRelation {
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 2px 10px; align-items: center; position: relative; }
-		> .wrap.c-longText { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; }
-
-		> .wrap.c-longText {
-			> .name { width: 100%; }
-			> .cell { width: 100%; }
-		}
-
-		> .wrap.hasMore {
-			> .name { width: calc(100% - 28px); }
-		}
-
-		> .wrap:hover {
-			> .icon.more { opacity: 1; }
-		}
-
 		> .wrap {
+			&:hover {
+				> .icon.more { opacity: 1; }
+			}
+
+			&.c-longText { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; }
+			&.c-longText {
+				> .name { width: 100%; }
+				> .cell { width: 100%; }
+			}
+
 			&.canEdit::before { 
 				content: ''; border-radius: 12px; position: absolute; top: -12px; left: -16px; width: calc(100% + 32px); height: calc(100% + 24px); z-index: 20;
-				background-color: var(--color-shape-transparent-tertiary); pointer-events: none; opacity: 0; transition: opacity $transitionCommon;
+				background-color: var(--color-shape-highlight-medium); pointer-events: none; opacity: 0; transition: opacity $transitionCommon;
 			}
 			&.canEdit:hover::before { opacity: 1; }
 

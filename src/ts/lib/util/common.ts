@@ -1140,12 +1140,10 @@ class UtilCommon {
 
 			const height = obj.outerHeight();
 
-			obj.addClass('anim').css({ height: 0 });
-
-			console.log(height);
+			obj.css({ height: 0 }).addClass('anim');
 
 			raf(() => obj.css({ height }));
-			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen'), delay);
+			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen').css({ heght: 'auto' }), delay);
 		};
 	};
 
