@@ -175,8 +175,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		hidden = hidden.filter(it => filterMapper(it) && !(it.isReadonlyValue && Relation.isEmpty(object[it.relationKey])));
 
 		return [
-			{ id: 'header', children: featured },
-			{ id: 'object', children: items, withEmpty: true },
+			{ id: 'object', children: featured.concat(items), withEmpty: true },
 			{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), children: hidden, withToggle: true },
 			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription'), withToggle: true }
 		].filter(it => it.children.length || it.withEmpty);
