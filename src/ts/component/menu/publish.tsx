@@ -26,11 +26,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const domain = U.Space.getPublishDomain();
 	const url = U.Space.getPublishUrl(slug);
 	const items: any[] = [
-		{ 
-			id: 'link', 
-			name: translate('commonCopyLink'), 
-			onClick: () => U.Object.copyLink(object, space, 'web', ''),
-		},
 		(!space.isPersonal ? 
 		{ 
 			id: 'space', 
