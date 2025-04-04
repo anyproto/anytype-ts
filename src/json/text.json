@@ -403,7 +403,6 @@
 	"authRegisterLabel": "New Profile",
 	"authRegisterName": "Enter your name",
 	"authRegisterSubmit": "Create",
-	"authRegisterAdvanced": "Advanced",
 
 	"authDeleteTitle": "Delete Profile",
 	"authDeleteTitleDeleted": "Vault data removed from the backup node",
@@ -1667,6 +1666,7 @@
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
+	"menuObjectAdvanced": "Advanced",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",
