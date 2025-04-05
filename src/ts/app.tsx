@@ -24,7 +24,6 @@ import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
 import 'scss/common.scss';
-import 'scss/transitions.scss';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
