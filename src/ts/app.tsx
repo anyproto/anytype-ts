@@ -125,11 +125,10 @@ class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
 		const { location } = this.props;
-		const currentPath = location.pathname;
-		const shouldTransition = prevPath != currentPath;
-		
-		// Update the previous pathname for next render
-		prevPath = currentPath;
+		const shouldTransition = prevPath != location.pathname;
+
+		console.log('prevPath', prevPath);
+		console.log('currentPath', location.pathname);
 		
 		return (
 			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
@@ -156,6 +155,10 @@ class RoutePage extends React.Component<RouteComponentProps> {
 				</DragProvider>
 			</SelectionProvider>
 		);
+	};
+
+	componentDidUpdate (): void {
+		prevPath = this.props.location.pathname;
 	};
 
 };
