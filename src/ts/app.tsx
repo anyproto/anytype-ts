@@ -119,16 +119,17 @@ Sentry.setContext('info', {
 	isPackaged: isPackaged,
 });
 
+let prevPath = '';
+
 class RoutePage extends React.Component<RouteComponentProps> {
-	private prevPathname: string = '';
 
 	render () {
 		const { location } = this.props;
-		const currentPathname = location.pathname;
-		const shouldTransition = this.prevPathname !== currentPathname;
+		const currentPath = location.pathname;
+		const shouldTransition = prevPath != currentPath;
 		
 		// Update the previous pathname for next render
-		this.prevPathname = currentPathname;
+		prevPath = currentPath;
 		
 		return (
 			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
