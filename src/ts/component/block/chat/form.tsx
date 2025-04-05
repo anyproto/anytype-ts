@@ -76,6 +76,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.removeBookmark = this.removeBookmark.bind(this);
 		this.getMarksAndRange = this.getMarksAndRange.bind(this);
 		this.getObjectFromPath = this.getObjectFromPath.bind(this);
+		this.onVoice = this.onVoice.bind(this);
 	};
 
 	render () {
@@ -204,6 +205,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						addAttachments={this.addAttachments}
 						onMenuClose={this.onMenuClose}
 						removeBookmark={this.removeBookmark}
+						onVoice={this.onVoice}
 					/>
 
 					<div ref={ref => this.refCounter = ref} className="charCounter">{charCounter} / {J.Constant.limit.chat.text}</div>
@@ -795,6 +797,22 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					});
 				},
 			}
+		});
+	};
+
+	onVoice (audio) {
+		const { blob } = audio;
+		const ext = blob.type.split('/')[1];
+		const file = new File([ blob ], `Voice Message.${ext}`, { type: blob.type });
+
+		U.Common.saveClipboardFiles([ file ], {}, (data) => {
+			if (!data.files || !data.files.length) {
+				return;
+			};
+
+			const obj = this.getObjectFromPath(data.files[0].path);
+
+			this.addAttachments([ obj ]);
 		});
 	};
 
