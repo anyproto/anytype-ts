@@ -281,21 +281,15 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					const lists = [];
 
 					if (fixed.length) {
-						lists.push([
-							{ name: translate('commonSystem'), isSection: true }
-						].concat(fixed));
+						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(fixed));
 					};
 
 					if (types.length) {
-						lists.push([
-							{ name: translate('commonSuggested'), isSection: true }
-						].concat(types));
+						lists.push([ { name: translate('commonSuggested'), isSection: true } ].concat(types));
 					};
 
 					if (items.length) {
-						lists.push([
-							{ name: translate('commonExistingObjects'), isSection: true }
-						].concat(items));
+						lists.push([ { name: translate('commonExistingObjects'), isSection: true } ].concat(items));
 					};
 
 					let ret = [];
