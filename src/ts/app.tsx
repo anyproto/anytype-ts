@@ -119,17 +119,11 @@ Sentry.setContext('info', {
 	isPackaged: isPackaged,
 });
 
-let prevPath = '';
-
 class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
 		const { location } = this.props;
-		const shouldTransition = prevPath != location.pathname;
 
-		console.log('prevPath', prevPath);
-		console.log('currentPath', location.pathname);
-		
 		return (
 			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
 				<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
@@ -137,28 +131,20 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListMenu key="listMenu" {...this.props} />
 
 					<SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} />
-					{shouldTransition ? (
-						<TransitionGroup component={null}>
-							<CSSTransition
-								key={location.key}
-								classNames="page-transition"
-								timeout={150} /* 100ms delay + 50ms transition */
-								mountOnEnter
-								unmountOnExit
-							>
-								<Page {...this.props} isPopup={false} />
-							</CSSTransition>
-						</TransitionGroup>
-					) : (
-						<Page {...this.props} isPopup={false} />
-					)}
+					<TransitionGroup component={null}>
+						<CSSTransition
+							key={location.key}
+							classNames="page-transition"
+							timeout={300}
+							mountOnEnter={true}
+							unmountOnExit={true}
+						>
+							<Page {...this.props} isPopup={false} />
+						</CSSTransition>
+					</TransitionGroup>
 				</DragProvider>
 			</SelectionProvider>
 		);
-	};
-
-	componentDidUpdate (): void {
-		prevPath = this.props.location.pathname;
 	};
 
 };
