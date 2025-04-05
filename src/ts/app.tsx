@@ -5,6 +5,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
@@ -118,9 +119,17 @@ Sentry.setContext('info', {
 	isPackaged: isPackaged,
 });
 
+let prevPath = '';
+
 class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
+		const { location } = this.props;
+		const shouldTransition = prevPath != location.pathname;
+
+		console.log('prevPath', prevPath);
+		console.log('currentPath', location.pathname);
+		
 		return (
 			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
 				<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
@@ -128,10 +137,28 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListMenu key="listMenu" {...this.props} />
 
 					<SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} />
-					<Page {...this.props} isPopup={false} />
+					{shouldTransition ? (
+						<TransitionGroup component={null}>
+							<CSSTransition
+								key={location.key}
+								classNames="page-transition"
+								timeout={150} /* 100ms delay + 50ms transition */
+								mountOnEnter
+								unmountOnExit
+							>
+								<Page {...this.props} isPopup={false} />
+							</CSSTransition>
+						</TransitionGroup>
+					) : (
+						<Page {...this.props} isPopup={false} />
+					)}
 				</DragProvider>
 			</SelectionProvider>
 		);
+	};
+
+	componentDidUpdate (): void {
+		prevPath = this.props.location.pathname;
 	};
 
 };
