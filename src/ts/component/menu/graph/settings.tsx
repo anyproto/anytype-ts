@@ -162,7 +162,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		const { allowLocal } = data;
 		const values = this.getValues();
 		const layouts = U.Object.getGraphSkipLayouts();
-		const types = S.Record.getTypes().filter(it => !layouts.includes(it.recommendedLayout));
+		const types = S.Record.getTypes().filter(it => !layouts.includes(it.recommendedLayout) && ![ J.Constant.typeKey.template ].includes(it.uniqueKey));
 
 		let sections: any[] = [
 			{ 
