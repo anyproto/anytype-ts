@@ -5,6 +5,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
@@ -121,6 +122,8 @@ Sentry.setContext('info', {
 class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
+		const { location } = this.props;
+
 		return (
 			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
 				<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
@@ -128,7 +131,17 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListMenu key="listMenu" {...this.props} />
 
 					<SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} />
-					<Page {...this.props} isPopup={false} />
+					<TransitionGroup component={null}>
+						<CSSTransition
+							key={location.key}
+							classNames="page-transition"
+							timeout={300}
+							mountOnEnter={true}
+							unmountOnExit={true}
+						>
+							<Page {...this.props} isPopup={false} />
+						</CSSTransition>
+					</TransitionGroup>
 				</DragProvider>
 			</SelectionProvider>
 		);
