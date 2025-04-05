@@ -52,6 +52,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isRelation = U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
 		const canEditIcon = allowDetails && !isRelation && !isType;
+		const isOwner = U.Space.isMyOwner();
 
 		if (!allowDetails) {
 			cn.push('isReadonly');
@@ -81,6 +82,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			/>
 		);
 
+		let buttonLayout = null;
 		let buttonEdit = null;
 		let buttonCreate = null;
 		let buttonTemplate = null;
@@ -112,6 +114,17 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				if (isType) {
 					const isTemplate = U.Object.isTemplate(object.id);
 					const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
+
+					if (isOwner && !check.forceLayoutFromType) {
+						buttonLayout = (
+							<Button
+								id="button-layout"
+								color="blank"
+								className="c28 resetLayout"
+								onClick={this.onLayout}
+							/>
+						);
+					};
 
 					if (canShowTemplates) {
 						buttonTemplate = (
@@ -167,6 +180,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			);
 		};
 
+		if (buttonLayout) {
+			buttons.push(() => buttonLayout);
+		};
 		if (buttonTemplate) {
 			buttons.push(() => buttonTemplate);
 		};
@@ -418,6 +434,41 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		U.Object.openDateByTimestamp(relationKey, object.timestamp + dir * 86400);
 		analytics.event(dir > 0 ? 'ClickDateForward' : 'ClickDateBack');
+	};
+
+	onLayout = () => {
+		const { rootId } = this.props;
+
+		S.Menu.open('select', {
+			element: '.headSimple #button-layout',
+			horizontal: I.MenuDirection.Center,
+			className: 'menuTypeLayout',
+			data: {
+				sections: [
+					{
+						name: translate('menuTypeLayoutDescription'),
+						children: [ 
+							{ id: 'reset', icon: 'reset', name: translate('menuTypeLayoutReset') },
+						]
+					}
+				],
+				noVirtualisation: true,
+				onSelect: () => {
+					S.Popup.open('confirm', {
+						data: {
+							title: translate('popupConfirmTypeLayoutResetTitle'),
+							text: translate('popupConfirmTypeLayoutResetText'),
+							textConfirm: translate('commonReset'),
+							colorConfirm: 'red',
+							colorCancel: 'blank',
+							onConfirm: () => {
+								C.ObjectTypeResolveLayoutConflicts(rootId);
+							},
+						}
+					});
+				},
+			}
+		});
 	};
 
 });

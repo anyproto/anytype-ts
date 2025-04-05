@@ -18,4 +18,9 @@
 			content: ''; position: absolute; top: 0px; left: 14px; height: 1px; width: calc(100% - 28px); background: var(--color-shape-secondary); 
 		}
 	}
+
+	.menu.menuTypeLayout {
+		.content { height: unset !important; }
+		.sectionName { white-space: normal !important; }
+	}
 }

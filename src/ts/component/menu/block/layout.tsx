@@ -90,7 +90,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			sections.unshift({
 				name: translate('menuBlockLayoutConflict'),
 				children: [ { id: 'reset', icon: 'reload', name: translate('menuBlockLayoutReset') } ]
-			})
+			});
 		};
 
 		sections = sections.filter((section: any) => {
