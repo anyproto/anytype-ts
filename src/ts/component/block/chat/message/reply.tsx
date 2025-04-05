@@ -7,8 +7,8 @@ const ChatMessageReply = observer(class ChatMessageReply extends React.Component
 
 	render () {
 		const { space } = S.Common;
-		const { rootId, id, getReplyContent, onReplyClick } = this.props;
-		const message = S.Chat.getReply(rootId, id);
+		const { id, subId, getReplyContent, onReplyClick } = this.props;
+		const message = S.Chat.getReply(subId, id);
 		const cn = [ 'reply' ];
 
 		if (!message) {

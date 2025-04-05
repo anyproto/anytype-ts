@@ -2,6 +2,33 @@
 
 .formWrapper.isFixed { padding: 0px 0px 16px 0px; position: sticky; z-index: 11; bottom: 0px; width: 100%; background: var(--color-bg-primary); }
 
+.formWrapper {
+	.navigation { position: absolute; right: 0px; bottom: 100%; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; gap: 16px 0px; }
+	.navigation {
+		.btn { position: relative; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+		.btn {
+			.bg {
+				position: absolute; z-index: 0; left: 0px; top: 0px; width: 100%; height: 100%;
+				border-radius: 50%; background-color: var(--color-bg-primary); border: 1px solid var(--color-shape-secondary);
+			}
+			.icon { position: relative; z-index: 1; width: 20px; height: 20px; background: url('~img/arrow/chat.svg'); }
+			.counter { position: absolute; z-index: 2; height: 20px; left: 0px; top: -14px; width: 100%; text-align: center; }
+			.counter {
+				.label {
+					display: inline-block; @include text-small; line-height: 20px; padding: 0px 4px; height: 20px; min-width: 20px;
+					border-radius: 10px; color: var(--color-text-inversion); background: var(--color-control-active);
+				}
+			}
+		}
+		.btn.up {
+			.icon { transform: rotate(180deg); }
+		}
+		.btn:hover {
+			.bg { transform: scale(0.95); }
+		}
+	}
+}
+
 .form { 
 	padding: 0px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); background-color: var(--color-bg-primary); border-radius: 12px; position: relative; 
 	overflow: hidden; 

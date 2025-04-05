@@ -27,6 +27,7 @@ export interface ChatMessage {
 	// Internal
 	isFirst: boolean;
 	isLast: boolean;
+	isRead: boolean;
 };
 
 export interface ChatMessageContent {
