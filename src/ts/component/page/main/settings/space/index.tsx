@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Tag, Editable } from 'Component';
+import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Switch, Editable } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 interface State {
@@ -47,7 +47,9 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const buttons = this.getButtons();
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const widgets = S.Detail.get(S.Block.widgets, S.Block.widgets, [ 'autoWidgetDisabled' ], true);
 		const maxIcons = 5;
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
@@ -167,6 +169,31 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						<div className="section sectionSpaceManager">
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 							<div className="sectionContent">
+
+								{isOwner ? (
+									<div className="item">
+										<div className="sides">
+											<Icon className="widget" />
+
+											<div className="side left">
+												<Title text={translate('popupSettingsSpaceIndexAutoWidgetsTitle')} />
+												<Label text={translate('popupSettingsSpaceIndexAutoWidgetsText')} />
+											</div>
+
+											<div className="side right">
+												<Switch
+													value={!widgets.autoWidgetDisabled}
+													className="big"
+													onChange={(e: any, v: boolean) => {
+														C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ]);
+
+														analytics.event('AutoCreateTypeWidgetToggle', { type: v ? 'true' : 'false' });
+													}}
+												/>
+											</div>
+										</div>
+									</div>
+								) : ''}
 
 								<div className="item">
 									<div className="sides">
@@ -345,12 +372,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 					element,
 					offsetX: 16,
 					offsetY: -40,
-					onOpen: () => {
-						$(element).addClass('hover');
-					},
-					onClose: () => {
-						$(element).removeClass('hover');
-					},
+					onOpen: () => $(element).addClass('hover'),
+					onClose: () => $(element).removeClass('hover'),
 					data: {
 						options: [
 							{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },

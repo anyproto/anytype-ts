@@ -133,10 +133,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		let templateId = '';
 		let isCollection = false;
 
-		if (layout != I.WidgetLayout.Tree) {
-			flags.push(I.ObjectFlag.DeleteEmpty);
-		};
-
 		if (U.Object.isInSetLayouts(object.layout)) {
 			const rootId = getRootId();
 			if (!rootId) {
@@ -178,6 +174,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		if (!typeKey) {
 			return;
+		};
+
+		if ((layout != I.WidgetLayout.Tree) && ![ J.Constant.typeKey.type ].includes(typeKey)) {
+			flags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
 		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, true, (message: any) => {

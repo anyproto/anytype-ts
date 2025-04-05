@@ -267,9 +267,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			const isCompletedSets = Onboarding.isCompleted('sets');
 
 			window.setTimeout(() => {
-				if (!isCollection && !isCompletedSets) {
-					Onboarding.start('sets', isPopup);
-				} else 
 				if (isCollection && !total) {
 					Onboarding.start('collections', isPopup);
 				} else 
@@ -1115,12 +1112,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			S.Menu.open('dataviewSource', {
 				element,
 				horizontal: I.MenuDirection.Center,
-				onOpen: () => { 
-					element.addClass('active');
-				}, 
-				onClose: () => {
-					element.removeClass('active');
-				}, 
+				onOpen: () => element.addClass('active'), 
+				onClose: () => element.removeClass('active'), 
 				data: {
 					rootId,
 					objectId,

@@ -10,7 +10,6 @@ import { CSS } from '@dnd-kit/utilities';
 const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { readonly, rootId, object, onChange } = props;
-	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const [ active, setActive ] = useState(null);
 	const [ dummy, setDummy ] = useState(0);
@@ -21,12 +20,15 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
+	const skipKeys = [ 'name', 'description' ];
+	const filterMapper = it => it && !skipKeys.includes(it.relationKey);
+
 	const recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
 	const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 	const recommendedHiddenRelations = Relation.getArrayValue(object.recommendedHiddenRelations);
-	const featured = recommendedFeaturedRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
-	const recommended = recommendedRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
-	const hidden = recommendedHiddenRelations.map(key => S.Record.getRelationById(key)).filter(it => it);
+	const featured = recommendedFeaturedRelations.map(key => S.Record.getRelationById(key)).filter(filterMapper);
+	const recommended = recommendedRelations.map(key => S.Record.getRelationById(key)).filter(filterMapper);
+	const hidden = recommendedHiddenRelations.map(key => S.Record.getRelationById(key)).filter(filterMapper);
 	const lists: any[] = [
 		{ id: I.SidebarRelationList.Featured, name: translate('sidebarTypeRelationHeader'), data: featured, relationKey: 'recommendedFeaturedRelations' },
 		{ id: I.SidebarRelationList.Recommended, name: translate('sidebarTypeRelationSidebar'), data: recommended, relationKey: 'recommendedRelations' },
@@ -92,34 +94,36 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 	if (conflictIds.length) {
 		const ids = [].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
-		const cids = conflictIds.filter(it => !ids.includes(it));
+		const cids = conflictIds.filter(it => !ids.includes(it)).map(id => S.Record.getRelationById(id)).filter(filterMapper);
 
-		lists.push({
-			id: I.SidebarRelationList.Local, name: translate('sidebarTypeRelationFound'), data: cids.map(id => S.Record.getRelationById(id)), relationKey: '',
-			description: translate('sidebarTypeRelationLocalDescription'),
-			onInfo: () => {
-				S.Menu.open('select', {
-					element: `#sidebarRight #button-more-${I.SidebarRelationList.Local}`,
-					className: 'fixed',
-					classNameWrap: 'fromSidebar',
-					horizontal: I.MenuDirection.Right,
-					data: {
-						options: [
-							{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
-						],
-						onSelect: (e, option) => {
-							switch (option.id) {
-								case 'addToType': {
-									addConfirm(cids);
-									break;
+		if (cids.length) {
+			lists.push({
+				id: I.SidebarRelationList.Local, name: translate('sidebarTypeRelationFound'), data: cids, relationKey: '',
+				description: translate('sidebarTypeRelationLocalDescription'),
+				onInfo: () => {
+					S.Menu.open('select', {
+						element: `#sidebarRight #button-more-${I.SidebarRelationList.Local}`,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+						horizontal: I.MenuDirection.Right,
+						data: {
+							options: [
+								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+							],
+							onSelect: (e, option) => {
+								switch (option.id) {
+									case 'addToType': {
+										addConfirm(cids);
+										break;
+									};
 								};
-							};
-						},
-					}
-				});
-			},
-			onMore,
-		});
+							},
+						}
+					});
+				},
+				onMore,
+			});
+		};
 	};
 
 	const loadConflicts = () => {
@@ -127,16 +131,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			return;
 		};
 
-		C.ObjectTypeListConflictingRelations(rootId, space, (message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const ids = Relation.getArrayValue(message.conflictRelationIds)
-				.map(id => S.Record.getRelationById(id))
-				.filter(it => it && !Relation.isSystem(it.relationKey))
-				.map(it => it.id);
-
+		U.Data.getConflictRelations(rootId, ids => {
 			setIsLoaded(true);
 			setConflictIds(ids);
 		});
@@ -224,9 +219,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				readonly: !allowed,
 				ref: 'type',
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					onChange({ [list.relationKey]: [ id ].concat(ids) });
-
-					analytics.stackAdd('AddConflictRelation');
+					onChange({ [list.relationKey]: [ relation.id ].concat(ids) });
 				},
 				deleteCommand: () => {
 					onChange({ [list.relationKey]: ids.filter(it => it != id) });

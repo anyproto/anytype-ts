@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, sidebar, translate, keyboard, Relation, C, Preview, analytics } from 'Lib';
+import { I, S, U, sidebar, translate, keyboard, Relation, C, Storage, analytics } from 'Lib';
 import Section from 'Component/sidebar/section';
 
 const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, {}> {
@@ -37,7 +37,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 					{allowTypeDetails ? (
 						<div className="side right">
-							<Button color="blank" text={translate('sidebarObjectRelationSetUp')} className="simple" onClick={this.onSetUp} />
+							<Button color="blank" text={translate('sidebarObjectRelationSetUp')} className="c28" onClick={this.onSetUp} />
 						</div>
 					) : ''}
 				</div>
@@ -53,13 +53,13 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 					{sections.map((section, i) => {
 						const { id, name, description, withToggle } = section;
-						const cnlb = [];
+						const cnt = [ 'titleWrap' ];
 						const cnl = [ 'list' ];
 						const onToggle = withToggle ? () => this.onToggle(id) : null;
 
 						if (withToggle) {
+							cnt.push('withToggle');
 							cnl.push('withToggle');
-							cnlb.push('sectionToggle');
 						};
 
 						let button = null;
@@ -76,9 +76,9 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 						return (
 							<div id={`relationGroup-${id}`} className="group" key={id}>
 								{name ? (
-									<div className="titleWrap">
+									<div className={cnt.join(' ')}>
 										<div className="side left">
-											<Label text={name} onClick={onToggle} className={cnlb.join(' ')} />
+											<Label text={name} onClick={onToggle} />
 											{description ? (
 												<Icon
 													className="question withBackground"
@@ -100,10 +100,12 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 								<div className={cnl.join(' ')}>
 									{!section.children.length && section.withEmpty ? (
-										<div className="item empty">
+										<div className="section empty">
 											{translate('sidebarObjectRelationEmpty')}
 										</div>
 									) : ''}
+
+									{section.withToggle ? <div /> : ''}
 
 									{section.children.map((item, i) => (
 										<Section
@@ -130,6 +132,15 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 	componentDidMount () {
 		analytics.event('ScreenObjectRelation');
+
+		const { page } = this.props;
+		const sections = this.getSections().filter(it => it.withToggle);
+
+		sections.forEach(section => {
+			const toggle = Storage.checkToggle(page, section.id);
+
+			this.initToggle(section.id, toggle);
+		});
 	};
 
 	getObject () {
@@ -137,7 +148,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		return S.Detail.get(rootId, rootId);
 	};
 
-	getSections () {
+	getSections (): any[] {
 		const { rootId } = this.props;
 		const object = this.getObject();
 		const isTemplate = U.Object.isTemplate(object.type);
@@ -145,27 +156,29 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const local = S.Record
 			.getConflictRelations(rootId, rootId, type.id)
 			.sort(U.Data.sortByName)
-			.map((it) => ({ ...it, onMore: this.onLocal }));
-		const localKeys = local.map(it => it.relationKey);
+			.map(it => ({ ...it, onMore: this.onLocal }));
+		const featuredIds = Relation.getArrayValue(type.recommendedFeaturedRelations);
 		const recommendedIds = Relation.getArrayValue(type.recommendedRelations);
 		const hiddenIds = Relation.getArrayValue(type.recommendedHiddenRelations);
+		const filterMapper = it => it && it.relationKey && !it.isArchived
 
 		let items = recommendedIds.map(it => S.Record.getRelationById(it));
-		items = items.filter(it => it && it.relationKey && !it.isArchived);
+		items = items.filter(filterMapper);
 		items = S.Record.checkHiddenObjects(items);
-		items = items.filter(it => !localKeys.includes(it.relationKey));
+
+		let featured = featuredIds.map(it => S.Record.getRelationById(it));
+		featured = featured.filter(filterMapper);
+		featured = S.Record.checkHiddenObjects(featured);
 
 		let hidden = hiddenIds.map(it => S.Record.getRelationById(it));
 		hidden = S.Record.checkHiddenObjects(hidden);
-		hidden = hidden.filter(it => it && !(it.isReadonlyValue && Relation.isEmpty(object[it.relationKey])));
+		hidden = hidden.filter(it => filterMapper(it) && !(it.isReadonlyValue && Relation.isEmpty(object[it.relationKey])));
 
-		const sections = [
-			{ id: 'object', children: items },
-			{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), children: hidden, withToggle: true, withEmpty: true },
-			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription'), withEmpty: true }
-		];
-
-		return sections;
+		return [
+			{ id: 'object', children: featured.concat(items), withEmpty: true },
+			{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), children: hidden, withToggle: true },
+			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription'), withToggle: true }
+		].filter(it => it.children.length || it.withEmpty);
 	};
 
 	getRelations () {
@@ -256,14 +269,25 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		});
 	};
 
-	onToggle (id: string) {
+	initToggle (id: string, isOpen: boolean) {
 		const obj = $(`#sidebarRight #relationGroup-${id}`);
-		const toggle = obj.find('.sectionToggle');
+		const title = obj.find('.titleWrap');
+		const list = obj.find('> .list');
+
+		title.toggleClass('isOpen', isOpen);
+		list.toggleClass('isOpen', isOpen).css({ height: (isOpen ? 'auto': 0) });
+	};
+
+	onToggle (id: string) {
+		const { page } = this.props;
+		const obj = $(`#sidebarRight #relationGroup-${id}`);
+		const title = obj.find('.titleWrap');
 		const list = obj.find('> .list');
 		const isOpen = list.hasClass('isOpen');
 
 		U.Common.toggle(list, 200);
-		toggle.toggleClass('isOpen', !isOpen);
+		title.toggleClass('isOpen', !isOpen);
+		Storage.setToggle(page, id, !isOpen);
 
 		analytics.event('ScreenObjectRelationToggle', { type: isOpen ? 'Collapse' : 'Extend' });
 	};

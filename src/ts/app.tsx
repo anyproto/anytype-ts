@@ -525,6 +525,10 @@ class App extends React.Component<object, State> {
 	};
 
 	checkUpdateVersion (v: string) {
+		if (!Storage.get('primitivesOnboarding')) {
+			return;
+		};
+
 		v = String(v || '');
 
 		const update = v.split('.');

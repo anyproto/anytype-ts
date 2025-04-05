@@ -271,21 +271,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
-				onOver: (e, context: any, item: any) => {
-					if (!item.isAdd) {
-						S.Menu.closeAll(J.Menu.widgetAdd);
-						return;
-					};
-
-					U.Menu.typeSuggest({ 
-						element: `#${menuContext.getId()} #item-${item.id}`,
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-						offsetX: menuContext.getSize().width,
-						vertical: I.MenuDirection.Center,
-						isSub: true,
-					}, { name: context.filter }, {}, analytics.route.addWidget, object => onSelect(object, true));
-				},
 				dataChange: (context: any, items: any[]) => {
 					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');

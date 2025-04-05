@@ -304,6 +304,10 @@ class UtilObject {
 		param.filters = (param.filters || []).concat(filters);
 		param.keys = (param.keys || []).concat(J.Relation.default).concat([ 'links', 'backlinks' ]);
 
+		if (undefined === param.ignoreArchived) {
+			param.ignoreArchived = false;
+		};
+
 		U.Data.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
@@ -523,10 +527,7 @@ class UtilObject {
 
 		C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
 			if (!message.error.code) {
-				const object = message.details;
-
-				object._routeParam_ = { relationKey };
-				this[fn](object);
+				this[fn]({ ...message.details, _routeParam_: { relationKey } });
 			};
 		});
 	};
@@ -730,13 +731,17 @@ class UtilObject {
 
 		const type = S.Record.getTypeType();
 		const featured = [ 'type', 'tag', 'backlinks' ];
+		const recommended = [ 'createdDate', 'creator', 'links' ];
+		const hidden = [ 'lastModifiedDate', 'lastModifiedBy', 'lastOpenedDate' ];
 		const mapper = it => S.Record.getRelationByKey(it)?.id;
 		const newDetails: any = {
 			isNew: true,
 			type: type.id,
 			layout: I.ObjectLayout.Type,
-			recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
 			defaultTypeId: String(S.Record.getPageType()?.id) || '',
+			recommendedRelations: recommended.map(mapper).filter(it => it),
+			recommendedFeaturedRelations: featured.map(mapper).filter(it => it),
+			recommendedHiddenRelations: hidden.map(mapper).filter(it => it),
 			data: {
 				route: analytics.route.settingsSpace,
 			},
@@ -744,6 +749,11 @@ class UtilObject {
 		};
 
 		sidebar.rightPanelToggle(true, true, isPopup, 'type', { details: newDetails });
+	};
+
+	typeIcon (id: string, option: number, size: number, color?: string): string {
+		const newColor = color || U.Common.iconBgByOption(option);
+		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor });
 	};
 
 };

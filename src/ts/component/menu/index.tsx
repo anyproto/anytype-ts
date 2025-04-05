@@ -77,6 +77,8 @@ import MenuDataviewNew from './dataview/new';
 import MenuSyncStatus from './syncStatus';
 import MenuSyncStatusInfo from './syncStatus/info';
 
+import MenuIdentity from './identity';
+
 interface State {
 	tab: string;
 };
@@ -157,6 +159,8 @@ const Components: any = {
 
 	syncStatus:				 MenuSyncStatus,
 	syncStatusInfo:			 MenuSyncStatusInfo,
+
+	identity:				 MenuIdentity,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {

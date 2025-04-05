@@ -1265,6 +1265,21 @@ class UtilData {
 		});
 	};
 
+	getConflictRelations (rootId: string, callBack: (ids: string[]) => void) {
+		C.ObjectTypeListConflictingRelations(rootId, S.Common.space, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const ids = S.Record.checkHiddenObjects(Relation.getArrayValue(message.conflictRelationIds)
+				.map(id => S.Record.getRelationById(id))).map(it => it.id).filter(it => it);
+
+			if (callBack) {
+				callBack(ids);
+			};
+		});
+	};
+
 };
 
 export default new UtilData();

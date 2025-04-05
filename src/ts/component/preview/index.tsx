@@ -13,7 +13,7 @@ const PreviewIndex = observer(forwardRef(() => {
 	const polygonRef = useRef(null);
 	const { preview } = S.Common;
 	const { type, target, object: initialObject, marks, range, noUnlink, noEdit, x, y, width, height, onChange, withPlural } = preview;
-	const [ object, setObject ] = useState(initialObject);
+	const [ object, setObject ] = useState(null);
 	const cn = [ 'previewWrapper' ];
 	const win = $(window);
 

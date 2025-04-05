@@ -200,6 +200,7 @@ export interface ButtonComponent {
 };
 
 export interface SidebarPageComponent {
+	page?: string;
 	rootId?: string;
 	isPopup?: boolean;
 	readonly?: boolean;
@@ -214,6 +215,7 @@ export interface SidebarSectionComponent extends SidebarPageComponent {
 	item?: any;
 	readonly?: boolean;
 	onChange?(update: any): void;
+	disableButton?(v: boolean): void;
 	onDragStart?: (e: React.DragEvent) => void;
 };
 

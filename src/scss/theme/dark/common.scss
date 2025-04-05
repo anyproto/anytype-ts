@@ -15,12 +15,11 @@ html.themeDark {
 	--color-shape-primary: #313131;
 	--color-shape-secondary: #292929;
 	--color-shape-tertiary: #232323;
-	--color-shape-transparent-tertiary: rgba(255,255,255,0.03);
-	--color-shape-transparent-tertiary-hex: #1f1f1f;
 
 	--color-shape-highlight-dark: rgba(255, 255, 255, 0.11);
 	--color-shape-highlight-medium: rgba(255, 255, 255, 0.05);
 	--color-shape-highlight-light: rgba(255, 255, 255, 0.03);
+	--color-shape-highlight-light-hex: #1f1f1f;
 
 	/* Control */
 
@@ -328,6 +327,12 @@ html.themeDark {
 	.header.isCommon {
 		.path { border: 0px; line-height: 28px; }
 		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
+	}
+
+	.header.mainSettings {
+		.identity {
+			.icon.anyName { background-image: url('#{$themePath}/icon/header/settings/anyName.svg'); }
+		}
 	}
 
 	/* Vault */

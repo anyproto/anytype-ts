@@ -26,11 +26,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const domain = U.Space.getPublishDomain();
 	const url = U.Space.getPublishUrl(slug);
 	const items: any[] = [
-		{ 
-			id: 'link', 
-			name: translate('commonCopyLink'), 
-			onClick: () => U.Object.copyLink(object, space, 'web', ''),
-		},
 		(!space.isPersonal ? 
 		{ 
 			id: 'space', 
@@ -144,7 +139,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onUpgrade = () => {
-		U.Router.go('/main/settings/membership', {});
+		U.Object.openAuto(
+			{ id: 'membership', layout: I.ObjectLayout.Settings },
+			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: I.TierType.Builder }}) } },
+		);
 		analytics.event('ClickUpgradePlanTooltip');
 	};
 

@@ -343,6 +343,7 @@ class RecordStore {
 	getConflictRelations (rootId: string, blockId: string, typeId: string): any[] {
 		const objectKeys = S.Detail.getKeys(rootId, blockId);
 		const typeKeys = U.Object.getTypeRelationKeys(typeId);
+		const skipKeys = [ 'name', 'description' ];
 
 		let conflictKeys = [];
 
@@ -356,7 +357,9 @@ class RecordStore {
 			conflictKeys = objectKeys;
 		};
 
-		conflictKeys = conflictKeys.map(it => this.getRelationByKey(it)).filter(it => it && !Relation.isSystem(it.relationKey));
+		conflictKeys = conflictKeys.filter(it => !skipKeys.includes(it));
+		conflictKeys = conflictKeys.map(it => this.getRelationByKey(it)).filter(it => it);
+
 		return this.checkHiddenObjects(conflictKeys);
 	};
 

@@ -14,6 +14,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		this.onSelect = this.onSelect.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 	};
 
     render () {
@@ -60,6 +61,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 						readonly={readonly}
 						onBlur={this.onChange}
 						onKeyDown={this.onKeyDown}
+						onKeyUp={this.onKeyUp}
 						placeholder={translate('defaultNameType')} 
 					/>
 				</div>
@@ -116,6 +118,12 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 			e.preventDefault();
 			this.onChange();
 		});
+	};
+
+	onKeyUp (e: any) {
+		const value = this.refName?.getTextValue().trim();
+
+		this.props.disableButton(!value);
 	};
 
 });

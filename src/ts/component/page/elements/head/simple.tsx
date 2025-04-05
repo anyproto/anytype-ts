@@ -51,7 +51,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isRelation = U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
-		const canEditIcon = allowDetails && !isRelation;
+		const canEditIcon = allowDetails && !isRelation && !isType;
 		const isOwner = U.Space.isMyOwner();
 
 		if (!allowDetails) {

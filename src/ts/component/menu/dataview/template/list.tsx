@@ -29,6 +29,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	render () {
 		const { param, setHover } = this.props;
 		const { data } = param;
+		const { activeId } = data;
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
@@ -41,13 +42,15 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		);
 
 		const Item = (item: any) => {
+			const cn = [ 'item' ];
+
 			let content = null;
+
 			if (item.id == J.Constant.templateId.new) {
 				content = <ItemAdd {...item} />;
 			} else {
 				content = (
 					<PreviewObject
-						className={item.id == templateId ? 'isDefault' : ''}
 						rootId={item.id}
 						size={previewSize}
 						onMore={e => this.onMore(e, item)}
@@ -55,10 +58,17 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				);
 			};
 
+			if ((item.id == activeId) && activeId) {
+				cn.push('active');
+			};
+			if ((item.id == templateId) && templateId) {
+				cn.push('isDefault');
+			};
+
 			return (
 				<div 
 					id={`item-${item.id}`} 
-					className="item"
+					className={cn.join(' ')}
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={() => setHover(item)}
 					onMouseLeave={() => setHover(null)}

@@ -403,7 +403,6 @@
 	"authRegisterLabel": "New Profile",
 	"authRegisterName": "Enter your name",
 	"authRegisterSubmit": "Create",
-	"authRegisterAdvanced": "Advanced",
 
 	"authDeleteTitle": "Delete Profile",
 	"authDeleteTitleDeleted": "Vault data removed from the backup node",
@@ -868,7 +867,7 @@
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
-	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
+	"popupSettingsSpaceIndexManageSpaceTitle": "General Settings",
 	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
@@ -880,8 +879,9 @@
 	"popupSettingsSpaceIndexNetworkIdTitle": "Network ID",
 	"popupSettingsSpaceIndexCreatedByTitle": "Created by",
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
+	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
+	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
 
-	"popupSettingsSpaceStorageManagerTitle": "Synced files",
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
 	"popupSettingsImportTitle": "Import",
@@ -1669,6 +1669,7 @@
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
+	"menuObjectAdvanced": "Advanced",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",
@@ -1734,7 +1735,7 @@
 	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"menuPublishTitle": "Publish to web",
-	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties.",
+	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties. Default limit is 10MB per object for free plans and 100MB for paid plans.",
 	"menuPublishLabelJoinSpace": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
@@ -1953,7 +1954,7 @@
 	"sidebarObjectTypeMedia": "Media",
 	"sidebarObjectTypeBookmark": "Bookmarks",
 	"sidebarObjectTypeRelation": "Properties",
-	"sidebarObjectRelationEmpty": "No Properties",
+	"sidebarObjectRelationEmpty": "No Properties yet. Add some to this type",
 
 	"sidebarObjectShow": "Show",
 	"sidebarObjectSort": "Sort",
@@ -1988,7 +1989,7 @@
 	"sidebarTypeRelationEmpty": "There are no Properties yet",
 	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
-	"sidebarRelationLocal": "Local Properties",
+	"sidebarRelationLocal": "Local",
 	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add to the type to use in all objects, or remove",
 	"sidebarTypeRelationLocalDescription": "These properties exist in some objects but aren’t part of the Type. Add them to make them appear in all objects of this Type.",
 
@@ -2066,8 +2067,6 @@
 
 	"onboardingSpacesTitle": "Spaces",
 	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
-	"onboardingAllObjectTitle": "All Objects",
-	"onboardingAllObjectText": "<b>Everything in Anytype is an Object.</b> All objects is where all your content lives.",
 	"onboardingWidgetsTitle": "Widgets",
 	"onboardingWidgetsText": "<b>Use Widgets</b> to create custom views of your data. Add and adjust them to suit your workflow.",
 	"onboardingMultipleSpacesTitle": "Multiple Spaces",
@@ -2085,16 +2084,42 @@
 	"onboardingMobileText": "<b>Sync to your mobile devices locally.</b> Scan the QR code to download the iOS or Android App and make use of peer-to-peer sync.",
 	"onboardingMobileButton": "Great",
 
-	"onboardingSetsTitle": "Queries",
-	"onboardingSetsText": "<b>A Query gathers all objects of a certain type in your space.</b> Explore what's already here or add more by clicking +New Object.",
-	"onboardingSetsButton": "Perfect",
-
 	"onboardingCollectionsTitle": "Collections",
 	"onboardingCollectionsText": "<b>Create an object in the Collection.</b> Use Collections to store and organise handpicked objects and files.",
 	"onboardingCollectionsButton": "Okay!",
 
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
 	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
+
+	"onboardingPrimitivesTitle": "All-New Types &<br/>Object Management",
+	"onboardingPrimitivesDescription": "Important changes to how things work in Anytype",
+	"onboardingPrimitivesButton": "See Changes",
+
+	"onboardingPrimitivesTypesPages": "Pages",
+	"onboardingPrimitivesTypesBookmarks": "Bookmarks",
+	"onboardingPrimitivesTypesContacts": "Contacts",
+	"onboardingPrimitivesTypesNotes": "Notes",
+	"onboardingPrimitivesTypesTasks": "Tasks",
+	"onboardingPrimitivesTypesCollections": "Collections",
+	"onboardingPrimitivesTypesGoals": "Goals",
+	"onboardingPrimitivesTypesQueries": "Queries",
+	"onboardingPrimitivesTypesBooks": "Books",
+	"onboardingPrimitivesTypesMovies": "Movies",
+	"onboardingPrimitivesTypesFiles": "Files",
+	"onboardingPrimitivesTypesProjects": "Projects",
+	"onboardingPrimitivesTypesVideo": "Video",
+	"onboardingPrimitivesTypesAudio": "Audio",
+
+	"onboardingPrimitivesSlide0Title": "Now Type Is in Control",
+	"onboardingPrimitivesSlide0Text": "Object Types now define properties and layout. Any changes at<br/>the type level apply to all objects of that type",
+	"onboardingPrimitivesSlide1Title": "Relations Are Now Properties",
+	"onboardingPrimitivesSlide1Text": "Properties are now managed at the type level, while local<br/>properties stay on the object level",
+	"onboardingPrimitivesSlide2Title": "Object Type Has a List",
+	"onboardingPrimitivesSlide2Text": "Every type has a built-in list of its objects. You can also auto-<br/>create a widget when a new object of this type is added.",
+	"onboardingPrimitivesSlide3Title": "Templates Are for Content",
+	"onboardingPrimitivesSlide3Text": "Templates no longer define properties or layout. They inherit object<br/>settings and only control content and default property values.",
+	"onboardingPrimitivesSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
+	"onboardingPrimitivesSlide4Button": "See updates",
 
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
@@ -2299,7 +2324,7 @@
 	"origin3": "Imported object",
 	"origin4": "Web clipper",
 	"origin5": "Mobile sharing extension",
-	"origin6": "Use case",
+	"origin6": "Installed from Gallery",
 	"origin7": "Library installed",
 	"origin8": "Bookmark",
 	"origin9": "API",

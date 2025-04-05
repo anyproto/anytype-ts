@@ -1,0 +1,14 @@
+@import "~scss/_mixins";
+
+.menus {
+    .menu.menuIdentity { width: 360px; }
+    .menu.menuIdentity {
+        .content { padding: 16px 32px 24px; text-align: center; }
+        .content {
+            .iconWrapper { width: 48px; height: 48px; border-radius: 8px; margin: 0px auto 16px; display: flex; align-items: center; justify-content: center; background: var(--color-shape-highlight-medium); }
+            .icon { width: 20px; height: 20px; background: url('~img/icon/header/settings/anyName.svg'); }
+            .title { @include text-paragraph; color: var(--color-text-primary); font-weight: 600; margin-bottom: 4px; }
+            .label { margin-bottom: 12px; }
+        }
+    }
+}

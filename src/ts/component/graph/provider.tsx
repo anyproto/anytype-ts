@@ -189,8 +189,6 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		d.src = U.Graph.imageSrc(d);
 		d.name = U.Smile.strip(U.Object.name(d, true));
 		d.shortName = U.Common.shorten(d.name, 24);
-		d.description = String(d.description || '');
-		d.snippet = String(d.snippet || '');
 
 		// Clear icon props to fix image size
 		if (U.Object.isTaskLayout(d.layout)) {
