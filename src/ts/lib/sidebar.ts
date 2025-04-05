@@ -217,6 +217,15 @@ class Sidebar {
 		};
 	};
 
+	getVaultWidth (): number {
+		const { isClosed } = this.data;
+		const { showVault } = S.Common;
+		const isMain = keyboard.isMain();
+		const isPopup = keyboard.isPopup();
+
+		return isClosed || !showVault || !isMain || isPopup ? 0 : J.Size.vault.width;
+	};
+
 	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
 		const isPopup = keyboard.isPopup();
 		const isMain = keyboard.isMain();
@@ -236,10 +245,9 @@ class Sidebar {
 			widthRight = this.objRight.outerWidth();
 		};
 
-		const { isClosed } = this.data;
 		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = isClosed || !showVault || !isMain || isPopup ? 0 : J.Size.vault.width;
+		const vw = this.getVaultWidth();
 
 		widthLeft += vw;
 

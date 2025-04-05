@@ -286,7 +286,6 @@ class App extends React.Component<object, State> {
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const route = String(data.route || redirect || '');
-		const spaceId = Storage.get('spaceId');
 
 		S.Common.configSet(config, true);
 		S.Common.nativeThemeSet(isDark);
