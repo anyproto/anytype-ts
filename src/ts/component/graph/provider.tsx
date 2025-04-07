@@ -300,7 +300,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const body = $('body');
 		const node = $(nodeRef.current);
 		const { left, top } = node.offset();
-		const render = previewId != subject.current.id;
+		const render = previewId.current != subject.current.id;
 
 		previewId.current = subject.current.id;
 
