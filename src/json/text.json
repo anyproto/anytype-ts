@@ -1125,6 +1125,12 @@
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 	"popupConfirmSpaceDeleted": "The space you try to access has been deleted",
 
+	"popupConfirmInviteError101Title": "No Access to This Space",
+	"popupConfirmInviteError101Text": "The link you are using does not seem to work. Please ask the owner to share a new one with you.",
+	"popupConfirmInviteError103Title": "Oops!",
+	"popupConfirmInviteError103Text": "The space you try to access has been deleted",
+
+
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
 	"popupConfirmWelcomeButton": "Show me what I can build",
@@ -1162,6 +1168,9 @@
 	"popupConfirmLocalFieldsTextSingle": "This Property will be added to the Type and will appear in all objects of this specific Type.",
 	"popupConfirmLocalFieldsTitlePlural": "Add Properties to the Type?",
 	"popupConfirmLocalFieldsTextPlural": "These Properties will be added to the Type and will appear in all objects of this specific Type.",
+
+	"popupConfirmTypeLayoutResetTitle": "Reset layout for all objects?",
+	"popupConfirmTypeLayoutResetText": "This will reset layout type, alignment, and featured properties for all objects of this type. This action cannot be undone.<br/>Are you sure?",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1678,6 +1687,9 @@
 	"menuTypeSuggestFilterTypes": "Filter Types...",
 	"menuTypeSuggestCreateType": "Create Type",
 	"menuTypeSuggestCreateTypeFilter": "Create Type %s",
+
+	"menuTypeLayoutDescription": "Some objects have layout settings that differ from the type, including featured properties and alignment. ",
+	"menuTypeLayoutReset": "Reset to match the Type",
 
 	"menuWidgetAddWidget": "Add Widget",
 	"menuWidgetWidgetType": "Widget type",

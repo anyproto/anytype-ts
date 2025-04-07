@@ -35,13 +35,17 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
 
 					if (message.error.code) {
+						const errorCodes = Object.values(J.Error.Code.SpaceInviteView);
+						const code = message.error.code;
+
 						let icon = '';
 						let title = '';
 						let text = '';
 
-						if (message.error.code == J.Error.Code.SPACE_IS_DELETED) {
+						if (errorCodes.includes(code)) {
 							icon = 'error';
-							title = translate('popupConfirmSpaceDeleted');
+							title = translate(`popupConfirmInviteError${code}Title`);
+							text = translate(`popupConfirmInviteError${code}Text`);
 						} else {
 							icon = 'sad';
 							title = translate('popupInviteRequestTitle');
