@@ -52,9 +52,9 @@
 		.items {
 			.sectionName { padding: 4px 16px; }
 
-			.sides { display: flex; align-items: center; gap: 0px 4px; }
+			.sides { display: flex; align-items: center; gap: 0px 6px; }
 			.sides {
-				.side.left { display: flex; align-items: center; flex-grow: 1; }
+				.side.left { display: flex; align-items: center; flex-grow: 1; overflow: hidden; @include text-overflow-nw; }
 				.side.right { width: 20px; flex-shrink: 0; display: flex; align-items: center; flex-shrink: 0; }
 				.side.right {
 					.icon { width: 20px; height: 20px; margin: 0px; }
