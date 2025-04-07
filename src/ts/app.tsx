@@ -272,6 +272,8 @@ class App extends React.Component<object, State> {
 			if (resizable.length) {
 				resizable.trigger('resizeInit');
 			};
+
+			$(window).trigger('resize');
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
