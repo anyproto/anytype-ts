@@ -325,6 +325,12 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 
 		content = <EmptySearch text={textEmpty} />;
 	} else {
+		const autoSizerProps: any = {};
+
+		if (disableHeight) {
+			autoSizerProps.disableHeight = true;
+		};
+
 		content = (
 			<div className="items">
 				{isLoading ? <Loader /> : (
@@ -335,13 +341,13 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 					>
 						{({ onRowsRendered }) => {
 							const Sizer = item => (
-								<AutoSizer disableHeight={disableHeight}>
+								<AutoSizer {...autoSizerProps} className="scrollArea">
 									{({ width, height }) => {
-										const listProps: any = {};
+										let listProps: any = {};
 
 										if (disableHeight) {
+											listProps = { ...item };
 											listProps.autoHeight = true;
-											listProps.height = item.height;
 										} else {
 											listProps.height = height;
 										};
@@ -368,7 +374,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 							if (disableHeight) {
 								return (
 									<WindowScroller scrollElement={scrollContainer}>
-										{({ height }) => <Sizer height={height} />}
+										{props => <Sizer {...props} />}
 									</WindowScroller>
 								);
 							} else {
