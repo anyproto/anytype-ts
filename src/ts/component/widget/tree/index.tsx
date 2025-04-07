@@ -29,7 +29,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const top = useRef(0);
 	const branches = useRef([]);
 	const subscriptionHashes = useRef({});
-	const cache = useRef(new CellMeasurerCache());
+	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
 	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
 

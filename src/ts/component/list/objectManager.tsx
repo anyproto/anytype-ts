@@ -61,7 +61,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	const checkboxRef = useRef(new Map());
 	const timeout = useRef(0);
 	const top = useRef(0);
-	const cache = useRef(new CellMeasurerCache());
+	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: rowHeight || 64 }));
 	const [ selected, setSelected ] = useState<string[]>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const recordIds = S.Record.getRecordIds(subId, '');
@@ -404,7 +404,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 		const items = getItems();
 
 		cache.current = new CellMeasurerCache({
-			fixedWidth: true,
+			fixedHeight: true,
 			defaultHeight: rowHeight || 64,
 			keyMapper: i => (items[i] || {}).id,
 		});
