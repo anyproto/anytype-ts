@@ -47,6 +47,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const onSettings = () => {
 		menuOpen('graphSettings', '#button-header-settings', { 
 			horizontal: I.MenuDirection.Right,
+			subIds: J.Menu.graphSettings,
 			data: {
 				allowLocal: true,
 				storageKey: J.Constant.graphId.global,

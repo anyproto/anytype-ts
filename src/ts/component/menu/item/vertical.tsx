@@ -6,6 +6,7 @@ import { I, U } from 'Lib';
 class MenuItemVertical extends React.Component<I.MenuItem> {
 
 	node: any = null;
+	refSwitch: any = null;
 
 	render () {
 		const { 
@@ -131,6 +132,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			if (withSwitch) {
 				additional = (
 					<Switch 
+						ref={ref => this.refSwitch = ref}
 						value={switchValue} 
 						readonly={readonly}
 						onChange={onSwitch} 

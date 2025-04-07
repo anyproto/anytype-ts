@@ -8,6 +8,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 
 	node = null;
 	n = -1;
+	menuContext = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -83,6 +84,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 
 	componentWillUnmount () {
 		this.unbind();
+		S.Menu.closeAll(J.Menu.graphSettings);
 	};
 
 	rebind () {
@@ -99,6 +101,53 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item);
+			this.onOver(e, item);
+		};
+	};
+
+	onOver (e: any, item: any) {
+		if (!item.arrow) {
+			S.Menu.closeAll(J.Menu.graphSettings);
+			return;
+		};
+
+		const { param, id, getId, getSize } = this.props;
+		const { data, className, classNameWrap } = param;
+		const options = this.getTypeOptions();
+
+		let menuId = '';
+
+		const menuParam: any = {
+			menuKey: item.id,
+			element: `#${getId()} #item-${item.id}`,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			offsetX: getSize().width,
+			className,
+			classNameWrap,
+			onOpen: context => this.menuContext = context,
+			rebind: this.rebind,
+			parentId: id,
+			data: {
+				...data,
+			},
+		};
+
+		switch (item.id) {
+			case 'types': {
+				menuId = 'select';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					options,
+				});
+				break;
+			};
+		};
+
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(J.Menu.graphSettings, () => {
+				S.Menu.open(menuId, menuParam);
+			});
 		};
 	};
 
@@ -124,6 +173,30 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 
 		analytics.event('GraphSettings', { id, count: values[id] });
 		this.save(values);
+	};
+
+	getTypeOptions () {
+		const layouts = U.Object.getGraphSkipLayouts();
+		const values = this.getValues();
+		const onSwitch = (id: string, v: boolean) => {
+			if (v) {
+				values.filterTypes = values.filterTypes.filter(it => it != id);
+			} else {
+				values.filterTypes.push(id);
+			};
+			this.save(values);
+			this.menuContext?.ref?.updateOptions(this.getTypeOptions());
+		};
+
+		return S.Record.getTypes().
+			filter(it => !layouts.includes(it.recommendedLayout) && ![ J.Constant.typeKey.template ].includes(it.uniqueKey)).
+			map(it => ({ 
+				...it,
+				object: it, 
+				withSwitch: true,
+				switchValue: !values.filterTypes.includes(it.id),
+				onSwitch: (e, v: boolean) => onSwitch(it.id, v),
+			}));
 	};
 
 	onSwitch (id: string) {
@@ -161,8 +234,6 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		const { data } = param;
 		const { allowLocal } = data;
 		const values = this.getValues();
-		const layouts = U.Object.getGraphSkipLayouts();
-		const types = S.Record.getTypes().filter(it => !layouts.includes(it.recommendedLayout) && ![ J.Constant.typeKey.template ].includes(it.uniqueKey));
 
 		let sections: any[] = [
 			{ 
@@ -195,25 +266,18 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			sections.push({ children });
 		};
 
-		if (config.experimental && types.length) {
-			sections.push({ name: translate('menuGraphSettingsTypes'), children: types.map(it => ({ ...it, object: it, isType: true })) });
+		if (config.experimental) {
+			sections.push({ 
+				children: [
+					{ id: 'types', name: translate('menuGraphSettingsTypes'), arrow: true },
+				]
+			});
 		};
 
 		sections = sections.map(s => {
 			s.children = s.children.filter(it => it).map(c => {
-				c.withSwitch = true;
-
-				if (c.isType) {
-					c.switchValue = !values.filterTypes.includes(c.id);
-					c.onSwitch = (e, v) => {
-						if (v) {
-							values.filterTypes = values.filterTypes.filter(it => it != c.id);
-						} else {
-							values.filterTypes.push(c.id);
-						};
-						this.save(values);
-					};
-				} else {
+				if (!c.arrow) {
+					c.withSwitch = true;
 					c.switchValue = values[c.id];
 					c.onSwitch = () => this.onSwitch(c.id);
 				};

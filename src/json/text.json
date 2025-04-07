@@ -1635,7 +1635,7 @@
 	"menuGraphSettingsPreview": "Preview",
 	"menuGraphSettingsCluster": "Cluster by Type",
 	"menuGraphSettingsShowOnGraph": "Show on Graph",
-	"menuGraphSettingsTypes": "Types",
+	"menuGraphSettingsTypes": "Filter by Types",
 	"menuGraphSettingsLinks": "Links",
 	"menuGraphSettingsRelations": "Relations",
 	"menuGraphSettingsUnlinkedObjects": "Unlinked Objects",
