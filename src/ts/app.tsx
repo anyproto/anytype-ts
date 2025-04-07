@@ -135,7 +135,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 						<CSSTransition
 							key={location.key}
 							classNames="page-transition"
-							timeout={300}
+							timeout={200}
 							mountOnEnter={false}
 							unmountOnExit={false}
 						>
