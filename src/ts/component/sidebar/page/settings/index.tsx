@@ -132,7 +132,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				<div className="body">
 					<div className="list">
 						{isSpace ? (
-							<div className="head" onClick={() => U.Space.openDashboard()}>
+							<div className="head" onClick={this.onBack}>
 								<Icon className="back withBackground" />
 								<ObjectName object={space} />
 							</div>
@@ -299,6 +299,11 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		};
 
 		U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Settings });
+	};
+
+	onBack () {
+		sidebar.leftPanelSetState({ page: 'widget' });
+		U.Space.openDashboard();
 	};
 
 });

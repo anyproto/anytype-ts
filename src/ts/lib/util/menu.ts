@@ -797,7 +797,6 @@ class UtilMenu {
 		const { containerId, cid, key, onInviteRevoke } = param || {};
 		const isOwner = U.Space.isMyOwner();
 		const isLocalNetwork = U.Data.isLocalNetwork();
-
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
 		];

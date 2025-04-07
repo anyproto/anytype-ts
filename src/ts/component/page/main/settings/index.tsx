@@ -165,7 +165,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		const space = U.Space.getSpaceview();
 
 		S.Common.getRef('vault')?.setActive(space.id);
-		sidebar.leftPanelSetState({ page: 'widget' });
 	};
 
 	init () {

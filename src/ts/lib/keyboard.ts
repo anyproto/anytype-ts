@@ -336,6 +336,7 @@ class Keyboard {
 			};
 		} else {
 			const history = U.Router.history;
+			const current = U.Router.getParam(history.location.pathname);
 
 			let prev = history.entries[history.index - 1];
 
@@ -353,6 +354,10 @@ class Keyboard {
 						U.Router.go(prev.pathname, {});
 					};
 					return;
+				};
+
+				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex' ].includes(current.id))) {
+					sidebar.leftPanelSetState({ page: 'widget' });
 				};
 
 				history.goBack();

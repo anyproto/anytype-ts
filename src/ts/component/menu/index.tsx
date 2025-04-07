@@ -468,13 +468,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getBorderLeft () {
-		let ret = J.Size.menuBorder;
-
-		if (S.Common.showVault && !sidebar.data.isClosed) {
-			ret += J.Size.vault.width;
-		};
-
-		return ret;
+		return Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder;
 	};
 
 	position () {
