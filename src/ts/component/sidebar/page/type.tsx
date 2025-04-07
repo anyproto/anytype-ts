@@ -150,6 +150,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onChange (update: any) {
+		console.log('onChange', JSON.stringify(update, null, 3));
+
 		const sections = this.getSections();
 		const skipFormat = [ 'defaultTypeId' ];
 
@@ -171,6 +173,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		if (undefined !== update.recommendedLayout) {
 			this.updateLayout(update.recommendedLayout);
 		};
+
+		console.log('onChange', JSON.stringify(this.object, null, 3));
 
 		sections.forEach(it => {
 			this.updateObject(it.id);

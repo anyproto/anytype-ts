@@ -56,6 +56,9 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				onConfirm: () => {
 					const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
+					console.log(ids);
+					console.log(recommendedRelations);
+
 					onChange({ recommendedRelations: recommendedRelations.concat(ids) });
 					analytics.stackAdd('AddConflictRelation', { count: ids.length });
 				},
@@ -94,11 +97,11 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 	if (conflictIds.length) {
 		const ids = [].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
-		const cids = conflictIds.filter(it => !ids.includes(it)).map(id => S.Record.getRelationById(id)).filter(filterMapper);
+		const conflictRelations = conflictIds.filter(it => !ids.includes(it)).map(id => S.Record.getRelationById(id)).filter(filterMapper);
 
-		if (cids.length) {
+		if (conflictRelations.length) {
 			lists.push({
-				id: I.SidebarRelationList.Local, name: translate('sidebarTypeRelationFound'), data: cids, relationKey: '',
+				id: I.SidebarRelationList.Local, name: translate('sidebarTypeRelationFound'), data: conflictRelations, relationKey: '',
 				description: translate('sidebarTypeRelationLocalDescription'),
 				onInfo: () => {
 					S.Menu.open('select', {
@@ -113,7 +116,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 							onSelect: (e, option) => {
 								switch (option.id) {
 									case 'addToType': {
-										addConfirm(cids);
+										addConfirm(conflictRelations.map(it => it.id));
 										break;
 									};
 								};

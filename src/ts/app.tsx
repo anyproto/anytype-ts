@@ -126,7 +126,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 		const { location } = this.props;
 		const oldParam = U.Router.getParam(prev);
 		const newParam = U.Router.getParam(location.pathname);
-		const noTransition = (oldParam.page == newParam.page) && (oldParam.action == newParam.action);
+		const noTransition = true; //(oldParam.page == newParam.page) && (oldParam.action == newParam.action);
 
 		let content = null;
 
