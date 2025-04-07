@@ -1125,6 +1125,12 @@
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 	"popupConfirmSpaceDeleted": "The space you try to access has been deleted",
 
+	"popupConfirmInviteError101Title": "No Access to This Space",
+	"popupConfirmInviteError101Text": "The link you are using does not seem to work. Please ask the owner to share a new one with you.",
+	"popupConfirmInviteError103Title": "Oops!",
+	"popupConfirmInviteError103Text": "The space you try to access has been deleted",
+
+
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
 	"popupConfirmWelcomeButton": "Show me what I can build",
