@@ -1,6 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
+	.menu.menuGraphSettings { width: var(--menu-width-icon); }
 	.menu.menuGraphSettings {
 		.content { max-height: unset; }
 

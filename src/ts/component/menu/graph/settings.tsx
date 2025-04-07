@@ -114,6 +114,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		const { param, id, getId, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
 		const options = this.getTypeOptions();
+		const width = getSize().width;
 
 		let menuId = '';
 
@@ -122,7 +123,8 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			element: `#${getId()} #item-${item.id}`,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			offsetX: getSize().width,
+			width,
+			offsetX: width,
 			className,
 			classNameWrap,
 			onOpen: context => this.menuContext = context,
