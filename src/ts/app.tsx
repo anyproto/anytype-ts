@@ -22,7 +22,6 @@ import 'react-virtualized/styles.css';
 import 'swiper/scss';
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
-
 import 'scss/common.scss';
 
 const memoryHistory = hs.createMemoryHistory;
@@ -119,10 +118,35 @@ Sentry.setContext('info', {
 	isPackaged: isPackaged,
 });
 
+let prev = '';
+
 class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
 		const { location } = this.props;
+		const oldParam = U.Router.getParam(prev);
+		const newParam = U.Router.getParam(location.pathname);
+		const noTransition = (oldParam.page == newParam.page) && (oldParam.action == newParam.action);
+
+		let content = null;
+
+		if (noTransition) {
+			content = <Page {...this.props} isPopup={false} />;
+		} else {
+			content = (
+				<TransitionGroup component={null}>
+					<CSSTransition
+						key={location.key}
+						classNames="page-transition"
+						timeout={200}
+						mountOnEnter={true}
+						unmountOnExit={true}
+					>
+						<Page {...this.props} isPopup={false} />
+					</CSSTransition>
+				</TransitionGroup>
+			);
+		};
 
 		return (
 			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
@@ -131,20 +155,14 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListMenu key="listMenu" {...this.props} />
 
 					<SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} />
-					<TransitionGroup component={null}>
-						<CSSTransition
-							key={location.key}
-							classNames="page-transition"
-							timeout={200}
-							mountOnEnter={false}
-							unmountOnExit={false}
-						>
-							<Page {...this.props} isPopup={false} />
-						</CSSTransition>
-					</TransitionGroup>
+					{content}
 				</DragProvider>
 			</SelectionProvider>
 		);
+	};
+
+	componentDidMount (): void {
+		prev = this.props.location.pathname;
 	};
 
 };
@@ -269,11 +287,11 @@ class App extends React.Component<object, State> {
 		Renderer.on('zoom', () => {
 			const resizable = $('.resizable');
 
+			sidebar.resizePage(null, null, false);
+
 			if (resizable.length) {
 				resizable.trigger('resizeInit');
 			};
-
-			$(window).trigger('resize');
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {

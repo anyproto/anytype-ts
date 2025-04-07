@@ -238,9 +238,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.setBodyClass();
 		this.resize();
 		this.event();
-		this.unbind();
-
-		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => this.resize());
+		this.rebind();
 
 		if (!isPopup) {
 			keyboard.setMatch(match);
@@ -250,9 +248,21 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Highlight.showAll();
 	};
 
+	rebind () {
+		const { history, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
+		const key = String(history?.location?.key || '');
+
+		this.unbind();
+		$(window).on(`resize.page${namespace}${key}`, () => this.resize());
+	};
+
 	unbind () {
-		const { isPopup } = this.props;
-		$(window).off('resize.page' + (isPopup ? 'Popup' : ''));
+		const { history, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
+		const key = String(history?.location?.key || '');
+
+		$(window).off(`resize.page${namespace}${key}`);
 	};
 
 	event () {
