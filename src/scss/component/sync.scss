@@ -1,9 +1,9 @@
 @import "~scss/_mixins";
 
 @keyframes syncing {
-	0% { width: 8px; height: 8px; margin: -4px 0px 0px -4px; opacity: .4; }
-	70% { width: 28px; height: 28px; margin: -14px 0px 0px -14px; opacity: 0; }
-	100% { width: 28px; height: 28px; margin: -14px 0px 0px -14px; opacity: 0; }
+	0% { transform: scale3d(1,1,1); opacity: 0.4; }
+	70% { transform: scale3d(3.2,3.2,1); opacity: 0; }
+	100% { transform: scale3d(3.5,3.5,1); opacity: 0; }
 };
 
 .sync { 
