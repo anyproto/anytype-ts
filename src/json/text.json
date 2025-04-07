@@ -849,7 +849,7 @@
 	"popupSettingsDataManagementDataPublishDate": "Published date",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
-	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
+	"popupSettingsSpaceIndexDescriptionPlaceholder": "Describe your space",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
 	"popupSettingsSpaceIndexInfoLabel": "Encrypted & local-first",

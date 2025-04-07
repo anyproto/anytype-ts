@@ -14,7 +14,6 @@ interface State {
 const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
-	description: string = '';
 	refDescription: any = null;
 
 	state = {
@@ -135,7 +134,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						<Editable
 							classNameWrap="spaceDescription"
 							ref={ref => this.refDescription = ref}
-							placeholder={'Describe your space'}
+							placeholder={translate('popupSettingsSpaceIndexDescriptionPlaceholder')}
 							readonly={!canWrite || !isEditing}
 							onKeyUp={() => this.refDescription?.placeholderCheck()}
 						/>
@@ -267,7 +266,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		this.refName.setValue(name);
 
 		if (description) {
-			this.description = description;
 			this.refDescription?.setValue(description);
 			this.refDescription?.placeholderCheck();
 		};
@@ -432,11 +430,9 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onSave () {
-		this.description = this.refDescription?.getTextValue();
-
 		C.WorkspaceSetInfo(S.Common.space, {
-			name: this.checkName(this.refName.getValue()),
-			description: this.description,
+			name: this.checkName(this.refName?.getValue()),
+			description: this.refDescription?.getTextValue(),
 		});
 		this.setState({ isEditing: false });
 	};
@@ -456,7 +452,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	checkDescription (): boolean {
-		return !/^\r?\n$/.test(this.description)
+		return !/^\r?\n$/.test(String(this.refDescription?.getTextValue() || ''));
 	};
 
 	getButtons () {
