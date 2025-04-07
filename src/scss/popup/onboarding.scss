@@ -19,15 +19,15 @@ $elementsTransition: opacity 0.2s linear;
                 .types { height: 244px; width: 470px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 38px; }
                 .types {
                     .type {
-                        display: flex; align-items: center; gap: 8px; height: 52px; padding: 0px 16px 0px 15px;
+                        display: flex; align-items: center; gap: 8px; height: 52px; padding: 0px 16px 0px 15px; transform: scale3d(1, 1, 1);
                         background-color: rgba(255, 255, 255, 0.3); border-radius: 10px; transition: all 0.5s $easeInQuint;
                     }
                     .type {
                         .icon { width: 20px; height: 20px;  }
                         .label { color: #7580c1; font-weight: 500; }
                     }
-                    .type.hidden { opacity: 0; transform: scale(0); }
-                    .type:hover { transform: scale(1.1); background-color: rgba(255, 255, 255, 0.50); }
+                    .type.hidden { opacity: 0; transform: scale3d(0, 0, 1); }
+                    .type:hover { transform: scale3d(1.1, 1.1, 1); background-color: rgba(255, 255, 255, 0.50); }
                 }
 
                 .title { @include text-title; margin-bottom: 8px; }
