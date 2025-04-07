@@ -1169,6 +1169,9 @@
 	"popupConfirmLocalFieldsTitlePlural": "Add Properties to the Type?",
 	"popupConfirmLocalFieldsTextPlural": "These Properties will be added to the Type and will appear in all objects of this specific Type.",
 
+	"popupConfirmTypeLayoutResetTitle": "Reset layout for all objects?",
+	"popupConfirmTypeLayoutResetText": "This will reset layout type, alignment, and featured properties for all objects of this type. This action cannot be undone.<br/>Are you sure?",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1684,6 +1687,9 @@
 	"menuTypeSuggestFilterTypes": "Filter Types...",
 	"menuTypeSuggestCreateType": "Create Type",
 	"menuTypeSuggestCreateTypeFilter": "Create Type %s",
+
+	"menuTypeLayoutDescription": "Some objects have layout settings that differ from the type, including featured properties and alignment. ",
+	"menuTypeLayoutReset": "Reset to match the Type",
 
 	"menuWidgetAddWidget": "Add Widget",
 	"menuWidgetWidgetType": "Widget type",
