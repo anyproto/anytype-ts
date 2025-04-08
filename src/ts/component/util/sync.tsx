@@ -25,8 +25,6 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 	};
 
 	const onClickHandler = (e: MouseEvent) => {
-		const syncStatus = S.Auth.getSyncStatus();
-
 		if (onClick) {
 			onClick(e);
 		};

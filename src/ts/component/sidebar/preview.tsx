@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Title, Label, Checkbox, Icon, IconObject } from 'Component';
-import { I, S, U, J, Relation, translate } from 'Lib';
+import { I, S, U, J, Relation, translate, sidebar } from 'Lib';
 
 const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.Component<I.SidebarPageComponent> {
 
@@ -23,6 +23,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		super(props);
 
 		this.getWidth = this.getWidth.bind(this);
+		this.onClose = this.onClose.bind(this);
 	};
 
 	render () {
@@ -62,7 +63,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		};
 
 		return (
-			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
+			<div ref={ref => this.node = ref} className="layoutPreviewWrapper" onClick={this.onClose}>
 				<div ref={ref => this.refPreview = ref} className={cn.join(' ')}>
 					<div className="layoutHeader">
 						{!isNote ? (
@@ -117,6 +118,10 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 	componentWillUnmount (): void {
 		$(window).off('resize.sidebarPreview');
+	};
+
+	onClose () {
+		sidebar.rightPanelToggle(false, true, this.props.isPopup);
 	};
 
 	update (object: any) {
@@ -233,7 +238,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	getNodeWidth (): number {
 		const { isPopup } = this.props;
 		const container = U.Common.getPageFlexContainer(isPopup);
-		const vw = isPopup ? 0 : J.Size.vault.width;
+		const vw = sidebar.getVaultWidth();
 
 		return container.width() - J.Size.sidebar.right - vw;
 	};

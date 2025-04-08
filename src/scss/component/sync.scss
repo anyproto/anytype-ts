@@ -1,27 +1,26 @@
 @import "~scss/_mixins";
 
 @keyframes syncing {
-	0% { width: 8px; height: 8px; margin: -4px 0px 0px -4px; opacity: .4; }
-	70% { width: 28px; height: 28px; margin: -14px 0px 0px -14px; opacity: 0; }
-	100% { width: 28px; height: 28px; margin: -14px 0px 0px -14px; opacity: 0; }
+	0% { transform: scale3d(1,1,1); opacity: 0.4; }
+	70% { transform: scale3d(3.2,3.2,1); opacity: 0; }
+	100% { transform: scale3d(3.5,3.5,1); opacity: 0; }
 };
 
 .sync { 
 	height: 28px; min-width: 28px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary);
-	border-radius: 4px; gap: 0px 8px;
+	border-radius: 4px; gap: 0px 8px; justify-content: center;
 }
 .sync:hover, .sync.hover { background: var(--color-shape-highlight-medium); }
 .sync {
-	.icon { width: 8px; height: 8px; border-radius: 50%; margin-left: 10px; background-color: var(--color-control-active); }
+	.icon { width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-control-active); }
 	.icon.error { background-color: var(--color-red); display: block; }
 	.icon.synced,
 	.icon.syncing { background-color: var(--color-lime); }
 	.icon.upgrade { background-color: var(--color-yellow); }
 	.icon.syncing::before,
 	.icon.syncing::after {
-		content: ''; @include pos-abs-mid; z-index: 0; margin: -4px 0px 0px -4px;
-		display: block; width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-lime);
-		animation: syncing 1.6s ease-out infinite;
+		content: ''; @include pos-abs-mid; z-index: 0; margin: -4px 0px 0px -4px; display: block; width: 8px; height: 8px; border-radius: 50%; 
+		background-color: var(--color-lime); animation: syncing 1.6s ease-out infinite;
 	}
 	.icon.syncing::after { animation-delay: 0.3s; }
 	.name { @include text-overflow-nw; margin-right: 10px; }

@@ -676,7 +676,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	};
 
 	onKeyDown (e: any) {
-		if (!this.refFilter.isFocused()) {
+		if (!this.refFilter?.isFocused()) {
 			return;
 		};
 

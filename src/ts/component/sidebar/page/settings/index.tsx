@@ -132,7 +132,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				<div className="body">
 					<div className="list">
 						{isSpace ? (
-							<div className="head" onClick={() => U.Space.openDashboard()}>
+							<div className="head" onClick={this.onBack}>
 								<Icon className="back withBackground" />
 								<ObjectName object={space} />
 							</div>
@@ -220,9 +220,10 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
 					{ id: 'types', icon: 'type', name: U.Common.plural(10, translate('pluralObjectType')) },
 					{ id: 'relations', icon: 'relation', name: U.Common.plural(10, translate('pluralProperty')) },
-					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
 				],
 			},
+			{ isDiv: true },
+			{ id : 'bin', children: [ { id: 'archive', icon: 'bin', name: translate('commonBin') } ] },
 		];
 	};
 
@@ -257,20 +258,18 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 		sections.forEach((section, idx) => {
 			if (section.name) {
-				const item: any = { id: section.id, name: section.name, isSection: true };
-
-				if (idx == 0) {
-					item.isFirst = true;
-				};
-
-				items.push(item);
-			} else if (section.isDiv) {
+				items.push({ 
+					id: section.id, 
+					name: section.name, 
+					isSection: true, 
+					isFirst: idx === 0,
+				});
+			} else 
+			if (section.isDiv) {
 				items.push({ isDiv: true });
 			};
 
-			let children = section.children ? section.children : [];
-
-			items = items.concat(children);
+			items = items.concat(section.children ? section.children : []);
 		});
 
 		return items;
@@ -300,6 +299,11 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		};
 
 		U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Settings });
+	};
+
+	onBack () {
+		sidebar.leftPanelSetState({ page: 'widget' });
+		U.Space.openDashboard();
 	};
 
 });

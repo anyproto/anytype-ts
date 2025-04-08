@@ -200,6 +200,7 @@ export interface ButtonComponent {
 };
 
 export interface SidebarPageComponent {
+	page?: string;
 	rootId?: string;
 	isPopup?: boolean;
 	readonly?: boolean;

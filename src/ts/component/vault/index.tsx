@@ -234,6 +234,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			element: `#vault #item-${item.id}`,
 			vertical: I.MenuDirection.Center,
 			route: analytics.route.vault,
+			offsetX: 42,
 		});
 	};
 

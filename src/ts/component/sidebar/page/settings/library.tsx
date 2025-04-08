@@ -263,7 +263,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			filters,
 			sorts,
 			limit,
-			keys: J.Relation.default.concat([ 'lastModifiedDate', 'sourceObject' ]),
+			keys: J.Relation.default.concat([ 'lastUsedDate', 'sourceObject' ]),
 			noDeps: true,
 			ignoreHidden: true,
 			ignoreDeleted: true,

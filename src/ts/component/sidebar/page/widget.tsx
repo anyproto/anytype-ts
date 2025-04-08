@@ -271,21 +271,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
-				onOver: (e, context: any, item: any) => {
-					if (!item.isAdd) {
-						S.Menu.closeAll(J.Menu.widgetAdd);
-						return;
-					};
-
-					U.Menu.typeSuggest({ 
-						element: `#${menuContext.getId()} #item-${item.id}`,
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-						offsetX: menuContext.getSize().width,
-						vertical: I.MenuDirection.Center,
-						isSub: true,
-					}, { name: context.filter }, {}, analytics.route.addWidget, object => onSelect(object, true));
-				},
 				dataChange: (context: any, items: any[]) => {
 					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
@@ -296,21 +281,15 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					const lists = [];
 
 					if (fixed.length) {
-						lists.push([
-							{ name: translate('commonSystem'), isSection: true }
-						].concat(fixed));
+						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(fixed));
 					};
 
 					if (types.length) {
-						lists.push([
-							{ name: translate('commonSuggested'), isSection: true }
-						].concat(types));
+						lists.push([ { name: translate('commonSuggested'), isSection: true } ].concat(types));
 					};
 
 					if (items.length) {
-						lists.push([
-							{ name: translate('commonExistingObjects'), isSection: true }
-						].concat(items));
+						lists.push([ { name: translate('commonExistingObjects'), isSection: true } ].concat(items));
 					};
 
 					let ret = [];

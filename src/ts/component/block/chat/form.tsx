@@ -1082,6 +1082,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	updateValue (value: string) {
+		if (!this.refEditable) {
+			return;
+		};
+
 		this.refEditable.setValue(Mark.toHtml(value, this.marks));
 		this.refEditable.setRange(this.range);
 		this.refEditable.placeholderCheck();

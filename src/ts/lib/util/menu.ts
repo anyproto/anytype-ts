@@ -696,7 +696,7 @@ class UtilMenu {
 		r[I.ImportType.Markdown] = 'Markdown';
 		r[I.ImportType.Html] = 'HTML';
 		r[I.ImportType.Text] = 'TXT';
-		r[I.ImportType.Protobuf] = 'Any-Block';
+		r[I.ImportType.Protobuf] = 'Anytype';
 		r[I.ImportType.Csv] = 'CSV';
 		return r;
 	};
@@ -797,7 +797,6 @@ class UtilMenu {
 		const { containerId, cid, key, onInviteRevoke } = param || {};
 		const isOwner = U.Space.isMyOwner();
 		const isLocalNetwork = U.Data.isLocalNetwork();
-
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
 		];
@@ -1123,11 +1122,21 @@ class UtilMenu {
 		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: any, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean }, route: string, callBack?: (item: any) => void) {
 		details = details || {};
 		flags = flags || {};
 
 		let menuContext = null;
+
+		const objectFlags: I.ObjectFlag[] = [];
+
+		if (flags.selectTemplate) {
+			objectFlags.push(I.ObjectFlag.SelectTemplate);
+		};
+
+		if (flags.deleteEmpty) {
+			objectFlags.push(I.ObjectFlag.DeleteEmpty);
+		};
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
@@ -1184,7 +1193,7 @@ class UtilMenu {
 						cb(message.details, message.middleTime);
 					});
 				} else {
-					C.ObjectCreate(details, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
+					C.ObjectCreate(details, objectFlags, type?.defaultTemplateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -1254,7 +1263,7 @@ class UtilMenu {
 		};
 
 		const buttons: any[] = [
-			flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport } : null,
+			flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true } : null,
 		].filter(it => it);
 
 		const check = async () => {
@@ -1277,18 +1286,12 @@ class UtilMenu {
 				data: {
 					noStore: true,
 					onMore,
-					buttons: buttons.map(it => ({ ...it, isButton: true })),
+					buttons,
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
-						const objectFlags: I.ObjectFlag[] = [];
-
-						if (flags.deleteEmpty) {
-							objectFlags.push(I.ObjectFlag.DeleteEmpty);
-						};
-
 						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, true, (message: any) => {
 							if (message.error.code || !message.details) {
 								return;

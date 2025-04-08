@@ -42,18 +42,20 @@ const HeaderBanner: FC<Props> = ({
 				menuContext = context;
 				node.addClass('active');
 			},
-			onClose: () => {
-				node.removeClass('active');
-			},
+			onClose: () => node.removeClass('active'),
 			data: {
 				fromBanner: true,
 				withTypeSelect: false,
 				noAdd: true,
 				noTitle: true,
 				typeId: type.id,
-				templateId: sourceObject,
+				activeId: sourceObject,
+				templateId: type.defaultTemplateId,
 				previewSize: I.PreviewSize.Medium,
-				onSetDefault: id => U.Object.setDefaultTemplateId(type.id, id),
+				onSetDefault: id => {
+					S.Menu.updateData('dataviewTemplateList', { templateId: id });
+					U.Object.setDefaultTemplateId(type.id, id);
+				},
 				onSelect: item => {
 					C.ObjectApplyTemplate(object.id, item.id);
 

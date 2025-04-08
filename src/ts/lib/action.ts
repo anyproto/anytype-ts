@@ -879,6 +879,8 @@ class Action {
 			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey, format: relation.format }));
 		};
 	};
+
+
 };
 
 export default new Action();

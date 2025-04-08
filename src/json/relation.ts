@@ -128,6 +128,7 @@ export default {
 		'relationFormat',
 		'type',
 		'layout',
+		'resolvedLayout',
 		'done',
 		'fileExt',
 		'fileMimeType',

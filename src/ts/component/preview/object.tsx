@@ -341,6 +341,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	const isBookmark = U.Object.isBookmarkLayout(object.layou);
 	const cn = [ 'previewObject' , check.className, className ];
 	const withName = !U.Object.isNoteLayout(object.layout);
+	const withIcon = check.withIcon || isTask || isBookmark;
 
 	switch (size) {
 		case I.PreviewSize.Large: {
@@ -428,7 +429,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 							) : ''}
 
 							<div className="heading">
-								{check.withIcon ? <IconObject size={iconSize} object={object} /> : ''}
+								{withIcon ? <IconObject size={iconSize} object={object} /> : ''}
 								{withName ? <ObjectName object={object} /> : ''}
 								<div className="featured" />
 							</div>

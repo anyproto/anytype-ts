@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
-import { I, S, U, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
+import { I, S, U, J, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -206,7 +206,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const Component = Components[path];
 		const routeParam = { replace: true };
 		const refSidebar = sidebar.rightPanelRef(isPopup);
-		const whatsNew = Storage.get('whatsNew');
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
@@ -239,28 +238,33 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.setBodyClass();
 		this.resize();
 		this.event();
-		this.unbind();
-
-		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => this.resize());
+		this.rebind();
 
 		if (!isPopup) {
 			keyboard.setMatch(match);
-		};
-
-		if (whatsNew && !S.Popup.isOpen()) {
-			S.Popup.open('help', { data: { document: 'whatsNew' } });
-			Storage.set('whatsNew', false);
 		};
 
 		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 	};
 
-	unbind () {
-		const { isPopup } = this.props;
-		$(window).off('resize.page' + (isPopup ? 'Popup' : ''));
+	rebind () {
+		const { history, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
+		const key = String(history?.location?.key || '');
+
+		this.unbind();
+		$(window).on(`resize.page${namespace}${key}`, () => this.resize());
 	};
-	
+
+	unbind () {
+		const { history, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
+		const key = String(history?.location?.key || '');
+
+		$(window).off(`resize.page${namespace}${key}`);
+	};
+
 	event () {
 		const { page, action, id } = this.getMatchParams();
 		const params = { page, action, id: undefined };

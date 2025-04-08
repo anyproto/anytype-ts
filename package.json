@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.45.25-alpha",
+	"version": "0.45.34-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -100,6 +100,7 @@
 		"@sentry/cli": "^2.18.1",
 		"@sindresorhus/slugify": "^2.2.1",
 		"@types/emoji-mart": "^3.0.13",
+		"@types/react-transition-group": "^4.4.12",
 		"@viz-js/viz": "^3.2.4",
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
@@ -150,6 +151,7 @@
 		"react-pdf": "^6.2.2",
 		"react-router-dom": "^5.3.4",
 		"react-sortable-hoc": "^2.0.0",
+		"react-transition-group": "^4.4.5",
 		"react-virtualized": "^9.22.3",
 		"regedit": "^5.1.3",
 		"sanitize-filename": "^1.6.3",

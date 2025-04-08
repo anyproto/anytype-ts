@@ -2,7 +2,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, sidebar } from 'Lib';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage } from 'Lib';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -1129,17 +1129,21 @@ class UtilCommon {
 		const isOpen = obj.hasClass('isOpen');
 
 		if (isOpen) {
-			obj.addClass('anim').removeClass('isOpen').css({ height: 0 });
-			window.setTimeout(() => obj.removeClass('anim'), delay);
+			const height = obj.outerHeight();
+
+			obj.css({ height });
+
+			raf(() => obj.addClass('anim').css({ height: 0 }));
+			window.setTimeout(() => obj.removeClass('isOpen anim'), delay);
 		} else {
 			obj.css({ height: 'auto' });
 
 			const height = obj.outerHeight();
 
-			obj.addClass('anim isOpen').css({ height: 0 });
+			obj.css({ height: 0 }).addClass('anim');
 
 			raf(() => obj.css({ height }));
-			window.setTimeout(() => obj.removeClass('anim'), delay);
+			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen').css({ heght: 'auto' }), delay);
 		};
 	};
 
@@ -1234,6 +1238,11 @@ class UtilCommon {
 		o = Math.max(0, Math.min(list.length, o));
 
 		return bg[list[o - 1]];
+	};
+
+	showWhatsNew () {
+		S.Popup.open('help', { data: { document: 'whatsNew' } });
+		Storage.set('whatsNew', false);
 	};
 
 };

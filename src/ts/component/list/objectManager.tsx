@@ -61,7 +61,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	const checkboxRef = useRef(new Map());
 	const timeout = useRef(0);
 	const top = useRef(0);
-	const cache = useRef(new CellMeasurerCache());
+	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: rowHeight || 64 }));
 	const [ selected, setSelected ] = useState<string[]>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const recordIds = S.Record.getRecordIds(subId, '');
@@ -325,6 +325,12 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 
 		content = <EmptySearch text={textEmpty} />;
 	} else {
+		const autoSizerProps: any = {};
+
+		if (disableHeight) {
+			autoSizerProps.disableHeight = true;
+		};
+
 		content = (
 			<div className="items">
 				{isLoading ? <Loader /> : (
@@ -335,13 +341,13 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 					>
 						{({ onRowsRendered }) => {
 							const Sizer = item => (
-								<AutoSizer disableHeight={disableHeight}>
+								<AutoSizer {...autoSizerProps} className="scrollArea">
 									{({ width, height }) => {
-										const listProps: any = {};
+										let listProps: any = {};
 
 										if (disableHeight) {
+											listProps = { ...item };
 											listProps.autoHeight = true;
-											listProps.height = item.height;
 										} else {
 											listProps.height = height;
 										};
@@ -368,7 +374,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 							if (disableHeight) {
 								return (
 									<WindowScroller scrollElement={scrollContainer}>
-										{({ height }) => <Sizer height={height} />}
+										{props => <Sizer {...props} />}
 									</WindowScroller>
 								);
 							} else {
@@ -398,7 +404,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 		const items = getItems();
 
 		cache.current = new CellMeasurerCache({
-			fixedWidth: true,
+			fixedHeight: true,
 			defaultHeight: rowHeight || 64,
 			keyMapper: i => (items[i] || {}).id,
 		});

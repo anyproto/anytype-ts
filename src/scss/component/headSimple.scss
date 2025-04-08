@@ -15,6 +15,9 @@
 	&.isType, &.isRelation {
 		.side.left {
 			.titleWrap { align-items: center; }
+			.editableWrap.title {
+				.editable { @include text-overflow-nw; }
+			}
 		}
 	}
 
@@ -45,5 +48,11 @@
 	.side.right { text-align: right; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: flex-end; }
 	.side.right {
 		.button { white-space: nowrap; }
+
+		.button.resetLayout { padding: 0px; width: 28px; display: flex; align-items: center; justify-content: center; }
+		.button.resetLayout::before { content: ''; width: 20px; height: 20px; background: url('~img/icon/type/layout.svg'); flex-shrink: 0; }
+		.button.resetLayout {
+			.txt { display: none; }
+		}
 	}
 }
