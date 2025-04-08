@@ -457,13 +457,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	getButtons () {
 		const { cid, key } = this.state;
-
 		const space = U.Space.getSpaceview();
 		const isDisabled = space.spaceAccessType == I.SpaceType.Personal;
 		const tooltip = isDisabled ? translate('pageSettingsSpaceIndexEntrySpaceTooltip') : '';
 
 		return [
-			U.Space.canMyParticipantWrite() ? { id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip } : null,
+			!space.isPersonal ? { id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip } : null,
 			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
 			{ id: 'more', name: translate('commonMore'), icon: 'more' },
 		].filter(it => it);
