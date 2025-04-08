@@ -120,8 +120,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
-		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
-		let deepLink = { id: 'deepLink', icon: 'linkTo', name: translate('commonCopyDeeplink') };
+		let pageLink = { id: 'pageLink', icon: 'linkTo', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
@@ -194,7 +193,6 @@ class MenuObject extends React.Component<I.Menu> {
 
 		if (!allowedPageLink) {
 			pageLink = null;
-			deepLink = null;
 		};
 		if (!allowedArchive)		 archive = null;
 		if (!allowedLock)			 pageLock = null;
@@ -220,7 +218,7 @@ class MenuObject extends React.Component<I.Menu> {
 			remove = null;
 		};
 
-		advancedOptions.push(deepLink);
+		advancedOptions.push(pageLink);
 		advancedOptions = advancedOptions.filter(it => it);
 		if (advancedOptions.length) {
 			advanced.children = advancedOptions;
@@ -238,7 +236,7 @@ class MenuObject extends React.Component<I.Menu> {
 				{ children: [ openObject ] },
 				{ children: [ createWidget, fav, pageLock, history ] },
 				{ children: [ linkTo, addCollection, template ] },
-				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
+				{ children: [ search, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 				{ children: [ openFile, downloadFile ] },
 			]);
@@ -262,7 +260,7 @@ class MenuObject extends React.Component<I.Menu> {
 					{ children: [ createWidget, fav, pageLock ] },
 					{ children: [ linkTo, addCollection, template ] },
 					{ children: [ search, history, pageCopy, archive ] },
-					{ children: [ pageLink, pageReload ] },
+					{ children: [ pageReload ] },
 					{ children: [ print, pageExport ] },
 				]);
 			};
@@ -377,7 +375,7 @@ class MenuObject extends React.Component<I.Menu> {
 					onSelect: (e, option) => {
 						switch (option.id) {
 
-							case 'deepLink': {
+							case 'pageLink': {
 								const object = this.getObject();
 								const space = U.Space.getSpaceview();
 
@@ -518,11 +516,6 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'pageCreate': {
 				U.Object.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, [], route, message => U.Object.openAuto(message.details));
-				break;
-			};
-
-			case 'pageLink': {
-				U.Object.copyLink(object, space, 'web', '');
 				break;
 			};
 
