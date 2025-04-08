@@ -38,8 +38,6 @@
 			}
 		}
 	}
-
-
 }
 
 /* PageMainArchive */
@@ -161,6 +159,16 @@
 				.icon.invite { background: url('#{$themePath}/icon/settings/space/invite.svg'); }
 				.icon.qr { background: url('#{$themePath}/icon/settings/space/qr.svg'); }
 				.icon.more { background: url('#{$themePath}/icon/settings/space/more.svg'); }
+			}
+		}
+
+		.sections {
+			.section {
+				.sectionContent {
+					> .item {
+						.icon.widget { background-image: url('#{$themePath}/icon/settings/widget.svg'); }
+					}
+				}
 			}
 		}
 	}
