@@ -11,9 +11,9 @@
 
 		.iconWrapper {
 			display: flex; width: 320px; height: 104px; border-radius: 320px; margin: -16px auto 10px; align-items: center; justify-content: space-around;
-			background: radial-gradient(50% 50% at 50% 50%, #FFF0C8 0%, rgba(255, 240, 200, 0.00) 100%);
+			background: radial-gradient(50% 50% at 50% 50%, #fff0c8 0%, rgba(255, 240, 200, 0.00) 100%);
 		}
 
-		.icon { width: 72px; height: 72px; background-image: url('~img/logo/symbol.svg'); }
+		.icon { width: 72px; height: 72px; background-image: url('~img/logo/symbol.png'); }
 	}
 }
