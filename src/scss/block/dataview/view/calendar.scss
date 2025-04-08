@@ -35,7 +35,7 @@
 					}
 				}
 			}
-			.day.weekend { background-color: var(--color-shape-highlight-light); }
+			.day.weekend:not(.active) { background-color: var(--color-shape-highlight-light); }
 
 			.day.other {
 				.number { color: var(--color-text-tertiary); }
