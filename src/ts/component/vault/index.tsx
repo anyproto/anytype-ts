@@ -280,7 +280,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
-			offsetX: 8,
+			offsetX: 44,
 			delay,
 		});
 	};

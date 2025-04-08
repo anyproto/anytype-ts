@@ -100,8 +100,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			);
 		};
 
-		console.log(messageOrderId, messageCounter);
-
 		let title = '';
 		let text = '';
 		let icon: any = null;
