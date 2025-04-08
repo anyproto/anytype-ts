@@ -391,9 +391,8 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLabel": "Create & collaborate in spaces you own.<br/>Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
-	"authSelectLogin": "Already have a Key",
-	"authSelectSignup": "I am new here",
+	"authSelectLogin": "Log In",
+	"authSelectSignup": "Sign Up",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Enter my Vault",

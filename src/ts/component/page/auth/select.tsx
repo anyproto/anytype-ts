@@ -36,8 +36,8 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 		<div ref={nodeRef}>
 			<Header {...props} component="authIndex" />
 			<Frame>
+				<div className="star animation" />
 				<div className="logo animation" />
-				<Label className="descr animation" text={translate('authSelectLabel')} />
 
 				<div className="buttons">
 					<div className="animation">
