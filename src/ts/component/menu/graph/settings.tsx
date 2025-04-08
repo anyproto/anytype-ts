@@ -268,13 +268,11 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			sections.push({ children });
 		};
 
-		if (config.experimental) {
-			sections.push({ 
-				children: [
-					{ id: 'types', name: translate('menuGraphSettingsTypes'), arrow: true },
-				]
-			});
-		};
+		sections.push({ 
+			children: [
+				{ id: 'types', name: translate('menuGraphSettingsTypes'), arrow: true },
+			]
+		});
 
 		sections = sections.map(s => {
 			s.children = s.children.filter(it => it).map(c => {
