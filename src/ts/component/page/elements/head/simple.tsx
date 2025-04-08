@@ -195,29 +195,30 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		return (
 			<div ref={node => this.node = node} className={cn.join(' ')}>
-				<div className="side left">
-					<div className="titleWrap">
-						{!noIcon && check.withIcon ? (
-							<IconObject 
-								id={'block-icon-' + rootId} 
-								size={32} 
-								iconSize={32}
-								object={object} 
-								canEdit={canEditIcon}
-							/>
-						) : ''}
-						<Editor className="title" id="title" readonly={isType || !allowDetails} />
+				<div className="sides">
+					<div className="side left">
+						<div className="titleWrap">
+							{!noIcon && check.withIcon ? (
+								<IconObject 
+									id={'block-icon-' + rootId} 
+									size={32} 
+									iconSize={32}
+									object={object} 
+									canEdit={canEditIcon}
+								/>
+							) : ''}
+							<Editor className="title" id="title" readonly={isType || !allowDetails} />
+						</div>
 					</div>
 
-					{descr}
-					{featured}
+					{buttons.length ? (
+						<div className="side right">
+							{buttons.map((Component, i) => <Component key={i} />)}
+						</div>
+					) : ''}
 				</div>
-
-				{buttons.length ? (
-					<div className="side right">
-						{buttons.map((Component, i) => <Component key={i} />)}
-					</div>
-				) : ''}
+				{descr}
+				{featured}
 			</div>
 		);
 	};
