@@ -216,12 +216,12 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
 				].filter(it => it),
 			},
-			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
 					{ id: 'types', icon: 'type', name: U.Common.plural(10, translate('pluralObjectType')) },
 					{ id: 'relations', icon: 'relation', name: U.Common.plural(10, translate('pluralProperty')) },
 				],
 			},
+			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
 			{ isDiv: true },
 			{ id : 'bin', children: [ { id: 'archive', icon: 'bin', name: translate('commonBin') } ] },
 		];
