@@ -9,7 +9,9 @@
 		.titleWrap { align-items: start; }
 	}
 
-	&.isRelation { align-items: center; }
+	&.isRelation {
+		.sides { align-items: center; }
+	}
 	&.isType, &.isRelation {
 		.titleWrap { align-items: center; }
 		.editableWrap.title {
