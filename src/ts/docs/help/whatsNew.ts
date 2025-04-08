@@ -54,7 +54,7 @@ export default [
 	text(`The <b>Properties</b> icon lets you view, add and remove values to the properties of a specific object. `),
 	text(`The <b>Set up</b> menu allows you to manage the properties of its Type. From there you can add, remove and organize them into different sections:`),
 	bullet(`<b>Header</b> properties appear in the header part of every object of that Type.`),
-	bullet(`<b>Sidebar</b> properties are the ones you choose to show in the Properties menu by clicking the Properties icon.`),
+	bullet(`<b>Sidebar</b> properties are the ones you choose to show in the Properties panel.`),
 	bullet(`<b>Hidden</b> properties live under the ${hl('Show more')} button.`),
 	bullet(`<b>Local</b> properties: After updating to the new version or when changing an object’s Type, some properties (formerly relations) might not match the new Type’s predefined structure. Properties that were once unique to individual objects will now appear as local properties. You can either unify them by adding them to the Type or create a new Type, if you need.`),
 	text(``),
@@ -71,12 +71,12 @@ export default [
 	h3(`Type Widgets`),
 	text(`You can now add widgets based on object Types, making it easier to organize and display relevant content. We’ve also introduced <b>Automatic Widget</b> creation to help users seamlessly discover and adopt widgets, creating a more personalized and intuitive workspace.`),
 	bullet(`When a new object type (e.g., Document, Contact) is created, a dedicated widget is automatically added to the sidebar. This widget displays all objects of that Type from the space, providing quick access and better organization.`),
-	bullet(`<b>Widgets are optional</b> – you can remove any widget at any time via ${hl('Edit')} button or by right-clicking. Once removed, they won’t reappear unless manually added.`),
+	bullet(`<b>Widgets are optional</b> – you can remove any widget at any time via ${hl('Edit')} button or by right-clicking. Once removed, they won’t reappear unless manually added. Automatic widget creation can also be disabled in Settings.`),
 	img(`46/3.png`, 'c70'),
 	text(``),
 
 	h3(`Settings Update`),
-	text(`Both General and Space Settings have been updated to a full-page layout instead of a pop-up, with sections now located in the left sidebar.`),
+	text(`Both General and Space Settings have been updated to a full-page layout instead of a pop-up, with sections now located in the left sidebar. `),
 	img(`46/4.png`, 'c70'),
 	text(``),
 
@@ -96,12 +96,16 @@ export default [
 	text(`You can now choose whether your week starts on Sunday or Monday. Head to your updated settings to make the switch in the date picker.`),
 	text(``),
 
+	h3(`All Objects as a System Widget`),
+	text(`The All Objects section is now available as a system widget that can be added or removed from the sidebar. While core functionality like sorting and search remains the same, Types and Properties are now managed from your Space Settings.`),
+	text(``),
+
 	h3(`Use [[ to Link in Editor`),
 	text(`The editor now supports the ${hl('[[')} syntax for linking. This Markdown pattern works similarly to ${hl('@mention')}, allowing you to reference other objects.`),
 	text(``),
 
 	h3(`HTTP Links for Objects`),
-	text(`You can now copy an HTTP link for any object via the sharing menu by selecting ${hl('Copy Deeplink')}. Users without the Anytype app can click on these links to download the app and access the object after installation. When opened inside the App, these links directly open the object without any redirection.`),
+	text(`You can now copy an HTTP link for any object via the three-dots menu by selecting ${hl('Copy Link')}. Users without the Anytype app can click on these links to download the app and access the object after installation. When opened inside the App, these links directly open the object without any redirection.`),
 	text(``),
 
 	h3(`Web Publishing Updates`),
@@ -114,6 +118,10 @@ export default [
 
 	h3(`Drag-to-Select on Graph Page`),
 	text(`Added a drag-to-select feature to the graph page, making it easier to select multiple items at once. Now you can grab and move a bunch of objects with just a simple drag. Many thanks for the contribution to @${link('https://github.com/anyproto/anytype-ts/pull/1211', 'ShirayukiRin')}!`),
+	text(``),
+
+	h3(`Type Filters in Graph`),
+	text(`In addition to existing clustering by Type, you can now filter the Graph to display only selected object Types – helping you focus on exactly what you need.`),
 	text(``),
 
 	h3(`fa-IR Language`),
