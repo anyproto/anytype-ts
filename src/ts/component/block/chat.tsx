@@ -586,9 +586,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		C.ChatUnreadMessages(rootId, orderId, () => {
 			if (viewport.length) {
-				const { dbTimestamp } = S.Chat.getState(subId);
+				const { lastStateId } = S.Chat.getState(subId);
 
-				C.ChatReadMessages(rootId, viewport[0].orderId, viewport[viewport.length - 1].orderId, dbTimestamp);
+				C.ChatReadMessages(rootId, viewport[0].orderId, viewport[viewport.length - 1].orderId, lastStateId);
 			};
 		});
 	};
@@ -646,10 +646,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
 		const state = S.Chat.getState(subId);
-		const { messageOrderId, dbTimestamp } = state;
+		const { lastStateId } = state;
 
 		if (first && last) {
-			C.ChatReadMessages(rootId, first, last, dbTimestamp);
+			C.ChatReadMessages(rootId, first, last, lastStateId);
 		};
 
 		S.Chat.setReadStatus(subId, this.scrolledOrderIds.map(it => it.id), true);

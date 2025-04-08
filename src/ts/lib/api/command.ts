@@ -2292,13 +2292,13 @@ export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOr
 	dispatcher.request(ChatGetMessages.name, request, callBack);
 };
 
-export const ChatReadMessages = (objectId: string, afterOrderId: string, beforeOrderId: string, dbTimestamp: number, callBack?: (message: any) => void) => {
+export const ChatReadMessages = (objectId: string, afterOrderId: string, beforeOrderId: string, lastStateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.ReadMessages.Request();
 
 	request.setChatobjectid(objectId);
 	request.setBeforeorderid(beforeOrderId);
 	request.setAfterorderid(afterOrderId);
-	request.setLastdbtimestamp(dbTimestamp);
+	request.setLaststateid(lastStateId);
 
 	dispatcher.request(ChatReadMessages.name, request, callBack);
 };

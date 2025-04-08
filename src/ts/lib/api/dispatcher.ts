@@ -1010,7 +1010,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'ChatUpdateReadStatus': {
+				case 'ChatUpdateMessageReadStatus': {
 					mapped.subIds.forEach(subId => S.Chat.setReadStatus(subId, mapped.ids, mapped.isRead));
 					break;
 				};

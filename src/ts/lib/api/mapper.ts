@@ -663,7 +663,7 @@ export const Mapper = {
 		ChatState: (obj: Model.ChatState): any => {
 			return {
 				messages: Mapper.From.ChatStateUnreadMessages(obj.getMessages()),
-				dbTimestamp: obj.getDbtimestamp(),
+				lastStateId: obj.getLaststateid(),
 			};
 		},
 
@@ -1189,7 +1189,7 @@ export const Mapper = {
 			if (v == V.CHATDELETE)					 t = 'ChatDelete';
 			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
 			if (v == V.CHATSTATEUPDATE)			 	 t = 'ChatStateUpdate';
-			if (v == V.CHATUPDATEREADSTATUS)		 t = 'ChatUpdateReadStatus';
+			if (v == V.CHATUPDATEMESSAGEREADSTATUS)	 t = 'ChatUpdateMessageReadStatus';
 
 			if (v == V.SPACEAUTOWIDGETADDED)		 t = 'SpaceAutoWidgetAdded';
 
@@ -1706,7 +1706,7 @@ export const Mapper = {
 			};
 		},
 
-		ChatUpdateReadStatus: (obj: Events.Event.Chat.UpdateReadStatus) => {
+		ChatUpdateMessageReadStatus: (obj: Events.Event.Chat.UpdateMessageReadStatus) => {
 			return {
 				ids: obj.getIdsList(),
 				isRead: obj.getIsread(),
