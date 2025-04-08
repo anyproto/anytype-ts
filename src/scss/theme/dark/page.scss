@@ -124,22 +124,26 @@
 	}
 
 	.pageSettingsMembership {
-		.slide { background: var(--color-shape-tertiary) !important; }
-		.slide.c0 {
-			.illustration { background: url('#{$themePath}/icon/payment/slide0.svg'); }
-		}
-		.slide.c1 {
-			.illustration { background: url('#{$themePath}/icon/payment/slide1.svg'); }
-		}
-		.slide.c2 {
-			.illustration { background: url('#{$themePath}/icon/payment/slide2.svg'); }
-		}
-		.slide.c3 {
-			.illustration { background: url('#{$themePath}/icon/payment/slide3.svg'); }
-		}
-		.tiers {
+		.swiper {
+			.slide,
 			.tier { background: var(--color-shape-tertiary) !important; }
 		}
+
+		.swiper.featuresList {
+			.slide.c0 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide0.svg'); }
+			}
+			.slide.c1 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide1.svg'); }
+			}
+			.slide.c2 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide2.svg'); }
+			}
+			.slide.c3 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide3.svg'); }
+			}
+		}
+
 		.actionItems {
 			.icon { background-image: url('#{$themePath}/icon/payment/hyperlink.svg'); }
 		}
