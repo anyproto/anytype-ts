@@ -31,6 +31,7 @@ export enum BlockType {
 	TableOfContents		 = 'tableOfContents',
 	Widget		 		 = 'widget',
 	Chat				 = 'chat',
+	CodePlayground       = 'codePlayground'
 };
 
 export enum BlockPosition {

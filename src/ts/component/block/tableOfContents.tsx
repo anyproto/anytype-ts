@@ -26,6 +26,7 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 
 	const getTree = () => {
 		const blocks = S.Block.unwrapTree([ S.Block.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
+		console.log('blocks', blocks)
 		const list: any[] = [];
 
 		let hasH1 = false;

@@ -27,6 +27,7 @@ import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
 
 import BlockEmbed from './embed';
+import CodePlayground from './codePlayground';
 
 interface Props extends I.BlockComponent {
 	css?: any;
@@ -127,7 +128,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		if (bgColor && !block.isLink() && !block.isBookmark()) {
 			cd.push(`bgColor bgColor-${bgColor}`);
 		};
-
+		console.log('hello', type)
 		switch (type) {
 			case I.BlockType.Text: {
 				canDropMiddle = canDrop && block.canHaveChildren();
@@ -328,7 +329,11 @@ const Block = observer(class Block extends React.Component<Props> {
 			case I.BlockType.TableOfContents: {
 				blockComponent = <BlockTableOfContents key={key} ref={setRef} {...this.props} />;
 				break;
-			};
+			}
+
+			case I.BlockType.CodePlayground: {
+				blockComponent = <CodePlayground key={key} ref={setRef} {...this.props} />;
+			}
 		};
 
 		let object = null;
