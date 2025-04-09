@@ -134,6 +134,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 								<Filter
 									ref={ref => this.refFilter = ref}
 									icon="search"
+									className="outlined"
 									placeholder={translate('commonSearch')}
 									onChange={this.onFilterChange}
 									onClear={this.onFilterClear}

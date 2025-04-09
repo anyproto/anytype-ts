@@ -115,14 +115,7 @@
         .filterWrapper {
 			.side.left { flex-grow: 1; }
 			.side.right { flex-shrink: 0; }
-
-            .filter { padding: 0px 4px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
-            .filter {
-                .inner { height: 26px; gap: 0px; }
-                .line { display: none; }
-                .icon.search { background-size: 13px; }
-                .icon.clear { margin-left: 8px; }
-            }
+            .filter { padding: 0px; }
         }
     }
 }
