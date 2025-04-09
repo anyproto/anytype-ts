@@ -261,12 +261,16 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	setName () {
-		const { name, description } = U.Space.getSpaceview();
+		const space = U.Space.getSpaceview();
 
+		let name = space.name;
+		if (name == translate('defaultNamePage')) {
+			name = '';
+		};
 		this.refName.setValue(name);
 
-		if (description) {
-			this.refDescription?.setValue(description);
+		if (space.description) {
+			this.refDescription?.setValue(space.description);
 			this.refDescription?.placeholderCheck();
 		};
 	};
