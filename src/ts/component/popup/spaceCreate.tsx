@@ -74,6 +74,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 				return;
 			};
 
+			const startingId = message.startingId;
+
 			C.WorkspaceSetInfo(message.objectId, details, () => {
 				if (message.error.code) {
 					setError(message.error.description);
@@ -90,6 +92,13 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 						if (withImport) {
 							close(() => U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings }));
+						} else 
+						if (startingId) {
+							U.Object.getById(startingId, {}, (object: any) => {
+								if (object) {
+									U.Object.openRoute(object);
+								};
+							});
 						} else {
 							U.Space.openDashboard({ replace: true });
 						};
