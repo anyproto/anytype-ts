@@ -283,7 +283,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		};
 
 		let unlinkCommand = null;
-
 		if (isType) {
 			unlinkCommand = (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 				U.Object.typeRelationUnlink(object.id, relation.id, onChange);
@@ -298,7 +297,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				...data,
 				relationId: relation.id,
 				unlinkCommand,
-				noUnlink,
 			}
 		});
 	};

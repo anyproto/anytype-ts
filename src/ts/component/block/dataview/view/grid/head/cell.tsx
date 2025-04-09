@@ -114,7 +114,6 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 					relationId: relation.id,
 					extendedOptions: true,
 					unlinkCommand,
-					noUnlink,
 					addCommand: (rootId: string, blockId: string, relation: any) => {
 						Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, relation._index_);
 					},
