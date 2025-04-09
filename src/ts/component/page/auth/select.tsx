@@ -35,8 +35,9 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 	return (
 		<div ref={nodeRef}>
 			<Header {...props} component="authIndex" />
+			
+			<div className="star animation" />
 			<Frame>
-				<div className="star animation" />
 				<div className="logo animation" />
 
 				<div className="buttons">
