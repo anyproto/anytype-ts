@@ -326,7 +326,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				id: 'system', name: systemLabel,
 				children: records.filter(it => storeIds.includes(it.sourceObject)),
 			},
-		];
+		].filter(it => it.children.length);
 	};
 
 	getItems () {
