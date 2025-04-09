@@ -1036,7 +1036,7 @@ class UtilData {
 			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
-			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
 		];
 	};
 

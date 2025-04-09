@@ -153,7 +153,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const node = $(this.node);
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
 		];
 
 		S.Menu.open('searchObject', {

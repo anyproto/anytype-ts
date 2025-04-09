@@ -102,8 +102,9 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			case 'existing': {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
+					withPlural: true,
 					filters: [
-						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getLayoutsForTypeSelection() },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: (el: any) => {
