@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, U, J, translate, Action, analytics } from 'Lib';
+import { I, U, J, translate, Action, analytics, sidebar } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PageSettingsComponent {
@@ -50,6 +50,7 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 			Action.import(item.format, J.Constant.fileExtension.import[item.format]);
 
 			U.Space.openDashboard();
+			sidebar.leftPanelSetState({ page: 'widget' });
 		} else {
 			onPage(U.Common.toCamelCase('import-' + item.id));
 		};
