@@ -1145,7 +1145,15 @@ class UtilData {
 
 					this.onInfo(message.account.info);
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, callBack);
+					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
+						if (message.startingId) {
+							S.Auth.startingId = message.startingId;
+						};
+
+						if (callBack) {
+							callBack();
+						};
+					});
 
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });

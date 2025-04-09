@@ -61,7 +61,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		const details = {
 			name,
 			iconOption,
-			spaceDashboardId: I.HomePredefinedId.Last,
 		};
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');

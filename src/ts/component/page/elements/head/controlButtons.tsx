@@ -39,8 +39,6 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			return null;
 		};
 
-		console.log('ROOT', root);
-
 		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
 		const checkType = S.Block.checkBlockTypeExists(rootId);

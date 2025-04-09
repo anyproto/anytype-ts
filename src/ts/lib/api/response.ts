@@ -486,7 +486,7 @@ export const TemplateCreateFromObject = (response: Rpc.Template.CreateFromObject
 export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
 	return {
 		objectId: response.getSpaceid(),
-		//startingId: response.getStartingobjectid(),
+		startingId: response.getStartingobjectid(),
 	};
 };
 
@@ -659,5 +659,11 @@ export const PublishingResolveUri = (response: Rpc.Publishing.ResolveUri.Respons
 export const PublishingGetStatus = (response: Rpc.Publishing.GetStatus.Response) => {
 	return {
 		state: response.hasPublish() ? Mapper.From.PublishState(response.getPublish()) : null,
+	};
+};
+
+export const ObjectImportUseCase = (response: Rpc.Object.ImportUseCase.Response) => {
+	return {
+		startingId: response.getStartingobjectid(),
 	};
 };

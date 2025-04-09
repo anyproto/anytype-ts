@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { Frame, Label, Button, Header, Footer, Error } from 'Component';
+import { Frame, Button, Header, Footer, Error } from 'Component';
 import { I, U, S, translate, Animation, analytics } from 'Lib';
 
 const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
