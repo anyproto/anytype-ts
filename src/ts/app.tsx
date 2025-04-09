@@ -16,7 +16,6 @@ require('pdfjs-dist/build/pdf.worker.entry.js');
 
 configure({ enforceActions: 'never' });
 
-
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
