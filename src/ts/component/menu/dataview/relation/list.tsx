@@ -232,7 +232,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const object = S.Detail.get(rootId, rootId);
-		const isType = U.Object.isTypeLayout(object.layout);
 
 		S.Menu.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
@@ -258,23 +257,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 						};
 					};
 
-					if (isType) {
-						const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).concat(relation.id));
-
-						C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
-							if (message.error.code) {
-								return;
-							};
-
-							S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
-							C.BlockDataviewRelationSet(rootId, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(rootId)), () => {
-								const list = Dataview.viewGetRelations(rootId, blockId, view);
-								Dataview.viewRelationAdd(rootId, blockId, relation.relationKey, list.length, view);
-							});
-						});
-					} else {
-						Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), cb);
-					};
+					Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, relations.length, cb);
 				},
 			}
 		});
@@ -300,11 +283,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		};
 
 		let unlinkCommand = null;
-		let noUnlink = false;
-
-		if ([ 'name', 'description' ].includes(relation.relationKey)) {
-			noUnlink = true;
-		};
 
 		if (isType) {
 			unlinkCommand = (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

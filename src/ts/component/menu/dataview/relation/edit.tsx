@@ -219,6 +219,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const object = S.Detail.get(rootId, rootId);
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const isName = relation && (relation.relationKey == 'name');
+		const isDescription = relation && (relation.relationKey == 'description');
 		const canFilter = !isFile;
 		const canSort = !isFile;
 		const canHide = !isName;
@@ -239,7 +240,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		let canDuplicate = true;
 		let canDelete = true;
-		let canUnlink = !noUnlink;
+		let canUnlink = !noUnlink && !isName;
+
+		if (isType && isDescription) {
+			canUnlink = false;
+		};
 
 		if (relation) {
 			const isAllowedRelation = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
@@ -435,6 +440,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			return;
 		};
 
+		const object = S.Detail.get(rootId, rootId);
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const idx = view.relations.findIndex(it => it && (it.relationKey == relation.relationKey));
 
@@ -524,14 +530,18 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						ref: 'dataview',
 						skipKeys: relations.map(it => it.relationKey),
 						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-							Dataview.relationAdd(rootId, blockId, relation.relationKey, Math.max(0, idx + item.dir), view, (message: any) => {
+							const index = Math.max(0, idx + item.dir);
+
+							const cb = (message: any) => {
 								S.Menu.closeAll([ this.props.id, 'relationSuggest' ]);
 								loadData(view.id, 0);
 
 								if (onChange) {
 									onChange(message);
 								};
-							});
+							};
+
+							Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, index, cb);
 						},
 					}
 				});

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { SortableElement } from 'react-sortable-hoc';
-import { I, S, J, U, keyboard, Relation, Dataview } from 'Lib';
+import { I, S, J, U, C, keyboard, Relation, Dataview } from 'Lib';
 import Handle from './handle';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
@@ -90,6 +90,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		const obj = $(element);
 		const object = S.Detail.get(rootId, rootId);
 		const isType = U.Object.isTypeLayout(object.layout);
+		const view = getView();
 
 		let unlinkCommand = null;
 		if (isType) {
@@ -112,8 +113,10 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 					blockId: block.id,
 					relationId: relation.id,
 					extendedOptions: true,
+					unlinkCommand,
+					noUnlink,
 					addCommand: (rootId: string, blockId: string, relation: any) => {
-						Dataview.relationAdd(rootId, blockId, relation.relationKey, relation._index_, getView());
+						Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, relation._index_);
 					},
 				}
 			});
