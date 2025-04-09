@@ -20,7 +20,9 @@ const EDITORS = [
 	{ relationKey: 'description', blockId: 'description' },
 ];
 
-const HeadSimple = observer(class Controls extends React.Component<Props> {
+const SUB_ID_CHECK = 'headSimple-check';
+
+const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 	
 	_isMounted = false;
 	refEditable: any = {};
@@ -53,6 +55,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const cn = [ 'headSimple', check.className ];
 		const canEditIcon = allowDetails && !isRelation && !isType;
 		const isOwner = U.Space.isMyOwner();
+		const total = S.Record.getMeta(SUB_ID_CHECK, '').total;
 
 		if (!allowDetails) {
 			cn.push('isReadonly');
@@ -115,7 +118,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					const isTemplate = U.Object.isTemplate(object.id);
 					const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 
-					if (isOwner && !check.forceLayoutFromType) {
+					if (isOwner && total) {
 						buttonLayout = (
 							<Button
 								id="button-layout"
@@ -226,6 +229,21 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
+
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
+		const isType = U.Object.isTypeLayout(object.layout);
+
+		if (isType) {
+			U.Data.searchSubscribe({
+				subId: SUB_ID_CHECK,
+				filters: [
+					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: object.id },
+				],
+				keys: [ 'id' ],
+				limit: 1,
+			});
+		};
 	};
 
 	componentDidUpdate () {
