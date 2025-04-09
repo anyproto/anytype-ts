@@ -724,8 +724,11 @@ class UtilData {
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
-			{ relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
 		];
+
+		if (relationKey && ids.length) {
+			filters.push({ relationKey: relationKey, condition: I.FilterCondition.In, value: ids });
+		};
 
 		this.search({
 			filters,
