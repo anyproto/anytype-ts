@@ -624,17 +624,17 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		head = (
 			<div className="head" onClick={onClickHandler}>
-				<div className="side left">
-					{back}
-					<div className="clickable">
-						{collapse}
-						{icon}
-						<ObjectName object={object} withPlural={true} />
-						{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
+				<div className="sides">
+					<div className="side left">
+						{back}
+						<div className="clickable">
+							{collapse}
+							{icon}
+							<ObjectName object={object} withPlural={true} />
+							{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
+						</div>
 					</div>
-				</div>
-				<div className="side right">
-					{buttons}
+					<div className="side right">{buttons}</div>
 				</div>
 			</div>
 		);

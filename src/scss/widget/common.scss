@@ -5,16 +5,21 @@
 .widget {
 	.ReactVirtualized__List { overscroll-behavior: none; }
 
-	.head { 
-		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 10px 16px 8px 12px;
-	}
+	.head { padding: 10px 16px 8px 10px; }
 	.head {
-		.side.left { flex-grow: 1; display: flex; flex-direction: row; align-items: center; gap: 0px 4px; overflow: hidden; }
+		.sides { width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 2px 4px 2px 6px; }
+		.side.left { flex-grow: 1; display: flex; flex-direction: row; align-items: center; gap: 0px 4px; overflow: hidden; height: 28px; }
 		.side.right { flex-shrink: 0; }	
+
+		.sides::after { 
+			opacity: 0; content: ''; width: 100%; height: 100%; left: 0px; top: 0px; border-radius: 6px; z-index: 1;
+			pointer-events: none; position: absolute; transition: opacity $transitionCommon; background: var(--color-shape-highlight-medium);
+		}
+		.sides:hover::after { opacity: 1; }
 
 		.clickable { 
 			@include text-paragraph; font-weight: 600; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; position: relative; 
-			overflow: hidden; padding: 2px 4px;
+			overflow: hidden;
 		}
 		.clickable {
 			.iconObject, .icon { flex-shrink: 0; }
@@ -22,12 +27,7 @@
 			.name { @include text-overflow-nw; }
 			.count { color: var(--color-text-secondary); }
 		}
-		.clickable::after { 
-			opacity: 0; content: ''; width: 100%; height: 100%; left: 0px; top: 0px; border-radius: 6px; z-index: 1;
-			pointer-events: none; position: absolute; transition: opacity $transitionCommon; background: var(--color-shape-highlight-medium);
-		}
 		.clickable:hover {
-			&::after { opacity: 1; }
 			.iconWrap.collapse { display: flex; }
 			.headerIcon { display: none; }
 		}
@@ -107,7 +107,7 @@
 	.head::before { top: 18px; }
 	.head {
 		.headerIcon { display: block !important; }
-		.clickable::after { display: none; }
+		.sides::after { display: none; }
 	}
 }
 
