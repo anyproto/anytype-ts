@@ -5,7 +5,7 @@
 .widget {
 	.ReactVirtualized__List { overscroll-behavior: none; }
 
-	.head { padding: 10px 16px 8px 10px; }
+	.head { padding: 8px; }
 	.head {
 		.sides { width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 2px 4px 2px 6px; }
 		.side.left { flex-grow: 1; display: flex; flex-direction: row; align-items: center; gap: 0px 4px; overflow: hidden; height: 28px; }
@@ -117,7 +117,6 @@
 }
 
 .widget.widgetLink {
-	.head { padding-bottom: 10px; }
 	.headerIcon { display: block !important; }
 	.iconWrap.collapse { display: none !important; }
 }
