@@ -1,3 +1,4 @@
+[![Anytype Logo](https://github.com/anyproto/anytype-ts/blob/main/electron/img/icons/64x64.png)](https://anytype.io)
 # Anytype
 Official Anytype client for MacOS, Linux, and Windows.
 
