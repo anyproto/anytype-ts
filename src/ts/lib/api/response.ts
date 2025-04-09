@@ -486,7 +486,7 @@ export const TemplateCreateFromObject = (response: Rpc.Template.CreateFromObject
 export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
 	return {
 		objectId: response.getSpaceid(),
-		startingId: response.getStartingobjectid(),
+		//startingId: response.getStartingobjectid(),
 	};
 };
 
