@@ -466,7 +466,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const tooltip = isDisabled ? translate('pageSettingsSpaceIndexEntrySpaceTooltip') : '';
 
 		return [
-			!space.isPersonal ? { id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip } : null,
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip },
 			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
 			{ id: 'more', name: translate('commonMore'), icon: 'more' },
 		].filter(it => it);
