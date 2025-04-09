@@ -1995,7 +1995,7 @@
 	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
 	"sidebarRelationLocal": "Local",
-	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add to the type to use in all objects, or remove",
+	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add them to the type to use in all objects, or remove",
 	"sidebarTypeRelationLocalDescription": "These properties exist in some objects but aren’t part of the Type. Add them to make them appear in all objects of this Type.",
 
 	"sidebarRelationLocalAddToType": "Add to the Type",
