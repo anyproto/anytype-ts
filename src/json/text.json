@@ -1687,7 +1687,7 @@
 	"menuTypeSuggestCreateType": "Create Type",
 	"menuTypeSuggestCreateTypeFilter": "Create Type %s",
 
-	"menuTypeLayoutDescription": "Some objects have layout settings that differ from the type, including featured properties and alignment. ",
+	"menuTypeLayoutDescription": "Objects may have layout settings that differ from the type, including featured properties and alignment. You can make the layout identical for all objects of this Type.",
 	"menuTypeLayoutReset": "Reset to match the Type",
 
 	"menuWidgetAddWidget": "Add Widget",

@@ -467,6 +467,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 					{
 						name: translate('menuTypeLayoutDescription'),
 						children: [ 
+							{ isDiv: true },
 							{ id: 'reset', icon: 'reset', name: translate('menuTypeLayoutReset') },
 						]
 					}
