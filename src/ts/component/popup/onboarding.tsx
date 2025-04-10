@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, U, S, translate } from 'Lib';
+import { I, U, S, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Navigation } from 'swiper/modules';
 
@@ -34,6 +34,15 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		{ id: 'audio', name: translate('onboardingPrimitivesTypesAudio'), icon: 'musical-notes' }
 	];
 
+	const onStepChange = (idx: number, callBack?: () => void) => {
+		setStep(idx);
+		if (callBack) {
+			callBack();
+		};
+
+		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 1 });
+	};
+
 	const initTypes = () => {
 		const wrapper = $(nodeRef.current).find('.step0');
 		const typeIds = types.map(it => it.id);
@@ -56,13 +65,20 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	const initGallery = () => {
 		const wrapper = $(nodeRef.current).find('.step1');
 
-		setStep(1);
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => wrapper.removeClass('init'), 600);
 	};
 
+	const onSlideChange = () => {
+		const idx = swiperControl?.activeIndex || 0;
+
+		setActiveSlide(idx);
+
+		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 2 });
+	};
+
 	useEffect(() => {
-		initTypes();
+		onStepChange(0, initTypes);
 
 		return () => {
 			window.clearInterval(interval.current);
@@ -88,11 +104,11 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 				<Title text={translate('onboardingPrimitivesTitle')} />
 				<Label text={translate('onboardingPrimitivesDescription')} />
-				<Button onClick={initGallery} text={translate('onboardingPrimitivesButton')} className="c42" />
+				<Button onClick={() => onStepChange(1, initGallery)} text={translate('onboardingPrimitivesButton')} className="c42" />
 			</div>
 
 			<div className="step1 init">
-				{!activeSlide ? <Icon className="slideBack" onClick={() => setStep(0)} /> : ''}
+				{!activeSlide ? <Icon className="slideBack" onClick={() => onStepChange(0)} /> : ''}
 				<div className="textWrapper">
 					{Array(SLIDE_COUNT).fill(null).map((_, idx: number) => (
 						<div key={idx} className={[ 'text', `text${idx}`, idx != activeSlide ? 'hidden' : '' ].join(' ')}>
@@ -114,7 +130,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 					keyboard={{ enabled: true }}
 					navigation={true}
 					modules={[ Keyboard, Navigation ]}
-					onRealIndexChange={() => setActiveSlide(swiperControl?.activeIndex)}
+					onRealIndexChange={onSlideChange}
 				>
 					{Array(SLIDE_COUNT).fill(null).map((_, idx: number) => (
 						<SwiperSlide key={idx}>
