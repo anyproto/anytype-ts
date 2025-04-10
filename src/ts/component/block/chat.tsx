@@ -30,7 +30,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	timeoutScroll = 0;
 	timeoutScrollStop = 0;
 	top = 0;
-	firstReadOrderId = '';
+	firstUnreadOrderId = '';
 	scrolledItems = [];
 	state = {
 		isLoading: false,
@@ -64,7 +64,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const sections = this.getSections();
 		const subId = this.getSubId();
 		const hasScroll = this.hasScroll();
-		const { messageOrderId } = S.Chat.getState(subId);
 
 		const Section = (item: any) => {
 			const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
@@ -85,7 +84,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							rootId={rootId}
 							blockId={blockId}
 							subId={subId}
-							isNew={item.orderId == messageOrderId}
+							isNew={item.orderId == this.firstUnreadOrderId}
 							scrollToBottom={this.scrollToBottomCheck}
 							onContextMenu={e => this.onContextMenu(e, item)}
 							onMore={e => this.onContextMenu(e, item, true)}
@@ -148,6 +147,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const { messageOrderId } = S.Chat.getState(subId);
 
 			if (messageOrderId) {
+				this.firstUnreadOrderId = messageOrderId;
+
 				this.loadMessagesByOrderId(messageOrderId, () => {
 					this.setState({ isLoading: false });
 				});
@@ -511,7 +512,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onStateUpdate () {
-		this.refForm?.forceUpdate();
+		const { messageOrderId, messageCounter } = S.Chat.getState(this.getSubId());
+
+		if (!this.firstUnreadOrderId && messageCounter) {
+			this.firstUnreadOrderId = messageOrderId;
+		};
 	};
 
 	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
@@ -565,7 +570,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						};
 
 						case 'unread': {
-							this.onUndead(item.orderId);
+							this.onUnread(item.orderId);
 							break;
 						};
 					};
@@ -582,7 +587,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		S.Menu.open('select', menuParam);
 	};
 
-	onUndead (orderId: string) {
+	onUnread (orderId: string) {
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
 		const viewport = this.getMessagesInViewport();
@@ -697,9 +702,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToMessage (id: string) {
-		if (!this.hasScroll()) {
-			this.scrollToBottom();
-		};
 		if (!id) {
 			return;
 		};

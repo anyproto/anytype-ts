@@ -27,7 +27,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	render () {
-		const { rootId, id, readonly, subId, scrollToBottom, onContextMenu, onMore, onReplyEdit } = this.props;
+		const { rootId, id, isNew, readonly, subId, scrollToBottom, onContextMenu, onMore, onReplyEdit } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(subId, id);
@@ -68,7 +68,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		if (isLast) {
 			cn.push('isLast');
 		};
-		if (!isRead && !isSelf) {
+		if (isNew && !isSelf) {
 			cn.push('isNew');
 		};
 		if (text) {
@@ -189,7 +189,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 					) : ''}
 				</div>
 
-				{!isRead ? (
+				{isNew ? (
 					<div className="newMessages">
 						<Label text={translate('blockChatNewMessages')} />
 					</div>

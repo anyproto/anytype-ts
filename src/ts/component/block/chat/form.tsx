@@ -88,8 +88,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { attachments, charCounter } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
-		const { messageOrderId } = S.Chat.getState(subId);
-		const unreadCounter = S.Chat.getUnreadCounter(subId);
+		const { messageOrderId, messageCounter } = S.Chat.getState(subId);
 		const messagesInViewport = getMessagesInViewport();
 		const isBottom = getIsBottom();
 
@@ -136,7 +135,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		let btnDirection = '';
-		if (messagesInViewport.length && (messagesInViewport[0].orderId < messageOrderId)) {
+		if (messagesInViewport.length && (messagesInViewport[0].orderId > messageOrderId)) {
 			btnDirection = 'up';
 		};
 
@@ -148,14 +147,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			>
 
 				<div className="navigation">
-					{!isBottom || unreadCounter ? (
+					{!isBottom || messageCounter ? (
 						<div className={[ 'btn', btnDirection ].join(' ')} onClick={this.onNavigationClick}>
 							<div className="bg" />
 							<Icon className="arrow" />
 
-							{unreadCounter ? (
+							{messageCounter ? (
 								<div className="counter">
-									<Label text={String(unreadCounter)} />
+									<Label text={String(messageCounter)} />
 								</div>
 							) : ''}
 						</div>
@@ -858,10 +857,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onNavigationClick () {
 		const { subId, loadMessagesByOrderId, getMessages, scrollToMessage, scrollToBottom } = this.props;
-		const { messageOrderId } = S.Chat.getState(subId);
-		const unreadCounter = S.Chat.getUnreadCounter(subId);
+		const { messageOrderId, messageCounter } = S.Chat.getState(subId);
 
-		if (messageOrderId && unreadCounter) {
+		if (messageOrderId && messageCounter) {
 			const messages = getMessages();
 			const loaded = messages.find(it => it.orderId == messageOrderId);
 

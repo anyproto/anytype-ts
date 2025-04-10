@@ -107,7 +107,13 @@ class ChatStore {
 		const map = this.stateMap.get(subId);
 
 		if (map) {
-			set(map, state);
+			const { messages, lastStateId } = state;
+
+			set(map, {
+				messageOrderId: messages.orderId,
+				messageCounter: messages.counter,
+				lastStateId,
+			});
 		} else {
 			this.stateMap.set(subId, this.createState(state));
 		};
