@@ -606,6 +606,7 @@ export const DeviceList = (response: Rpc.Device.List.Response) => {
 export const ChatGetMessages = (response: Rpc.Chat.GetMessages.Response) => {
 	return {
 		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
+		state: Mapper.From.ChatState(response.getChatstate()),
 	};
 };
 
@@ -618,6 +619,7 @@ export const ChatGetMessagesByIds = (response: Rpc.Chat.GetMessagesByIds.Respons
 export const ChatSubscribeLastMessages = (response: Rpc.Chat.SubscribeLastMessages.Response) => {
 	return {
 		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
+		state: Mapper.From.ChatState(response.getChatstate()),
 	};
 };
 

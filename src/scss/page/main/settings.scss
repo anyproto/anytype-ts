@@ -208,6 +208,9 @@
                     > .item {
 						.icon { flex-shrink: 0; width: 20px; height: 20px; }
 						.icon.widget { background-image: url('~img/icon/settings/widget.svg'); }
+						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+                        .icon.arrow { width: 6px; height: 10px; background-image: url('~img/icon/popup/settings/forward.svg'); }
+                        .icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
 
                         .sides { display: flex; justify-content: space-between; gap: 0px 16px; }
                         .sides:not(.alignTop) { align-items: center; }
@@ -224,10 +227,6 @@
                         .button {
                             .txt { @include text-overflow-nw; line-height: unset; }
                         }
-
-                        .icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
-                        .icon.arrow { width: 6px; height: 10px; background-image: url('~img/icon/popup/settings/forward.svg'); }
-                        .icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
                     }
                 }
             }

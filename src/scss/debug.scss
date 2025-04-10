@@ -11,6 +11,10 @@ html.debug {
 		.block.blockLayout.layoutColumn { border-color: rgba(0,0,255,0.1); }
 		.block.blockLayout.layoutDiv { border-width: 2px; border-color: rgba(0,255,0,0.3); padding: 2px; }
 
+		.block.blockChat {
+			.message.isUnread { background: rgba(0,0,255,0.05); }
+		}
+
 		.block.blockFeatured {
 			.cellContent { background: rgba(0,0,255,0.05); }
 		}

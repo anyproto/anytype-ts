@@ -2280,30 +2280,53 @@ export const ChatDeleteMessage = (objectId: string, messageId: string, callBack?
 
 };
 
-export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOrderId: string, limit: number, callBack?: (message: any) => void) => {
+export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOrderId: string, limit: number, includeBoundary: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.GetMessages.Request();
 
 	request.setChatobjectid(objectId);
 	request.setBeforeorderid(beforeOrderId);
 	request.setAfterorderid(afterOrderId);
 	request.setLimit(limit);
+	request.setIncludeboundary(includeBoundary);
 
 	dispatcher.request(ChatGetMessages.name, request, callBack);
 };
 
-export const ChatSubscribeLastMessages = (objectId: string, limit: number, callBack?: (message: any) => void) => {
+export const ChatReadMessages = (objectId: string, afterOrderId: string, beforeOrderId: string, lastStateId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.ReadMessages.Request();
+
+	request.setChatobjectid(objectId);
+	request.setBeforeorderid(beforeOrderId);
+	request.setAfterorderid(afterOrderId);
+	request.setLaststateid(lastStateId);
+
+	dispatcher.request(ChatReadMessages.name, request, callBack);
+};
+
+export const ChatUnreadMessages = (objectId: string, afterOrderId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.Unread.Request();
+
+	request.setChatobjectid(objectId);
+	request.setAfterorderid(afterOrderId);
+
+	dispatcher.request(ChatUnreadMessages.name, request, callBack);
+};
+
+export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.SubscribeLastMessages.Request();
 
 	request.setChatobjectid(objectId);
 	request.setLimit(limit);
+	request.setSubid(subId);
 
 	dispatcher.request(ChatSubscribeLastMessages.name, request, callBack);
 };
 
-export const ChatUnsubscribe = (objectId: string, callBack?: (message: any) => void) => {
+export const ChatUnsubscribe = (objectId: string, subId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.Unsubscribe.Request();
 
 	request.setChatobjectid(objectId);
+	request.setSubid(subId);
 
 	dispatcher.request(ChatUnsubscribe.name, request, callBack);
 };

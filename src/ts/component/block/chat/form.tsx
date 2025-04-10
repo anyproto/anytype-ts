@@ -3,7 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable, Icon, IconObject, Loader } from 'Component';
+import { Editable, Icon, IconObject, Label, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
@@ -16,13 +16,17 @@ interface Props extends I.BlockComponent {
 	subId: string;
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
+	loadMessagesByOrderId: (orderId: string) => void;
 	getMessages: () => I.ChatMessage[];
+	getMessagesInViewport: () => any[];
+	getIsBottom: () => boolean;
 	getReplyContent: (message: any) => any;
 };
 
 interface State {
 	attachments: any[];
 	charCounter: number;
+	isBottom: boolean;
 };
 
 const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
@@ -39,10 +43,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	editingId: string = '';
 	replyingId: string = '';
 	swiper = null;
-	speedLimit = { last: 0, counter: 0 }
+	speedLimit = { last: 0, counter: 0 };
 	state = {
 		attachments: [],
 		charCounter: 0,
+		isBottom: false,
 	};
 
 	constructor (props: Props) {
@@ -70,6 +75,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onReply = this.onReply.bind(this);
 		this.onReplyClear = this.onReplyClear.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
+		this.onSwiper = this.onSwiper.bind(this);
+		this.onNavigationClick = this.onNavigationClick.bind(this);
 		this.addAttachments = this.addAttachments.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
 		this.caretMenuParam = this.caretMenuParam.bind(this);
@@ -79,10 +86,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, readonly, getReplyContent } = this.props;
-		const { attachments, charCounter } = this.state;
+		const { rootId, subId, readonly, getReplyContent, getMessagesInViewport } = this.props;
+		const { attachments, charCounter, isBottom } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
+		const { messageCounter } = S.Chat.getState(subId);
 
 		if (readonly) {
 			return (
@@ -102,7 +110,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			onClear = this.onEditClear;
 		} else
 		if (this.replyingId) {
-			const message = S.Chat.getMessage(rootId, this.replyingId);
+			const message = S.Chat.getMessage(subId, this.replyingId);
 
 			if (message) {
 				const reply = getReplyContent(message);
@@ -132,6 +140,22 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				id="formWrapper" 
 				className="formWrapper"
 			>
+
+				<div className="navigation">
+					{!isBottom || messageCounter ? (
+						<div className="btn" onClick={this.onNavigationClick}>
+							<div className="bg" />
+							<Icon className="arrow" />
+
+							{messageCounter ? (
+								<div className="counter">
+									<Label text={String(messageCounter)} />
+								</div>
+							) : ''}
+						</div>
+					) : ''}
+				</div>
+
 				<div className="form">
 					<Loader id="form-loader" />
 
@@ -621,7 +645,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, scrollToBottom, scrollToMessage } = this.props;
+		const { rootId, subId, scrollToBottom, scrollToMessage } = this.props;
 		const node = $(this.node);
 		const loader = node.find('#form-loader');
 		const list = this.state.attachments || [];
@@ -644,7 +668,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		
 		const callBack = () => {
 			if (this.editingId) {
-				const message = S.Chat.getMessage(rootId, this.editingId);
+				const message = S.Chat.getMessage(subId, this.editingId);
 				if (message) {
 					const { marks, text } = this.getMarksFromHtml();
 					const update = U.Common.objectCopy(message);
@@ -820,6 +844,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onAttachmentRemove (id: string) {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
+	};
+
+	onSwiper (swiper) {
+		this.swiper = swiper;
+	};
+
+	onNavigationClick () {
+		this.props.scrollToBottom();
 	};
 
 	updateButtons () {

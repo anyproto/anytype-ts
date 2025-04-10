@@ -656,6 +656,21 @@ export const Mapper = {
 				content: Mapper.From.ChatMessageContent(obj.getMessage()),
 				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
+				isRead: obj.getRead(),
+			};
+		},
+
+		ChatState: (obj: Model.ChatState): any => {
+			return {
+				messages: Mapper.From.ChatStateUnreadMessages(obj.getMessages()),
+				lastStateId: obj.getLaststateid(),
+			};
+		},
+
+		ChatStateUnreadMessages (obj: any): any {
+			return {
+				orderId: obj.getOldestorderid(),
+				counter: obj.getCounter(),
 			};
 		},
 
@@ -1173,6 +1188,8 @@ export const Mapper = {
 			if (v == V.CHATUPDATE)					 t = 'ChatUpdate';
 			if (v == V.CHATDELETE)					 t = 'ChatDelete';
 			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
+			if (v == V.CHATSTATEUPDATE)			 	 t = 'ChatStateUpdate';
+			if (v == V.CHATUPDATEMESSAGEREADSTATUS)	 t = 'ChatUpdateMessageReadStatus';
 
 			if (v == V.SPACEAUTOWIDGETADDED)		 t = 'SpaceAutoWidgetAdded';
 
@@ -1655,6 +1672,7 @@ export const Mapper = {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
+				subIds: obj.getSubidsList(),
 			};
 		},
 
@@ -1662,12 +1680,14 @@ export const Mapper = {
 			return {
 				id: obj.getId(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
+				subIds: obj.getSubidsList(),
 			};
 		},
 
 		ChatDelete: (obj: Events.Event.Chat.Delete) => {
 			return {
 				id: obj.getId(),
+				subIds: obj.getSubidsList(),
 			};
 		},
 
@@ -1675,6 +1695,22 @@ export const Mapper = {
 			return {
 				id: obj.getId(),
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
+				subIds: obj.getSubidsList(),
+			};
+		},
+
+		ChatStateUpdate: (obj: Events.Event.Chat.UpdateState) => {
+			return {
+				state: Mapper.From.ChatState(obj.getState()),
+				subIds: obj.getSubidsList(),
+			};
+		},
+
+		ChatUpdateMessageReadStatus: (obj: Events.Event.Chat.UpdateMessageReadStatus) => {
+			return {
+				ids: obj.getIdsList(),
+				isRead: obj.getIsread(),
+				subIds: obj.getSubidsList(),
 			};
 		},
 

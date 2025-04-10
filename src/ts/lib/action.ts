@@ -19,9 +19,17 @@ class Action {
 
 		const onClose = () => {
 			const blocks = S.Block.getBlocks(rootId, it => it.isDataview());
+			const object = S.Detail.get(rootId, rootId);
 
 			for (const block of blocks) {
+				const subId = S.Record.getSubId(rootId, block.id);
+
 				this.dbClearBlock(rootId, block.id);
+
+				if (U.Object.isChatLayout(object.layout)) {
+					C.ChatUnsubscribe(object.chatId, subId);
+				};
+				S.Chat.clear(subId);
 			};
 
 			this.dbClearRoot(rootId);
@@ -39,13 +47,6 @@ class Action {
 	dbClearRoot (rootId: string) {
 		if (!rootId) {
 			return;
-		};
-
-		const object = S.Detail.get(rootId, rootId);
-
-		if (U.Object.isChatLayout(object.layout)) {
-			C.ChatUnsubscribe(object.chatId);
-			S.Chat.clear(object.id);
 		};
 
 		S.Record.metaClear(rootId, '');
