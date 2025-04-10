@@ -301,7 +301,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				};
 
 				this.loadDepsAndReplies(messages, () => {
-					if (dir < 0) {
+					if ((dir < 0) && messages.length) {
 						U.Common.getScrollContainer(isPopup).scrollTop(20);
 					};
 
