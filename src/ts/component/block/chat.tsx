@@ -31,7 +31,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	timeoutScrollStop = 0;
 	top = 0;
 	firstReadOrderId = '';
-	scrolledOrderIds = [];
+	scrolledItems = [];
 	state = {
 		isLoading: false,
 	};
@@ -53,6 +53,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.getMessages = this.getMessages.bind(this);
 		this.getReplyContent = this.getReplyContent.bind(this);
 		this.loadMessagesByOrderId = this.loadMessagesByOrderId.bind(this);
+		this.hasScroll = this.hasScroll.bind(this);
 	};
 
 	render () {
@@ -62,7 +63,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 		const sections = this.getSections();
 		const subId = this.getSubId();
-		const isNew = true;
+		const hasScroll = this.hasScroll();
+		const { messageOrderId } = S.Chat.getState(subId);
 
 		const Section = (item: any) => {
 			const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
@@ -83,7 +85,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							rootId={rootId}
 							blockId={blockId}
 							subId={subId}
-							isNew={isNew}
+							isNew={item.orderId == messageOrderId}
 							scrollToBottom={this.scrollToBottomCheck}
 							onContextMenu={e => this.onContextMenu(e, item)}
 							onMore={e => this.onContextMenu(e, item, true)}
@@ -128,7 +130,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					loadMessagesByOrderId={this.loadMessagesByOrderId}
 					getMessages={this.getMessages}
 					getMessagesInViewport={this.getMessagesInViewport}
-					getIsBottom={() => this.isBottom}
+					getIsBottom={() => hasScroll ? this.isBottom : true}
 					getReplyContent={this.getReplyContent}
 				/>
 			</div>
@@ -631,7 +633,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		this.top = st;
-		this.scrolledOrderIds = this.scrolledOrderIds.concat(this.getMessagesInViewport().filter(it => !it.isRead).map(it => ({ id: it.id, orderId: it.orderId })));
+		this.scrolledItems = this.scrolledItems.concat(this.getMessagesInViewport().filter(it => !it.isRead).map(it => ({ id: it.id, orderId: it.orderId })));
 
 		window.clearTimeout(this.timeoutScrollStop);
 		this.timeoutScrollStop = window.setTimeout(() => this.onReadStop(), 100);
@@ -641,12 +643,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onReadStop () {
-		if (!this.scrolledOrderIds.length) {
+		if (!this.scrolledItems.length) {
 			return;
 		};
 
-		const first = this.scrolledOrderIds[0]?.id;
-		const last = this.scrolledOrderIds[this.scrolledOrderIds.length - 1]?.id;
+		const first = this.scrolledItems[0]?.orderId;
+		const last = this.scrolledItems[this.scrolledItems.length - 1]?.orderId;
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
 		const state = S.Chat.getState(subId);
@@ -656,10 +658,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			C.ChatReadMessages(rootId, first, last, lastStateId);
 		};
 
-		S.Chat.setReadStatus(subId, this.scrolledOrderIds.map(it => it.id), true);
+		S.Chat.setReadStatus(subId, this.scrolledItems.map(it => it.id), true);
 
-		this.refForm?.forceUpdate(); // TODO: remove
-		this.scrolledOrderIds = [];
+		this.scrolledItems = [];
 	};
 
 	getMessageScrollOffset (id: string) {
@@ -696,6 +697,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToMessage (id: string) {
+		if (!this.hasScroll()) {
+			this.scrollToBottom();
+		};
 		if (!id) {
 			return;
 		};
@@ -716,6 +720,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = node.find('#scrollWrapper');
+
+		if (!this.hasScroll()) {
+			const messages = this.getMessagesInViewport();
+
+			if (messages.length) {
+				this.scrolledItems = messages.map(it => ({ id: it.id, orderId: it.orderId }));
+				this.onReadStop();
+			};
+		};
 
 		this.setAutoLoadDisabled(true);
 		container.scrollTop(wrapper.outerHeight());
@@ -823,6 +836,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	setAutoLoadDisabled (v: boolean) {
 		this.isAutoLoadDisabled = v;
+	};
+
+	hasScroll () {
+		const { isPopup } = this.props;
+		const container = U.Common.getScrollContainer(isPopup);
+
+		if (isPopup) {
+			return container.get(0).scrollHeight > container.get(0).clientHeight;
+		};
+		return document.documentElement.scrollHeight > window.innerHeight;
 	};
 
 });

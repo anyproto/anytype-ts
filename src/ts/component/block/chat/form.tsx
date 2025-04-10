@@ -88,7 +88,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { attachments, charCounter } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
-		const { messageOrderId, messageCounter } = S.Chat.getState(subId);
+		const { messageOrderId } = S.Chat.getState(subId);
+		const unreadCounter = S.Chat.getUnreadCounter(subId);
 		const messagesInViewport = getMessagesInViewport();
 		const isBottom = getIsBottom();
 
@@ -147,14 +148,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			>
 
 				<div className="navigation">
-					{!isBottom || messageCounter ? (
+					{!isBottom || unreadCounter ? (
 						<div className={[ 'btn', btnDirection ].join(' ')} onClick={this.onNavigationClick}>
 							<div className="bg" />
 							<Icon className="arrow" />
 
-							{messageCounter ? (
+							{unreadCounter ? (
 								<div className="counter">
-									<Label text={String(messageCounter)} />
+									<Label text={String(unreadCounter)} />
 								</div>
 							) : ''}
 						</div>
@@ -857,9 +858,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onNavigationClick () {
 		const { subId, loadMessagesByOrderId, getMessages, scrollToMessage, scrollToBottom } = this.props;
-		const { messageCounter, messageOrderId } = S.Chat.getState(subId);
+		const { messageOrderId } = S.Chat.getState(subId);
+		const unreadCounter = S.Chat.getUnreadCounter(subId);
 
-		if (messageOrderId) {
+		if (messageOrderId && unreadCounter) {
 			const messages = getMessages();
 			const loaded = messages.find(it => it.orderId == messageOrderId);
 
