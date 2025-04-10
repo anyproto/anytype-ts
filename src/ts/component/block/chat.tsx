@@ -135,14 +135,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 	
 	componentDidMount () {
-		const subId = this.getSubId();
-
 		this._isMounted = true;
 		this.rebind();
 		this.setState({ isLoading: true });
 
 		this.loadMessages(1, true, () => {
-			const { messageOrderId } = S.Chat.getState(subId);
+			const { messageOrderId } = S.Chat.getState(this.getSubId());
 
 			if (messageOrderId) {
 				this.firstUnreadOrderId = messageOrderId;
@@ -235,6 +233,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	loadMessages (dir: number, clear: boolean, callBack?: () => void) {
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
 
@@ -298,13 +297,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				};
 
 				if (messages.length) {
-					const scrollTo = dir < 0 ? messages[0].id : messages[messages.length - 1].id;
-
 					S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
-					this.scrollToMessage(scrollTo);
 				};
 
-				this.loadDepsAndReplies(messages, callBack);
+				this.loadDepsAndReplies(messages, () => {
+					if (dir < 0) {
+						U.Common.getScrollContainer(isPopup).scrollTop(20);
+					};
+
+					if (callBack) {
+						callBack();
+					};
+				});
 			});
 		};
 	};
@@ -584,6 +588,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			if (st <= 0) {
 				this.loadMessages(-1, false);
 			};
+
 			if (st - fh >= scrollWrapper.outerHeight() - ch) {
 				this.loadMessages(1, false);
 			};
@@ -666,7 +671,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return ret;
 	};
 
-	scrollToMessage (id: string) {
+	scrollToMessage (id: string, offset?: number) {
+		offset = Number(offset) || 0;
 		if (!id) {
 			return;
 		};
@@ -677,7 +683,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.setIsBottom(false);
 		this.setAutoLoadDisabled(true);
 
-		container.scrollTop(Math.max(0, top - container.height() / 2));
+		container.scrollTop(Math.max(0, top - container.height() / 2) + offset);
 
 		this.setAutoLoadDisabled(false);
 	};
