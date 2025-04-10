@@ -193,12 +193,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	updateLayout (layout: I.ObjectLayout) {
 		const rootId = keyboard.getRootId();
-		const root = S.Block.getLeaf(rootId, rootId);
 		const current = S.Detail.get(rootId, rootId);
 
-		if (root) {
-			S.Block.update(rootId, rootId, { layout });
-		};
+		S.Block.update(rootId, rootId, { layout });
 
 		if (!current._empty_) {
 			S.Detail.update(rootId, { id: rootId, details: { resolvedLayout: layout } }, false);
