@@ -150,31 +150,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				this.firstUnreadOrderId = messageOrderId;
 
 				this.loadMessagesByOrderId(messageOrderId, () => {
-					this.setState({ isLoading: false });
+					this.setState({ isLoading: false }, () => {
+						const target = this.getMessages().find(it => it.orderId == messageOrderId);
+						this.scrollToMessage(target?.id);
+					});
 				});
 			} else {
-				this.loadDepsAndReplies(() => {
-					this.setState({ isLoading: false }, () => {
-						this.scrollToBottom();
-					});
+				this.setState({ isLoading: false }, () => {
+					this.scrollToBottom();
 				});
 			};
 		});
-	};
-
-	componentDidUpdate () {
-		const deps = this.getDeps();
-		const replies = this.getReplies();
-
-		if (this.deps && !U.Common.compareJSON(deps, this.deps)) {
-			this.deps = deps;
-			this.loadDeps(() => this.forceUpdate());
-		};
-
-		if (this.replies && !U.Common.compareJSON(replies, this.replies)) {
-			this.replies = replies;
-			this.loadReplies(() => this.forceUpdate());
-		};
 	};
 
 	componentWillUnmount () {
@@ -211,13 +197,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 	};
 
-	loadDepsAndReplies = (callBack?: () => void) => {
-		this.loadReplies(() => {
-			this.replies = this.getReplies();
-
-			this.loadDeps(() => {
-				this.deps = this.getDeps();
-
+	loadDepsAndReplies = (list: I.ChatMessage[], callBack?: () => void) => {
+		this.loadReplies(this.getReplyIds(list), () => {
+			this.loadDeps(this.getDepsIds(list), () => {
 				if (callBack) {
 					callBack();
 				};
@@ -250,10 +232,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 
 			S.Chat.setState(subId, state);
-
-			if (callBack) {
-				callBack();
-			};
+			this.loadDepsAndReplies(messages, callBack);
 		});
 	};
 
@@ -327,9 +306,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					this.scrollToMessage(scrollTo);
 				};
 
-				if (callBack) {
-					callBack();
-				};
+				this.loadDepsAndReplies(messages, callBack);
 			});
 		};
 	};
@@ -352,15 +329,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				};
 
 				S.Chat.set(subId, list);
-
-				this.loadDepsAndReplies(() => {
-					const target = list.find(it => it.orderId == orderId);
-					this.scrollToMessage(target?.id);
-
-					if (callBack) {
-						callBack();
-					};
-				});
+				this.loadDepsAndReplies(list, callBack);
 			});
 		});
 	};
@@ -369,7 +338,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return S.Chat.getList(this.getSubId());
 	};
 
-	getDeps () {
+	getDepsIds (list: any[]) {
 		const messages = this.getMessages();
 		const markTypes = [ I.MarkType.Object, I.MarkType.Mention ];
 
@@ -391,28 +360,27 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return deps;
 	};
 
-	getReplies () {
-		return this.getMessages().filter(it => it.replyToMessageId).map(it => it.replyToMessageId);
+	getReplyIds (list: any[]) {
+		return (list || []).filter(it => it.replyToMessageId).map(it => it.replyToMessageId)
 	};
 
 	getSubId (): string {
 		return S.Record.getSubId(this.getRootId(), this.getBlockId());
 	};
 
-	loadDeps (callBack?: () => void) {
-		const rootId = this.getRootId();
-		const deps = this.getDeps();
-
-		if (!deps.length) {
+	loadDeps (ids: string[], callBack?: () => void) {
+		if (!ids.length) {
 			if (callBack) {
 				callBack();
 			};
 			return;
 		};
 
+		const rootId = this.getRootId();
+
 		U.Data.subscribeIds({
 			subId: this.getSubId(),
-			ids: deps,
+			ids,
 			noDeps: true,
 			keys: U.Data.chatRelationKeys(),
 		}, (message: any) => {
@@ -429,19 +397,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
-	loadReplies (callBack?: () => void) {
-		const rootId = this.getRootId();
-		const subId = this.getSubId();
-		const replies = this.getReplies();
-
-		if (!replies.length) {
+	loadReplies (ids: string[], callBack?: () => void) {
+		if (!ids.length) {
 			if (callBack) {
 				callBack();
 			};
 			return;
 		};
 
-		C.ChatGetMessagesByIds(rootId, replies, (message: any) => {
+		const rootId = this.getRootId();
+		const subId = this.getSubId();
+
+		C.ChatGetMessagesByIds(rootId, ids, (message: any) => {
 			if (!message.error.code) {
 				message.messages.forEach(it => S.Chat.setReply(subId, it));
 			};
@@ -767,7 +734,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 
 			S.Chat.clear(subId);
-			this.loadMessagesByOrderId(reply.orderId);
+			this.loadMessagesByOrderId(reply.orderId, () => {
+				this.scrollToMessage(reply.id);
+			});
 		});
 	};
 
