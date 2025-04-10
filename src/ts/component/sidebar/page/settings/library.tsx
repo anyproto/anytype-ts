@@ -134,6 +134,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 								<Filter
 									ref={ref => this.refFilter = ref}
 									icon="search"
+									className="outlined"
 									placeholder={translate('commonSearch')}
 									onChange={this.onFilterChange}
 									onClear={this.onFilterClear}
@@ -302,8 +303,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 	getSections () {
 		const isType = this.type == I.ObjectContainerType.Type;
-		const storeSubId = isType ? J.Constant.subId.typeStore : J.Constant.subId.relationStore;
-		const storeIds = S.Record.getRecordIds(storeSubId, '');
 		const records = S.Record.getRecords(J.Constant.subId.library);
 
 		let myLabel = '';
@@ -320,13 +319,13 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		return [
 			{
 				id: 'my', name: myLabel,
-				children: records.filter(it => !storeIds.includes(it.sourceObject)),
+				children: records.filter(it => S.Block.isAllowed(it.restrictions, [ I.RestrictionObject.Delete ])),
 			},
 			{
 				id: 'system', name: systemLabel,
-				children: records.filter(it => storeIds.includes(it.sourceObject)),
+				children: records.filter(it => !S.Block.isAllowed(it.restrictions, [ I.RestrictionObject.Delete ])),
 			},
-		];
+		].filter(it => it.children.length);
 	};
 
 	getItems () {

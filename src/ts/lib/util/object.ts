@@ -603,6 +603,7 @@ class UtilObject {
 			return;
 		};
 
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const root = S.Block.getLeaf(id, id);
 		const fields = root.fields || {};
 		const featured = Relation.getArrayValue(object.featuredRelations).filter(it => [ 'description' ].includes(it));
@@ -612,6 +613,10 @@ class UtilObject {
 		C.ObjectRelationDelete(id, [ 'layout', 'layoutAlign' ]);
 		C.ObjectListSetDetails([ id ], [ { key: 'featuredRelations', value: featured } ]);
 		C.BlockListSetFields(id, [ { blockId: id, fields } ]);
+
+		if (type) {
+			S.Block.update(id, id, { layout: type.recommendedLayout });
+		};
 
 		analytics.event('ResetToTypeDefault');
 	};

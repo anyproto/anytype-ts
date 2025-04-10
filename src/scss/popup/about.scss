@@ -9,11 +9,7 @@
 		.version { display: flex; align-items: center; justify-content: center; gap: 0px 16px; margin-bottom: 20px; }
 		.copyright { color: var(--color-text-secondary); }
 
-		.iconWrapper {
-			display: flex; width: 320px; height: 104px; border-radius: 320px; margin: -16px auto 10px; align-items: center; justify-content: space-around;
-			background: radial-gradient(50% 50% at 50% 50%, #FFF0C8 0%, rgba(255, 240, 200, 0.00) 100%);
-		}
-
-		.icon { width: 72px; height: 72px; background-image: url('~img/logo/symbol.svg'); }
+		.iconWrapper { display: flex; width: 320px; height: 104px; border-radius: 320px; margin: -16px auto 10px; align-items: center; justify-content: space-around; }
+		.icon { width: 72px; height: 72px; background-image: url('~img/logo/symbol.png'); }
 	}
 }

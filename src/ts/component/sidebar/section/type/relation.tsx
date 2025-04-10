@@ -56,9 +56,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				onConfirm: () => {
 					const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
-					console.log(ids);
-					console.log(recommendedRelations);
-
 					onChange({ recommendedRelations: recommendedRelations.concat(ids) });
 					analytics.stackAdd('AddConflictRelation', { count: ids.length });
 				},

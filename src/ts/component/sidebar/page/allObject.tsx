@@ -343,7 +343,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			};
 
 			case I.ObjectContainerType.List: {
-				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getSetLayouts().filter(it => !U.Object.isTypeLayout(it)) });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getSetLayouts() });
 				break;
 			};
 

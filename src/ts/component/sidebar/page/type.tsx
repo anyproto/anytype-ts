@@ -150,8 +150,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onChange (update: any) {
-		console.log('onChange', JSON.stringify(update, null, 3));
-
 		const sections = this.getSections();
 		const skipFormat = [ 'defaultTypeId' ];
 
@@ -174,8 +172,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			this.updateLayout(update.recommendedLayout);
 		};
 
-		console.log('onChange', JSON.stringify(this.object, null, 3));
-
 		sections.forEach(it => {
 			this.updateObject(it.id);
 			this.forceUpdate();
@@ -197,12 +193,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	updateLayout (layout: I.ObjectLayout) {
 		const rootId = keyboard.getRootId();
-		const root = S.Block.getLeaf(rootId, rootId);
 		const current = S.Detail.get(rootId, rootId);
 
-		if (root) {
-			S.Block.update(rootId, rootId, { layout });
-		};
+		S.Block.update(rootId, rootId, { layout });
 
 		if (!current._empty_) {
 			S.Detail.update(rootId, { id: rootId, details: { resolvedLayout: layout } }, false);
@@ -261,10 +254,14 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	onCancel () {
 		const { isPopup, previous } = this.props;
+		const rootId = keyboard.getRootId();
 
 		if (U.Common.objectLength(this.update)) {
 			S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
-			this.updateLayout(this.backup.recommendedLayout);
+
+			if ((rootId != this.backup.id) && !U.Object.isTypeLayout(this.backup.layout)) {
+				this.updateLayout(this.backup.recommendedLayout);
+			};
 		};
 
 		if (previous && previous.page) {

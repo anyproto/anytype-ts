@@ -745,12 +745,12 @@ class Action {
 		});
 	};
 
-	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
+	importUsecase (spaceId: string, id: I.Usecase, callBack?: (message: any) => void) {
 		C.ObjectImportUseCase(spaceId, id, (message: any) => {
 			S.Block.closeRecentWidgets();
 
 			if (callBack) {
-				callBack();
+				callBack(message);
 			};
 		});
 	};

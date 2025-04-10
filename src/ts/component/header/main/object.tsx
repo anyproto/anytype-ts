@@ -53,7 +53,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					onMouseOut={onTooltipHide}
 				>
 					<IconObject object={object} size={18} />
-					<ObjectName object={object} />
+					<ObjectName object={object} withPlural={true} />
 					{label ? <Label text={label} /> : ''}
 				</div>
 			);

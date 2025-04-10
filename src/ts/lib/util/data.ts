@@ -585,12 +585,12 @@ class UtilData {
 
 		const object = S.Detail.get(rootId, blockId, [ 
 			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 
-			'templateIsBundled', 'featuredRelations', 'targetObjectType', 'forceLayoutFromType',
+			'templateIsBundled', 'featuredRelations', 'targetObjectType',
 		].concat(J.Relation.cover).concat(keys), true);
 		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
-		const { iconEmoji, iconImage, iconName, coverType, coverId, forceLayoutFromType } = object;
+		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
 		const ret = {
 			withCover: false,
 			withIcon: false,
@@ -598,7 +598,6 @@ class UtilData {
 			layout: object.layout,
 			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
 			layoutWidth: this.getLayoutWidth(rootId),
-			forceLayoutFromType: false,
 		};
 
 		if (undefined !== object.layoutAlign) {
@@ -624,7 +623,6 @@ class UtilData {
 
 			case I.ObjectLayout.Type: {
 				ret.withIcon = Boolean(iconName || iconEmoji) || true;
-				ret.forceLayoutFromType = Boolean(forceLayoutFromType) || false;
 				break;
 			};
 
@@ -724,8 +722,11 @@ class UtilData {
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
-			{ relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
 		];
+
+		if (relationKey && ids.length) {
+			filters.push({ relationKey: relationKey, condition: I.FilterCondition.In, value: ids });
+		};
 
 		this.search({
 			filters,
@@ -1036,7 +1037,7 @@ class UtilData {
 			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
-			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
 		];
 	};
 
@@ -1145,7 +1146,15 @@ class UtilData {
 
 					this.onInfo(message.account.info);
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, callBack);
+					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
+						if (message.startingId) {
+							S.Auth.startingId = message.startingId;
+						};
+
+						if (callBack) {
+							callBack();
+						};
+					});
 
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });

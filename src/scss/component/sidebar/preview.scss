@@ -33,6 +33,9 @@
     .layoutPreview {
         .layoutHeader { margin-bottom: 44px; }
         .titleWrapper { margin-bottom: 8px; }
+		.titleWrapper {
+			.iconObject { display: inline-block; }
+		}
         .title { @include text-title; @include text-overflow-nw; }
         .description { @include text-header3; font-weight: 400; margin-bottom: 10px; }
 

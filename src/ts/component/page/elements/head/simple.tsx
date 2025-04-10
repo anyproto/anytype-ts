@@ -20,7 +20,9 @@ const EDITORS = [
 	{ relationKey: 'description', blockId: 'description' },
 ];
 
-const HeadSimple = observer(class Controls extends React.Component<Props> {
+const SUB_ID_CHECK = 'headSimple-check';
+
+const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 	
 	_isMounted = false;
 	refEditable: any = {};
@@ -53,6 +55,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const cn = [ 'headSimple', check.className ];
 		const canEditIcon = allowDetails && !isRelation && !isType;
 		const isOwner = U.Space.isMyOwner();
+		const total = S.Record.getMeta(SUB_ID_CHECK, '').total;
 
 		if (!allowDetails) {
 			cn.push('isReadonly');
@@ -89,7 +92,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let descr = null;
 		let featured = null;
 
-		if (featuredRelations.includes('description')) {
+		if (!isRelation && featuredRelations.includes('description')) {
 			descr = <Editor className="descr" id="description" readonly={!allowDetails} />;
 		};
 
@@ -115,7 +118,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					const isTemplate = U.Object.isTemplate(object.id);
 					const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 
-					if (isOwner && !check.forceLayoutFromType) {
+					if (isOwner && total) {
 						buttonLayout = (
 							<Button
 								id="button-layout"
@@ -195,29 +198,30 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		return (
 			<div ref={node => this.node = node} className={cn.join(' ')}>
-				<div className="side left">
-					<div className="titleWrap">
-						{!noIcon && check.withIcon ? (
-							<IconObject 
-								id={'block-icon-' + rootId} 
-								size={32} 
-								iconSize={32}
-								object={object} 
-								canEdit={canEditIcon}
-							/>
-						) : ''}
-						<Editor className="title" id="title" readonly={isType || !allowDetails} />
+				<div className="sides">
+					<div className="side left">
+						<div className="titleWrap">
+							{!noIcon && check.withIcon ? (
+								<IconObject 
+									id={'block-icon-' + rootId} 
+									size={32} 
+									iconSize={32}
+									object={object} 
+									canEdit={canEditIcon}
+								/>
+							) : ''}
+							<Editor className="title" id="title" readonly={isType || !allowDetails} />
+						</div>
 					</div>
 
-					{descr}
-					{featured}
+					{buttons.length ? (
+						<div className="side right">
+							{buttons.map((Component, i) => <Component key={i} />)}
+						</div>
+					) : ''}
 				</div>
-
-				{buttons.length ? (
-					<div className="side right">
-						{buttons.map((Component, i) => <Component key={i} />)}
-					</div>
-				) : ''}
+				{descr}
+				{featured}
 			</div>
 		);
 	};
@@ -225,6 +229,21 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
+
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
+		const isType = U.Object.isTypeLayout(object.layout);
+
+		if (isType) {
+			U.Data.searchSubscribe({
+				subId: SUB_ID_CHECK,
+				filters: [
+					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: object.id },
+				],
+				keys: [ 'id' ],
+				limit: 1,
+			});
+		};
 	};
 
 	componentDidUpdate () {
@@ -448,6 +467,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					{
 						name: translate('menuTypeLayoutDescription'),
 						children: [ 
+							{ isDiv: true },
 							{ id: 'reset', icon: 'reset', name: translate('menuTypeLayoutReset') },
 						]
 					}

@@ -31,14 +31,18 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, ref, readonly, noDelete, noUnlink } = data;
-
 		const relation = this.getRelation();
 		const root = S.Block.getLeaf(rootId, rootId);
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
+		const object = S.Detail.get(rootId, rootId);
+		const isType = U.Object.isTypeLayout(object.layout);
+		const isName = relation && (relation.relationKey == 'name');
+		const isDescription = relation && (relation.relationKey == 'description');
 
 		let canDuplicate = true;
 		let canDelete = !noDelete;
+		let canUnlink = !noUnlink && !isName;
 		let opts: any = null;
 		let unlinkText = '';
 		let name = '';
@@ -68,6 +72,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			case 'object':
 				unlinkText = translate('commonUnlinkFromObject');
 				break;
+		};
+
+		canUnlink = canUnlink && !!unlinkText;
+
+		if (isType && isDescription) {
+			canUnlink = false;
 		};
 
 		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
@@ -152,7 +162,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="section">
 						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
 						{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{unlinkText && !noUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
+						{canUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
 						{canDelete ? <MenuItemVertical icon="remove" name={translate('commonMoveToBin')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}

@@ -118,6 +118,12 @@ html.themeDark {
 	.icon.import-notion { background-image: url('#{$themePath}/icon/import/notion.svg'); }
 	.icon.import-roam { background-image: url('#{$themePath}/icon/import/roam.svg'); }
 
+	.icon.widget-star { background-image: url('#{$themePath}/icon/widget/system/star.svg'); }
+	.icon.widget-pencil { background-image: url('#{$themePath}/icon/widget/system/pencil.svg'); }
+	.icon.widget-eye { background-image: url('#{$themePath}/icon/widget/system/eye.svg'); }
+	.icon.widget-bin { background-image: url('#{$themePath}/icon/widget/system/bin.svg'); }
+	.icon.widget-all { background-image: url('#{$themePath}/icon/widget/system/all.svg'); }
+
 	.objectManagerWrapper {
 		.icon.checkbox { background-image: url('#{$themePath}/icon/archive/checkbox0.svg') !important; }
 		.icon.checkbox.active { background-image: url('#{$themePath}/icon/archive/checkbox1.svg') !important; }

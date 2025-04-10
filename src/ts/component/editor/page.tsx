@@ -1016,7 +1016,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	getStyleParam () {
-		const cmd = keyboard.cmdKey();
 		return [
 			{ key: 'turnBlock0', style: I.TextStyle.Paragraph },
 			{ key: 'turnBlock1', style: I.TextStyle.Header1 },

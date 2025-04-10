@@ -18,6 +18,9 @@
 	.body {
 		.side.right {
 			.cnt { background-color: var(--color-shape-secondary); color: var(--color-text-primary); }
+
+			.icon.plus { background-image: url('#{$themePath}/icon/widget/button/plus.svg'); border-color: var(--color-shape-secondary); }
+			.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
 		}
 
 		.buttons {

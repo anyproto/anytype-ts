@@ -752,6 +752,31 @@ class Dataview {
 		return ret;
 	};
 
+	addTypeOrDataviewRelation (rootId: string, blockId: string, relation: any, object: any, view: I.View, index: number, callBack?: (message: any) => void) {
+		if (!rootId || !blockId || !relation || !object || !view) {
+			return;
+		};
+
+		const isType = U.Object.isTypeLayout(object.layout);
+
+		if (isType) {
+			const value = U.Common.arrayUnique(Relation.getArrayValue(object.recommendedRelations).concat(relation.id));
+
+			C.ObjectListSetDetails([ object.id ], [ { key: 'recommendedRelations', value } ], (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				S.Detail.update(J.Constant.subId.type, { id: rootId, details: { recommendedRelations: value } }, false);
+				C.BlockDataviewRelationSet(rootId, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(rootId)), () => {
+					this.viewRelationAdd(rootId, blockId, relation.relationKey, index, view, callBack);
+				});
+			});
+		} else {
+			this.relationAdd(rootId, blockId, relation.relationKey, index, view, callBack);
+		};
+	};
+
 };
 
 export default new Dataview();

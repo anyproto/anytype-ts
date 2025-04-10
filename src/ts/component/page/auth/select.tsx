@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { Frame, Label, Button, Header, Footer, Error } from 'Component';
+import { Frame, Button, Header, Footer, Error } from 'Component';
 import { I, U, S, translate, Animation, analytics } from 'Lib';
 
 const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
@@ -35,16 +35,17 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 	return (
 		<div ref={nodeRef}>
 			<Header {...props} component="authIndex" />
+			
+			<div className="star animation" />
 			<Frame>
 				<div className="logo animation" />
-				<Label className="descr animation" text={translate('authSelectLabel')} />
 
 				<div className="buttons">
 					<div className="animation">
-						<Button ref={registerRef} text={translate('authSelectSignup')} onClick={onRegister} />
+						<Button text={translate('authSelectLogin')} color="blank" onClick={onLogin} />
 					</div>
 					<div className="animation">
-						<Button text={translate('authSelectLogin')} color="blank" onClick={onLogin} />
+						<Button ref={registerRef} text={translate('authSelectSignup')} onClick={onRegister} />
 					</div>
 				</div>
 

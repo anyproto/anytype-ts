@@ -59,19 +59,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		};
 
 		if (stage == Stage.Phrase) {
-			const cb = () => {
-				Animation.from(() => {
-					nextRef.current?.setLoading(false);
-					setStage(stage + 1);
-				});
-			};
-
-			if (account) {
-				cb();
-			} else {
-				nextRef.current?.setLoading(true);
-				U.Data.accountCreate(setErrorHandler, cb);
-			};
+			Animation.from(() => setStage(stage + 1));
 		};
 
 		if (stage == Stage.Phrase) {
@@ -90,9 +78,18 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 							S.Common.showRelativeDatesSet(true);
 
 							U.Space.initSpaceState();
-							U.Space.openDashboard({ replace: true });
 
-							C.WorkspaceSetInfo(S.Common.space, { spaceDashboardId: I.HomePredefinedId.Last });
+							if (S.Auth.startingId) {
+								U.Object.getById(S.Auth.startingId, {}, object => {
+									if (object) {
+										U.Object.openRoute(object, { replace: true });
+									} else {
+										U.Space.openDashboard({ replace: true });
+									};
+								});
+							} else {
+								U.Space.openDashboard({ replace: true });
+							};
 
 							Storage.set('primitivesOnboarding', true);
 							Onboarding.start('basics', false);
@@ -205,7 +202,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					<Input
 						ref={nameRef}
 						focusOnMount={true}
-						placeholder={translate('defaultNamePage')}
+						placeholder={translate('commonYourName')}
 						maxLength={255}
 					/>
 				</div>

@@ -201,6 +201,7 @@
 	"commonSystemRelations": "System Properties",
 	"commonApply": "Apply",
 	"commonDescription": "Description",
+	"commonYourName": "Your Name",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -391,9 +392,8 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLabel": "Create & collaborate in spaces you own.<br/>Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
-	"authSelectLogin": "Already have a Key",
-	"authSelectSignup": "I am new here",
+	"authSelectLogin": "Log In",
+	"authSelectSignup": "Sign Up",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Enter my Vault",
@@ -816,7 +816,7 @@
 	"popupSettingsPhraseBackup": "Back up Key",
 
 	"popupSettingsPinTitle": "Pin Code",
-	"popupSettingsPinText": "The Pin Code will protect your Key. As we do not store your Key or Pin Code and do not ask for your e-mail or phone number, it is impossible to recover your data without this information. So, please, remember or write it down somewhere in a safe place.",
+	"popupSettingsPinText": "Set a 6-digit PIN for your application screen when unattended. PIN adds a quick layer of privacy for your app. It prevents casual viewing but doesn't enhance data encryption. Your primary data remains secure with your account Key. PIN protection is recommended when you step away from your device.",
 	"popupSettingsPinOn": "Turn Pin Code on",
 	"popupSettingsPinOff": "Turn Pin Code off",
 	"popupSettingsPinChange": "Update Pin Code",
@@ -1329,12 +1329,12 @@
 	"popupShortcutEditorTurn1": "Turn block into a H1 heading",
 	"popupShortcutEditorTurn2": "Turn block into a H2 heading",	
 	"popupShortcutEditorTurn3": "Turn block into a H3 heading",
-	"popupShortcutEditorTurn4": "Turn block into a checkbox block",
-	"popupShortcutEditorTurn5": "Turn block into a bulleted list",
-	"popupShortcutEditorTurn6": "Turn block into a numbered list",
-	"popupShortcutEditorTurn7": "Turn block into a toggle",
-	"popupShortcutEditorTurn8": "Turn block into a code block",
-	"popupShortcutEditorTurn9": "Turn block into a page",
+	"popupShortcutEditorTurn4": "Turn block into a highlight block",
+	"popupShortcutEditorTurn5": "Turn block into a callout block",
+	"popupShortcutEditorTurn6": "Turn block into a todo list",
+	"popupShortcutEditorTurn7": "Turn block into a bulleted list",
+	"popupShortcutEditorTurn8": "Turn block into a numbered list",
+	"popupShortcutEditorTurn9": "Turn block into a toggle",
 
 	"popupShortcutNavigationMenu": "Menu, Search",
 	"popupShortcutNavigationMenu1": "Go to the next option",
@@ -1688,7 +1688,7 @@
 	"menuTypeSuggestCreateType": "Create Type",
 	"menuTypeSuggestCreateTypeFilter": "Create Type %s",
 
-	"menuTypeLayoutDescription": "Some objects have layout settings that differ from the type, including featured properties and alignment. ",
+	"menuTypeLayoutDescription": "Objects may have layout settings that differ from the type, including featured properties and alignment. You can make the layout identical for all objects of this Type.",
 	"menuTypeLayoutReset": "Reset to match the Type",
 
 	"menuWidgetAddWidget": "Add Widget",
@@ -1996,7 +1996,7 @@
 	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
 	"sidebarRelationLocal": "Local",
-	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add to the type to use in all objects, or remove",
+	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add them to the type to use in all objects, or remove",
 	"sidebarTypeRelationLocalDescription": "These properties exist in some objects but aren’t part of the Type. Add them to make them appear in all objects of this Type.",
 
 	"sidebarRelationLocalAddToType": "Add to the Type",
@@ -2068,7 +2068,7 @@
 	"onboardingDefaultTypeTitle": "Change Types Easily",
 	"onboardingDefaultTypeDescription": "You can change type and template of a new object in this menu.",
 
-	"onboardingTemplateSelectTitle": "New Template Selector",
+	"onboardingTemplateSelectTitle": "Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
 	"onboardingSpacesTitle": "Spaces",

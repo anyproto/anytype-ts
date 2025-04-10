@@ -261,12 +261,16 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	setName () {
-		const { name, description } = U.Space.getSpaceview();
+		const space = U.Space.getSpaceview();
 
+		let name = space.name;
+		if (name == translate('defaultNamePage')) {
+			name = '';
+		};
 		this.refName.setValue(name);
 
-		if (description) {
-			this.refDescription?.setValue(description);
+		if (space.description) {
+			this.refDescription?.setValue(space.description);
 			this.refDescription?.placeholderCheck();
 		};
 	};
@@ -457,13 +461,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	getButtons () {
 		const { cid, key } = this.state;
-
 		const space = U.Space.getSpaceview();
 		const isDisabled = space.spaceAccessType == I.SpaceType.Personal;
 		const tooltip = isDisabled ? translate('pageSettingsSpaceIndexEntrySpaceTooltip') : '';
 
 		return [
-			U.Space.canMyParticipantWrite() ? { id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip } : null,
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip },
 			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
 			{ id: 'more', name: translate('commonMore'), icon: 'more' },
 		].filter(it => it);
