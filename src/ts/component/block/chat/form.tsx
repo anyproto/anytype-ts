@@ -90,8 +90,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { attachments, charCounter, isBottom } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
-		const { messageOrderId, messageCounter } = S.Chat.getState(subId);
-		const messagesInViewport = getMessagesInViewport();
+		const { messageCounter } = S.Chat.getState(subId);
 
 		if (readonly) {
 			return (
@@ -135,11 +134,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 		};
 
-		let btnDirection = '';
-		if (messagesInViewport.length && messageOrderId && (messagesInViewport[0].orderId > messageOrderId)) {
-			btnDirection = 'up';
-		};
-
 		return (
 			<div 
 				ref={ref => this.node = ref}
@@ -149,7 +143,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 				<div className="navigation">
 					{!isBottom || messageCounter ? (
-						<div className={[ 'btn', btnDirection ].join(' ')} onClick={this.onNavigationClick}>
+						<div className="btn" onClick={this.onNavigationClick}>
 							<div className="bg" />
 							<Icon className="arrow" />
 
@@ -857,21 +851,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onNavigationClick () {
-		const { subId, loadMessagesByOrderId, getMessages, scrollToMessage, scrollToBottom } = this.props;
-		const { messageOrderId, messageCounter } = S.Chat.getState(subId);
-
-		if (messageOrderId && messageCounter) {
-			const messages = getMessages();
-			const loaded = messages.find(it => it.orderId == messageOrderId);
-
-			if (loaded) {
-				scrollToMessage(loaded.id);
-			} else {
-				loadMessagesByOrderId(messageOrderId);
-			};
-		} else {
-			scrollToBottom();
-		};
+		this.props.scrollToBottom();
 	};
 
 	updateButtons () {
