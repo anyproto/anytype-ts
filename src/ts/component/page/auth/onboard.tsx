@@ -202,7 +202,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					<Input
 						ref={nameRef}
 						focusOnMount={true}
-						placeholder={translate('defaultNamePage')}
+						placeholder={translate('commonYourName')}
 						maxLength={255}
 					/>
 				</div>

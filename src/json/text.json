@@ -201,6 +201,7 @@
 	"commonSystemRelations": "System Properties",
 	"commonApply": "Apply",
 	"commonDescription": "Description",
+	"commonYourName": "Your Name",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
