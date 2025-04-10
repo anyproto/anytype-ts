@@ -77,12 +77,6 @@ class ChatStore {
 		(ids || []).forEach(id => this.update(subId, { id, isRead }));
 	};
 
-	getUnreadCounter (subId) {
-		const unread = this.getList(subId).filter(it => !it.isRead);
-
-		return unread.length;
-	};
-
 	private createState (state: any) {
 		const { messages, lastStateId } = state;
 		const el = {
