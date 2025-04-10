@@ -131,10 +131,10 @@
 	}
 }
 
-.message.isNew:not(:last-child) { position: relative; padding-bottom: 25px; margin-bottom: 6px; border-bottom: 1px solid var(--color-shape-tertiary); }
+.message.isNew:not(:first-child) { position: relative; padding-bottom: 25px; margin-bottom: 6px; border-bottom: 1px solid var(--color-shape-tertiary); }
 .message.isNew {
 	.newMessages { display: flex; }
 }
-.message.isNew:last-child {
+.message.isNew:first-child {
 	.newMessages { display: none; }
 }

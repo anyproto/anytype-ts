@@ -135,7 +135,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		let btnDirection = '';
-		if (messagesInViewport.length && (messagesInViewport[0].orderId < messageOrderId)) {
+		if (messagesInViewport.length && (messagesInViewport[0].orderId > messageOrderId)) {
 			btnDirection = 'up';
 		};
 

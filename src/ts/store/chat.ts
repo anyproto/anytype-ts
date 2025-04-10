@@ -77,6 +77,12 @@ class ChatStore {
 		(ids || []).forEach(id => this.update(subId, { id, isRead }));
 	};
 
+	getUnreadCounter (subId) {
+		const unread = this.getList(subId).filter(it => !it.isRead);
+
+		return unread.length;
+	};
+
 	private createState (state: any) {
 		const { messages, lastStateId } = state;
 		const el = {
@@ -101,7 +107,13 @@ class ChatStore {
 		const map = this.stateMap.get(subId);
 
 		if (map) {
-			set(map, state);
+			const { messages, lastStateId } = state;
+
+			set(map, {
+				messageOrderId: messages.orderId,
+				messageCounter: messages.counter,
+				lastStateId,
+			});
 		} else {
 			this.stateMap.set(subId, this.createState(state));
 		};
