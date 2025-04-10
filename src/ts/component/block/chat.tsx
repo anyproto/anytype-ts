@@ -147,6 +147,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const { messageOrderId } = S.Chat.getState(subId);
 
 			if (messageOrderId) {
+				this.firstUnreadOrderId = messageOrderId;
+
 				this.loadMessagesByOrderId(messageOrderId, () => {
 					this.setState({ isLoading: false });
 				});
