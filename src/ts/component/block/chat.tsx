@@ -7,13 +7,9 @@ import { I, C, S, U, J, keyboard, translate, Preview, Mark } from 'Lib';
 import Message from './chat/message';
 import Form from './chat/form';
 
-interface State {
-	isLoading: boolean;
-};
-
 const GROUP_TIME = 300;
 
-const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent, State> {
+const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent> {
 
 	_isMounted = false;
 	node = null;
@@ -30,9 +26,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	top = 0;
 	firstUnreadOrderId = '';
 	scrolledItems = [];
-	state = {
-		isLoading: false,
-	};
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -137,7 +130,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
-		this.setState({ isLoading: true });
 
 		this.loadMessages(1, true, () => {
 			const { messageOrderId } = S.Chat.getState(this.getSubId());
@@ -146,15 +138,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				this.firstUnreadOrderId = messageOrderId;
 
 				this.loadMessagesByOrderId(messageOrderId, () => {
-					this.setState({ isLoading: false }, () => {
-						const target = this.getMessages().find(it => it.orderId == messageOrderId);
-						this.scrollToMessage(target?.id);
-					});
+					const target = this.getMessages().find(it => it.orderId == messageOrderId);
+					this.scrollToMessage(target?.id);
 				});
 			} else {
-				this.setState({ isLoading: false }, () => {
-					this.scrollToBottom();
-				});
+				this.scrollToBottom();
 			};
 		});
 	};

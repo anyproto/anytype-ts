@@ -356,7 +356,7 @@ class Keyboard {
 					return;
 				};
 
-				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex' ].includes(current.id))) {
+				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
 					sidebar.leftPanelSetState({ page: 'widget' });
 				};
 
