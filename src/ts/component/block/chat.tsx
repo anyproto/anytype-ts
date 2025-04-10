@@ -185,7 +185,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.unbind();
 
-		win.on(`messageAdd.${ns}`, () => this.onStateUpdate());
+		win.on(`messageAdd.${ns}`, (e, message, subIds) => this.onMessageAdd(message, subIds));
 		win.on(`messageUpdate.${ns}`, () => this.scrollToBottomCheck());
 		win.on(`reactionUpdate.${ns}`, () => this.scrollToBottomCheck());
 		win.on(`chatStateUpdate.${ns}`, this.onStateUpdate);
@@ -477,6 +477,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		return sections;
+	};
+
+	onMessageAdd (message: I.ChatMessage, subIds: string[]) {
+		const subId = this.getSubId();
+		if (!subIds.includes(subId)) {
+			return;
+		};
+
+		this.loadDepsAndReplies([ message ]);
+		this.onStateUpdate();
 	};
 
 	onStateUpdate () {

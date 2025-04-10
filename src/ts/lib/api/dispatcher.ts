@@ -992,7 +992,7 @@ class Dispatcher {
 						});
 					};
 
-					$(window).trigger('messageAdd', [ message ]);
+					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
 					break;
 				};
 

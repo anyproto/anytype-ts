@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, J, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PageSettingsComponent {
@@ -17,6 +17,7 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 	refName: any = null;
 	refDescription: any = null;
 	format = '';
+	timeout = 0;
 	state = {
 		error: '',
 		loading: false,
@@ -107,12 +108,18 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 		);
 	};
 
-	onName () {
-		U.Object.setName(S.Block.profile, this.refName.getValue());
+	componentWillUnmount(): void {
+		window.clearTimeout(this.timeout);
 	};
 
-	onDescription (e) {
-		U.Object.setDescription(S.Block.profile, this.refDescription.getValue());
+	onName () {
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => U.Object.setName(S.Block.profile, this.refName.getValue()), J.Constant.delay.keyboard);
+	};
+
+	onDescription () {
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => U.Object.setDescription(S.Block.profile, this.refDescription.getValue()), J.Constant.delay.keyboard);
 	};
 
 });
