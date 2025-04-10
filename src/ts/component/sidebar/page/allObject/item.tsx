@@ -55,7 +55,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 					{iconLarge}
 					<div className="info">
 						<div className="nameWrap">
-							<ObjectName object={item} />
+							<ObjectName object={item} withPlural={true} />
 						</div>
 						<div className="bottomWrap">
 							<div className="type">
@@ -69,12 +69,10 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 			);
 		} else {
 			content = (
-				<>
-					<div className="nameWrap">
-						{iconSmall}
-						<ObjectName object={item} />
-					</div>
-				</>
+				<div className="nameWrap">
+					{iconSmall}
+					<ObjectName object={item} withPlural={true} />
+				</div>
 			);
 		};
 
