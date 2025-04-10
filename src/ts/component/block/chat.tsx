@@ -692,18 +692,27 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = node.find('#scrollWrapper');
+		const viewport = this.getMessagesInViewport();
 
-		if (!this.hasScroll()) {
-			const messages = this.getMessagesInViewport();
-
-			if (messages.length) {
-				this.scrolledItems = messages.map(it => ({ id: it.id, orderId: it.orderId }));
+		const read = () => {
+			if (viewport.length) {
+				this.scrolledItems = viewport.map(it => ({ id: it.id, orderId: it.orderId }));
 				this.onReadStop();
 			};
 		};
 
+		if (!this.hasScroll()) {
+			read();
+			this.setIsBottom(true);
+
+			return;
+		};
+
 		this.setAutoLoadDisabled(true);
+
 		container.scrollTop(wrapper.outerHeight());
+		window.setTimeout(() => read, 20);
+
 		this.setAutoLoadDisabled(false);
 	};
 
@@ -805,6 +814,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	setIsBottom (v: boolean) {
+		if (v != this.isBottom) {
+			this.refForm?.setState({ isBottom: v });
+		};
 		this.isBottom = v;
 	};
 
