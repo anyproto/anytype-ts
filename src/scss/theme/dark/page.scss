@@ -68,6 +68,7 @@
 			.section {
 				.sectionContent {
 					.item {
+						.icon.widget { background-image: url('#{$themePath}/icon/settings/widget.svg'); }
 						.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
 					}
 				}
