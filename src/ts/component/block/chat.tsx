@@ -806,6 +806,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	setIsBottom (v: boolean) {
+		if (v != this.isBottom) {
+			this.refForm?.setState({ isBottom: v });
+		};
 		this.isBottom = v;
 	};
 

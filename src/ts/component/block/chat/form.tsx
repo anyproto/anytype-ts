@@ -26,6 +26,7 @@ interface Props extends I.BlockComponent {
 interface State {
 	attachments: any[];
 	charCounter: number;
+	isBottom: boolean;
 };
 
 const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
@@ -46,6 +47,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	state = {
 		attachments: [],
 		charCounter: 0,
+		isBottom: false,
 	};
 
 	constructor (props: Props) {
@@ -84,13 +86,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, subId, readonly, getReplyContent, getMessagesInViewport, getIsBottom } = this.props;
-		const { attachments, charCounter } = this.state;
+		const { rootId, subId, readonly, getReplyContent, getMessagesInViewport } = this.props;
+		const { attachments, charCounter, isBottom } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
 		const { messageOrderId, messageCounter } = S.Chat.getState(subId);
 		const messagesInViewport = getMessagesInViewport();
-		const isBottom = getIsBottom();
 
 		if (readonly) {
 			return (
@@ -135,7 +136,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		let btnDirection = '';
-		if (messagesInViewport.length && (messagesInViewport[0].orderId > messageOrderId)) {
+		if (messagesInViewport.length && messageOrderId && (messagesInViewport[0].orderId > messageOrderId)) {
 			btnDirection = 'up';
 		};
 
