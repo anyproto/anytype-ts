@@ -694,10 +694,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				};
 
 				C.ChatAddMessage(rootId, message, (message: any) => {
-					if (!message.error.code) {
-						Storage.setChat(rootId, { lastId: message.messageId });
-					};
-
 					scrollToBottom();
 					clear();
 				});

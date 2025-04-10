@@ -671,10 +671,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToMessage (id: string, offset?: number) {
-		offset = Number(offset) || 0;
 		if (!id) {
 			return;
 		};
+
+		offset = Number(offset) || 0;
 
 		const container = U.Common.getScrollContainer(this.props.isPopup);
 		const top = this.getMessageScrollOffset(id);
@@ -688,7 +689,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToBottom () {
-		const {isPopup} = this.props;
+		const { isPopup } = this.props;
 		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = node.find('#scrollWrapper');
@@ -704,7 +705,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		if (!this.hasScroll()) {
 			read();
 			this.setIsBottom(true);
-
 			return;
 		};
 

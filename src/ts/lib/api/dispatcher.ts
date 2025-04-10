@@ -966,7 +966,7 @@ class Dispatcher {
 					const message = new M.ChatMessage(mapped.message);
 					const author = U.Space.getParticipant(U.Space.getParticipantId(space, message.creator));
 
-					mapped.subIds.forEach((subId) => {
+					mapped.subIds.forEach(subId => {
 						const list = S.Chat.getList(subId);
 
 						let idx = list.findIndex(it => it.orderId == orderId);
