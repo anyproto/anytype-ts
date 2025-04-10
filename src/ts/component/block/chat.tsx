@@ -516,10 +516,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		if (!this.firstUnreadOrderId && messageCounter) {
 			this.firstUnreadOrderId = messageOrderId;
-			this.forceUpdate();
 		};
-
-		this.refForm?.forceUpdate();
 	};
 
 	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
