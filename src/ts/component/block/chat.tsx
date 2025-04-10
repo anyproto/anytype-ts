@@ -131,7 +131,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = true;
 		this.rebind();
 
-		this.loadMessages(1, true, () => {
+		this.loadState(() => {
 			const { messageOrderId } = S.Chat.getState(this.getSubId());
 
 			if (messageOrderId) {
@@ -142,7 +142,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					this.scrollToMessage(target?.id);
 				});
 			} else {
-				this.scrollToBottom();
+				this.loadMessages(1, true, () => this.scrollToBottom());
 			};
 		});
 	};
@@ -191,6 +191,25 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
+	loadState (callBack?: () => void) {
+		const rootId = this.getRootId();
+		const subId = this.getSubId();
+
+		if (!rootId) {
+			return;
+		};
+
+		C.ChatSubscribeLastMessages(rootId, 0, subId, (message: any) => {
+			if (message.state) {
+				S.Chat.setState(subId, message.state);
+			};
+
+			if (callBack) {
+				callBack();
+			};
+		});
+	};
+
 	subscribeMessages (clear: boolean, callBack?: () => void) {
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
@@ -210,18 +229,22 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const messages = message.messages || [];
 			const state = message.state;
 
-			if (messages.length && clear) {
-				S.Chat.set(subId, messages);
-				this.forceUpdate();
-			};
-
 			S.Chat.setState(subId, state);
-			this.loadDepsAndReplies(messages, callBack);
+
+			this.loadDepsAndReplies(messages, () => {
+				if (messages.length && clear) {
+					S.Chat.set(subId, messages);
+					this.forceUpdate();
+				};
+
+				if (callBack) {
+					callBack();
+				};
+			});
 		});
 	};
 
 	loadMessages (dir: number, clear: boolean, callBack?: () => void) {
-		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
 
@@ -251,6 +274,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				return;
 			};
 
+			const first = list[0];
 			const before = dir < 0 ? list[0].orderId : '';
 			const after = dir > 0 ? list[list.length - 1].orderId : '';
 
@@ -284,13 +308,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					this.setIsBottom(false);
 				};
 
-				if (messages.length) {
-					S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
-				};
-
 				this.loadDepsAndReplies(messages, () => {
-					if ((dir < 0) && messages.length) {
-						U.Common.getScrollContainer(isPopup).scrollTop(20);
+					if (messages.length) {
+						S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
+
+						if (first && (dir < 0)) {
+							this.scrollToMessage(first.id);
+						};
 					};
 
 					if (callBack) {
