@@ -27,6 +27,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
 	const cn = [ 'vault' ];
+	const counters = S.Chat.getTotalCounters();
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -306,6 +307,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			C.ChatSubscribeToMessagePreviews();
 		};
 
+		S.Chat.setBadge(counters);
 		$(nodeRef.current).find('#scroll').scrollTop(top.current);
 		setActive(S.Block.spaceview);
 	});

@@ -1,5 +1,5 @@
 import { observable, action, makeObservable, set, intercept } from 'mobx';
-import { J, I, U, M } from 'Lib';
+import { J, I, U, M, Renderer } from 'Lib';
 
 class ChatStore {
 
@@ -151,6 +151,17 @@ class ChatStore {
 		return this.replyMap.get(subId)?.get(id);
 	};
 
+	getTotalCounters (): { mentionCounter: number; messageCounter: number; } {
+		const ret = { mentionCounter: 0, messageCounter: 0 };
+		for (const [ key, value ] of this.stateMap.entries()) {
+			if (key.startsWith(J.Constant.subId.chatPreview)) {
+				ret.mentionCounter += value.mentionCounter || 0;
+				ret.messageCounter += value.messageCounter || 0;
+			};
+		};
+		return ret;
+	};
+
 	getSpaceCounters (spaceId: string): any {
 		if (!spaceId) {
 			return null;
@@ -163,6 +174,21 @@ class ChatStore {
 		};
 
 		return null;
+	};
+
+	setBadge (counters: { mentionCounter: number; messageCounter: number; }) {
+		let t = '';
+
+		if (counters) {
+			if (counters.mentionCounter) {
+				t = '@';
+			} else 
+			if (counters.messageCounter) {
+				t = String(counters.messageCounter || '');
+			};
+		};
+
+		Renderer.send('setBadge', t || '');
 	};
 
 };

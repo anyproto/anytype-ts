@@ -1092,6 +1092,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	renderMarkup () {
+		if (!this.refEditable) {
+			return;
+		};
+
 		const { rootId, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
 		const node = this.refEditable.getNode();
 		const value = this.refEditable.getTextValue();
@@ -1154,6 +1158,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	resize () {
 		const node = $(this.node);
 		const dummy = $(this.refDummy);
+
+		if (!dummy.length) {
+			return;
+		};
 
 		dummy.css({ width: node.outerWidth(true), height: node.outerHeight(true) });
 		node.css({ left: dummy.offset().left });
