@@ -850,6 +850,10 @@ const Block = observer(class Block extends React.Component<Props> {
 				type = I.PreviewType.Link;
 			};
 
+			item.off('click.link').on('click.link', e => {
+				e.preventDefault();
+			});
+
 			item.off('mousedown.link').on('mousedown.link', e => {
 				e.preventDefault();
 
