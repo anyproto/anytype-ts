@@ -1,5 +1,5 @@
 import { observable, action, makeObservable, set, intercept } from 'mobx';
-import { I, U, M } from 'Lib';
+import { J, I, U, M } from 'Lib';
 
 class ChatStore {
 
@@ -83,17 +83,21 @@ class ChatStore {
 		return unread.length;
 	};
 
-	private createState (state: any) {
-		const { messages, lastStateId } = state;
+	private createState (state: I.ChatState) {
+		const { messages, mentions, lastStateId } = state;
 		const el = {
 			messageOrderId: messages.orderId,
 			messageCounter: messages.counter,
+			mentionOrderId: mentions.orderId,
+			mentionCounter: mentions.counter,
 			lastStateId,
 		};
 
 		makeObservable(el, {
 			messageOrderId: observable,
 			messageCounter: observable,
+			mentionOrderId: observable,
+			mentionCounter: observable,
 			lastStateId: observable,
 		});
 
@@ -103,15 +107,17 @@ class ChatStore {
 		return el;
 	};
 
-	setState (subId: string, state: any) {
+	setState (subId: string, state: I.ChatState) {
 		const map = this.stateMap.get(subId);
 
 		if (map) {
-			const { messages, lastStateId } = state;
+			const { messages, mentions, lastStateId } = state;
 
 			set(map, {
 				messageOrderId: messages.orderId,
 				messageCounter: messages.counter,
+				mentionOrderId: mentions.orderId,
+				mentionCounter: mentions.counter,
 				lastStateId,
 			});
 		} else {
@@ -143,6 +149,20 @@ class ChatStore {
 
 	getReply (subId: string, id: string): I.ChatMessage {
 		return this.replyMap.get(subId)?.get(id);
+	};
+
+	getSpaceCounters (spaceId: string): any {
+		if (!spaceId) {
+			return null;
+		};
+
+		for (const [ key, value ] of this.stateMap.entries()) {
+			if (key.startsWith([ J.Constant.subId.chatPreview, spaceId ].join('-'))) {
+				return value;
+			};
+		};
+
+		return null;
 	};
 
 };

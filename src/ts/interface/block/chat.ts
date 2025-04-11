@@ -13,6 +13,17 @@ export enum AttachmentType {
 	Link		 = 2,
 };
 
+export interface ChatStateCounter {
+	orderId: string;
+	counter: number;
+};
+
+export interface ChatState {
+	messages: ChatStateCounter;
+	mentions: ChatStateCounter;
+	lastStateId: string;
+};
+
 export interface ChatMessage {
 	id: string;
 	orderId: string;

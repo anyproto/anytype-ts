@@ -111,6 +111,7 @@ export default {
 		subSpace:		 'subSpace',
 		allObject:		 'allObject',
 		library: 		 'library',
+		chatPreview:	 'lastMessage',
 	},
 
 	typeKey: {

@@ -660,14 +660,15 @@ export const Mapper = {
 			};
 		},
 
-		ChatState: (obj: Model.ChatState): any => {
+		ChatState: (obj: Model.ChatState): I.ChatState => {
 			return {
 				messages: Mapper.From.ChatStateUnreadMessages(obj.getMessages()),
+				mentions: Mapper.From.ChatStateUnreadMessages(obj.getMentions()),
 				lastStateId: obj.getLaststateid(),
 			};
 		},
 
-		ChatStateUnreadMessages (obj: any): any {
+		ChatStateUnreadMessages (obj: any): I.ChatStateCounter {
 			return {
 				orderId: obj.getOldestorderid(),
 				counter: obj.getCounter(),

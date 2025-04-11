@@ -1004,7 +1004,13 @@ class Dispatcher {
 				};
 
 				case 'ChatStateUpdate': {
-					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state));
+					mapped.subIds.forEach(subId => {
+						if (subId == J.Constant.subId.chatPreview) {
+							subId = [ J.Constant.subId.chatPreview, spaceId, rootId ].join('-');
+						};
+
+						S.Chat.setState(subId, mapped.state);
+					});
 
 					$(window).trigger('chatStateUpdate');
 					break;

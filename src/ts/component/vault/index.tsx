@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
+import { I, U, S, C, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
 import VaultItem from './item';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
@@ -22,6 +22,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const top = useRef(0);
 	const timeoutHover = useRef(0);
 	const pressed = useRef(new Set());
+	const isSubscribed = useRef(false);
 	const n = useRef(-1);
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
@@ -300,6 +301,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
+		if (S.Auth.account && !isSubscribed.current) {
+			isSubscribed.current = true;
+			C.ChatSubscribeToMessagePreviews();
+		};
+
 		$(nodeRef.current).find('#scroll').scrollTop(top.current);
 		setActive(S.Block.spaceview);
 	});
