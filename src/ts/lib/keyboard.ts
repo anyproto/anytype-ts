@@ -1182,16 +1182,15 @@ class Keyboard {
 	};
 
 	getMarkParam () {
-		const cmd = this.cmdKey();
 		return [
-			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
-			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
-			{ key: `${cmd}+u`,		 type: I.MarkType.Underline, param: '' },
-			{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
-			{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
-			{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
-			{ key: `${cmd}+shift+h`, type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
-			{ key: `${cmd}+shift+c`, type: I.MarkType.Color,	 param: Storage.get('color') },
+			{ key: 'textBold',		 type: I.MarkType.Bold,		 param: '' },
+			{ key: 'textItalic',	 type: I.MarkType.Italic,	 param: '' },
+			{ key: 'textUnderlined', type: I.MarkType.Underline, param: '' },
+			{ key: 'textStrike',	 type: I.MarkType.Strike,	 param: '' },
+			{ key: 'textLink',		 type: I.MarkType.Link,		 param: '' },
+			{ key: 'textCode',		 type: I.MarkType.Code,		 param: '' },
+			{ key: 'textColor',		 type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
+			{ key: 'textBackground', type: I.MarkType.Color,	 param: Storage.get('color') },
 		];
 	};
 	
