@@ -1,38 +1,20 @@
 import * as React from 'react';
-import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
-import { I, S, U, J, translate } from 'Lib';
+import { IconObject, Input, Title, Icon } from 'Component';
+import { I, S, U, J, C, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PageSettingsComponent {
-	setLoading: (v: boolean) => void;
-};
+const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends React.Component<I.PageSettingsComponent> {
 
-interface State {
-	error: string;
-	loading: boolean;
-};
-
-const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends React.Component<Props, State> {
-
-	refName: any = null;
-	refDescription: any = null;
-	format = '';
 	timeout = 0;
-	state = {
-		error: '',
-		loading: false,
-	};
 
-	constructor (props: Props) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
-		this.onName = this.onName.bind(this);
-		this.onDescription = this.onDescription.bind(this);
+		this.onSave = this.onSave.bind(this);
 	};
 
 	render () {
 		const { config } = S.Common;
-		const { error, loading } = this.state;
 		const { account } = S.Auth;
 		const profile = U.Space.getProfile();
 
@@ -44,10 +26,7 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 		return (
 			<div className="sections">
 				<div className="section top">
-					<Error text={error} />
-
 					<div className="iconWrapper">
-						{loading ? <Loader /> : ''}
 						<IconObject
 							id="userpic"
 							object={profile}
@@ -61,17 +40,15 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 					<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
 
 					<Input
-						ref={ref => this.refName = ref}
 						value={name}
-						onKeyUp={this.onName}
+						onKeyUp={(e, v) => this.onSave(e, 'name', v)}
 						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
 						maxLength={160}
 					/>
 
 					<Input
-						ref={ref => this.refDescription = ref}
 						value={profile.description}
-						onKeyUp={this.onDescription}
+						onKeyUp={(e, v) => this.onSave(e, 'description', v)}
 						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
 						maxLength={160}
 					/>
@@ -112,14 +89,18 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 		window.clearTimeout(this.timeout);
 	};
 
-	onName () {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => U.Object.setName(S.Block.profile, this.refName.getValue()), J.Constant.delay.keyboard);
-	};
+	onSave (e: any, key: string, value: string) {
+		let t = J.Constant.delay.keyboard;
 
-	onDescription () {
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			t = 0;
+		});
+
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => U.Object.setDescription(S.Block.profile, this.refDescription.getValue()), J.Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => {
+			C.ObjectListSetDetails([ S.Block.profile ], [ { key, value: String(value || '') } ]);
+		}, t);
 	};
 
 });
