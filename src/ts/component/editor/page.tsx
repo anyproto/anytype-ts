@@ -572,7 +572,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let ret = false;
 
 		// Select all
-		keyboard.shortcut(`${cmd}+a`, e, () => {
+		keyboard.shortcut('selectAll', e, () => {
 			if (popupOpen || menuOpen) {
 				return;
 			};
@@ -844,7 +844,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (block.isText()) {
 
 			// Select all
-			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+			keyboard.shortcut('selectAll', e, (pressed: string) => {
 				if ((range.from == 0) && (range.to == length)) {
 					e.preventDefault();
 					this.onSelectAll();

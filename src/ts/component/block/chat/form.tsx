@@ -381,7 +381,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			});
 		};
 
-		keyboard.shortcut(`${cmd}+t`, e, () => {
+		keyboard.shortcut('chatObject', e, () => {
 			if (!S.Menu.isOpen('searchObject')) {
 				e.preventDefault();
 				this.refButtons.onChatButton(e, I.ChatButton.Object);
@@ -395,7 +395,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+m`, e, () => {
+		keyboard.shortcut('chatMention', e, () => {
 			if (!S.Menu.isOpen('mention')) {
 				e.preventDefault();
 				this.refButtons.onChatButton(e, I.ChatButton.Mention);
