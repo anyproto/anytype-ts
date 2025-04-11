@@ -87,9 +87,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, subId, readonly, getReplyContent, getMessagesInViewport } = this.props;
+		const { subId, readonly, getReplyContent } = this.props;
 		const { attachments, charCounter, isBottom } = this.state;
-		const { space } = S.Common;
 		const value = this.getTextValue();
 		const { messageCounter } = S.Chat.getState(subId);
 

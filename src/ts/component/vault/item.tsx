@@ -30,7 +30,7 @@ const VaultItem: FC<Props> = observer(({
 	};
 
 	let icon = null;
-	let counterText = null;
+	let cnt = null;
 
 	if (!item.isButton) {
 		icon = <IconObject object={item} size={36} iconSize={36} />;
@@ -39,10 +39,10 @@ const VaultItem: FC<Props> = observer(({
 	};
 
 	if (counters.mentionCounter) {
-		counterText = '@';
+		cnt = '@';
 	} else 
 	if (counters.messageCounter) {
-		counterText = counters.messageCounter;
+		cnt = counters.messageCounter;
 	};
 
 	return (
@@ -60,7 +60,7 @@ const VaultItem: FC<Props> = observer(({
 		>
 			<div className="iconWrap">
 				{icon}
-				{counterText ? <div className="cnt">{counterText}</div> : ''}
+				{cnt ? <div className="cnt">{cnt}</div> : ''}
 			</div>
 		</div>
 	);

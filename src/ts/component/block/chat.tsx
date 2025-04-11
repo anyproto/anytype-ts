@@ -657,18 +657,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.scrolledItems = [];
 	};
 
-	getMessageScrollOffset (id: string) {
+	getMessageScrollOffset (id: string): number {
 		const ref = this.messageRefs[id];
 		if (!ref) {
-			return;
+			return 0;
 		};
 
 		const node = $(ref.node);
-		if (!node.length) {
-			return;
-		};
-
-		return node.offset().top + node.outerHeight();
+		return node.length ? node.offset().top + node.outerHeight() : 0;
 	};
 
 	getMessagesInViewport () {
