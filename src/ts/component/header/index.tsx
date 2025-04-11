@@ -85,6 +85,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 							tooltipCaption={item.caption} 
 							className={cn.join(' ')} 
 							onClick={e => item.onClick(e)} 
+							onDoubleClick={e => e.stopPropagation()}
 						/>
 					);
 				})}

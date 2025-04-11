@@ -19,6 +19,7 @@ interface Props {
 	draggable?: boolean;
 	style?: any;
 	onClick?(e: MouseEvent): void;
+	onDoubleClick?(e: MouseEvent): void;
 	onMouseDown?(e: MouseEvent): void;
 	onMouseEnter?(e: MouseEvent): void;
 	onMouseLeave?(e: MouseEvent): void;
@@ -44,6 +45,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	draggable = false,
 	style = {},
 	onClick,
+	onDoubleClick,
 	onMouseDown,
 	onMouseEnter,
 	onMouseLeave,
@@ -121,6 +123,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			onContextMenu={onContextMenuHandler} 
 			onDragStart={onDragStart} 
 			onClick={onClick} 
+			onDoubleClick={onDoubleClick}
 		>
 			{arrow ? <div className="icon arrow" /> : ''}
 			{inner}
