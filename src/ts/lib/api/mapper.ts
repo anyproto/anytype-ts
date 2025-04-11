@@ -657,6 +657,7 @@ export const Mapper = {
 				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
 				isRead: obj.getRead(),
+				isReadMention: obj.getMentionread(),
 			};
 		},
 
