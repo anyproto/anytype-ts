@@ -409,9 +409,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		if (showTooltip) {
-			const text = !checkValue() && withName ? translate(`placeholderCell${relation.format}`) : relation.name;
-
-			Preview.tooltipShow({ text, element: cell, typeX: tooltipX, typeY: tooltipY, delay: 1000 });
+			Preview.tooltipShow({ text: relation.name, element: cell, typeX: tooltipX, typeY: tooltipY, delay: 1000 });
 		};
 	};
 	
