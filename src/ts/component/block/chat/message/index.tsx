@@ -42,6 +42,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
 		const ct = [ 'textWrapper' ];
+		const cnBubble = [ 'bubble' ];
 		const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 
 		let text = content.text.replace(/\r?\n$/, '');
@@ -115,7 +116,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				<div className="side left">
 					<IconObject
 						object={{ ...author, layout: I.ObjectLayout.Participant }}
-						size={40}
+						size={32}
 						onClick={e => U.Object.openConfig(author)}
 					/>
 				</div>
@@ -128,6 +129,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 			);
 		};
 
+		if (hasAttachments) {
+			cnBubble.push('withAttachment');
+
+			if (attachmentsLayout) {
+				cnBubble.push('withMedia');
+			};
+		};
+
 		return (
 			<div 
 				ref={ref => this.node = ref} 
@@ -138,11 +147,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				<div className="flex">
 					{userpicNode}
 					<div className="side right">
-						{authorNode}
 
 						<Reply {...this.props} id={replyToMessageId} />
 
-						<div className={[ 'bubble', attachmentsLayout ? 'withMedia' : '' ].join(' ')}>
+						{authorNode}
+
+						<div className={cnBubble.join(' ')}>
 							<div className={ct.join(' ')}>
 								<div
 									ref={ref => this.refText = ref}

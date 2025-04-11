@@ -1,23 +1,33 @@
 .message { @include text-common; position: relative; }
 .message {
-	.text { user-select: text !important; display: inline; }
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
 
 	.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
 
-	> .flex > .side.left { flex-shrink: 0; width: 40px; display: flex; align-items: flex-end; }
+	> .flex > .side.left { flex-shrink: 0; width: 32px; display: flex; align-items: flex-end; }
 	> .flex > .side.left {
 		.iconObject { display: none; }
 	}
 
 	> .flex > .side.right { display: flex; flex-direction: column; position: relative; }
 
-	.bubble { padding: 8px 12px; border-radius: 16px; background: var(--color-shape-tertiary); display: flex; flex-direction: column; }
+	.bubble { border-radius: 16px; background: var(--color-shape-tertiary); display: flex; flex-direction: column; }
 	.bubble {
-		.time { @include text-very-small; color: var(--color-text-secondary); float: right; padding-left: 24px; padding-top: 2px; }
+		.textWrapper { line-height: 20px; padding: 8px 12px; }
+		.text { user-select: text !important; display: inline; }
+		.time { @include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 24px; padding-top: 3px; }
+
+		.attachments { padding: 4px; }
 	}
-	.bubble.withMedia { flex-direction: column-reverse; }
+	.bubble.withAttachment {
+		.textWrapper { padding: 8px 12px 0px; }
+	}
+	.bubble.withAttachment.withMedia { flex-direction: column-reverse; }
+	.bubble.withAttachment.withMedia {
+		.textWrapper { padding: 0px 12px 8px; }
+	}
+
 
 	.icon.reactionAdd { width: 20px; height: 20px; background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
 	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
@@ -56,9 +66,9 @@
 		}
 	}
 
-	.author { display: none; align-items: center; gap: 0px 8px; }
+	.author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 4px; }
 	.author {
-		.name { @include text-overflow-nw; font-weight: 500; }
+		.name { @include text-small; @include text-overflow-nw; font-weight: 500; }
 	}
 	.author * { user-select: text !important; }
 
@@ -70,7 +80,7 @@
 		.item:hover { color: var(--color-text-primary); }
 	}
 
-	.reactions { padding: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center; }
+	.reactions { padding: 4px 0px 8px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center; }
 	.reactions {
 		.reaction { 
 			display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
@@ -118,15 +128,22 @@
 
 .message:first-child { margin-top: 0px; }
 
-.message.isFirst { margin: 12px 0px 0px 0px; }
+.message.isFirst { margin: 16px 0px 0px 0px; }
 .message.isFirst {
 	.author { display: flex; }
 	> .flex > .side.right {  min-width: 164px; }
 }
 
 .message.isFirst, .message.withText {
-	.attachments { padding: 8px 0px 0px 0px;  }
-	.attachments.withLayout { padding: 0px 0px 8px 0px;  }
+	.attachments { padding: 8px 4px 4px 4px;  }
+	.attachments.withLayout { padding: 4px 4px 8px 4px;  }
+}
+
+.message:not(.withText) {
+	.bubble {
+		.textWrapper { display: none; }
+		.attachments { padding: 0px;}
+	}
 }
 
 .message.isLast {
