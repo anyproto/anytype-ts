@@ -21,7 +21,7 @@ interface SelectionRefProps {
 	hide(): void;
 };
 
-const THRESHOLD = 10;
+const THRESHOLD = 20;
 
 const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, ref) => {
 
