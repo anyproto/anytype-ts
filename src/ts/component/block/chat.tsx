@@ -622,8 +622,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		const read = (item) => {
-			S.Chat.setReadStatus(subId, [ item.id ], true);
-			C.ChatReadMessages(rootId, item.orderId, item.orderId, lastStateId);
+			const { id, orderId } = item;
+
+			S.Chat.setReadStatus(subId, [ id ], true);
+			C.ChatReadMessages(rootId, orderId, orderId, lastStateId);
 		};
 
 		this.getMessagesInViewport().filter(it => !it.isRead).forEach(item => read(item));
