@@ -783,18 +783,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		if (!ret && ids.length && !keyboard.isSpecial(e)) {
-			this.blockCreate(ids[ids.length - 1] , I.BlockPosition.Bottom, {
+			const param = {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
-			}, (blockId: string) => {
+			};
+
+			C.BlockCreate(rootId, ids[ids.length - 1], I.BlockPosition.Bottom, param, (message: any) => {
 				const key = e.key;
+				const blockId = message.blockId;
 
 				C.BlockListDelete(rootId, ids);
 				U.Data.blockSetText(rootId, blockId, key, [], true, () => {
-					const block = S.Block.getLeaf(rootId, blockId);
-					const length = block.getLength();
+					const length = key.length;
 
-					window.setTimeout(() => this.focus(blockId, length, length, true));
+					focus.set(blockId, { from: length, to: length });
+					focus.apply();
+					focus.scroll(isPopup, blockId);
 				});
 			});
 		};
@@ -2361,7 +2365,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup } = this.props;
 
 		window.setTimeout(() => {
-			focus.set(id, { from: from, to: to });
+			focus.set(id, { from, to });
 			focus.apply();
 
 			if (scroll) {
