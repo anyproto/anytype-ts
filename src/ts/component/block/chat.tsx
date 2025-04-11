@@ -583,6 +583,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onScroll (e: any) {
 		const { isPopup } = this.props;
+		const rootId = this.getRootId();
+		const subId = this.getSubId();
+		const { lastStateId } = S.Chat.getState(subId);
 		const node = $(this.node);
 		const scrollWrapper = node.find('#scrollWrapper');
 		const formWrapper = node.find('#formWrapper');
@@ -618,11 +621,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 		});
 
-		this.top = st;
-		this.scrolledItems = this.scrolledItems.concat(this.getMessagesInViewport().filter(it => !it.isRead).map(it => ({ id: it.id, orderId: it.orderId })));
+		const read = (item) => {
+			S.Chat.setReadStatus(subId, [ item.id ], true);
+			C.ChatReadMessages(rootId, item.orderId, item.orderId, lastStateId);
+		};
 
-		window.clearTimeout(this.timeoutScrollStop);
-		this.timeoutScrollStop = window.setTimeout(() => this.onReadStop(), 100);
+		this.getMessagesInViewport().filter(it => !it.isRead).forEach(item => read(item));
+
+		this.top = st;
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
