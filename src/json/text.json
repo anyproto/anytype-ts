@@ -762,7 +762,7 @@
 	"blockChatButtonEmoji": "Add emoji",
 	"blockChatButtonMention": "Add mention",
 	"blockChatNewMessages": "New messages",
-	"blockChatMessageEdited": "(edited)",
+	"blockChatMessageEdited": "edited",
 	"blockChatEditing": "Editing message",
 	"blockChatReplying": "Replying to %s",
 	"blockChatFormReadonly": "Only editors can send messages. Contact the owner to request access.",
