@@ -653,6 +653,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		if (first && last) {
 			C.ChatReadMessages(rootId, first, last, lastStateId, I.ChatReadType.Message);
+			C.ChatReadMessages(rootId, first, last, lastStateId, I.ChatReadType.Mention);
 		};
 
 		if (ids.length) {
