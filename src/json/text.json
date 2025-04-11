@@ -1636,7 +1636,9 @@
 	"menuDataviewTemplateUnsetDefaultForView": "Unset as default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
 
-	"menuDataviewExistingObject": "Existing object",
+	"menuDataviewNewExistingObject": "Existing object",
+	"menuDataviewNewTemplate": "Template for this View",
+	"menuDataviewNewType": "Default Type for this View",
 
 	"menuGraphSettingsTitles": "Titles",
 	"menuGraphSettingsArrows": "Arrows",

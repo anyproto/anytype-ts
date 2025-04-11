@@ -35,19 +35,17 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const type = S.Record.getTypeById(typeId);
 		const templateName = template ? template.name : translate('commonBlank');
 
-		const itemsAdd: any[] = [
-			{ id: 'new', icon: 'add', name: translate('commonNew') },
-		];
+		const itemsAdd: any[] = [];
 		const itemsSettings: any[] = [
-			{ id: 'template', name: translate('commonTemplate'), arrow: true, caption: templateName },
+			{ id: 'template', name: translate('menuDataviewNewTemplate'), arrow: true, caption: templateName },
 		];
 
 		if (isAllowedObject && isCollection) {
-			itemsAdd.push({ id: 'existing', icon: 'existingObject', name: translate('menuDataviewExistingObject'), arrow: true });
+			itemsAdd.push({ id: 'existing', icon: 'existingObject', name: translate('menuDataviewNewExistingObject'), arrow: true });
 		};
 
 		if (withTypeSelect) {
-			itemsSettings.unshift({ id: 'type', name: translate('commonDefaultType'), arrow: true, caption: type.name });
+			itemsSettings.unshift({ id: 'type', name: translate('menuDataviewNewType'), arrow: true, caption: type.name });
 		};
 
 		let sections: any[] = [
@@ -174,21 +172,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const onClick = (e: React.MouseEvent, item: any) => {
-		if (item.arrow) {
-			return;
-		};
-
-		switch (item.id) {
-			case 'new': {
-				if (onSelect) {
-					onSelect(template ? template : { id: '' });
-				};
-				break;
-			};
-		};
-	};
-
 	const onMouseEnter = (e: React.MouseEvent, item: any) => {
 		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
@@ -220,7 +203,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						icon={action.icon}
 						onMouseEnter={e => onMouseEnter(e, action)}
 						onMouseLeave={e => onMouseLeave(e, action)}
-						onClick={e => onClick(e, action)}
 					/>
 				))}
 			</div>
@@ -247,7 +229,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onOver,
-		onClick,
 		onMouseEnter,
 		onMouseLeave,
 		resize,

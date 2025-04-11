@@ -51,13 +51,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
 		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
-		
-		let isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
-
-		// Force disable for types
-		if (U.Object.isTypeLayout(target.layout)) {
-			isAllowedTemplate = false;
-		};
+		const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
