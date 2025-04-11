@@ -109,7 +109,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 		let userpicNode = null;
 		let authorNode = null;
-		let attachmentsNode = null;
 
 		if (!isSelf) {
 			userpicNode = (
@@ -129,26 +128,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 			);
 		};
 
-		if (hasAttachments) {
-			attachmentsNode = (
-				<div className={ca.join(' ')}>
-					{attachments.map((item: any, i: number) => (
-						<Attachment
-							ref={ref => this.attachmentRefs[item.id] = ref}
-							key={i}
-							object={item}
-							subId={subId}
-							scrollToBottom={scrollToBottom}
-							onRemove={() => this.onAttachmentRemove(item.id)}
-							onPreview={(preview) => this.onPreview(preview)}
-							showAsFile={!attachmentsLayout}
-							bookmarkAsDefault={attachments.length > 1}
-						/>
-					))}
-				</div>
-			);
-		};
-
 		return (
 			<div 
 				ref={ref => this.node = ref} 
@@ -163,9 +142,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 						<Reply {...this.props} id={replyToMessageId} />
 
-						<div className="bubble">
-							{attachmentsLayout ? attachmentsNode : ''}
-
+						<div className={[ 'bubble', attachmentsLayout ? 'withMedia' : '' ].join(' ')}>
 							<div className={ct.join(' ')}>
 								<div
 									ref={ref => this.refText = ref}
@@ -179,7 +156,24 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 								</div>
 							</div>
 
-							{!attachmentsLayout ? attachmentsNode : ''}
+
+							{hasAttachments ? (
+								<div className={ca.join(' ')}>
+									{attachments.map((item: any, i: number) => (
+										<Attachment
+											ref={ref => this.attachmentRefs[item.id] = ref}
+											key={i}
+											object={item}
+											subId={subId}
+											scrollToBottom={scrollToBottom}
+											onRemove={() => this.onAttachmentRemove(item.id)}
+											onPreview={(preview) => this.onPreview(preview)}
+											showAsFile={!attachmentsLayout}
+											bookmarkAsDefault={attachments.length > 1}
+										/>
+									))}
+								</div>
+							) : ''}
 						</div>
 
 						{hasReactions ? (

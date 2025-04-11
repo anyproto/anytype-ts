@@ -13,10 +13,11 @@
 
 	> .flex > .side.right { display: flex; flex-direction: column; position: relative; }
 
-	.bubble { padding: 8px 12px; border-radius: 16px; background: var(--color-shape-tertiary); }
+	.bubble { padding: 8px 12px; border-radius: 16px; background: var(--color-shape-tertiary); display: flex; flex-direction: column; }
 	.bubble {
-		.time { @include text-very-small; color: var(--color-text-secondary); float: right; padding-left: 24px; padding-top: 3px; }
+		.time { @include text-very-small; color: var(--color-text-secondary); float: right; padding-left: 24px; padding-top: 2px; }
 	}
+	.bubble.withMedia { flex-direction: column-reverse; }
 
 	.icon.reactionAdd { width: 20px; height: 20px; background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
 	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
