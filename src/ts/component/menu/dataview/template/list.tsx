@@ -54,6 +54,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 						rootId={item.id}
 						size={previewSize}
 						onMore={e => this.onMore(e, item)}
+						onContextMenu={e => this.onMore(e, item)}
 					/>
 				);
 			};
@@ -70,7 +71,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					id={`item-${item.id}`} 
 					className={cn.join(' ')}
 					onClick={e => this.onClick(e, item)}
-					onContextMenu={e => this.onMore(e, item)}
 					onMouseEnter={() => setHover(item)}
 					onMouseLeave={() => setHover(null)}
 				>

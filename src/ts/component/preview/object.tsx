@@ -10,6 +10,7 @@ interface Props {
 	className?: string;
 	onMore? (e: any): void;
 	onClick? (e: any): void;
+	onContextMenu? (e: any): void;
 	onMouseEnter? (e: any): void;
 	onMouseLeave? (e: any): void;
 	position?: () => void;
@@ -23,6 +24,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	size = I.PreviewSize.Small,
 	className = '',
 	onClick,
+	onContextMenu,
 	onMore,
 	onMouseEnter,
 	onMouseLeave,
@@ -411,7 +413,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 						</div>
 					) : ''}
 
-					<div onClick={onClick}>
+					<div onClick={onClick} onContextMenu={onContextMenu}>
 						<div className="scroller">
 							{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
 
