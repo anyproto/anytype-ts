@@ -134,8 +134,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.loadState(() => {
 			const { messageOrderId } = S.Chat.getState(this.getSubId());
 
-			console.log('MESSAGE ORDER ID', messageOrderId);
-
 			if (messageOrderId) {
 				this.firstUnreadOrderId = messageOrderId;
 
@@ -153,7 +151,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = false;
 		this.unbind();
 
-		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 		window.clearTimeout(this.timeoutInterface);
 		window.clearTimeout(this.timeoutScroll);
 		window.clearTimeout(this.timeoutScrollStop);
@@ -392,22 +389,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const rootId = this.getRootId();
 
-		U.Data.subscribeIds({
-			subId: this.getSubId(),
-			ids,
-			noDeps: true,
-			keys: U.Data.chatRelationKeys(),
-		}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			message.records.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
+		U.Object.getByIds(ids, { keys: U.Data.chatRelationKeys() }, (objects) => {
+			objects.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
+
+			this.refForm?.forceUpdate();
 
 			if (callBack) {
 				callBack();
 			};
-
-			this.refForm?.forceUpdate();
 		});
 	};
 
@@ -733,8 +722,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.setAutoLoadDisabled(true);
 
-		console.log(container, wrapper.outerHeight());
-
 		container.scrollTop(wrapper.outerHeight() + 100);
 		window.setTimeout(() => read, 20);
 
@@ -779,11 +766,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	getReplyContent (message: any): any {
 		const { creator, content } = message;
-		const { space } = S.Common;
-		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
+		const rootId = this.getRootId();
+		const author = U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, creator));
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
 		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
-		const attachments = (message.attachments || []).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
+		const attachments = (message.attachments || []).map(it => S.Detail.get(rootId, it.target)).filter(it => !it.isDeleted);
 		const l = attachments.length;
 
 		let text: string = '';

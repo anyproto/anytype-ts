@@ -320,10 +320,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	getAttachments (): any[] {
-		const { subId, id } = this.props;
+		const { rootId, subId, id } = this.props;
 		const message = S.Chat.getMessage(subId, id);
 
-		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
+		return (message.attachments || []).map(it => S.Detail.get(rootId, it.target)).filter(it => !it._empty_);
 	};
 
 	getAttachmentsClass (): string {

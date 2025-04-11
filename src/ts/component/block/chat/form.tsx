@@ -1155,8 +1155,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const node = $(this.node);
 		const dummy = $(this.refDummy);
 
-		console.log(node, node.outerWidth(true), node.outerHeight(true));
-
 		dummy.css({ width: node.outerWidth(true), height: node.outerHeight(true) });
 		node.css({ left: dummy.offset().left });
 	};
