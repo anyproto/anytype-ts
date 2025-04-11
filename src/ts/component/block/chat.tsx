@@ -36,7 +36,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
-		this.onStateUpdate = this.onStateUpdate.bind(this);
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.scrollToBottomCheck = this.scrollToBottomCheck.bind(this);
@@ -175,7 +174,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		win.on(`messageAdd.${ns}`, (e, message, subIds) => this.onMessageAdd(message, subIds));
 		win.on(`messageUpdate.${ns}`, () => this.scrollToBottomCheck());
 		win.on(`reactionUpdate.${ns}`, () => this.scrollToBottomCheck());
-		win.on(`chatStateUpdate.${ns}`, this.onStateUpdate);
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 	};
@@ -488,15 +486,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		this.loadDepsAndReplies([ message ]);
-		this.onStateUpdate();
-	};
-
-	onStateUpdate () {
-		const { messageOrderId, messageCounter } = S.Chat.getState(this.getSubId());
-
-		if (!this.firstUnreadOrderId && messageCounter) {
-			this.firstUnreadOrderId = messageOrderId;
-		};
 	};
 
 	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
