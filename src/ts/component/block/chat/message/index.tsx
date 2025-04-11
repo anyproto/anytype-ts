@@ -31,7 +31,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(subId, id);
-		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isRead } = message;
+		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const attachments = this.getAttachments();
 		const hasReactions = reactions.length;
@@ -80,7 +80,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		if (U.Common.checkRtl(text)) {
 			ct.push('isRtl');
 		};
-		if (!isRead) {
+		if (!isReadMessage || !isReadMention) {
 			ct.push('isUnread');
 		};
 

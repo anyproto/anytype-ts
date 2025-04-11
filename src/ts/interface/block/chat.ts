@@ -43,7 +43,7 @@ export interface ChatMessage {
 	// Internal
 	isFirst: boolean;
 	isLast: boolean;
-	isRead: boolean;
+	isReadMessage: boolean;
 	isReadMention: boolean;
 };
 

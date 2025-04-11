@@ -645,7 +645,7 @@ export const Mapper = {
 			};
 		},
 
-		ChatMessage: (obj: Model.ChatMessage): any => {
+		ChatMessage: (obj: Model.ChatMessage): Partial<I.ChatMessage> => {
 			return {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
@@ -656,7 +656,7 @@ export const Mapper = {
 				content: Mapper.From.ChatMessageContent(obj.getMessage()),
 				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
-				isRead: obj.getRead(),
+				isReadMessage: obj.getRead(),
 				isReadMention: obj.getMentionread(),
 			};
 		},

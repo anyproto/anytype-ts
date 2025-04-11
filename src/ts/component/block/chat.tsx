@@ -616,7 +616,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 			switch (type) {
 				case I.ChatReadType.Message: {
-					S.Chat.setReadStatus(subId, [ id ], true);
+					S.Chat.setReadMessageStatus(subId, [ id ], true);
 					break;
 				};
 
@@ -649,12 +649,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const subId = this.getSubId();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
+		const ids = this.scrolledItems.map(it => it.id);
 
 		if (first && last) {
 			C.ChatReadMessages(rootId, first, last, lastStateId, I.ChatReadType.Message);
 		};
 
-		S.Chat.setReadStatus(subId, this.scrolledItems.map(it => it.id), true);
+		if (ids.length) {
+			S.Chat.setReadMessageStatus(subId, ids, true);
+			S.Chat.setReadMessageStatus(subId, ids, true);
+		};
 
 		this.scrolledItems = [];
 	};

@@ -977,6 +977,7 @@ class Dispatcher {
 						S.Chat.add(subId, idx, message);
 					});
 
+					/*
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
 						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
 							const { space } = S.Common;
@@ -991,6 +992,7 @@ class Dispatcher {
 							};
 						});
 					};
+					*/
 
 					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
 					break;
@@ -1017,7 +1019,7 @@ class Dispatcher {
 				};
 
 				case 'ChatUpdateMessageReadStatus': {
-					mapped.subIds.forEach(subId => S.Chat.setReadStatus(subId, mapped.ids, mapped.isRead));
+					mapped.subIds.forEach(subId => S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead));
 					break;
 				};
 

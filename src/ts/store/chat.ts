@@ -73,12 +73,12 @@ class ChatStore {
 		this.replyMap.set(subId, map);
 	};
 
-	setReadStatus (subId: string, ids: string[], isRead: boolean) {
-		(ids || []).forEach(id => this.update(subId, { id, isRead }));
+	setReadMessageStatus (subId: string, ids: string[], value: boolean) {
+		(ids || []).forEach(id => this.update(subId, { id, isReadMessage: value }));
 	};
 
-	setReadMentionStatus (subId: string, ids: string[], isRead: boolean) {
-		(ids || []).forEach(id => this.update(subId, { id, isReadMention: isRead }));
+	setReadMentionStatus (subId: string, ids: string[], value: boolean) {
+		(ids || []).forEach(id => this.update(subId, { id, isReadMention: value }));
 	};
 
 	getUnreadCounter (subId) {
