@@ -77,6 +77,10 @@ class ChatStore {
 		(ids || []).forEach(id => this.update(subId, { id, isRead }));
 	};
 
+	setReadMentionStatus (subId: string, ids: string[], isRead: boolean) {
+		(ids || []).forEach(id => this.update(subId, { id, isReadMention: isRead }));
+	};
+
 	getUnreadCounter (subId) {
 		const unread = this.getList(subId).filter(it => !it.isRead);
 

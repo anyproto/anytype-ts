@@ -1021,6 +1021,11 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatUpdateMentionReadStatus': {
+					mapped.subIds.forEach(subId => S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead));
+					break;
+				};
+
 				case 'ChatDelete': {
 					mapped.subIds.forEach(subId => S.Chat.delete(subId, mapped.id));
 					break;

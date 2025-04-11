@@ -565,7 +565,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			if (viewport.length) {
 				const { lastStateId } = S.Chat.getState(subId);
 
-				C.ChatReadMessages(rootId, viewport[0].orderId, viewport[viewport.length - 1].orderId, lastStateId);
+				C.ChatReadMessages(rootId, viewport[0].orderId, viewport[viewport.length - 1].orderId, lastStateId, I.ChatReadType.Message);
 			};
 		});
 	};
@@ -584,6 +584,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const fh = formWrapper.outerHeight();
 		const ch = container.outerHeight();
 		const hh = J.Size.header;
+		const list = this.getMessagesInViewport();
 
 		this.setIsBottom(false);
 
@@ -610,14 +611,26 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 		});
 
-		const read = (item) => {
+		const read = (item, type: I.ChatReadType) => {
 			const { id, orderId } = item;
 
-			S.Chat.setReadStatus(subId, [ id ], true);
-			C.ChatReadMessages(rootId, orderId, orderId, lastStateId);
+			switch (type) {
+				case I.ChatReadType.Message: {
+					S.Chat.setReadStatus(subId, [ id ], true);
+					break;
+				};
+
+				case I.ChatReadType.Mention: {
+					S.Chat.setReadMentionStatus(subId, [ id ], true);
+					break;
+				};
+			};
+
+			C.ChatReadMessages(rootId, orderId, orderId, lastStateId, type);
 		};
 
-		this.getMessagesInViewport().filter(it => !it.isRead).forEach(item => read(item));
+		list.filter(it => !it.isRead).forEach(item => read(item, I.ChatReadType.Message));
+		list.filter(it => !it.isReadMention).forEach(item => read(item, I.ChatReadType.Mention));
 
 		this.top = st;
 
@@ -638,7 +651,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { lastStateId } = state;
 
 		if (first && last) {
-			C.ChatReadMessages(rootId, first, last, lastStateId);
+			C.ChatReadMessages(rootId, first, last, lastStateId, I.ChatReadType.Message);
 		};
 
 		S.Chat.setReadStatus(subId, this.scrolledItems.map(it => it.id), true);
