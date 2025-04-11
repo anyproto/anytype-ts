@@ -1,6 +1,6 @@
 
 
-.formWrapper.isFixed { padding: 0px 0px 16px 0px; position: sticky; z-index: 11; bottom: 0px; width: 100%; background: var(--color-bg-primary); }
+.formWrapper.isFixed { padding: 0px 0px 16px 0px; position: fixed; z-index: 11; bottom: 0px; width: 704px; background: var(--color-bg-primary); }
 
 .formWrapper {
 	.navigation { position: absolute; right: 0px; bottom: 100%; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; gap: 16px 0px; }

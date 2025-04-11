@@ -134,6 +134,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.loadState(() => {
 			const { messageOrderId } = S.Chat.getState(this.getSubId());
 
+			console.log('MESSAGE ORDER ID', messageOrderId);
+
 			if (messageOrderId) {
 				this.firstUnreadOrderId = messageOrderId;
 
@@ -234,7 +236,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.loadDepsAndReplies(messages, () => {
 				if (messages.length && clear) {
 					S.Chat.set(subId, messages);
-					this.forceUpdate();
 				};
 
 				if (callBack) {
@@ -732,7 +733,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.setAutoLoadDisabled(true);
 
-		container.scrollTop(wrapper.outerHeight());
+		console.log(container, wrapper.outerHeight());
+
+		container.scrollTop(wrapper.outerHeight() + 100);
 		window.setTimeout(() => read, 20);
 
 		this.setAutoLoadDisabled(false);

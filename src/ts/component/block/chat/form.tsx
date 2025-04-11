@@ -36,6 +36,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	refEditable = null;
 	refButtons = null;
 	refCounter = null;
+	refDummy = null;
 	isLoading = [];
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
@@ -135,106 +136,109 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		return (
-			<div 
-				ref={ref => this.node = ref}
-				id="formWrapper" 
-				className="formWrapper"
-			>
+			<>
+				<div ref={ref => this.refDummy = ref} className="formDummy" />
+				<div 
+					ref={ref => this.node = ref}
+					id="formWrapper" 
+					className="formWrapper"
+				>
 
-				<div className="navigation">
-					{!isBottom || messageCounter ? (
-						<div className="btn" onClick={this.onNavigationClick}>
-							<div className="bg" />
-							<Icon className="arrow" />
+					<div className="navigation">
+						{!isBottom || messageCounter ? (
+							<div className="btn" onClick={this.onNavigationClick}>
+								<div className="bg" />
+								<Icon className="arrow" />
 
-							{messageCounter ? (
-								<div className="counter">
-									<Label text={String(messageCounter)} />
+								{messageCounter ? (
+									<div className="counter">
+										<Label text={String(messageCounter)} />
+									</div>
+								) : ''}
+							</div>
+						) : ''}
+					</div>
+
+					<div className="form">
+						<Loader id="form-loader" />
+
+						{title ? (
+							<div className="head">
+								<div className="side left">
+									{icon}
+									<div className="textWrapper">
+										<div className="name">{title}</div>
+										<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+									</div>
 								</div>
-							) : ''}
-						</div>
-					) : ''}
-				</div>
-
-				<div className="form">
-					<Loader id="form-loader" />
-
-					{title ? (
-						<div className="head">
-							<div className="side left">
-								{icon}
-								<div className="textWrapper">
-									<div className="name">{title}</div>
-									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								<div className="side right">
+									<Icon className="clear" onClick={onClear} />
 								</div>
 							</div>
-							<div className="side right">
-								<Icon className="clear" onClick={onClear} />
+						) : ''}
+
+						<Editable 
+							ref={ref => this.refEditable = ref}
+							id="messageBox"
+							classNameWrap="customScrollbar"
+							maxLength={J.Constant.limit.chat.text}
+							placeholder={translate('blockChatPlaceholder')}
+							onSelect={this.onSelect}
+							onFocus={this.onFocusInput}
+							onBlur={this.onBlurInput}
+							onKeyUp={this.onKeyUpInput} 
+							onKeyDown={this.onKeyDownInput}
+							onInput={this.onInput}
+							onPaste={this.onPaste}
+							onMouseDown={this.onMouseDown}
+							onMouseUp={this.onMouseUp}
+						/>
+
+						{attachments.length ? (
+							<div className="attachments">
+								<Swiper
+									slidesPerView={'auto'}
+									spaceBetween={8}
+									onSwiper={swiper => this.swiper = swiper}
+									navigation={true}
+									modules={[ Navigation ]}
+								>
+									{attachments.map(item => (
+										<SwiperSlide key={item.id}>
+											<Attachment
+												object={item}
+												onRemove={this.onAttachmentRemove}
+												bookmarkAsDefault={true}
+											/>
+										</SwiperSlide>
+									))}
+								</Swiper>
 							</div>
-						</div>
-					) : ''}
+						) : ''}
 
-					<Editable 
-						ref={ref => this.refEditable = ref}
-						id="messageBox"
-						classNameWrap="customScrollbar"
-						maxLength={J.Constant.limit.chat.text}
-						placeholder={translate('blockChatPlaceholder')}
-						onSelect={this.onSelect}
-						onFocus={this.onFocusInput}
-						onBlur={this.onBlurInput}
-						onKeyUp={this.onKeyUpInput} 
-						onKeyDown={this.onKeyDownInput}
-						onInput={this.onInput}
-						onPaste={this.onPaste}
-						onMouseDown={this.onMouseDown}
-						onMouseUp={this.onMouseUp}
-					/>
+						<Buttons
+							ref={ref => this.refButtons = ref}
+							{...this.props}
+							value={value}
+							hasSelection={this.hasSelection}
+							getMarksAndRange={this.getMarksAndRange}
+							attachments={attachments}
+							caretMenuParam={this.caretMenuParam}
+							onMention={this.onMention}
+							onChatButtonSelect={this.onChatButtonSelect}
+							onTextButtonToggle={this.onTextButtonToggle}
+							getObjectFromPath={this.getObjectFromPath}
+							addAttachments={this.addAttachments}
+							onMenuClose={this.onMenuClose}
+							removeBookmark={this.removeBookmark}
+						/>
 
-					{attachments.length ? (
-						<div className="attachments">
-							<Swiper
-								slidesPerView={'auto'}
-								spaceBetween={8}
-								onSwiper={swiper => this.swiper = swiper}
-								navigation={true}
-								modules={[ Navigation ]}
-							>
-								{attachments.map(item => (
-									<SwiperSlide key={item.id}>
-										<Attachment
-											object={item}
-											onRemove={this.onAttachmentRemove}
-											bookmarkAsDefault={true}
-										/>
-									</SwiperSlide>
-								))}
-							</Swiper>
-						</div>
-					) : ''}
+						<div ref={ref => this.refCounter = ref} className="charCounter">{charCounter} / {J.Constant.limit.chat.text}</div>
 
-					<Buttons
-						ref={ref => this.refButtons = ref}
-						{...this.props}
-						value={value}
-						hasSelection={this.hasSelection}
-						getMarksAndRange={this.getMarksAndRange}
-						attachments={attachments}
-						caretMenuParam={this.caretMenuParam}
-						onMention={this.onMention}
-						onChatButtonSelect={this.onChatButtonSelect}
-						onTextButtonToggle={this.onTextButtonToggle}
-						getObjectFromPath={this.getObjectFromPath}
-						addAttachments={this.addAttachments}
-						onMenuClose={this.onMenuClose}
-						removeBookmark={this.removeBookmark}
-					/>
-
-					<div ref={ref => this.refCounter = ref} className="charCounter">{charCounter} / {J.Constant.limit.chat.text}</div>
-
-					<Icon id="send" className="send" onClick={this.onSend} />
+						<Icon id="send" className="send" onClick={this.onSend} />
+					</div>
 				</div>
-			</div>
+			</>
 		);
 	};
 	
@@ -263,21 +267,39 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				this.setAttachments(attachments);
 			};
 		};
+
+		this.resize();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
-		if (this.props.readonly) {
-			return;
-		};
-
 		this.renderMarkup();
 		this.checkSendButton();
+		this.resize();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
 		window.clearTimeout(this.timeoutFilter);
 		keyboard.disableSelection(false);
+	};
+
+	unbind () {
+		const { isPopup, block } = this.props;
+		const events = [ 'resize' ];
+		const ns = block.id + U.Common.getEventNamespace(isPopup);
+
+		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+	};
+
+	rebind () {
+		const { isPopup, block } = this.props;
+		const win = $(window);
+		const ns = block.id + U.Common.getEventNamespace(isPopup);
+
+		this.unbind();
+		win.on(`resize.${ns}`, () => this.resize());
 	};
 
 	checkSendButton () {
@@ -1127,6 +1149,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				}
 			});
 		};
+	};
+
+	resize () {
+		const node = $(this.node);
+		const dummy = $(this.refDummy);
+
+		console.log(node, node.outerWidth(true), node.outerHeight(true));
+
+		dummy.css({ width: node.outerWidth(true), height: node.outerHeight(true) });
+		node.css({ left: dummy.offset().left });
 	};
 
 });
