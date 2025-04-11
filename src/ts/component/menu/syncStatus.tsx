@@ -140,7 +140,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							rowCount={items.length}
 							isRowLoaded={({ index }) => !!items[index]}
 							threshold={LIMIT_HEIGHT}
-							loadMoreRows={() => { return; }}
+							loadMoreRows={() => {}}
 						>
 							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">

@@ -5,10 +5,6 @@ import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { I, S, U, J, keyboard, focus, translate, analytics, Preview } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface State {
-	loading: boolean;
-};
-
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
@@ -16,11 +12,7 @@ const HEIGHT_DIV = 16;
 const HEIGHT_FILTER = 44;
 const LIMIT_HEIGHT = 6;
 
-const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Menu, State> {
-
-	state = {
-		loading: false,
-	};
+const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Menu> {
 
 	_isMounted = false;	
 	filter = '';
@@ -42,6 +34,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+
+		this.cache = new CellMeasurerCache({
+			defaultHeight: HEIGHT_ITEM,
+			fixedWidth: true,
+		});
 	};
 	
 	render () {
@@ -306,8 +303,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
 
-		if (clear) {
-			this.setState({ loading: true });
+		if (!filter) {
+			this.items = [];
+			this.forceUpdate();
+			return;
 		};
 
 		U.Data.search({
@@ -318,7 +317,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
-				this.setState({ loading: false });
 				return;
 			};
 
@@ -331,12 +329,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			};
 
 			this.items = this.items.concat(message.records || []);
-
-			if (clear) {
-				this.setState({ loading: false });
-			} else {
-				this.forceUpdate();
-			};
+			this.forceUpdate();
 		});
 	};
 
@@ -399,26 +392,20 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		return h;
 	};
 
-	getListHeight () {
-		return this.getItems(true).reduce((res: number, item: any) => res + this.getRowHeight(item), 0);
-	};
-
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 12;
 
 		let height = HEIGHT_FILTER;
 		if (filter) {
-			height += this.getListHeight() + offset;
-			obj.removeClass('initial');
-		} else {
-			obj.addClass('initial');
+			height += items.reduce((res: number, item: any) => res + this.getRowHeight(item), offset);
 		};
 
-		obj.css({ height });
+		obj.css({ height }).toggleClass('initial', !filter);
 		position();
 	};
 	

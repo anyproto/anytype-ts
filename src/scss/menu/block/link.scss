@@ -27,10 +27,11 @@
 			.name { @include text-overflow-nw; width: 100%; }
 		}
 
+		.item.withDescription { gap: 0px 6px; }
 		.item.withDescription {
-			.iconMain { background-size: 24px; }
+			.iconMain { background-size: 24px; margin: 0px; }
 			.iconMain, .iconObject:not(.isTask) { background-color: var(--color-shape-highlight-medium); border-radius: 10px; }
-			.info { padding: 0px; }
+			.info { padding: 0px; overflow: hidden; }
 		}
 		.item.withDescription.withIcon {
 			.info { padding-left: 52px; }
