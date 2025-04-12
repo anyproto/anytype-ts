@@ -900,6 +900,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			onArrow(1);
 		});
 
+		console.log(this.ref.onClick, shortcutSelect);
+
 		if (this.ref && this.ref.onClick) {	
 			keyboard.shortcut(shortcutSelect.join(', '), e, () => {
 				e.preventDefault();

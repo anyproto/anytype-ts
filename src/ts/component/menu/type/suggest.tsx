@@ -235,6 +235,8 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			});
 		};
 
+		console.log(e, ret);
+
 		if (!ret) {
 			onKeyDown(e);
 		};
@@ -357,7 +359,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		forceUpdate: () => setDummy(dummy + 1),
-		onClickHandler,
+		onClick: onClickHandler,
 	}), []);
 
 	return (
