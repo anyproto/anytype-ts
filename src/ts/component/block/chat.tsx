@@ -390,6 +390,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		U.Object.getByIds(ids, { keys: U.Data.chatRelationKeys() }, (objects) => {
 			objects.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
 
+			this.forceUpdate();
 			this.refForm?.forceUpdate();
 
 			if (callBack) {

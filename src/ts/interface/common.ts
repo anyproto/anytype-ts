@@ -340,6 +340,10 @@ export interface SearchSubscribeParam {
 	noDeps: boolean;
 };
 
+export interface SearchIdsParam extends SearchSubscribeParam {
+	ids: string[];
+};
+
 export enum SortId {
 	All			 = 'all',
 	Orphan		 = 'orphan',
