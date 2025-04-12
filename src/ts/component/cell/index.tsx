@@ -319,7 +319,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 							};
 
 							case 'reload': {
-								C.ObjectBookmarkFetch(recordId, value, () => analytics.event('ReloadSourceData'));
+								C.ObjectBookmarkFetch(record.id, value, () => analytics.event('ReloadSourceData'));
 								break;
 							};
 						};

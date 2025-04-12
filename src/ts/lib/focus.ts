@@ -28,8 +28,6 @@ class Focus {
 		};
 		this.backup = U.Common.objectCopy(this.state);
 
-		console.log('SET', range.from, range.to);
-		console.trace();
 		C.BlockSetCarriage(keyboard.getRootId(), id, range);
 		return this;
 	};
