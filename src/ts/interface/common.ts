@@ -18,7 +18,6 @@ export enum DropType {
 };
 
 export enum SelectType {
-	None	 = '',
 	Block	 = 'block',
 	Record	 = 'record',
 };
