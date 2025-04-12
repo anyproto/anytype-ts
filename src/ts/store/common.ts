@@ -608,6 +608,10 @@ class CommonStore {
 		return Boolean(this.showSidebarRightValue[isPopup ? 'popup' : 'full']);
 	};
 
+	@action getShowMenuBar (): boolean {
+		return this.config.showMenuBar;
+	}
+
 };
 
 export const Common: CommonStore = new CommonStore();

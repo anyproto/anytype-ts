@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon } from 'Component';
+import { Icon, HeaderTitlebar } from 'Component';
+import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -184,6 +185,9 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 			className={cn.join(' ')}
 			onDoubleClick={onDoubleClick}
 		>
+			{!isPopup && !U.Common.isPlatformMac() && (
+				<HeaderTitlebar showMenu={!S.Common.getShowMenuBar()} />
+			)}
 			{Component ? (
 				<Component 
 					ref={childRef} 
@@ -202,4 +206,4 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 
 });
 
-export default Header;
+export default observer(Header);
