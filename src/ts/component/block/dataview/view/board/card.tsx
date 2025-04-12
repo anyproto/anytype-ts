@@ -7,7 +7,6 @@ interface Props extends I.ViewComponent {
 	id: string;
 	groupId: string;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
-	recordIdx?: number;
 };
 
 const Card = observer(class Card extends React.Component<Props> {

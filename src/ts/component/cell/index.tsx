@@ -16,7 +16,6 @@ interface Props extends I.Cell {
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	maxWidth?: number;
-	recordIdx?: number;
 };
 
 const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
