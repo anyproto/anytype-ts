@@ -1,0 +1,41 @@
+@import "~scss/_mixins";
+
+.titlebar { display: none; height: 32px; background: var(--color-bg-primary); position: relative; -webkit-app-region: no-drag; }
+
+html.platformWindows {
+    .titlebar { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-shape-primary); }
+
+    .titlebar {
+        .menuButton { width: 46px; height: 100%; display: flex; align-items: center; justify-content: center; transition: $transitionCommon; cursor: default; }
+
+        .menuButton:hover { background: var(--color-shape-highlight-medium); }
+
+        .menuButton {
+            .icon.menu { width: 16px; height: 16px; background-image: url('~img/icon/menu/hamburger.svg'); }
+        }
+
+        .dragRegion { flex: 1; height: 100%; -webkit-app-region: drag; }
+
+        .windowControls { display: flex; height: 100%; }
+
+        .windowControls {
+            .button { width: 46px; height: 100%; display: flex; align-items: center; justify-content: center; transition: $transitionCommon; cursor: default; }
+
+            .button:hover { background: var(--color-shape-highlight-medium); }
+
+            .button.close:hover { background: var(--color-red); }
+
+            .button.close:hover {
+                .icon { filter: brightness(10); }
+            }
+
+            .icon { width: 16px; height: 16px; }
+
+            .icon.minimize { background-image: url('~img/icon/window/minimize.svg'); }
+
+            .icon.maximize { background-image: url('~img/icon/window/maximize.svg'); }
+
+            .icon.close { background-image: url('~img/icon/window/close.svg'); }
+        }
+    }
+} 
