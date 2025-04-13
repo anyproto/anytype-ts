@@ -63,7 +63,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		};
 
 		return (
-			<div ref={ref => this.node = ref} className="layoutPreviewWrapper" onClick={this.onClose}>
+			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
 				<div ref={ref => this.refPreview = ref} className={cn.join(' ')}>
 					<div className="layoutHeader">
 						{!isNote ? (
