@@ -156,13 +156,22 @@ class ChatStore {
 	};
 
 	getTotalCounters (): { mentionCounter: number; messageCounter: number; } {
+		const spaces = U.Space.getList();
 		const ret = { mentionCounter: 0, messageCounter: 0 };
-		for (const [ key, value ] of this.stateMap.entries()) {
-			if (key.startsWith(J.Constant.subId.chatPreview)) {
-				ret.mentionCounter += value.mentionCounter || 0;
-				ret.messageCounter += value.messageCounter || 0;
+
+		if (!spaces.length) {
+			return ret;
+		};
+
+		for (const space of spaces) {
+			const counters = this.getSpaceCounters(space.targetSpaceId);
+
+			if (counters) {
+				ret.mentionCounter += counters.mentionCounter || 0;
+				ret.messageCounter += counters.messageCounter || 0;
 			};
 		};
+
 		return ret;
 	};
 
