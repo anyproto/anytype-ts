@@ -387,7 +387,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const rootId = this.getRootId();
 
-		U.Object.getByIds(ids, { keys: U.Data.chatRelationKeys() }, (objects) => {
+		U.Object.getByIds(ids, { keys: U.Data.chatRelationKeys() }, objects => {
 			objects.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
 
 			this.forceUpdate();
