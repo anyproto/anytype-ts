@@ -711,6 +711,7 @@ export const Mapper = {
 				timestamp: obj.getTimestamp(),
 				size: obj.getSize(),
 				details: Decode.struct(obj.getDetails()),
+				joinSpace: obj.getJoinspace(),
 			};
 		},
 

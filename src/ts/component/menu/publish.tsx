@@ -121,6 +121,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				setStatus(state);
 				setSlug(state.uri);
 				inputRef.current.setValue(state.uri);
+				spaceInfoRef.current.setValue(state.joinSpace);
 			};
 		});
 	};
