@@ -205,7 +205,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 										ref={ref => this.refButton = ref}
 										onClick={isShareActive ? () => this.onInitLink() : null}
 										className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')}
-										tooltip={isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled')}
+										tooltipParam={{ text: isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled') }}
 										text={translate('popupSettingsSpaceShareGenerateInvite')}
 									/>
 								</div>

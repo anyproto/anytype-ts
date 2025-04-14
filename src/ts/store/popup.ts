@@ -4,24 +4,15 @@ import raf from 'raf';
 import { I, S, U, J, focus, Preview } from 'Lib';
 
 const AUTH_IDS = [ 'settings' ];
-const SHOW_DIMMER = [
-	'settings',
-	'confirm',
-	'migration',
-	'pin',
-	'preview',
-	'about',
-	'usecase',
-	'inviteRequest',
-	'inviteConfirm',
-	'usecase',
-	'membership',
-	'membershipFinalization',
-	'share',
-	'spaceCreate',
-	'logout',
-	'search',
-	'onboarding',
+const NO_DIMMER_IDS = [
+	'settingsOnboarding',
+	'shortcut',
+	'page',
+	'export',
+	'phrase',
+	'objectManager',
+	'relation',
+	'inviteQr',
 ];
 
 class PopupStore {
@@ -200,19 +191,8 @@ class PopupStore {
 		window.clearTimeout(this.timeout);
 	};
 
-	showDimmerIds () {
-		return SHOW_DIMMER;
-	};
-
-	checkShowDimmer (list: I.Popup[]) {
-		let ret = false;
-		for (const item of list) {
-			if (SHOW_DIMMER.includes(item.id)) {
-				ret = true;
-				break;
-			};
-		};
-		return ret;
+	noDimmerIds () {
+		return NO_DIMMER_IDS;
 	};
 
 	replace (oldId: string, newId: string, param: I.PopupParam) {

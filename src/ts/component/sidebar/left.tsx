@@ -60,8 +60,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 				<Icon 
 					id="sidebarToggle"
 					className="withBackground"
-					tooltipCaption={keyboard.getCaption('toggleSidebar')}
-					tooltipY={I.MenuDirection.Bottom}
+					tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 					onClick={this.onToggleClick}
 					onContextMenu={this.onToggleContext}
 				/>

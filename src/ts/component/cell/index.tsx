@@ -16,7 +16,6 @@ interface Props extends I.Cell {
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	maxWidth?: number;
-	recordIdx?: number;
 };
 
 const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
@@ -319,7 +318,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 							};
 
 							case 'reload': {
-								C.ObjectBookmarkFetch(recordId, value, () => analytics.event('ReloadSourceData'));
+								C.ObjectBookmarkFetch(record.id, value, () => analytics.event('ReloadSourceData'));
 								break;
 							};
 						};
@@ -409,9 +408,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		if (showTooltip) {
-			const text = !checkValue() && withName ? translate(`placeholderCell${relation.format}`) : relation.name;
-
-			Preview.tooltipShow({ text, element: cell, typeX: tooltipX, typeY: tooltipY, delay: 1000 });
+			Preview.tooltipShow({ text: relation.name, element: cell, typeX: tooltipX, typeY: tooltipY, delay: 1000 });
 		};
 	};
 	

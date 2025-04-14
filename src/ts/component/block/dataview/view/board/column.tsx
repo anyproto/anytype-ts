@@ -93,8 +93,8 @@ const Column = observer(class Column extends React.Component<Props> {
 						</div>
 
 						<div className="side right">
-							<Icon id={`button-${id}-more`} className="more" tooltip={translate('blockDataviewBoardColumnSettings')} onClick={this.onMore} />
-							{isAllowedObject ? <Icon className="add" tooltip={tooltip} onClick={e => this.onAdd(e, -1)} /> : ''}
+							<Icon id={`button-${id}-more`} className="more" tooltipParam={{ text: translate('blockDataviewBoardColumnSettings') }} onClick={this.onMore} />
+							{isAllowedObject ? <Icon className="add" tooltipParam={{ text: tooltip }} onClick={e => this.onAdd(e, -1)} /> : ''}
 						</div>
 					</div>
 

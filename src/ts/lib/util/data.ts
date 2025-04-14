@@ -900,7 +900,7 @@ class UtilData {
 		});
 	};
 
-	subscribeIds (param: any, callBack?: (message: any) => void) {
+	subscribeIds (param: Partial<I.SearchIdsParam>, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
 		param = Object.assign({

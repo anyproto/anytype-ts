@@ -688,10 +688,6 @@ const Block = observer(class Block extends React.Component<Props> {
 		const currentBlockId = childrenIds[index];
 		const res = this.calcWidth(e.pageX - offset, index);
 
-		if (!res) {
-			return;
-		};
-		
 		this.unbind();
 		node.removeClass('isResizing');
 		$('body').removeClass('colResize');
@@ -700,11 +696,13 @@ const Block = observer(class Block extends React.Component<Props> {
 		keyboard.disableSelection(false);	
 		
 		node.find('.colResize.active').removeClass('active');
-		
-		C.BlockListSetFields(rootId, [
-			{ blockId: prevBlockId, fields: { width: res.percent * res.sum } },
-			{ blockId: currentBlockId, fields: { width: (1 - res.percent) * res.sum } },
-		]);
+
+		if (res) {
+			C.BlockListSetFields(rootId, [
+				{ blockId: prevBlockId, fields: { width: res.percent * res.sum } },
+				{ blockId: currentBlockId, fields: { width: (1 - res.percent) * res.sum } },
+			]);
+		};
 		
 		node.find('.resizable').trigger('resizeEnd', [ e ]);
 	};
@@ -741,7 +739,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 		};
 
-		return { sum: sum, percent: x };
+		return { sum, percent: x };
 	};
 	
 	onMouseMove (e: any) {
@@ -849,6 +847,10 @@ const Block = observer(class Block extends React.Component<Props> {
 				target = U.Common.urlFix(url);
 				type = I.PreviewType.Link;
 			};
+
+			item.off('click.link').on('click.link', e => {
+				e.preventDefault();
+			});
 
 			item.off('mousedown.link').on('mousedown.link', e => {
 				e.preventDefault();

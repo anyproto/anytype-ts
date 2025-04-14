@@ -24,6 +24,11 @@ export interface ChatState {
 	lastStateId: string;
 };
 
+export enum ChatReadType {
+	Message = 0,
+	Mention = 1,
+};
+
 export interface ChatMessage {
 	id: string;
 	orderId: string;
@@ -38,7 +43,8 @@ export interface ChatMessage {
 	// Internal
 	isFirst: boolean;
 	isLast: boolean;
-	isRead: boolean;
+	isReadMessage: boolean;
+	isReadMention: boolean;
 };
 
 export interface ChatMessageContent {

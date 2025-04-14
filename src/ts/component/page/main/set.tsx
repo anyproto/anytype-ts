@@ -261,7 +261,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		});
 
 		if (!keyboard.isFocused) {
-			keyboard.shortcut(`${cmd}+a`, e, () => {
+			keyboard.shortcut('selectAll', e, () => {
 				e.preventDefault();
 
 				const records = S.Record.getRecordIds(S.Record.getSubId(rootId, J.Constant.blockId.dataview), '');

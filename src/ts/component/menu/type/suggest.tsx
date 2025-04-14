@@ -200,7 +200,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (item.id == 'add') {
 			C.ObjectCreateObjectType({ name: filter }, [], S.Common.space, (message: any) => {
 				if (!message.error.code) {
-					U.Object.openAuto(message.details);
+					cb(message.details);
 					analytics.event('CreateType');
 				};
 			});
@@ -234,6 +234,8 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				ret = true;
 			});
 		};
+
+		console.log(e, ret);
 
 		if (!ret) {
 			onKeyDown(e);
@@ -357,7 +359,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		forceUpdate: () => setDummy(dummy + 1),
-		onClickHandler,
+		onClick: onClickHandler,
 	}), []);
 
 	return (

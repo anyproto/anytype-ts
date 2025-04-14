@@ -11,10 +11,7 @@ interface Props {
 	value?: string;
 	placeholder?: string;
 	placeholderFocus?: string;
-	tooltip?: string;
-	tooltipCaption?: string;
-	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
-	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
+	tooltipParam?: I.TooltipParam;
 	focusOnMount?: boolean;
 	onClick?(e: any): void;
 	onFocus?(e: any): void;
@@ -45,10 +42,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	value = '',
 	placeholder = translate('commonFilterClick'),
 	placeholderFocus = '',
-	tooltip = '',
-	tooltipCaption = '',
-	tooltipX = I.MenuDirection.Center,
-	tooltipY = I.MenuDirection.Bottom,
+	tooltipParam = {},
 	focusOnMount = false,
 	onClick,
 	onFocus,
@@ -80,10 +74,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		iconObj = (
 			<Icon 
 				className={icon} 
-				tooltip={tooltip}
-				tooltipCaption={tooltipCaption}
-				tooltipX={tooltipX}
-				tooltipY={tooltipY}
+				tooltipParam={tooltipParam}
 				onClick={onIconClick} 
 			/>
 		);

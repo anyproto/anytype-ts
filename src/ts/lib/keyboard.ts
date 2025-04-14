@@ -1189,8 +1189,8 @@ class Keyboard {
 			{ key: 'textStrike',	 type: I.MarkType.Strike,	 param: '' },
 			{ key: 'textLink',		 type: I.MarkType.Link,		 param: '' },
 			{ key: 'textCode',		 type: I.MarkType.Code,		 param: '' },
-			{ key: 'textColor',		 type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
-			{ key: 'textBackground', type: I.MarkType.Color,	 param: Storage.get('color') },
+			{ key: 'textColor',		 type: I.MarkType.Color,	 param: Storage.get('color') },
+			{ key: 'textBackground', type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
 		];
 	};
 	

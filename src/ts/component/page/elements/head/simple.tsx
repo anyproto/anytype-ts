@@ -483,6 +483,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 							colorCancel: 'blank',
 							onConfirm: () => {
 								C.ObjectTypeResolveLayoutConflicts(rootId);
+								analytics.event('ResetToTypeDefault', { route: analytics.route.type });
 							},
 						}
 					});

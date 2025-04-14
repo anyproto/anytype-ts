@@ -18,7 +18,6 @@ export enum DropType {
 };
 
 export enum SelectType {
-	None	 = '',
 	Block	 = 'block',
 	Record	 = 'record',
 };
@@ -340,6 +339,10 @@ export interface SearchSubscribeParam {
 	noDeps: boolean;
 };
 
+export interface SearchIdsParam extends SearchSubscribeParam {
+	ids: string[];
+};
+
 export enum SortId {
 	All			 = 'all',
 	Orphan		 = 'orphan',
@@ -363,4 +366,17 @@ export interface Error {
 
 export interface PageRef {
 	resize: () => void;
+};
+
+export interface TooltipParam {
+	element?: any;
+	title?: string;
+	text?: string;
+	caption?: string;
+	className?: string;
+	typeX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
+	typeY?: I.MenuDirection.Top| I.MenuDirection.Center | I.MenuDirection.Bottom;
+	offsetX?: number;
+	offsetY?: number;
+	delay?: number;
 };

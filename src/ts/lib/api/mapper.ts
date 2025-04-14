@@ -645,7 +645,7 @@ export const Mapper = {
 			};
 		},
 
-		ChatMessage: (obj: Model.ChatMessage): any => {
+		ChatMessage: (obj: Model.ChatMessage): Partial<I.ChatMessage> => {
 			return {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
@@ -656,7 +656,8 @@ export const Mapper = {
 				content: Mapper.From.ChatMessageContent(obj.getMessage()),
 				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
-				isRead: obj.getRead(),
+				isReadMessage: obj.getRead(),
+				isReadMention: obj.getMentionread(),
 			};
 		},
 
@@ -1191,6 +1192,7 @@ export const Mapper = {
 			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
 			if (v == V.CHATSTATEUPDATE)			 	 t = 'ChatStateUpdate';
 			if (v == V.CHATUPDATEMESSAGEREADSTATUS)	 t = 'ChatUpdateMessageReadStatus';
+			if (v == V.CHATUPDATEMENTIONREADSTATUS)	 t = 'ChatUpdateMentionReadStatus';
 
 			if (v == V.SPACEAUTOWIDGETADDED)		 t = 'SpaceAutoWidgetAdded';
 
@@ -1708,6 +1710,14 @@ export const Mapper = {
 		},
 
 		ChatUpdateMessageReadStatus: (obj: Events.Event.Chat.UpdateMessageReadStatus) => {
+			return {
+				ids: obj.getIdsList(),
+				isRead: obj.getIsread(),
+				subIds: obj.getSubidsList(),
+			};
+		},
+
+		ChatUpdateMentionReadStatus: (obj: Events.Event.Chat.UpdateMentionReadStatus) => {
 			return {
 				ids: obj.getIdsList(),
 				isRead: obj.getIsread(),

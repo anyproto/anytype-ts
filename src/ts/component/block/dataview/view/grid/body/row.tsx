@@ -9,7 +9,6 @@ interface Props extends I.ViewComponent {
 	cellPosition?: (cellId: string) => void;
 	onRef?(ref: any, id: string): void;
 	getColumnWidths?: (relationId: string, width: number) => any;
-	recordIdx?: number;
 };
 
 const BodyRow = observer(class BodyRow extends React.Component<Props> {

@@ -86,7 +86,7 @@ class Popup extends React.Component<I.Popup> {
 			cn.push(className);
 		};
 
-		if (S.Popup.showDimmerIds().includes(id)) {
+		if (!S.Popup.noDimmerIds().includes(id)) {
 			cn.push('showDimmer');
 		};
 		
@@ -191,7 +191,7 @@ class Popup extends React.Component<I.Popup> {
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (!S.Popup.showDimmerIds().includes(id)) {
+			if (S.Popup.noDimmerIds().includes(id)) {
 				sw = sidebar.getDummyWidth();
 			};
 

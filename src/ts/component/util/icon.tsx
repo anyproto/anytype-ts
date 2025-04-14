@@ -7,18 +7,12 @@ interface Props {
 	icon?: string;
 	className?: string;
 	arrow?: boolean;
-	tooltip?: string;
-	tooltipCaption?: string;
-	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
-	tooltipY?: I.MenuDirection.Top| I.MenuDirection.Center | I.MenuDirection.Bottom;
-	tooltipClassName?: string;
-	tooltipOffsetX?: number;
-	tooltipOffsetY?: number;
-	tooltipDelay?: number;
+	tooltipParam?: Partial<I.TooltipParam>;
 	inner?: any;
 	draggable?: boolean;
 	style?: any;
 	onClick?(e: MouseEvent): void;
+	onDoubleClick?(e: MouseEvent): void;
 	onMouseDown?(e: MouseEvent): void;
 	onMouseEnter?(e: MouseEvent): void;
 	onMouseLeave?(e: MouseEvent): void;
@@ -32,18 +26,12 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	icon = '',
 	className = '',
 	arrow = false,
-	tooltip = '',
-	tooltipCaption = '',
-	tooltipX = I.MenuDirection.Center,
-	tooltipY = I.MenuDirection.Bottom,
-	tooltipClassName = '',
-	tooltipOffsetX = 0,
-	tooltipOffsetY = 0,
-	tooltipDelay,
+	tooltipParam = {},
 	inner = null,
 	draggable = false,
 	style = {},
 	onClick,
+	onDoubleClick,
 	onMouseDown,
 	onMouseEnter,
 	onMouseLeave,
@@ -61,19 +49,11 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	useEffect(() => Preview.tooltipHide(false));
 
 	const onMouseEnterHandler = (e: MouseEvent) => {
-		const t = Preview.tooltipCaption(tooltip, tooltipCaption);
+		const { text = '', caption = '' } = tooltipParam;
+		const t = Preview.tooltipCaption(text, caption);
 		
 		if (t) {
-			Preview.tooltipShow({ 
-				text: t, 
-				element: $(nodeRef.current), 
-				typeX: tooltipX, 
-				typeY: tooltipY, 
-				className: tooltipClassName,
-				offsetX: tooltipOffsetX,
-				offsetY: tooltipOffsetY,
-				delay: tooltipDelay,
-			});
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
 		};
 		
 		if (onMouseEnter) {
@@ -82,9 +62,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	};
 	
 	const onMouseLeaveHandler = (e: MouseEvent) => {
-		if (tooltip) {
-			Preview.tooltipHide(false);
-		};
+		Preview.tooltipHide(false);
 		
 		if (onMouseLeave) {
 			onMouseLeave(e);
@@ -121,6 +99,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			onContextMenu={onContextMenuHandler} 
 			onDragStart={onDragStart} 
 			onClick={onClick} 
+			onDoubleClick={onDoubleClick}
 		>
 			{arrow ? <div className="icon arrow" /> : ''}
 			{inner}

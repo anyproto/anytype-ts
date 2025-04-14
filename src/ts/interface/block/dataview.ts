@@ -150,6 +150,7 @@ export interface ViewComponent {
 	className?: string;
 	refCells?: any;
 	recordId?: string;
+	recordIdx?: number;
 	getRecord?(id: string): any;
 	getRecords?(): string[];
 	onRef?(ref: any, id: string): void;

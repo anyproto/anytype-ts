@@ -238,6 +238,15 @@
 			}
 		}
 
+		.formWrapper {
+			.navigation {
+				.btn {
+					.icon.arrow { background-image: url('#{$themePath}/arrow/chat.svg'); }
+					.icon.mention { background-image: url('#{$themePath}/icon/chat/navigation/mention.svg'); }
+				}
+			}
+		}
+
 		.form {
 			.icon.send { background: url('#{$themePath}/icon/chat/buttons/send.svg'); }
 
