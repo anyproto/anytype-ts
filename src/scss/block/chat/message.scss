@@ -42,21 +42,20 @@
 		.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 	}
 
-	.reply { 
-		padding: 8px 8px 8px 12px; margin: 4px 0px; border-radius: 12px; background: #e3e3e3; position: relative; overflow: hidden;
-		display: flex; align-items: center; gap: 0px 8px;
-	}
-	.reply::before { 
-		content: ''; display: block; position: absolute; top: 0px; left: 0px; width: 4px; height: 100%;	background-color: var(--color-text-secondary); 
-	}
+	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; }
 	.reply {
+		.bubble { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 8px 12px; border-radius: 16px; }
+
 		> .icon, > .iconObject { flex-shrink: 0; width: 32px; height: 32px; }
 		> .iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
 
 		.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
 
-		.textWrapper { width: 100%; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
-		.name { font-weight: 500; }
+		.textWrapper { padding: 0px; width: 100%; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
+		.name { @include text-small; font-weight: 500; }
+		.text { @include clamp3; }
+	}
+	.reply.withAttachment {
 		.text { @include clamp1; }
 	}
 
@@ -106,9 +105,6 @@
 		> .controls { flex-direction: row-reverse; }
 		.bubble { background-color: #c5efa3}
 	}
-
-	.reply { background-color: #c5efa3; }
-	.reply::before { background-color: #4dae00; }
 }
 
 .message.canExpand {
