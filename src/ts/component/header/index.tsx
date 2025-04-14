@@ -81,7 +81,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 					return (
 						<Icon 
 							key={item.id} 
-							tooltipParam={{ text: item.name, caption: item.caption }} 
+							tooltipParam={{ text: item.name, caption: item.caption, typeY: I.MenuDirection.Bottom }} 
 							className={cn.join(' ')} 
 							onClick={e => item.onClick(e)} 
 							onDoubleClick={e => e.stopPropagation()}

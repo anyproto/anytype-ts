@@ -1,11 +1,11 @@
 @import "~scss/_vars";
-@mixin cnt-2 { width: calc(536px / 2); }
-@mixin cnt-3 { width: calc(532px / 3); }
-@mixin cnt-4 { width: calc(528px / 4); }
+@mixin cnt-2 { width: calc(528px / 2); }
+@mixin cnt-3 { width: calc(524px / 3); }
+@mixin cnt-4 { width: calc(520px / 4); }
 
 .blocks {
 	.block.blockChat { @include text-common; }
-	.block.blockChat { 
+	.block.blockChat {
 		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
 
 		.scrollWrapper { display: flex; flex-direction: column; min-height: 206px; justify-content: flex-end; }

@@ -467,16 +467,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		return Number(window.AnytypeGlobalConfig?.menuBorderBottom) || J.Size.menuBorder;
 	};
 
-	getBorderLeft () {
-		return Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder;
+	getBorderLeft (isFixed) {
+		return (Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder) + (isFixed ? 0 : J.Size.vault.width);
 	};
 
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge } = param;
-		const borderLeft = this.getBorderLeft();
-		const borderTop = this.getBorderTop();
-		const borderBottom = this.getBorderBottom();
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -493,6 +490,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const arrow = menu.find('#arrowDirection');
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const winSize = U.Common.getWindowDimensions();
+			const borderLeft = this.getBorderLeft(isFixed);
+			const borderTop = this.getBorderTop();
+			const borderBottom = this.getBorderBottom();
 			const ww = winSize.ww;
 			const wh = winSize.wh + (!isFixed ? win.scrollTop() : 0);
 			const width = param.width ? param.width : menu.outerWidth();

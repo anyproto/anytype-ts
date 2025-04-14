@@ -42,18 +42,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
 		const ct = [ 'textWrapper' ];
+		const cnBubble = [ 'bubble' ];
+		const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 
 		let text = content.text.replace(/\r?\n$/, '');
 		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
-
-		if (modifiedAt) {
-			const cnl = [ 'label', 'small' ];
-			if (text) {
-				cnl.push('withText');
-			};
-
-			text += `<div class="${cnl.join(' ')}">${translate('blockChatMessageEdited')}</div>`;
-		};
 
 		if (hasAttachments == 1) {
 			ca.push('isSingle');
@@ -115,58 +108,93 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 			);
 		};
 
+		let userpicNode = null;
+		let authorNode = null;
+
+		if (!isSelf) {
+			userpicNode = (
+				<div className="side left">
+					<IconObject
+						object={{ ...author, layout: I.ObjectLayout.Participant }}
+						size={32}
+						onClick={e => U.Object.openConfig(author)}
+					/>
+				</div>
+			);
+
+			authorNode = (
+				<div className="author" onClick={e => U.Object.openConfig(author)}>
+					<ObjectName object={author} />
+				</div>
+			);
+		};
+
+		if (hasAttachments) {
+			cnBubble.push('withAttachment');
+
+			if (attachmentsLayout) {
+				cnBubble.push('withMedia');
+			};
+		};
+
 		return (
-			<div 
-				ref={ref => this.node = ref} 
-				id={`item-${id}`} 
+			<div
+				ref={ref => this.node = ref}
+				id={`item-${id}`}
 				className={cn.join(' ')}
 				onContextMenu={onContextMenu}
 			>
 				<div className="flex">
-					<div className="side left">
-						<IconObject 
-							object={{ ...author, layout: I.ObjectLayout.Participant }} 
-							size={40} 
-							onClick={e => U.Object.openConfig(author)} 
-						/>
-					</div>
+					{userpicNode}
 					<div className="side right">
-						<div className="author" onClick={e => U.Object.openConfig(author)}>
-							<ObjectName object={author} />
-							<div className="time">{U.Date.date('H:i', createdAt)}</div>
-						</div>
 
 						<Reply {...this.props} id={replyToMessageId} />
 
-						<div className={ct.join(' ')}>
-							<div 
-								ref={ref => this.refText = ref} 
-								className="text" 
-								dangerouslySetInnerHTML={{ __html: text }}
-							/>
+						{authorNode}
 
-							<div className="expand" onClick={this.onExpand}>
-								{translate(this.isExpanded ? 'blockChatMessageCollapse' : 'blockChatMessageExpand')}
-							</div>
-						</div>
-
-						{hasAttachments ? (
-							<div className={ca.join(' ')}>
-								{attachments.map((item: any, i: number) => (
-									<Attachment
-										ref={ref => this.attachmentRefs[item.id] = ref}
-										key={i}
-										object={item}
-										subId={subId}
-										scrollToBottom={scrollToBottom}
-										onRemove={() => this.onAttachmentRemove(item.id)}
-										onPreview={(preview) => this.onPreview(preview)}
-										showAsFile={!attachmentsLayout}
-										bookmarkAsDefault={attachments.length > 1}
+						<div className="bubbleWrapper">
+							<div className={cnBubble.join(' ')}>
+								<div className={ct.join(' ')}>
+									<div
+										ref={ref => this.refText = ref}
+										className="text"
+										dangerouslySetInnerHTML={{ __html: text }}
 									/>
-								))}
+									<div className="time">{editedLabel} {U.Date.date('H:i', createdAt)}</div>
+
+									<div className="expand" onClick={this.onExpand}>
+										{translate(this.isExpanded ? 'blockChatMessageCollapse' : 'blockChatMessageExpand')}
+									</div>
+								</div>
+
+
+								{hasAttachments ? (
+									<div className={ca.join(' ')}>
+										{attachments.map((item: any, i: number) => (
+											<Attachment
+												ref={ref => this.attachmentRefs[item.id] = ref}
+												key={i}
+												object={item}
+												subId={subId}
+												scrollToBottom={scrollToBottom}
+												onRemove={() => this.onAttachmentRemove(item.id)}
+												onPreview={(preview) => this.onPreview(preview)}
+												showAsFile={!attachmentsLayout}
+												bookmarkAsDefault={attachments.length > 1}
+											/>
+										))}
+									</div>
+								) : ''}
 							</div>
-						) : ''}
+
+							{!readonly ? (
+								<div className="controls">
+									{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} /> : ''}
+									<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltipParam={{ text: translate('blockChatReply') }} />
+									<Icon className="more" onClick={onMore} />
+								</div>
+							) : ''}
+						</div>
 
 						{hasReactions ? (
 							<div className="reactions">
@@ -179,14 +207,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 							</div>
 						) : ''}
 					</div>
-
-					{!readonly ? (
-						<div className="controls">
-							{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} /> : ''}
-							<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltipParam={{ text: translate('blockChatReply') }} />
-							<Icon className="more" onClick={onMore} />
-						</div>
-					) : ''}
 				</div>
 
 				{isNew ? (
