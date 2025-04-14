@@ -959,6 +959,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				const rect = U.Common.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
+			onClose: () => {
+				focus.set(block.id, range);
+				focus.apply();
+			},
 			data: {
 				rootId,
 				blockId: block.id,

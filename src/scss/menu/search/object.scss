@@ -3,11 +3,12 @@
 .menus {
 	.menu.menuSearchObject { width: var(--menu-width-set); }
 	.menu.menuSearchObject {
-		.content { transition: none; padding: 12px 0px 0px 0px; max-height: unset; }
+		.content { transition: none; padding: 0px; max-height: unset; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.wrap.withLabel {
 			.ReactVirtualized__List { padding-top: 0px; }
 		}
+		.wrap.withFilter { padding-top: 8px; }
 		.wrap.withFilter {
 			.emptySearch { height: calc(100% - 42px); }
 			.loaderWrapper { top: 42px; height: calc(100% - 42px); }

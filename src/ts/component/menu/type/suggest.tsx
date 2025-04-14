@@ -235,8 +235,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			});
 		};
 
-		console.log(e, ret);
-
 		if (!ret) {
 			onKeyDown(e);
 		};
