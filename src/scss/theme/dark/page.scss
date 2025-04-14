@@ -42,7 +42,8 @@
 
 /* PageMainArchive */
 
-.pageMainArchive {
+.pageMainArchive,
+.pageSettingsArchive {
 	.wrapper {
 		.titleWrapper {
 			.icon.archive { background-image: url('#{$themePath}/icon/archive/logo.svg'); }
