@@ -77,7 +77,7 @@ class WindowManager {
 
 	createMain (options) {
 		const { isChild } = options;
-		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icon512x512.png'));
+		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icons', '512x512.png'));
 
 		let state = {};
 		let param = {
