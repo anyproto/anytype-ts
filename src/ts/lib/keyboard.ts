@@ -456,6 +456,7 @@ class Keyboard {
 
 			case 'shortcut': {
 				this.onShortcut();
+				analytics.event('MenuHelpShortcut', { route: analytics.route.shortcut });
 				break;
 			};
 

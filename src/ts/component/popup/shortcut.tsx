@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Filter, Icon, Select, Label, Error } from 'Component';
-import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action, Preview } from 'Lib';
+import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action, Preview, analytics } from 'Lib';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -21,6 +21,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onClick = (item: any) => {
 		setEditingId(item.id);
+
+		analytics.event('ClickShortcut', { name: item.id });
 	};
 
 	const onContext = (item: any) => {
@@ -90,8 +92,11 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 									Renderer.send('shortcutExport', paths[0], ret);
 
 									Preview.toastShow({ text: translate('popupShortcutToastExported') });
+									analytics.event('ExportShortcutMapping');
 								};
 							});
+
+							analytics.event('ClickExportShortcutMapping');
 							break;
 						};
 
@@ -110,12 +115,15 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 													Renderer.send('initMenu');
 													Preview.toastShow({ text: translate('popupShortcutToastUpdated') });
+													analytics.event('ImportShortcutMapping');
 												});
 											};
 										});
 									},
 								},
 							});
+
+							analytics.event('ClickImportShortcutMapping');
 							break;
 						};
 
@@ -133,10 +141,12 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 										Renderer.send('initMenu');
 										Preview.toastShow({ text: translate('popupShortcutToastUpdated') });
+										analytics.event('ResetShortcutMapping');
 									},
 								},
 							});
 
+							analytics.event('ClickResetShortcutMapping');
 							break;
 						};
 					};
@@ -280,6 +290,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			timeout.current = window.setTimeout(() => {
 				clear();
 				Preview.toastShow({ text: translate('popupShortcutToastSaved') });
+				analytics.event('UpdateShortcut', { name: editingId });
 			}, 2000);
 		};
 
@@ -377,7 +388,15 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			<div className="head">
 				<div className="sides">
 					<div className="side left">
-						<Select id={`${id}-section`} options={sections} value={page} onChange={id => setPage(id)} />
+						<Select 
+							id={`${id}-section`} 
+							options={sections} 
+							value={page} 
+							onChange={id => {
+								setPage(id);
+								analytics.event(U.Common.toUpperCamelCase(`ScreenShortcut-${id}`));
+							}}
+						/>
 					</div>
 					<div className="side right">
 						<Icon id="icon-more" className="more withBackground" onClick={onMenu} />
