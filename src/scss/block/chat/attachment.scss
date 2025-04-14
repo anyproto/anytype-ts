@@ -73,6 +73,8 @@
 	}
 }
 
+.attachments:not(.withLayout) { flex-direction: column; }
+
 .attachments.isSingle {
 	.attachment { width: 540px; }
 }
