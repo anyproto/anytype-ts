@@ -80,8 +80,7 @@ const Item = observer(class Item extends React.Component<Props> {
 					{canCreate ? (
 						<Icon 
 							className="plus withBackground" 
-							tooltip={translate(`commonNewObject`)} 
-							tooltipY={I.MenuDirection.Top}
+							tooltipParam={{ text: translate(`commonNewObject`) }} 
 							onClick={this.onCreate} 
 						/> 
 					) : ''}

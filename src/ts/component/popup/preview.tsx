@@ -84,7 +84,7 @@ class PopupPreview extends React.Component<I.Popup> {
 								<ObjectName object={current} />
 							</div>
 							<div className="side right">
-								<Icon id="button-header-more" tooltip={translate('commonMenu')} className="more" onClick={this.onMore} />
+								<Icon id="button-header-more" tooltipParam={{ text: translate('commonMenu') }} className="more" onClick={this.onMore} />
 							</div>
 						</>
 					) : ''}

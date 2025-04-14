@@ -7,14 +7,7 @@ interface Props {
 	icon?: string;
 	className?: string;
 	arrow?: boolean;
-	tooltip?: string;
-	tooltipCaption?: string;
-	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
-	tooltipY?: I.MenuDirection.Top| I.MenuDirection.Center | I.MenuDirection.Bottom;
-	tooltipClassName?: string;
-	tooltipOffsetX?: number;
-	tooltipOffsetY?: number;
-	tooltipDelay?: number;
+	tooltipParam?: Partial<I.TooltipParam>;
 	inner?: any;
 	draggable?: boolean;
 	style?: any;
@@ -33,14 +26,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	icon = '',
 	className = '',
 	arrow = false,
-	tooltip = '',
-	tooltipCaption = '',
-	tooltipX = I.MenuDirection.Center,
-	tooltipY = I.MenuDirection.Bottom,
-	tooltipClassName = '',
-	tooltipOffsetX = 0,
-	tooltipOffsetY = 0,
-	tooltipDelay,
+	tooltipParam = {},
 	inner = null,
 	draggable = false,
 	style = {},
@@ -63,19 +49,11 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	useEffect(() => Preview.tooltipHide(false));
 
 	const onMouseEnterHandler = (e: MouseEvent) => {
-		const t = Preview.tooltipCaption(tooltip, tooltipCaption);
+		const { text = '', caption = '' } = tooltipParam;
+		const t = Preview.tooltipCaption(text, caption);
 		
 		if (t) {
-			Preview.tooltipShow({ 
-				text: t, 
-				element: $(nodeRef.current), 
-				typeX: tooltipX, 
-				typeY: tooltipY, 
-				className: tooltipClassName,
-				offsetX: tooltipOffsetX,
-				offsetY: tooltipOffsetY,
-				delay: tooltipDelay,
-			});
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
 		};
 		
 		if (onMouseEnter) {
@@ -84,9 +62,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	};
 	
 	const onMouseLeaveHandler = (e: MouseEvent) => {
-		if (tooltip) {
-			Preview.tooltipHide(false);
-		};
+		Preview.tooltipHide(false);
 		
 		if (onMouseLeave) {
 			onMouseLeave(e);

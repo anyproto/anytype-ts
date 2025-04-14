@@ -155,7 +155,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className={cn.join(' ')} onClick={e => this.onClick(e, el)}>
 								<Icon className={el.icon} />
 								<Label text={el.name} />
-								{el.tooltip ? <Icon className="tooltipOverlay" tooltip={el.tooltip} /> : ''}
+								{el.tooltip ? <Icon className="tooltipOverlay" tooltipParam={{ text: el.tooltip }} /> : ''}
 							</div>
 						);
 					})}

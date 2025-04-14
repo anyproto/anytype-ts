@@ -5,18 +5,6 @@ const BORDER = 12;
 const DELAY_TOOLTIP = 650;
 const DELAY_PREVIEW = 300;
 
-interface TooltipParam {
-	text: string;
-	element: any;
-	typeX: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
-	typeY: I.MenuDirection.Top | I.MenuDirection.Center | I.MenuDirection.Bottom;
-	offsetX: number;
-	offsetY: number;
-	delay: number;
-	className?: string;
-	title?: string;
-};
-
 /**
  * Preview class for handling tooltips, previews, and toasts.
  */
@@ -41,7 +29,7 @@ class Preview {
    * @param delay - The length of time to wait before showing the tooltip.
    * @param className - custom class name to be added to tooltip element.
    */
-	tooltipShow (param: Partial<TooltipParam>) {
+	tooltipShow (param: Partial<I.TooltipParam>) {
 		const { element } = param;
 		const typeX = Number(param.typeX) || I.MenuDirection.Center;
 		const typeY = Number(param.typeY) || I.MenuDirection.Top;

@@ -30,7 +30,7 @@ const HeadHandle = observer(class HeadHandle extends React.Component<Props> {
 				onClick={onClick}
 				onContextMenu={onClick}
 			>
-				<IconObject object={{ relationFormat: format, layout: I.ObjectLayout.Relation }} tooltip={name} />
+				<IconObject object={{ relationFormat: format, layout: I.ObjectLayout.Relation }} tooltipParam={{ text: name }} />
 				<div className="name">{name}</div>
 			</div>
 		));

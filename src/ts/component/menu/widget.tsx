@@ -57,7 +57,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 							return (
 								<div className={cn.join(' ')} key={i} onClick={e => this.onOptionClick(e, option, item)}>
-									{option.icon ? <Icon className={option.icon} tooltip={option.description} tooltipY={I.MenuDirection.Top} /> : option.name}
+									{option.icon ? <Icon className={option.icon} tooltipParam={{ text: option.description }} /> : option.name}
 								</div>
 							);
 						})}

@@ -117,7 +117,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasMore) {
-		more = <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => onContextHandler(e, true)} />;
+		more = <Icon className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
 	
 	let inner = (

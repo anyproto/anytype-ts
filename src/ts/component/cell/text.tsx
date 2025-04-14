@@ -309,9 +309,9 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					id={[ relation.relationKey, record.id ].join('-')} 
 					size={iconSize} 
 					canEdit={canEdit} 
-					offsetY={4} 
 					object={record} 
 					noClick={true}
+					menuParam={{ offsetY: 4 }}
 				/>
 			);
 		};

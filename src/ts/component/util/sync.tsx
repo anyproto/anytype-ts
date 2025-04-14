@@ -46,7 +46,7 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 			className={cn.join(' ')} 
 			onClick={onClickHandler}
 		>
-			<Icon tooltip={isDevelopment ? translate('syncButtonStaging') : ''} className={getIcon()} />
+			<Icon tooltipParam={{ text: isDevelopment ? translate('syncButtonStaging') : '' }} className={getIcon()} />
 		</div>
 	);
 
