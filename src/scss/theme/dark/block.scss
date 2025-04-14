@@ -221,7 +221,9 @@
 			}
 		}
 		.message.isSelf {
-			.bubble { background: #36551d; }
+			.bubbleWrapper {
+				.bubble { background: #36551d; }
+			}
 		}
 
 		.reactions {

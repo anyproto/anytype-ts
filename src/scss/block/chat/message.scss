@@ -14,6 +14,19 @@ $colorLightLime: #c5efa3;
 
 	> .flex > .side.right { display: flex; flex-direction: column; position: relative; }
 
+	.bubbleWrapper { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
+	.bubbleWrapper {
+		.controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
+		.controls {
+			.icon { width: 20px; height: 20px; }
+			.icon.messageReply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
+			.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('~img/icon/chat/buttons/reply1.svg'); }
+
+			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+		}
+	}
+
 	.bubble { border-radius: 16px; background: var(--color-shape-tertiary); display: flex; flex-direction: column; }
 	.bubble {
 		.textWrapper { line-height: 20px; padding: 8px 12px; }
@@ -33,16 +46,6 @@ $colorLightLime: #c5efa3;
 
 	.icon.reactionAdd { width: 28px; height: 28px; background: var(--color-shape-highlight-medium) url('~img/icon/chat/buttons/reaction1.svg') 50% 50% no-repeat; background-size: 20px; border-radius: 50%; }
 	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-color: var(--color-shape-highlight-dark); }
-
-	> .flex > .controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
-	> .flex > .controls {
-		.icon { width: 20px; height: 20px; }
-		.icon.messageReply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
-		.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('~img/icon/chat/buttons/reply1.svg'); }
-
-		.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-		.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
-	}
 
 	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; }
 	.reply {
@@ -103,8 +106,10 @@ $colorLightLime: #c5efa3;
 
 .message.isSelf {
 	> .flex { flex-direction: row-reverse; }
-	> .flex {
-		> .controls { flex-direction: row-reverse; }
+
+	.bubbleWrapper { flex-direction: row-reverse; }
+	.bubbleWrapper {
+		.controls { flex-direction: row-reverse; }
 		.bubble { background-color: $colorLightLime}
 	}
 }

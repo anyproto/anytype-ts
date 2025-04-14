@@ -152,36 +152,46 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 						{authorNode}
 
-						<div className={cnBubble.join(' ')}>
-							<div className={ct.join(' ')}>
-								<div
-									ref={ref => this.refText = ref}
-									className="text"
-									dangerouslySetInnerHTML={{ __html: text }}
-								/>
-								<div className="time">{editedLabel} {U.Date.date('H:i', createdAt)}</div>
+						<div className="bubbleWrapper">
+							<div className={cnBubble.join(' ')}>
+								<div className={ct.join(' ')}>
+									<div
+										ref={ref => this.refText = ref}
+										className="text"
+										dangerouslySetInnerHTML={{ __html: text }}
+									/>
+									<div className="time">{editedLabel} {U.Date.date('H:i', createdAt)}</div>
 
-								<div className="expand" onClick={this.onExpand}>
-									{translate(this.isExpanded ? 'blockChatMessageCollapse' : 'blockChatMessageExpand')}
+									<div className="expand" onClick={this.onExpand}>
+										{translate(this.isExpanded ? 'blockChatMessageCollapse' : 'blockChatMessageExpand')}
+									</div>
 								</div>
+
+
+								{hasAttachments ? (
+									<div className={ca.join(' ')}>
+										{attachments.map((item: any, i: number) => (
+											<Attachment
+												ref={ref => this.attachmentRefs[item.id] = ref}
+												key={i}
+												object={item}
+												subId={subId}
+												scrollToBottom={scrollToBottom}
+												onRemove={() => this.onAttachmentRemove(item.id)}
+												onPreview={(preview) => this.onPreview(preview)}
+												showAsFile={!attachmentsLayout}
+												bookmarkAsDefault={attachments.length > 1}
+											/>
+										))}
+									</div>
+								) : ''}
 							</div>
 
-
-							{hasAttachments ? (
-								<div className={ca.join(' ')}>
-									{attachments.map((item: any, i: number) => (
-										<Attachment
-											ref={ref => this.attachmentRefs[item.id] = ref}
-											key={i}
-											object={item}
-											subId={subId}
-											scrollToBottom={scrollToBottom}
-											onRemove={() => this.onAttachmentRemove(item.id)}
-											onPreview={(preview) => this.onPreview(preview)}
-											showAsFile={!attachmentsLayout}
-											bookmarkAsDefault={attachments.length > 1}
-										/>
-									))}
+							{!readonly ? (
+								<div className="controls">
+									{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} /> : ''}
+									<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltip={translate('blockChatReply')} />
+									<Icon className="more" onClick={onMore} />
 								</div>
 							) : ''}
 						</div>
@@ -197,14 +207,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 							</div>
 						) : ''}
 					</div>
-
-					{!readonly ? (
-						<div className="controls">
-							{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} /> : ''}
-							<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltip={translate('blockChatReply')} />
-							<Icon className="more" onClick={onMore} />
-						</div>
-					) : ''}
 				</div>
 
 				{isNew ? (
