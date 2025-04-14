@@ -17,8 +17,7 @@ interface Props {
 	offsetX?: number;
 	offsetY?: number;
 	menuId?: string;
-	tooltip?: string;
-	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
+	tooltipParam?: Partial<I.TooltipParam>;
 	noGallery?: boolean;
 	noUpload?: boolean;
 	noRemove?: boolean;
@@ -118,8 +117,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		size = 20,
 		offsetX = 0,
 		offsetY = 0,
-		tooltip = '',
-		tooltipY = I.MenuDirection.Bottom,
+		tooltipParam = {},
 		noRemove = false,
 		noClick = false,
 		menuParam = {},
@@ -165,10 +163,17 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const onMouseEnterHandler = (e: any) => {
-		if (tooltip) {
-			Preview.tooltipShow({ text: tooltip, element: $(nodeRef.current), typeY: tooltipY });
+		if (tooltipParam?.text) {
+			Preview.tooltipShow({ 
+				...tooltipParam,
+				element: $(nodeRef.current),
+				typeX: tooltipParam.typeX || I.MenuDirection.Center,
+				typeY: tooltipParam.typeY || I.MenuDirection.Bottom,
+				offsetX: tooltipParam.offsetX || 0,
+				offsetY: tooltipParam.offsetY || 0,
+			});
 		};
-
+		
 		if (canEdit && U.Object.isTaskLayout(object.layout)) {
 			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][1] });
 		};
@@ -179,7 +184,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 	
 	const onMouseLeaveHandler = (e: any) => {
-		Preview.tooltipHide(false);
+		if (tooltipParam?.text) {
+			Preview.tooltipHide(false);
+		};
 
 		if (canEdit && U.Object.isTaskLayout(object.layout)) {
 			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][0] });

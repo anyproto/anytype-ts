@@ -1,3 +1,5 @@
+import { MenuDirection } from './menu';
+
 export * from './account';
 export * from './space';
 export * from './animation';
@@ -27,3 +29,15 @@ export * from './block/embed';
 export * from './block/table';
 export * from './block/widget';
 export * from './block/chat';
+
+export interface TooltipParam {
+    text: string;
+    element: any;
+    typeX: MenuDirection.Left | MenuDirection.Center | MenuDirection.Right;
+    typeY: MenuDirection.Top | MenuDirection.Center | MenuDirection.Bottom;
+    offsetX: number;
+    offsetY: number;
+    delay: number;
+    className?: string;
+    title?: string;
+}
