@@ -12,6 +12,7 @@ const SHOW_DIMMER = [
 	'preview',
 	'about',
 	'usecase',
+	'help',
 	'inviteRequest',
 	'inviteConfirm',
 	'usecase',

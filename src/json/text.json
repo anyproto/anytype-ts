@@ -1445,6 +1445,7 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
+	"popupUsecaseBanner": "We’re updating our Gallery experiences so they're more compatible with our latest version. <a>Read more.</a>",
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no Properties shown yet",
