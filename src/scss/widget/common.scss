@@ -106,6 +106,7 @@
 	.head { border-bottom: 1px solid var(--color-shape-secondary); padding: 12px 16px 11px 8px !important; }
 	.head::before { top: 18px; }
 	.head {
+		.sides { padding: 0px; }
 		.headerIcon { display: block !important; }
 		.sides::after { display: none; }
 	}

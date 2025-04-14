@@ -36,7 +36,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
-		this.onStateUpdate = this.onStateUpdate.bind(this);
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.scrollToBottomCheck = this.scrollToBottomCheck.bind(this);
@@ -175,7 +174,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		win.on(`messageAdd.${ns}`, (e, message, subIds) => this.onMessageAdd(message, subIds));
 		win.on(`messageUpdate.${ns}`, () => this.scrollToBottomCheck());
 		win.on(`reactionUpdate.${ns}`, () => this.scrollToBottomCheck());
-		win.on(`chatStateUpdate.${ns}`, this.onStateUpdate);
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 	};
@@ -389,9 +387,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const rootId = this.getRootId();
 
-		U.Object.getByIds(ids, { keys: U.Data.chatRelationKeys() }, (objects) => {
+		U.Object.getByIds(ids, { keys: U.Data.chatRelationKeys() }, objects => {
 			objects.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
 
+			this.forceUpdate();
 			this.refForm?.forceUpdate();
 
 			if (callBack) {
@@ -487,16 +486,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		this.loadDepsAndReplies([ message ]);
-		this.onStateUpdate();
-	};
-
-	onStateUpdate () {
-		const { messageOrderId, messageCounter } = S.Chat.getState(this.getSubId());
-
-		if (!this.firstUnreadOrderId && messageCounter) {
-			this.firstUnreadOrderId = messageOrderId;
-		};
+		this.loadDepsAndReplies([ message ], () => {
+			this.scrollToBottomCheck();
+		});
 	};
 
 	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
@@ -576,7 +568,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			if (viewport.length) {
 				const { lastStateId } = S.Chat.getState(subId);
 
-				C.ChatReadMessages(rootId, viewport[0].orderId, viewport[viewport.length - 1].orderId, lastStateId);
+				C.ChatReadMessages(rootId, viewport[0].orderId, viewport[viewport.length - 1].orderId, lastStateId, I.ChatReadType.Message);
 			};
 		});
 	};
@@ -595,6 +587,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const fh = formWrapper.outerHeight();
 		const ch = container.outerHeight();
 		const hh = J.Size.header;
+		const list = this.getMessagesInViewport();
 
 		this.setIsBottom(false);
 
@@ -621,14 +614,26 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 		});
 
-		const read = (item) => {
+		const read = (item, type: I.ChatReadType) => {
 			const { id, orderId } = item;
 
-			S.Chat.setReadStatus(subId, [ id ], true);
-			C.ChatReadMessages(rootId, orderId, orderId, lastStateId);
+			switch (type) {
+				case I.ChatReadType.Message: {
+					S.Chat.setReadMessageStatus(subId, [ id ], true);
+					break;
+				};
+
+				case I.ChatReadType.Mention: {
+					S.Chat.setReadMentionStatus(subId, [ id ], true);
+					break;
+				};
+			};
+
+			C.ChatReadMessages(rootId, orderId, orderId, lastStateId, type);
 		};
 
-		this.getMessagesInViewport().filter(it => !it.isRead).forEach(item => read(item));
+		list.filter(it => !it.isRead).forEach(item => read(item, I.ChatReadType.Message));
+		list.filter(it => !it.isReadMention).forEach(item => read(item, I.ChatReadType.Mention));
 
 		this.top = st;
 
@@ -647,12 +652,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const subId = this.getSubId();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
+		const ids = this.scrolledItems.map(it => it.id);
 
 		if (first && last) {
-			C.ChatReadMessages(rootId, first, last, lastStateId);
+			C.ChatReadMessages(rootId, first, last, lastStateId, I.ChatReadType.Message);
+			C.ChatReadMessages(rootId, first, last, lastStateId, I.ChatReadType.Mention);
 		};
 
-		S.Chat.setReadStatus(subId, this.scrolledItems.map(it => it.id), true);
+		if (ids.length) {
+			S.Chat.setReadMessageStatus(subId, ids, true);
+			S.Chat.setReadMessageStatus(subId, ids, true);
+		};
 
 		this.scrolledItems = [];
 	};
@@ -844,9 +854,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { isPopup } = this.props;
 		const container = U.Common.getScrollContainer(isPopup);
 
-		if (isPopup) {
-			return container.get(0).scrollHeight > container.get(0).clientHeight;
+		if (isPopup && container.length) {
+			const el = container.get(0);
+
+			return el.scrollHeight > el.clientHeight;
 		};
+
 		return document.documentElement.scrollHeight > window.innerHeight;
 	};
 

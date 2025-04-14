@@ -61,7 +61,8 @@ class ChatMessage implements I.ChatMessage {
 
 	isFirst = false;
 	isLast = false;
-	isRead = false;
+	isReadMessage = false;
+	isReadMention = false;
 
 	constructor (props: I.ChatMessage) {
 
@@ -76,7 +77,8 @@ class ChatMessage implements I.ChatMessage {
 		this.reactions = props.reactions || [];
 		this.isFirst = Boolean(props.isFirst);
 		this.isLast = Boolean(props.isLast);
-		this.isRead = Boolean(props.isRead);
+		this.isReadMessage = Boolean(props.isReadMessage);
+		this.isReadMention = Boolean(props.isReadMention);
 
 		this.reactions.sort((c1, c2) => {
 			const l1 = c1.authors.length;
@@ -98,7 +100,8 @@ class ChatMessage implements I.ChatMessage {
 			content: observable,
 			attachments: observable,
 			reactions: observable,
-			isRead: observable,
+			isReadMessage: observable,
+			isReadMention: observable,
 		});
 
 		intercept(this as any, change => U.Common.intercept(this, change));

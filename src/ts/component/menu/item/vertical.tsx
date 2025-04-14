@@ -96,9 +96,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			iconSideElement = (
 				<Icon
 					className="note"
-					tooltip={note}
-					tooltipY={I.MenuDirection.Top}
-					tooltipClassName="menuNote"
+					tooltipParam={{ text: note, className: 'menuNote' }}
 				/>
 			);
 		};

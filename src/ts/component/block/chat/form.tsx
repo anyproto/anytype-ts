@@ -90,7 +90,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { subId, readonly, getReplyContent } = this.props;
 		const { attachments, charCounter, isBottom } = this.state;
 		const value = this.getTextValue();
-		const { messageCounter } = S.Chat.getState(subId);
+		const { messageCounter, mentionCounter } = S.Chat.getState(subId);
 
 		if (readonly) {
 			return (
@@ -144,8 +144,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				>
 
 					<div className="navigation">
+						{mentionCounter ? (
+							<div className="btn" onClick={() => this.onNavigationClick(I.ChatReadType.Mention)}>
+								<div className="bg" />
+								<Icon className="mention" />
+								<div className="counter">
+									<Label text={String(mentionCounter)} />
+								</div>
+							</div>
+						) : ''}
+
 						{!isBottom || messageCounter ? (
-							<div className="btn" onClick={this.onNavigationClick}>
+							<div className="btn" onClick={() => this.onNavigationClick(I.ChatReadType.Message)}>
 								<div className="bg" />
 								<Icon className="arrow" />
 
@@ -371,7 +381,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			});
 		};
 
-		keyboard.shortcut(`${cmd}+t`, e, () => {
+		keyboard.shortcut('chatObject', e, () => {
 			if (!S.Menu.isOpen('searchObject')) {
 				e.preventDefault();
 				this.refButtons.onChatButton(e, I.ChatButton.Object);
@@ -385,7 +395,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+m`, e, () => {
+		keyboard.shortcut('chatMention', e, () => {
 			if (!S.Menu.isOpen('mention')) {
 				e.preventDefault();
 				this.refButtons.onChatButton(e, I.ChatButton.Mention);
@@ -867,7 +877,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.swiper = swiper;
 	};
 
-	onNavigationClick () {
+	onNavigationClick (type: I.ChatReadType) {
 		this.props.scrollToBottom();
 	};
 

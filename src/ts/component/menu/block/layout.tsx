@@ -190,6 +190,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		switch (item.id) {
 			case 'reset': {
 				U.Object.resetLayout(rootId);
+				analytics.event('ResetToTypeDefault', { route: analytics.route.object });
 				break;
 			};
 

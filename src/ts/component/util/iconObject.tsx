@@ -14,16 +14,13 @@ interface Props {
 	asImage?: boolean;
 	size?: number;
 	iconSize?: number;
-	offsetX?: number;
-	offsetY?: number;
 	menuId?: string;
-	tooltip?: string;
-	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	noGallery?: boolean;
 	noUpload?: boolean;
 	noRemove?: boolean;
 	noClick?: boolean;
 	menuParam?: Partial<I.MenuParam>;
+	tooltipParam?: Partial<I.TooltipParam>;
 	style?: any;
 	getObject?(): any;
 	onSelect?(id: string): void;
@@ -116,13 +113,10 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		className = '',
 		canEdit = false,
 		size = 20,
-		offsetX = 0,
-		offsetY = 0,
-		tooltip = '',
-		tooltipY = I.MenuDirection.Bottom,
 		noRemove = false,
 		noClick = false,
 		menuParam = {},
+		tooltipParam = {},
 		style = {},
 		getObject,
 		onSelect,
@@ -165,8 +159,11 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const onMouseEnterHandler = (e: any) => {
-		if (tooltip) {
-			Preview.tooltipShow({ text: tooltip, element: $(nodeRef.current), typeY: tooltipY });
+		const { text = '', caption = '' } = tooltipParam;
+		const t = Preview.tooltipCaption(text, caption);
+		
+		if (t) {
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
 		};
 
 		if (canEdit && U.Object.isTaskLayout(object.layout)) {
@@ -230,8 +227,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		S.Menu.open('smile', { 
 			element: `#${props.id}`,
-			offsetX,
-			offsetY,
 			data: {
 				value: (object.iconEmoji || object.iconImage || ''),
 				spaceId: object.spaceId,

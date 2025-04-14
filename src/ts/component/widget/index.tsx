@@ -63,12 +63,15 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const childRef = useRef(null);
 	const subId = useRef('');
 	const timeout = useRef(0);
-	const recordIds = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).map(it => it.id)
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
-	const favCnt = isFavorite ? recordIds.length : 0;
-	const isType = U.Object.isTypeLayout(object?.layout);
 
+	let favCnt = 0;
 	let layout = block.content.layout;
+
+	if (isFavorite) {
+		favCnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
+	};
+
 	if (object) {
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(object.id, object.layout).map(it => it.id);
 
@@ -578,11 +581,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		buttons = (
 			<div className="buttons">
 				<div className="iconWrap more" onClick={onOptions}>
-					<Icon className="options" tooltip={translate('widgetOptions')} />
+					<Icon className="options" tooltipParam={{ text: translate('widgetOptions') }} />
 				</div>
 				{canCreate ? (
 					<div className="iconWrap create" onClick={onCreateClick}>
-						<Icon className="plus" tooltip={translate('commonCreateNewObject')} />
+						<Icon className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} />
 					</div>
 				) : ''}
 			</div>

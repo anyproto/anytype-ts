@@ -415,7 +415,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 
 					<div onClick={onClick} onContextMenu={onContextMenu}>
 						<div className="scroller">
-							{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
+							{object.templateIsBundled ? <Icon className="logo" tooltipParam={{ text: translate('previewObjectTemplateIsBundled') }} /> : ''}
 
 							{(coverType != I.CoverType.None) && coverId ? (
 								<Cover 

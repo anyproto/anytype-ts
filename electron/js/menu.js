@@ -491,7 +491,7 @@ class MenuManager {
 				} 
 			},
 
-			(is.windows || is.linux || is.macos) ? {
+			(is.windows || is.linux) ? {
 				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: config.showMenuBar, click: () => {
 					const { config } = ConfigManager;
 
@@ -532,7 +532,7 @@ class MenuManager {
 		let icon = '';
 
 		if (is.windows) {
-			icon = 'icon32x32.png';
+			icon = path.join('icons', '32x32.png');
 		} else 
 		if (is.linux) {
 			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP;

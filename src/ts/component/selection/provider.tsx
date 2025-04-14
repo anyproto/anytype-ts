@@ -382,7 +382,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		for (const i in I.SelectType) {
 			const type = I.SelectType[i];
-			
+
 			list[type] = get(type, false);
 
 			nodes.current.filter(it => it.type == type).forEach(item => {

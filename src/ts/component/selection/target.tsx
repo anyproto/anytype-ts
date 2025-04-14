@@ -13,7 +13,7 @@ interface Props {
 const SelectionTarget: FC<Props> = ({
 	id = '',
 	className = '',
-	type = I.SelectType.None,
+	type = '',
 	children,
 	style = {},
 	onContextMenu,

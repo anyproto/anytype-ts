@@ -81,10 +81,10 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 					return (
 						<Icon 
 							key={item.id} 
-							tooltip={item.name} 
-							tooltipCaption={item.caption} 
+							tooltipParam={{ text: item.name, caption: item.caption }} 
 							className={cn.join(' ')} 
 							onClick={e => item.onClick(e)} 
+							onDoubleClick={e => e.stopPropagation()}
 						/>
 					);
 				})}

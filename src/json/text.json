@@ -1026,10 +1026,10 @@
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
-	"popupLogoutTitle": "Make sure you saved your login ley",
-	"popupLogoutText": "We have no way to recover your login key— it’s yours alone. Please save it before logging out.",
+	"popupLogoutTitle": "Make sure you saved your login key",
+	"popupLogoutText": "We have no way to recover your login key - it’s yours alone. Please save it before logging out.",
 	"popupLogoutCopyButton": "Reveal and copy key",
-	"popupLogoutLogoutButton": "I saved it, logout",
+	"popupLogoutLogoutButton": "Logout",
 
 	"popupSpaceCreateLabel": "Encrypted & local-first",
 	"popupSpaceCreateCreate": "Create from scratch",
@@ -1307,8 +1307,7 @@
 
 	"popupShortcutChat": "Chat",
 	"popupShortcutChat1": "Attach an object",
-	"popupShortcutChat2": "Pick Emoji",
-	"popupShortcutChat3": "Mention",
+	"popupShortcutChat2": "Mention",
 
 	"popupShortcutNavigation": "Navigation",
 	"popupShortcutObject": "Object Actions",
@@ -1446,6 +1445,7 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
+	"popupUsecaseBanner": "We’re updating our Gallery experiences so they're more compatible with our latest version. <a>Read more.</a>",
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no Properties shown yet",
@@ -1636,7 +1636,9 @@
 	"menuDataviewTemplateUnsetDefaultForView": "Unset as default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
 
-	"menuDataviewExistingObject": "Existing object",
+	"menuDataviewNewExistingObject": "Existing object",
+	"menuDataviewNewTemplate": "Template for this View",
+	"menuDataviewNewType": "Default Type for this View",
 
 	"menuGraphSettingsTitles": "Titles",
 	"menuGraphSettingsArrows": "Arrows",

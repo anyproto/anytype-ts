@@ -578,7 +578,7 @@ class Mark {
 				marks[i].range.to = to;
 			};
 
-			marks.push({ type: I.MarkType.Link, range: { from: from, to: to }, param: p2 });
+			marks.push({ type: I.MarkType.Link, range: { from, to }, param: p2 });
 			adjustMarks = true;
 
 			text = text.replace(s, p1 + ' ');

@@ -73,8 +73,12 @@ class ChatStore {
 		this.replyMap.set(subId, map);
 	};
 
-	setReadStatus (subId: string, ids: string[], isRead: boolean) {
-		(ids || []).forEach(id => this.update(subId, { id, isRead }));
+	setReadMessageStatus (subId: string, ids: string[], value: boolean) {
+		(ids || []).forEach(id => this.update(subId, { id, isReadMessage: value }));
+	};
+
+	setReadMentionStatus (subId: string, ids: string[], value: boolean) {
+		(ids || []).forEach(id => this.update(subId, { id, isReadMention: value }));
 	};
 
 	getUnreadCounter (subId) {
@@ -152,13 +156,22 @@ class ChatStore {
 	};
 
 	getTotalCounters (): { mentionCounter: number; messageCounter: number; } {
+		const spaces = U.Space.getList();
 		const ret = { mentionCounter: 0, messageCounter: 0 };
-		for (const [ key, value ] of this.stateMap.entries()) {
-			if (key.startsWith(J.Constant.subId.chatPreview)) {
-				ret.mentionCounter += value.mentionCounter || 0;
-				ret.messageCounter += value.messageCounter || 0;
+
+		if (!spaces.length) {
+			return ret;
+		};
+
+		for (const space of spaces) {
+			const counters = this.getSpaceCounters(space.targetSpaceId);
+
+			if (counters) {
+				ret.mentionCounter += counters.mentionCounter || 0;
+				ret.messageCounter += counters.messageCounter || 0;
 			};
 		};
+
 		return ret;
 	};
 

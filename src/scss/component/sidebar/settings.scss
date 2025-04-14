@@ -106,7 +106,7 @@
 
             > .head { justify-content: space-between; }
             > .head {
-                .left { display: flex; gap: 0px 8px; align-items: center; }
+                .left { display: flex; gap: 0px 4px; align-items: center; }
                 .title { @include text-paragraph; font-weight: 600; }
             }
         }

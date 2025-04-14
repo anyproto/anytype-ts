@@ -178,7 +178,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedFav = canWrite && !object.isArchived && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystemLayouts;
 		const allowedLinkTo = canWrite && !object.isArchived;
-		const allowedAddCollection = canWrite && !object.isArchived;
+		const allowedAddCollection = canWrite && !object.isArchived && !isTemplate;
 		const allowedPageLink = !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelationLayout;
 		const allowedReload = canWrite && object.source && isBookmark;
