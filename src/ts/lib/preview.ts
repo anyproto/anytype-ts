@@ -115,6 +115,8 @@ class Preview {
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - ow - BORDER, x);
 
+			y = Math.max(BORDER, y);
+
 			node.css({ left: x, top: y }).addClass('show');
 
 			window.clearTimeout(this.timeout.delay);

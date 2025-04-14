@@ -144,7 +144,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{showRelations ? (
 					<Icon 
 						id="button-header-relation" 
-						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation') }}
+						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
 						className="relation withBackground"
 						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
 					/> 
@@ -153,7 +153,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{showMenu ? (
 					<Icon 
 						id="button-header-more"
-						tooltipParam={{ text: translate('commonMenu') }}
+						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
 						className="more withBackground"
 						onClick={onMore} 
 					/> 
