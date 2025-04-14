@@ -1,5 +1,3 @@
-$colorLightLime: #c5efa3;
-
 .message { @include text-common; position: relative; }
 .message {
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
@@ -31,7 +29,7 @@ $colorLightLime: #c5efa3;
 	.bubble {
 		.textWrapper { line-height: 20px; padding: 8px 12px; }
 		.text { user-select: text !important; display: inline; }
-		.time { @include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 24px; padding-top: 3px; }
+		.time { @include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 3px; }
 
 		.attachments { padding: 4px; }
 	}
@@ -95,7 +93,7 @@ $colorLightLime: #c5efa3;
 			.count { min-width: 18px; text-align: center; }
 		}
 
-		.reaction.isSelf { background-color: var(--color-lime-light); }
+		.reaction.isSelf { background-color: var(--color-bg-tag-lime); }
 	}
 
 	.newMessages { display: none; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
@@ -110,7 +108,7 @@ $colorLightLime: #c5efa3;
 	.bubbleWrapper { flex-direction: row-reverse; }
 	.bubbleWrapper {
 		.controls { flex-direction: row-reverse; }
-		.bubble { background-color: var(--color-lime-light); }
+		.bubble { background-color: var(--color-bg-tag-lime); }
 	}
 
 	.reactions { flex-direction: row-reverse; }
@@ -133,7 +131,7 @@ $colorLightLime: #c5efa3;
 
 .message:first-child { margin-top: 0px; }
 
-.message.isFirst { margin: 16px 0px 0px 0px; }
+.message.isFirst { margin: 12px 0px 0px 0px; }
 .message.isFirst {
 	.author { display: flex; }
 	> .flex > .side.right {  min-width: 164px; }
