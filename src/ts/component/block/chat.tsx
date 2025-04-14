@@ -852,9 +852,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { isPopup } = this.props;
 		const container = U.Common.getScrollContainer(isPopup);
 
-		if (isPopup) {
-			return container.get(0).scrollHeight > container.get(0).clientHeight;
+		if (isPopup && container.length) {
+			const el = container.get(0);
+
+			return el.scrollHeight > el.clientHeight;
 		};
+
 		return document.documentElement.scrollHeight > window.innerHeight;
 	};
 
