@@ -75,8 +75,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 				{showRelations ? (
 					<Icon 
 						id="button-header-relation" 
-						tooltip={translate('commonRelations')}
-						tooltipCaption={keyboard.getCaption('relation')}
+						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation') }}
 						className="relation withBackground"
 						onClick={() => onRelation({ readonly: object.isArchived || root?.isLocked() })} 
 					/> 
@@ -85,7 +84,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 				{showMenu ? (
 					<Icon 
 						id="button-header-more"
-						tooltip={translate('commonMenu')}
+						tooltipParam={{ text: translate('commonMenu') }}
 						className="more withBackground"
 						onClick={onMore} 
 					/> 

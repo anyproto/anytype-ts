@@ -381,7 +381,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					</div>
 					<div className="side right">
 						<Icon id="icon-more" className="more withBackground" onClick={onMenu} />
-						<Icon className="close withBackground" tooltip={translate('commonClose')} onClick={() => close()} />
+						<Icon className="close withBackground" tooltipParam={{ text: translate('commonClose') }} onClick={() => close()} />
 					</div>
 				</div>
 				<div className="filterWrap">

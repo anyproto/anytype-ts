@@ -174,7 +174,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 									<Reaction key={i} {...item} />
 								))}
 								{!readonly && canAddReaction ? (
-									<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+									<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
 								) : ''}
 							</div>
 						) : ''}
@@ -182,8 +182,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 					{!readonly ? (
 						<div className="controls">
-							{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} /> : ''}
-							<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltip={translate('blockChatReply')} />
+							{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} /> : ''}
+							<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltipParam={{ text: translate('blockChatReply') }} />
 							<Icon className="more" onClick={onMore} />
 						</div>
 					) : ''}

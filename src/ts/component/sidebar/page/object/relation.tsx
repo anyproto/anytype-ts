@@ -67,7 +67,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 							button = (
 								<Icon 
 									className="plus withBackground" 
-									tooltip={translate('commonAddRelation')}
+									tooltipParam={{ text: translate('commonAddRelation') }}
 									onClick={this.onAdd}
 								/>
 							);
@@ -82,12 +82,14 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 											{description ? (
 												<Icon
 													className="question withBackground"
-													tooltipClassName="relationGroupDescription"
-													tooltip={description}
-													tooltipX={I.MenuDirection.Right}
-													tooltipY={I.MenuDirection.Center}
-													tooltipOffsetX={-8}
-													tooltipDelay={0}
+													tooltipParam={{ 
+														text: description,
+														className: 'relationGroupDescription',
+														typeX: I.MenuDirection.Right,
+														typeY: I.MenuDirection.Center,
+														offsetX: -8,
+														delay: 0,
+													}}
 												/>
 											) : ''}
 										</div>

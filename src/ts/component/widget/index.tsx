@@ -581,11 +581,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		buttons = (
 			<div className="buttons">
 				<div className="iconWrap more" onClick={onOptions}>
-					<Icon className="options" tooltip={translate('widgetOptions')} />
+					<Icon className="options" tooltipParam={{ text: translate('widgetOptions') }} />
 				</div>
 				{canCreate ? (
 					<div className="iconWrap create" onClick={onCreateClick}>
-						<Icon className="plus" tooltip={translate('commonCreateNewObject')} />
+						<Icon className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} />
 					</div>
 				) : ''}
 			</div>

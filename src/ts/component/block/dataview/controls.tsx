@@ -85,7 +85,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				<Icon
 					id={elementId} 
 					className={cn.join(' ')}
-					tooltip={item.text}
+					tooltipParam={{ text: item.text }}
 					onClick={() => this.onButton(`#${elementId}`, item.menu)}
 				/>
 			);
@@ -110,7 +110,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				{views.map((item: I.View, i: number) => (
 					<ViewItem key={i} {...item} index={i} disabled={readonly} />
 				))}
-				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus withBackground" tooltip={translate('blockDataviewControlsViewAdd')} onClick={this.onViewAdd} /> : ''}
+				{allowedView ? (
+					<Icon 
+						id={`button-${block.id}-view-add`} 
+						className="plus withBackground" 
+						tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
+						onClick={this.onViewAdd} /> 
+				) : ''}
 			</div>
 		));
 		
@@ -151,8 +157,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search withBackground"
-							tooltip={translate('commonSearch')}
-							tooltipCaption={keyboard.getCaption('searchText')}
+							tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
 							onChange={onFilterChange}
 							onIconClick={this.onFilterShow}
 						/>
@@ -165,7 +170,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 								<Button
 									id={`button-${block.id}-add-record`}
 									className="addRecord c28"
-									tooltip={tooltip}
+									tooltipParam={{ text: tooltip }}
 									text={translate('commonNew')}
 									onClick={e => onRecordAdd(e, -1)}
 								/>
@@ -173,7 +178,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 									<Button
 										id={`button-${block.id}-add-record-select`}
 										className="select c28"
-										tooltip={translate('blockDataviewShowTemplates')}
+										tooltipParam={{ text: translate('blockDataviewShowTemplates') }}
 										onClick={e => onTemplateMenu(e, -1)}
 									/>
 								) : ''}

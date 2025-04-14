@@ -282,12 +282,14 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					{list.description ? (
 						<Icon 
 							className="question withBackground"
-							tooltipClassName="relationGroupDescription"
-							tooltip={list.description}
-							tooltipX={I.MenuDirection.Center}
-							tooltipY={I.MenuDirection.Bottom}
-							tooltipOffsetX={-8}
-							tooltipDelay={0}
+							tooltipParam={{
+								text: list.description, 
+								className: 'relationGroupDescription',
+								typeX: I.MenuDirection.Center, 
+								typeY: I.MenuDirection.Bottom, 
+								offsetX: -8, 
+								delay: 0,
+							}}
 						/> 
 					) : ''}
 				</div>
@@ -296,7 +298,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 						<Icon 
 							id={`button-more-${list.id}`}
 							className="more withBackground"
-							tooltip={translate('commonActions')}
+							tooltipParam={{ text: translate('commonActions') }}
 							onClick={list.onInfo}
 						/>
 					) : ''}
@@ -342,7 +344,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				<Icon 
 					id="section-relation-plus" 
 					className="plus withBackground" 
-					tooltip={translate('commonAddRelation')}
+					tooltipParam={{ text: translate('commonAddRelation') }}
 					onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} 
 				/>
 			</div>
