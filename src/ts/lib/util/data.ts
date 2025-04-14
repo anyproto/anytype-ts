@@ -358,9 +358,9 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				withArchived: true,
+				ignoreArchived: false,
 				onSubscribe: () => {
-					S.Record.getTypes().forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
+					S.Record.getRecords(J.Constant.subId.type).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
 			},
 			{
@@ -387,9 +387,9 @@ class UtilData {
 				noDeps: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				withArchived: true,
+				ignoreArchived: false,
 				onSubscribe: () => {
-					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
+					S.Record.getRecords(J.Constant.subId.relation).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
 			},
 			{
@@ -433,11 +433,11 @@ class UtilData {
 		this.createSubscriptions(list, callBack);
 	};
 
-	createSubscriptions (list: any[], callBack?: () => void) {
+	createSubscriptions (list: I.SearchSubscribeParam[], callBack?: () => void) {
 		let cnt = 0;
-		const cb = (item: any) => {
+		const cb = (item: any, message: any) => {
 			if (item.onSubscribe) {
-				item.onSubscribe();
+				item.onSubscribe(message);
 			};
 
 			cnt++;
@@ -448,7 +448,7 @@ class UtilData {
 		};
 
 		for (const item of list) {
-			this.searchSubscribe(item, () => cb(item));
+			this.searchSubscribe(item, message => cb(item, message));
 		};
 	};
 
@@ -579,7 +579,7 @@ class UtilData {
 		}, callBack);
 	};
 
-	checkDetails (rootId: string, blockId?: string, keys?: string[]) {
+	checkDetails (rootId: string, blockId?: string, keys?: string[]): any {
 		blockId = blockId || rootId;
 		keys = keys || [];
 
@@ -722,8 +722,11 @@ class UtilData {
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
-			{ relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
 		];
+
+		if (relationKey && ids.length) {
+			filters.push({ relationKey: relationKey, condition: I.FilterCondition.In, value: ids });
+		};
 
 		this.search({
 			filters,
@@ -791,10 +794,14 @@ class UtilData {
 
 		if (ignoreDeleted) {
 			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
+		} else {
+			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.None, value: null });
 		};
 
 		if (ignoreArchived) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
+		} else {
+			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.None, value: null });
 		};
 
 		return filters;
@@ -827,6 +834,10 @@ class UtilData {
 
 		if (!keys.includes(param.idField)) {
 			keys.push(param.idField);
+		};
+
+		if (keys.includes('name')) {
+			keys.push('pluralName');
 		};
 
 		if (keys.includes('layout')) {
@@ -889,7 +900,7 @@ class UtilData {
 		});
 	};
 
-	subscribeIds (param: any, callBack?: (message: any) => void) {
+	subscribeIds (param: Partial<I.SearchIdsParam>, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
 		param = Object.assign({
@@ -999,7 +1010,7 @@ class UtilData {
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, [])));
+		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, []), true));
 	};
 
 	setWindowTitleText (name: string) {
@@ -1018,15 +1029,15 @@ class UtilData {
 		document.title = title.join(' - ');
 	};
 
-	graphFilters () {
+	getGraphFilters () {
 		return [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
-			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
 		];
 	};
 
@@ -1135,7 +1146,15 @@ class UtilData {
 
 					this.onInfo(message.account.info);
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, callBack);
+					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
+						if (message.startingId) {
+							S.Auth.startingId = message.startingId;
+						};
+
+						if (callBack) {
+							callBack();
+						};
+					});
 
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
@@ -1229,15 +1248,10 @@ class UtilData {
 	};
 
 	getLayoutWidth (rootId: string): number {
-		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
-		const type = S.Record.getTypeById(object.type);
+		const object = S.Detail.get(rootId, rootId, [ 'type', 'targetObjectType' ], true);
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const root = S.Block.getLeaf(rootId, rootId);
-
-		let ret = type?.layoutWidth;
-
-		if (undefined !== root?.fields?.width) {
-			ret = root?.fields?.width;
-		};
+		const ret = undefined !== root?.fields?.width ? root?.fields?.width : type?.layoutWidth;
 
 		return Number(ret) || 0;
 	};
@@ -1257,6 +1271,21 @@ class UtilData {
 			{ blockId: block.id, fields: { ...fields, isRtlDetected: true } } 
 		], () => {
 			C.BlockListSetAlign(rootId, [ block.id ], I.BlockHAlign.Right);
+		});
+	};
+
+	getConflictRelations (rootId: string, callBack: (ids: string[]) => void) {
+		C.ObjectTypeListConflictingRelations(rootId, S.Common.space, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const ids = S.Record.checkHiddenObjects(Relation.getArrayValue(message.conflictRelationIds)
+				.map(id => S.Record.getRelationById(id))).map(it => it.id).filter(it => it);
+
+			if (callBack) {
+				callBack(ids);
+			};
 		});
 	};
 

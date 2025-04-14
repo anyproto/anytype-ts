@@ -25,8 +25,6 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 	};
 
 	const onClickHandler = (e: MouseEvent) => {
-		const syncStatus = S.Auth.getSyncStatus();
-
 		if (onClick) {
 			onClick(e);
 		};
@@ -48,7 +46,7 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 			className={cn.join(' ')} 
 			onClick={onClickHandler}
 		>
-			<Icon tooltip={isDevelopment ? translate('syncButtonStaging') : ''} className={getIcon()} />
+			<Icon tooltipParam={{ text: isDevelopment ? translate('syncButtonStaging') : '' }} className={getIcon()} />
 		</div>
 	);
 

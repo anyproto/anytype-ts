@@ -27,6 +27,7 @@ import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
 import PopupSpaceCreate from './spaceCreate';
 import PopupLogout from './logout';
+import PopupOnboarding from './onboarding';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -74,6 +75,7 @@ class Popup extends React.Component<I.Popup> {
 			share:					 PopupShare,
 			spaceCreate:			 PopupSpaceCreate,
 			logout: 				 PopupLogout,
+			onboarding:				 PopupOnboarding,
 		};
 		
 		const popupId = this.getId();

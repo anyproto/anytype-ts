@@ -7,6 +7,7 @@ const PREFIX = 'sidebarObjectRelation';
 
 const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation extends React.Component<I.SidebarSectionComponent> {
 	
+	node = null;
 	refCell = null;
 
 	constructor (props: I.SidebarSectionComponent) {
@@ -37,16 +38,12 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 			U.Common.getCellContainer('sidebarRight'),
 		].join(', ');
 
-		if (canEdit) {
-			cn.push('canEdit');
-		};
-
 		if (hasMore) {
 			cw.push('hasMore');
 		};
 
         return (
-			<div className={cw.join(' ')}>
+			<div ref={ref => this.node = ref} className={cw.join(' ')}>
 				<div className="name">{relation.name}</div>
 
 				<div 
@@ -77,6 +74,23 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 			</div>
 		);
     };
+
+	componentDidMount(): void {
+		this.init();
+	};
+
+	componentDidUpdate(): void {
+		this.init();
+	};
+
+	init () {
+		const node = $(this.node);
+		const cell = node.find('.cell');
+		const canEdit = this.refCell?.canEdit();	
+
+		node.toggleClass('canEdit', canEdit);
+		cell.toggleClass('canEdit', canEdit);
+	};
 
 	onCellClick (e: any) {
 		this.refCell?.onClick(e);

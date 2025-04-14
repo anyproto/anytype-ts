@@ -47,7 +47,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			};
 		};
 
-		if (isSystemTarget()) {
+		if (isSystemTarget) {
 			getData(subId);
 		} else 
 		if (view) {
@@ -142,7 +142,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const isAllowedObject = () => {
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 
-		if (isSystemTarget()) {
+		if (isSystemTarget) {
 			return true;
 		};
 
@@ -212,7 +212,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	let content = null;
 	let viewSelect = null;
 
-	if (!isSystemTarget() && (views.length > 1)) {
+	if (!isSystemTarget && (views.length > 1)) {
 		viewSelect = (
 			<Select 
 				ref={selectRef}
@@ -280,7 +280,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	};
 
 	useEffect(() => {
-		if (isSystemTarget()) {
+		if (isSystemTarget) {
 			getData(subId);
 		} else {
 			setIsLoading(true);
@@ -301,7 +301,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, []);
 
 	useEffect(() => {
-		if (!isSystemTarget()) {
+		if (!isSystemTarget) {
 			load(viewId);
 		};
 	}, [ viewId ]);

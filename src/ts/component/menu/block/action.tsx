@@ -418,7 +418,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
 						this.moveToPage(item.id);
@@ -543,7 +543,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
-						C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, () => onCreate());
+						C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, true, () => onCreate());
 					};
 
 					filters = filters.concat([

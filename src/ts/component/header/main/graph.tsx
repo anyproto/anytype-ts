@@ -27,9 +27,10 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 				rootId,
 				blockId: rootId,
 				blockIds: [ rootId ],
-				filters: U.Data.graphFilters(),
+				filters: U.Data.getGraphFilters(),
 				filter: S.Common.getGraph(J.Constant.graphId.global).filter,
 				canAdd: true,
+				withPlural: true,
 				onSelect: (item: any) => {
 					$(window).trigger('updateGraphRoot', { id: item.id });
 				},
@@ -46,6 +47,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const onSettings = () => {
 		menuOpen('graphSettings', '#button-header-settings', { 
 			horizontal: I.MenuDirection.Right,
+			subIds: J.Menu.graphSettings,
 			data: {
 				allowLocal: true,
 				storageKey: J.Constant.graphId.global,
@@ -66,13 +68,13 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(true)}</div>
+			<div className="side left">{renderLeftIcons(false)}</div>
 			<div className="side center">{renderTabs()}</div>
 
 			<div className="side right">
-				<Icon id="button-header-search" className="btn-search withBackground" tooltip={translate('headerGraphTooltipSearch')} onClick={onSearch} />
-				<Icon id="button-header-filter" className="btn-filter withBackground dn" tooltip={translate('headerGraphTooltipFilters')} onClick={onFilter} />
-				<Icon id="button-header-settings" className="btn-settings withBackground" tooltip={translate('headerGraphTooltipSettings')} onClick={onSettings} />
+				<Icon id="button-header-search" className="btn-search withBackground" tooltipParam={{ text: translate('headerGraphTooltipSearch') }} onClick={onSearch} />
+				<Icon id="button-header-filter" className="btn-filter withBackground dn" tooltipParam={{ text: translate('headerGraphTooltipFilters') }} onClick={onFilter} />
+				<Icon id="button-header-settings" className="btn-settings withBackground" tooltipParam={{ text: translate('headerGraphTooltipSettings') }} onClick={onSettings} />
 			</div>
 		</>
 	);

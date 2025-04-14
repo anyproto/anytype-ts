@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { U, S } from 'Lib';
+import { J, U, S, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';

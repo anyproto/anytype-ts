@@ -105,9 +105,7 @@ export default {
 				'.shareBanner',
 			],
 			/*
-			onClose: () => {
-				Onboarding.start('emailCollection', false);
-			},
+			onClose: () => Onboarding.start('emailCollection', false),
 			*/
 		},
 		items: [
@@ -116,13 +114,6 @@ export default {
 				description: translate('onboardingSpacesText'),
 				param: {
 					element: '#widget-space',
-				}
-			},
-			{
-				category: translate('onboardingAllObjectTitle'),
-				description: translate('onboardingAllObjectText'),
-				param: {
-					element: '#widget-space #item-all',
 				}
 			},
 			{
@@ -216,23 +207,6 @@ export default {
 					offsetX: -295,
 				}
 			},
-		]
-	}),
-
-	sets: () => ({
-		items: [
-			{
-				category: translate('onboardingSetsTitle'),
-				description: translate('onboardingSetsText'),
-				buttonText: translate('onboardingSetsButton'),
-				param: {
-					noArrow: true,
-					element: '#dataviewControlsSideRight',
-					vertical: I.MenuDirection.Bottom,
-					horizontal: I.MenuDirection.Right,
-					offsetY: 14,
-				}
-			}
 		]
 	}),
 

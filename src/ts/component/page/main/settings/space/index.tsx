@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Tag } from 'Component';
+import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Switch, Editable } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 interface State {
@@ -14,6 +14,7 @@ interface State {
 const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
 	refName: any = null;
+	refDescription: any = null;
 
 	state = {
 		error: '',
@@ -26,6 +27,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		super(props);
 
 		this.setName = this.setName.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 		this.onDashboard = this.onDashboard.bind(this);
@@ -44,13 +46,15 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const buttons = this.getButtons();
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const widgets = S.Detail.get(S.Block.widgets, S.Block.widgets, [ 'autoWidgetDisabled' ], true);
 		const maxIcons = 5;
 		const headerButtons = isEditing ? [
-			{ color: 'blank', text: translate('commonCancel'), onClick: () => this.onCancel },
+			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave },
 		] : [
-			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: () => this.setState({ isEditing: true }) },
+			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
 
@@ -81,6 +85,23 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			);
 		};
 
+		let membersIcons = null;
+		if (canWrite) {
+			membersIcons = (
+				<div className="membersIcons">
+					{members.map((el, idx) => {
+						if (idx < maxIcons) {
+							return <IconObject key={idx} size={36} object={el} />;
+						};
+						return null;
+					})}
+					{members.length > maxIcons ? (
+						<div className="membersMore">+{members.length - maxIcons}</div>
+					) : ''}
+				</div>
+			);
+		};
+
 		return (
 			<>
 				<div className={cnh.join(' ')}>
@@ -90,10 +111,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						</div>
 					) : ''}
 
+					<Label className="spaceType" text={translate(`spaceAccessType${space.spaceAccessType || 0}`)} />
+
 					<IconObject
 						id="spaceIcon"
-						size={128}
-						iconSize={128}
+						size={96}
+						iconSize={96}
 						object={{ ...space, spaceId: S.Common.space }}
 						canEdit={canWrite}
 						menuParam={{ horizontal: I.MenuDirection.Center }}
@@ -106,29 +129,36 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						placeholder={translate('defaultNamePage')}
 						readonly={!canWrite || !isEditing}
 					/>
+
+					{isEditing || this.checkDescription() ? (
+						<Editable
+							classNameWrap="spaceDescription"
+							ref={ref => this.refDescription = ref}
+							placeholder={translate('popupSettingsSpaceIndexDescriptionPlaceholder')}
+							readonly={!canWrite || !isEditing}
+							onKeyUp={() => this.refDescription?.placeholderCheck()}
+						/>
+					) : ''}
 				</div>
 
-				{canWrite ? (
-					<div className="membersIcons">
-						{members.map((el, idx) => {
-							if (idx < maxIcons) {
-								return <IconObject key={idx} size={36} object={el} />;
-							};
-							return null;
-						})}
-						{members.length > maxIcons ? (
-							<div className="membersMore">+{members.length - maxIcons}</div>
-						) : ''}
-					</div>
-				) : ''}
+				{/*{membersIcons}*/}
 
 				<div className="buttons">
-					{buttons.map((el, idx) => (
-						<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className="btn" onClick={e => this.onClick(e, el)}>
-							<Icon className={el.icon} />
-							<Label text={el.name} />
-						</div>
-					))}
+					{buttons.map((el, idx) => {
+						const cn = [ 'btn' ];
+
+						if (el.isDisabled) {
+							cn.push('disabled');
+						};
+
+						return (
+							<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className={cn.join(' ')} onClick={e => this.onClick(e, el)}>
+								<Icon className={el.icon} />
+								<Label text={el.name} />
+								{el.tooltip ? <Icon className="tooltipOverlay" tooltipParam={{ text: el.tooltip }} /> : ''}
+							</div>
+						);
+					})}
 				</div>
 
 				<div className="sections">
@@ -138,6 +168,31 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						<div className="section sectionSpaceManager">
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 							<div className="sectionContent">
+
+								{isOwner ? (
+									<div className="item">
+										<div className="sides">
+											<Icon className="widget" />
+
+											<div className="side left">
+												<Title text={translate('popupSettingsSpaceIndexAutoWidgetsTitle')} />
+												<Label text={translate('popupSettingsSpaceIndexAutoWidgetsText')} />
+											</div>
+
+											<div className="side right">
+												<Switch
+													value={!widgets.autoWidgetDisabled}
+													className="big"
+													onChange={(e: any, v: boolean) => {
+														C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ]);
+
+														analytics.event('AutoCreateTypeWidgetToggle', { type: v ? 'true' : 'false' });
+													}}
+												/>
+											</div>
+										</div>
+									</div>
+								) : ''}
 
 								<div className="item">
 									<div className="sides">
@@ -193,6 +248,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	componentDidMount (): void {
 		this.setName();
 		this.init();
+
+		analytics.event('ScreenSettingsSpaceIndex');
 	};
 
 	componentDidUpdate (): void {
@@ -206,7 +263,16 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	setName () {
 		const space = U.Space.getSpaceview();
 
-		this.refName.setValue(space.name);
+		let name = space.name;
+		if (name == translate('defaultNamePage')) {
+			name = '';
+		};
+		this.refName.setValue(name);
+
+		if (space.description) {
+			this.refDescription?.setValue(space.description);
+			this.refDescription?.placeholderCheck();
+		};
 	};
 
 	init () {
@@ -280,6 +346,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onClick (e: React.MouseEvent, item: any) {
+		if (item.isDisabled) {
+			return;
+		};
+
 		const { cid, key } = this.state;
 		const space = U.Space.getSpaceview();
 		const isOwner = U.Space.isMyOwner(space.targetSpaceId);
@@ -287,24 +357,25 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		switch (item.id) {
 			case 'invite': {
 				this.props.onPage('spaceShare');
+
+				analytics.event('ClickSettingsSpaceInvite', { route: analytics.route.settingsSpace });
 				break;
 			};
+
 			case 'qr': {
 				S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
+				analytics.event('ScreenQr', { route: analytics.route.settingsSpace });
 				break;
 			};
+
 			case 'more': {
 				const element = `#${U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)}`;
 				S.Menu.open('select', {
 					element,
 					offsetX: 16,
 					offsetY: -40,
-					onOpen: () => {
-						$(element).addClass('hover');
-					},
-					onClose: () => {
-						$(element).removeClass('hover');
-					},
+					onOpen: () => $(element).addClass('hover'),
+					onClose: () => $(element).removeClass('hover'),
 					data: {
 						options: [
 							{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
@@ -353,10 +424,20 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				},
 			}
 		});
+
+		analytics.event('ScreenSpaceInfo');
+	};
+
+	onEdit () {
+		this.setState({ isEditing: true });
+		this.refName?.focus();
 	};
 
 	onSave () {
-		C.WorkspaceSetInfo(S.Common.space, { name: this.checkName(this.refName.getValue()) });
+		C.WorkspaceSetInfo(S.Common.space, {
+			name: this.checkName(this.refName?.getValue()),
+			description: this.refDescription?.getTextValue(),
+		});
 		this.setState({ isEditing: false });
 	};
 
@@ -374,12 +455,21 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		return v;
 	};
 
+	checkDescription (): boolean {
+		return !/^\r?\n$/.test(String(this.refDescription?.getTextValue() || ''));
+	};
+
 	getButtons () {
+		const { cid, key } = this.state;
+		const space = U.Space.getSpaceview();
+		const isDisabled = space.spaceAccessType == I.SpaceType.Personal;
+		const tooltip = isDisabled ? translate('pageSettingsSpaceIndexEntrySpaceTooltip') : '';
+
 		return [
-			{ id: 'invite', name: translate('pageSettingsSpaceIndexInvitePeople'), icon: 'invite' },
-			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip },
+			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
 			{ id: 'more', name: translate('commonMore'), icon: 'more' },
-		];
+		].filter(it => it);
 	};
 
 });

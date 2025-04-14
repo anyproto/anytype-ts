@@ -137,6 +137,11 @@
 			.side.left { background: linear-gradient(to bottom, #ffebeb 0%, #f6f6f6 25%); }
 		}
 
+        .sides.ice {
+            .tierIcon { background-image: url('~img/icon/payment/ice.svg'); }
+            .side.left { background: linear-gradient(to bottom, #daf0ff 0%, #f4f4f4 25%); }
+        }
+
 		.sides.default {
 			.tierIcon { background-image: url('~img/icon/payment/purple.svg'); }
 			.side.left { background: linear-gradient(to bottom, #fbeaff 0%, #f6f6f6 25%); }

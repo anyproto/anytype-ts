@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	isPackaged: app.isPackaged,
 	userPath: () => app.getPath('userData'),
 	tmpPath,
+	downloadPath: () => app.getPath('downloads'),
 	logPath: () => path.join(app.getPath('userData'), 'logs'),
 	dirName: fp => path.dirname(fp),
 	filePath: (...args) => path.join(...args),

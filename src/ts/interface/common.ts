@@ -18,7 +18,6 @@ export enum DropType {
 };
 
 export enum SelectType {
-	None	 = '',
 	Block	 = 'block',
 	Record	 = 'record',
 };
@@ -55,14 +54,15 @@ export interface Toast {
 };
 
 export enum ToastAction {
-	None		 	= 0,
-	Move		 	= 1,
-	Link		 	= 2,
-	Lock 		 	= 3,
-	Collection	 	= 4,
-	StorageFull		= 5,
-	TemplateCreate	= 6,
-	Archive 		= 7,
+	None		 	 = 0,
+	Move		 	 = 1,
+	Link		 	 = 2,
+	Lock 		 	 = 3,
+	Collection	 	 = 4,
+	StorageFull		 = 5,
+	TemplateCreate	 = 6,
+	Archive 		 = 7,
+	Widget			 = 8,
 };
 
 export interface Option {
@@ -199,6 +199,7 @@ export interface ButtonComponent {
 };
 
 export interface SidebarPageComponent {
+	page?: string;
 	rootId?: string;
 	isPopup?: boolean;
 	readonly?: boolean;
@@ -208,10 +209,12 @@ export interface SidebarPageComponent {
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {
+	id: string;
 	object: any;
 	item?: any;
 	readonly?: boolean;
 	onChange?(update: any): void;
+	disableButton?(v: boolean): void;
 	onDragStart?: (e: React.DragEvent) => void;
 };
 
@@ -223,7 +226,7 @@ export enum SidebarRelationList {
 	Featured 		= 1,
 	Recommended 	= 2,
 	Hidden 			= 3,
-	Conflict 		= 4,
+	Local 			= 4,
 };
 
 export enum SurveyType {
@@ -299,6 +302,7 @@ export interface GraphSettings {
 	cluster: boolean;
 	filter: string;
 	depth: number;
+	filterTypes: string[];
 };
 
 export interface FocusState {
@@ -335,6 +339,10 @@ export interface SearchSubscribeParam {
 	noDeps: boolean;
 };
 
+export interface SearchIdsParam extends SearchSubscribeParam {
+	ids: string[];
+};
+
 export enum SortId {
 	All			 = 'all',
 	Orphan		 = 'orphan',
@@ -358,4 +366,17 @@ export interface Error {
 
 export interface PageRef {
 	resize: () => void;
+};
+
+export interface TooltipParam {
+	element?: any;
+	title?: string;
+	text?: string;
+	caption?: string;
+	className?: string;
+	typeX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
+	typeY?: I.MenuDirection.Top| I.MenuDirection.Center | I.MenuDirection.Bottom;
+	offsetX?: number;
+	offsetY?: number;
+	delay?: number;
 };

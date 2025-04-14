@@ -21,7 +21,7 @@ interface SelectionRefProps {
 	hide(): void;
 };
 
-const THRESHOLD = 10;
+const THRESHOLD = 20;
 
 const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, ref) => {
 
@@ -194,7 +194,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const onScroll = (e: any) => {
-		if (!isSelecting.current || !hasMoved.current) {
+		if (!isSelecting.current || !hasMoved.current || keyboard.isSelectionDisabled) {
 			return;
 		};
 
@@ -382,7 +382,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		for (const i in I.SelectType) {
 			const type = I.SelectType[i];
-			
+
 			list[type] = get(type, false);
 
 			nodes.current.filter(it => it.type == type).forEach(item => {

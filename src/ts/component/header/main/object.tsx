@@ -13,11 +13,12 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const object = S.Detail.get(rootId, rootId, J.Relation.template);
 	const isDeleted = object._empty_ || object.isDeleted;
 	const isLocked = root ? root.isLocked() : false;
+	const isRelation = U.Object.isRelationLayout(object.layout);
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
-	const showMenu = !isTypeOrRelation && !isDeleted;
+	const showMenu = !isRelation && !isDeleted;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 
@@ -52,7 +53,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					onMouseOut={onTooltipHide}
 				>
 					<IconObject object={object} size={18} />
-					<ObjectName object={object} />
+					<ObjectName object={object} withPlural={true} />
 					{label ? <Label text={label} /> : ''}
 				</div>
 			);
@@ -65,7 +66,10 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		const object = S.Detail.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		S.Popup.closeAll(null, () => U.Object.openRoute(object));
+		S.Popup.closeAll(null, () => {
+			U.Object.openRoute(object);
+			keyboard.disableClose(false);
+		});
 	};
 	
 	const onMore = () => {
@@ -140,8 +144,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{showRelations ? (
 					<Icon 
 						id="button-header-relation" 
-						tooltip={translate('commonRelations')}
-						tooltipCaption={keyboard.getCaption('relation')}
+						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation') }}
 						className="relation withBackground"
 						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
 					/> 
@@ -150,7 +153,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{showMenu ? (
 					<Icon 
 						id="button-header-more"
-						tooltip={translate('commonMenu')}
+						tooltipParam={{ text: translate('commonMenu') }}
 						className="more withBackground"
 						onClick={onMore} 
 					/> 

@@ -89,8 +89,7 @@ class Api {
 		ConfigManager.set({ hideTray: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
-			MenuManager.initMenu();
-			MenuManager.initTray();
+			this.initMenu(win);
 		});
 	};
 
@@ -192,9 +191,13 @@ class Api {
 	setInterfaceLang (win, lang) {
 		ConfigManager.set({ interfaceLang: lang }, () => {
 			WindowManager.reloadAll();
-			MenuManager.initMenu();
-			MenuManager.initTray();
+			this.initMenu(win);
 		});
+	};
+
+	initMenu (win) {
+		MenuManager.initMenu();
+		MenuManager.initTray();
 	};
 
 	setSpellingLang (win, languages) {
@@ -246,16 +249,16 @@ class Api {
 	};
 
 	moveNetworkConfig (win, src) {
-		if (path.extname(src) != 'yml') {
-			return { err: 'Invalid file' };
+		if (!path.extname(src).match(/yml|yaml/i)) {
+			return { error: `Invalid file extension: ${path.extname(src)}. Required YAML` };
 		};
 
 		const dst = path.join(Util.defaultUserDataPath(), 'config.yaml');
 		try {
 			fs.copyFileSync(src, dst);
 			return { path: dst };
-		} catch (err) {
-			return { err };
+		} catch (e) {
+			return { error: e.message };
 		};
 	};
 

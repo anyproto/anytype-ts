@@ -102,7 +102,7 @@
 		.widget.button { cursor: default; animation: none; }
 	}
 
-	> .body.isListPreview { overflow: hidden; height: 100%; }
+	> .body.isListPreview { overflow: hidden; height: 100%; padding-right: 12px; }
 	> .body.isOnboardingHidden { visibility: visible; }
 	> .body.withShareBanner:not(.isOnboardingHidden) { margin-top: -10px; }
 }

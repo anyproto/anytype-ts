@@ -6,7 +6,6 @@ import { Cell, DropTarget, Icon, SelectionTarget } from 'Component';
 
 interface Props extends I.ViewComponent {
 	style?: any;
-	recordIdx?: number;
 };
 
 const Row = observer(class Row extends React.Component<Props> {

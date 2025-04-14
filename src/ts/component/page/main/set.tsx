@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, translate, analytics, sidebar } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, Dataview, analytics, sidebar } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -45,11 +45,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const isCollection = U.Object.isCollectionLayout(check.layout);
 			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
-			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 			const readonly = this.isReadonly();
+			const placeholder = Dataview.namePlaceholder(check.layout);
 
 			content = (
 				<>
@@ -193,6 +192,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			sidebar.rightPanelSetState(isPopup, { rootId });
 			this.setState({ isLoading: false });
 			this.resize();
+
+			if (U.Object.isTypeLayout(object.layout)) {
+				analytics.event('ScreenType', { objectType: object.id });
+			};
 		});
 	};
 
@@ -202,7 +205,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		const { isPopup } = this.props;
-		const close = !(isPopup && (this.getRootId() == this.id));
+		const close = !isPopup || (this.getRootId() == this.id);
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -258,7 +261,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		});
 
 		if (!keyboard.isFocused) {
-			keyboard.shortcut(`${cmd}+a`, e, () => {
+			keyboard.shortcut('selectAll', e, () => {
 				e.preventDefault();
 
 				const records = S.Record.getRecordIds(S.Record.getSubId(rootId, J.Constant.blockId.dataview), '');

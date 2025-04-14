@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Editable } from 'Component';
-import { analytics, I, keyboard, translate } from 'Lib';
+import { IconObject, Editable, Label } from 'Component';
+import { J, analytics, I, keyboard, translate } from 'Lib';
 
 const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends React.Component<I.SidebarSectionComponent> {
 	
 	refName = null;
+	timeout = 0;
 
 	constructor (props: I.SidebarSectionComponent) {
 		super(props);
@@ -13,33 +14,57 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		this.onSelect = this.onSelect.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 	};
 
     render () {
-		const { object, readonly } = this.props;
+		const { id, object, readonly } = this.props;
+
+		let icon = null;
+		let label = '';
+
+		switch (id) {
+			case 'title': {
+				label = translate('sidebarTypeTitleLabelName');
+				icon = (
+					<IconObject 
+						id={`sidebar-icon-title-${object.id}`} 
+						object={object} 
+						size={24} 
+						canEdit={!readonly}
+						onIconSelect={this.onSelect}
+						menuParam={{
+							horizontal: I.MenuDirection.Center,
+							className: 'fixed',
+							classNameWrap: 'fromSidebar',
+						}}
+					/>
+				);
+				break;
+			};
+
+			case 'plural': {
+				label = translate('sidebarTypeTitleLabelPlural');
+				break;
+			};
+
+		};
 
         return (
 			<div className="wrap">
-				<IconObject 
-					id={`sidebar-icon-title-${object.id}`} 
-					object={object} 
-					size={24} 
-					canEdit={!readonly}
-					onIconSelect={this.onSelect}
-					menuParam={{
-						horizontal: I.MenuDirection.Center,
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-					}}
-				/>
+				<Label text={label} />
 
-				<Editable
-					ref={ref => this.refName = ref}
-					readonly={readonly}
-					onBlur={this.onChange}
-					onKeyDown={this.onKeyDown}
-					placeholder={translate('defaultNameType')} 
-				/>
+				<div className="flex">
+					{icon}
+					<Editable
+						ref={ref => this.refName = ref}
+						readonly={readonly}
+						onBlur={this.onChange}
+						onKeyDown={this.onKeyDown}
+						onKeyUp={this.onKeyUp}
+						placeholder={translate('defaultNameType')} 
+					/>
+				</div>
 			</div>
 		);
     };
@@ -52,11 +77,23 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		this.setValue();
 	};
 
+	componentWillUnmount(): void {
+		window.clearTimeout(this.timeout);	
+	};
+
+	getRelationKey (): string {
+		switch (this.props.id) {
+			case 'title': return 'name';
+			case 'plural': return 'pluralName';
+		};
+		return '';
+	};
+
 	setValue () {
 		const { object } = this.props;
 
-		let text = String(object.name || '');
-		if (text == translate('defaultNamePage')) {
+		let text = String(object[this.getRelationKey()] || '');
+		if (text == translate('defaultNameType')) {
 			text = '';
 		};
 
@@ -71,7 +108,9 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
 	onChange () {
-		this.props.onChange({ name: this.refName?.getTextValue() });
+		const value = this.refName?.getTextValue().trim();
+
+		this.props.onChange({ [this.getRelationKey()]: value });
 	};
 
 	onKeyDown (e: any) {
@@ -79,6 +118,12 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 			e.preventDefault();
 			this.onChange();
 		});
+	};
+
+	onKeyUp (e: any) {
+		const value = this.refName?.getTextValue().trim();
+
+		this.props.disableButton(!value);
 	};
 
 });

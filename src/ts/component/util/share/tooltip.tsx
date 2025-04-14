@@ -5,12 +5,12 @@ import { S, translate, analytics } from 'Lib';
 
 interface Props {
 	route: string;
-	showOnce?: boolean;
 };
 
 const ShareTooltip: FC<Props> = observer(({ 
 	route = '',
 }) => {
+
 	const onClickHandler = () => {
 		S.Popup.open('share', {});
 		analytics.event('ClickShareApp', { route });
@@ -25,6 +25,7 @@ const ShareTooltip: FC<Props> = observer(({
 			<Label text={translate('shareTooltipLabel')} />
 		</div>
 	);
+
 });
 
 export default ShareTooltip;

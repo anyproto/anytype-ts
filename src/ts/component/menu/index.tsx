@@ -77,6 +77,8 @@ import MenuDataviewNew from './dataview/new';
 import MenuSyncStatus from './syncStatus';
 import MenuSyncStatusInfo from './syncStatus/info';
 
+import MenuIdentity from './identity';
+
 interface State {
 	tab: string;
 };
@@ -157,6 +159,8 @@ const Components: any = {
 
 	syncStatus:				 MenuSyncStatus,
 	syncStatusInfo:			 MenuSyncStatusInfo,
+
+	identity:				 MenuIdentity,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
@@ -464,13 +468,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getBorderLeft () {
-		let ret = J.Size.menuBorder;
-
-		if (S.Common.showVault && !sidebar.data.isClosed) {
-			ret += J.Size.vault.width;
-		};
-
-		return ret;
+		return Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder;
 	};
 
 	position () {
@@ -901,6 +899,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			e.preventDefault();
 			onArrow(1);
 		});
+
+		console.log(this.ref.onClick, shortcutSelect);
 
 		if (this.ref && this.ref.onClick) {	
 			keyboard.shortcut(shortcutSelect.join(', '), e, () => {

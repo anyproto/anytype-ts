@@ -8,6 +8,24 @@
 	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
 	.iconImage { border-radius: inherit; }
 
+	.iconCommon, .smileImage, .iconImage, .iconFile, .iconCheckbox, .iconError {
+		&.c14 { @include pos-abs-mid; width: 14px; height: 14px; margin: -7px 0px 0px -7px; }
+		&.c16 { @include pos-abs-mid; width: 16px; height: 16px; margin: -8px 0px 0px -8px; }
+		&.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
+		&.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+		&.c22 { @include pos-abs-mid; width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
+		&.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
+		&.c26 { @include pos-abs-mid; width: 26px; height: 26px; margin: -13px 0px 0px -13px; }
+		&.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
+		&.c30 { @include pos-abs-mid; width: 30px; height: 30px; margin: -15px 0px 0px -15px; }
+		&.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
+		&.c36 { @include pos-abs-mid; width: 36px; height: 36px; margin: -18px 0px 0px -18px; }
+		&.c40 { @include pos-abs-mid; width: 40px; height: 40px; margin: -20px 0px 0px -20px; }
+		&.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
+		&.c56 { @include pos-abs-mid; width: 56px; height: 56px; margin: -28px 0px 0px -28px; }
+		&.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
+	}
+
 	.iconCommon.c14, .smileImage.c14, .iconImage.c14, .iconFile.c14, .iconCheckbox.c14 { @include pos-abs-mid; width: 14px; height: 14px; margin: -7px 0px 0px -7px; }
 	.iconCommon.c16, .smileImage.c16, .iconImage.c16, .iconFile.c16, .iconCheckbox.c16 { @include pos-abs-mid; width: 16px; height: 16px; margin: -8px 0px 0px -8px; }
 	.iconCommon.c18, .smileImage.c18, .iconImage.c18, .iconFile.c18, .iconCheckbox.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
@@ -128,3 +146,7 @@
 .iconObject.withImage { background-color: unset !important; }
 
 .iconObject.isHuman, .iconObject.isParticipant { border-radius: 100% !important; background-color: unset; }
+
+.iconObject.withImageError {
+	img:not(.iconError) { display: none; }
+}

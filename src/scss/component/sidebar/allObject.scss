@@ -5,11 +5,10 @@
 		> .head { display: flex; flex-direction: column; gap: 8px 0px; overflow: hidden; padding: 0px 0px 12px 0px; }
 		> .head {
 			.titleWrap { 
-				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 16px 10px 1px 10px; justify-content: space-between;
+				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 12px 10px 1px 10px; justify-content: space-between;
 			}
 			.titleWrap {
-				.side { height: 32px; }
-				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 				.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 
 				.title { @include text-paragraph; font-weight: 600; flex-grow: 1; }

@@ -2,7 +2,6 @@ export default {
 	Code: {
 		ANYTYPE_NEEDS_UPGRADE:				 	10,
 		NO_ACCOUNTS_FOUND:					 	101,
-		SPACE_IS_DELETED:						103,
 		FAILED_TO_FIND_ACCOUNT_INFO:		 	104,
 		ANOTHER_ANYTYPE_PROCESS_IS_RUNNING:	 	108,
 		ACCOUNT_IS_DELETED:					 	109,
@@ -29,7 +28,16 @@ export default {
 			NOTION_RATE_LIMIT_EXCEEDED:					13,
 			FILE_IMPORT_NO_OBJECTS_IN_ZIP_ARCHIVE:		14,
 			FILE_IMPORT_NO_OBJECTS_IN_DIRECTORY:		17,
-		}
+		},
+
+		Publish: {
+			PAGE_SIZE_EXCEEDED: 	103
+		},
+
+		SpaceInviteView: {
+			INVITE_NOT_FOUND: 		101,
+			SPACE_IS_DELETED:		103,
+		},
 	},
 
 	'Error: net::ERR_TIMED_OUT': 'Network time-out',

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, U, J, translate, Action } from 'Lib';
+import { I, U, J, translate, Action, analytics, sidebar } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PageSettingsComponent {
@@ -36,6 +36,10 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 		);
 	};
 
+	componentDidMount () {
+		analytics.event('ScreenSettingsImportIndex', { route: analytics.route.settingsSpaceIndex });
+	};
+
 	onClick (id: string) {
 		const { onPage } = this.props;
 		const items = this.getItems();
@@ -44,6 +48,9 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 
 		if (common.includes(item.format)) {
 			Action.import(item.format, J.Constant.fileExtension.import[item.format]);
+
+			U.Space.openDashboard();
+			sidebar.leftPanelSetState({ page: 'widget' });
 		} else {
 			onPage(U.Common.toCamelCase('import-' + item.id));
 		};

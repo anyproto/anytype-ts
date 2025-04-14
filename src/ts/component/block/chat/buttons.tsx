@@ -56,11 +56,13 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 							id={`button-${block.id}-${item.type}`} 
 							key={i} 
 							className={cn.join(' ')} 
-							tooltip={item.name}
-							tooltipCaption={item.caption}
-							tooltipY={I.MenuDirection.Top}
 							inner={item.inner}
 							onMouseDown={e => this.onButton(e, item)}
+							tooltipParam={{
+								text: item.name,
+								caption: item.caption,
+								typeY: I.MenuDirection.Top,
+							}}
 						/>
 					);
 				})}

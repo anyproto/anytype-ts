@@ -233,22 +233,20 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			limit: J.Constant.limit.menuRecords,
 		};
 
-		this.loadRequest(requestParam, () => {
-			this.loadRequest({ ...requestParam, spaceId: J.Constant.storeSpaceId }, (message: any) => {
-				if (!this._isMounted) {
-					return;
-				};
+		this.loadRequest(requestParam, (message: any) => {
+			if (!this._isMounted) {
+				return;
+			};
 
-				if (callBack) {
-					callBack(message);
-				};
+			if (callBack) {
+				callBack(message);
+			};
 
-				if (clear) {
-					this.setState({ isLoading: false });
-				} else {
-					this.forceUpdate();
-				};
-			});
+			if (clear) {
+				this.setState({ isLoading: false });
+			} else {
+				this.forceUpdate();
+			};
 		});
 	};
 
@@ -266,37 +264,29 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 		const systemKeys = Relation.systemKeys();
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
-		const librarySources = library.map(it => it.sourceObject);
+		const types = U.Menu.getRelationTypes().filter(it => it.name.match(reg)).map(it => ({ ...it, isType: true }));
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
-			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
-			{ id: 'system', name: translate('menuRelationSuggestSystem'), children: system },
+			canWrite ? { id: 'create', name: translate('menuRelationSuggestCreateNew'), children: types } : null,
+			{ id: 'library', name: translate('commonMyRelations'), children: library },
+			{ id: 'system', name: translate('commonSystemRelations'), children: system },
 		];
 
-		if (canWrite) {
-			if (filter) {
-				const store = items.filter(it => !it.isInstalled && !librarySources.includes(it.id) && !systemKeys.includes(it.relationKey));
-				sections = sections.concat([
-					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-					{ children: [ { id: 'add', name: U.Common.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
-				]);
-			} else {
-				sections = sections.concat([
-					{ 
-						children: [
-							{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
-						] 
-					},
-				]);
-			};
+		if (canWrite && filter) {
+			sections.unshift({ children: [ { id: 'add', name: U.Common.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] });
 		};
 
 		sections = sections.filter((section: any) => {
+			if (!section) {
+				return false;
+			};
+
 			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
 		});
@@ -326,9 +316,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	onFilterChange (v: string) {
 		if (v != this.filter) {
 			window.clearTimeout(this.timeoutFilter);
-			this.timeoutFilter = window.setTimeout(() => {
-				this.props.param.data.filter = this.refFilter.getValue();
-			}, J.Constant.delay.keyboard);
+			this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, J.Constant.delay.keyboard);
 		};
 	};
 
@@ -337,76 +325,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		if (!keyboard.isMouseDisabled && !S.Menu.isAnimating(this.props.id)) {
 			this.props.setActive(item, false);
-			this.onOver(e, item);
 		};
 	};
 
-	onOver (e: any, item: any) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		if (!item.arrow) {
-			S.Menu.closeAll([ 'searchObject' ]);
-			return;
-		};
-
-		const { id, getId, getSize, param, close } = this.props;
-		const { classNameWrap, data } = param;
-		const skipKeys = data.skipKeys || [];
-		const sources = this.getLibrarySources();
-
-		const menuParam: I.MenuParam = {
-			menuKey: item.id,
-			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width,
-			offsetY: 36,
-			vertical: I.MenuDirection.Top,
-			isSub: true,
-			noFlipY: true,
-			classNameWrap,
-			rebind: this.rebind,
-			parentId: id,
-			data: {},
-		};
-
-		let menuId = '';
-
-		switch (item.id) {
-			case 'store': {
-				menuId = 'searchObject';
-				menuParam.className = 'single';
-
-				const filters: I.Filter[] = [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
-					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
-					{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
-				];
-
-				menuParam.data = Object.assign(menuParam.data, {
-					keys: U.Data.typeRelationKeys(),
-					filters,
-					spaceId: J.Constant.storeSpaceId,
-					sorts: [
-						{ relationKey: 'name', type: I.SortType.Asc },
-					],
-					onSelect: (item: any) => {
-						this.onClick(e, S.Detail.mapper(item));
-						close();
-					},
-					dataMapper: it => S.Detail.mapper(it),
-				});
-				break;
-			};
-		};
-
-		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll([ 'searchObject' ], () => {
-				S.Menu.open(menuId, menuParam);
-			});
-		};
-	};
-	
 	onClick (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -421,8 +342,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		const { id, close, param, getId, getSize } = this.props;
-		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall } = data;
+		const { data, className, classNameWrap } = param;
+		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall, filter } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 		const onAdd = (item: any) => {
 			close();
@@ -434,17 +355,27 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			U.Object.setLastUsedDate(item.id, U.Date.now());
 		};
 
-		if (item.id == 'add') {
+		if (item.isType || (item.id == 'add')) {
+			const addParam: any = { name: filter };
+
+			if (item.isType) {
+				addParam.format = item.id;
+			} else {
+				addParam.format = I.RelationType.LongText;
+			};
+
 			S.Menu.open(menuIdEdit, { 
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: getSize().width,
 				offsetY: -80,
 				noAnimation: true,
+				className,
 				classNameWrap,
 				rebind: this.rebind,
 				parentId: id,
 				data: {
 					...data,
+					addParam,
 					onChange: () => close(),
 					addCommand: (rootId: string, blockId: string, item: any) => onAdd(item),
 				}
@@ -467,7 +398,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		e.stopPropagation();
 
 		const { param, getId, getSize } = this.props;
-		const { data, classNameWrap } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, menuIdEdit } = data;
 
 		S.Menu.open(menuIdEdit, { 
@@ -475,6 +406,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			noAnimation: true,
+			className,
 			classNameWrap,
 			data: {
 				...data,
@@ -488,10 +420,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	getRowHeight (item: any) {
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
-	};
-
-	getLibrarySources () {
-		return this.items.filter(it => (it.spaceId == S.Common.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

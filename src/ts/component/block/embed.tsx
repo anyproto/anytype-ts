@@ -501,9 +501,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			commonFilter: true,
 			className: (isTemplate ? 'isTemplate' : ''),
 			subIds: J.Menu.latex,
-			onClose: () => {
-				S.Common.filterSet(0, '');
-			},
+			onClose: () => S.Common.filterSet(0, ''),
 			data: {
 				isTemplate: isTemplate,
 				rootId: rootId,

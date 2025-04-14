@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard } from 'Lib';
+import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 
@@ -938,7 +938,13 @@ class Dispatcher {
 
 				case 'ImportFinish': {
 					const { collectionId, count, type } = mapped;
+					const { account } = S.Auth;
 
+					if (!account) {
+						break;
+					};
+
+					/*
 					if (collectionId) {
 						window.setTimeout(() => {
 							S.Popup.open('objectManager', { 
@@ -949,6 +955,7 @@ class Dispatcher {
 							});
 						}, S.Popup.getTimeout() + 10);
 					};
+					*/
 
 					analytics.event('Import', { type, count });
 					break;
@@ -956,17 +963,21 @@ class Dispatcher {
 
 				case 'ChatAdd': {
 					const orderId = mapped.orderId;
-					const list = S.Chat.getList(rootId);
 					const message = new M.ChatMessage(mapped.message);
 					const author = U.Space.getParticipant(U.Space.getParticipantId(space, message.creator));
 
-					let idx = list.findIndex(it => it.orderId == orderId);
-					if (idx < 0) {
-						idx = list.length;
-					};
+					mapped.subIds.forEach(subId => {
+						const list = S.Chat.getList(subId);
 
-					S.Chat.add(rootId, idx, message);
+						let idx = list.findIndex(it => it.orderId == orderId);
+						if (idx < 0) {
+							idx = list.length;
+						};
 
+						S.Chat.add(subId, idx, message);
+					});
+
+					/*
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
 						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
 							const { space } = S.Common;
@@ -981,28 +992,54 @@ class Dispatcher {
 							};
 						});
 					};
+					*/
 
-					$(window).trigger('messageAdd', [ message ]);
+					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
 					break;
 				};
 
 				case 'ChatUpdate': {
-					S.Chat.update(rootId, mapped.message);
+					mapped.subIds.forEach(subId => S.Chat.update(subId, mapped.message));
 
 					$(window).trigger('messageUpdate', [ mapped.message ]);
 					break;
 				};
 
+				case 'ChatStateUpdate': {
+					mapped.subIds.forEach(subId => {
+						if (subId == J.Constant.subId.chatPreview) {
+							subId = [ J.Constant.subId.chatPreview, spaceId, rootId ].join('-');
+						};
+
+						S.Chat.setState(subId, mapped.state);
+					});
+
+					$(window).trigger('chatStateUpdate');
+					break;
+				};
+
+				case 'ChatUpdateMessageReadStatus': {
+					mapped.subIds.forEach(subId => S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead));
+					break;
+				};
+
+				case 'ChatUpdateMentionReadStatus': {
+					mapped.subIds.forEach(subId => S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead));
+					break;
+				};
+
 				case 'ChatDelete': {
-					S.Chat.delete(rootId, mapped.id);
+					mapped.subIds.forEach(subId => S.Chat.delete(subId, mapped.id));
 					break;
 				};
 
 				case 'ChatUpdateReactions': {
-					const message = S.Chat.getMessage(rootId, mapped.id);
-					if (message) {
-						set(message, { reactions: mapped.reactions });
-					};
+					mapped.subIds.forEach((subId) => {
+						const message = S.Chat.getMessage(subId, mapped.id);
+						if (message) {
+							set(message, { reactions: mapped.reactions });
+						};
+					});
 
 					$(window).trigger('reactionUpdate', [ message ]);
 					break;
@@ -1048,6 +1085,14 @@ class Dispatcher {
 					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
+
+				case 'SpaceAutoWidgetAdded': {
+					Preview.toastShow({ objectId: mapped.targetId, action: I.ToastAction.Widget, icon: 'check' });
+
+					analytics.createWidget(0, '', analytics.widgetType.auto);
+					break;
+				};
+
 			};
 
 			if (needLog) {

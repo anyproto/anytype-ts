@@ -41,7 +41,8 @@
 		.icon.pin { background-image: url('~img/icon/menu/action/pin0.svg'); }
 		.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
 		.icon.removeWidget { background-image: url('~img/icon/menu/action/removeWidget0.svg'); }
-		.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+		.icon.more,
+		.icon.advanced { background-image: url('~img/icon/menu/action/more0.svg'); }
 		.icon.download { background-image: url('~img/icon/menu/action/download0.svg'); }
 		.icon.upload { background-image: url('~img/icon/menu/action/upload0.svg'); }
 		.icon.rename { background-image: url('~img/icon/menu/action/rename0.svg'); }
@@ -64,7 +65,6 @@
 		.icon.clock { background-image: url('~img/icon/menu/action/clock0.svg'); }
 		.icon.settings { background-image: url('~img/icon/menu/action/settings0.svg'); }
 		.icon.viewSettings { background-image: url('~img/icon/dataview/button/settings.svg'); }
-		.icon.expand { background-image: url('~img/icon/menu/action/expand0.svg'); }
 		.icon.source { background-image: url('~img/icon/menu/action/source0.svg'); }
 		.icon.editText { background-image: url('~img/icon/menu/action/editText0.svg'); }
 		.icon.resize { background-image: url('~img/icon/menu/action/resize0.svg'); }
@@ -78,6 +78,7 @@
 		.icon.pageUnlock { background-image: url('~img/icon/menu/action/pageUnlock0.svg'); }
 		.icon.sort { background-image: url('~img/icon/menu/action/sort0.svg'); }
 		.icon.reload { background-image: url('~img/icon/menu/action/reload0.svg'); }
+		.icon.reset { background-image: url('~img/icon/menu/action/reset.svg'); }
 		.icon.hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
 		.icon.browse { background-image: url('~img/icon/menu/action/browse0.svg'); }
 		.icon.install { background-image: url('~img/icon/menu/action/install0.svg'); }

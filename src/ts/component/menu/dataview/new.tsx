@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, J, analytics, keyboard, translate, Action } from 'Lib';
+import { I, S, U, J, keyboard, translate, Action } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
 const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -9,8 +9,8 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { param, setActive, setHover, onKeyDown, getId, getSize, position } = props;
 	const { data } = param;
 	const { 
-		rootId, subId, blockId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect, isCollection, withTypeSelect, 
-		isAllowedObject,
+		subId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect, isCollection, withTypeSelect, 
+		isAllowedObject, targetId,
 	} = data;
 	const n = useRef(-1);
 	const [ template, setTemplate ] = useState(null);
@@ -35,19 +35,17 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const type = S.Record.getTypeById(typeId);
 		const templateName = template ? template.name : translate('commonBlank');
 
-		const itemsAdd: any[] = [
-			{ id: 'new', icon: 'add', name: translate('commonNew') },
-		];
+		const itemsAdd: any[] = [];
 		const itemsSettings: any[] = [
-			{ id: 'template', name: translate('commonTemplate'), arrow: true, caption: templateName },
+			{ id: 'template', name: translate('menuDataviewNewTemplate'), arrow: true, caption: templateName },
 		];
 
 		if (isAllowedObject && isCollection) {
-			itemsAdd.push({ id: 'existing', icon: 'existingObject', name: translate('menuDataviewExistingObject'), arrow: true });
+			itemsAdd.push({ id: 'existing', icon: 'existingObject', name: translate('menuDataviewNewExistingObject'), arrow: true });
 		};
 
 		if (withTypeSelect) {
-			itemsSettings.unshift({ id: 'type', name: translate('commonDefaultType'), arrow: true, caption: type.name });
+			itemsSettings.unshift({ id: 'type', name: translate('menuDataviewNewType'), arrow: true, caption: type.name });
 		};
 
 		let sections: any[] = [
@@ -88,8 +86,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			data: {
-				rootId,
-				blockId,
 				hasSources,
 				getView,
 				typeId,
@@ -104,14 +100,17 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			case 'existing': {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
+					withPlural: true,
 					filters: [
-						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getLayoutsForTypeSelection() },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] },
 					],
 					onSelect: (el: any) => {
-						Action.addToCollection(rootId, [ el.id ]);
+						Action.addToCollection(targetId, [ el.id ]);
 					},
-					skipIds: [ ...S.Record.getRecordIds(subId, ''), rootId ],
+					skipIds: [ ...S.Record.getRecordIds(subId, ''), targetId ],
 				});
 				break;
 			};
@@ -122,7 +121,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
-						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					skipIds: [ typeId ],
 					onClick: type => {
@@ -140,22 +139,22 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'template': {
-				const update = (item) => {
-					data.templateId = item.id;
+				const update = id => {
+					data.templateId = id;
 					loadTemplate();
 				};
 
 				menuId = 'dataviewTemplateList';
 				menuParam.data = Object.assign(menuParam.data, {
-					onSetDefault: (item) => {
-						update(item);
+					onSetDefault: id => {
+						update(id);
 
 						if (onSetDefault) {
-							onSetDefault(item);
+							onSetDefault(id);
 						};
 					},
-					onSelect: (item) => {
-						update(item);
+					onSelect: item => {
+						update(item.id);
 
 						if (onSelect) {
 							onSelect(item);
@@ -170,21 +169,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.closeAll(J.Menu.dataviewNew, () => {
 				S.Menu.open(menuId, menuParam);
 			});
-		};
-	};
-
-	const onClick = (e: React.MouseEvent, item: any) => {
-		if (item.arrow) {
-			return;
-		};
-
-		switch (item.id) {
-			case 'new': {
-				if (onSelect) {
-					onSelect(template ? template : { id: '' });
-				};
-				break;
-			};
 		};
 	};
 
@@ -219,7 +203,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						icon={action.icon}
 						onMouseEnter={e => onMouseEnter(e, action)}
 						onMouseLeave={e => onMouseLeave(e, action)}
-						onClick={e => onClick(e, action)}
 					/>
 				))}
 			</div>
@@ -246,7 +229,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onOver,
-		onClick,
 		onMouseEnter,
 		onMouseLeave,
 		resize,

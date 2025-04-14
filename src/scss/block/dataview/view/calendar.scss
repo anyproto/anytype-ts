@@ -7,7 +7,7 @@
 			.table { display: flex; flex-flow: column; height: 100%; }
 			.table {
 				> .head, > .body { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-				> .head { flex-shrink: 0; padding-right: 6px; }
+				> .head { flex-shrink: 0; }
 				> .head {
 					.item { 
 						@include text-small; padding: 2px 10px; border-color: var(--color-shape-secondary); border-style: solid;
@@ -15,7 +15,7 @@
 					}
 				}
 
-				> .body { overflow: scroll; border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px;  }
+				> .body { border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px; }
 			}
 
 			.day { 
@@ -35,6 +35,7 @@
 					}
 				}
 			}
+			.day.weekend:not(.active) { background-color: var(--color-shape-highlight-light); }
 
 			.day.other {
 				.number { color: var(--color-text-tertiary); }

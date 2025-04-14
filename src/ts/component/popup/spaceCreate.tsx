@@ -61,7 +61,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		const details = {
 			name,
 			iconOption,
-			spaceDashboardId: I.HomePredefinedId.Last,
 		};
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
@@ -73,6 +72,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 				setError(message.error.description);
 				return;
 			};
+
+			const startingId = message.startingId;
 
 			C.WorkspaceSetInfo(message.objectId, details, () => {
 				if (message.error.code) {
@@ -89,9 +90,16 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 						U.Space.initSpaceState();
 
 						if (withImport) {
-							close(() => {
-								U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
+							close(() => U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings }));
+						} else 
+						if (startingId) {
+							U.Object.getById(startingId, {}, (object: any) => {
+								if (object) {
+									U.Object.openRoute(object);
+								};
 							});
+						} else {
+							U.Space.openDashboard({ replace: true });
 						};
 
 						if (onCreate) {

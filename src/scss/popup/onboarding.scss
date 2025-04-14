@@ -1,0 +1,89 @@
+@import "~scss/_mixins";
+
+$elementsTransition: opacity 0.2s linear;
+
+.popups {
+    .popup.popupOnboarding {
+        .innerWrap { background: #cbd2fa; width: 768px; height: 600px; border-radius: 20px; overflow: hidden; }
+
+        .steps { transition: margin-left 0.6s cubic-bezier(0.78, 0, 0.39, 1); display: flex; align-items: center; text-align: center; }
+        .steps.s1 { margin-left: -100%; }
+        .steps {
+            .step0 { display: flex; flex-direction: column; align-items: center; width: 768px; height: 600px; padding-top: 70px; flex-shrink: 0; }
+            .step0.init {
+                .title,
+                > .label,
+                .button { opacity: 0; }
+            }
+            .step0 {
+                .types { height: 244px; width: 470px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 38px; }
+                .types {
+                    .type {
+                        display: flex; align-items: center; gap: 8px; height: 52px; padding: 0px 16px 0px 15px; transform: scale3d(1, 1, 1);
+                        background-color: rgba(255, 255, 255, 0.3); border-radius: 10px; transition: all 0.5s $easeInQuint;
+                    }
+                    .type {
+                        .icon { width: 20px; height: 20px;  }
+                        .label { color: #7580c1; font-weight: 500; }
+                    }
+                    .type.hidden { opacity: 0; transform: scale3d(0, 0, 1); }
+                    .type:hover { transform: scale3d(1.1, 1.1, 1); background-color: rgba(255, 255, 255, 0.50); }
+                }
+
+                .title { @include text-title; margin-bottom: 8px; }
+                > .label { @include text-paragraph; margin-bottom: 20px; }
+
+                .title,
+                > .label,
+                .button { transition: opacity 1s $easeInQuint; }
+            }
+
+            .step1 { height: 600px; width: 768px; flex-shrink: 0; position: relative; overflow: hidden; }
+            .step1.init {
+                .textWrapper,
+                .swiper-button-prev,
+                .swiper-button-next,
+                .slideBack { opacity: 0; }
+            }
+            .step1 {
+                .textWrapper { height: 184px; position: relative; width: 608px; margin: 0px auto; z-index: 1; }
+                .textWrapper {
+                    .text { position: absolute; left: 0px; top: 48px; width: 100%; }
+                    .text.hidden { opacity: 0; }
+                    .text {
+                        .title { @include text-header1; margin-bottom: 5px; }
+                        .label { @include text-paragraph; font-weight: 500; margin-bottom: 12px; opacity: 0.7; }
+                        .label.count { @include text-small; margin-bottom: 0px; }
+                    }
+                    .text4 {
+                        .title { margin-bottom: 16px; }
+                        .button { border-radius: 18px; }
+                    }
+                }
+
+                .swiper { width: 100%; z-index: 2; overflow: visible; }
+                .swiper-wrapper { transition-timing-function: cubic-bezier(0.78, 0, 0.39, 1); }
+                .swiper-slide { width: 100%; transition: opacity 0.3s linear; }
+                .swiper-button-prev,
+                .swiper-button-next,
+                .slideBack { position: absolute; z-index: 2; width: 36px; height: 36px; background: url('~img/icon/onboarding/primitives/arrow.svg'); }
+                .swiper-button-prev { left: 44px;  top: -93px; }
+                .swiper-button-next { right: 44px;  top: -93px; transform: rotateZ(180deg); }
+                .slideBack { left: 44px;  top: 91px; z-index: 3; }
+                .swiper-button-disabled { opacity: 0; }
+
+                .slide { display: flex; flex-direction: column; gap: 21px 0px; align-items: center; }
+                .slide {
+                    img { width: 680px; height: 425px; }
+                }
+
+                // transitions
+                .textWrapper,
+                .textWrapper .text,
+                .swiper-button-prev,
+                .swiper-button-next,
+                .slideBack { transition: $elementsTransition; }
+            }
+        }
+    }
+}

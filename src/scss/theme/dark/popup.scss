@@ -61,9 +61,6 @@
 
 	.popup.popupConfirm {
 		.iconWrapper { background: none; }
-		.icon.update { background-image: url('#{$themePath}/icon/popup/confirm/update.svg'); }
-		.icon.updated { background-image: url('#{$themePath}/icon/popup/confirm/updated.svg'); }
-		.icon.error { background-image: url('#{$themePath}/icon/popup/confirm/error.svg'); }
 		.icon.confirm { background-image: url('#{$themePath}/icon/popup/confirm/confirm.svg'); }
 	}
 
@@ -98,5 +95,27 @@
 	.popup.popupShare {
 		.content::before { display: none; }
 		.content::after { background-image: url('#{$themePath}/icon/popup/share/header.svg'); }
+	}
+
+	/* PopupOnboarding */
+
+	.popup.popupOnboarding {
+		.innerWrap { background: #20295c; }
+
+		.steps {
+			.step0 {
+				.types {
+					.type {
+						.label { color: rgba(32, 41, 92, 0.5); }
+					}
+				}
+			}
+
+			.step1 {
+				.swiper-button-prev,
+				.swiper-button-next,
+				.slideBack { background-image: url('#{$themePath}/icon/onboarding/primitives/arrow.svg'); }
+			}
+		}
 	}
 }

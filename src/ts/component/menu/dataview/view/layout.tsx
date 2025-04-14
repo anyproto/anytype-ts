@@ -356,6 +356,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'cardSize': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
+					value: String(this.param.cardSize),
 					options: Relation.getSizeOptions(),
 				});
 				break;
@@ -363,6 +364,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 			case 'graphSettings': {
 				menuId = 'graphSettings';
+				menuParam.subIds = J.Menu.graphSettings;
 				menuParam.data = Object.assign(menuParam.data, {
 					storageKey: J.Constant.graphId.dataview,
 				});

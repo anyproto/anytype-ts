@@ -13,6 +13,22 @@ export enum AttachmentType {
 	Link		 = 2,
 };
 
+export interface ChatStateCounter {
+	orderId: string;
+	counter: number;
+};
+
+export interface ChatState {
+	messages: ChatStateCounter;
+	mentions: ChatStateCounter;
+	lastStateId: string;
+};
+
+export enum ChatReadType {
+	Message = 0,
+	Mention = 1,
+};
+
 export interface ChatMessage {
 	id: string;
 	orderId: string;
@@ -27,6 +43,8 @@ export interface ChatMessage {
 	// Internal
 	isFirst: boolean;
 	isLast: boolean;
+	isReadMessage: boolean;
+	isReadMention: boolean;
 };
 
 export interface ChatMessageContent {

@@ -6,10 +6,11 @@ import { I, U } from 'Lib';
 class MenuItemVertical extends React.Component<I.MenuItem> {
 
 	node: any = null;
+	refSwitch: any = null;
 
 	render () {
 		const { 
-			icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore,
+			icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural,
 			className, style, iconSize, switchValue, selectValue, options, readonly, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
 			selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index
 		} = this.props;
@@ -73,7 +74,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 
 		if (object) {
 			iconMainElement = <IconObject object={object} size={iconSize} />;
-			nameElement = <ObjectName object={object} />;
+			nameElement = <ObjectName object={object} withPlural={withPlural} />;
 
 			if (object.isHidden) {
 				cn.push('isHidden');
@@ -95,9 +96,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			iconSideElement = (
 				<Icon
 					className="note"
-					tooltip={note}
-					tooltipY={I.MenuDirection.Top}
-					tooltipClassName="menuNote"
+					tooltipParam={{ text: note, className: 'menuNote' }}
 				/>
 			);
 		};
@@ -131,6 +130,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			if (withSwitch) {
 				additional = (
 					<Switch 
+						ref={ref => this.refSwitch = ref}
 						value={switchValue} 
 						readonly={readonly}
 						onChange={onSwitch} 

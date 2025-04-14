@@ -374,10 +374,10 @@ class Storage {
 		return (this.get('onboarding') || []).includes(key);
 	};
 
-	getHighlight (key: string) {
+	getHighlight (key: string): boolean {
 		const highlights = this.get('highlights') || {};
 
-		return highlights[key] || false;
+		return Boolean(highlights[key]) || false;
 	};
 
 	setHighlight (key: string, value: boolean) {
@@ -451,8 +451,6 @@ class Storage {
 	};
 
 	setPinnedTypes (list: string[]) {
-		list = list.slice(0, 50);
-
 		this.set('pinnedTypes', this.checkArray([ ...new Set(list) ]));
 	};
 
@@ -504,6 +502,17 @@ class Storage {
 	updateShortcuts (id: string, keys: string[]) {
 		const list = this.getShortcuts();
 		this.setShortcuts({ ...list, [id]: keys });
+	};
+
+	resetShortcut (id: string) {
+		const list = this.getShortcuts();
+
+		delete(list[id]);
+		this.setShortcuts(list);
+	};
+
+	removeShortcut (id: string) {
+		this.updateShortcuts(id, []);
 	};
 
 	resetShortcuts () {

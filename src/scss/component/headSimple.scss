@@ -1,41 +1,53 @@
 @import "~scss/_mixins";
 
-.headSimple { width: 100%; margin: 0px auto 24px auto; display: flex; align-items: flex-start; gap: 0px 32px; }
+.headSimple { width: 100%; margin: 0px auto 24px auto; display: flex; flex-direction: column; gap: 8px 0px; }
 .headSimple {
-	&.isSet, &.isType { padding: 0px 14px; }
+	&.isSet, &.isType { padding: 0px 0px 0px 14px; }
 	&.isCollection { padding: 0px 20px; }
 
 	&.isSet, &.isCollection {
-		.side.left {
-			.titleWrap { align-items: start; }
-		}
+		.titleWrap { align-items: start; }
 	}
 
-	&.isType, &.isRelation { align-items: center; }
+	&.isRelation {
+		.sides { align-items: center; }
+	}
 	&.isType, &.isRelation {
-		.side.left {
-			.titleWrap { align-items: center; }
+		.titleWrap { align-items: center; }
+		.editableWrap.title {
+			.editable { @include text-overflow-nw; }
 		}
 	}
 
-	.side.left { width: 100%; flex-grow: 1; display: flex; flex-direction: column; gap: 6px 0px; }
-	.side.left {
-		.titleWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; justify-content: stretch; }
-		.titleWrap {
-			> .iconObject { flex-shrink: 0; }
-			> .title { @include text-header1; }
-		}
-
-		.editableWrap { flex-grow: 1; }
+	&.isReadonly {
 		.editableWrap {
-			.editable { z-index: 1; position: relative;  word-break: break-word; cursor: text; min-height: 32px; }
+			.editable { @include text-overflow-nw; }
 		}
-		
-		> .descr { @include text-paragraph; }
 	}
 
-	.side.right { text-align: right; display: flex; flex-direction: row; gap: 0px 16px; align-items: center; justify-content: flex-end; }
+	.titleWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; justify-content: stretch; }
+	.titleWrap {
+		> .iconObject { flex-shrink: 0; }
+		> .title { @include text-header1; }
+	}
+
+	.editableWrap { flex-grow: 1; }
+	.editableWrap {
+		.editable { z-index: 1; position: relative;  word-break: break-word; cursor: text; min-height: 32px; }
+	}
+	
+	.descr { @include text-paragraph; }
+
+	.sides { display: flex; align-items: flex-start; flex-direction: row; gap: 0px 32px; }
+	.side.left { width: 100%; flex-grow: 1; display: flex; flex-direction: column; gap: 6px 0px; }
+	.side.right { text-align: right; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: flex-end; }
 	.side.right {
 		.button { white-space: nowrap; }
+
+		.button.resetLayout { padding: 0px; width: 28px; display: flex; align-items: center; justify-content: center; }
+		.button.resetLayout::before { content: ''; width: 20px; height: 20px; background: url('~img/icon/type/layout.svg'); flex-shrink: 0; }
+		.button.resetLayout {
+			.txt { display: none; }
+		}
 	}
 }

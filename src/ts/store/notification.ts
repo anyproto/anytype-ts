@@ -21,7 +21,6 @@ class NotificationStore {
 
 	set (list: I.Notification[]): void {
 		this.itemList = list.map(it => new M.Notification(it));
-		this.setBadge();
 	};
 
 	get (id: string): I.Notification {
@@ -36,8 +35,6 @@ class NotificationStore {
 		} else {
 			this.itemList.unshift(item);
 		};
-
-		this.setBadge();
 	};
 
 	update (item: I.Notification): void {
@@ -50,18 +47,10 @@ class NotificationStore {
 
 	delete (id: string) {
 		this.itemList = this.itemList.filter(it => it.id != id);
-		this.setBadge();
 	};
 
 	clear () {
 		this.itemList = [];
-		this.setBadge();
-	};
-
-	setBadge () {
-		const length = this.list.filter(it => it.status != I.NotificationStatus.Replied).length;
-
-		Renderer.send('setBadge', String(length || ''));
 	};
 
 };

@@ -66,6 +66,8 @@
 		.btn.small { padding: 0px 6px; }
 
 		.btn {
+			.dot { width: 6px; height: 6px; background: var(--color-red); border-radius: 50%; position: absolute; right: 6px; top: 6px; }
+
 			.icon { width: 20px; height: 20px; }
 			.icon.icon { background-image: url('~img/icon/add/icon1.svg'); }
 			.icon.addCover { background-image: url('~img/icon/add/cover1.svg'); }

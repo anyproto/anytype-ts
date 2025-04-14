@@ -22,7 +22,7 @@ const PopupInviteQr = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		Renderer.send('download', image, { saveAs: true });
-		analytics.event('ClickSettingsSpaceShare', { type: 'DownloadQr' });
+		analytics.event('ClickScreenQr', { type: 'Download' });
 	};
 
 	return (

@@ -4,6 +4,7 @@ import { I, S, U, J, Relation, translate } from 'Lib';
 interface Detail {
 	relationKey: string;
 	value: unknown;
+	isDeleted: boolean;
 };
 
 interface Item {
@@ -24,9 +25,13 @@ class DetailStore {
 	};
 
 	private createListItem (k: string, v: any): Detail {
-		const el = { relationKey: k, value: v };
+		const el = { relationKey: k, value: v, isDeleted: false };
 
-		makeObservable(el, { value: observable });
+		makeObservable(el, { 
+			value: observable, 
+			isDeleted: observable,
+		});
+
 		intercept(el as any, (change: any) => {
 			return (change.newValue === el[change.name] ? null : change); 
 		});
@@ -92,11 +97,9 @@ class DetailStore {
 				continue;
 			};
 
-			//console.log('[S.Detail].update: ', k, item.details[k]);
-
 			const el = list.find(it => it.relationKey == k);
 			if (el) {
-				set(el, 'value', item.details[k]);
+				set(el, { value: item.details[k], isDeleted: false });
 			} else {
 				list.push(this.createListItem(k, item.details[k]));
 			};
@@ -154,7 +157,13 @@ class DetailStore {
 		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? J.Relation.default : []) ] : []);
 		const object = { id };
 
+		list = list.filter(it => !it.isDeleted);
+
 		if (withKeys) {
+			if (keys.has('name')) {
+				keys.add('pluralName');
+			};
+
 			if (keys.has('layout')) {
 				keys.add('resolvedLayout');
 			};
@@ -249,6 +258,7 @@ class DetailStore {
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;
+		object.pluralName = Relation.getStringValue(object.pluralName);
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');

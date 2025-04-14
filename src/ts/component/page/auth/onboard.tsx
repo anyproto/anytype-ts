@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
+import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -59,19 +59,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		};
 
 		if (stage == Stage.Phrase) {
-			const cb = () => {
-				Animation.from(() => {
-					nextRef.current?.setLoading(false);
-					setStage(stage + 1);
-				});
-			};
-
-			if (account) {
-				cb();
-			} else {
-				nextRef.current?.setLoading(true);
-				U.Data.accountCreate(setErrorHandler, cb);
-			};
+			Animation.from(() => setStage(stage + 1));
 		};
 
 		if (stage == Stage.Phrase) {
@@ -90,6 +78,20 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 							S.Common.showRelativeDatesSet(true);
 
 							U.Space.initSpaceState();
+
+							if (S.Auth.startingId) {
+								U.Object.getById(S.Auth.startingId, {}, object => {
+									if (object) {
+										U.Object.openRoute(object, { replace: true });
+									} else {
+										U.Space.openDashboard({ replace: true });
+									};
+								});
+							} else {
+								U.Space.openDashboard({ replace: true });
+							};
+
+							Storage.set('primitivesOnboarding', true);
 							Onboarding.start('basics', false);
 						},
 					};
@@ -102,7 +104,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 			const details = { 
 				name: translate('commonEntrySpace'), 
-				spaceDashboardId: I.HomePredefinedId.Last,
 				iconOption: U.Common.rand(1, J.Constant.count.icon),
 			};
 
@@ -163,7 +164,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	let content = null;
 	let buttons = null;
-	let more = null;
 
 	switch (stage) {
 		case Stage.Phrase: {
@@ -193,10 +193,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					) : ''}
 				</>
 			);
-
-			if (!phraseVisible) {
-				more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
-			};
 			break;
 		};
 
@@ -206,7 +202,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					<Input
 						ref={nameRef}
 						focusOnMount={true}
-						placeholder={translate('defaultNamePage')}
+						placeholder={translate('commonYourName')}
 						maxLength={255}
 					/>
 				</div>
@@ -260,7 +256,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 				<Error className="animation" text={error} />
 				<div className="buttons">{buttons}</div>
-				{more}
 			</Frame>
 
 			<CanvasWorkerBridge state={0} />

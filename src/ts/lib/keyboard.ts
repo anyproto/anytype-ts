@@ -172,6 +172,9 @@ class Keyboard {
 						S.Popup.close(last.id);
 					};
 				};
+			} else 
+			if (this.isMainSettings() && !this.isFocused) {
+				U.Space.openDashboard();
 			};
 			
 			Preview.previewHide(false);
@@ -333,6 +336,7 @@ class Keyboard {
 			};
 		} else {
 			const history = U.Router.history;
+			const current = U.Router.getParam(history.location.pathname);
 
 			let prev = history.entries[history.index - 1];
 
@@ -350,6 +354,10 @@ class Keyboard {
 						U.Router.go(prev.pathname, {});
 					};
 					return;
+				};
+
+				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
+					sidebar.leftPanelSetState({ page: 'widget' });
 				};
 
 				history.goBack();
@@ -639,6 +647,7 @@ class Keyboard {
 
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
+				Storage.delete('primitivesOnboarding');
 				break;
 			};
 
@@ -677,7 +686,6 @@ class Keyboard {
 						className: 'isLeft',
 						data: {
 							icon: 'warning',
-							bgColor: 'red',
 							title: translate('commonWarning'),
 							text: translate('popupConfirmReleaseChannelText'),
 							onConfirm: () => cb(),
@@ -734,6 +742,7 @@ class Keyboard {
 					[ translate('libKeyboardAccountId'), account.id ],
 					[ translate('libKeyboardAnalyticsId'), account.info.analyticsId ],
 					[ translate('libKeyboardDeviceId'), account.info.deviceId ],
+					[ translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress ],
 				]);
 			};
 
@@ -954,7 +963,7 @@ class Keyboard {
 
 	getRootId (isPopup?: boolean): string {
 		const match = this.getMatch(isPopup);
-		return match.params?.objectId || match.params?.id;
+		return match.params.objectId || match.params.id;
 	};
 
 	getPopupMatch () {
@@ -963,7 +972,7 @@ class Keyboard {
 	};
 
 	getMatch (isPopup?: boolean) {
-		const popup = undefined == isPopup ? this.isPopup() : isPopup;
+		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 
 		let ret: any = { params: {} };
 		if (popup) {
@@ -1013,6 +1022,10 @@ class Keyboard {
 
 	isMainType () {
 		return this.isMain() && (this.match?.params?.action == 'type');
+	};
+
+	isMainSettings () {
+		return this.isMain() && (this.match?.params?.action == 'settings');
 	};
 
 	isAuth () {
@@ -1169,16 +1182,15 @@ class Keyboard {
 	};
 
 	getMarkParam () {
-		const cmd = this.cmdKey();
 		return [
-			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
-			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
-			{ key: `${cmd}+u`,		 type: I.MarkType.Underline, param: '' },
-			{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
-			{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
-			{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
-			{ key: `${cmd}+shift+h`, type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
-			{ key: `${cmd}+shift+c`, type: I.MarkType.Color,	 param: Storage.get('color') },
+			{ key: 'textBold',		 type: I.MarkType.Bold,		 param: '' },
+			{ key: 'textItalic',	 type: I.MarkType.Italic,	 param: '' },
+			{ key: 'textUnderlined', type: I.MarkType.Underline, param: '' },
+			{ key: 'textStrike',	 type: I.MarkType.Strike,	 param: '' },
+			{ key: 'textLink',		 type: I.MarkType.Link,		 param: '' },
+			{ key: 'textCode',		 type: I.MarkType.Code,		 param: '' },
+			{ key: 'textColor',		 type: I.MarkType.Color,	 param: Storage.get('color') },
+			{ key: 'textBackground', type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
 		];
 	};
 	
@@ -1222,7 +1234,6 @@ class Keyboard {
 
 		const string = this.shortcuts[s] ? (this.shortcuts[s].keys || []).join('+') : s;
 		if (!string) {
-			console.log('[keyboard.shortcut] Empty string', s);
 			return;
 		};
 

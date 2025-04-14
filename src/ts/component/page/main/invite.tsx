@@ -8,7 +8,7 @@ interface PageMainInviteRefProps {
 
 const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((props, ref) => {
 
-	const { isPopup, match } = props;
+	const { isPopup, match, location } = props;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const cidRef = useRef('');
@@ -16,7 +16,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	const [ error, setError ] = useState('');
 
 	const init = () => {
-		const { cid, key, route } = match.params || {};
+		const { cid, key, route } = U.Common.searchParam(location.search);
 
 		if ((cidRef.current == cid) && (keyRef.current == key)) {
 			return;
@@ -35,13 +35,17 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
 
 					if (message.error.code) {
+						const errorCodes = Object.values(J.Error.Code.SpaceInviteView);
+						const code = message.error.code;
+
 						let icon = '';
 						let title = '';
 						let text = '';
 
-						if (message.error.code == J.Error.Code.SPACE_IS_DELETED) {
+						if (errorCodes.includes(code)) {
 							icon = 'error';
-							title = translate('popupConfirmSpaceDeleted');
+							title = translate(`popupConfirmInviteError${code}Title`);
+							text = translate(`popupConfirmInviteError${code}Text`);
 						} else {
 							icon = 'sad';
 							title = translate('popupInviteRequestTitle');
@@ -51,7 +55,6 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 						S.Popup.open('confirm', {
 							data: {
 								icon,
-								bgColor: 'red',
 								title,
 								text,
 								textConfirm: translate('commonOkay'),

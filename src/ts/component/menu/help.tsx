@@ -48,7 +48,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		switch (item.id) {
 			case 'whatsNew': {
-				S.Popup.open('help', { data: { document: item.document } });
+				U.Common.showWhatsNew();
 				break;
 			};
 

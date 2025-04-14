@@ -129,8 +129,8 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 						<div id="tabs" className="tabs">
 							<Swiper
 								onSwiper={swiper => this.refSwiper = swiper}
-								direction={'horizontal'}
-								slidesPerView={'auto'}
+								direction="horizontal"
+								slidesPerView="auto"
 								slidesPerGroupAuto={true}
 								spaceBetween={12}
 								mousewheel={true}
@@ -179,7 +179,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 					<div className="body">
 						{!items.length && !isLoading ? (
-							<EmptySearch filter={this.filter} text={translate('sidebarObjectEmpty')} />
+							<EmptySearch filter={this.filter} text={isAllowedObject ? translate('sidebarObjectEmptyCreate') : translate('sidebarObjectEmpty')} />
 						) : ''}
 
 						{this.cache && items.length && !isLoading ? (
@@ -256,15 +256,16 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	initStorage () {
 		const storage = this.storageGet() || {};
+		const options = this.getTypeOptions();
 
 		this.type = storage.type || I.ObjectContainerType.Object;
-		this.orphan = storage.orphan || false;
+		this.orphan = Boolean(storage.orphan) || false;
+		this.compact = Boolean(storage.compact) || false;
 
-		if ([ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(this.type) && (undefined === storage.compact)) {
-			storage.compact = true;
+		if (options.length && !options.find(it => it.id == this.type)) {
+			this.type = options[0].id;
 		};
 
-		this.compact = storage.compact || false;
 		this.initSort();
 	};
 
@@ -342,12 +343,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			};
 
 			case I.ObjectContainerType.List: {
-				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getSetLayouts().filter(it => !U.Object.isTypeLayout(it)) });
-				break;
-			};
-
-			case I.ObjectContainerType.Type: {
-				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type });
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getSetLayouts() });
 				break;
 			};
 
@@ -365,11 +361,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 			case I.ObjectContainerType.Bookmark: {
 				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Bookmark });
-				break;
-			};
-
-			case I.ObjectContainerType.Relation: {
-				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation });
 				break;
 			};
 		};
@@ -543,7 +534,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	};
 
 	onAdd () {
-		const isPopup = keyboard.isPopup();
 		const details = {
 			...this.getDetailsByType(this.type),
 			name: this.filter,
@@ -557,19 +547,10 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			};
 		};
 
-		let flags = [];
-		if (![ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(this.type)) {
-			flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
-		};
+		const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 
 		if (this.type == I.ObjectContainerType.Bookmark) {
 			this.onBookmarkMenu(details, cb);
-		} else
-		if (this.type == I.ObjectContainerType.Relation) {
-			this.onRelationMenu(cb);
-		} else 
-		if (this.type == I.ObjectContainerType.Type) {
-			sidebar.rightPanelToggle(true, true, isPopup, 'type', { details });
 		} else {
 			keyboard.pageCreate(details, analytics.route.allObjects, flags, (message: any) => {
 				cb(message.targetId);
@@ -608,8 +589,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
-			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 		];
 	};
 
@@ -623,20 +602,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			case I.ObjectContainerType.Bookmark: {
 				type = S.Record.getBookmarkType();
 				layout = I.ObjectLayout.Bookmark;
-				break;
-			};
-
-			case I.ObjectContainerType.Type: {
-				type = S.Record.getTypeType();
-				layout = I.ObjectLayout.Type;
-
-				const featured = [ 'type', 'tag', 'backlinks' ];
-				const recommended = [];
-				const mapper = it => S.Record.getRelationByKey(it)?.id;
-
-				details.recommendedFeaturedRelations = featured.map(mapper).filter(it => it);
-				details.recommendedRelations = recommended.map(mapper).filter(it => it);
-				details.defaultTypeId = S.Record.getPageType().id;
 				break;
 			};
 
@@ -697,28 +662,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		});
 	};
 
-	onRelationMenu (callBack: (id: string) => void) {
-		const node = $(this.node);
-		const width = node.width() - 32;
-
-		S.Menu.open('blockRelationEdit', { 
-			element: '#sidebarLeft #containerObject #button-object-create',
-			offsetY: 4,
-			width,
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			horizontal: I.MenuDirection.Right,
-			data: {
-				filter: this.filter,
-				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					callBack(relation.id);
-				},
-				deleteCommand: () => {
-				},
-			}
-		});
-	};
-
 	onOver (item: any, index: number) {
 		if (!keyboard.isMouseDisabled) {
 			this.n = index;
@@ -733,7 +676,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	};
 
 	onKeyDown (e: any) {
-		if (!this.refFilter.isFocused()) {
+		if (!this.refFilter?.isFocused()) {
 			return;
 		};
 
@@ -981,34 +924,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	withSections (): boolean {
 		return [ I.SortId.Created, I.SortId.Updated ].includes(this.sortId);
-	};
-
-	getMaxWidth () {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const items = tabs.find('.tab');
-
-		let max = (items.length - 1) * 12;
-		items.each((i, item) => {
-			max += $(item).outerWidth();
-		});
-		return max;
-	};
-
-	fillTabArray () {
-		const node = $(this.node);
-		const tabs = node.find('#tabs');
-		const items = tabs.find('.tab');
-		const cx = tabs.offset().left;
-		const length = items.length;
-
-		for (let i = 0; i < length; ++i) {
-			const item = $(items.get(i));
-			const x = Math.floor(item.offset().left - cx - 16);
-			const w = item.outerWidth() + 12;
-
-			this.tabArray.push({ i, x, w });
-		};
 	};
 
 });

@@ -5,6 +5,10 @@ const Diff = require('diff');
 class Action {
 
 	pageClose (rootId: string, withCommand: boolean) {
+		if (keyboard.isCloseDisabled) {
+			return;
+		};
+
 		const { root, widgets } = S.Block;
 		const { space } = S.Common;
 
@@ -15,9 +19,17 @@ class Action {
 
 		const onClose = () => {
 			const blocks = S.Block.getBlocks(rootId, it => it.isDataview());
+			const object = S.Detail.get(rootId, rootId);
 
 			for (const block of blocks) {
+				const subId = S.Record.getSubId(rootId, block.id);
+
 				this.dbClearBlock(rootId, block.id);
+
+				if (U.Object.isChatLayout(object.layout)) {
+					C.ChatUnsubscribe(object.chatId, subId);
+				};
+				S.Chat.clear(subId);
 			};
 
 			this.dbClearRoot(rootId);
@@ -35,13 +47,6 @@ class Action {
 	dbClearRoot (rootId: string) {
 		if (!rootId) {
 			return;
-		};
-
-		const object = S.Detail.get(rootId, rootId);
-
-		if (U.Object.isChatLayout(object.layout)) {
-			C.ChatUnsubscribe(object.chatId);
-			S.Chat.clear(object.id);
 		};
 
 		S.Record.metaClear(rootId, '');
@@ -62,6 +67,7 @@ class Action {
 		S.Record.recordsClear(subId, '');
 		S.Record.recordsClear(`${subId}/dep`, '');
 		S.Record.viewsClear(rootId, blockId);
+		S.Record.groupsClear(rootId, blockId);
 
 		S.Detail.clear(subId);
 
@@ -152,7 +158,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget', { layout, params: { target } });
+		analytics.event('DeleteWidget', { layout, widgetType: analytics.getWidgetType(block.content.autoAdded), params: { target } });
 	};
 
 	focusToEnd (rootId: string, id: string) {
@@ -203,7 +209,6 @@ class Action {
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
-					bgColor: 'red',
 					title: translate('popupConfirmOpenExternalLinkTitle'),
 					text: U.Common.sprintf(translate('popupConfirmOpenExternalLinkText'), U.Common.shorten(url, 120)),
 					textConfirm: translate('commonYes'),
@@ -217,11 +222,9 @@ class Action {
 	};
 
 	openPath (path: string) {
-		if (!path) {
-			return;
+		if (path) {
+			Renderer.send('openPath', path);
 		};
-
-		Renderer.send('openPath', path);
 	};
 
 	openFile (id: string, route: string) {
@@ -229,9 +232,11 @@ class Action {
 			return;
 		};
 
-		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
-			this.openPath(message.path);
-			analytics.event('OpenMedia', { route });
+		C.FileDownload(id, U.Common.getElectron().downloadPath(), (message: any) => {
+			if (message.path) {
+				this.openPath(message.path);
+				analytics.event('OpenMedia', { route });
+			};
 		});
 	};
 
@@ -255,9 +260,9 @@ class Action {
 		const properties = param.properties || [];
 		const extensions = param.extensions || [];
 
-		const options: any = { 
-			properties: [ 'openFile' ].concat(properties), 
-		};
+		const options: any = Object.assign(param, { 
+			properties: [ 'openFile' ].concat(properties),
+		});
 
 		if (extensions.length) {
 			options.filters = [ 
@@ -284,7 +289,7 @@ class Action {
 		});
 
 		U.Common.getElectron().showOpenDialog(options).then(({ filePaths }) => {
-			if ((filePaths == undefined) || !filePaths.length) {
+			if ((typeof filePaths === 'undefined') || !filePaths.length) {
 				return;
 			};
 
@@ -535,6 +540,7 @@ class Action {
 			};
 
 			analytics.event('ClickImportFile', { type });
+			Preview.toastShow({ text: translate('toastImportStart') });
 
 			C.ObjectImport(S.Common.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
 				if (message.error.code) {
@@ -585,10 +591,10 @@ class Action {
 
 		const range = U.Common.objectCopy(focus.state.range);
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
-		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
+		const tree = S.Block.wrapTree(rootId, rootId);
 
 		let next = null;
-		let blocks = S.Block.unwrapTree(tree).filter(it => ids.includes(it.id));
+		let blocks = S.Block.unwrapTree([ tree ]).filter(it => ids.includes(it.id));
 
 		ids.forEach((id: string) => {
 			const block = S.Block.getLeaf(rootId, id);
@@ -739,12 +745,12 @@ class Action {
 		});
 	};
 
-	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
+	importUsecase (spaceId: string, id: I.Usecase, callBack?: (message: any) => void) {
 		C.ObjectImportUseCase(spaceId, id, (message: any) => {
 			S.Block.closeRecentWidgets();
 
 			if (callBack) {
-				callBack();
+				callBack(message);
 			};
 		});
 	};
@@ -767,6 +773,7 @@ class Action {
 		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
+		let toggle = false;
 
 		if (object && !object._empty_) {
 			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
@@ -777,19 +784,22 @@ class Action {
 			} else
 			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;
+				toggle = true;
 			};
 		};
 
 		const limit = Number(U.Menu.getWidgetLimitOptions(layout)[0]?.id) || 0;
 		const newBlock = { 
 			type: I.BlockType.Link,
-			content: { 
-				targetBlockId: objectId, 
-			},
+			content: { targetBlockId: objectId },
 		};
 
-		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, () => {
-			analytics.event('AddWidget', { type: layout, route });
+		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, (message: any) => {
+			analytics.createWidget(layout, route, analytics.widgetType.manual);
+
+			if (toggle) {
+				Storage.setToggle('widget', message.blockId, true);
+			};
 		});
 	};
 
@@ -869,6 +879,8 @@ class Action {
 			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey, format: relation.format }));
 		};
 	};
+
+
 };
 
 export default new Action();

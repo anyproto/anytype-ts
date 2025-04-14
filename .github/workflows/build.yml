@@ -57,7 +57,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 20.9.0
+          node-version: 20.19.0
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli --legacy-peer-deps

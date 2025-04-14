@@ -16,12 +16,11 @@ class UtilSpace {
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = this.getLastObject();
 		};
-
 		if (!home) {
-			U.Object.openRoute({ layout: I.ObjectLayout.Empty }, param);
-		} else {
-			U.Object.openRoute(home, param);
+			home = { layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' };
 		};
+
+		U.Object.openRoute(home, param);
 	};
 
 	openFirstSpaceOrVoid (filter?: (it: any) => boolean, param?: Partial<I.RouteParam>) {
@@ -254,18 +253,6 @@ class UtilSpace {
 		};
 
 		blocks.forEach(block => Storage.setToggle('widget', block.id, false));
-
-		const first = blocks[0];
-		const children = S.Block.getChildren(widgets, first.id);
-
-		if (children.length) {
-			const object = S.Detail.get(widgets, children[0].getTargetObjectId());
-
-			if (!object._empty_) {
-				Storage.setLastOpened(U.Common.getCurrentElectronWindowId(), { id: object.id, layout: object.layout });
-				U.Space.openDashboard();
-			};
-		};
 	};
 
 	getInvite (id: string, callBack: (cid: string, key: string) => void) {

@@ -80,8 +80,7 @@ const Item = observer(class Item extends React.Component<Props> {
 					{canCreate ? (
 						<Icon 
 							className="plus withBackground" 
-							tooltip={translate(`commonNewObject`)} 
-							tooltipY={I.MenuDirection.Top}
+							tooltipParam={{ text: translate(`commonNewObject`) }} 
 							onClick={this.onCreate} 
 						/> 
 					) : ''}
@@ -109,8 +108,9 @@ const Item = observer(class Item extends React.Component<Props> {
 	onMouseEnter (e: any, item: any) {
 		const node = $(this.node);
 		const element = node.find(`#item-${item.id}`);
+		const name = U.Common.shorten(item.name, 50);
 
-		Preview.tooltipShow({ text: item.name, element });
+		Preview.tooltipShow({ text: name, element });
 	};
 
 	onMouseLeave (e: any) {

@@ -43,7 +43,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 		if (isRed) {
 			usageCn.push('red');
-			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={this.onUpgrade} />;
+			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgrade')} onClick={this.onUpgrade} />;
 		};
 
 		const buttons: I.ButtonComponent[] = [
@@ -58,18 +58,18 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 		return (
 			<div ref={ref => this.node = ref} className="wrap">
+				{buttonUpgrade}
+
 				<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 				<Label text={U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit))} />
 
 				<div className={usageCn.join(' ')}>
 					<ProgressBar segments={progressSegments} current={U.File.size(bytesUsed)} max={U.File.size(bytesLimit)} />
-
-					{buttonUpgrade}
 				</div>
 
 				{canWrite ? (
 					<div className="fileManagerWrapper">
-						<Title className="sub" text={translate('popupSettingsSpaceStorageManagerTitle')} />
+						<Title className="sub" text={translate('pageSettingsSpaceCleanupSpaceFiles')} />
 
 						<ListObjectManager
 							ref={ref => this.refManager = ref}
@@ -88,6 +88,10 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 				) : ''}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		analytics.event('ScreenSettingsSpaceStorageManager');
 	};
 
 	onUpgrade () {

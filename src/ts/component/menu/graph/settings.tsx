@@ -1,13 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, J, keyboard, translate, analytics } from 'Lib';
+import { I, S, J, U, keyboard, translate, analytics } from 'Lib';
 import { MenuItemVertical, DragHorizontal } from 'Component';
 
 const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
 
 	node = null;
 	n = -1;
+	menuContext = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -25,40 +26,41 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			snaps.push(i / graphDepth);
 		};
 
+		const Item = (item: any) => {
+			if (item.withDrag) {
+				return (
+					<div id={`item-${item.id}`} className="item withDrag">
+						<div className="flex">
+							<div className="name">{item.name}</div>
+							<div id={`value-${item.id}`} className="value">{values[item.id]}</div>
+						</div>
+						<div className="drag">
+							<DragHorizontal 
+								value={values[item.id] / graphDepth} 
+								snaps={snaps}
+								strictSnap={true}
+								onMove={(e: any, v: number) => this.onDragMove(item.id, v)}
+								onEnd={(e: any, v: number) => this.onDragEnd(item.id, v)} 
+							/>
+						</div>
+					</div>
+				);
+			} else {
+				return (
+					<MenuItemVertical 
+						{...item} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onSwitch(item.id)} 
+					/>
+				);
+			};
+		};
+
 		const Section = (item: any) => (
 			<div className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
-					{item.children.map((item: any, i: number) => {
-						if (item.withDrag) {
-							return (
-								<div id={`item-${item.id}`} key={i} className="item withDrag">
-									<div className="flex">
-										<div className="name">{item.name}</div>
-										<div id={`value-${item.id}`} className="value">{values[item.id]}</div>
-									</div>
-									<div className="drag">
-										<DragHorizontal 
-											value={values[item.id] / graphDepth} 
-											snaps={snaps}
-											strictSnap={true}
-											onMove={(e: any, v: number) => this.onDragMove(item.id, v)}
-											onEnd={(e: any, v: number) => this.onDragEnd(item.id, v)} 
-										/>
-									</div>
-								</div>
-							);
-						} else {
-							return (
-								<MenuItemVertical 
-									key={i} 
-									{...item} 
-									onMouseEnter={e => this.onMouseEnter(e, item)} 
-									onClick={e => this.onSwitch(item.id)} 
-								/>
-							);
-						};
-					})}
+					{item.children.map((item: any, i: number) => <Item key={i} {...item} />)}
 				</div>
 			</div>
 		);
@@ -82,6 +84,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 
 	componentWillUnmount () {
 		this.unbind();
+		S.Menu.closeAll(J.Menu.graphSettings);
 	};
 
 	rebind () {
@@ -97,7 +100,56 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, true);
+			this.props.setActive(item);
+			this.onOver(e, item);
+		};
+	};
+
+	onOver (e: any, item: any) {
+		if (!item.arrow) {
+			S.Menu.closeAll(J.Menu.graphSettings);
+			return;
+		};
+
+		const { param, id, getId, getSize } = this.props;
+		const { data, className, classNameWrap } = param;
+		const options = this.getTypeOptions();
+		const width = getSize().width;
+
+		let menuId = '';
+
+		const menuParam: any = {
+			menuKey: item.id,
+			element: `#${getId()} #item-${item.id}`,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			width,
+			offsetX: width,
+			className,
+			classNameWrap,
+			onOpen: context => this.menuContext = context,
+			rebind: this.rebind,
+			parentId: id,
+			data: {
+				...data,
+			},
+		};
+
+		switch (item.id) {
+			case 'types': {
+				menuId = 'select';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					options,
+				});
+				break;
+			};
+		};
+
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(J.Menu.graphSettings, () => {
+				S.Menu.open(menuId, menuParam);
+			});
 		};
 	};
 
@@ -125,6 +177,30 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		this.save(values);
 	};
 
+	getTypeOptions () {
+		const layouts = U.Object.getGraphSkipLayouts();
+		const values = this.getValues();
+		const onSwitch = (id: string, v: boolean) => {
+			if (v) {
+				values.filterTypes = values.filterTypes.filter(it => it != id);
+			} else {
+				values.filterTypes.push(id);
+			};
+			this.save(values);
+			this.menuContext?.ref?.updateOptions(this.getTypeOptions());
+		};
+
+		return S.Record.getTypes().
+			filter(it => !layouts.includes(it.recommendedLayout) && ![ J.Constant.typeKey.template ].includes(it.uniqueKey)).
+			map(it => ({ 
+				...it,
+				object: it, 
+				withSwitch: true,
+				switchValue: !values.filterTypes.includes(it.id),
+				onSwitch: (e, v: boolean) => onSwitch(it.id, v),
+			}));
+	};
+
 	onSwitch (id: string) {
 		const values = this.getValues();
 		values[id] = !values[id];
@@ -147,10 +223,15 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getValues () {
-		return S.Common.getGraph(this.getKey());
+		const ret: any = S.Common.getGraph(this.getKey());
+
+		ret.filterTypes = ret.filterTypes || [];
+
+		return ret;
 	};
 
 	getSections (): any[] {
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { allowLocal } = data;
@@ -187,11 +268,19 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			sections.push({ children });
 		};
 
+		sections.push({ 
+			children: [
+				{ id: 'types', name: translate('menuGraphSettingsTypes'), arrow: true },
+			]
+		});
+
 		sections = sections.map(s => {
 			s.children = s.children.filter(it => it).map(c => {
-				c.switchValue = values[c.id];
-				c.withSwitch = true;
-				c.onSwitch = () => this.onSwitch(c.id);
+				if (!c.arrow) {
+					c.withSwitch = true;
+					c.switchValue = values[c.id];
+					c.onSwitch = () => this.onSwitch(c.id);
+				};
 				return c;
 			});
 			return s;

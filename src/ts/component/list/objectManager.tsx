@@ -20,6 +20,8 @@ interface Props {
 	isReadonly?: boolean;
 	ignoreArchived?: boolean;
 	ignoreHidden?: boolean;
+	disableHeight?: boolean;
+	scrollElement?: HTMLElement;
 	resize?: () => void;
 	onAfterLoad?: (message: any) => void;
 };
@@ -47,6 +49,8 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	ignoreArchived = true,
 	ignoreHidden = true,
 	isPopup = false,
+	disableHeight = true,
+	scrollElement,
 	resize,
 	onAfterLoad
 }, ref) => {
@@ -57,11 +61,12 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	const checkboxRef = useRef(new Map());
 	const timeout = useRef(0);
 	const top = useRef(0);
-	const cache = useRef(new CellMeasurerCache());
+	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: rowHeight || 64 }));
 	const [ selected, setSelected ] = useState<string[]>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const recordIds = S.Record.getRecordIds(subId, '');
 	const records = S.Record.getRecords(subId);
+	const scrollContainer = scrollElement || isPopup ? $('#popupPage-innerWrap').get(0) : window;
 
 	const onFilterShow = () => {
 		$(filterWrapperRef.current).addClass('active');
@@ -320,6 +325,12 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 
 		content = <EmptySearch text={textEmpty} />;
 	} else {
+		const autoSizerProps: any = {};
+
+		if (disableHeight) {
+			autoSizerProps.disableHeight = true;
+		};
+
 		content = (
 			<div className="items">
 				{isLoading ? <Loader /> : (
@@ -328,15 +339,23 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => true}
 					>
-						{({ onRowsRendered }) => (
-							<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-								{({ height }) => (
-									<AutoSizer disableHeight={true}>
-										{({ width }) => (
+						{({ onRowsRendered }) => {
+							const Sizer = item => (
+								<AutoSizer {...autoSizerProps} className="scrollArea">
+									{({ width, height }) => {
+										let listProps: any = {};
+
+										if (disableHeight) {
+											listProps = { ...item };
+											listProps.autoHeight = true;
+										} else {
+											listProps.height = height;
+										};
+
+										return (
 											<List
-												autoHeight={true}
+												{...listProps}
 												ref={listRef}
-												height={Number(height) || 0}
 												width={Number(width) || 0}
 												deferredMeasurmentCache={cache.current}
 												rowCount={items.length}
@@ -347,11 +366,21 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 												onScroll={onScroll}
 												scrollToAlignment="start"
 											/>
-										)}
-									</AutoSizer>
-								)}
-							</WindowScroller>
-						)}
+										);
+									}}
+								</AutoSizer>
+							);
+
+							if (disableHeight) {
+								return (
+									<WindowScroller scrollElement={scrollContainer}>
+										{props => <Sizer {...props} />}
+									</WindowScroller>
+								);
+							} else {
+								return <Sizer />;
+							};
+						}}
 					</InfiniteLoader>
 				)}
 			</div>
@@ -375,7 +404,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 		const items = getItems();
 
 		cache.current = new CellMeasurerCache({
-			fixedWidth: true,
+			fixedHeight: true,
 			defaultHeight: rowHeight || 64,
 			keyMapper: i => (items[i] || {}).id,
 		});

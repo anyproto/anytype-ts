@@ -18,6 +18,9 @@
 	.body {
 		.side.right {
 			.cnt { background-color: var(--color-shape-secondary); color: var(--color-text-primary); }
+
+			.icon.plus { background-image: url('#{$themePath}/icon/widget/button/plus.svg'); border-color: var(--color-shape-secondary); }
+			.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
 		}
 
 		.buttons {
@@ -25,6 +28,7 @@
 				.icon.member { background-image: url('#{$themePath}/icon/widget/button/member.svg'); }
 				.icon.all { background-image: url('#{$themePath}/icon/widget/button/all.svg'); }
 				.icon.chat { background-image: url('#{$themePath}/icon/widget/button/chat.svg'); }
+				.icon.search { background-image: url('#{$themePath}/icon/widget/button/search.svg'); }
 
 				.side.right {
 					.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); opacity: 1; }

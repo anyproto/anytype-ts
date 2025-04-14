@@ -738,7 +738,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					continue;
 				};
 
-				const reg = new RegExp(`^(${k}\\s)`);
+				let space = '\\s';
+				if (newStyle == I.TextStyle.Code) {
+					space = '';
+				};
+
+				const reg = new RegExp(`^(${k})${space}`);
 				const match = value.match(reg);
 
 				if (!match) {
@@ -766,9 +771,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						S.Block.toggle(rootId, id, true);
 					};
 
-					if ((newStyle == I.TextStyle.Code) && match[2]) {
+					if (newStyle == I.TextStyle.Code) {
+						const lang = match[2] || Storage.get('codeLang') || J.Constant.default.codeLang;
+
 						C.BlockListSetFields(rootId, [ 
-							{ blockId: block.id, fields: { ...block.fields, lang: match[2] } } 
+							{ blockId: block.id, fields: { ...block.fields, lang } } 
 						]);
 					};
 				});
@@ -1183,9 +1190,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Center,
 					passThrough: true,
-					onClose: () => {
-						keyboard.disableContextClose(false);
-					},
+					onClose: () => keyboard.disableContextClose(false),
 					data: {
 						blockId: block.id,
 						blockIds: [ block.id ],

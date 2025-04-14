@@ -75,6 +75,9 @@
 		.item.add { gap: 0px 12px; }
 	}
 
+	/* Type layout conflict */
+	.menu.menuSelect.menuTypeLayout { width: var(--menu-width-icon); }
+
 	/* Links, Backlinks */
 	.menu.menuSelect.featuredLinks {
 		.item {

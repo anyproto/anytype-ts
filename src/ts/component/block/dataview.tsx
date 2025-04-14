@@ -61,6 +61,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getTarget = this.getTarget.bind(this);
 		this.getTypeId = this.getTypeId.bind(this);
 		this.getDefaultTemplateId = this.getDefaultTemplateId.bind(this);
+		this.getSubId = this.getSubId.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -166,6 +167,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getTypeId: this.getTypeId,
 			getTemplateId: this.getDefaultTemplateId,
 			getEmpty: this.getEmpty,
+			getSubId: this.getSubId,
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
@@ -250,6 +252,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		const viewId = match.params.viewId || block.content.viewId;
+		const object = this.getTarget();
 
 		if (viewId) {
 			S.Record.metaSet(subId, '', { viewId });
@@ -264,9 +267,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			const isCompletedSets = Onboarding.isCompleted('sets');
 
 			window.setTimeout(() => {
-				if (!isCollection && !isCompletedSets) {
-					Onboarding.start('sets', isPopup);
-				} else 
 				if (isCollection && !total) {
 					Onboarding.start('collections', isPopup);
 				} else 
@@ -285,10 +285,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.resize();
 		this.rebind();
 
-		const view = this.getView();
-		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
+		if (!U.Object.isTypeLayout(object.layout)) {
+			const view = this.getView();
+			const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
 
-		analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view?.type });
+			analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view?.type });
+		};
 	};
 
 	componentDidUpdate () {
@@ -420,6 +422,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			Dataview.getData({
 				rootId, 
+				subId,
 				blockId: block.id, 
 				newViewId: viewId, 
 				keys, 
@@ -503,9 +506,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getSubId (groupId?: string): string {
-		const { rootId, block } = this.props;
+		const { rootId, block, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
 
-		return groupId ? S.Record.getGroupSubId(rootId, block.id, groupId) : S.Record.getSubId(rootId, block.id);
+		let ret = '';
+		if (groupId) {
+			ret = S.Record.getGroupSubId(rootId, block.id, groupId);
+		} else {
+			ret = S.Record.getSubId(rootId, block.id);
+		};
+		return ret + namespace;
 	};
 
 	getRecords (groupId?: string): string[] {
@@ -668,7 +678,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.creating = true;
 
-		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, true, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -824,9 +834,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.refControls?.toggleHoverArea(false);
 			},
 			data: {
-				rootId,
 				blockId: block.id,
 				subId: this.getSubId(),
+				targetId: this.getObjectId(),
 				hasSources,
 				getView: this.getView,
 				withTypeSelect: this.isAllowedDefaultType(),
@@ -843,8 +853,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						analytics.event('DefaultTypeChange', { route });
 					};
 				},
-				onSetDefault: (item) => {
-					Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
+				onSetDefault: id => {
+					Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: id });
 				},
 				onSelect: (item: any) => {
 					if (!view) {
@@ -880,7 +890,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, true, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1028,7 +1038,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
+				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => onSelect(message.details, true));
 			};
 		} else {
 			filters = filters.concat([
@@ -1102,12 +1112,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			S.Menu.open('dataviewSource', {
 				element,
 				horizontal: I.MenuDirection.Center,
-				onOpen: () => { 
-					element.addClass('active');
-				}, 
-				onClose: () => {
-					element.removeClass('active');
-				}, 
+				onOpen: () => element.addClass('active'), 
+				onClose: () => element.removeClass('active'), 
 				data: {
 					rootId,
 					objectId,
@@ -1220,8 +1226,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getEmpty (type: string) {
-		const { isInline, block } = this.props;
+		const { isInline, block, readonly } = this.props;
 		const isCollection = this.isCollection();
+		const view = this.getView();
 		const cn = [];
 
 		if (isInline) {
@@ -1253,7 +1260,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case 'view': {
-				cn.push('withHead');
+				if (view.type != I.ViewType.Grid) {
+					cn.push('withHead');
+				};
 
 				emptyProps.title = translate('commonNoObjects');
 
@@ -1271,7 +1280,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				{...this.props}
 				{...emptyProps}
 				className={cn.join(' ')}
-				withButton={emptyProps.button ? true : false}
+				withButton={emptyProps.button && !readonly ? true : false}
 			/>
 		);
 	};

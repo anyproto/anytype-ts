@@ -5,8 +5,14 @@
 	.icon.remove { display: none !important; }
 
 	.body {
-		.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 8px; }
+		.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 8px; position: relative; }
 		.sides {
+			&::after { 
+				opacity: 0; content: ''; width: 100%; height: 100%; left: 0px; top: 0px; border-radius: 6px; z-index: 1;
+				pointer-events: none; position: absolute; transition: opacity $transitionCommon; background: var(--color-shape-highlight-medium);
+			}
+			&:hover::after { opacity: 1; }
+
 			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; width: 100%; flex-grow: 1; overflow: hidden; }
 			.side.left {
 				.iconObject { flex-shrink: 0; }
@@ -59,6 +65,7 @@
 				.icon.member { background-image: url('~img/icon/widget/button/member.svg'); }
 				.icon.all { background-image: url('~img/icon/widget/button/all.svg'); }
 				.icon.chat { background-image: url('~img/icon/widget/button/chat.svg'); }
+				.icon.search { background-image: url('~img/icon/widget/button/search.svg'); }
 			}
 			.item:hover {
 				.side.right {

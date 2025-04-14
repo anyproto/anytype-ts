@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { SortableElement } from 'react-sortable-hoc';
-import { I, S, J, keyboard, Relation, Dataview } from 'Lib';
+import { I, S, J, U, C, keyboard, Relation, Dataview } from 'Lib';
 import Handle from './handle';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
@@ -75,7 +75,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { block, getView, relationKey } = this.props;
+		const { rootId, block, getView, relationKey } = this.props;
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation || keyboard.isResizing) {
@@ -88,6 +88,16 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
 		const element = `${blockEl} ${headEl} #${Relation.cellId('head', relationKey, '')}`;
 		const obj = $(element);
+		const object = S.Detail.get(rootId, rootId);
+		const isType = U.Object.isTypeLayout(object.layout);
+		const view = getView();
+
+		let unlinkCommand = null;
+		if (isType) {
+			unlinkCommand = (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+				U.Object.typeRelationUnlink(object.id, relation.id, onChange);
+			};
+		};
 
 		window.setTimeout(() => {
 			S.Menu.open('dataviewRelationEdit', { 
@@ -103,8 +113,9 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 					blockId: block.id,
 					relationId: relation.id,
 					extendedOptions: true,
+					unlinkCommand,
 					addCommand: (rootId: string, blockId: string, relation: any) => {
-						Dataview.relationAdd(rootId, blockId, relation.relationKey, relation._index_, getView());
+						Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, relation._index_);
 					},
 				}
 			});

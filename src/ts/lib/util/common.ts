@@ -2,7 +2,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, sidebar } from 'Lib';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage } from 'Lib';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -309,6 +309,23 @@ class UtilCommon {
 		return s;
 	};
 
+	shortMask (s: string, n: number): string {
+		s = String(s || '');
+
+		const l = s.length;
+
+		if (l <= n*2) {
+			return s;
+		};
+
+		let ret = '';
+		ret += s.substring(0, n);
+		ret += '...';
+		ret += s.substring(l - n);
+
+		return ret;
+	};
+
 	clipboardCopy (data: any, callBack?: () => void) {
 		const handler = (e: any) => {
 			e.preventDefault();
@@ -579,7 +596,6 @@ class UtilCommon {
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'error',
-					bgColor: 'red',
 					title: translate('commonError'),
 					text: translate('popupConfirmObjectOpenErrorText'),
 					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
@@ -603,7 +619,6 @@ class UtilCommon {
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
-				bgColor: 'green',
 				title: translate('popupConfirmNeedUpdateTitle'),
 				text: translate('popupConfirmNeedUpdateText'),
 				textConfirm: translate('commonUpdate'),
@@ -679,16 +694,15 @@ class UtilCommon {
 	};
 
 	searchParam (url: string): any {
-		const a = String(url || '').replace(/^\?/, '').split('&');
 		const param: any = {};
-		
-		a.forEach((s) => {
-			const [ key, value ] = s.split('=');
 
-			if (key) {
-				param[key] = decodeURIComponent(value);
-			};
-		});
+		try {
+			const u = new URLSearchParams(String(url || ''));
+			u.forEach((v, k) => {
+				param[k] = v;
+			});
+
+		} catch (e) { /**/ };
 		return param;
 	};
 
@@ -1115,17 +1129,21 @@ class UtilCommon {
 		const isOpen = obj.hasClass('isOpen');
 
 		if (isOpen) {
-			obj.addClass('anim').removeClass('isOpen').css({ height: 0 });
-			window.setTimeout(() => obj.removeClass('anim'), delay);
+			const height = obj.outerHeight();
+
+			obj.css({ height });
+
+			raf(() => obj.addClass('anim').css({ height: 0 }));
+			window.setTimeout(() => obj.removeClass('isOpen anim'), delay);
 		} else {
 			obj.css({ height: 'auto' });
 
 			const height = obj.outerHeight();
 
-			obj.addClass('anim isOpen').css({ height: 0 });
+			obj.css({ height: 0 }).addClass('anim');
 
 			raf(() => obj.css({ height }));
-			window.setTimeout(() => obj.removeClass('anim'), delay);
+			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen').css({ heght: 'auto' }), delay);
 		};
 	};
 
@@ -1211,6 +1229,20 @@ class UtilCommon {
 		} catch (e) { /**/ };
 
 		return ret;
+	};
+
+	iconBgByOption (o: number): string {
+		const { bg, list } = J.Theme.icon;
+
+		o = Number(o) || 0;
+		o = Math.max(0, Math.min(list.length, o));
+
+		return bg[list[o - 1]];
+	};
+
+	showWhatsNew () {
+		S.Popup.open('help', { data: { document: 'whatsNew' } });
+		Storage.set('whatsNew', false);
 	};
 
 };

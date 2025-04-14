@@ -40,12 +40,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
 
-		if (!length) {
-			return getEmpty('view');
-		};
-
 		let content = null;
-
+		if (!length) {
+			content = getEmpty('view');
+		} else
 		if (isInline) {
 			content = (
 				<div>
@@ -465,7 +463,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		if (isInline) {
 			if (parent) {
 				if (parent.isPage() || parent.isLayoutDiv()) {
-					const wrapper = $('.blocks');
+					const wrapper = container.find('#editorWrapper');
 					const ww = wrapper.width();
 					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
 					const margin = Math.max(0, (cw - ww) / 2);

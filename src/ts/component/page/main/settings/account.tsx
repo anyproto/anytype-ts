@@ -1,39 +1,23 @@
 import * as React from 'react';
-import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { IconObject, Input, Title, Icon } from 'Component';
+import { I, S, U, J, C, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PageSettingsComponent {
-	setLoading: (v: boolean) => void;
-};
+const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends React.Component<I.PageSettingsComponent> {
 
-interface State {
-	error: string;
-	loading: boolean;
-};
+	timeout = 0;
 
-const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends React.Component<Props, State> {
-
-	refName: any = null;
-	refDescription: any = null;
-	format = '';
-	state = {
-		error: '',
-		loading: false,
-	};
-
-	constructor (props: Props) {
+	constructor (props: I.PageSettingsComponent) {
 		super(props);
 
-		this.onName = this.onName.bind(this);
-		this.onDescription = this.onDescription.bind(this);
+		this.onSave = this.onSave.bind(this);
 	};
 
 	render () {
-		const { error, loading } = this.state;
+		const { config } = S.Common;
 		const { account } = S.Auth;
 		const profile = U.Space.getProfile();
-	
+
 		let name = profile.name;
 		if (name == translate('defaultNamePage')) {
 			name = '';
@@ -42,14 +26,11 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 		return (
 			<div className="sections">
 				<div className="section top">
-					<Error text={error} />
-
 					<div className="iconWrapper">
-						{loading ? <Loader /> : ''}
 						<IconObject
 							id="userpic"
 							object={profile}
-							size={108}
+							size={128}
 							canEdit={true}
 						/>
 					</div>
@@ -59,17 +40,15 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 					<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
 
 					<Input
-						ref={ref => this.refName = ref}
 						value={name}
-						onKeyUp={this.onName}
+						onKeyUp={(e, v) => this.onSave(e, 'name', v)}
 						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
 						maxLength={160}
 					/>
 
 					<Input
-						ref={ref => this.refDescription = ref}
 						value={profile.description}
-						onKeyUp={this.onDescription}
+						onKeyUp={(e, v) => this.onSave(e, 'description', v)}
 						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
 						maxLength={160}
 					/>
@@ -88,28 +67,40 @@ const PageMainSettingsAccount = observer(class PageMainSettingsAccount extends R
 					</div>
 				</div>
 
-				<div className="section">
-					<Title text={translate('popupSettingsEthereumIdentityTitle')} />
+				{config.experimental ? (
+					<div className="section">
+						<Title text={translate('popupSettingsEthereumIdentityTitle')} />
 
-					<div className="inputWrapper withIcon">
-						<Input
-							value={account.info.ethereumAddress}
-							readonly={true}
-							onClick={() => U.Common.copyToast(translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress)}
-						/>
-						<Icon className="copy" />
+						<div className="inputWrapper withIcon">
+							<Input
+								value={account.info.ethereumAddress}
+								readonly={true}
+								onClick={() => U.Common.copyToast(translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress)}
+							/>
+							<Icon className="copy" />
+						</div>
 					</div>
-				</div>
+				) : ''}
 			</div>
 		);
 	};
 
-	onName () {
-		U.Object.setName(S.Block.profile, this.refName.getValue());
+	componentWillUnmount(): void {
+		window.clearTimeout(this.timeout);
 	};
 
-	onDescription (e) {
-		U.Object.setDescription(S.Block.profile, this.refDescription.getValue());
+	onSave (e: any, key: string, value: string) {
+		let t = J.Constant.delay.keyboard;
+
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			t = 0;
+		});
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			C.ObjectListSetDetails([ S.Block.profile ], [ { key, value: String(value || '') } ]);
+		}, t);
 	};
 
 });

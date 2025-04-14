@@ -2,22 +2,23 @@
 	.section.objectRelation { padding: 12px 16px; }
 	.section.objectRelation {
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 2px 10px; align-items: center; position: relative; }
-		> .wrap.c-longText { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; }
-
-		> .wrap.c-longText {
-			> .name { width: 100%; }
-			> .cell { width: 100%; }
-		}
-
-		> .wrap.hasMore {
-			> .name { width: calc(100% - 28px); }
-		}
-
-		> .wrap:hover {
-			> .icon.more { opacity: 1; }
-		}
-
 		> .wrap {
+			&:hover {
+				> .icon.more { opacity: 1; }
+			}
+
+			&.c-longText { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; }
+			&.c-longText {
+				> .name { width: 100%; }
+				> .cell { width: 100%; }
+			}
+
+			&.canEdit::before { 
+				content: ''; border-radius: 12px; position: absolute; top: -12px; left: -16px; width: calc(100% + 32px); height: calc(100% + 24px); z-index: 20;
+				background-color: var(--color-shape-highlight-medium); pointer-events: none; opacity: 0; transition: opacity $transitionCommon;
+			}
+			&.canEdit:hover::before { opacity: 1; }
+
 			> .name { @include text-overflow-nw; color: var(--color-text-secondary); }
 			> .icon.more { 
 				width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); position: absolute; right: 0px; top: 1px; opacity: 0; 
@@ -29,14 +30,14 @@
 			.cell.c-select, 
 			.cell.c-object, 
 			.cell.c-file {
-				.over { overflow: visible !important; width: 100%; flex-wrap: wrap; gap: 4px 6px; }
+				.over { width: 100%; flex-wrap: wrap; gap: 4px 6px; max-height: clamp(22px, 126px, 126px); }
 			}
 
 			.cell.c-shortText {
 				.name { width: 100%; }
 			}
 			.cell.c-longText {
-				.name, span { @include clamp3; word-wrap: break-word; line-height: 22px; }
+				.name, span { @include clamp5; word-wrap: break-word; line-height: 22px; }
 			}
 
 			.cell.isEditing { padding: 0px; }

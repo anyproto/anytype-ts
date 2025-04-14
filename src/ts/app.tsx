@@ -5,6 +5,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
@@ -21,7 +22,6 @@ import 'react-virtualized/styles.css';
 import 'swiper/scss';
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
-
 import 'scss/common.scss';
 
 const memoryHistory = hs.createMemoryHistory;
@@ -118,9 +118,36 @@ Sentry.setContext('info', {
 	isPackaged: isPackaged,
 });
 
+let prev = '';
+
 class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
+		const { location } = this.props;
+		const oldParam = U.Router.getParam(prev);
+		const newParam = U.Router.getParam(location.pathname);
+		const noTransition = true; //(oldParam.page == newParam.page) && (oldParam.action == newParam.action);
+
+		let content = null;
+
+		if (noTransition) {
+			content = <Page {...this.props} isPopup={false} />;
+		} else {
+			content = (
+				<TransitionGroup component={null}>
+					<CSSTransition
+						key={location.key}
+						classNames="page-transition"
+						timeout={200}
+						mountOnEnter={true}
+						unmountOnExit={true}
+					>
+						<Page {...this.props} isPopup={false} />
+					</CSSTransition>
+				</TransitionGroup>
+			);
+		};
+
 		return (
 			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
 				<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
@@ -128,10 +155,14 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListMenu key="listMenu" {...this.props} />
 
 					<SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} />
-					<Page {...this.props} isPopup={false} />
+					{content}
 				</DragProvider>
 			</SelectionProvider>
 		);
+	};
+
+	componentDidMount (): void {
+		prev = this.props.location.pathname;
 	};
 
 };
@@ -256,6 +287,8 @@ class App extends React.Component<object, State> {
 		Renderer.on('zoom', () => {
 			const resizable = $('.resizable');
 
+			sidebar.resizePage(null, null, false);
+
 			if (resizable.length) {
 				resizable.trigger('resizeInit');
 			};
@@ -286,7 +319,6 @@ class App extends React.Component<object, State> {
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const route = String(data.route || redirect || '');
-		const spaceId = Storage.get('spaceId');
 
 		S.Common.configSet(config, true);
 		S.Common.nativeThemeSet(isDark);
@@ -403,24 +435,32 @@ class App extends React.Component<object, State> {
 		};
 	};
 
-	onUpdateConfirm (e: any, auto: boolean) {
+	onUpdateConfirm (e: any, auto: boolean, info: any) {
 		S.Progress.delete(I.ProgressType.UpdateCheck);
-		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
 			return;
 		};
 
+		console.log('[App.onUpdateConfirm]', info);
+
+		const title = [ translate('popupConfirmUpdatePromptTitle') ];
+		const version = info?.releaseName;
+
+		if (version) {
+			title.push(version);
+		};
+
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
-				bgColor: 'green',
-				title: translate('popupConfirmUpdatePromptTitle'),
+				title: title.join(' - '),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateConfirm');
+					this.checkUpdateVersion(version);
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
@@ -429,23 +469,32 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	onUpdateAvailable (e: any, auto: boolean) {
+	onUpdateAvailable (e: any, auto: boolean, info: any) {
 		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;
 		};
 
+		console.log('[App.onUpdateAvailable]', info);
+
+		const title = [ translate('popupConfirmUpdatePromptTitle') ];
+		const version = info?.version;
+
+		if (version) {
+			title.push(version);
+		};
+
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
-				bgColor: 'green',
-				title: translate('popupConfirmUpdatePromptTitle'),
+				title: title.join(' - '),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('commonUpdate'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');
+					this.checkUpdateVersion(version);
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
@@ -464,7 +513,6 @@ class App extends React.Component<object, State> {
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'updated',
-				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: U.Common.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
@@ -485,7 +533,6 @@ class App extends React.Component<object, State> {
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'error',
-				bgColor: 'red',
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: U.Common.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
@@ -507,6 +554,22 @@ class App extends React.Component<object, State> {
 			current: progress.transferred, 
 			total: progress.total,
 		});
+	};
+
+	checkUpdateVersion (v: string) {
+		if (!Storage.get('primitivesOnboarding')) {
+			return;
+		};
+
+		v = String(v || '');
+
+		const update = v.split('.');
+		const current = String(electron.version.app || '').split('.');
+
+		if ((update[0] != current[0]) || (update[1] != current[1])) {
+			Storage.set('whatsNew', true);
+			Storage.setHighlight('whatsNew', true);
+		};
 	};
 
 	onRoute (route: string) {

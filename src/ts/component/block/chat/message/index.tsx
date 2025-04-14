@@ -30,8 +30,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const { rootId, id, isNew, readonly, subId, scrollToBottom, onContextMenu, onMore, onReplyEdit } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
-		const message = S.Chat.getMessage(rootId, id);
-		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId } = message;
+		const message = S.Chat.getMessage(subId, id);
+		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const attachments = this.getAttachments();
 		const hasReactions = reactions.length;
@@ -79,6 +79,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		};
 		if (U.Common.checkRtl(text)) {
 			ct.push('isRtl');
+		};
+		if (!isReadMessage || !isReadMention) {
+			ct.push('isUnread');
 		};
 
 		// Subscriptions
@@ -171,7 +174,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 									<Reaction key={i} {...item} />
 								))}
 								{!readonly && canAddReaction ? (
-									<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+									<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
 								) : ''}
 							</div>
 						) : ''}
@@ -179,8 +182,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 					{!readonly ? (
 						<div className="controls">
-							{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} /> : ''}
-							<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltip={translate('blockChatReply')} />
+							{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} /> : ''}
+							<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltipParam={{ text: translate('blockChatReply') }} />
 							<Icon className="more" onClick={onMore} />
 						</div>
 					) : ''}
@@ -204,8 +207,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	init () {
-		const { rootId, id, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
-		const message = S.Chat.getMessage(rootId, id);
+		const { rootId, id, subId, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
+		const message = S.Chat.getMessage(subId, id);
 		const { creator, content } = message;
 		const { marks, text } = content;
 		const { account } = S.Auth;
@@ -310,18 +313,17 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	update (param: Partial<I.ChatMessage>) {
-		const { rootId, id } = this.props;
-		const message = Object.assign(S.Chat.getMessage(rootId, id), param);
+		const { rootId, id, subId } = this.props;
+		const message = Object.assign(S.Chat.getMessage(subId, id), param);
 
 		C.ChatEditMessageContent(rootId, id, message);
 	};
 
 	getAttachments (): any[] {
-		const { rootId, blockId, id } = this.props;
-		const subId = S.Record.getSubId(rootId, blockId);
-		const message = S.Chat.getMessage(rootId, id);
+		const { rootId, subId, id } = this.props;
+		const message = S.Chat.getMessage(subId, id);
 
-		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
+		return (message.attachments || []).map(it => S.Detail.get(rootId, it.target)).filter(it => !it._empty_);
 	};
 
 	getAttachmentsClass (): string {
@@ -341,8 +343,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 	canAddReaction (): boolean {
 		const { account } = S.Auth;
-		const { rootId, id } = this.props;
-		const message = S.Chat.getMessage(rootId, id);
+		const { id, subId } = this.props;
+		const message = S.Chat.getMessage(subId, id);
 		const reactions = message.reactions || [];
 		const { self, all } = J.Constant.limit.chat.reactions;
 

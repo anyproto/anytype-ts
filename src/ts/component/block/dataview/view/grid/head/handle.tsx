@@ -21,7 +21,7 @@ const HeadHandle = observer(class HeadHandle extends React.Component<Props> {
 	};
 
 	render () {
-		const { format, name, readonly, onClick } = this.props;
+		const { format, name, onClick } = this.props;
 
 		const Handle = SortableHandle(() => (
 			<div 
@@ -30,8 +30,7 @@ const HeadHandle = observer(class HeadHandle extends React.Component<Props> {
 				onClick={onClick}
 				onContextMenu={onClick}
 			>
-				{readonly ? <Icon className="lock" /> : ''}
-				<IconObject object={{ relationFormat: format, layout: I.ObjectLayout.Relation }} tooltip={name} />
+				<IconObject object={{ relationFormat: format, layout: I.ObjectLayout.Relation }} tooltipParam={{ text: name }} />
 				<div className="name">{name}</div>
 			</div>
 		));

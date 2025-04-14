@@ -50,6 +50,12 @@ export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.S
 	};
 };
 
+export const AccountMigrate = (response: Rpc.Account.Migrate.Response) => {
+	return {
+		requiredSpace: response.getError().getRequiredspace()
+	};
+};
+
 export const DebugSpaceSummary = (response: Rpc.Debug.SpaceSummary.Response) => {
 	return response.toObject();
 };
@@ -329,6 +335,12 @@ export const BlockCreate = (response: Rpc.Block.Create.Response) => {
 	};
 };
 
+export const BlockCreateWidget = (response: Rpc.Block.CreateWidget.Response) => {
+	return {
+		blockId: response.getBlockid(),
+	};
+};
+
 export const BlockTableCreate = (response: Rpc.BlockTable.Create.Response) => {
 	return {
 		blockId: response.getBlockid(),
@@ -474,6 +486,7 @@ export const TemplateCreateFromObject = (response: Rpc.Template.CreateFromObject
 export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
 	return {
 		objectId: response.getSpaceid(),
+		startingId: response.getStartingobjectid(),
 	};
 };
 
@@ -593,6 +606,7 @@ export const DeviceList = (response: Rpc.Device.List.Response) => {
 export const ChatGetMessages = (response: Rpc.Chat.GetMessages.Response) => {
 	return {
 		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
+		state: Mapper.From.ChatState(response.getChatstate()),
 	};
 };
 
@@ -605,6 +619,7 @@ export const ChatGetMessagesByIds = (response: Rpc.Chat.GetMessagesByIds.Respons
 export const ChatSubscribeLastMessages = (response: Rpc.Chat.SubscribeLastMessages.Response) => {
 	return {
 		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
+		state: Mapper.From.ChatState(response.getChatstate()),
 	};
 };
 
@@ -646,5 +661,11 @@ export const PublishingResolveUri = (response: Rpc.Publishing.ResolveUri.Respons
 export const PublishingGetStatus = (response: Rpc.Publishing.GetStatus.Response) => {
 	return {
 		state: response.hasPublish() ? Mapper.From.PublishState(response.getPublish()) : null,
+	};
+};
+
+export const ObjectImportUseCase = (response: Rpc.Object.ImportUseCase.Response) => {
+	return {
+		startingId: response.getStartingobjectid(),
 	};
 };

@@ -104,6 +104,7 @@ export interface MenuItem {
 	withSwitch?: boolean;
 	withSelect?: boolean;
 	withMore?: boolean;
+	withPlural?: boolean;
 	subComponent?: string;
 	note?: string;
 	sortArrow?: I.SortType;

@@ -83,7 +83,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more withBackground" onClick={e => this.onContextMenu(e, item)} />
+						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
 					</div>
 				</div>
 			);
@@ -140,7 +140,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							rowCount={items.length}
 							isRowLoaded={({ index }) => !!items[index]}
 							threshold={LIMIT_HEIGHT}
-							loadMoreRows={() => { return; }}
+							loadMoreRows={() => {}}
 						>
 							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">

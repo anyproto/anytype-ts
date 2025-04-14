@@ -151,8 +151,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.rebind();
 		this.open();
 		this.initNodes();
-
-		keyboard.disableClose(false);
 	};
 
 	componentDidUpdate () {
@@ -276,9 +274,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		let close = true;
 		if (isPopup && (match?.params?.id == this.id)) {
-			close = false;
-		};
-		if (keyboard.isCloseDisabled) {
 			close = false;
 		};
 
@@ -577,7 +572,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let ret = false;
 
 		// Select all
-		keyboard.shortcut(`${cmd}+a`, e, () => {
+		keyboard.shortcut('selectAll', e, () => {
 			if (popupOpen || menuOpen) {
 				return;
 			};
@@ -788,18 +783,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		if (!ret && ids.length && !keyboard.isSpecial(e)) {
-			this.blockCreate(ids[ids.length - 1] , I.BlockPosition.Bottom, {
+			const param = {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
-			}, (blockId: string) => {
+			};
+
+			C.BlockCreate(rootId, ids[ids.length - 1], I.BlockPosition.Bottom, param, (message: any) => {
 				const key = e.key;
+				const blockId = message.blockId;
 
 				C.BlockListDelete(rootId, ids);
 				U.Data.blockSetText(rootId, blockId, key, [], true, () => {
-					const block = S.Block.getLeaf(rootId, blockId);
-					const length = block.getLength();
+					const length = key.length;
 
-					window.setTimeout(() => this.focus(blockId, length, length, true));
+					focus.set(blockId, { from: length, to: length });
+					focus.apply();
+					focus.scroll(isPopup, blockId);
 				});
 			});
 		};
@@ -845,7 +844,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (block.isText()) {
 
 			// Select all
-			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+			keyboard.shortcut('selectAll', e, (pressed: string) => {
 				if ((range.from == 0) && (range.to == length)) {
 					e.preventDefault();
 					this.onSelectAll();
@@ -1021,7 +1020,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	getStyleParam () {
-		const cmd = keyboard.cmdKey();
 		return [
 			{ key: 'turnBlock0', style: I.TextStyle.Paragraph },
 			{ key: 'turnBlock1', style: I.TextStyle.Header1 },
@@ -2367,7 +2365,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup } = this.props;
 
 		window.setTimeout(() => {
-			focus.set(id, { from: from, to: to });
+			focus.set(id, { from, to });
 			focus.apply();
 
 			if (scroll) {

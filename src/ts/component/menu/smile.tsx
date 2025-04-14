@@ -99,7 +99,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 						onMouseDown={e => this.onMouseDown(e, item)}
 						onContextMenu={e => this.onSkin(e, item)}
 					>
-						<IconObject object={item} size={30} iconSize={30} tooltip={item.id} />
+						<IconObject object={item} size={30} iconSize={30} tooltipParam={{ text: item.id }} />
 					</div>
 				);
 
@@ -276,14 +276,13 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 										key={i} 
 										id={`item-${group.id}`}
 										className={group.id} 
-										tooltip={group.name} 
-										tooltipY={I.MenuDirection.Bottom} 
+										tooltipParam={{ text: group.name, typeY: I.MenuDirection.Bottom }} 
 										onClick={() => this.onGroup(group.id)} 
 									/>
 								))}
 								<Icon 
 									className="random" 
-									tooltip={translate('menuSmileRandom')} 
+									tooltipParam={{ text: translate('menuSmileRandom') }} 
 									onClick={() => this.onRandom()}
 								/>
 							</div>

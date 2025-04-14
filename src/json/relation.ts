@@ -112,11 +112,13 @@ export default {
 		'layoutWidth',
 		'iconName',
 		'iconOption',
+		'pluralName',
 	],
 
 	graph: [
 		'id',
 		'name',
+		'pluralName',
 		'snippet',
 		'description',
 		'iconEmoji',
@@ -126,6 +128,7 @@ export default {
 		'relationFormat',
 		'type',
 		'layout',
+		'resolvedLayout',
 		'done',
 		'fileExt',
 		'fileMimeType',

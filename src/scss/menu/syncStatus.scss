@@ -12,6 +12,7 @@
 		.syncPanel { height: 28px; padding: 0px 16px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
 
 		.title { @include text-paragraph; font-weight: 600; padding: 0; color: var(--color-text-primary); }
+		.ReactVirtualized__List { padding: 8px; }
 
 		.icons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 		.icons {
@@ -49,25 +50,27 @@
 
 		.items { height: 100%; padding: 0px; }
 		.items {
-			.sides { display: flex; align-items: center; gap: 0px 4px; }
+			.sectionName { padding: 4px 16px; }
+
+			.sides { display: flex; align-items: center; gap: 0px 6px; }
 			.sides {
-				.side.left { display: flex; align-items: center; flex-grow: 1; width: calc(100% - 24px); }
-				.side.right { width: 20px; flex-shrink: 0; display: flex; align-items: center; }
+				.side.left { display: flex; align-items: center; flex-grow: 1; overflow: hidden; @include text-overflow-nw; }
+				.side.right { width: 20px; flex-shrink: 0; display: flex; align-items: center; flex-shrink: 0; }
 				.side.right {
-					.icon { width: 20px; height: 20px; }
+					.icon { width: 20px; height: 20px; margin: 0px; }
 					.icon.queued { background-image: url('~img/icon/menu/syncStatus/queued.svg'); }
 					.icon.syncing { background-image: url('~img/icon/menu/syncStatus/loading.svg'); transform: translateZ(0); animation: rotate 0.8s infinite steps(8); }
 					.icon.synced { background-image: url('~img/icon/menu/syncStatus/ok.svg'); }
-					.icon.error { background-image: url('~img/icon/menu/syncStatus/failed.svg'); display: block; margin: 0px; }
-					.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); opacity: 0; position: static; margin: 0px; }
+					.icon.error { background-image: url('~img/icon/menu/syncStatus/failed.svg'); display: block; }
+					.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); display: none; position: static; width: 20px !important; height: 20px !important; }
 					.icon.more:hover { background-color: unset !important; background-image: url('~img/icon/menu/action/more1.svg'); }
 				}
 			}
 
-			.sectionName { padding: 4px 16px; }
-
-			.item { padding: 3px 8px; margin: 0px 8px; width: unset; line-height: 22px; border-radius: 6px; }
+			.item { padding: 3px 8px; line-height: 22px; border-radius: 6px; }
 			.item {
+				&::before { border-radius: inherit; }
+
 				.info { display: flex; align-items: baseline; width: calc(100% - 24px); }
 				.info {
 					.iconObject { margin-right: 8px; }
@@ -80,7 +83,7 @@
 				&::before { background: var(--color-shape-highlight-medium); }
 				.side.right {
 					.icon:not(.more) { display: none; }
-					.icon.more { opacity: 1; }
+					.icon.more { display: block; }
 				}
 			}
 		}

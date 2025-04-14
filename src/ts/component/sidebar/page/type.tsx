@@ -21,6 +21,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.onChange = this.onChange.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
+		this.disableButton = this.disableButton.bind(this);
 	};
 
     render () {
@@ -46,7 +47,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 						<Button 
 							ref={ref => this.buttonSaveRef = ref} 
-							text={type ? translate('commonSave') : translate('commonCreate')}
+							text={type ? translate('commonSave') : translate('commonApply')}
 							className="c28" 
 							onClick={this.onSave}
 						/>
@@ -59,10 +60,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							{...this.props} 
 							ref={ref => this.sectionRefs.set(item.id, ref)}
 							key={item.id} 
+							id={item.id}
 							component={item.component}
 							object={this.object} 
 							withState={true}
 							onChange={this.onChange}
+							disableButton={this.disableButton}
 							readonly={readonly}
 						/>
 					))}
@@ -82,9 +85,11 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
 
+	componentWillUnmount (): void {
+		this.disableScroll(false);
+	}; 
+
 	init () {
-		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
 		const type = this.getObject();
 		const sections = this.getSections();
 		const details: any = this.props.details || {};
@@ -101,9 +106,24 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.backup = U.Common.objectCopy(this.object);
 
 		sections.forEach(it => this.updateObject(it.id));
-		container.addClass('overPopup');
 
-		$(this.buttonSaveRef.getNode()).addClass('disabled');
+		this.disableScroll(true);
+		if (!details.isNew) {
+			this.disableButton(true);
+		};
+	};
+
+	disableButton (v: boolean) {
+		if (this.buttonSaveRef) {
+			$(this.buttonSaveRef.getNode()).toggleClass('disabled', v);
+		};
+	};
+
+	disableScroll (v: boolean) {
+		const { isPopup } = this.props;
+		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
+
+		container.toggleClass('overPopup', v);
 	};
 	
 	getObject () {
@@ -123,6 +143,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		return [
 			{ id: 'title', component: 'type/title' },
+			{ id: 'plural', component: 'type/title' },
 			!isFile ? { id: 'layout', component: 'type/layout' } : null,
 			{ id: 'relation', component: 'type/relation' },
 		].filter(it => it);
@@ -156,7 +177,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			this.forceUpdate();
 		});
 
-		$(this.buttonSaveRef.getNode()).toggleClass('disabled', !U.Common.objectLength(this.update));
+		this.disableButton(!U.Common.objectLength(this.update));
 
 		// analytics
 		let eventId = '';
@@ -172,12 +193,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	updateLayout (layout: I.ObjectLayout) {
 		const rootId = keyboard.getRootId();
-		const root = S.Block.getLeaf(rootId, rootId);
 		const current = S.Detail.get(rootId, rootId);
 
-		if (root) {
-			S.Block.update(rootId, rootId, { layout });
-		};
+		S.Block.update(rootId, rootId, { layout });
 
 		if (!current._empty_) {
 			S.Detail.update(rootId, { id: rootId, details: { resolvedLayout: layout } }, false);
@@ -185,13 +203,14 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onSave () {
-		if (!U.Common.objectLength(this.update)) {
-			return;
-		};
-
 		const { space } = S.Common;
 		const { rootId, isPopup, previous } = this.props;
+		const details: any = this.props.details || {};
 		const type = S.Record.getTypeType();
+
+		if (!U.Common.objectLength(this.update) && !details.isNew) {
+			return;
+		};
 
 		if (rootId) {
 			const update = [];
@@ -202,19 +221,25 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			};
 
 			if (update.length) {
-				C.ObjectListSetDetails([ rootId ], update);
+				C.ObjectListSetDetails([ rootId ], update, () => {
+					C.BlockDataviewRelationSet(rootId, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(rootId)));
+				});
 
-				if (previous) {
+				if (previous && previous.page) {
 					sidebar.rightPanelSetState(isPopup, previous);
 				} else {
 					this.close();
 				};
 			};
 		} else {
-			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
+			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, true, (message) => {
 				if (!message.error.code) {
+					const route = details.data && details.data.route ? details.data.route : '';
+
 					U.Object.openRoute(message.details);
 					S.Common.getRef('sidebarLeft')?.refChild?.refFilter?.setValue('');
+
+					analytics.event('CreateObject', { objectType: '_objectType', route });
 				};
 			});
 
@@ -228,12 +253,22 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onCancel () {
+		const { isPopup, previous } = this.props;
+		const rootId = keyboard.getRootId();
+
 		if (U.Common.objectLength(this.update)) {
 			S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
-			this.updateLayout(this.backup.recommendedLayout);
+
+			if ((rootId != this.backup.id) && !U.Object.isTypeLayout(this.backup.layout)) {
+				this.updateLayout(this.backup.recommendedLayout);
+			};
 		};
 
-		this.close();
+		if (previous && previous.page) {
+			sidebar.rightPanelSetState(isPopup, previous);
+		} else {
+			this.close();
+		};
 	};
 
 	close () {

@@ -578,7 +578,7 @@ class Mark {
 				marks[i].range.to = to;
 			};
 
-			marks.push({ type: I.MarkType.Link, range: { from: from, to: to }, param: p2 });
+			marks.push({ type: I.MarkType.Link, range: { from, to }, param: p2 });
 			adjustMarks = true;
 
 			text = text.replace(s, p1 + ' ');
@@ -635,7 +635,7 @@ class Mark {
 		
 		switch (type) {
 			case I.MarkType.Link: {
-				attr = `href="${U.Common.urlFix(param)}"`;
+				attr = `href="${U.Common.urlFix(param)}" class="markuplink"`;
 				break;
 			};
 

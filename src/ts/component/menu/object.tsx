@@ -111,6 +111,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let pageInstall = null;
 		let template = null;
 		let setDefaultTemplate = null;
+		let advancedOptions = [];
 
 		let print = { id: 'print', name: translate('menuObjectPrint'), caption: keyboard.getCaption('print') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
@@ -119,12 +120,14 @@ class MenuObject extends React.Component<I.Menu> {
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
-		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyDeeplink') };
+		let pageLink = { id: 'pageLink', icon: 'linkTo', name: translate('commonCopyLink') };
+		let pageDeeplink = { id: 'pageDeeplink', icon: 'linkTo', name: translate('commonCopyDeeplink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
+		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -148,9 +151,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 		};
 
-		if (object.isInstalled) {
-			pageInstall = { id: 'pageUninstall', icon: 'remove', name: translate('commonDelete') };
-		} else {
+		if (isTypeOrRelationLayout && !object.isInstalled) {
 			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuObjectInstall') };
 		};
 
@@ -177,9 +178,9 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedFav = canWrite && !object.isArchived && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystemLayouts;
 		const allowedLinkTo = canWrite && !object.isArchived;
-		const allowedAddCollection = canWrite && !object.isArchived;
+		const allowedAddCollection = canWrite && !object.isArchived && !isTemplate;
 		const allowedPageLink = !object.isArchived;
-		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
+		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelationLayout;
 		const allowedReload = canWrite && object.source && isBookmark;
 		const allowedInstall = canWrite && !object.isInstalled && isTypeOrRelationLayout;
 		const allowedUninstall = canWrite && object.isInstalled && isTypeOrRelationLayout && canDelete;
@@ -191,6 +192,11 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedOpenFile = isInFileLayouts;
 		const allowedOpenObject = isFilePreview;
 
+		if (!allowedPageLink) {
+			pageLink = null;
+			pageDeeplink = null;
+		};
+
 		if (!allowedArchive)		 archive = null;
 		if (!allowedLock)			 pageLock = null;
 		if (!allowedCopy)			 pageCopy = null;
@@ -200,10 +206,8 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedFav)			 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
-		if (allowedUninstall)		 archive = null;
 		if (!allowedWidget)			 createWidget = null;
 		if (!allowedLinkTo)			 linkTo = null;
-		if (!allowedPageLink)		 pageLink = null;
 		if (!allowedAddCollection)	 addCollection = null;
 		if (!allowedExport)			 pageExport = null;
 		if (!allowedPrint)			 print = null;
@@ -217,6 +221,14 @@ class MenuObject extends React.Component<I.Menu> {
 			remove = null;
 		};
 
+		advancedOptions.push(pageDeeplink);
+		advancedOptions = advancedOptions.filter(it => it);
+		if (advancedOptions.length) {
+			advanced.children = advancedOptions;
+		} else {
+			advanced = null;
+		};
+
 		let sections = [];
 		if (hasShortMenu) {
 			if (!U.Object.isInSetLayouts(object.layout)) {
@@ -226,8 +238,8 @@ class MenuObject extends React.Component<I.Menu> {
 			sections = sections.concat([
 				{ children: [ openObject ] },
 				{ children: [ createWidget, fav, pageLock, history ] },
-				{ children: [ linkTo, addCollection, template ] },
-				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
+				{ children: [ linkTo, addCollection, template, pageLink ] },
+				{ children: [ search, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 				{ children: [ openFile, downloadFile ] },
 			]);
@@ -249,15 +261,17 @@ class MenuObject extends React.Component<I.Menu> {
 				sections = sections.concat([
 					{ children: [ openObject ] },
 					{ children: [ createWidget, fav, pageLock ] },
-					{ children: [ linkTo, addCollection, template ] },
+					{ children: [ linkTo, addCollection, template, pageLink ] },
 					{ children: [ search, history, pageCopy, archive ] },
-					{ children: [ pageLink, pageReload ] },
+					{ children: [ pageReload ] },
 					{ children: [ print, pageExport ] },
 				]);
 			};
 
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		};
+
+		sections = sections.concat([ { children: [ advanced ] } ]);
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -291,7 +305,7 @@ class MenuObject extends React.Component<I.Menu> {
 			return;
 		};
 
-		const { id, param, getId, getSize, close } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 
@@ -347,13 +361,35 @@ class MenuObject extends React.Component<I.Menu> {
 						name: translate('blockDataviewCreateNewCollection'),
 						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
 						onClick: (details: any) => {
-							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => {
 								Action.addToCollection(message.objectId, [ rootId ]);
 								U.Object.openAuto(message.details);
 							});
 						},
 					},
 				});
+				break;
+			};
+
+			case 'advanced': {
+				menuId = 'select';
+				menuParam.data = {
+					options: item.children,
+					onSelect: (e, option) => {
+						switch (option.id) {
+
+							case 'pageDeeplink': {
+								const object = this.getObject();
+								const space = U.Space.getSpaceview();
+
+								U.Object.copyLink(object, space, 'deeplink', '');
+								close();
+								break;
+							};
+
+						};
+					},
+				};
 				break;
 			};
 		};
@@ -399,7 +435,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			const home = U.Space.getDashboard();
 			if (home && (object.id == home.id)) {
-				U.Object.openRoute({ layout: I.ObjectLayout.Empty });
+				U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' });
 			} else {
 				keyboard.onBack();
 			};
@@ -417,6 +453,7 @@ class MenuObject extends React.Component<I.Menu> {
 			case 'history': {
 				keyboard.disableClose(true);
 				U.Object.openAuto({ layout: I.ObjectLayout.History, id: object.id });
+				keyboard.disableClose(false);
 				break;
 			};
 			
@@ -435,6 +472,11 @@ class MenuObject extends React.Component<I.Menu> {
 						analytics.event('DuplicateObject', { count: 1, route, objectType: object.type });
 					};
 				});
+				break;
+			};
+
+			case 'pageLink': {
+				U.Object.copyLink(object, space, 'web', '');
 				break;
 			};
 
@@ -482,11 +524,6 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'pageCreate': {
 				U.Object.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, [], route, message => U.Object.openAuto(message.details));
-				break;
-			};
-
-			case 'pageLink': {
-				U.Object.copyLink(object, space, 'deeplink', '');
 				break;
 			};
 

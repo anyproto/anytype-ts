@@ -7,7 +7,8 @@ import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 
 import SidebarWidget from './page/widget';
 import SidebarObject from './page/allObject';
-import SidebarSettings from './page/settings';
+import SidebarSettingsIndex from './page/settings/index';
+import SidebarSettingsLibrary from './page/settings/library'
 
 interface State {
 	page: string;
@@ -16,8 +17,10 @@ interface State {
 const Components = {
 	object: SidebarObject,
 	widget: SidebarWidget,
-	settings: SidebarSettings,
-	settingsSpace: SidebarSettings,
+	settings: SidebarSettingsIndex,
+	settingsSpace: SidebarSettingsIndex,
+	types: SidebarSettingsLibrary,
+	relations: SidebarSettingsLibrary,
 };
 
 const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State> {
@@ -57,8 +60,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 				<Icon 
 					id="sidebarToggle"
 					className="withBackground"
-					tooltipCaption={keyboard.getCaption('toggleSidebar')}
-					tooltipY={I.MenuDirection.Bottom}
+					tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 					onClick={this.onToggleClick}
 					onContextMenu={this.onToggleContext}
 				/>

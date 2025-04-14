@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
-import { I, S, U, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
+import { I, S, U, J, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -14,7 +14,6 @@ import PageAuthDeleted from './auth/deleted';
 import PageAuthMigrate from './auth/migrate';
 
 import PageMainBlank from './main/blank';
-import PageMainEmpty from './main/empty';
 import PageMainVoid from './main/void';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
@@ -44,8 +43,7 @@ const Components = {
 	'auth/deleted':			 PageAuthDeleted,
 	'auth/migrate':			 PageAuthMigrate,
 
-	'main/blank':			 PageMainBlank,		
-	'main/empty':			 PageMainEmpty,		
+	'main/blank':			 PageMainBlank,
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
@@ -240,9 +238,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.setBodyClass();
 		this.resize();
 		this.event();
-		this.unbind();
-
-		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => this.resize());
+		this.rebind();
 
 		if (!isPopup) {
 			keyboard.setMatch(match);
@@ -252,11 +248,23 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Highlight.showAll();
 	};
 
-	unbind () {
-		const { isPopup } = this.props;
-		$(window).off('resize.page' + (isPopup ? 'Popup' : ''));
+	rebind () {
+		const { history, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
+		const key = String(history?.location?.key || '');
+
+		this.unbind();
+		$(window).on(`resize.page${namespace}${key}`, () => this.resize());
 	};
-	
+
+	unbind () {
+		const { history, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
+		const key = String(history?.location?.key || '');
+
+		$(window).off(`resize.page${namespace}${key}`);
+	};
+
 	event () {
 		const { page, action, id } = this.getMatchParams();
 		const params = { page, action, id: undefined };

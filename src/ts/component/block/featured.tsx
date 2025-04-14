@@ -46,13 +46,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block, size, iconSize, isPopup } = this.props;
 		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
-		const keys = items.map(it => it.relationKey);
-		const hasType = keys.includes('type');
-		const hasSetOf = keys.includes('setOf');
-
-		const skipIds = [ 'type', 'description', 'setOf' ];
-		const list = items.filter(it => !skipIds.includes(it.relationKey));
 		const object = this.getObject();
+		const type = S.Detail.get(rootId, object.type, []);
 
 		return (
 			<div 
@@ -62,12 +57,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp}
 			>
-
-				{hasType ? this.renderType() : ''}
-				{hasSetOf ? this.renderSetOf() : ''}
-				{this.renderIdentity()}
-
-				{list.map((relation: any, i: any) => {
+				{items.map((relation: any, i: any) => {
 					const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
 					const value = object[relation.relationKey];
 					const canEdit = allowedValue && !relation.isReadonlyValue;
@@ -75,6 +65,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 					if (i == items.length - 1) {
 						cn.push('last');
+					};
+
+					if (relation.relationKey == 'type') {
+						return this.renderType(i);
+					};
+
+					if (relation.relationKey == 'setOf') {
+						return this.renderSetOf(i);
+					};
+
+					if (relation.relationKey == 'identity') {
+						return this.renderIdentity(i);
 					};
 
 					if ([ 'links', 'backlinks' ].includes(relation.relationKey)) {
@@ -155,10 +157,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 	};
 
-	renderType () {
+	renderType (index) {
 		const { rootId } = this.props;
 		const object = this.getObject();
-		const type = S.Detail.get(rootId, object.type, [ 'name', 'isDeleted' ]);
+		const type = S.Detail.get(rootId, object.type, []);
 		const name = (
 			<div className="name">
 				<ObjectType object={type} />
@@ -166,17 +168,16 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		);
 
 		let ret = null;
-
 		if (U.Object.isTemplate(object.type)) {
 			ret = (
-				<span className="cell">
+				<span className="cell" key={index}>
 					<div className="cellContent type disabled">{name}</div>
 					<div className="bullet" />
 				</span>
 			);
 		} else {
 			ret = (
-				<span className="cell canEdit">
+				<span className="cell canEdit" key={index}>
 					<div
 						id={Relation.cellId(PREFIX, 'type', object.id)}
 						className="cellContent type"
@@ -194,7 +195,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		return ret;
 	};
 
-	renderSetOf () {
+	renderSetOf (index: number) {
 		const { rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
 		const object = this.getObject();
@@ -203,6 +204,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const setOfString = [];
 		const tl = types.length;
 		const rl = relations.length;
+		const cn = [ 'cell' ];
+
+		if (!readonly) {
+			cn.push('canEdit');
+		};
 
 		if (tl) {
 			setOfString.push(U.Common.sprintf('%s: %s', U.Common.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
@@ -220,7 +226,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		return (
-			<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
+			<span className={cn.join(' ')} key={index} >
 				<div
 					id={Relation.cellId(PREFIX, 'setOf', object.id)}
 					className="cellContent setOf"
@@ -243,7 +249,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		);
 	};
 
-	renderIdentity () {
+	renderIdentity (index: number) {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'layout' ], true);
@@ -256,7 +262,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const relationKey = object.globalName ? 'globalName': 'identity';
 
 		return (
-			<span className="cell">
+			<span className="cell" key={index}>
 				<div
 					id={Relation.cellId(PREFIX, relationKey, object.id)}
 					className="cellContent c-longText"
@@ -388,7 +394,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = S.Detail.get(rootId, rootId, [ 'setOf' ]);
 		const type = S.Detail.get(rootId, object.type, []);
 		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
-		const typeIsDeleted = type._empty_ || type.isDeleted;
+		const typeIsDeleted = type._empty_ || type.isDeleted || type.isArchived;
 		const options: any[] = [];
 
 		if (!typeIsDeleted) {
@@ -455,7 +461,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					keys: U.Data.typeRelationKeys(),
 					skipIds: [ object.type ],
@@ -564,6 +570,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 					keyboard.disableClose(true);
 					U.Object.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
+					keyboard.disableClose(false);
 					window.setTimeout(() => { Preview.toastShow({ text: U.Common.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
 
 					analytics.event('SetTurnIntoCollection');
@@ -834,7 +841,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			ret = keys.map(it => S.Record.getRelationByKey(it));
 		};
 
-		return ret.filter(it => it);
+		return ret.filter(it => it && !it.isDeleted && !it.isArchived);
 	};
 	
 });
