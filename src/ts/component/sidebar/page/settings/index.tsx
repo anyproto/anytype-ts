@@ -214,6 +214,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
 					isEntrySpace ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
 					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
+					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
 				].filter(it => it),
 			},
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
@@ -222,8 +223,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				],
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
-			{ isDiv: true },
-			{ id : 'bin', children: [ { id: 'archive', icon: 'bin', name: translate('commonBin') } ] },
 		];
 	};
 
