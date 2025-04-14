@@ -491,7 +491,7 @@ class MenuManager {
 				} 
 			},
 
-			(is.windows || is.linux || is.macos) ? {
+			(is.windows || is.linux) ? {
 				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: config.showMenuBar, click: () => {
 					const { config } = ConfigManager;
 
