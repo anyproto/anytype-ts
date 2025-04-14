@@ -206,6 +206,8 @@
 
 	/* BlockChat */
 	.block.blockChat {
+		--color-lime-light: #36551d;
+
 		.emptyState {
 			.img { background: none; }
 		}
@@ -219,15 +221,6 @@
 				.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('#{$themePath}/icon/chat/buttons/reply1.svg'); }
 				.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
 			}
-		}
-		.message.isSelf {
-			.bubbleWrapper {
-				.bubble { background: #36551d; }
-			}
-		}
-
-		.reactions {
-			.reaction.isSelf { background: #36551d; }
 		}
 
 		.formWrapper {

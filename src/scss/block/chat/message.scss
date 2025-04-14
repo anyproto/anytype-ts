@@ -95,7 +95,7 @@ $colorLightLime: #c5efa3;
 			.count { min-width: 18px; text-align: center; }
 		}
 
-		.reaction.isSelf { background-color: $colorLightLime; }
+		.reaction.isSelf { background-color: var(--color-lime-light); }
 	}
 
 	.newMessages { display: none; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
@@ -110,7 +110,7 @@ $colorLightLime: #c5efa3;
 	.bubbleWrapper { flex-direction: row-reverse; }
 	.bubbleWrapper {
 		.controls { flex-direction: row-reverse; }
-		.bubble { background-color: $colorLightLime}
+		.bubble { background-color: var(--color-lime-light); }
 	}
 
 	.reactions { flex-direction: row-reverse; }
