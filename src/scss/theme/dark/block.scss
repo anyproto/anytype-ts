@@ -206,8 +206,6 @@
 
 	/* BlockChat */
 	.block.blockChat {
-		--color-lime-light: #36551d;
-
 		.emptyState {
 			.img { background: none; }
 		}
@@ -215,7 +213,6 @@
 			.bubble { background: var(--color-shape-tertiary); }
 
 			.icon.reactionAdd { background-image: url('#{$themePath}/icon/chat/buttons/reaction1.svg'); }
-			.icon.reactionAdd:hover, .icon.reactionAdd.hover {  }
 
 			> .flex > .controls {
 				.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('#{$themePath}/icon/chat/buttons/reply1.svg'); }
