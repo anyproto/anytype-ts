@@ -486,7 +486,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		this.loadDepsAndReplies([ message ]);
+		this.loadDepsAndReplies([ message ], () => {
+			this.scrollToBottomCheck();
+		});
 	};
 
 	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
