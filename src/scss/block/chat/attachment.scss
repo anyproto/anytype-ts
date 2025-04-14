@@ -2,7 +2,7 @@
 .attachments {
 	.attachment {
 		position: relative; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
-		min-width: calc(524px / 2); width: calc(524px / 2); height: 72px; border-radius: 12px; display: flex; flex-direction: row; align-items: center;;
+		@include cnt-2; height: 72px; border-radius: 12px; display: flex; flex-direction: row; align-items: center;;
 	}
 
 	.attachment {
@@ -73,6 +73,8 @@
 	}
 }
 
+.attachments:not(.withLayout) { flex-direction: column; }
+
 .attachments.isSingle {
 	.attachment { width: 540px; }
 }
@@ -91,7 +93,7 @@
 	}
 }
 
-.attachments.layout-1 { max-width: 360px; max-height: 360px; }
+.attachments.layout-1 { max-width: 360px; max-height: 368px; }
 .attachments.layout-1 {
 	.attachment { max-width: 100%; max-height: 100%; aspect-ratio: unset; }
 	.attachment {
