@@ -384,6 +384,8 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 				},
 			}
 		});
+
+		analytics.event('ScreenTypeTemplateSelector');
 	};
 
 	onTemplateAdd () {
