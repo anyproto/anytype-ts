@@ -333,7 +333,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				continue;
 			};
 
-			if (Relation.isArrayType(relation.format)) {
+			if (Relation.isArrayType(relation.format) && (relation.format != I.RelationType.Select)) {
 				const diff = Diff.diffArrays(this.initial[k] || [], this.details[k] || []);
 
 				diff.forEach(it => {
