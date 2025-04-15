@@ -129,8 +129,9 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	loadMoreRows ({ startIndex, stopIndex }) {
 		const { loadData, getView, getLimit, getSubId } = this.props;
 		const subId = getSubId();
-		let { offset } = S.Record.getMeta(subId, '');
 		const view = getView();
+
+		let { offset } = S.Record.getMeta(subId, '');
 
 		return new Promise((resolve, reject) => {
 			offset += getLimit();
