@@ -614,26 +614,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 		});
 
-		const read = (item, type: I.ChatReadType) => {
-			const { id, orderId } = item;
+		list.filter(it => !it.isReadMessage).forEach(it => S.Chat.setReadMessageStatus(subId, [ it.id ], true));
+		list.filter(it => !it.isReadMention).forEach(it => S.Chat.setReadMentionStatus(subId, [ it.id ], true));
 
-			switch (type) {
-				case I.ChatReadType.Message: {
-					S.Chat.setReadMessageStatus(subId, [ id ], true);
-					break;
-				};
-
-				case I.ChatReadType.Mention: {
-					S.Chat.setReadMentionStatus(subId, [ id ], true);
-					break;
-				};
-			};
-
-			C.ChatReadMessages(rootId, orderId, orderId, lastStateId, type);
-		};
-
-		list.filter(it => !it.isRead).forEach(item => read(item, I.ChatReadType.Message));
-		list.filter(it => !it.isReadMention).forEach(item => read(item, I.ChatReadType.Mention));
+		window.clearTimeout(this.timeoutScrollStop);
+		this.timeoutScrollStop = window.setTimeout(() => this.onReadStop(), 300);
 
 		this.top = st;
 
@@ -659,10 +644,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			C.ChatReadMessages(rootId, first, last, lastStateId, I.ChatReadType.Mention);
 		};
 
-		if (ids.length) {
-			S.Chat.setReadMessageStatus(subId, ids, true);
-			S.Chat.setReadMessageStatus(subId, ids, true);
-		};
+		S.Chat.setReadMessageStatus(subId, ids, true);
+		S.Chat.setReadMentionStatus(subId, ids, true);
 
 		this.scrolledItems = [];
 	};
