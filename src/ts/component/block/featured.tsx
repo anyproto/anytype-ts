@@ -68,15 +68,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					};
 
 					if (relation.relationKey == 'type') {
-						return this.renderType(i);
+						return this.renderType();
 					};
 
 					if (relation.relationKey == 'setOf') {
-						return this.renderSetOf(i);
+						return this.renderSetOf();
 					};
 
 					if (relation.relationKey == 'identity') {
-						return this.renderIdentity(i);
+						return this.renderIdentity();
 					};
 
 					if ([ 'links', 'backlinks' ].includes(relation.relationKey)) {
@@ -157,7 +157,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 	};
 
-	renderType (index) {
+	renderType () {
 		const { rootId } = this.props;
 		const object = this.getObject();
 		const type = S.Detail.get(rootId, object.type, []);
@@ -170,14 +170,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		let ret = null;
 		if (U.Object.isTemplate(object.type)) {
 			ret = (
-				<span className="cell" key={index}>
+				<span className="cell" key="type">
 					<div className="cellContent type disabled">{name}</div>
 					<div className="bullet" />
 				</span>
 			);
 		} else {
 			ret = (
-				<span className="cell canEdit" key={index}>
+				<span className="cell canEdit" key="type">
 					<div
 						id={Relation.cellId(PREFIX, 'type', object.id)}
 						className="cellContent type"
@@ -195,7 +195,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		return ret;
 	};
 
-	renderSetOf (index: number) {
+	renderSetOf () {
 		const { rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
 		const object = this.getObject();
@@ -226,7 +226,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		return (
-			<span className={cn.join(' ')} key={index} >
+			<span className={cn.join(' ')} key="setOf">
 				<div
 					id={Relation.cellId(PREFIX, 'setOf', object.id)}
 					className="cellContent setOf"
@@ -249,7 +249,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		);
 	};
 
-	renderIdentity (index: number) {
+	renderIdentity () {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'layout' ], true);
@@ -262,7 +262,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const relationKey = object.globalName ? 'globalName': 'identity';
 
 		return (
-			<span className="cell" key={index}>
+			<span className="cell" key="identity">
 				<div
 					id={Relation.cellId(PREFIX, relationKey, object.id)}
 					className="cellContent c-longText"
@@ -836,7 +836,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		let ret = [];
 		if (!keys.length) {
-			ret = S.Record.getTypeFeaturedRelations(short.targetObjectType || short.type);
+			const typeId = short.targetObjectType || short.type;
+			const type = S.Record.getTypeById(typeId);
+
+			if (!type || type.isDeleted) {
+				ret = [ S.Record.getRelationByKey('type') ];
+			} else {
+				ret = S.Record.getTypeFeaturedRelations(typeId);
+			};
 		} else {
 			ret = keys.map(it => S.Record.getRelationByKey(it));
 		};

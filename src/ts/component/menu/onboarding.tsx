@@ -348,7 +348,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 							S.Detail.update(rootId, { id: item.id, details: item }, false);
 
-							C.ObjectSetObjectType(rootId, item.id, () => {
+							C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
 								U.Object.openAuto({ id: rootId, layout: item.recommendedLayout });
 							});
 
