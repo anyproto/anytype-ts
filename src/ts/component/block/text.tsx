@@ -941,6 +941,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		const win = $(window);
 		const range = this.getRange();
+
+		if (!range) {
+			return;
+		};
+
 		const from = range.from - 2;
 		
 		let value = this.getValue();
