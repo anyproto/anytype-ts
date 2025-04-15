@@ -178,6 +178,9 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 			analyticsId = I.SidebarRelationList[to.id];
         };
+		if (from.id == I.SidebarRelationList.Local) {
+			analytics.stackAdd('AddConflictRelation', { count: 1 });
+		};
 
 		analytics.stackAdd('ReorderRelation', { id: analyticsId });
     };
