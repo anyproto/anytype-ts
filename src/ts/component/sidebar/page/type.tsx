@@ -132,10 +132,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		const isList = U.Object.isInSetLayouts(type.recommendedLayout);
 
-		return Object.assign(type, {
-			layoutFormat: isList ? I.LayoutFormat.List : I.LayoutFormat.Page,
-			name: type.name == translate('defaultNamePage') ? '' : type.name,
-		});
+		return Object.assign(type, { layoutFormat: isList ? I.LayoutFormat.List : I.LayoutFormat.Page });
 	};
 
 	getSections () {
