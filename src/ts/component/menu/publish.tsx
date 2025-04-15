@@ -215,7 +215,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						<Label text={translate('menuPublishLabelJoinSpace')} />
 					</div>
 					<div className="value">
-						<Switch ref={spaceInfoRef} value={true} onChange={(e, v) => onSpaceInfoSwitch(v)} />
+						<Switch ref={spaceInfoRef} value={false} onChange={(e, v) => onSpaceInfoSwitch(v)} />
 					</div>
 				</div>
 			) : ''}
