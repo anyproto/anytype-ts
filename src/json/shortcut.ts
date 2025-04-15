@@ -49,7 +49,7 @@ const getSections = () => {
 
 				{
 					name: translate('popupShortcutNavigation'), children: [
-						{ id: 'settings', name: translate('popupShortcutNavigationBasics1'), keys: [ cmdKey, ',' ] },
+						{ id: 'settings', name: translate('popupShortcutNavigationBasics1'), keys: [ cmdKey, 'comma' ] },
 						{ id: 'navigation', name: translate('popupShortcutNavigationBasics2'), keys: [ cmdKey, 'o' ] },
 						{ id: 'graph', name: translate('popupShortcutNavigationBasics3'), keys: [ cmdKey, 'alt', 'o' ] },
 						{ id: 'search', name: translate('popupShortcutNavigationBasics4'), keys: [ cmdKey, 'k' ] },
@@ -67,8 +67,8 @@ const getSections = () => {
 
 				{
 					name: translate('popupShortcutNavigationMenu'), children: [
-						{ name: translate('popupShortcutNavigationMenu1'), keys: [ 'arrowdown', '[,]', 'tab' ] },
-						{ name: translate('popupShortcutNavigationMenu2'), keys: [ 'arrowup', '[,]', 'shift', 'tab' ] },
+						{ name: translate('popupShortcutNavigationMenu1'), keys: [ 'arrowdown' ] },
+						{ name: translate('popupShortcutNavigationMenu2'), keys: [ 'arrowup' ] },
 						{ name: translate('popupShortcutNavigationMenu3'), keys: [ 'arrowleft' ] },
 						{ name: translate('popupShortcutNavigationMenu4'), keys: [ 'arrowright' ] },
 						{ name: translate('popupShortcutNavigationMenu5'), keys: [ 'enter' ] },
@@ -130,12 +130,14 @@ const getSections = () => {
 					]
 				},
 
+				/*
 				{
 					name: translate('popupShortcutChat'), children: [
 						{ id: 'chatObject', name: translate('popupShortcutChat1'), keys: [ cmdKey, 't' ] },
 						{ id: 'chatMention', name: translate('popupShortcutChat3'), keys: [ cmdKey, 'm' ] },
 					]
 				},
+				*/
 
 				{
 					name: translate('popupShortcutMainTextStyle'), children: [

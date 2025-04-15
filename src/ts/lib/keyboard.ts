@@ -1267,11 +1267,10 @@ class Keyboard {
 				};
 			};
 
-			const ks = keys.join('+');
 			const check = U.Common.arrayUnique(pressed).sort().join('+');
 
-			if (check == ks) {
-				res = ks;
+			if (check == keys.join('+')) {
+				res = check;
 			};
 		};
 
@@ -1329,6 +1328,9 @@ class Keyboard {
 			};
 			if (key == 'arrowdown') {
 				return '↓';
+			};
+			if (key == 'comma') {
+				return ',';
 			};
 			return U.Common.ucFirst(key);
 		});

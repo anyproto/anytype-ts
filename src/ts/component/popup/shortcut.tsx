@@ -309,8 +309,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 			const metaKeys = keyboard.metaKeys(e);
 			const key = keyboard.eventKey(e);
+			const which = e.which;
 			const code = String(e.code || '').toLowerCase();
 			const skip = [ Key.meta, Key.ctrl ];
+			const special = [ 'comma' ];
 
 			if (key == Key.escape) {
 				clear();
@@ -337,10 +339,19 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					};
 				});
 
+				for (const s of special) {
+					if (which == J.Key[s]) {
+						pressed.push(s);
+						parsedCode = true;
+					};
+				};
+
 				if (!parsedCode) {
 					pressed.push(key);
 				};
 			};
+
+			console.log(pressed);
 
 			pressed = U.Common.arrayUnique(pressed);
 			checkConflicts(editingId, pressed);
