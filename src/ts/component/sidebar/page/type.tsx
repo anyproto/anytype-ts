@@ -132,7 +132,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		const isList = U.Object.isInSetLayouts(type.recommendedLayout);
 
-		return Object.assign(type, { layoutFormat: isList ? I.LayoutFormat.List : I.LayoutFormat.Page });
+		return Object.assign(type, {
+			layoutFormat: isList ? I.LayoutFormat.List : I.LayoutFormat.Page,
+			name: type.name == translate('defaultNamePage') ? '' : type.name,
+		});
 	};
 
 	getSections () {
@@ -208,15 +211,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		if (!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName)) {
 			return;
-		};
-
-		if (!this.object.name && this.object.pluralName) {
-			this.object.name = this.object.pluralName;
-			this.update.name = this.object.pluralName;
-		} else
-		if (!this.object.pluralName && this.object.name) {
-			this.object.pluralName = this.object.name;
-			this.update.pluralName = this.object.name;
 		};
 
 		if (rootId) {

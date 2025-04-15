@@ -278,8 +278,8 @@ class UtilObject {
 		if (this.isInFileLayouts(layout)) {
 			name = U.File.name(object);
 		} else
-		if (withPlural && this.isTypeLayout(layout)) {
-			name = object.pluralName || object.name;
+		if (this.isTypeLayout(layout)) {
+			name = withPlural ? object.pluralName || object.name : object.name || object.pluralName;
 		} else {
 			name = object.name;
 		};

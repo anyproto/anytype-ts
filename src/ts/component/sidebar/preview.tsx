@@ -69,7 +69,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 						{!isNote ? (
 							<div className="titleWrapper">
 								{icon}
-								<Title text={name || pluralName || translate('defaultNamePage')} />
+								<Title text={name || translate('defaultNamePage')} />
 							</div>
 						) : ''}
 
