@@ -1,5 +1,6 @@
-import { I, J, keyboard } from 'Lib';
+import { I, J, U, keyboard } from 'Lib';
 
+const version = U.Common.getElectron().version.app;
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const shift = keyboard.shiftSymbol();
@@ -14,8 +15,8 @@ const callout = (t: string, icon: string) => block(I.TextStyle.Callout, t, I.Blo
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const caption = (t: string) => block(I.TextStyle.Paragraph, `<i>${t}</i>`, I.BlockHAlign.Center);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}" loop autoplay class="full ${c || ''}" />`);
-const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}" class="full ${c || ''}" />`);
+const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}?v=${version}" loop autoplay class="full ${c || ''}" />`);
+const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}?v=${version}" class="full ${c || ''}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
