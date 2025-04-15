@@ -27,7 +27,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	render () {
-		const { name, recommendedLayout, layoutAlign, layoutFormat } = this.object;
+		const { name, pluralName, recommendedLayout, layoutAlign, layoutFormat } = this.object;
 		const viewType = this.getViewType();
 		const featured = this.getFeatured();
 		const withDescription = featured.map(it => it.relationKey).includes('description');
@@ -69,7 +69,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 						{!isNote ? (
 							<div className="titleWrapper">
 								{icon}
-								<Title text={name || translate('defaultNameType')} />
+								<Title text={name || pluralName || translate('defaultNamePage')} />
 							</div>
 						) : ''}
 

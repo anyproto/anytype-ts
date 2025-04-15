@@ -48,7 +48,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 						<Button 
 							ref={ref => this.buttonSaveRef = ref} 
 							text={type ? translate('commonSave') : translate('commonApply')}
-							className="c28" 
+							className="c28"
 							onClick={this.onSave}
 						/>
 					</div>
@@ -108,9 +108,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		sections.forEach(it => this.updateObject(it.id));
 
 		this.disableScroll(true);
-		if (!details.isNew) {
-			this.disableButton(true);
-		};
+		this.disableButton(true);
 	};
 
 	disableButton (v: boolean) {
@@ -177,7 +175,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			this.forceUpdate();
 		});
 
-		this.disableButton(!U.Common.objectLength(this.update));
+		this.disableButton(!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName));
 
 		// analytics
 		let eventId = '';
@@ -210,6 +208,15 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		if (!U.Common.objectLength(this.update) && !details.isNew) {
 			return;
+		};
+
+		if (!this.object.name && this.object.pluralName) {
+			this.object.name = this.object.pluralName;
+			this.update.name = this.object.pluralName;
+		} else
+		if (!this.object.pluralName && this.object.name) {
+			this.object.pluralName = this.object.name;
+			this.update.pluralName = this.object.name;
 		};
 
 		if (rootId) {
