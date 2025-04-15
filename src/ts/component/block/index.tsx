@@ -484,6 +484,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		e.stopPropagation();
 
 		if (!this._isMounted || keyboard.isResizing) {
+			e.preventDefault();
 			return;
 		};
 		
@@ -620,15 +621,13 @@ const Block = observer(class Block extends React.Component<Props> {
 		const win = $(window);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
-		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + J.Size.blockMenu ;
-		const add = $('#button-block-add');
+		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + J.Size.blockMenu;
 		
 		selection?.clear();
 
 		this.unbind();
 		node.addClass('isResizing');
 		$('body').addClass('colResize');
-		add.css({ opacity: 0 });
 		
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
