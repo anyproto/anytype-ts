@@ -257,6 +257,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		keyboard.setDragging(false);
 
 		setDummy(dummy + 1);
+
+		analytics.event('ReorderSpace');
 	};
 
 	const onScroll = () => {
