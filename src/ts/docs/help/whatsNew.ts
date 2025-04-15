@@ -1,5 +1,6 @@
-import { I, J, keyboard } from 'Lib';
+import { I, J, U, keyboard } from 'Lib';
 
+const version = U.Common.getElectron().version.app;
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const shift = keyboard.shiftSymbol();
@@ -14,8 +15,8 @@ const callout = (t: string, icon: string) => block(I.TextStyle.Callout, t, I.Blo
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const caption = (t: string) => block(I.TextStyle.Paragraph, `<i>${t}</i>`, I.BlockHAlign.Center);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}" loop autoplay class="full ${c || ''}" />`);
-const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}" class="full ${c || ''}" />`);
+const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}?v=${version}" loop autoplay class="full ${c || ''}" />`);
+const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}?v=${version}" class="full ${c || ''}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
@@ -25,12 +26,12 @@ export default [
 	title(`Desktop 0.46.0 Released!`),
 	text(''),
 	text('Hi dear Anytypers!'),
-	text(`We\'re thrilled to announce a major update and introduce a project we call "<b>Primitives</b>" – a fundamental shift in Anytype\'s core organizing structure. With Primitives, we\'re streamlining our user experience by eliminating the current behavior and bringing a clearer, more intuitive way to use <b>Types</b>.`),
-	text('Primitives reimagine Types. Now, you can define layouts and properties within a Type and all associated objects will automatically inherit these settings.'),
+	text(`We're thrilled to announce a major update and introduce a fundamental shift in Anytype's core organizing structure. We\'re streamlining our user experience by eliminating the current behavior and bringing a clearer, more intuitive way to use <b>Types</b>.`),
+	text('The new Anytype reimagine Types. Now, you can define layouts and properties within a Type and all associated objects will automatically inherit these settings.'),
 	text('Along with this transformation, we’ve included many new improvements and bug fixes.'),
 	text(``),
 
-	h2(`Meet Primitives`),
+	h2(`Meet the new Anytype`),
 	text(``),
 
 	bullet(`<b>Relations</b> are now called <b>Properties</b>.`),
@@ -52,7 +53,7 @@ export default [
 
 	h3(`Right Sidebar and Set Up Menu`),
 	text(`The <b>Properties</b> icon lets you view, add and remove values to the properties of a specific object. `),
-	text(`The <b>Set up</b> menu allows you to manage the properties of its Type. From there you can add, remove and organize them into different sections:`),
+	text(`The ${hl('Edit type')} button allows you to manage the properties of its Type. From there you can add, remove and organize them into different sections:`),
 	bullet(`<b>Header</b> properties appear in the header part of every object of that Type.`),
 	bullet(`<b>Sidebar</b> properties are the ones you choose to show in the Properties panel.`),
 	bullet(`<b>Hidden</b> properties live under the ${hl('Show more')} button.`),
@@ -70,13 +71,14 @@ export default [
 
 	h3(`Type Widgets`),
 	text(`You can now add widgets based on object Types, making it easier to organize and display relevant content. We’ve also introduced <b>Automatic Widget</b> creation to help users seamlessly discover and adopt widgets, creating a more personalized and intuitive workspace.`),
-	bullet(`When a new object type (e.g., Document, Contact) is created, a dedicated widget is automatically added to the sidebar. This widget displays all objects of that Type from the space, providing quick access and better organization.`),
-	bullet(`<b>Widgets are optional</b> – you can remove any widget at any time via ${hl('Edit')} button or by right-clicking. Once removed, they won’t reappear unless manually added. Automatic widget creation can also be disabled in Settings.`),
+	bullet(`When you create the first object of a Type, a dedicated widget is automatically added to your sidebar. This widget displays all objects of that Type within the space, giving you quick access without any extra setup.`),
+	bullet(`<b>Automatic Widgets are optional</b> – you can remove any widget at any time via ${hl('Edit')} button or by right-clicking. Once removed, they won’t reappear unless manually added. Automatic widget creation can also be disabled in Settings.`),
 	img(`46/3.png`, 'c70'),
 	text(``),
 
 	h3(`Settings Update`),
 	text(`Both General and Space Settings have been updated to a full-page layout instead of a pop-up, with sections now located in the left sidebar. `),
+	text(`As part of this update, Types and Properties now live in your Space Settings, bringing everything related to your space configuration into one place.`),
 	img(`46/4.png`, 'c70'),
 	text(``),
 
@@ -104,8 +106,8 @@ export default [
 	text(`The editor now supports the ${hl('[[')} syntax for linking. This Markdown pattern works similarly to ${hl('@mention')}, allowing you to reference other objects.`),
 	text(``),
 
-	h3(`HTTP Links for Objects`),
-	text(`You can now copy an HTTP link for any object via the three-dots menu by selecting ${hl('Copy Link')}. Users without the Anytype app can click on these links to download the app and access the object after installation. When opened inside the App, these links directly open the object without any redirection.`),
+	h3(`HTTPS Links for Objects`),
+	text(`You can now copy an HTTPS link for any object via the three-dots menu by selecting ${hl('Copy Link')}. Users without the Anytype app can click on these links to download the app and access the object after installation. When opened inside the App, these links directly open the object without any redirection.`),
 	text(``),
 
 	h3(`Web Publishing Updates`),
