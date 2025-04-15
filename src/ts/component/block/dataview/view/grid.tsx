@@ -30,11 +30,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations, getSubId } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const records = getRecords();
-		const { offset, total } = S.Record.getMeta(S.Record.getSubId(rootId, block.id), '');
+		const { offset, total } = S.Record.getMeta(getSubId(), '');
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
@@ -430,8 +430,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	loadMoreRows () {
-		const { rootId, block, loadData, getView, getLimit } = this.props;
-		const subId = S.Record.getSubId(rootId, block.id);
+		const { rootId, block, loadData, getView, getLimit, getSubId } = this.props;
+		const subId = getSubId();
 		const view = getView();
 		const limit = getLimit();
 
@@ -446,7 +446,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	resize () {
-		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
+		const { rootId, block, isPopup, isInline, getVisibleRelations, getSubId } = this.props;
 		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
@@ -454,7 +454,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = U.Common.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, J.Size.blockMenu);
-		const length = S.Record.getRecordIds(S.Record.getSubId(rootId, block.id), '').length;
+		const length = S.Record.getRecordIds(getSubId(), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
 

@@ -20,10 +20,10 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, className, isPopup, isInline, getView, getKeys, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
+		const { rootId, block, className, isPopup, isInline, getView, getSubId, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const records = getRecords();
-		const subId = S.Record.getSubId(rootId, block.id);
+		const subId = getSubId();
 		const { offset, total } = S.Record.getMeta(subId, '');
 		const limit = getLimit();
 		const length = records.length;
@@ -127,8 +127,8 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		const { rootId, block, loadData, getView, getLimit } = this.props;
-		const subId = S.Record.getSubId(rootId, block.id);
+		const { loadData, getView, getLimit, getSubId } = this.props;
+		const subId = getSubId();
 		let { offset } = S.Record.getMeta(subId, '');
 		const view = getView();
 
