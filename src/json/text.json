@@ -1976,8 +1976,10 @@
 	"sidebarObjectSortLastUsed": "Date last used",
 
 	"sidebarTypeTitle": "Editing type",
-	"sidebarTypeTitleLabelName": "Type name and icon",
-	"sidebarTypeTitleLabelPlural": "Type List name",
+	"sidebarTypeTitleLabelName": "Type name",
+	"sidebarTypeTitlePlaceholder": "e.g. Project",
+	"sidebarTypeTitleLabelPlural": "Type plural name",
+	"sidebarTypeTitlePlaceholderPlural": "e.g. Projects",
 	"sidebarSectionLayoutName": "Layout",
 	"sidebarSectionLayoutFormat": "Format",
 	"sidebarSectionLayoutFormatPage": "Page",

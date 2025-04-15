@@ -260,6 +260,10 @@ class DetailStore {
 		object.layoutWidth = Number(object.layoutWidth) || 0;
 		object.pluralName = Relation.getStringValue(object.pluralName);
 
+		if (object.name == translate('defaultNamePage')) {
+			object.name = '';
+		};
+
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');
 		};

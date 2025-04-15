@@ -22,10 +22,12 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 		let icon = null;
 		let label = '';
+		let placeholder = '';
 
 		switch (id) {
 			case 'title': {
 				label = translate('sidebarTypeTitleLabelName');
+				placeholder = translate('sidebarTypeTitlePlaceholder');
 				icon = (
 					<IconObject 
 						id={`sidebar-icon-title-${object.id}`} 
@@ -45,6 +47,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 			case 'plural': {
 				label = translate('sidebarTypeTitleLabelPlural');
+				placeholder = translate('sidebarTypeTitlePlaceholderPlural');
 				break;
 			};
 
@@ -62,7 +65,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 						onBlur={this.onChange}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
-						placeholder={translate('defaultNameType')} 
+						placeholder={placeholder}
 					/>
 				</div>
 			</div>
