@@ -31,7 +31,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	sortId: I.SortId = I.SortId.LastUsed;
 	sortType: I.SortType = I.SortType.Desc;
 	searchIds: string[] = null;
-	offset = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -40,7 +39,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
-		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getAnalyticsSuffix = this.getAnalyticsSuffix.bind(this);
 		this.openFirst = this.openFirst.bind(this);
 	};
@@ -149,7 +147,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 							<div className="inner">
 								<InfiniteLoader
 									rowCount={items.length}
-									loadMoreRows={this.loadMoreRows}
+									loadMoreRows={() => {}}
 									isRowLoaded={() => true}
 									threshold={LIMIT}
 								>
@@ -219,7 +217,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const limit = this.offset + J.Constant.limit.menuRecords;
 		const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType);
 		const option = options.find(it => it.id == this.sortId);
 
@@ -263,7 +260,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			subId: J.Constant.subId.library,
 			filters,
 			sorts,
-			limit,
 			keys: J.Relation.default.concat([ 'lastUsedDate', 'sourceObject' ]),
 			noDeps: true,
 			ignoreHidden: true,
@@ -274,13 +270,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			if (callBack) {
 				callBack(message);
 			};
-		});
-	};
-
-	loadMoreRows ({ startIndex, stopIndex }) {
-		return new Promise((resolve, reject) => {
-			this.offset += J.Constant.limit.menuRecords;
-			this.load(false, resolve);
 		});
 	};
 
