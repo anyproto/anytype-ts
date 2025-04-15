@@ -806,6 +806,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		} else 
 		if (addParam) {
 			ret = addParam;
+			ret.format = Number(ret.format) || I.RelationType.LongText;
 		};
 
 		return ret;

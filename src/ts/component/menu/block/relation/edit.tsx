@@ -490,6 +490,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		} else 
 		if (addParam) {
 			ret = addParam;
+			ret.format = Number(ret.format) || I.RelationType.LongText;
 		};
 
 		return ret;

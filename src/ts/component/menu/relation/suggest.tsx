@@ -356,14 +356,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		if (item.isType || (item.id == 'add')) {
-			const addParam: any = { name: filter };
-
-			if (item.isType) {
-				addParam.format = item.id;
-			} else {
-				addParam.format = I.RelationType.LongText;
-			};
-
 			S.Menu.open(menuIdEdit, { 
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: getSize().width,
@@ -375,7 +367,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				parentId: id,
 				data: {
 					...data,
-					addParam,
+					addParam: { 
+						name: filter,
+						format: item.isType ? item.id : I.RelationType.LongText,
+					},
 					onChange: () => close(),
 					addCommand: (rootId: string, blockId: string, item: any) => onAdd(item),
 				}

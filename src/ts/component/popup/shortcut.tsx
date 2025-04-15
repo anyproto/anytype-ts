@@ -351,8 +351,6 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				};
 			};
 
-			console.log(pressed);
-
 			pressed = U.Common.arrayUnique(pressed);
 			checkConflicts(editingId, pressed);
 
