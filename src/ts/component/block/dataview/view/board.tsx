@@ -87,14 +87,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	componentWillUnmount () {
-		const groups = this.getGroups(true);
-		const ids = [ this.getSubId('groups') ];
-
-		groups.forEach((it: any) => {
-			ids.push(this.getSubId(it.id));
-		});
-
-		C.ObjectSearchUnsubscribe(ids);
 		this.unbind();
 	};
 
