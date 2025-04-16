@@ -220,6 +220,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				rootId: object.id,
 				relationId: id,
 				readonly: !allowed,
+				noUnlink: list.id == I.SidebarRelationList.Local,
 				ref: 'type',
 				addCommand: (rootId: string, blockId: string, relation: any) => {
 					onChange({ [list.relationKey]: [ relation.id ].concat(ids) });
