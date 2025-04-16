@@ -493,7 +493,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		this.lastMessage = message;
+		if (!this.lastMessage || this.lastMessage.orderId < message.orderId) {
+			this.lastMessage = message;
+		};
 		this.loadDepsAndReplies([ message ], () => {
 			this.scrollToBottomCheck();
 		});
@@ -735,7 +737,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			if (last) {
 				this.scrollToMessage(id)
 			} else {
-				S.Chat.clear(this.getSubId());
 				this.loadMessagesByOrderId(orderId, () => {
 					this.scrollToMessage(id);
 				});
