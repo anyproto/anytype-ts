@@ -564,6 +564,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const renderSelection = () => {
+		const { config } = S.Common;
 		const container = getPageContainer();
 
 		if (frame.current) {
@@ -576,6 +577,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			for (const i in I.SelectType) {
 				const type = I.SelectType[i];
 				const list = get(type, true);
+
+				if (!list.length) {
+					continue;
+				};
+
+				if (config.debug.ui) {
+					console.log('renderSelection', type, list);
+					console.trace();
+				};
 
 				for (const id of list) {
 					container.find(`#selectionTarget-${id}`).addClass('isSelectionSelected');
