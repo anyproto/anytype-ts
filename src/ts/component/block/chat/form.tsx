@@ -14,6 +14,7 @@ import Buttons from './buttons';
 interface Props extends I.BlockComponent {
 	blockId: string;
 	subId: string;
+	onScrollToBottomClick: () => void;
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
 	loadMessagesByOrderId: (orderId: string) => void;
@@ -883,7 +884,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onNavigationClick (type: I.ChatReadType) {
-		this.props.scrollToBottom();
+		this.props.onScrollToBottomClick();
 	};
 
 	updateButtons () {
