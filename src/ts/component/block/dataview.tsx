@@ -506,8 +506,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getSubId (groupId?: string): string {
-		const { rootId, block, isPopup } = this.props;
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const { rootId, block } = this.props;
 
 		let ret = '';
 		if (groupId) {
@@ -515,7 +514,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			ret = S.Record.getSubId(rootId, block.id);
 		};
-		return ret + namespace;
+		return ret;
 	};
 
 	getRecords (groupId?: string): string[] {
