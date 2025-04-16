@@ -166,7 +166,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		S.Detail.update(J.Constant.subId.type, { id: this.object.id, details: update }, false);
 
-		if (undefined !== update.recommendedLayout) {
+		if ((undefined !== update.recommendedLayout) && !U.Object.isTypeLayout(this.object.layout)) {
 			this.updateLayout(update.recommendedLayout);
 		};
 

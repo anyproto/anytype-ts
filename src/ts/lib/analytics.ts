@@ -601,7 +601,6 @@ class Analytics {
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 			'main/date':		 'ScreenDate',
-			'main/archive':		 'ScreenBin',
 		};
 
 		return map[key] || '';
