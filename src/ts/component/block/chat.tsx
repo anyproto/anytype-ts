@@ -728,15 +728,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		if (this.lastMessage) {
+			const { id, orderId } = this.lastMessage;
 			const messages = this.getMessages();
 			const last = messages.find(it => it.id == this.lastMessage.id);
 
 			if (last) {
-				this.scrollToMessage(this.lastMessage.id)
+				this.scrollToMessage(id)
 			} else {
 				S.Chat.clear(this.getSubId());
-				this.loadMessagesByOrderId(this.lastMessage.orderId, () => {
-					this.scrollToMessage(this.lastMessage.id);
+				this.loadMessagesByOrderId(orderId, () => {
+					this.scrollToMessage(id);
 				});
 			};
 
