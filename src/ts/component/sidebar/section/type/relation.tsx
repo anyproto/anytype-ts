@@ -210,7 +210,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	const onEdit = (e: any, list: any, id: string) => {
 		const allowed = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Relation ]);
 		const ids = Relation.getArrayValue(object[list.relationKey]);
-		const isConflict = list.id == I.SidebarRelationList.Local;
 		
 		S.Menu.open('blockRelationEdit', { 
 			element: `#sidebarRight #item-${id}`,
@@ -221,8 +220,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				rootId: object.id,
 				relationId: id,
 				readonly: !allowed,
-				noUnlink: isConflict,
-				noDelete: isConflict,
+				noUnlink: list.id == I.SidebarRelationList.Local,
 				ref: 'type',
 				addCommand: (rootId: string, blockId: string, relation: any) => {
 					onChange({ [list.relationKey]: [ relation.id ].concat(ids) });
