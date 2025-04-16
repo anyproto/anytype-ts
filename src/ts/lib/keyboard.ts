@@ -174,6 +174,7 @@ class Keyboard {
 				};
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
+				sidebar.leftPanelSetState({ page: 'widget' });
 				U.Space.openDashboard();
 			};
 			
