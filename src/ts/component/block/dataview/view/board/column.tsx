@@ -136,10 +136,6 @@ const Column = observer(class Column extends React.Component<Props> {
 		this.load(true);
 	};
 
-	componentWillUnmount () {
-		this.clear();
-	};
-
 	load (clear: boolean) {
 		const { id, block, isCollection, value, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, getSearchIds } = this.props;
 		const object = getTarget();

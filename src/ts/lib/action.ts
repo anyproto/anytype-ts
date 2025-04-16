@@ -62,13 +62,22 @@ class Action {
 		};
 
 		const subId = S.Record.getSubId(rootId, blockId);
+		const groups = S.Record.getGroups(rootId, blockId);
 
 		S.Record.metaClear(subId, '');
 		S.Record.recordsClear(subId, '');
 		S.Record.recordsClear(`${subId}/dep`, '');
 		S.Record.viewsClear(rootId, blockId);
-		S.Record.groupsClear(rootId, blockId);
 
+		const groupIds = groups.map(it => it.id).concat('groups');
+		
+		groupIds.forEach(id => {
+			S.Record.recordsClear(S.Record.getGroupSubId(rootId, blockId, id), '');
+		});
+
+		C.ObjectSearchUnsubscribe(groupIds);
+
+		S.Record.groupsClear(rootId, blockId);
 		S.Detail.clear(subId);
 
 		C.ObjectSearchUnsubscribe([ subId ]);
