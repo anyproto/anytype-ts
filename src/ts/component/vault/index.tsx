@@ -14,6 +14,7 @@ interface VaultRefProps {
 
 const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
+	const { config } = S.Common;
 	const nodeRef = useRef(null);
 	const { showVault } = S.Common;
 	const checkKeyUp = useRef(false);
@@ -304,9 +305,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		if (S.Auth.account && !isSubscribed.current) {
-			isSubscribed.current = true;
-			C.ChatSubscribeToMessagePreviews();
+		if (config.experimental) {
+			if (S.Auth.account && !isSubscribed.current) {
+				isSubscribed.current = true;
+				C.ChatSubscribeToMessagePreviews();
+			};
 		};
 
 		S.Chat.setBadge(counters);
