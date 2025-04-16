@@ -94,7 +94,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		if (readonly) {
 			return (
-				<div id="formWrapper" className="formWrapper">
+				<div 
+					ref={ref => this.node = ref} 
+					id="formWrapper" 
+					className="formWrapper"
+				>
 					<div className="readonly">{translate('blockChatFormReadonly')}</div>
 				</div>
 			);
