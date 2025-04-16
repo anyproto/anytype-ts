@@ -59,7 +59,7 @@
 	.attachment.isVideo { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 	.attachment.isVideo {
 		.mediaVideo { border-radius: inherit; overflow: hidden; width: 100%; height: 100%; }
-		video { width: 100%; display: block; object-fit: cover; }
+		video { width: 100%; height: 100%; display: block; object-fit: cover; }
 	}
 
 	.attachment.isAudio { min-width: unset; }
