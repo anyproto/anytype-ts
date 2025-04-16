@@ -285,7 +285,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					<Label text={list.name} />
 					{list.description ? (
 						<Icon 
-							className="question withBackground"
+							className="question"
 							tooltipParam={{
 								text: list.description, 
 								className: 'relationGroupDescription',

@@ -81,7 +81,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 											<Label text={name} onClick={onToggle} />
 											{description ? (
 												<Icon
-													className="question withBackground"
+													className="question"
 													tooltipParam={{ 
 														text: description,
 														className: 'relationGroupDescription',
