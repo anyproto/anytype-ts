@@ -1007,8 +1007,8 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds.forEach(subId => {
-						if (subId == J.Constant.subId.chatPreview) {
-							subId = [ J.Constant.subId.chatPreview, spaceId, rootId ].join('-');
+						if (subId == J.Constant.subId.chatSpace) {
+							subId = [ J.Constant.subId.chatSpace, spaceId, rootId ].join('-');
 						};
 
 						S.Chat.setState(subId, mapped.state);
