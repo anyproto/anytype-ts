@@ -20,7 +20,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	isBottom = false;
 	isAutoLoadDisabled = false;
 	messageRefs: any = {};
-	lastMessage: any = null;
 	timeoutInterface = 0;
 	timeoutScroll = 0;
 	timeoutScrollStop = 0;
@@ -37,6 +36,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
+		this.onScrollToBottomClick = this.onScrollToBottomClick.bind(this);
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.scrollToBottomCheck = this.scrollToBottomCheck.bind(this);
@@ -115,6 +115,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					rootId={rootId}
 					blockId={blockId}
 					subId={subId}
+					onScrollToBottomClick={this.onScrollToBottomClick}
 					scrollToBottom={this.scrollToBottom}
 					scrollToMessage={this.scrollToMessage}
 					loadMessagesByOrderId={this.loadMessagesByOrderId}
@@ -201,11 +202,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		C.ChatSubscribeLastMessages(rootId, 0, subId, (message: any) => {
 			if (message.state) {
 				S.Chat.setState(subId, message.state);
-			};
-
-			const list = message.messages;
-			if (list && list.length) {
-				this.lastMessage = list[list.length - 1];
 			};
 
 			if (callBack) {
@@ -493,9 +489,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (!this.lastMessage || this.lastMessage.orderId < message.orderId) {
-			this.lastMessage = message;
-		};
 		this.loadDepsAndReplies([ message ], () => {
 			this.scrollToBottomCheck();
 		});
@@ -662,6 +655,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.scrolledItems.clear();
 	};
 
+	onScrollToBottomClick () {
+		this.loadMessages(1, true, this.scrollToBottom);
+	};
+
 	getMessageScrollOffset (id: string): number {
 		const ref = this.messageRefs[id];
 		if (!ref) {
@@ -726,22 +723,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		if (!this.hasScroll()) {
 			this.readScrolledMessages();
 			this.setIsBottom(true);
-			return;
-		};
-
-		if (this.lastMessage) {
-			const { id, orderId } = this.lastMessage;
-			const messages = this.getMessages();
-			const last = messages.find(it => it.id == this.lastMessage.id);
-
-			if (last) {
-				this.scrollToMessage(id)
-			} else {
-				this.loadMessagesByOrderId(orderId, () => {
-					this.scrollToMessage(id);
-				});
-			};
-
 			return;
 		};
 
