@@ -1,8 +1,8 @@
 @import "~scss/_mixins";
 
 .pageMainRelation,
-.settingsPage.pageSettingsRelation, {
-	.wrapper { width: 704px; margin: 0px auto; padding: 40px 0px 80px 0px; user-select: none; }
+.settingsPage.pageSettingsRelation {
+	.wrapper { width: 736px; margin: 0px auto; padding: 40px 16px 80px 16px; user-select: none; }
 	.wrapper.withIcon {
 		.editorControls {
 			#button-icon { display: none; }

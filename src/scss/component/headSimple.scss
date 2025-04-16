@@ -14,6 +14,7 @@
 	}
 	&.isType, &.isRelation {
 		.titleWrap { align-items: center; }
+		.editableWrap.title { width: calc(100% - 32px); }
 		.editableWrap.title {
 			.editable { @include text-overflow-nw; }
 		}
