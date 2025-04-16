@@ -6,10 +6,7 @@
 
         .title { @include text-header3; margin-bottom: 20px; }
 
-        .iconWrapper {
-            display: flex; width: 320px; height: 104px; border-radius: 320px; margin: 0px auto 28px; align-items: center; justify-content: space-around;
-            background: radial-gradient(50% 50% at 50% 50%, #80d1ff 0%, rgba(187, 231, 255, 0.00) 100%);
-        }
+        .iconWrapper { display: flex; width: 320px; height: 104px; border-radius: 320px; margin: 0px auto 28px; align-items: center; justify-content: space-around; }
         .icon { width: 68px; height: 72px; background-image: url('~img/icon/popup/confirm/invite.svg'); }
 
         .invitation { margin-bottom: 20px; user-select: text !important; word-wrap: break-word; }
