@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
+import { Navigation, Mousewheel } from 'swiper/modules';
 
 import Attachment from './attachment';
 import Buttons from './buttons';
@@ -214,7 +214,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 									spaceBetween={8}
 									onSwiper={swiper => this.swiper = swiper}
 									navigation={true}
-									modules={[ Navigation ]}
+									mousewheel={true}
+									modules={[ Navigation, Mousewheel ]}
 								>
 									{attachments.map(item => (
 										<SwiperSlide key={item.id}>
