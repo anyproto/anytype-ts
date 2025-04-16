@@ -36,6 +36,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
+		this.onScrollToBottomClick = this.onScrollToBottomClick.bind(this);
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.scrollToBottomCheck = this.scrollToBottomCheck.bind(this);
@@ -114,6 +115,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					rootId={rootId}
 					blockId={blockId}
 					subId={subId}
+					onScrollToBottomClick={this.onScrollToBottomClick}
 					scrollToBottom={this.scrollToBottom}
 					scrollToMessage={this.scrollToMessage}
 					loadMessagesByOrderId={this.loadMessagesByOrderId}
@@ -651,6 +653,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		S.Chat.setReadMentionStatus(subId, ids, true);
 
 		this.scrolledItems.clear();
+	};
+
+	onScrollToBottomClick () {
+		this.loadMessages(1, true, this.scrollToBottom);
 	};
 
 	getMessageScrollOffset (id: string): number {
