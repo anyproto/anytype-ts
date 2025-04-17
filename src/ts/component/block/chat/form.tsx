@@ -262,7 +262,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		if (storage) {
 			const text = String(storage.text || '');
 			const marks = storage.marks || [];
-			const attachments = this.checkLimit('attachments', storage.attachments || []);
+			const attachments = storage.attachments || [];
 			const length = text.length;
 
 			this.marks = marks;
@@ -606,16 +606,27 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	addAttachments (list: any[], callBack?: () => void) {
+		const { attachments } = this.state;
+		const limit = J.Constant.limit.chat.attachments;
+
 		list = list.map(it => {
 			it.timestamp = U.Date.now();
 			return it;
 		});
 
-		this.setAttachments(list.concat(this.state.attachments), callBack);
+		if (list.length + attachments.length > limit) {
+			Preview.toastShow({
+				icon: 'notice',
+				text: U.Common.sprintf(translate('toastChatAttachmentsLimitReached'), limit, U.Common.plural(limit, translate('pluralFile')).toLowerCase())
+			});
+			return;
+		};
+
+		this.setAttachments(list.concat(attachments), callBack);
 	};
 
 	setAttachments (list: any[], callBack?: () => void) {
-		this.setState({ attachments: this.checkLimit('attachments', list) }, callBack);
+		this.setState({ attachments: list }, callBack);
 	};
 
 	addBookmark (url: string, fromText?: boolean) {
@@ -1058,25 +1069,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	hasSelection (): boolean {
 		return this.range ? this.range.to - this.range.from > 0 : false;
-	};
-
-	checkLimit (type: string, list: any[]) {
-		const limit = J.Constant.limit.chat;
-
-		list = U.Common.arrayUniqueObjects(list, 'id');
-
-		if (list.length > limit[type]) {
-			list = list.slice(0, limit[type]);
-
-			if (type == 'attachments') {
-				Preview.toastShow({
-					icon: 'notice',
-					text: U.Common.sprintf(translate('toastChatAttachmentsLimitReached'), limit[type], U.Common.plural(limit[type], translate('pluralFile')).toLowerCase())
-				});
-			};
-		};
-
-		return list;
 	};
 
 	updateMarkup (value: string, from: number, to: number) {
