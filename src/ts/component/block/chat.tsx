@@ -765,7 +765,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	scrollToBottomCheck () {
 		if (this.isBottom) {
 			window.clearTimeout(this.timeoutScroll);
-			this.timeoutScroll = window.setTimeout(() => this.scrollToBottom(true), 10);
+			this.timeoutScroll = window.setTimeout(() => this.scrollToBottom(false), 10);
 		};
 	};
 
