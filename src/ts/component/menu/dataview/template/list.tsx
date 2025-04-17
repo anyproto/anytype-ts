@@ -33,6 +33,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		const ItemAdd = () => (
 			<div className="previewObject small">
@@ -43,9 +44,9 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 		const Item = (item: any) => {
 			const cn = [ 'item' ];
+			const onMore = canWrite ? e => this.onMore(e, item) : null;
 
 			let content = null;
-
 			if (item.id == J.Constant.templateId.new) {
 				content = <ItemAdd {...item} />;
 			} else {
@@ -53,8 +54,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					<PreviewObject
 						rootId={item.id}
 						size={previewSize}
-						onMore={e => this.onMore(e, item)}
-						onContextMenu={e => this.onMore(e, item)}
+						onMore={onMore}
+						onContextMenu={onMore}
 					/>
 				);
 			};
