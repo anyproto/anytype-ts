@@ -167,7 +167,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				<div className="side left">
 					<div className="link">
 						<IconObject object={object} size={14} />
-						{U.Common.shortUrl(source)}
+						<div className="source">{U.Common.shortUrl(source)}</div>
 					</div>
 					<ObjectName object={object} />
 					<ObjectDescription object={object} />
