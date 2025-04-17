@@ -88,9 +88,9 @@ export interface BlockComponent {
 	onUpdate?(): void;
 	getWrapperWidth?(): number;
 	blockRemove?(focused?: I.Block): void;
-	renderMentions?(rootId: string, node: any, marks: I.Mark[], getValue: () => string): void;
-	renderObjects?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any): void;
-	renderLinks?(node: any, marks: I.Mark[], getValue: () => string, props: any): void;
+	renderMentions?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, param?: any): void;
+	renderObjects?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any): void;
+	renderLinks?(node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any): void;
 	renderEmoji?(node: any): void;
 	checkMarkOnBackspace?(value: string, range: I.TextRange, marks: I.Mark[]): { value: string, marks: I.Mark[], save: boolean };
 };

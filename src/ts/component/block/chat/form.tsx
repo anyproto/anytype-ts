@@ -1114,10 +1114,17 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { rootId, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
 		const node = this.refEditable.getNode();
 		const value = this.refEditable.getTextValue();
+		const onChange = (text: string, marks: I.Mark[]) => {
+			this.marks = marks;
+			this.updateValue(text);
+			this.updateMarkup(text, this.range.from, this.range.to);
+		};
 
-		renderMentions(rootId, node, this.marks, () => value);
-		renderObjects(rootId, node, this.marks, () => value, this.props);
-		renderLinks(node, this.marks, () => value, this.props);
+		const param = { onChange };
+
+		renderMentions(rootId, node, this.marks, () => value, param);
+		renderObjects(rootId, node, this.marks, () => value, this.props, param);
+		renderLinks(node, this.marks, () => value, this.props, param);
 		renderEmoji(node);
 	};
 
