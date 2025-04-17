@@ -127,7 +127,10 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
 				allowedRelation = false;
 			};
-			if (U.Object.isTypeOrRelationLayout(object.layout)) {
+			if (U.Object.isTypeLayout(object.layout)) {
+				allowedRelation = false;
+			};
+			if (U.Object.isRelationLayout(object.layout)) {
 				allowedRelation = false;
 				allowedWidget = false;
 				allowedLinkTo = false;
