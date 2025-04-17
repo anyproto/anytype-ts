@@ -161,7 +161,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				>
 					<div className="navigation">
 						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt="@" /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" cnt={mc} />
+						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
 					</div>
 
 					<div className="form">
