@@ -94,4 +94,12 @@
 			.icon.file { background-image: url('~img/icon/chat/attachment/file.svg'); }
 		}
 	}
+
+	/* Chat message */
+	.menu.menuSelect.chatMessage {
+		.item {
+			.icon.reaction { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
+			.icon.reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
+		}
+	}
 }
