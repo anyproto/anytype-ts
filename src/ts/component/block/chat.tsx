@@ -142,6 +142,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					const target = this.getMessages().find(it => it.orderId == messageOrderId);
 
 					this.scrollToMessage(target?.id);
+
+					console.log('SCROLL TO MESSAGE', target?.id);
 				});
 			} else {
 				this.loadMessages(1, true, this.scrollToBottom);
@@ -862,10 +864,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	setIsBottom (v: boolean) {
-		if (v != this.isBottom) {
-			this.refForm?.setState({ isBottom: v });
-		};
 		this.isBottom = v;
+
+		const node = $(this.refForm?.node);
+		const btn = node.find(`#navigation-${I.ChatReadType.Message}`);
+
+		btn.toggleClass('active', !v);
 	};
 
 	setAutoLoadDisabled (v: boolean) {

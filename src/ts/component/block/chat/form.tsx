@@ -27,7 +27,6 @@ interface Props extends I.BlockComponent {
 interface State {
 	attachments: any[];
 	charCounter: number;
-	isBottom: boolean;
 };
 
 const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
@@ -49,7 +48,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	state = {
 		attachments: [],
 		charCounter: 0,
-		isBottom: false,
 	};
 
 	constructor (props: Props) {
@@ -89,9 +87,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	render () {
 		const { subId, readonly, getReplyContent } = this.props;
-		const { attachments, charCounter, isBottom } = this.state;
+		const { attachments, charCounter } = this.state;
 		const value = this.getTextValue();
 		const { messageCounter, mentionCounter } = S.Chat.getState(subId);
+		const mc = messageCounter > 999 ? '999+' : messageCounter;
 
 		if (readonly) {
 			return (
@@ -139,6 +138,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 		};
 
+		const Button = (item: any) => (
+			<div id={`navigation-${item.type}`} className={`btn ${item.className || ''}`} onClick={() => this.onNavigationClick(item.type)}>
+				<div className="bg" />
+				<Icon className={item.icon} />
+
+				{item.cnt ? (
+					<div className="counter">
+						<Label text={String(item.cnt)} />
+					</div>
+				) : ''}
+			</div>
+		);
+
 		return (
 			<>
 				<div ref={ref => this.refDummy = ref} className="formDummy" />
@@ -147,30 +159,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					id="formWrapper" 
 					className="formWrapper"
 				>
-
 					<div className="navigation">
-						{mentionCounter ? (
-							<div className="btn" onClick={() => this.onNavigationClick(I.ChatReadType.Mention)}>
-								<div className="bg" />
-								<Icon className="mention" />
-								<div className="counter">
-									<Label text={String(mentionCounter)} />
-								</div>
-							</div>
-						) : ''}
-
-						{!isBottom || messageCounter ? (
-							<div className="btn" onClick={() => this.onNavigationClick(I.ChatReadType.Message)}>
-								<div className="bg" />
-								<Icon className="arrow" />
-
-								{messageCounter ? (
-									<div className="counter">
-										<Label text={String(messageCounter)} />
-									</div>
-								) : ''}
-							</div>
-						) : ''}
+						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt="@" /> : ''}
+						<Button type={I.ChatReadType.Message} icon="arrow" cnt={mc} />
 					</div>
 
 					<div className="form">
