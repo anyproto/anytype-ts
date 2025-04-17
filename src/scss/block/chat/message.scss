@@ -10,7 +10,7 @@
 		.iconObject { display: none; }
 	}
 
-	> .flex > .side.right { display: flex; flex-direction: column; position: relative; }
+	> .flex > .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; }
 
 	.bubbleWrapper { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
 	.bubbleWrapper {
@@ -29,18 +29,10 @@
 	.bubble {
 		.textWrapper { line-height: 20px; padding: 8px 12px; }
 		.text { user-select: text !important; display: inline; }
-		.time { @include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 3px; }
+		.time { @include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 4px; }
 
 		.attachments { padding: 4px; }
 	}
-	.bubble.withAttachment {
-		.textWrapper { padding: 8px 12px 0px; }
-	}
-	.bubble.withAttachment.withMedia { flex-direction: column-reverse; }
-	.bubble.withAttachment.withMedia {
-		.textWrapper { padding: 0px 12px 8px; }
-	}
-
 
 	.icon.reactionAdd { width: 28px; height: 28px; background: var(--color-shape-highlight-medium) url('~img/icon/chat/buttons/reaction1.svg') 50% 50% no-repeat; background-size: 20px; border-radius: 50%; }
 	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-color: var(--color-shape-highlight-dark); }
@@ -55,7 +47,7 @@
 		.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
 
 		.textWrapper { padding: 0px; width: 100%; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
-		.name { @include text-small; font-weight: 500; }
+		.name { @include text-small; font-weight: 500; padding-left: 12px; }
 		.text { @include clamp3; }
 	}
 	.reply.withAttachment {
@@ -68,7 +60,7 @@
 		}
 	}
 
-	.author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 4px; }
+	.author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 4px; padding-left: 12px; }
 	.author {
 		.name { @include text-small; @include text-overflow-nw; font-weight: 500; }
 	}
@@ -82,7 +74,7 @@
 		.item:hover { color: var(--color-text-primary); }
 	}
 
-	.reactions { padding: 4px 0px 8px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center; }
+	.reactions { padding: 4px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center; }
 	.reactions {
 		.reaction { 
 			display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
@@ -105,6 +97,8 @@
 .message.isSelf {
 	> .flex { flex-direction: row-reverse; }
 
+	> .flex > .side.right { align-items: flex-end; }
+
 	.bubbleWrapper { flex-direction: row-reverse; }
 	.bubbleWrapper {
 		.controls { flex-direction: row-reverse; }
@@ -112,6 +106,28 @@
 	}
 
 	.reactions { flex-direction: row-reverse; }
+}
+
+.message.withAttachment {
+	.bubble {
+		.textWrapper { padding: 8px 12px 0px; }
+	}
+}
+.message.withAttachment:not(.withMedia) {
+	.bubbleWrapper {
+		.bubble { width: 360px; }
+	}
+}
+
+.message.withAttachment.withMedia {
+	.bubble { flex-direction: column-reverse; width: 540px; }
+	.bubble {
+		.textWrapper { padding: 0px 12px 8px; }
+	}
+
+	&.mediaLayout-1 {
+		.bubble { width: 360px; }
+	}
 }
 
 .message.canExpand {
@@ -143,6 +159,7 @@
 }
 
 .message:not(.withText) {
+	.bubble { padding: 4px; }
 	.bubble {
 		.textWrapper { display: none; }
 		.attachments { padding: 0px;}

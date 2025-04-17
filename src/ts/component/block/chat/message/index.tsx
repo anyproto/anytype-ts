@@ -130,10 +130,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		};
 
 		if (hasAttachments) {
-			cnBubble.push('withAttachment');
+			cn.push('withAttachment');
 
 			if (attachmentsLayout) {
-				cnBubble.push('withMedia');
+				cn.push('withMedia');
+				cn.push(`mediaLayout-${attachments.length}`)
 			};
 		};
 

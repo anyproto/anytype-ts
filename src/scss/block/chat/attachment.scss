@@ -74,10 +74,9 @@
 	}
 }
 
-.attachments:not(.withLayout) { flex-direction: column; }
-
-.attachments.isSingle {
-	.attachment { width: 540px; }
+.attachments:not(.withLayout) { flex-direction: column; width: 100%; }
+.attachments:not(.withLayout) {
+	.attachment { width: 100%; }
 }
 
 .attachments.isSingle {
