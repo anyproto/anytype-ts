@@ -192,7 +192,7 @@ class UtilRouter {
 					const spaces = U.Space.getList().filter(it => (it.targetSpaceId != id) && it.isLocalOk);
 
 					if (spaces.length) {
-						this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam, false);
+						this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam, useFallback);
 					} else {
 						U.Router.go('/main/void', routeParam);
 					};
