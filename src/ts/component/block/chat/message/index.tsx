@@ -145,6 +145,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				className={cn.join(' ')}
 				onContextMenu={onContextMenu}
 			>
+				{isNew ? (
+					<div className="newMessages">
+						<Label text={translate('blockChatNewMessages')} />
+					</div>
+				) : ''}
+
 				<div className="flex">
 					{userpicNode}
 					<div className="side right">
@@ -211,12 +217,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 						</div>
 					</div>
 				</div>
-
-				{isNew ? (
-					<div className="newMessages">
-						<Label text={translate('blockChatNewMessages')} />
-					</div>
-				) : ''}
 			</div>
 		);
 	};
