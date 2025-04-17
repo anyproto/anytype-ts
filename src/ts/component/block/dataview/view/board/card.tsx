@@ -84,7 +84,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				draggable={true}
 				onDragStart={e => onDragStartCard(e, groupId, record)}
 				onClick={e => this.onClick(e)}
-				onContextMenu={e => onContext(e, record.id)}
+				onContextMenu={e => onContext(e, record.id, subId)}
 				{...U.Common.dataProps({ id: record.id })}
 			>
 				{content}

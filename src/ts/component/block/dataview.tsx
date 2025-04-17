@@ -979,13 +979,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onContext (e: any, id: string): void {
+	onContext (e: any, id: string, subId?: string): void {
 		e.preventDefault();
 		e.stopPropagation();
 
+		subId = subId || this.getSubId();
+
 		const { block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
-		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		const view = this.getView();
 
