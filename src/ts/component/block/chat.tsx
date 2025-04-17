@@ -512,7 +512,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const menuParam: Partial<I.MenuParam> = {
 			className: 'chatMessage',
 			vertical: I.MenuDirection.Bottom,
-			horizontal: onMore ? I.MenuDirection.Center : I.MenuDirection.Left,
+			horizontal: I.MenuDirection.Left,
 			onOpen: () => {
 				$(message).addClass('hover');
 				container.addClass('over');
@@ -525,6 +525,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				options: this.getMessageMenuOptions(item, onMore),
 				onSelect: (e, option) => {
 					switch (option.id) {
+						case 'reaction': {
+							this.messageRefs[item.id].onReactionAdd();
+							break;
+						};
+
+						case 'copy': {
+							U.Common.clipboardCopy({ text: item.content.text });
+							break;
+						};
+
 						case 'reply': {
 							this.refForm.onReply(item);
 							break;
@@ -687,9 +697,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getMessageMenuOptions (message, noControls) {
-		let options: any[] = [
-			{ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') },
-		];
+		let options: any[] = [];
+
+		if (message.content.text) {
+			options.push({ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') });
+		};
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
@@ -707,7 +719,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		if (S.Common.config.experimental) {
-			options.unshift({ id: 'unread', icon: 'empty', name: 'Unread' });
+			options.push({ id: 'unread', icon: 'empty', name: 'Unread' });
 		};
 
 		return options;
