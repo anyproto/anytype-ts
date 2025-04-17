@@ -144,7 +144,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					this.scrollToMessage(target?.id);
 				});
 			} else {
-				this.loadMessages(1, true, () => this.scrollToBottom());
+				this.loadMessages(1, true, this.scrollToBottom);
 			};
 		});
 	};
@@ -491,13 +491,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onMessageAdd (message: I.ChatMessage, subIds: string[]) {
 		const subId = this.getSubId();
-		if (!subIds.includes(subId)) {
-			return;
+		if (subIds.includes(subId)) {
+			this.loadDepsAndReplies([ message ], () => this.scrollToBottomCheck());
 		};
-
-		this.loadDepsAndReplies([ message ], () => {
-			this.scrollToBottomCheck();
-		});
 	};
 
 	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
@@ -662,7 +658,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onScrollToBottomClick () {
-		this.loadMessages(1, true, this.scrollToBottom);
+		this.loadMessages(1, true, () => this.scrollToBottom(true));
 	};
 
 	getMessageScrollOffset (id: string): number {
@@ -715,7 +711,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const { isPopup } = this.props;
 		const container = U.Common.getScrollContainer(isPopup);
-		const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
 		const top = this.getMessageScrollOffset(id);
 		const y = Math.max(0, top - container.height() / 2 - J.Size.header);
 
@@ -728,6 +723,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		if (animate) {
+			const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
 			animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
 		} else {
 			container.scrollTop(y);
@@ -735,7 +731,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 	};
 
-	scrollToBottom () {
+	scrollToBottom (animate?: boolean) {
 		if (!this.hasScroll()) {
 			this.readScrolledMessages();
 			this.setIsBottom(true);
@@ -746,19 +742,28 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = node.find('#scrollWrapper');
+		const y = wrapper.outerHeight();
 
 		this.setAutoLoadDisabled(true);
 
-		container.scrollTop(wrapper.outerHeight());
+		const cb = () => {
+			this.readScrolledMessages();
+			this.setAutoLoadDisabled(false);
+		};
 
-		this.readScrolledMessages();
-		this.setAutoLoadDisabled(false);
+		if (animate) {
+			const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
+			animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
+		} else {
+			container.scrollTop(y);
+			cb();
+		};
 	};
 
 	scrollToBottomCheck () {
 		if (this.isBottom) {
 			window.clearTimeout(this.timeoutScroll);
-			this.timeoutScroll = window.setTimeout(() => this.scrollToBottom(), 10);
+			this.timeoutScroll = window.setTimeout(() => this.scrollToBottom(true), 10);
 		};
 	};
 
