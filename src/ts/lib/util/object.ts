@@ -742,7 +742,7 @@ class UtilObject {
 		const mapper = it => S.Record.getRelationByKey(it)?.id;
 		const newDetails: any = {
 			isNew: true,
-			type: type.id,
+			type: type?.id,
 			layout: I.ObjectLayout.Type,
 			defaultTypeId: String(S.Record.getPageType()?.id) || '',
 			recommendedRelations: recommended.map(mapper).filter(it => it),
