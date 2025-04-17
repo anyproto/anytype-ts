@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { analytics, I, J, keyboard, C, S, sidebar, Storage, translate, U } from 'Lib';
-import { Button, Filter, Icon, IconObject, Title } from 'Component';
+import { Button, Filter, Icon, IconObject, Title, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends React.Component {
@@ -81,7 +81,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 					onContextMenu={() => this.onContext(item)}
 				>
 					<IconObject object={item} />
-					<div className="name">{item.name}</div>
+					<ObjectName object={item} />
 				</div>
 			);
 		};

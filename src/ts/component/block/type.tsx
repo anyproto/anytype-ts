@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, ObjectName } from 'Component';
 import { I, C, S, U, J, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
@@ -40,7 +40,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 					onMouseLeave={this.onOut}
 				>
 					{item.icon ? <Icon className={item.icon} /> : ''}
-					{item.name}
+					<ObjectName object={item} />
 				</div>
 			);
 		};

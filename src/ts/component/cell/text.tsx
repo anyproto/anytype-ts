@@ -319,6 +319,9 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		if (!isEditing) {
 			if (U.Object.isNoteLayout(record.layout)) {
 				val = record.snippet;
+			} else
+			if (U.Object.isTypeLayout(record.layout)) {
+				val = record.name || record.pluralName || translate('defaultNamePage');
 			} else {
 				val = val || translate('defaultNamePage');
 			};

@@ -543,6 +543,9 @@ class UtilData {
 				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
 
+		items = S.Record.checkHiddenObjects(items);
+		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
+
 		if (limit) {
 			items = items.slice(0, limit);
 		};
@@ -556,9 +559,6 @@ class UtilData {
 		};
 
 		items = items.filter(it => it);
-		items = S.Record.checkHiddenObjects(items);
-
-		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
 		return items;
 	};
 
