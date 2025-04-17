@@ -703,7 +703,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onReadStop();
 	};
 
-	scrollToMessage (id: string) {
+	scrollToMessage (id: string, animate?: boolean) {
 		if (!id) {
 			return;
 		};
@@ -714,17 +714,25 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		const { isPopup } = this.props;
-		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
+		const container = U.Common.getScrollContainer(isPopup);
+		const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
 		const top = this.getMessageScrollOffset(id);
 		const y = Math.max(0, top - container.height() / 2 - J.Size.header);
 
 		this.setIsBottom(false);
 		this.setAutoLoadDisabled(true);
 
-		container.stop(true, true).animate({ scrollTop: y }, 300, () => {
+		const cb = () => {
 			this.readScrolledMessages();
 			this.setAutoLoadDisabled(false);
-		});
+		};
+
+		if (animate) {
+			animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
+		} else {
+			container.scrollTop(y);
+			cb();
+		};
 	};
 
 	scrollToBottom () {
@@ -768,7 +776,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const message = S.Chat.getMessage(subId, item.replyToMessageId);
 
 		if (message) {
-			this.scrollToMessage(message.id);
+			this.scrollToMessage(message.id, true);
 			return;
 		};
 
@@ -783,7 +791,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 
 			S.Chat.clear(subId);
-			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id));
+			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id, true));
 		});
 	};
 
