@@ -73,7 +73,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 									textConfirm: translate('commonOpenSpace'),
 									textCancel: translate('commonCancel'),
 									onConfirm: () => {
-										U.Router.switchSpace(message.spaceId, '', false, {});
+										U.Router.switchSpace(message.spaceId, '', false, {}, false);
 									},
 								},
 							});

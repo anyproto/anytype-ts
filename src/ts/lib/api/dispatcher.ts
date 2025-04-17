@@ -986,7 +986,7 @@ class Dispatcher {
 							};
 
 							if (spaceId != space) {
-								U.Router.switchSpace(spaceId, '', false, { onRouteChange: open });
+								U.Router.switchSpace(spaceId, '', false, { onRouteChange: open }, false);
 							} else {
 								open();
 							};

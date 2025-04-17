@@ -106,7 +106,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 							onCreate(message.objectId);
 						};
 					} 
-				});
+				}, false);
 
 				analytics.event('CreateSpace', { usecase: I.Usecase.Empty, middleTime: message.middleTime, route });
 				analytics.event('SelectUsecase', { type: I.Usecase.Empty });

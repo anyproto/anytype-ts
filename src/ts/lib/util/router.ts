@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, keyboard } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, keyboard, translate } from 'Lib';
 
 interface RouteParam {
 	page: string; 
@@ -92,7 +92,7 @@ class UtilRouter {
 		sidebar.rightPanelToggle(false, false, keyboard.isPopup());
 
 		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
-			this.switchSpace(routeParam.spaceId, route, false, param);
+			this.switchSpace(routeParam.spaceId, route, false, param, false);
 			return;
 		};
 
@@ -153,7 +153,7 @@ class UtilRouter {
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
 	};
 
-	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any) {
+	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any, useFallback: boolean) {
 		if (this.isOpening) {
 			return;
 		};
@@ -179,12 +179,23 @@ class UtilRouter {
 			this.isOpening = false;
 
 			if (message.error.code) {
-				const spaces = U.Space.getList().filter(it => (it.targetSpaceId != id) && it.isLocalOk);
-
-				if (spaces.length) {
-					this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam);
+				if (!useFallback) {
+					S.Popup.open('confirm', {
+						data: {
+							icon: 'error',
+							title: translate('commonError'),
+							text: message.error.description,
+							canCancel: true,
+						},
+					});
 				} else {
-					U.Router.go('/main/void', routeParam);
+					const spaces = U.Space.getList().filter(it => (it.targetSpaceId != id) && it.isLocalOk);
+
+					if (spaces.length) {
+						this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam, false);
+					} else {
+						U.Router.go('/main/void', routeParam);
+					};
 				};
 				return;
 			};

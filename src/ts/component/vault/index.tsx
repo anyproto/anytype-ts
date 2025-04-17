@@ -120,7 +120,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
 			if (item.targetSpaceId != S.Common.space) {
-				U.Router.switchSpace(item.targetSpaceId, '', true, { animate: true });
+				U.Router.switchSpace(item.targetSpaceId, '', true, { animate: true }, false);
 			};
 		};
 
@@ -164,7 +164,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			default: {
-				U.Router.switchSpace(item.targetSpaceId, '', true, { animate: true });
+				U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
 				break;
 			};
 		};

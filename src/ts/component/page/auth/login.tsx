@@ -79,7 +79,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			const routeParam = { replace: true };
 
 			if (spaceId) {
-				U.Router.switchSpace(spaceId, '', false, routeParam);
+				U.Router.switchSpace(spaceId, '', false, routeParam, true);
 			} else {
 				Animation.from(() => {
 					U.Data.onAuthWithoutSpace(routeParam);

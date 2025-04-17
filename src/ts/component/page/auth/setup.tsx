@@ -83,7 +83,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			};
 
 			if (spaceId) {
-				U.Router.switchSpace(spaceId, '', false, routeParam);
+				U.Router.switchSpace(spaceId, '', false, routeParam, true);
 			} else {
 				U.Data.onAuthWithoutSpace(routeParam);
 			};
