@@ -27,7 +27,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	render () {
-		const { rootId, id, isNew, readonly, subId, scrollToBottom, onContextMenu, onMore, onReplyEdit } = this.props;
+		const { rootId, id, isNew, readonly, subId, hasMore, scrollToBottom, onContextMenu, onMore, onReplyEdit } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(subId, id);
@@ -205,7 +205,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 								<div className="controls">
 									{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} /> : ''}
 									<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltipParam={{ text: translate('blockChatReply') }} />
-									<Icon className="more" onClick={onMore} />
+									{hasMore ? <Icon className="more" onClick={onMore} /> : '' }
 								</div>
 							) : ''}
 						</div>

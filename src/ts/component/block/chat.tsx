@@ -66,24 +66,29 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						<Label text={date} />
 					</div>
 
-					{(item.list || []).map(item => (
-						<Message
-							ref={ref => this.messageRefs[item.id] = ref}
-							key={item.id}
-							{...this.props}
-							id={item.id}
-							rootId={rootId}
-							blockId={blockId}
-							subId={subId}
-							isNew={item.orderId == this.firstUnreadOrderId}
-							scrollToBottom={this.scrollToBottomCheck}
-							onContextMenu={e => this.onContextMenu(e, item)}
-							onMore={e => this.onContextMenu(e, item, true)}
-							onReplyEdit={e => this.onReplyEdit(e, item)}
-							onReplyClick={e => this.onReplyClick(e, item)}
-							getReplyContent={this.getReplyContent}
-						/>
-					))}
+					{(item.list || []).map(item => {
+						const hasMore = !!this.getMessageMenuOptions(item, true).length;
+
+						return (
+							<Message
+								ref={ref => this.messageRefs[item.id] = ref}
+								key={item.id}
+								{...this.props}
+								id={item.id}
+								rootId={rootId}
+								blockId={blockId}
+								subId={subId}
+								isNew={item.orderId == this.firstUnreadOrderId}
+								hasMore={hasMore}
+								scrollToBottom={this.scrollToBottomCheck}
+								onContextMenu={e => this.onContextMenu(e, item)}
+								onMore={e => this.onContextMenu(e, item, true)}
+								onReplyEdit={e => this.onReplyEdit(e, item)}
+								onReplyClick={e => this.onReplyClick(e, item)}
+								getReplyContent={this.getReplyContent}
+							/>
+						);
+					})}
 				</div>
 			);
 		};
@@ -714,8 +719,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			options = ([
 				{ id: 'reaction',icon: 'reaction',  name: translate('blockChatReactionAdd') },
 				{ id: 'reply',icon: 'reply',  name: translate('blockChatReply') },
-				{ isDiv: true },
-			]).concat(options);
+				options.length ? { isDiv: true } : null,
+			].filter(it => it)).concat(options);
 		};
 
 		if (S.Common.config.experimental) {
