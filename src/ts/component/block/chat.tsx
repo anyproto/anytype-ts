@@ -226,10 +226,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				return;
 			};
 
-			const messages = message.messages || [];
-			const state = message.state;
+			if (message.state) {
+				S.Chat.setState(subId, message.state);
+			};
 
-			S.Chat.setState(subId, state);
+			const messages = message.messages || [];
 
 			this.loadDepsAndReplies(messages, () => {
 				if (messages.length && clear) {
@@ -341,8 +342,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					list = list.concat(message.messages);
 				};
 
-				S.Chat.set(subId, list);
-				this.loadDepsAndReplies(list, callBack);
+				this.loadDepsAndReplies(list, () => {
+					S.Chat.set(subId, list);
+
+					if (callBack) {
+						callBack();
+					};
+				});
 			});
 		});
 	};
@@ -591,6 +597,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const list = this.getMessagesInViewport();
 
 		this.setIsBottom(false);
+
+		console.log(this.isAutoLoadDisabled);
 
 		if (!this.isAutoLoadDisabled) {
 			if (st <= 0) {

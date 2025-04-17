@@ -45,7 +45,7 @@
 	.icon.reactionAdd { width: 28px; height: 28px; background: var(--color-shape-highlight-medium) url('~img/icon/chat/buttons/reaction1.svg') 50% 50% no-repeat; background-size: 20px; border-radius: 50%; }
 	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-color: var(--color-shape-highlight-dark); }
 
-	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; }
+	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; cursor: default; }
 	.reply {
 		.bubble { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 8px 12px; border-radius: 16px; }
 
