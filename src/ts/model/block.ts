@@ -417,13 +417,7 @@ class Block implements I.Block {
 
 			l = t.length;
 
-			console.log(JSON.stringify(t, null, 2));
-
-			const charCodes = Array.from(t).map(char => char.charCodeAt(0));
-			console.log(JSON.stringify(charCodes, null, 2));
-
-			// Last line break doesn't expand range.to
-			if (l && ((t[l - 1] == '\n') || (t[l - 1] == ' '))) {
+			if (l && (t[l - 1] == '\n')) {
 				l--;
 			};
 		};

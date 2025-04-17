@@ -743,7 +743,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					space = '';
 				};
 
-				const reg = new RegExp(`^(${k})${space}`);
+				const reg = new RegExp(`^(${k}${space})`);
 				const match = value.match(reg);
 
 				if (!match) {

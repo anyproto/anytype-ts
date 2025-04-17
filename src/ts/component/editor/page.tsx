@@ -1447,8 +1447,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const replace = !range.to && block.isTextList() && !length;
 
-		console.log(block, length, range.to, replace);
-
 		if (block.isTextCode() && isEnter) {
 			return;
 		};
