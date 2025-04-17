@@ -12,7 +12,7 @@ const PreviewIndex = observer(forwardRef(() => {
 	const nodeRef = useRef(null);
 	const polygonRef = useRef(null);
 	const { preview } = S.Common;
-	const { type, target, object: initialObject, marks, range, noUnlink, noEdit, x, y, width, height, onChange, withPlural } = preview;
+	const { type, markType, target, object: initialObject, marks, range, noUnlink, noEdit, x, y, width, height, onChange, withPlural } = preview;
 	const [ object, setObject ] = useState(null);
 	const cn = [ 'previewWrapper' ];
 	const win = $(window);
@@ -45,7 +45,7 @@ const PreviewIndex = observer(forwardRef(() => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const mark = Mark.getInRange(marks, I.MarkType.Link, range);
+		const mark = Mark.getInRange(marks, markType, range);
 		const rect = U.Common.objectCopy($('#preview').get(0).getBoundingClientRect());
 
 		S.Menu.open('blockLink', {
@@ -63,21 +63,8 @@ const PreviewIndex = observer(forwardRef(() => {
 	};
 	
 	const onUnlink = () => {
-		onChange(Mark.toggleLink({ type: getMarkType(), param: '', range }, preview.marks));
+		onChange(Mark.toggleLink({ type: markType, param: '', range }, preview.marks));
 		Preview.previewHide(true);
-	};
-
-	const getMarkType = () => {
-		switch (type) {
-			case I.PreviewType.Link: {
-				return I.MarkType.Link;
-			};
-
-			case I.PreviewType.Default:
-			case I.PreviewType.Object: {
-				return I.MarkType.Object;
-			};
-		};
 	};
 
 	const position = () => {

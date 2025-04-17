@@ -55,15 +55,7 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
-	useEffect(() => {
-		if (initialObject) {
-			setObject(initialObject);
-		};
-	});
-
-	useEffect(() => {
-		initialObject ? position && position() : load();
-	});
+	useEffect(() => load(), [ rootId ]);
 
 	return (
 		<div className={cn.join(' ')}>

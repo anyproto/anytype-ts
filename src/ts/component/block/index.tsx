@@ -815,17 +815,11 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-
+		const getParam = (item: any) => {
 			const range = String(item.attr('data-range') || '').split('-');
 			const url = String(item.attr('href') || '');
 			const scheme = U.Common.getScheme(url);
 			const isInside = scheme == J.Constant.protocol;
-
-			if (!url) {
-				return;
-			};
 
 			let route = '';
 			let target;
@@ -847,12 +841,21 @@ const Block = observer(class Block extends React.Component<Props> {
 				type = I.PreviewType.Link;
 			};
 
+			return { route, target, type, range, isInside };
+		};
+
+		items.each((i: number, item: any) => {
+			item = $(item);
+
 			item.off('click.link').on('click.link', e => {
 				e.preventDefault();
 			});
 
 			item.off('mousedown.link').on('mousedown.link', e => {
 				e.preventDefault();
+
+				const item = $(e.currentTarget);
+				const { isInside, route, target } = getParam(item);
 
 				isInside ? U.Router.go(route, {}) : Action.openUrl(target);
 			});
@@ -863,9 +866,19 @@ const Block = observer(class Block extends React.Component<Props> {
 					return;
 				};
 
+				const item = $(e.currentTarget);
+				const url = String(item.attr('href') || '');
+
+				if (!url) {
+					return;
+				};
+
+				const { target, type, range } = getParam(item);
+
 				Preview.previewShow({
 					target,
 					type,
+					markType: I.MarkType.Link,
 					element: item,
 					range: { 
 						from: Number(range[0]) || 0,
@@ -880,6 +893,8 @@ const Block = observer(class Block extends React.Component<Props> {
 
 						const parsed = Mark.fromHtml(getValue(), restricted);
 						this.setMarks(parsed.text, marks);
+
+						console.log(marks);
 					},
 					noUnlink: readonly,
 					noEdit: readonly,
@@ -973,6 +988,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 				Preview.previewShow({
 					target: object.id,
+					markType: I.MarkType.Mention,
 					object,
 					element: name,
 					range: { 
@@ -1040,6 +1056,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 				Preview.previewShow({
 					target: object.id,
+					markType: I.MarkType.Object,
 					object,
 					element: item,
 					marks,
