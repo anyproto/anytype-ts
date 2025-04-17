@@ -1178,6 +1178,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	resize () {
+		const { isPopup } = this.props;
+		if (isPopup) {
+			return;
+		};
+
 		const node = $(this.node);
 		const dummy = $(this.refDummy);
 

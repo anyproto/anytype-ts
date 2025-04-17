@@ -93,7 +93,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				id="pageFlex" 
 				className={[ 'pageFlex', (isPopup ? 'isPopup' : 'isFull') ].join(' ')}
 			>
-				<div id="sidebarDummyLeft" className="sidebarDummy" />
+				{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
 				<div id="page" className={`page ${this.getClass('page')}`}>
 					{Component ? (
 						<Component ref={ref => this.refChild = ref} {...this.props} />
