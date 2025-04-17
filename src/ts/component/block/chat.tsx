@@ -66,24 +66,29 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						<Label text={date} />
 					</div>
 
-					{(item.list || []).map(item => (
-						<Message
-							ref={ref => this.messageRefs[item.id] = ref}
-							key={item.id}
-							{...this.props}
-							id={item.id}
-							rootId={rootId}
-							blockId={blockId}
-							subId={subId}
-							isNew={item.orderId == this.firstUnreadOrderId}
-							scrollToBottom={this.scrollToBottomCheck}
-							onContextMenu={e => this.onContextMenu(e, item)}
-							onMore={e => this.onContextMenu(e, item, true)}
-							onReplyEdit={e => this.onReplyEdit(e, item)}
-							onReplyClick={e => this.onReplyClick(e, item)}
-							getReplyContent={this.getReplyContent}
-						/>
-					))}
+					{(item.list || []).map(item => {
+						const hasMore = !!this.getMessageMenuOptions(item, true).length;
+
+						return (
+							<Message
+								ref={ref => this.messageRefs[item.id] = ref}
+								key={item.id}
+								{...this.props}
+								id={item.id}
+								rootId={rootId}
+								blockId={blockId}
+								subId={subId}
+								isNew={item.orderId == this.firstUnreadOrderId}
+								hasMore={hasMore}
+								scrollToBottom={this.scrollToBottomCheck}
+								onContextMenu={e => this.onContextMenu(e, item)}
+								onMore={e => this.onContextMenu(e, item, true)}
+								onReplyEdit={e => this.onReplyEdit(e, item)}
+								onReplyClick={e => this.onReplyClick(e, item)}
+								getReplyContent={this.getReplyContent}
+							/>
+						);
+					})}
 				</div>
 			);
 		};
@@ -505,22 +510,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		const { isPopup } = this.props;
-		const { account } = S.Auth;
-		const { config } = S.Common;
 		const blockId = this.getBlockId();
 		const message = `#block-${blockId} #item-${item.id}`;
 		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
-		const isSelf = item.creator == account.id;
-		const options: any[] = [
-			config.experimental ? { id: 'unread', name: 'Unread' } : null,
-			{ id: 'reply', name: translate('blockChatReply') },
-			isSelf ? { id: 'edit', name: translate('commonEdit') } : null,
-			isSelf ? { id: 'delete', name: translate('commonDelete'), color: 'red' } : null,
-		].filter(it => it);
 
 		const menuParam: Partial<I.MenuParam> = {
+			className: 'chatMessage',
 			vertical: I.MenuDirection.Bottom,
-			horizontal: onMore ? I.MenuDirection.Center : I.MenuDirection.Left,
+			horizontal: I.MenuDirection.Left,
 			onOpen: () => {
 				$(message).addClass('hover');
 				container.addClass('over');
@@ -530,9 +527,19 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				container.removeClass('over');
 			},
 			data: {
-				options,
+				options: this.getMessageMenuOptions(item, onMore),
 				onSelect: (e, option) => {
 					switch (option.id) {
+						case 'reaction': {
+							this.messageRefs[item.id].onReactionAdd();
+							break;
+						};
+
+						case 'copy': {
+							U.Common.clipboardCopy({ text: item.content.text });
+							break;
+						};
+
 						case 'reply': {
 							this.refForm.onReply(item);
 							break;
@@ -692,6 +699,35 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		return ret;
+	};
+
+	getMessageMenuOptions (message, noControls) {
+		let options: any[] = [];
+
+		if (message.content.text) {
+			options.push({ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') });
+		};
+
+		if (message.creator == S.Auth.account.id) {
+			options = options.concat([
+				{ id: 'edit', icon: 'pencil', name: translate('commonEdit') },
+				{ id: 'delete', icon: 'remove', name: translate('commonDelete') },
+			]);
+		};
+
+		if (!noControls) {
+			options = ([
+				{ id: 'reaction',icon: 'reaction',  name: translate('blockChatReactionAdd') },
+				{ id: 'reply',icon: 'reply',  name: translate('blockChatReply') },
+				options.length ? { isDiv: true } : null,
+			].filter(it => it)).concat(options);
+		};
+
+		if (S.Common.config.experimental) {
+			options.push({ id: 'unread', icon: 'empty', name: 'Unread' });
+		};
+
+		return options;
 	};
 
 	readScrolledMessages () {
