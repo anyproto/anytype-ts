@@ -84,7 +84,7 @@ export interface MenuItem {
 	object?: any;
 	name?: any;
 	description?: string;
-	caption?: string;
+	caption?: any;
 	inner?: any;
 	color?: string;
 	arrow?: boolean;

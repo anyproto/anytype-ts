@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { MenuItemVertical, Loader, ObjectName, EmptySearch } from 'Component';
+import { MenuItemVertical, Loader, ObjectName, ObjectType, EmptySearch } from 'Component';
 import { I, S, U, J, C, keyboard, Mark, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -76,7 +76,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						name={<ObjectName object={item} withPlural={true} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
-						caption={type?.name}
+						caption={<ObjectType object={type} />}
 						style={param.style}
 						isDiv={item.isDiv}
 						className={cn.join(' ')}

@@ -170,7 +170,7 @@
 			.iconObject, .icon.dnd { flex-shrink: 0; }
 			.name { width: 100%; margin-right: 6px; }
 
-			.clickable { flex-grow: 1; gap: 0px 6px; width: calc(100% - 100px); }
+			.clickable { flex-grow: 1; gap: 0px 6px; overflow: hidden; }
 			.clickable {
 				.icon { margin: 0px; }
 				.name { margin: 0px; width: 100%; }
@@ -178,7 +178,7 @@
 
 			.caption { 
 				@include text-overflow-nw; display: inline-block; vertical-align: top; color: var(--color-text-secondary); @include text-small; text-align: right;
-				flex-shrink: 0; line-height: 20px; max-width: 40%;
+				flex-shrink: 0; line-height: 20px; max-width: 30%;
 			}
 
 			.highlightMark { position: relative; top: auto; right: auto; margin: 0px 0px 0px 10px; }

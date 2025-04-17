@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
+import { Filter, MenuItemVertical, Icon, Loader, ObjectName, ObjectType } from 'Component';
 import { I, S, U, J, keyboard, Relation, translate, analytics } from 'Lib';
 
 interface State {
@@ -83,10 +83,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					<MenuItemVertical 
 						id={item.id}
 						object={item}
-						name={name}
+						name={<ObjectName object={item} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
-						caption={type ? type.name : undefined}
+						caption={<ObjectType object={type} />}
 						style={param.style}
 					/>
 				);
