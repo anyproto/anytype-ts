@@ -107,7 +107,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 			{withName ? (
 				<div className="info">
 					{icon}
-					<ObjectName object={object} />
+					<ObjectName object={object} withPlural={true} />
 				</div>
 			) : ''}
 		</div>

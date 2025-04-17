@@ -125,7 +125,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			{icon}
 
 			<div className="info">
-				<ObjectName object={object} />
+				<ObjectName object={object} withPlural={true} />
 				{descr}
 			</div>
 

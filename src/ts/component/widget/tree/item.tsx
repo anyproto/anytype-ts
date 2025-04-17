@@ -110,7 +110,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 							classNameWrap: 'fromSidebar',
 						}}
 					/>
-					<ObjectName object={object} />
+					<ObjectName object={object} withPlural={true} />
 				</div>
 
 				<div className="buttons">{more}</div>

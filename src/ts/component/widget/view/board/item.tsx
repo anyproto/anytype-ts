@@ -90,7 +90,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let inner = (
 		<div className="inner" onMouseDown={onClick}>
 			{icon}
-			<ObjectName object={object} />
+			<ObjectName object={object} withPlural={true} />
 
 			<div className="buttons">
 				{more}

@@ -53,7 +53,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 				>
 					{icon}
-					<ObjectName object={item} onMouseDown={e => this.onClick(e, item)} />
+					<ObjectName object={item} onMouseDown={e => this.onClick(e, item)} withPlural={true} />
 				</div>
 			);
 		};
