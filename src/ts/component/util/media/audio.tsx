@@ -16,6 +16,8 @@ interface Props {
 
 interface MediaAudioRefProps {
 	updatePlaylist(playlist: PlaylistItem[]): void;
+	onPlay?(): void;
+	onPause?(): void;
 };
 
 const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
@@ -195,6 +197,8 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 				setCurrent(playlist[0]);
 			};
 		},
+		onPlay: onPlayHandler,
+		onPause: onPauseHandler,
 	}));
 
 	return (

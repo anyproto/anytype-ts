@@ -470,7 +470,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		this.range = this.getRange();
 
-		S.Common.filterSet(this.range.from, '');
+		if (this.range) {
+			S.Common.filterSet(this.range.from, '');
+		};
 		this.onLatexMenu(e, 'select', true);
 	};
 
