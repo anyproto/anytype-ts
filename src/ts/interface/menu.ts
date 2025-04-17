@@ -75,6 +75,7 @@ export interface MenuRef {
 	setIndex: (i: number) => void,
 	onClick?: (e: any, item: any) => void,
 	onOver?: (e: any, item: any) => void,
+	getData?: () => any,
 };
 
 export interface MenuItem {

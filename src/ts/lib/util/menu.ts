@@ -1275,7 +1275,7 @@ class UtilMenu {
 
 			buttons.unshift({ 
 				id: 'add', icon: 'plus', onClick: () => {
-					U.Object.createType({ name: menuContext.ref?.filter }, keyboard.isPopup());
+					U.Object.createType({ name: menuContext.ref.getData().filter }, keyboard.isPopup());
 					menuContext.close();
 				}, 
 			});

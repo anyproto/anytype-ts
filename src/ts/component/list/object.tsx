@@ -58,7 +58,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	};
 
 	const getData = (page: number, callBack?: (message: any) => void) => {
-		const limit = J.Constant.limit.listObject
+		const limit = J.Constant.limit.listObject;
 		const offset = (page - 1) * limit;
 		const fl = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
