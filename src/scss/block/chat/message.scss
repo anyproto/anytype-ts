@@ -12,8 +12,8 @@
 
 	> .flex > .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; }
 
-	.bubbleWrapper { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
-	.bubbleWrapper {
+	.bubbleOuter { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
+	.bubbleOuter {
 		.controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
 		.controls {
 			.icon { width: 20px; height: 20px; }
@@ -34,8 +34,8 @@
 		.attachments { padding: 4px; }
 	}
 
-	.icon.reactionAdd { width: 28px; height: 28px; background: var(--color-shape-highlight-medium) url('~img/icon/chat/buttons/reaction1.svg') 50% 50% no-repeat; background-size: 20px; border-radius: 50%; }
-	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-color: var(--color-shape-highlight-dark); }
+	.icon.reactionAdd { width: 28px; height: 28px; background: url('~img/icon/chat/buttons/reaction0.svg') 50% 50% no-repeat; background-size: 20px; border-radius: 50%; }
+	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
 
 	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; cursor: default; }
 	.reply {
@@ -99,13 +99,11 @@
 
 	> .flex > .side.right { align-items: flex-end; }
 
-	.bubbleWrapper { flex-direction: row-reverse; }
-	.bubbleWrapper {
+	.bubbleOuter { flex-direction: row-reverse; }
+	.bubbleOuter {
 		.controls { flex-direction: row-reverse; }
 		.bubble { background-color: var(--color-bg-tag-lime); }
 	}
-
-	.reactions { flex-direction: row-reverse; }
 }
 
 .message.withAttachment {
@@ -114,7 +112,7 @@
 	}
 }
 .message.withAttachment:not(.withMedia) {
-	.bubbleWrapper {
+	.bubbleOuter {
 		.bubble { width: 360px; }
 	}
 }
@@ -170,6 +168,10 @@
 	> .flex > .side.left {
 		.iconObject { display: block; }
 	}
+}
+
+.message:not(.isLast) {
+	.reactions { padding-bottom: 8px; }
 }
 
 .message.isNew:not(:last-child) { position: relative; padding-bottom: 25px; margin-bottom: 6px; border-bottom: 1px solid var(--color-shape-tertiary); }
