@@ -107,7 +107,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	onSelect (id: string, color: number) {
 		this.props.onChange({ iconName: id, iconOption: color });
 
-		analytics.stackAdd('SetIcon', { objectType: '_objectType', color });
+		analytics.stackAdd('SetIcon', { objectType: J.Constant.typeKey.type, color });
 	};
 
 	onChange () {
