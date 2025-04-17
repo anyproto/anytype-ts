@@ -598,8 +598,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.setIsBottom(false);
 
-		console.log(this.isAutoLoadDisabled);
-
 		if (!this.isAutoLoadDisabled) {
 			if (st <= 0) {
 				this.loadMessages(-1, false);
@@ -715,16 +713,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(this.props.isPopup);
+		const { isPopup } = this.props;
+		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
 		const top = this.getMessageScrollOffset(id);
+		const y = Math.max(0, top - container.height() / 2 - J.Size.header);
 
 		this.setIsBottom(false);
 		this.setAutoLoadDisabled(true);
 
-		container.scrollTop(Math.max(0, top - container.height() / 2));
-
-		this.readScrolledMessages();
-		this.setAutoLoadDisabled(false);
+		container.stop(true, true).animate({ scrollTop: y }, 300, () => {
+			this.readScrolledMessages();
+			this.setAutoLoadDisabled(false);
+		});
 	};
 
 	scrollToBottom () {
@@ -765,6 +765,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
+		const message = S.Chat.getMessage(subId, item.replyToMessageId);
+
+		if (message) {
+			this.scrollToMessage(message.id);
+			return;
+		};
 
 		C.ChatGetMessagesByIds(rootId, [ item.replyToMessageId ], (message: any) => {
 			if (message.error.code || !message.messages.length) {
