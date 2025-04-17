@@ -130,10 +130,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		};
 
 		if (hasAttachments) {
-			cnBubble.push('withAttachment');
+			cn.push('withAttachment');
 
 			if (attachmentsLayout) {
-				cnBubble.push('withMedia');
+				cn.push('withMedia');
+				cn.push(`mediaLayout-${attachments.length}`)
 			};
 		};
 
@@ -355,6 +356,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const c = [];
 
 		if (ml && (ml == al)) {
+			if (ml == 1) {
+				const { widthInPixels, heightInPixels } = attachments[0];
+
+				if (Math.max(widthInPixels, heightInPixels) < 100) {
+					return '';
+				};
+			};
+
 			c.push(`withLayout ${ml >= 10 ? `layout-10` : `layout-${ml}`}`);
 		};
 
