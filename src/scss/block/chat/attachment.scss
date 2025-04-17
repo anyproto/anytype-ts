@@ -52,8 +52,7 @@
 
 	.attachment.isImage { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 	.attachment.isImage {
-		.image { display: block; object-fit: cover; aspect-ratio: 1; border-radius: 12px; width: 100%; height: 100%; }
-		.loaderWrapper { width: 72px; height: 72px; }
+		.image, .loaderWrapper { display: block; object-fit: cover; aspect-ratio: 1; border-radius: 12px; width: 100%; height: 100%; }
 	}
 
 	.attachment.isVideo { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
@@ -91,7 +90,7 @@
 .attachments.withLayout {
 	.attachment { border-radius: 12px; height: auto; width: auto; aspect-ratio: 1; flex-shrink: 0; min-width: unset; }
 	.attachment.isImage {
-		.image { max-width: 100%; max-height: 360px; }
+		.image, .loaderWrapper { max-width: 100%; max-height: 360px; }
 	}
 }
 

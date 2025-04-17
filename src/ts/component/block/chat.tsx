@@ -783,9 +783,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 
 			S.Chat.clear(subId);
-			this.loadMessagesByOrderId(reply.orderId, () => {
-				this.scrollToMessage(reply.id);
-			});
+			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id));
 		});
 	};
 
