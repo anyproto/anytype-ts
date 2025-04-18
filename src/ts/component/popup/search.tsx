@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Loader, IconObject, EmptySearch, Label, Filter } from 'Component';
+import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType } from 'Component';
 import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark, sidebar } from 'Lib';
 
 interface State {
@@ -666,7 +666,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			return { 
 				...it,
-				caption: !type || type.isDeleted ? translate('commonDeletedType') : type.name,
+				caption: <ObjectType object={type} />,
 				isObject: true,
 			};
 		});

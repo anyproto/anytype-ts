@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
+import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
 import { I, C, S, U, J, keyboard, Preview, analytics, Action, focus, translate } from 'Lib';
 
 interface State {
@@ -83,7 +83,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				props.withDescription = true;
 				props.iconSize = 40;
 			} else {
-				props.caption = (type ? type.name : undefined);
+				props.caption = <ObjectType object={type} />;
 			};
 
 			if (undefined !== item.caption) {
