@@ -14,8 +14,8 @@
 
 	.bubbleOuter { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
 	.bubbleOuter {
-		.controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
-		.controls {
+		> .controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
+		> .controls {
 			.icon { width: 20px; height: 20px; }
 			.icon.messageReply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
 			.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('~img/icon/chat/buttons/reply1.svg'); }
@@ -101,7 +101,7 @@
 
 	.bubbleOuter { flex-direction: row-reverse; }
 	.bubbleOuter {
-		.controls { flex-direction: row-reverse; }
+		> .controls { flex-direction: row-reverse; }
 		.bubble { background-color: var(--color-bg-tag-lime); }
 	}
 }

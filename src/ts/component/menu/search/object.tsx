@@ -62,7 +62,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				return null;
 			};
 
-			const type = S.Record.getTypeById(item.type);
 			const checkbox = value && value.length && value.includes(item.id);
 			const cn = [];
 			const props = {
@@ -82,7 +81,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			if (isBig && !item.isAdd) {
 				props.withDescription = true;
 				props.iconSize = 40;
-			} else {
+			} else 
+			if (item.type) {
+				const type = S.Record.getTypeById(item.type);
 				props.caption = <ObjectType object={type} />;
 			};
 

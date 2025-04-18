@@ -224,6 +224,8 @@ class UtilData {
 			};
 		});
 
+		C.ChatSubscribeToMessagePreviews();
+
 		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
 		this.createGlobalSubscriptions();

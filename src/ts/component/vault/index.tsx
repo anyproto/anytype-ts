@@ -305,13 +305,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		if (config.experimental) {
-			if (S.Auth.account && !isSubscribed.current) {
-				isSubscribed.current = true;
-				C.ChatSubscribeToMessagePreviews();
-			};
-		};
-
 		S.Chat.setBadge(counters);
 		$(nodeRef.current).find('#scroll').scrollTop(top.current);
 		setActive(S.Block.spaceview);
