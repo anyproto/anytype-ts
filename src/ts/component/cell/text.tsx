@@ -85,7 +85,9 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	};
 
 	const onKeyUpDate = (e: any, v: any) => {
-		setValue(fixDateValue(v));
+		v = fixDateValue(v);
+
+		setValue(v);
 
 		if (v) {
 			S.Menu.updateData(MENU_ID, { value: v });
