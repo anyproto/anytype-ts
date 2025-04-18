@@ -88,7 +88,7 @@
 		.reaction.isSelf { background-color: var(--color-bg-tag-lime); }
 	}
 
-	.newMessages { display: none; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
+	.newMessages { display: none; justify-content: center; position: absolute; top: -9px; left: 0px;  width: 100%; }
 	.newMessages {
 		.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
 	}
@@ -174,7 +174,7 @@
 	.reactions { padding-bottom: 8px; }
 }
 
-.message.isNew:not(:last-child) { position: relative; padding-bottom: 25px; margin-bottom: 6px; border-bottom: 1px solid var(--color-shape-tertiary); }
+.message.isNew:not(:last-child) { position: relative; margin-top: 26px; padding-top: 26px; border-top: 1px solid var(--color-shape-tertiary); }
 .message.isNew {
 	.newMessages { display: flex; }
 }
