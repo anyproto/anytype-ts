@@ -367,17 +367,17 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 							const list = Relation.getArrayValue(type.recommendedFileRelations);
 							const idx = list.findIndex(id => id == targetId);
-							const dir = position == I.BlockPosition.Bottom ? 0 : -1;
+							const dir = position == I.BlockPosition.Bottom ? 1 : -1;
 
 							if (idx < 0) {
 								break;
 							};
 
-							for (const id of ids) {
-								list.splice(Math.max(0, idx + dir), 0, id);
+							for (let i = 0; i < ids.length; i++) {
+								list.splice(Math.max(0, i + idx + dir), 0, ids[i]);
 							};
 
-							C.ObjectListSetDetails([ type.id ], [ { key: 'recommendedFileRelations', value: list } ]);
+							C.ObjectListSetDetails([ type.id ], [ { key: 'recommendedFileRelations', value: U.Common.arrayUnique(list) } ]);
 						} else {
 							const keys = ids.map(id => S.Record.getRelationById(id)?.relationKey).filter(it => it);
 
