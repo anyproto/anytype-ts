@@ -94,13 +94,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		if (readonly) {
 			return (
-				<div 
-					ref={ref => this.node = ref} 
-					id="formWrapper" 
-					className="formWrapper"
-				>
-					<div className="readonly">{translate('blockChatFormReadonly')}</div>
-				</div>
+				<>
+					<div ref={ref => this.refDummy = ref} className="formDummy" />
+					<div 
+						ref={ref => this.node = ref} 
+						id="formWrapper" 
+						className="formWrapper"
+					>
+						<div className="readonly">{translate('blockChatFormReadonly')}</div>
+					</div>
+				</>
 			);
 		};
 
@@ -249,17 +252,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		if (this.props.readonly) {
-			return;
-		};
-
 		this._isMounted = true;
 		this.checkSendButton();
 
-		const { rootId } = this.props;
+		const { rootId, readonly } = this.props;
 		const storage = Storage.getChat(rootId);
 
-		if (storage) {
+		if (!readonly && storage) {
 			const text = String(storage.text || '');
 			const marks = storage.marks || [];
 			const attachments = this.checkLimit('attachments', storage.attachments || []);
