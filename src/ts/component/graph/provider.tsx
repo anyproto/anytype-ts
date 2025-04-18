@@ -567,6 +567,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onClickObject = (id: string) => {
 		setSelected([]);
+		onPreviewHide();
 		U.Object.openConfig(getNode(id));
 	};
 
