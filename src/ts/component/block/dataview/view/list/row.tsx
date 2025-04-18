@@ -32,8 +32,10 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		let content = (
 			<>
-				{relations.map((relation: any, i: number) => {
+				{relations.map((vr: any, i: number) => {
+					const relation = S.Record.getRelationByKey(vr.relationKey);
 					const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+
 					return (
 						<Cell
 							key={'list-cell-' + relation.relationKey}
@@ -47,7 +49,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							idPrefix={idPrefix}
 							onClick={e => this.onCellClick(e, relation)}
 							isInline={true}
-							showTooltip={true}
+							tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left, offsetX: 14 }}
 							arrayLimit={2}
 							iconSize={relation.relationKey == 'name' ? 24 : 18}
 							withName={true}

@@ -12,9 +12,7 @@ import CellFile from './file';
 
 interface Props extends I.Cell {
 	elementId?: string;
-	showTooltip?: boolean;
-	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
-	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
+	tooltipParam?: I.TooltipParam;
 	maxWidth?: number;
 };
 
@@ -23,7 +21,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const { 
 		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
 		isInline, menuClassName = '', menuClassNameWrap = '', block, subId, rootId, onCellChange,
-		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, showTooltip, withName, readonly, tooltipX, tooltipY,
+		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
 	} = props;
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
@@ -402,13 +400,17 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 	const onMouseEnterHandler = (e: any) => {
 		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, record.id)}`);
+		const { text = '', caption = '' } = tooltipParam;
+		const t = Preview.tooltipCaption(text, caption);
 
 		if (onMouseEnter) {
 			onMouseEnter(e);
 		};
 
-		if (showTooltip) {
-			Preview.tooltipShow({ text: relation.name, element: cell, typeX: tooltipX, typeY: tooltipY, delay: 1000 });
+		console.log(t);
+
+		if (t) {
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: cell });
 		};
 	};
 	
@@ -422,11 +424,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 	const getPlaceholder = (relation: any, record: any): string => {
 		if (!relation.id) {
-			return '';
+			return translate(`placeholderCellCommon`);
 		};
 
 		const canEdit = canCellEdit(relation, record);
-		return !canEdit ? translate(`placeholderCellCommon`) : (placeholder || translate(`placeholderCell${relation.format}`));
+		return !canEdit ? translate(`placeholderCellCommon`) : (props.placeholder || translate(`placeholderCell${relation.format}`));
 	};
 
 	const canCellEdit = (relation: any, record: any): boolean => {

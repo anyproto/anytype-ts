@@ -106,8 +106,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								isInline={true}
 								idPrefix={PREFIX}
 								elementMapper={this.elementMapper}
-								showTooltip={true}
-								tooltipX={I.MenuDirection.Left}
+								tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
 								arrayLimit={relation.format == I.RelationType.Object ? 1 : 2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
