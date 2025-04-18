@@ -147,8 +147,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					const target = this.getMessages().find(it => it.orderId == messageOrderId);
 
 					this.scrollToMessage(target?.id);
-
-					console.log('SCROLL TO MESSAGE', target?.id);
 				});
 			} else {
 				this.loadMessages(1, true, this.scrollToBottom);

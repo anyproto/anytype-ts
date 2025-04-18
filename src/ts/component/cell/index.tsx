@@ -407,8 +407,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			onMouseEnter(e);
 		};
 
-		console.log(t);
-
 		if (t) {
 			Preview.tooltipShow({ ...tooltipParam, text: t, element: cell });
 		};
