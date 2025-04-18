@@ -133,7 +133,7 @@
 			name { font-weight: inherit; }
 		}
 		markupbold { font-weight: 700; }
-		markuplink, markupobject { font-weight: inherit; }
+		a.markuplink, markupobject { font-weight: inherit; }
 	}
 
 	/* Header2 */
@@ -145,7 +145,7 @@
 			name { font-weight: inherit; }
 		}
 		markupbold { font-weight: 700; }
-		markuplink, markupobject { font-weight: inherit; }
+		.markuplink, markupobject { font-weight: inherit; }
 	}
 
 	/* Header3 */
@@ -157,7 +157,7 @@
 			name { font-weight: inherit; }
 		}
 		markupbold { font-weight: 700; }
-		markuplink, markupobject { font-weight: inherit; }
+		.markuplink, markupobject { font-weight: inherit; }
 	}
 
 	/* Quote */
