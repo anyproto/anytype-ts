@@ -36,7 +36,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	render () {
 		const { block, readonly, className, isCollection, getTarget } = this.props;
 		const { isEditing } = this.state;
-		const { targetObjectId } = block.content;
+		const targetObjectId = block.getTargetObjectId();
 		const object = getTarget();
 		const cn = [ 'dataviewHead' ];
 		const placeholder = Dataview.namePlaceholder(object.layout);
@@ -190,7 +190,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			};
 		} else {
 			filters = filters.concat([
-				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Set, I.ObjectLayout.Type ] },
 				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
@@ -301,7 +301,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const object = getTarget();
 		const placeholder = Dataview.namePlaceholder(object.layout);
 
-		let name = String(object.name || '');
+		let name = U.Object.name(object, true);
 		if ([ 
 			translate('defaultNamePage'), 
 			placeholder,
