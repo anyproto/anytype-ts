@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics } from 'Lib';
+import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
@@ -356,12 +356,35 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 					};
 
 					case I.DropType.Relation: {
-						ids.forEach((id: string) => {
-							const relation = S.Record.getRelationById(id);
-							if (relation) {
-								C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key: relation.relationKey } });
+						const object = S.Detail.get(targetContextId, targetContextId);
+
+						if (U.Object.isInFileLayouts(object.layout)) {
+							const type = S.Record.getTypeById(object.type);
+
+							if (!type) {
+								break;
 							};
-						});
+
+							const list = Relation.getArrayValue(type.recommendedFileRelations);
+							const idx = list.findIndex(id => id == targetId);
+							const dir = position == I.BlockPosition.Bottom ? 1 : -1;
+
+							if (idx < 0) {
+								break;
+							};
+
+							for (let i = 0; i < ids.length; i++) {
+								list.splice(Math.max(0, i + idx + dir), 0, ids[i]);
+							};
+
+							C.ObjectListSetDetails([ type.id ], [ { key: 'recommendedFileRelations', value: U.Common.arrayUnique(list) } ]);
+						} else {
+							const keys = ids.map(id => S.Record.getRelationById(id)?.relationKey).filter(it => it);
+
+							keys.forEach((key: string) => {
+								C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
+							});
+						};
 						break;
 					};
 				};
