@@ -458,8 +458,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getObjectId (): string {
-		const { rootId, block } = this.props;
-		return block.getTargetObjectId() || rootId;
+		const { rootId, block, isInline } = this.props;
+
+		let ret = block.getTargetObjectId();
+
+		if (!isInline && !ret) {
+			ret = rootId;
+		};
+
+		return ret;
 	};
 
 	getKeys (id: string): string[] {
