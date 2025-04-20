@@ -37,7 +37,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
-
 	const getSections = () => {
 		const { filter } = data;
 		const pinned = Storage.getPinnedTypes();
@@ -359,6 +358,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		forceUpdate: () => setDummy(dummy + 1),
 		onClick: onClickHandler,
 		getData: () => data,
+		getListRef: () => listRef.current,
 	}), []);
 
 	return (
