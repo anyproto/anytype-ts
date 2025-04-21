@@ -76,6 +76,7 @@ export interface MenuRef {
 	onClick?: (e: any, item: any) => void,
 	onOver?: (e: any, item: any) => void,
 	getData?: () => any,
+	getListRef?: () => any,
 };
 
 export interface MenuItem {

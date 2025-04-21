@@ -24,7 +24,7 @@
 		> .side.right { padding-top: 0px; margin-top: 32px; border-top: 0px; }
 	}
 
-	.blocks.horizontal.withSidebar { width: 100%; padding: 16px 16px 80px 16px; }
+	.blocks.horizontal.withSidebar { max-width: 736px; width: 100%; padding: 16px 16px 80px 16px; }
 	.blocks.horizontal.withSidebar {
 		.inner { min-height: 0 !important; }
 		.block.blockMedia {
