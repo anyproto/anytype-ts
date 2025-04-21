@@ -461,7 +461,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isInline } = this.props;
 
 		let ret = block.getTargetObjectId();
-
 		if (!isInline && !ret) {
 			ret = rootId;
 		};
@@ -1049,7 +1048,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		} else {
 			filters = filters.concat([
-				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Set, I.ObjectLayout.Type ] },
 				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
@@ -1106,6 +1105,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				filters,
 				addParam,
 				onSelect,
+				withPlural: true,
 			}
 		}, param || {}));
 	};

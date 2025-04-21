@@ -50,7 +50,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				return null;
 			};			
 
-			const type = S.Record.getTypeById(item.type);
+			const type = item.type ? S.Record.getTypeById(item.type) : null;
 			const object = ![ 'add', 'selectDate' ].includes(item.id) ? item : null;
 			const cn = [];
 
@@ -76,7 +76,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						name={<ObjectName object={item} withPlural={true} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
-						caption={<ObjectType object={type} />}
+						caption={type ? <ObjectType object={type} /> : ''}
 						style={param.style}
 						isDiv={item.isDiv}
 						className={cn.join(' ')}
