@@ -195,18 +195,13 @@ class ChatStore {
 	};
 
 	setBadge (counters: { mentionCounter: number; messageCounter: number; }) {
-		let t = '';
+		let t = 0;
 
 		if (counters) {
-			if (counters.mentionCounter) {
-				t = '@';
-			} else 
-			if (counters.messageCounter) {
-				t = String(counters.messageCounter || '');
-			};
+			t = counters.mentionCounter + counters.messageCounter;
 		};
 
-		Renderer.send('setBadge', t || '');
+		Renderer.send('setBadge', String(t || ''));
 	};
 
 };

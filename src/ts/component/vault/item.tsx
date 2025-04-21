@@ -39,13 +39,8 @@ const VaultItem: FC<Props> = observer(({
 		cn.push(`isButton ${item.id}`);
 	};
 
-	if (config.experimental) {
-		if (counters.mentionCounter) {
-			cnt = '@';
-		} else 
-		if (counters.messageCounter) {
-			cnt = counters.messageCounter;
-		};
+	if (config.experimental && counters) {
+		cnt = counters.mentionCounter + counters.messageCounter;
 	};
 
 	return (
