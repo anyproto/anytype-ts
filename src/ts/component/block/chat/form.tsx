@@ -16,12 +16,13 @@ interface Props extends I.BlockComponent {
 	subId: string;
 	onScrollToBottomClick: () => void;
 	scrollToBottom: () => void;
-	scrollToMessage: (id: string) => void;
-	loadMessagesByOrderId: (orderId: string) => void;
+	scrollToMessage: (id: string, animate?: boolean) => void;
+	loadMessagesByOrderId: (orderId: string, callBack?: () => void) => void;
 	getMessages: () => I.ChatMessage[];
 	getMessagesInViewport: () => any[];
 	getIsBottom: () => boolean;
 	getReplyContent: (message: any) => any;
+	highlightMessage: (id: string, orderId?: string) => void;
 };
 
 interface State {
@@ -163,7 +164,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					className="formWrapper"
 				>
 					<div className="navigation">
-						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt="@" /> : ''}
+						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
 					</div>
 
@@ -716,7 +717,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					update.content.marks = marks;
 
 					C.ChatEditMessageContent(rootId, this.editingId, update, () => {
-						scrollToMessage(this.editingId);
+						scrollToMessage(this.editingId, true);
 						clear();
 					});
 				};
@@ -846,7 +847,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						};
 
 						if (next) {
-							scrollToMessage(next.id);
+							scrollToMessage(next.id, true);
 						} else {
 							scrollToBottom();
 						};
@@ -885,7 +886,29 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onNavigationClick (type: I.ChatReadType) {
-		this.props.onScrollToBottomClick();
+		switch (type) {
+			case I.ChatReadType.Message: {
+				this.props.onScrollToBottomClick();
+				break;
+			};
+
+			case I.ChatReadType.Mention: {
+				const { subId, getMessages, scrollToMessage, loadMessagesByOrderId, highlightMessage } = this.props;
+				const { mentionOrderId } = S.Chat.getState(subId);
+				const messages = getMessages();
+				const target = messages.find(it => it.orderId == mentionOrderId);
+
+				if (target) {
+					scrollToMessage(target.id, true);
+				} else {
+					loadMessagesByOrderId(mentionOrderId, () => {
+						highlightMessage('', mentionOrderId);
+					});
+				};
+				break;
+			};
+		};
+
 	};
 
 	updateButtons () {
