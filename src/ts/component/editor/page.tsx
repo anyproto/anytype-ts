@@ -1013,7 +1013,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			// Move blocks with arrows
-			keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
+			keyboard.shortcut('moveSelectionUp, moveSelectionDown', e, (pressed: string) => {
 				this.onCtrlShiftArrowBlock(e, pressed);
 			});
 		};
