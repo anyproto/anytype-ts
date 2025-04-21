@@ -24,6 +24,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		this.onReactionEnter = this.onReactionEnter.bind(this);
 		this.onReactionLeave = this.onReactionLeave.bind(this);
 		this.onPreview = this.onPreview.bind(this);
+		this.highlight = this.highlight.bind(this);
 	};
 
 	render () {
@@ -388,6 +389,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		});
 
 		return (cntSelf < self) && (reactions.length < all);
+	};
+
+	highlight () {
+		$(this.node).addClass('highlight');
+
+		window.setTimeout(() => {
+			$(this.node).removeClass('highlight');
+		}, J.Constant.delay.highlight);
 	};
 
 });

@@ -278,6 +278,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		} else {
 			const list = this.getMessages();
 			if (!list.length) {
+				this.isLoading = false;
 				return;
 			};
 
@@ -286,6 +287,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const after = dir > 0 ? list[list.length - 1].orderId : '';
 
 			if (!before && !after) {
+				this.isLoading = false;
 				return;
 			};
 
@@ -932,12 +934,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		if (!target) {
 			return;
 		};
-		const ref = this.messageRefs[target.id]
 
-		$(ref.node).addClass('highlight');
-		window.setTimeout(() => {
-			$(ref.node).removeClass('highlight');
-		}, 1000);
+		this.messageRefs[target.id].highlight();
 	};
 
 });
