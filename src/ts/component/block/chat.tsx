@@ -45,6 +45,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.getReplyContent = this.getReplyContent.bind(this);
 		this.loadMessagesByOrderId = this.loadMessagesByOrderId.bind(this);
 		this.hasScroll = this.hasScroll.bind(this);
+		this.highlightMessage = this.highlightMessage.bind(this);
 	};
 
 	render () {
@@ -128,6 +129,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					getMessagesInViewport={this.getMessagesInViewport}
 					getIsBottom={() => hasScroll ? this.isBottom : true}
 					getReplyContent={this.getReplyContent}
+					highlightMessage={this.highlightMessage}
 				/>
 			</div>
 		);
@@ -754,6 +756,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.setAutoLoadDisabled(true);
 
 		const cb = () => {
+			this.highlightMessage(id);
 			this.readScrolledMessages();
 			this.setAutoLoadDisabled(false);
 		};
@@ -921,6 +924,20 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		return document.documentElement.scrollHeight > window.innerHeight;
+	};
+
+	highlightMessage (id: string, orderId?: string) {
+		const messages = this.getMessages();
+		const target = messages.find(it => orderId ? it.orderId == orderId : it.id == id);
+		if (!target) {
+			return;
+		};
+		const ref = this.messageRefs[target.id]
+
+		$(ref.node).addClass('highlight');
+		window.setTimeout(() => {
+			$(ref.node).removeClass('highlight');
+		}, 1000);
 	};
 
 });
