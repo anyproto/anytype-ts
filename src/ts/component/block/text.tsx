@@ -1144,23 +1144,20 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		keyboard.setFocus(true);
-
 		const currentFrom = focus.state.range.from;
 		const currentTo = focus.state.range.to;
-
-		window.clearTimeout(this.timeoutContext);
+		const win = $(window);
+		const el = $(`#block-${block.id}`);
 
 		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
-			if (!keyboard.isContextCloseDisabled) {
+			if (S.Menu.isOpen('blockContext') && !keyboard.isContextCloseDisabled) {
 				S.Menu.close('blockContext');
 			};
 			return;
 		};
 
-		const win = $(window);
-		const el = $('#block-' + block.id);
-
+		keyboard.setFocus(true);
+		window.clearTimeout(this.timeoutContext);
 		S.Menu.closeAll([ 'blockAdd', 'blockMention' ]);
 
 		this.timeoutContext = window.setTimeout(() => {
