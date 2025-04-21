@@ -120,7 +120,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					childRef.current.setEditing(true);
 				};
 
-				if (childRef.current && childRef.current.onClick) {
+				if (childRef.current.onClick) {
 					childRef.current.onClick(e);
 				};
 			};
@@ -134,7 +134,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			keyboard.disableSelection(false);
 
 			if (childRef.current) {
-				if (childRef.current && childRef.current.onBlur) {
+				if (childRef.current.onBlur) {
 					childRef.current.onBlur();
 				};
 
