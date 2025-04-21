@@ -163,7 +163,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					className="formWrapper"
 				>
 					<div className="navigation">
-						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt="@" /> : ''}
+						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
 					</div>
 
@@ -885,7 +885,27 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onNavigationClick (type: I.ChatReadType) {
-		this.props.onScrollToBottomClick();
+		switch (type) {
+			case I.ChatReadType.Message: {
+				this.props.onScrollToBottomClick();
+				break;
+			};
+			
+			case I.ChatReadType.Mention: {
+				const { subId, getMessages, scrollToMessage, loadMessagesByOrderId } = this.props;
+				const { mentionOrderId } = S.Chat.getState(subId);
+				const messages = getMessages();
+				const target = messages.find(it => it.orderId == mentionOrderId);
+
+				if (target) {
+					scrollToMessage(target.id);
+				} else {
+					loadMessagesByOrderId(mentionOrderId);
+				};
+				break;
+			};
+		};
+
 	};
 
 	updateButtons () {
