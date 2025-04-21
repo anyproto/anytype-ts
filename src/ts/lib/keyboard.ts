@@ -1234,12 +1234,7 @@ class Keyboard {
 			return;
 		};
 
-		const string = this.shortcuts[s] ? (this.shortcuts[s].keys || []).join('+') : s;
-		if (!string) {
-			return;
-		};
-
-		const a = string.split(',').map(it => it.trim());
+		const a = s.split(',').map(it => it.trim());
 		const key = this.eventKey(e);
 		const which = e.which;
 		const metaKeys = this.metaKeys(e);
@@ -1257,7 +1252,15 @@ class Keyboard {
 		};
 
 		for (const item of a) {
-			const keys = item.split('+').sort();
+			let keys = [];
+
+			if (this.shortcuts[item]) {
+				keys = this.shortcuts[item].keys || [];
+			} else {
+				keys = item.split('+');
+			};
+
+			keys.sort();
 			
 			for (const k of keys) {
 				if (which == J.Key[k]) {

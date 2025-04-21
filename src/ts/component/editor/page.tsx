@@ -727,7 +727,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			// Move blocks with arrows
-			keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
+			keyboard.shortcut(`moveSelectionUp, moveSelectionDown`, e, (pressed: string) => {
 				this.onCtrlShiftArrowEditor(e, pressed);
 
 				ret = true;
@@ -745,7 +745,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// Indent block
-		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
+		keyboard.shortcut('indent, outdent', e, (pressed: string) => {
 			this.onTabEditor(e, ids, pressed);
 
 			ret = true;
@@ -997,7 +997,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			// Tab, indent block
-			keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
+			keyboard.shortcut('indent, outdent', e, (pressed: string) => {
 				const isShift = pressed.match('shift') ? true : false;
 
 				if (isInsideTable) {
