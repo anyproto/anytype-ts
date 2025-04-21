@@ -381,32 +381,32 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const menuOpenSmile = S.Menu.isOpen('smile');
 		const saveKeys: any[] = [
-			{ key: keyboard.getKeysString('moveSelectionUp'), preventDefault: true },
-			{ key: keyboard.getKeysString('moveSelectionDown'), preventDefault: true },
-			{ key: keyboard.getKeysString('relation') },
-			{ key: keyboard.getKeysString('duplicate'), preventDefault: true },
-			{ key: keyboard.getKeysString('selectAll'), preventDefault: true },
-			{ key: keyboard.getKeysString('back') },
-			{ key: keyboard.getKeysString('forward') },
-			{ key: keyboard.getKeysString('zoomIn') },
-			{ key: keyboard.getKeysString('zoomOut') },
-			{ key: keyboard.getKeysString('zoomReset') },
-			{ key: keyboard.getKeysString('turnBlock0') },
-			{ key: keyboard.getKeysString('turnBlock1') },
-			{ key: keyboard.getKeysString('turnBlock2') },
-			{ key: keyboard.getKeysString('turnBlock3') },
-			{ key: keyboard.getKeysString('turnBlock4') },
-			{ key: keyboard.getKeysString('turnBlock5') },
-			{ key: keyboard.getKeysString('turnBlock6') },
-			{ key: keyboard.getKeysString('turnBlock7') },
-			{ key: keyboard.getKeysString('turnBlock8') },
-			{ key: keyboard.getKeysString('turnBlock9') },
-			{ key: keyboard.getKeysString('undo'), preventDefault: true },
-			{ key: keyboard.getKeysString('redo'), preventDefault: true },
-			{ key: keyboard.getKeysString('menuAction') },
-			{ key: keyboard.getKeysString('indent'), preventDefault: true },
-			{ key: keyboard.getKeysString('outdent'), preventDefault: true },
-			{ key: keyboard.getKeysString('pageLock') },
+			{ key: 'moveSelectionUp', preventDefault: true },
+			{ key: 'moveSelectionDown', preventDefault: true },
+			{ key: 'relation' },
+			{ key: 'duplicate', preventDefault: true },
+			{ key: 'selectAll', preventDefault: true },
+			{ key: 'back' },
+			{ key: 'forward' },
+			{ key: 'zoomIn' },
+			{ key: 'zoomOut' },
+			{ key: 'zoomReset' },
+			{ key: 'turnBlock0' },
+			{ key: 'turnBlock1' },
+			{ key: 'turnBlock2' },
+			{ key: 'turnBlock3' },
+			{ key: 'turnBlock4' },
+			{ key: 'turnBlock5' },
+			{ key: 'turnBlock6' },
+			{ key: 'turnBlock7' },
+			{ key: 'turnBlock8' },
+			{ key: 'turnBlock9' },
+			{ key: 'undo', preventDefault: true },
+			{ key: 'redo', preventDefault: true },
+			{ key: 'menuAction' },
+			{ key: 'indent', preventDefault: true },
+			{ key: 'outdent', preventDefault: true },
+			{ key: 'pageLock' },
 			{ key: `${cmd}+shift+arrowleft` },
 			{ key: `${cmd}+shift+arrowright` },
 			{ key: `${cmd}+c`, preventDefault: true },
@@ -508,7 +508,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			});
 		});
 
-		keyboard.shortcut('tab', e, () => {
+		keyboard.shortcut('indent', e, () => {
 			e.preventDefault();
 
 			if (block.isTextCode()) {

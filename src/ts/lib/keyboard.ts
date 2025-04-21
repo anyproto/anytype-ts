@@ -1295,10 +1295,6 @@ class Keyboard {
 		return this.shortcuts[id].keys || [];
 	};
 
-	getKeysString (id: string) {
-		return this.getKeys(id).join('+');
-	};
-
 	getSymbolsFromKeys (keys: string[]) {
 		const isMac = U.Common.isPlatformMac();
 
