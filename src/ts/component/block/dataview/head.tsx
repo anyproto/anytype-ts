@@ -327,16 +327,17 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	save () {
 		const { isEditing } = this.state;
 		const { block, getTarget } = this.props;
-		const { targetObjectId } = block.content;
-		const object = getTarget();
-		const placeholder = Dataview.namePlaceholder(object.layout);
+		const targetId = block.getTargetObjectId();
 
-		if (!isEditing || !targetObjectId) {
+		if (!isEditing || !targetId) {
 			return;
 		};
+
+		const object = getTarget();
+		const placeholder = Dataview.namePlaceholder(object.layout);
 		
 		let value = this.getValue();
-		if (value == object.name) {
+		if ([ object.name, object.pluralName ].includes(value)) {
 			return;
 		};
 
@@ -347,10 +348,9 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			value = '';
 		};
 
-		if (targetObjectId) {
-			U.Object.setName(targetObjectId, value);
-		};
-		
+		const key = U.Object.isTypeLayout(object.layout) ? 'pluralName' : 'name';
+		C.ObjectListSetDetails([ targetId ], [ { key, value } ]);
+
 		this.ref?.placeholderCheck();
 	};
 
