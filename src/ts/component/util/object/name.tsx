@@ -49,12 +49,12 @@ const ObjectName: FC<Props> = ({
 	if (!name) {
 		empty = <span className="empty">{translate('commonEmpty')}</span>;
 	};
-	if (withPronoun && (U.Space.getParticipant().id == object.id)) {
-		you = <span className="you">({translate('commonYou')})</span>;
+	if (withPronoun) {
+		you = <span className="you"> ({translate('commonYou')})</span>;
 	};
 
 	if (!empty && !latex) {
-		content = <span>{name} {you}</span>;
+		content = <span>{name}{you}</span>;
 	};
 
 	return (

@@ -39,7 +39,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd } = data;
+		const { canAdd, pronounId } = data;
 		const { isLoading } = this.state;
 		const filter = this.getFilter();
 		const items = this.getItems();
@@ -52,6 +52,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 			const type = item.type ? S.Record.getTypeById(item.type) : null;
 			const object = ![ 'add', 'selectDate' ].includes(item.id) ? item : null;
+			const withPronoun = pronounId && pronounId == item.id;
 			const cn = [];
 
 			if (item.id == 'add') {
@@ -73,7 +74,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						id={item.id}
 						object={object}
 						icon={item.icon}
-						name={<ObjectName object={item} withPlural={true} withPronoun={true} />}
+						name={<ObjectName object={item} withPlural={true} withPronoun={withPronoun} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
 						caption={type ? <ObjectType object={type} /> : ''}
@@ -81,7 +82,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						isDiv={item.isDiv}
 						className={cn.join(' ')}
 						withPlural={true}
-						withPronoun={true}
+						withPronoun={withPronoun}
 					/>
 				</CellMeasurer>
 			);

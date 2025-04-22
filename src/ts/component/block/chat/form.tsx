@@ -1044,6 +1044,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				data: {
 					rootId,
 					blockId,
+					pronounId: U.Space.getParticipant().id,
 					marks: this.marks,
 					skipIds: [ S.Auth.account.id ],
 					filters: [
