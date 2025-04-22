@@ -73,7 +73,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						id={item.id}
 						object={object}
 						icon={item.icon}
-						name={<ObjectName object={item} withPlural={true} />}
+						name={<ObjectName object={item} withPlural={true} withPronoun={true} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
 						caption={type ? <ObjectType object={type} /> : ''}
@@ -81,6 +81,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						isDiv={item.isDiv}
 						className={cn.join(' ')}
 						withPlural={true}
+						withPronoun={true}
 					/>
 				</CellMeasurer>
 			);
