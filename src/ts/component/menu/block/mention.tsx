@@ -52,7 +52,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 			const type = item.type ? S.Record.getTypeById(item.type) : null;
 			const object = ![ 'add', 'selectDate' ].includes(item.id) ? item : null;
-			const withPronoun = pronounId && pronounId == item.id;
+			const withPronoun = pronounId && (pronounId == item.id);
 			const cn = [];
 
 			if (item.id == 'add') {
