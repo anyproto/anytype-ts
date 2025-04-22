@@ -585,6 +585,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onScroll (e: any) {
+		const rootId = this.getRootId();
 		const { isPopup } = this.props;
 		const subId = this.getSubId();
 		const node = $(this.node);
@@ -597,6 +598,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const ch = container.outerHeight();
 		const hh = J.Size.header;
 		const list = this.getMessagesInViewport();
+		const state = S.Chat.getState(subId);
+		const { lastStateId } = state;
 
 		this.setIsBottom(false);
 
@@ -625,10 +628,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		list.forEach(it => {
 			this.scrolledItems.add(it.id);
-		});
 
-		list.filter(it => !it.isReadMessage).forEach(it => S.Chat.setReadMessageStatus(subId, [ it.id ], true));
-		list.filter(it => !it.isReadMention).forEach(it => S.Chat.setReadMentionStatus(subId, [ it.id ], true));
+			if (!it.isReadMessage) {
+				S.Chat.setReadMessageStatus(subId, [ it.id ], true);
+				C.ChatReadMessages(rootId, it.orderId, it.orderId, lastStateId, I.ChatReadType.Message);
+			};
+			if (!it.isReadMention) {
+				S.Chat.setReadMentionStatus(subId, [ it.id ], true);
+				C.ChatReadMessages(rootId, it.orderId, it.orderId, lastStateId, I.ChatReadType.Mention);
+			};
+		});
 
 		window.clearTimeout(this.timeoutScrollStop);
 		this.timeoutScrollStop = window.setTimeout(() => this.onReadStop(), 300);
