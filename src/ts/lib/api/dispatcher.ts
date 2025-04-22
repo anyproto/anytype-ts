@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview } from 'Lib';
+import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 
@@ -320,6 +320,11 @@ class Dispatcher {
 
 					if (!block) {
 						break;
+					};
+
+					if (id == focus.state.focused) {
+						console.error('[Dispatcher] BlockSetText: focus is set to block', id);
+						Sentry.captureMessage('[Dispatcher] BlockSetText: focus is set to block');
 					};
 
 					const content: any = {};
