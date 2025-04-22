@@ -24,6 +24,24 @@ export default {
 		},
 	}),
 
+	mainEdit: () => ({
+		items: [
+			{
+				description: translate('onboardingMainObject'),
+				buttonText: translate('commonOk'),
+			}
+		],
+
+		param: {
+			element: '#pageFlex.isFull #block-header',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Center,
+			passThrough: true,
+			noClose: true,
+			offsetY: -4,
+		},
+	}),
+
 	emailCollection: () => ({
 		items: [ { noButton: true } ],
 		param: {

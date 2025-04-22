@@ -92,6 +92,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 							};
 
 							Storage.set('primitivesOnboarding', true);
+							Storage.set('mainEdit', true);
 							Onboarding.start('basics', false);
 						},
 					};
