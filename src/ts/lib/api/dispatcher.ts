@@ -56,7 +56,7 @@ class Dispatcher {
 
 		this.stream.on('data', (event) => {
 			try {
-				this.event(event, false);
+				this.event(event, false, false);
 			} catch (e) {
 				console.error(e);
 			};
@@ -92,7 +92,7 @@ class Dispatcher {
 		}, t * 1000);
 	};
 
-	event (event: Events.Event, skipDebug?: boolean) {
+	event (event: Events.Event, isSync: boolean, skipDebug: boolean) {
 		const { config, space } = S.Common;
 		const { account } = S.Auth;
 		const traceId = event.getTraceid();
@@ -320,6 +320,11 @@ class Dispatcher {
 
 					if (!block) {
 						break;
+					};
+
+					if (!isSync && (id == focus.state.focused)) {
+						console.error('[Dispatcher] BlockSetText: focus', id);
+						Sentry.captureMessage('[Dispatcher] BlockSetText: focus');
 					};
 
 					const content: any = {};
@@ -937,14 +942,14 @@ class Dispatcher {
 				};
 
 				case 'ImportFinish': {
-					const { collectionId, count, type } = mapped;
-					const { account } = S.Auth;
-
 					if (!account) {
 						break;
 					};
 
+					const { collectionId, count, type } = mapped;
+
 					/*
+
 					if (collectionId) {
 						window.setTimeout(() => {
 							S.Popup.open('objectManager', { 
@@ -1321,7 +1326,7 @@ class Dispatcher {
 				};
 
 				if (message.event) {
-					this.event(message.event, true);
+					this.event(message.event, true, true);
 				};
 
 				const middleTime = Math.ceil(t1 - t0);
