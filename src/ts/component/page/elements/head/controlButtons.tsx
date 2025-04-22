@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, J, translate, analytics, focus, Renderer, Relation, Action } from 'Lib';
+import { I, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -105,6 +105,22 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	};
 
 	componentDidMount (): void {
+		const { rootId, readonly } = this.props;
+		const root = S.Block.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return;
+		};
+
+		const checkType = S.Block.checkBlockTypeExists(rootId);
+		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const isNote = U.Object.isNoteLayout(root.layout);
+		const allowedDescription = !checkType && allowedDetails && !isNote && !root.isLocked() && !readonly;
+
+		if (allowedDescription) {
+			Onboarding.start('objectDescriptionButton', keyboard.isPopup());
+		};
+
 		this.rebind();
 	};
 

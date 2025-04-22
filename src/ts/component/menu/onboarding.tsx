@@ -324,7 +324,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		switch (action) {
 			case 'close': {
-				close();
+				this.onClose();
 				break;
 			};
 
@@ -376,7 +376,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		if ((dir > 0) && (current == items.length - 1)) {
-			close();
+			this.onClose();
 			return;
 		};
 
