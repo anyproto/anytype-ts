@@ -322,11 +322,6 @@ class Dispatcher {
 						break;
 					};
 
-					if (id == focus.state.focused) {
-						console.error('[Dispatcher] BlockSetText: focus is set to block', id);
-						Sentry.captureMessage('[Dispatcher] BlockSetText: focus is set to block');
-					};
-
 					const content: any = {};
 
 					if (text !== null) {
