@@ -30,7 +30,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	render () {
 		const { param, position, close } = this.props;
-		const { data } = param;
+		const { data, noClose } = param;
 		const { key, current } = data;
 		const section = Onboarding.getSection(key);
 		const { items, showConfetti } = section;
@@ -74,7 +74,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				<Icon className="close" onClick={this.onClose} />
+				{!noClose ? <Icon className="close" onClick={this.onClose} /> : ''}
 
 				{category ? <Label className="category" text={category} /> : ''}
 				{item.name ? <Label className="name" text={item.name} /> : ''}
@@ -324,7 +324,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		switch (action) {
 			case 'close': {
-				close();
+				this.onClose();
 				break;
 			};
 
@@ -376,7 +376,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		if ((dir > 0) && (current == items.length - 1)) {
-			close();
+			this.onClose();
 			return;
 		};
 
