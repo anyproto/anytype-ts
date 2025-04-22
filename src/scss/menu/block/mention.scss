@@ -7,6 +7,9 @@
 		.items { height: 100%; }
 		.item {
 			.name { @include text-overflow-nw; width: 100%; }
+			.name {
+				.you { @include text-small; color: var(--color-text-secondary); }
+			}
 		}
 
 		.item.add {
