@@ -50,8 +50,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	render () {
 		const { showRelativeDates } = S.Common;
+		const { block } = this.props;
 		const rootId = this.getRootId();
-		const blockId = this.getBlockId();
 		const messages = this.getMessages();
 		const sections = this.getSections();
 		const subId = this.getSubId();
@@ -77,7 +77,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 								{...this.props}
 								id={item.id}
 								rootId={rootId}
-								blockId={blockId}
+								blockId={block.id}
 								subId={subId}
 								isNew={item.orderId == this.firstUnreadOrderId}
 								hasMore={hasMore}
@@ -119,7 +119,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					ref={ref => this.refForm = ref}
 					{...this.props}
 					rootId={rootId}
-					blockId={blockId}
+					blockId={block.id}
 					subId={subId}
 					onScrollToBottomClick={this.onScrollToBottomClick}
 					scrollToBottom={this.scrollToBottom}
@@ -392,7 +392,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getSubId (): string {
-		return S.Record.getSubId(this.getRootId(), this.getBlockId());
+		return S.Record.getSubId(this.getRootId(), this.props.block.id);
 	};
 
 	loadDeps (ids: string[], callBack?: () => void) {
@@ -444,10 +444,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 		return object.chatId;
-	};
-
-	getBlockId () {
-		return this.props.block.id;
 	};
 
 	getSections () {
@@ -511,9 +507,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { isPopup } = this.props;
-		const blockId = this.getBlockId();
-		const message = `#block-${blockId} #item-${item.id}`;
+		const { isPopup, block } = this.props;
+		const message = `#block-${block.id} #item-${item.id}`;
 		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
 
 		const menuParam: Partial<I.MenuParam> = {

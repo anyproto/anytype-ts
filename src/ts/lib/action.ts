@@ -17,27 +17,24 @@ class Action {
 			return;
 		};
 
-		const onClose = () => {
-			const blocks = S.Block.getBlocks(rootId, it => it.isDataview());
-			const object = S.Detail.get(rootId, rootId);
+		const blocks = S.Block.getBlocks(rootId);
+		const object = S.Detail.get(rootId, rootId);
 
-			for (const block of blocks) {
-				const subId = S.Record.getSubId(rootId, block.id);
-
-				this.dbClearBlock(rootId, block.id);
-
-				if (U.Object.isChatLayout(object.layout)) {
-					C.ChatUnsubscribe(object.chatId, subId);
-				};
-				S.Chat.clear(subId);
-			};
-
-			this.dbClearRoot(rootId);
-
-			S.Block.clear(rootId);
+		if (object.layout == I.ObjectLayout.Space) {
+			this.dbClearChat(object.chatId, J.Constant.blockId.chat);
 		};
 
-		onClose();
+		for (const block of blocks) {
+			if (block.isDataview()) {
+				this.dbClearBlock(rootId, block.id);
+			} else 
+			if (block.isChat()) {
+				this.dbClearChat(object.chatId, block.id);
+			};
+		};
+
+		this.dbClearRoot(rootId);
+		S.Block.clear(rootId);
 
 		if (withCommand) {
 			C.ObjectClose(rootId, space);
@@ -81,6 +78,17 @@ class Action {
 		S.Detail.clear(subId);
 
 		C.ObjectSearchUnsubscribe([ subId ]);
+	};
+
+	dbClearChat (chatId: string, blockId: string) {	
+		if (!chatId || !blockId) {
+			return;
+		};
+
+		const subId = S.Record.getSubId(chatId, blockId);
+
+		C.ChatUnsubscribe(chatId, subId);
+		S.Chat.clear(subId);
 	};
 
 	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
