@@ -162,7 +162,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const featuredIds = Relation.getArrayValue(type.recommendedFeaturedRelations);
 		const recommendedIds = Relation.getArrayValue(type.recommendedRelations);
 		const hiddenIds = Relation.getArrayValue(type.recommendedHiddenRelations);
-		const filterMapper = it => it && it.relationKey && !it.isArchived
+		const filterMapper = it => it && it.relationKey && !it.isArchived && (it.relationKey != 'description');
 
 		let items = recommendedIds.map(it => S.Record.getRelationById(it));
 		items = items.filter(filterMapper);
