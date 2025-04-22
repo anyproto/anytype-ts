@@ -617,8 +617,6 @@ class UtilObject {
 		if (type) {
 			S.Block.update(id, id, { layout: type.recommendedLayout });
 		};
-
-		analytics.event('ResetToTypeDefault');
 	};
 
 	getTypeRelationListsKeys () {
