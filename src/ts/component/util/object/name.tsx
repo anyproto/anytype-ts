@@ -6,6 +6,7 @@ interface Props {
 	className?: string;
 	withLatex?: boolean;
 	withPlural?: boolean;
+	withPronoun?: boolean;
 	onClick? (e: MouseEvent): void;
 	onMouseDown? (e: MouseEvent): void;
 	onMouseEnter? (e: MouseEvent): void;
@@ -17,6 +18,7 @@ const ObjectName: FC<Props> = ({
 	className = 'name',
 	withLatex = false,
 	withPlural = false,
+	withPronoun= false,
 	onClick,
 	onMouseDown,
 	onMouseEnter,
@@ -30,6 +32,7 @@ const ObjectName: FC<Props> = ({
 	let empty = null;
 	let latex = null;
 	let content = null;
+	let you = null;
 
 	if (!isDeleted) {
 		if (U.Object.isNoteLayout(layout)) {
@@ -46,9 +49,12 @@ const ObjectName: FC<Props> = ({
 	if (!name) {
 		empty = <span className="empty">{translate('commonEmpty')}</span>;
 	};
+	if (withPronoun) {
+		you = <span className="you"> ({translate('commonYou')})</span>;
+	};
 
 	if (!empty && !latex) {
-		content = <span>{name}</span>;
+		content = <span>{name}{you}</span>;
 	};
 
 	return (
