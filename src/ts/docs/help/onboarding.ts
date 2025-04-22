@@ -361,29 +361,33 @@ export default {
 		};
 	},
 
-	objectDescriptionButton: () => ({
-		items: [
-			{
-				description: translate('onboardingMainObject'),
-				buttonText: translate('commonOk'),
-			}
-		],
+	objectDescriptionButton: () => {
+		const controls = '#page.isFull .editorControls';
+		const btn = `${controls} #button-description`;
 
-		param: {
-			element: '#pageFlex.isFull .editorControls #button-description',
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Center,
-			passThrough: true,
-			noClose: true,
-			offsetY: 16,
-			onOpen: () => {
-				$('#pageFlex.isFull .editorControls').addClass('hover');
+		if (!$(btn).length) {
+			return;
+		};
+
+		return {
+			items: [
+				{
+					description: translate('onboardingMainObject'),
+					buttonText: translate('commonOk'),
+				}
+			],
+			param: {
+				element: btn,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Center,
+				passThrough: true,
+				noClose: true,
+				offsetY: 16,
+				onOpen: () => $(controls).addClass('active'),
+				onClose: () => $(controls).removeClass('active'),
 			},
-			onClose: () => {
-				$('#pageFlex.isFull .editorControls').removeClass('hover');
-			},
-		},
-	}),
+		};
+	},
 
 	typeResetLayout: () => ({
 		items: [
