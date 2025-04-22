@@ -2019,6 +2019,9 @@
 	"onboardingMainGraph": "Onboarding",
 	"onboardingMainGraph11": "<b>Space is essentially a graph</b>, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.",
 
+	"onboardingMainObject": "Description now exists in every object;<br/>you can hide or show it whenever you want.",
+	"onboardingMainType": "You can match the object settings to the Type settings with just one click.",
+
 	"onboardingStoreType": "Library",
 	"onboardingStoreType11": "<b>This Library contains all types of Objects and Properties.</b> It comes with preinstalled types, as well as types that can be uploaded to Anytype for different use cases.",
 	"onboardingStoreType21": "<b>You can create your own types with any object layout for your own purposes.</b> Additionally, you can save any existing object as a Library template if you need to use it frequently.",

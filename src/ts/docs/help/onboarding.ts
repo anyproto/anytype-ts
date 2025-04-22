@@ -361,4 +361,46 @@ export default {
 		};
 	},
 
+	objectDescriptionButton: () => ({
+		items: [
+			{
+				description: translate('onboardingMainObject'),
+				buttonText: translate('commonOk'),
+			}
+		],
+
+		param: {
+			element: '#pageFlex.isFull .editorControls #button-description',
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			passThrough: true,
+			noClose: true,
+			offsetY: 16,
+			onOpen: () => {
+				$('#pageFlex.isFull .editorControls').addClass('hover');
+			},
+			onClose: () => {
+				$('#pageFlex.isFull .editorControls').removeClass('hover');
+			},
+		},
+	}),
+
+	typeResetLayout: () => ({
+		items: [
+			{
+				description: translate('onboardingMainType'),
+				buttonText: translate('commonOk'),
+			}
+		],
+
+		param: {
+			element: '#pageFlex.isFull .headSimple .side.right',
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			noClose: true,
+			offsetX: -304,
+			offsetY: 45,
+		},
+	}),
+
 };
