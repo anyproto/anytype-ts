@@ -92,8 +92,8 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 							};
 
 							Storage.set('primitivesOnboarding', true);
-							Storage.set('objectDescriptionButton', true);
-							Storage.set('typeResetLayout', true);
+							Storage.setOnboarding('objectDescriptionButton');
+							Storage.setOnboarding('typeResetLayout');
 							Onboarding.start('basics', false);
 						},
 					};

@@ -29,44 +29,22 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		this.onCover = this.onCover.bind(this);
 		this.onLayout = this.onLayout.bind(this);
 		this.onDescription = this.onDescription.bind(this);
+		this.getAllowedButtons = this.getAllowedButtons.bind(this);
 	};
 
 	render (): any {
-		const { rootId, readonly } = this.props;
+		const { rootId } = this.props;
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
+		const { allowedIcon, allowedLayout, allowedCover,  allowedDescription } = this.getAllowedButtons();
 		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
-		const checkType = S.Block.checkBlockTypeExists(rootId);
-		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const isInSets = U.Object.isInSetLayouts(root.layout);
-		const isTask = U.Object.isTaskLayout(root.layout);
-		const isNote = U.Object.isNoteLayout(root.layout);
-		const isBookmark = U.Object.isBookmarkLayout(root.layout);
-		const isChat = U.Object.isChatLayout(root.layout);
-		const isType = U.Object.isTypeLayout(root.layout);
 		const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
 		const hasConflict = U.Object.hasLayoutConflict(object);
-
-		let allowedLayout = !checkType && allowedDetails && !isChat && !isType;
-		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
-		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
-		let allowedDescription = !checkType && allowedDetails && !isNote;
-
-		if (isInSets && !hasConflict) {
-			allowedLayout = false;
-		};
-
-		if (root.isLocked() || readonly) {
-			allowedIcon = false;
-			allowedLayout = false;
-			allowedCover = false;
-			allowedDescription = false;
-		};
 
 		return (
 			<div 
@@ -105,17 +83,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	};
 
 	componentDidMount (): void {
-		const { rootId, readonly } = this.props;
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return;
-		};
-
-		const checkType = S.Block.checkBlockTypeExists(rootId);
-		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const isNote = U.Object.isNoteLayout(root.layout);
-		const allowedDescription = !checkType && allowedDetails && !isNote && !root.isLocked() && !readonly;
+		const { allowedDescription } = this.getAllowedButtons();
 
 		if (allowedDescription) {
 			Onboarding.start('objectDescriptionButton', keyboard.isPopup());
@@ -249,6 +217,49 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				onSelect: onCoverSelect
 			},
 		});
+	};
+
+	getAllowedButtons (): any {
+		const { rootId, readonly } = this.props;
+		const root = S.Block.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return {};
+		};
+
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
+		const checkType = S.Block.checkBlockTypeExists(rootId);
+		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const isInSets = U.Object.isInSetLayouts(root.layout);
+		const isTask = U.Object.isTaskLayout(root.layout);
+		const isNote = U.Object.isNoteLayout(root.layout);
+		const isBookmark = U.Object.isBookmarkLayout(root.layout);
+		const isChat = U.Object.isChatLayout(root.layout);
+		const isType = U.Object.isTypeLayout(root.layout);
+		const hasConflict = U.Object.hasLayoutConflict(object);
+
+		let allowedLayout = !checkType && allowedDetails && !isChat && !isType;
+		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
+		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
+		let allowedDescription = !checkType && allowedDetails && !isNote;
+
+		if (isInSets && !hasConflict) {
+			allowedLayout = false;
+		};
+
+		if (root.isLocked() || readonly) {
+			allowedIcon = false;
+			allowedLayout = false;
+			allowedCover = false;
+			allowedDescription = false;
+		};
+
+		return {
+			allowedIcon,
+			allowedLayout,
+			allowedCover,
+			allowedDescription,
+		};
 	};
 
 	resize () {
