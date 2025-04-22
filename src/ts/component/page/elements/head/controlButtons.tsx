@@ -219,12 +219,17 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		});
 	};
 
-	getAllowedButtons (): any {
+	getAllowedButtons (): { allowedIcon: boolean, allowedLayout: boolean, allowedCover: boolean, allowedDescription: boolean, } {
 		const { rootId, readonly } = this.props;
 		const root = S.Block.getLeaf(rootId, rootId);
 
+		let allowedLayout = false;
+		let allowedIcon = false;
+		let allowedCover = false;
+		let allowedDescription = false;
+
 		if (!root) {
-			return {};
+			return { allowedIcon, allowedLayout, allowedCover, allowedDescription };
 		};
 
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
@@ -238,10 +243,10 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const isType = U.Object.isTypeLayout(root.layout);
 		const hasConflict = U.Object.hasLayoutConflict(object);
 
-		let allowedLayout = !checkType && allowedDetails && !isChat && !isType;
-		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
-		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
-		let allowedDescription = !checkType && allowedDetails && !isNote;
+		allowedLayout = !checkType && allowedDetails && !isChat && !isType;
+		allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
+		allowedCover = !checkType && allowedDetails && !isNote && !isType;
+		allowedDescription = !checkType && allowedDetails && !isNote;
 
 		if (isInSets && !hasConflict) {
 			allowedLayout = false;
@@ -254,12 +259,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			allowedDescription = false;
 		};
 
-		return {
-			allowedIcon,
-			allowedLayout,
-			allowedCover,
-			allowedDescription,
-		};
+		return { allowedIcon, allowedLayout, allowedCover, allowedDescription };
 	};
 
 	resize () {
