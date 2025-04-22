@@ -58,8 +58,6 @@ class ChatStore {
 		const item = this.getMessage(subId, param.id);
 
 		if (item) {
-			console.log('UPDATE', param);
-
 			set(item, param);
 		};
 	};
