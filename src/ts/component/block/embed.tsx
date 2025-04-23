@@ -485,10 +485,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const win = $(window);
 
 		const recalcRect = () => {
-			let rect = null;
-			if (element == 'input') {
-				rect = U.Common.getSelectionRect();
-			};
+			const rect = element == 'input' ? U.Common.getSelectionRect() : null;
 			return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 		};
 
