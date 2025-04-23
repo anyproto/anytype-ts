@@ -37,6 +37,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterKeyDown = this.onFilterKeyDown.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
@@ -128,6 +129,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						placeholderFocus={placeholderFocus} 
 						value={filter}
 						onChange={this.onFilterChange} 
+						onKeyDown={this.onFilterKeyDown}
 						focusOnMount={true}
 					/>
 				) : ''}
@@ -471,6 +473,19 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		} else {
 			process(item, false);
+		};
+	};
+
+	onFilterKeyDown (e: any, v: string) {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { onBackspaceClose } = data;
+
+		if (onBackspaceClose && !v) {
+			keyboard.shortcut('backspace', e, () => {
+				close();
+				onBackspaceClose();
+			});
 		};
 	};
 

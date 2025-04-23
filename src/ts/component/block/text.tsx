@@ -947,11 +947,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const from = range.from - 2;
-		
+
 		let value = this.getValue();
-		value = U.Common.stringCut(value, range.from - 2, range.from);
+		value = U.Common.stringCut(value, from, range.from);
 
 		const position = value.length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
+		const cb = () => {
+			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
+				window.setTimeout(() => {
+					focus.set(block.id, { from, to: from });
+					focus.apply();
+				}, 15);
+			});
+		};
 
 		S.Menu.open('searchObject', {
 			menuKey: 'link',
@@ -974,14 +982,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				canAdd: true,
 				type: I.NavigationType.Link,
 				position,
+				onBackspaceClose: () => cb(),
 				onSelect: () => {
 					if (position == I.BlockPosition.Bottom) {
-						U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-							window.setTimeout(() => {
-								focus.set(block.id, { from, to: from });
-								focus.apply();
-							}, 15);
-						});
+						cb();
 					};
 				},
 			},
