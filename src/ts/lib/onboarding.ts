@@ -98,6 +98,7 @@ class Onboarding {
 			cnw.push('fromPopup');
 		};
 		if (section.showDimmer) {
+			param.menuKey = 'withDimmer';
 			cnw.push('fromOnboarding');
 		};
 		param.classNameWrap = cnw.join(' ');

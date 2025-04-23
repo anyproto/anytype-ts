@@ -1484,6 +1484,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	menuCheck () {
+		if (S.Menu.isOpen('onboarding', 'withDimmer')) {
+			return true;
+		};
 		return S.Menu.isOpen('', '', [ 'blockContext', 'searchText', 'onboarding', 'publish' ]);
 	};
 
