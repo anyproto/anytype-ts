@@ -491,7 +491,8 @@ class UtilData {
 				if (!message.error.code) {
 					S.Auth.tokenSet(message.token);
 					S.Auth.appTokenSet(message.appToken);
-					dispatcher.listenEvents();
+
+					dispatcher.startStream();
 				};
 
 				if (callBack) {

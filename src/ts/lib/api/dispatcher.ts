@@ -42,9 +42,9 @@ class Dispatcher {
 		this.service = new Service.ClientCommandsClient(address, null, null);
 	};
 
-	listenEvents () {
+	startStream () {
 		if (!S.Auth.token) {
-			console.error('[Dispatcher.listenEvents] No token');
+			console.error('[Dispatcher.startStream] No token');
 			return;
 		};
 
@@ -97,7 +97,7 @@ class Dispatcher {
 
 		window.clearTimeout(this.timeoutStream);
 		this.timeoutStream = window.setTimeout(() => { 
-			this.listenEvents(); 
+			this.startStream(); 
 			this.reconnects++;
 		}, t * 1000);
 	};
