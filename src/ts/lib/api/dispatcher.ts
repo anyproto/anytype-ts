@@ -53,10 +53,7 @@ class Dispatcher {
 		const request = new Commands.StreamRequest();
 		request.setToken(S.Auth.token);
 
-		if (this.stream) {
-			this.stream.cancel();
-			this.stream = null;
-		};
+		this.stopStream();
 
 		this.stream = this.service.listenSessionEvents(request, null);
 
@@ -79,6 +76,13 @@ class Dispatcher {
 			console.error('[Dispatcher.stream] end, restarting');
 			this.reconnect();
 		});
+	};
+
+	stopStream () {
+		if (this.stream) {
+			this.stream.cancel();
+			this.stream = null;
+		};
 	};
 
 	reconnect () {

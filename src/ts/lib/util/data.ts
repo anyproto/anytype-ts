@@ -514,6 +514,8 @@ class UtilData {
 		C.WalletCloseSession(token, () => {
 			S.Auth.tokenSet('');
 
+			dispatcher.stopStream();
+
 			if (callBack) {
 				callBack();
 			};
