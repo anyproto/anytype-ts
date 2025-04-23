@@ -168,7 +168,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
 					</div>
 
-					<div className="form">
+					<div className="form customScrollbar">
 						<Loader id="form-loader" />
 
 						{title ? (
@@ -189,7 +189,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						<Editable 
 							ref={ref => this.refEditable = ref}
 							id="messageBox"
-							classNameWrap="customScrollbar"
 							maxLength={J.Constant.limit.chat.text}
 							placeholder={translate('blockChatPlaceholder')}
 							onSelect={this.onSelect}
