@@ -1059,7 +1059,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	storageSet (data: any) {
-		Storage.set(this.getId(), data);
+		const current = this.storageGet();
+		Storage.set(this.getId(), Object.assign(current, data));
 	};
 
 	getId (): string {
