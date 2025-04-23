@@ -357,7 +357,7 @@ html.themeDark {
 		}
 
 		.item.settings {
-			.iconWrap { background-image: url('#{$themePath}/icon/vault/settings.svg'); }
+			.iconWrap { background-color: unset; background-image: url('#{$themePath}/icon/vault/settings.svg'); }
 		}
 	}
 
