@@ -317,16 +317,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onSelect () {
 		this.range = this.refEditable.getRange();
+		this.updateButtons();
 	};
 
 	onMouseDown () {
 		this.onSelect();
-		this.updateButtons();
 	};
 
 	onMouseUp () {
 		this.onSelect();
-		this.updateButtons();
 	};
 
 	onFocusInput () {
@@ -1091,7 +1090,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	hasSelection (): boolean {
-		return this.range ? this.range.to - this.range.from > 0 : false;
+		return this.range ? this.range.to != this.range.from : false;
 	};
 
 	updateMarkup (value: string, from: number, to: number) {
