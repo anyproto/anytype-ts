@@ -174,7 +174,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	getFilter () {
-		return String(S.Common.filter.text || '').replace(/^@/, '');
+		return String(S.Common.filter.text || '').replace(/^[@\[]+/, '');
 	};
 
 	getSections () {

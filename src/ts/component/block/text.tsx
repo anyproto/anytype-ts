@@ -373,7 +373,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let value = this.getValue();
 		let ret = false;
 
-		const symbolBefore = range ? value[range.from - 1] : '';
+		const oneSymbolBefore = range ? value[range.from - 1] : '';
+		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const cmd = keyboard.cmdKey();
 
 		const menuOpen = S.Menu.isOpen('', '', [ 'onboarding' ]);
@@ -555,11 +556,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				ret = true;
 			};
 
-			if (menuOpenAdd && (symbolBefore == '/')) {
+			if (menuOpenAdd && (oneSymbolBefore == '/')) {
 				S.Menu.close('blockAdd');
 			};
 
-			if (menuOpenMention && (symbolBefore == '@')) {
+			if (menuOpenMention && ((oneSymbolBefore == '@') || (oneSymbolBefore == '['))) {
 				S.Menu.close('blockMention');
 			};
 		});
@@ -658,7 +659,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const menuOpenAdd = S.Menu.isOpen('blockAdd');
 		const menuOpenMention = S.Menu.isOpen('blockMention');
-		const menuOpenLink = S.Menu.isOpen('searchObject', 'link');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const isRtl = U.Common.checkRtl(value);
@@ -675,7 +675,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
-		const canOpenMenuLink = !menuOpenLink && (oneSymbolBefore == '[') && (twoSymbolBefore == '[') && isAllowedMenu;
+		const canOpenMenuLink = !menuOpenMention && (oneSymbolBefore == '[') && (twoSymbolBefore == '[') && isAllowedMenu;
 
 		this.preventMenu = false;
 
@@ -715,13 +715,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Open mention menu
 		if (canOpenMenuMention) {
-			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention());
+			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention(1));
 			return;
 		};
 
 		// Open link menu
 		if (canOpenMenuLink) {
-			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onLink());
+			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention(2));
 			return;
 		};
 
@@ -839,7 +839,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		onKeyUp(e, value, this.marks, range, this.props);
 	};
 
-	onMention () {
+	onMention (d: number) {
 		const range = this.getRange();
 
 		if (!range) {
@@ -851,9 +851,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const element = $(`#block-${block.id}`);
 
 		let value = this.getValue();
-		value = U.Common.stringCut(value, range.from - 1, range.from);
+		value = U.Common.stringCut(value, range.from - d, range.from);
 
-		S.Common.filterSet(range.from - 1, '');
+		S.Common.filterSet(range.from - d, '');
 
 		raf(() => {
 			S.Menu.open('blockMention', {
@@ -878,9 +878,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						value = U.Common.stringInsert(value, text, from, from);
 
 						U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
-							focus.set(block.id, { from: to, to: to });
-							focus.apply();
-
 							// Try to fix async detailsUpdate event
 							window.setTimeout(() => {
 								focus.set(block.id, { from: to, to });
@@ -937,61 +934,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 
-	onLink () {
-		const { rootId, block } = this.props;
-		const win = $(window);
-		const range = this.getRange();
-
-		if (!range) {
-			return;
-		};
-
-		const from = range.from - 2;
-
-		let value = this.getValue();
-		value = U.Common.stringCut(value, from, range.from);
-
-		const position = value.length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
-		const cb = () => {
-			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				window.setTimeout(() => {
-					focus.set(block.id, { from, to: from });
-					focus.apply();
-				}, 15);
-			});
-		};
-
-		S.Menu.open('searchObject', {
-			menuKey: 'link',
-			element: `#block-${block.id}`,
-			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
-			},
-			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : J.Size.blockMenu;
-			},
-			onClose: () => {
-				focus.set(block.id, range);
-				focus.apply();
-			},
-			data: {
-				rootId,
-				blockId: block.id,
-				canAdd: true,
-				type: I.NavigationType.Link,
-				position,
-				onBackspaceClose: () => cb(),
-				onSelect: () => {
-					if (position == I.BlockPosition.Bottom) {
-						cb();
-					};
-				},
-			},
-		});
-	};
-	
 	setText (marks: I.Mark[], update: boolean, callBack?: () => void) {
 		const { rootId, block } = this.props;
 		const { content } = block;
