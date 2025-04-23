@@ -32,8 +32,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param, position, close } = this.props;
 		const { data, noClose } = param;
 		const { key, current } = data;
-		const section = Onboarding.getSection(key);
-		const { items, showConfetti } = section;
+		const section = this.getSection();
+		const items = this.getItems();
+		const { showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
 		const withSteps = l > 1;
@@ -177,6 +178,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		this.props.param.hiddenElements.forEach(el => $(el).addClass('isOnboardingHidden'));
 	};
 
+	getItems () {
+		return this.getSection()?.items || [];
+	};
+
 	initDimmer () {
 		const { param } = this.props;
 		const { data, highlightElements } = param;
@@ -187,7 +192,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		const { current } = data;
-		const { items } = section;
+		const items = this.getItems();
 		const item = items[current];
 		const body = $('body');
 
@@ -319,9 +324,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => this.onArrow(e, pressed == 'arrowleft' ? -1 : 1));
+		keyboard.shortcut('arrowleft, arrowright', e, pressed => this.onArrow(e, pressed == 'arrowleft' ? -1 : 1));
 
-		keyboard.shortcut('enter', e, () => { this.onArrow(e, 1); });
+		keyboard.shortcut('enter', e, () => this.onArrow(e, 1));
 	};
 
 	onButton (e: any, action: string) {
@@ -372,11 +377,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onArrow (e: any, dir: number) {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { current } = data;
-		const section = this.getSection();
-		const { items } = section;
+		const items = this.getItems();
 
 		if ((dir < 0) && !current) {
 			return;
@@ -395,7 +399,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { data, onOpen, onClose } = param;
 		const { isPopup, options } = data;
 		const section = this.getSection();
-		const { items } = section;
+		const items = this.getItems();
 		const item = items[next];
 
 		if (!item) {
@@ -476,7 +480,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	getSection () {
-		return Onboarding.getSection(this.props.param.data.key);
+		return Onboarding.getSection(this.props.param.data.key) || {};
 	};
 
 });
