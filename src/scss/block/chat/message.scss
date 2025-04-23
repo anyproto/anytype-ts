@@ -174,12 +174,9 @@
 	.reactions { padding-bottom: 8px; }
 }
 
-.message.isNew:not(:last-child) { position: relative; margin-top: 26px; padding-top: 26px; border-top: 1px solid var(--color-shape-tertiary); }
+.message.isNew { position: relative; margin-top: 26px; padding-top: 26px; border-top: 1px solid var(--color-shape-tertiary); }
 .message.isNew {
 	.newMessages { display: flex; }
-}
-.message.isNew:last-child {
-	.newMessages { display: none; }
 }
 
 .message.highlight {
