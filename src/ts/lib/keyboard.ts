@@ -448,6 +448,7 @@ class Keyboard {
 		const logPath = electron.logPath();
 		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
+		const isMainChat = this.isMainChat();
 
 		switch (cmd) {
 			case 'search': {
@@ -486,15 +487,19 @@ class Keyboard {
 			};
 
 			case 'undo': {
-				if (!this.isFocused) {
+				if (!this.isFocused && !isMainChat) {
 					this.onUndo(rootId, route);
+				} else {
+					document.execCommand('undo');
 				};
 				break;
 			};
 
 			case 'redo': {
-				if (!this.isFocused) {
+				if (!this.isFocused && !isMainChat) {
 					this.onRedo(rootId, route);
+				} else {
+					document.execCommand('redo');
 				};
 				break;
 			};
