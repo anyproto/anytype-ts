@@ -124,7 +124,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 		const menuParam: any = {
 			element: `#button-${block.id}-${type}`,
-			rect: { ...rect, y: rect.y + win.scrollTop() },
+			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			className: 'fixed',
 			offsetY: -8,
 			vertical: I.MenuDirection.Top,
