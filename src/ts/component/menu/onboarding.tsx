@@ -181,6 +181,11 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data, highlightElements } = param;
 		const section = this.getSection();
+
+		if (!section) {
+			return;
+		};
+
 		const { current } = data;
 		const { items } = section;
 		const item = items[current];
