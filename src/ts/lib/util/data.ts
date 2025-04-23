@@ -486,8 +486,7 @@ class UtilData {
 	};
 
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
-		const { token } = S.Auth;
-		const cb = () => {
+		this.closeSession(() => {
 			C.WalletCreateSession(phrase, key, (message: any) => {
 				if (!message.error.code) {
 					S.Auth.tokenSet(message.token);
@@ -499,16 +498,26 @@ class UtilData {
 					callBack(message);
 				};
 			});
+		});
+	};
+
+	closeSession (callBack?: () => void) {
+		const { token } = S.Auth;
+
+		if (!token) {
+			if (callBack) {
+				callBack();
+			};
+			return;
 		};
 
-		if (token) {
-			C.WalletCloseSession(token, () => {
-				S.Auth.tokenSet('');
-				cb();
-			});
-		} else {
-			cb();
-		};
+		C.WalletCloseSession(token, () => {
+			S.Auth.tokenSet('');
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {

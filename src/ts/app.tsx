@@ -392,10 +392,7 @@ class App extends React.Component<object, State> {
 					};
 
 					e.preventDefault();
-					C.WalletCloseSession(S.Auth.token, () => {
-						S.Auth.tokenSet('');
-						window.close();
-					});
+					U.Data.closeSession(() => window.close());
 					return false;
 				});
 			} else {
