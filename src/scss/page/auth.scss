@@ -131,7 +131,7 @@ html.bodyIndex, html.bodyAuth {
 	.button.black:not(.disabled):hover { background: var(--color-button-black-hover) !important; color: var(--color-text-primary) !important; }
 
 	.button.blank { border-color: var(--color-button-stroke) !important; color: var(--color-text-primary) !important; background: none; }
-	.button:not(.disabled):hover{ background: var(--color-button-blank-hover) !important; }
+	.button.blank:not(.disabled):hover{ background: var(--color-button-blank-hover) !important; }
 }
 
 html.bodyAuthDeleted {
