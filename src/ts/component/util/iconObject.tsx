@@ -394,7 +394,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.Relation: {
-			if ([ I.RelationType.Icon, I.RelationType.Relations ].includes(relationFormat)) {
+			if ([ I.RelationType.Icon ].includes(relationFormat)) {
 				break;
 			};
 
