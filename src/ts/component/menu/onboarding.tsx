@@ -315,9 +315,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	onKeyDown (e: any) {
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => this.onArrow(e, pressed == 'arrowleft' ? -1 : 1));
-		keyboard.shortcut('enter', e, () => {
-			this.onArrow(e, 1);
-		});
+
+		keyboard.shortcut('enter', e, () => { this.onArrow(e, 1); });
 	};
 
 	onButton (e: any, action: string) {
