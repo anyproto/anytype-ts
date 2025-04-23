@@ -44,6 +44,7 @@ class Dispatcher {
 
 	listenEvents () {
 		if (!S.Auth.token) {
+			console.error('[Dispatcher.listenEvents] No token');
 			return;
 		};
 
@@ -51,6 +52,11 @@ class Dispatcher {
 
 		const request = new Commands.StreamRequest();
 		request.setToken(S.Auth.token);
+
+		if (this.stream) {
+			this.stream.cancel();
+			this.stream = null;
+		};
 
 		this.stream = this.service.listenSessionEvents(request, null);
 

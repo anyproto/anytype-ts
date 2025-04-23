@@ -247,7 +247,6 @@ class App extends React.Component<object, State> {
 		U.Smile.init();
 
 		dispatcher.init(getGlobal('serverAddress'));
-		dispatcher.listenEvents();
 		keyboard.init();
 
 		this.registerIpcEvents();
