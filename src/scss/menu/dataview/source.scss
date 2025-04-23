@@ -6,12 +6,18 @@
 		.content { overflow: visible !important; padding: 0px; }
 		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: auto; max-height: 350px; }
 
-		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; }
+		.item { padding: 8px 16px; position: relative; white-space: nowrap; display: flex; }
 		.item {
 			.grey { color: var(--color-control-active); }
-			.iconObject { margin-right: 10px; }
+			.iconObject, .iconWrapper { margin-right: 10px; border-radius: 5px; background-color: var(--color-shape-highlight-medium); }
 
-			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
+			.iconWrapper { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+			.iconWrapper {
+				.icon { margin: 0px !important; }
+				.icon.puzzle { background-image: url('~img/icon/menu/puzzle.svg'); background-size: 24px; }
+			}
+
+			.buttons { line-height: 40px; opacity: 0; transition: $transitionAllCommon; }
 			.buttons {
 				.icon { vertical-align: middle; opacity: 1; }
 			}
@@ -47,6 +53,8 @@
 		.item.add {
 			.icon.dnd { margin-top: 0px; }
 		}
+
+		.item.isSection { padding: 4px 16px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
 
 		.bottom { padding: 0px 0px 8px 0px; }
 		.bottom {

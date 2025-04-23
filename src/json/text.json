@@ -1609,7 +1609,7 @@
 	"menuDataviewSortShowEmptyBottom": "On bottom",
 
 	"menuDataviewSourceSelectOneOrMoreSources": "Select one or more sources",
-	"menuDataviewSourceAddRelation": "Add a Property",
+	"menuDataviewSourceEmptySourceLabel": "Select a parameter to collect objects by it",
 
 	"menuDataviewViewEditCover": "Cover",
 	"menuDataviewViewEditCardSize": "Card size",
