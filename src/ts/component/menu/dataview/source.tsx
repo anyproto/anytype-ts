@@ -111,51 +111,45 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			element: `#${getId()} #item-${item.itemId}`,
 			offsetX: getSize().width,
 			offsetY: -56,
+			data: {},
 		};
+
+		let menuId = '';
 
 		switch (item.itemId) {
 			case 'type': {
-				S.Menu.open('typeSuggest', {
-					...menuParam,
-					data: {
-						filter: '',
-						onClick: (item: any) => {
-							this.save([ item.id ]);
+				menuId = 'typeSuggest';
+				menuParam.data = {
+					onClick: (item: any) => {
+						this.save([ item.id ]);
 
-							analytics.event('SetSelectQuery', { type: 'type' });
-							close();
-						}
+						analytics.event('SetSelectQuery', { type: 'type' });
+						close();
 					}
-				});
+				};
 				break;
 			};
+
 			case 'relation': {
-				S.Menu.open('searchObject', {
-					...menuParam,
-					className: 'single',
-					data: {
-						skipIds: value,
-						filters: [
-							{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
-						],
-						sorts: [
-							{ relationKey: 'name', type: I.SortType.Asc }
-						],
-						onSelect: (item: any) => {
-							this.save([ item.id ]);
+				menuId = 'relationSuggest';
+				menuParam.data = {
+					menuIdEdit: 'blockRelationEdit',
+					skipCreate: true,
+					addCommand: (rootId: string, blockId: string, relation: any) => {
+						this.save([ relation.id ]);
 
-							if (!value.length) {
-								analytics.event('SetSelectQuery', { type: 'relation' });
-							};
+						if (!value.length) {
+							analytics.event('SetSelectQuery', { type: 'relation' });
+						};
 
-							close();
-						}
+						close();
 					}
-				});
+				};
 				break;
 			};
 		};
 
+		S.Menu.open(menuId, menuParam);
 	};
 
 	save (value: string[], callBack?: () => void) {

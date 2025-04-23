@@ -263,7 +263,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, skipCreate } = data;
 		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 		const systemKeys = Relation.systemKeys();
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
@@ -273,7 +273,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
-			canWrite ? { id: 'create', name: translate('menuRelationSuggestCreateNew'), children: types } : null,
+			canWrite && !skipCreate ? { id: 'create', name: translate('menuRelationSuggestCreateNew'), children: types } : null,
 			{ id: 'library', name: translate('commonMyRelations'), children: library },
 			{ id: 'system', name: translate('commonSystemRelations'), children: system },
 		];
@@ -354,6 +354,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 			U.Object.setLastUsedDate(item.id, U.Date.now());
 		};
+		console.log('HERE: ', item)
 
 		if (item.isType || (item.id == 'add')) {
 			S.Menu.open(menuIdEdit, { 
