@@ -354,7 +354,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 			U.Object.setLastUsedDate(item.id, U.Date.now());
 		};
-		console.log('HERE: ', item)
 
 		if (item.isType || (item.id == 'add')) {
 			S.Menu.open(menuIdEdit, { 
