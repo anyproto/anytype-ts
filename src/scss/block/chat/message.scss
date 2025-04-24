@@ -111,20 +111,10 @@
 		.textWrapper { padding: 8px 12px 0px; }
 	}
 }
-.message.withAttachment:not(.withMedia) {
-	.bubbleOuter {
-		.bubble { width: 360px; }
-	}
-}
-
 .message.withAttachment.withMedia {
-	.bubble { flex-direction: column-reverse; width: 540px; }
+	.bubble { flex-direction: column-reverse; }
 	.bubble {
 		.textWrapper { padding: 0px 12px 8px; }
-	}
-
-	&.mediaLayout-1 {
-		.bubble { width: 360px; }
 	}
 }
 
@@ -153,7 +143,7 @@
 
 .message.isFirst, .message.withText {
 	.attachments { padding: 8px 4px 4px 4px;  }
-	.attachments.withLayout { padding: 4px 4px 8px 4px;  }
+	.attachments.withLayout { padding: 4px 4px 8px 4px; }
 }
 
 .message:not(.withText) {
