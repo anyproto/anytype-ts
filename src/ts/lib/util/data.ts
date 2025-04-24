@@ -1146,43 +1146,45 @@ class UtilData {
 
 		analytics.event('StartCreateAccount');
 
-		C.WalletCreate(dataPath, (message) => {
-			if (message.error.code) {
-				onError(message.error.description);
-				return;
-			};
-
-			phrase = message.mnemonic;
-
-			this.createSession(phrase, '', (message) => {
+		this.closeSession(() => {
+			C.WalletCreate(dataPath, (message) => {
 				if (message.error.code) {
 					onError(message.error.description);
 					return;
 				};
 
-				C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, (message) => {
+				phrase = message.mnemonic;
+
+				this.createSession(phrase, '', (message) => {
 					if (message.error.code) {
 						onError(message.error.description);
 						return;
 					};
 
-					S.Auth.accountSet(message.account);
-					S.Common.configSet(message.account.config, false);
-
-					this.onInfo(message.account.info);
-					Renderer.send('keytarSet', message.account.id, phrase);
-					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
-						if (message.startingId) {
-							S.Auth.startingId = message.startingId;
+					C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, (message) => {
+						if (message.error.code) {
+							onError(message.error.description);
+							return;
 						};
 
-						if (callBack) {
-							callBack();
-						};
+						S.Auth.accountSet(message.account);
+						S.Common.configSet(message.account.config, false);
+
+						this.onInfo(message.account.info);
+						Renderer.send('keytarSet', message.account.id, phrase);
+						Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
+							if (message.startingId) {
+								S.Auth.startingId = message.startingId;
+							};
+
+							if (callBack) {
+								callBack();
+							};
+						});
+
+						analytics.event('CreateAccount', { middleTime: message.middleTime });
+						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
 					});
-
-					analytics.event('CreateAccount', { middleTime: message.middleTime });
-					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
 				});
 			});
 		});
