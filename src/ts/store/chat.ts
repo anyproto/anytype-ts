@@ -1,12 +1,24 @@
 import { observable, action, makeObservable, set, intercept } from 'mobx';
-import { J, I, U, M, Renderer } from 'Lib';
+import { J, I, U, M, S, Renderer } from 'Lib';
+
+interface Counter {
+	mentionCounter: number; 
+	messageCounter: number;
+};
+
+interface ChatState {
+	messageOrderId: string;
+	messageCounter: number;
+	mentionOrderId: string;
+	mentionCounter: number;
+	lastStateId: string;
+};
 
 class ChatStore {
 
 	public messageMap: Map<string, any[]> = observable(new Map());
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
-	public stateMap: Map<string, any> = observable.map(new Map());
-	public spaceMap: Map<string, any> = observable.map(new Map());
+	public stateMap: Map<string, Map<string, ChatState>> = observable.map(new Map());
 
 	constructor () {
 		makeObservable(this, {
@@ -21,6 +33,7 @@ class ChatStore {
 	set (subId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
+
 		this.messageMap.set(subId, observable.array(list));
 	};
 
@@ -82,12 +95,7 @@ class ChatStore {
 		(ids || []).forEach(id => this.update(subId, { id, isReadMention: value }));
 	};
 
-	private stateParam (subId: string) {
-		const [ prefix, spaceId, chatId ] = subId.split('-');
-		return { prefix, spaceId, chatId };
-	};
-
-	private createState (state: I.ChatState) {
+	private createState (state: I.ChatState): ChatState {
 		const { messages, mentions, lastStateId } = state;
 		const el = {
 			messageOrderId: messages.orderId,
@@ -111,19 +119,25 @@ class ChatStore {
 		return el;
 	};
 
-	getMapParam (subId: string): { mapName: string; mapKey: string; } {
-		const param = this.stateParam(subId);
-		const isSpace = param.prefix == J.Constant.subId.chatSpace;
-		const mapName = isSpace ? 'spaceMap' : 'stateMap';
-		const mapKey = isSpace ? param.spaceId : subId;
+	private getSubParam (subId: string): { prefix: string; spaceId: string; chatId: string; isSpace: boolean; } {
+		const [ prefix, spaceId, chatId ] = subId.split('-');
 
-		return { mapName, mapKey };
+		if (prefix == J.Constant.subId.chatSpace) {
+			return { prefix, spaceId, chatId, isSpace: true };
+		} else {
+			return { prefix: '', spaceId: S.Common.space, chatId: prefix, isSpace: false };
+		};
 	};
 
 	setState (subId: string, state: I.ChatState) {
-		const { mapName, mapKey } = this.getMapParam(subId);
-		const current = this[mapName].get(mapKey);
+		const param = this.getSubParam(subId);
+	
+		let spaceMap = this.stateMap.get(param.spaceId);
+		if (!spaceMap) {
+			spaceMap = new Map();
+		};
 
+		const current = spaceMap.get(param.chatId);
 		if (current) {
 			const { messages, mentions, lastStateId } = state;
 
@@ -135,23 +149,37 @@ class ChatStore {
 				lastStateId,
 			});
 		} else {
-			this[mapName].set(mapKey, this.createState(state));
+			spaceMap.set(param.chatId, this.createState(state));
 		};
+
+		this.stateMap.set(param.spaceId, spaceMap);
 	};
 
-	getState (subId: string) {
-		const { mapName, mapKey } = this.getMapParam(subId);
-		return this[mapName].get(mapKey) || {};
+	getState (subId: string): ChatState {
+		const param = this.getSubParam(subId);
+		const ret = {
+			messageOrderId: '',
+			messageCounter: 0,
+			mentionOrderId: '',
+			mentionCounter: 0,
+			lastStateId: '',
+		};
+
+		return Object.assign(ret, this.stateMap.get(param.spaceId)?.get(param.chatId) || {});
 	};
 
 	clear (subId: string) {
+		const param = this.getSubParam(subId);
+
 		this.messageMap.delete(subId);
 		this.replyMap.delete(subId);
+		this.stateMap.get(param.spaceId)?.delete(param.chatId);
 	};
 
 	clearAll () {
 		this.messageMap.clear();
 		this.replyMap.clear();
+		this.stateMap.clear();
 	};
 
 	getList (subId: string): any[] {
@@ -166,7 +194,7 @@ class ChatStore {
 		return this.replyMap.get(subId)?.get(id);
 	};
 
-	getTotalCounters (): { mentionCounter: number; messageCounter: number; } {
+	getTotalCounters (): Counter {
 		const spaces = U.Space.getList();
 		const ret = { mentionCounter: 0, messageCounter: 0 };
 
@@ -186,15 +214,21 @@ class ChatStore {
 		return ret;
 	};
 
-	getSpaceCounters (spaceId: string): any {
-		if (!spaceId) {
-			return null;
+	getSpaceCounters (spaceId: string): Counter {
+		const spaceMap = this.stateMap.get(spaceId);
+		const ret = { mentionCounter: 0, messageCounter: 0 };
+
+		if (spaceMap) {
+			for (const [ chatId, state ] of spaceMap) {
+				ret.mentionCounter += state.mentionCounter || 0;
+				ret.messageCounter += state.messageCounter || 0;
+			};
 		};
 
-		return this.spaceMap.get(spaceId);
+		return ret;
 	};
 
-	setBadge (counters: { mentionCounter: number; messageCounter: number; }) {
+	setBadge (counters: Counter) {
 		let t = 0;
 
 		if (counters) {

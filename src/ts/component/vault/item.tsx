@@ -24,7 +24,6 @@ const VaultItem: FC<Props> = observer(({
 	const { config } = S.Common;
 	const cn = [ 'item' ];
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
-	const counters = S.Chat.getSpaceCounters(item.targetSpaceId) || {};
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
@@ -39,7 +38,9 @@ const VaultItem: FC<Props> = observer(({
 		cn.push(`isButton ${item.id}`);
 	};
 
-	if (config.experimental) {
+	if (config.experimental && !item.isButton) {
+		const counters = S.Chat.getSpaceCounters(item.targetSpaceId);
+
 		if (counters.mentionCounter) {
 			cnt = '@';
 		} else 
