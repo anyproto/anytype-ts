@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName } from 'Component';
+import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName, Tag } from 'Component';
 import { I, C, S, U, J, Action, translate, analytics, sidebar, keyboard, Relation } from 'Lib';
 import { observable } from 'mobx';
 
@@ -25,6 +25,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		super(props);
 
 		this.onMore = this.onMore.bind(this);
+		this.onOptionClick = this.onOptionClick.bind(this);
 		this.onOptionAdd = this.onOptionAdd.bind(this);
 		this.onOptionRemove = this.onOptionRemove.bind(this);
 	};
@@ -59,16 +60,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 				canAdd = true;
 				optionsLabel = U.Common.plural(types.length, translate('pluralObjectType'));
-				options = types.map((type) => {
-					return (
-						<div key={type.id} className="item">
-							<IconObject object={type} />
-							<ObjectName object={type} />
+				options = types.map((type) => (
+					<div key={type.id} className="item object">
+						<IconObject object={type} />
+						<ObjectName object={type} />
 
-							{!isReadonlyRelation ? <Icon onClick={e => this.onOptionRemove(e, type)} className="remove" /> : ''}
-						</div>
-					);
-				});
+						{!isReadonlyRelation ? <Icon onClick={e => this.onOptionRemove(e, type)} className="remove" /> : ''}
+					</div>
+				));
 				break;
 			};
 
@@ -78,6 +77,16 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
+				const relationsOptions = Relation.getOptions(S.Record.getRecordIds(J.Constant.subId.option, ''))
+										.filter(it => (it.relationKey == object.relationKey) && !it._empty_ && !it.isArchived && !it.isDeleted);
+
+				canAdd = true;
+				optionsLabel = U.Common.plural(relationsOptions.length, translate('pluralOption'));
+				options = relationsOptions.map((option) => (
+					<div key={option.id} id={`item-${option.id}`} className="item option" onClick={e => this.onOptionClick(e, option)}>
+						<Tag text={option.name} color={option.color} className={Relation.selectClassName(relationFormat)} />
+					</div>
+				));
 				break;
 			};
 		};
@@ -254,19 +263,41 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		});
 	};
 
+	onOptionClick (e, option) {
+		const object = this.getObject();
+		const { relationFormat, objectTypes } = object;
+
+		switch (relationFormat) {
+			case I.RelationType.Select:
+			case I.RelationType.MultiSelect: {
+				S.Menu.open('dataviewOptionEdit', {
+					element: `#pageRelation #item-${option.id}`,
+					offsetY: 4,
+					data: {
+						option: option,
+					}
+				});
+				break;
+			};
+		};
+	};
+
 	onOptionAdd () {
 		const object = this.getObject();
 		const { relationFormat, objectTypes } = object;
+		const param = {
+			element: `#pageRelation .relationData .options .add`,
+			className: 'single',
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 8,
+		}
 
 		switch (relationFormat) {
 			case I.RelationType.Object: {
 				S.Menu.closeAll([], () => {
 					S.Menu.open('dataviewObjectList', {
-						element: `#pageRelation .relationData .options .add`,
-						className: 'single',
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Center,
-						offsetY: 8,
+						...param,
 						data: {
 							canEdit: true,
 							rootId: this.getRootId(),
@@ -288,6 +319,27 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 				break;
 			};
+
+			case I.RelationType.Select:
+			case I.RelationType.MultiSelect: {
+				const colors = U.Menu.getBgColors();
+
+				S.Menu.open('dataviewOptionEdit', {
+					...param,
+					data: {
+						option: { name: '', color: colors[U.Common.rand(1, colors.length - 1)].value },
+						isNew: true,
+						onCreate: (option) => {
+							C.ObjectCreateRelationOption({
+								relationKey: object.relationKey,
+								name: option.name,
+								relationOptionColor: option.color,
+							}, S.Common.space);
+						},
+					}
+				});
+				break;
+			};
 		};
 	};
 
@@ -298,6 +350,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		switch (relationFormat) {
 			case I.RelationType.Object: {
 				const details = [ { key: 'relationFormatObjectTypes', value: Relation.getArrayValue(objectTypes.filter(it => it != item.id)) } ];
+
 				C.ObjectListSetDetails([ object.id ], details);
 				break;
 			};

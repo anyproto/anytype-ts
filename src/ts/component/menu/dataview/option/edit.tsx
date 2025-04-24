@@ -14,7 +14,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option } = data;
+		const { option, isNew } = data;
 		const sections = this.getSections();
 
 		const Color = (item: any) => (
@@ -104,14 +104,22 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isNew } = data;
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
+
+		let button = null;
+		if (isNew) {
+			button = { id: 'create', icon: 'add', name: translate('menuDataviewOptionEditCreate') };
+		} else {
+			button = { id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') };
+		};
 
 		return [
 			{ children: colors, className: 'colorPicker' },
 			{ 
-				children: [
-					{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
-				] 
+				children: [ button ]
 			},
 		];
 	};
@@ -169,6 +177,23 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 					}
 				}
 			});
+		} else
+		if (item.id == 'create') {
+			const { param, close } = this.props;
+			const { data } = param;
+			const { onCreate } = data;
+			const value = this.refName ? this.refName.getValue() : '';
+
+			if (!onCreate) {
+				close();
+			};
+
+			if (!value) {
+				return;
+			};
+
+			onCreate({ name: value, color: this.color });
+			close();
 		};
 	};
 
@@ -199,10 +224,10 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option } = data;
+		const { option, isNew } = data;
 		const value = this.refName ? this.refName.getValue() : '';
 
-		if (!value) {
+		if (!value || isNew) {
 			return;
 		};
 

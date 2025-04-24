@@ -221,6 +221,7 @@
 	"pluralMonth": "month|months",
 	"pluralYear": "year|years",
 	"pluralDevice": "device|devices",
+	"pluralOption": "Option|Options",
 
 	"pluralImage": "Image|Images",
 	"pluralVideo": "Video|Videos",
@@ -1547,6 +1548,7 @@
 	"menuDataviewOptionListCreate": "Create or select an option",
 	"menuDataviewOptionEditPlaceholder": "Option name",
 	"menuDataviewOptionEditDelete": "Delete option",
+	"menuDataviewOptionEditCreate": "Create option",
 	"menuDataviewObjectTypeEditName": "Object Type name",
 	"menuDataviewObjectTypeEditLayout": "Layout",
 	"menuDataviewObjectListFind": "Find an object",
