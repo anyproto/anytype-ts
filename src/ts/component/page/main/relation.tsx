@@ -58,7 +58,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				const types = (object?.objectTypes.map(it => S.Record.getTypeById(it)) || []).filter(it => it);
 
 				canAdd = true;
-				optionsLabel = U.Common.plural(10, translate('pluralObjectType'));
+				optionsLabel = U.Common.plural(types.length, translate('pluralObjectType'));
 				options = types.map((type) => {
 					return (
 						<div key={type.id} className="item">
