@@ -341,6 +341,7 @@ export interface SearchSubscribeParam {
 
 export interface SearchIdsParam extends SearchSubscribeParam {
 	ids: string[];
+	updateDetails?: boolean;
 };
 
 export enum SortId {

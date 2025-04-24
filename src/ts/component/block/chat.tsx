@@ -403,11 +403,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const rootId = this.getRootId();
-
-		U.Object.getByIds(ids, { keys: U.Data.chatRelationKeys() }, objects => {
-			objects.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
-
+		U.Data.subscribeIds({
+			subId: this.getSubId(),
+			ids,
+			noDeps: true,
+			keys: U.Data.chatRelationKeys(),
+			updateDetails: true,
+		}, () => {
 			this.forceUpdate();
 			this.refForm?.forceUpdate();
 

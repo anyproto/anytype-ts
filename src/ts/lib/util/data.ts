@@ -832,7 +832,7 @@ class UtilData {
 		return filters;
 	};
 
-	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
+	private onSubscribe (subId: string, idField: string, keys: string[], message: any, update?: boolean) {
 		if (message.error.code) {
 			return;
 		};
@@ -850,7 +850,13 @@ class UtilData {
 			details = details.concat(message.records.map(mapper));
 		};
 
-		S.Detail.set(subId, details);
+		if (update) {
+			for (const item of details) {
+				S.Detail.update(subId, item, true);
+			};
+		} else {
+			S.Detail.set(subId, details);
+		};
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
@@ -935,9 +941,10 @@ class UtilData {
 			keys: J.Relation.default,
 			noDeps: false,
 			idField: 'id',
+			updateDetails: false,
 		}, param);
 
-		const { spaceId, subId, noDeps } = param;
+		const { spaceId, subId, noDeps, updateDetails } = param;
 		const ids = U.Common.arrayUnique(param.ids.filter(it => it));
 		const keys = this.mapKeys(param);
 
@@ -977,7 +984,7 @@ class UtilData {
 				return 0;
 			});
 
-			this.onSubscribe(subId, 'id', keys, message);
+			this.onSubscribe(subId, 'id', keys, message, updateDetails);
 
 			if (callBack) {
 				callBack(message);
