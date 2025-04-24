@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
+import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input } from 'Component';
 import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
-import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
 	Phrase	 = 0,
@@ -19,7 +18,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	const nameRef = useRef(null);
 	const [ stage, setStage ] = useState(Stage.Phrase);
 	const [ phraseVisible, setPhraseVisible ] = useState(false);
-	const [ error, setError ] = useState('');
 	const cnb = [];
 
 	const unbind = () => {
@@ -73,27 +71,30 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					nextRef.current?.setLoading(false);
 
 					const routeParam = {
-						replace: true, 
+						replace: true,
 						onRouteChange: () => {
 							S.Common.showRelativeDatesSet(true);
-
+							S.Common.getRef('mainAnimation')?.destroy();
 							U.Space.initSpaceState();
+
+							const newRouteParam = { replace: true };
 
 							if (S.Auth.startingId) {
 								U.Object.getById(S.Auth.startingId, {}, object => {
 									if (object) {
-										U.Object.openRoute(object, { replace: true });
+										U.Object.openRoute(object, newRouteParam);
 									} else {
-										U.Space.openDashboard({ replace: true });
+										U.Space.openDashboard(newRouteParam);
 									};
 								});
 							} else {
-								U.Space.openDashboard({ replace: true });
+								U.Space.openDashboard(newRouteParam);
 							};
 
 							Storage.set('primitivesOnboarding', true);
 							Storage.setOnboarding('objectDescriptionButton');
 							Storage.setOnboarding('typeResetLayout');
+
 							Onboarding.start('basics', false);
 						},
 					};
@@ -153,11 +154,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	const onPhraseTooltip = () => {
 		S.Popup.open('phrase', {});
 		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[stage] });
-	};
-
-	const setErrorHandler = (error: string) => {
-		nextRef.current?.setLoading(false);
-		setError(error);
 	};
 
 	if (!canMoveForward()) {
@@ -256,11 +252,8 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 				{content}
 
-				<Error className="animation" text={error} />
 				<div className="buttons">{buttons}</div>
 			</Frame>
-
-			<CanvasWorkerBridge state={0} />
 		</div>
 	);
 

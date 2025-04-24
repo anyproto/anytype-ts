@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { Frame, Button, Header, Footer, Error } from 'Component';
 import { I, U, S, translate, Animation, analytics } from 'Lib';
-import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -24,6 +23,7 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	useEffect(() => {
 		S.Auth.clearAll();
+		S.Common.getRef('mainAnimation')?.create();
 
 		Animation.to(() => {
 			U.Common.renderLinks($(nodeRef.current));
@@ -52,8 +52,6 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 				<Error text={error} />
 			</Frame>
 			<Footer {...props} className="animation" component="authDisclaimer" />
-
-			<CanvasWorkerBridge state={0} />
 		</div>
 	);
 

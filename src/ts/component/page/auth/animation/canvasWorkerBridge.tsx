@@ -1,21 +1,21 @@
-/* 
-NOTE: this file is copy pasted from the JS-Onboard-Animation Repository
-*/
-
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { DOM_EVENTS, OnboardStage, statsVisible } from './constants';
-//import Stats from 'stats.js';
 
-type Props = {
+interface Props {
 	state: OnboardStage;
 };
 
-const CanvasWorkerBridge = (props: Props) => {
-	const canvasRef = React.useRef<HTMLCanvasElement>(null);
-	const worker = React.useRef<Worker | null>(null);
+interface RefProps {
+	create: () => void;
+	destroy: () => void;
+};
 
-	React.useEffect(() => {
-		// NOTE: Change this next line to new Worker(`workers/onboard.js`) when copying over to JS-anytype
+const CanvasWorkerBridge = forwardRef<RefProps, Props>((props, ref) => {
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const worker = useRef<Worker | null>(null);
+	const [ isDestroyed, setIsDestroyed ] = useState(false);
+
+	useEffect(() => {
 		worker.current = new Worker('workers/onboard.js');
 
 		if (!canvasRef.current) {
@@ -33,10 +33,10 @@ const CanvasWorkerBridge = (props: Props) => {
 					drawingSurface: offscreen,
 					width: canvas.clientWidth,
 					height: canvas.clientHeight,
-					pixelRatio: 1, //window.devicePixelRatio,
+					pixelRatio: 1,
 				},
 			},
-			[offscreen]
+			[ offscreen ]
 		);
 
 		Object.values(DOM_EVENTS).forEach(([eventName, passive]) => {
@@ -85,9 +85,9 @@ const CanvasWorkerBridge = (props: Props) => {
 			window.removeEventListener('resize', handleResize);
 			worker.current?.terminate();
 		};
-	}, []);
+	}, [ isDestroyed ]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!worker.current) {
 			return;
 		};
@@ -96,7 +96,7 @@ const CanvasWorkerBridge = (props: Props) => {
 	}, [ props ]);
 
 	/*
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!statsVisible) {
 			return;
 		};
@@ -111,7 +111,18 @@ const CanvasWorkerBridge = (props: Props) => {
 	}, []);
 	*/
 
-	return <canvas ref={canvasRef} />;
-};
+	useImperativeHandle(ref, () => ({
+		create: () => {
+			setIsDestroyed(false);
+		},
+
+		destroy: () => {
+			worker.current.terminate();
+			setIsDestroyed(true);
+		},
+	}));
+
+	return isDestroyed ? null : <canvas id="mainAnimation" ref={canvasRef} />;
+});
 
 export default CanvasWorkerBridge;

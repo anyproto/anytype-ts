@@ -26,6 +26,7 @@ html.bodyIndex, html.bodyAuth {
 	--shadow: 0px 0px 0px 1px var(--color-button-stroke) !important;
 
 	body { background: var(--color-bg-primary); color: var(--color-text-secondary); overflow: hidden; }
+	#mainAnimation { height: 100vh; width: 100vw; position: absolute; top: 0px; left: 0px; z-index: -1; display: block; }
 
 	#vault,
 	#sidebarToggle,
@@ -143,8 +144,6 @@ html.bodyAuthDeleted {
 .pageAuth, .pageIndex {
 	.frame { text-align: center; background: none !important; }
 	.input { height: 40px; border: solid 1px var(--color-shape-primary) !important; }
-
-	canvas { height: 100vh; width: 100vw; position: absolute; top: 0px; left: 0px; z-index: -1; }
 
 	.header { width: 100% !important; }
 	.header {

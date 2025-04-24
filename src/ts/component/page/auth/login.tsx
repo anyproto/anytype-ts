@@ -76,7 +76,10 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			S.Common.configSet(message.account.config, false);
 
 			const spaceId = Storage.get('spaceId');
-			const routeParam = { replace: true };
+			const routeParam = { 
+				replace: true, 
+				onFadeIn: () => S.Common.getRef('mainAnimation')?.destroy(),
+			};
 
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
@@ -89,6 +92,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 
 			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce(true);
+
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
