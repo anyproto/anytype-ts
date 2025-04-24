@@ -1189,6 +1189,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		const node = $(this.node);
 		const dummy = $(this.refDummy);
+		const padding = 16;
 
 		if (!dummy.length) {
 			return;
@@ -1196,7 +1197,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		raf(() => {
 			dummy.css({ height: node.outerHeight(true) });
-			node.css({ left: dummy.offset().left, width: dummy.width() });
+			node.css({ left: dummy.offset().left - padding, width: dummy.width() + padding * 2 });
 		});
 	};
 
