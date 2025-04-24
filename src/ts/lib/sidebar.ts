@@ -260,6 +260,9 @@ class Sidebar {
 			widthRight = 0;
 		};
 
+		widthLeft = Number(widthLeft) || 0;
+		widthRight = Number(widthRight) || 0;
+
 		const container = U.Common.getScrollContainer(isPopup);
 		const pageWidth = (!isPopup ? ww : this.pageFlex.width()) - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;

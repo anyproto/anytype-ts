@@ -825,6 +825,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			let route = '';
 			let target;
 			let type;
+			let spaceId = '';
 
 			if (isInside) {
 				route = '/' + url.split('://')[1];
@@ -833,16 +834,18 @@ const Block = observer(class Block extends React.Component<Props> {
 				if (search) {
 					const searchParam = U.Common.searchParam(search);
 					target = searchParam.objectId;
+					spaceId = searchParam.spaceId;
 				} else {
 					const routeParam = U.Router.getParam(route);
 					target = routeParam.id;
+					spaceId = routeParam.spaceId;
 				};
 			} else {
 				target = U.Common.urlFix(url);
 				type = I.PreviewType.Link;
 			};
 
-			return { route, target, type, range, isInside };
+			return { route, target, type, range, spaceId, isInside };
 		};
 
 		items.each((i: number, item: any) => {
@@ -874,7 +877,11 @@ const Block = observer(class Block extends React.Component<Props> {
 					return;
 				};
 
-				const { target, type, range } = getParam(item);
+				const { target, type, range, spaceId, isInside } = getParam(item);
+
+				if (isInside && spaceId && (spaceId !== S.Common.space)) {
+					return;
+				};
 
 				Preview.previewShow({
 					target,

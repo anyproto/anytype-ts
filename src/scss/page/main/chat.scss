@@ -7,3 +7,7 @@
 		.elements { width: calc(100% - 32px); margin-left: 0px; left: 16px; }
 	}
 }
+
+html.bodyMainChat {
+	body { overflow-y: scroll; }
+}
