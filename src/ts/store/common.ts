@@ -189,7 +189,7 @@ class CommonStore {
 		};
 
 		let type = S.Record.getTypeByKey(this.defaultType);
-		if (!type || !type.isInstalled || !U.Object.isAllowedObject(type.recommendedLayout)) {
+		if (!type || !type.isInstalled || type.isArchived || type.isDeleted || !U.Object.isAllowedObject(type.recommendedLayout)) {
 			type = S.Record.getTypeByKey(J.Constant.default.typeKey);
 		};
 
