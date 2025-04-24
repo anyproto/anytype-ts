@@ -491,7 +491,8 @@
 
 	"pageMainArchiveEmpty": "Your Bin is empty",
 	"pageMainBlockEmpty": "Block not found",
-	"pageMainRelationObjectsCreated": "%s created",
+
+	"pageMainRelationPropertyType": "Property Type",
 
 	"pageMainMediaNotFound": "File not found",
 

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple } from 'Component';
-import { I, C, S, U, Action, translate, analytics, sidebar, keyboard } from 'Lib';
+import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName } from 'Component';
+import { I, C, S, U, J, Action, translate, analytics, sidebar, keyboard, Relation } from 'Lib';
+import { observable } from 'mobx';
 
 interface State {
 	isDeleted: boolean;
@@ -13,7 +14,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	id = '';
 	refHeader: any = null;
 	refHead: any = null;
-	refListType: any = null;
 	refListObject: any = null;
 
 	state = {
@@ -25,6 +25,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		super(props);
 
 		this.onMore = this.onMore.bind(this);
+		this.onOptionAdd = this.onOptionAdd.bind(this);
+		this.onOptionRemove = this.onOptionRemove.bind(this);
 	};
 
 	render () {
@@ -36,8 +38,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		const rootId = this.getRootId();
 		const object = this.getObject();
-		const subIdType = S.Record.getSubId(rootId, 'type');
-		const totalType = S.Record.getMeta(subIdType, '').total;
+		const { relationFormat, isReadonlyRelation } = object;
 		const subIdObject = S.Record.getSubId(rootId, 'object');
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
 		const columnsObject: any[] = [
@@ -48,13 +49,41 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
 		];
 
-		const filtersType: I.Filter[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-			{ relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
-		];
+		let options = null;
+		let optionsLabel = '';
+		let canAdd = false;
+
+		switch (relationFormat) {
+			case I.RelationType.Object: {
+				const types = (object?.objectTypes.map(it => S.Record.getTypeById(it)) || []).filter(it => it);
+
+				canAdd = true;
+				optionsLabel = U.Common.plural(10, translate('pluralObjectType'));
+				options = types.map((type) => {
+					return (
+						<div key={type.id} className="item">
+							<IconObject object={type} />
+							<ObjectName object={type} />
+
+							{!isReadonlyRelation ? <Icon onClick={e => this.onOptionRemove(e, type)} className="remove" /> : ''}
+						</div>
+					);
+				});
+				break;
+			};
+
+			case I.RelationType.Date: {
+				break;
+			};
+
+			case I.RelationType.Select:
+			case I.RelationType.MultiSelect: {
+				break;
+			};
+		};
 
 		return (
-			<div>
+			<div id="pageRelation">
 				<Header 
 					{...this.props} 
 					component="mainObject" 
@@ -72,62 +101,53 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						rootId={rootId}
 					/>
 
-					{!object._empty_ ? (
-						<>
-							<div className="section set">
-								<div className="title">
-									<div className="side left">
-										{U.Common.plural(totalType, translate('pluralObjectType'))}
-										<span className="cnt">{totalType}</span>
-									</div>
+					<div className="relationData">
+						<dl>
+							<dt>{translate('pageMainRelationPropertyType')}</dt>
+							<dd>{translate(`relationName${relationFormat}`)}</dd>
+						</dl>
+
+						{options ? (
+							<dl className="options">
+								<dt>{optionsLabel}</dt>
+								<dd>
+									{options}
+									{canAdd && !isReadonlyRelation ? <Icon className="add" onClick={this.onOptionAdd} /> : ''}
+								</dd>
+							</dl>
+						) : ''}
+					</div>
+
+					{!object._empty_ && object.isInstalled ? (
+						<div className="section set">
+							<div className="title">
+								<div className="side left">
+									{U.Common.plural(totalObject, translate('pluralObject'))}
+									<span className="cnt">{totalObject}</span>
 								</div>
 
-								<div className="content">
-									<ListObject 
-										ref={ref => this.refListType = ref}
-										{...this.props}
-										spaceId={object.spaceId}
-										subId={subIdType} 
-										rootId={rootId} 
-										columns={[]} 
-										filters={filtersType} 
-										route={analytics.route.screenRelation}
+								<div className="side right">
+									<Icon
+										id="button-create"
+										className="more withBackground"
+										onClick={this.onMore}
 									/>
 								</div>
 							</div>
 
-							{object.isInstalled ? (
-								<div className="section set">
-									<div className="title">
-										<div className="side left">
-											{U.Common.plural(totalObject, translate('pluralObject'))}
-											<span className="cnt">{totalObject}</span>
-										</div>
-
-										<div className="side right">
-											<Icon 
-												id="button-create"
-												className="more withBackground" 
-												onClick={this.onMore} 
-											/>
-										</div>
-									</div>
-
-									<div className="content">
-										<ListObject 
-											ref={ref => this.refListObject = ref}
-											{...this.props} 
-											sources={[ rootId ]} 
-											spaceId={object.spaceId}
-											subId={subIdObject} 
-											rootId={rootId} 
-											columns={columnsObject} 
-											route={analytics.route.screenRelation}
-										/>
-									</div>
-								</div>
-							) : ''}
-						</>
+							<div className="content">
+								<ListObject
+									ref={ref => this.refListObject = ref}
+									{...this.props}
+									sources={[ rootId ]}
+									spaceId={object.spaceId}
+									subId={subIdObject}
+									rootId={rootId}
+									columns={columnsObject}
+									route={analytics.route.screenRelation}
+								/>
+							</div>
+						</div>
 					) : ''}
 				</div>
 
@@ -232,6 +252,56 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				},
 			},
 		});
+	};
+
+	onOptionAdd () {
+		const object = this.getObject();
+		const { relationFormat, objectTypes } = object;
+
+		switch (relationFormat) {
+			case I.RelationType.Object: {
+				S.Menu.closeAll([], () => {
+					S.Menu.open('dataviewObjectList', {
+						element: `#pageRelation .relationData .options .add`,
+						className: 'single',
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Center,
+						offsetY: 8,
+						data: {
+							canEdit: true,
+							rootId: this.getRootId(),
+							relation: observable.box(object),
+							value: objectTypes,
+							filters: [
+								{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+								{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+							],
+							onChange: (value: any, callBack?: () => void) => {
+								const details = [ { key: 'relationFormatObjectTypes', value: value } ];
+
+								C.ObjectListSetDetails([ object.id ], details);
+								S.Menu.closeAll();
+							},
+						}
+					})
+				});
+
+				break;
+			};
+		};
+	};
+
+	onOptionRemove (e, item) {
+		const object = this.getObject();
+		const { relationFormat, objectTypes } = object;
+
+		switch (relationFormat) {
+			case I.RelationType.Object: {
+				const details = [ { key: 'relationFormatObjectTypes', value: Relation.getArrayValue(objectTypes.filter(it => it != item.id)) } ];
+				C.ObjectListSetDetails([ object.id ], details);
+				break;
+			};
+		};
 	};
 
 });

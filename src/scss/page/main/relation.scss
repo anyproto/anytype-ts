@@ -10,6 +10,32 @@
 	}
 
 	.wrapper {
+		.relationData { display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 28px; }
+		.relationData {
+			dl { display: flex; align-items: center; }
+			dl {
+				dt { flex-shrink: 0; width: 136px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
+				dd { width: 100%; display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px; }
+				dd {
+					.item {
+						position: relative; display: flex; align-items: center; height: 30px; gap: 0px 4px; padding: 0px 8px;
+						border-radius: 6px; border: 1px solid var(--color-shape-primary);
+					}
+					.item {
+						.icon.remove {
+							display: none; position: absolute; right: -8px; top: -8px; width: 16px; height: 16px; border-radius: 50%;
+							background-color: var(--color-shape-secondary); background-image: url('~img/icon/close.svg'); background-size: 12px;
+						}
+					}
+					.item:hover {
+						.icon.remove { display: block; }
+					}
+
+					.icon.add { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
+				}
+			}
+		}
+
 		.block {
 			.wrapMenu { display: none; }
 			.wrapContent { width: 100%; }
