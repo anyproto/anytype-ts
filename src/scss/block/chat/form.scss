@@ -70,7 +70,11 @@
 		.icon.clear { width: 20px; height: 20px; border-radius: 50%; background: var(--color-control-active) url('~img/icon/chat/buttons/clear.svg'); }
 	}
 
-	.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: transparent; }
+	&.customScrollbar {
+		::-webkit-scrollbar { height: 0px; }
+	}
+
+	.editableWrap { @include text-common; max-height: 352px; overflow-y: scroll; background-color: transparent; }
 	.editableWrap {
 		.editable, .placeholder { padding: 16px; }
 	}
