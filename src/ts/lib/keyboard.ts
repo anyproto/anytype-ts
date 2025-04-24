@@ -449,6 +449,7 @@ class Keyboard {
 		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
 		const isMainChat = this.isMainChat();
+		const canUndo = !this.isFocused && this.isMainEditor();
 
 		switch (cmd) {
 			case 'search': {
@@ -487,7 +488,7 @@ class Keyboard {
 			};
 
 			case 'undo': {
-				if (!this.isFocused && !isMainChat) {
+				if (canUndo) {
 					this.onUndo(rootId, route);
 				} else {
 					document.execCommand('undo');
@@ -496,7 +497,7 @@ class Keyboard {
 			};
 
 			case 'redo': {
-				if (!this.isFocused && !isMainChat) {
+				if (canUndo) {
 					this.onRedo(rootId, route);
 				} else {
 					document.execCommand('redo');
