@@ -805,12 +805,13 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderLinks (node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any) {
+	renderLinks (rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any) {
 		node = $(node);
 		param = param || {};
 
-		const { readonly, block } = props;
+		const { readonly } = props;
 		const items = node.find(Mark.getTag(I.MarkType.Link));
+		const subId = param.subId || rootId;
 
 		if (!items.length) {
 			return;
@@ -833,10 +834,12 @@ const Block = observer(class Block extends React.Component<Props> {
 				const search = url.split('?')[1];
 				if (search) {
 					const searchParam = U.Common.searchParam(search);
+
 					target = searchParam.objectId;
 					spaceId = searchParam.spaceId;
 				} else {
 					const routeParam = U.Router.getParam(route);
+
 					target = routeParam.id;
 					spaceId = routeParam.spaceId;
 				};
@@ -879,12 +882,19 @@ const Block = observer(class Block extends React.Component<Props> {
 
 				const { target, type, range, spaceId, isInside } = getParam(item);
 
-				if (isInside && spaceId && (spaceId !== S.Common.space)) {
-					return;
+				let object;
+
+				if (isInside) {
+					if (spaceId && (spaceId !== S.Common.space)) {
+						return;
+					};
+
+					object = S.Detail.get(subId, target, []);
 				};
 
 				Preview.previewShow({
 					target,
+					object,
 					type,
 					markType: I.MarkType.Link,
 					element: item,
@@ -910,6 +920,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { block } = this.props;
 		const size = U.Data.emojiParam(block.content.style);
 		const items = node.find(Mark.getTag(I.MarkType.Mention));
+		const subId = param.subId || rootId;
 
 		if (!items.length) {
 			return;
@@ -925,7 +936,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			const range = String(item.attr('data-range') || '').split('-');
 			const target = String(item.attr('data-param') || '');
-			const object = S.Detail.get(rootId, target, []);
+			const object = S.Detail.get(subId, target, []);
 			const { id, _empty_, layout, done, isDeleted, isArchived } = object;
 			const isTask = U.Object.isTaskLayout(layout);
 			const name = item.find('name');
@@ -1006,6 +1017,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const { readonly } = props;
 		const items = node.find(Mark.getTag(I.MarkType.Object));
+		const subId = param.subId || rootId;
 
 		if (!items.length) {
 			return;
@@ -1015,7 +1027,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			item = $(item);
 			
 			const param = item.attr('data-param');
-			const object = S.Detail.get(rootId, param, []);
+			const object = S.Detail.get(subId, param, []);
 			const range = String(item.attr('data-range') || '').split('-');
 
 			if (!param) {
