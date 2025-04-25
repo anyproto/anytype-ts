@@ -330,7 +330,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						option: { name: '', color: colors[U.Common.rand(1, colors.length - 1)].value },
 						isNew: true,
 						relationKey: object.relationKey,
-					}
+					},
 				});
 				break;
 			};

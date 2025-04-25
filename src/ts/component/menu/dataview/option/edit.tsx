@@ -14,7 +14,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option, isNew } = data;
+		const { option } = data;
 		const sections = this.getSections();
 
 		const Color = (item: any) => (
@@ -153,7 +153,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 				this.save();
 				this.props.close();
 			};
-			
+
 			ret = true;
 		});
 
