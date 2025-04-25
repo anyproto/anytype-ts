@@ -26,6 +26,16 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 	const { rootId, readonly, onIcon, onLayout, onCoverOpen, onCoverClose, onEdit, onUploadStart, onUpload, onCoverSelect } = props;
 	const [ dummy, setDummy ] = useState(0);
 	const root = S.Block.getLeaf(rootId, rootId);
+	const isInSets = U.Object.isInSetLayouts(root?.layout);
+	const isTask = U.Object.isTaskLayout(root?.layout);
+	const isNote = U.Object.isNoteLayout(root?.layout);
+	const isBookmark = U.Object.isBookmarkLayout(root?.layout);
+	const isChat = U.Object.isChatLayout(root?.layout);
+	const isType = U.Object.isTypeLayout(root?.layout);
+	const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
+	const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
+	const hasConflict = U.Object.hasLayoutConflict(object);
+	const check = U.Data.checkDetails(rootId);
 	const nodeRef = useRef(null);
 	const timeout = useRef(0);
 
@@ -158,16 +168,8 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 			return { allowedIcon, allowedLayout, allowedCover, allowedDescription };
 		};
 
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const isInSets = U.Object.isInSetLayouts(root.layout);
-		const isTask = U.Object.isTaskLayout(root.layout);
-		const isNote = U.Object.isNoteLayout(root.layout);
-		const isBookmark = U.Object.isBookmarkLayout(root.layout);
-		const isChat = U.Object.isChatLayout(root.layout);
-		const isType = U.Object.isTypeLayout(root.layout);
-		const hasConflict = U.Object.hasLayoutConflict(object);
 
 		allowedLayout = !checkType && allowedDetails && !isChat && !isType;
 		allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
@@ -194,10 +196,6 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 	};
 
 	const { allowedIcon, allowedLayout, allowedCover, allowedDescription } = getAllowedButtons();
-	const check = U.Data.checkDetails(rootId);
-	const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
-	const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
-	const hasConflict = U.Object.hasLayoutConflict(object);
 
 	useEffect(() => {
 		if (allowedDescription) {
