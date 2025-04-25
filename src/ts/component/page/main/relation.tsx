@@ -61,7 +61,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				canAdd = true;
 				optionsLabel = U.Common.plural(types.length, translate('pluralObjectType'));
 				options = types.map((type) => (
-					<div key={type.id} className="item object">
+					<div key={type.id} className="item object" onClick={e => this.onOptionClick(e, type)}>
 						<IconObject object={type} />
 						<ObjectName object={type} />
 
@@ -83,7 +83,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				canAdd = true;
 				optionsLabel = U.Common.plural(relationsOptions.length, translate('pluralOption'));
 				options = relationsOptions.map((option) => (
-					<div key={option.id} id={`item-${option.id}`} className="item option" onClick={e => this.onOptionClick(e, option)}>
+					<div key={option.id} id={`item-${option.id}`} className="item" onClick={e => this.onOptionClick(e, option)}>
 						<Tag text={option.name} color={option.color} className={Relation.selectClassName(relationFormat)} />
 					</div>
 				));
@@ -117,7 +117,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						</dl>
 
 						{options ? (
-							<dl className="options">
+							<dl className={[ 'options', Relation.selectClassName(relationFormat) ].join(' ')}>
 								<dt>{optionsLabel}</dt>
 								<dd>
 									{options}
@@ -279,6 +279,11 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				});
 				break;
 			};
+
+			case I.RelationType.Object: {
+				U.Object.openAuto(option);
+				break;
+			};
 		};
 	};
 
@@ -340,6 +345,9 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	onOptionRemove (e, item) {
 		const object = this.getObject();
 		const { relationFormat, objectTypes } = object;
+
+		e.preventDefault();
+		e.stopPropagation();
 
 		switch (relationFormat) {
 			case I.RelationType.Object: {

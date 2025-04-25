@@ -2,7 +2,7 @@
 
 .pageMainRelation,
 .settingsPage.pageSettingsRelation {
-	.wrapper { width: 736px; margin: 0px auto; padding: 40px 16px 80px 16px; user-select: none; }
+	.wrapper { width: calc(100% - 96px); margin: 0px auto; padding: 60px 0px 0px 0px; user-select: none; }
 	.wrapper.withIcon {
 		.editorControls {
 			#button-icon { display: none; }
@@ -28,9 +28,14 @@
 						.icon.remove { display: block; }
 					}
 
-					.item.object { border-radius: 6px; border: 1px solid var(--color-shape-primary); padding: 0px 8px; }
-
 					.icon.add { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
+				}
+			}
+
+			dl.options.isObject,
+			dl.options.isSelect {
+				dd {
+					.item { border-radius: 6px; border: 1px solid var(--color-shape-primary); padding: 0px 8px; }
 				}
 			}
 		}

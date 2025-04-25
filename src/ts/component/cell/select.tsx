@@ -311,6 +311,8 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	useEffect(() => {
 		$(`#${id}`).toggleClass('isEditing', isEditing);
 
+		console.log('ITEMS: ', getItems())
+
 		if (isEditing) {
 			placeholderCheck();
 			focus();
