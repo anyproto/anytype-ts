@@ -329,13 +329,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					data: {
 						option: { name: '', color: colors[U.Common.rand(1, colors.length - 1)].value },
 						isNew: true,
-						onCreate: (option) => {
-							C.ObjectCreateRelationOption({
-								relationKey: object.relationKey,
-								name: option.name,
-								relationOptionColor: option.color,
-							}, S.Common.space);
-						},
+						relationKey: object.relationKey,
 					}
 				});
 				break;

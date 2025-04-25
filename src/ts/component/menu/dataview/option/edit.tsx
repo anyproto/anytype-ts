@@ -136,6 +136,10 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	onKeyDown (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { isNew } = data;
+
 		window.clearTimeout(this.timeout);
 
 		let ret = false;
@@ -143,9 +147,13 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
-			this.save();
-			this.props.close();
-
+			if (isNew) {
+				this.create();
+			} else {
+				this.save();
+				this.props.close();
+			};
+			
 			ret = true;
 		});
 
@@ -179,21 +187,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			});
 		} else
 		if (item.id == 'create') {
-			const { param, close } = this.props;
-			const { data } = param;
-			const { onCreate } = data;
-			const value = this.refName ? this.refName.getValue() : '';
-
-			if (!onCreate) {
-				close();
-			};
-
-			if (!value) {
-				return;
-			};
-
-			onCreate({ name: value, color: this.color });
-			close();
+			this.create();
 		};
 	};
 
@@ -235,6 +229,29 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			{ key: 'name', value },
 			{ key: 'relationOptionColor', value: this.color },
 		]);
+	};
+
+	create () {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { relationKey } = data;
+		const value = this.refName ? this.refName.getValue() : '';
+
+		if (!value) {
+			return;
+		};
+
+		if (!relationKey) {
+			console.error('[MenuDataviewOption.Create] No relationKey');
+			return;
+		};
+
+		C.ObjectCreateRelationOption({
+			relationKey,
+			name: value,
+			relationOptionColor: this.color,
+		}, S.Common.space);
+		close();
 	};
 	
 });
