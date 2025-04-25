@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from 'react';
-import { I, C, U, analytics } from 'Lib';
+import { I, C, U, S, Action, analytics } from 'Lib';
 
 const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -23,19 +23,21 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			const details = message.objectView?.details || [];
-			const item = details.find(it => it.id == id);
+			const object = S.Detail.get(id, id);
 
-			if (!item) {
+			if (object._empty_) {
+				U.Space.openDashboard();
 				console.error('Object not found');
 				return;
 			};
 
-			const object = item.details;
-
 			U.Object.openRoute(object);
 			analytics.event('OpenObjectByLink', { route, objectType: object.type, type: 'Object' });
 		});
+
+		return () => {
+			Action.pageClose(id, false);
+		};
 
 	}, []);
 

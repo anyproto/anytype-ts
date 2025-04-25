@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Label, Button } from 'Component';
-import { I, C, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
+import { I, C, S, U, J, analytics, Relation, Storage, translate, Action } from 'Lib';
 import Item from './item';
 
 const MAX_DEPTH = 15; // Maximum depth of the tree
@@ -32,6 +32,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
 	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
+	const traceId = getTraceId();
 
 	const unsubscribe = () => {	
 		const subIds = Object.keys(subscriptionHashes.current).map(getSubId);
@@ -258,7 +259,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		node.css(css);
 	};
 
-
 	const nodes = loadTree();
 	const length = nodes.length;
 
@@ -367,10 +367,13 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			getData(getSubId(), initCache);
 		} else {
 			initCache();
-			C.ObjectShow(targetId, getTraceId(), U.Router.getRouteSpaceId());
+			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId());
 		};
 
-		return () => unsubscribe();
+		return () => {
+			unsubscribe();
+			Action.pageClose([ targetId, traceId ].join('-'), false);
+		};
 	}, []);
 
 	useEffect(() => {

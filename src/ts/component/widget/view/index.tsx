@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Button } from 'Component';
-import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics } from 'Lib';
+import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics, Action } from 'Lib';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
@@ -29,6 +29,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const object = S.Detail.get(S.Block.widgets, targetId);
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
 	const viewType = view ? view.type : I.ViewType.List;
+	const traceId = getTraceId();
 
 	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
@@ -285,7 +286,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		} else {
 			setIsLoading(true);
 
-			C.ObjectShow(targetId, getTraceId(), U.Router.getRouteSpaceId(), () => {
+			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), () => {
 				setIsLoading(false);
 
 				const view = getView();
@@ -297,6 +298,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		return () => {
 			C.ObjectSearchUnsubscribe([ subId ]);
+			Action.pageClose([ targetId, traceId ].join('-'), false);
 		};
 	}, []);
 
