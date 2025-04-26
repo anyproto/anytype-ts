@@ -17,21 +17,14 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		C.ObjectShow(id, '', spaceId, (message: any) => {
-			if (message.error.code) {
+		U.Object.getById(id, { spaceId }, object => {
+			if (!object) {
 				U.Space.openDashboard();
-				return;
-			};
-
-			const object = S.Detail.get(id, id);
-
-			if (object._empty_) {
-				U.Space.openDashboard();
-				console.error('Object not found');
 				return;
 			};
 
 			U.Object.openRoute(object);
+
 			analytics.event('OpenObjectByLink', { route, objectType: object.type, type: 'Object' });
 		});
 

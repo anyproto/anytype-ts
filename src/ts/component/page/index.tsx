@@ -201,7 +201,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
 		const isPinCheck = this.isAuthPinCheck();
-		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
 		const routeParam = { replace: true };

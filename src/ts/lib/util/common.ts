@@ -606,7 +606,7 @@ class UtilCommon {
 							};
 						});
 
-						U.Space.openDashboard({ replace: true });
+						U.Space.openDashboard();
 					}
 				},
 			});

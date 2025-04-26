@@ -5,6 +5,10 @@ class UtilSpace {
 	openDashboard (param?: any) {
 		param = param || {};
 
+		if (undefined === param.replace) {
+			param.replace = true;
+		};
+
 		const space = this.getSpaceview();
 
 		if (!space || space._empty_ || space.isAccountDeleted || !space.isLocalOk) {
