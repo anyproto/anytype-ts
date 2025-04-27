@@ -23,7 +23,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const top = useRef(0);
 	const timeoutHover = useRef(0);
 	const pressed = useRef(new Set());
-	const isSubscribed = useRef(false);
 	const n = useRef(-1);
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
@@ -305,7 +304,10 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		S.Chat.setBadge(counters);
+		if (config.experimental) {
+			S.Chat.setBadge(counters);
+		};
+
 		$(nodeRef.current).find('#scroll').scrollTop(top.current);
 		setActive(S.Block.spaceview);
 	});
