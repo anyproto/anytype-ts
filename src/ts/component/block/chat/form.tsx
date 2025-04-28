@@ -93,21 +93,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { messageCounter, mentionCounter } = S.Chat.getState(subId);
 		const mc = messageCounter > 999 ? '999+' : messageCounter;
 
-		if (readonly) {
-			return (
-				<>
-					<div ref={ref => this.refDummy = ref} className="formDummy" />
-					<div 
-						ref={ref => this.node = ref} 
-						id="formWrapper" 
-						className="formWrapper"
-					>
-						<div className="readonly">{translate('blockChatFormReadonly')}</div>
-					</div>
-				</>
-			);
-		};
-
+		let form = null;
 		let title = '';
 		let text = '';
 		let icon: any = null;
@@ -155,6 +141,91 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			</div>
 		);
 
+		if (readonly) {
+			form = <div className="readonly">{translate('blockChatFormReadonly')}</div>;
+		} else {
+			form = (
+				<div className="form customScrollbar">
+					<Loader id="form-loader" />
+
+					{title ? (
+						<div className="head">
+							<div className="side left">
+								{icon}
+								<div className="textWrapper">
+									<div className="name">{title}</div>
+									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								</div>
+							</div>
+							<div className="side right">
+								<Icon className="clear" onClick={onClear} />
+							</div>
+						</div>
+					) : ''}
+
+					<Editable 
+						ref={ref => this.refEditable = ref}
+						id="messageBox"
+						maxLength={J.Constant.limit.chat.text}
+						placeholder={translate('blockChatPlaceholder')}
+						onSelect={this.onSelect}
+						onFocus={this.onFocusInput}
+						onBlur={this.onBlurInput}
+						onKeyUp={this.onKeyUpInput} 
+						onKeyDown={this.onKeyDownInput}
+						onInput={this.onInput}
+						onPaste={this.onPaste}
+						onMouseDown={this.onMouseDown}
+						onMouseUp={this.onMouseUp}
+					/>
+
+					{attachments.length ? (
+						<div className="attachments">
+							<Swiper
+								slidesPerView={'auto'}
+								spaceBetween={8}
+								onSwiper={swiper => this.swiper = swiper}
+								navigation={true}
+								mousewheel={true}
+								modules={[ Navigation, Mousewheel ]}
+							>
+								{attachments.map(item => (
+									<SwiperSlide key={item.id}>
+										<Attachment
+											object={item}
+											onRemove={this.onAttachmentRemove}
+											bookmarkAsDefault={true}
+										/>
+									</SwiperSlide>
+								))}
+							</Swiper>
+						</div>
+					) : ''}
+
+					<Buttons
+						ref={ref => this.refButtons = ref}
+						{...this.props}
+						value={value}
+						hasSelection={this.hasSelection}
+						getMarksAndRange={this.getMarksAndRange}
+						attachments={attachments}
+						caretMenuParam={this.caretMenuParam}
+						onMention={this.onMention}
+						onChatButtonSelect={this.onChatButtonSelect}
+						onTextButtonToggle={this.onTextButtonToggle}
+						getObjectFromPath={this.getObjectFromPath}
+						addAttachments={this.addAttachments}
+						onMenuClose={this.onMenuClose}
+						removeBookmark={this.removeBookmark}
+					/>
+
+					<div ref={ref => this.refCounter = ref} className="charCounter">{charCounter} / {J.Constant.limit.chat.text}</div>
+
+					<Icon id="send" className="send" onClick={this.onSend} />
+				</div>
+			);
+		};
+
 		return (
 			<>
 				<div ref={ref => this.refDummy = ref} className="formDummy" />
@@ -168,84 +239,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
 					</div>
 
-					<div className="form customScrollbar">
-						<Loader id="form-loader" />
-
-						{title ? (
-							<div className="head">
-								<div className="side left">
-									{icon}
-									<div className="textWrapper">
-										<div className="name">{title}</div>
-										<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
-									</div>
-								</div>
-								<div className="side right">
-									<Icon className="clear" onClick={onClear} />
-								</div>
-							</div>
-						) : ''}
-
-						<Editable 
-							ref={ref => this.refEditable = ref}
-							id="messageBox"
-							maxLength={J.Constant.limit.chat.text}
-							placeholder={translate('blockChatPlaceholder')}
-							onSelect={this.onSelect}
-							onFocus={this.onFocusInput}
-							onBlur={this.onBlurInput}
-							onKeyUp={this.onKeyUpInput} 
-							onKeyDown={this.onKeyDownInput}
-							onInput={this.onInput}
-							onPaste={this.onPaste}
-							onMouseDown={this.onMouseDown}
-							onMouseUp={this.onMouseUp}
-						/>
-
-						{attachments.length ? (
-							<div className="attachments">
-								<Swiper
-									slidesPerView={'auto'}
-									spaceBetween={8}
-									onSwiper={swiper => this.swiper = swiper}
-									navigation={true}
-									mousewheel={true}
-									modules={[ Navigation, Mousewheel ]}
-								>
-									{attachments.map(item => (
-										<SwiperSlide key={item.id}>
-											<Attachment
-												object={item}
-												onRemove={this.onAttachmentRemove}
-												bookmarkAsDefault={true}
-											/>
-										</SwiperSlide>
-									))}
-								</Swiper>
-							</div>
-						) : ''}
-
-						<Buttons
-							ref={ref => this.refButtons = ref}
-							{...this.props}
-							value={value}
-							hasSelection={this.hasSelection}
-							getMarksAndRange={this.getMarksAndRange}
-							attachments={attachments}
-							caretMenuParam={this.caretMenuParam}
-							onMention={this.onMention}
-							onChatButtonSelect={this.onChatButtonSelect}
-							onTextButtonToggle={this.onTextButtonToggle}
-							getObjectFromPath={this.getObjectFromPath}
-							addAttachments={this.addAttachments}
-							onMenuClose={this.onMenuClose}
-							removeBookmark={this.removeBookmark}
-						/>
-
-						<div ref={ref => this.refCounter = ref} className="charCounter">{charCounter} / {J.Constant.limit.chat.text}</div>
-
-						<Icon id="send" className="send" onClick={this.onSend} />
-					</div>
+					{form}
 				</div>
 			</>
 		);
