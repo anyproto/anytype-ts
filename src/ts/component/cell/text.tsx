@@ -15,7 +15,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		id, recordId, relation, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit, viewType, getView, getRecord, onChange, cellPosition, onRecordAdd,
 		groupId, recordIdx,
 	} = props;
-	const { includeTime } = relation;
 	const record = getRecord(recordId);
 	const isName = relation.relationKey == 'name';
 	const isLongText = relation.format == I.RelationType.LongText;
@@ -214,7 +213,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				};
 			};
 			
-			if (includeTime) {
+			if (relation.includeTime) {
 				mask.push('99:99');
 				ph.push('hh:mm');
 			};
@@ -285,7 +284,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, val);
 				const time = U.Date.timeWithFormat(S.Common.timeFormat, val);
 				
-				val = includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
+				val = relation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 			} else {
 				val = '';
 			};
@@ -356,7 +355,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					default: format.push('d.m.Y'); break;
 				};
 
-				if (includeTime) {
+				if (relation.includeTime) {
 					format.push('H:i');
 				};
 
