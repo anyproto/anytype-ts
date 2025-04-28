@@ -4,6 +4,10 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, S, U, J, Preview, translate, Relation } from 'Lib';
 
+interface IconParam {
+	userIconColor?: { bg?: string, text?: string };
+};
+
 interface Props {
 	id?: string;
 	layout?: I.ObjectLayout;
@@ -19,6 +23,7 @@ interface Props {
 	noUpload?: boolean;
 	noRemove?: boolean;
 	noClick?: boolean;
+	param?: IconParam;
 	menuParam?: Partial<I.MenuParam>;
 	tooltipParam?: Partial<I.TooltipParam>;
 	style?: any;
@@ -115,6 +120,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		size = 20,
 		noRemove = false,
 		noClick = false,
+		param = {},
 		menuParam = {},
 		tooltipParam = {},
 		style = {},
@@ -142,6 +148,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
 	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted } = object || {};
+	const { userIconColor } = param;
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
 
@@ -269,7 +276,11 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const userSvg = (): string => {
-		const color = J.Theme[theme]?.iconUser;
+		let color = J.Theme[theme]?.iconUser;
+		if (userIconColor) {
+			color = Object.assign(color, userIconColor);
+		};
+
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${color.bg}" />`;
 		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
 		const svg = `

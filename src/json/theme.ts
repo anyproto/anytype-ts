@@ -24,6 +24,10 @@ export default {
 		error: '#000',
 		iconDefault: '#e3e3e3',
 
+		shape: {
+			transparentSecondary: 'rgba(0, 0, 0, 0.05)',
+		},
+
 		color: {
 			default: '#252525',
 			grey: '#b6b6b6',
@@ -74,6 +78,10 @@ export default {
 
 		error: '#fff',
 		iconDefault: '#323232',
+
+		shape: {
+			transparentSecondary: 'rgba(255, 255, 255, 0.05)',
+		},
 
 		color: {
 			default: '#f8f8f8',

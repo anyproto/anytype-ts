@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, S, sidebar, translate, U } from 'Lib';
+import { I, J, keyboard, S, sidebar, translate, U } from 'Lib';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -28,6 +28,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const param = keyboard.getMatch().params;
 		const isSpace = this.props.page == 'settingsSpace';
 		const items = this.getItems();
+		const theme = S.Common.getThemeClass();
 
 		const ItemSection = (item: any) => {
 			const cn = [ 'section' ];
@@ -73,7 +74,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 							{participant.globalName ? <Label className="anyName" text={participant.globalName} /> : ''}
 						</>
 					);
-					icon = <IconObject object={{ ...participant, name: participant.globalName || participant.name }} size={40} iconSize={40} />;
+					icon = <IconObject object={{ ...participant, name: participant.globalName || participant.name }} param={{ userIconColor: { bg: J.Theme[theme].shape.transparentSecondary } }} size={40} iconSize={40} />;
 				};
 
 				cn.push('itemAccount');
