@@ -202,6 +202,7 @@
 	"commonApply": "Apply",
 	"commonDescription": "Description",
 	"commonYourName": "Your Name",
+	"commonIncludeTime": "Include time",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1532,7 +1533,6 @@
 
 	"menuBlockRelationEditSelectObjectType": "Select Object Type",
 	"menuBlockRelationEditLimitObjectTypes": "Limit Object Types",
-	"menuBlockRelationEditIncludeTime": "Include time",
 	"menuBlockRelationEditRelationName": "Property name",
 	"menuBlockRelationEditRelationType": "Property Type",
 	"menuBlockRelationEditSelectRelationType": "Select Property Type",
@@ -1591,7 +1591,6 @@
 
 	"menuDataviewRelationEditSelectObjectType": "Select Object Type",
 	"menuDataviewRelationEditLimitObjectTypes": "Limit Object Types",
-	"menuDataviewRelationEditIncludeTime": "Include time",
 	"menuDataviewRelationEditRelationName": "Property name",
 	"menuDataviewRelationEditRelationType": "Property Type",
 	"menuDataviewRelationEditSelectRelationType": "Select Property Type",

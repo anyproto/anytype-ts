@@ -1,6 +1,18 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName, Tag } from 'Component';
+import {
+	Header,
+	Footer,
+	Loader,
+	ListObject,
+	Deleted,
+	Icon,
+	HeadSimple,
+	IconObject,
+	ObjectName,
+	Tag,
+	Switch
+} from 'Component';
 import { I, C, S, U, J, Action, translate, analytics, sidebar, keyboard, Relation } from 'Lib';
 import { observable } from 'mobx';
 
@@ -72,6 +84,13 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			};
 
 			case I.RelationType.Date: {
+				optionsLabel = translate('commonIncludeTime');
+				options = (
+					<Switch
+						value={object.includeTime}
+						onChange={(e: any, v: boolean) => this.onSwitch(e, 'includeTime', v)}
+					/>
+				);
 				break;
 			};
 
@@ -261,6 +280,12 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				},
 			},
 		});
+	};
+
+	onSwitch (e, key, value) {
+		const object = this.getObject();
+
+		C.ObjectListSetDetails([ object.id ], [ { key, value: Boolean(value) } ]);
 	};
 
 	onOptionClick (e, option) {

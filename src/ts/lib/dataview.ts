@@ -161,13 +161,13 @@ class Dataview {
 
 	filterMapper (view: any, it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
-		const vr = view.getRelation(it.relationKey);
 
 		if (relation) {
 			it.format = relation.format;
-		};
-		if (vr && vr.includeTime) {
-			it.includeTime = true;
+
+			if (relation.includeTime) {
+				it.includeTime = true;
+			};
 		};
 
 		return it;
@@ -560,13 +560,14 @@ class Dataview {
 		};
 
 		const { showRelativeDates } = S.Common;
-		const { formulaType, includeTime, relationKey } = viewRelation;
+		const { formulaType, relationKey } = viewRelation;
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation) {
 			return null;
 		};
 
+		const { includeTime } = relation;
 		const { total } = S.Record.getMeta(subId, '');
 		const isDate = relation.format == I.RelationType.Date;
 		const isArray = Relation.isArrayType(relation.format);
