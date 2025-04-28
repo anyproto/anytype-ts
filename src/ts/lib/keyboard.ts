@@ -1202,8 +1202,18 @@ class Keyboard {
 		];
 	};
 	
-	isSpecial (e: any): boolean {
-		return this.isArrow(e) || [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ].includes(this.eventKey(e));
+	isSpecial(e: any): boolean {
+		const fk = Array.from({ length: 12 }, (_, i) => `F${i + 1}`);
+		const sk = new Set([
+			Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta,
+			Key.left, Key.up, Key.right, Key.down,
+			'PageUp', 'PageDown', 'Home', 'End', 'Insert', 'Delete', 
+			'CapsLock', 'NumLock', 'ScrollLock', 'Pause', 'PrintScreen', 'ContextMenu',
+			'Dead',
+			...fk,
+		].map(it => it.toLowerCase()));
+		
+		return sk.has(this.eventKey(e));
 	};
 
 	isArrow (e: any): boolean {
@@ -1221,13 +1231,13 @@ class Keyboard {
 	metaKeys (e: any): string[] {
 		const ret = [];
 		if (e.shiftKey) {
-			ret.push('shift');
+			ret.push(Key.shift);
 		};
 		if (e.altKey) {
-			ret.push('alt');
+			ret.push(Key.alt);
 		};
 		if (e.ctrlKey) {
-			ret.push('ctrl');
+			ret.push(Key.ctrl);
 		};
 		if (e.metaKey) {
 			ret.push('cmd');
@@ -1308,31 +1318,31 @@ class Keyboard {
 			if (key === this.cmdKey()) {
 				return this.cmdSymbol();
 			};
-			if (key == 'shift') {
+			if (key == Key.shift) {
 				return this.shiftSymbol();
 			};
-			if (key == 'alt') {
+			if (key == Key.alt) {
 				return this.altSymbol();
 			};
-			if ((key == 'ctrl') && isMac) {
+			if ((key == Key.ctrl) && isMac) {
 				return '&#8963;';
 			};
-			if (key == 'enter') {
+			if (key == Key.enter) {
 				return '&#8629;';
 			};
-			if (key == 'delete') {
+			if (key == Key.delete) {
 				return 'Del';
 			};
-			if (key == 'arrowleft') {
+			if (key == Key.left) {
 				return '←';
 			};
-			if (key == 'arrowup') {
+			if (key == Key.up) {
 				return '↑';
 			};
-			if (key == 'arrowright') {
+			if (key == Key.right) {
 				return '→';
 			};
-			if (key == 'arrowdown') {
+			if (key == Key.down) {
 				return '↓';
 			};
 			if (key == 'comma') {
@@ -1362,6 +1372,7 @@ class Keyboard {
 
 export enum Key {
 	backspace	 = 'backspace',
+	delete		 = 'delete',
 	tab			 = 'tab',
 	enter		 = 'enter',
 	shift		 = 'shift',
