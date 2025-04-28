@@ -567,7 +567,6 @@ class Dataview {
 			return null;
 		};
 
-		const { includeTime } = relation;
 		const { total } = S.Record.getMeta(subId, '');
 		const isDate = relation.format == I.RelationType.Date;
 		const isArray = Relation.isArrayType(relation.format);
@@ -579,7 +578,7 @@ class Dataview {
 			const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, t);
 			const time = U.Date.timeWithFormat(S.Common.timeFormat, t);
 
-			return includeTime ? [ date, time ].join(' ') : date;
+			return relation.includeTime ? [ date, time ].join(' ') : date;
 		};
 
 		const min = () => {
