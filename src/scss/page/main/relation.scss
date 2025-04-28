@@ -45,7 +45,8 @@
 			}
 			dl.isMultiSelect {
 				dd {
-					.item { height: unset; }
+					.item { height: 20px; }
+					.icon.add.withBackground { width: 20px !important; height: 20px !important; }
 				}
 			}
 		}
