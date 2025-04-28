@@ -286,14 +286,16 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		} else {
 			setIsLoading(true);
 
-			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), () => {
-				setIsLoading(false);
+			if (targetId) {
+				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), () => {
+					setIsLoading(false);
 
-				const view = getView();
-				if (view) {
-					load(view.id);
-				};
-			});
+					const view = getView();
+					if (view) {
+						load(view.id);
+					};
+				});
+			};
 		};
 
 		return () => {
