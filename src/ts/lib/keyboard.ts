@@ -1205,11 +1205,10 @@ class Keyboard {
 	isSpecial(e: any): boolean {
 		const fk = Array.from({ length: 12 }, (_, i) => `F${i + 1}`);
 		const sk = new Set([
-			Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta,
+			Key.escape, Key.backspace, Key.delete, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta,
 			Key.left, Key.up, Key.right, Key.down,
-			'PageUp', 'PageDown', 'Home', 'End', 'Insert', 'Delete', 
-			'CapsLock', 'NumLock', 'ScrollLock', 'Pause', 'PrintScreen', 'ContextMenu',
-			'Dead',
+			'PageUp', 'PageDown', 'Home', 'End', 'Insert', 'CapsLock', 
+			'NumLock', 'ScrollLock', 'Pause', 'PrintScreen', 'ContextMenu', 'Dead',
 			...fk,
 		].map(it => it.toLowerCase()));
 		
