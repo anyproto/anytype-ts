@@ -169,8 +169,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		};
 
 		if (clear) {
-			this.clear();
-			this.setState({ loading: true });
+			S.Record.recordsClear(subId, '');
 		};
 
 		U.Data.searchSubscribe({
@@ -185,15 +184,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
 			S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
-
-			if (clear) {
-				this.setState({ loading: false });
-			};
 		});
-	};
-
-	clear () {
-		S.Record.recordsClear(this.props.getSubId(), '');
 	};
 
 	getItems () {

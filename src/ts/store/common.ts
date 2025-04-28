@@ -615,17 +615,12 @@ class CommonStore {
 	};
 
 	setTimeout (id: string, timeout: number, func: () => void) {
-		console.log('[setTimeout] get', id, timeout, this.getTimeout(id));
-
 		window.clearTimeout(this.getTimeout(id));
 
 		const t = window.setTimeout(() => {
 			this.timeoutMap.delete(id);
-			console.log('[setTimeout] delete', id);
 			func();
 		}, timeout);
-
-		console.log('[setTimeout] set', id, timeout, t);
 
 		this.timeoutMap.set(id, t);
 	};
