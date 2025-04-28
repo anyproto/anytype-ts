@@ -20,12 +20,15 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const Color = (item: any) => (
 			<div
 				id={`item-${item.id}`}
-				className={[ 'item', 'color', `color-${item.className}` ].join(' ')}
+				className={[
+					'item',
+					'color',
+					`color-${item.className}`,
+					this.color == item.value ? 'selected' : ''
+				].join(' ')}
 				onClick={e => this.onClick(e, item)}
 				onMouseEnter={e => this.onMouseEnter(e, item)}
-			>
-				{this.color == item.value ? <Icon className="tick" /> : ''}
-			</div>
+			/>
 		);
 
 		const Section = (item: any) => (
@@ -225,9 +228,9 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			return;
 		};
 
-		C.ObjectListSetDetails([ option.id ], [ 
+		C.ObjectListSetDetails([ option.id ], [
 			{ key: 'name', value },
-			{ key: 'relationOptionColor', value: this.color },
+			{ key: 'relationOptionColor', value: this.getColor() },
 		]);
 	};
 
@@ -249,9 +252,18 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		C.ObjectCreateRelationOption({
 			relationKey,
 			name: value,
-			relationOptionColor: this.color,
+			relationOptionColor: this.getColor(),
 		}, S.Common.space);
 		close();
+	};
+
+	getColor () {
+		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
+
+		if (this.n > -1) {
+			return colors[this.n].value;
+		};
+		return this.color;
 	};
 	
 });
