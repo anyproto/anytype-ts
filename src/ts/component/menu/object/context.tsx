@@ -129,6 +129,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 			if (U.Object.isTypeLayout(object.layout)) {
 				allowedRelation = false;
+				allowedCopy	= false;
 			};
 			if (U.Object.isRelationLayout(object.layout)) {
 				allowedRelation = false;
