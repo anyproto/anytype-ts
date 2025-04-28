@@ -35,11 +35,15 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
+		} else
+		if (isLoading) {
+			return <Loader id="loader" />;
 		};
 
 		const rootId = this.getRootId();
 		const object = this.getObject();
 		const { relationFormat, isReadonlyRelation } = object;
+		const canWrite = U.Space.canMyParticipantWrite();
 		const subIdObject = S.Record.getSubId(rootId, 'object');
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
 		const columnsObject: any[] = [
@@ -58,14 +62,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			case I.RelationType.Object: {
 				const types = (object?.objectTypes.map(it => S.Record.getTypeById(it)) || []).filter(it => it);
 
-				canAdd = true;
+				canAdd = canWrite;
 				optionsLabel = U.Common.plural(types.length, translate('pluralObjectType'));
 				options = types.map((type) => (
 					<div key={type.id} className="item object" onClick={e => this.onOptionClick(e, type)}>
 						<IconObject object={type} />
 						<ObjectName object={type} />
 
-						{!isReadonlyRelation ? <Icon onClick={e => this.onOptionRemove(e, type)} className="remove" /> : ''}
+						{!isReadonlyRelation && canWrite ? <Icon onClick={e => this.onOptionRemove(e, type)} className="remove" /> : ''}
 					</div>
 				));
 				break;
@@ -87,7 +91,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				const relationsOptions = Relation.getOptions(S.Record.getRecordIds(J.Constant.subId.option, ''))
 										.filter(it => (it.relationKey == object.relationKey) && !it._empty_ && !it.isArchived && !it.isDeleted);
 
-				canAdd = true;
+				canAdd = canWrite;
 				optionsLabel = U.Common.plural(relationsOptions.length, translate('pluralOption'));
 				options = relationsOptions.map((option) => (
 					<div key={option.id} id={`item-${option.id}`} className="item" onClick={e => this.onOptionClick(e, option)}>
@@ -106,8 +110,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					ref={ref => this.refHeader = ref} 
 					rootId={rootId} 
 				/>
-
-				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className="blocks wrapper">
 					<HeadSimple 
@@ -128,7 +130,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 								<dt>{optionsLabel}</dt>
 								<dd>
 									{options}
-									{canAdd && !isReadonlyRelation ? <Icon className="add" onClick={this.onOptionAdd} /> : ''}
+									{canAdd && !isReadonlyRelation ? <Icon className="add withBackground" onClick={this.onOptionAdd} /> : ''}
 								</dd>
 							</dl>
 						) : ''}
@@ -271,6 +273,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	onSwitch (e, key, value) {
+		if (!U.Space.canMyParticipantWrite()) {
+			return;
+		};
+
 		const object = this.getObject();
 
 		C.ObjectListSetDetails([ object.id ], [ { key, value: Boolean(value) } ]);
@@ -278,11 +284,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 	onOptionClick (e, option) {
 		const object = this.getObject();
-		const { relationFormat, objectTypes } = object;
+		const { relationFormat } = object;
 
 		switch (relationFormat) {
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
+				if (!U.Space.canMyParticipantWrite()) {
+					break;
+				};
 				S.Menu.open('dataviewOptionEdit', {
 					element: `#page #item-${option.id}`,
 					offsetY: 4,
@@ -309,7 +318,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 8,
-		}
+		};
 
 		switch (relationFormat) {
 			case I.RelationType.Object: {

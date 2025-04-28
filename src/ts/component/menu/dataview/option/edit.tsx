@@ -261,7 +261,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		if (this.n > -1) {
-			return colors[this.n].value;
+			return colors[this.n]?.value || this.color;
 		};
 		return this.color;
 	};
