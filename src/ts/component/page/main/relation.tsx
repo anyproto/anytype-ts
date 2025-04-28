@@ -1,18 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import {
-	Header,
-	Footer,
-	Loader,
-	ListObject,
-	Deleted,
-	Icon,
-	HeadSimple,
-	IconObject,
-	ObjectName,
-	Tag,
-	Switch
-} from 'Component';
+import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName, Tag, Switch } from 'Component';
 import { I, C, S, U, J, Action, translate, analytics, sidebar, keyboard, Relation } from 'Lib';
 import { observable } from 'mobx';
 
@@ -111,7 +99,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		return (
-			<div id="pageRelation">
+			<>
 				<Header 
 					{...this.props} 
 					component="mainObject" 
@@ -180,7 +168,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				</div>
 
 				<Footer component="mainObject" {...this.props} />
-			</div>
+			</>
 		);
 	};
 
@@ -296,7 +284,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
 				S.Menu.open('dataviewOptionEdit', {
-					element: `#pageRelation #item-${option.id}`,
+					element: `#page #item-${option.id}`,
 					offsetY: 4,
 					data: {
 						option: option,
@@ -316,7 +304,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const object = this.getObject();
 		const { relationFormat, objectTypes } = object;
 		const param = {
-			element: `#pageRelation .relationData .options .add`,
+			element: `#page .relationData .options .add`,
 			className: 'single',
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,

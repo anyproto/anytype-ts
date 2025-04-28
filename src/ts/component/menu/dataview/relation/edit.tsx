@@ -30,7 +30,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { readonly } = data;
 		const relation = this.getRelation();
-		const viewRelation = this.getViewRelation();
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
