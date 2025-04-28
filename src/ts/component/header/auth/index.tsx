@@ -7,7 +7,9 @@ const HeaderAuthIndex = forwardRef(() => {
 	return (
 		<>
 			<div className="side left" />
-			<div className="side center" />
+			<div className="side center">
+				<div className="logo" />
+			</div>
 			<div className="side right">
 				<Icon className="settings withBackground" onClick={() => S.Popup.open('settingsOnboarding', {})} />
 			</div>
