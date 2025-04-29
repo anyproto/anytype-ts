@@ -259,7 +259,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			const length = text.length;
 
 			this.marks = marks;
-			this.updateMarkup(text, length, length);
+			this.updateMarkup(text, { from: length, to: length });
 			this.updateCounter(text);
 
 			if (attachments.length) {
@@ -366,7 +366,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				this.marks = parsed.marks;
 
 				const l = value.length;
-				this.updateMarkup(value, l, l);
+				this.updateMarkup(value, { from: l, to: l });
 			});
 		};
 
@@ -484,7 +484,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		if (adjustMarks) {
-			this.updateMarkup(value, to, to);
+			this.updateMarkup(value, { from: to, to });
 		};
 
 		this.checkSendButton();
@@ -514,6 +514,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		let text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
 		let value = U.Common.stringInsert(current, text, from, to);
+
 		if (value.length >= limit) {
 			const excess = value.length - limit;
 			const keep = text.length - excess;
@@ -522,13 +523,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			value = U.Common.stringInsert(current, text, from, to);
 		};
 
-		this.range = { from: to, to: to + text.length };
-		this.updateMarkup(value, this.range.from, this.range.to);
+		const rt = to + text.length;
+
+		this.range = { from: rt, to: rt };
+		this.updateMarkup(value, this.range);
 
 		if (list.length) {
-			U.Common.saveClipboardFiles(list, {}, data => {
-				this.addAttachments(data.files);
-			});
+			U.Common.saveClipboardFiles(list, {}, data => this.addAttachments(data.files));
 		};
 
 		this.checkUrls();
@@ -553,7 +554,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.addBookmark(param, true);
 		};
 
-		this.updateMarkup(text, this.range.to + 1, this.range.to + 1);
+		this.updateMarkup(text, { from: this.range.to + 1, to: this.range.to + 1 });
 	};
 
 	canDrop (e: any): boolean {
@@ -787,7 +788,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.marks = marks;
 		this.editingId = message.id;
 		this.replyingId = '';
-		this.updateMarkup(text, l, l);
+		this.updateMarkup(text, { from: l, to: l });
 		this.updateCounter();
 
 		this.setAttachments(attachments, () => {
@@ -798,7 +799,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	onEditClear () {
 		this.editingId = '';
 		this.marks = [];
-		this.updateMarkup('', 0, 0);
+		this.updateMarkup('', { from: 0, to: 0 });
 		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
 		this.clearCounter();
 		this.refButtons.setButtons();
@@ -932,7 +933,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 				value = U.Common.stringInsert(value, ' ', range.from, range.from);
 
-				this.updateMarkup(value, to, to);
+				this.updateMarkup(value, { from: to, to });
 				break;
 			};
 		};
@@ -944,7 +945,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const value = this.getTextValue();
 
 		this.marks = Mark.toggle(this.marks, { type, param, range: { from, to } });
-		this.updateMarkup(value, from, to);
+		this.updateMarkup(value, { from, to });
 
 		switch (type) {
 			case I.MarkType.Link: {
@@ -1048,7 +1049,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						value = U.Common.stringInsert(value, text, from, from);
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
-						this.updateMarkup(value, to, to);
+						this.updateMarkup(value, { from: to, to });
 					},
 				},
 			});
@@ -1086,8 +1087,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		return this.range ? this.range.to != this.range.from : false;
 	};
 
-	updateMarkup (value: string, from: number, to: number) {
-		this.range = { from, to };
+	updateMarkup (value: string, range: I.TextRange) {
+		this.range = range;
 		this.updateValue(value);
 		this.renderMarkup();
 		this.checkSendButton();
@@ -1115,7 +1116,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const onChange = (text: string, marks: I.Mark[]) => {
 			this.marks = marks;
 			this.updateValue(text);
-			this.updateMarkup(text, this.range.from, this.range.to);
+			this.updateMarkup(text, this.range);
 		};
 
 		const param = { onChange, subId };
