@@ -41,9 +41,12 @@ class RecordStore {
 
 	clearAll () {
 		this.relationMap.clear();
+		this.relationKeyMap.clear();
+		this.typeKeyMap.clear();
 		this.viewMap.clear();
 		this.recordMap.clear();
 		this.metaMap.clear();
+		this.groupMap.clear();
 	};
 
 	keyMapGet (type: string, spaceId: string) {

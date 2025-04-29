@@ -253,21 +253,19 @@ export const ObjectSubscribeIds = (response: Rpc.Object.SubscribeIds.Response) =
 	};
 };
 
+/*
 export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 	const nodes = (response.getNodesList() || []).map(Decode.struct).map(it => S.Detail.mapper(it));
-	const hashes: any = [];
-
-	let edges: any[] = (response.getEdgesList() || []).map(Mapper.From.GraphEdge);
-
-	// Deduplicate edges
-	edges = edges.filter(d => { 
-		const hash = [ d.source, d.target ].join('-');
-		if (hashes.includes(hash)) {
+	const hashes = new Set<string>();
+	const edges: any[] = (response.getEdgesList() || []).map(Mapper.From.GraphEdge).filter(d => {
+		if (d.source == d.target) {
 			return false;
 		};
 
-		hashes.push(hash);
-		return (d.source != d.target);
+		const hash = `${d.source}-${d.target}`;
+
+		hashes.add(hash);
+		return !hashes.has(hash);
 	});
 
 	// Find backlinks
@@ -279,6 +277,44 @@ export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 			edge.isDouble = true;
 			edge.types = [ edge.type, double.type ];
 			edges.splice(idx, 1);
+		};
+	};
+
+	return { edges, nodes };
+};
+*/
+
+export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
+	const nodes = (response.getNodesList() || []).map(Decode.struct).map(it => S.Detail.mapper(it));
+	const edgesRaw = response.getEdgesList() || [];
+	const seen = new Set<string>();
+	const edgeMap = new Map<string, any>();
+	const edges: any[] = [];
+
+	for (let i = 0; i < edgesRaw.length; i++) {
+		const edge = Mapper.From.GraphEdge(edgesRaw[i]);
+
+		if (edge.source == edge.target) {
+			continue;
+		};
+
+		const key = `${edge.source}-${edge.target}`;
+		const reverseKey = `${edge.target}-${edge.source}`;
+
+		// Check if reverse already added
+		if (edgeMap.has(reverseKey)) {
+			const reverse = edgeMap.get(reverseKey);
+
+			reverse.isDouble = true;
+			reverse.types = [reverse.type, edge.type];
+			edgeMap.delete(reverseKey);
+			continue;
+		};
+
+		if (!seen.has(key)) {
+			seen.add(key);
+			edgeMap.set(key, edge);
+			edges.push(edge);
 		};
 	};
 
