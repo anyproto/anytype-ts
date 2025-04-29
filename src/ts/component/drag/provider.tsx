@@ -562,6 +562,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 			};
 
 			const initVars = () => {
+				const hd = hoverData.current;
+
 				x = hd.x;
 				y = hd.y;
 				width = hd.width;
@@ -601,7 +603,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 			};
 
 			if (position.current == I.BlockPosition.Bottom) {
-				const targetBot = objectData.current.get(hd + '-bot');
+				const targetBot = objectData.current.get(hd.cacheKey + '-bot');
 				if (targetBot) {
 					setHoverData(targetBot);
 					initVars();
