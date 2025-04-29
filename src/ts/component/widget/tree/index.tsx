@@ -34,8 +34,12 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
 	const traceId = getTraceId();
 
+	const getSubIds = () => {
+		return Object.keys(subscriptionHashes.current).map(getSubId);
+	};
+
 	const unsubscribe = () => {	
-		const subIds = Object.keys(subscriptionHashes.current).map(getSubId);
+		const subIds = getSubIds();
 
 		if (subIds.length) {
 			C.ObjectSearchUnsubscribe(subIds);
@@ -44,15 +48,17 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const clear = () => {
-		const subIds = Object.keys(subscriptionHashes.current).map(getSubId);
+		//const subIds = getSubIds();
 
 		subscriptionHashes.current = {};
 		branches.current = [];
 
+		/*
 		subIds.forEach(subId => {
 			S.Record.recordsClear(subId, '');
 			S.Record.recordsClear(`${subId}/dep`, '');
 		});
+		*/
 	};
 
 	const updateData = () => {
@@ -372,7 +378,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		return () => {
 			unsubscribe();
-			Action.pageClose([ targetId, traceId ].join('-'), false);
+			//Action.pageClose([ targetId, traceId ].join('-'), false);
 		};
 	}, []);
 

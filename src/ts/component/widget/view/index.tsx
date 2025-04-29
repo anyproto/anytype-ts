@@ -300,7 +300,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		return () => {
 			C.ObjectSearchUnsubscribe([ subId ]);
-			Action.pageClose([ targetId, traceId ].join('-'), false);
+			//Action.pageClose([ targetId, traceId ].join('-'), false);
 		};
 	}, []);
 

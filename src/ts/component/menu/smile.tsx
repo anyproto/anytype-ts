@@ -1087,8 +1087,6 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 	
 	setLastIds (id: string, skin: number) {
-		console.log('setLastIds', id, skin);
-
 		if (!id) {
 			return;
 		};
