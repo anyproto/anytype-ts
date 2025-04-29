@@ -38,7 +38,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons()}</div>
+			<div className="side left">{renderLeftIcons(true)}</div>
 			<div className="side center">{renderIdentity()}</div>
 			<div className="side right" />
 		</>
