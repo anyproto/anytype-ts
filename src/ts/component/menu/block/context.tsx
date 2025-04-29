@@ -173,7 +173,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		const { from, to } = range;
 		const object = S.Detail.get(rootId, rootId);
-
+		const element = $(`#${getId()}`);
+		
 		keyboard.disableContextClose(true);
 		focus.set(blockId, range);
 
@@ -286,12 +287,14 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				
 			case I.MarkType.Link: {
 				menuId = 'blockLink';
-
 				mark = Mark.getInRange(marks, type, { from, to });
 
+				const rect = (element.get(0).getBoundingClientRect() || {}) as DOMRect;
+				rect.y = Number(rect.y) + $(window).scrollTop();
+
 				menuParam = Object.assign(menuParam, {
-					offsetY: param.offsetY,
-					rect: param.recalcRect(),
+					offsetY: -rect.height,
+					rect,
 					width: getSize().width,
 					noFlipY: true,
 				});
