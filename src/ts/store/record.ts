@@ -331,7 +331,7 @@ class RecordStore {
 	};
 
 	getDataviewRelations (rootId: string, blockId: string): any[] {
-		return this.getDataviewRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
+		return [ 'name' ].concat(this.getDataviewRelationKeys(rootId, blockId)).map(it => this.getRelationByKey(it)).filter(it => it);
 	};
 
 	getObjectRelations (rootId: string, typeId: string): any[] {
