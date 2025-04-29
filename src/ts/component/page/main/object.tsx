@@ -6,7 +6,7 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 	const { match } = props;
 
 	useEffect(() => {
-		const { id, spaceId, cid, key } = match.params || {};
+		const { id, spaceId, cid, key, messageOrder } = match.params || {};
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
 		const route = match.params.route || analytics.route.app;
 
@@ -23,7 +23,14 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			U.Object.openRoute(object);
+			U.Object.openRoute({ 
+				...object, 
+				_routeParam_: {
+					additional: [
+						{ key: 'messageOrder', value: decodeURIComponent(messageOrder) },
+					]
+				} 
+			});
 
 			analytics.event('OpenObjectByLink', { route, objectType: object.type, type: 'Object' });
 		});

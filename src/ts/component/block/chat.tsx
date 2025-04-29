@@ -139,16 +139,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = true;
 		this.rebind();
 
+		const { isPopup } = this.props;
+		const match = keyboard.getMatch(isPopup);
+
 		this.loadState(() => {
 			const { messageOrderId } = S.Chat.getState(this.getSubId());
+			const orderId = match.params.messageOrder || messageOrderId;
 
-			if (messageOrderId) {
-				this.firstUnreadOrderId = messageOrderId;
+			if (orderId) {
+				this.firstUnreadOrderId = orderId;
 
-				this.loadMessagesByOrderId(messageOrderId, () => {
-					const target = this.getMessages().find(it => it.orderId == messageOrderId);
+				this.loadMessagesByOrderId(orderId, () => {
+					const target = this.getMessages().find(it => it.orderId == orderId);
 
-					this.scrollToMessage(target?.id);
+					if (target) {
+						this.scrollToMessage(target.id);
+					} else {
+						this.loadMessages(1, true, this.scrollToBottom);
+					};
 				});
 			} else {
 				this.loadMessages(1, true, this.scrollToBottom);
@@ -509,9 +517,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
+		const { rootId } = this.props;
+		const { space } = S.Common;
 		const { isPopup, block } = this.props;
 		const message = `#block-${block.id} #item-${item.id}`;
 		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
+		const object = S.Detail.get(rootId, rootId, []);
 
 		const menuParam: Partial<I.MenuParam> = {
 			className: 'chatMessage',
@@ -536,6 +547,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 						case 'copy': {
 							U.Common.clipboardCopy({ text: item.content.text });
+							break;
+						};
+
+						case 'link': {
+							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
 							break;
 						};
 
@@ -716,6 +732,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			options.push({ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') });
 		};
 
+		options.push({ id: 'link', icon: 'link', name: translate('commonCopyLink') });
+
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
 				{ id: 'edit', icon: 'pencil', name: translate('commonEdit') },
@@ -725,8 +743,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		if (!noControls) {
 			options = ([
-				{ id: 'reaction',icon: 'reaction',  name: translate('blockChatReactionAdd') },
-				{ id: 'reply',icon: 'reply',  name: translate('blockChatReply') },
+				{ id: 'reaction', icon: 'reaction', name: translate('blockChatReactionAdd') },
+				{ id: 'reply', icon: 'reply', name: translate('blockChatReply') },
 				options.length ? { isDiv: true } : null,
 			].filter(it => it)).concat(options);
 		};

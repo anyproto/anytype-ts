@@ -687,7 +687,9 @@ class UtilObject {
 		});
 	};
 
-	copyLink (object: any, space: any, type: string, route: string) {
+	copyLink (object: any, space: any, type: string, route: string, add?: string) {
+		add = add || '';
+
 		const cb = (link: string) => {
 			U.Common.copyToast(translate('commonLink'), link);
 			analytics.event('CopyLink', { route });
@@ -705,6 +707,10 @@ class UtilObject {
 				link = `https://object.any.coop/${object.id}?spaceId=${space.targetSpaceId}`;
 				break;
 			};
+		};
+
+		if (add) {
+			link += add;
 		};
 		
 		if (space.isShared) {
