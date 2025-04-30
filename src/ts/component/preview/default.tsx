@@ -8,6 +8,7 @@ interface Props {
 	object?: any;
 	className?: string;
 	withPlural?: boolean;
+	noLoad?: boolean;
 	position?: () => void;
 	setObject?: (object: any) => void;
 };
@@ -18,9 +19,9 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 		rootId = '',
 		className = '',
 		object: initialObject,
-		position,
 		setObject: setParentObject,
 		withPlural = false,
+		noLoad = false,
 	} = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ object, setObject ] = useState(initialObject);
@@ -33,7 +34,7 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const load = () => {
-		if (isLoading || (idRef.current == rootId)) {
+		if (isLoading || (idRef.current == rootId) || noLoad) {
 			return;
 		};
 

@@ -288,6 +288,9 @@ class UtilObject {
 	};
 
 	getById (id: string, param: Partial<I.SearchSubscribeParam>, callBack: (object: any) => void) {
+		param = param || {};
+		param.limit = 1;
+
 		this.getByIds([ id ], param, objects => {
 			if (callBack) {
 				callBack(objects[0]);
