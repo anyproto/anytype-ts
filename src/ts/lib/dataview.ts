@@ -130,9 +130,6 @@ class Dataview {
 		if (viewChange) {
 			meta.viewId = newViewId;
 		};
-		if (viewChange || clear) {
-			S.Record.recordsSet(subId, '', []);
-		};
 
 		S.Record.metaSet(subId, '', meta);
 

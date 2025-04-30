@@ -21,15 +21,8 @@ interface Props extends I.BlockComponent {
 	isInline?: boolean;
 };
 
-interface State {
-	loading: boolean;
-};
+const BlockDataview = observer(class BlockDataview extends React.Component<Props> {
 
-const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
-
-	state = {
-		loading: false,
-	};
 	node = null;
 	refView = null;
 	refControls = null;
@@ -95,7 +88,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	render () {
 		const { rootId, block, isPopup, isInline, readonly } = this.props;
-		const { loading } = this.state;
 		const views = S.Record.getViews(rootId, block.id);
 
 		if (!views.length) {
@@ -186,9 +178,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			canCellEdit: this.canCellEdit,
 		};
 
-		if (loading) {
-			body = null;
-		} else
 		if (isInline && !targetId) {
 			body = this.getEmpty('target');
 		} else
@@ -390,10 +379,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if (clear) {
-			S.Record.recordsSet(subId, '', []);
-		};
-
 		S.Record.metaSet(subId, '', { offset, viewId });
 
 		if (view.type == I.ViewType.Board) {
@@ -410,10 +395,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.viewId = '';
 			};
 		} else {
-			if (clear) {
-				this.setState({ loading: true });
-			};
-
 			const filters = [];
 
 			if (this.searchIds) {
@@ -432,15 +413,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				sources,
 				filters,
 				collectionId: (isCollection ? this.getObjectId() : ''),
-			}, (message: any) => {
-				if (clear) {
-					this.setState({ loading: false });
-				};
-
-				if (callBack) {
-					callBack(message);
-				};
-			});
+			}, callBack);
 		};
 	};
 
