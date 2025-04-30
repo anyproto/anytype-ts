@@ -525,15 +525,32 @@ class UtilSubscription {
 	};
 	
 	destroyList (ids: string[], clearState?: boolean, callBack?: () => void): void {
-		C.ObjectSearchUnsubscribe(ids, callBack);
+		ids = ids || [];
 
-		ids.forEach(id => {
-			this.map.delete(id);
+		if (!ids.length) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
 
-			if (clearState) {
-				Action.dbClearRoot(id);
+		C.ObjectSearchUnsubscribe(ids, () => {
+			ids.forEach(id => {
+				this.map.delete(id);
+
+				if (clearState) {
+					Action.dbClearRoot(id);
+				};
+			});
+
+			if (callBack) {
+				callBack();
 			};
 		});
+	};
+
+	destroyAll (callBack?: () => void): void {
+		this.destroyList([ ...this.map.keys() ], true, callBack);
 	};
 
 	profileRelationKeys () {

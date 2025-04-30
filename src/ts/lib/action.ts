@@ -37,6 +37,8 @@ class Action {
 		this.dbClearRoot(rootId);
 		S.Block.clear(rootId);
 
+		U.Subscription.destroyList([ rootId ]);
+
 		if (withCommand) {
 			C.ObjectClose(rootId, space);
 		};
@@ -50,7 +52,6 @@ class Action {
 		S.Record.metaClear(rootId, '');
 		S.Record.recordsClear(rootId, '');
 		S.Detail.clear(rootId);
-		U.Subscription.destroyList([ rootId ]);
 	};
 
 	dbClearBlock (rootId: string, blockId: string) {
