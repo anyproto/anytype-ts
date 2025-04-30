@@ -65,7 +65,7 @@
 		> .body {
 			.ReactVirtualized__List { padding: 0px 8px 8px 8px; overscroll-behavior: none; }
 
-			.emptySearch { height: auto; padding: 5px 0px 0px 0px; }
+			.emptySearch { height: auto; padding: 5px 16px 0px 16px; }
 			.emptySearch {
 				.txt { color: var(--color-text-secondary); }
 				.small { @include text-small; }
