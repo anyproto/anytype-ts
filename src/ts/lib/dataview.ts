@@ -145,18 +145,20 @@ class Dataview {
 			};
 		};
 
-		U.Subscription.subscribe({
-			...param,
-			subId,
-			filters: filters.map(it => this.filterMapper(view, it)),
-			sorts: sorts.map(it => this.filterMapper(view, it)),
-			keys,
-			limit,
-			offset,
-			collectionId,
-			ignoreDeleted: true,
-			ignoreHidden: true,
-		}, callBack);
+		U.Subscription.destroyList([ subId ], false, () => {
+			U.Subscription.subscribe({
+				...param,
+				subId,
+				filters: filters.map(it => this.filterMapper(view, it)),
+				sorts: sorts.map(it => this.filterMapper(view, it)),
+				keys,
+				limit,
+				offset,
+				collectionId,
+				ignoreDeleted: true,
+				ignoreHidden: true,
+			}, callBack);
+		});
 	};
 
 	filterMapper (view: any, it: any) {
