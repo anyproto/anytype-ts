@@ -321,7 +321,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		if (type.iconName) {
 			src = U.Object.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
 		} else {
-			src = require(`img/icon/default/${id}.svg`);
+			src = U.Common.updateSvg(require(`img/icon/default/${id}.svg`), { id, size, fill: J.Theme[theme].iconDefault });
 		};
 
 		cn.push('withDefault');
@@ -330,15 +330,14 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	switch (layout) {
-		default:
-		case I.ObjectLayout.Chat:
-		case I.ObjectLayout.Page: {
+		default: {
 			if (iconImage) {
 				cn.push('withImage');
 			};
 
 			let di = 'page';
 			switch (layout) {
+				case I.ObjectLayout.ChatOld:
 				case I.ObjectLayout.Chat: di = 'chat'; break;
 				case I.ObjectLayout.Collection: 
 				case I.ObjectLayout.Set: di = 'set'; break;
