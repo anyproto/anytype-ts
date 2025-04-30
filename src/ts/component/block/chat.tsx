@@ -377,22 +377,22 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	getDepsIds (list: any[]) {
 		const markTypes = [ I.MarkType.Object, I.MarkType.Mention ];
 
-		let deps = [];
+		let attachments = [];
+		let marks = [];
 
 		list.forEach(it => {
-			const marks = (it.content.marks || []).filter(it => markTypes.includes(it.type)).map(it => it.param);
-			const attachments = (it.attachments || []).map(it => it.target);
-
-			deps = deps.concat(marks);
-			deps = deps.concat(attachments);
+			attachments = attachments.concat(it.attachments || []);
+			marks = marks.concat(it.content.marks || []);
 		});
 
 		if (this.refForm) {
-			deps = deps.concat((this.refForm.state.attachments || []).map(it => it.target));
-			deps = deps.concat((this.refForm.marks || []).filter(it => markTypes.includes(it.type)).map(it => it.param));
+			attachments = attachments.concat(this.refForm.state.attachments || []);
+			marks = marks.concat(this.refForm.marks || []);
 		};
 
-		return deps;
+		return [].
+			concat(attachments.map(it => it.target)).
+			concat(marks.filter(it => markTypes.includes(it.type)).map(it => it.param));
 	};
 
 	getReplyIds (list: any[]) {

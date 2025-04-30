@@ -1018,7 +1018,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, blockId } = this.props;
+		const { rootId, blockId, subId } = this.props;
 
 		let value = this.refEditable.getTextValue();
 		let from = this.range.from;
@@ -1044,7 +1044,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
 					],
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
-						S.Detail.update(rootId, { id: object.id, details: object }, false);
+						S.Detail.update(subId, { id: object.id, details: object }, false);
 
 						value = U.Common.stringInsert(value, text, from, from);
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
