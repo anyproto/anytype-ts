@@ -124,7 +124,7 @@ class Block implements I.Block {
 	};
 
 	canCreateBlock (): boolean {
-		return !this.isPage() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType() && !this.isTableRow();
+		return !this.isPage() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType() && !this.isTableRow();
 	};
 
 	canBecomeWidget (): boolean {
