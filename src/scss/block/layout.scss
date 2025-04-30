@@ -55,6 +55,9 @@
 			> .dropTarget.isOver.top::before { bottom: 4px; }
 			> .dropTarget.isOver.bottom::before { top: 4px; }
 		}
+
+		&.isAdding.top::before { top: 9px; }
+		&.isAdding.bottom::after { bottom: 9px; }
 	}
 
 	/* Column */
