@@ -380,7 +380,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		};
 
 		return () => {
-			unsubscribe();
+			//unsubscribe();
 			//Action.pageClose([ targetId, traceId ].join('-'), false);
 		};
 	}, []);
