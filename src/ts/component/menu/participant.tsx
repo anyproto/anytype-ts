@@ -11,7 +11,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	const { object } = data;
 
 	const load = () => {
-		U.Object.getById(object.id, { keys: U.Data.participantRelationKeys() }, (object: any) => {
+		U.Object.getById(object.id, { keys: U.Subscription.participantRelationKeys() }, (object: any) => {
 			if (object) {
 				props.param.data.object = object;
 			};

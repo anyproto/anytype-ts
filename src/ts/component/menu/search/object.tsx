@@ -323,7 +323,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.setState({ isLoading: true });
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			spaceId,
 			filters,
 			sorts,

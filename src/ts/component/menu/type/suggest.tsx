@@ -145,10 +145,10 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			itemList.current = [];
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			filters,
 			sorts,
-			keys: U.Data.typeRelationKeys(),
+			keys: U.Subscription.typeRelationKeys(),
 			fullText: filter,
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,

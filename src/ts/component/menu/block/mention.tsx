@@ -262,7 +262,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.setState({ isLoading: true });
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			filters,
 			sorts,
 			fullText: filter,

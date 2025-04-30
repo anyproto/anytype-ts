@@ -57,9 +57,9 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const load = () => {
 		setIsLoading(true);
 
-		U.Data.search({
+		U.Subscription.search({
 			spaceId,
-			keys: U.Data.participantRelationKeys(),
+			keys: U.Subscription.participantRelationKeys(),
 			filters: [
 				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 			],

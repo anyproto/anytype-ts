@@ -145,7 +145,7 @@ class Dataview {
 			};
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			...param,
 			subId,
 			filters: filters.map(it => this.filterMapper(view, it)),

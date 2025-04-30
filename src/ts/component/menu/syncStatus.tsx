@@ -175,7 +175,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		this._isMounted = false;
 		this.onCloseInfo();
 
-		C.ObjectSearchUnsubscribe([ SUB_ID ]);
+		U.Subscription.destroyList([ SUB_ID ]);
 	};
 
 	onContextMenu (e, item) {
@@ -272,11 +272,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 		this.setState({ isLoading: true });
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: SUB_ID,
 			filters,
 			sorts,
-			keys: U.Data.syncStatusRelationKeys(),
+			keys: U.Subscription.syncStatusRelationKeys(),
 			offset: 0,
 			limit: 30,
 		}, () => {

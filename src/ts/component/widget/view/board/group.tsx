@@ -39,7 +39,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId,
 			filters: filters.map(it => Dataview.filterMapper(view, it)),
 			sorts: sorts.map(it => Dataview.filterMapper(view, it)),

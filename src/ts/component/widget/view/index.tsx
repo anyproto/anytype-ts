@@ -299,7 +299,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		};
 
 		return () => {
-			C.ObjectSearchUnsubscribe([ subId ]);
+			U.Subscription.destroyList([ subId ]);
 			//Action.pageClose([ targetId, traceId ].join('-'), false);
 		};
 	}, []);

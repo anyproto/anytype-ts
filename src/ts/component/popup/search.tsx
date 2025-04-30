@@ -344,7 +344,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this._isMounted = false;
 		this.unbind();
 
-		C.ObjectSearchUnsubscribe([ J.Constant.subId.search ]);
+		U.Subscription.destroyList([ J.Constant.subId.search ]);
 		window.clearTimeout(this.timeout);
 	};
 
@@ -587,7 +587,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
-		].map(U.Data.sortMapper);
+		].map(U.Subscription.sortMapper);
 
 		let limit = J.Constant.limit.menuRecords;
 
@@ -623,7 +623,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.items = this.items.concat(records);
 
 			if (this.items.length) {
-				U.Data.subscribeIds({
+				U.Subscription.subscribeIds({
 					subId: J.Constant.subId.search,
 					ids: this.items.map(it => it.id),
 					noDeps: true,

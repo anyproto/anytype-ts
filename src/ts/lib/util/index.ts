@@ -10,6 +10,7 @@ import Router from './router';
 import Smile from './smile';
 import Space from './space';
 import Prism from './prism';
+import Subscription from './subscription';
 
 export {
 	Common,
@@ -24,4 +25,5 @@ export {
 	Smile,
 	Space,
 	Prism,
+	Subscription,
 };

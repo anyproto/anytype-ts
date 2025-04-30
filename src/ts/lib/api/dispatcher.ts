@@ -1145,7 +1145,7 @@ class Dispatcher {
 			const object = U.Space.getSpaceview(id);
 
 			if (intersection.length && object.targetSpaceId) {
-				U.Data.createSubSpaceSubscriptions([ object.targetSpaceId ]);
+				U.Subscription.createSubSpace([ object.targetSpaceId ]);
 			};
 
 			if (object.isAccountDeleted && (object.targetSpaceId == space)) {

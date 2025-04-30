@@ -1440,7 +1440,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.filter = v;
 
 			if (v) {
-				U.Data.search({
+				U.Subscription.search({
 					filters: [],
 					sorts: [],
 					fullText: v,

@@ -411,11 +411,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		U.Data.subscribeIds({
+		U.Subscription.subscribeIds({
 			subId: this.getSubId(),
 			ids,
 			noDeps: true,
-			keys: U.Data.chatRelationKeys(),
+			keys: U.Subscription.chatRelationKeys(),
 			updateDetails: true,
 		}, () => {
 			this.forceUpdate();

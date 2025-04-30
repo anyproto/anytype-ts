@@ -198,7 +198,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId,
 			filters: filters.map(it => Dataview.filterMapper(view, it)),
 			sorts: sorts.map(it => Dataview.filterMapper(view, it)),

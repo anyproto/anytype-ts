@@ -257,7 +257,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return null;
 		};
 
-		const object = S.Detail.get(rootId, storeId, U.Data.participantRelationKeys());
+		const object = S.Detail.get(rootId, storeId, U.Subscription.participantRelationKeys());
 		const relationKey = object.globalName ? 'globalName': 'identity';
 
 		return (
@@ -462,7 +462,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
-					keys: U.Data.typeRelationKeys(),
+					keys: U.Subscription.typeRelationKeys(),
 					skipIds: [ object.type ],
 					onClick: (item: any) => {
 						keyboard.disableClose(true);

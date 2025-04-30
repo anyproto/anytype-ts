@@ -155,7 +155,7 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 
 		setIsLoading(true);
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId,
 			sorts,
 			filters: fl,
