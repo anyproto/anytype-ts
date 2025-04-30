@@ -114,6 +114,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		const value = this.refName?.getTextValue().trim();
 
 		this.props.onChange({ [this.getRelationKey()]: value });
+		window.clearTimeout(this.timeout);
 	};
 
 	onKeyDown (e: any) {
@@ -127,6 +128,9 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		const value = this.refName?.getTextValue().trim();
 
 		this.props.disableButton(!value);
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.onChange(), J.Constant.delay.keyboard);
 	};
 
 });

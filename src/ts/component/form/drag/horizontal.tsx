@@ -73,6 +73,8 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
+		console.log('start', e);
+
 		if (readonly) {
 			return;
 		};
