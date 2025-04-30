@@ -123,7 +123,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 	componentWillUnmount(): void {
 		S.Menu.closeAll(J.Menu.cell);
-		C.ObjectSearchUnsubscribe([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
+		U.Subscription.destroyList([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
 	};
 
 	loadObjects (callBack?: () => void) {
@@ -133,7 +133,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const objectIds = this.getObjectIds();
 		const keys = this.getRelationKeys();
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: SUB_ID_OBJECT,
 			filters: [
 				{ relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
@@ -191,7 +191,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			return;
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: SUB_ID_DEPS,
 			filters: [
 				{ relationKey: 'id', condition: I.FilterCondition.In, value: depIds },

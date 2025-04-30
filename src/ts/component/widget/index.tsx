@@ -380,7 +380,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: subId.current,
 			filters,
 			sorts,

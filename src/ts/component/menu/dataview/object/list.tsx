@@ -275,7 +275,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value });
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			filters,
 			sorts,
 			fullText: filter,

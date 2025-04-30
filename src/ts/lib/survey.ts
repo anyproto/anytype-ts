@@ -129,7 +129,7 @@ class Survey {
 			return;
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			spaceId: space,
 			filters: [
 				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },

@@ -251,7 +251,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	loadRequest (param: any, callBack?: (message: any) => void) {
-		U.Data.search(param, (message: any) => {
+		U.Subscription.search(param, (message: any) => {
 			this.items = this.items.concat(message.records || []);
 
 			if (callBack) {

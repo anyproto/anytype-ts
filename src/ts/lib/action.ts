@@ -37,6 +37,8 @@ class Action {
 		this.dbClearRoot(rootId);
 		S.Block.clear(rootId);
 
+		U.Subscription.destroyList([ rootId ]);
+
 		if (withCommand) {
 			C.ObjectClose(rootId, space);
 		};
@@ -50,8 +52,6 @@ class Action {
 		S.Record.metaClear(rootId, '');
 		S.Record.recordsClear(rootId, '');
 		S.Detail.clear(rootId);
-
-		C.ObjectSearchUnsubscribe([ rootId ]);
 	};
 
 	dbClearBlock (rootId: string, blockId: string) {
@@ -73,12 +73,10 @@ class Action {
 			S.Record.recordsClear(S.Record.getGroupSubId(rootId, blockId, id), '');
 		});
 
-		C.ObjectSearchUnsubscribe(groupIds);
-
 		S.Record.groupsClear(rootId, blockId);
 		S.Detail.clear(subId);
 
-		C.ObjectSearchUnsubscribe([ subId ]);
+		U.Subscription.destroyList(groupIds.concat([ subId ]), true);
 	};
 
 	dbClearChat (chatId: string, blockId: string) {	

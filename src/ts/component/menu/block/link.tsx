@@ -309,7 +309,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return;
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			filters,
 			sorts,
 			fullText: filter,

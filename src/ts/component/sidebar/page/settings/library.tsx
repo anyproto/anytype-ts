@@ -195,7 +195,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	componentWillUnmount () {
-		C.ObjectSearchUnsubscribe([ J.Constant.subId.library ]);
+		U.Subscription.destroyList([ J.Constant.subId.library ]);
 	};
 
 	initSort () {
@@ -256,7 +256,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			S.Record.recordsSet(J.Constant.subId.library, '', []);
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: J.Constant.subId.library,
 			filters,
 			sorts,
@@ -275,7 +275,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 	loadSearchIds (clear: boolean) {
 		if (this.filter) {
-			U.Data.search({
+			U.Subscription.search({
 				filters: [],
 				sorts: [],
 				fullText: this.filter,

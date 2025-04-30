@@ -42,7 +42,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const subIds = getSubIds();
 
 		if (subIds.length) {
-			C.ObjectSearchUnsubscribe(subIds);
+			U.Subscription.destroyList(subIds);
 			clear();
 		};
 	};
@@ -179,7 +179,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		};
 
 		subscriptionHashes.current[nodeId] = hash;
-		U.Data.subscribeIds({
+		U.Subscription.subscribeIds({
 			subId,
 			ids: links,
 			keys: J.Relation.sidebar,
@@ -380,8 +380,10 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		};
 
 		return () => {
+			/*
 			unsubscribe();
-			//Action.pageClose([ targetId, traceId ].join('-'), false);
+			Action.pageClose([ targetId, traceId ].join('-'), false);
+			*/
 		};
 	}, []);
 

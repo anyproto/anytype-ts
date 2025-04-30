@@ -235,7 +235,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		const isType = U.Object.isTypeLayout(object.layout);
 
 		if (isType) {
-			U.Data.searchSubscribe({
+			U.Subscription.subscribe({
 				subId: SUB_ID_CHECK,
 				filters: [
 					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: object.id },

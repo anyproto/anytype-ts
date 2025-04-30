@@ -105,7 +105,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	componentWillUnmount () {
-		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+		U.Subscription.destroyList([ this.getSubId() ]);
 		this.unbind();
 	};
 
@@ -171,7 +171,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		];
 		const keys = J.Relation.default.concat([ 'targetObjectType' ]);
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: this.getSubId(),
 			filters,
 			sorts,

@@ -377,7 +377,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			S.Record.recordsSet(J.Constant.subId.allObject, '', []);
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: J.Constant.subId.allObject,
 			filters,
 			sorts,
@@ -403,7 +403,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	loadSearchIds (clear: boolean) {
 		if (this.filter) {
-			U.Data.search({
+			U.Subscription.search({
 				filters: [],
 				sorts: [],
 				fullText: this.filter,

@@ -308,7 +308,7 @@ class UtilObject {
 			param.ignoreArchived = false;
 		};
 
-		U.Data.search(param, (message: any) => {
+		U.Subscription.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
 			};

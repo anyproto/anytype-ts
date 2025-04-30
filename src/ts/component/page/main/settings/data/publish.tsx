@@ -59,7 +59,7 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 	};
 
 	componentWillUnmount(): void {
-		C.ObjectSearchUnsubscribe([ SUB_ID ]);
+		U.Subscription.destroyList([ SUB_ID ]);
 	};
 
 	load () {

@@ -172,7 +172,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			S.Record.recordsClear(subId, '');
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId,
 			filters: filters.map(it => Dataview.filterMapper(view, it)),
 			sorts: sorts.map(it => Dataview.filterMapper(view, it)),

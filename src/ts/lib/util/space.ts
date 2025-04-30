@@ -113,7 +113,7 @@ class UtilSpace {
 	};
 
 	getList () {
-		return S.Record.getRecords(J.Constant.subId.space, U.Data.spaceRelationKeys()).filter(it => it.isAccountActive);
+		return S.Record.getRecords(J.Constant.subId.space, U.Subscription.spaceRelationKeys()).filter(it => it.isAccountActive);
 	};
 
 	getSpaceview (id?: string) {

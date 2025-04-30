@@ -579,7 +579,7 @@ class UtilMenu {
 					S.Detail.update(U.Space.getSubSpaceSubId(space), { id: object.id, details: object }, false);
 				};
 
-				U.Data.createSubSpaceSubscriptions([ space ], () => {
+				U.Subscription.createSubSpace([ space ], () => {
 					if (openRoute) {
 						U.Space.openDashboard();
 					};
