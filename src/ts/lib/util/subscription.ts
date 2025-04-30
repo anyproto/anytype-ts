@@ -116,12 +116,16 @@ class UtilSubscription {
 			collectionId: ''
 		}, param);
 
+		const { config } = S.Common;
 		const { spaceId, subId, idField, sorts, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
 		const keys = this.mapKeys(param);
 		const filters = this.defaultFilters(param);
+		const debug = config.flagsMw.request;
 
 		if (!subId) {
-			console.error('[U.Data].searchSubscribe: subId is empty');
+			if (debug) {
+				console.error('[U.Subscription].subscribe: subId is empty');
+			};
 
 			if (callBack) {
 				callBack({ error: { code: 1, description: 'subId is empty' } });
@@ -130,7 +134,9 @@ class UtilSubscription {
 		};
 
 		if (!spaceId) {
-			console.error('[U.Data].searchSubscribe: spaceId is empty');
+			if (debug) {
+				console.error('[U.Subscription].subscribe: spaceId is empty');
+			};
 
 			if (callBack) {
 				callBack({ error: { code: 1, description: 'spaceId is empty' } });
@@ -142,7 +148,9 @@ class UtilSubscription {
 
 		if (hash) {
 			if (this.map.has(subId) && (this.map.get(subId) == hash)) {
-				console.error('[U.Data].searchSubscribe: already subscribed', subId, hash);
+				if (debug) {
+					console.error('[U.Subscription].subscribe: already subscribed', subId, hash);
+				};
 
 				if (callBack) {
 					callBack({ error: { code: 1, description: 'Already subscribed' } });
@@ -175,12 +183,16 @@ class UtilSubscription {
 			updateDetails: false,
 		}, param);
 
+		const { config } = S.Common;
 		const { spaceId, subId, noDeps, updateDetails } = param;
 		const ids = U.Common.arrayUnique(param.ids.filter(it => it));
 		const keys = this.mapKeys(param);
+		const debug = config.flagsMw.request;
 
 		if (!subId) {
-			console.error('[U.Data].subscribeIds: subId is empty');
+			if (debug) {
+				console.error('[U.Subscription].subscribeIds: subId is empty');
+			};
 
 			if (callBack) {
 				callBack({ error: { code: 1, description: 'subId is empty' } });
@@ -189,7 +201,9 @@ class UtilSubscription {
 		};
 
 		if (!spaceId) {
-			console.error('[U.Data].subscribeIds: spaceId is empty');
+			if (debug) {
+				console.error('[U.Subscription].subscribeIds: spaceId is empty');
+			};
 
 			if (callBack) {
 				callBack({ error: { code: 1, description: 'spaceId is empty' } });
@@ -198,7 +212,9 @@ class UtilSubscription {
 		};
 
 		if (!ids.length) {
-			console.error('[U.Data].subscribeIds: ids list is empty');
+			if (debug) {
+				console.error('[U.Subscription].subscribeIds: ids list is empty');
+			};
 
 			if (callBack) {
 				callBack({ error: { code: 1, description: 'ids list is empty' } });
@@ -210,7 +226,9 @@ class UtilSubscription {
 
 		if (hash) {
 			if (this.map.has(subId) && (this.map.get(subId) == hash)) {
-				console.error('[U.Data].searchSubscribe: already subscribed', subId, hash);
+				if (debug) {
+					console.error('[U.Subscription].searchSubscribe: already subscribed', subId, hash);
+				};
 
 				if (callBack) {
 					callBack({ error: { code: 1, description: 'Already subscribed' } });
@@ -256,12 +274,16 @@ class UtilSubscription {
 			skipLayoutFormat: null,
 		}, param);
 
+		const { config } = S.Common;
 		const { spaceId, sorts, offset, limit, skipLayoutFormat } = param;
 		const keys = this.mapKeys(param);
 		const filters = this.defaultFilters(param);
+		const debug = config.flagsMw.request;
 
 		if (!spaceId) {
-			console.error('[U.Data].search: spaceId is empty');
+			if (debug) {
+				console.error('[U.Subscription].search: spaceId is empty');
+			};
 
 			if (callBack) {
 				callBack({ error: { code: 1, description: 'spaceId is empty' } });
