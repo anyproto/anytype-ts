@@ -373,7 +373,10 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			getData(getSubId(), initCache);
 		} else {
 			initCache();
-			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId());
+
+			if (targetId) {
+				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId());
+			};
 		};
 
 		return () => {

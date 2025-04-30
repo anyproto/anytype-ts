@@ -179,6 +179,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
+		if (typeKey == J.Constant.typeKey.type) {
+			U.Object.createType({}, false);
+			return;
+		};
+
 		if ((layout != I.WidgetLayout.Tree) && ![ J.Constant.typeKey.type ].includes(typeKey)) {
 			flags.push(I.ObjectFlag.DeleteEmpty);
 		};
