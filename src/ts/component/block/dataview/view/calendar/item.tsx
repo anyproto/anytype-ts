@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName, Icon } from 'Component';
+import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
 import { I, S, U, translate, Preview } from 'Lib';
 
 interface Props extends I.ViewComponent {
@@ -27,16 +27,19 @@ const Item = observer(class Item extends React.Component<Props> {
 		this.onContext = this.onContext.bind(this);
 		this.canCreate = this.canCreate.bind(this);
 		this.onCreate = this.onCreate.bind(this);
+		this.onDragStart = this.onDragStart.bind(this);
 	};
 
 	render () {
-		const { items, className, d, m, y, getView, onContext } = this.props;
+		const { rootId, items, className, d, m, y, getView, onContext } = this.props;
 		const view = getView();
 		const { hideIcon } = view;
 		const slice = items.slice(0, LIMIT);
 		const length = items.length;
 		const cn = [ 'day' ];
 		const canCreate = this.canCreate();
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
+		const canDrag = relation && !relation.isReadonlyValue;
 
 		if (className) {
 			cn.push(className);
@@ -55,13 +58,31 @@ const Item = observer(class Item extends React.Component<Props> {
 			const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && U.Object.isTaskLayout(item.layout);
 			const icon = hideIcon ? null : <IconObject id={`item-${item.id}-icon`} object={item} size={16} canEdit={canEdit} />;
 
+			let content = (
+				<>
+					{icon}
+					<ObjectName object={item} onClick={() => this.onOpen(item)} />
+				</>
+			);
+
+			if (canDrag) {
+				content = (
+					<DropTarget {...this.props} rootId={rootId} id={item.id} dropType={I.DropType.Record}>
+						{content}
+					</DropTarget>
+				);
+			};
+
 			return (
+				
 				<div 
 					id={`item-${item.id}`}
 					className="item" 
+					draggable={canDrag}
 					onContextMenu={e => onContext(e, item.id)}
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 					onMouseLeave={this.onMouseLeave}
+					onDragStart={e => this.onDragStart(e, item)}
 				>
 					{icon}
 					<ObjectName object={item} onClick={() => this.onOpen(item)} />
@@ -76,27 +97,29 @@ const Item = observer(class Item extends React.Component<Props> {
 				onContextMenu={this.onContext}
 				onDoubleClick={this.onCreate}
 			>
-				<div className="head">
-					{canCreate ? (
-						<Icon 
-							className="plus withBackground" 
-							tooltipParam={{ text: translate(`commonNewObject`) }} 
-							onClick={this.onCreate} 
-						/> 
-					) : ''}
+				<DropTarget {...this.props} rootId={rootId} id={[ y, m, d ].join('-')} dropType={I.DropType.Record}>
+					<div className="head">
+						{canCreate ? (
+							<Icon 
+								className="plus withBackground" 
+								tooltipParam={{ text: translate(`commonNewObject`) }} 
+								onClick={this.onCreate} 
+							/> 
+						) : ''}
 
-					<div className="number" onClick={this.onOpenDate}>
-						<div className="inner">{d}</div>
+						<div className="number" onClick={this.onOpenDate}>
+							<div className="inner">{d}</div>
+						</div>
 					</div>
-				</div>
 
-				<div className="items">
-					{slice.map((item, i) => (
-						<Item key={[ y, m, d, item.id ].join('-')} {...item} />
-					))}
+					<div className="items">
+						{slice.map((item, i) => (
+							<Item key={[ y, m, d, item.id ].join('-')} {...item} />
+						))}
 
-					{more}
-				</div>
+						{more}
+					</div>
+				</DropTarget>
 			</div>
 		);
 	};
@@ -205,6 +228,10 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
 		return groupRelation && (!groupRelation.isReadonlyValue || isToday) && isAllowedObject();
+	};
+
+	onDragStart (e: any, item: any) {
+		console.log('onDragStart', item);
 	};
 
 });
