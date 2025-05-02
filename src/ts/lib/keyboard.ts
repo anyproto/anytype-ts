@@ -1236,7 +1236,7 @@ class Keyboard {
 			ret.push(Key.alt);
 		};
 		if (e.ctrlKey) {
-			ret.push(Key.ctrl);
+			ret.push('ctrl');
 		};
 		if (e.metaKey) {
 			ret.push('cmd');
@@ -1323,7 +1323,7 @@ class Keyboard {
 			if (key == Key.alt) {
 				return this.altSymbol();
 			};
-			if ((key == Key.ctrl) && isMac) {
+			if ((key == 'ctrl') && isMac) {
 				return '&#8963;';
 			};
 			if (key == Key.enter) {
