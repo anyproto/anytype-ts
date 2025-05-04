@@ -280,6 +280,7 @@ class DetailStore {
 		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
 		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
+		object.includeTime = Boolean(object.includeTime) || false;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedRelation');

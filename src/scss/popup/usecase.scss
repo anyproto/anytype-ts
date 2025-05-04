@@ -40,8 +40,9 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 				}
 			}
 
+			.categories { position: sticky; top: 0px; left: 0px; z-index: 10; }
 			.categories {
-				.swiper { padding: 18px 24px; background: var(--color-bg-tag-blue); position: sticky; top: 0px; left: 0px; z-index: 10; }
+				.swiper { padding: 18px 24px; background: var(--color-bg-tag-blue); }
 
 				.swiper-button-prev, .swiper-button-next { 
 					position: absolute; top: 0px; z-index: 1; width: 15%; height: 100%; pointer-events: none; opacity: 0;
