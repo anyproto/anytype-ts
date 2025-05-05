@@ -3,9 +3,6 @@
 .popups {
 	.popup.popupConfirm {
 		.innerWrap { width: 424px; padding: 32px; text-align: center; }
-		.wrap.withCheckbox, .wrap.withInput {
-			.descr { margin-bottom: 12px; }
-		}
 
 		.wrap.withInput {
 			.checkboxWrapper { margin-bottom: 12px; }
@@ -13,7 +10,7 @@
 
 		.title { @include text-header3; margin-bottom: 6px; }
 		.descr { margin-bottom: 24px; user-select: text !important; word-wrap: break-word; }
-		.buttons { display: flex; flex-direction: row-reverse; gap: 0px 8px; }
+		.buttons { display: flex; flex-direction: column; gap: 8px; }
 		.buttons {
 			.button { width: 100%; }
 			.button.blank:not(:hover):not(.hover) { background-color: var(--color-bg-primary); }
