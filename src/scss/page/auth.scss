@@ -41,12 +41,6 @@ html.bodyIndex, html.bodyAuth {
 	}
 
 	#popupConfirm-innerWrap {
-		.iconWrapper { background: none; }
-		.icon.update { background-image: url('~img/theme/dark/icon/popup/confirm/update.svg'); }
-		.icon.updated { background-image: url('~img/theme/dark/icon/popup/confirm/updated.svg'); }
-		.icon.error { background-image: url('~img/theme/dark/icon/popup/confirm/error.svg'); }
-		.icon.confirm { background-image: url('~img/theme/dark/icon/popup/confirm/confirm.svg'); }
-
 		h1 { font-size: var(--font-size-header3); margin-bottom: 16px; color: var(--color-text-primary) !important; }
 		b { display: block; font-weight: 700; color: var(--color-text-primary) !important; margin-bottom: 8px; }
 		p { margin-bottom: 8px; }
