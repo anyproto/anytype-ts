@@ -253,7 +253,7 @@ html.bodyAuthDeleted {
 	.tooltipLink { color: var(--color-text-primary) !important; }
 	.tooltipLink:hover { text-decoration: underline; }
 
-	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
+	.phraseWrapper, .inputWrapper { margin: 0px 0px 40px 0px; }
 	.phraseWrapper {
 		.icon { display: none; }
 		.icon.copy { display: block; right: 16px; background-image: url('~img/icon/onboarding/copy.svg'); }
@@ -262,14 +262,14 @@ html.bodyAuthDeleted {
 	.inputWrapper {
 		.input { 
 			border-radius: 26px; border: none !important; background: var(--color-input-opaque) !important; color: var(--color-text-primary) !important; 
-			font-size: var(--font-size-header3); padding: 0px 26px; height: 72px; width: 480px; height: auto; 
+			font-size: var(--font-size-header3); padding: 0px 26px; height: 72px; width: 480px;
 		}
 		.input:hover { filter: brightness(1.2); }
 		.input::placeholder { color: var(--color-text-tertiary) !important; }
 	}
 
 	.stageSoul {
-		.label { margin: 0px 0px 40px 0px; }
+		.label { margin-bottom: 40px; }
 	}
 }
 
