@@ -78,13 +78,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		const setOf = Relation.getArrayValue(object.setOf);
 		const isCollection = U.Object.isCollectionLayout(object.layout);
-
-		if (!setOf.length && !isCollection) {
-			return;
-		};
-
 		const view = getView();
-		if (!view) {
+
+		if (!view || (!setOf.length && !isCollection)) {
 			return;
 		};
 
@@ -156,7 +152,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const views = S.Record.getViews(rootId, J.Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 	const cn = [ 'innerWrap' ];
 	const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
-	const isEmpty = !isLoading && !length && showEmpty;
+	const isEmpty = !length && showEmpty;
 	const childProps = {
 		...props,
 		ref: childRef,
@@ -191,12 +187,10 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		);
 	};
 
-	if (isLoading) {
-	} else
-	if (!length && showEmpty) {
+	if (isEmpty) {
 		content = (
 			<div className="emptyWrap">
-				<Label className="empty" text={translate('widgetEmptyLabel')} />
+				{!isLoading ? <Label className="empty" text={translate('widgetEmptyLabel')} /> : ''}
 			</div>
 		);
 	} else {

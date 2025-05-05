@@ -205,19 +205,13 @@ class UtilRouter {
 				animate: true,
 				delay: 100,
 				onFadeOut: () => {
-					/*
-					S.Record.metaClear(J.Constant.subId.participant, '');
-					S.Record.recordsClear(J.Constant.subId.participant, '');
-					S.Block.clear(S.Block.widgets);
-					*/
-
 					analytics.removeContext();
 					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
 
 					U.Data.onInfo(message.info);
 					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } });
-				}
+				},
 			});
 		});
 	};

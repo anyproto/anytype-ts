@@ -315,7 +315,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const defaultIcon = (id: string) => {
-		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'iconName' ], true);
+		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'name', 'iconName' ], true);
 
 		let src = '';
 		if (type.iconName) {
@@ -339,7 +339,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			switch (layout) {
 				case I.ObjectLayout.ChatOld:
 				case I.ObjectLayout.Chat: di = 'chat'; break;
-				case I.ObjectLayout.Collection: 
+				case I.ObjectLayout.Collection: di = 'collection'; break;
 				case I.ObjectLayout.Set: di = 'set'; break;
 			};
 

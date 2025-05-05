@@ -67,7 +67,7 @@ export default {
 		menu:			 150,
 		popup:			 150,
 		toast:			 2500,
-		route:			 100,
+		route:			 200,
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 400,

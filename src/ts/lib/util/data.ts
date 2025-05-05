@@ -150,8 +150,6 @@ class UtilData {
 		const { pin } = S.Common;
 		const { root, widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const color = Storage.get('color');
-		const bgColor = Storage.get('bgColor');
 		const routeParam = Object.assign({ replace: true }, param.routeParam);
 		const route = param.route || redirect;
 
@@ -186,15 +184,6 @@ class UtilData {
 						S.Common.redirectSet('');
 					};
 
-					if (!color) {
-						Storage.set('color', 'orange');
-					};
-					if (!bgColor) {
-						Storage.set('bgColor', 'orange');
-					};
-
-					Storage.clearDeletedSpaces();
-
 					if (callBack) {
 						callBack();
 					};
@@ -220,7 +209,7 @@ class UtilData {
 
 		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
-		U.Subscription.createGlobal();
+		U.Subscription.createGlobal(() => Storage.clearDeletedSpaces());
 
 		analytics.event('OpenAccount');
 	};
