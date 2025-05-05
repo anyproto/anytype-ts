@@ -269,13 +269,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const { isPopup } = this.props;
-		const match = keyboard.getMatch(isPopup);
-
-		let close = true;
-		if (isPopup && (match?.params?.id == this.id)) {
-			close = false;
-		};
+		const { isPopup, matchPopup } = this.props;
+		const close = !isPopup || (isPopup && (matchPopup?.params?.id != this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -1227,7 +1222,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 		const next = S.Block.getFirstBlock(rootId, -dir, it => it.isFocusable());
-		
+
 		this.focusNextBlock(next, dir);
 	};
 
@@ -1499,6 +1494,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = S.Block.getLeaf(rootId, focused);
+
 		if (!block) {
 			return;
 		};
