@@ -225,14 +225,24 @@ class ChatStore {
 			};
 		};
 
+		if (spaceId == S.Common.space) {
+			ret.mentionCounter = 1;
+			ret.messageCounter = 2;
+		};
+
 		return ret;
 	};
 
-	setBadge (counters: Counter) {
+	setBadge () {
+		const { config } = S.Common;
+
 		let t = 0;
 
-		if (counters) {
-			t = counters.mentionCounter + counters.messageCounter;
+		if (config.experimental) {
+			const counters = this.getTotalCounters();
+			if (counters) {
+				t = counters.mentionCounter + counters.messageCounter;
+			};
 		};
 
 		Renderer.send('setBadge', String(t || ''));
