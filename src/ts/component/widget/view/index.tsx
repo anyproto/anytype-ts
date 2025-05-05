@@ -91,6 +91,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		Dataview.getData({
 			rootId,
 			blockId: J.Constant.blockId.dataview,
+			subId,
 			newViewId: viewId,
 			sources: setOf,
 			limit: getLimitHandler(),
