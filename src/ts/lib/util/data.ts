@@ -815,6 +815,11 @@ class UtilData {
 	};
 
 	getConflictRelations (rootId: string, callBack: (ids: string[]) => void) {
+		if (!rootId) {
+			console.error('[U.Data].getConflictRelations: No rootId');
+			return;
+		};
+
 		C.ObjectTypeListConflictingRelations(rootId, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;

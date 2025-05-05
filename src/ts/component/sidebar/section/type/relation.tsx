@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
-import { I, S, C, U, Relation, translate, keyboard, analytics } from 'Lib';
+import { I, S, U, Relation, translate, keyboard, analytics } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -124,17 +124,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				onMore,
 			});
 		};
-	};
-
-	const loadConflicts = () => {
-		if (isLoaded) {
-			return;
-		};
-
-		U.Data.getConflictRelations(rootId, ids => {
-			setIsLoaded(true);
-			setConflictIds(ids);
-		});
 	};
 
 	const onSortStart = (e: any) => {
@@ -338,7 +327,14 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	}));
 
 	useEffect(() => {
-		loadConflicts();
+		if (isLoaded || !object.id) {
+			return;
+		};
+
+		U.Data.getConflictRelations(object.id, ids => {
+			setIsLoaded(true);
+			setConflictIds(ids);
+		});
 	});
 
 	return (
