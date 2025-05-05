@@ -975,7 +975,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			// Backspace
 			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 				if (!readonly) {
-					//this.onBackspaceBlock(e, range, pressed, length, props);
+					this.onBackspaceBlock(e, range, pressed, length, props);
 				};
 			});
 
