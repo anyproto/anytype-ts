@@ -64,7 +64,7 @@
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
 	.innerWrap { transition: opacity 0.4s $easeInQuint; }
 
-	.emptyWrap { padding: 0px 16px; display: flex; align-items: center; }
+	.emptyWrap { padding: 0px 16px; display: flex; align-items: center; justify-content: center; }
 	.emptyWrap {
 		.label { text-align: center; @include text-common; white-space: nowrap; }
 	}
