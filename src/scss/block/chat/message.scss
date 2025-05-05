@@ -107,14 +107,18 @@
 }
 
 .message.withAttachment {
-	.bubble {
-		.textWrapper { padding: 8px 12px 0px; }
+	.bubbleOuter {
+		.bubble {
+			.textWrapper { padding: 8px 12px 0px; }
+		}
 	}
 }
 .message.withAttachment.withMedia {
-	.bubble { flex-direction: column-reverse; }
-	.bubble {
-		.textWrapper { padding: 0px 12px 8px; }
+	.bubbleOuter {
+		.bubble { flex-direction: column-reverse; }
+		.bubble {
+			.textWrapper { padding: 0px 12px 8px; }
+		}
 	}
 }
 

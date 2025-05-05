@@ -176,7 +176,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 										</div>
 									</div>
 
-
 									{hasAttachments ? (
 										<div className={ca.join(' ')}>
 											{attachments.map((item: any, i: number) => (
