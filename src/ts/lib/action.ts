@@ -674,28 +674,31 @@ class Action {
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const deleted = U.Space.getSpaceviewBySpaceId(id);
+		const space = U.Space.getSpaceviewBySpaceId(id);
 
-		if (!deleted) {
+		if (!space) {
 			return;
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name = U.Common.shorten(deleted.name, 32);
+		const name = U.Common.shorten(space.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
 		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
 		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
 		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+		const confirmMessage = isOwner ? space.name : '';
 
 		analytics.event(`Click${suffix}Space`, { route });
 
 		S.Popup.open('confirm', {
 			data: {
+				icon: 'confirm',
 				title,
 				text,
 				textConfirm: confirm,
-				confirmMessage: translate('pageSettingsSpaceDeleteSpace'),
+				colorConfirm: 'red',
+				confirmMessage,
 				onConfirm: () => {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
@@ -706,7 +709,7 @@ class Action {
 
 						if (!message.error.code) {
 							Preview.toastShow({ text: toast });
-							analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
+							analytics.event(`${suffix}Space`, { type: space.spaceAccessType, route });
 						};
 					});
 				},

@@ -36,13 +36,13 @@
 		}
 
 		.checkboxWrapper { 
-			display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: center; margin: 0px 0px 24px 0px; cursor: default;
+			display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: center; margin: 0px 0px 16px 0px; cursor: default;
 		}
 		.checkboxWrapper {
 			.label { margin: 0px !important; }
 		}
 
-		.confirmMessage { display: flex; flex-direction: column; gap: 4px 0px; justify-content: flex-start; margin: 0px 0px 24px 0px; text-align: left; }
+		.confirmMessage { display: flex; flex-direction: column; gap: 4px 0px; justify-content: flex-start; margin: 0px 0px 16px 0px; text-align: left; }
 		.confirmMessage {
 			.label { margin: 0px; @include text-small; }
 			.input { border: 1px solid var(--color-shape-secondary); border-radius: 6px; }

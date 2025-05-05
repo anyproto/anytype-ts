@@ -69,7 +69,6 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 
 				{confirmMessage ? (
 					<div className="confirmMessage">
-						<Label text={translate('popupConfirmConfirmationText')} />
 						<Input type="text" ref={ref => this.refInput = ref} placeholder={confirmMessage} />
 					</div>
 				) : ''}
