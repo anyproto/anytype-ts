@@ -202,6 +202,8 @@
 	"commonApply": "Apply",
 	"commonDescription": "Description",
 	"commonYourName": "Your Name",
+	"commonShowHide": "Show / Hide",
+	"commonShowKey": "Reveal and copy Key",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -392,8 +394,8 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLogin": "Log In",
-	"authSelectSignup": "Sign Up",
+	"authSelectLogin": "I already have the key",
+	"authSelectSignup": "I am new here",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Enter my Vault",
@@ -422,13 +424,13 @@
 	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It's local-first – everything works offline.<br/>Only you have the key.",
 	"authOnboardVaultButton": "Get my Key",
 
-	"authOnboardSoulTitle": "Set your name",
-	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
+	"authOnboardSoulTitle": "Add your name",
+	"authOnboardSoulLabel": "Only seen by people you share something with. There is no central registry for these names.",
 
 	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "Your key replaces login and password. Keep it safe &mdash; you control your data. Find it later in app settings.<span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — you control your data.<br/>You can find this key later in app settings.<br/><span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
 	"authOnboardPhraseSubmit": "Reveal my key",
-	"authOnboardPhraseNotNow": "Not now",
+	"authOnboardPhraseNotNow": "Skip",
 
 	"onboardingExperienceSubTitle": "Build your first space",
 	"onboardingExperienceTypeTitle": "Who Will Use This Space?",
@@ -808,13 +810,7 @@
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
 
 	"popupSettingsPhraseTitle": "Key",
-	"popupSettingsPhraseStub": "You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes.",
-	"popupSettingsPhraseShowPhrase": "Show and copy Key",
-	"popupSettingsPhraseHidePhrase": "Hide Key",
-	"popupSettingsPhraseShowQR": "Show QR-code",
-	"popupSettingsPhraseHideQR": "Hide QR-code",
 	"popupSettingsPhraseText": "Your key protects your vault. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
-	"popupSettingsPhraseBackup": "Back up Key",
 
 	"popupSettingsPinTitle": "Pin Code",
 	"popupSettingsPinText": "Set a 6-digit PIN for your application screen when unattended. PIN adds a quick layer of privacy for your app. It prevents casual viewing but doesn't enhance data encryption. Your primary data remains secure with your account Key. PIN protection is recommended when you step away from your device.",
@@ -1029,7 +1025,6 @@
 
 	"popupLogoutTitle": "Make sure you saved your login key",
 	"popupLogoutText": "We have no way to recover your login key - it’s yours alone. Please save it before logging out.",
-	"popupLogoutCopyButton": "Reveal and copy key",
 	"popupLogoutLogoutButton": "Logout",
 
 	"popupSpaceCreateLabel": "Encrypted & local-first",
@@ -1430,8 +1425,8 @@
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
-	"popupPhraseTitle1": "What is a Key?",
-	"popupPhraseTitle2": "How to save my key?",
+	"popupPhraseTitle1": "What is the Key?",
+	"popupPhraseTitle2": "How to save my Key?",
 	"popupPhraseLabel1": "It is represented by a recovery phrase – 12 random words from which your vault is magically generated on this device.",
 	"popupPhraseLabel2": "Whomever knows the combination of these words owns your vault. Right now, you are the only person in the world who knows it.",
 	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose it, it cannot be recovered. So, store it somewhere safe!",
