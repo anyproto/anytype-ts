@@ -191,7 +191,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		);
 	};
 
-	if (!isLoading && !length && showEmpty) {
+	if (isLoading) {
+	} else
+	if (!length && showEmpty) {
 		content = (
 			<div className="emptyWrap">
 				<Label className="empty" text={translate('widgetEmptyLabel')} />

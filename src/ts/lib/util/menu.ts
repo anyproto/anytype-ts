@@ -840,10 +840,6 @@ class UtilMenu {
 
 		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
 
-		if (U.Space.canCreateSpace()) {
-			items.push({ id: 'add', name: translate('commonNewSpace'), isButton: true });
-		};
-
 		if (ids && (ids.length > 0)) {
 			items.sort((c1, c2) => {
 				const i1 = ids.indexOf(c1.id);

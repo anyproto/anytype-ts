@@ -35,7 +35,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	});
 	const itemsWithCounterIds = itemsWithCounter.map(it => it.id);
 	const itemsWithoutCounter = items.filter(it => !itemsWithCounterIds.includes(it.id));
-
+	const canCreate = U.Space.canCreateSpace();
 
 	const cn = [ 'vault' ];
 	const sensors = useSensors(
@@ -328,6 +328,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		getNode: () => nodeRef.current,
 	}));
 
+	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
 	const itemSettings = { id: 'settings', name: translate('commonSettings'), isButton: true };	
 
 	return (
@@ -376,8 +377,16 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 						</div>
 					</SortableContext>
 				</DndContext>
-
 				<div className="side bottom" onDragStart={e => e.preventDefault()}>
+					{canCreate ? (
+						<VaultItem 
+							item={itemAdd}
+							onClick={e => onClick(e, itemAdd)}
+							onContextMenu={null}
+							onMouseEnter={e => onMouseEnter(e, itemAdd)}
+							onMouseLeave={() => Preview.tooltipHide()}
+						/>
+					) : ''}
 					<VaultItem 
 						item={itemSettings}
 						onClick={e => onClick(e, itemSettings)}
