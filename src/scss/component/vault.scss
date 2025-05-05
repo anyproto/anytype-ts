@@ -22,7 +22,7 @@
 		.side.top::-webkit-scrollbar { display: none; }
 		.side.bottom { flex-shrink: 0; justify-content: flex-end; padding-bottom: 12px; }
 
-		.div { width: 24px; height: 1px; background: var(--color-text-secondary); }
+		.div { width: 24px; height: 1px; background: var(--color-shape-highlight-dark); }
 	}
 
 	.item { width: 36px; height: 36px; flex-shrink: 0; position: relative; padding: 2px; transition: padding 0.2s $easeInQuint; }
