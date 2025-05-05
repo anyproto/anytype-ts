@@ -80,7 +80,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		if (!setOf.length && !isCollection) {
-			S.Record.recordsSet(subId, '', []);
 			return;
 		};
 

@@ -253,7 +253,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 		if (clear) {
 			this.setState({ isLoading: true });
-			S.Record.recordsSet(J.Constant.subId.library, '', []);
 		};
 
 		U.Subscription.subscribe({
