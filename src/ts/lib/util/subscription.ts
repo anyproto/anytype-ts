@@ -50,7 +50,7 @@ class UtilSubscription {
 	defaultFilters (param: any) {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
-		const filters = param.filters || [];
+		const filters = U.Common.objectCopy(param.filters || []);
 		const skipLayouts = [ I.ObjectLayout.Chat ];
 
 		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
@@ -117,10 +117,11 @@ class UtilSubscription {
 		}, param);
 
 		const { config } = S.Common;
-		const { spaceId, subId, idField, sorts, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
+		const { spaceId, subId, idField, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
 		const keys = this.mapKeys(param);
-		const filters = this.defaultFilters(param);
 		const debug = config.flagsMw.request;
+		const filters = this.defaultFilters(param);
+		const sorts = (param.sorts || []).map(this.sortMapper);
 
 		if (!subId) {
 			if (debug) {
@@ -144,7 +145,7 @@ class UtilSubscription {
 			return;
 		};
 
-		const hash = this.makeHash(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId);
+		const hash = this.makeHash(spaceId, subId, filters, sorts, keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId);
 
 		if (hash) {
 			if (this.map.has(subId) && (this.map.get(subId) == hash)) {
@@ -161,7 +162,7 @@ class UtilSubscription {
 			this.map.set(subId, hash);
 		};
 
-		C.ObjectSearchSubscribe(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
+		C.ObjectSearchSubscribe(spaceId, subId, filters.map(this.filterMapper), sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
 
 			if (callBack) {
@@ -275,10 +276,11 @@ class UtilSubscription {
 		}, param);
 
 		const { config } = S.Common;
-		const { spaceId, sorts, offset, limit, skipLayoutFormat } = param;
+		const { spaceId, offset, limit, skipLayoutFormat } = param;
 		const keys = this.mapKeys(param);
-		const filters = this.defaultFilters(param);
 		const debug = config.flagsMw.request;
+		const filters = this.defaultFilters(param);
+		const sorts = (param.sorts || []).map(this.sortMapper);
 
 		if (!spaceId) {
 			if (debug) {
@@ -291,7 +293,7 @@ class UtilSubscription {
 			return;
 		};
 
-		C.ObjectSearch(spaceId, filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
+		C.ObjectSearch(spaceId, filters, sorts, keys, param.fullText, offset, limit, (message: any) => {
 			if (message.records) {
 				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
 			};
@@ -300,6 +302,14 @@ class UtilSubscription {
 				callBack(message);
 			};
 		});
+	};
+
+	filterMapper (it: I.Filter) {
+		const relation = S.Record.getRelationByKey(it.relationKey);
+		if (relation) {
+			it.format = relation.format;
+		};
+		return it;
 	};
 
 	sortMapper (it: any) {

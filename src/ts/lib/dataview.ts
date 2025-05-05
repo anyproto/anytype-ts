@@ -142,29 +142,26 @@ class Dataview {
 			};
 		};
 
-		U.Subscription.destroyList([ subId ], false, () => {
-			U.Subscription.subscribe({
-				...param,
-				subId,
-				filters: filters.map(it => this.filterMapper(view, it)),
-				sorts: sorts.map(it => this.filterMapper(view, it)),
-				keys,
-				limit,
-				offset,
-				collectionId,
-				ignoreDeleted: true,
-				ignoreHidden: true,
-			}, callBack);
-		});
+		U.Subscription.subscribe({
+			...param,
+			subId,
+			filters: filters.map(it => this.filterMapper(view, it)),
+			sorts: sorts.map(it => this.filterMapper(view, it)),
+			keys,
+			limit,
+			offset,
+			collectionId,
+			ignoreDeleted: true,
+			ignoreHidden: true,
+		}, callBack);
 	};
 
 	filterMapper (view: any, it: any) {
-		const relation = S.Record.getRelationByKey(it.relationKey);
-		const vr = view.getRelation(it.relationKey);
-
-		if (relation) {
-			it.format = relation.format;
+		if (!view) {
+			return it;
 		};
+
+		const vr = view.getRelation(it.relationKey);
 		if (vr && vr.includeTime) {
 			it.includeTime = true;
 		};

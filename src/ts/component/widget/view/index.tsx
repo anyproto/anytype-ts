@@ -251,13 +251,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				});
 			};
 		};
-
-		return () => {
-			/*
-			U.Subscription.destroyList([ subId ]);
-			Action.pageClose([ targetId, traceId ].join('-'), false);
-			*/
-		};
 	}, []);
 
 	useEffect(() => {

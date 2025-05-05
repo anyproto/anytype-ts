@@ -3,7 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
-import { Label, Button } from 'Component';
+import { Label } from 'Component';
 import { I, C, S, U, J, analytics, Relation, Storage, translate, Action } from 'Lib';
 import Item from './item';
 
@@ -18,7 +18,7 @@ interface WidgetTreeRefProps {
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, canCreate, onCreate, isSystemTarget, getData, getTraceId, sortFavorite, addGroupLabels } = props;
+	const { block, parent, isPreview, isSystemTarget, getData, getTraceId, sortFavorite, addGroupLabels } = props;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -34,31 +34,9 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
 	const traceId = getTraceId();
 
-	const getSubIds = () => {
-		return Object.keys(subscriptionHashes.current).map(getSubId);
-	};
-
-	const unsubscribe = () => {	
-		const subIds = getSubIds();
-
-		if (subIds.length) {
-			U.Subscription.destroyList(subIds);
-			clear();
-		};
-	};
-
 	const clear = () => {
-		//const subIds = getSubIds();
-
 		subscriptionHashes.current = {};
 		branches.current = [];
-
-		/*
-		subIds.forEach(subId => {
-			S.Record.recordsClear(subId, '');
-			S.Record.recordsClear(`${subId}/dep`, '');
-		});
-		*/
 	};
 
 	const updateData = () => {
@@ -369,13 +347,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			if (targetId) {
 				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId());
 			};
-		};
-
-		return () => {
-			/*
-			unsubscribe();
-			Action.pageClose([ targetId, traceId ].join('-'), false);
-			*/
 		};
 	}, []);
 
