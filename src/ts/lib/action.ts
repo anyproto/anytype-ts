@@ -695,6 +695,7 @@ class Action {
 				title,
 				text,
 				textConfirm: confirm,
+				confirmMessage: translate('pageSettingsSpaceDeleteSpace'),
 				onConfirm: () => {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
