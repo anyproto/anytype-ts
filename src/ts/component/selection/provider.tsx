@@ -179,7 +179,8 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const rect = getRect(x.current, y.current, e.pageX, e.pageY);
+		const { x: x1, y: y1 } = recalcCoords(e.pageX, e.pageY);
+		const rect = getRect(x.current, y.current, x1, y1);
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
