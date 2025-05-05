@@ -867,11 +867,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	getReplyContent (message: any): any {
 		const { creator, content } = message;
-		const rootId = this.getRootId();
 		const author = U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, creator));
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
 		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
-		const attachments = (message.attachments || []).map(it => S.Detail.get(rootId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
+		const subId = this.getSubId();
+		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
 		const l = attachments.length;
 
 		let text: string = '';
