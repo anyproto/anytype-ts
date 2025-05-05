@@ -45,6 +45,7 @@
 	&:hover, &.hover, &.active { background: var(--color-shape-highlight-medium); }
 }
 
+.button.c48 { @include text-paragraph; height: 48px; border-radius: 8px; padding: 0px 16px; }
 .button.c36 { @include text-common; height: 36px; border-radius: 6px; padding: 0px 12px; }
 .button.c32 { @include text-small; height: 32px; border-radius: 6px; padding: 0px 10px; }
 .button.c28 { @include text-common; height: 28px; border-radius: 6px; padding: 0px 10px; }

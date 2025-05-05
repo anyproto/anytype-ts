@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input } from 'Component';
+import { Frame, Title, Label, Button, Phrase, Icon, Input } from 'Component';
 import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
 
 enum Stage {
@@ -18,7 +18,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	const nameRef = useRef(null);
 	const [ stage, setStage ] = useState(Stage.Phrase);
 	const [ phraseVisible, setPhraseVisible ] = useState(false);
-	const cnb = [];
+	const cnb = [ 'c48' ];
 
 	const unbind = () => {
 		$(window).off('keydown.onboarding');
@@ -246,7 +246,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			{canMoveBack() ? <Icon className="arrow back" onClick={onBack} /> : ''}
 
 			<Frame ref={frameRef}>
-				<DotIndicator className="animation" index={stage} count={2} />
 				<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
 				<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
 
