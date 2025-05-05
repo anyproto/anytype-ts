@@ -225,11 +225,6 @@ class ChatStore {
 			};
 		};
 
-		if (spaceId == S.Common.space) {
-			ret.mentionCounter = 1;
-			ret.messageCounter = 2;
-		};
-
 		return ret;
 	};
 
