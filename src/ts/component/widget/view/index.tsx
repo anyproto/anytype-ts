@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Select, Label, Button } from 'Component';
-import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics, Action } from 'Lib';
+import { Select, Label } from 'Component';
+import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate } from 'Lib';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
@@ -17,7 +17,7 @@ interface WidgetViewRefProps {
 
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
-	const { parent, block, isSystemTarget, onCreate, getData, getTraceId, getLimit, sortFavorite } = props;
+	const { parent, block, isSystemTarget, getData, getTraceId, getLimit, sortFavorite } = props;
 	const { viewId, limit, layout } = parent.content;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -120,11 +120,16 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	};
 
 	const getLimitHandler = (): number => {
-		let limit = getLimit(parent.content);
-		if ((layout == I.WidgetLayout.View) && (viewType == I.ViewType.Calendar)) {
-			limit = 1000;
+		const view = getView();
+		if (!view) {
+			return 0;
 		};
-		return limit;
+
+		if ((layout == I.WidgetLayout.View) && (view.type == I.ViewType.Calendar)) {
+			return 1000;
+		};
+
+		return getLimit(parent.content);
 	};
 
 	const onChangeView = (viewId: string) => {

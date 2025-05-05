@@ -110,7 +110,7 @@ class Dataview {
 			sorts: [],
 		}, param);
 
-		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
+		const { rootId, blockId, newViewId, keys, offset, limit, collectionId } = param;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const view = S.Record.getView(rootId, blockId, newViewId);
 		
