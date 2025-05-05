@@ -273,15 +273,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	if (!length) {
 		content = (
 			<div className="emptyWrap">
-				<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-				{canCreate ? (
-					<Button 
-						text={translate('commonCreateObject')} 
-						color="blank" 
-						className="c28" 
-						onClick={() => onCreate({ route: analytics.route.inWidget })} 
-					/> 
-				) : ''}
+				<Label className="empty" text={translate('widgetEmptyLabel')} />
 			</div>
 		);
 	} else 
@@ -400,6 +392,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		listRef.current?.recomputeRowHeights(0);
 		listRef.current?.scrollToPosition(top.current);
+
+		$(`#widget-${parent.id}`).toggleClass('isEmpty', !length);
 	});
 
 	useImperativeHandle(ref, () => ({

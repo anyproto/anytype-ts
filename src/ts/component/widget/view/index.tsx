@@ -139,51 +139,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		return (targetId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
 	};
 
-	const isAllowedObject = () => {
-		const isCollection = U.Object.isCollectionLayout(object.layout);
-
-		if (isSystemTarget) {
-			return true;
-		};
-
-		let isAllowed = S.Block.checkFlags(rootId, J.Constant.blockId.dataview, [ I.RestrictionDataview.Object ]);
-		if (!isAllowed) {
-			return false;
-		};
-
-		if (isAllowed && isCollection) {
-			return true;
-		};
-
-		const sources = getSources();
-		if (!sources.length) {
-			return false;
-		};
-
-		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type);
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
-
-		for (const type of types) {
-			if (skipLayouts.includes(type.recommendedLayout)) {
-				isAllowed = false;
-				break;
-			};
-		};
-
-		return isAllowed;
-	};
-
-	const getSources = (): string[] => {
-		if (U.Object.isCollectionLayout(object.layout)) {
-			return [];
-		};
-
-		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type).map(it => it.id);
-		const relations = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Relation).map(it => it.id);
-
-		return [].concat(types).concat(relations);
-	};
-
 	const onOpen = () => {
 		if (childRef.current?.onOpen) {
 			childRef.current?.onOpen();
@@ -195,7 +150,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const views = S.Record.getViews(rootId, J.Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 	const cn = [ 'innerWrap' ];
 	const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
-	const canCreate = props.canCreate && isAllowedObject();
+	const isEmpty = !isLoading && !length && showEmpty;
 	const childProps = {
 		...props,
 		ref: childRef,
@@ -233,15 +188,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	if (!isLoading && !length && showEmpty) {
 		content = (
 			<div className="emptyWrap">
-				<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-				{canCreate ? (
-					<Button 
-						text={translate('commonCreateObject')} 
-						color="blank" 
-						className="c28" 
-						onClick={() => onCreate({ route: analytics.route.inWidget })} 
-					/> 
-				) : ''}
+				<Label className="empty" text={translate('widgetEmptyLabel')} />
 			</div>
 		);
 	} else {
@@ -310,6 +257,10 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			load(viewId);
 		};
 	}, [ viewId ]);
+
+	useEffect(() => {
+		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);
+	});
 
 	useImperativeHandle(ref, () => ({
 		updateData,

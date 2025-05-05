@@ -1922,7 +1922,6 @@
 	"widgetLibrary": "Library",
 	"widgetOptions": "Options",
 	"widgetEmptyLabel": "There are no Objects here",
-	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
 	"widgetShowAll": "See all Objects",
 	"widgetItemClipboard": "Create from clipboard",
 
