@@ -338,7 +338,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onDelete () {
-		Action.removeSpace(S.Common.space, 'Settings', (message: any) => {
+		Action.removeSpace(S.Common.space, analytics.route.settings, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			};
@@ -372,7 +372,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				const element = `#${U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)}`;
 				S.Menu.open('select', {
 					element,
-					offsetX: 16,
+					horizontal: I.MenuDirection.Center,
 					offsetY: -40,
 					onOpen: () => $(element).addClass('hover'),
 					onClose: () => $(element).removeClass('hover'),
