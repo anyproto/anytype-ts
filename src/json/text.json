@@ -1090,6 +1090,9 @@
 
 	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
 
+	"popupConfirmConfirmationText": "Input this text to confirm:",
+	"popupConfirmConfirmationTextError": "Text does not match",
+
 	"popupConfirmUpdatePromptTitle": "Update available",
 	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
 	"popupConfirmUpdatePromptRestartOk": "Restart and update",
@@ -1130,7 +1133,6 @@
 	"popupConfirmInviteError101Text": "The link you are using does not seem to work. Please ask the owner to share a new one with you.",
 	"popupConfirmInviteError103Title": "Oops!",
 	"popupConfirmInviteError103Text": "The space you try to access has been deleted",
-
 
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
@@ -1933,7 +1935,7 @@
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
 	"spaceDeleteWarningTitle": "Delete \"%s\" space",
-	"spaceDeleteWarningText": "This space will be deleted irrevocably. You can't undo this action.",
+	"spaceDeleteWarningText": "This will permanently delete the space. You can't undo this action. Please type the name of the space to confirm deletion.",
 	"spaceDeleteToast": "Space \"%s\" was deleted",
 	"spaceLeaveWarningTitle": "Leave a space",
 	"spaceLeaveWarningText": "\"%s\" will be removed from your devices and you will no longer have access to it",

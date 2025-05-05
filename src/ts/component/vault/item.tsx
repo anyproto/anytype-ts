@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react';
-import { IconObject } from 'Component';
+import { IconObject, Icon } from 'Component';
 import { S } from 'Lib';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -23,14 +23,10 @@ const VaultItem: FC<Props> = observer(({
 
 	const { config } = S.Common;
 	const cn = [ 'item' ];
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
-	const style = {
-		transform: CSS.Transform.toString(transform),
-		transition,
-	};
 
 	let icon = null;
 	let cnt = null;
+	let disabled = false;
 
 	if (!item.isButton) {
 		icon = <IconObject object={item} size={36} iconSize={36} />;
@@ -42,11 +38,21 @@ const VaultItem: FC<Props> = observer(({
 		const counters = S.Chat.getSpaceCounters(item.targetSpaceId);
 
 		if (counters.mentionCounter) {
-			cnt = '@';
+			cnt = <Icon className="mention" />;
 		} else 
 		if (counters.messageCounter) {
 			cnt = counters.messageCounter;
 		};
+	};
+
+	if (cnt) {
+		disabled = true;
+	};
+
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled });
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
 	};
 
 	return (

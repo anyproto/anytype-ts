@@ -4,7 +4,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics, Action } from 'Lib';
+import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
@@ -374,7 +374,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let ret = false;
 
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
-		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const cmd = keyboard.cmdKey();
 
 		const menuOpen = S.Menu.isOpen('', '', [ 'onboarding' ]);
@@ -1170,20 +1169,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
+		if (!selection) {
+			return;
+		};
+
 		window.clearTimeout(this.timeoutClick);
 
 		this.clicks++;
-		if (selection && (this.clicks == 3)) {
+		if (this.clicks == 3) {
 			e.preventDefault();
 			e.stopPropagation();
 
 			S.Menu.closeAll([ 'blockContext' ], () => {
 				this.clicks = 0;
+				//this.refEditable?.setRange({ from: 0, to: block.getLength() });
 
 				focus.set(block.id, { from: 0, to: block.getLength() });
 				focus.apply();
 
-				this.onSelect();
+				//this.onSelect();
 			});
 		};
 	};

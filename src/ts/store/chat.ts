@@ -228,11 +228,16 @@ class ChatStore {
 		return ret;
 	};
 
-	setBadge (counters: Counter) {
+	setBadge () {
+		const { config } = S.Common;
+
 		let t = 0;
 
-		if (counters) {
-			t = counters.mentionCounter + counters.messageCounter;
+		if (config.experimental) {
+			const counters = this.getTotalCounters();
+			if (counters) {
+				t = counters.mentionCounter + counters.messageCounter;
+			};
 		};
 
 		Renderer.send('setBadge', String(t || ''));
