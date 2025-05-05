@@ -21,6 +21,8 @@
 		.side.top { gap: 16px 0px; overflow: auto; flex-grow: 1; overscroll-behavior: none; }
 		.side.top::-webkit-scrollbar { display: none; }
 		.side.bottom { flex-shrink: 0; justify-content: flex-end; padding-bottom: 12px; }
+
+		.div { width: 24px; height: 1px; background: var(--color-shape-highlight-dark); }
 	}
 
 	.item { width: 36px; height: 36px; flex-shrink: 0; position: relative; padding: 2px; transition: padding 0.2s $easeInQuint; }
@@ -36,6 +38,9 @@
 			min-width: 20px; height: 20px; border-radius: 50%; background: var(--color-text-secondary); @include text-very-small; position: absolute;
 			bottom: -5px; right: -5px; color: var(--color-text-inversion); text-align: center; display: flex; align-items: center; justify-content: center;
 			padding: 0px 2px;
+		}
+		.cnt {
+			.icon.mention { width: 12px; height: 12px; background-image: url('~img/icon/vault/mention.svg'); }
 		}
 	}
 	.item::after {
