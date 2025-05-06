@@ -2328,7 +2328,7 @@ export const ChatSubscribeToMessagePreviews = (subId: string, callBack?: (messag
 
 	request.setSubid(subId);
 
-	dispatcher.request(ChatSubscribeToMessagePreviews.name, new Empty(), callBack);
+	dispatcher.request(ChatSubscribeToMessagePreviews.name, request, callBack);
 };
 
 export const ChatUnsubscribe = (objectId: string, subId: string, callBack?: (message: any) => void) => {
