@@ -129,6 +129,10 @@ class ChatStore {
 		};
 	};
 
+	getSubId (spaceId: string, chatId: string): string {
+		return [ J.Constant.subId.chatSpace, spaceId, chatId ].join('-');
+	};
+
 	setState (subId: string, state: I.ChatState) {
 		const param = this.getSubParam(subId);
 	
@@ -241,7 +245,6 @@ class ChatStore {
 		};
 
 		return ret;
-
 	};
 
 	setBadge () {

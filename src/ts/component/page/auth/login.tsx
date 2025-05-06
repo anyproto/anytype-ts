@@ -37,16 +37,18 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 		};
 
 		submitRef.current?.setLoading(true);
-		
-		C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
-			if (setErrorHandler(message.error.code, translate('pageAuthLoginInvalidPhrase'))) {
-				return;
-			};
 
-			S.Auth.accountListClear();
-			U.Data.createSession(phrase, '', () => {
-				C.AccountRecover(message => {
-					setErrorHandler(message.error.code, message.error.description);
+		U.Data.closeSession(() => {
+			C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
+				if (setErrorHandler(message.error.code, translate('pageAuthLoginInvalidPhrase'))) {
+					return;
+				};
+
+				S.Auth.accountListClear();
+				U.Data.createSession(phrase, '', () => {
+					C.AccountRecover(message => {
+						setErrorHandler(message.error.code, message.error.description);
+					});
 				});
 			});
 		});

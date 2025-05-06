@@ -669,6 +669,16 @@ export const Mapper = {
 			};
 		},
 
+		ChatPreview: (obj: Rpc.Chat.SubscribeToMessagePreviews.Response.ChatPreview): any => {
+			return {
+				spaceId: obj.getSpaceid(),
+				chatId: obj.getChatobjectid(),
+				message: obj.hasMessage() ? Mapper.From.ChatMessage(obj.getMessage()) : null,
+				state: obj.hasState() ? Mapper.From.ChatState(obj.getState()) : null,
+				dependencies: (obj.getDependenciesList() || []).map(Decode.struct),
+			};
+		},
+
 		ChatStateUnreadMessages (obj: any): I.ChatStateCounter {
 			return {
 				orderId: obj.getOldestorderid(),

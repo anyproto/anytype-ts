@@ -205,7 +205,11 @@ class UtilData {
 			};
 		});
 
-		C.ChatSubscribeToMessagePreviews();
+		C.ChatSubscribeToMessagePreviews((message: any) => {
+			for (const item of message.previews) {
+				S.Chat.setState(S.Chat.getSubId(item.spaceId, item.chatId), item.state);
+			};
+		});
 
 		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
