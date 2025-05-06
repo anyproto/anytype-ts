@@ -100,6 +100,26 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				};
 
 				return true;
+			}).sort((a: I.Block, b: I.Block) => {
+				const c1 = this.getChild(a.id);
+				const c2 = this.getChild(b.id);
+
+				const t1 = c1?.getTargetObjectId();
+				const t2 = c2?.getTargetObjectId();
+
+				const isChat1 = t1 == J.Constant.widgetId.chat;
+				const isChat2 = t2 == J.Constant.widgetId.chat;
+
+				const isBin1 = t1 == J.Constant.widgetId.bin;
+				const isBin2 = t2 == J.Constant.widgetId.bin;
+
+				if (isChat1 && !isChat2) return -1;
+				if (!isChat1 && isChat2) return 1;
+
+				if (isBin1 && !isBin2) return 1;
+				if (!isBin1 && isBin2) return -1;
+
+				return 0;
 			});
 
 			let first = null;
@@ -253,8 +273,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			});					
 		};
 
-		let menuContext = null;
-
 		S.Menu.open('searchObjectWidgetAdd', {
 			component: 'searchObject',
 			element: '#widget-list-add',
@@ -262,7 +280,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			classNameWrap: 'fromSidebar',
 			offsetY: -4,
 			vertical: position,
-			onOpen: context => menuContext = context,
 			subIds: J.Menu.widgetAdd,
 			data: {
 				route: analytics.route.addWidget,
@@ -354,7 +371,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		e.preventDefault();
 
 		const target = $(e.currentTarget);
-		const y = e.pageY - $(window).scrollTop();
+		const y = e.pageY;
 
 		raf.cancel(this.frame);
 		this.frame = raf(() => {
@@ -363,8 +380,19 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			const { top } = target.offset();
 			const height = target.height();
+			const child = this.getChild(blockId);
 
 			this.position = y <= top + height / 2 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+
+			if (child) {
+				const t = child.getTargetObjectId();
+				if (t == J.Constant.widgetId.chat) {
+					this.position = I.BlockPosition.Bottom;
+				};
+				if (t == J.Constant.widgetId.bin) {
+					this.position = I.BlockPosition.Top;
+				};
+			};
 
 			target.addClass([ 'isOver', (this.position == I.BlockPosition.Top ? 'top' : 'bottom') ].join(' '));
 		});
@@ -456,6 +484,17 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				keyboard.shortcut('escape', e, () => close(e));
 			});
 		}, S.Menu.getTimeout());
+	};
+
+	getChild (id: string): I.Block {
+		const { widgets } = S.Block;
+
+		const childrenIds = S.Block.getChildrenIds(widgets, id);
+		if (!childrenIds.length) {
+			return null;
+		};
+
+		return S.Block.getLeaf(widgets, childrenIds[0]);
 	};
 
 });

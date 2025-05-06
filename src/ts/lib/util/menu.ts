@@ -417,7 +417,7 @@ class UtilMenu {
 		if (id == J.Constant.widgetId.bin) {
 			options.unshift(I.WidgetLayout.Link);
 		} else
-		if (id == J.Constant.widgetId.allObject) {
+		if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(id)) {
 			options = [ I.WidgetLayout.Link ];
 		};
 
@@ -855,8 +855,10 @@ class UtilMenu {
 	};
 
 	getSystemWidgets () {
+		const space = U.Space.getSpaceview();
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-star' },
+			space.chatId || U.Object.isAllowedChat() ? { id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: 'widget-chat' } : null,
 			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },

@@ -17,9 +17,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const alt = keyboard.altSymbol();
 	const buttons = [
 		{ id: 'search', name: translate('commonSearch') },
-		space.chatId || U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
 		!space.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
-		//{ id: 'all', name: translate('commonAllContent') },
 	].filter(it => it);
 
 	if (isSpaceOwner && requestCnt) {
@@ -59,16 +57,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			case 'member': {
 				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
-				break;
-			};
-
-			case 'all': {
-				sidebar.leftPanelSetState({ page: 'object' });
-				break;
-			};
-
-			case 'chat': {
-				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
 				break;
 			};
 

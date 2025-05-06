@@ -160,6 +160,7 @@ export default {
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
 		bin:			 'bin',
+		chat:			 'chat',
 	},
 
 	monthDays: {
