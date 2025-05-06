@@ -4,9 +4,10 @@ import sha1 from 'sha1';
 const SYSTEM_DATE_RELATION_KEYS = [
 	'lastModifiedDate', 
 	'lastOpenedDate', 
+	'lastUsedDate',
+	'lastMessageDate',
 	'createdDate',
 	'addedDate',
-	'lastUsedDate',
 ];
 
 class UtilSubscription {

@@ -32,9 +32,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			return counters.mentionCounter || counters.messageCounter;
 		};
 		return false;
-	});
+	}).sort((c1, c2) => U.Data.sortByNumericKey('lastMessageDate', c1, c2, I.SortType.Desc));
 	const itemsWithCounterIds = itemsWithCounter.map(it => it.id);
 	const itemsWithoutCounter = items.filter(it => !itemsWithCounterIds.includes(it.id));
+	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
+	const itemSettings = { id: 'settings', name: translate('commonSettings'), isButton: true };
 	const canCreate = U.Space.canCreateSpace();
 
 	const cn = [ 'vault' ];
@@ -327,9 +329,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		setActive,
 		getNode: () => nodeRef.current,
 	}));
-
-	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
-	const itemSettings = { id: 'settings', name: translate('commonSettings'), isButton: true };	
 
 	return (
 		<div 
