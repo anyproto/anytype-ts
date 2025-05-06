@@ -220,12 +220,28 @@ class ChatStore {
 
 		if (spaceMap) {
 			for (const [ chatId, state ] of spaceMap) {
-				ret.mentionCounter += state.mentionCounter || 0;
-				ret.messageCounter += state.messageCounter || 0;
+				ret.mentionCounter += Number(state.mentionCounter) || 0;
+				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
 		};
 
 		return ret;
+	};
+
+	getChatCounters (spaceId: string, chatId: string): Counter {
+		const spaceMap = this.stateMap.get(spaceId);
+		const ret = { mentionCounter: 0, messageCounter: 0 };
+
+		if (spaceMap) {
+			const state = spaceMap.get(chatId);
+			if (state) {
+				ret.mentionCounter = Number(state.mentionCounter) || 0;
+				ret.messageCounter = Number(state.messageCounter) || 0;
+			};
+		};
+
+		return ret;
+
 	};
 
 	setBadge () {

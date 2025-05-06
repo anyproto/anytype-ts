@@ -20,6 +20,8 @@ interface Props extends I.WidgetComponent {
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
+	const { config, space } = S.Common;
+	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview } = props;
 	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
@@ -64,12 +66,22 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
+	const isChat = targetId == J.Constant.widgetId.chat;
 
-	let favCnt = 0;
+	let cnt = 0;
+	let showCnt = false;
 	let layout = block.content.layout;
 
 	if (isFavorite) {
-		favCnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
+		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
+		showCnt = cnt > limit;
+	};
+
+	if (isChat && config.experimental) {
+		const counters = S.Chat.getChatCounters(space, spaceview.chatId);
+
+		cnt = counters.mentionCounter || counters.messageCounter;
+		showCnt = !!cnt;
 	};
 
 	if (object) {
@@ -642,7 +654,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							{collapse}
 							{icon}
 							<ObjectName object={object} withPlural={true} />
-							{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
+							{showCnt ? <span className="count">{cnt}</span> : ''}
 						</div>
 					</div>
 					<div className="side right">{buttons}</div>

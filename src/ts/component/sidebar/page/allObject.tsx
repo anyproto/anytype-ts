@@ -55,6 +55,11 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_SECTION,
+		});
 	};
 
 	render () {
