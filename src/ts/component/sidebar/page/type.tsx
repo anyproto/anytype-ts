@@ -223,7 +223,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				};
 			};
 		} else {
-			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, true, (message) => {
+			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
 				if (!message.error.code) {
 					const route = details.data && details.data.route ? details.data.route : '';
 					const format = I.LayoutFormat[this.object.layoutFormat];

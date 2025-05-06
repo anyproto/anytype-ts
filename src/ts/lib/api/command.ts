@@ -283,7 +283,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setLocalpath(path);
 	request.setType(type as number);
 	request.setDetails(Encode.struct(details));
-	request.setCreatetypewidgetifmissing(config.experimental);
+	request.setCreatetypewidgetifmissing(true);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -1279,7 +1279,7 @@ export const ObjectTypeResolveLayoutConflicts = (id: string, callBack?: (message
 
 // ---------------------- OBJECT ---------------------- //
 
-export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, createWidget: boolean, callBack?: (message: any) => void) => {
+export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1287,7 +1287,7 @@ export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: st
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey || J.Constant.default.typeKey);
-	request.setCreatetypewidgetifmissing(createWidget);
+	request.setCreatetypewidgetifmissing(true);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };

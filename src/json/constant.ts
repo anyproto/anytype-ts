@@ -24,10 +24,6 @@ export default {
 		testing:		 'N4N1wDHFpFpovXBqdbq2TDXE9tXdXbtV1eTJFpKJW4YeaJqR'
 	},
 
-	chatSpaceId: [
-		'bafyreiezhzb4ggnhjwejmh67pd5grilk6jn3jt7y2rnfpbkjwekilreola.1t123w9f2lgn5',
-	],
-
 	platforms: {
 		win32:			 'Windows',
 		darwin:			 'Mac',

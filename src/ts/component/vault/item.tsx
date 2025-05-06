@@ -34,7 +34,7 @@ const VaultItem: FC<Props> = observer(({
 		cn.push(`isButton ${item.id}`);
 	};
 
-	if (config.experimental && !item.isButton) {
+	if (!item.isButton) {
 		const counters = S.Chat.getSpaceCounters(item.targetSpaceId);
 
 		if (counters.mentionCounter) {

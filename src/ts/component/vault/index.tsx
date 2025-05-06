@@ -27,7 +27,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
 	const itemsWithCounter = items.filter(it => {
-		if (config.experimental && !it.isButton) {
+		if (!it.isButton) {
 			const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 			return counters.mentionCounter || counters.messageCounter;
 		};

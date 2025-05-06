@@ -243,7 +243,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id), details);
 
-		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

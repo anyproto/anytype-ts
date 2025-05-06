@@ -571,7 +571,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						};
 
 						case 'unread': {
-							this.onUnread(item.orderId);
+							C.ChatUnreadMessages(rootId, item.orderId);
 							break;
 						};
 					};
@@ -586,20 +586,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		S.Menu.open('select', menuParam);
-	};
-
-	onUnread (orderId: string) {
-		const rootId = this.getRootId();
-		const subId = this.getSubId();
-		const viewport = this.getMessagesInViewport();
-
-		C.ChatUnreadMessages(rootId, orderId, () => {
-			if (viewport.length) {
-				const { lastStateId } = S.Chat.getState(subId);
-
-				C.ChatReadMessages(rootId, viewport[0].orderId, viewport[viewport.length - 1].orderId, lastStateId, I.ChatReadType.Message);
-			};
-		});
 	};
 
 	onScroll (e: any) {
@@ -726,13 +712,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getMessageMenuOptions (message, noControls) {
+		const { config } = S.Common;
+
 		let options: any[] = [];
 
 		if (message.content.text) {
 			options.push({ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') });
 		};
-
-		options.push({ id: 'link', icon: 'link', name: translate('commonCopyLink') });
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
@@ -749,8 +735,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			].filter(it => it)).concat(options);
 		};
 
-		if (S.Common.config.experimental) {
-			options.push({ id: 'unread', icon: 'empty', name: 'Unread' });
+		if (config.experimental) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'link', icon: 'link', name: translate('commonCopyLink') },
+				{ id: 'unread', name: translate('blockChatMarkAsUnread') },
+			]);
 		};
 
 		return options;

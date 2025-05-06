@@ -322,7 +322,7 @@ class MenuContext extends React.Component<I.Menu> {
 						name: translate('blockDataviewCreateNewCollection'),
 						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
 						onClick: (details: any) => {
-							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, objectIds);
 								U.Object.openAuto(message.details);
 							});

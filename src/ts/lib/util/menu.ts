@@ -1191,7 +1191,7 @@ class UtilMenu {
 						cb(message.details, message.middleTime);
 					});
 				} else {
-					C.ObjectCreate(details, objectFlags, type?.defaultTemplateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
+					C.ObjectCreate(details, objectFlags, type?.defaultTemplateId, type?.uniqueKey, S.Common.space, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -1290,7 +1290,7 @@ class UtilMenu {
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
-						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, true, (message: any) => {
+						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
 							if (message.error.code || !message.details) {
 								return;
 							};

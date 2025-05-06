@@ -77,7 +77,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		showCnt = cnt > limit;
 	};
 
-	if (isChat && config.experimental) {
+	if (isChat) {
 		const counters = S.Chat.getChatCounters(space, spaceview.chatId);
 
 		cnt = counters.mentionCounter || counters.messageCounter;
@@ -200,7 +200,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			flags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
-		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, true, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
