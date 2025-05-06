@@ -33,6 +33,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		};
 		return false;
 	}).sort((c1, c2) => U.Data.sortByNumericKey('lastMessageDate', c1, c2, I.SortType.Desc));
+
 	const itemsWithCounterIds = itemsWithCounter.map(it => it.id);
 	const itemsWithoutCounter = items.filter(it => !itemsWithCounterIds.includes(it.id));
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };

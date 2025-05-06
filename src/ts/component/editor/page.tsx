@@ -459,7 +459,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const { pageX, pageY } = e;
-		const blocks = S.Block.getBlocks(rootId, it => it.canCreateBlock());
+		const blocks = S.Block.getBlocks(rootId, it => it.canCreateBlock()).sort((c1, c2) => {
+			const l1 = c1.isLayout();
+			const l2 = c2.isLayout();
+
+			if (l1 && !l2) return -1;
+			if (!l1 && l2) return 1;
+
+			return 0;
+		});
 
 		let offset = 140;
 		let hovered: any = null;
@@ -487,6 +495,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				this.hoverId = block.id;
 				hovered = obj;
 				hoveredRect = rect;
+
+				if (block.isLayout() && (pageX < rect.x) || (pageX > rect.x + J.Size.blockMenu)) {
+					continue;
+				};
 			};
 		};
 
