@@ -583,11 +583,6 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 					continue;
 				};
 
-				if (config.debug.ui) {
-					console.log('renderSelection', type, list);
-					console.trace();
-				};
-
 				for (const id of list) {
 					container.find(`#selectionTarget-${id}`).addClass('isSelectionSelected');
 

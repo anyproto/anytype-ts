@@ -63,8 +63,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		const isAllowedObject = this.isAllowedObject();
 		const typeOptions = this.getTypeOptions();
 
-		console.log('items', items);
-
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			if (!item) {
@@ -388,9 +386,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, (message: any) => {
-			console.log(message);
-			console.log('ITEMS', this.getItems());
-
 			this.setState({ isLoading: false });
 
 			if (callBack) {
