@@ -2323,7 +2323,11 @@ export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId
 	dispatcher.request(ChatSubscribeLastMessages.name, request, callBack);
 };
 
-export const ChatSubscribeToMessagePreviews = (callBack?: (message: any) => void) => {
+export const ChatSubscribeToMessagePreviews = (subId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.SubscribeToMessagePreviews.Request();
+
+	request.setSubid(subId);
+
 	dispatcher.request(ChatSubscribeToMessagePreviews.name, new Empty(), callBack);
 };
 

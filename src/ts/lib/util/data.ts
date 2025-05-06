@@ -205,7 +205,7 @@ class UtilData {
 			};
 		});
 
-		C.ChatSubscribeToMessagePreviews((message: any) => {
+		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
 			for (const item of message.previews) {
 				S.Chat.setState(S.Chat.getSubId(item.spaceId, item.chatId), item.state);
 			};
