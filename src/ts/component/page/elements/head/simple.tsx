@@ -42,8 +42,8 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 
 	render (): any {
 		const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup } = this.props;
-		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout', 'pluralName' ], true);
+		const check = U.Data.checkDetails(rootId, '', []);
+		const object = S.Detail.get(rootId, rootId, [ 'layout', 'spaceId', 'featuredRelations', 'recommendedLayout', 'pluralName' ], true);
 
 		if (object._empty_) {
 			return null;
