@@ -401,11 +401,6 @@
 	"authLoginSubmit": "Enter my Vault",
 	"authLoginLostPhrase": "I've lost the Key",
 
-	"authRegisterTitle": "Add name and profile picture",
-	"authRegisterLabel": "New Profile",
-	"authRegisterName": "Enter your name",
-	"authRegisterSubmit": "Create",
-
 	"authDeleteTitle": "Delete Profile",
 	"authDeleteTitleDeleted": "Vault data removed from the backup node",
 	"authDeleteDescription": "We're sorry to see you go. Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
@@ -420,17 +415,16 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardVaultTitle": "This is your Vault",
-	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It's local-first – everything works offline.<br/>Only you have the key.",
-	"authOnboardVaultButton": "Get my Key",
+	"authOnboardNameTitle": "Add your name",
+	"authOnboardNameLabel": "Only seen by people you share something with. There is no central registry for these names.",
 
-	"authOnboardSoulTitle": "Add your name",
-	"authOnboardSoulLabel": "Only seen by people you share something with. There is no central registry for these names.",
+	"authOnboardEmailTitle": "Stay in the loop",
+	"authOnboardEmailLabel": "We’d love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won’t share your data. Ever.",
+	"authOnboardEmailPlaceholder": "Enter your email...",
 
 	"authOnboardPhraseTitle": "This is your Key",
 	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — you control your data.<br/>You can find this key later in app settings.<br/><span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
 	"authOnboardPhraseSubmit": "Reveal my key",
-	"authOnboardPhraseNotNow": "Skip",
 
 	"onboardingExperienceSubTitle": "Build your first space",
 	"onboardingExperienceTypeTitle": "Who Will Use This Space?",

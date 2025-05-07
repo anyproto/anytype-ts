@@ -204,7 +204,7 @@ class UtilRouter {
 				replace: true, 
 				animate: true,
 				delay: 100,
-				onFadeOut: () => {
+				onRouteChange: () => {
 					analytics.removeContext();
 					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
