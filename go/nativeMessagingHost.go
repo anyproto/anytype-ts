@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -221,14 +222,64 @@ func getOpenPortsUnix() (map[string][]string, error) {
 	return result, nil
 }
 
+func extractPort(s string) string {
+	arr := strings.Split(s, ":")
+	if len(arr) == 2 {
+		return arr[1]
+	}
+	return ""
+}
+
+func getOpenPortsNew() map[string][]string {
+	var dataPath string
+	if env := os.Getenv("ANYTYPE_DATA_PATH"); env != "" {
+		dataPath = env
+	} else {
+		if appData, err := os.UserConfigDir(); err == nil {
+			dataPath = path.Join(appData, "anytype")
+		}
+	}
+	if dataPath == "" {
+		return nil
+	}
+
+	var s struct {
+		GRPC string `json:"grpc"`
+		Web  string `json:"web"`
+	}
+
+	f, err := os.Open(path.Join(dataPath, "listening.json"))
+	if err != nil {
+		return nil
+	}
+	defer f.Close()
+
+	err = json.NewDecoder(f).Decode(&s)
+	if err != nil {
+		return nil
+	}
+
+	grpcWebPort := extractPort(s.Web)
+	gatewayPort := extractPort(s.GRPC)
+	if grpcWebPort == "" || gatewayPort == "" {
+		return nil
+	}
+
+	return map[string][]string{"0": {grpcWebPort, gatewayPort}}
+}
+
 // Windows, MacOS and Linux: returns a list of all open ports for all instances of anytype found using cli utilities
 func getOpenPorts() (map[string][]string, error) {
-	// Get Platform
-	platform := runtime.GOOS
 	var (
 		ports map[string][]string
 		err   error
 	)
+	ports = getOpenPortsNew()
+	if ports != nil {
+		return ports, nil
+	}
+	// Get Platform
+	platform := runtime.GOOS
 	// Platform specific functions
 	if platform == "windows" {
 		ports, err = getOpenPortsWindows()
