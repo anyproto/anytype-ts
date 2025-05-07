@@ -306,11 +306,9 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		if (account && (stage == Stage.Phrase)) {
 			Renderer.send('keytarGet', account.id).then(value => phraseRef.current?.setValue(value));
 		};
-	}, [ stage ]);
 
-	useEffect(() => {
 		analytics.event('ScreenOnboarding', { step: Stage[stage] });
-	});
+	}, [ stage ]);
 
 	return (
 		<div 
