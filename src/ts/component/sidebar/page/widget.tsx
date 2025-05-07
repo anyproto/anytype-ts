@@ -332,6 +332,18 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			return;
 		};
 
+		const child = this.getChild(blockId);
+		if (!child) {
+			return;
+		};
+
+		const targetId = child.getTargetObjectId();
+
+		if ([ J.Constant.widgetId.chat, J.Constant.widgetId.bin ].includes(targetId)) {
+			e.preventDefault();
+			return;
+		};
+
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
