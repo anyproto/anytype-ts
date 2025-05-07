@@ -184,7 +184,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		};
 	};
 
-	const onEmailKeyDown = (e: KeyboardEvent, v: string) => {
+	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
 		const isValid = U.Common.checkEmail(v);
 
 		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
@@ -270,7 +270,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 						focusOnMount={true}
 						placeholder={translate('authOnboardEmailPlaceholder')}
 						maxLength={255}
-						onKeyDown={onEmailKeyDown}
+						onKeyUp={onEmailKeyUp}
 					/>
 				</div>
 			);
