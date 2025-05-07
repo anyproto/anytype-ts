@@ -517,8 +517,12 @@ class UtilObject {
 	};
 
 	isAllowedChat () {
+		const electron = U.Common.getElectron();
 		const spaceview = U.Space.getSpaceview();
-		return spaceview.isShared;
+		const version = electron.version?.app;
+		const [ major, minor, patch ] = version.split('.');
+
+		return spaceview.isShared && (electron.isPackaged || patch.match(/alpha|beta/));
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {
