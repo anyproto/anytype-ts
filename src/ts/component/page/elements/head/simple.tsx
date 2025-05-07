@@ -43,29 +43,35 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 	render (): any {
 		const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup } = this.props;
 		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout', 'pluralName' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout', 'pluralName' ], true);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
 		const isType = U.Object.isTypeLayout(check.layout);
-		const isDate = U.Object.isDateLayout(object.layout);
-		const isRelation = U.Object.isRelationLayout(object.layout);
+		const isDate = U.Object.isDateLayout(check.layout);
+		const isRelation = U.Object.isRelationLayout(check.layout);
 		const cn = [ 'headSimple', check.className ];
 		const canEditIcon = allowDetails && !isRelation && !isType;
 		const isOwner = U.Space.isMyOwner();
 		const total = S.Record.getMeta(SUB_ID_CHECK, '').total;
-
-		if (!allowDetails) {
-			cn.push('isReadonly');
-		};
-
 		const placeholder = {
 			title: this.props.placeholder,
 			description: translate('commonDescription'),
 		};
 		const buttons = [];
+
+		let buttonLayout = null;
+		let buttonEdit = null;
+		let buttonCreate = null;
+		let buttonTemplate = null;
+		let descr = null;
+		let featured = null;
+
+		if (!allowDetails) {
+			cn.push('isReadonly');
+		};
 
 		const Editor = (item: any) => (
 			<Editable
@@ -84,13 +90,6 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 				onCompositionStart={this.onCompositionStart}
 			/>
 		);
-
-		let buttonLayout = null;
-		let buttonEdit = null;
-		let buttonCreate = null;
-		let buttonTemplate = null;
-		let descr = null;
-		let featured = null;
 
 		if (!isRelation && featuredRelations.includes('description')) {
 			descr = <Editor className="descr" id="description" readonly={!allowDetails} />;
