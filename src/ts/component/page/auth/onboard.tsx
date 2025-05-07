@@ -140,13 +140,14 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					nextRef.current?.setLoading(true);
 					
 					C.MembershipGetVerificationEmail(email, false, false, true, (message: any) => {
+						nextRef.current?.setLoading(false);
+
 						if (message.error.code) {
 							setError(message.error.description);
 							return;
 						};
 
 						onAuth();
-
 						analytics.event('ScreenOnboardingEnterEmail', { middleTime: message.middleTime });
 					});
 				} else {
