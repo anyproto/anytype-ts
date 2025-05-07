@@ -251,6 +251,8 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			keyMapper: i => (items[i] || {}).id,
 		});
 
+		this.refList?.recomputeRowHeights(0);
+
 		this.setActive(items[this.n]);
 	};
 
