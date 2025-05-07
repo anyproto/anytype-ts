@@ -516,13 +516,13 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
-	isAllowedChat () {
+	isAllowedChat (): boolean {
 		const electron = U.Common.getElectron();
 		const spaceview = U.Space.getSpaceview();
 		const version = String(electron.version?.app || '');
 		const [ major, minor, patch ] = version.split('.');
 
-		return spaceview.isShared && (!electron.isPackaged || patch.match(/alpha|beta/));
+		return spaceview.isShared && (!electron.isPackaged || patch.match(/alpha|beta/)) ? true : false;
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {
