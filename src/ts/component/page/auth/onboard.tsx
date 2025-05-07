@@ -139,13 +139,15 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 				if (email) {
 					nextRef.current?.setLoading(true);
 					
-					C.MembershipGetVerificationEmail(email, false, false, true, (message) => {
+					C.MembershipGetVerificationEmail(email, false, false, true, (message: any) => {
 						if (message.error.code) {
 							setError(message.error.description);
 							return;
 						};
 
 						onAuth();
+
+						analytics.event('ScreenOnboardingEnterEmail', { middleTime: message.middleTime });
 					});
 				} else {
 					onAuth();
