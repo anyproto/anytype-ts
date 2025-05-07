@@ -201,7 +201,6 @@
 	"commonSystemRelations": "System Properties",
 	"commonApply": "Apply",
 	"commonDescription": "Description",
-	"commonYourName": "Your Name",
 	"commonShowHide": "Show / Hide",
 	"commonShowKey": "Reveal and copy Key",
 
@@ -417,6 +416,7 @@
 
 	"authOnboardNameTitle": "Add your name",
 	"authOnboardNameLabel": "Only seen by people you share something with. There is no central registry for these names.",
+	"authOnboardNamePlaceholder": "Enter your name...",
 
 	"authOnboardEmailTitle": "Stay in the loop",
 	"authOnboardEmailLabel": "We’d love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won’t share your data. Ever.",

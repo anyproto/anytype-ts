@@ -147,9 +147,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 							return;
 						};
 
-						onAuth();
 						analytics.event('ScreenOnboardingEnterEmail', { middleTime: message.middleTime });
 					});
+
+					onAuth();
 				} else {
 					onAuth();
 					analytics.event('ScreenOnboardingSkipEmail');
@@ -244,7 +245,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 						key="name"
 						ref={nameRef}
 						focusOnMount={true}
-						placeholder={translate('commonYourName')}
+						placeholder={translate('authOnboardNamePlaceholder')}
 						maxLength={255}
 					/>
 				</div>
