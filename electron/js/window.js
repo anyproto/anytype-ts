@@ -28,7 +28,7 @@ class WindowManager {
 			show: false,
 			titleBarStyle: 'hidden-inset',
 			webPreferences: {
-				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
+				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
 			},
 		}, param);
 

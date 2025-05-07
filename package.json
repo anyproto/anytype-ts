@@ -198,7 +198,7 @@
 			"dist/js/**/*",
 			"electron/img/*",
 			"electron/img/icons/*",
-			"electron/js/preload.js",
+			"electron/js/preload.cjs",
 			"build",
 			"node_modules/keytar/build/Release/keytar.node",
 			"node_modules/lodash.isequal",
