@@ -151,6 +151,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					});
 				} else {
 					onAuth();
+					analytics.event('ScreenOnboardingSkipEmail');
 				};
 				break;
 			};
