@@ -142,7 +142,11 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
 	getValue () {
-		return String(this.refName?.getTextValue() || '');
+		let t = String(this.refName?.getTextValue() || '');
+		if (t === '\n') {
+			t = '';
+		};
+		return t;
 	};
 
 	onKeyUp (e: any) {
