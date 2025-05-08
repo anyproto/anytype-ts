@@ -248,7 +248,7 @@ class Action {
 			return;
 		};
 
-		C.FileDownload(id, U.Common.getElectron().downloadPath(), (message: any) => {
+		C.FileDownload(id, U.Common.getElectron().tmpPath(), (message: any) => {
 			if (message.path) {
 				this.openPath(message.path);
 				analytics.event('OpenMedia', { route });
