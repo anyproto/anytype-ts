@@ -8,7 +8,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const inputRef = useRef(null);
-	const { showRelativeDates } = S.Common;
+	const { showRelativeDates, dateFormat } = S.Common;
 	const { 
 		id, recordId, relation, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit, viewType, getView, getRecord, onChange, cellPosition, onRecordAdd,
 		groupId, recordIdx,
@@ -136,16 +136,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	const fixDateValue = (v: any) => {
 		v = String(v || '').replace(/_/g, '');
 
-		let view = null;
-		let viewRelation: any = {};
-
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-
-			if (v && viewRelation) {
-				v = U.Date.parseDate(v, viewRelation.dateFormat);
-			};
+		if (v) {
+			v = U.Date.parseDate(v, dateFormat);
 		};
 
 		return v ? v : null;
