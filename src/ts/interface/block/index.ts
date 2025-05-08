@@ -91,7 +91,7 @@ export interface BlockComponent {
 	renderMentions?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, param?: any): void;
 	renderObjects?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any): void;
 	renderLinks?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any): void;
-	renderEmoji?(node: any): void;
+	renderEmoji?(node: any, param?: any): void;
 	checkMarkOnBackspace?(value: string, range: I.TextRange, marks: I.Mark[]): { value: string, marks: I.Mark[], save: boolean };
 };
 

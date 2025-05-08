@@ -46,6 +46,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.loadMessagesByOrderId = this.loadMessagesByOrderId.bind(this);
 		this.hasScroll = this.hasScroll.bind(this);
 		this.highlightMessage = this.highlightMessage.bind(this);
+		this.loadDepsAndReplies = this.loadDepsAndReplies.bind(this);
 	};
 
 	render () {
@@ -130,6 +131,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					getIsBottom={() => hasScroll ? this.isBottom : true}
 					getReplyContent={this.getReplyContent}
 					highlightMessage={this.highlightMessage}
+					loadDepsAndReplies={this.loadDepsAndReplies}
 				/>
 			</div>
 		);
@@ -376,19 +378,29 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	getDepsIds (list: any[]) {
 		const markTypes = [ I.MarkType.Object, I.MarkType.Mention ];
+		const subId = this.getSubId();
 
 		let attachments = [];
 		let marks = [];
+
+		if (this.refForm) {
+			attachments = attachments.concat(this.refForm.state.attachments || []);
+			marks = marks.concat(this.refForm.marks || []);
+
+			const replyingId = this.refForm.getReplyingId();
+
+			if (replyingId) {
+				const message = S.Chat.getMessage(subId, replyingId);
+				if (message) {
+					list.push(message);
+				};
+			};
+		};
 
 		list.forEach(it => {
 			attachments = attachments.concat(it.attachments || []);
 			marks = marks.concat(it.content.marks || []);
 		});
-
-		if (this.refForm) {
-			attachments = attachments.concat(this.refForm.state.attachments || []);
-			marks = marks.concat(this.refForm.marks || []);
-		};
 
 		return [].
 			concat(attachments.map(it => it.target)).
@@ -396,7 +408,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getReplyIds (list: any[]) {
-		return (list || []).filter(it => it.replyToMessageId).map(it => it.replyToMessageId)
+		return (list || []).filter(it => it.replyToMessageId).map(it => it.replyToMessageId);
 	};
 
 	getSubId (): string {
@@ -482,7 +494,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				item.isFirst = false;
 				item.isLast = false;
 
-				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME))) {
+				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME) || item.replyToMessageId)) {
 					item.isFirst = true;
 
 					if (prev) {
@@ -870,7 +882,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		let isMultiple: boolean = false;
 
 		if (content.text) {
-			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+			text = U.Common.sanitize(Mark.toHtml(content.text, content.marks));
+			text = text.replace(/\n\r?/g, ' ');
 		};
 
 		if (!l) {
@@ -945,6 +958,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	highlightMessage (id: string, orderId?: string) {
 		const messages = this.getMessages();
 		const target = messages.find(it => orderId ? it.orderId == orderId : it.id == id);
+
 		if (!target) {
 			return;
 		};

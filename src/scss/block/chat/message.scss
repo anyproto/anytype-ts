@@ -39,7 +39,14 @@
 
 	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; cursor: default; }
 	.reply {
-		.bubble { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 8px 12px; border-radius: 16px; }
+		.bubble { 
+			display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 8px 12px; border-radius: 16px; margin-left: 8px; 
+			position: relative;
+		}
+		.bubble::before {
+			content: ''; position: absolute; left: -8px; top: 0px; width: 4px; height: 100%; background-color: var(--color-shape-primary);
+			border-radius: 4px;
+		}
 
 		> .icon, > .iconObject { flex-shrink: 0; width: 32px; height: 32px; }
 		> .iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }

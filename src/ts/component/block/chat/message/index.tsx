@@ -58,7 +58,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				controls.push({ id: 'reaction-add', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: this.onReactionAdd });
 			};
 
-			controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
+			//if (!isSelf) {
+				controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
+			//};
 
 			if (hasMore) {
 				controls.push({ className: 'more', onClick: onMore });
@@ -230,7 +232,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 							{controls.length ? (
 								<div className="controls">
 									{controls.map((item, i) => (
-										<Icon key={item.id} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
+										<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
 									))}
 								</div>
 							) : ''}

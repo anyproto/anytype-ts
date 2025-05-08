@@ -918,7 +918,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		param = param || {};
 
 		const { block } = this.props;
-		const size = U.Data.emojiParam(block.content.style);
+		const size = param.iconSize || U.Data.emojiParam(block.content.style);
 		const items = node.find(Mark.getTag(I.MarkType.Mention));
 		const subId = param.subId || rootId;
 
@@ -1079,8 +1079,9 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderEmoji (node: any) {
+	renderEmoji (node: any, param?: any) {
 		node = $(node);
+		param = param || {};
 
 		const items = node.find(Mark.getTag(I.MarkType.Emoji));
 		if (!items.length) {
@@ -1088,7 +1089,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		const { block } = this.props;
-		const size = U.Data.emojiParam(block.content.style);
+		const size = param.iconSize || U.Data.emojiParam(block.content.style);
 
 		items.each((i: number, item: any) => {
 			item = $(item);
