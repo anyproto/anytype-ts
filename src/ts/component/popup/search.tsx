@@ -811,7 +811,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			// Settings item
 			if (item.isSettings) {
-				U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Settings });
+				U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
 			} else 
 
 			// Import action

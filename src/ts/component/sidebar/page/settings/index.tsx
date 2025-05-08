@@ -298,7 +298,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			return;
 		};
 
-		U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Settings });
+		U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
 	};
 
 	onBack () {

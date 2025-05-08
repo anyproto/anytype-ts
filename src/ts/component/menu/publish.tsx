@@ -31,7 +31,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
 			onClick: () => {
-				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				close();
 
 				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });
@@ -140,7 +140,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onUpgrade = () => {
-		U.Object.openAuto(
+		U.Object.openRoute(
 			{ id: 'membership', layout: I.ObjectLayout.Settings },
 			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: I.TierType.Builder }}) } },
 		);

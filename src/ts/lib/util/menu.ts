@@ -1138,7 +1138,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
+			U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings });
 		};
 
 		const getClipboardData = async () => {

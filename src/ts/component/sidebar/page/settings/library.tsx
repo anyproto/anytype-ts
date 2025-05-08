@@ -412,7 +412,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			},
 		};
 
-		U.Object.openAuto(param);
+		U.Object.openRoute(param);
 
 		let e = '';
 

@@ -26,7 +26,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const onSettings = (e: MouseEvent) => {
 		e.stopPropagation();
-		U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+		U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 	};
 
 	const onCreate = (e: MouseEvent) => {
@@ -55,7 +55,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'member': {
-				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
 				break;
 			};

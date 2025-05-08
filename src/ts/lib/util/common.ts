@@ -642,7 +642,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					U.Object.openAuto({ id: 'spaceList', layout: I.ObjectLayout.Settings });
+					U.Object.openRoute({ id: 'spaceList', layout: I.ObjectLayout.Settings });
 				},
 			},
 		});

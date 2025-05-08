@@ -232,7 +232,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut('settings', e, () => {
-				U.Object.openAuto({ id: 'account', layout: I.ObjectLayout.Settings });
+				U.Object.openRoute({ id: 'account', layout: I.ObjectLayout.Settings });
 			});
 
 			// Relation panel

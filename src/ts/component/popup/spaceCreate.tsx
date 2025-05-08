@@ -90,7 +90,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 						U.Space.initSpaceState();
 
 						if (withImport) {
-							close(() => U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings }));
+							close(() => U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings }));
 						} else 
 						if (startingId) {
 							U.Object.getById(startingId, {}, (object: any) => {
