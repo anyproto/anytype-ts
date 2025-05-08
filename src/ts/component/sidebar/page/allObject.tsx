@@ -606,6 +606,12 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		let layout = null;
 
 		switch (t) {
+			case I.ObjectContainerType.Object: {
+				type = S.Record.getPageType();
+				layout = I.ObjectLayout.Page;
+				break;
+			};
+
 			case I.ObjectContainerType.Bookmark: {
 				type = S.Record.getBookmarkType();
 				layout = I.ObjectLayout.Bookmark;
