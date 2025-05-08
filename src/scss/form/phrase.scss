@@ -21,7 +21,7 @@
 
 	.icon { 
 		height: 20px; width: 20px; vertical-align: top; transition: $transitionAllCommon; position: absolute;
-		right: -32px; top: 50%; margin: -10px 0px 0px 0px; cursor: default;
+		right: -32px; top: 50%; margin: -14px 0px 0px 0px; cursor: default;
 	}
 	.icon.show { background-image: url('~img/icon/keyphrase/hide0.svg'); }
 	.icon.show:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
