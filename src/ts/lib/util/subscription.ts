@@ -277,7 +277,7 @@ class UtilSubscription {
 		}, param);
 
 		const { config } = S.Common;
-		const { spaceId, offset, limit, skipLayoutFormat } = param;
+		const { spaceId, offset, limit, skipLayoutFormat, fullText } = param;
 		const keys = this.mapKeys(param);
 		const debug = config.flagsMw.request;
 		const filters = this.defaultFilters(param);
@@ -294,7 +294,7 @@ class UtilSubscription {
 			return;
 		};
 
-		C.ObjectSearch(spaceId, filters, sorts, keys, param.fullText, offset, limit, (message: any) => {
+		C.ObjectSearch(spaceId, filters, sorts, keys, fullText, offset, limit, (message: any) => {
 			if (message.records) {
 				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
 			};
