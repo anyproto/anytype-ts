@@ -45,9 +45,25 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const ct = [ 'textWrapper' ];
 		const cnBubble = [ 'bubble' ];
 		const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
+		const controls = [];
 
+		let userpicNode = null;
+		let authorNode = null;
 		let text = content.text.replace(/\r?\n$/, '');
+
 		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
+
+		if (!readonly) {
+			if (!hasReactions && canAddReaction) {
+				controls.push({ id: 'reaction-add', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: this.onReactionAdd });
+			};
+
+			controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
+
+			if (hasMore) {
+				controls.push({ className: 'more', onClick: onMore });
+			};
+		};
 
 		if (hasAttachments == 1) {
 			ca.push('isSingle');
@@ -90,7 +106,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 			const length = authors.length;
 			const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
 			const isMe = authors.includes(account.id);
-			const cn = [ 'reaction', (isMe ? 'isSelf' : '') ];
+			const cn = [ 'reaction' ];
+
+			if (isMe) {
+				cn.push('isMe');
+			};
+			if (length > 1) {
+				cn.push('isMulti');
+			};
 
 			return (
 				<div 
@@ -108,9 +131,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				</div>
 			);
 		};
-
-		let userpicNode = null;
-		let authorNode = null;
 
 		if (!isSelf) {
 			userpicNode = (
@@ -207,11 +227,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 								) : ''}
 							</div>
 
-							{!readonly ? (
+							{controls.length ? (
 								<div className="controls">
-									{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} /> : ''}
-									<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltipParam={{ text: translate('blockChatReply') }} />
-									{hasMore ? <Icon className="more" onClick={onMore} /> : '' }
+									{controls.map((item, i) => (
+										<Icon key={item.id} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
+									))}
 								</div>
 							) : ''}
 						</div>

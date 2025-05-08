@@ -35,7 +35,7 @@
 	}
 
 	.icon.reactionAdd { width: 28px; height: 28px; background: url('~img/icon/chat/buttons/reaction0.svg') 50% 50% no-repeat; background-size: 20px; border-radius: 50%; }
-	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
+	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction2.svg'); }
 
 	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; cursor: default; }
 	.reply {
@@ -80,12 +80,14 @@
 			display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
 			background-color: var(--color-shape-highlight-medium); padding: 4px 6px; flex-shrink: 0;
 		}
-		.reaction:hover { background-color: var(--color-shape-highlight-dark); }
 		.reaction {
+			&:hover { background-color: var(--color-shape-highlight-dark); }
+			&.isMulti { gap: 0px 2px; }
+			&.isSelf { background-color: var(--color-bg-tag-lime); }
+
 			.count { min-width: 18px; text-align: center; }
 		}
-
-		.reaction.isSelf { background-color: var(--color-bg-tag-lime); }
+		.reactionAdd { background-color: var(--color-shape-highlight-medium); background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
 	}
 
 	.newMessages { display: none; justify-content: center; position: absolute; top: -9px; left: 0px;  width: 100%; }
