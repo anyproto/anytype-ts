@@ -121,7 +121,6 @@ html.bodyIndex, html.bodyAuth {
 	.button.black.disabled { background-color: var(--color-shape-highlight-medium) !important; }
 
 	.button.disabled { color: var(--color-text-tertiary) !important; }
-	.button.simple {  }
 
 	.button.blank { border-color: var(--color-button-stroke) !important; color: var(--color-text-primary) !important; background: none; }
 	.button.blank:not(.disabled):hover{ background: var(--color-button-blank-hover) !important; }
@@ -234,7 +233,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthOnboard, .pageAuthLogin {
-	.frame { width: 1064px; top: 40%; margin-top: 0px !important; }
+	.frame { width: 1064px; }
 
 	@media (max-width: 1160px) {
 		.frame { width: calc(100% - 96px); }
