@@ -98,7 +98,7 @@
 		.reaction {
 			&:hover { background-color: var(--color-shape-highlight-dark); }
 			&.isMulti { gap: 0px 2px; }
-			&.isSelf { background-color: var(--color-bg-tag-lime); }
+			&.isMe { background-color: var(--color-bg-tag-lime); }
 
 			.count { min-width: 18px; text-align: center; }
 		}
