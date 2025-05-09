@@ -113,14 +113,10 @@ class WindowManager {
 				});
 			} catch (e) {};
 		} else {
-			const { screen } = require('electron');
-			const primaryDisplay = screen.getPrimaryDisplay();
-			const { width, height } = primaryDisplay.workAreaSize;
+			const { width, height } = this.getScreenSize();
 
 			param = Object.assign(param, this.getWindowPosition(param, width, height));
 		};
-
-		console.log('PARAM', param);
 
 		const win = this.create(options, param);
 
@@ -142,9 +138,7 @@ class WindowManager {
 	};
 
 	createChallenge (options) {
-		const { screen } = require('electron');
-		const primaryDisplay = screen.getPrimaryDisplay();
-		const { width, height } = primaryDisplay.workAreaSize;
+		const { width, height } = this.getScreenSize();
 
 		const win = this.create({ ...options, isChallenge: true }, {
 			backgroundColor: '',
@@ -169,6 +163,21 @@ class WindowManager {
 
 		setTimeout(() => this.closeChallenge(options), 30000);
 		return win;
+	};
+
+	getScreenSize () {
+		const ret = { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT };
+
+		try {
+			const { screen } = require('electron');
+			const primaryDisplay = screen.getPrimaryDisplay();
+			const { width, height } = primaryDisplay.workAreaSize;
+
+			ret.width = width;
+			ret.height = height;
+		} catch (e) {};
+
+		return ret;
 	};
 
 	closeChallenge (options) {
