@@ -47,9 +47,16 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 			const { item } = props;
 			const isCurrent = item.id == membership.tier;
 			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
+			const cn = [ 'tier', `c${item.id}`, item.color ];
+			const offer = isCurrent ? translate('popupSettingsMembershipCurrent') : item.offer;
+
+			if (isCurrent) {
+				cn.push('isCurrent');
+			};
 
 			let period = '';
 			let buttonText = translate('popupSettingsMembershipLearnMore');
+			let offerLabel = null;
 
 			if (isCurrent) {
 				if (membership.status == I.MembershipStatus.Pending) {
@@ -90,15 +97,19 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				};
 			};
 
+			if (offer) {
+				offerLabel = <div className="offerLabel">{offer}</div>;
+			};
+
 			return (
 				<div 
-					className={[ 'tier', `c${item.id}`, item.color, (isCurrent ? 'isCurrent' : '') ].join(' ')}
+					className={cn.join(' ')}
 					onClick={() => S.Popup.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">
 						<div className="iconWrapper">
 							<Icon />
-							<div className="current">{translate('popupSettingsMembershipCurrent')}</div>
+							{offerLabel}
 						</div>
 
 						<Title text={item.name} />
