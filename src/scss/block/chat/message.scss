@@ -10,11 +10,14 @@
 		.iconObject { display: none; }
 	}
 
-	> .flex > .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; }
+	.bubbleOuter { display: flex; flex-direction: column; }
 
-	.bubbleOuter { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
-	.bubbleOuter {
-		> .controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
+	.bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
+	.bubbleInner {
+		> .controls { 
+			flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; 
+			opacity: 0; transition: opacity $transitionCommon; 
+		}
 		> .controls {
 			.icon { width: 20px; height: 20px; }
 			.icon.messageReply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
@@ -106,15 +109,17 @@
 		> .flex { flex-direction: row-reverse; }
 		> .flex > .side.right { align-items: flex-end; }
 
-		.bubbleOuter { flex-direction: row-reverse; }
-		.bubbleOuter {
+		.bubbleInner { flex-direction: row-reverse; }
+		.bubbleInner {
 			> .controls { flex-direction: row-reverse; }
 			.bubble { background-color: var(--color-bg-tag-lime); }
 		}
+
+		.reactions { justify-content: flex-end; }
 	}
 
 	&.withAttachment {
-		.bubbleOuter {
+		.bubbleInner {
 			.bubble {
 				.textWrapper { padding: 8px 12px 0px; }
 			}
@@ -122,7 +127,7 @@
 	}
 
 	&.withAttachment.withMedia {
-		.bubbleOuter {
+		.bubbleInner {
 			.bubble { flex-direction: column-reverse; }
 			.bubble {
 				.textWrapper { padding: 0px 12px 8px; }
@@ -152,7 +157,6 @@
 	&.isFirst { margin: 12px 0px 0px 0px; }
 	&.isFirst {
 		.author { display: flex; }
-		> .flex > .side.right {  min-width: 164px; }
 	}
 
 	&.isFirst, &.withText {
@@ -161,7 +165,7 @@
 	}
 
 	&:not(.withText) {
-		.bubbleOuter {
+		.bubbleInner {
 			.bubble { padding: 4px; }
 			.bubble {
 				.textWrapper { display: none; }
@@ -186,7 +190,7 @@
 	}
 
 	&.highlight {
-		.bubbleOuter {
+		.bubbleInner {
 			.bubble { background-color: var(--color-bg-ice) !important;}
 		}
 	}

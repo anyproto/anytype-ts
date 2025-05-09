@@ -136,13 +136,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 		if (!isSelf) {
 			userpicNode = (
-				<div className="side left">
-					<IconObject
-						object={{ ...author, layout: I.ObjectLayout.Participant }}
-						size={32}
-						onClick={e => U.Object.openConfig(author)}
-					/>
-				</div>
+				<IconObject
+					object={{ ...author, layout: I.ObjectLayout.Participant }}
+					size={32}
+					onClick={e => U.Object.openConfig(author)}
+				/>
 			);
 
 			authorNode = (
@@ -175,7 +173,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				) : ''}
 
 				<div className="flex">
-					{userpicNode}
+					<div className="side left">
+						{userpicNode}
+					</div>
+
 					<div className="side right">
 
 						<Reply {...this.props} id={replyToMessageId} />
@@ -217,23 +218,23 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 									) : ''}
 								</div>
 
-								{hasReactions ? (
-									<div className="reactions">
-										{reactions.map((item: any, i: number) => (
-											<Reaction key={i} {...item} />
+								{controls.length ? (
+									<div className="controls">
+										{controls.map((item, i) => (
+											<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
 										))}
-										{!readonly && canAddReaction ? (
-											<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
-										) : ''}
 									</div>
 								) : ''}
 							</div>
 
-							{controls.length ? (
-								<div className="controls">
-									{controls.map((item, i) => (
-										<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
+							{hasReactions ? (
+								<div className="reactions">
+									{reactions.map((item: any, i: number) => (
+										<Reaction key={i} {...item} />
 									))}
+									{!readonly && canAddReaction ? (
+										<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
+									) : ''}
 								</div>
 							) : ''}
 						</div>
