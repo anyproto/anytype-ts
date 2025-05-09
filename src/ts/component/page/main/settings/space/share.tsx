@@ -54,6 +54,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		};
 
 		const { membership } = S.Auth;
+		const tier = U.Data.getMembershipTier(membership.tier);
 		const hasLink = cid && key;
 		const space = U.Space.getSpaceview();
 		const participant = U.Space.getParticipant();
@@ -75,7 +76,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		};
 
 		if (space.isShared) {
-			if (!U.Space.getReaderLimit() && membership.isExplorer) {
+			if (!U.Space.getReaderLimit() && tier?.price) {
 				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
 				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 				memberUpgradeType = 'members';
@@ -394,13 +395,14 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 	getParticipantOptions () {
 		const { membership } = S.Auth;
+		const tier = U.Data.getMembershipTier(membership.tier);
 
 		let items: any[] = [] as any[];
 
-		if (membership.isExplorer || (U.Space.getReaderLimit() - 1 >= 0)) {
+		if (!tier?.price || (U.Space.getReaderLimit() - 1 >= 0)) {
 			items.push({ id: I.ParticipantPermissions.Reader });
 		};
-		if (membership.isExplorer || (U.Space.getWriterLimit() - 1 >= 0)) {
+		if (!tier?.price || (U.Space.getWriterLimit() - 1 >= 0)) {
 			items.push({ id: I.ParticipantPermissions.Writer });
 		};
 

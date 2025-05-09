@@ -211,8 +211,7 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers(noTierCache);
-		this.getMembershipStatus();
+		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
 		U.Subscription.createGlobal(() => Storage.clearDeletedSpaces());
 
 		analytics.event('OpenAccount');
@@ -607,7 +606,7 @@ class UtilData {
 		});
 	};
 
-	getMembershipTiers (noCache: boolean) {
+	getMembershipTiers (noCache: boolean, callBack?: () => void) {
 		const { config, interfaceLang, isOnline } = S.Common;
 		const { testPayment } = config;
 
@@ -622,6 +621,10 @@ class UtilData {
 
 			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
 			S.Common.membershipTiersListSet(tiers);
+
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 
