@@ -37,7 +37,7 @@
 		.cnt { 
 			min-width: 20px; height: 20px; border-radius: 50%; background: var(--color-text-secondary); @include text-very-small; position: absolute;
 			bottom: -5px; right: -5px; color: var(--color-text-inversion); text-align: center; display: flex; align-items: center; justify-content: center;
-			padding: 0px 2px;
+			padding: 0px 2px; cursor: default;
 		}
 		.cnt {
 			.icon.mention { width: 12px; height: 12px; background-image: url('~img/icon/vault/mention.svg'); }
