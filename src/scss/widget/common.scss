@@ -83,7 +83,7 @@
 	> .dropTarget:not(.targetHead).targetTop { top: -7px; }
 	> .dropTarget:not(.targetHead).targetBot { bottom: -7px; }
 	> .dropTarget:not(.targetHead).isOver::before { 
-		content: ""; position: absolute; background: var(--color-system-accent-100); width: calc(100% - 24px); height: 2px; border-radius: 2px; left: 12px;
+		content: ""; position: absolute; background: var(--color-control-accent); width: calc(100% - 24px); height: 2px; border-radius: 2px; left: 12px;
 	}
 	> .dropTarget:not(.targetHead).targetTop.isOver::before { top: 0px; }
 	> .dropTarget:not(.targetHead).targetBot.isOver::before { bottom: 0px; }

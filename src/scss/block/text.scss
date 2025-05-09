@@ -193,7 +193,7 @@
 			}
 
 			> .dropTarget.targetBot { display: block; height: 16px; position: static; }
-			> .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
+			> .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px var(--color-control-accent) inset; }
 
 			> .children { padding-right: 16px; }
 		}
@@ -274,7 +274,7 @@
 	.block.blockText.textNumbered > .wrapContent > .dropTarget.targetBot.isOver.bottom,
 	.block.blockText.textCheckbox > .wrapContent > .dropTarget.targetBot.isOver.bottom,
 	.block.blockText.textToggle > .wrapContent > .dropTarget.targetBot.isOver.bottom
-	{ box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
+	{ box-shadow: 0px -2px 0px var(--color-control-accent) inset; }
 
 	.block.blockText.textParagraph > .wrapContent.bgColor > .selectionTarget > .dropTarget, 
 	.block.blockText.textHeader1 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
