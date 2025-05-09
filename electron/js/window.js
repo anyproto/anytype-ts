@@ -103,13 +103,15 @@ class WindowManager {
 		};
 
 		if (!isChild) {
-			state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
-			param = Object.assign(param, {
-				x: state.x,
-				y: state.y,
-				width: state.width,
-				height: state.height,
-			});
+			try {
+				state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
+				param = Object.assign(param, {
+					x: state.x,
+					y: state.y,
+					width: state.width,
+					height: state.height,
+				});
+			} catch (e) {};
 		} else {
 			const { screen } = require('electron');
 			const primaryDisplay = screen.getPrimaryDisplay();
@@ -117,6 +119,8 @@ class WindowManager {
 
 			param = Object.assign(param, this.getWindowPosition(param, width, height));
 		};
+
+		console.log('PARAM', param);
 
 		const win = this.create(options, param);
 
