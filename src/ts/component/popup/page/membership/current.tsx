@@ -45,8 +45,8 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	render() {
 		const { verificationStep, countdown, status, statusText } = this.state;
 		const { membership } = S.Auth;
-		const { tier, dateEnds, paymentMethod, userEmail } = membership;
-		const tierItem = U.Data.getMembershipTier(tier);
+		const { dateEnds, paymentMethod, userEmail } = membership;
+		const tier = U.Data.getMembershipTier(membership.tier);
 
 		let dateText = '';
 		let paidText = '';
@@ -54,13 +54,13 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		let manageText = '';
 		let verificationForm: any = null;
 
-		if (tierItem.period && membership.dateEnds) {
+		if (tier.period && membership.dateEnds) {
 			dateText = `${U.Date.date('d F Y', dateEnds)}`;
 		} else {
 			dateText = translate('popupMembershipForever');
 		};
 
-		if (membership.isExplorer) {
+		if (!tier.price) {
 			buttonText = translate('popupMembershipChangeEmail');
 
 			if (!userEmail) {
@@ -159,8 +159,9 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	onButton () {
 		const { membership } = S.Auth;
 		const { onChangeEmail } = this.props;
+		const tier = U.Data.getMembershipTier(membership.tier);
 
-		if (membership.isExplorer) {
+		if (!tier.price) {
 			onChangeEmail();
 		} else {
 			if (membership.paymentMethod == I.PaymentMethod.Crypto) {

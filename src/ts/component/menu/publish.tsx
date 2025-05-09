@@ -11,6 +11,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { rootId } = data;
 	const { isOnline } = S.Common;
 	const { membership } = S.Auth;
+	const tier = U.Data.getMembershipTier(membership.tier);
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
@@ -52,6 +53,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPublish = (isUpdate?: boolean) => {
 		const analyticsName = isUpdate ? 'ShareObjectUpdate' : 'ShareObjectPublish';
 
+
 		publishRef.current?.setLoading(true);
 
 		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), (message: any) => {
@@ -60,7 +62,8 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (message.error.code) {
 				if (message.error.code == J.Error.Code.Publish.PAGE_SIZE_EXCEEDED) {
 					const { membership } = S.Auth;
-					const limit = membership.isNone || membership.isExplorer ? 10 : 100;
+					const tier = U.Data.getMembershipTier(membership.tier);
+					const limit = !tier.price ? 10 : 100;
 
 					setError(U.Common.sprintf(translate('errorPublishingCreate103'), limit));
 				} else {
@@ -220,7 +223,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 			) : ''}
 
-			{(membership.isNone || membership.isExplorer) ? (
+			{!tier?.price ? (
 				<div className="incentiveBanner">
 					<Label text={translate('menuPublishBecomeMemberText')} />
 					<Button text={translate('menuPublishUpgrade')} onClick={onUpgrade} />

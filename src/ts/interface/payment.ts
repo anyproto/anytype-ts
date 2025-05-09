@@ -13,6 +13,10 @@ export enum TierType {
 	AnytypeTeam				 = 7,
 	AnytypeBetaUsers		 = 8,
 	Builder2for1			 = 9,
+	AnyPioneer				 = 16,
+	NewExplorer				 = 20,
+	Starter					 = 21,
+	Pioneer					 = 22,
 };
 
 export enum MembershipStatus {
@@ -62,7 +66,7 @@ export interface Membership {
 	userEmail?: string;
 	subscribeToNewsletter?: boolean;
 	isNone?: boolean;
-	isExplorer?: boolean;
+	isStarter?: boolean;
 	isBuilder?: boolean;
 	isCreator?: boolean;
 };
@@ -82,7 +86,7 @@ export interface MembershipTier {
 	offer?: string;
 	color?: string;
 	price?: number;
-	isExplorer?: boolean;
+	isStarter?: boolean;
 	isBuilder?: boolean;
 	isCreator?: boolean;
 };

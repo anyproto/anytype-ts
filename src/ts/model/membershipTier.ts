@@ -49,8 +49,8 @@ class MembershipTier implements I.MembershipTier {
 		return this.id == I.TierType.None;
 	};
 
-	get isExplorer (): boolean {
-		return this.id == I.TierType.Explorer;
+	get isStarter (): boolean {
+		return this.id == I.TierType.Starter;
 	};
 
 	get isBuilder (): boolean {

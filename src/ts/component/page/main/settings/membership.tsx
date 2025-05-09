@@ -19,7 +19,8 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 	render () {
 		const { membership } = S.Auth;
 		const { membershipTiers, interfaceLang } = S.Common;
-		const { tier, status } = membership;
+		const { status } = membership;
+		const tier = U.Data.getMembershipTier(membership.tier);
 		const length = membershipTiers.length;
 		const cnt = [];
 
@@ -132,7 +133,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 					text={!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')} 
 				/>
 
-				{(membership.isNone || membership.isExplorer) ? (
+				{!tier?.price ? (
 					<>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 

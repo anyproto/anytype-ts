@@ -956,21 +956,7 @@ class Dispatcher {
 						break;
 					};
 
-					const { collectionId, count, type } = mapped;
-
-					/*
-
-					if (collectionId) {
-						window.setTimeout(() => {
-							S.Popup.open('objectManager', { 
-								data: { 
-									collectionId, 
-									type: I.ObjectManagerPopup.Favorites,
-								} 
-							});
-						}, S.Popup.getTimeout() + 10);
-					};
-					*/
+					const { count, type } = mapped;
 
 					analytics.event('Import', { type, count });
 					break;
