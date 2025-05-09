@@ -93,7 +93,7 @@
 	.reactions {
 		.reaction { 
 			display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
-			background-color: var(--color-shape-highlight-medium); padding: 4px 6px; flex-shrink: 0;
+			background-color: var(--color-shape-highlight-medium); padding: 5px 6px; flex-shrink: 0;
 		}
 		.reaction {
 			&:hover { background-color: var(--color-shape-highlight-dark); }
