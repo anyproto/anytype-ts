@@ -3,11 +3,13 @@
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
 
-	.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
-
-	> .flex > .side.left { flex-shrink: 0; width: 32px; display: flex; align-items: flex-end; }
-	> .flex > .side.left {
-		.iconObject { display: none; }
+	> .flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
+	> .flex {
+		> .side.left { flex-shrink: 0; width: 32px; display: flex; align-items: flex-end; }
+		> .side.left {
+			.iconObject { display: none; }
+		}
+		> .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; }
 	}
 
 	.bubbleOuter { display: flex; flex-direction: column; }
@@ -28,7 +30,10 @@
 		}
 	}
 
-	.bubble { border-radius: 16px; background-color: var(--color-shape-tertiary); display: flex; flex-direction: column; transition: background-color $easeInQuint 0.2s; }
+	.bubble { 
+		border-radius: 16px; background-color: var(--color-shape-tertiary); display: flex; flex-direction: column;
+		transition: background-color $easeInQuint 0.2s; 
+	}
 	.bubble {
 		.textWrapper { line-height: 20px; padding: 8px 12px; }
 		.text { user-select: text !important; display: inline; }
@@ -120,6 +125,7 @@
 
 	&.withAttachment {
 		.bubbleInner {
+			.bubble { max-width: 368px; }
 			.bubble {
 				.textWrapper { padding: 8px 12px 0px; }
 			}
