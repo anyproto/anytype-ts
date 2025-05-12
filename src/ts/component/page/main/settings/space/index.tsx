@@ -313,6 +313,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			element: `#${getId()} #defaultType`,
 			horizontal: I.MenuDirection.Right,
 			data: {
+				canAdd: true,
 				filter: '',
 				filters: [
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },

@@ -415,6 +415,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			case 'turnObject': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },

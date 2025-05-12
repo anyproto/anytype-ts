@@ -453,6 +453,8 @@ class Dataview {
 		const view = this.getView(rootId, blockId, viewId);
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+		const type = S.Record.getTypeById(object.type);
 		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
 
 		let typeId = '';
@@ -479,9 +481,12 @@ class Dataview {
 			};
 		};
 
-		const type = S.Record.getTypeById(typeId);
+		if (!typeId && type && type.defaultTypeId) {
+			typeId = type.defaultTypeId;
+		};
 
-		if (!type) {
+		const check = S.Record.getTypeById(typeId);
+		if (!check) {
 			typeId = S.Common.type;
 		};
 

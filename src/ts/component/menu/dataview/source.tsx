@@ -120,6 +120,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			case 'type': {
 				menuId = 'typeSuggest';
 				menuParam.data = {
+					canAdd: true,
 					onClick: (item: any) => {
 						this.save([ item.id ]);
 

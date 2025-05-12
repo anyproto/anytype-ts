@@ -1283,6 +1283,7 @@ class UtilMenu {
 				onOpen: context => menuContext = context,
 				data: {
 					noStore: true,
+					canAdd: true,
 					onMore,
 					buttons,
 					filters: [
