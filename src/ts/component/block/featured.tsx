@@ -198,8 +198,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
 		const object = this.getObject();
-		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
-		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
+		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => U.Object.name(it));
+		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => U.Object.name(it.name));
 		const setOfString = [];
 		const tl = types.length;
 		const rl = relations.length;

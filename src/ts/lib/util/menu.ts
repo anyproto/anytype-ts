@@ -127,7 +127,7 @@ class UtilMenu {
 				iconEmoji: type.iconEmoji, 
 				iconName: type.iconName,
 				iconOption: type.iconOption,
-				name: type.name || translate('defaultNamePage'), 
+				name: U.Object.name(type), 
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,

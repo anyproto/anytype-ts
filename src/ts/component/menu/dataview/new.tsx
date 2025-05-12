@@ -45,7 +45,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (withTypeSelect) {
-			itemsSettings.unshift({ id: 'type', name: translate('menuDataviewNewType'), arrow: true, caption: type.name });
+			itemsSettings.unshift({ id: 'type', name: translate('menuDataviewNewType'), arrow: true, caption: U.Object.name(type) });
 		};
 
 		let sections: any[] = [

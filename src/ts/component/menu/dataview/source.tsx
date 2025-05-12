@@ -216,7 +216,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 						...it,
 						itemId: 'type',
 						name: translate('commonObjectType'),
-						value: it.name,
+						value: U.Object.name(it),
 					});
 				} else {
 					items.push({ ...it, itemId: it.id, value: translate('commonAll') });
