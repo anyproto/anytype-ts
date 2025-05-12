@@ -1583,9 +1583,16 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 		const op = new Rpc.Object.ListModifyDetailValues.Request.Operation();
 
 		op.setRelationkey(it.relationKey);
-		op.setAdd(Encode.value(it.add));
-		op.setSet(Encode.value(it.set));
-		op.setRemove(Encode.value(it.remove));
+
+		if (it.add) {
+			op.setAdd(Encode.value(it.add));
+		};
+		if (it.set) {
+			op.setSet(Encode.value(it.set));
+		};
+		if (it.remove) {
+			op.setRemove(Encode.value(it.remove));
+		};
 
 		return op;
 	}));
