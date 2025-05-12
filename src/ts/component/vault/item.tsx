@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon } from 'Component';
-import { S } from 'Lib';
+import { J, S } from 'Lib';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -21,15 +21,15 @@ const VaultItem: FC<Props> = observer(({
 	onContextMenu,
 }) => {
 
-	const { config } = S.Common;
 	const cn = [ 'item' ];
+	const theme = S.Common.getThemeClass();
 
 	let icon = null;
 	let cnt = null;
 	let disabled = false;
 
 	if (!item.isButton) {
-		icon = <IconObject object={item} size={36} iconSize={36} />;
+		icon = <IconObject object={item} size={36} iconSize={36} param={{ userIcon: J.Theme[theme].textInversion }} />;
 	} else {
 		cn.push(`isButton ${item.id}`);
 	};

@@ -14,7 +14,6 @@ interface VaultRefProps {
 
 const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
-	const { config } = S.Common;
 	const nodeRef = useRef(null);
 	const { showVault } = S.Common;
 	const checkKeyUp = useRef(false);
@@ -26,6 +25,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const n = useRef(-1);
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
+	const profile = U.Space.getProfile();
 	const itemsWithCounter = items.filter(it => {
 		if (!it.isButton) {
 			const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
@@ -37,7 +37,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const itemsWithCounterIds = itemsWithCounter.map(it => it.id);
 	const itemsWithoutCounter = items.filter(it => !itemsWithCounterIds.includes(it.id));
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
-	const itemSettings = { id: 'settings', name: translate('commonSettings'), isButton: true };
+	const itemSettings = { ...profile, id: 'settings', layout: I.ObjectLayout.Human };
 	const canCreate = U.Space.canCreateSpace();
 
 	const cn = [ 'vault' ];

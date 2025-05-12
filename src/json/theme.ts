@@ -23,10 +23,7 @@ export default {
 
 		error: '#000',
 		iconDefault: 'rgba(0,0,0,0.11)',
-
-		shape: {
-			transparentSecondary: 'rgba(0, 0, 0, 0.05)',
-		},
+		textInversion: '#fff',
 
 		color: {
 			default: '#252525',
@@ -63,10 +60,7 @@ export default {
 			bg: '#fff'
 		},
 
-		iconUser: {
-			text: '#b6b6b6',
-			bg: '#f2f2f2'
-		},
+		iconUser: '#b6b6b6',
 
 		progress: {
 			bg: '#ebebeb',
@@ -78,10 +72,7 @@ export default {
 
 		error: '#fff',
 		iconDefault: 'rgba(255,255,255,0.11)',
-
-		shape: {
-			transparentSecondary: 'rgba(255, 255, 255, 0.05)',
-		},
+		textInversion: '#171717',
 
 		color: {
 			default: '#f8f8f8',
@@ -124,10 +115,7 @@ export default {
 			bg: '#fff'
 		},
 
-		iconUser: {
-			text: '#9a9a9a',
-			bg: '#b6b6b6'
-		},
+		iconUser: '#9a9a9a',
 
 		progress: {
 			bg: '#292929',

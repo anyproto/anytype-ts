@@ -74,7 +74,13 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 							{participant.globalName ? <Label className="anyName" text={participant.globalName} /> : ''}
 						</>
 					);
-					icon = <IconObject object={{ ...participant, name: participant.globalName || participant.name }} param={{ userIconColor: { bg: J.Theme[theme].shape.transparentSecondary } }} size={40} iconSize={40} />;
+					icon = (
+						<IconObject 
+							object={{ ...participant, name: participant.globalName || participant.name }} 
+							size={40} 
+							iconSize={40} 
+						/>
+					);
 				};
 
 				cn.push('itemAccount');
