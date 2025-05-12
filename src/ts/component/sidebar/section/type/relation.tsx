@@ -150,6 +150,10 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         const toItems = Relation.getArrayValue(object[to.relationKey]);
         const oldIndex = fromItems.indexOf(active.id);
         const newIndex = toItems.indexOf(over.id);
+		const element = $(nodeRef.current).find(`#item-${over.id}`);
+		const rect = element.length ? element.get(0).getBoundingClientRect() : null;
+		const pointerY = active.rect.current.translated?.top ?? 0;
+		const offset = rect && (pointerY < (rect.top + rect.height / 2)) ? 0 : 1;
 
 		let analyticsId = '';
 
@@ -159,7 +163,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			analyticsId = 'SameGroup';
         } else 
 		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Local)) {
-			toItems.splice(newIndex, 0, active.id);
+			toItems.splice(newIndex + offset, 0, active.id);
 			onChange({
 				[from.relationKey]: fromItems.filter(id => id != active.id),
 				[to.relationKey]: toItems,
