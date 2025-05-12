@@ -54,7 +54,7 @@
 		.side.left { flex-grow: 1; display: flex; align-items: center; gap: 0px 8px; overflow: hidden; }
 		.side.left {
 			> .icon, > .iconObject { flex-shrink: 0; }
-			> .iconObject:not(.noBg) { background-color: var(--color-shape-highlight-dark) !important; }
+			> .iconObject:not(.noBg) { background-color: var(--color-shape-highlight-medium) !important; }
 			
 			.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
 			.textWrapper { width: 100%; @include text-small; display: flex; flex-direction: column; overflow: hidden; }

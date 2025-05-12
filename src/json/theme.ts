@@ -22,7 +22,7 @@ export default {
 	'': {
 
 		error: '#000',
-		iconDefault: '#e3e3e3',
+		iconDefault: 'rgba(0,0,0,0.11)',
 
 		shape: {
 			transparentSecondary: 'rgba(0, 0, 0, 0.05)',
@@ -77,7 +77,7 @@ export default {
 	dark: {
 
 		error: '#fff',
-		iconDefault: '#323232',
+		iconDefault: 'rgba(255,255,255,0.11)',
 
 		shape: {
 			transparentSecondary: 'rgba(255, 255, 255, 0.05)',
