@@ -65,19 +65,20 @@
         .title { @include text-header1; }
     }
 
-    .layoutPreview.layoutAlignLeft {
+    .layoutPreview.align0 {
         .layoutHeader { text-align: left; }
         .featured { justify-content: flex-start; }
     }
-    .layoutPreview.layoutAlignCenter {
+    .layoutPreview.align1 {
         .layoutHeader { text-align: center; }
         .titleWrapper,
         .featured { justify-content: center; }
     }
-    .layoutPreview.layoutAlignRight {
+    .layoutPreview.align2 {
         .layoutHeader { text-align: right; }
-        .titleWrapper,
         .featured { justify-content: flex-end; }
+
+		.titleWrapper { flex-direction: row-reverse; }
     }
 
     .layoutPreview.layoutFormatPage {

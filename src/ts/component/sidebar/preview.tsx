@@ -40,7 +40,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 		const cn = [
 			'layoutPreview',
-			`layoutAlign${I.BlockHAlign[layoutAlign]}`,
+			`align${layoutAlign}`,
 			`defaultView${I.ViewType[viewType]}`,
 			U.Data.layoutClass('', recommendedLayout),
 			U.Common.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),

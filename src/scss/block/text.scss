@@ -110,6 +110,16 @@
 				}
 			}
 		}
+
+		&.align2 {
+			> .wrapContent {
+				> .selectionTarget {
+					> .dropTarget {
+						> .flex { flex-direction: row-reverse; }
+					}
+				}
+			}
+		}
 	}
 
 	/* Description */
