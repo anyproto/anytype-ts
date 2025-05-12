@@ -23,7 +23,7 @@
 		}
 		.clickable {
 			.iconObject, .icon { flex-shrink: 0; }
-			.icon { width: 18px; height: 18px; }
+			.icon { width: 20px; height: 20px; }
 			.name { @include text-overflow-nw; }
 			.count { color: var(--color-text-secondary); }
 		}
@@ -35,7 +35,7 @@
 		.iconWrap { width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 		.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
 		.iconWrap.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
-		.iconWrap.collapse { display: none; width: 18px; height: 18px; }
+		.iconWrap.collapse { display: none; width: 20px; height: 20px; }
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
