@@ -1587,7 +1587,7 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 		if (it.add) {
 			op.setAdd(Encode.value(it.add));
 		};
-		if (it.set) {
+		if (it.set || (it.set === null)) {
 			op.setSet(Encode.value(it.set));
 		};
 		if (it.remove) {
