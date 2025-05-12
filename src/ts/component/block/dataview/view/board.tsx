@@ -84,6 +84,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	componentDidUpdate () {
 		this.resize();
 		U.Common.triggerResizeEditor(this.props.isPopup);
+
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Record) || [];
+
+		if (ids.length) {
+			selection?.renderSelection();
+		};
 	};
 
 	componentWillUnmount () {

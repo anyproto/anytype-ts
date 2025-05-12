@@ -565,7 +565,6 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const renderSelection = () => {
-		const { config } = S.Common;
 		const container = getPageContainer();
 
 		if (frame.current) {

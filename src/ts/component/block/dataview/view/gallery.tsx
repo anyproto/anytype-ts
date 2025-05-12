@@ -169,6 +169,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	componentDidUpdate (): void {
 		this.reset();
+
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Record) || [];
+
+		if (ids.length) {
+			selection?.renderSelection();
+		};
 	};
 
 	componentWillUnmount () {

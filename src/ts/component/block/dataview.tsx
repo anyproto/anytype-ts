@@ -705,7 +705,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				U.Object.openConfig(object);
 			} else {
 				if (U.Object.isNoteLayout(object.layout)) {
-					this.onCellClick(e, 'name', object.id);
+					this.onCellClick(e, 'name', object.id, object);
 				} else {
 					window.setTimeout(() => {
 						const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
@@ -926,7 +926,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (keyboard.withCommand(e)) {
 				if (!ids.length) {
-					U.Object.openEvent(e, record);
+					U.Object.openPopup(record);
 				};
 			} else {
 				U.Object.openConfig(record);
