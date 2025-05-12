@@ -839,7 +839,7 @@
 
                     .offerLabel { 
 						border: 1px solid rgba(0,0,0,0); background: var(--color-bg-primary); border-radius: 10px; @include text-small; font-weight: 500; 
-						height: 20px; padding: 0px 8px; 
+						height: 20px; padding: 0px 8px; @include text-overflow-nw;
 					}
                 }
 
