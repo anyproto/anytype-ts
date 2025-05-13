@@ -305,6 +305,9 @@ class Mark {
 
 			const fixedParam = param.replace(/([^\\])\$/gi, '$1\\$'); // Escape $ symbol for inline LaTeX
 			const attr = this.paramToAttr(mark.type, fixedParam);
+			const span = '<span></span>';
+			const smile = '<smile></smile>';
+			const space = '<img src="./img/space.svg" class="space" />';
 			const data = [];
 
 			if (param) {
@@ -315,16 +318,16 @@ class Mark {
 				data.push(`data-range="${mark.range.from}-${mark.range.to}"`);
 			};
 
-			let prefix = '';
-			let suffix = '';
+			let prefix = span;
+			let suffix = span;
 
 			if (mark.type == I.MarkType.Mention) {
-				prefix = '<smile></smile><img src="./img/space.svg" class="space" /><name>';
-				suffix = '</name>';
+				prefix = `${smile}${space}<name>`;
+				suffix = `</name>${span}`;
 			};
 
 			if (mark.type == I.MarkType.Emoji) {
-				prefix = '<smile></smile>';
+				prefix = `${span}${smile}`;
 			};
 
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
