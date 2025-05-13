@@ -318,8 +318,8 @@ class Mark {
 				data.push(`data-range="${mark.range.from}-${mark.range.to}"`);
 			};
 
-			let prefix = span;
-			let suffix = span;
+			let prefix = '';
+			let suffix = '';
 
 			if (mark.type == I.MarkType.Mention) {
 				prefix = `${smile}${space}<name>`;
@@ -328,6 +328,7 @@ class Mark {
 
 			if (mark.type == I.MarkType.Emoji) {
 				prefix = `${span}${smile}`;
+				suffix = `${span}`;
 			};
 
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
