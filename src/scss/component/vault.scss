@@ -7,6 +7,8 @@
 .vault.isClosed, .vault.isHidden { width: 0px; }
 .vault.anim { transition-property: width; transition-timing-function: linear; }
 .vault {
+	* { user-select: none; }
+
 	.head { 
 		height: 50px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
 		position: relative; z-index: 1; background: inherit;
