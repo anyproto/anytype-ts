@@ -765,7 +765,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onReadStop();
 	};
 
-	scrollToMessage (id: string, animate?: boolean) {
+	scrollToMessage (id: string, animate?: boolean, highlight?: boolean) {
 		if (!id) {
 			return;
 		};
@@ -784,9 +784,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.setAutoLoadDisabled(true);
 
 		const cb = () => {
-			this.highlightMessage(id);
 			this.readScrolledMessages();
 			this.setAutoLoadDisabled(false);
+
+			if (highlight) {
+				this.highlightMessage(id);
+			};
 		};
 
 		if (animate) {
@@ -848,7 +851,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const message = S.Chat.getMessage(subId, item.replyToMessageId);
 
 		if (message) {
-			this.scrollToMessage(message.id, true);
+			this.scrollToMessage(message.id, true, true);
 			return;
 		};
 
@@ -863,7 +866,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 
 			S.Chat.clear(subId);
-			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id, true));
+			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id, true, true));
 		});
 	};
 

@@ -16,7 +16,7 @@ interface Props extends I.BlockComponent {
 	subId: string;
 	onScrollToBottomClick: () => void;
 	scrollToBottom: () => void;
-	scrollToMessage: (id: string, animate?: boolean) => void;
+	scrollToMessage: (id: string, animate?: boolean, highlight?: boolean) => void;
 	loadMessagesByOrderId: (orderId: string, callBack?: () => void) => void;
 	getMessages: () => I.ChatMessage[];
 	getMessagesInViewport: () => any[];
@@ -717,7 +717,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					update.content.marks = marks;
 
 					C.ChatEditMessageContent(rootId, this.editingId, update, () => {
-						scrollToMessage(this.editingId, true);
+						scrollToMessage(this.editingId, true, true);
 						clear();
 					});
 				};
@@ -898,7 +898,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				const target = messages.find(it => it.orderId == mentionOrderId);
 
 				if (target) {
-					scrollToMessage(target.id, true);
+					scrollToMessage(target.id, true, true);
 				} else {
 					loadMessagesByOrderId(mentionOrderId, () => {
 						highlightMessage('', mentionOrderId);
