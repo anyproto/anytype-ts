@@ -375,10 +375,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		if (component == 'dataviewFilterList') {
 			const conditions = Relation.filterConditionsByType(item.format);
 			const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+			const quickOptions = Relation.filterQuickOptions(item.format, condition);
+			const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
 
 			newItem = Object.assign(newItem, {
 				condition: condition as I.FilterCondition,
 				value: Relation.formatValue(item, null, false),
+				quickOption,
 			});
 
 			onFilterAdd(newItem, callBack);

@@ -210,10 +210,13 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const first = relationOptions[0];
 		const conditions = Relation.filterConditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+		const quickOptions = Relation.filterQuickOptions(first.format, condition);
+		const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
 		const newItem = { 
 			relationKey: first.id, 
 			condition: condition as I.FilterCondition,
 			value: Relation.formatValue(first, null, false),
+			quickOption,
 		};
 
 		onFilterAdd(newItem, () => {
