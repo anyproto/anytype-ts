@@ -537,7 +537,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 					value = parsed.value;
 					this.marks = parsed.marks;
+
 					U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
+						focus.set(block.id, parsed.range);
+						focus.apply();
+
 						onKeyDown(e, value, this.marks, range, this.props);
 					});
 					ret = true;
@@ -545,8 +549,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			} else 
 			if (!menuOpenAdd && !menuOpenMention && !range.to) {
 				if (block.canHaveMarks()) {
-					const { marks } = this.getMarksFromHtml();
-					this.marks = marks;
+					const parsed = this.getMarksFromHtml();
+
+					this.marks = parsed.marks;
 				};
 
 				U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {

@@ -360,23 +360,21 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.onSend();
 		});
 
-		if (range && range.to) {
-			keyboard.shortcut('backspace', e, () => {
-				const parsed = checkMarkOnBackspace(value, range, this.marks);
+		keyboard.shortcut('backspace', e, () => {
+			const parsed = checkMarkOnBackspace(value, range, this.marks);
 
-				if (!parsed.save) {
-					return;
-				};
+			if (!parsed.save) {
+				return;
+			};
 
-				e.preventDefault();
+			e.preventDefault();
 
-				value = parsed.value;
-				this.marks = parsed.marks;
+			value = parsed.value;
+			this.marks = parsed.marks;
 
-				const l = value.length;
-				this.updateMarkup(value, { from: l, to: l });
-			});
-		};
+			const l = value.length;
+			this.updateMarkup(value, { from: l, to: l });
+		});
 
 		keyboard.shortcut('chatObject', e, () => {
 			if (!S.Menu.isOpen('searchObject')) {

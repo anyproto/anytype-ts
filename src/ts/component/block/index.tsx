@@ -1120,9 +1120,9 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 	};
 
-	checkMarkOnBackspace (value: string, range: I.TextRange, oM: I.Mark[]) {
+	checkMarkOnBackspace (value: string, range: I.TextRange, oM: I.Mark[]): { value: string, marks: I.Mark[], range: I.TextRange, save: boolean } | null {
 		if (!range || !range.to) {
-			return;
+			return { value, marks: oM, range: null, save: false };
 		};
 
 		const types = [ I.MarkType.Mention, I.MarkType.Emoji ];
@@ -1131,6 +1131,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let rM = [];
 		let save = false;
 		let mark = null;
+		let r = null;
 
 		for (const m of marks) {
 			if ((m.range.from < range.from) && (m.range.to == range.to)) {
@@ -1146,10 +1147,11 @@ const Block = observer(class Block extends React.Component<Props> {
 			});
 
 			rM = Mark.adjust(rM, mark.range.from, mark.range.from - mark.range.to);
+			r = { from: mark.range.from, to: mark.range.from };
 			save = true;
 		};
 
-		return { value, marks: rM, save };
+		return { value, marks: rM, range: r, save };
 	};
 
 	onMentionSelect (getValue: () => string, marks: I.Mark[], id: string, icon: string) {
