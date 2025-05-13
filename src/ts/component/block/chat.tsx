@@ -963,7 +963,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		this.messageRefs[target.id].highlight();
+		this.messageRefs[target.id]?.highlight();
 	};
 
 });
