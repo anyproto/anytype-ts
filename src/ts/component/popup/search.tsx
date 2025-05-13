@@ -64,7 +64,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			let value: any = '';
 
 			if (relationKey) {
-				if ([ 'name', 'pluralName', 'type' ].includes(relationKey)) {
+				if ([ 'name', 'pluralName', 'type', 'snippet' ].includes(relationKey)) {
 					return '';
 				} else {
 					const relation = S.Record.getRelationByKey(relationKey);
