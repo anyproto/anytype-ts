@@ -5,7 +5,7 @@ const KEYS = [
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor', 'emptyType', 'status', 'sort', 'widgetType',
+	'processor', 'emptyType', 'status', 'sort', 'widgetType', 'origin', 'apiAppName',
 ];
 const URL = 'amplitude.anytype.io';
 
