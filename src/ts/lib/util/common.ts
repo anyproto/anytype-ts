@@ -721,7 +721,7 @@ class UtilCommon {
 	findClosestElement (array: number[], goal: number) {
 		return array.reduce((prev: number, curr: number) => {
 			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
-		});
+		}, 0);
 	};
 
 	
