@@ -230,7 +230,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			this.setState({ isLoading: true });
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			filters,
 			sorts,
 			fullText: filter,

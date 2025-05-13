@@ -21,15 +21,8 @@ interface Props extends I.BlockComponent {
 	isInline?: boolean;
 };
 
-interface State {
-	loading: boolean;
-};
+const BlockDataview = observer(class BlockDataview extends React.Component<Props> {
 
-const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
-
-	state = {
-		loading: false,
-	};
 	node = null;
 	refView = null;
 	refControls = null;
@@ -95,7 +88,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	render () {
 		const { rootId, block, isPopup, isInline, readonly } = this.props;
-		const { loading } = this.state;
 		const views = S.Record.getViews(rootId, block.id);
 
 		if (!views.length) {
@@ -186,9 +178,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			canCellEdit: this.canCellEdit,
 		};
 
-		if (loading) {
-			body = null;
-		} else
 		if (isInline && !targetId) {
 			body = this.getEmpty('target');
 		} else
@@ -390,10 +379,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if (clear) {
-			S.Record.recordsSet(subId, '', []);
-		};
-
 		S.Record.metaSet(subId, '', { offset, viewId });
 
 		if (view.type == I.ViewType.Board) {
@@ -410,10 +395,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.viewId = '';
 			};
 		} else {
-			if (clear) {
-				this.setState({ loading: true });
-			};
-
 			const filters = [];
 
 			if (this.searchIds) {
@@ -432,15 +413,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				sources,
 				filters,
 				collectionId: (isCollection ? this.getObjectId() : ''),
-			}, (message: any) => {
-				if (clear) {
-					this.setState({ loading: false });
-				};
-
-				if (callBack) {
-					callBack(message);
-				};
-			});
+			}, callBack);
 		};
 	};
 
@@ -683,7 +656,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.creating = true;
 
-		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, true, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -732,7 +705,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				U.Object.openConfig(object);
 			} else {
 				if (U.Object.isNoteLayout(object.layout)) {
-					this.onCellClick(e, 'name', object.id);
+					this.onCellClick(e, 'name', object.id, object);
 				} else {
 					window.setTimeout(() => {
 						const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
@@ -895,7 +868,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, true, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -953,7 +926,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (keyboard.withCommand(e)) {
 				if (!ids.length) {
-					U.Object.openEvent(e, record);
+					U.Object.openPopup(record);
 				};
 			} else {
 				U.Object.openConfig(record);
@@ -1044,7 +1017,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => onSelect(message.details, true));
+				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
 			};
 		} else {
 			filters = filters.concat([
@@ -1440,7 +1413,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.filter = v;
 
 			if (v) {
-				U.Data.search({
+				U.Subscription.search({
 					filters: [],
 					sorts: [],
 					fullText: v,

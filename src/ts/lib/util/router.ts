@@ -203,19 +203,15 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
-				delay: 300,
-				onFadeOut: () => {
-					S.Record.metaClear(J.Constant.subId.participant, '');
-					S.Record.recordsClear(J.Constant.subId.participant, '');
-
+				delay: 100,
+				onRouteChange: () => {
 					analytics.removeContext();
-					S.Block.clear(S.Block.widgets);
 					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
 
 					U.Data.onInfo(message.info);
-					U.Data.onAuth({ route, routeParam });
-				}
+					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } });
+				},
 			});
 		});
 	};

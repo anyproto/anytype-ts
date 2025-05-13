@@ -145,7 +145,7 @@
 
 .iconObject.withImage { background-color: unset !important; }
 
-.iconObject.isHuman, .iconObject.isParticipant { border-radius: 100% !important; background-color: unset; }
+.iconObject.isHuman, .iconObject.isParticipant { border-radius: 100% !important; background-color: var(--color-shape-tertiary); }
 
 .iconObject.withImageError {
 	img:not(.iconError) { display: none; }

@@ -20,6 +20,8 @@ interface Props extends I.WidgetComponent {
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
+	const { config, space } = S.Common;
+	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview } = props;
 	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
@@ -64,12 +66,22 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
+	const isChat = targetId == J.Constant.widgetId.chat;
 
-	let favCnt = 0;
+	let cnt = 0;
+	let showCnt = false;
 	let layout = block.content.layout;
 
 	if (isFavorite) {
-		favCnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
+		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
+		showCnt = cnt > limit;
+	};
+
+	if (isChat) {
+		const counters = S.Chat.getChatCounters(space, spaceview.chatId);
+
+		cnt = counters.mentionCounter || counters.messageCounter;
+		showCnt = !!cnt;
 	};
 
 	if (object) {
@@ -179,11 +191,16 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
+		if (typeKey == J.Constant.typeKey.type) {
+			U.Object.createType({}, false);
+			return;
+		};
+
 		if ((layout != I.WidgetLayout.Tree) && ![ J.Constant.typeKey.type ].includes(typeKey)) {
 			flags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
-		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, true, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -375,7 +392,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: subId.current,
 			filters,
 			sorts,
@@ -609,6 +626,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			if (targetId == J.Constant.widgetId.allObject) {
 				sidebar.leftPanelSetState({ page: 'object' });
 			} else 
+			if (targetId == J.Constant.widgetId.chat) {
+				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+			} else
 			if (isSystemTarget) {
 				onSetPreview();
 			} else {
@@ -622,7 +642,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
-			icon = <IconObject object={object} size={18} iconSize={18} className="headerIcon" />;
+			icon = <IconObject object={object} size={20} iconSize={20} className="headerIcon" />;
 		};
 
 		head = (
@@ -634,7 +654,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							{collapse}
 							{icon}
 							<ObjectName object={object} withPlural={true} />
-							{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
+							{showCnt ? <span className="count">{cnt}</span> : ''}
 						</div>
 					</div>
 					<div className="side right">{buttons}</div>

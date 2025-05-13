@@ -382,28 +382,29 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					menuParam.vertical = I.MenuDirection.Center;
 				};
 
+				ids = selection?.getForClick(blockId, true, false);
+				if (!ids.length) {
+					break;
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
 						if (item.type == I.BlockType.Text) {
-							C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
-								this.setFocus(blockIds[0]);
+							C.BlockListTurnInto(rootId, ids, item.itemId, () => {
+								this.setFocus(ids[0]);
 
 								if (item.itemId == I.TextStyle.Toggle) {
-									blockIds.forEach(id => S.Block.toggle(rootId, id, true));
+									ids.forEach(id => S.Block.toggle(rootId, id, true));
 								};
 							});
 						};
 
 						if (item.type == I.BlockType.Div) {
-							C.BlockDivListSetStyle(rootId, blockIds, item.itemId, (message: any) => {
-								this.setFocus(blockIds[0]);
-							});
+							C.BlockDivListSetStyle(rootId, ids, item.itemId, () => this.setFocus(ids[0]));
 						};
 
 						if (item.type == I.BlockType.File) {
-							C.BlockFileListSetStyle(rootId, blockIds, item.itemId, (message: any) => {
-								this.setFocus(blockIds[0]);
-							});
+							C.BlockFileListSetStyle(rootId, ids, item.itemId, () => this.setFocus(ids[0]));
 						};
 						
 						close();
@@ -415,6 +416,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			case 'turnObject': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
@@ -543,7 +545,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
-						C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, true, () => onCreate());
+						C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, () => onCreate());
 					};
 
 					filters = filters.concat([

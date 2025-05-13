@@ -5,6 +5,10 @@ class UtilSpace {
 	openDashboard (param?: any) {
 		param = param || {};
 
+		if (undefined === param.replace) {
+			param.replace = true;
+		};
+
 		const space = this.getSpaceview();
 
 		if (!space || space._empty_ || space.isAccountDeleted || !space.isLocalOk) {
@@ -109,7 +113,7 @@ class UtilSpace {
 	};
 
 	getList () {
-		return S.Record.getRecords(J.Constant.subId.space, U.Data.spaceRelationKeys()).filter(it => it.isAccountActive);
+		return S.Record.getRecords(J.Constant.subId.space, U.Subscription.spaceRelationKeys()).filter(it => it.isAccountActive);
 	};
 
 	getSpaceview (id?: string) {

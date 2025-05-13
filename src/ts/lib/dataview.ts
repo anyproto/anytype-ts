@@ -110,7 +110,7 @@ class Dataview {
 			sorts: [],
 		}, param);
 
-		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
+		const { rootId, blockId, newViewId, keys, offset, limit, collectionId } = param;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const view = S.Record.getView(rootId, blockId, newViewId);
 		
@@ -130,9 +130,6 @@ class Dataview {
 		if (viewChange) {
 			meta.viewId = newViewId;
 		};
-		if (viewChange || clear) {
-			S.Record.recordsSet(subId, '', []);
-		};
 
 		S.Record.metaSet(subId, '', meta);
 
@@ -145,7 +142,7 @@ class Dataview {
 			};
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			...param,
 			subId,
 			filters: filters.map(it => this.filterMapper(view, it)),
@@ -169,7 +166,6 @@ class Dataview {
 				it.includeTime = true;
 			};
 		};
-
 		return it;
 	};
 
@@ -458,6 +454,8 @@ class Dataview {
 		const view = this.getView(rootId, blockId, viewId);
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+		const type = S.Record.getTypeById(object.type);
 		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
 
 		let typeId = '';
@@ -484,9 +482,12 @@ class Dataview {
 			};
 		};
 
-		const type = S.Record.getTypeById(typeId);
+		if (!typeId && type && type.defaultTypeId) {
+			typeId = type.defaultTypeId;
+		};
 
-		if (!type) {
+		const check = S.Record.getTypeById(typeId);
+		if (!check) {
 			typeId = S.Common.type;
 		};
 

@@ -40,7 +40,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 						<div className="value">{item.value}</div>
 					</div>
 					<div className="buttons">
-						{canDelete ? <Icon className="delete withBackground" onClick={e => this.onRemove(e, item)} /> : ''}
+						{canDelete ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
 					</div>
 				</form>
 			);
@@ -120,6 +120,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			case 'type': {
 				menuId = 'typeSuggest';
 				menuParam.data = {
+					canAdd: true,
 					onClick: (item: any) => {
 						this.save([ item.id ]);
 
@@ -216,7 +217,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 						...it,
 						itemId: 'type',
 						name: translate('commonObjectType'),
-						value: it.name,
+						value: U.Object.name(it),
 					});
 				} else {
 					items.push({ ...it, itemId: it.id, value: translate('commonAll') });

@@ -1,12 +1,12 @@
 import React, { forwardRef, useEffect } from 'react';
-import { I, C, U, analytics } from 'Lib';
+import { I, C, U, S, Action, analytics } from 'Lib';
 
 const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { match } = props;
 
 	useEffect(() => {
-		const { id, spaceId, cid, key } = match.params || {};
+		const { id, spaceId, cid, key, messageOrder } = match.params || {};
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
 		const route = match.params.route || analytics.route.app;
 
@@ -17,25 +17,27 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		C.ObjectShow(id, '', spaceId, (message: any) => {
-			if (message.error.code) {
+		U.Object.getById(id, { spaceId }, object => {
+			if (!object) {
 				U.Space.openDashboard();
 				return;
 			};
 
-			const details = message.objectView?.details || [];
-			const item = details.find(it => it.id == id);
+			U.Object.openRoute({ 
+				...object, 
+				_routeParam_: {
+					additional: [
+						{ key: 'messageOrder', value: decodeURIComponent(messageOrder) },
+					]
+				} 
+			});
 
-			if (!item) {
-				console.error('Object not found');
-				return;
-			};
-
-			const object = item.details;
-
-			U.Object.openRoute(object);
 			analytics.event('OpenObjectByLink', { route, objectType: object.type, type: 'Object' });
 		});
+
+		return () => {
+			Action.pageClose(id, false);
+		};
 
 	}, []);
 

@@ -113,7 +113,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								/>
 							</div>
 							<div className="buttons">
-								<Icon className="delete withBackground" onClick={e => this.onDelete(e, element)} />
+								<Icon className="delete" onClick={e => this.onDelete(e, element)} />
 							</div>
 						</div>
 					);
@@ -390,11 +390,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
-		
 		const filterQuickOptions = Relation.filterQuickOptions(relation.format, item.condition);
-		const filterOption: any = filterQuickOptions.find(it => it.id == item.quickOption) || {};
-
+		
+		let filterOption: any = filterQuickOptions.find(it => it.id == item.quickOption);
 		let conditionOptions = [];
+
+		if (!filterOption) {
+			filterOption = filterQuickOptions.length ? filterQuickOptions[0] : {};
+		};
+
 		if (Relation.isDictionary(item.relationKey)) {
 			conditionOptions = Relation.filterConditionsDictionary();
 		} else {

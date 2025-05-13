@@ -88,6 +88,9 @@ body.isFullScreen {
 }
 
 .header.authIndex { height: 52px; width: 100% !important; }
+.header.authIndex {
+	.logo { width: 70px; height: 18px; background: url('~img/logo/white.svg'); }
+}
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.header.authIndex {

@@ -126,7 +126,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 					ref={ref => this.ref = ref}
 					{...this.props}
 					getId={this.getId}
-					onPage={id => U.Object.openAuto({ id, layout: I.ObjectLayout.Settings })}
+					onPage={id => U.Object.openRoute({ id, layout: I.ObjectLayout.Settings })}
 					onExport={this.onExport}
 					onConfirmPin={this.onConfirmPin}
 					setConfirmPin={this.setConfirmPin}

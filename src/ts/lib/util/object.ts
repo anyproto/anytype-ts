@@ -288,6 +288,9 @@ class UtilObject {
 	};
 
 	getById (id: string, param: Partial<I.SearchSubscribeParam>, callBack: (object: any) => void) {
+		param = param || {};
+		param.limit = 1;
+
 		this.getByIds([ id ], param, objects => {
 			if (callBack) {
 				callBack(objects[0]);
@@ -308,7 +311,7 @@ class UtilObject {
 			param.ignoreArchived = false;
 		};
 
-		U.Data.search(param, (message: any) => {
+		U.Subscription.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
 			};
@@ -513,9 +516,13 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
-	isAllowedChat () {
-		const { config, space } = S.Common;
-		return config.experimental || J.Constant.chatSpaceId.includes(space);
+	isAllowedChat (): boolean {
+		const electron = U.Common.getElectron();
+		const spaceview = U.Space.getSpaceview();
+		const version = String(electron.version?.app || '');
+		const [ major, minor, patch ] = version.split('.');
+
+		return spaceview.isShared && (!electron.isPackaged || patch.match(/alpha|beta/)) ? true : false;
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {
@@ -687,7 +694,9 @@ class UtilObject {
 		});
 	};
 
-	copyLink (object: any, space: any, type: string, route: string) {
+	copyLink (object: any, space: any, type: string, route: string, add?: string) {
+		add = add || '';
+
 		const cb = (link: string) => {
 			U.Common.copyToast(translate('commonLink'), link);
 			analytics.event('CopyLink', { route });
@@ -705,6 +714,10 @@ class UtilObject {
 				link = `https://object.any.coop/${object.id}?spaceId=${space.targetSpaceId}`;
 				break;
 			};
+		};
+
+		if (add) {
+			link += add;
 		};
 		
 		if (space.isShared) {

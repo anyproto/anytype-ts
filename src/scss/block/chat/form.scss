@@ -1,5 +1,5 @@
 .formWrapper.isFixed { 
-	padding: 0px 0px 16px 0px; position: fixed; z-index: 11; bottom: 0px; background: var(--color-bg-primary);
+	padding: 0px 16px 16px 16px; position: fixed; z-index: 11; bottom: 0px; background: var(--color-bg-primary);
 }
 
 .formWrapper {
@@ -53,12 +53,9 @@
 	.head {
 		.side.left { flex-grow: 1; display: flex; align-items: center; gap: 0px 8px; overflow: hidden; }
 		.side.left {
-			.icon,
-			.iconObject { flex-shrink: 0; width: 32px; height: 32px; }
-
-			.iconObject.withImage { border-radius: 4px !important; }
-			.iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
-
+			> .icon, > .iconObject { flex-shrink: 0; }
+			> .iconObject:not(.noBg) { background-color: var(--color-shape-highlight-medium) !important; }
+			
 			.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
 			.textWrapper { width: 100%; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
 		}
@@ -70,7 +67,11 @@
 		.icon.clear { width: 20px; height: 20px; border-radius: 50%; background: var(--color-control-active) url('~img/icon/chat/buttons/clear.svg'); }
 	}
 
-	.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: transparent; }
+	&.customScrollbar {
+		::-webkit-scrollbar { height: 0px; }
+	}
+
+	.editableWrap { @include text-common; max-height: 352px; overflow-x: hidden; overflow-y: scroll; background-color: transparent; }
 	.editableWrap {
 		.editable, .placeholder { padding: 16px; }
 	}

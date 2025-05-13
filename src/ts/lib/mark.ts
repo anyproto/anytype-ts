@@ -305,6 +305,8 @@ class Mark {
 
 			const fixedParam = param.replace(/([^\\])\$/gi, '$1\\$'); // Escape $ symbol for inline LaTeX
 			const attr = this.paramToAttr(mark.type, fixedParam);
+			const smile = '<smile></smile>';
+			const space = '<img src="./img/space.svg" class="space" />';
 			const data = [];
 
 			if (param) {
@@ -319,12 +321,12 @@ class Mark {
 			let suffix = '';
 
 			if (mark.type == I.MarkType.Mention) {
-				prefix = '<smile></smile><img src="./img/space.svg" class="space" /><name>';
-				suffix = '</name>';
+				prefix = `${smile}${space}<name>`;
+				suffix = `</name>`;
 			};
 
 			if (mark.type == I.MarkType.Emoji) {
-				prefix = '<smile></smile>';
+				prefix = `${smile}`;
 			};
 
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
@@ -363,7 +365,7 @@ class Mark {
 
 		// Remove inner tags from mentions and emoji
 		const obj = $(`<div>${html}</div>`);
-		
+
 		obj.find(this.getTag(I.MarkType.Mention)).removeAttr('class').each((i: number, item: any) => {
 			item = $(item);
 			item.html(item.find('name').html());

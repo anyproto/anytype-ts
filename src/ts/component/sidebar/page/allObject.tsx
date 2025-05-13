@@ -55,6 +55,11 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_SECTION,
+		});
 	};
 
 	render () {
@@ -246,6 +251,8 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			keyMapper: i => (items[i] || {}).id,
 		});
 
+		this.refList?.recomputeRowHeights(0);
+
 		this.setActive(items[this.n]);
 	};
 
@@ -374,10 +381,9 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 		if (clear) {
 			this.setState({ isLoading: true });
-			S.Record.recordsSet(J.Constant.subId.allObject, '', []);
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: J.Constant.subId.allObject,
 			filters,
 			sorts,
@@ -388,6 +394,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			ignoreDeleted: true,
 		}, (message: any) => {
 			this.setState({ isLoading: false });
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -403,7 +410,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	loadSearchIds (clear: boolean) {
 		if (this.filter) {
-			U.Data.search({
+			U.Subscription.search({
 				filters: [],
 				sorts: [],
 				fullText: this.filter,
@@ -599,6 +606,12 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		let layout = null;
 
 		switch (t) {
+			case I.ObjectContainerType.Object: {
+				type = S.Record.getPageType();
+				layout = I.ObjectLayout.Page;
+				break;
+			};
+
 			case I.ObjectContainerType.Bookmark: {
 				type = S.Record.getBookmarkType();
 				layout = I.ObjectLayout.Bookmark;

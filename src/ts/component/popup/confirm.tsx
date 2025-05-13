@@ -1,13 +1,21 @@
 import * as React from 'react';
-import { Title, Icon, Label, Button, Checkbox, Error } from 'Component';
+import { Title, Icon, Label, Button, Checkbox, Error, Input } from 'Component';
 import { I, keyboard, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup> {
+interface State {
+	error: string;
+};
+
+const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup, State> {
 
 	refButtons: any = null;
 	refCheckbox: any = null;
+	refInput: any = null;
 	n = 0;
+	state = {
+		error: '',
+	};
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -22,7 +30,9 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 	render() {
 		const { param } = this.props;
 		const { data } = param;
-		const { title, text, icon, storageKey, error } = data;
+		const { title, text, icon, storageKey, confirmMessage } = data;
+		const cn = [ 'wrap' ];
+		const error = String(data.error || this.state.error || '');
 		
 		const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
 		const canCancel = undefined === data.canCancel ? true : data.canCancel;
@@ -31,6 +41,14 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		const colorConfirm = data.colorConfirm || 'black';
 		const colorCancel = data.colorCancel || 'blank';
 		const bgColor = data.bgColor || '';
+
+		if (storageKey) {
+			cn.push('withCheckbox');
+		};
+
+		if (confirmMessage) {
+			cn.push('withInput');
+		};
 		
 		return (
 			<div className={[ 'wrap', (storageKey ? 'withCheckbox' : '') ].join(' ')}>
@@ -40,12 +58,18 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 					</div>
 				) : ''}
 				<Title text={title} />
-				<Label text={text} />
+				<Label className="descr" text={text} />
 
 				{storageKey ? (
 					<div className="checkboxWrapper" onClick={this.onCheck}>
 						<Checkbox ref={ref => this.refCheckbox = ref} value={false} />
 						<Label text={translate('commonDoNotShowAgain')} />
+					</div>
+				) : ''}
+
+				{confirmMessage ? (
+					<div className="confirmMessage">
+						<Input type="text" ref={ref => this.refInput = ref} placeholder={confirmMessage} />
 					</div>
 				) : ''}
 
@@ -119,7 +143,16 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 	onConfirm (e: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { onConfirm, noCloseOnConfirm } = data;
+		const { onConfirm, noCloseOnConfirm, confirmMessage } = data;
+
+		if (confirmMessage) {
+			const value = this.refInput.getValue();
+
+			if (value != confirmMessage) {
+				this.setState({ error: translate('popupConfirmConfirmationTextError') });
+				return;
+			};
+		};
 		
 		e.preventDefault();
 		if (!noCloseOnConfirm) {

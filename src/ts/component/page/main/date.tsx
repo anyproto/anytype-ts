@@ -163,7 +163,7 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 			return;
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			filters: getFilters(start, end),
 			keys: [ relationKey ],
 		}, (message: any) => {

@@ -18,6 +18,7 @@ interface Props {
 };
 
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
+const TRACE_ID = 'preview';
 
 const PreviewObject = observer(forwardRef<{}, Props>(({
 	rootId = '',
@@ -305,12 +306,12 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		idRef.current = rootId;
 		setIsLoading(true);
 
-		C.ObjectShow(rootId, 'preview', U.Router.getRouteSpaceId(), () => {
-			setIsLoading(false);
-
+		C.ObjectShow(rootId, TRACE_ID, U.Router.getRouteSpaceId(), () => {
 			if (setObject) {
 				setObject(S.Detail.get(contextId, rootId, []));
 			};
+
+			setIsLoading(false);
 		});
 	};
 
@@ -326,7 +327,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	};
 
 	const getRootId = () => {
-		return [ rootId, 'preview' ].join('-');
+		return [ rootId, TRACE_ID ].join('-');
 	};
 
 	const update = () => {

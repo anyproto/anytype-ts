@@ -25,6 +25,17 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 		cidRef.current = cid;
 		keyRef.current = key;
 
+		const request = (invite) => {
+			S.Popup.open('inviteRequest', { 
+				data: { 
+					invite, 
+					cid, 
+					key, 
+					route,
+				},
+			});
+		};
+
 		if (!cid || !key) {
 			setError(translate('pageMainInviteErrorData'));
 		} else {
@@ -78,24 +89,10 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 								},
 							});
 						} else {
-							S.Popup.open('inviteRequest', { 
-								data: { 
-									invite: message, 
-									cid, 
-									key, 
-									route,
-								},
-							});
+							request(message);
 						};
 					} else {
-						S.Popup.open('inviteRequest', { 
-							data: { 
-								invite: message, 
-								cid, 
-								key, 
-								route,
-							},
-						});
+						request(message);
 					};
 				});
 			});

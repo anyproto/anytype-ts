@@ -66,7 +66,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 
 		S.Record.metaSet(subId, '', { offset });
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			spaceId,
 			subId,
 			sorts: [ { relationKey: sortId, type: sortType } ],
@@ -226,8 +226,8 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		setSortId(columnList[0].relationKey);
 
 		return () => {
-			C.ObjectSearchUnsubscribe([ subId ]);
-		}
+			U.Subscription.destroyList([ subId ]);
+		};
 	}, []);
 
 	useEffect(() => getData(1), [ sortId, sortType ]);

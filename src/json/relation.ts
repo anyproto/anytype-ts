@@ -158,6 +158,7 @@ export default {
 		'targetSpaceId',
 		'creator',
 		'createdDate',
+		'lastMessageDate',
 		'chatId',
 	],
 

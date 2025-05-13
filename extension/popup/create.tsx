@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
-import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
+import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon, IconObject } from 'Component';
 import { I, C, S, U, J, Relation, keyboard, Storage } from 'Lib';
 import Util from '../lib/util';
 
@@ -11,6 +11,7 @@ interface State {
 	error: string;
 	isLoading: boolean;
 	withContent: boolean;
+	collection: any;
 };
 
 const MAX_LENGTH = 320;
@@ -24,8 +25,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	node: any = null;
 	refName: any = null;
+	refDescription: any = null;
 	refSpace: any = null;
 	refType: any = null;
+	refCollection: any = null;
 	refComment: any = null;
 	isCreating = false;
 	url = '';
@@ -34,6 +37,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		error: '',
 		isLoading: false,
 		withContent: true,
+		collection: null,
 	};
 
 	constructor (props: I.PageComponent) {
@@ -49,6 +53,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.onFocus = this.onFocus.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
+		this.onCollection = this.onCollection.bind(this);
 		this.focus = this.focus.bind(this);
 	};
 
@@ -56,6 +61,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const { error, isLoading, withContent } = this.state;
 		const { space } = S.Common;
 		const tags = this.getTagsValue();
+		const collection = this.state.collection as any;
 
 		return (
 			<div 
@@ -69,6 +75,11 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 						<div className="row">
 							<Label text="Title" />
 							<Input ref={ref => this.refName = ref} />
+						</div>
+
+						<div className="row">
+							<Label text="Description" />
+							<Input ref={ref => this.refDescription = ref} />
 						</div>
 
 						<div className="row">
@@ -105,6 +116,17 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 						<div className="row withContent" onClick={this.onCheckbox}>
 							<Icon className={[ 'checkbox', (withContent ? 'active' : '') ].join(' ')} />
 							<Label text="Add page content" />
+						</div>
+
+						<div className="row">
+							<Label text="Link to Collection" />
+							<div id="select-collection" className="select" onMouseDown={this.onCollection}>
+								<div className="item">
+									{collection ? <IconObject object={collection} iconSize={16} /> : ''}
+									<div className="name">{collection ? collection.name : 'Select Object'}</div>
+								</div>
+								<Icon className="arrow light" />
+							</div>
 						</div>
 
 						<div className="row">
@@ -165,16 +187,18 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount (): void {
-		U.Data.createAllSubscriptions(() => {
+		U.Subscription.createAll(() => {
 			this.initSpace();
 			this.initName();
 			this.initType();
+			this.initCollection();
 			this.setState({ withContent: Boolean(Storage.get('withContent')) });
 		});
 	};
 
 	componentDidUpdate(): void {
 		this.initType();
+		this.initCollection();
 		this.placeholderCheck();
 	};
 
@@ -206,6 +230,17 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.details.type = this.details.type || J.Constant.typeKey.bookmark;
 		this.refType.setOptions(options);
 		this.refType.setValue(this.details.type);
+	};
+
+	initCollection () {
+		const { collection } = this.details;
+		if (!collection) {
+			return;
+		};
+
+		U.Object.getById(collection, {}, object => {
+			console.log('Collection', collection, object);
+		});
 	};
 
 	initName () {
@@ -253,9 +288,43 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.forceUpdate();
 	};
 
+	onCollection (): void {
+		const collectionType = S.Record.getCollectionType();
+
+		S.Menu.open('searchObject', {
+			className: 'single',
+			element: '#select-collection',
+			data: {
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+					{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+				],
+				onSelect: (el: any) => {
+					this.setState({ collection: el });
+				},
+				canAdd: true,
+				addParam: {
+					name: 'Create new Collection',
+					nameWithFilter: 'Create new Collection "%s"',
+					onClick: (details: any) => {
+						C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+							if (message.error.code) {
+								this.setState({ error: message.error.description });
+								return;
+							};
+
+							this.setState({ collection: message.details });
+						});
+					},
+				},
+			}
+		});
+	};
+
 	onSpaceChange (id: string): void {
 		S.Common.spaceSet(id);
-		U.Data.createAllSubscriptions(() => this.forceUpdate());
+		U.Subscription.createAll(() => this.forceUpdate());
 
 		Storage.set('lastSpaceId', id);
 	};
@@ -408,11 +477,16 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		};
 
 		const { withContent } = this.state;
+		const collection = this.state.collection as any;
 
 		this.isCreating = true;
 		this.setState({ isLoading: true, error: '' });
 
-		const details = Object.assign({ name: this.refName?.getValue(), origin: I.ObjectOrigin.Webclipper }, this.details);
+		const details = Object.assign({ 
+			name: this.refName?.getValue(), 
+			description: this.refDescription?.getValue(),
+			origin: I.ObjectOrigin.Webclipper,
+		}, this.details);
 		const type = S.Record.getTypeByKey(details.type);
 
 		delete(details.type);
@@ -426,6 +500,12 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			};
 
 			const object = message.details;
+
+			if (collection) {
+				C.ObjectCollectionAdd(collection.id, [ object.id ], () => {
+					this.setState({ collection: null });
+				});
+			};
 
 			S.Extension.createdObject = object;
 			U.Router.go('/success', {});

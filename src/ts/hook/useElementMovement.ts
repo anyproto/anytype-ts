@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import $ from 'jquery';
 
 interface Position {
 	x: number;
@@ -12,32 +13,20 @@ class ElementMovementObserver {
 	private movementObserver: MutationObserver;
 	private resizeObserver: ResizeObserver;
 	private element: HTMLElement;
-	private lastPosition: Position;
 	private onMove: (position: Position) => void;
 
 	constructor (element: HTMLElement, callback: (position: Position) => void) {
 		this.element = element;
 		this.onMove = callback;
-		this.lastPosition = this.getPosition();
 
-		this.movementObserver = new MutationObserver(() => {
-			this.checkForMovement();
-		});
-	
-		this.resizeObserver = new ResizeObserver(() => {
-			this.checkForMovement();
-		});
-
+		this.movementObserver = new MutationObserver(() => this.checkForMovement());
+		this.resizeObserver = new ResizeObserver(() => this.checkForMovement());
 		this.startObserving();
 	};
 
 	private checkForMovement = () => {
-		const currentPosition = this.getPosition();
 
-		if (this.hasPositionChanged(currentPosition)) {
-			this.lastPosition = currentPosition;
-			this.onMove(currentPosition);
-		};
+		this.onMove(this.getPosition());
 	};
 
 	private getPosition (): Position {
@@ -49,15 +38,6 @@ class ElementMovementObserver {
 			width: rect.width,
 			height: rect.height
 		};
-	};
-
-	private hasPositionChanged (current: Position): boolean {
-		return (
-			(current.x !== this.lastPosition.x) ||
-			(current.y !== this.lastPosition.y) ||
-			(current.width !== this.lastPosition.width) ||
-			(current.height !== this.lastPosition.height)
-		);
 	};
 
 	private startObserving (): void {
@@ -78,14 +58,14 @@ class ElementMovementObserver {
 		this.resizeObserver.observe(this.element);
 
 		// And handle scroll
-		window.addEventListener('scroll', this.checkForMovement);
+		$(window).off('scroll.elementMovement').on('scroll.elementMovement', this.checkForMovement);
 	};
 
 	public disconnect (): void {
 		this.movementObserver.disconnect();
 		this.resizeObserver.disconnect();
 
-		window.removeEventListener('scroll', this.checkForMovement);
+		$(window).off('scroll.elementMovement')
 	};
 };
 

@@ -836,10 +836,11 @@
                 .iconWrapper { display: flex; align-items: flex-start; flex-direction: row; margin: 0px 0px 10px 0px; justify-content: space-between; gap: 0px 8px; }
                 .iconWrapper {
                     .icon { width: 64px; height: 64px; background-size: contain; background-position: left center; }
-                    .current {
-                        border: 1px solid var(--color-control-accent); border-radius: 10px; @include text-small; font-weight: 500; height: 20px;
-                        padding: 0px 8px; display: none;
-                    }
+
+                    .offerLabel { 
+						border: 1px solid rgba(0,0,0,0); background: var(--color-bg-primary); border-radius: 10px; @include text-small; font-weight: 500; 
+						height: 20px; padding: 0px 8px; @include text-overflow-nw;
+					}
                 }
 
                 .title { @include text-paragraph; margin: 0px 0px 4px 0px; text-align: left; }
@@ -851,36 +852,42 @@
                 .priceWrapper {
                     .price { @include text-paragraph; font-weight: 600; }
                 }
+
+				&.isCurrent {
+					.iconWrapper {
+						.offerLabel { border-color: var(--color-control-accent); background: none; color: var(--color-control-accent); }
+					}
+
+					.priceWrapper {
+						.price { display: none; }
+					}
+				}
             }
 
             .tier.green { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25%); }
             .tier.green {
                 .icon { background-image: url('~img/icon/payment/green.svg'); }
+				.offerLabel { color: var(--color-teal); }
             }
             .tier.blue { background: linear-gradient(180deg, #eaecfe 0%, #f4f4f4 25%); }
             .tier.blue {
                 .icon { background-image: url('~img/icon/payment/blue.svg'); background-size: 60px; }
+				.offerLabel { color: var(--color-blue); }
             }
             .tier.red { background: linear-gradient(180deg, #ffebeb 0%, #f5f5f5 25%); }
             .tier.red {
                 .icon { background-image: url('~img/icon/payment/red.svg'); }
+				.offerLabel { color: var(--color-red); }
             }
             .tier.ice { background: linear-gradient(180deg, #daf0ff 0%, #f4f4f4 25%); }
             .tier.ice {
                 .icon { background-image: url('~img/icon/payment/ice.svg'); }
+				.offerLabel { color: var(--color-ice); }
             }
             .tier.default { background: linear-gradient(180deg, #ffeaff 0%, #f3f3f3 25%); }
             .tier.default {
                 .icon { background-image: url('~img/icon/payment/purple.svg'); }
-            }
-
-            .tier.isCurrent {
-                .iconWrapper {
-                    .current { display: block; }
-                }
-                .priceWrapper {
-                    .price { display: none; }
-                }
+				.offerLabel { color: var(--color-purple); }
             }
         }
 

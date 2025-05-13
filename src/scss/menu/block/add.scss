@@ -98,7 +98,7 @@
 		}
 
 		.cellContent.c-longText {
-			.name { -webkit-line-clamp: 1; -webkit-box-orient: vertical; display: -webkit-box; }
+			.name { @include clamp1; }
 		}
 	}
 }

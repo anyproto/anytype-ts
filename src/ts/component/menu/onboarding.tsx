@@ -351,6 +351,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 					offsetX: getSize().width,
 					vertical: I.MenuDirection.Center,
 					data: {
+						canAdd: true,
 						filter: '',
 						filters: [
 							{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },

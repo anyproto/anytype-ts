@@ -24,10 +24,6 @@ export default {
 		testing:		 'N4N1wDHFpFpovXBqdbq2TDXE9tXdXbtV1eTJFpKJW4YeaJqR'
 	},
 
-	chatSpaceId: [
-		'bafyreiezhzb4ggnhjwejmh67pd5grilk6jn3jt7y2rnfpbkjwekilreola.1t123w9f2lgn5',
-	],
-
 	platforms: {
 		win32:			 'Windows',
 		darwin:			 'Mac',
@@ -67,7 +63,7 @@ export default {
 		menu:			 150,
 		popup:			 150,
 		toast:			 2500,
-		route:			 250,
+		route:			 200,
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 400,
@@ -160,6 +156,7 @@ export default {
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
 		bin:			 'bin',
+		chat:			 'chat',
 	},
 
 	monthDays: {

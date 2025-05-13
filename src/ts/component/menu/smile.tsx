@@ -504,7 +504,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 				this.setLoading(true);
 
-				U.Data.search({
+				U.Subscription.search({
 					filters,
 					sorts,
 					fullText: filter,
@@ -1087,8 +1087,6 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 	
 	setLastIds (id: string, skin: number) {
-		console.log('setLastIds', id, skin);
-
 		if (!id) {
 			return;
 		};

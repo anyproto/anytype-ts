@@ -233,7 +233,6 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		resize();
 	});
 
-
 	return (
 		<div ref={nodeRef} className={cn.join(' ')}>
 			{content}

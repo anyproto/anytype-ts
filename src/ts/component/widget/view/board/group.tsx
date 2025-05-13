@@ -39,18 +39,20 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 
-		U.Data.searchSubscribe({
-			subId,
-			filters: filters.map(it => Dataview.filterMapper(view, it)),
-			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
-			keys: J.Relation.sidebar,
-			sources: object.setOf || [],
-			limit,
-			ignoreHidden: true,
-			ignoreDeleted: true,
-			collectionId: (isCollection ? object.id : ''),
-		}, () => {
-			S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
+		U.Subscription.destroyList([ subId ], false, () => {
+			U.Subscription.subscribe({
+				subId,
+				filters: filters.map(it => Dataview.filterMapper(view, it)),
+				sorts: sorts.map(it => Dataview.filterMapper(view, it)),
+				keys: J.Relation.sidebar,
+				sources: object.setOf || [],
+				limit,
+				ignoreHidden: true,
+				ignoreDeleted: true,
+				collectionId: (isCollection ? object.id : ''),
+			}, () => {
+				S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
+			});
 		});
 	};
 

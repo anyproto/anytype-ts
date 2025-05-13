@@ -4,13 +4,11 @@ import { observer } from 'mobx-react';
 import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
 import { Input, IconObject } from 'Component';
 
-const MENU_ID = 'calendar';
-
 const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const inputRef = useRef(null);
-	const { showRelativeDates } = S.Common;
+	const { showRelativeDates, dateFormat } = S.Common;
 	const { 
 		id, recordId, relation, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit, viewType, getView, getRecord, onChange, cellPosition, onRecordAdd,
 		groupId, recordIdx,
@@ -36,10 +34,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		if (canEdit && (v != isEditing)) {
 			setIsEditing(v);
 		};
-	};
-
-	const onChangeHandler = (v: any) => {
-		setValue(v);
 	};
 
 	const onPaste = (e: any, v: any) => {
@@ -90,7 +84,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		setValue(v);
 
 		if (v) {
-			S.Menu.updateData(MENU_ID, { value: v });
+			S.Menu.updateData('calendar', { value: v });
 		};
 
 		if (keyboard.isComposition) {
@@ -99,7 +93,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
-			save(v, () => S.Menu.close(MENU_ID));
+			save(v, () => S.Menu.close('calendar'));
 		});
 	};
 
@@ -123,7 +117,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 
 		save(value.current, () => {
-			if (!S.Menu.isOpen(MENU_ID)) {
+			if (!S.Menu.isOpen('calendar')) {
 				setEditingHandler(false);
 			};
 		});
@@ -142,16 +136,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	const fixDateValue = (v: any) => {
 		v = String(v || '').replace(/_/g, '');
 
-		let view = null;
-		let viewRelation: any = {};
-
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-
-			if (v && viewRelation) {
-				v = U.Date.parseDate(v, viewRelation.dateFormat);
-			};
+		if (v) {
+			v = U.Date.parseDate(v, dateFormat);
 		};
 
 		return v ? v : null;
@@ -397,7 +383,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	useImperativeHandle(ref, () => ({
 		setEditing: (v: boolean) => setEditingHandler(v),
 		isEditing: () => isEditing,
-		onChange: (v: any) => onChangeHandler(v),
+		onChange: (v: any) => setValue(v),
 		getValue: () => val,
 		onBlur,
 	}));

@@ -123,7 +123,7 @@ const PopupLogout = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 			</div>
 
 			<div ref={buttonsRef} className="buttons">
-				<Button text={translate('popupLogoutCopyButton')} color="black" className="c36" onClick={onCopy} onMouseEnter={onMouseEnter} />
+				<Button text={translate('commonShowKey')} color="black" className="c36" onClick={onCopy} onMouseEnter={onMouseEnter} />
 				<Button text={translate('popupLogoutLogoutButton')} color="red" className="c36" onClick={onLogout} onMouseEnter={onMouseEnter} />
 			</div>
 		</div>

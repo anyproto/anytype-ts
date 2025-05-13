@@ -129,6 +129,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 			if (U.Object.isTypeLayout(object.layout)) {
 				allowedRelation = false;
+				allowedCopy	= false;
 			};
 			if (U.Object.isRelationLayout(object.layout)) {
 				allowedRelation = false;
@@ -261,6 +262,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'changeType': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
@@ -321,7 +323,7 @@ class MenuContext extends React.Component<I.Menu> {
 						name: translate('blockDataviewCreateNewCollection'),
 						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
 						onClick: (details: any) => {
-							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, objectIds);
 								U.Object.openAuto(message.details);
 							});

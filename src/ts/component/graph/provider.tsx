@@ -320,7 +320,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			body.find('#graphPreview').remove();
 			body.append(el);
 
-			ReactDOM.render(<PreviewDefault object={subject.current} className="previewGraph" />, el.get(0), position);
+			ReactDOM.render(<PreviewDefault object={subject.current} className="previewGraph" noLoad={true} />, el.get(0), position);
 			analytics.event('SelectGraphNode', { objectType: subject.current.type, layout: subject.current.layout });
 		} else {
 			position();

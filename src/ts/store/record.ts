@@ -41,9 +41,12 @@ class RecordStore {
 
 	clearAll () {
 		this.relationMap.clear();
+		this.relationKeyMap.clear();
+		this.typeKeyMap.clear();
 		this.viewMap.clear();
 		this.recordMap.clear();
 		this.metaMap.clear();
+		this.groupMap.clear();
 	};
 
 	keyMapGet (type: string, spaceId: string) {
@@ -328,7 +331,7 @@ class RecordStore {
 	};
 
 	getDataviewRelations (rootId: string, blockId: string): any[] {
-		return this.getDataviewRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
+		return [ 'name' ].concat(this.getDataviewRelationKeys(rootId, blockId)).map(it => this.getRelationByKey(it)).filter(it => it);
 	};
 
 	getObjectRelations (rootId: string, typeId: string): any[] {

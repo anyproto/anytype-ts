@@ -956,21 +956,7 @@ class Dispatcher {
 						break;
 					};
 
-					const { collectionId, count, type } = mapped;
-
-					/*
-
-					if (collectionId) {
-						window.setTimeout(() => {
-							S.Popup.open('objectManager', { 
-								data: { 
-									collectionId, 
-									type: I.ObjectManagerPopup.Favorites,
-								} 
-							});
-						}, S.Popup.getTimeout() + 10);
-					};
-					*/
+					const { count, type } = mapped;
 
 					analytics.event('Import', { type, count });
 					break;
@@ -992,7 +978,6 @@ class Dispatcher {
 						S.Chat.add(subId, idx, message);
 					});
 
-					/*
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
 						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
 							const { space } = S.Common;
@@ -1007,7 +992,6 @@ class Dispatcher {
 							};
 						});
 					};
-					*/
 
 					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
 					break;
@@ -1023,7 +1007,7 @@ class Dispatcher {
 				case 'ChatStateUpdate': {
 					mapped.subIds.forEach(subId => {
 						if (subId == J.Constant.subId.chatSpace) {
-							subId = [ J.Constant.subId.chatSpace, spaceId, rootId ].join('-');
+							subId = S.Chat.getSubId(spaceId, rootId);
 						};
 
 						S.Chat.setState(subId, mapped.state);
@@ -1145,7 +1129,7 @@ class Dispatcher {
 			const object = U.Space.getSpaceview(id);
 
 			if (intersection.length && object.targetSpaceId) {
-				U.Data.createSubSpaceSubscriptions([ object.targetSpaceId ]);
+				U.Subscription.createSubSpace([ object.targetSpaceId ]);
 			};
 
 			if (object.isAccountDeleted && (object.targetSpaceId == space)) {

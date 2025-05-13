@@ -283,7 +283,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setLocalpath(path);
 	request.setType(type as number);
 	request.setDetails(Encode.struct(details));
-	request.setCreatetypewidgetifmissing(config.experimental);
+	request.setCreatetypewidgetifmissing(true);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -1279,7 +1279,7 @@ export const ObjectTypeResolveLayoutConflicts = (id: string, callBack?: (message
 
 // ---------------------- OBJECT ---------------------- //
 
-export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, createWidget: boolean, callBack?: (message: any) => void) => {
+export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1287,7 +1287,7 @@ export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: st
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey || J.Constant.default.typeKey);
-	request.setCreatetypewidgetifmissing(createWidget);
+	request.setCreatetypewidgetifmissing(true);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -1583,9 +1583,16 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 		const op = new Rpc.Object.ListModifyDetailValues.Request.Operation();
 
 		op.setRelationkey(it.relationKey);
-		op.setAdd(Encode.value(it.add));
-		op.setSet(Encode.value(it.set));
-		op.setRemove(Encode.value(it.remove));
+
+		if (it.add) {
+			op.setAdd(Encode.value(it.add));
+		};
+		if (it.set || (it.set === null)) {
+			op.setSet(Encode.value(it.set));
+		};
+		if (it.remove) {
+			op.setRemove(Encode.value(it.remove));
+		};
 
 		return op;
 	}));
@@ -2323,8 +2330,12 @@ export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId
 	dispatcher.request(ChatSubscribeLastMessages.name, request, callBack);
 };
 
-export const ChatSubscribeToMessagePreviews = (callBack?: (message: any) => void) => {
-	dispatcher.request(ChatSubscribeToMessagePreviews.name, new Empty(), callBack);
+export const ChatSubscribeToMessagePreviews = (subId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.SubscribeToMessagePreviews.Request();
+
+	request.setSubid(subId);
+
+	dispatcher.request(ChatSubscribeToMessagePreviews.name, request, callBack);
 };
 
 export const ChatUnsubscribe = (objectId: string, subId: string, callBack?: (message: any) => void) => {

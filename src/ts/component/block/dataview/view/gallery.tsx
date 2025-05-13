@@ -169,6 +169,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	componentDidUpdate (): void {
 		this.reset();
+
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Record) || [];
+
+		if (ids.length) {
+			selection?.renderSelection();
+		};
 	};
 
 	componentWillUnmount () {
@@ -181,12 +188,14 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return;
 		};
 
-		this.setColumnCount();
-		this.cache.clearAll();
+		S.Common.setTimeout('galleryReset', 500, () => {
+			this.setColumnCount();
+			this.cache.clearAll();
 
-		if (this.refList) {
-			this.refList.recomputeRowHeights(0);
-		};
+			if (this.refList) {
+				this.refList.recomputeRowHeights(0);
+			};
+		});
 	};
 
 	setColumnCount () {
@@ -213,7 +222,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.width = width;
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.forceUpdate(), 10);
+		this.timeout = window.setTimeout(() => this.forceUpdate(), 50);
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {

@@ -15,7 +15,7 @@ html.bodyIndex, html.bodyAuth {
 	--color-button-black-hover: rgba(37, 37, 37, 0.8);
 	--color-button-blank-hover: rgba(23, 23, 23, 0.8);
 
-	--color-input-opaque: rgba(23, 23, 23, 0.6) !important;
+	--color-input-opaque: rgba(255, 255, 255, 0.1) !important;
 	--color-popup: #141414 !important;
 
 	--color-error: #8a351a !important;
@@ -41,12 +41,6 @@ html.bodyIndex, html.bodyAuth {
 	}
 
 	#popupConfirm-innerWrap {
-		.iconWrapper { background: none; }
-		.icon.update { background-image: url('~img/theme/dark/icon/popup/confirm/update.svg'); }
-		.icon.updated { background-image: url('~img/theme/dark/icon/popup/confirm/updated.svg'); }
-		.icon.error { background-image: url('~img/theme/dark/icon/popup/confirm/error.svg'); }
-		.icon.confirm { background-image: url('~img/theme/dark/icon/popup/confirm/confirm.svg'); }
-
 		h1 { font-size: var(--font-size-header3); margin-bottom: 16px; color: var(--color-text-primary) !important; }
 		b { display: block; font-weight: 700; color: var(--color-text-primary) !important; margin-bottom: 8px; }
 		p { margin-bottom: 8px; }
@@ -76,13 +70,9 @@ html.bodyIndex, html.bodyAuth {
 		}
 	}
 
-	.dotIndicator {
-		.dot { background-color: var(--color-button-stroke); }
-    	.dot.active { background-color: var(--color-text-primary) !important; }
-	}
 
 	.tooltip:not(.menuNote) {
-		width: 410px; padding: 12px 16px; background: var(--color-popup) !important; color: var(--color-text-secondary) !important; box-shadow: var(--shadow) !important; @include text-common; 
+		min-width: 224px; padding: 12px 16px; background: var(--color-popup) !important; color: var(--color-text-secondary) !important; box-shadow: var(--shadow) !important; @include text-common; 
 		white-space: normal;
 	}
 	.tooltip:not(.menuNote) {
@@ -126,13 +116,19 @@ html.bodyIndex, html.bodyAuth {
 		.dot { border-color: #fff; }
 	}
 
-	.button.disabled { color: var(--color-text-tertiary) }
-
 	.button.black { background: var(--color-button-stroke) !important; color: var(--color-text-primary) !important;  }
 	.button.black:not(.disabled):hover { background: var(--color-button-black-hover) !important; color: var(--color-text-primary) !important; }
+	.button.black.disabled { background-color: var(--color-shape-highlight-medium) !important; }
+
+	.button.disabled { color: var(--color-text-tertiary) !important; }
 
 	.button.blank { border-color: var(--color-button-stroke) !important; color: var(--color-text-primary) !important; background: none; }
 	.button.blank:not(.disabled):hover{ background: var(--color-button-blank-hover) !important; }
+
+	.phraseWrapper { background: var(--color-input-opaque) !important; color: #f8f8f8; }
+	.phraseWrapper.isHidden {
+		.word { background-color: #f8f8f8; }
+	}
 }
 
 html.bodyAuthDeleted {
@@ -143,7 +139,7 @@ html.bodyAuthDeleted {
 
 .pageAuth, .pageIndex {
 	.frame { text-align: center; background: none !important; }
-	.input { height: 40px; border: solid 1px var(--color-shape-primary) !important; }
+	.input { height: 40px; border: solid 1px var(--color-shape-primary) !important; text-align: center; }
 
 	.header { width: 100% !important; }
 	.header {
@@ -161,7 +157,7 @@ html.bodyAuthDeleted {
 	.iconObject { margin-bottom: 12px; }
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
-	.button { width: 192px; @include text-common; }
+	.button { min-width: 224px; @include text-common; }
 	.button.disabled { color: var(--color-text-tertiary) !important; }
 	
 	.small { color: var(--color-text-secondary) !important; }
@@ -184,7 +180,7 @@ html.bodyAuthDeleted {
 		a:hover { color: var(--color-text-primary); }
 	}
 
-	.buttons { display: flex; flex-direction: row; gap: 0px 12px; justify-content: center; width: 100%; position: absolute; bottom: -58px; }
+	.buttons { display: flex; flex-direction: row; gap: 0px 12px; justify-content: center; width: 100%; position: absolute; bottom: -68px; }
 
 	.footer {
 		.label.disclaimer { color: var(--color-text-tertiary) !important; }
@@ -201,7 +197,7 @@ html.bodyAuthDeleted {
 	.error { position: absolute; z-index: 1; width: 100%; left: 0px; top: 0px; transform: translateY(calc(-100% - 16px)); }
 
 	.title { margin: 0px 0px 20px 0px; }
-	.phraseWrapper { margin: 0px 0px 20px 0px; background: var(--color-button-blank-hover); }
+	.phraseWrapper { margin: 0px 0px 40px 0px; }
 }
 
 .pageAuthInvite {
@@ -231,13 +227,13 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
 	.frame { display: flex; flex-direction: column; align-items: center; }
-	.title { @include text-header3; color: var(--color-text-primary) !important; }
+	.title { @include text-header1; color: var(--color-text-primary) !important; }
 	.label { @include text-paragraph; color: var(--color-text-secondary) !important; }
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
 }
 
 .pageAuthOnboard, .pageAuthLogin {
-	.frame { width: 1064px; top: 40%; margin-top: 0px !important; }
+	.frame { width: 1064px; }
 
 	@media (max-width: 1160px) {
 		.frame { width: calc(100% - 96px); }
@@ -245,28 +241,36 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthOnboard {
-	.title { margin: 0px 0px 10px 0px; }
-	.label { width: 400px; margin: 0px 0px 20px 0px; }
-	.dotIndicator { margin: 0px 0px 12px 0px; }
-	.button { min-width: 192px; width: auto; }
+	.title { margin: 0px 0px 8px 0px; }
+	.label { width: 640px; margin: 0px 0px 34px 0px; }
+	.button { min-width: 224px; width: auto; }
 
 	.tooltipLink { color: var(--color-text-primary) !important; }
 	.tooltipLink:hover { text-decoration: underline; }
 
-	.phraseWrapper { background: var(--color-input-opaque) !important; }
-	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
+	.phraseWrapper, .inputWrapper { margin: 0px 0px 40px 0px; }
 	.phraseWrapper {
 		.icon { display: none; }
-		.icon.copy { display: block; }
+		.icon.copy { display: block; right: 16px; background-image: url('~img/icon/onboarding/copy.svg'); }
 	}
 
 	.inputWrapper {
 		.input { 
 			border-radius: 26px; border: none !important; background: var(--color-input-opaque) !important; color: var(--color-text-primary) !important; 
-			font-size: var(--font-size-header3); padding: 36px 26px; width: 392px; height: auto; 
+			font-size: var(--font-size-header3); padding: 0px 26px; height: 72px; width: 480px;
 		}
 		.input:hover { filter: brightness(1.2); }
 		.input::placeholder { color: var(--color-text-tertiary) !important; }
+	}
+
+	.stageName {
+		.label { width: 480px; margin-bottom: 40px; }
+	}
+
+	.stageEmail {
+		.label { width: 504px; margin-bottom: 40px; }
+
+		.buttons { flex-direction: column; gap: 16px; }
 	}
 }
 

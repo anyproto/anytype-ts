@@ -227,7 +227,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 				this.setState({ isLoading: true });
 
-				U.Data.search({
+				U.Subscription.search({
 					filters,
 					sorts,
 					fullText: filter,

@@ -198,8 +198,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
 		const object = this.getObject();
-		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
-		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
+		const mapper = it => U.Object.name(it);
+		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(mapper);
+		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(mapper);
 		const setOfString = [];
 		const tl = types.length;
 		const rl = relations.length;
@@ -257,7 +258,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return null;
 		};
 
-		const object = S.Detail.get(rootId, storeId, U.Data.participantRelationKeys());
+		const object = S.Detail.get(rootId, storeId, U.Subscription.participantRelationKeys());
 		const relationKey = object.globalName ? 'globalName': 'identity';
 
 		return (
@@ -455,14 +456,16 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'change':
+				const layouts = U.Object.isCollectionLayout(object.layout) ? [ I.ObjectLayout.Collection ] : U.Object.getPageLayouts();
+
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: layouts },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
-					keys: U.Data.typeRelationKeys(),
+					keys: U.Subscription.typeRelationKeys(),
 					skipIds: [ object.type ],
 					onClick: (item: any) => {
 						keyboard.disableClose(true);

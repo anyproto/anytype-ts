@@ -169,31 +169,24 @@ const Column = observer(class Column extends React.Component<Props> {
 		};
 
 		if (clear) {
-			this.clear();
-			this.setState({ loading: true });
+			S.Record.recordsClear(subId, '');
 		};
 
-		U.Data.searchSubscribe({
-			subId,
-			filters: filters.map(it => Dataview.filterMapper(view, it)),
-			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
-			keys: getKeys(view.id),
-			sources: object.setOf || [],
-			limit,
-			ignoreHidden: true,
-			ignoreDeleted: true,
-			collectionId: (isCollection ? object.id : ''),
-		}, () => {
-			S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
-
-			if (clear) {
-				this.setState({ loading: false });
-			};
+		U.Subscription.destroyList([ subId ], false, () => {
+			U.Subscription.subscribe({
+				subId,
+				filters: filters.map(it => Dataview.filterMapper(view, it)),
+				sorts: sorts.map(it => Dataview.filterMapper(view, it)),
+				keys: getKeys(view.id),
+				sources: object.setOf || [],
+				limit,
+				ignoreHidden: true,
+				ignoreDeleted: true,
+				collectionId: (isCollection ? object.id : ''),
+			}, () => {
+				S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
+			});
 		});
-	};
-
-	clear () {
-		S.Record.recordsClear(this.props.getSubId(), '');
 	};
 
 	getItems () {

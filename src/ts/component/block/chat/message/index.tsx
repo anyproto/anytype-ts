@@ -45,9 +45,27 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const ct = [ 'textWrapper' ];
 		const cnBubble = [ 'bubble' ];
 		const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
+		const controls = [];
 
+		let userpicNode = null;
+		let authorNode = null;
 		let text = content.text.replace(/\r?\n$/, '');
+
 		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
+
+		if (!readonly) {
+			if (!hasReactions && canAddReaction) {
+				controls.push({ id: 'reaction-add', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: this.onReactionAdd });
+			};
+
+			//if (!isSelf) {
+				controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
+			//};
+
+			if (hasMore) {
+				controls.push({ className: 'more', onClick: onMore });
+			};
+		};
 
 		if (hasAttachments == 1) {
 			ca.push('isSingle');
@@ -90,7 +108,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 			const length = authors.length;
 			const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
 			const isMe = authors.includes(account.id);
-			const cn = [ 'reaction', (isMe ? 'isSelf' : '') ];
+			const cn = [ 'reaction' ];
+
+			if (isMe) {
+				cn.push('isMe');
+			};
+			if (length > 1) {
+				cn.push('isMulti');
+			};
 
 			return (
 				<div 
@@ -109,18 +134,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 			);
 		};
 
-		let userpicNode = null;
-		let authorNode = null;
-
 		if (!isSelf) {
 			userpicNode = (
-				<div className="side left">
-					<IconObject
-						object={{ ...author, layout: I.ObjectLayout.Participant }}
-						size={32}
-						onClick={e => U.Object.openConfig(author)}
-					/>
-				</div>
+				<IconObject
+					object={{ ...author, layout: I.ObjectLayout.Participant }}
+					size={32}
+					onClick={e => U.Object.openConfig(author)}
+				/>
 			);
 
 			authorNode = (
@@ -153,7 +173,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				) : ''}
 
 				<div className="flex">
-					{userpicNode}
+					<div className="side left">
+						{userpicNode}
+					</div>
+
 					<div className="side right">
 
 						<Reply {...this.props} id={replyToMessageId} />
@@ -176,7 +199,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 										</div>
 									</div>
 
-
 									{hasAttachments ? (
 										<div className={ca.join(' ')}>
 											{attachments.map((item: any, i: number) => (
@@ -196,23 +218,23 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 									) : ''}
 								</div>
 
-								{hasReactions ? (
-									<div className="reactions">
-										{reactions.map((item: any, i: number) => (
-											<Reaction key={i} {...item} />
+								{controls.length ? (
+									<div className="controls">
+										{controls.map((item, i) => (
+											<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
 										))}
-										{!readonly && canAddReaction ? (
-											<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
-										) : ''}
 									</div>
 								) : ''}
 							</div>
 
-							{!readonly ? (
-								<div className="controls">
-									{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} /> : ''}
-									<Icon id="message-reply" className="messageReply" onClick={onReplyEdit} tooltipParam={{ text: translate('blockChatReply') }} />
-									{hasMore ? <Icon className="more" onClick={onMore} /> : '' }
+							{hasReactions ? (
+								<div className="reactions">
+									{reactions.map((item: any, i: number) => (
+										<Reaction key={i} {...item} />
+									))}
+									{!readonly && canAddReaction ? (
+										<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
+									) : ''}
 								</div>
 							) : ''}
 						</div>
@@ -239,9 +261,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const isSelf = creator == account.id;
 		const readonly = this.props.readonly || !isSelf;
 
-		renderMentions(rootId, this.node, marks, () => text);
-		renderObjects(rootId, this.node, marks, () => text, { readonly });
-		renderLinks(this.node, marks, () => text, { readonly });
+		renderMentions(rootId, this.node, marks, () => text, { subId });
+		renderObjects(rootId, this.node, marks, () => text, { readonly }, { subId });
+		renderLinks(rootId, this.node, marks, () => text, { readonly }, { subId });
 		renderEmoji(this.node);
 
 		this.checkLinesLimit();

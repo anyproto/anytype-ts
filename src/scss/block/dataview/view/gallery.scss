@@ -20,7 +20,7 @@
 			.card {
 				.dropTarget { height: 100%; }
 				.dropTarget.isOver { box-shadow: 0px 0px; }
-				.dropTarget.isOver::before { content: ""; position: absolute; background: var(--color-system-accent-100); width: 2px; height: 100%; border-radius: 2px; top: 0px; }
+				.dropTarget.isOver::before { content: ""; position: absolute; background: var(--color-control-accent); width: 2px; height: 100%; border-radius: 2px; top: 0px; }
 				.dropTarget.isOver.top::before { left: -10px; }
 				.dropTarget.isOver.bottom::before { right: -10px; }
 

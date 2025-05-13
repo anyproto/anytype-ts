@@ -48,7 +48,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 						<Button 
 							ref={ref => this.buttonSaveRef = ref} 
 							text={type ? translate('commonSave') : translate('commonApply')}
-							className="c28"
+							className="c28 disabled"
 							onClick={this.onSave}
 						/>
 					</div>
@@ -91,7 +91,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	init () {
 		const type = this.getObject();
-		const sections = this.getSections();
 		const details: any = this.props.details || {};
 		const newType = Object.assign({
 			recommendedLayout: I.ObjectLayout.Page,
@@ -105,8 +104,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
 		this.backup = U.Common.objectCopy(this.object);
 
-		sections.forEach(it => this.updateObject(it.id));
-
+		this.updateSections();
 		this.disableScroll(true);
 		this.disableButton(true);
 	};
@@ -148,7 +146,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onChange (update: any) {
-		const sections = this.getSections();
 		const skipFormat = [ 'defaultTypeId' ];
 
 		for (const relationKey in update) {
@@ -170,11 +167,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			this.updateLayout(update.recommendedLayout);
 		};
 
-		sections.forEach(it => {
-			this.updateObject(it.id);
-			this.forceUpdate();
-		});
-
+		this.updateSections();
 		this.disableButton(!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName));
 
 		// analytics
@@ -230,7 +223,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				};
 			};
 		} else {
-			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, true, (message) => {
+			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
 				if (!message.error.code) {
 					const route = details.data && details.data.route ? details.data.route : '';
 					const format = I.LayoutFormat[this.object.layoutFormat];
@@ -275,8 +268,14 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		sidebar.rightPanelToggle(false, true, this.props.isPopup);
 	};
 
-	updateObject (id: string) {
-		this.sectionRefs.get(id)?.setObject(this.object);
+	updateSections () {
+		const sections = this.getSections();
+
+		sections.forEach(it => {
+			this.sectionRefs.get(it.id)?.setObject(this.object);
+		});
+
+		this.forceUpdate();
 		this.previewRef?.update(this.object);
 	};
 

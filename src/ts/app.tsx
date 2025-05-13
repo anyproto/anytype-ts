@@ -320,6 +320,8 @@ class App extends React.Component<object, State> {
 		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
+		const color = Storage.get('color');
+		const bgColor = Storage.get('bgColor');
 		const route = String(data.route || redirect || '');
 
 		S.Common.configSet(config, true);
@@ -327,6 +329,13 @@ class App extends React.Component<object, State> {
 		S.Common.themeSet(config.theme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
+
+		if (!color) {
+			Storage.set('color', 'orange');
+		};
+		if (!bgColor) {
+			Storage.set('bgColor', 'orange');
+		};
 
 		analytics.init();
 

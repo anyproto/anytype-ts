@@ -606,7 +606,7 @@ class UtilCommon {
 							};
 						});
 
-						U.Space.openDashboard({ replace: true });
+						U.Space.openDashboard();
 					}
 				},
 			});
@@ -642,7 +642,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					U.Object.openAuto({ id: 'spaceList', layout: I.ObjectLayout.Settings });
+					U.Object.openRoute({ id: 'spaceList', layout: I.ObjectLayout.Settings });
 				},
 			},
 		});
@@ -721,7 +721,7 @@ class UtilCommon {
 	findClosestElement (array: number[], goal: number) {
 		return array.reduce((prev: number, curr: number) => {
 			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
-		});
+		}, 0);
 	};
 
 	

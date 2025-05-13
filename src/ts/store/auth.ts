@@ -179,29 +179,34 @@ class AuthStore {
 	};
 
 	logout (mainWindow: boolean, removeData: boolean) {
-		if (mainWindow) {
-			C.AccountStop(removeData, () => U.Data.closeSession());
-			Renderer.send('logout');
-		} else {
-			U.Data.closeSession();
-		};
+		U.Subscription.destroyAll(() => {
+			if (mainWindow) {
+				if (S.Auth.token) {
+					C.AccountStop(removeData, () => U.Data.closeSession());
+				};
+				Renderer.send('logout');
+			} else {
+				U.Data.closeSession();
+			};
 
-		analytics.profile('', '');
-		analytics.removeContext();
+			analytics.profile('', '');
+			analytics.removeContext();
 
-		keyboard.setPinChecked(false);
+			keyboard.setPinChecked(false);
 
-		S.Common.spaceSet('');
+			S.Common.spaceSet('');
 
-		S.Block.clearAll();
-		S.Detail.clearAll();
-		S.Record.clearAll();
-		S.Menu.closeAllForced();
-		S.Notification.clear();
-		S.Chat.clearAll();
+			S.Block.clearAll();
+			S.Detail.clearAll();
+			S.Record.clearAll();
+			S.Menu.closeAllForced();
+			S.Notification.clear();
+			S.Chat.clearAll();
 
-		this.clearAll();
-		Storage.logout();
+			this.clearAll();
+			Storage.logout();
+
+		});
 	};
 
 };

@@ -4,6 +4,10 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, S, U, J, Preview, translate, Relation } from 'Lib';
 
+interface IconParam {
+	userIcon?: string;
+};
+
 interface Props {
 	id?: string;
 	layout?: I.ObjectLayout;
@@ -22,6 +26,7 @@ interface Props {
 	menuParam?: Partial<I.MenuParam>;
 	tooltipParam?: Partial<I.TooltipParam>;
 	style?: any;
+	param?: IconParam;
 	getObject?(): any;
 	onSelect?(id: string): void;
 	onIconSelect?(id: string, color: number): void;
@@ -118,6 +123,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		menuParam = {},
 		tooltipParam = {},
 		style = {},
+		param = {},
 		getObject,
 		onSelect,
 		onIconSelect,
@@ -142,6 +148,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
 	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted } = object || {};
+	const { userIcon } = param;
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
 
@@ -269,12 +276,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const userSvg = (): string => {
-		const color = J.Theme[theme]?.iconUser;
-		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${color.bg}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${userIcon || J.Theme[theme]?.iconUser}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
-				${circle}
 				${text}
 			</svg>
 		`;
@@ -304,13 +308,13 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const defaultIcon = (id: string) => {
-		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'iconName' ], true);
+		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'name', 'iconName' ], true);
 
 		let src = '';
 		if (type.iconName) {
 			src = U.Object.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
 		} else {
-			src = require(`img/icon/default/${id}.svg`);
+			src = U.Common.updateSvg(require(`img/icon/default/${id}.svg`), { id, size, fill: J.Theme[theme].iconDefault });
 		};
 
 		cn.push('withDefault');
@@ -319,17 +323,16 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	switch (layout) {
-		default:
-		case I.ObjectLayout.Chat:
-		case I.ObjectLayout.Page: {
+		default: {
 			if (iconImage) {
 				cn.push('withImage');
 			};
 
 			let di = 'page';
 			switch (layout) {
+				case I.ObjectLayout.ChatOld:
 				case I.ObjectLayout.Chat: di = 'chat'; break;
-				case I.ObjectLayout.Collection: 
+				case I.ObjectLayout.Collection: di = 'collection'; break;
 				case I.ObjectLayout.Set: di = 'set'; break;
 			};
 

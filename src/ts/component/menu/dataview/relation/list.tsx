@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { I, C, S, J, U, Relation, keyboard, Dataview, translate, analytics } from 'Lib';
+import { I, C, S, J, U, keyboard, Dataview, translate, analytics } from 'Lib';
 import { Icon, IconObject, Switch } from 'Component';
 
 const HEIGHT = 28;

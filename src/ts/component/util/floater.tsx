@@ -26,7 +26,10 @@ const Floater = forwardRef<FloaterRefProps, Props>(({
 	const cn = [ 'floater' ];
 
 	useImperativeHandle(ref, () => ({
-		show: () => $(nodeRef.current).addClass('show'),
+		show: () => {
+			onMove();
+			$(nodeRef.current).addClass('show');
+		},
 		hide: () => $(nodeRef.current).removeClass('show'),
 	}));
 
@@ -35,22 +38,20 @@ const Floater = forwardRef<FloaterRefProps, Props>(({
 			return;
 		};
 
-		const anchorElRect = anchorEl.getBoundingClientRect();
-		const elRect = nodeRef.current.getBoundingClientRect();
+		const anchorRect = anchorEl.getBoundingClientRect();
+		const elementRect = nodeRef.current.getBoundingClientRect();
+		const { top: at, left: al, width: aw, height: ah } = anchorRect;
+		const { height: eh, width: ew } = elementRect;
+		const x = al + aw / 2 - ew / 2;
 
-		const { top: at, left: al, width: aw, height: ah } = anchorElRect;
-		const { height: eh, width: ew } = elRect;
-		const sy = window.scrollY;
-		const nl = al + aw / 2 - ew / 2;
-
-		let nt = at - eh - offset + sy;
-		if (nt < 0) {
-			nt = at + ah + offset + sy;
+		let y = at - eh - offset;
+		if (y < 0) {
+			y = at + ah + offset;
 		} else {
-			nt = at - eh - offset + sy;
+			y = at - eh - offset;
 		};
 
-		setPosition({ top: nt, left: nl });
+		setPosition({ left: x, top: y });
 	};
 
 	H.useElementMovement(anchorEl, onMove);

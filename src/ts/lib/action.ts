@@ -37,6 +37,8 @@ class Action {
 		this.dbClearRoot(rootId);
 		S.Block.clear(rootId);
 
+		U.Subscription.destroyList([ rootId ]);
+
 		if (withCommand) {
 			C.ObjectClose(rootId, space);
 		};
@@ -50,8 +52,6 @@ class Action {
 		S.Record.metaClear(rootId, '');
 		S.Record.recordsClear(rootId, '');
 		S.Detail.clear(rootId);
-
-		C.ObjectSearchUnsubscribe([ rootId ]);
 	};
 
 	dbClearBlock (rootId: string, blockId: string) {
@@ -73,12 +73,10 @@ class Action {
 			S.Record.recordsClear(S.Record.getGroupSubId(rootId, blockId, id), '');
 		});
 
-		C.ObjectSearchUnsubscribe(groupIds);
-
 		S.Record.groupsClear(rootId, blockId);
 		S.Detail.clear(subId);
 
-		C.ObjectSearchUnsubscribe([ subId ]);
+		U.Subscription.destroyList(groupIds.concat([ subId ]), true);
 	};
 
 	dbClearChat (chatId: string, blockId: string) {	
@@ -250,7 +248,7 @@ class Action {
 			return;
 		};
 
-		C.FileDownload(id, U.Common.getElectron().downloadPath(), (message: any) => {
+		C.FileDownload(id, U.Common.getElectron().tmpPath(), (message: any) => {
 			if (message.path) {
 				this.openPath(message.path);
 				analytics.event('OpenMedia', { route });
@@ -676,27 +674,31 @@ class Action {
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const deleted = U.Space.getSpaceviewBySpaceId(id);
+		const space = U.Space.getSpaceviewBySpaceId(id);
 
-		if (!deleted) {
+		if (!space) {
 			return;
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name = U.Common.shorten(deleted.name, 32);
+		const name = U.Common.shorten(space.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
 		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
 		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
 		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+		const confirmMessage = isOwner ? space.name : '';
 
 		analytics.event(`Click${suffix}Space`, { route });
 
 		S.Popup.open('confirm', {
 			data: {
+				icon: 'confirm',
 				title,
 				text,
 				textConfirm: confirm,
+				colorConfirm: 'red',
+				confirmMessage,
 				onConfirm: () => {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
@@ -707,7 +709,7 @@ class Action {
 
 						if (!message.error.code) {
 							Preview.toastShow({ text: toast });
-							analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
+							analytics.event(`${suffix}Space`, { type: space.spaceAccessType, route });
 						};
 					});
 				},

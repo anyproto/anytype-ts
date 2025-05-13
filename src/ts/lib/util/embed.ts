@@ -99,7 +99,7 @@ class UtilEmbed {
 					try {
 						const info = new URL(url);
 
-						if (info.pathname.match(/^\/@/)) {
+						if (info.pathname.match(/^\/@/) || info.pathname.match(/\/hashtag\//)) {
 							p = null;
 						};
 					} catch (e) { p = null; };
