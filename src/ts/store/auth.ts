@@ -181,7 +181,9 @@ class AuthStore {
 	logout (mainWindow: boolean, removeData: boolean) {
 		U.Subscription.destroyAll(() => {
 			if (mainWindow) {
-				C.AccountStop(removeData, () => U.Data.closeSession());
+				if (S.Auth.token) {
+					C.AccountStop(removeData, () => U.Data.closeSession());
+				};
 				Renderer.send('logout');
 			} else {
 				U.Data.closeSession();
