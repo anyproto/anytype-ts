@@ -112,7 +112,10 @@
 
 	&.isSelf {
 		> .flex { flex-direction: row-reverse; }
-		> .flex > .side.right { align-items: flex-end; }
+		> .flex {
+			> .side.left { display: none; }
+			> .side.right { align-items: flex-end; }
+		}
 
 		.bubbleInner { flex-direction: row-reverse; }
 		.bubbleInner {
