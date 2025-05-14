@@ -57,6 +57,18 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		let options = null;
 		let optionsLabel = '';
 		let canAdd = false;
+		let withMore = false;
+
+		const checkMore = (arr: any[]) => {
+			const output = arr.slice(0, J.Constant.limit.relation.option);
+
+			if (arr.length > output.length) {
+				withMore = true;
+				output.push(<div key="optionMore" className="more" onClick={this.onOptionMore}>{arr.length - output.length} {translate('commonMore')}...</div>);
+			};
+
+			return output;
+		};
 
 		switch (relationFormat) {
 			case I.RelationType.Object: {
@@ -64,6 +76,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 				canAdd = canWrite;
 				optionsLabel = U.Common.plural(types.length, translate('pluralObjectType'));
+
 				options = types.map((type) => (
 					<div key={type.id} className="item object" onClick={e => this.onOptionClick(e, type)}>
 						<IconObject object={type} />
@@ -72,6 +85,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						{!isReadonlyRelation && canWrite ? <Icon onClick={e => this.onOptionRemove(e, type)} className="remove" /> : ''}
 					</div>
 				));
+				options = checkMore(options);
 				break;
 			};
 
@@ -89,7 +103,12 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
 				const relationsOptions = Relation.getOptions(S.Record.getRecordIds(J.Constant.subId.option, ''))
-										.filter(it => (it.relationKey == object.relationKey) && !it._empty_ && !it.isArchived && !it.isDeleted);
+										.filter(it => (it.relationKey == object.relationKey) && !it.isArchived && !it.isDeleted)
+										.sort((c1, c2) => {
+											if (c1.createdDate > c2.createdDate) return -1;
+											if (c1.createdDate < c2.createdDate) return 1;
+											return 0;
+										});
 
 				canAdd = canWrite;
 				optionsLabel = U.Common.plural(relationsOptions.length, translate('pluralOption'));
@@ -98,7 +117,18 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						<Tag text={option.name} color={option.color} className={Relation.selectClassName(relationFormat)} />
 					</div>
 				));
+				options = checkMore(options);
 				break;
+			};
+		};
+
+		if (options && canAdd && !isReadonlyRelation) {
+			const add = <Icon key="optionAdd" className="add withBackground" onClick={this.onOptionAdd} />;
+
+			if (withMore) {
+				options.unshift(add);
+			} else {
+				options.push(add);
 			};
 		};
 
@@ -128,10 +158,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						{options ? (
 							<dl className={[ 'options', Relation.selectClassName(relationFormat) ].join(' ')}>
 								<dt>{optionsLabel}</dt>
-								<dd>
-									{options}
-									{canAdd && !isReadonlyRelation ? <Icon className="add withBackground" onClick={this.onOptionAdd} /> : ''}
-								</dd>
+								<dd>{options}</dd>
 							</dl>
 						) : ''}
 					</div>
@@ -379,6 +406,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				break;
 			};
 		};
+	};
+
+	onOptionMore () {
+
 	};
 
 });

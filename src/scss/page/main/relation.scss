@@ -29,6 +29,9 @@
 					}
 
 					.icon.add { display: block; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
+
+					.more { color: var(--color-text-secondary); border-radius: 6px; padding: 0px 4px; height: 20px; }
+					.more:hover, .more.hover { background: var(--color-shape-highlight-medium); }
 				}
 			}
 
