@@ -77,6 +77,7 @@ export default {
 		'relationFormatObjectTypes',
 		'sourceObject',
 		'restrictions',
+		'includeTime',
 	],
 
 	cover: [
@@ -93,7 +94,8 @@ export default {
 		'type',
 		'layout',
 		'name',
-		'relationOptionColor'
+		'relationOptionColor',
+		'createdDate',
 	],
 
 	type: [

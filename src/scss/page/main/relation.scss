@@ -2,7 +2,7 @@
 
 .pageMainRelation,
 .settingsPage.pageSettingsRelation {
-	.wrapper { width: 736px; margin: 0px auto; padding: 40px 16px 80px 16px; user-select: none; }
+	.wrapper { width: calc(100% - 96px); margin: 0px auto; padding: 60px 0px 0px 0px; user-select: none; }
 	.wrapper.withIcon {
 		.editorControls {
 			#button-icon { display: none; }
@@ -10,6 +10,51 @@
 	}
 
 	.wrapper {
+		.relationData { display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 28px; }
+		.relationData {
+			dl { display: flex; align-items: center; }
+			dl {
+				dt { flex-shrink: 0; width: 136px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
+				dd { width: 100%; display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px; }
+				dd {
+					.item { position: relative; display: flex; align-items: center; height: 30px; gap: 0px 4px; }
+					.item {
+						.icon.remove {
+							display: none; position: absolute; right: -8px; top: -8px; width: 16px; height: 16px; border-radius: 50%;
+							background-color: var(--color-shape-secondary); background-image: url('~img/icon/close.svg'); background-size: 12px;
+						}
+					}
+					.item:hover {
+						.icon.remove { display: block; }
+					}
+
+					.icon.add { display: block; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
+
+					.more { color: var(--color-text-secondary); border-radius: 6px; padding: 0px 8px; line-height: 28px; }
+					.more:hover, .more.hover { background: var(--color-shape-highlight-medium); }
+				}
+			}
+
+			dl.options.isObject,
+			dl.options.isSelect {
+				dd {
+					.item { border-radius: 6px; border: 1px solid var(--color-shape-primary); padding: 0px 8px; }
+				}
+			}
+			dl.options.isSelect {
+				dd {
+					.item { padding: 0px 6px; }
+				}
+			}
+			dl.isMultiSelect {
+				dd {
+					.item { height: 20px; }
+					.icon.add.withBackground { width: 20px !important; height: 20px !important; }
+					.more { padding: 0px 4px; line-height: 20px; }
+				}
+			}
+		}
+
 		.block {
 			.wrapMenu { display: none; }
 			.wrapContent { width: 100%; }

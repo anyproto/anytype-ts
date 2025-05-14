@@ -54,7 +54,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const active = value.includes(item.id);
-			const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+			const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 			
 			let content = null;
 			if (item.id == 'add') {
@@ -241,9 +241,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		const { param } = this.props;
 		const { data } = param;
-		const { cellRef, canEdit } = data;
+		const { cellRef, canEdit, noSelect } = data;
 
-		if (!canEdit) {
+		if (!canEdit || noSelect) {
 			return;
 		};
 
@@ -348,7 +348,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		const { id, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
-		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && data.canEdit;
 
 		if (!isAllowed) {
 			return;
@@ -374,16 +374,17 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	getItems (): any[] {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, filterMapper, canEdit } = data;
+		const { canAdd, filterMapper, canEdit, noSelect } = data;
 		const relation = data.relation.get();
 		const isSelect = relation.format == I.RelationType.Select;
 		const value = Relation.getArrayValue(data.value);
+		const skipIds = Relation.getArrayValue(data.skipIds);
 		const ret = [];
 
 		let items = Relation.getOptions(S.Record.getRecordIds(J.Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
 		let check = [];
 
-		items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+		items = items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted && !skipIds.includes(it.id));
 
 		if (filterMapper) {
 			items = items.filter(filterMapper);
@@ -399,7 +400,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			return 0;
 		});
 
-		if (canEdit && data.filter) {
+		if ((canEdit || noSelect) && data.filter) {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());

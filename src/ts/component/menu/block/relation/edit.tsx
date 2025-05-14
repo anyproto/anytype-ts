@@ -10,6 +10,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	node: any = null;
 	format: I.RelationType = null;
 	objectTypes: string[] = [];
+	includeTime: boolean = false;
 	ref = null;
 	
 	constructor (props: I.Menu) {
@@ -39,6 +40,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isType = U.Object.isTypeLayout(object.layout);
 		const isName = relation && (relation.relationKey == 'name');
 		const isDescription = relation && (relation.relationKey == 'description');
+		const isDate = this.format == I.RelationType.Date;
 
 		let canDuplicate = true;
 		let canDelete = !noDelete;
@@ -103,6 +105,23 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 						onClick={this.onObjectType}
 						arrow={!isReadonly}
 						{...typeProps}
+					/>
+				</div>
+			);
+		};
+
+		if (isDate && !isReadonly) {
+			opts = (
+				<div className="section">
+					<MenuItemVertical
+						id="includeTime"
+						icon="clock"
+						name={translate('commonIncludeTime')}
+						onMouseEnter={this.menuClose}
+						readonly={readonly}
+						withSwitch={true}
+						switchValue={this.includeTime}
+						onSwitch={(e: any, v: boolean) => this.onChangeTime(v)}
 					/>
 				</div>
 			);
@@ -179,6 +198,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		if (relation) {
 			this.format = relation.format;
 			this.objectTypes = Relation.getArrayValue(relation.objectTypes);
+			this.includeTime = relation.includeTime;
 			this.forceUpdate();
 		};
 
@@ -325,7 +345,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	onChangeTime (v: boolean) {
 		const relation = this.getRelation();
-		relation.includeTime = v;
+
+		this.includeTime = v;
+
+		if (relation && relation.id) {
+			this.save();
+		};
 	};
 
 	menuOpen (id: string, options: I.MenuParam) {
@@ -429,6 +454,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
+			includeTime: this.includeTime,
 		};
 
 		relation && relation.id ? this.update(item) : this.add(item);
