@@ -382,6 +382,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					S.Menu.open('dataviewObjectList', {
 						...param,
 						data: {
+							canAdd: true,
 							canEdit: true,
 							rootId: this.getRootId(),
 							relation: observable.box(object),
@@ -397,7 +398,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 								S.Menu.closeAll();
 							},
 						}
-					})
+					});
 				});
 
 				break;
@@ -440,6 +441,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	onOptionMore () {
 		const object = this.getObject();
 		const { output, canAdd } = this.getOptionsData();
+		const skipIds = output.map(it => it.id);
 		const { relationFormat, isReadonlyRelation } = object;
 		const param = {
 			element: `#page .relationData .options .more`,
@@ -451,7 +453,63 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		switch (relationFormat) {
 			case I.RelationType.Object: {
+				const types = (object?.objectTypes.map(it => S.Record.getTypeById(it)) || []).filter(it => it);
+				const typeIds = types.map(it => it.id);
 
+				let onMore = null;
+				
+				if (canAdd && !isReadonlyRelation) {
+					onMore = (e: MouseEvent, context: any, item: any) => {
+						const { props } = context;
+						const { className, classNameWrap } = props.param;
+						const type = S.Record.getTypeById(item.id);
+
+						S.Menu.open('select', {
+							element: `#${props.getId()} #item-${item.id} .icon.more`,
+							horizontal: I.MenuDirection.Center,
+							offsetY: 4,
+							className,
+							classNameWrap,
+							data: {
+								options: [
+									{ id: 'unlink', name: translate('commonUnlink') }
+								],
+								onSelect: (event: any, element: any) => {
+									switch (element.id) {
+										case 'unlink': {
+											const details = [ { key: 'relationFormatObjectTypes', value: typeIds.filter(it => it != type.id) } ];
+
+											C.ObjectListSetDetails([ object.id ], details);
+											S.Menu.close('typeSuggest');
+											break;
+										};
+									};
+								}
+							}
+						});
+					};
+				};
+
+				S.Menu.open('typeSuggest', {
+					...param,
+					data: {
+						canAdd: canAdd && !isReadonlyRelation,
+						onMore,
+						filters: [
+							{ relationKey: 'id', condition: I.FilterCondition.In, value: typeIds },
+							{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
+						],
+						onClick: (option: any) => {
+							if (!typeIds.includes(option.id)) {
+								const details = [ { key: 'relationFormatObjectTypes', value: [ option.id ].concat(typeIds) } ];
+
+								C.ObjectListSetDetails([ object.id ], details);
+							} else {
+								U.Object.openAuto(option);
+							};
+						},
+					}
+				});
 				break;
 			};
 
@@ -464,7 +522,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						canAdd: canAdd && !isReadonlyRelation,
 						canEdit: canAdd && !isReadonlyRelation,
 						noSelect: true,
-						skipIds: output.map(it => it.id),
+						skipIds,
 						value: [],
 						relation: observable.box(object),
 						onChange: () => { return false },

@@ -30,7 +30,7 @@
 
 					.icon.add { display: block; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 
-					.more { color: var(--color-text-secondary); border-radius: 6px; padding: 0px 4px; height: 20px; }
+					.more { color: var(--color-text-secondary); border-radius: 6px; padding: 0px 8px; line-height: 28px; }
 					.more:hover, .more.hover { background: var(--color-shape-highlight-medium); }
 				}
 			}
@@ -50,6 +50,7 @@
 				dd {
 					.item { height: 20px; }
 					.icon.add.withBackground { width: 20px !important; height: 20px !important; }
+					.more { padding: 0px 4px; line-height: 20px; }
 				}
 			}
 		}
