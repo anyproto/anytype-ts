@@ -42,6 +42,8 @@
 			}
 
 			.day {
+				.dropTarget { width: 100%; height: 100%; }
+
 				.head { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }
 				.head {
 					.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; opacity: 0; transition: opacity $transitionCommon; }
