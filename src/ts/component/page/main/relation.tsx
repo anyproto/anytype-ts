@@ -28,6 +28,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.onOptionClick = this.onOptionClick.bind(this);
 		this.onOptionAdd = this.onOptionAdd.bind(this);
 		this.onOptionRemove = this.onOptionRemove.bind(this);
+		this.onOptionMore = this.onOptionMore.bind(this);
 	};
 
 	render () {
@@ -54,30 +55,15 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
 		];
 
+		const { output, more, label, canAdd } = this.getOptionsData();
+
 		let options = null;
-		let optionsLabel = '';
-		let canAdd = false;
+		let optionsLabel = label;
 		let withMore = false;
-
-		const checkMore = (arr: any[]) => {
-			const output = arr.slice(0, J.Constant.limit.relation.option);
-
-			if (arr.length > output.length) {
-				withMore = true;
-				output.push(<div key="optionMore" className="more" onClick={this.onOptionMore}>{arr.length - output.length} {translate('commonMore')}...</div>);
-			};
-
-			return output;
-		};
 
 		switch (relationFormat) {
 			case I.RelationType.Object: {
-				const types = (object?.objectTypes.map(it => S.Record.getTypeById(it)) || []).filter(it => it);
-
-				canAdd = canWrite;
-				optionsLabel = U.Common.plural(types.length, translate('pluralObjectType'));
-
-				options = types.map((type) => (
+				options = output.map((type) => (
 					<div key={type.id} className="item object" onClick={e => this.onOptionClick(e, type)}>
 						<IconObject object={type} />
 						<ObjectName object={type} />
@@ -85,7 +71,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						{!isReadonlyRelation && canWrite ? <Icon onClick={e => this.onOptionRemove(e, type)} className="remove" /> : ''}
 					</div>
 				));
-				options = checkMore(options);
 				break;
 			};
 
@@ -102,24 +87,18 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
-				const relationsOptions = Relation.getOptions(S.Record.getRecordIds(J.Constant.subId.option, ''))
-										.filter(it => (it.relationKey == object.relationKey) && !it.isArchived && !it.isDeleted)
-										.sort((c1, c2) => {
-											if (c1.createdDate > c2.createdDate) return -1;
-											if (c1.createdDate < c2.createdDate) return 1;
-											return 0;
-										});
-
-				canAdd = canWrite;
-				optionsLabel = U.Common.plural(relationsOptions.length, translate('pluralOption'));
-				options = relationsOptions.map((option) => (
+				options = output.map((option) => (
 					<div key={option.id} id={`item-${option.id}`} className="item" onClick={e => this.onOptionClick(e, option)}>
 						<Tag text={option.name} color={option.color} className={Relation.selectClassName(relationFormat)} />
 					</div>
 				));
-				options = checkMore(options);
 				break;
 			};
+		};
+
+		if (options && more > 0) {
+			withMore = true;
+			options.push(<div key="optionMore" className="more" onClick={this.onOptionMore}>{more} {translate('commonMore')}...</div>);
 		};
 
 		if (options && canAdd && !isReadonlyRelation) {
@@ -267,6 +246,56 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		return S.Detail.get(rootId, rootId);
 	};
 
+	getOptionsData (): { output: any[], more: number, label: string, canAdd: boolean } {
+		const object = this.getObject();
+		const { relationFormat } = object;
+		const canWrite = U.Space.canMyParticipantWrite();
+
+		let output = [];
+		let more = 0;
+		let label = '';
+		let canAdd = false;
+
+		const checkMore = (arr: any[]) => {
+			output = arr.slice(0, J.Constant.limit.relation.option);
+
+			if (arr.length > output.length) {
+				more = arr.length - output.length;
+			};
+		};
+
+		switch (relationFormat) {
+			case I.RelationType.Object: {
+				const types = (object?.objectTypes.map(it => S.Record.getTypeById(it)) || []).filter(it => it);
+
+				canAdd = canWrite;
+				label = U.Common.plural(types.length, translate('pluralObjectType'));
+
+				checkMore(types);
+				break;
+			};
+
+			case I.RelationType.Select:
+			case I.RelationType.MultiSelect: {
+				const relationsOptions = Relation.getOptions(S.Record.getRecordIds(J.Constant.subId.option, ''))
+					.filter(it => (it.relationKey == object.relationKey) && !it.isArchived && !it.isDeleted)
+					.sort((c1, c2) => {
+						if (c1.createdDate > c2.createdDate) return -1;
+						if (c1.createdDate < c2.createdDate) return 1;
+						return 0;
+					});
+
+				canAdd = canWrite;
+				label = U.Common.plural(relationsOptions.length, translate('pluralOption'));
+
+				checkMore(relationsOptions);
+				break;
+			};
+		};
+
+		return { output, more, label, canAdd };
+	};
+
 	onSetAdd () {
 		const object = this.getObject();
 
@@ -409,7 +438,41 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	onOptionMore () {
+		const object = this.getObject();
+		const { output, canAdd } = this.getOptionsData();
+		const { relationFormat, isReadonlyRelation } = object;
+		const param = {
+			element: `#page .relationData .options .more`,
+			className: 'single',
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 8,
+		};
 
+		switch (relationFormat) {
+			case I.RelationType.Object: {
+
+				break;
+			};
+
+			case I.RelationType.Select:
+			case I.RelationType.MultiSelect: {
+				S.Menu.open('dataviewOptionList', {
+					...param,
+					onClose: () => S.Menu.closeAll([ 'dataviewOptionList', 'dataviewOptionEdit', 'select' ]),
+					data: {
+						canAdd: canAdd && !isReadonlyRelation,
+						canEdit: canAdd && !isReadonlyRelation,
+						noSelect: true,
+						skipIds: output.map(it => it.id),
+						value: [],
+						relation: observable.box(object),
+						onChange: () => { return false },
+					},
+				});
+				break;
+			};
+		};
 	};
 
 });
