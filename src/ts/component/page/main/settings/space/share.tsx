@@ -53,6 +53,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 			return <Loader id="loader" />;
 		};
 
+		const { config } = S.Common;
 		const { membership } = S.Auth;
 		const tier = U.Data.getMembershipTier(membership.tier);
 		const hasLink = cid && key;
@@ -210,13 +211,15 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 										text={translate('popupSettingsSpaceShareGenerateInvite')}
 									/>
 
-									<Button
-										ref={ref => this.refButton = ref}
-										onClick={isShareActive ? () => this.onInitLink(true) : null}
-										className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')}
-										tooltipParam={{ text: isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled') }}
-										text={translate('popupSettingsSpaceShareGenerateLinkWithoutApprove')}
-									/>
+									{config.experimental ? (
+										<Button
+											ref={ref => this.refButton = ref}
+											onClick={isShareActive ? () => this.onInitLink(true) : null}
+											className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')}
+											tooltipParam={{ text: isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled') }}
+											text={translate('popupSettingsSpaceShareGenerateLinkWithoutApprove')}
+										/>
+									) : ''}
 								</div>
 							) : ''}
 						</>
