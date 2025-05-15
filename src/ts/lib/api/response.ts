@@ -622,6 +622,7 @@ export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Respo
 	return {
 		inviteCid: response.getInvitecid(),
 		inviteKey: response.getInvitefilekey(),
+		inviteType: response.getInvitetype(),
 	};
 };
 

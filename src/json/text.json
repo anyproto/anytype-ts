@@ -917,6 +917,7 @@
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 	"popupSettingsSpaceShareRevokeInvite": "Delete link",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
+	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareShowQR": "Show QR code",
 

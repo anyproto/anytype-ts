@@ -209,6 +209,14 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 										tooltipParam={{ text: isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled') }}
 										text={translate('popupSettingsSpaceShareGenerateInvite')}
 									/>
+
+									<Button
+										ref={ref => this.refButton = ref}
+										onClick={isShareActive ? () => this.onInitLink(true) : null}
+										className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')}
+										tooltipParam={{ text: isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled') }}
+										text={translate('popupSettingsSpaceShareGenerateLinkWithoutApprove')}
+									/>
 								</div>
 							) : ''}
 						</>
@@ -342,7 +350,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		analytics.event('ClickShareSpaceCopyLink');
 	};
 
-	onInitLink () {
+	onInitLink (noApprove?: boolean) {
 		const btn = this.refButton;
 		const space = U.Space.getSpaceview();
 
@@ -359,7 +367,15 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 				return;
 			};
 
-			C.SpaceInviteGenerate(S.Common.space, (message: any) => {
+			let inviteType = null;
+			let permissions = null;
+
+			if (noApprove) {
+				inviteType = I.InviteType.WithoutApprove;
+				permissions = I.ParticipantPermissions.Writer;
+			};
+
+			C.SpaceInviteGenerate(S.Common.space, inviteType, permissions, (message: any) => {
 				btn.setLoading(false);
 
 				if (this.setError(message.error)) {
