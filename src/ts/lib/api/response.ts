@@ -631,6 +631,7 @@ export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 		spaceName: response.getSpacename(),
 		creatorName: response.getCreatorname(),
 		spaceId: response.getSpaceid(),
+		inviteType: response.getInvitetype(),
 	};
 };
 
