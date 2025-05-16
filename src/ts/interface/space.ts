@@ -35,7 +35,7 @@ export enum ParticipantStatus {
 };
 
 export enum InviteType {
-	Member 					 = 0,
+	WithApprove 			 = 0,
 	Guest 					 = 1,
 	WithoutApprove 			 = 2,
 };

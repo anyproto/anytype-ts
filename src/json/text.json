@@ -903,7 +903,7 @@
 
 	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
-	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space. Once they request to join, you can set their access rights.",
+	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space.",
 	"popupSettingsSpaceShareInviteLinkDisabled": "Invitations are disabled by the space owner. In order to have an ability to invite people. please ask space owner to generate an invite link.",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
@@ -920,6 +920,9 @@
 	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareShowQR": "Show QR code",
+
+	"popupSettingsSpaceShareLinkWithApproveLabel": "This link requires manual approve from space owner. Once they request to join, you can set their access rights.",
+	"popupSettingsSpaceShareLinkWithoutApproveLabel": "This link doesn't require manual approve from space owner.",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
