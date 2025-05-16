@@ -40,7 +40,6 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 			setError(translate('pageMainInviteErrorData'));
 		} else {
 			C.SpaceInviteView(cid, key, (message: any) => {
-				console.log('MESSAGE: ', message)
 				U.Space.openDashboard({ replace: true });
 
 				S.Popup.closeAll(null, () => {
@@ -104,9 +103,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 									text: U.Common.sprintf(translate('popupConfirmJoinSpaceText'), spaceName, creatorName),
 									textConfirm: translate('popupConfirmJoinSpaceButtonConfirm'),
 									onConfirm: () => {
-										C.SpaceJoin(account.info.networkId, message.spaceId, cid, key, (message: any) => {
-											console.log('JOINT?..')
-										});
+										C.SpaceJoin(account.info.networkId, message.spaceId, cid, key);
 									},
 								},
 							});
