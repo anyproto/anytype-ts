@@ -1,6 +1,6 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, Relation } from 'Lib';
+import { I, S, U, translate, Relation, analytics } from 'Lib';
 import { Icon, Label, Title, Button } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
@@ -16,6 +16,8 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 				element: '#settings-identity-badge',
 				horizontal: I.MenuDirection.Center,
 			});
+
+			analytics.event('ClickUpgradePlanTooltip', { type: 'identity' });
 		};
 	};
 

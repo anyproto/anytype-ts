@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, U, J, keyboard, analytics, Storage, sidebar } from 'Lib';
+import { I, S, U, J, keyboard, analytics, Storage, sidebar, Onboarding } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -522,6 +522,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			} else {
 				const el = this.getElement();
 				if (!el || !el.length) {
+					if (id == 'onboarding') {
+						S.Menu.close(id);
+					};
 					console.log('[Menu].position', id, 'element not found', element);
 					return;
 				};
