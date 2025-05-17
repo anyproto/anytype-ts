@@ -2116,10 +2116,15 @@ export const MembershipFinalize = (name: string, callBack?: (message: any) => vo
 
 // ---------------------- SPACE ---------------------- //
 
-export const SpaceInviteGenerate = (spaceId: string, callBack?: (message: any) => void) => {
+export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.InviteGenerate.Request();
 
 	request.setSpaceid(spaceId);
+
+	if (inviteType && permissions) {
+		request.setInvitetype(inviteType as number);
+		request.setPermissions(permissions as number);
+	};
 
 	dispatcher.request(SpaceInviteGenerate.name, request, callBack);
 };

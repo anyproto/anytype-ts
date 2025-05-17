@@ -622,6 +622,7 @@ export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Respo
 	return {
 		inviteCid: response.getInvitecid(),
 		inviteKey: response.getInvitefilekey(),
+		inviteType: response.getInvitetype(),
 	};
 };
 
@@ -630,6 +631,7 @@ export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 		spaceName: response.getSpacename(),
 		creatorName: response.getCreatorname(),
 		spaceId: response.getSpaceid(),
+		inviteType: response.getInvitetype(),
 	};
 };
 

@@ -54,7 +54,24 @@
 	}
 	.item::after {
 		content: ''; position: absolute; width: 4px; height: 4px; background-color: var(--color-control-accent); left: -10px; top: 50%; margin-top: -2px;
-		border-radius: 50%; opacity: 0; transition: opacity 0.2s $easeInQuint; opacity: 0;
+		border-radius: 50%; opacity: 0; transition: opacity 0.2s $easeInQuint;
+	}
+
+	.item.loading {
+		.iconWrap { background-color: var(--color-shape-highlight-medium); }
+		.iconWrap {
+			.iconObject, .cnt { display: none; }
+		}
+
+		@keyframes rotate {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+
+		&:before {
+			content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
+			width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear
+		}
 	}
 
 	.item.isButton {
