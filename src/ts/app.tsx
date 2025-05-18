@@ -241,8 +241,6 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
-
-		window.setTimeout(() => U.Common.showWhatsNew(), 1500);
 	};
 
 	init () {
