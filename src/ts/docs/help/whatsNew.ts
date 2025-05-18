@@ -25,13 +25,88 @@ export default () => {
 		{ type: I.BlockType.IconPage, icon: '👋' },
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
 
+		title(`Desktop 0.46.X Released!`),
+		text(''),
+		text('This release marks an exciting and long-awaited moment in Anytype’s evolution: the <b>first iteration of our Local API</b> is here! It opens up powerful new possibilities for an ecosystem of plugins, automations and third-party integrations.'),
+		text('Alongside this launch, we’re polishing the new structure around Types, delivering performance fixes and enhancing workflows with an upgraded Raycast extension.'),
+		text(''),
+
+		h2(`Anytype Local API (Developer Preview)`),
+		text(''),
+		text('Our Local API is now available, and directly shipped with the desktop app. It runs on localhost and never has to call the cloud (you can use it on a plane literally, on-device only).'),
+		text('Although it’s designed for developers, we’re looking forward to the community shipping more amazing integrations soon!'),
+		text(''),
+
+		h3(`Key Points`),
+		bullet(`Authenticate once via a 4-digit challenge in the desktop app. This generates an ${hl('app_key')}, which is used as a bearer token to authenticated subsequent requests. Later, app settings will allow generating tokens to share with integrations easily.`),
+		bullet(`OpenAPI specification and full documentation are available on our new ${link('https://developers.anytype.io/', 'Developer Portal')}.`),
+		bullet(`Example endpoints expose core Anytype functionality: creating objects, editing, querying and more.`),
+		bullet(`Early SDKs and community tools are already underway: Python client, MCP, Raycast, Go client in the works.`),
+		text(''),
+
+		callout(`By using extensions or supplying API key you grant those extensions limited access to your vault: they can create, edit or delete objects. Be careful to use <b>trustworthy only</b>.`, '⚠️'),
+		text(''),
+
+		h2(`Raycast Extension Updates`),
+		text(''),
+		text('As a companion to our Local API, we’ve just shipped another greatly improved Raycast extension.'),
+		text('Here’s what’s new:'),
+		bullet(`<b>Create</b> new spaces, objects, types, properties or tags quickly with ${hl('CMD+N')} when browsing spaces.`),
+		bullet(`<b>Edit</b> your selected items (spaces, objects, types, properties, or tags) easily using ${hl('CMD+E')}.`),
+		bullet(`<b>Add objects to lists</b> using the new ${hl('Add object to list')} command, or from the context menu.`),
+		text(''),
+
+		h2(`Quality of Life Improvements`),
+		text(''),
+
+		text('<b>Extra safety step for deleting</b>'),
+		text('To help prevent accidental deletions, space removal now includes an added confirmation layer.'),
+		text(''),
+
+		text('<b>Improved date interactions in widgets</b>'),
+		text('Added an expand icon and helpful hover cues in calendar widgets to make date menus more discoverable.'),
+		text(''),
+
+
+		text('<b>Widget behavior fine-tuned</b>'),
+		text('Smoothed out how widgets behave when adding new objects.'),
+		text(''),
+
+
+		text('<b>Adjusted property picker in Query menu</b>'),
+		text('Minor UX improvements for a more intuitive setup.'),
+		text(''),
+
+		h2(`Bug Fixes`),
+		bullet(`Fixed text deletion in the Description field.`),
+		bullet(`Fixed misplaced volume bar. Thanks for flagging it, @${link('https://community.anytype.io/t/volume-bar-is-misplaced/27771/1', 'Shoyo')}!`),
+		bullet(`Typing in Date fields works as expected (<i>no more 31.12.1969 issues!</i>). Thanks for the heads-up, @${link('https://community.anytype.io/t/can-t-manually-type-in-a-date/27724', 'natanyberry')}!`),
+		bullet(`Icons now appear correctly in Queries.`),
+		bullet(`Kanban views display correctly in widgets.`),
+		bullet(`Fixed cursor jumping to the beginning of the line in the type creation panel.`),
+		bullet(`Fixed objects displaying in Kanban when opened in modal window.`),
+		bullet(`Improved drag-and-drop and block insertion behaviour in column layouts. Thanks for reporting, @${link('https://community.anytype.io/t/two-bugs-with-content-in-columns-on-a-page-solved/27337', 'VisualNotes')}!`),
+		bullet(`Fixed incorrect pop-up link positioning in text.`),
+		bullet(`Improved performance when renaming images in Gallery view. Thanks to @${link('https://community.anytype.io/t/its-a-pain-to-rename-pictures-in-the-gallery-view-if-you-have-lots-of-objects-loaded/24461', 'Code-Jack')}!`),
+		bullet(`Fixed issue preventing blocks from being moved into the end position of a toggle. Yet another great catch from @${link('https://community.anytype.io/t/toggles-impossible-to-move-a-block-from-outside-into-the-toggle-at-the-end-position/27715', 'Code-Jack')}!`),
+		bullet(`Unable to delete bullet points – resolved.`),
+		bullet(`Multi-line selection is no longer replaced by the key-name (e.g. ${hl('PageDown')}).`),
+		bullet(`Opening Preferences from a modal window no longer causes a blank screen. Thanks for catching it, @${link('https://community.anytype.io/t/modal-open-open-preferences-all-blank/27801', 'krst')}!`),
+		bullet(`Fixed severe scroll jump when switching views in inline Queries.`),
+		bullet(`Empty names no longer appear when the singular form of a Type name is unset.`),
+		bullet(`Fixed issue preventing properties from being placed at the first or last position within a section in the panel.`),
+		text(''),
+
+		div(),
+		// --------------------------------------------//
+
 		title(`Desktop 0.46.0 Released!`),
 		text(''),
 		text('Hi dear Anytypers!'),
 		text(`We're thrilled to announce a major update and introduce a fundamental shift in Anytype's core organizing structure. We\'re streamlining our user experience by eliminating the current behavior and bringing a clearer, more intuitive way to use <b>Types</b>.`),
 		text('The new Anytype reimagine Types. Now, you can define layouts and properties within a Type and all associated objects will automatically inherit these settings.'),
 		text('Along with this transformation, we’ve included many new improvements and bug fixes.'),
-		text(``),
+		text(`Add objects to lists using the new "Add object to list" command, or from the context menu.`),
 
 		h2(`Meet the new Anytype`),
 		text(``),
