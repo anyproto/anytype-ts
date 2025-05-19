@@ -522,9 +522,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			} else {
 				const el = this.getElement();
 				if (!el || !el.length) {
-					if (data.closeOnAnchorMissing) {
-						S.Menu.close(id);
-					};
 					console.log('[Menu].position', id, 'element not found', element);
 					return;
 				};

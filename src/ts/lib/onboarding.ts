@@ -44,7 +44,6 @@ class Onboarding {
 						key,
 						current: 0,
 						isPopup,
-						closeOnAnchorMissing: true,
 					},
 				});
 			}, t);
