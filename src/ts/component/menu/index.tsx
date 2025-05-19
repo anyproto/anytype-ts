@@ -471,9 +471,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		return (Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder) + (isFixed ? 0 : J.Size.vault.width);
 	};
 
-	position () {
+	position (callBack?: (error?: boolean) => void) {
 		const { id, param } = this.props;
-		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge } = param;
+		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge, data } = param;
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -522,7 +522,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			} else {
 				const el = this.getElement();
 				if (!el || !el.length) {
-					if (id == 'onboarding') {
+					if (data.closeOnAnchorMissing) {
 						S.Menu.close(id);
 					};
 					console.log('[Menu].position', id, 'element not found', element);
