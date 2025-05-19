@@ -26,7 +26,7 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 
 		setIsLoading(true);
 
-		C.AccountLocalLinkCreateApp({ name }, (message: any) => {
+		C.AccountLocalLinkCreateApp({ name, scope: I.LocalApiScope.Json }, (message: any) => {
 			setIsLoading(false);
 
 			if (message.error.code) {

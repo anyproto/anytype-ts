@@ -385,7 +385,7 @@ export interface TooltipParam {
 
 export enum LocalApiScope {
 	Limited		 = 0,
-	JsonAPI		 = 1,
+	Json		 = 1,
 	Full		 = 2,
 };
 

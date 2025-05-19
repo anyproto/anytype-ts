@@ -1132,6 +1132,7 @@ export const Mapper = {
 			const item = new Model.Account.Auth.AppInfo();
 
 			item.setAppname(obj.name);
+			item.setScope(obj.scope as number);
 
 			return item;
 		},
