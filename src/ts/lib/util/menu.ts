@@ -91,7 +91,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
-			{ id: I.EmbedProcessor.Drawio, name: 'Drawio' },
+			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
 		];
 
 		if (config.experimental) {
