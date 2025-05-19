@@ -984,7 +984,7 @@ class UtilCommon {
 	};
 
 	normalizeLineEndings (s: string) {
-		return String(s || '').replace(/\r\n?/g, '\n');
+		return String(s || '').replace(/\r?\n/g, '\n');
 	};
 
 	htmlSpecialChars (s: string) {

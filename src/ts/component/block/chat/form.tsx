@@ -861,11 +861,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	getTextValue (): string {
-		return this.trim(String(this.refEditable?.getTextValue() || '').replace(/^\r?\n/gm, ''));
+		return String(this.refEditable?.getTextValue() || '');
 	};
 
 	getHtmlValue (): string {
-		return this.trim(String(this.refEditable?.getHtmlValue() || ''));
+		return String(this.refEditable?.getHtmlValue() || '');
 	};
 
 	trim (value: string): string {
