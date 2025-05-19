@@ -241,9 +241,10 @@ class UtilEmbed {
 					// Edit mode cannot be opened at this time
 					u.searchParams.delete('edit');
 					url = u.toString();
-				}
+				};
+				
 				break;
-			}
+			};
 
 			case I.EmbedProcessor.GithubGist: {
 				const a = url.split('#');
