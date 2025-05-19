@@ -92,6 +92,7 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 		const { getId } = this.props;
 		const element = $(`#${getId()} #icon-more-${item.hash}`);
 		const options: any[] = [
+			{ id: 'copy', name: translate('commonCopy'), color: 'blue' },
 			{ id: 'revoke', name: translate('popupSettingsApiRevoke'), color: 'red' },
 		];
 
@@ -106,6 +107,11 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 				options,
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
+						case 'copy': {
+							U.Common.copyToast(translate('popupSettingsApiKey'), item.hash);
+							break;
+						};
+
 						case 'revoke': {
 							C.AccountLocalLinkRevokeApp(item.hash, (message: any) => {
 								if (!message.error.code) {
