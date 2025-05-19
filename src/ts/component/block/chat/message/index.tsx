@@ -260,11 +260,19 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const { account } = S.Auth;
 		const isSelf = creator == account.id;
 		const readonly = this.props.readonly || !isSelf;
+		const node = $(this.node);
+		const et = node.find('.bubbleOuter .text');
+		const er = node.find('.reply .text');
 
-		renderMentions(rootId, this.node, marks, () => text, { subId });
-		renderObjects(rootId, this.node, marks, () => text, { readonly }, { subId });
-		renderLinks(rootId, this.node, marks, () => text, { readonly }, { subId });
-		renderEmoji(this.node);
+		renderMentions(rootId, et, marks, () => text, { subId });
+		renderObjects(rootId, et, marks, () => text, { readonly }, { subId });
+		renderLinks(rootId, et, marks, () => text, { readonly }, { subId });
+		renderEmoji(et);
+
+		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16 });
+		renderObjects(rootId, er, marks, () => text, { readonly }, { subId, iconSize: 16 });
+		renderLinks(rootId, er, marks, () => text, { readonly }, { subId, iconSize: 16 });
+		renderEmoji(er, { iconSize: 16 });
 
 		this.checkLinesLimit();
 	};
@@ -414,11 +422,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	highlight () {
-		$(this.node).addClass('highlight');
+		const node = $(this.node);
 
-		window.setTimeout(() => {
-			$(this.node).removeClass('highlight');
-		}, J.Constant.delay.highlight);
+		node.addClass('highlight');
+		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
 	};
 
 });

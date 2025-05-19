@@ -238,9 +238,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		U.Object.getById(collection, {}, object => {
-			console.log('Collection', collection, object);
-		});
+		U.Object.getById(collection, {}, object => this.setState({ collection: object }));
 	};
 
 	initName () {
