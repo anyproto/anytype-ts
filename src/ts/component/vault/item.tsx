@@ -24,7 +24,7 @@ const VaultItem: FC<Props> = observer(({
 	const cn = [ 'item' ];
 	const theme = S.Common.getThemeClass();
 
-	if (item.spaceLocalStatus == I.SpaceStatus.Loading) {
+	if (item.isLocalLoading) {
 		cn.push('loading');
 	};
 

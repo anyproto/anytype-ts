@@ -349,6 +349,7 @@ class DetailStore {
 
 		// Local status
 		object.isLocalOk = [ I.SpaceStatus.Unknown, I.SpaceStatus.Ok ].includes(object.spaceLocalStatus);
+		object.isLocalLoading = object.spaceLocalStatus == I.SpaceStatus.Loading;
 
 		return object;
 	};
