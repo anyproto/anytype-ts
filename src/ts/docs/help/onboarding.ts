@@ -87,6 +87,7 @@ export default {
 		showDimmer: true,
 		param: {
 			noArrow: true,
+			noClose: true,
 			horizontal: I.MenuDirection.Right,
 			stickToElementEdge: I.MenuDirection.Top,
 			width: 288,
