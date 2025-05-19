@@ -92,7 +92,7 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 		const { getId } = this.props;
 		const element = $(`#${getId()} #icon-more-${item.hash}`);
 		const options: any[] = [
-			{ id: 'copy', name: translate('commonCopy'), color: 'blue' },
+			{ id: 'copy', name: translate('commonCopy') },
 			{ id: 'revoke', name: translate('popupSettingsApiRevoke'), color: 'red' },
 		];
 
