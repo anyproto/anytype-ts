@@ -76,7 +76,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						style={param.style}
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						onClick={e => this.onClick(e, item)}
-						withMore={item.isInstalled}
+						withMore={true}
 						onMore={e => this.onEdit(e, item)}
 					/>
 				);
@@ -267,8 +267,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 		const systemKeys = Relation.systemKeys();
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
-		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
-		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
+		const library = items.filter(it => !systemKeys.includes(it.relationKey));
+		const system = items.filter(it => systemKeys.includes(it.relationKey));
 		const types = U.Menu.getRelationTypes().filter(it => it.name.match(reg)).map(it => ({ ...it, isType: true }));
 		const canWrite = U.Space.canMyParticipantWrite();
 

@@ -1209,8 +1209,8 @@ class UtilMenu {
 			const { props } = context;
 			const { className, classNameWrap } = props.param;
 			const type = S.Record.getTypeById(item.id);
-			const canDefault = type.isInstalled && !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
-			const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+			const canDefault = !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
+			const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const route = '';
 
 			let options: any[] = [

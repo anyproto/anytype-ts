@@ -36,7 +36,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 		const cn = [ 'viewContent', className ];
 
-		if (!relation || !relation.isInstalled) {
+		if (!relation) {
 			return (
 				<Empty
 					{...this.props}

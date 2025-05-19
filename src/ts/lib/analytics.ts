@@ -647,28 +647,16 @@ class Analytics {
 			object = S.Record.getTypeByKey(id);
 		};
 
-		if (!object) {
-			return '';
-		};
-
-		if (!object.isInstalled) {
-			return object.id;
-		} else {
-			return object.sourceObject ? object.sourceObject : 'custom';
-		};
+		return object ? (object.sourceObject ? object.sourceObject : 'custom') : '';
 	};
 
-	relationMapper (key: string) {
-		const object = S.Record.getRelationByKey(key);
+	relationMapper (id: string) {
+		let object = S.Record.getRelationById(id);
 		if (!object) {
-			return '';
+			object = S.Record.getRelationByKey(id);
 		};
 
-		if (!object.isInstalled) {
-			return object.id;
-		} else {
-			return object.sourceObject ? object.sourceObject : 'custom';
-		};
+		return object ? (object.sourceObject ? object.sourceObject : 'custom') : '';
 	};
 
 	embedType (isInline: boolean): string {
