@@ -726,6 +726,18 @@ export const Mapper = {
 			};
 		},
 
+		AppInfo: (obj: Model.Account.Auth.AppInfo): I.AppInfo => {
+			return {
+				hash: obj.getApphash(),
+				name: obj.getAppname(),
+				path: obj.getApppath(),
+				createdAt: obj.getCreatedat(),
+				expireAt: obj.getExpireat(),
+				scope: obj.getScope() as number,
+				isActive: obj.getIsactive(),
+			};
+		},
+
 	},
 
 	//------------------------------------------------------------
@@ -1114,6 +1126,14 @@ export const Mapper = {
 			});
 
 			return reactions;
+		},
+
+		AppInfo: (obj: any) => {
+			const item = new Model.Account.Auth.AppInfo();
+
+			item.setAppname(obj.name);
+
+			return item;
 		},
 
 	},

@@ -382,3 +382,19 @@ export interface TooltipParam {
 	offsetY?: number;
 	delay?: number;
 };
+
+export enum LocalApiScope {
+	Limited		 = 0,
+	JsonAPI		 = 1,
+	Full		 = 2,
+};
+
+export interface AppInfo {
+	hash: string;
+	name: string;
+	path: string;
+	createdAt: number;
+	expireAt: number;
+	scope: LocalApiScope;
+	isActive: boolean;
+};

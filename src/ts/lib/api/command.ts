@@ -257,6 +257,26 @@ export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callB
 	dispatcher.request(AccountLocalLinkSolveChallenge.name, request, callBack);
 };
 
+export const AccountLocalLinkListApps = (callBack?: (message: any) => void) => {
+	dispatcher.request(AccountLocalLinkListApps.name, new Empty(), callBack);
+};
+
+export const AccountLocalLinkCreateApp = (app: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.LocalLink.CreateApp.Request();
+
+	request.setApp(Mapper.To.AppInfo(app));
+
+	dispatcher.request(AccountLocalLinkCreateApp.name, request, callBack);
+};
+
+export const AccountLocalLinkRevokeApp = (hash: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.LocalLink.RevokeApp.Request();
+
+	request.setApphash(hash);
+
+	dispatcher.request(AccountLocalLinkRevokeApp.name, request, callBack);
+};
+
 // ---------------------- FILE ---------------------- //
 
 export const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {

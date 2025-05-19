@@ -371,7 +371,8 @@
     }
 
     > .pageSettingsSpaceList,
-    > .pageSettingsDataPublish {
+    > .pageSettingsDataPublish,
+	> .pageSettingsApi {
         .title { margin-bottom: 32px !important; }
 
         .items {
@@ -399,6 +400,15 @@
             .icon.active { background-color: var(--color-shape-highlight-medium); }
         }
     }
+
+	> .pageSettingsApi {
+		.title { margin: 0px !important; }
+		.titleWrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+
+		.items {
+            .row { grid-template-columns: minmax(0, 1fr) 100px 100px 100px 28px; }
+		}
+	}
 
     > .pageSettingsDataPublish {
         .items {
