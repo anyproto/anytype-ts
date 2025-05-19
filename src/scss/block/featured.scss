@@ -8,7 +8,13 @@
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: middle; margin-top: -4px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-		.wrap { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-wrap: wrap; }
+
+		.listColumn {
+			.wrapMenu { display: none; }
+		}
+
+		.listInline { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-wrap: wrap; }
+
 		.bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-secondary); }
 
 		.cell { white-space: nowrap; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 2px; height: 28px; }
@@ -64,15 +70,15 @@
 	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	.block.blockFeatured.align0 {
-		> .wrapContent > .selectionTarget > .dropTarget { margin-left: -6px; }
+		> .wrapContent > .selectionTarget > .dropTarget > .wrap > .listInline { margin-left: -6px; }
 	}
 
 	.block.blockFeatured.align1 {
-		.wrap { justify-content: center; }
+		.wrap > .listInline { justify-content: center; }
 	}
 
 	.block.blockFeatured.align2 {
-		.wrap { justify-content: flex-end; }
+		.wrap > .listInline { justify-content: flex-end; }
 	}
 
 	.block.blockFeatured.small { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }
