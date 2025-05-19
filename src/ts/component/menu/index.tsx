@@ -471,7 +471,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		return (Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder) + (isFixed ? 0 : J.Size.vault.width);
 	};
 
-	position (callBack?: (error?: boolean) => void) {
+	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge, data } = param;
 
