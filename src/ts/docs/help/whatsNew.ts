@@ -79,8 +79,9 @@ export default () => {
 		text(''),
 
 		h2(`Bug Fixes`),
+		bullet(`Fixed an issue where some objects were not being indexed by the full-text search engine.`),
+		bullet(`Resolved a bug causing type objects to not persist after app restart.`),
 		bullet(`Fixed text deletion in the Description field.`),
-		bullet(`Fixed issue causing search results to appear empty.`),
 		bullet(`Fixed misplaced volume bar. Thanks for flagging it, @${link('https://community.anytype.io/t/volume-bar-is-misplaced/27771/1', 'Shoyo')}!`),
 		bullet(`Typing in Date fields works as expected (<i>no more 31.12.1969 issues!</i>). Thanks for the heads-up, @${link('https://community.anytype.io/t/can-t-manually-type-in-a-date/27724', 'natanyberry')}!`),
 		bullet(`Icons now appear correctly in Queries.`),
