@@ -191,7 +191,7 @@ class UtilMenu {
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
-			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
+			{ id: 'remove', icon: 'remove', name: translate('commonMoveToBin'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: copyName, caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];
@@ -1250,7 +1250,7 @@ class UtilMenu {
 
 							case 'remove': {
 								if (S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-									Action.uninstall(item, true, route);
+									Action.archive([ item.id ], route);
 								};
 								break;
 							};

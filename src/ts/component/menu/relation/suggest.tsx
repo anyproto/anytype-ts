@@ -343,7 +343,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { id, close, param, getId, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall, filter } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, ref, filter } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 		const onAdd = (item: any) => {
 			close();
@@ -376,15 +376,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				}
 			});
 		} else {
-			if (item.isInstalled || noInstall) {
-				onAdd(item);
+			onAdd(item);
 
-				if (!noInstall) {
-					analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type, relationKey: item.relationKey });
-				};
-			} else {
-				Action.install(item, true, message => onAdd(message.details));
-			};
+			analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type, relationKey: item.relationKey });
 		};
 	};
 

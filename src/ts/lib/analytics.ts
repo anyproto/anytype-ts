@@ -257,8 +257,6 @@ class Analytics {
 		};
 
 		switch (code) {
-			case 'ObjectInstall':
-			case 'ObjectUninstall':
 			case 'SelectGraphNode':
 			case 'CreateObject': {
 				data.layout = I.ObjectLayout[data.layout];
