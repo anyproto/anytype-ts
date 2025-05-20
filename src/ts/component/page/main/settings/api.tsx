@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Button } from 'Component';
-import { I, S, U, C, J, translate } from 'Lib';
+import { I, S, U, C, J, translate, Preview } from 'Lib';
 
 interface State {
 	list: I.AppInfo[];
@@ -31,7 +31,11 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 					<div className="col colObject">
 						<div className="name">{name}</div>
 					</div>
-					<div className="col">
+					<div 
+						className="col" 
+						onMouseEnter={e => Preview.tooltipShow({ text: item.apiKey, element: $(e.currentTarget) })} 
+						onMouseLeave={() => Preview.tooltipHide()}
+					>
 						{U.Common.shortMask(item.apiKey, 3)}
 					</div>
 					<div className="col colDate">
