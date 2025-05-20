@@ -393,7 +393,6 @@ export interface AppInfo {
 	hash: string;
 	apiKey: string;
 	name: string;
-	path: string;
 	createdAt: number;
 	expireAt: number;
 	scope: LocalApiScope;

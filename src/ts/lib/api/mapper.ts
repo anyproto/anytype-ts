@@ -729,9 +729,8 @@ export const Mapper = {
 		AppInfo: (obj: Model.Account.Auth.AppInfo): I.AppInfo => {
 			return {
 				hash: obj.getApphash(),
-				apiKey: '', // obj.getAppkey(),
+				apiKey: obj.getAppkey(),
 				name: obj.getAppname(),
-				path: obj.getApppath(),
 				createdAt: obj.getCreatedat(),
 				expireAt: obj.getExpireat(),
 				scope: obj.getScope() as number,
