@@ -238,6 +238,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 			{ id: 'dataIndex', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'dataPublish', 'delete' ] },
 			{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+			{ id: 'api', name: translate('popupSettingsApiTitle') },
 		];
 
 		if (this.withMembership()) {
