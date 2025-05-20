@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Button } from 'Component';
-import { I, S, U, C, translate } from 'Lib';
+import { I, S, U, C, J, translate } from 'Lib';
 
 interface State {
 	list: I.AppInfo[];
@@ -32,7 +32,7 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 						<div className="name">{name}</div>
 					</div>
 					<div className="col">
-						{U.Common.shortMask(item.hash, 3)}
+						{U.Common.shortMask(item.apiKey, 3)}
 					</div>
 					<div className="col colDate">
 						{item.createdAt ? U.Date.dateWithFormat(dateFormat, item.createdAt) : ''}
@@ -83,16 +83,15 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 	};
 
 	onAdd () {
-		S.Popup.open('apiCreate', {
-			onClose: () => this.load(),
-		});
+		S.Popup.open('apiCreate', { onClose: () => this.load() });
 	};
 
 	onMore (item: any) {
 		const { getId } = this.props;
 		const element = $(`#${getId()} #icon-more-${item.hash}`);
 		const options: any[] = [
-			{ id: 'copy', name: translate('commonCopy') },
+			{ id: 'copyKey', name: translate('popupSettingsApiCopyKey') },
+			{ id: 'copyMcp', name: translate('popupSettingsApiCopyMcp') },
 			{ id: 'revoke', name: translate('popupSettingsApiRevoke'), color: 'red' },
 		];
 
@@ -107,8 +106,13 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 				options,
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
-						case 'copy': {
-							U.Common.copyToast(translate('popupSettingsApiKey'), item.hash);
+						case 'copyKey': {
+							U.Common.copyToast(translate('popupSettingsApiKey'), item.apiKey);
+							break;
+						};
+
+						case 'copyMcp': {
+							U.Common.copyToast(translate('popupSettingsApiMcpConfig'), U.Common.sprintf(J.Constant.mcpConfig, item.apiKey));
 							break;
 						};
 

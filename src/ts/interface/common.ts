@@ -391,6 +391,7 @@ export enum LocalApiScope {
 
 export interface AppInfo {
 	hash: string;
+	apiKey: string;
 	name: string;
 	path: string;
 	createdAt: number;

@@ -3,9 +3,29 @@
 .popups {
 	.popup.popupApiCreate {
 		.innerWrap { width: 480px; padding: 20px 56px 24px 56px; text-align: center; }
-		.nameWrapper { margin: 0px 0px 28px 0px; }
+		.nameWrapper { margin: 0px 0px 24px 0px; }
+
+		.phraseWrapper { border-radius: 12px; background-color: var(--color-shape-tertiary); padding: 11px 22px; line-height: unset; }
+		.phraseWrapper {
+			.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; word-break: unset; }
+			.word { @include text-small; font-weight: 500; margin: 0; }
+			.bg { filter: blur(8px); opacity: 0.5; }
+
+			.icon { width: 24px !important; height: 24px !important; margin: 0px; top: 50%; right: 12px; z-index: 1; margin-top: -12px; }
+			.icon.show { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); display: none; }
+			.icon.copy { display: block; }
+
+			&.isHidden {
+				.icon.show { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: var(--color-shape-tertiary); display: none; }
+			}
+		}
 
 		.input { @include text-header1; height: auto; text-align: center; }
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+
+		.wrap.withKey {
+			.nameWrapper { margin: 0px 0px 12px 0px; }
+			.phraseWrapper { margin: 0px 0px 24px 0px; }
+		} 
 	}
 }
