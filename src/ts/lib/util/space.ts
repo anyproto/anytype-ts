@@ -259,9 +259,9 @@ class UtilSpace {
 		blocks.forEach(block => Storage.setToggle('widget', block.id, false));
 	};
 
-	getInvite (id: string, callBack: (cid: string, key: string) => void) {
+	getInvite (id: string, callBack: (cid: string, key: string, inviteType: I.InviteType) => void) {
 		C.SpaceInviteGetCurrent(id, (message: any) => {
-			callBack(message.inviteCid, message.inviteKey);
+			callBack(message.inviteCid, message.inviteKey, message.inviteType);
 		});
 	};
 

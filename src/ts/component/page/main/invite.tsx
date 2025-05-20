@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, J, translate } from 'Lib';
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 interface PageMainInviteRefProps {
 	resize: () => void;
@@ -92,7 +92,24 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 							request(message);
 						};
 					} else {
-						request(message);
+						if (message.inviteType == I.InviteType.WithoutApprove) {
+							const { spaceName, creatorName } = message;
+							const { account } = S.Auth;
+
+							S.Popup.open('confirm', {
+								data: {
+									icon: 'join',
+									title: U.Common.sprintf(translate('popupConfirmJoinSpaceTitle'), spaceName),
+									text: U.Common.sprintf(translate('popupConfirmJoinSpaceText'), spaceName, creatorName),
+									textConfirm: translate('popupConfirmJoinSpaceButtonConfirm'),
+									onConfirm: () => {
+										C.SpaceJoin(account.info.networkId, message.spaceId, cid, key);
+									},
+								},
+							});
+						} else {
+							request(message);
+						};
 					};
 				});
 			});
