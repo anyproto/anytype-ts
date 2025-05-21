@@ -1708,6 +1708,7 @@ export const Mapper = {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
+				dependencies: obj.getDependenciesList().map(Decode.struct),
 				subIds: obj.getSubidsList(),
 			};
 		},
