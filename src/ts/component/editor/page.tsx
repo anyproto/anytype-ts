@@ -555,6 +555,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onKeyDownEditor (e: any) {
 		const { rootId, isPopup } = this.props;
 
+		if (S.Popup.isOpen('', [ 'page' ])) {
+			return;
+		};
+
 		if (isPopup !== keyboard.isPopup()) {
 			return;
 		};
