@@ -170,7 +170,10 @@ class UtilRouter {
 		sidebar.rightPanelToggle(false, false, false);
 
 		if (sendEvent) {
-			analytics.event('SwitchSpace');
+			const counters = S.Chat.getSpaceCounters(id);
+			const { mentionCounter, messageCounter} = counters;
+
+			analytics.event('SwitchSpace', { unreadMessageCount: messageCounter, hasMentions: !!mentionCounter });
 		};
 
 		this.isOpening = true;

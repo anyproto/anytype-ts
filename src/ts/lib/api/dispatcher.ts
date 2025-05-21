@@ -983,6 +983,8 @@ class Dispatcher {
 							const { space } = S.Common;
 							const open = () => {
 								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+
+								analytics.event('OpenChatFromNotification');
 							};
 
 							if (spaceId != space) {
