@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, C, J, Mark, translate, Preview } from 'Lib';
+import { I, S, U, C, J, Mark, translate, Preview, analytics } from 'Lib';
 
 import Attachment from '../attachment';
 import Reply from './reply';
@@ -332,14 +332,26 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				noUpload: true,
 				value: '',
 				onSelect: icon => this.onReactionSelect(icon),
+				route: 'Reaction',
 			}
 		});
+
+		analytics.event('ClickMessageMenuReaction');
 	};
 
 	onReactionSelect (icon: string) {
-		const { rootId, id } = this.props;
+		const { account } = S.Auth;
+		const { rootId, id, subId } = this.props;
+		const message = S.Chat.getMessage(subId, id);
+		const { reactions } = message;
 
 		C.ChatToggleMessageReaction(rootId, id, icon);
+
+		if (reactions.find(it => it.icon == icon && it.authors.includes(account.id))) {
+			analytics.event('RemoveReaction');
+		} else {
+			analytics.event('AddReaction');
+		};
 	};
 
 	onAttachmentRemove (attachmentId: string) {

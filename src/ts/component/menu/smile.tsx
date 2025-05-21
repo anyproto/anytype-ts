@@ -453,6 +453,8 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 
 		this.setState({ tab: t }, () => this.load());
+
+		analytics.event('ScreenEmoji', { route: this.props.param.data?.route });
 	};
 	
 	componentDidUpdate () {

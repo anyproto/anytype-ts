@@ -262,6 +262,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 						U.Object.setIcon(object.id, '', objectId);
 					};
 				},
+				route: 'Icon'
 			},
 			...menuParam,
 		});

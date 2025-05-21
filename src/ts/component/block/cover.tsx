@@ -193,6 +193,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 				onUpload (objectId: string) {
 					U.Object.setIcon(rootId, '', objectId, cb);
 				},
+				route: 'Icon',
 			}
 		});
 	};
