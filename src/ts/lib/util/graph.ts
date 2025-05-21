@@ -2,9 +2,9 @@ import { I, S, U, J, Relation } from 'Lib';
 
 class UtilGraph {
 
-
-
 	imageSrc (d: any) {
+		d = d || {};
+
 		let src = '';
 
 		switch (d.layout) {
@@ -69,8 +69,6 @@ class UtilGraph {
 						src = U.Smile.srcFromColons(code);
 					};
 					src = src.replace(/^.\//, '');
-				} else {
-
 				};
 				break;
 			};
