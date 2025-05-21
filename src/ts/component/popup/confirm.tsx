@@ -106,9 +106,11 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 	};
 
 	onKeyDown (e: any) {
+		const cmd = keyboard.cmdKey();
+		const buttons = $(this.refButtons).find('.button');
+
 		keyboard.shortcut('enter, space', e, () => {
 			e.stopPropagation();
-			const buttons = $(this.refButtons).find('.button');
 
 			if (buttons[this.n]) {
 				$(buttons[this.n]).trigger('click');
@@ -120,9 +122,8 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 			this.onCancel(e);
 		});
 
-		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (arrow) => {
-			const dir = [ 'arrowup', 'arrowleft' ].includes(arrow) ? 1 : -1;
-			const buttons = $(this.refButtons).find('.button');
+		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
+			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? 1 : -1;
 
 			if (buttons.length < 2) {
 				return;
@@ -137,6 +138,10 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 			};
 
 			this.setHighlight();
+		});
+
+		keyboard.shortcut(`${cmd}+c`, e, () => {
+			e.stopPropagation();
 		});
 	};
 	

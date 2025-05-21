@@ -1,6 +1,8 @@
 @import "~scss/_mixins";
 
 .popups {
+
+	.popup.popupConfirm * { user-select: text !important; }
 	.popup.popupConfirm {
 		.innerWrap { width: 424px; padding: 32px; text-align: center; }
 
