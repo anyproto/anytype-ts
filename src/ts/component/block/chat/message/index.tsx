@@ -49,9 +49,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 		let userpicNode = null;
 		let authorNode = null;
-		let text = content.text.replace(/\r?\n$/, '');
+		let text = content.text.replace(/^\r?\n/g, '').replace(/\r?\n$/g, '');
 
-		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
+		const diff = text.length - content.text.length;
+		const marks = Mark.adjust(content.marks, 0, diff);
+
+		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, marks)));
 
 		if (!readonly) {
 			if (!hasReactions && canAddReaction) {

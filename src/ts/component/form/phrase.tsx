@@ -33,7 +33,6 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	checkPin = false,
 	placeholder = '',
 	onKeyDown,
-	onChange,
 	onToggle,
 	onCopy,
 	onClick,

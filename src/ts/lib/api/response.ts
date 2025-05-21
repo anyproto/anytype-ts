@@ -50,6 +50,18 @@ export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.S
 	};
 };
 
+export const AccountLocalLinkListApps = (response: Rpc.Account.LocalLink.ListApps.Response) => {
+	return {
+		list: (response.getAppList() || []).map(Mapper.From.AppInfo),
+	};
+};
+
+export const AccountLocalLinkCreateApp = (response: Rpc.Account.LocalLink.CreateApp.Response) => {
+	return {
+		key: response.getAppkey(),
+	};
+};
+
 export const AccountMigrate = (response: Rpc.Account.Migrate.Response) => {
 	return {
 		requiredSpace: response.getError().getRequiredspace()

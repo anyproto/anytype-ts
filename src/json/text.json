@@ -807,6 +807,16 @@
 	"popupSettingsPhraseTitle": "Key",
 	"popupSettingsPhraseText": "Your key protects your vault. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
 
+	"popupSettingsApiTitle": "API Keys",
+	"popupSettingsApiKey": "Key",
+	"popupSettingsApiCreated": "Created",
+	"popupSettingsApiScope": "Scope",
+	"popupSettingsApiRevoke": "Revoke",
+	"popupSettingsApiCreate": "Create new API key",
+	"popupSettingsApiCopyKey": "Copy Key",
+	"popupSettingsApiCopyMcp": "Copy MCP Config",
+	"popupSettingsApiMcpConfig": "MCP Config",
+
 	"popupSettingsPinTitle": "Pin Code",
 	"popupSettingsPinText": "Set a 6-digit PIN for your application screen when unattended. PIN adds a quick layer of privacy for your app. It prevents casual viewing but doesn't enhance data encryption. Your primary data remains secure with your account Key. PIN protection is recommended when you step away from your device.",
 	"popupSettingsPinOn": "Turn Pin Code on",
@@ -1029,6 +1039,8 @@
 	"popupSpaceCreateLabel": "Encrypted & local-first",
 	"popupSpaceCreateCreate": "Create from scratch",
 	"popupSpaceCreateImport": "Import my data",
+
+	"popupApiCreateCreate": "Create new API key",
 
 	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
 	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
@@ -2474,6 +2486,10 @@
 	"formulaCheckboxPercentNotEmpty": "Percentage checked",
 
 	"timeFormat12": "12 hour",
-	"timeFormat24": "24 hour"
+	"timeFormat24": "24 hour",
+
+	"apiScope0": "Webclipper",
+	"apiScope1": "API",
+	"apiScope2": "Full"
 
 }

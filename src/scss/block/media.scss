@@ -68,7 +68,7 @@
 		}
 	}
 
-	.block.blockMedia.isAudio.withContent > .wrapContent  { border: 1px solid var(--color-shape-secondary); }
+	.block.blockMedia.isAudio.withContent > .wrapContent  { border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
 	.block.blockMedia.isAudio > .wrapContent > .selectionTarget > .dropTarget > .focusable > .wrap { width: 100%; padding: 12px 12px 7px 14px; }
 
 	.block.blockMedia.isReadonly {
