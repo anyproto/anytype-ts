@@ -106,11 +106,18 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 	};
 
 	onKeyDown (e: any) {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { confirmMessage } = data;
 		const cmd = keyboard.cmdKey();
 		const buttons = $(this.refButtons).find('.button');
 
-		keyboard.shortcut('enter, space', e, () => {
+		keyboard.shortcut('enter, space', e, (pressed: string) => {
 			e.stopPropagation();
+
+			if ((pressed === 'space') && confirmMessage) {
+				return;
+			};
 
 			if (buttons[this.n]) {
 				$(buttons[this.n]).trigger('click');
