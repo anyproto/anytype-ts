@@ -23,7 +23,8 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	refInput = null;
 	refList: any = null;
 	refCopy: any = null;
-	refButton: any = null;
+	refButtonRegular: any = null;
+	refButtonNoApprove: any = null;
 
 	state = {
 		isLoading: false,
@@ -209,7 +210,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 							{isSpaceOwner ? (
 								<div className="buttons">
 									<Button
-										ref={ref => this.refButton = ref}
+										ref={ref => this.refButtonRegular = ref}
 										onClick={isShareActive ? () => this.onInitLink() : null}
 										className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')}
 										tooltipParam={{ text: isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled') }}
@@ -218,7 +219,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 									{config.experimental ? (
 										<Button
-											ref={ref => this.refButton = ref}
+											ref={ref => this.refButtonNoApprove = ref}
 											onClick={isShareActive ? () => this.onInitLink(true) : null}
 											className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')}
 											tooltipParam={{ text: isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled') }}
@@ -359,7 +360,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	onInitLink (noApprove?: boolean) {
-		const btn = this.refButton;
+		const btn = noApprove ? this.refButtonNoApprove : this.refButtonRegular;
 		const space = U.Space.getSpaceview();
 
 		if (!btn || btn.isLoading()) {
