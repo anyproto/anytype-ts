@@ -25,7 +25,7 @@ export default () => {
 		{ type: I.BlockType.IconPage, icon: '👋' },
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
 
-		title(`Desktop 0.46.X Released!`),
+		title(`Desktop 0.46.6 Released!`),
 		text(''),
 		text('This release marks an exciting and long-awaited moment in Anytype’s evolution: the <b>first iteration of our Local API</b> is here! It opens up powerful new possibilities for an ecosystem of plugins, automations and third-party integrations.'),
 		text('Alongside this launch, we’re polishing the new structure around Types, delivering performance fixes and enhancing workflows with an upgraded Raycast extension.'),
