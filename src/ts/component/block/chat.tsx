@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Preview, Mark } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Message from './chat/message';
 import Form from './chat/form';
@@ -164,6 +164,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				this.loadMessages(1, true, this.scrollToBottom);
 			};
 		});
+
+		analytics.event('ScreenChat');
 	};
 
 	componentWillUnmount () {
@@ -559,11 +561,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 						case 'copy': {
 							U.Common.clipboardCopy({ text: item.content.text });
+
+							analytics.event('ClickMessageMenuCopy');
 							break;
 						};
 
 						case 'link': {
 							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
+
+							analytics.event('ClickMessageMenuLink');
 							break;
 						};
 
@@ -868,6 +874,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			S.Chat.clear(subId);
 			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id, true, true));
 		});
+
+		analytics.event('ClickScrollToReply');
 	};
 
 	getReplyContent (message: any): any {

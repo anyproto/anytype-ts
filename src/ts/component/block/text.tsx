@@ -934,6 +934,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						focus.apply();
 					});
 				},
+				route: analytics.route.editor,
 			},
 		});
 	};

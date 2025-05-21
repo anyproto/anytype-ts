@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview } from 'Lib';
+import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -732,9 +732,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					reactions: [],
 				};
 
+				let messageType = 'Text';
+				if (attachments.length && message.content?.text.length) {
+					messageType = 'Mixed';
+				} else
+				if (attachments.length) {
+					messageType = 'Attachment';
+				};
+
 				C.ChatAddMessage(rootId, message, (message: any) => {
 					scrollToBottom();
 					clear();
+
+					analytics.event('SentMessage', { type: messageType });
 				});
 			};
 		};
@@ -802,6 +812,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.setAttachments(attachments, () => {
 			this.refEditable.setRange(this.range);
 		});
+
+		analytics.event('ClickMessageMenuEdit');
 	};
 
 	onEditClear () {
@@ -820,6 +832,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.range = { from: length, to: length };
 		this.refEditable.setRange(this.range);
 		this.setState({ replyingId: message.id });
+
+		analytics.event('ClickMessageMenuReply');
 	};
 
 	onReplyClear () {
@@ -850,10 +864,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						} else {
 							scrollToBottom();
 						};
+
+						analytics.event('DeleteMessage');
 					});
 				},
 			}
 		});
+
+		analytics.event('ClickMessageMenuDelete');
 	};
 
 	getMarksAndRange (): any {
@@ -878,6 +896,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onAttachmentRemove (id: string) {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
+
+		analytics.event('DetachItemChat');
 	};
 
 	onSwiper (swiper) {
@@ -888,6 +908,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		switch (type) {
 			case I.ChatReadType.Message: {
 				this.props.onScrollToBottomClick();
+
+				analytics.event('ClickScrollToBottom');
 				break;
 			};
 
@@ -904,6 +926,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						highlightMessage('', mentionOrderId);
 					});
 				};
+
+				analytics.event('ClickScrollToMention');
 				break;
 			};
 		};
@@ -1056,6 +1080,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
 						this.updateMarkup(value, { from: to, to });
+
+						analytics.event('Mention');
 					},
 				},
 			});
