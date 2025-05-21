@@ -335,7 +335,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				noUpload: true,
 				value: '',
 				onSelect: icon => this.onReactionSelect(icon),
-				route: 'Reaction',
+				route: analytics.route.reaction,
 			}
 		});
 
@@ -347,14 +347,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const { rootId, id, subId } = this.props;
 		const message = S.Chat.getMessage(subId, id);
 		const { reactions } = message;
+		const event = reactions.find(it => (it.icon == icon) && it.authors.includes(account.id)) ? 'RemoveReaction' : 'AddReaction';
 
 		C.ChatToggleMessageReaction(rootId, id, icon);
 
-		if (reactions.find(it => it.icon == icon && it.authors.includes(account.id))) {
-			analytics.event('RemoveReaction');
-		} else {
-			analytics.event('AddReaction');
-		};
+		analytics.event(event);
 	};
 
 	onAttachmentRemove (attachmentId: string) {

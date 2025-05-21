@@ -428,7 +428,8 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { storageGet } = this.props;
+		const { storageGet, param } = this.props;
+		const { data } = param;
 		const items = this.getItems();
 		const tabs = this.getTabs();
 		const storage = storageGet();
@@ -454,7 +455,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 		this.setState({ tab: t }, () => this.load());
 
-		analytics.event('ScreenEmoji', { route: this.props.param.data?.route });
+		analytics.event('ScreenEmoji', { route: data?.route });
 	};
 	
 	componentDidUpdate () {

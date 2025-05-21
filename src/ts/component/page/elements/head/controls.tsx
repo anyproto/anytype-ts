@@ -121,7 +121,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				onUpload (objectId: string) {
 					U.Object.setIcon(rootId, '', objectId, cb);
 				},
-				route: 'Icon',
+				route: analytics.route.icon,
 			}
 		});
 	};

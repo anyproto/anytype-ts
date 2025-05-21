@@ -88,6 +88,11 @@ class Analytics {
 		usecaseSite: 'Site',
 
 		onboardingTooltip: 'OnboardingTooltip',
+
+		message: 'Message',
+		reaction: 'Reaction',
+		icon: 'Icon',
+		editor: 'Editor',
 	};
 
 	public widgetType = {

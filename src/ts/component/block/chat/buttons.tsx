@@ -102,7 +102,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 						noUpload: true,
 						value: '',
 						onSelect: (icon) => onChatButtonSelect(type, icon),
-						route: 'Message',
+						route: analytics.route.message,
 					}
 				});
 				break;
@@ -268,7 +268,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				return;
 			};
 
-			const analyticsMenuName = menu.charAt(0).toUpperCase() + menu.slice(1);
+			const analyticsMenuName = U.Common.toUpperCamelCase(menu);
 
 			menuId = 'searchObject';
 			data = {

@@ -732,13 +732,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					reactions: [],
 				};
 
-				let messageType = '';
+				let messageType = 'Text';
 				if (attachments.length && message.content?.text.length) {
 					messageType = 'Mixed';
-				} else if (attachments.length) {
+				} else
+				if (attachments.length) {
 					messageType = 'Attachment';
-				} else {
-					messageType = 'Text';
 				};
 
 				C.ChatAddMessage(rootId, message, (message: any) => {
