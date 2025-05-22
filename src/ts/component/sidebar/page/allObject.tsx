@@ -123,11 +123,11 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 					<div className="head">
 						<div className="titleWrap" onClick={() => sidebar.leftPanelSetState({ page: 'widget' })}>
 							<div className="side left">
-								<Icon className="back withBackground" />
+								<Icon className="back" />
 								<Title text={translate('commonAllContent')} />
 							</div>
 							<div className="side right">
-								<Icon id="button-object-more" className="more withBackground" onClick={this.onMore} />
+								<Icon id="button-object-more" className="more" onClick={this.onMore} />
 							</div>
 						</div>
 
