@@ -127,6 +127,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 					<Input
 						ref={ref => this.refName = ref}
 						placeholder={translate('defaultNamePage')}
+						maxLength={J.Constant.limit.spaceName}
 						readonly={!canWrite || !isEditing}
 					/>
 
@@ -137,6 +138,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							placeholder={translate('popupSettingsSpaceIndexDescriptionPlaceholder')}
 							readonly={!canWrite || !isEditing}
 							onKeyUp={() => this.refDescription?.placeholderCheck()}
+							maxLength={J.Constant.limit.spaceDescription}
 						/>
 					) : ''}
 				</div>
