@@ -119,11 +119,11 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 					<div className="list">
 						<div className="head">
 							<div className="left">
-								<Icon className="back withBackground" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
+								<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
 								<Title text={title} />
 							</div>
 							<div className="side right">
-								<Icon id="button-object-more" className="more withBackground" onClick={this.onMore} />
+								<Icon id="button-object-more" className="more" onClick={this.onMore} />
 							</div>
 						</div>
 

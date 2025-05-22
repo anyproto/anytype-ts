@@ -381,6 +381,14 @@ html.themeDark {
 				> .head {
 					.titleWrap {
 						.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
+						.icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
+						.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+					}
+					.tabs {
+						.swiper-button-prev, .swiper-button-next {
+							&::before { background-image: url('#{$themePath}/arrow/sidebarObjectTab0.svg'); }
+							&:hover::before { background-image: url('#{$themePath}/arrow/sidebarObjectTab1.svg'); }
+						}
 					}
 				}
 			}
@@ -389,6 +397,13 @@ html.themeDark {
 		> #containerSettings {
 			> .body {
 				.list {
+					> .head {
+						.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
+						.icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
+
+						.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
+						.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+					}
 					.toggle {
 						.icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
 					}
