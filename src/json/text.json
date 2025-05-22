@@ -812,10 +812,13 @@
 	"popupSettingsApiCreated": "Created",
 	"popupSettingsApiScope": "Scope",
 	"popupSettingsApiRevoke": "Revoke",
-	"popupSettingsApiCreate": "Create new API key",
+	"popupSettingsApiCreate": "Create new",
 	"popupSettingsApiCopyKey": "Copy Key",
 	"popupSettingsApiCopyMcp": "Copy MCP Config",
 	"popupSettingsApiMcpConfig": "MCP Config",
+
+	"popupApiCreateTitle": "Create new API key",
+	"popupApiCreatePlaceholder": "Key name",
 
 	"popupSettingsPinTitle": "Pin Code",
 	"popupSettingsPinText": "Set a 6-digit PIN for your application screen when unattended. PIN adds a quick layer of privacy for your app. It prevents casual viewing but doesn't enhance data encryption. Your primary data remains secure with your account Key. PIN protection is recommended when you step away from your device.",

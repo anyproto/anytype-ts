@@ -1,20 +1,15 @@
 import React, { forwardRef, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Input, Button, Loader, Error, Phrase } from 'Component';
+import { Input, Button, Loader, Error, Title, Icon } from 'Component';
 import { I, C, U, translate, keyboard } from 'Lib';
 
 const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 
 	const nameRef = useRef(null);
-	const phraseRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ key, setKey ] = useState('');
-	const cn = [ 'wrap' ];
-
-	if (key) {
-		cn.push('withKey');
-	};
+	const icon = key ? 'success' : 'create';
 
 	const onKeyDown = (e: any, v: string) => {
 		keyboard.shortcut('enter', e, () => {
@@ -24,14 +19,9 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 		});
 	};
 
-	const onToggle = (isHidden: boolean) => {
-		if (!isHidden) {
-			U.Common.copyToast(translate('commonPhrase'), phraseRef.current.getValue());
-		};
-	};
-
 	const onCopy = () => {
-		phraseRef.current.onToggle();
+		U.Common.copyToast(translate('commonPhrase'), key);
+		close();
 	};
 
 	const onSubmit = () => {
@@ -55,45 +45,63 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 		});
 	};
 
+	let input = null;
+	let buttons = null;
+
+	if (key) {
+		input = (
+			<Input
+				key="inputWithKey"
+				ref={nameRef}
+				value={key}
+				readonly={true}
+				onClick={onCopy}
+			/>
+		);
+
+		buttons = (
+			<div className="buttons">
+				<Button text={translate('commonCopy')} className="c36" onClick={onCopy} />
+				<Button text={translate('commonClose')} className="c36" color="blank" onClick={() => close()} />
+			</div>
+		);
+	} else {
+		input = (
+			<Input
+				key="inputWithoutKey"
+				ref={nameRef}
+				value=""
+				focusOnMount={true}
+				placeholder={translate('popupApiCreatePlaceholder')}
+				onKeyDown={onKeyDown}
+			/>
+		);
+
+		buttons = (
+			<div className="buttons">
+				<Button text={translate('commonCreate')} className="c36" onClick={onSubmit} />
+				<Button text={translate('commonCancel')} className="c36" color="blank" onClick={() => close()} />
+			</div>
+		);
+	};
+
 	return (
-		<div className={cn.join(' ')}>
+		<>
 			{isLoading ? <Loader id="loader" /> : ''}
 
-			<div className="nameWrapper">
-				<Input
-					ref={nameRef}
-					value=""
-					focusOnMount={true}
-					onKeyDown={onKeyDown}
-					placeholder={translate('defaultNamePage')}
-				/>
+			<div className="iconWrapper">
+				<Icon className={icon} />
 			</div>
 
-			{key ? (
-				<>
-					<div className="inputs" onClick={onCopy}>
-						<Phrase
-							ref={phraseRef}
-							value={key}
-							readonly={true}
-							isHidden={true}
-							checkPin={true}
-							onToggle={onToggle}
-						/>
-					</div>
+			<Title text={translate('popupApiCreateTitle')} />
 
-					<div className="buttons">
-						<Button text={translate('commonOk')} onClick={() => close()} />
-					</div>
-				</>
-			) : (
-				<div className="buttons">
-					<Button text={translate('popupApiCreateCreate')} onClick={onSubmit} />
-				</div>
-			)}
+			<div className="nameWrapper">
+				{input}
+			</div>
 
+			{buttons}
 			<Error text={error} />
-		</div>
+		</>
 	);
 
 }));
