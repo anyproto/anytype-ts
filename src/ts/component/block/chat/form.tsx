@@ -1203,25 +1203,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const now = U.Date.now();
 
 		if (now - last >= 5 ) {
-			this.speedLimit = {
-				last: now,
-				counter: 1
-			};
+			this.speedLimit = { last: now, counter: 1 };
 			return;
 		};
 
-		this.speedLimit = {
-			last: now,
-			counter: counter + 1,
-		};
+		this.speedLimit = { last: now, counter: counter + 1 };
 
 		if (counter >= 5) {
-			this.speedLimit = {
-				last: now,
-				counter: 1
-			};
+			this.speedLimit = { last: now, counter: 1 };
 
 			S.Popup.open('confirm', {
+				onClose: () => {
+					this.refEditable.setRange(this.range);
+				},
 				data: {
 					icon: 'warning',
 					title: translate('popupConfirmSpeedLimitTitle'),
