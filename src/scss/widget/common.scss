@@ -33,16 +33,22 @@
 		}
 
 		.iconWrap { width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-		.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
-		.iconWrap.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
 		.iconWrap.collapse { display: none; width: 20px; height: 20px; }
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
-		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
-		.icon.options { background-image: url('~img/icon/widget/options.svg'); }
+		.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
+		.icon.options { background-image: url('~img/icon/widget/options0.svg'); }
 		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
-		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
+		.icon.collapse { background-image: url('~img/icon/widget/collapse0.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
+
+		.iconWrap:hover,
+		.iconWrap.active {
+			.icon.back { background-image: url('~img/icon/widget/back1.svg'); }
+			.icon.options { background-image: url('~img/icon/widget/options1.svg'); }
+			.icon.plus { background-image: url('~img/icon/widget/plus1.svg'); }
+			.icon.collapse { background-image: url('~img/icon/widget/collapse1.svg'); }
+		}
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; } 
