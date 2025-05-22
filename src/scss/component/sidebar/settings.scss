@@ -15,7 +15,7 @@
 			}
             > .head {
                 .icon { width: 24px !important; height: 24px !important; }
-                .icon.back { background-image: url('~img/icon/widget/back.svg'); flex-shrink: 0; }
+                .icon.back { background-image: url('~img/icon/widget/back0.svg'); flex-shrink: 0; }
                 .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 
                 .name, .title { @include text-overflow-nw; }
