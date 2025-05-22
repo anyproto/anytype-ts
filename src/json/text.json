@@ -1145,7 +1145,7 @@
 	"popupConfirmInviteError103Text": "The space you try to access has been deleted",
 
 	"popupConfirmJoinSpaceTitle": "Join %s",
-	"popupConfirmJoinSpaceText": "You've been invited to join %s, created by %s",
+	"popupConfirmJoinSpaceText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>",
 	"popupConfirmJoinSpaceButtonConfirm": "Join Space",
 
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
