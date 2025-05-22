@@ -818,6 +818,7 @@
 	"popupSettingsApiMcpConfig": "MCP Config",
 
 	"popupApiCreateTitle": "Create new API key",
+	"popupApiCreateSuccess": "API key successfully created",
 	"popupApiCreatePlaceholder": "Key name",
 
 	"popupSettingsPinTitle": "Pin Code",
