@@ -397,10 +397,10 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 
 	onTemplateAdd () {
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId);
+		const type = S.Detail.get(rootId, rootId);
 		const details: any = {
-			targetObjectType: object.id,
-			layout: object.recommendedLayout,
+			targetObjectType: type.id,
+			layout: type.recommendedLayout,
 		};
 
 		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
@@ -409,6 +409,13 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 			};
 
 			const object = message.details;
+
+			if (!type.defaultTemplateId) {
+				U.Object.setDefaultTemplateId(type.id, object.id);
+			};
+
+			if (!object.defaultTemplateId) {
+			};
 
 			analytics.event('CreateTemplate', { objectType: object.type, route: analytics.route.screenType });
 			U.Object.openConfig(object);
