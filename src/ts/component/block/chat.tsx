@@ -50,7 +50,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	render () {
-		const { showRelativeDates } = S.Common;
+		const { showRelativeDates, dateFormat } = S.Common;
 		const { block } = this.props;
 		const rootId = this.getRootId();
 		const messages = this.getMessages();
@@ -60,7 +60,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const Section = (item: any) => {
 			const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
-			const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, item.createdAt);
+			const date = day ? day : U.Date.dateWithFormat(dateFormat, item.createdAt);
 
 			return (
 				<div className="section">
@@ -405,8 +405,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		return [].
-			concat(attachments.map(it => it.target)).
-			concat(marks.filter(it => markTypes.includes(it.type)).map(it => it.param));
+			concat(attachments.map(it => it.id)).
+			concat(marks.filter(it => markTypes.includes(it.type) && it.param).map(it => it.param)).filter(it => it);
 	};
 
 	getReplyIds (list: any[]) {

@@ -154,22 +154,37 @@ class DetailStore {
 			return { id, _empty_: true };
 		};
 		
-		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? J.Relation.default : []) ] : []);
 		const object = { id };
-
-		list = list.filter(it => !it.isDeleted);
+		const keys = new Set<string>();
 
 		if (withKeys) {
+			for (const key of withKeys) {
+				keys.add(key);
+			};
+
+			if (!forceKeys) {
+				for (const key of J.Relation.default) {
+					keys.add(key);
+				};
+			};
+
 			if (keys.has('name')) {
 				keys.add('pluralName');
 			};
-
 			if (keys.has('layout')) {
 				keys.add('resolvedLayout');
 			};
-
-			list = list.filter(it => keys.has(it.relationKey));
 		};
+
+		list = list.filter(it => {
+			if (it.isDeleted) {
+				return false;
+			};
+			if (withKeys && !keys.has(it.relationKey)) {
+				return false;
+			};
+			return true;
+		});
 
 		for (let i = 0; i < list.length; i++) {
 			object[list[i].relationKey] = list[i].value;

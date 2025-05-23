@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Input, Button, Loader, Error, Title, Icon } from 'Component';
+import { Input, Button, Loader, Error, Title, Icon, Textarea } from 'Component';
 import { I, C, U, translate, keyboard } from 'Lib';
 
 const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
@@ -10,6 +10,7 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ key, setKey ] = useState('');
 	const icon = key ? 'success' : 'create';
+	const title = key ? translate('popupApiCreateSuccess') : translate('popupApiCreateTitle');
 
 	const onKeyDown = (e: any, v: string) => {
 		keyboard.shortcut('enter', e, () => {
@@ -50,7 +51,7 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 
 	if (key) {
 		input = (
-			<Input
+			<Textarea
 				key="inputWithKey"
 				ref={nameRef}
 				value={key}
@@ -93,7 +94,7 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 				<Icon className={icon} />
 			</div>
 
-			<Title text={translate('popupApiCreateTitle')} />
+			<Title text={title} />
 
 			<div className="nameWrapper">
 				{input}

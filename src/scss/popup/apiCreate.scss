@@ -15,8 +15,12 @@
 
 		.nameWrapper { display: flex; flex-direction: column; gap: 4px 0px; justify-content: flex-start; margin: 0px 0px 16px 0px; text-align: left; }
 		.nameWrapper {
-			.input { border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
-			.input.isReadonly { background-color: var(--color-shape-secondary); }
+			.input, .textarea { font-family: 'Inter'; border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
+			.input, .textarea {
+				&.isReadonly { background-color: var(--color-shape-tertiary); }
+			}
+
+			.textarea { padding: 6px 16px; text-align: center; }
 		}
 
 		.buttons { display: flex; flex-direction: column; gap: 8px; }

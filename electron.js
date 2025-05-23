@@ -76,7 +76,7 @@ if (is.development && !port) {
 	return;
 };
 
-if (app.isPackaged && !app.requestSingleInstanceLock()) {
+if (!is.development && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, '' ,false);
 	return;
 };
