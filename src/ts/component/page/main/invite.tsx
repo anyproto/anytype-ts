@@ -54,7 +54,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 						let text = '';
 
 						if (errorCodes.includes(code)) {
-							icon = 'error';
+							icon = 'lock';
 							title = translate(`popupConfirmInviteError${code}Title`);
 							text = translate(`popupConfirmInviteError${code}Text`);
 						} else {
