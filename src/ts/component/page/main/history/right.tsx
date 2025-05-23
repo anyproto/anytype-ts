@@ -45,6 +45,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 	render () {
 		const { isPopup } = this.props;
+		const { timeFormat } = S.Common;
 		const groups = this.groupData();
 		const year = U.Date.date('Y', U.Date.now());
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -106,7 +107,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 				<div id={`item-${item.id}`} className="child">
 					<div className="info" onClick={e => this.loadVersion(item.id)}>
 						{icon}
-						<div className="date">{U.Date.date('g:i A', item.time)}</div>
+						<div className="date">{U.Date.timeWithFormat(timeFormat, item.time)}</div>
 					</div>
 
 					{withChildren ? (
@@ -128,7 +129,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 					className="item" 
 				>
 					<div className="info" onClick={e => this.loadVersion(item.id)}>
-						<div className="date">{U.Date.date('g:i A', item.time)}</div>
+						<div className="date">{U.Date.timeWithFormat(timeFormat, item.time)}</div>
 
 						{author ? (
 							<div className="author">
