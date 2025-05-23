@@ -425,8 +425,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		console.log('loadDeps', ids);
-
 		U.Subscription.subscribeIds({
 			subId: this.getSubId(),
 			ids,
