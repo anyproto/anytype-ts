@@ -405,8 +405,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		return [].
-			concat(attachments.map(it => it.target)).
-			concat(marks.filter(it => markTypes.includes(it.type)).map(it => it.param));
+			concat(attachments.map(it => it.id)).
+			concat(marks.filter(it => markTypes.includes(it.type) && it.param).map(it => it.param)).filter(it => it);
 	};
 
 	getReplyIds (list: any[]) {
@@ -424,6 +424,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 			return;
 		};
+
+		console.log('loadDeps', ids);
 
 		U.Subscription.subscribeIds({
 			subId: this.getSubId(),

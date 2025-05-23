@@ -28,7 +28,6 @@ interface Props extends I.BlockComponent {
 
 interface State {
 	attachments: any[];
-	charCounter: number;
 	replyingId: string;
 };
 
@@ -49,7 +48,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	speedLimit = { last: 0, counter: 0 };
 	state = {
 		attachments: [],
-		charCounter: 0,
 		replyingId: '',
 	};
 
@@ -90,7 +88,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	render () {
 		const { subId, readonly, getReplyContent } = this.props;
-		const { attachments, charCounter, replyingId } = this.state;
+		const { attachments, replyingId } = this.state;
 		const value = this.getTextValue();
 		const { messageCounter, mentionCounter } = S.Chat.getState(subId);
 		const mc = messageCounter > 999 ? '999+' : messageCounter;
@@ -221,7 +219,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						removeBookmark={this.removeBookmark}
 					/>
 
-					<div ref={ref => this.refCounter = ref} className="charCounter">{charCounter} / {J.Constant.limit.chat.text}</div>
+					<div ref={ref => this.refCounter = ref} className="charCounter" />
 
 					<Icon id="send" className="send" onClick={this.onSend} />
 				</div>
@@ -274,9 +272,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		const { loadDepsAndReplies } = this.props;
-
-		loadDepsAndReplies([], () => {
+		this.props.loadDepsAndReplies([], () => {
 			this.renderMarkup();
 			this.renderReply();
 		});
@@ -1186,16 +1182,21 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	updateCounter (v?: string) {
-		const value = v || this.getTextValue();
-		const l = value.length;
+		v = v || this.getTextValue();
 
-		this.setState({ charCounter: l });
-		$(this.refCounter).toggleClass('show', l >= J.Constant.limit.chat.text - 50);
+		const el = $(this.refCounter);
+		const l = v.length;
+		const limit = J.Constant.limit.chat.text;
+
+		if (l >= limit - 50) {
+			el.addClass('show').text(`${l} / ${limit}`);
+		} else {
+			el.removeClass('show');
+		};
 	};
 
 	clearCounter () {
-		this.setState({ charCounter: 0 });
-		$(this.refCounter).removeClass('show');
+		$(this.refCounter).text('').removeClass('show');
 	};
 
 	checkSpeedLimit () {
