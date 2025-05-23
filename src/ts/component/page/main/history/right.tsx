@@ -45,7 +45,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 	render () {
 		const { isPopup } = this.props;
-		const { timeFormat } = S.Common;
+		const { timeFormat, showRelativeDates } = S.Common;
 		const groups = this.groupData();
 		const year = U.Date.date('Y', U.Date.now());
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -64,7 +64,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const Section = (item: any) => {
 			const y = U.Date.date('Y', item.time);
 			const format = y == year ? 'M d' : 'M d, Y';
-			const day = U.Date.dayString(item.time);
+			const day = showRelativeDates ? U.Date.dayString(item.time) : null;
 			const date = day ? day : U.Date.date(format, item.time);
 			const authors = U.Common.arrayUnique(item.list.map(it => it.authorId)).slice(0, LIMIT_AUTHORS);
 
