@@ -1842,8 +1842,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
-
 		S.Menu.closeAll([ 'blockAdd' ]);
 
 		if (!data) {
@@ -1854,19 +1852,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const hasHtml = data && data.html;
 		
 		if (hasHtml) {
-        	e.preventDefault();
-        	this.onPaste(data);
-	    } else {
-	        const clipboardItems = (e.clipboardData || e.originalEvent.clipboardData).items;
-	        const files = U.Common.getDataTransferFiles(clipboardItems);
-	        
-	        if (files.length && !data.files.length) {
-	            U.Common.saveClipboardFiles(files, data, data => this.onPasteEvent(e, props, data));
-	        } else {
-	            e.preventDefault();
-	            this.onPaste(data);
-	        };
-	    };
+			e.preventDefault();
+			this.onPaste(data);
+		} else {
+			const clipboardItems = (e.clipboardData || e.originalEvent.clipboardData).items;
+			const files = U.Common.getDataTransferFiles(clipboardItems);
+
+			if (files.length && !data.files.length) {
+				U.Common.saveClipboardFiles(files, data, data => this.onPasteEvent(e, props, data));
+			} else {
+				e.preventDefault();
+				this.onPaste(data);
+			};
+		};
 	};
 
 	onPaste (data: any) {
