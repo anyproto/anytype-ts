@@ -76,7 +76,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						style={param.style}
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						onClick={e => this.onClick(e, item)}
-						withMore={item.isInstalled}
+						withMore={true}
 						onMore={e => this.onEdit(e, item)}
 					/>
 				);
@@ -267,8 +267,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 		const systemKeys = Relation.systemKeys();
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
-		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
-		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
+		const library = items.filter(it => !systemKeys.includes(it.relationKey));
+		const system = items.filter(it => systemKeys.includes(it.relationKey));
 		const types = U.Menu.getRelationTypes().filter(it => it.name.match(reg)).map(it => ({ ...it, isType: true }));
 		const canWrite = U.Space.canMyParticipantWrite();
 
@@ -343,7 +343,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { id, close, param, getId, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall, filter } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, ref, filter } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 		const onAdd = (item: any) => {
 			close();
@@ -376,15 +376,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				}
 			});
 		} else {
-			if (item.isInstalled || noInstall) {
-				onAdd(item);
+			onAdd(item);
 
-				if (!noInstall) {
-					analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type, relationKey: item.relationKey });
-				};
-			} else {
-				Action.install(item, true, message => onAdd(message.details));
-			};
+			analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type, relationKey: item.relationKey });
 		};
 	};
 

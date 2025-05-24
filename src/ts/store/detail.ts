@@ -266,7 +266,6 @@ class DetailStore {
 		object.recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
 		object.recommendedHiddenRelations = Relation.getArrayValue(object.recommendedHiddenRelations);
 		object.recommendedFileRelations = Relation.getArrayValue(object.recommendedFileRelations);
-		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTypeId = Relation.getStringValue(object.defaultTypeId);
@@ -293,7 +292,6 @@ class DetailStore {
 		object.objectTypes = Relation.getArrayValue(object.objectTypes || object.relationFormatObjectTypes);
 		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
 		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
-		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 
 		if (object.isDeleted) {

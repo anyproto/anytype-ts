@@ -96,37 +96,35 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 								</div>
 							</div>
 
-							{object.isInstalled ? (
-								<div className="section set">
-									<div className="title">
-										<div className="side left">
-											{U.Common.plural(totalObject, translate('pluralObject'))}
-											<span className="cnt">{totalObject}</span>
-										</div>
-
-										<div className="side right">
-											<Icon 
-												id="button-create"
-												className="more withBackground" 
-												onClick={this.onMore} 
-											/>
-										</div>
+							<div className="section set">
+								<div className="title">
+									<div className="side left">
+										{U.Common.plural(totalObject, translate('pluralObject'))}
+										<span className="cnt">{totalObject}</span>
 									</div>
 
-									<div className="content">
-										<ListObject 
-											ref={ref => this.refListObject = ref}
-											{...this.props} 
-											sources={[ rootId ]} 
-											spaceId={object.spaceId}
-											subId={subIdObject} 
-											rootId={rootId} 
-											columns={columnsObject} 
-											route={analytics.route.screenRelation}
+									<div className="side right">
+										<Icon 
+											id="button-create"
+											className="more withBackground" 
+											onClick={this.onMore} 
 										/>
 									</div>
 								</div>
-							) : ''}
+
+								<div className="content">
+									<ListObject 
+										ref={ref => this.refListObject = ref}
+										{...this.props} 
+										sources={[ rootId ]} 
+										spaceId={object.spaceId}
+										subId={subIdObject} 
+										rootId={rootId} 
+										columns={columnsObject} 
+										route={analytics.route.screenRelation}
+									/>
+								</div>
+							</div>
 						</>
 					) : ''}
 				</div>

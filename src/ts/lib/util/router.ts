@@ -91,7 +91,7 @@ class UtilRouter {
 		S.Popup.closeAll();
 		sidebar.rightPanelToggle(false, false, keyboard.isPopup());
 
-		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route, false, param, false);
 			return;
 		};

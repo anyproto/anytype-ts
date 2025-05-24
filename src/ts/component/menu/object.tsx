@@ -108,7 +108,6 @@ class MenuObject extends React.Component<I.Menu> {
 		let remove = null;
 		let fav = null;
 		let pageLock = null;
-		let pageInstall = null;
 		let template = null;
 		let setDefaultTemplate = null;
 		let advancedOptions = [];
@@ -151,10 +150,6 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 		};
 
-		if (isTypeOrRelationLayout && !object.isInstalled) {
-			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuObjectInstall') };
-		};
-
 		if (object.isArchived) {
 			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
 			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
@@ -182,8 +177,6 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedPageLink = !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelationLayout;
 		const allowedReload = canWrite && object.source && isBookmark;
-		const allowedInstall = canWrite && !object.isInstalled && isTypeOrRelationLayout;
-		const allowedUninstall = canWrite && object.isInstalled && isTypeOrRelationLayout && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
@@ -204,7 +197,6 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedSearch)			 search = null;
 		if (!allowedHistory)		 history = null;
 		if (!allowedFav)			 fav = null;
-		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
 		if (!allowedWidget)			 createWidget = null;
 		if (!allowedLinkTo)			 linkTo = null;
@@ -239,7 +231,7 @@ class MenuObject extends React.Component<I.Menu> {
 				{ children: [ openObject ] },
 				{ children: [ createWidget, fav, pageLock, history ] },
 				{ children: [ linkTo, addCollection, template, pageLink ] },
-				{ children: [ search, pageInstall, pageCopy, archive, remove ] },
+				{ children: [ search, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 				{ children: [ openFile, downloadFile ] },
 			]);
@@ -532,18 +524,6 @@ class MenuObject extends React.Component<I.Menu> {
 				C.ObjectBookmarkFetch(rootId, object.source, () => {
 					analytics.event('ReloadSourceData', { route });
 				});
-				break;
-			};
-
-			case 'pageInstall': {
-				Action.install(object, false, (message: any) => {
-					U.Object.openAuto(message.details);
-				});
-				break;
-			};
-
-			case 'pageUninstall': {
-				Action.uninstall(object, false, '', () => onBack());
 				break;
 			};
 
