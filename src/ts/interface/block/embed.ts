@@ -24,6 +24,7 @@ export enum EmbedProcessor {
 	Graphviz		 = 20,
 	Sketchfab		 = 21,
 	Image			 = 22,
+	Drawio			 = 23,
 };
 
 export interface ContentEmbed {

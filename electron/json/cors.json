@@ -53,6 +53,7 @@
 		"https://*.bilibili.com",
 		"https://s1.hdslb.com",
 		"https://static.sketchfab.com",
+		"https://*.diagrams.net",
 		"https://*.bstarstatic.com"
 	],
 
@@ -121,6 +122,7 @@
 		"wss://*.biliapi.net",
 		"https://sketchfab.com",
 		"https://media.sketchfab.com",
+		"https://*.diagrams.net",
 		"https://sentry.io",
 		"https://*.any.coop",
 		"https://*.amplitude.com",
@@ -165,7 +167,8 @@
 		"https://*.codepenassets.com",
 		"https://*.bstarstatic.com",
 		"https://*.googletagmanager.com",
-		"https://*.facebook.net"
+		"https://*.facebook.net",
+		"https://*.diagrams.net"
 	],
 
 	"frame-src": [
@@ -191,7 +194,8 @@
 		"https://codepen.io",
 		"https://cdpn.io",
 		"https://kroki.io",
-		"https://sketchfab.com"
+		"https://sketchfab.com",
+		"https://*.diagrams.net"
 	],
 
 	"worker-src": [ 

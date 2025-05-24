@@ -335,6 +335,10 @@ class Block implements I.Block {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Sketchfab);
 	};
 
+	isEmbedDrawio (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Drawio);
+	};
+
 	isEmbedBilibili (): boolean {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Bilibili);
 	};
