@@ -115,7 +115,7 @@ class Analytics {
 			return;
 		};
 
-		const { interfaceLang } = S.Common;
+		const { interfaceLang, config } = S.Common;
 		const electron = U.Common.getElectron();
 		const platform = U.Common.getPlatform();
 		const hasDefaultPath = electron.userPath() == electron.defaultPath();
@@ -138,6 +138,7 @@ class Analytics {
 			platform,
 			interfaceLang,
 			hasDefaultPath: Number(hasDefaultPath),
+			releaseChannel: config.channel,
 		};
 
 		if (electron.version) {
