@@ -101,13 +101,12 @@ class Analytics {
 	};
 
 	debug () {
-		const { config } = S.Common;
-		return config.debug.analytics;
+		return S.Common.config.debug.analytics;
 	};
 
 	isAllowed (): boolean {
 		const { config } = S.Common;
-		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !U.Common.getElectron().isPackaged) || this.debug();
+		return !(config.sudo || !U.Common.getElectron().isPackaged) || this.debug();
 	};
 	
 	init (options?: any) {
@@ -705,7 +704,7 @@ class Analytics {
 	};
 
 	log (...args: any[]) {
-		if (!this.debug()) {
+		if (!this.isAllowed()) {
 			return;
 		};
 
