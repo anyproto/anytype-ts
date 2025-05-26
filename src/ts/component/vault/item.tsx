@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon } from 'Component';
-import { J, S } from 'Lib';
+import { J, S, I } from 'Lib';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -23,6 +23,10 @@ const VaultItem: FC<Props> = observer(({
 
 	const cn = [ 'item' ];
 	const theme = S.Common.getThemeClass();
+
+	if (item.isLocalLoading) {
+		cn.push('loading');
+	};
 
 	let icon = null;
 	let cnt = null;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, C, J, Mark, translate, Preview } from 'Lib';
+import { I, S, U, C, J, Mark, translate, Preview, analytics } from 'Lib';
 
 import Attachment from '../attachment';
 import Reply from './reply';
@@ -49,9 +49,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 		let userpicNode = null;
 		let authorNode = null;
-		let text = content.text.replace(/\r?\n$/, '');
+		let text = content.text.replace(/^\r?\n/g, '').replace(/\r?\n$/g, '');
 
-		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
+		const diff = text.length - content.text.length;
+		const marks = Mark.adjust(content.marks, 0, diff);
+
+		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, marks)));
 
 		if (!readonly) {
 			if (!hasReactions && canAddReaction) {
@@ -332,14 +335,23 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				noUpload: true,
 				value: '',
 				onSelect: icon => this.onReactionSelect(icon),
+				route: analytics.route.reaction,
 			}
 		});
+
+		analytics.event('ClickMessageMenuReaction');
 	};
 
 	onReactionSelect (icon: string) {
-		const { rootId, id } = this.props;
+		const { account } = S.Auth;
+		const { rootId, id, subId } = this.props;
+		const message = S.Chat.getMessage(subId, id);
+		const { reactions } = message;
+		const event = reactions.find(it => (it.icon == icon) && it.authors.includes(account.id)) ? 'RemoveReaction' : 'AddReaction';
 
 		C.ChatToggleMessageReaction(rootId, id, icon);
+
+		analytics.event(event);
 	};
 
 	onAttachmentRemove (attachmentId: string) {

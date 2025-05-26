@@ -742,12 +742,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					continue;
 				};
 
-				let space = '\\s';
-				if (newStyle == I.TextStyle.Code) {
-					space = '';
-				};
-
-				const reg = new RegExp(`^(${k}${space})`);
+				const reg = new RegExp(`^(${k}\\s)`);
 				const match = value.match(reg);
 
 				if (!match) {
@@ -934,6 +929,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						focus.apply();
 					});
 				},
+				route: analytics.route.editor,
 			},
 		});
 	};

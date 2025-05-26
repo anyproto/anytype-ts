@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview } from 'Lib';
+import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -28,7 +28,6 @@ interface Props extends I.BlockComponent {
 
 interface State {
 	attachments: any[];
-	charCounter: number;
 	replyingId: string;
 };
 
@@ -49,7 +48,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	speedLimit = { last: 0, counter: 0 };
 	state = {
 		attachments: [],
-		charCounter: 0,
 		replyingId: '',
 	};
 
@@ -90,7 +88,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	render () {
 		const { subId, readonly, getReplyContent } = this.props;
-		const { attachments, charCounter, replyingId } = this.state;
+		const { attachments, replyingId } = this.state;
 		const value = this.getTextValue();
 		const { messageCounter, mentionCounter } = S.Chat.getState(subId);
 		const mc = messageCounter > 999 ? '999+' : messageCounter;
@@ -221,7 +219,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						removeBookmark={this.removeBookmark}
 					/>
 
-					<div ref={ref => this.refCounter = ref} className="charCounter">{charCounter} / {J.Constant.limit.chat.text}</div>
+					<div ref={ref => this.refCounter = ref} className="charCounter" />
 
 					<Icon id="send" className="send" onClick={this.onSend} />
 				</div>
@@ -274,9 +272,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		const { loadDepsAndReplies } = this.props;
-
-		loadDepsAndReplies([], () => {
+		this.props.loadDepsAndReplies([], () => {
 			this.renderMarkup();
 			this.renderReply();
 		});
@@ -732,9 +728,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					reactions: [],
 				};
 
+				let messageType = 'Text';
+				if (attachments.length && message.content?.text.length) {
+					messageType = 'Mixed';
+				} else
+				if (attachments.length) {
+					messageType = 'Attachment';
+				};
+
 				C.ChatAddMessage(rootId, message, (message: any) => {
 					scrollToBottom();
 					clear();
+
+					analytics.event('SentMessage', { type: messageType });
 				});
 			};
 		};
@@ -802,6 +808,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.setAttachments(attachments, () => {
 			this.refEditable.setRange(this.range);
 		});
+
+		analytics.event('ClickMessageMenuEdit');
 	};
 
 	onEditClear () {
@@ -820,6 +828,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.range = { from: length, to: length };
 		this.refEditable.setRange(this.range);
 		this.setState({ replyingId: message.id });
+
+		analytics.event('ClickMessageMenuReply');
 	};
 
 	onReplyClear () {
@@ -850,10 +860,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						} else {
 							scrollToBottom();
 						};
+
+						analytics.event('DeleteMessage');
 					});
 				},
 			}
 		});
+
+		analytics.event('ClickMessageMenuDelete');
 	};
 
 	getMarksAndRange (): any {
@@ -878,6 +892,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onAttachmentRemove (id: string) {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
+
+		analytics.event('DetachItemChat');
 	};
 
 	onSwiper (swiper) {
@@ -888,6 +904,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		switch (type) {
 			case I.ChatReadType.Message: {
 				this.props.onScrollToBottomClick();
+
+				analytics.event('ClickScrollToBottom');
 				break;
 			};
 
@@ -904,6 +922,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						highlightMessage('', mentionOrderId);
 					});
 				};
+
+				analytics.event('ClickScrollToMention');
 				break;
 			};
 		};
@@ -1056,6 +1076,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
 						this.updateMarkup(value, { from: to, to });
+
+						analytics.event('Mention');
 					},
 				},
 			});
@@ -1160,16 +1182,21 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	updateCounter (v?: string) {
-		const value = v || this.getTextValue();
-		const l = value.length;
+		v = v || this.getTextValue();
 
-		this.setState({ charCounter: l });
-		$(this.refCounter).toggleClass('show', l >= J.Constant.limit.chat.text - 50);
+		const el = $(this.refCounter);
+		const l = v.length;
+		const limit = J.Constant.limit.chat.text;
+
+		if (l >= limit - 50) {
+			el.addClass('show').text(`${l} / ${limit}`);
+		} else {
+			el.removeClass('show');
+		};
 	};
 
 	clearCounter () {
-		this.setState({ charCounter: 0 });
-		$(this.refCounter).removeClass('show');
+		$(this.refCounter).text('').removeClass('show');
 	};
 
 	checkSpeedLimit () {
@@ -1177,25 +1204,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const now = U.Date.now();
 
 		if (now - last >= 5 ) {
-			this.speedLimit = {
-				last: now,
-				counter: 1
-			};
+			this.speedLimit = { last: now, counter: 1 };
 			return;
 		};
 
-		this.speedLimit = {
-			last: now,
-			counter: counter + 1,
-		};
+		this.speedLimit = { last: now, counter: counter + 1 };
 
 		if (counter >= 5) {
-			this.speedLimit = {
-				last: now,
-				counter: 1
-			};
+			this.speedLimit = { last: now, counter: 1 };
 
 			S.Popup.open('confirm', {
+				onClose: () => {
+					this.refEditable.setRange(this.range);
+				},
 				data: {
 					icon: 'warning',
 					title: translate('popupConfirmSpeedLimitTitle'),

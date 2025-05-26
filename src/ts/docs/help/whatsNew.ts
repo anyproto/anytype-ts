@@ -25,7 +25,7 @@ export default () => {
 		{ type: I.BlockType.IconPage, icon: '👋' },
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
 
-		title(`Desktop 0.46.X Released!`),
+		title(`Desktop 0.46.6 Released!`),
 		text(''),
 		text('This release marks an exciting and long-awaited moment in Anytype’s evolution: the <b>first iteration of our Local API</b> is here! It opens up powerful new possibilities for an ecosystem of plugins, automations and third-party integrations.'),
 		text('Alongside this launch, we’re polishing the new structure around Types, delivering performance fixes and enhancing workflows with an upgraded Raycast extension.'),
@@ -33,27 +33,28 @@ export default () => {
 
 		h2(`Anytype Local API (Developer Preview)`),
 		text(''),
-		text('Our Local API is now available, and directly shipped with the desktop app. It runs on localhost and never has to call the cloud (you can use it on a plane literally, on-device only).'),
-		text('Although it’s designed for developers, we’re looking forward to the community shipping more amazing integrations soon!'),
+		text('Our API is now available and directly included with the desktop app, running entirely on localhost. It operates fully offline, meaning you can build and use integrations without any cloud dependencies - even while flying!'),
+		text('This initial release targets developers, and we’re eager to see what the community creates with it!'),
 		text(''),
 
-		h3(`Key Points`),
-		bullet(`Authenticate once via a 4-digit challenge in the desktop app. This generates an ${hl('app_key')}, which is used as a bearer token to authenticated subsequent requests. Later, app settings will allow generating tokens to share with integrations easily.`),
-		bullet(`OpenAPI specification and full documentation are available on our new ${link('https://developers.anytype.io/', 'Developer Portal')}.`),
-		bullet(`Example endpoints expose core Anytype functionality: creating objects, editing, querying and more.`),
-		bullet(`Early SDKs and community tools are already underway: Python client, MCP, Raycast, Go client in the works.`),
+		h3(`Key Highlights`),
+		bullet(`<b>Secure Authentication</b>: Authenticate once via a 4-digit challenge in the desktop app, generating an API key. This key acts as a bearer token to authenticate subsequent requests. Additionally, API keys can be managed and generated directly through the desktop client's settings, making it easy to share keys with third-party integrations.`),
+		bullet(`<b>Comprehensive Documentation</b>: The OpenAPI specification and full documentation are available on our new ${link('https://developers.anytype.io/', 'Developer Portal')}.`),
+		bullet(`<b>Robust API Capabilities</b>: Endpoints offer core Anytype functionality: creating objects, editing, querying and much more.`),
+		bullet(`<b>Growing Developer Ecosystem</b>: Early SDKs and community-driven tools are already underway: Python and Go clients, MCP server and Raycast extension.`),
 		text(''),
 
-		callout(`By using extensions or supplying API key you grant those extensions limited access to your vault: they can create, edit or delete objects. Be careful to use <b>trustworthy only</b>.`, '⚠️'),
+		callout(`<b>Important Security Notice</b>: By providing an API key or using extensions, you grant limited access to your Anytype vault, enabling operations such as editing or deleting objects. Ensure you <b>use only trusted extensions</b>.`, '⚠️'),
 		text(''),
 
 		h2(`Raycast Extension Updates`),
 		text(''),
-		text('As a companion to our Local API, we’ve just shipped another greatly improved Raycast extension.'),
+		text('As a companion to our Local API, we’ve just shipped great improvements for our Raycast extension.'),
 		text('Here’s what’s new:'),
-		bullet(`<b>Create</b> new spaces, objects, types, properties or tags quickly with ${hl('CMD+N')} when browsing spaces.`),
-		bullet(`<b>Edit</b> your selected items (spaces, objects, types, properties, or tags) easily using ${hl('CMD+E')}.`),
-		bullet(`<b>Add objects to lists</b> using the new ${hl('Add object to list')} command, or from the context menu.`),
+		bullet(`<b>Quickly create</b> new spaces, objects, types, properties, or tags with the shortcut ${hl('CMD+N')} while browsing your spaces.`),
+		bullet(`<b>Easily edit</b> your selected items (spaces, objects, types, properties or tags) using ${hl('CMD+E')}.`),
+		bullet(`<b>Conveniently add objects</b> to lists either through the new ${hl('Add object to list')} command or directly from the context menu ${hl('CMD+K')}.`),
+		img(`46.x/1.jpg`, 'c70'),
 		text(''),
 
 		h2(`Quality of Life Improvements`),
@@ -68,8 +69,8 @@ export default () => {
 		text(''),
 
 
-		text('<b>Widget behavior fine-tuned</b>'),
-		text('Smoothed out how widgets behave when adding new objects.'),
+		text('<b>Optimized widget behaviour</b>'),
+		text('Widgets are now preserved when switching between spaces, and adding new objects works more smoothly.'),
 		text(''),
 
 
@@ -78,6 +79,8 @@ export default () => {
 		text(''),
 
 		h2(`Bug Fixes`),
+		bullet(`Fixed an issue where some objects were not being indexed by the full-text search engine.`),
+		bullet(`Resolved a bug causing type objects to not persist after app restart.`),
 		bullet(`Fixed text deletion in the Description field.`),
 		bullet(`Fixed misplaced volume bar. Thanks for flagging it, @${link('https://community.anytype.io/t/volume-bar-is-misplaced/27771/1', 'Shoyo')}!`),
 		bullet(`Typing in Date fields works as expected (<i>no more 31.12.1969 issues!</i>). Thanks for the heads-up, @${link('https://community.anytype.io/t/can-t-manually-type-in-a-date/27724', 'natanyberry')}!`),

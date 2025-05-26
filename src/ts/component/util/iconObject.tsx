@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, S, U, J, Preview, translate, Relation } from 'Lib';
+import { I, S, U, J, Preview, translate, Relation, analytics } from 'Lib';
 
 interface IconParam {
 	userIcon?: string;
@@ -262,6 +262,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 						U.Object.setIcon(object.id, '', objectId);
 					};
 				},
+				route: analytics.route.icon
 			},
 			...menuParam,
 		});

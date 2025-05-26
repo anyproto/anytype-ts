@@ -140,7 +140,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 					<div className="list">
 						{isSpace ? (
 							<div className="head" onClick={this.onBack}>
-								<Icon className="back withBackground" />
+								<Icon className="back" />
 								<ObjectName object={space} />
 							</div>
 						) : ''}
@@ -238,6 +238,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 			{ id: 'dataIndex', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'dataPublish', 'delete' ] },
 			{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+			{ id: 'api', name: translate('popupSettingsApiTitle') },
 		];
 
 		if (this.withMembership()) {

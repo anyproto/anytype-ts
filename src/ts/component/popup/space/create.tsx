@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Input, IconObject, Button, Loader, Error } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Storage, sidebar } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, analytics, Storage } from 'Lib';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 
@@ -32,7 +32,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		return {
 			name: nameRef.current?.getValue(),
 			layout: I.ObjectLayout.SpaceView,
-			iconOption: iconOption,
+			iconOption,
 		};
 	};
 

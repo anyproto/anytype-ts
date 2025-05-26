@@ -10,6 +10,7 @@ interface HeaderMainHistoryRefProps {
 const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.HeaderComponent>((props, ref) => {
 
 	const { rootId, match, isPopup, renderLeftIcons, onRelation, menuOpen } = props;
+	const { dateFormat, timeFormat } = S.Common;
 	const [ version, setVersion ] = useState<I.HistoryVersion | null>(null);
 	const [ dummyState, setDummyState ] = useState(0);
 	const object = S.Detail.get(rootId, rootId, []);
@@ -20,6 +21,15 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isTypeOrRelation && !isDeleted;
+
+	let date = [];
+
+	if (version) {
+		date = date.concat([
+			U.Date.dateWithFormat(dateFormat, version.time),
+			U.Date.timeWithFormat(timeFormat, version.time),
+		]);
+	};
 
 	const onMore = () => {
 		menuOpen('object', '#button-header-more', {
@@ -56,9 +66,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 			<div className="side left">{renderLeftIcons(true)}</div>
 
 			<div className="side center">
-				<div className="txt">
-					{version ? U.Date.date('M d, Y g:i:s A', version.time) : ''}
-				</div>
+				<div className="txt">{date.join(' ')}</div>
 			</div>
 
 			<div className="side right">

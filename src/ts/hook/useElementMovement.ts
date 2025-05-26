@@ -25,7 +25,6 @@ class ElementMovementObserver {
 	};
 
 	private checkForMovement = () => {
-
 		this.onMove(this.getPosition());
 	};
 

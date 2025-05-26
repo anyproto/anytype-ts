@@ -1,6 +1,8 @@
 @import "~scss/_mixins";
 
 .popups {
+
+	.popup.popupConfirm * { user-select: text !important; }
 	.popup.popupConfirm {
 		.innerWrap { width: 424px; padding: 32px; text-align: center; }
 
@@ -30,6 +32,9 @@
 			.icon.invite { background-image: url('~img/icon/popup/confirm/invite.svg'); }
 			.icon.sad { background-image: url('~img/icon/popup/confirm/sad.svg'); }
 			.icon.warning { background-image: url('~img/icon/popup/confirm/warning.svg'); }
+			.icon.join { background-image: url('~img/icon/popup/confirm/join.svg'); }
+			.icon.create { background-image: url('~img/icon/popup/confirm/create.svg'); }
+			.icon.success { background-image: url('~img/icon/popup/confirm/success.svg'); }
 		}
 
 		.checkboxWrapper { 
