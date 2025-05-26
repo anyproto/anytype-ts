@@ -179,7 +179,7 @@ export default {
 			"mcpServers": {
 				"anytype": {
 					"command": "npx",
-					"args": ["anytype-mcp", "run"],
+					"args": ["-y", "@anyproto/anytype-mcp"],
 					"env": {
 						"OPENAPI_MCP_HEADERS": "{\\"Authorization\\":\\"Bearer %s\\", \\"Anytype-Version\\":\\"2025-05-20\\"}"
 					}
