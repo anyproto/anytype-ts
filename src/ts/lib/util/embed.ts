@@ -84,7 +84,7 @@ class UtilEmbed {
 	};
 
 	getDrawioHtml (content: string): string {
-		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+		return content.match(/^<svg/) ? content : `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
 	getImageHtml (content: string): string {
@@ -235,14 +235,17 @@ class UtilEmbed {
 			};
 
 			case I.EmbedProcessor.Drawio: {
-				const u = new URL(url);
-				const allowedHosts = ['viewer.diagrams.net', 'embed.diagrams.net', 'app.diagrams.net', 'draw.io'];
-				if (allowedHosts.includes(u.hostname)) {
-					// Edit mode cannot be opened at this time
-					u.searchParams.delete('edit');
-					url = u.toString();
-				};
-				
+				try {
+					const u = new URL(url);
+					const allowedHosts = [ 'viewer.diagrams.net', 'embed.diagrams.net', 'app.diagrams.net', 'draw.io' ];
+
+
+					if (allowedHosts.includes(u.hostname)) {
+						// Edit mode cannot be opened at this time
+						u.searchParams.delete('edit');
+						url = u.toString();
+					};
+				} catch (e) { /**/ };
 				break;
 			};
 
@@ -395,6 +398,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Image,
+			I.EmbedProcessor.Drawio,
 		].includes(p);
 	};
 

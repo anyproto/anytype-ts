@@ -615,7 +615,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const sanitizeParam: any = { 
-						ADD_TAGS: [ 'iframe' ],
+						ADD_TAGS: [ 'iframe', 'div', 'a' ],
 						ADD_ATTR: [
 							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
 						],
@@ -669,6 +669,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					if (block.isEmbedDrawio()) {
+						sanitizeParam.ADD_TAGS.push('svg', 'a', 'foreignObject', 'switch');
+
 						allowScript = !!text.match(/https:\/\/(?:viewer|embed|app)\.diagrams\.net\/\?[^"\s>]*/);
 					};
 
@@ -680,7 +682,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
-						data.html = this.sanitize(text, allowScript);
+						data.html = DOMPurify.sanitize(text, sanitizeParam);
 					};
 
 					iw.postMessage(data, '*');
@@ -938,22 +940,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	};
-
-	sanitize (text: string, allowScript: boolean): string {
-		const param: any = { 
-			ADD_TAGS: [ 'iframe' ],
-			ADD_ATTR: [
-				'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
-			],
-		};
-
-		if (allowScript) {
-			param.FORCE_BODY = true;
-			param.ADD_TAGS.push('script');
-		};
-
-		return DOMPurify.sanitize(text, param);
 	};
 
 	resize () {
