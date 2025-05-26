@@ -77,8 +77,7 @@
     .layoutPreview.align2 {
         .layoutHeader { text-align: right; }
         .featured { justify-content: flex-end; }
-
-		.titleWrapper { flex-direction: row-reverse; }
+		.titleWrapper { justify-content: flex-end; }
     }
 
     .layoutPreview.layoutFormatPage {

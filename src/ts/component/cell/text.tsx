@@ -179,7 +179,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			const mask = [];
 			const ph = [];
 
-			switch (viewRelation.dateFormat) {
+			switch (dateFormat) {
 				case I.DateFormat.ISO: {
 					mask.push('9999.99.99');
 					ph.push('yyyy.mm.dd');
@@ -267,7 +267,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				val = Number(val) || 0;
 
 				const day = showRelativeDates ? U.Date.dayString(val) : null;
-				const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, val);
+				const date = day ? day : U.Date.dateWithFormat(dateFormat, val);
 				const time = U.Date.timeWithFormat(S.Common.timeFormat, val);
 				
 				val = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
@@ -335,7 +335,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			if (relation.format == I.RelationType.Date) {
 				const format = [];
 
-				switch (viewRelation.dateFormat) {
+				switch (dateFormat) {
 					case I.DateFormat.ISO: format.push('Y.m.d'); break;
 					case I.DateFormat.ShortUS: format.push('m.d.Y'); break;
 					default: format.push('d.m.Y'); break;

@@ -34,7 +34,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 				<Title text={translate('popupInviteRequestTitle')} />
 				
 				<div className="iconWrapper">
-					<Icon />
+					<Icon className="join" />
 				</div>
 
 				<Label className="invitation" text={U.Common.sprintf(translate('popupInviteRequestText'), spaceName, creatorName)} />

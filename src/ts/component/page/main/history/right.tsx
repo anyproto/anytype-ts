@@ -45,6 +45,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 	render () {
 		const { isPopup } = this.props;
+		const { timeFormat, showRelativeDates } = S.Common;
 		const groups = this.groupData();
 		const year = U.Date.date('Y', U.Date.now());
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -63,7 +64,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const Section = (item: any) => {
 			const y = U.Date.date('Y', item.time);
 			const format = y == year ? 'M d' : 'M d, Y';
-			const day = U.Date.dayString(item.time);
+			const day = showRelativeDates ? U.Date.dayString(item.time) : null;
 			const date = day ? day : U.Date.date(format, item.time);
 			const authors = U.Common.arrayUnique(item.list.map(it => it.authorId)).slice(0, LIMIT_AUTHORS);
 
@@ -106,7 +107,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 				<div id={`item-${item.id}`} className="child">
 					<div className="info" onClick={e => this.loadVersion(item.id)}>
 						{icon}
-						<div className="date">{U.Date.date('g:i A', item.time)}</div>
+						<div className="date">{U.Date.timeWithFormat(timeFormat, item.time)}</div>
 					</div>
 
 					{withChildren ? (
@@ -128,7 +129,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 					className="item" 
 				>
 					<div className="info" onClick={e => this.loadVersion(item.id)}>
-						<div className="date">{U.Date.date('g:i A', item.time)}</div>
+						<div className="date">{U.Date.timeWithFormat(timeFormat, item.time)}</div>
 
 						{author ? (
 							<div className="author">

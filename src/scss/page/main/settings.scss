@@ -394,7 +394,7 @@
             .col.colObject { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 12px; }
             .col.colObject {
                 .iconObject { flex-shrink: 0; }
-                .name { @include text-overflow-nw; }
+                .name { @include text-overflow-nw; font-weight: 500; }
             }
 
             .col.colDate { @include text-overflow-nw; }

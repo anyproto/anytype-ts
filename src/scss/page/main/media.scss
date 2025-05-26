@@ -14,7 +14,7 @@
 		.block.blockMedia { max-height: unset; }
 	}
 
-	.blocks.horizontal { width: 704px; flex-direction: column; padding-bottom: 80px; }
+	.blocks.horizontal { max-width: 704px; width: calc(100% - 32px); flex-direction: column; padding-bottom: 80px; }
 	.blocks.horizontal {
 		> .side.left { text-align: center; }
 		> .side.right { padding-top: 32px; margin-top: 52px; border-top: 1px solid var(--color-shape-highlight-medium); }

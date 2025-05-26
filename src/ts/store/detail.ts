@@ -154,22 +154,37 @@ class DetailStore {
 			return { id, _empty_: true };
 		};
 		
-		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? J.Relation.default : []) ] : []);
 		const object = { id };
-
-		list = list.filter(it => !it.isDeleted);
+		const keys = new Set<string>();
 
 		if (withKeys) {
+			for (const key of withKeys) {
+				keys.add(key);
+			};
+
+			if (!forceKeys) {
+				for (const key of J.Relation.default) {
+					keys.add(key);
+				};
+			};
+
 			if (keys.has('name')) {
 				keys.add('pluralName');
 			};
-
 			if (keys.has('layout')) {
 				keys.add('resolvedLayout');
 			};
-
-			list = list.filter(it => keys.has(it.relationKey));
 		};
+
+		list = list.filter(it => {
+			if (it.isDeleted) {
+				return false;
+			};
+			if (withKeys && !keys.has(it.relationKey)) {
+				return false;
+			};
+			return true;
+		});
 
 		for (let i = 0; i < list.length; i++) {
 			object[list[i].relationKey] = list[i].value;
@@ -251,7 +266,6 @@ class DetailStore {
 		object.recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
 		object.recommendedHiddenRelations = Relation.getArrayValue(object.recommendedHiddenRelations);
 		object.recommendedFileRelations = Relation.getArrayValue(object.recommendedFileRelations);
-		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTypeId = Relation.getStringValue(object.defaultTypeId);
@@ -278,7 +292,6 @@ class DetailStore {
 		object.objectTypes = Relation.getArrayValue(object.objectTypes || object.relationFormatObjectTypes);
 		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
 		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
-		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 
 		if (object.isDeleted) {
