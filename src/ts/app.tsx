@@ -5,7 +5,6 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
@@ -119,35 +118,13 @@ Sentry.setContext('info', {
 	isPackaged: isPackaged,
 });
 
-let prev = '';
-
 class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
-		const { location } = this.props;
-		const oldParam = U.Router.getParam(prev);
-		const newParam = U.Router.getParam(location.pathname);
-		const noTransition = true; //(oldParam.page == newParam.page) && (oldParam.action == newParam.action);
-
-		let content = null;
-
-		if (noTransition) {
-			content = <Page {...this.props} isPopup={false} />;
-		} else {
-			content = (
-				<TransitionGroup component={null}>
-					<CSSTransition
-						key={location.key}
-						classNames="page-transition"
-						timeout={200}
-						mountOnEnter={true}
-						unmountOnExit={true}
-					>
-						<Page {...this.props} isPopup={false} />
-					</CSSTransition>
-				</TransitionGroup>
-			);
-		};
+		const { page, action } = (this.props.match?.params || {}) as any;
+		const noSidebar = 
+			[ 'auth', 'object', 'invite', 'membership' ].includes(page) || 
+			((page == 'main') && [ 'blank', 'object', 'invite', 'membership' ].includes(action));
 
 		return (
 			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
@@ -155,15 +132,11 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 
-					<SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} />
-					{content}
+					{!noSidebar ? <SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} /> : ''}
+					<Page {...this.props} isPopup={false} />
 				</DragProvider>
 			</SelectionProvider>
 		);
-	};
-
-	componentDidMount (): void {
-		prev = this.props.location.pathname;
 	};
 
 };

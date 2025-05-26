@@ -433,10 +433,10 @@ class Relation {
 	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
 		const options: any[] = U.Common.objectCopy(S.Record.getDataviewRelations(rootId, blockId)).filter(it => {
-			if (it.isInstalled && (it.relationKey == 'picture')) {
+			if (it.relationKey == 'picture') {
 				return true;
 			};
-			return it.isInstalled && !it.isHidden && formats.includes(it.format);
+			return !it.isHidden && formats.includes(it.format);
 		}).map(it => ({
 			id: it.relationKey, 
 			icon: 'relation ' + this.className(it.format),
@@ -465,7 +465,7 @@ class Relation {
 		};
 		
 		let options: any[] = S.Record.getDataviewRelations(rootId, blockId).filter((it: any) => {
-			return it.isInstalled && formats.includes(it.format) && !it.isHidden;
+			return formats.includes(it.format) && !it.isHidden;
 		});
 
 		options.sort((c1: any, c2: any) => {

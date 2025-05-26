@@ -224,7 +224,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { cellRef } = data;
 
-		keyboard.shortcut('arrowdown', e, () => {
+		keyboard.shortcut('arrowup, arrowdown', e, () => {
 			if (cellRef) {
 				cellRef.blur();
 			};

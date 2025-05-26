@@ -454,21 +454,6 @@ class UtilSubscription {
 				}
 			},
 			{
-				spaceId: J.Constant.storeSpaceId,
-				subId: J.Constant.subId.typeStore,
-				keys: this.typeRelationKeys(),
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
-				],
-				sorts: [
-					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
-			},
-			{
 				subId: J.Constant.subId.relation,
 				keys: J.Relation.relation,
 				filters: [
@@ -481,17 +466,6 @@ class UtilSubscription {
 				onSubscribe: () => {
 					S.Record.getRecords(J.Constant.subId.relation).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
-			},
-			{
-				spaceId: J.Constant.storeSpaceId,
-				subId: J.Constant.subId.relationStore,
-				keys: J.Relation.relation,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
 			},
 			{
 				subId: J.Constant.subId.option,

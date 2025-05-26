@@ -542,7 +542,6 @@
 	"pageHeadControlButtonsReposition": "Reposition",
 
 	"pageHeadSimpleCreateSet": "Create Query",
-	"pageHeadSimpleInstall": "Install",
 
 	"pageSettingsLanguageTitle": "Language & Region",
 
@@ -818,6 +817,7 @@
 	"popupSettingsApiMcpConfig": "MCP Config",
 
 	"popupApiCreateTitle": "Create new API key",
+	"popupApiCreateSuccess": "API key successfully created",
 	"popupApiCreatePlaceholder": "Key name",
 
 	"popupSettingsPinTitle": "Pin Code",
@@ -1144,7 +1144,7 @@
 	"popupConfirmInviteError103Text": "The space you try to access has been deleted",
 
 	"popupConfirmJoinSpaceTitle": "Join %s",
-	"popupConfirmJoinSpaceText": "You've been invited to join %s, created by %s",
+	"popupConfirmJoinSpaceText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>",
 	"popupConfirmJoinSpaceButtonConfirm": "Join Space",
 
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
@@ -1689,7 +1689,6 @@
 	"menuObjectUseAsTemplate": "Use as Template",
 	"menuObjectUnlockPage": "Unlock Object",
 	"menuObjectLockPage": "Lock Object",
-	"menuObjectInstall": "Install",
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
@@ -2175,11 +2174,6 @@
 	"libMenuOpenSource": "Open source %s",
 	"libMenuOpenFullscreen": "Open fullscreen",
 	"libMenuCopyUrl": "Copy URL",
-
-	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
-	"libActionUninstallTypeText": "This Type will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
-	"libActionUninstallRelationTitle": "Do you want to remove Property \"%s\"?",
-	"libActionUninstallRelationText": "This Property will be removed from your Library. If you have created any Objects with which use this Property, you will no longer be able to edit the Property value.",
 
 	"utilLoadMoreText": "Show %s more %s",
 	"utilDeletedBackToDashboard": "Back to dashboard",
