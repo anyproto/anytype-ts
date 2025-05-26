@@ -669,7 +669,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					if (block.isEmbedDrawio()) {
-						sanitizeParam.ADD_TAGS.push('svg', 'a', 'foreignObject', 'switch');
+						sanitizeParam.ADD_TAGS.push('svg', 'foreignObject', 'switch');
 
 						allowScript = !!text.match(/https:\/\/(?:viewer|embed|app)\.diagrams\.net\/\?[^"\s>]*/);
 					};
