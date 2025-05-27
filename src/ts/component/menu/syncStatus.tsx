@@ -410,6 +410,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 				break;
 			};
+
 			case I.SyncStatusNetwork.SelfHost: {
 				id = 'self';
 				title = translate('menuSyncStatusInfoSelfTitle');
@@ -419,10 +420,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						message = translate('menuSyncStatusInfoSelfMessageSyncing');
 						break;
 					};
+
 					case I.SyncStatusSpace.Synced: {
 						message = translate('menuSyncStatusInfoSelfMessageSynced');
 						break;
 					};
+
 					case I.SyncStatusSpace.Error: {
 						message = translate('menuSyncStatusInfoSelfMessageError');
 						break;
@@ -431,6 +434,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 				break;
 			};
+
 			case I.SyncStatusNetwork.LocalOnly: {
 				id = 'localOnly';
 				title = translate('menuSyncStatusInfoLocalOnlyTitle');
