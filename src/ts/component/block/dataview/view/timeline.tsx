@@ -15,6 +15,35 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const listRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 
+	const getData = () => {
+		const cur = U.Date.getCalendarMonth(value);
+		if (!cur.length) {
+			return [];
+		};
+
+		const prev = U.Date.getCalendarMonth(cur[0].ts);
+		const next = U.Date.getCalendarMonth(cur[cur.length - 1].ts);
+		const ret = [].concat(prev);
+
+		cur.forEach(it => {
+			if (!ret.find(d => (d.y == it.y) && (d.m == it.m) && (d.d == it.d))) {
+				ret.push(it);
+			};
+		});
+
+		next.forEach(it => {
+			if (!ret.find(d => (d.y == it.y) && (d.m == it.m) && (d.d == it.d))) {
+				ret.push(it);
+			};
+		});
+
+		return ret;
+	};
+
+	const data = getData();
+
+	console.log('DATA', data);
+
 	const getItems = () => {
 		const view = getView();
 
@@ -46,7 +75,6 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return;
 		};
 
-		const data = U.Date.getCalendarMonth(value);
 		if (!data.length) {
 			return;
 		};
@@ -107,38 +135,24 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	}));
 
 	return (
-		<div
-			className={cn.join(' ')}
-		>
-			<div className="side left">
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => !!items[index]}
-				>
-					{({ onRowsRendered }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={listRef}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={cache.current}
-									rowCount={items.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={10}
-									onScroll={() => {}}
-									scrollToAlignment="center"
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
+		<div className={cn.join(' ')}>
+			<div className="header months">
+
+			</div>
+			<div className="header days">
+				{data.map((it, index) => (
+					<div key={index} className="day">
+						{it.d}
+					</div>
+				))}
 			</div>
 
-			<div className="side right">
+			<div className="body">
+				<div className="backgrounds">
+				</div>
+
+				<div className="items">
+				</div>
 			</div>
 		</div>
 	);

@@ -2,14 +2,12 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewTimeline { display: flex; height: 100%; min-height: 600px; }
-		.viewContent.viewTimeline {
-			> .side.left { width: 20%; background-color: var(--color-shape-tertiary); }
-			> .side.left {
-				.item { display: flex; height: 32px; }
+		.viewContent.viewTimeline { display: flex; flex-direction: column; height: 100%; min-height: 600px; overflow-x: scroll; }
+		.viewContent.viewTimeline {	
+			.header.days { display: flex; flex-direction: row; align-items: center; }
+			.header.days {
+				.day { width: 40px; flex-shrink: 0; text-align: center; }
 			}
-
-			> .side.right { width: 80%; }
         }
     }
 }
