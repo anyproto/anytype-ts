@@ -93,8 +93,9 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 						};
 					} else {
 						if (message.inviteType == I.InviteType.WithoutApprove) {
-							const { spaceName, creatorName } = message;
 							const { account } = S.Auth;
+							const spaceName = message.spaceName || translate('defaultNameSpace');
+							const creatorName = message.creatorName || translate('defaultNamePage');
 
 							S.Popup.open('confirm', {
 								data: {
