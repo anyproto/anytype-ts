@@ -513,12 +513,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				ref = this.refName;
 				el = $(this.node).find('.spaceNameWrapper .counter');
 				limit = J.Constant.limit.spaceName;
-				threshold = 10;
+				threshold = J.Constant.limit.spaceNameThreshold;
 			} else {
 				ref = this.refDescription;
 				el = $(this.node).find('.spaceDescriptionWrapper .counter');
 				limit = J.Constant.limit.spaceDescription;
-				threshold = 50;
+				threshold = J.Constant.limit.spaceDescriptionThreshold;
 			};
 
 			const counter = limit - ref?.getTextValue().length;

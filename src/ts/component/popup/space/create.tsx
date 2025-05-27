@@ -141,7 +141,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		const el = $('.popupSpaceCreate .nameWrapper .counter');
 		const counter = J.Constant.limit.spaceName - nameRef.current?.getTextValue().length;
 
-		if (counter <= 10) {
+		if (counter <= J.Constant.limit.spaceNameThreshold) {
 			el.addClass('show').text(counter);
 		} else {
 			el.removeClass('show');
