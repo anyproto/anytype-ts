@@ -329,7 +329,7 @@ class UtilDate {
 		};
 	};
 
-	getCalendarMonth (value: number) {
+	getCalendarMonth (value: number, noOther?: boolean) {
 		const { firstDay } = S.Common;
 		const { m, y } = this.getCalendarDateParam(value);
 		const md = {...J.Constant.monthDays};
@@ -361,14 +361,21 @@ class UtilDate {
 		wdl = (wdl - firstDay + 7) % 7;
 
 		let days = [];
-		for (let i = 1; i <= wdf; ++i) {
-			days.push({ d: md[pm] - (wdf - i), m: pm, y: py });
+
+		if (!noOther) {
+			for (let i = 1; i <= wdf; ++i) {
+				days.push({ d: md[pm] - (wdf - i), m: pm, y: py });
+			};
 		};
+
 		for (let i = 1; i <= md[m]; ++i) {
-			days.push({ y: y, m: m, d: i });
+			days.push({ y, m, d: i });
 		};
-		for (let i = 1; i <= (6 - wdl); ++i) {
-			days.push({ d: i, m: nm, y: ny });
+
+		if (!noOther) {
+			for (let i = 1; i <= (6 - wdl); ++i) {
+				days.push({ d: i, m: nm, y: ny });
+			};
 		};
 
 		days = days.map(it => {
