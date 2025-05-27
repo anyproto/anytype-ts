@@ -1,17 +1,19 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Label, Input, IconObject, Button, Loader, Error } from 'Component';
+import { Label, IconObject, Button, Loader, Error, Editable } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Storage } from 'Lib';
+import $ from 'jquery';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 
 	const nameRef = useRef(null);
 	const iconRef = useRef(null);
 	const [ error, setError ] = useState('');
+	const [ canSave, setCanSave ] = useState(true);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
 
-	const onKeyDown = (e: any, v: string) => {
+	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
@@ -19,8 +21,18 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		});
 	};
 
+	const onKeyUp = (e: any) => {
+		nameRef.current?.placeholderCheck();
+		onChange(e, nameRef.current?.getTextValue());
+		updateCounter();
+	};
+
 	const onChange = (e: any, v: string) => {
 		const object = getObject();
+
+		if (!v.trim().length) {
+			v = translate('defaultNamePage');
+		};
 
 		if (iconRef.current) {
 			object.name = v;
@@ -30,7 +42,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 	const getObject = () => {
 		return {
-			name: nameRef.current?.getValue(),
+			name: nameRef.current?.getTextValue(),
 			layout: I.ObjectLayout.SpaceView,
 			iconOption,
 		};
@@ -49,9 +61,9 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	const onSubmit = (withImport: boolean) => {
 		const { data } = param;
 		const { onCreate, route } = data;
-		const name = checkName(nameRef.current.getValue());
+		const name = checkName(nameRef.current.getTextValue());
 
-		if (isLoading) {
+		if (isLoading || !canSave) {
 			return;
 		};
 
@@ -125,11 +137,32 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		setIconOption(icon);
 	};
 
+	const updateCounter = () => {
+		const el = $('.popupSpaceCreate .nameWrapper .counter');
+		const counter = J.Constant.limit.spaceName - nameRef.current?.getTextValue().length;
+
+		if (counter <= 10) {
+			el.addClass('show').text(counter);
+		} else {
+			el.removeClass('show');
+		};
+
+		if (counter < 0) {
+			el.addClass('red');
+			setCanSave(false);
+		} else {
+			el.removeClass('red');
+			setCanSave(true);
+		};
+	};
+
 	const object = getObject();
 
 	useEffect(() => {
 		const object = getObject();
 		iconRef.current?.setObject(object);
+		nameRef.current?.setFocus();
+		updateCounter();
 	}, [ iconOption ]);
 
 	return (
@@ -149,19 +182,20 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 			</div>
 
 			<div className="nameWrapper">
-				<Input
+				<Editable
+					classNameWrap="spaceName"
 					ref={nameRef}
-					value=""
-					focusOnMount={true}
 					onKeyDown={onKeyDown}
-					onChange={onChange}
+					onKeyUp={onKeyUp}
 					placeholder={translate('defaultNamePage')}
+					maxLength={J.Constant.limit.spaceName}
 				/>
+				<div className="counter" />
 			</div>
 
 			<div className="buttons">
-				<Button text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
-				<Button text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+				<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
+				<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
 			</div>
 
 			<Error text={error} />
