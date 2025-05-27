@@ -4,7 +4,6 @@ export default {
 	googleMaps:			 'AIzaSyAgXu3wCb6mPJv4wNWKe2E3YycaYuqFm9o',
 	protocol:			 'anytype',
 	appName:			 'Anytype',
-	storeSpaceId:		 '_anytype_marketplace',
 	anytypeProfileId:	 '_anytype_profile',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],
@@ -181,7 +180,7 @@ export default {
 					"command": "npx",
 					"args": ["anytype-mcp", "run"],
 					"env": {
-						"OPENAPI_MCP_HEADERS": "{\"Authorization\":\"Bearer %s\", \"Anytype-Version\":\"2025-05-20\"}"
+						"OPENAPI_MCP_HEADERS": "{\\"Authorization\\":\\"Bearer %s\\", \\"Anytype-Version\\":\\"2025-05-20\\"}"
 					}
 				}
 			}

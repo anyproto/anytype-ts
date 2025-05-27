@@ -386,7 +386,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		let marks = [];
 
 		if (this.refForm) {
-			attachments = attachments.concat(this.refForm.state.attachments || []);
+			attachments = attachments.concat((this.refForm.state.attachments || []).map(it => it.id));
 			marks = marks.concat(this.refForm.marks || []);
 
 			const replyingId = this.refForm.getReplyingId();
@@ -400,13 +400,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		list.forEach(it => {
-			attachments = attachments.concat(it.attachments || []);
+			attachments = attachments.concat((it.attachments || []).map(it => it.target));
 			marks = marks.concat(it.content.marks || []);
 		});
 
-		return [].
-			concat(attachments.map(it => it.id)).
-			concat(marks.filter(it => markTypes.includes(it.type) && it.param).map(it => it.param)).filter(it => it);
+		marks = marks.filter(it => markTypes.includes(it.type) && it.param).map(it => it.param);
+
+		return attachments.concat(marks).filter(it => it);
 	};
 
 	getReplyIds (list: any[]) {

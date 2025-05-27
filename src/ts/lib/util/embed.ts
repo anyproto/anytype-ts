@@ -13,6 +13,7 @@ DOMAINS[I.EmbedProcessor.Bilibili] = [ 'bilibili.com', 'b23.tv'];
 DOMAINS[I.EmbedProcessor.Kroki] = [ 'kroki.io' ];
 DOMAINS[I.EmbedProcessor.GithubGist] = [ 'gist.github.com' ];
 DOMAINS[I.EmbedProcessor.Sketchfab] = [ 'sketchfab.com' ];
+DOMAINS[I.EmbedProcessor.Drawio] = [ 'diagrams.net' ];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -80,6 +81,10 @@ class UtilEmbed {
 
 	getSketchfabHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+	};
+
+	getDrawioHtml (content: string): string {
+		return content.match(/^<svg/) ? content : `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
 	getImageHtml (content: string): string {
@@ -229,6 +234,21 @@ class UtilEmbed {
 				break;
 			};
 
+			case I.EmbedProcessor.Drawio: {
+				try {
+					const u = new URL(url);
+					const allowedHosts = [ 'viewer.diagrams.net', 'embed.diagrams.net', 'app.diagrams.net', 'draw.io' ];
+
+
+					if (allowedHosts.includes(u.hostname)) {
+						// Edit mode cannot be opened at this time
+						u.searchParams.delete('edit');
+						url = u.toString();
+					};
+				} catch (e) { /**/ };
+				break;
+			};
+
 			case I.EmbedProcessor.GithubGist: {
 				const a = url.split('#');
 				if (!a.length) {
@@ -341,6 +361,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Bilibili,
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Sketchfab,
+			I.EmbedProcessor.Drawio,
 			I.EmbedProcessor.Image,
 		].includes(p);
 	};
@@ -377,6 +398,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Image,
+			I.EmbedProcessor.Drawio,
 		].includes(p);
 	};
 
@@ -394,6 +416,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Bilibili,
 			I.EmbedProcessor.Graphviz,
 			I.EmbedProcessor.Kroki,
+			I.EmbedProcessor.Drawio,
 			I.EmbedProcessor.Image,
 		].includes(p);
 	};
@@ -418,6 +441,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Chart,
+			I.EmbedProcessor.Drawio,
 		].includes(p);
 	};
 
