@@ -1,17 +1,18 @@
-import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, U, S, Dataview } from 'Lib';
-import { InfiniteLoader, List, Grid, AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
+import { I, U, S, Dataview, keyboard } from 'Lib';
+import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 
 const HEIGHT = 32;
 const WIDTH = 40;
 
 const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
-	const { className, isCollection, isPopup, getView, getSearchIds, getSubId, getKeys, getTarget } = props;
+	const { className, isCollection, isPopup, getView, getSearchIds, getSubId, getKeys, getTarget, onContext } = props;
 	const [ value, setValue ] = useState(U.Date.now());
 	const view = getView();
+	const { hideIcon } = view;
 	const cn = [ 'viewContent', className ];
 	const subId = getSubId();
 	const listRef = useRef(null);
@@ -65,10 +66,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const idx = data.findIndex(it => {
 			return (U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', start));
 		});
+		if (idx < 0) {
+			return null;
+		};
+
+		const icon = hideIcon ? null : <IconObject object={item} size={18} />;
 		const width = Math.ceil(Math.max(1, duration / 86400) * WIDTH);
 		const left = idx * WIDTH;
-
-		console.log(item.name, 'IDX', idx, 'START', start, 'END', end, 'DURATION', duration);
 
 		return (
 			<CellMeasurer
@@ -78,8 +82,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				columnIndex={0}
 				rowIndex={param.index}
 			>
-				<div className="item" style={{ ...param.style, width, left }}>
-					<IconObject object={item} />
+				<div 
+					className="item" 
+					style={{ ...param.style, width, left }} 
+					onClick={e => onClick(e, item)} 
+					onContextMenu={e => onContext(e, item.id)}
+				>
+					{icon}
 					<ObjectName object={item} />
 				</div>
 			</CellMeasurer>
@@ -124,6 +133,27 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const resize = () => {
 		$(itemsRef.current).css({ height: items.length * HEIGHT });
+	};
+
+	const onClick = (e: MouseEvent, item: any) => {
+		e.preventDefault();
+
+		const selection = S.Common.getRef('selectionProvider');
+		const cb = {
+			0: () => {
+				keyboard.withCommand(e) ? U.Object.openEvent(e, item) : U.Object.openConfig(item); 
+			},
+			2: () => onContext(e, item.id)
+		};
+
+		const ids = selection?.get(I.SelectType.Record) || [];
+		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
+			return;
+		};
+
+		if (cb[e.button]) {
+			cb[e.button]();
+		};
 	};
 
 	const items = getItems();
