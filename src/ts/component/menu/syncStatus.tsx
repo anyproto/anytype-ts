@@ -339,8 +339,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconNetwork (syncStatus) {
-		const { network, error, syncingCounter, status } = syncStatus;
+		let { network, error, syncingCounter, status } = syncStatus;
 		const buttons: any[] = [];
+
+		error = 1;
+		status = 2;
+
 
 		let id = '';
 		let title = '';
@@ -350,18 +354,27 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		let isError = false;
 		let isSlow = false;
 
-		if ([ I.SyncStatusSpace.Syncing, I.SyncStatusSpace.Synced ].includes(status)) {
-			isConnected = true;
-			className = 'connected';
-		} else
-		if (I.SyncStatusSpace.Upgrade == status) {
-			isConnected = true;
-			isSlow = true;
-			className = 'connectedSlow';
-		} else
-		if (I.SyncStatusSpace.Error == status) {
-			isError = true;
-			className = 'error';
+		switch (status) {
+			case I.SyncStatusSpace.Syncing:
+			case I.SyncStatusSpace.Synced: {
+				isConnected = true;
+				className = 'connected';
+				break;
+			};
+
+			case I.SyncStatusSpace.Upgrade: {
+				isConnected = true;
+				isSlow = true;
+				className = 'connectedSlow';
+				break;
+			};
+
+			case I.SyncStatusSpace.Error: {
+				isError = true;
+				className = 'error';
+				break;
+			};
+
 		};
 
 		switch (network) {
