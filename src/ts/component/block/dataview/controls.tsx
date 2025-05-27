@@ -408,6 +408,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			name: translate(`viewName${viewType}`),
 			type: viewType,
 			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
+			endRelationKey: view.endRelationKey || Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
 			filters: [],
 			sorts: [],

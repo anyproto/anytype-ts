@@ -453,12 +453,13 @@ class Relation {
 		let formats = [];
 
 		switch (type) {
-			default: {
+			case I.ViewType.Board: {
 				formats = [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Checkbox ];
 				break;
 			};
 
-			case I.ViewType.Calendar: {
+			case I.ViewType.Calendar:
+			case I.ViewType.Timeline: {
 				formats = [ I.RelationType.Date ];
 				break;
 			};
