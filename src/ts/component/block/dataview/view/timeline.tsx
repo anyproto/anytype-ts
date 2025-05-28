@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
+import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
 import { I, U, S, C, Dataview, keyboard, translate } from 'Lib';
@@ -18,6 +19,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const subId = getSubId();
 	const nodeRef = useRef(null);
 	const itemsRef = useRef(null);
+	const tooltipRef = useRef(null);
+	const headRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const startKey = view.groupRelationKey;
 	const endKey = 'dueDate'; // view.endRelationKey;
@@ -64,17 +67,12 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		e.stopPropagation();
 
 		const win = $(window);
-		const node = $(nodeRef.current);
 		const unbind = () => win.off('drag.timeline dragend.timeline');
-		const el = node.find(`#item-${item.id}`);
-		const { left } = el.offset();
+		const x = e.pageX;
 
 		keyboard.setDragging(true);
 
 		let d = 0;
-		let x = e.pageX;
-
-		console.log('onDragStart', x);
 
 		const save = () => {
 			if (!d) {
@@ -245,11 +243,17 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		$(nodeRef.current).find('.day').removeClass('active first last');
 	};
 
+	const getDuration = (item: any): number => {
+		const start = Number(item[startKey]) || 0;
+		const end = Number(item[endKey]) || 0;
+
+		return end - start;
+	};
+
 	const rowRenderer = (param: any) => {
 		const item = items[param.index];
 		const start = Number(item[startKey]) || 0;
-		const end = Number(item[endKey]) || 0;
-		const duration = end - start;
+		const duration = getDuration(item);
 
 		if (duration <= 0) {
 			return null;
@@ -282,6 +286,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					onDragStart={e => onDragStart(e, item)}
 					onMouseEnter={e => onMouseEnter(e, item)}
 					onMouseLeave={onMouseLeave}
+					{...U.Common.dataProps({ id: item.id })}
 				>
 					{icon}
 					<ObjectName object={item} />
@@ -292,6 +297,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			</CellMeasurer>
 		);
 	};
+
+	const Tooltip = (item: any) => (
+		<>
+			<Icon className="arrow" />
+			<ObjectName object={item} />
+		</>
+	);
 
 	const load = () => {
 		if (!view || !data.length) {
@@ -325,7 +337,16 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	};
 
 	const resize = () => {
-		$(itemsRef.current).css({ height: Math.max(20, items.length) * HEIGHT });
+		const node = $(nodeRef.current);
+		const head = $(headRef.current);
+		const items = $(itemsRef.current);
+		const tooltips = $(tooltipRef.current);
+		const top = head.offset().top + head.outerHeight();
+		const left = node.offset().left;
+		const width = node.width();
+
+		items.css({ height: Math.max(20, items.length) * HEIGHT });
+		tooltips.css({ left, top, width });
 	};
 
 	const onClick = (e: MouseEvent, item: any) => {
@@ -353,7 +374,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 	};
 
-	const scrollTo = (t: number) => {
+	const scrollTo = (t: number, animate: boolean) => {
 		const node = $(nodeRef.current);
 		const idx = getIndex(t);
 
@@ -373,7 +394,12 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 
 		const left = el.position().left - node.width() / 2 + WIDTH / 2;
-		node.scrollLeft(left);
+
+		if (animate) {
+			node.animate({ scrollLeft: left }, 200);
+		} else {
+			node.scrollLeft(left);
+		};
 	};
 
 	const onScroll = () => {
@@ -384,9 +410,11 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const node = $(nodeRef.current);
 		const sl = node.scrollLeft();
 		const wrap = node.find('.viewContent');
-		const width = wrap.width() - node.width();
+		const nw = node.width();
+		const width = wrap.width() - nw;
 		const first = data[0];
 		const last = data[data.length - 1];
+		const list = node.find('.item');
 
 		if (first && (sl <= 0)) {
 			setValue(first.ts);
@@ -395,16 +423,61 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		if (last && (sl >= width)) {
 			setValue(last.ts);
 		};
+
+		list.each((i, item: any) => {
+			item = $(item);
+
+			const { left } = item.offset();
+			const w = item.outerWidth();
+			const id = item.attr('data-id');
+			const object = items.find(it => it.id == id);
+
+			const createElement = () => {
+				el = $(`<div id="tooltipItem-${id}" class="tooltipItem" />`).appendTo(tooltipRef.current);
+				ReactDOM.render(<Tooltip {...object} />, el.get(0));
+
+				el.off('click').on('click', (e: any) => {
+					e.stopPropagation();
+					e.preventDefault();
+
+					scrollTo(object[startKey] + getDuration(object) / 2, true);
+				});
+
+				return el;
+			};
+
+			let el = $(`#tooltipItem-${id}`);
+
+			el.css({ top: item.position().top });
+
+			if ((left <= 0) || (left - w >= nw)) {
+				if (!el.length) {
+					el = createElement();
+				};
+
+				el.removeClass('isLeft isRight');
+
+				if (left <= 0) {
+					el.addClass('isLeft');
+				};
+				if (left - w >= nw) {
+					el.addClass('isRight');
+				};
+			} else 
+			if (el.length) {
+				el.remove();
+			};
+		});
 	};
 
 	const items = getItems();
 
 	useEffect(() => {
-		scrollTo(U.Date.now());
+		scrollTo(U.Date.now(), false);
 	}, []);
 
 	useEffect(() => {
-		scrollTo(value);
+		scrollTo(value, false);
 	}, [ value ]);
 
 	useEffect(() => {
@@ -416,110 +489,113 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	}));
 
 	return (
-		<div 
-			ref={nodeRef} 
-			id="scroll" 
-			className="scroll"
-			onScroll={onScroll}
-		>
-			<div className={cn.join(' ')} style={{ width: data.length * WIDTH }}>
-				<div className="head">
-					<div className="months">
-						{months.map((it, i) => {
-							const md = U.Date.getMonthDays(it.y);
-							const css = { width: md[it.m] * WIDTH };
+		<>
+			<div ref={tooltipRef} className="tooltipContainer" />
+			<div 
+				ref={nodeRef} 
+				id="scroll" 
+				className="scroll"
+				onScroll={onScroll}
+			>
+				<div className={cn.join(' ')} style={{ width: data.length * WIDTH }}>
+					<div ref={headRef} className="head">
+						<div className="months">
+							{months.map((it, i) => {
+								const md = U.Date.getMonthDays(it.y);
+								const css = { width: md[it.m] * WIDTH };
 
-							return (
-								<div key={i} className="month" style={css}>
-									{translate(`month${it.m}`)} {it.y}
-								</div>
-							);
-						})}
-					</div>
+								return (
+									<div key={i} className="month" style={css}>
+										{translate(`month${it.m}`)} {it.y}
+									</div>
+								);
+							})}
+						</div>
 
-					<div className="days">
-						{data.map((it, i) => {
-							const cn = [ 'day' ];
+						<div className="days">
+							{data.map((it, i) => {
+								const cn = [ 'day' ];
 
-							if (it.isWeekend) {
-								cn.push('weekend');
-							};
+								if (it.isWeekend) {
+									cn.push('weekend');
+								};
 
-							if (it.isToday) {
-								cn.push('today');
-							};
+								if (it.isToday) {
+									cn.push('today');
+								};
 
-							return (
-								<div key={i} id={`day-${it.d}-${it.m}-${it.y}`} className={cn.join(' ')}>
-									<div className="inner">
-										<div className="marker">
-											{it.d}
+								return (
+									<div key={i} id={`day-${it.d}-${it.m}-${it.y}`} className={cn.join(' ')}>
+										<div className="inner">
+											<div className="marker">
+												{it.d}
+											</div>
 										</div>
 									</div>
-								</div>
-							);
-						})}
-					</div>
-				</div>
-
-				<div className="body">
-					<div className="grid">
-						{data.map((it, i) => {
-							const cn = [ 'cell' ];
-
-							if (it.d == 1) {
-								cn.push('start');
-							};
-
-							if (it.isWeekend) {
-								cn.push('weekend');
-							};
-
-							if (it.isToday) {
-								cn.push('today');
-							};
-
-							return (
-								<div key={[ it.d, it.m, it.y ].join('-')} className={cn.join(' ')} style={{ left: i * WIDTH }} />
-							);
-						})}
+								);
+							})}
+						</div>
 					</div>
 
-					<div ref={itemsRef} className="items">
-						<InfiniteLoader
-							loadMoreRows={() => {}}
-							isRowLoaded={() => true}
-							rowCount={items.length}
-							threshold={10}
-						>
-							{({ onRowsRendered }) => (
-								<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-									{({ height, isScrolling, registerChild, scrollTop }) => (
-										<AutoSizer>
-											{({ width }) => (
-												<div ref={registerChild}>
-													<List
-														autoHeight={true}
-														height={Number(height) || 0}
-														width={Number(width) || 0}
-														isScrolling={isScrolling}
-														rowCount={items.length}
-														rowHeight={HEIGHT}
-														onRowsRendered={onRowsRendered}
-														rowRenderer={rowRenderer}
-														scrollTop={scrollTop}
-													/>
-												</div>
-											)}
-										</AutoSizer>
-									)}
-								</WindowScroller>
-							)}
-						</InfiniteLoader>
+					<div className="body">
+						<div className="grid">
+							{data.map((it, i) => {
+								const cn = [ 'cell' ];
+
+								if (it.d == 1) {
+									cn.push('start');
+								};
+
+								if (it.isWeekend) {
+									cn.push('weekend');
+								};
+
+								if (it.isToday) {
+									cn.push('today');
+								};
+
+								return (
+									<div key={[ it.d, it.m, it.y ].join('-')} className={cn.join(' ')} style={{ left: i * WIDTH }} />
+								);
+							})}
+						</div>
+
+						<div ref={itemsRef} className="items">
+							<InfiniteLoader
+								loadMoreRows={() => {}}
+								isRowLoaded={() => true}
+								rowCount={items.length}
+								threshold={10}
+							>
+								{({ onRowsRendered }) => (
+									<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+										{({ height, isScrolling, registerChild, scrollTop }) => (
+											<AutoSizer>
+												{({ width }) => (
+													<div ref={registerChild}>
+														<List
+															autoHeight={true}
+															height={Number(height) || 0}
+															width={Number(width) || 0}
+															isScrolling={isScrolling}
+															rowCount={items.length}
+															rowHeight={HEIGHT}
+															onRowsRendered={onRowsRendered}
+															rowRenderer={rowRenderer}
+															scrollTop={scrollTop}
+														/>
+													</div>
+												)}
+											</AutoSizer>
+										)}
+									</WindowScroller>
+								)}
+							</InfiniteLoader>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 
 }));
