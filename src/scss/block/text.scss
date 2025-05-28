@@ -127,6 +127,7 @@
 
 	/* Description */
 
+	.block.blockText.textDescription { @include text-description; }
 	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	/* Headers */
