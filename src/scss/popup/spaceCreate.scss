@@ -7,9 +7,19 @@
 		.label { @include text-very-small; color: var(--color-text-secondary); text-transform: uppercase; margin: 0px 0px 36px 0px; }
 
 		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
-		.nameWrapper { margin: 0px 0px 28px 0px; }
+		.nameWrapper { margin: 0px 0px 28px 0px; position: relative; }
+		.nameWrapper {
+			.counter { position: absolute; right: -44px; bottom: 1px; @include text-small; text-align: right; display: none; }
+			.counter.show { display: block; }
+			.counter.red { color: var(--color-red); }
+		}
 
-		.input { @include text-header1; height: auto; text-align: center; }
+		.spaceName { @include text-header1; height: auto; width: 100%; text-align: center; }
+		.spaceName {
+			.editable { position: relative; z-index: 1; }
+			.placeholder { z-index: 0; }
+		}
+
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 	}
 }
