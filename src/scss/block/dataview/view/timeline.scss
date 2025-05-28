@@ -20,7 +20,7 @@
 					.icon.arrow { transform: scale3d(1, 1, 1); }
 				}
 				&.isLeft { flex-direction: row; left: 8px; }
-				&.isRight { flex-direction: row-reverse; right: 8px; }
+				&.isRight { flex-direction: row-reverse; right: 8px; text-align: right; }
 
 				&:hover {
 					.name { width: 120px; }
