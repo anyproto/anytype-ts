@@ -43,8 +43,6 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			const m = U.Date.date('n', v);
 			const y = U.Date.date('Y', v);
 
-			console.log(m, y);
-
 			months.push({ m, y });
 			current.forEach(add);
 		};
@@ -139,6 +137,37 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		});
 	};
 
+	const onMouseEnter = (e: MouseEvent, item: any) => {
+		const node = $(nodeRef.current);
+		const start = Number(item[startKey]) || 0;
+		const end = Number(item[endKey]) || 0;
+		const idx1 = data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', start));
+		const idx2 = data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', end));
+		const slice = data.slice(idx1, idx2);
+
+		for (let i = 0; i < slice.length; i++) {
+			const it = slice[i];
+			const el = node.find(`#day-${it.d}-${it.m}-${it.y}`);
+
+			if (!el.length) {
+				continue;
+			};
+
+			el.addClass('active');
+
+			if (i == 0) {
+				el.addClass('first');
+			};
+			if (i == slice.length - 1) {
+				el.addClass('last');
+			};
+		};
+	};
+
+	const onMouseLeave = (e: MouseEvent) => {
+		$(nodeRef.current).find('.day.active').removeClass('active');
+	};
+
 	const rowRenderer = (param: any) => {
 		const item = items[param.index];
 		const start = Number(item[startKey]) || 0;
@@ -149,9 +178,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return null;
 		}; 
 
-		const idx = data.findIndex(it => {
-			return (U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', start));
-		});
+		const idx = data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', start));
 		if (idx < 0) {
 			return null;
 		};
@@ -176,6 +203,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					onContextMenu={e => onContext(e, item.id)}
 					draggable={canEditStart && canEditEnd}
 					onDragStart={e => onDragStart(e, item)}
+					onMouseEnter={e => onMouseEnter(e, item)}
+					onMouseLeave={onMouseLeave}
 				>
 					{icon}
 					<ObjectName object={item} />
@@ -291,7 +320,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 							};
 
 							return (
-								<div key={i} className={cn.join(' ')}>
+								<div key={i} id={`day-${it.d}-${it.m}-${it.y}`} className={cn.join(' ')}>
 									<div className="inner">
 										{it.d}
 									</div>
