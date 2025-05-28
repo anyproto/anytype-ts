@@ -17,12 +17,17 @@
 				}
 
 				.item { 
-					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border: 1px solid var(--color-shape-secondary); border-radius: 6px; 
-					padding: 0px 4px; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); background: var(--color-bg-primary);
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 6px; 
+					padding: 0px 8px; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset, 0px 0px 4px rgba(0, 0, 0, 0.05); 
+					background: var(--color-bg-primary);
 				}
 				.item {
 					.iconObject { flex-shrink: 0; }
 					.name { @include text-overflow-nw; }
+
+					.icon.resize { position: absolute; top: 0px; height: 100%; width: 20px; }
+					.icon.resize.left { left: 0px; cursor: w-resize; }
+					.icon.resize.right { right: 0px; cursor: e-resize; }
 				}
 			}
         }
