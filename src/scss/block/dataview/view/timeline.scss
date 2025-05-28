@@ -11,11 +11,14 @@
 			.tooltipItem {
 				.icon.arrow { 
 					width: 16px; height: 16px; border-radius: 4px; background-color: var(--color-shape-highlight-medium); flex-shrink: 0; 
-					transition: background-color 0.2s $easeInQuint;
+					transition: all 0.2s $easeInQuint; transform: scale3d(0.5, 0.5, 1);
 				}
 				.name { @include text-overflow-nw; width: 0px; transition: width 0.2s $easeInQuint; }
 
 				&.isLeft, &.isRight { opacity: 1; }
+				&.isLeft, &.isRight {
+					.icon.arrow { transform: scale3d(1, 1, 1); }
+				}
 				&.isLeft { flex-direction: row; left: 8px; }
 				&.isRight { flex-direction: row-reverse; right: 8px; }
 
@@ -77,9 +80,9 @@
 				}
 
 				.item { 
-					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 6px; 
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 6px; height: 32px !important;
 					padding: 0px 8px; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset, 0px 0px 4px rgba(0, 0, 0, 0.05); 
-					background: var(--color-bg-primary);
+					background: var(--color-bg-primary); 
 				}
 				.item {
 					.iconObject { flex-shrink: 0; }

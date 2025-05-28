@@ -1,11 +1,13 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
-import { I, U, S, C, Dataview, keyboard, translate } from 'Lib';
+import { I, U, S, C, J, Dataview, keyboard, translate } from 'Lib';
 import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 
-const HEIGHT = 32;
+const HEIGHT = 36;
 const WIDTH = 40;
 const DAY = 86400; // seconds in a day
 
@@ -21,16 +23,27 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const itemsRef = useRef(null);
 	const tooltipRef = useRef(null);
 	const headRef = useRef(null);
+	const bodyRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const startKey = view.groupRelationKey;
 	const endKey = 'dueDate'; // view.endRelationKey;
 	const object = getTarget();
 	const startRelation = S.Record.getRelationByKey(startKey);
 	const endRelation = S.Record.getRelationByKey(endKey);
+	const frame = useRef(0);
 
 	const canEditStart = !readonly && !startRelation.isReadonlyValue;
 	const canEditEnd = !readonly && !endRelation.isReadonlyValue;
 	const months = [];
+
+	const rebind = () => {
+		unbind();
+		U.Common.getScrollContainer(isPopup).on('scroll.timeline', e => onScrollVertical(e));
+	};
+
+	const unbind = () => {
+		U.Common.getScrollContainer(isPopup).off('scroll.timeline');
+	};
 
 	const getData = () => {
 		const ret = [];
@@ -260,10 +273,6 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		}; 
 
 		const idx = getIndex(start);
-		if (idx < 0) {
-			return null;
-		};
-
 		const icon = hideIcon ? null : <IconObject object={item} size={18} />;
 		const width = Math.max(1, Math.ceil(duration / DAY)) * WIDTH;
 		const left = idx * WIDTH;
@@ -338,15 +347,21 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const resize = () => {
 		const node = $(nodeRef.current);
-		const head = $(headRef.current);
+
+		if (!node.length) {
+			return;
+		};
+
+		const body = $(bodyRef.current);
 		const items = $(itemsRef.current);
 		const tooltips = $(tooltipRef.current);
-		const top = head.offset().top + head.outerHeight();
+		const container = U.Common.getScrollContainer(isPopup);
+		const top = body.offset().top - J.Size.header - 14 - container.scrollTop();
 		const left = node.offset().left;
 		const width = node.width();
 
 		items.css({ height: Math.max(20, items.length) * HEIGHT });
-		tooltips.css({ left, top, width });
+		tooltips.css({ transform: `translate3d(${left}px, ${top}px, 0)`, width });
 	};
 
 	const onClick = (e: MouseEvent, item: any) => {
@@ -402,7 +417,11 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 	};
 
-	const onScroll = () => {
+	const onScrollVertical = (e: any) => {
+		resize();
+	};
+
+	const onScrollHorizontal = () => {
 		if (!data.length) {
 			return;
 		};
@@ -411,6 +430,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const sl = node.scrollLeft();
 		const wrap = node.find('.viewContent');
 		const nw = node.width();
+		const nl = node.offset().left;
 		const width = wrap.width() - nw;
 		const first = data[0];
 		const last = data[data.length - 1];
@@ -431,6 +451,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			const w = item.outerWidth();
 			const id = item.attr('data-id');
 			const object = items.find(it => it.id == id);
+			const isLeft = left <= -w;
+			const isRight = left - nl >= nw;
 
 			const createElement = () => {
 				el = $(`<div id="tooltipItem-${id}" class="tooltipItem" />`).appendTo(tooltipRef.current);
@@ -440,7 +462,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					e.stopPropagation();
 					e.preventDefault();
 
-					scrollTo(object[startKey] + getDuration(object) / 2, true);
+					setValue(object[startKey]);
 				});
 
 				return el;
@@ -450,19 +472,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 			el.css({ top: item.position().top });
 
-			if ((left <= 0) || (left - w >= nw)) {
+			if (isLeft || isRight) {
 				if (!el.length) {
 					el = createElement();
 				};
 
-				el.removeClass('isLeft isRight');
-
-				if (left <= 0) {
-					el.addClass('isLeft');
-				};
-				if (left - w >= nw) {
-					el.addClass('isRight');
-				};
+				el.toggleClass('isLeft', isLeft);
+				el.toggleClass('isRight', isRight);
 			} else 
 			if (el.length) {
 				el.remove();
@@ -474,6 +490,11 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	useEffect(() => {
 		scrollTo(U.Date.now(), false);
+		rebind();
+
+		return () => {
+			unbind();
+		};
 	}, []);
 
 	useEffect(() => {
@@ -495,7 +516,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				ref={nodeRef} 
 				id="scroll" 
 				className="scroll"
-				onScroll={onScroll}
+				onScroll={onScrollHorizontal}
 			>
 				<div className={cn.join(' ')} style={{ width: data.length * WIDTH }}>
 					<div ref={headRef} className="head">
@@ -537,7 +558,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 						</div>
 					</div>
 
-					<div className="body">
+					<div ref={bodyRef} className="body">
 						<div className="grid">
 							{data.map((it, i) => {
 								const cn = [ 'cell' ];
