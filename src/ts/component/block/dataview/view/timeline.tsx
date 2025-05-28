@@ -6,6 +6,7 @@ import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, Windo
 
 const HEIGHT = 32;
 const WIDTH = 40;
+const DAY = 86400; // seconds in a day
 
 const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
@@ -24,6 +25,9 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const startRelation = S.Record.getRelationByKey(startKey);
 	const endRelation = S.Record.getRelationByKey(endKey);
 
+	const canEditStart = !readonly && !startRelation.isReadonlyValue;
+	const canEditEnd = !readonly && !endRelation.isReadonlyValue;
+
 	const getData = () => {
 		const ret = [];
 		const add = d => {
@@ -33,13 +37,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 
 		for (let i = 3; i >= 0; i--) {
-			const current = U.Date.getCalendarMonth(value - 86400 * 30 * i, true);
+			const current = U.Date.getCalendarMonth(value - DAY * 30 * i, true);
 
 			current.forEach(add);
 		};
 
 		for (let i = 1; i <= 3; i++) {
-			const current = U.Date.getCalendarMonth(value + 86400 * 30 * i, true);
+			const current = U.Date.getCalendarMonth(value + DAY * 30 * i, true);
 
 			current.forEach(add);
 		};
@@ -68,6 +72,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const { left } = el.offset();
 		const width = Math.floor(el.outerWidth());
 		const body = $('body');
+		const sl = node.scrollLeft();
 
 		unbind();
 		keyboard.setResize(true);
@@ -90,7 +95,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				const css: any = {};
 
 				if (dir < 0) {
-					css.left = left - node.offset().left + d * WIDTH;
+					css.left = left - node.offset().left + sl + d * WIDTH;
 					css.width = width - d * WIDTH;
 				};
 
@@ -110,15 +115,24 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			body.removeClass('eResize wResize');
 
 			if (d) {
-				const details: any = {};
+				const details: any = [];
 
-				if (dir > 0) {
-					item[endKey] = item[startKey] + d * 86400;
+				if (dir < 0) {
+					details.push({ key: startKey, value: item[startKey] + d * DAY });
 				};
 
-				if (U.Common.objectLength(details)) {
-					S.Detail.update(subId, { id: item.id, details }, false);
-					C.ObjectListSetDetails([ item.id ], [ details ]);
+				if (dir > 0) {
+					details.push({ key: endKey, value: item[endKey] + d * DAY });
+				};
+
+				if (details.length) {
+					const map = details.reduce((res, current) => { 
+						res[current.key] = current.value; 
+						return res;
+					}, {});
+
+					S.Detail.update(subId, { id: item.id, details: map }, false);
+					C.ObjectListSetDetails([ item.id ], details);
 				};
 			};
 		});
@@ -142,7 +156,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 
 		const icon = hideIcon ? null : <IconObject object={item} size={18} />;
-		const width = Math.max(1, Math.ceil(duration / 86400)) * WIDTH;
+		const width = Math.max(1, Math.ceil(duration / DAY)) * WIDTH;
 		const left = idx * WIDTH;
 
 		return (
@@ -159,14 +173,14 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					style={{ ...param.style, width, left }} 
 					onClick={e => onClick(e, item)} 
 					onContextMenu={e => onContext(e, item.id)}
-					draggable={!readonly}
+					draggable={canEditStart && canEditEnd}
 					onDragStart={e => onDragStart(e, item)}
 				>
 					{icon}
 					<ObjectName object={item} />
 
-					<Icon className="resize left" onMouseDown={e => onResizeStart(e, item, -1)} />
-					<Icon className="resize right" onMouseDown={e => onResizeStart(e, item, 1)} />
+					{canEditStart ? <Icon className="resize left" onMouseDown={e => onResizeStart(e, item, -1)} /> : ''}
+					{canEditEnd ? <Icon className="resize right" onMouseDown={e => onResizeStart(e, item, 1)} /> : ''}
 				</div>
 			</CellMeasurer>
 		);
@@ -209,7 +223,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	};
 
 	const resize = () => {
-		$(itemsRef.current).css({ height: items.length * HEIGHT });
+		$(itemsRef.current).css({ height: Math.max(20, items.length) * HEIGHT });
 	};
 
 	const onClick = (e: MouseEvent, item: any) => {
