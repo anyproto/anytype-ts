@@ -15,10 +15,10 @@
 				&.days {
 					.day { width: 40px; height: 40px; flex-shrink: 0; text-align: center; display: flex; align-items: center; justify-content: center; position: relative; }
 					.day {
-						.inner { min-width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+						.inner, .marker { min-width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
 
 						&.today {
-							.inner { border-radius: 50%; background: var(--color-red); color: var(--color-text-inversion); }
+							.marker { border-radius: 50%; background: var(--color-red); color: var(--color-text-inversion); }
 
 							&::after {
 								content: ''; position: absolute; bottom: -4px; left: calc(50% - 4px); width: 8px; height: 8px; border-radius: 50%; background: var(--color-red);
@@ -29,10 +29,10 @@
 							.inner { background: var(--color-shape-highlight-medium); width: 100%; }
 
 							&.first {
-								.inner { border-radius: 12px 0px 0px 12px; }
+								.inner { border-radius: 12px 0px 0px 12px; color: var(--color-text-primary); }
 							}
 							&.last {
-								.inner { border-radius: 0px 12px 12px 0px; }
+								.inner { border-radius: 0px 12px 12px 0px; color: var(--color-text-primary); }
 							}
 						}
 					}

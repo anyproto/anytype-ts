@@ -79,6 +79,32 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		let d = 0;
 
+		const save = (cmd: boolean) => {
+			if (!d) {
+				return;
+			};
+
+			const details: any = [];
+
+			if (dir < 0) {
+				item[startKey] = item[startKey] + d * DAY;
+				details.push({ key: startKey, value: item[startKey] });
+			};
+
+			if (dir > 0) {
+				item[endKey] = item[endKey] + d * DAY;
+				details.push({ key: endKey, value: item[endKey] });
+			};
+
+			if (details.length) {
+				S.Detail.update(subId, { id: item.id, details: { [startKey]: item[startKey], [endKey]: item[endKey] } }, false);
+
+				if (cmd) {
+					C.ObjectListSetDetails([ item.id ], details);
+				};
+			};
+		};
+
 		win.on('mousemove.timeline', (e: any) => {
 			if (dir < 0) {
 				d = e.pageX - left;
@@ -88,21 +114,31 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				d = e.pageX - left - width;
 			};
 
+			onMouseLeave();
+
 			if (d) {
 				d = Math.ceil(d / WIDTH);
 
 				const css: any = {};
 
+				let start = item[startKey];
+				let end = item[endKey];
+
 				if (dir < 0) {
 					css.left = left - node.offset().left + sl + d * WIDTH;
 					css.width = width - d * WIDTH;
+
+					start += d * DAY;
 				};
 
 				if (dir > 0) {
 					css.width = width + d * WIDTH;
+
+					end += d * DAY;
 				};
 
 				el.css(css);
+				setHover(start, end);
 			};
 		});
 
@@ -110,40 +146,27 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			e.stopPropagation();
 
 			unbind();
+			save(true);
 			window.setTimeout(() => keyboard.setResize(false), 20);
 			body.removeClass('eResize wResize');
-
-			if (d) {
-				const details: any = [];
-
-				if (dir < 0) {
-					details.push({ key: startKey, value: item[startKey] + d * DAY });
-				};
-
-				if (dir > 0) {
-					details.push({ key: endKey, value: item[endKey] + d * DAY });
-				};
-
-				if (details.length) {
-					const map = details.reduce((res, current) => { 
-						res[current.key] = current.value; 
-						return res;
-					}, {});
-
-					S.Detail.update(subId, { id: item.id, details: map }, false);
-					C.ObjectListSetDetails([ item.id ], details);
-				};
-			};
 		});
 	};
 
-	const onMouseEnter = (e: MouseEvent, item: any) => {
-		const node = $(nodeRef.current);
-		const start = Number(item[startKey]) || 0;
-		const end = Number(item[endKey]) || 0;
+	const setHover = (start: number, end: number) => {
+		start = Number(start) || 0;
+		end = Number(end) || 0;
+
 		const idx1 = data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', start));
 		const idx2 = data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', end));
+
+		if ((idx1 < 0) || (idx2 < 0) || (idx1 >= idx2)) {
+			return;
+		};
+
+		const node = $(nodeRef.current);
 		const slice = data.slice(idx1, idx2);
+
+		onMouseLeave();
 
 		for (let i = 0; i < slice.length; i++) {
 			const it = slice[i];
@@ -164,8 +187,12 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 	};
 
-	const onMouseLeave = (e: MouseEvent) => {
-		$(nodeRef.current).find('.day.active').removeClass('active');
+	const onMouseEnter = (e: MouseEvent, item: any) => {
+		setHover(item[startKey], item[endKey]);
+	};
+
+	const onMouseLeave = () => {
+		$(nodeRef.current).find('.day').removeClass('active first last');
 	};
 
 	const rowRenderer = (param: any) => {
@@ -322,7 +349,9 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 							return (
 								<div key={i} id={`day-${it.d}-${it.m}-${it.y}`} className={cn.join(' ')}>
 									<div className="inner">
-										{it.d}
+										<div className="marker">
+											{it.d}
+										</div>
 									</div>
 								</div>
 							);
