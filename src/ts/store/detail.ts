@@ -273,6 +273,7 @@ class DetailStore {
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;
 		object.pluralName = Relation.getStringValue(object.pluralName);
+		object.headerRelationsLayout = Number(object.headerRelationsLayout) || I.FeaturedRelationLayout.Inline;
 
 		if (object.name == translate('defaultNamePage')) {
 			object.name = '';

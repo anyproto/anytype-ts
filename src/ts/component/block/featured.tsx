@@ -47,7 +47,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
 		const object = this.getObject();
-		const type = S.Detail.get(rootId, object.type, []);
+		const type = S.Detail.get(rootId, object.type, [ 'headerRelationsLayout' ]);
+		const { headerRelationsLayout } = type;
 
 		return (
 			<div 
@@ -57,53 +58,54 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp}
 			>
-				<div className="listColumn">
-					{items.map((relation: any) => (
-						<Block 
-							{...this.props} 
-							key={relation.id} 
-							rootId={rootId} 
-							block={new M.Block({ id: relation.id, type: I.BlockType.Relation, content: { key: relation.relationKey } })} 
-							readonly={!allowedValue} 
-							isSelectionDisabled={true}
-							isContextMenuDisabled={true}
-						/>
-					))}
-				</div>
+				{headerRelationsLayout == I.FeaturedRelationLayout.Column ? (
+					<div className="listColumn">
+						{items.map((relation: any) => (
+							<Block
+								{...this.props}
+								key={relation.id}
+								rootId={rootId}
+								block={new M.Block({ id: relation.id, type: I.BlockType.Relation, content: { key: relation.relationKey } })}
+								readonly={!allowedValue}
+								isSelectionDisabled={true}
+								isContextMenuDisabled={true}
+							/>
+						))}
+					</div>
+				) : (
+					<div className="listInline">
+						{items.map((relation: any, i: any) => {
+							const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
+							const value = object[relation.relationKey];
+							const canEdit = allowedValue && !relation.isReadonlyValue;
+							const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
 
-				<div className="listInline">
-					{items.map((relation: any, i: any) => {
-						const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
-						const value = object[relation.relationKey];
-						const canEdit = allowedValue && !relation.isReadonlyValue;
-						const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
+							if (i == items.length - 1) {
+								cn.push('last');
+							};
 
-						if (i == items.length - 1) {
-							cn.push('last');
-						};
+							if (relation.relationKey == 'type') {
+								return this.renderType();
+							};
 
-						if (relation.relationKey == 'type') {
-							return this.renderType();
-						};
+							if (relation.relationKey == 'setOf') {
+								return this.renderSetOf();
+							};
 
-						if (relation.relationKey == 'setOf') {
-							return this.renderSetOf();
-						};
+							if (relation.relationKey == 'identity') {
+								return this.renderIdentity();
+							};
 
-						if (relation.relationKey == 'identity') {
-							return this.renderIdentity();
-						};
+							if ([ 'links', 'backlinks' ].includes(relation.relationKey)) {
+								return this.renderLinks(relation.relationKey, i);
+							};
 
-						if ([ 'links', 'backlinks' ].includes(relation.relationKey)) {
-							return this.renderLinks(relation.relationKey, i);
-						};
-
-						return (
-							<span
-								key={i}
-								className={cn.join(' ')}
-								onClick={e => this.onRelation(e, relation.relationKey)}
-							>
+							return (
+								<span
+									key={i}
+									className={cn.join(' ')}
+									onClick={e => this.onRelation(e, relation.relationKey)}
+								>
 								<Cell
 									ref={ref => this.cellRefs.set(id, ref)}
 									placeholder={relation.name}
@@ -129,9 +131,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								/>
 								<div className="bullet" />
 							</span>
-						);
-					})}
-				</div>
+							);
+						})}
+					</div>
+				)}
 			</div>
 		);
 	};

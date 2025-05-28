@@ -279,6 +279,16 @@ class UtilMenu {
 		});
 	};
 
+	getFeaturedRelationLayout () {
+		return [
+			{ id: I.FeaturedRelationLayout.Inline },
+			{ id: I.FeaturedRelationLayout.Column },
+		].map((it: any) => {
+			it.name = translate(`commonFeaturedRelationLayout${I.FeaturedRelationLayout[it.id]}`);
+			return it;
+		});
+	};
+
 	getLayoutIcon (layout: I.ObjectLayout) {
 		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
 	};
