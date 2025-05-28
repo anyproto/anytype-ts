@@ -86,7 +86,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		let dy = 0;
 
-		const save = (d: number) => {
+		const save = (d: number, cb: (message: any) => void) => {
 			if (!d) {
 				return;
 			};
@@ -100,7 +100,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			];
 				
 			S.Detail.update(subId, { id: item.id, details: { [startKey]: item[startKey], [endKey]: item[endKey] } }, false);
-			C.ObjectListSetDetails([ item.id ], details);
+			C.ObjectListSetDetails([ item.id ], details, cb);
 		};
 
 		win.on('drag.timeline', (e: any) => {
@@ -120,17 +120,17 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		win.on('dragend.timeline', (e: any) => {
 			e.stopPropagation();
 
-			save(Math.ceil((e.pageX - x) / WIDTH));
+			save(Math.ceil((e.pageX - x) / WIDTH), () => {
+				if (isCollection && (dy >= 0)) {
+					const records = arrayMove(S.Record.getRecordIds(subId, ''), item.index, dy);
+
+					S.Record.recordsSet(subId, '', records);
+					objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
+				};
+			});
 			unbind();
 			keyboard.setDragging(false);
 			line.hide();
-
-			if (dy >= 0) {
-				const records = arrayMove(S.Record.getRecordIds(subId, ''), item.index, dy);
-
-				S.Record.recordsSet(subId, '', records);
-				objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
-			};
 		});
 	};
 
