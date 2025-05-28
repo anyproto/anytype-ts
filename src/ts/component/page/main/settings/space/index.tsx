@@ -534,7 +534,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		});
 
 		this.canSave = canSave;
-		$(this.node).find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);
+		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);
 	};
 
 });
