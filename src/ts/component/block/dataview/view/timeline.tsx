@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import raf from 'raf';
+import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
 import { I, U, S, C, J, Dataview, keyboard, translate } from 'Lib';
@@ -14,7 +14,7 @@ const PADDING = 46;
 
 const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
-	const { className, isCollection, isPopup, readonly, isInline, getView, getSearchIds, getSubId, getKeys, getTarget, onContext } = props;
+	const { className, isCollection, isPopup, readonly, isInline, getView, getSearchIds, getSubId, getKeys, getTarget, onContext, objectOrderUpdate, getRecords } = props;
 	const [ value, setValue ] = useState(U.Date.now());
 	const view = getView();
 	const { hideIcon } = view;
@@ -25,6 +25,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const tooltipRef = useRef(null);
 	const headRef = useRef(null);
 	const bodyRef = useRef(null);
+	const lineRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const startKey = view.groupRelationKey;
 	const endKey = 'dueDate'; // view.endRelationKey;
@@ -72,22 +73,20 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		return data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', t));
 	};
 
-	const getItems = () => {
-		return view ? S.Record.getRecords(subId, [ view.groupRelationKey, 'dueDate' ]) : [];
-	};
-
 	const onDragStart = (e: DragEvent, item: any) => {
 		e.stopPropagation();
 
 		const win = $(window);
 		const unbind = () => win.off('drag.timeline dragend.timeline');
 		const x = e.pageX;
+		const body = $(bodyRef.current);
+		const line = $(lineRef.current);
 
 		keyboard.setDragging(true);
 
-		let d = 0;
+		let dy = 0;
 
-		const save = () => {
+		const save = (d: number) => {
 			if (!d) {
 				return;
 			};
@@ -105,19 +104,35 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 
 		win.on('drag.timeline', (e: any) => {
-			d = Math.ceil((e.pageX - x) / WIDTH);
+			const { top } = body.offset();
+			const dx = Math.ceil((e.pageX - x) / WIDTH);
 
-			setHover(item[startKey] + d * DAY, item[endKey] + d * DAY);
+			setHover(item[startKey] + dx * DAY, item[endKey] + dx * DAY);
+
+			if (isCollection) {
+				dy = Math.ceil((e.pageY - top) / HEIGHT) - 1;
+				if (dy && (dy != item.index) && (dy != item.index + 1)) {
+					line.css({ top: dy * HEIGHT + 1 }).show();
+				};
+			};
 		});
 
 		win.on('dragend.timeline', (e: any) => {
 			e.stopPropagation();
 
-			d = Math.ceil((e.pageX - x) / WIDTH);
-			save();
-
+			save(Math.ceil((e.pageX - x) / WIDTH));
 			unbind();
 			keyboard.setDragging(false);
+			line.hide();
+
+			const newIndex = dy - 1;
+
+			if (newIndex >= 0) {
+				const records = arrayMove(S.Record.getRecordIds(subId, ''), item.index, newIndex);
+
+				S.Record.recordsSet(subId, '', records);
+				objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
+			};
 		});
 	};
 
@@ -271,6 +286,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		if (duration <= 0) {
 			return null;
 		}; 
+
+		item.index = param.index;
 
 		const idx = getIndex(start);
 		const icon = hideIcon ? null : <IconObject object={item} size={18} />;
@@ -498,7 +515,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		});
 	};
 
-	const items = getItems();
+	const items = getRecords().map(id => S.Detail.get(subId, id));
 
 	useEffect(() => {
 		scrollTo(U.Date.now(), false);
@@ -592,6 +609,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 								);
 							})}
 						</div>
+
+						<div ref={lineRef} className="line" />
 
 						<div ref={itemsRef} className="items">
 							<InfiniteLoader

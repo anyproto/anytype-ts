@@ -431,7 +431,7 @@ class Dataview {
 
 			if (view.type == I.ViewType.Timeline) {
 				details[view.groupRelationKey] = U.Date.now();
-				details[view.endRelationKey] = U.Date.now();
+				details[view.endRelationKey] = U.Date.now() + 86400 * 5;
 			};
 		};
 

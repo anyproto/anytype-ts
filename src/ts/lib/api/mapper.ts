@@ -342,7 +342,7 @@ export const Mapper = {
 				cardSize: obj.getCardsize(),
 				hideIcon: obj.getHideicon(),
 				groupRelationKey: obj.getGrouprelationkey(),
-				endRelationKey: '', // obj.getEndrelationkey(),
+				endRelationKey: 'dueDate', // obj.getEndrelationkey(),
 				groupBackgroundColors: obj.getGroupbackgroundcolors(),
 				pageLimit: obj.getPagelimit(),
 				defaultTemplateId: obj.getDefaulttemplateid(),

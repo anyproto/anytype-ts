@@ -79,6 +79,8 @@
 					}
 				}
 
+				.line { width: 100%; position: absolute; left: 0px; top: 0px; height: 2px; background-color: var(--color-control-accent); display: none; }
+
 				.item { 
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 6px; height: 32px !important;
 					padding: 0px 8px; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset, 0px 0px 4px rgba(0, 0, 0, 0.05); 
