@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
-import { I, U, S, C, Dataview, keyboard, translate, Preview } from 'Lib';
+import { I, U, S, C, Dataview, keyboard, translate } from 'Lib';
 import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 
 const HEIGHT = 32;
@@ -252,17 +252,12 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return;
 		};
 
-		const first = data[0];
-		const last = data[data.length - 1];
-		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
-		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
 		const searchIds = getSearchIds();
 		const subId = getSubId();
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
-			{ relationKey: startRelation.relationKey, condition: I.FilterCondition.GreaterOrEqual, value: start, quickOption: I.FilterQuickOption.ExactDate, format: startRelation.format },
-			{ relationKey: endRelation.relationKey, condition: I.FilterCondition.GreaterOrEqual, value: start, format: endRelation.format },
-			{ relationKey: endRelation.relationKey, condition: I.FilterCondition.LessOrEqual, value: end, quickOption: I.FilterQuickOption.ExactDate, format: endRelation.format },
+			{ relationKey: startRelation.relationKey, condition: I.FilterCondition.GreaterOrEqual, value: 0, quickOption: I.FilterQuickOption.ExactDate, format: startRelation.format },
+			{ relationKey: endRelation.relationKey, condition: I.FilterCondition.GreaterOrEqual, value: 0, format: endRelation.format },
 		].concat(view.filters as any[]);
 
 		const sorts: I.Sort[] = [].concat(view.sorts);
@@ -346,15 +341,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const width = wrap.width() - node.width();
 		const first = data[0];
 		const last = data[data.length - 1];
-		const start = first.ts;
-		const end = last.ts;
 
-		if (sl <= 0) {
-			setValue(start);
+		if (first && (sl <= 0)) {
+			setValue(first.ts);
 		};
 
-		if (sl >= width) {
-			setValue(end);
+		if (last && (sl >= width)) {
+			setValue(last.ts);
 		};
 	};
 
@@ -384,40 +377,43 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			onScroll={onScroll}
 		>
 			<div className={cn.join(' ')} style={{ width: data.length * WIDTH }}>
-				<div className="header months">
-					{months.map((it, i) => {
-						const md = U.Date.getMonthDays(it.y);
-						const css = { width: md[it.m] * WIDTH };
+				<div className="head">
+					<div className="months">
+						{months.map((it, i) => {
+							const md = U.Date.getMonthDays(it.y);
+							const css = { width: md[it.m] * WIDTH };
 
-						return (
-							<div key={i} className="month" style={css}>
-								{translate(`month${it.m}`)} {it.y}
-							</div>
-						);
-					})}
-				</div>
-				<div className="header days">
-					{data.map((it, i) => {
-						const cn = [ 'day' ];
+							return (
+								<div key={i} className="month" style={css}>
+									{translate(`month${it.m}`)} {it.y}
+								</div>
+							);
+						})}
+					</div>
 
-						if (it.isWeekend) {
-							cn.push('weekend');
-						};
+					<div className="days">
+						{data.map((it, i) => {
+							const cn = [ 'day' ];
 
-						if (it.isToday) {
-							cn.push('today');
-						};
+							if (it.isWeekend) {
+								cn.push('weekend');
+							};
 
-						return (
-							<div key={i} id={`day-${it.d}-${it.m}-${it.y}`} className={cn.join(' ')}>
-								<div className="inner">
-									<div className="marker">
-										{it.d}
+							if (it.isToday) {
+								cn.push('today');
+							};
+
+							return (
+								<div key={i} id={`day-${it.d}-${it.m}-${it.y}`} className={cn.join(' ')}>
+									<div className="inner">
+										<div className="marker">
+											{it.d}
+										</div>
 									</div>
 								</div>
-							</div>
-						);
-					})}
+							);
+						})}
+					</div>
 				</div>
 
 				<div className="body">
