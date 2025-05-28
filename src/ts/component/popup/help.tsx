@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import * as Docs from 'Docs';
 import { Label, Icon, Cover, Button } from 'Component';
-import { I, U, J, translate, Action } from 'Lib';
+import { I, U, J, translate, Action, keyboard } from 'Lib';
 import Block from 'Component/block/help';
 
 const LIMIT = 1;
@@ -24,6 +24,23 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 
 	if (cover) {
 		cn.push('withCover');
+	};
+
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.help', e => onKeyDown(e));
+	};
+
+	const unbind = () => {
+		$(window).off('keydown.help');
+	};
+
+	const onKeyDown = (e: any) => {
+		const cmd = keyboard.cmdKey();
+
+		keyboard.shortcut(`${cmd}+c`, e, () => {
+			e.stopPropagation();
+		});
 	};
 
 	const getSections = (): any[] => {
@@ -76,7 +93,14 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 		setPage(page + dir);
 	};
 
-	useEffect(() => U.Common.renderLinks($(nodeRef.current)));
+	useEffect(() => {
+		rebind();
+		return () => unbind();
+	});
+
+	useEffect(() => {
+		U.Common.renderLinks($(nodeRef.current));
+	});
 
 	return (
 		<div 

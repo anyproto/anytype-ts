@@ -33,8 +33,6 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const tierItem = U.Data.getMembershipTier(tier);
 		const cn = [ 'sides', `tier${tier}`, tierItem.color ];
 
-		console.log(tierItem);
-
 		let content: any = null;
 		if (success) {
 			cn.push('success');

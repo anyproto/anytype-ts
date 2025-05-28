@@ -12,8 +12,11 @@
             .bg { filter: blur(8px); opacity: 0.5; }
 
             .icon { margin: 0px; top: 50%; right: 12px; transform: translateY(-50%); z-index: 1; }
-            .icon.hide { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
-            .icon.see { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: var(--color-shape-tertiary); }
+			.icon.show { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
+
+			&.isHidden {
+				.icon.show { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: var(--color-shape-tertiary); }
+			}
         }
 
         .buttons { display: flex; flex-direction: column; gap: 8px 0px; }

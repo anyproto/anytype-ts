@@ -79,15 +79,8 @@ class RecordStore {
 	};
 
 	typeKeyMapGet (key: string): string {
-		let map = this.keyMapGet(KeyMapType.Type, S.Common.space);
-		let ret = map.get(key);
-
-		if (!ret) {
-			map = this.keyMapGet(KeyMapType.Type, J.Constant.storeSpaceId);
-			ret = map.get(key);
-		};
-
-		return ret;
+		const map = this.keyMapGet(KeyMapType.Type, S.Common.space);
+		return map.get(key);
 	};
 
 	relationsSet (rootId: string, blockId: string, list: any[]) {

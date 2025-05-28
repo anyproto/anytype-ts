@@ -50,11 +50,15 @@ class UtilSubscription {
 
 	defaultFilters (param: any) {
 		const { config } = S.Common;
-		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
+		const { ignoreHidden, ignoreDeleted, ignoreArchived, ignoreChat } = param;
 		const filters = U.Common.objectCopy(param.filters || []);
-		const skipLayouts = [ I.ObjectLayout.Chat ];
+		
+		let skipLayouts = [];
 
-		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		if (ignoreChat) {
+			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
+		};
+
 		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
@@ -111,6 +115,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
+			ignoreChat: true,
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
@@ -273,6 +278,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
+			ignoreChat: true,
 			skipLayoutFormat: null,
 		}, param);
 
@@ -442,24 +448,10 @@ class UtilSubscription {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				ignoreArchived: false,
+				ignoreChat: false,
 				onSubscribe: () => {
 					S.Record.getRecords(J.Constant.subId.type).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
-			},
-			{
-				spaceId: J.Constant.storeSpaceId,
-				subId: J.Constant.subId.typeStore,
-				keys: this.typeRelationKeys(),
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
-				],
-				sorts: [
-					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
 			},
 			{
 				subId: J.Constant.subId.relation,
@@ -474,17 +466,6 @@ class UtilSubscription {
 				onSubscribe: () => {
 					S.Record.getRecords(J.Constant.subId.relation).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
-			},
-			{
-				spaceId: J.Constant.storeSpaceId,
-				subId: J.Constant.subId.relationStore,
-				keys: J.Relation.relation,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
 			},
 			{
 				subId: J.Constant.subId.option,

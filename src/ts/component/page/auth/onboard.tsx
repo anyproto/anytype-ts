@@ -307,7 +307,9 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			Renderer.send('keytarGet', account.id).then(value => phraseRef.current?.setValue(value));
 		};
 
-		analytics.event('ScreenOnboarding', { step: Stage[stage] });
+		const step = stage == Stage.Name ? 'Soul' : Stage[stage];
+
+		analytics.event('ScreenOnboarding', { step });
 	}, [ stage ]);
 
 	return (

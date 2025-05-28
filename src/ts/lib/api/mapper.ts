@@ -725,6 +725,18 @@ export const Mapper = {
 			};
 		},
 
+		AppInfo: (obj: Model.Account.Auth.AppInfo): I.AppInfo => {
+			return {
+				hash: obj.getApphash(),
+				apiKey: obj.getAppkey(),
+				name: obj.getAppname(),
+				createdAt: obj.getCreatedat(),
+				expireAt: obj.getExpireat(),
+				scope: obj.getScope() as number,
+				isActive: obj.getIsactive(),
+			};
+		},
+
 	},
 
 	//------------------------------------------------------------
@@ -1112,6 +1124,15 @@ export const Mapper = {
 			});
 
 			return reactions;
+		},
+
+		AppInfo: (obj: any) => {
+			const item = new Model.Account.Auth.AppInfo();
+
+			item.setAppname(obj.name);
+			item.setScope(obj.scope as number);
+
+			return item;
 		},
 
 	},
@@ -1685,6 +1706,7 @@ export const Mapper = {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
+				dependencies: obj.getDependenciesList().map(Decode.struct),
 				subIds: obj.getSubidsList(),
 			};
 		},

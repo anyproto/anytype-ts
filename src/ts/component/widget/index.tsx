@@ -80,7 +80,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	if (isChat) {
 		const counters = S.Chat.getChatCounters(space, spaceview.chatId);
 
-		cnt = counters.mentionCounter || counters.messageCounter;
+		cnt = counters.messageCounter;
 		showCnt = !!cnt;
 	};
 

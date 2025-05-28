@@ -20,6 +20,7 @@ interface Props {
 	onBlur?(e: any, value: string): void;
 	onCopy?(e: any, value: string): void;
 	onPaste?(e: any): void;
+	onClick?(e: any): void;
 };
 
 interface TextareaRefProps {
@@ -49,6 +50,7 @@ const Textarea = forwardRef<TextareaRefProps, Props>(({
 	onBlur,
 	onCopy,
 	onPaste,
+	onClick,
 }, ref) => {
 	const [ value, setValue ] = useState(initialValue);
 	const nodeRef = useRef(null);
@@ -56,6 +58,10 @@ const Textarea = forwardRef<TextareaRefProps, Props>(({
 
 	if (className) {
 		cn.push(className);
+	};
+
+	if (readonly) {
+		cn.push('isReadonly');
 	};
 
 	const onChangeHandler = (e: any) => {
@@ -162,6 +168,7 @@ const Textarea = forwardRef<TextareaRefProps, Props>(({
 			onBlur={onBlurHandler}
 			onCopy={onCopyHandler}
 			onPaste={onPasteHandler}
+			onClick={onClick}
 			maxLength={maxLength ? maxLength : undefined}
 			spellCheck={false}
 		/>

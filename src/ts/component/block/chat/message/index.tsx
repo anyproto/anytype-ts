@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, C, J, Mark, translate, Preview } from 'Lib';
+import { I, S, U, C, J, Mark, translate, Preview, analytics } from 'Lib';
 
 import Attachment from '../attachment';
 import Reply from './reply';
@@ -49,9 +49,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 		let userpicNode = null;
 		let authorNode = null;
-		let text = content.text.replace(/\r?\n$/, '');
+		let text = content.text.replace(/^\r?\n/g, '').replace(/\r?\n$/g, '');
 
-		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, content.marks)));
+		const diff = text.length - content.text.length;
+		const marks = Mark.adjust(content.marks, 0, diff);
+
+		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, marks)));
 
 		if (!readonly) {
 			if (!hasReactions && canAddReaction) {
@@ -260,11 +263,19 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const { account } = S.Auth;
 		const isSelf = creator == account.id;
 		const readonly = this.props.readonly || !isSelf;
+		const node = $(this.node);
+		const et = node.find('.bubbleOuter .text');
+		const er = node.find('.reply .text');
 
-		renderMentions(rootId, this.node, marks, () => text, { subId });
-		renderObjects(rootId, this.node, marks, () => text, { readonly }, { subId });
-		renderLinks(rootId, this.node, marks, () => text, { readonly }, { subId });
-		renderEmoji(this.node);
+		renderMentions(rootId, et, marks, () => text, { subId });
+		renderObjects(rootId, et, marks, () => text, { readonly }, { subId });
+		renderLinks(rootId, et, marks, () => text, { readonly }, { subId });
+		renderEmoji(et);
+
+		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16 });
+		renderObjects(rootId, er, marks, () => text, { readonly }, { subId, iconSize: 16 });
+		renderLinks(rootId, er, marks, () => text, { readonly }, { subId, iconSize: 16 });
+		renderEmoji(er, { iconSize: 16 });
 
 		this.checkLinesLimit();
 	};
@@ -324,14 +335,23 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				noUpload: true,
 				value: '',
 				onSelect: icon => this.onReactionSelect(icon),
+				route: analytics.route.reaction,
 			}
 		});
+
+		analytics.event('ClickMessageMenuReaction');
 	};
 
 	onReactionSelect (icon: string) {
-		const { rootId, id } = this.props;
+		const { account } = S.Auth;
+		const { rootId, id, subId } = this.props;
+		const message = S.Chat.getMessage(subId, id);
+		const { reactions } = message;
+		const event = reactions.find(it => (it.icon == icon) && it.authors.includes(account.id)) ? 'RemoveReaction' : 'AddReaction';
 
 		C.ChatToggleMessageReaction(rootId, id, icon);
+
+		analytics.event(event);
 	};
 
 	onAttachmentRemove (attachmentId: string) {
@@ -414,11 +434,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	highlight () {
-		$(this.node).addClass('highlight');
+		const node = $(this.node);
 
-		window.setTimeout(() => {
-			$(this.node).removeClass('highlight');
-		}, J.Constant.delay.highlight);
+		node.addClass('highlight');
+		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
 	};
 
 });

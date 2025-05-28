@@ -255,7 +255,7 @@ class ChatStore {
 		if (config.experimental) {
 			const counters = this.getTotalCounters();
 			if (counters) {
-				t = counters.mentionCounter + counters.messageCounter;
+				t = counters.messageCounter;
 			};
 		};
 

@@ -23,15 +23,13 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			U.Object.openRoute({ 
-				...object, 
-				_routeParam_: {
-					additional: [
-						{ key: 'messageOrder', value: decodeURIComponent(messageOrder) },
-					]
-				} 
-			});
+			const routeParam = { additional: [] };
 
+			if (messageOrder) {
+				routeParam.additional.push({ key: 'messageOrder', value: decodeURIComponent(messageOrder) });
+			};
+
+			U.Object.openRoute({ ...object, _routeParam_: routeParam });
 			analytics.event('OpenObjectByLink', { route, objectType: object.type, type: 'Object' });
 		});
 

@@ -147,7 +147,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ id: 'membership', layout: I.ObjectLayout.Settings },
 			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: I.TierType.Builder }}) } },
 		);
-		analytics.event('ClickUpgradePlanTooltip');
+		analytics.event('ClickUpgradePlanTooltip', { type: 'publish' });
 	};
 
 	const setSlugHander = v => setSlug(U.Common.slug(v));

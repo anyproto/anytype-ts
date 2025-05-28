@@ -196,6 +196,7 @@ export interface Block {
 	isEmbedGithubGist?(): boolean;
 	isEmbedSketchfab?(): boolean;
 	isEmbedBilibili?(): boolean;
+	isEmbedDrawio?():boolean;
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;

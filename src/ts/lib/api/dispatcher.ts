@@ -963,9 +963,9 @@ class Dispatcher {
 				};
 
 				case 'ChatAdd': {
-					const orderId = mapped.orderId;
+					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage(mapped.message);
-					const author = U.Space.getParticipant(U.Space.getParticipantId(space, message.creator));
+					const author = S.Detail.mapper(dependencies.find(it => it.identity == message.creator));
 
 					mapped.subIds.forEach(subId => {
 						const list = S.Chat.getList(subId);
@@ -983,6 +983,8 @@ class Dispatcher {
 							const { space } = S.Common;
 							const open = () => {
 								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+
+								analytics.event('OpenChatFromNotification');
 							};
 
 							if (spaceId != space) {

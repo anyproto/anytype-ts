@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Preview, Mark } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Message from './chat/message';
 import Form from './chat/form';
@@ -50,7 +50,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	render () {
-		const { showRelativeDates } = S.Common;
+		const { showRelativeDates, dateFormat } = S.Common;
 		const { block } = this.props;
 		const rootId = this.getRootId();
 		const messages = this.getMessages();
@@ -60,7 +60,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const Section = (item: any) => {
 			const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
-			const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, item.createdAt);
+			const date = day ? day : U.Date.dateWithFormat(dateFormat, item.createdAt);
 
 			return (
 				<div className="section">
@@ -164,6 +164,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				this.loadMessages(1, true, this.scrollToBottom);
 			};
 		});
+
+		analytics.event('ScreenChat');
 	};
 
 	componentWillUnmount () {
@@ -384,7 +386,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		let marks = [];
 
 		if (this.refForm) {
-			attachments = attachments.concat(this.refForm.state.attachments || []);
+			attachments = attachments.concat((this.refForm.state.attachments || []).map(it => it.id));
 			marks = marks.concat(this.refForm.marks || []);
 
 			const replyingId = this.refForm.getReplyingId();
@@ -398,13 +400,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		list.forEach(it => {
-			attachments = attachments.concat(it.attachments || []);
+			attachments = attachments.concat((it.attachments || []).map(it => it.target));
 			marks = marks.concat(it.content.marks || []);
 		});
 
-		return [].
-			concat(attachments.map(it => it.target)).
-			concat(marks.filter(it => markTypes.includes(it.type)).map(it => it.param));
+		marks = marks.filter(it => markTypes.includes(it.type) && it.param).map(it => it.param);
+
+		return attachments.concat(marks).filter(it => it);
 	};
 
 	getReplyIds (list: any[]) {
@@ -559,11 +561,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 						case 'copy': {
 							U.Common.clipboardCopy({ text: item.content.text });
+
+							analytics.event('ClickMessageMenuCopy');
 							break;
 						};
 
 						case 'link': {
 							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
+
+							analytics.event('ClickMessageMenuLink');
 							break;
 						};
 
@@ -868,6 +874,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			S.Chat.clear(subId);
 			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id, true, true));
 		});
+
+		analytics.event('ClickScrollToReply');
 	};
 
 	getReplyContent (message: any): any {
