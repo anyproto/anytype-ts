@@ -4,15 +4,27 @@
 	.block.blockDataview {
 		.viewContent.viewTimeline { display: flex; flex-direction: column; }
 		.viewContent.viewTimeline {	
+			.header { background: var(--color-bg-primary); }
 			.header {
 				&.months { display: flex; flex-direction: row; align-items: center; }
 				&.months {
 					.month { @include text-paragraph; flex-shrink: 0; font-weight: 600; padding-left: 16px; }
 				}
 
-				&.days { display: flex; flex-direction: row; align-items: center; }
+				&.days { display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary); }
 				&.days {
-					.day { width: 40px; height: 40px; flex-shrink: 0; text-align: center; display: flex; align-items: center; justify-content: center; }
+					.day { width: 40px; height: 40px; flex-shrink: 0; text-align: center; display: flex; align-items: center; justify-content: center; position: relative; }
+
+					.day.today {
+						.inner {
+							border-radius: 50%; background: var(--color-red); color: var(--color-text-inversion); min-width: 24px; height: 24px; display: flex;
+							align-items: center; justify-content: center;
+						}
+
+						&::after {
+							content: ''; position: absolute; bottom: -4px; left: calc(50% - 4px); width: 8px; height: 8px; border-radius: 50%; background: var(--color-red);
+						}
+					}
 				}
 			}
 
@@ -22,6 +34,10 @@
 					.cell { width: 40px; flex-shrink: 0; height: 100%; box-shadow: -1px 0px 0px var(--color-shape-highlight-light) inset; position: absolute; top: 0px; }
 					.cell.weekend { background: var(--color-shape-highlight-medium); }
 					.cell.start { box-shadow: -1px 0px 0px var(--color-text-primary); }
+					.cell.today::after {
+						content: ''; position: absolute; top: 0px; left: calc(50% - 0.5px); width: 1px; height: 100%; 
+						border-radius: 1px; box-shadow: inset 0px 0px 0px 1px var(--color-red);
+					}
 				}
 
 				.item { 

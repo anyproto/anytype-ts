@@ -279,11 +279,25 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 						})}
 					</div>
 					<div className="header days">
-						{data.map((it, i) => (
-							<div key={i} className="day">
-								{it.d}
-							</div>
-						))}
+						{data.map((it, i) => {
+							const cn = [ 'day' ];
+
+							if (it.isWeekend) {
+								cn.push('weekend');
+							};
+
+							if (it.isToday) {
+								cn.push('today');
+							};
+
+							return (
+								<div key={i} className={cn.join(' ')}>
+									<div className="inner">
+										{it.d}
+									</div>
+								</div>
+							);
+						})}
 					</div>
 
 					<div className="body">
@@ -297,6 +311,10 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 								if (it.isWeekend) {
 									cn.push('weekend');
+								};
+
+								if (it.isToday) {
+									cn.push('today');
 								};
 
 								return (
