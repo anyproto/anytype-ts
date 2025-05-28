@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { getRange, setRange } from 'selection-ranges';
 import { I, U, keyboard, Mark } from 'Lib';
+import raf from 'raf';
 
 interface Props {
 	id?: string;
@@ -30,6 +31,7 @@ interface EditableRefProps {
 	placeholderSet: (v: string) => void;
 	placeholderHide: () => void;
 	placeholderShow: () => void;
+	setFocus: () => void;
 	setValue: (html: string) => void;
 	getTextValue: () => string;
 	getHtmlValue: () => string;
@@ -83,6 +85,16 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	const placeholderShow = () => {
 		$(placeholderRef.current).show();
+	};
+
+	const setFocus = () => {
+		const el = $(editableRef.current).get(0);
+		const l = getTextValue().length;
+
+		raf(() => {
+			el.focus({ preventScroll: true });
+			setRange(el, { start: l, end: l });
+		});
 	};
 
 	const setValue = (html: string) => {
@@ -236,6 +248,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		placeholderSet,
 		placeholderHide,
 		placeholderShow,
+		setFocus,
 		setValue,
 		getTextValue,
 		getHtmlValue,
