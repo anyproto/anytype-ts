@@ -199,7 +199,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				};
 			};
 			
-			if (viewRelation.includeTime) {
+			if (relation.includeTime) {
 				mask.push('99:99');
 				ph.push('hh:mm');
 			};
@@ -270,7 +270,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				const date = day ? day : U.Date.dateWithFormat(dateFormat, val);
 				const time = U.Date.timeWithFormat(S.Common.timeFormat, val);
 				
-				val = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
+				val = relation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 			} else {
 				val = '';
 			};
@@ -341,7 +341,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					default: format.push('d.m.Y'); break;
 				};
 
-				if (viewRelation.includeTime) {
+				if (relation.includeTime) {
 					format.push('H:i');
 				};
 

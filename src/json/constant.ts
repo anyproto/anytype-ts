@@ -52,7 +52,11 @@ export default {
 				self:		 3,
 				all:		 12,
 			},
-		}
+		},
+
+		relation: {
+			option: 4,
+		},
 	},
 
 	default: {

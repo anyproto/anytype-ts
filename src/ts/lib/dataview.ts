@@ -157,13 +157,14 @@ class Dataview {
 	};
 
 	filterMapper (view: any, it: any) {
-		if (!view) {
-			return it;
-		};
+		const relation = S.Record.getRelationByKey(it.relationKey);
 
-		const vr = view.getRelation(it.relationKey);
-		if (vr && vr.includeTime) {
-			it.includeTime = true;
+		if (relation) {
+			it.format = relation.format;
+
+			if (relation.includeTime) {
+				it.includeTime = true;
+			};
 		};
 		return it;
 	};
@@ -565,7 +566,7 @@ class Dataview {
 		};
 
 		const { showRelativeDates } = S.Common;
-		const { formulaType, includeTime, relationKey } = viewRelation;
+		const { formulaType, relationKey } = viewRelation;
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation) {
@@ -583,7 +584,7 @@ class Dataview {
 			const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, t);
 			const time = U.Date.timeWithFormat(S.Common.timeFormat, t);
 
-			return includeTime ? [ date, time ].join(' ') : date;
+			return relation.includeTime ? [ date, time ].join(' ') : date;
 		};
 
 		const min = () => {

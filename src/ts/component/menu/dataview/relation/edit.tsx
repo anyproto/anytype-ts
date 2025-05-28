@@ -10,6 +10,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	node: any = null;
 	format: I.RelationType = null;
 	objectTypes: string[] = [];
+	includeTime: boolean = false;
 	ref = null;
 	
 	constructor (props: I.Menu) {
@@ -29,7 +30,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { readonly } = data;
 		const relation = this.getRelation();
-		const viewRelation = this.getViewRelation();
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
@@ -81,11 +81,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					<MenuItemVertical 
 						id="includeTime" 
 						icon="clock" 
-						name={translate('menuDataviewRelationEditIncludeTime')}
+						name={translate('commonIncludeTime')}
 						onMouseEnter={this.menuClose}
 						readonly={readonly}
 						withSwitch={true}
-						switchValue={viewRelation?.includeTime}
+						switchValue={this.includeTime}
 						onSwitch={(e: any, v: boolean) => this.onChangeTime(v)}
 					/>
 				</div>
@@ -165,6 +165,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (relation) {
 			this.format = relation.format;
 			this.objectTypes = Relation.getArrayValue(relation.objectTypes);
+			this.includeTime = relation.includeTime;
 			this.forceUpdate();
 		};
 
@@ -671,7 +672,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onChangeTime (v: boolean) {
-		this.saveViewRelation('includeTime', v);
+		const relation = this.getRelation();
+
+		this.includeTime = v;
+
+		if (relation && relation.id) {
+			this.save();
+		};
 	};
 
 	onSubmit (e: any) {
@@ -754,6 +761,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
+			includeTime: this.includeTime,
 		};
 
 		relation && relation.id ? this.update(item) : this.add(item);

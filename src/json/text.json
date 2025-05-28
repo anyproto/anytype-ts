@@ -203,6 +203,8 @@
 	"commonSystemRelations": "System Properties",
 	"commonApply": "Apply",
 	"commonDescription": "Description",
+	"commonYourName": "Your Name",
+	"commonIncludeTime": "Include time",
 	"commonShowHide": "Show / Hide",
 	"commonShowKey": "Reveal and copy Key",
 
@@ -224,6 +226,7 @@
 	"pluralMonth": "month|months",
 	"pluralYear": "year|years",
 	"pluralDevice": "device|devices",
+	"pluralOption": "Option|Options",
 
 	"pluralImage": "Image|Images",
 	"pluralVideo": "Video|Videos",
@@ -489,7 +492,8 @@
 
 	"pageMainArchiveEmpty": "Your Bin is empty",
 	"pageMainBlockEmpty": "Block not found",
-	"pageMainRelationObjectsCreated": "%s created",
+
+	"pageMainRelationPropertyType": "Property Type",
 
 	"pageMainMediaNotFound": "File not found",
 
@@ -1547,7 +1551,6 @@
 
 	"menuBlockRelationEditSelectObjectType": "Select Object Type",
 	"menuBlockRelationEditLimitObjectTypes": "Limit Object Types",
-	"menuBlockRelationEditIncludeTime": "Include time",
 	"menuBlockRelationEditRelationName": "Property name",
 	"menuBlockRelationEditRelationType": "Property Type",
 	"menuBlockRelationEditSelectRelationType": "Select Property Type",
@@ -1563,6 +1566,7 @@
 	"menuDataviewOptionListCreate": "Create or select an option",
 	"menuDataviewOptionEditPlaceholder": "Option name",
 	"menuDataviewOptionEditDelete": "Delete option",
+	"menuDataviewOptionEditCreate": "Create option",
 	"menuDataviewObjectTypeEditName": "Object Type name",
 	"menuDataviewObjectTypeEditLayout": "Layout",
 	"menuDataviewObjectListFind": "Find an object",
@@ -1605,7 +1609,6 @@
 
 	"menuDataviewRelationEditSelectObjectType": "Select Object Type",
 	"menuDataviewRelationEditLimitObjectTypes": "Limit Object Types",
-	"menuDataviewRelationEditIncludeTime": "Include time",
 	"menuDataviewRelationEditRelationName": "Property name",
 	"menuDataviewRelationEditRelationType": "Property Type",
 	"menuDataviewRelationEditSelectRelationType": "Select Property Type",

@@ -71,7 +71,7 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
-	spaceIndexEmpty:			 PageSpaceIndex,
+	spaceIndexEmpty:	 PageSpaceIndex,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,

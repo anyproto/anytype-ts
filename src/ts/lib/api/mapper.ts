@@ -355,7 +355,6 @@ export const Mapper = {
 				relationKey: obj.getKey(),
 				isVisible: obj.getIsvisible(),
 				width: obj.getWidth(),
-				includeTime: obj.getDateincludetime(),
 				formulaType: obj.getFormula(),
 				align: obj.getAlign(),
 			};
@@ -959,7 +958,6 @@ export const Mapper = {
 			item.setKey(obj.relationKey);
 			item.setIsvisible(obj.isVisible);
 			item.setWidth(obj.width);
-			item.setDateincludetime(obj.includeTime);
 			item.setFormula(obj.formulaType);
 			item.setAlign(obj.align as number);
 
