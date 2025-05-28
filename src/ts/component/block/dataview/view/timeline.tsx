@@ -61,7 +61,53 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	};
 
 	const onDragStart = (e: DragEvent, item: any) => {
+		e.stopPropagation();
 
+		const win = $(window);
+		const node = $(nodeRef.current);
+		const unbind = () => win.off('drag.timeline dragend.timeline');
+		const el = node.find(`#item-${item.id}`);
+		const { left } = el.offset();
+
+		keyboard.setDragging(true);
+
+		let d = 0;
+		let x = e.pageX;
+
+		console.log('onDragStart', x);
+
+		const save = () => {
+			if (!d) {
+				return;
+			};
+
+			item[startKey] = item[startKey] + d * DAY;
+			item[endKey] = item[endKey] + d * DAY;
+
+			const details: any = [
+				{ key: startKey, value: item[startKey] },
+				{ key: endKey, value: item[endKey] }
+			];
+				
+			S.Detail.update(subId, { id: item.id, details: { [startKey]: item[startKey], [endKey]: item[endKey] } }, false);
+			C.ObjectListSetDetails([ item.id ], details);
+		};
+
+		win.on('drag.timeline', (e: any) => {
+			d = Math.ceil((e.pageX - x) / WIDTH);
+
+			setHover(item[startKey] + d * DAY, item[endKey] + d * DAY);
+		});
+
+		win.on('dragend.timeline', (e: any) => {
+			e.stopPropagation();
+
+			d = Math.ceil((e.pageX - x) / WIDTH);
+			save();
+
+			unbind();
+			keyboard.setDragging(false);
+		});
 	};
 
 	const onResizeStart = (e: MouseEvent, item: any, dir: number) => {
