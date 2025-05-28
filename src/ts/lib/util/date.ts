@@ -329,16 +329,22 @@ class UtilDate {
 		};
 	};
 
+	getMonthDays (y: number) {
+		const ret = {...J.Constant.monthDays};
+
+		// February
+		if (this.isLeapYear(y)) {
+			ret[2] = 29;
+		};
+
+		return ret;
+	};
+
 	getCalendarMonth (value: number, noOther?: boolean) {
 		const { firstDay } = S.Common;
 		const { m, y } = this.getCalendarDateParam(value);
-		const md = {...J.Constant.monthDays};
+		const md = this.getMonthDays(y);
 		const today = this.today();
-		
-		// February
-		if (this.isLeapYear(y)) {
-			md[2] = 29;
-		};
 		
 		let wdf = Number(this.date('N', this.timestamp(y, m, 1)));
 		let wdl = Number(this.date('N', this.timestamp(y, m, md[m])));

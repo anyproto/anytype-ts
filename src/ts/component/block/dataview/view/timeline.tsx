@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
-import { I, U, S, C, Dataview, keyboard } from 'Lib';
+import { I, U, S, C, Dataview, keyboard, translate } from 'Lib';
 import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 
 const HEIGHT = 32;
@@ -27,6 +27,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const canEditStart = !readonly && !startRelation.isReadonlyValue;
 	const canEditEnd = !readonly && !endRelation.isReadonlyValue;
+	const months = [];
 
 	const getData = () => {
 		const ret = [];
@@ -36,15 +37,15 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			};
 		};
 
-		for (let i = 3; i >= 0; i--) {
-			const current = U.Date.getCalendarMonth(value - DAY * 30 * i, true);
+		for (let i = -3; i <= 3; i++) {
+			const v = value + DAY * 30 * i;
+			const current = U.Date.getCalendarMonth(v, true);
+			const m = U.Date.date('n', v);
+			const y = U.Date.date('Y', v);
 
-			current.forEach(add);
-		};
+			console.log(m, y);
 
-		for (let i = 1; i <= 3; i++) {
-			const current = U.Date.getCalendarMonth(value + DAY * 30 * i, true);
-
+			months.push({ m, y });
 			current.forEach(add);
 		};
 
@@ -266,11 +267,20 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			<div id="scrollWrap" className="scrollWrap">
 				<div className={cn.join(' ')} style={{ width: data.length * WIDTH }}>
 					<div className="header months">
+						{months.map((it, i) => {
+							const md = U.Date.getMonthDays(it.y);
+							const css = { width: md[it.m] * WIDTH };
 
+							return (
+								<div key={i} className="month" style={css}>
+									{translate(`month${it.m}`)}
+								</div>
+							);
+						})}
 					</div>
 					<div className="header days">
-						{data.map((it, index) => (
-							<div key={index} className="day">
+						{data.map((it, i) => (
+							<div key={i} className="day">
 								{it.d}
 							</div>
 						))}
@@ -280,6 +290,10 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 						<div className="grid">
 							{data.map((it, i) => {
 								const cn = [ 'cell' ];
+
+								if (it.d == 1) {
+									cn.push('start');
+								};
 
 								if (it.isWeekend) {
 									cn.push('weekend');

@@ -4,9 +4,16 @@
 	.block.blockDataview {
 		.viewContent.viewTimeline { display: flex; flex-direction: column; }
 		.viewContent.viewTimeline {	
-			.header.days { display: flex; flex-direction: row; align-items: center; }
-			.header.days {
-				.day { width: 40px; height: 40px; flex-shrink: 0; text-align: center; display: flex; align-items: center; justify-content: center; }
+			.header {
+				&.months { display: flex; flex-direction: row; align-items: center; }
+				&.months {
+					.month { @include text-paragraph; flex-shrink: 0; font-weight: 600; padding-left: 16px; }
+				}
+
+				&.days { display: flex; flex-direction: row; align-items: center; }
+				&.days {
+					.day { width: 40px; height: 40px; flex-shrink: 0; text-align: center; display: flex; align-items: center; justify-content: center; }
+				}
 			}
 
 			.body {
@@ -14,6 +21,7 @@
 				.grid {
 					.cell { width: 40px; flex-shrink: 0; height: 100%; box-shadow: -1px 0px 0px var(--color-shape-highlight-light) inset; position: absolute; top: 0px; }
 					.cell.weekend { background: var(--color-shape-highlight-medium); }
+					.cell.start { box-shadow: -1px 0px 0px var(--color-text-primary); }
 				}
 
 				.item { 
