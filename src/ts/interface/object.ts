@@ -80,3 +80,8 @@ export enum LayoutFormat {
 	Page = 0,
 	List = 1,
 };
+
+export enum FeaturedRelationLayout {
+	Inline = 0,
+	Column = 1,
+};

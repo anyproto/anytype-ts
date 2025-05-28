@@ -155,7 +155,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 			const relation = S.Record.getRelationByKey(relationKey);
 
-			update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
+			if (relationKey == 'headerRelationsLayout') {
+				update[relationKey] = Number(update[relationKey]);
+			} else {
+				update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
+			};
+
+			// update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
 		};
 
 		this.object = Object.assign(this.object, update);

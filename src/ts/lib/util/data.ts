@@ -359,6 +359,7 @@ class UtilData {
 			layout: object.layout,
 			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
 			layoutWidth: this.getLayoutWidth(rootId),
+			headerRelationsLayout: type?.headerRelationsLayout,
 		};
 
 		if (undefined !== object.layoutAlign) {
