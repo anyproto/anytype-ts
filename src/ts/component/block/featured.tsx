@@ -106,31 +106,31 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									className={cn.join(' ')}
 									onClick={e => this.onRelation(e, relation.relationKey)}
 								>
-								<Cell
-									ref={ref => this.cellRefs.set(id, ref)}
-									placeholder={relation.name}
-									elementId={id}
-									rootId={rootId}
-									subId={rootId}
-									block={block}
-									relationKey={relation.relationKey}
-									getRecord={() => object}
-									viewType={I.ViewType.Grid}
-									pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
-									size={size}
-									iconSize={iconSize}
-									readonly={!canEdit}
-									isInline={true}
-									idPrefix={PREFIX}
-									elementMapper={this.elementMapper}
-									tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
-									arrayLimit={relation.format == I.RelationType.Object ? 1 : 2}
-									textLimit={150}
-									onMouseLeave={this.onMouseLeave}
-									withName={true}
-								/>
-								<div className="bullet" />
-							</span>
+									<Cell
+										ref={ref => this.cellRefs.set(id, ref)}
+										placeholder={relation.name}
+										elementId={id}
+										rootId={rootId}
+										subId={rootId}
+										block={block}
+										relationKey={relation.relationKey}
+										getRecord={() => object}
+										viewType={I.ViewType.Grid}
+										pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
+										size={size}
+										iconSize={iconSize}
+										readonly={!canEdit}
+										isInline={true}
+										idPrefix={PREFIX}
+										elementMapper={this.elementMapper}
+										tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
+										arrayLimit={relation.format == I.RelationType.Object ? 1 : 2}
+										textLimit={150}
+										onMouseLeave={this.onMouseLeave}
+										withName={true}
+									/>
+									<div className="bullet" />
+								</span>
 							);
 						})}
 					</div>
