@@ -310,6 +310,8 @@ class UtilMenu {
 	};
 
 	getViews () {
+		const { config } = S.Common;
+
 		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
@@ -317,8 +319,8 @@ class UtilMenu {
 			{ id: I.ViewType.Board },
 			{ id: I.ViewType.Calendar },
 			{ id: I.ViewType.Graph },
-			{ id: I.ViewType.Timeline },
-		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+			config.experimental ? { id: I.ViewType.Timeline } : null,
+		].filter(it => it).map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 
 	viewContextMenu (param: any) {
