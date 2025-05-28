@@ -926,7 +926,8 @@ class UtilCommon {
 		return DOMPurify.sanitize(s, { 
 			ADD_TAGS: tags,
 			ADD_ATTR: [ 'contenteditable' ],
-			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+			FORBID_ATTR: [ 'style' ],
 		});
 	};
 
