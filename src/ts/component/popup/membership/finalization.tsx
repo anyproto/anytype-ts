@@ -161,14 +161,15 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 				return;
 			};
 
-			U.Data.getMembershipTiers(true);
-			U.Data.getMembershipStatus((membership) => {
-				if (!membership || membership.isNone) {
-					this.setError(translate('pageMainMembershipError'));
-					return;
-				};
+			U.Data.getMembershipTiers(true, () => {
+				U.Data.getMembershipStatus((membership) => {
+					if (!membership || membership.isNone) {
+						this.setError(translate('pageMainMembershipError'));
+						return;
+					};
 
-				S.Popup.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
+					S.Popup.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
+				});
 			});
 		});
 	};

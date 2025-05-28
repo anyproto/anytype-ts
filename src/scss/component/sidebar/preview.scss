@@ -52,6 +52,24 @@
         }
     }
 
+    .layoutPreview.featuredRelationLayoutColumn {
+        .featured { flex-direction: column; gap: 10px 0px; padding-top: 36px; }
+        .featured {
+            dl { width: 100%; display: flex; align-items: center; @include text-overflow-nw; }
+            dt { width: 35%; }
+            dd { width: 65%; }
+            dd {
+                .item { height: 12px; border-radius: 2px; background: var(--color-shape-secondary); }
+            }
+
+            dl:nth-child(even) {
+                dd {
+                    .item { width: 50%; }
+                }
+            }
+        }
+    }
+
     .layoutPreview:not(.isTask) {
         .titleWrapper {
 			> .icon { width: 96px; height: 96px; border-radius: 20px; background: var(--color-shape-tertiary) url('~img/icon/sidebar/preview/icon.svg') 50% 50% no-repeat; }
@@ -65,19 +83,19 @@
         .title { @include text-header1; }
     }
 
-    .layoutPreview.layoutAlignLeft {
+    .layoutPreview.align0 {
         .layoutHeader { text-align: left; }
         .featured { justify-content: flex-start; }
     }
-    .layoutPreview.layoutAlignCenter {
+    .layoutPreview.align1 {
         .layoutHeader { text-align: center; }
         .titleWrapper,
         .featured { justify-content: center; }
     }
-    .layoutPreview.layoutAlignRight {
+    .layoutPreview.align2 {
         .layoutHeader { text-align: right; }
-        .titleWrapper,
         .featured { justify-content: flex-end; }
+		.titleWrapper { justify-content: flex-end; }
     }
 
     .layoutPreview.layoutFormatPage {

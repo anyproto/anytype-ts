@@ -36,7 +36,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 		const cn = [ 'viewContent', className ];
 
-		if (!relation || !relation.isInstalled) {
+		if (!relation) {
 			return (
 				<Empty
 					{...this.props}
@@ -84,6 +84,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	componentDidUpdate () {
 		this.resize();
 		U.Common.triggerResizeEditor(this.props.isPopup);
+
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Record) || [];
+
+		if (ids.length) {
+			selection?.renderSelection();
+		};
 	};
 
 	componentWillUnmount () {
@@ -488,9 +495,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	getSubId (id: string): string {
-		const { rootId, block } = this.props;
+		const { rootId, block, isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
 
-		return S.Record.getGroupSubId(rootId, block.id, id);
+		return S.Record.getGroupSubId(rootId, block.id, id) + namespace;
 	};
 
 	resize () {

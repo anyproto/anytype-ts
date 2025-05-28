@@ -9,12 +9,13 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const { isPopup } = props;
 	const [ error, setError ] = useState('');
 	const { membership } = S.Auth;
-	const { status, tier } = membership;
+	const { status } = membership;
+	const tier = U.Data.getMembershipTier(membership.tier);
 
 	const init = () => {
 		const data = U.Common.searchParam(U.Router.history.location.search);
 	
-		let { tier } = data;
+		let newTier = data.tier;
 
 		U.Data.getMembershipStatus((membership: I.Membership) => {
 			if (!membership || membership.isNone) {
@@ -26,12 +27,12 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 				replace: true,
 				animate: true,
 				onFadeIn: () => {
-					if (tier && (tier != I.TierType.None)) {
-						if (!membership.isNone && !membership.isExplorer) {
-							tier = membership.tier;
+					if (newTier && (newTier != I.TierType.None)) {
+						if (tier.price) {
+							newTier = tier.id;
 						};
 
-						S.Popup.open('membership', { data: { tier } });
+						S.Popup.open('membership', { data: { tier: newTier } });
 					} else {
 						finalise();
 					};

@@ -42,10 +42,10 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 				<div className="buttons">
 					<div className="animation">
-						<Button text={translate('authSelectLogin')} color="blank" onClick={onLogin} />
+						<Button text={translate('authSelectLogin')} color="blank" className="c48" onClick={onLogin} />
 					</div>
 					<div className="animation">
-						<Button ref={registerRef} text={translate('authSelectSignup')} onClick={onRegister} />
+						<Button ref={registerRef} text={translate('authSelectSignup')} className="c48" onClick={onRegister} />
 					</div>
 				</div>
 

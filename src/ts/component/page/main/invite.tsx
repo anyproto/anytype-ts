@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, J, translate } from 'Lib';
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 interface PageMainInviteRefProps {
 	resize: () => void;
@@ -25,6 +25,17 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 		cidRef.current = cid;
 		keyRef.current = key;
 
+		const request = (invite) => {
+			S.Popup.open('inviteRequest', { 
+				data: { 
+					invite, 
+					cid, 
+					key, 
+					route,
+				},
+			});
+		};
+
 		if (!cid || !key) {
 			setError(translate('pageMainInviteErrorData'));
 		} else {
@@ -43,11 +54,11 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 						let text = '';
 
 						if (errorCodes.includes(code)) {
-							icon = 'error';
+							icon = 'lock';
 							title = translate(`popupConfirmInviteError${code}Title`);
 							text = translate(`popupConfirmInviteError${code}Text`);
 						} else {
-							icon = 'sad';
+							icon = 'error';
 							title = translate('popupInviteRequestTitle');
 							text = translate('popupConfirmInviteError');
 						};
@@ -78,24 +89,28 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 								},
 							});
 						} else {
-							S.Popup.open('inviteRequest', { 
-								data: { 
-									invite: message, 
-									cid, 
-									key, 
-									route,
-								},
-							});
+							request(message);
 						};
 					} else {
-						S.Popup.open('inviteRequest', { 
-							data: { 
-								invite: message, 
-								cid, 
-								key, 
-								route,
-							},
-						});
+						if (message.inviteType == I.InviteType.WithoutApprove) {
+							const { account } = S.Auth;
+							const spaceName = message.spaceName || translate('defaultNamePage');
+							const creatorName = message.creatorName || translate('defaultNamePage');
+
+							S.Popup.open('confirm', {
+								data: {
+									icon: 'join',
+									title: U.Common.sprintf(translate('popupConfirmJoinSpaceTitle'), spaceName),
+									text: U.Common.sprintf(translate('popupConfirmJoinSpaceText'), spaceName, creatorName),
+									textConfirm: translate('popupConfirmJoinSpaceButtonConfirm'),
+									onConfirm: () => {
+										C.SpaceJoin(account.info.networkId, message.spaceId, cid, key);
+									},
+								},
+							});
+						} else {
+							request(message);
+						};
 					};
 				});
 			});

@@ -61,8 +61,19 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 
 		return (
 			<div className={cn.join(' ')}>
-				<div className="number" onClick={() => U.Object.openDateByTimestamp(relationKey, timestamp, 'config')}>
-					<div className="inner">{label}</div>
+				<div className="head" onClick={() => U.Object.openDateByTimestamp(relationKey, timestamp, 'config')}>
+					{fromWidget ? (
+						<div className="sides">
+							<div className="side left">{label}</div>
+							<div className="side right">
+								<Icon className="expand withBackground" tooltipParam={{ text: translate('commonOpenObject') }} />
+							</div>
+						</div>
+					) : (
+						<div className="number">
+							{label}
+						</div>
+					)}
 				</div>
 				<div className="items">
 					{!items.length ? (

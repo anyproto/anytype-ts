@@ -7,8 +7,6 @@ interface State {
 	list: I.PublishState[];
 };
 
-const SUB_ID = 'dataPublish';
-
 const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish extends React.Component<I.PageSettingsComponent, State> {
 
 	state = {
@@ -56,10 +54,6 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 
 	componentDidMount(): void {
 		this.load();
-	};
-
-	componentWillUnmount(): void {
-		U.Subscription.destroyList([ SUB_ID ]);
 	};
 
 	load () {

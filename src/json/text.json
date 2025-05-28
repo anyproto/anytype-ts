@@ -76,6 +76,8 @@
 	"commonVAlignTop": "Top",
 	"commonVAlignMiddle": "Middle",
 	"commonVAlignBottom": "Bottom",
+	"commonFeaturedRelationLayoutInline": "Line",
+	"commonFeaturedRelationLayoutColumn": "List",
 	"commonAppearance": "Appearance",
 	"commonPreview": "Preview",
 	"commonColor": "Color",
@@ -202,6 +204,9 @@
 	"commonApply": "Apply",
 	"commonDescription": "Description",
 	"commonYourName": "Your Name",
+	"commonIncludeTime": "Include time",
+	"commonShowHide": "Show / Hide",
+	"commonShowKey": "Reveal and copy Key",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -221,6 +226,7 @@
 	"pluralMonth": "month|months",
 	"pluralYear": "year|years",
 	"pluralDevice": "device|devices",
+	"pluralOption": "Option|Options",
 
 	"pluralImage": "Image|Images",
 	"pluralVideo": "Video|Videos",
@@ -359,7 +365,7 @@
 	"viewName3": "Kanban",
 	"viewName4": "Calendar",
 	"viewName5": "Graph",
-
+	"viewName6": "Timeline",
 
 	"progressDropFiles": "Copying files...",
 	"progressImport": "Import in progress...",
@@ -392,17 +398,12 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLogin": "Log In",
-	"authSelectSignup": "Sign Up",
+	"authSelectLogin": "I already have the key",
+	"authSelectSignup": "I am new here",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Enter my Vault",
 	"authLoginLostPhrase": "I've lost the Key",
-
-	"authRegisterTitle": "Add name and profile picture",
-	"authRegisterLabel": "New Profile",
-	"authRegisterName": "Enter your name",
-	"authRegisterSubmit": "Create",
 
 	"authDeleteTitle": "Delete Profile",
 	"authDeleteTitleDeleted": "Vault data removed from the backup node",
@@ -418,17 +419,17 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardVaultTitle": "This is your Vault",
-	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It's local-first – everything works offline.<br/>Only you have the key.",
-	"authOnboardVaultButton": "Get my Key",
+	"authOnboardNameTitle": "Add your name",
+	"authOnboardNameLabel": "Only seen by people you share something with. There is no central registry for these names.",
+	"authOnboardNamePlaceholder": "Enter your name...",
 
-	"authOnboardSoulTitle": "Set your name",
-	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
+	"authOnboardEmailTitle": "Stay in the loop",
+	"authOnboardEmailLabel": "We’d love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won’t share your data. Ever.",
+	"authOnboardEmailPlaceholder": "Enter your email...",
 
 	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "Your key replaces login and password. Keep it safe &mdash; you control your data. Find it later in app settings.<span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — you control your data.<br/>You can find this key later in app settings.<br/><span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
 	"authOnboardPhraseSubmit": "Reveal my key",
-	"authOnboardPhraseNotNow": "Not now",
 
 	"onboardingExperienceSubTitle": "Build your first space",
 	"onboardingExperienceTypeTitle": "Who Will Use This Space?",
@@ -491,7 +492,8 @@
 
 	"pageMainArchiveEmpty": "Your Bin is empty",
 	"pageMainBlockEmpty": "Block not found",
-	"pageMainRelationObjectsCreated": "%s created",
+
+	"pageMainRelationPropertyType": "Property Type",
 
 	"pageMainMediaNotFound": "File not found",
 
@@ -546,7 +548,6 @@
 	"pageHeadControlButtonsReposition": "Reposition",
 
 	"pageHeadSimpleCreateSet": "Create Query",
-	"pageHeadSimpleInstall": "Install",
 
 	"pageSettingsLanguageTitle": "Language & Region",
 
@@ -767,6 +768,7 @@
 	"blockChatReplying": "Replying to %s",
 	"blockChatFormReadonly": "Only editors can send messages. Contact the owner to request access.",
 	"blockChatCopyText": "Copy text",
+	"blockChatMarkAsUnread": "Mark as unread",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
@@ -808,13 +810,21 @@
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
 
 	"popupSettingsPhraseTitle": "Key",
-	"popupSettingsPhraseStub": "You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes.",
-	"popupSettingsPhraseShowPhrase": "Show and copy Key",
-	"popupSettingsPhraseHidePhrase": "Hide Key",
-	"popupSettingsPhraseShowQR": "Show QR-code",
-	"popupSettingsPhraseHideQR": "Hide QR-code",
 	"popupSettingsPhraseText": "Your key protects your vault. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
-	"popupSettingsPhraseBackup": "Back up Key",
+
+	"popupSettingsApiTitle": "API Keys",
+	"popupSettingsApiKey": "Key",
+	"popupSettingsApiCreated": "Created",
+	"popupSettingsApiScope": "Scope",
+	"popupSettingsApiRevoke": "Revoke",
+	"popupSettingsApiCreate": "Create new",
+	"popupSettingsApiCopyKey": "Copy Key",
+	"popupSettingsApiCopyMcp": "Copy MCP Config",
+	"popupSettingsApiMcpConfig": "MCP Config",
+
+	"popupApiCreateTitle": "Create new API key",
+	"popupApiCreateSuccess": "API key successfully created",
+	"popupApiCreatePlaceholder": "Key name",
 
 	"popupSettingsPinTitle": "Pin Code",
 	"popupSettingsPinText": "Set a 6-digit PIN for your application screen when unattended. PIN adds a quick layer of privacy for your app. It prevents casual viewing but doesn't enhance data encryption. Your primary data remains secure with your account Key. PIN protection is recommended when you step away from your device.",
@@ -912,7 +922,7 @@
 
 	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
-	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space. Once they request to join, you can set their access rights.",
+	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space.",
 	"popupSettingsSpaceShareInviteLinkDisabled": "Invitations are disabled by the space owner. In order to have an ability to invite people. please ask space owner to generate an invite link.",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
@@ -926,8 +936,12 @@
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 	"popupSettingsSpaceShareRevokeInvite": "Delete link",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
+	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareShowQR": "Show QR code",
+
+	"popupSettingsSpaceShareLinkWithApproveLabel": "This link requires manual approve from space owner. Once they request to join, you can set their access rights.",
+	"popupSettingsSpaceShareLinkWithoutApproveLabel": "This link doesn't require manual approve from space owner.",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -1029,12 +1043,13 @@
 
 	"popupLogoutTitle": "Make sure you saved your login key",
 	"popupLogoutText": "We have no way to recover your login key - it’s yours alone. Please save it before logging out.",
-	"popupLogoutCopyButton": "Reveal and copy key",
 	"popupLogoutLogoutButton": "Logout",
 
 	"popupSpaceCreateLabel": "Encrypted & local-first",
 	"popupSpaceCreateCreate": "Create from scratch",
 	"popupSpaceCreateImport": "Import my data",
+
+	"popupApiCreateCreate": "Create new API key",
 
 	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
 	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
@@ -1090,6 +1105,9 @@
 
 	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
 
+	"popupConfirmConfirmationText": "Input this text to confirm:",
+	"popupConfirmConfirmationTextError": "Text does not match",
+
 	"popupConfirmUpdatePromptTitle": "Update available",
 	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
 	"popupConfirmUpdatePromptRestartOk": "Restart and update",
@@ -1131,6 +1149,9 @@
 	"popupConfirmInviteError103Title": "Oops!",
 	"popupConfirmInviteError103Text": "The space you try to access has been deleted",
 
+	"popupConfirmJoinSpaceTitle": "Join %s",
+	"popupConfirmJoinSpaceText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>",
+	"popupConfirmJoinSpaceButtonConfirm": "Join Space",
 
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
@@ -1428,8 +1449,8 @@
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
-	"popupPhraseTitle1": "What is a Key?",
-	"popupPhraseTitle2": "How to save my key?",
+	"popupPhraseTitle1": "What is the Key?",
+	"popupPhraseTitle2": "How to save my Key?",
 	"popupPhraseLabel1": "It is represented by a recovery phrase – 12 random words from which your vault is magically generated on this device.",
 	"popupPhraseLabel2": "Whomever knows the combination of these words owns your vault. Right now, you are the only person in the world who knows it.",
 	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose it, it cannot be recovered. So, store it somewhere safe!",
@@ -1530,7 +1551,6 @@
 
 	"menuBlockRelationEditSelectObjectType": "Select Object Type",
 	"menuBlockRelationEditLimitObjectTypes": "Limit Object Types",
-	"menuBlockRelationEditIncludeTime": "Include time",
 	"menuBlockRelationEditRelationName": "Property name",
 	"menuBlockRelationEditRelationType": "Property Type",
 	"menuBlockRelationEditSelectRelationType": "Select Property Type",
@@ -1546,6 +1566,7 @@
 	"menuDataviewOptionListCreate": "Create or select an option",
 	"menuDataviewOptionEditPlaceholder": "Option name",
 	"menuDataviewOptionEditDelete": "Delete option",
+	"menuDataviewOptionEditCreate": "Create option",
 	"menuDataviewObjectTypeEditName": "Object Type name",
 	"menuDataviewObjectTypeEditLayout": "Layout",
 	"menuDataviewObjectListFind": "Find an object",
@@ -1588,7 +1609,6 @@
 
 	"menuDataviewRelationEditSelectObjectType": "Select Object Type",
 	"menuDataviewRelationEditLimitObjectTypes": "Limit Object Types",
-	"menuDataviewRelationEditIncludeTime": "Include time",
 	"menuDataviewRelationEditRelationName": "Property name",
 	"menuDataviewRelationEditRelationType": "Property Type",
 	"menuDataviewRelationEditSelectRelationType": "Select Property Type",
@@ -1616,6 +1636,8 @@
 	"menuDataviewViewEditFitMedia": "Fit media",
 	"menuDataviewViewEditGroupBy": "Group by",
 	"menuDataviewViewEditDate": "Date Property",
+	"menuDataviewViewEditStartDate": "Start date",
+	"menuDataviewViewEditEndDate": "End date",
 	"menuDataviewViewEditColorColumns": "Color columns",
 	"menuDataviewViewEditShowIcon": "Show icon",
 	"menuDataviewViewEditPageLimit": "Page limit",
@@ -1674,7 +1696,6 @@
 	"menuObjectUseAsTemplate": "Use as Template",
 	"menuObjectUnlockPage": "Unlock Object",
 	"menuObjectLockPage": "Lock Object",
-	"menuObjectInstall": "Install",
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
@@ -1919,8 +1940,7 @@
 	"widgetAdd": "Add widget",
 	"widgetLibrary": "Library",
 	"widgetOptions": "Options",
-	"widgetEmptyLabel": "There are no Objects here",
-	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
+	"widgetEmptyLabel": "There are no objects here",
 	"widgetShowAll": "See all Objects",
 	"widgetItemClipboard": "Create from clipboard",
 
@@ -1933,7 +1953,7 @@
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
 	"spaceDeleteWarningTitle": "Delete \"%s\" space",
-	"spaceDeleteWarningText": "This space will be deleted irrevocably. You can't undo this action.",
+	"spaceDeleteWarningText": "This will permanently delete the space. You can't undo this action. Please type the name of the space to confirm deletion.",
 	"spaceDeleteToast": "Space \"%s\" was deleted",
 	"spaceLeaveWarningTitle": "Leave a space",
 	"spaceLeaveWarningText": "\"%s\" will be removed from your devices and you will no longer have access to it",
@@ -1987,6 +2007,7 @@
 	"sidebarSectionLayoutFormatList": "List",
 	"sidebarSectionLayoutType": "Layout type",
 	"sidebarSectionLayoutAlign": "Header position",
+	"sidebarSectionFeaturedView": "Properties view",
 	"sidebarSectionLayoutWidth": "Layout width",
 	"sidebarSectionLayoutDefaultView": "Default view",
 	"sidebarSectionLayoutDefaultType": "Default Object Type",
@@ -2161,11 +2182,6 @@
 	"libMenuOpenSource": "Open source %s",
 	"libMenuOpenFullscreen": "Open fullscreen",
 	"libMenuCopyUrl": "Copy URL",
-
-	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
-	"libActionUninstallTypeText": "This Type will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
-	"libActionUninstallRelationTitle": "Do you want to remove Property \"%s\"?",
-	"libActionUninstallRelationText": "This Property will be removed from your Library. If you have created any Objects with which use this Property, you will no longer be able to edit the Property value.",
 
 	"utilLoadMoreText": "Show %s more %s",
 	"utilDeletedBackToDashboard": "Back to dashboard",
@@ -2475,6 +2491,10 @@
 	"formulaCheckboxPercentNotEmpty": "Percentage checked",
 
 	"timeFormat12": "12 hour",
-	"timeFormat24": "24 hour"
+	"timeFormat24": "24 hour",
+
+	"apiScope0": "Webclipper",
+	"apiScope1": "API",
+	"apiScope2": "Full"
 
 }

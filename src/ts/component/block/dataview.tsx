@@ -16,6 +16,7 @@ import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
+import ViewTimeline from './dataview/view/timeline';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -104,7 +105,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const isCollection = this.isCollection();
 		const cn = [ 'focusable', `c${block.id}` ];
 
-		const { groupRelationKey, pageLimit, defaultTemplateId } = view;
+		const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
 		const className = [ U.Common.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 
 		let ViewComponent: any = null;
@@ -138,6 +139,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			case I.ViewType.Graph:
 				ViewComponent = ViewGraph;
+				break;
+
+			case I.ViewType.Timeline:
+				ViewComponent = ViewTimeline;
 				break;
 		};
 
@@ -388,7 +393,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.viewId = '';
 			};
 		} else 
-		if (view.type == I.ViewType.Calendar) {
+		if ([ I.ViewType.Calendar, I.ViewType.Timeline ].includes(view.type)) {
 			if (this.refView && this.refView.load) {
 				this.refView.load();
 			} else {
@@ -454,6 +459,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (view.groupRelationKey) {
 				keys.push(view.groupRelationKey);
+			};
+
+			if (view.endRelationKey) {
+				keys.push(view.endRelationKey);
 			};
 		};
 
@@ -656,7 +665,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.creating = true;
 
-		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, true, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -705,7 +714,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				U.Object.openConfig(object);
 			} else {
 				if (U.Object.isNoteLayout(object.layout)) {
-					this.onCellClick(e, 'name', object.id);
+					this.onCellClick(e, 'name', object.id, object);
 				} else {
 					window.setTimeout(() => {
 						const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
@@ -868,7 +877,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, true, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -926,7 +935,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (keyboard.withCommand(e)) {
 				if (!ids.length) {
-					U.Object.openEvent(e, record);
+					U.Object.openPopup(record);
 				};
 			} else {
 				U.Object.openConfig(record);
@@ -1017,7 +1026,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => onSelect(message.details, true));
+				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
 			};
 		} else {
 			filters = filters.concat([

@@ -197,12 +197,13 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, isInline } = data;
-		const { type, coverRelationKey, cardSize, coverFit, groupRelationKey, groupBackgroundColors, hideIcon, pageLimit } = this.param;
+		const { rootId, blockId, isInline } = data;
+		const { type, coverRelationKey, cardSize, coverFit, groupRelationKey, endRelationKey, groupBackgroundColors, hideIcon, pageLimit } = this.param;
 		const isGallery = type == I.ViewType.Gallery;
 		const isBoard = type == I.ViewType.Board;
 		const isCalendar = type == I.ViewType.Calendar;
 		const isGraph = type == I.ViewType.Graph;
+		const isTimeline = type == I.ViewType.Timeline;
 		const coverOption = Relation.getCoverOptions(rootId, blockId).find(it => it.id == coverRelationKey);
 
 		let settings: any[] = [];
@@ -225,14 +226,29 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			]);
 		};
 
-		if (isBoard || isCalendar) {
+		if (isBoard || isCalendar || isTimeline) {
 			const groupOption = Relation.getGroupOption(rootId, blockId, type, groupRelationKey);
-			const name = isBoard ? translate('menuDataviewViewEditGroupBy') : translate('menuDataviewViewEditDate');
+
+			let name = '';
+			if (isBoard)	 name = translate('menuDataviewViewEditGroupBy');
+			if (isCalendar)	 name = translate('menuDataviewViewEditDate');
+			if (isTimeline)	 name = translate('menuDataviewViewEditStartDate');	
 
 			settings.push({ 
 				id: 'groupRelationKey', 
 				name, 
 				caption: (groupOption ? groupOption.name : translate('commonSelect')), 
+				arrow: true,
+			});
+		};
+
+		if (isTimeline) {
+			const endOption = Relation.getGroupOption(rootId, blockId, type, endRelationKey);
+
+			settings.push({
+				id: 'endRelationKey',
+				name: translate('menuDataviewViewEditEndDate'),
+				caption: (endOption ? endOption.name : translate('commonSelect')),
 				arrow: true,
 			});
 		};
@@ -340,6 +356,15 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
 					value: Relation.getGroupOption(rootId, blockId, view.type, groupRelationKey)?.id,
+					options: Relation.getGroupOptions(rootId, blockId, view.type),
+				});
+				break;
+			};
+
+			case 'endRelationKey': {
+				menuId = 'select';
+				menuParam.data = Object.assign(menuParam.data, {
+					value: Relation.getGroupOption(rootId, blockId, view.type, this.param.endRelationKey)?.id,
 					options: Relation.getGroupOptions(rootId, blockId, view.type),
 				});
 				break;

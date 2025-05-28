@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview } from 'Lib';
+import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -16,18 +16,19 @@ interface Props extends I.BlockComponent {
 	subId: string;
 	onScrollToBottomClick: () => void;
 	scrollToBottom: () => void;
-	scrollToMessage: (id: string, animate?: boolean) => void;
+	scrollToMessage: (id: string, animate?: boolean, highlight?: boolean) => void;
 	loadMessagesByOrderId: (orderId: string, callBack?: () => void) => void;
 	getMessages: () => I.ChatMessage[];
 	getMessagesInViewport: () => any[];
 	getIsBottom: () => boolean;
 	getReplyContent: (message: any) => any;
 	highlightMessage: (id: string, orderId?: string) => void;
+	loadDepsAndReplies: (list: I.ChatMessage[], callBack?: () => void) => void;
 };
 
 interface State {
 	attachments: any[];
-	charCounter: number;
+	replyingId: string;
 };
 
 const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
@@ -43,12 +44,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
 	editingId: string = '';
-	replyingId: string = '';
 	swiper = null;
 	speedLimit = { last: 0, counter: 0 };
 	state = {
 		attachments: [],
-		charCounter: 0,
+		replyingId: '',
 	};
 
 	constructor (props: Props) {
@@ -88,7 +88,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	render () {
 		const { subId, readonly, getReplyContent } = this.props;
-		const { attachments, charCounter } = this.state;
+		const { attachments, replyingId } = this.state;
 		const value = this.getTextValue();
 		const { messageCounter, mentionCounter } = S.Chat.getState(subId);
 		const mc = messageCounter > 999 ? '999+' : messageCounter;
@@ -103,8 +103,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			title = translate('blockChatEditing');
 			onClear = this.onEditClear;
 		} else
-		if (this.replyingId) {
-			const message = S.Chat.getMessage(subId, this.replyingId);
+		if (replyingId) {
+			const message = S.Chat.getMessage(subId, replyingId);
 
 			if (message) {
 				const reply = getReplyContent(message);
@@ -115,7 +115,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					const object = reply.attachment;
 
 					let iconSize = null;
-					if (U.Object.getFileLayouts().concat([ I.ObjectLayout.Human, I.ObjectLayout.Participant ]).includes(object.layout)) {
+					if (U.Object.getFileLayouts().concat(U.Object.getHumanLayouts()).includes(object.layout)) {
 						iconSize = 32;
 					};
 
@@ -219,7 +219,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						removeBookmark={this.removeBookmark}
 					/>
 
-					<div ref={ref => this.refCounter = ref} className="charCounter">{charCounter} / {J.Constant.limit.chat.text}</div>
+					<div ref={ref => this.refCounter = ref} className="charCounter" />
 
 					<Icon id="send" className="send" onClick={this.onSend} />
 				</div>
@@ -272,7 +272,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		this.renderMarkup();
+		this.props.loadDepsAndReplies([], () => {
+			this.renderMarkup();
+			this.renderReply();
+		});
 		this.checkSendButton();
 		this.resize();
 	};
@@ -280,6 +283,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
 		window.clearTimeout(this.timeoutFilter);
 		keyboard.disableSelection(false);
 	};
@@ -352,23 +356,21 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.onSend();
 		});
 
-		if (range && range.to) {
-			keyboard.shortcut('backspace', e, () => {
-				const parsed = checkMarkOnBackspace(value, range, this.marks);
+		keyboard.shortcut('backspace', e, () => {
+			const parsed = checkMarkOnBackspace(value, range, this.marks);
 
-				if (!parsed.save) {
-					return;
-				};
+			if (!parsed.save) {
+				return;
+			};
 
-				e.preventDefault();
+			e.preventDefault();
 
-				value = parsed.value;
-				this.marks = parsed.marks;
+			value = parsed.value;
+			this.marks = parsed.marks;
 
-				const l = value.length;
-				this.updateMarkup(value, { from: l, to: l });
-			});
-		};
+			const l = value.length;
+			this.updateMarkup(value, { from: l, to: l });
+		});
 
 		keyboard.shortcut('chatObject', e, () => {
 			if (!S.Menu.isOpen('searchObject')) {
@@ -678,6 +680,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		const { rootId, subId, scrollToBottom, scrollToMessage } = this.props;
+		const { replyingId } = this.state;
 		const node = $(this.node);
 		const loader = node.find('#form-loader');
 		const list = this.state.attachments || [];
@@ -710,13 +713,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					update.content.marks = marks;
 
 					C.ChatEditMessageContent(rootId, this.editingId, update, () => {
-						scrollToMessage(this.editingId, true);
+						scrollToMessage(this.editingId, true, true);
 						clear();
 					});
 				};
 			} else {
 				const message = {
-					replyToMessageId: this.replyingId,
+					replyToMessageId: replyingId,
 					content: {
 						...this.getMarksFromHtml(),
 						style: I.TextStyle.Paragraph,
@@ -725,9 +728,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					reactions: [],
 				};
 
+				let messageType = 'Text';
+				if (attachments.length && message.content?.text.length) {
+					messageType = 'Mixed';
+				} else
+				if (attachments.length) {
+					messageType = 'Attachment';
+				};
+
 				C.ChatAddMessage(rootId, message, (message: any) => {
 					scrollToBottom();
 					clear();
+
+					analytics.event('SentMessage', { type: messageType });
 				});
 			};
 		};
@@ -787,13 +800,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		this.marks = marks;
 		this.editingId = message.id;
-		this.replyingId = '';
+
+		this.setState({ replyingId: '' });
 		this.updateMarkup(text, { from: l, to: l });
 		this.updateCounter();
 
 		this.setAttachments(attachments, () => {
 			this.refEditable.setRange(this.range);
 		});
+
+		analytics.event('ClickMessageMenuEdit');
 	};
 
 	onEditClear () {
@@ -809,15 +825,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const text = this.getTextValue();
 		const length = text.length;
 
-		this.replyingId = message.id;
 		this.range = { from: length, to: length };
 		this.refEditable.setRange(this.range);
-		this.forceUpdate();
+		this.setState({ replyingId: message.id });
+
+		analytics.event('ClickMessageMenuReply');
 	};
 
 	onReplyClear () {
-		this.replyingId = '';
-		this.forceUpdate();
+		this.setState({ replyingId: '' });
 		this.props.scrollToBottom();
 	};
 
@@ -844,10 +860,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						} else {
 							scrollToBottom();
 						};
+
+						analytics.event('DeleteMessage');
 					});
 				},
 			}
 		});
+
+		analytics.event('ClickMessageMenuDelete');
 	};
 
 	getMarksAndRange (): any {
@@ -855,11 +875,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	getTextValue (): string {
-		return this.trim(String(this.refEditable?.getTextValue() || '').replace(/^\r?\n/gm, ''));
+		return String(this.refEditable?.getTextValue() || '');
 	};
 
 	getHtmlValue (): string {
-		return this.trim(String(this.refEditable?.getHtmlValue() || ''));
+		return String(this.refEditable?.getHtmlValue() || '');
 	};
 
 	trim (value: string): string {
@@ -872,6 +892,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onAttachmentRemove (id: string) {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
+
+		analytics.event('DetachItemChat');
 	};
 
 	onSwiper (swiper) {
@@ -882,6 +904,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		switch (type) {
 			case I.ChatReadType.Message: {
 				this.props.onScrollToBottomClick();
+
+				analytics.event('ClickScrollToBottom');
 				break;
 			};
 
@@ -892,12 +916,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				const target = messages.find(it => it.orderId == mentionOrderId);
 
 				if (target) {
-					scrollToMessage(target.id, true);
+					scrollToMessage(target.id, true, true);
 				} else {
 					loadMessagesByOrderId(mentionOrderId, () => {
 						highlightMessage('', mentionOrderId);
 					});
 				};
+
+				analytics.event('ClickScrollToMention');
 				break;
 			};
 		};
@@ -1050,6 +1076,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
 						this.updateMarkup(value, { from: to, to });
+
+						analytics.event('Mention');
 					},
 				},
 			});
@@ -1118,26 +1146,57 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.updateValue(text);
 			this.updateMarkup(text, this.range);
 		};
+		const getValue = () => value;
 
 		const param = { onChange, subId };
 
-		renderMentions(rootId, node, this.marks, () => value, param);
-		renderObjects(rootId, node, this.marks, () => value, this.props, param);
-		renderLinks(rootId, node, this.marks, () => value, this.props, param);
+		renderMentions(rootId, node, this.marks, getValue, param);
+		renderObjects(rootId, node, this.marks, getValue, this.props, param);
+		renderLinks(rootId, node, this.marks, getValue, this.props, param);
 		renderEmoji(node);
 	};
 
-	updateCounter (v?: string) {
-		const value = v || this.getTextValue();
-		const l = value.length;
+	renderReply () {
+		const { replyingId } = this.state;
+		if (!replyingId) {
+			return;
+		};
 
-		this.setState({ charCounter: l });
-		$(this.refCounter).toggleClass('show', l >= J.Constant.limit.chat.text - 50);
+		const { rootId, subId, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
+		const message = S.Chat.getMessage(subId, replyingId);
+
+		if (!message) {
+			return;
+		};
+
+		const marks = message.content.marks || [];
+		const getValue = () => String(message.content.text || '');
+		const node = $(this.node);
+		const head = node.find('.head');
+		const param = { subId, iconSize: 16 };
+
+		renderMentions(rootId, head, marks, getValue, param);
+		renderObjects(rootId, head, marks, getValue, this.props, param);
+		renderLinks(rootId, head, marks, getValue, this.props, param);
+		renderEmoji(head, param);
+	};
+
+	updateCounter (v?: string) {
+		v = v || this.getTextValue();
+
+		const el = $(this.refCounter);
+		const l = v.length;
+		const limit = J.Constant.limit.chat.text;
+
+		if (l >= limit - 50) {
+			el.addClass('show').text(`${l} / ${limit}`);
+		} else {
+			el.removeClass('show');
+		};
 	};
 
 	clearCounter () {
-		this.setState({ charCounter: 0 });
-		$(this.refCounter).removeClass('show');
+		$(this.refCounter).text('').removeClass('show');
 	};
 
 	checkSpeedLimit () {
@@ -1145,25 +1204,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const now = U.Date.now();
 
 		if (now - last >= 5 ) {
-			this.speedLimit = {
-				last: now,
-				counter: 1
-			};
+			this.speedLimit = { last: now, counter: 1 };
 			return;
 		};
 
-		this.speedLimit = {
-			last: now,
-			counter: counter + 1,
-		};
+		this.speedLimit = { last: now, counter: counter + 1 };
 
 		if (counter >= 5) {
-			this.speedLimit = {
-				last: now,
-				counter: 1
-			};
+			this.speedLimit = { last: now, counter: 1 };
 
 			S.Popup.open('confirm', {
+				onClose: () => {
+					this.refEditable.setRange(this.range);
+				},
 				data: {
 					icon: 'warning',
 					title: translate('popupConfirmSpeedLimitTitle'),
@@ -1174,6 +1227,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				}
 			});
 		};
+	};
+
+	getReplyingId () {
+		return this.state.replyingId;
 	};
 
 	resize () {

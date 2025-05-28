@@ -58,7 +58,7 @@
 						> .editableWrap { flex: auto; padding: 0px; width: 100%; }
 						> .editableWrap {
 							#value { width: 100%; position: relative; z-index: 2; user-select: text; padding: 1px 0px; }
-							#value * { user-select: text !important; }
+							#value *:not(markupmention) { user-select: text !important; }
 							#value.isFocused { background: none; }
 						}
 					}
@@ -110,17 +110,42 @@
 				}
 			}
 		}
+
+		&.align2 {
+			> .wrapContent {
+				> .selectionTarget {
+					> .dropTarget {
+						> .flex { justify-content: flex-end; }
+						> .flex {
+							> .editableWrap { flex: unset; flex-grow: 0; width: auto; }
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/* Description */
 
+	.block.blockText.textDescription { @include text-description; }
 	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
+
+	/* Headers */
 
 	.block.blockText.textHeader1,
 	.block.blockText.textHeader2,
 	.block.blockText.textHeader3 {
-		markupmention {
-			.space { width: 6px; }
+		> .wrapContent {
+			> .selectionTarget {
+				> .dropTarget {
+					markupbold { font-weight: 700; }
+					markupmention {
+						name { font-weight: inherit; }
+						.space { width: 6px; }
+					}
+					a.markuplink, markupobject { font-weight: inherit; }
+				}
+			}
 		}
 	}
 
@@ -128,37 +153,16 @@
 
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget { @include text-header1; padding: 3px 0px 1px 0px; }
-	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget {
-		marukupmention {
-			name { font-weight: inherit; }
-		}
-		markupbold { font-weight: 700; }
-		a.markuplink, markupobject { font-weight: inherit; }
-	}
 
 	/* Header2 */
 	
 	.block.blockText.textHeader2 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
-	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget {
-		marukupmention {
-			name { font-weight: inherit; }
-		}
-		markupbold { font-weight: 700; }
-		.markuplink, markupobject { font-weight: inherit; }
-	}
 
 	/* Header3 */
 	
 	.block.blockText.textHeader3 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
-	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget {
-		marukupmention {
-			name { font-weight: inherit; }
-		}
-		markupbold { font-weight: 700; }
-		.markuplink, markupobject { font-weight: inherit; }
-	}
 
 	/* Quote */
 	
@@ -203,7 +207,7 @@
 			}
 
 			> .dropTarget.targetBot { display: block; height: 16px; position: static; }
-			> .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
+			> .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px var(--color-control-accent) inset; }
 
 			> .children { padding-right: 16px; }
 		}
@@ -284,7 +288,7 @@
 	.block.blockText.textNumbered > .wrapContent > .dropTarget.targetBot.isOver.bottom,
 	.block.blockText.textCheckbox > .wrapContent > .dropTarget.targetBot.isOver.bottom,
 	.block.blockText.textToggle > .wrapContent > .dropTarget.targetBot.isOver.bottom
-	{ box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
+	{ box-shadow: 0px -2px 0px var(--color-control-accent) inset; }
 
 	.block.blockText.textParagraph > .wrapContent.bgColor > .selectionTarget > .dropTarget, 
 	.block.blockText.textHeader1 > .wrapContent.bgColor > .selectionTarget > .dropTarget,

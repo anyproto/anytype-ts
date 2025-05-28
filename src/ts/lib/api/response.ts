@@ -50,6 +50,18 @@ export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.S
 	};
 };
 
+export const AccountLocalLinkListApps = (response: Rpc.Account.LocalLink.ListApps.Response) => {
+	return {
+		list: (response.getAppList() || []).map(Mapper.From.AppInfo),
+	};
+};
+
+export const AccountLocalLinkCreateApp = (response: Rpc.Account.LocalLink.CreateApp.Response) => {
+	return {
+		key: response.getAppkey(),
+	};
+};
+
 export const AccountMigrate = (response: Rpc.Account.Migrate.Response) => {
 	return {
 		requiredSpace: response.getError().getRequiredspace()
@@ -622,6 +634,7 @@ export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Respo
 	return {
 		inviteCid: response.getInvitecid(),
 		inviteKey: response.getInvitefilekey(),
+		inviteType: response.getInvitetype(),
 	};
 };
 
@@ -630,6 +643,7 @@ export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 		spaceName: response.getSpacename(),
 		creatorName: response.getCreatorname(),
 		spaceId: response.getSpaceid(),
+		inviteType: response.getInvitetype(),
 	};
 };
 
@@ -662,6 +676,12 @@ export const ChatSubscribeLastMessages = (response: Rpc.Chat.SubscribeLastMessag
 export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 	return {
 		messageId: response.getMessageid(),
+	};
+};
+
+export const ChatSubscribeToMessagePreviews = (response: Rpc.Chat.SubscribeToMessagePreviews.Response) => {
+	return {
+		previews: (response.getPreviewsList() || []).map(Mapper.From.ChatPreview),
 	};
 };
 

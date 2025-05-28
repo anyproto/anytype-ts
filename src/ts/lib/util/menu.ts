@@ -91,6 +91,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
+			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
 		];
 
 		if (config.experimental) {
@@ -127,7 +128,7 @@ class UtilMenu {
 				iconEmoji: type.iconEmoji, 
 				iconName: type.iconName,
 				iconOption: type.iconOption,
-				name: type.name || translate('defaultNamePage'), 
+				name: U.Object.name(type), 
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,
@@ -191,7 +192,7 @@ class UtilMenu {
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
-			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
+			{ id: 'remove', icon: 'remove', name: translate('commonMoveToBin'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: copyName, caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];
@@ -278,6 +279,16 @@ class UtilMenu {
 		});
 	};
 
+	getFeaturedRelationLayout () {
+		return [
+			{ id: I.FeaturedRelationLayout.Inline },
+			{ id: I.FeaturedRelationLayout.Column },
+		].map((it: any) => {
+			it.name = translate(`commonFeaturedRelationLayout${I.FeaturedRelationLayout[it.id]}`);
+			return it;
+		});
+	};
+
 	getLayoutIcon (layout: I.ObjectLayout) {
 		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
 	};
@@ -309,6 +320,8 @@ class UtilMenu {
 	};
 
 	getViews () {
+		const { config } = S.Common;
+
 		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
@@ -316,7 +329,8 @@ class UtilMenu {
 			{ id: I.ViewType.Board },
 			{ id: I.ViewType.Calendar },
 			{ id: I.ViewType.Graph },
-		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+			config.experimental ? { id: I.ViewType.Timeline } : null,
+		].filter(it => it).map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 
 	viewContextMenu (param: any) {
@@ -417,7 +431,7 @@ class UtilMenu {
 		if (id == J.Constant.widgetId.bin) {
 			options.unshift(I.WidgetLayout.Link);
 		} else
-		if (id == J.Constant.widgetId.allObject) {
+		if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(id)) {
 			options = [ I.WidgetLayout.Link ];
 		};
 
@@ -840,10 +854,6 @@ class UtilMenu {
 
 		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
 
-		if (U.Space.canCreateSpace()) {
-			items.push({ id: 'add', name: translate('commonNewSpace'), isButton: true });
-		};
-
 		if (ids && (ids.length > 0)) {
 			items.sort((c1, c2) => {
 				const i1 = ids.indexOf(c1.id);
@@ -859,8 +869,10 @@ class UtilMenu {
 	};
 
 	getSystemWidgets () {
+		const space = U.Space.getSpaceview();
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-star' },
+			space.chatId || U.Object.isAllowedChat() ? { id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: 'widget-chat' } : null,
 			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
@@ -1140,7 +1152,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
+			U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings });
 		};
 
 		const getClipboardData = async () => {
@@ -1193,7 +1205,7 @@ class UtilMenu {
 						cb(message.details, message.middleTime);
 					});
 				} else {
-					C.ObjectCreate(details, objectFlags, type?.defaultTemplateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
+					C.ObjectCreate(details, objectFlags, type?.defaultTemplateId, type?.uniqueKey, S.Common.space, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -1211,8 +1223,8 @@ class UtilMenu {
 			const { props } = context;
 			const { className, classNameWrap } = props.param;
 			const type = S.Record.getTypeById(item.id);
-			const canDefault = type.isInstalled && !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
-			const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+			const canDefault = !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
+			const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const route = '';
 
 			let options: any[] = [
@@ -1252,7 +1264,7 @@ class UtilMenu {
 
 							case 'remove': {
 								if (S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-									Action.uninstall(item, true, route);
+									Action.archive([ item.id ], route);
 								};
 								break;
 							};
@@ -1285,6 +1297,7 @@ class UtilMenu {
 				onOpen: context => menuContext = context,
 				data: {
 					noStore: true,
+					canAdd: true,
 					onMore,
 					buttons,
 					filters: [
@@ -1292,7 +1305,7 @@ class UtilMenu {
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
-						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, true, (message: any) => {
+						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
 							if (message.error.code || !message.details) {
 								return;
 							};

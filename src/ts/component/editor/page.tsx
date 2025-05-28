@@ -269,13 +269,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const { isPopup } = this.props;
-		const match = keyboard.getMatch(isPopup);
-
-		let close = true;
-		if (isPopup && (match?.params?.id == this.id)) {
-			close = false;
-		};
+		const { isPopup, matchPopup } = this.props;
+		const close = !isPopup || (isPopup && (matchPopup?.params?.id != this.id));
 
 		if (close) {
 			Action.pageClose(this.id, true);
@@ -464,7 +459,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const { pageX, pageY } = e;
-		const blocks = S.Block.getBlocks(rootId, it => it.canCreateBlock());
+		const blocks = S.Block.getBlocks(rootId, it => it.canCreateBlock()).sort((c1, c2) => {
+			const l1 = c1.isLayout();
+			const l2 = c2.isLayout();
+
+			if (l1 && !l2) return -1;
+			if (!l1 && l2) return 1;
+
+			return 0;
+		});
 
 		let offset = 140;
 		let hovered: any = null;
@@ -492,6 +495,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				this.hoverId = block.id;
 				hovered = obj;
 				hoveredRect = rect;
+
+				if (block.isLayout() && (pageX < rect.x) || (pageX > rect.x + J.Size.blockMenu)) {
+					continue;
+				};
 			};
 		};
 
@@ -547,6 +554,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onKeyDownEditor (e: any) {
 		const { rootId, isPopup } = this.props;
+
+		if (S.Popup.isOpen('', [ 'page' ])) {
+			return;
+		};
 
 		if (isPopup !== keyboard.isPopup()) {
 			return;
@@ -1227,7 +1238,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 		const next = S.Block.getFirstBlock(rootId, -dir, it => it.isFocusable());
-		
+
 		this.focusNextBlock(next, dir);
 	};
 
@@ -1499,6 +1510,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = S.Block.getLeaf(rootId, focused);
+
 		if (!block) {
 			return;
 		};
@@ -1830,8 +1842,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
-
 		S.Menu.closeAll([ 'blockAdd' ]);
 
 		if (!data) {
@@ -1842,19 +1852,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const hasHtml = data && data.html;
 		
 		if (hasHtml) {
-        	e.preventDefault();
-        	this.onPaste(data);
-	    } else {
-	        const clipboardItems = (e.clipboardData || e.originalEvent.clipboardData).items;
-	        const files = U.Common.getDataTransferFiles(clipboardItems);
-	        
-	        if (files.length && !data.files.length) {
-	            U.Common.saveClipboardFiles(files, data, data => this.onPasteEvent(e, props, data));
-	        } else {
-	            e.preventDefault();
-	            this.onPaste(data);
-	        };
-	    };
+			e.preventDefault();
+			this.onPaste(data);
+		} else {
+			const clipboardItems = (e.clipboardData || e.originalEvent.clipboardData).items;
+			const files = U.Common.getDataTransferFiles(clipboardItems);
+
+			if (files.length && !data.files.length) {
+				U.Common.saveClipboardFiles(files, data, data => this.onPasteEvent(e, props, data));
+			} else {
+				e.preventDefault();
+				this.onPaste(data);
+			};
+		};
 	};
 
 	onPaste (data: any) {

@@ -335,6 +335,7 @@ export interface SearchSubscribeParam {
 	ignoreHidden: boolean;
 	ignoreDeleted: boolean;
 	ignoreArchived: boolean;
+	ignoreChat: boolean;
 	skipLayoutFormat: I.ObjectLayout[];
 	noDeps: boolean;
 };
@@ -380,4 +381,20 @@ export interface TooltipParam {
 	offsetX?: number;
 	offsetY?: number;
 	delay?: number;
+};
+
+export enum LocalApiScope {
+	Limited		 = 0,
+	Json		 = 1,
+	Full		 = 2,
+};
+
+export interface AppInfo {
+	hash: string;
+	apiKey: string;
+	name: string;
+	createdAt: number;
+	expireAt: number;
+	scope: LocalApiScope;
+	isActive: boolean;
 };

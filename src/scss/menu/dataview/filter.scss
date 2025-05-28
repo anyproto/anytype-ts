@@ -31,10 +31,7 @@
 				.iconObject { margin-right: 2px; }
 			}
 
-			.txt { 
-				width: calc(100% - 70px); line-height: 20px; height: 40px; display: flex; flex-direction: column; align-items: flex-start; 
-				flex-grow: 1;
-			}
+			.txt { line-height: 20px; height: 40px; display: flex; flex-direction: column; align-items: flex-start; flex-grow: 1; overflow: hidden; }
 			.txt {
 				> .name { @include text-overflow-nw; max-width: 100%; }
 				> .flex { line-height: 20px; max-width: 100%; }
@@ -45,9 +42,6 @@
 			}
 		}
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
-		.item.isReadonly {
-			.txt { width: calc(100% - 50px); }
-		}
 
 		.item:not(.isReadonly) {
 			.txt {
@@ -61,7 +55,6 @@
 		.item:not(.isReadonly).hover 
 		{
 			.buttons { display: flex; }
-			.txt { width: calc(100% - 126px); }
 		}
 
 		.item.add { display: block; }
@@ -93,7 +86,7 @@
 			.clickable { width: 100%; height: 20px; display: flex; }
 			.buttons { margin: 0px; position: static; display: none; }
 
-			.icon.delete { transition: none; width: 20px; height: 20px; }
+			.icon.delete { transition: none; width: 20px !important; height: 20px !important; }
 			.icon.plus { margin: 0px; }
 
 			.name { @include text-overflow-nw; width: calc(100% - 40px); }

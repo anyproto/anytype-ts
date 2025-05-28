@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
-import { I, C, S, U, J, focus, translate, keyboard } from 'Lib';
+import { I, C, S, U, J, focus, translate, keyboard, analytics } from 'Lib';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
 
 interface State {
@@ -193,6 +193,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 				onUpload (objectId: string) {
 					U.Object.setIcon(rootId, '', objectId, cb);
 				},
+				route: analytics.route.icon,
 			}
 		});
 	};

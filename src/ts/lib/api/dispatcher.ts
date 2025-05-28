@@ -606,7 +606,7 @@ class Dispatcher {
 					let updateData = false;
 
 					if (fields !== null) {
-						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit' ];
+						const updateKeys = [ 'type', 'groupRelationKey', 'endRelationKey', 'pageLimit' ];
 
 						for (const f of updateKeys) {
 							if (fields[f] != view[f]) {
@@ -956,30 +956,16 @@ class Dispatcher {
 						break;
 					};
 
-					const { collectionId, count, type } = mapped;
-
-					/*
-
-					if (collectionId) {
-						window.setTimeout(() => {
-							S.Popup.open('objectManager', { 
-								data: { 
-									collectionId, 
-									type: I.ObjectManagerPopup.Favorites,
-								} 
-							});
-						}, S.Popup.getTimeout() + 10);
-					};
-					*/
+					const { count, type } = mapped;
 
 					analytics.event('Import', { type, count });
 					break;
 				};
 
 				case 'ChatAdd': {
-					const orderId = mapped.orderId;
+					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage(mapped.message);
-					const author = U.Space.getParticipant(U.Space.getParticipantId(space, message.creator));
+					const author = S.Detail.mapper(dependencies.find(it => it.identity == message.creator));
 
 					mapped.subIds.forEach(subId => {
 						const list = S.Chat.getList(subId);
@@ -992,12 +978,13 @@ class Dispatcher {
 						S.Chat.add(subId, idx, message);
 					});
 
-					/*
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
 						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
 							const { space } = S.Common;
 							const open = () => {
 								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+
+								analytics.event('OpenChatFromNotification');
 							};
 
 							if (spaceId != space) {
@@ -1007,7 +994,6 @@ class Dispatcher {
 							};
 						});
 					};
-					*/
 
 					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
 					break;
@@ -1023,7 +1009,7 @@ class Dispatcher {
 				case 'ChatStateUpdate': {
 					mapped.subIds.forEach(subId => {
 						if (subId == J.Constant.subId.chatSpace) {
-							subId = [ J.Constant.subId.chatSpace, spaceId, rootId ].join('-');
+							subId = S.Chat.getSubId(spaceId, rootId);
 						};
 
 						S.Chat.setState(subId, mapped.state);

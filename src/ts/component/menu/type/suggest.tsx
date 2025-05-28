@@ -19,7 +19,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const { param, getId, position, close, setHover, setActive, onKeyDown } = props;
 	const { data } = param;
-	const { noFilter, skipIds, onMore, onClick, noInstall } = data;
+	const { noFilter, skipIds, onMore, onClick, canAdd } = data;
 	const itemList = useRef([]);
 	const filter = String(data.filter || '');
 	const currentFilter = useRef('');
@@ -52,7 +52,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ id: 'library', name: translate('commonMyTypes'), children: library },
 		];
 
-		if (canWrite && filter && !add) {
+		if (canWrite && filter && !add && canAdd) {
 			sections.push({ 
 				children: [ 
 					{ id: 'add', name: U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) },
@@ -207,15 +207,8 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (item.onClick) {
 			item.onClick(e);
 		} else {
-			if (item.isInstalled || noInstall) {
-				cb(item);
-				setLast(item);
-			} else {
-				Action.install(item, true, message => {
-					cb(message.details);
-					setLast(message.details);
-				});
-			};
+			cb(item);
+			setLast(item);
 		};
 	};
 

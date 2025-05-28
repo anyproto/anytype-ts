@@ -3,18 +3,23 @@
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
 
-	.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
-
-	> .flex > .side.left { flex-shrink: 0; width: 32px; display: flex; align-items: flex-end; }
-	> .flex > .side.left {
-		.iconObject { display: none; }
+	> .flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
+	> .flex {
+		> .side.left { flex-shrink: 0; width: 32px; display: flex; align-items: flex-end; }
+		> .side.left {
+			.iconObject { display: none; }
+		}
+		> .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; }
 	}
 
-	> .flex > .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; }
+	.bubbleOuter { display: flex; flex-direction: column; }
 
-	.bubbleOuter { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
-	.bubbleOuter {
-		> .controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
+	.bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
+	.bubbleInner {
+		> .controls { 
+			flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; 
+			opacity: 0; transition: opacity $transitionCommon; 
+		}
 		> .controls {
 			.icon { width: 20px; height: 20px; }
 			.icon.messageReply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
@@ -25,7 +30,10 @@
 		}
 	}
 
-	.bubble { border-radius: 16px; background-color: var(--color-shape-tertiary); display: flex; flex-direction: column; transition: background-color $easeInQuint 0.2s; }
+	.bubble { 
+		border-radius: 16px; background-color: var(--color-shape-tertiary); display: flex; flex-direction: column;
+		transition: background-color $easeInQuint 0.2s; 
+	}
 	.bubble {
 		.textWrapper { line-height: 20px; padding: 8px 12px; }
 		.text { user-select: text !important; display: inline; }
@@ -35,11 +43,18 @@
 	}
 
 	.icon.reactionAdd { width: 28px; height: 28px; background: url('~img/icon/chat/buttons/reaction0.svg') 50% 50% no-repeat; background-size: 20px; border-radius: 50%; }
-	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
+	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction2.svg'); }
 
 	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; cursor: default; }
 	.reply {
-		.bubble { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 8px 12px; border-radius: 16px; }
+		.bubble { 
+			display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 8px 12px; border-radius: 16px; margin-left: 8px; 
+			position: relative;
+		}
+		.bubble::before {
+			content: ''; position: absolute; left: -8px; top: 0px; width: 4px; height: 100%; background-color: var(--color-shape-primary);
+			border-radius: 4px;
+		}
 
 		> .icon, > .iconObject { flex-shrink: 0; width: 32px; height: 32px; }
 		> .iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
@@ -78,97 +93,114 @@
 	.reactions {
 		.reaction { 
 			display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
-			background-color: var(--color-shape-highlight-medium); padding: 4px 6px; flex-shrink: 0;
+			background-color: var(--color-shape-highlight-medium); padding: 5px 6px; flex-shrink: 0;
 		}
-		.reaction:hover { background-color: var(--color-shape-highlight-dark); }
 		.reaction {
+			&:hover { background-color: var(--color-shape-highlight-dark); }
+			&.isMulti { gap: 0px 2px; }
+			&.isMe { background-color: var(--color-bg-tag-lime); }
+
 			.count { min-width: 18px; text-align: center; }
 		}
-
-		.reaction.isSelf { background-color: var(--color-bg-tag-lime); }
+		.reactionAdd { background-color: var(--color-shape-highlight-medium); background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
 	}
 
 	.newMessages { display: none; justify-content: center; position: absolute; top: -9px; left: 0px;  width: 100%; }
 	.newMessages {
 		.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
 	}
-}
 
-.message.isSelf {
-	> .flex { flex-direction: row-reverse; }
+	&.isSelf {
+		> .flex { flex-direction: row-reverse; }
+		> .flex {
+			> .side.left { display: none; }
+			> .side.right { align-items: flex-end; }
+		}
 
-	> .flex > .side.right { align-items: flex-end; }
+		.bubbleInner { flex-direction: row-reverse; }
+		.bubbleInner {
+			> .controls { flex-direction: row-reverse; }
+			.bubble { background-color: var(--color-bg-tag-lime); }
+		}
 
-	.bubbleOuter { flex-direction: row-reverse; }
-	.bubbleOuter {
-		> .controls { flex-direction: row-reverse; }
-		.bubble { background-color: var(--color-bg-tag-lime); }
+		.reactions { justify-content: flex-end; }
 	}
-}
 
-.message.withAttachment {
-	.bubble {
-		.textWrapper { padding: 8px 12px 0px; }
+	&.withAttachment {
+		.bubbleInner {
+			.bubble { max-width: 368px; }
+			.bubble {
+				.textWrapper { padding: 8px 12px 0px; }
+			}
+		}
 	}
-}
-.message.withAttachment.withMedia {
-	.bubble { flex-direction: column-reverse; }
-	.bubble {
-		.textWrapper { padding: 0px 12px 8px; }
+
+	&.withAttachment.withMedia {
+		.bubbleInner {
+			.bubble { flex-direction: column-reverse; }
+			.bubble {
+				.textWrapper { padding: 0px 12px 8px; }
+			}
+		}
 	}
-}
 
-.message.canExpand {
-	.expand { display: flex; }
-	.text { @include clamp; -webkit-line-clamp: 10; }
-}
-.message.canExpand.isExpanded {
-	.text { -webkit-line-clamp: unset; }
-	.reply {
-		.text { @include clamp; -webkit-line-clamp: 10; }
+	&.canExpand {
+		.expand { display: flex; }
+		.text { @include clamp10; }
 	}
-	.expand::after { transform: rotateZ(180deg); margin-top: 2px; }
-}
-.message:hover, .message.hover {
-	.controls { opacity: 1; }
-}
 
-.message:first-child { margin-top: 0px; }
-
-.message.isFirst { margin: 12px 0px 0px 0px; }
-.message.isFirst {
-	.author { display: flex; }
-	> .flex > .side.right {  min-width: 164px; }
-}
-
-.message.isFirst, .message.withText {
-	.attachments { padding: 8px 4px 4px 4px;  }
-	.attachments.withLayout { padding: 4px 4px 8px 4px; }
-}
-
-.message:not(.withText) {
-	.bubble { padding: 4px; }
-	.bubble {
-		.textWrapper { display: none; }
-		.attachments { padding: 0px;}
+	&.canExpand.isExpanded {
+		.text { -webkit-line-clamp: unset; }
+		.reply {
+			.text { @include clamp10; }
+		}
+		.expand::after { transform: rotateZ(180deg); margin-top: 2px; }
 	}
-}
 
-.message.isLast {
-	> .flex > .side.left {
-		.iconObject { display: block; }
+	&:hover, &.hover {
+		.controls { opacity: 1; }
 	}
-}
 
-.message:not(.isLast) {
-	.reactions { padding-bottom: 8px; }
-}
+	&:first-child { margin-top: 0px; }
 
-.message.isNew { position: relative; margin-top: 26px; padding-top: 26px; border-top: 1px solid var(--color-shape-tertiary); }
-.message.isNew {
-	.newMessages { display: flex; }
-}
+	&.isFirst { margin: 12px 0px 0px 0px; }
+	&.isFirst {
+		.author { display: flex; }
+	}
 
-.message.highlight {
-	.bubble { background-color: var(--color-bg-ice) !important;}
+	&.isFirst, &.withText {
+		.attachments { padding: 8px 4px 4px 4px;  }
+		.attachments.withLayout { padding: 4px 4px 8px 4px; }
+	}
+
+	&:not(.withText) {
+		.bubbleInner {
+			.bubble { padding: 4px; }
+			.bubble {
+				.textWrapper { display: none; }
+				.attachments { padding: 0px;}
+			}
+		}
+	}
+
+	&.isLast {
+		> .flex > .side.left {
+			.iconObject { display: block; }
+		}
+	}
+
+	&:not(.isLast) {
+		.reactions { padding-bottom: 8px; }
+	}
+
+	&.isNew { position: relative; margin-top: 26px; padding-top: 26px; border-top: 1px solid var(--color-shape-tertiary); }
+	&.isNew {
+		.newMessages { display: flex; }
+	}
+
+	&.highlight {
+		.bubbleInner {
+			.bubble { background-color: var(--color-bg-ice) !important;}
+		}
+	}
 }

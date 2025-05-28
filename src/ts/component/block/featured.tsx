@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { ObjectType, Cell } from 'Component';
-import { I, C, S, U, J, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { ObjectType, Cell, Block } from 'Component';
+import { I, C, S, U, J, M, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	size?: number;
@@ -47,7 +47,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
 		const object = this.getObject();
-		const type = S.Detail.get(rootId, object.type, []);
+		const check = U.Data.checkDetails(rootId, rootId, []);
+		const { headerRelationsLayout } = check;
 
 		return (
 			<div 
@@ -57,65 +58,83 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp}
 			>
-				{items.map((relation: any, i: any) => {
-					const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
-					const value = object[relation.relationKey];
-					const canEdit = allowedValue && !relation.isReadonlyValue;
-					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
-
-					if (i == items.length - 1) {
-						cn.push('last');
-					};
-
-					if (relation.relationKey == 'type') {
-						return this.renderType();
-					};
-
-					if (relation.relationKey == 'setOf') {
-						return this.renderSetOf();
-					};
-
-					if (relation.relationKey == 'identity') {
-						return this.renderIdentity();
-					};
-
-					if ([ 'links', 'backlinks' ].includes(relation.relationKey)) {
-						return this.renderLinks(relation.relationKey, i);
-					};
-
-					return (
-						<span
-							key={i}
-							className={cn.join(' ')}
-							onClick={e => this.onRelation(e, relation.relationKey)}
-						>
-							<Cell
-								ref={ref => this.cellRefs.set(id, ref)}
-								placeholder={relation.name}
-								elementId={id}
+				{headerRelationsLayout == I.FeaturedRelationLayout.Column ? (
+					<div className="listColumn">
+						{items.map((relation: any) => (
+							<Block
+								{...this.props}
+								key={relation.id}
 								rootId={rootId}
-								subId={rootId}
-								block={block}
-								relationKey={relation.relationKey}
-								getRecord={() => object}
-								viewType={I.ViewType.Grid}
-								pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
-								size={size}
-								iconSize={iconSize}
-								readonly={!canEdit}
-								isInline={true}
-								idPrefix={PREFIX}
-								elementMapper={this.elementMapper}
-								tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
-								arrayLimit={relation.format == I.RelationType.Object ? 1 : 2}
-								textLimit={150}
-								onMouseLeave={this.onMouseLeave}
-								withName={true}
+								block={new M.Block({ id: relation.id, type: I.BlockType.Relation, content: { key: relation.relationKey } })}
+								readonly={!allowedValue}
+								isSelectionDisabled={true}
+								isContextMenuDisabled={true}
 							/>
-							<div className="bullet" />
-						</span>
-					);
-				})}
+						))}
+					</div>
+				) : (
+					<div className="listInline">
+						{items.map((relation: any, i: any) => {
+							const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
+							const value = object[relation.relationKey];
+							const canEdit = allowedValue && !relation.isReadonlyValue;
+							const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
+
+							if (i == items.length - 1) {
+								cn.push('last');
+							};
+
+							if (relation.relationKey == 'type') {
+								return this.renderType();
+							};
+
+							if (relation.relationKey == 'setOf') {
+								return this.renderSetOf();
+							};
+
+							if (relation.relationKey == 'identity') {
+								return this.renderIdentity();
+							};
+
+							if ([ 'links', 'backlinks' ].includes(relation.relationKey)) {
+								return this.renderLinks(relation.relationKey, i);
+							};
+
+							return (
+								<span
+									key={i}
+									className={cn.join(' ')}
+									onClick={e => this.onRelation(e, relation.relationKey)}
+								>
+									<Cell
+										ref={ref => this.cellRefs.set(id, ref)}
+										placeholder={relation.name}
+										elementId={id}
+										rootId={rootId}
+										subId={rootId}
+										block={block}
+										relationKey={relation.relationKey}
+										getRecord={() => object}
+										viewType={I.ViewType.Grid}
+										pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
+										size={size}
+										iconSize={iconSize}
+										readonly={!canEdit}
+										isInline={true}
+										idPrefix={PREFIX}
+										elementMapper={this.elementMapper}
+										tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
+										arrayLimit={relation.format == I.RelationType.Object ? 1 : 2}
+										textLimit={150}
+										onMouseLeave={this.onMouseLeave}
+										withName={true}
+									/>
+									<div className="bullet" />
+								</span>
+							);
+						})}
+					</div>
+				)}
 			</div>
 		);
 	};
@@ -198,8 +217,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
 		const object = this.getObject();
-		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
-		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
+		const mapper = it => U.Object.name(it);
+		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(mapper);
+		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(mapper);
 		const setOfString = [];
 		const tl = types.length;
 		const rl = relations.length;
@@ -455,11 +475,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'change':
+				const layouts = U.Object.isCollectionLayout(object.layout) ? [ I.ObjectLayout.Collection ] : U.Object.getPageLayouts();
+
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: layouts },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					keys: U.Subscription.typeRelationKeys(),
@@ -830,7 +852,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems (): any[] {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const short = S.Detail.get(rootId, storeId, [ 'type', 'targetObjectType', 'layout', 'featuredRelations' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'type', 'targetObjectType', 'layout', 'featuredRelations', 'headerRelationsLayout' ], true);
 		const keys = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
 
 		let ret = [];

@@ -11,7 +11,7 @@ const ShareBanner: FC<Props> = ({
 }) => {
 
 	const onClickHandler = () => {
-		U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+		U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 
 		analytics.event('ClickOnboardingTooltip', { id: 'SpaceShare', type: 'OpenSettings' });
 	};

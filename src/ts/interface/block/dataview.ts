@@ -30,6 +30,7 @@ export enum ViewType {
 	Board			 = 3,
 	Calendar		 = 4,
 	Graph			 = 5,
+	Timeline		 = 6,
 };
 
 export enum SortType { 
@@ -206,6 +207,7 @@ export interface View {
 	type: ViewType;
 	coverRelationKey: string;
 	groupRelationKey: string;
+	endRelationKey: string;
 	groupBackgroundColors: boolean;
 	coverFit: boolean;
 	cardSize: I.CardSize;

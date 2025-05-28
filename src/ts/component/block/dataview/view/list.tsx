@@ -124,6 +124,13 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 
 	componentDidUpdate () {
 		U.Common.triggerResizeEditor(this.props.isPopup);
+
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Record) || [];
+
+		if (ids.length) {
+			selection?.renderSelection();
+		};
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {

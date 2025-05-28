@@ -91,7 +91,7 @@ class UtilRouter {
 		S.Popup.closeAll();
 		sidebar.rightPanelToggle(false, false, keyboard.isPopup());
 
-		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route, false, param, false);
 			return;
 		};
@@ -170,7 +170,10 @@ class UtilRouter {
 		sidebar.rightPanelToggle(false, false, false);
 
 		if (sendEvent) {
-			analytics.event('SwitchSpace');
+			const counters = S.Chat.getSpaceCounters(id);
+			const { mentionCounter, messageCounter} = counters;
+
+			analytics.event('SwitchSpace', { unreadMessageCount: messageCounter, hasMentions: !!mentionCounter });
 		};
 
 		this.isOpening = true;
@@ -204,20 +207,14 @@ class UtilRouter {
 				replace: true, 
 				animate: true,
 				delay: 100,
-				onFadeOut: () => {
-					/*
-					S.Record.metaClear(J.Constant.subId.participant, '');
-					S.Record.recordsClear(J.Constant.subId.participant, '');
-					S.Block.clear(S.Block.widgets);
-					*/
-
+				onRouteChange: () => {
 					analytics.removeContext();
 					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
 
 					U.Data.onInfo(message.info);
 					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } });
-				}
+				},
 			});
 		});
 	};

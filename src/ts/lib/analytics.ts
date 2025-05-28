@@ -5,7 +5,7 @@ const KEYS = [
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor', 'emptyType', 'status', 'sort', 'widgetType',
+	'processor', 'emptyType', 'status', 'sort', 'widgetType', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions'
 ];
 const URL = 'amplitude.anytype.io';
 
@@ -88,6 +88,11 @@ class Analytics {
 		usecaseSite: 'Site',
 
 		onboardingTooltip: 'OnboardingTooltip',
+
+		message: 'Message',
+		reaction: 'Reaction',
+		icon: 'Icon',
+		editor: 'Editor',
 	};
 
 	public widgetType = {
@@ -96,13 +101,12 @@ class Analytics {
 	};
 
 	debug () {
-		const { config } = S.Common;
-		return config.debug.analytics;
+		return S.Common.config.debug.analytics;
 	};
 
 	isAllowed (): boolean {
 		const { config } = S.Common;
-		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !U.Common.getElectron().isPackaged) || this.debug();
+		return !(config.sudo || !U.Common.getElectron().isPackaged) || this.debug();
 	};
 	
 	init (options?: any) {
@@ -110,7 +114,7 @@ class Analytics {
 			return;
 		};
 
-		const { interfaceLang } = S.Common;
+		const { interfaceLang, config } = S.Common;
 		const electron = U.Common.getElectron();
 		const platform = U.Common.getPlatform();
 		const hasDefaultPath = electron.userPath() == electron.defaultPath();
@@ -133,6 +137,7 @@ class Analytics {
 			platform,
 			interfaceLang,
 			hasDefaultPath: Number(hasDefaultPath),
+			releaseChannel: config.channel,
 		};
 
 		if (electron.version) {
@@ -257,8 +262,6 @@ class Analytics {
 		};
 
 		switch (code) {
-			case 'ObjectInstall':
-			case 'ObjectUninstall':
 			case 'SelectGraphNode':
 			case 'CreateObject': {
 				data.layout = I.ObjectLayout[data.layout];
@@ -647,28 +650,16 @@ class Analytics {
 			object = S.Record.getTypeByKey(id);
 		};
 
-		if (!object) {
-			return '';
-		};
-
-		if (!object.isInstalled) {
-			return object.id;
-		} else {
-			return object.sourceObject ? object.sourceObject : 'custom';
-		};
+		return object ? (object.sourceObject ? object.sourceObject : 'custom') : '';
 	};
 
-	relationMapper (key: string) {
-		const object = S.Record.getRelationByKey(key);
+	relationMapper (id: string) {
+		let object = S.Record.getRelationById(id);
 		if (!object) {
-			return '';
+			object = S.Record.getRelationByKey(id);
 		};
 
-		if (!object.isInstalled) {
-			return object.id;
-		} else {
-			return object.sourceObject ? object.sourceObject : 'custom';
-		};
+		return object ? (object.sourceObject ? object.sourceObject : 'custom') : '';
 	};
 
 	embedType (isInline: boolean): string {
@@ -699,7 +690,7 @@ class Analytics {
 	};
 
 	log (...args: any[]) {
-		if (!this.debug()) {
+		if (!this.isAllowed()) {
 			return;
 		};
 

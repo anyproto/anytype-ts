@@ -129,6 +129,10 @@ class ChatStore {
 		};
 	};
 
+	getSubId (spaceId: string, chatId: string): string {
+		return [ J.Constant.subId.chatSpace, spaceId, chatId ].join('-');
+	};
+
 	setState (subId: string, state: I.ChatState) {
 		const param = this.getSubParam(subId);
 	
@@ -220,19 +224,39 @@ class ChatStore {
 
 		if (spaceMap) {
 			for (const [ chatId, state ] of spaceMap) {
-				ret.mentionCounter += state.mentionCounter || 0;
-				ret.messageCounter += state.messageCounter || 0;
+				ret.mentionCounter += Number(state.mentionCounter) || 0;
+				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
 		};
 
 		return ret;
 	};
 
-	setBadge (counters: Counter) {
+	getChatCounters (spaceId: string, chatId: string): Counter {
+		const spaceMap = this.stateMap.get(spaceId);
+		const ret = { mentionCounter: 0, messageCounter: 0 };
+
+		if (spaceMap) {
+			const state = spaceMap.get(chatId);
+			if (state) {
+				ret.mentionCounter = Number(state.mentionCounter) || 0;
+				ret.messageCounter = Number(state.messageCounter) || 0;
+			};
+		};
+
+		return ret;
+	};
+
+	setBadge () {
+		const { config } = S.Common;
+
 		let t = 0;
 
-		if (counters) {
-			t = counters.mentionCounter + counters.messageCounter;
+		if (config.experimental) {
+			const counters = this.getTotalCounters();
+			if (counters) {
+				t = counters.messageCounter;
+			};
 		};
 
 		Renderer.send('setBadge', String(t || ''));

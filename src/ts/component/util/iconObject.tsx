@@ -2,10 +2,10 @@ import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, S, U, J, Preview, translate, Relation } from 'Lib';
+import { I, S, U, J, Preview, translate, Relation, analytics } from 'Lib';
 
 interface IconParam {
-	userIconColor?: { bg?: string, text?: string };
+	userIcon?: string;
 };
 
 interface Props {
@@ -23,10 +23,10 @@ interface Props {
 	noUpload?: boolean;
 	noRemove?: boolean;
 	noClick?: boolean;
-	param?: IconParam;
 	menuParam?: Partial<I.MenuParam>;
 	tooltipParam?: Partial<I.TooltipParam>;
 	style?: any;
+	param?: IconParam;
 	getObject?(): any;
 	onSelect?(id: string): void;
 	onIconSelect?(id: string, color: number): void;
@@ -120,10 +120,10 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		size = 20,
 		noRemove = false,
 		noClick = false,
-		param = {},
 		menuParam = {},
 		tooltipParam = {},
 		style = {},
+		param = {},
 		getObject,
 		onSelect,
 		onIconSelect,
@@ -148,7 +148,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
 	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted } = object || {};
-	const { userIconColor } = param;
+	const { userIcon } = param;
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
 
@@ -262,6 +262,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 						U.Object.setIcon(object.id, '', objectId);
 					};
 				},
+				route: analytics.route.icon
 			},
 			...menuParam,
 		});
@@ -276,16 +277,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const userSvg = (): string => {
-		let color = J.Theme[theme]?.iconUser;
-		if (userIconColor) {
-			color = Object.assign(color, userIconColor);
-		};
-
-		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${color.bg}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${userIcon || J.Theme[theme]?.iconUser}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
-				${circle}
 				${text}
 			</svg>
 		`;
@@ -315,7 +309,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const defaultIcon = (id: string) => {
-		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'iconName' ], true);
+		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'name', 'iconName' ], true);
 
 		let src = '';
 		if (type.iconName) {
@@ -339,7 +333,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			switch (layout) {
 				case I.ObjectLayout.ChatOld:
 				case I.ObjectLayout.Chat: di = 'chat'; break;
-				case I.ObjectLayout.Collection: 
+				case I.ObjectLayout.Collection: di = 'collection'; break;
 				case I.ObjectLayout.Set: di = 'set'; break;
 			};
 

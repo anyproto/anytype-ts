@@ -157,6 +157,7 @@
 		.preview.isKroki { background-image: url('#{$themePath}/icon/block/embed/kroki.svg'); }
 		.preview.isGraphviz { background-image: url('#{$themePath}/icon/block/embed/graphviz.svg'); }
 		.preview.isSketchfab { background-image: url('#{$themePath}/icon/block/embed/sketchfab.svg'); }
+		.preview.isDrawio { background-image: url('#{$themePath}/icon/block/embed/drawio.svg'); }
 		.preview.isImage { background-image: url('#{$themePath}/icon/block/embed/image.svg'); }
 	}
 	.block.blockEmbed:not(.isLatex) {
@@ -212,10 +213,12 @@
 		.message {
 			.bubble { background: var(--color-shape-tertiary); }
 
-			> .flex > .controls {
-				.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('#{$themePath}/icon/chat/buttons/reaction1.svg'); }
-				.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('#{$themePath}/icon/chat/buttons/reply1.svg'); }
-				.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+			.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('#{$themePath}/icon/chat/buttons/reply1.svg'); }
+			.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('#{$themePath}/icon/chat/buttons/reaction2.svg'); }
+
+			.reactions {
+				.reactionAdd { background-image: url('#{$themePath}/icon/chat/buttons/reaction1.svg'); }
 			}
 		}
 

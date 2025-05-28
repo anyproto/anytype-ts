@@ -9,6 +9,7 @@ import PageDelete from './delete';
 import PagePersonal from './personal';
 import PagePhrase from './phrase';
 import PageLanguage from './language';
+import PageApi from './api';
 
 import PageDataIndex from './data/index';
 import PageDataPublish from './data/publish';
@@ -50,6 +51,7 @@ const Components: any = {
 	phrase:				 PagePhrase,
 	membership:			 PageMembership,
 	language:			 PageLanguage,
+	api:				 PageApi,
 
 	pinIndex:			 PagePinIndex,
 	pinSelect:			 PagePinSelect,
@@ -69,7 +71,7 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
-	spaceIndexEmpty:			 PageSpaceIndex,
+	spaceIndexEmpty:	 PageSpaceIndex,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
@@ -126,7 +128,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 					ref={ref => this.ref = ref}
 					{...this.props}
 					getId={this.getId}
-					onPage={id => U.Object.openAuto({ id, layout: I.ObjectLayout.Settings })}
+					onPage={id => U.Object.openRoute({ id, layout: I.ObjectLayout.Settings })}
 					onExport={this.onExport}
 					onConfirmPin={this.onConfirmPin}
 					setConfirmPin={this.setConfirmPin}

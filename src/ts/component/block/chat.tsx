@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Preview, Mark } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Message from './chat/message';
 import Form from './chat/form';
@@ -46,10 +46,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.loadMessagesByOrderId = this.loadMessagesByOrderId.bind(this);
 		this.hasScroll = this.hasScroll.bind(this);
 		this.highlightMessage = this.highlightMessage.bind(this);
+		this.loadDepsAndReplies = this.loadDepsAndReplies.bind(this);
 	};
 
 	render () {
-		const { showRelativeDates } = S.Common;
+		const { showRelativeDates, dateFormat } = S.Common;
 		const { block } = this.props;
 		const rootId = this.getRootId();
 		const messages = this.getMessages();
@@ -59,7 +60,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const Section = (item: any) => {
 			const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
-			const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, item.createdAt);
+			const date = day ? day : U.Date.dateWithFormat(dateFormat, item.createdAt);
 
 			return (
 				<div className="section">
@@ -130,6 +131,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					getIsBottom={() => hasScroll ? this.isBottom : true}
 					getReplyContent={this.getReplyContent}
 					highlightMessage={this.highlightMessage}
+					loadDepsAndReplies={this.loadDepsAndReplies}
 				/>
 			</div>
 		);
@@ -162,6 +164,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				this.loadMessages(1, true, this.scrollToBottom);
 			};
 		});
+
+		analytics.event('ScreenChat');
 	};
 
 	componentWillUnmount () {
@@ -376,27 +380,37 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	getDepsIds (list: any[]) {
 		const markTypes = [ I.MarkType.Object, I.MarkType.Mention ];
+		const subId = this.getSubId();
 
 		let attachments = [];
 		let marks = [];
 
+		if (this.refForm) {
+			attachments = attachments.concat((this.refForm.state.attachments || []).map(it => it.id));
+			marks = marks.concat(this.refForm.marks || []);
+
+			const replyingId = this.refForm.getReplyingId();
+
+			if (replyingId) {
+				const message = S.Chat.getMessage(subId, replyingId);
+				if (message) {
+					list.push(message);
+				};
+			};
+		};
+
 		list.forEach(it => {
-			attachments = attachments.concat(it.attachments || []);
+			attachments = attachments.concat((it.attachments || []).map(it => it.target));
 			marks = marks.concat(it.content.marks || []);
 		});
 
-		if (this.refForm) {
-			attachments = attachments.concat(this.refForm.state.attachments || []);
-			marks = marks.concat(this.refForm.marks || []);
-		};
+		marks = marks.filter(it => markTypes.includes(it.type) && it.param).map(it => it.param);
 
-		return [].
-			concat(attachments.map(it => it.target)).
-			concat(marks.filter(it => markTypes.includes(it.type)).map(it => it.param));
+		return attachments.concat(marks).filter(it => it);
 	};
 
 	getReplyIds (list: any[]) {
-		return (list || []).filter(it => it.replyToMessageId).map(it => it.replyToMessageId)
+		return (list || []).filter(it => it.replyToMessageId).map(it => it.replyToMessageId);
 	};
 
 	getSubId (): string {
@@ -482,7 +496,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				item.isFirst = false;
 				item.isLast = false;
 
-				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME))) {
+				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME) || item.replyToMessageId)) {
 					item.isFirst = true;
 
 					if (prev) {
@@ -547,11 +561,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 						case 'copy': {
 							U.Common.clipboardCopy({ text: item.content.text });
+
+							analytics.event('ClickMessageMenuCopy');
 							break;
 						};
 
 						case 'link': {
 							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
+
+							analytics.event('ClickMessageMenuLink');
 							break;
 						};
 
@@ -571,7 +589,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						};
 
 						case 'unread': {
-							this.onUnread(item.orderId);
+							C.ChatUnreadMessages(rootId, item.orderId);
 							break;
 						};
 					};
@@ -586,20 +604,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		S.Menu.open('select', menuParam);
-	};
-
-	onUnread (orderId: string) {
-		const rootId = this.getRootId();
-		const subId = this.getSubId();
-		const viewport = this.getMessagesInViewport();
-
-		C.ChatUnreadMessages(rootId, orderId, () => {
-			if (viewport.length) {
-				const { lastStateId } = S.Chat.getState(subId);
-
-				C.ChatReadMessages(rootId, viewport[0].orderId, viewport[viewport.length - 1].orderId, lastStateId, I.ChatReadType.Message);
-			};
-		});
 	};
 
 	onScroll (e: any) {
@@ -726,13 +730,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getMessageMenuOptions (message, noControls) {
+		const { config } = S.Common;
+
 		let options: any[] = [];
 
 		if (message.content.text) {
 			options.push({ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') });
 		};
-
-		options.push({ id: 'link', icon: 'link', name: translate('commonCopyLink') });
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
@@ -749,8 +753,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			].filter(it => it)).concat(options);
 		};
 
-		if (S.Common.config.experimental) {
-			options.push({ id: 'unread', icon: 'empty', name: 'Unread' });
+		if (config.experimental) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'link', icon: 'link', name: translate('commonCopyLink') },
+				{ id: 'unread', name: translate('blockChatMarkAsUnread') },
+			]);
 		};
 
 		return options;
@@ -763,7 +771,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onReadStop();
 	};
 
-	scrollToMessage (id: string, animate?: boolean) {
+	scrollToMessage (id: string, animate?: boolean, highlight?: boolean) {
 		if (!id) {
 			return;
 		};
@@ -782,9 +790,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.setAutoLoadDisabled(true);
 
 		const cb = () => {
-			this.highlightMessage(id);
 			this.readScrolledMessages();
 			this.setAutoLoadDisabled(false);
+
+			if (highlight) {
+				this.highlightMessage(id);
+			};
 		};
 
 		if (animate) {
@@ -828,7 +839,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	scrollToBottomCheck () {
 		if (this.isBottom) {
 			window.clearTimeout(this.timeoutScroll);
-			this.timeoutScroll = window.setTimeout(() => this.scrollToBottom(false), 10);
+			this.timeoutScroll = window.setTimeout(() => this.scrollToBottom(false), 50);
 		};
 	};
 
@@ -846,7 +857,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const message = S.Chat.getMessage(subId, item.replyToMessageId);
 
 		if (message) {
-			this.scrollToMessage(message.id, true);
+			this.scrollToMessage(message.id, true, true);
 			return;
 		};
 
@@ -861,17 +872,19 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 
 			S.Chat.clear(subId);
-			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id, true));
+			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id, true, true));
 		});
+
+		analytics.event('ClickScrollToReply');
 	};
 
 	getReplyContent (message: any): any {
 		const { creator, content } = message;
-		const rootId = this.getRootId();
 		const author = U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, creator));
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
 		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
-		const attachments = (message.attachments || []).map(it => S.Detail.get(rootId, it.target)).filter(it => !it.isDeleted);
+		const subId = this.getSubId();
+		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
 		const l = attachments.length;
 
 		let text: string = '';
@@ -880,7 +893,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		let isMultiple: boolean = false;
 
 		if (content.text) {
-			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+			text = U.Common.sanitize(Mark.toHtml(content.text, content.marks));
+			text = text.replace(/\n\r?/g, ' ');
 		};
 
 		if (!l) {
@@ -955,11 +969,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	highlightMessage (id: string, orderId?: string) {
 		const messages = this.getMessages();
 		const target = messages.find(it => orderId ? it.orderId == orderId : it.id == id);
+
 		if (!target) {
 			return;
 		};
 
-		this.messageRefs[target.id].highlight();
+		this.messageRefs[target.id]?.highlight();
 	};
 
 });

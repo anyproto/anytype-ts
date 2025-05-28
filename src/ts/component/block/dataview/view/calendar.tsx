@@ -31,7 +31,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { block, className } = this.props;
 		const { value } = this.state;
 		const cn = [ 'viewContent', className ];
-		const data = this.getData();
+		const data = U.Date.getCalendarMonth(value);
 		const { m, y } = this.getDateParam(value);
 		const days = U.Date.getWeekDays();
 		const months = U.Date.getMonths();
@@ -145,14 +145,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		return { d, m, y };
 	};
 
-	getData () {
-		return U.Date.getCalendarMonth(this.state.value);
-	};
-
 	load () {
+		const { value } = this.state;
 		const { isCollection, getView, getKeys, getTarget, getSearchIds, getSubId } = this.props;
 		const object = getTarget();
 		const view = getView();
+
 		if (!view) {
 			return;
 		};
@@ -162,7 +160,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
-		const data = this.getData();
+		const data = U.Date.getCalendarMonth(value);
 		if (!data.length) {
 			return;
 		};
@@ -243,7 +241,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id), details);
 
-		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

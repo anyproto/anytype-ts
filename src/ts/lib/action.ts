@@ -248,7 +248,7 @@ class Action {
 			return;
 		};
 
-		C.FileDownload(id, U.Common.getElectron().downloadPath(), (message: any) => {
+		C.FileDownload(id, U.Common.getElectron().tmpPath(), (message: any) => {
 			if (message.path) {
 				this.openPath(message.path);
 				analytics.event('OpenMedia', { route });
@@ -312,106 +312,6 @@ class Action {
 			if (callBack) {
 				callBack(filePaths);
 			};
-		});
-	};
-
-	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
-		C.WorkspaceObjectAdd(S.Common.space, object.id, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const { details } = message;
-			const eventParam: any = { layout: object.layout };
-
-			let toast = '';
-			let subId = '';
-
-			switch (object.layout) {
-				case I.ObjectLayout.Type: {
-					toast = U.Common.sprintf(translate('toastObjectTypeAdded'), object.name);
-					subId = J.Constant.subId.type;
-
-					eventParam.objectType = object.id;
-					break;
-				};
-
-				case I.ObjectLayout.Relation: {
-					toast = U.Common.sprintf(translate('toastRelationAdded'), object.name);
-					subId = J.Constant.subId.relation;
-
-					eventParam.relationKey = object.relationKey;
-					break;
-				};
-			};
-
-			if (showToast) {
-				Preview.toastShow({ text: toast });
-			};
-
-			S.Detail.update(subId, { id: details.id, details }, false);
-			analytics.event('ObjectInstall', eventParam);
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	uninstall (object: any, showToast: boolean, route?: string, callBack?: (message: any) => void) {
-		const eventParam: any = { layout: object.layout };
-
-		if (route) {
-			eventParam.route = route;
-		};
-
-		let title = '';
-		let text = '';
-		let toast = '';
-		
-		switch (object.layout) {
-			case I.ObjectLayout.Type: {
-				title = U.Common.sprintf(translate('libActionUninstallTypeTitle'), object.name);
-				text = translate('libActionUninstallTypeText');
-				toast = U.Common.sprintf(translate('toastObjectTypeRemoved'), object.name);
-
-				eventParam.objectType = object.id;
-				break;
-			};
-
-			case I.ObjectLayout.Relation: {
-				title = U.Common.sprintf(translate('libActionUninstallRelationTitle'), object.name);
-				text = translate('libActionUninstallRelationText');
-				toast = U.Common.sprintf(translate('toastRelationRemoved'), object.name);
-
-				eventParam.relationKey = object.relationKey;
-				break;
-			};
-		};
-
-		S.Popup.open('confirm', {
-			data: {
-				title,
-				text,
-				textConfirm: translate('commonRemove'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					C.WorkspaceObjectListRemove([ object.id ], (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						if (callBack) {
-							callBack(message);
-						};
-
-						if (showToast) {
-							Preview.toastShow({ text: toast });
-						};
-						analytics.event('ObjectUninstall', eventParam);
-					});
-				},
-			},
 		});
 	};
 
@@ -674,27 +574,31 @@ class Action {
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const deleted = U.Space.getSpaceviewBySpaceId(id);
+		const space = U.Space.getSpaceviewBySpaceId(id);
 
-		if (!deleted) {
+		if (!space) {
 			return;
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name = U.Common.shorten(deleted.name, 32);
+		const name = U.Common.shorten(space.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
 		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
 		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
 		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+		const confirmMessage = isOwner ? space.name : '';
 
 		analytics.event(`Click${suffix}Space`, { route });
 
 		S.Popup.open('confirm', {
 			data: {
+				icon: 'confirm',
 				title,
 				text,
 				textConfirm: confirm,
+				colorConfirm: 'red',
+				confirmMessage,
 				onConfirm: () => {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
@@ -705,7 +609,7 @@ class Action {
 
 						if (!message.error.code) {
 							Preview.toastShow({ text: toast });
-							analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
+							analytics.event(`${suffix}Space`, { type: space.spaceAccessType, route });
 						};
 					});
 				},

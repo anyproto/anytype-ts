@@ -160,6 +160,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.onScrollHorizontal();
 		this.onScrollVertical();
 
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Record) || [];
+
+		if (ids.length) {
+			selection?.renderSelection();
+		};
+
 		U.Common.triggerResizeEditor(this.props.isPopup);
 	};
 

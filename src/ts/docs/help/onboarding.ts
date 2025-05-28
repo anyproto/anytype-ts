@@ -18,7 +18,6 @@ export default {
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
-			noClose: true,
 			passThrough: true,
 			offsetY: -4,
 		},
@@ -33,7 +32,6 @@ export default {
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
-			noClose: true,
 			passThrough: true,
 			offsetY: -4,
 		},
@@ -57,7 +55,6 @@ export default {
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
-			noClose: true,
 			passThrough: true,
 			offsetY: -4,
 		},
@@ -81,7 +78,6 @@ export default {
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
-			noClose: true,
 			passThrough: true,
 			offsetY: -4,
 		},
@@ -91,11 +87,11 @@ export default {
 		showDimmer: true,
 		param: {
 			noArrow: true,
+			noClose: true,
 			horizontal: I.MenuDirection.Right,
 			stickToElementEdge: I.MenuDirection.Top,
 			width: 288,
 			offsetX: -312,
-			noClose: true,
 			highlightElements: [],
 			hiddenElements: [ 
 				'#widget-buttons', 
@@ -156,7 +152,6 @@ export default {
 				const $element = $('#containerSettings #item-membership');
 				return -$element.outerHeight();
 			},
-			noClose: true,
 		},
 		items: [
 			{
@@ -176,7 +171,6 @@ export default {
 		param: {
 			noArrow: true,
 			width: 288,
-			noClose: true,
 			highlightElements: [],
 			classNameWrap: 'fixed',
 		},
@@ -214,7 +208,6 @@ export default {
 		showDimmer: true,
 		param: {
 			noArrow: true,
-			noClose: true,
 		},
 		items: [
 			{
@@ -381,7 +374,6 @@ export default {
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
-				noClose: true,
 				offsetY: 16,
 				onOpen: () => $(controls).addClass('active'),
 				onClose: () => $(controls).removeClass('active'),
@@ -401,7 +393,6 @@ export default {
 			element: '#pageFlex.isFull .headSimple .side.right',
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
-			noClose: true,
 			offsetX: -304,
 			offsetY: 45,
 		},

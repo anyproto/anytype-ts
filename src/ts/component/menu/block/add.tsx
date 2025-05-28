@@ -273,7 +273,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			ret = ret.concat(objectRelations);
 		};
 
-		ret = S.Record.checkHiddenObjects(ret.filter(it => it.isInstalled)).sort(U.Data.sortByName);
+		ret = S.Record.checkHiddenObjects(ret).sort(U.Data.sortByName);
 
 		if (!isTemplate) {
 			ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
@@ -480,6 +480,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			case 'turnObject': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },

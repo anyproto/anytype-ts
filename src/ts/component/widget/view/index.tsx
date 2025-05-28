@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Select, Label, Button } from 'Component';
-import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics, Action } from 'Lib';
+import { Select, Label } from 'Component';
+import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate } from 'Lib';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
@@ -17,7 +17,7 @@ interface WidgetViewRefProps {
 
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
-	const { parent, block, isSystemTarget, onCreate, getData, getTraceId, getLimit, sortFavorite } = props;
+	const { parent, block, isSystemTarget, getData, getTraceId, getLimit, sortFavorite } = props;
 	const { viewId, limit, layout } = parent.content;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -78,20 +78,16 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		const setOf = Relation.getArrayValue(object.setOf);
 		const isCollection = U.Object.isCollectionLayout(object.layout);
-
-		if (!setOf.length && !isCollection) {
-			S.Record.recordsSet(subId, '', []);
-			return;
-		};
-
 		const view = getView();
-		if (!view) {
+
+		if (!view || (!setOf.length && !isCollection)) {
 			return;
 		};
 
 		Dataview.getData({
 			rootId,
 			blockId: J.Constant.blockId.dataview,
+			subId,
 			newViewId: viewId,
 			sources: setOf,
 			limit: getLimitHandler(),
@@ -120,11 +116,16 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	};
 
 	const getLimitHandler = (): number => {
-		let limit = getLimit(parent.content);
-		if ((layout == I.WidgetLayout.View) && (viewType == I.ViewType.Calendar)) {
-			limit = 1000;
+		const view = getView();
+		if (!view) {
+			return 0;
 		};
-		return limit;
+
+		if ((layout == I.WidgetLayout.View) && (view.type == I.ViewType.Calendar)) {
+			return 1000;
+		};
+
+		return getLimit(parent.content);
 	};
 
 	const onChangeView = (viewId: string) => {
@@ -140,51 +141,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		return (targetId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
 	};
 
-	const isAllowedObject = () => {
-		const isCollection = U.Object.isCollectionLayout(object.layout);
-
-		if (isSystemTarget) {
-			return true;
-		};
-
-		let isAllowed = S.Block.checkFlags(rootId, J.Constant.blockId.dataview, [ I.RestrictionDataview.Object ]);
-		if (!isAllowed) {
-			return false;
-		};
-
-		if (isAllowed && isCollection) {
-			return true;
-		};
-
-		const sources = getSources();
-		if (!sources.length) {
-			return false;
-		};
-
-		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type);
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
-
-		for (const type of types) {
-			if (skipLayouts.includes(type.recommendedLayout)) {
-				isAllowed = false;
-				break;
-			};
-		};
-
-		return isAllowed;
-	};
-
-	const getSources = (): string[] => {
-		if (U.Object.isCollectionLayout(object.layout)) {
-			return [];
-		};
-
-		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type).map(it => it.id);
-		const relations = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Relation).map(it => it.id);
-
-		return [].concat(types).concat(relations);
-	};
-
 	const onOpen = () => {
 		if (childRef.current?.onOpen) {
 			childRef.current?.onOpen();
@@ -196,7 +152,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const views = S.Record.getViews(rootId, J.Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 	const cn = [ 'innerWrap' ];
 	const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
-	const canCreate = props.canCreate && isAllowedObject();
+	const isEmpty = !length && showEmpty;
 	const childProps = {
 		...props,
 		ref: childRef,
@@ -231,18 +187,10 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		);
 	};
 
-	if (!isLoading && !length && showEmpty) {
+	if (isEmpty) {
 		content = (
 			<div className="emptyWrap">
-				<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-				{canCreate ? (
-					<Button 
-						text={translate('commonCreateObject')} 
-						color="blank" 
-						className="c28" 
-						onClick={() => onCreate({ route: analytics.route.inWidget })} 
-					/> 
-				) : ''}
+				{!isLoading ? <Label className="empty" text={translate('widgetEmptyLabel')} /> : ''}
 			</div>
 		);
 	} else {
@@ -297,13 +245,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				});
 			};
 		};
-
-		return () => {
-			/*
-			U.Subscription.destroyList([ subId ]);
-			Action.pageClose([ targetId, traceId ].join('-'), false);
-			*/
-		};
 	}, []);
 
 	useEffect(() => {
@@ -311,6 +252,10 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			load(viewId);
 		};
 	}, [ viewId ]);
+
+	useEffect(() => {
+		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);
+	});
 
 	useImperativeHandle(ref, () => ({
 		updateData,

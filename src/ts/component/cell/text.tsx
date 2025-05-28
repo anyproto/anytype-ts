@@ -4,13 +4,11 @@ import { observer } from 'mobx-react';
 import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
 import { Input, IconObject } from 'Component';
 
-const MENU_ID = 'calendar';
-
 const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const inputRef = useRef(null);
-	const { showRelativeDates } = S.Common;
+	const { showRelativeDates, dateFormat } = S.Common;
 	const { 
 		id, recordId, relation, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit, viewType, getView, getRecord, onChange, cellPosition, onRecordAdd,
 		groupId, recordIdx,
@@ -36,10 +34,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		if (canEdit && (v != isEditing)) {
 			setIsEditing(v);
 		};
-	};
-
-	const onChangeHandler = (v: any) => {
-		setValue(v);
 	};
 
 	const onPaste = (e: any, v: any) => {
@@ -90,7 +84,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		setValue(v);
 
 		if (v) {
-			S.Menu.updateData(MENU_ID, { value: v });
+			S.Menu.updateData('calendar', { value: v });
 		};
 
 		if (keyboard.isComposition) {
@@ -99,7 +93,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
-			save(v, () => S.Menu.close(MENU_ID));
+			save(v, () => S.Menu.close('calendar'));
 		});
 	};
 
@@ -123,7 +117,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 
 		save(value.current, () => {
-			if (!S.Menu.isOpen(MENU_ID)) {
+			if (!S.Menu.isOpen('calendar')) {
 				setEditingHandler(false);
 			};
 		});
@@ -142,16 +136,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	const fixDateValue = (v: any) => {
 		v = String(v || '').replace(/_/g, '');
 
-		let view = null;
-		let viewRelation: any = {};
-
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-
-			if (v && viewRelation) {
-				v = U.Date.parseDate(v, viewRelation.dateFormat);
-			};
+		if (v) {
+			v = U.Date.parseDate(v, dateFormat);
 		};
 
 		return v ? v : null;
@@ -193,7 +179,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			const mask = [];
 			const ph = [];
 
-			switch (viewRelation.dateFormat) {
+			switch (dateFormat) {
 				case I.DateFormat.ISO: {
 					mask.push('9999.99.99');
 					ph.push('yyyy.mm.dd');
@@ -213,7 +199,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				};
 			};
 			
-			if (viewRelation.includeTime) {
+			if (relation.includeTime) {
 				mask.push('99:99');
 				ph.push('hh:mm');
 			};
@@ -281,10 +267,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				val = Number(val) || 0;
 
 				const day = showRelativeDates ? U.Date.dayString(val) : null;
-				const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, val);
+				const date = day ? day : U.Date.dateWithFormat(dateFormat, val);
 				const time = U.Date.timeWithFormat(S.Common.timeFormat, val);
 				
-				val = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
+				val = relation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 			} else {
 				val = '';
 			};
@@ -349,13 +335,13 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			if (relation.format == I.RelationType.Date) {
 				const format = [];
 
-				switch (viewRelation.dateFormat) {
+				switch (dateFormat) {
 					case I.DateFormat.ISO: format.push('Y.m.d'); break;
 					case I.DateFormat.ShortUS: format.push('m.d.Y'); break;
 					default: format.push('d.m.Y'); break;
 				};
 
-				if (viewRelation.includeTime) {
+				if (relation.includeTime) {
 					format.push('H:i');
 				};
 
@@ -397,7 +383,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	useImperativeHandle(ref, () => ({
 		setEditing: (v: boolean) => setEditingHandler(v),
 		isEditing: () => isEditing,
-		onChange: (v: any) => onChangeHandler(v),
+		onChange: (v: any) => setValue(v),
 		getValue: () => val,
 		onBlur,
 	}));

@@ -110,7 +110,7 @@ class Dataview {
 			sorts: [],
 		}, param);
 
-		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
+		const { rootId, blockId, newViewId, keys, offset, limit, collectionId } = param;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const view = S.Record.getView(rootId, blockId, newViewId);
 		
@@ -142,31 +142,29 @@ class Dataview {
 			};
 		};
 
-		U.Subscription.destroyList([ subId ], false, () => {
-			U.Subscription.subscribe({
-				...param,
-				subId,
-				filters: filters.map(it => this.filterMapper(view, it)),
-				sorts: sorts.map(it => this.filterMapper(view, it)),
-				keys,
-				limit,
-				offset,
-				collectionId,
-				ignoreDeleted: true,
-				ignoreHidden: true,
-			}, callBack);
-		});
+		U.Subscription.subscribe({
+			...param,
+			subId,
+			filters: filters.map(it => this.filterMapper(view, it)),
+			sorts: sorts.map(it => this.filterMapper(view, it)),
+			keys,
+			limit,
+			offset,
+			collectionId,
+			ignoreDeleted: true,
+			ignoreHidden: true,
+		}, callBack);
 	};
 
 	filterMapper (view: any, it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
-		const vr = view.getRelation(it.relationKey);
 
 		if (relation) {
 			it.format = relation.format;
-		};
-		if (vr && vr.includeTime) {
-			it.includeTime = true;
+
+			if (relation.includeTime) {
+				it.includeTime = true;
+			};
 		};
 		return it;
 	};
@@ -431,6 +429,11 @@ class Dataview {
 			if (view.type == I.ViewType.Calendar) {
 				details[view.groupRelationKey] = U.Date.now();
 			};
+
+			if (view.type == I.ViewType.Timeline) {
+				details[view.groupRelationKey] = U.Date.now();
+				details[view.endRelationKey] = U.Date.now() + 86400 * 5;
+			};
 		};
 
 		for (const filter of view.filters) {
@@ -456,6 +459,8 @@ class Dataview {
 		const view = this.getView(rootId, blockId, viewId);
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+		const type = S.Record.getTypeById(object.type);
 		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
 
 		let typeId = '';
@@ -482,9 +487,12 @@ class Dataview {
 			};
 		};
 
-		const type = S.Record.getTypeById(typeId);
+		if (!typeId && type && type.defaultTypeId) {
+			typeId = type.defaultTypeId;
+		};
 
-		if (!type) {
+		const check = S.Record.getTypeById(typeId);
+		if (!check) {
 			typeId = S.Common.type;
 		};
 
@@ -558,7 +566,7 @@ class Dataview {
 		};
 
 		const { showRelativeDates } = S.Common;
-		const { formulaType, includeTime, relationKey } = viewRelation;
+		const { formulaType, relationKey } = viewRelation;
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation) {
@@ -576,7 +584,7 @@ class Dataview {
 			const date = day ? day : U.Date.dateWithFormat(S.Common.dateFormat, t);
 			const time = U.Date.timeWithFormat(S.Common.timeFormat, t);
 
-			return includeTime ? [ date, time ].join(' ') : date;
+			return relation.includeTime ? [ date, time ].join(' ') : date;
 		};
 
 		const min = () => {

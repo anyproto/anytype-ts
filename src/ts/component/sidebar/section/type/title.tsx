@@ -6,15 +6,18 @@ import { J, analytics, I, keyboard, translate } from 'Lib';
 const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends React.Component<I.SidebarSectionComponent> {
 	
 	refName = null;
+	range: I.TextRange = null;
 	timeout = 0;
 
 	constructor (props: I.SidebarSectionComponent) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
+		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 	};
 
     render () {
@@ -34,7 +37,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 						object={object} 
 						size={24} 
 						canEdit={!readonly}
-						onIconSelect={this.onSelect}
+						onIconSelect={this.onIconSelect}
 						menuParam={{
 							horizontal: I.MenuDirection.Center,
 							className: 'fixed',
@@ -62,9 +65,10 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 					<Editable
 						ref={ref => this.refName = ref}
 						readonly={readonly}
-						onBlur={this.onChange}
+						onBlur={this.onBlur}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
+						onSelect={this.onSelect}
 						placeholder={placeholder}
 					/>
 				</div>
@@ -102,16 +106,20 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 		this.refName.setValue(text);
 		this.refName.placeholderCheck();
+
+		if (this.range) {
+			this.refName.setRange(this.range);
+		};
 	};
 
-	onSelect (id: string, color: number) {
+	onIconSelect (id: string, color: number) {
 		this.props.onChange({ iconName: id, iconOption: color });
 
 		analytics.stackAdd('SetIcon', { objectType: J.Constant.typeKey.type, color });
 	};
 
 	onChange () {
-		const value = this.refName?.getTextValue().trim();
+		const value = this.getValue();
 
 		this.props.onChange({ [this.getRelationKey()]: value });
 		window.clearTimeout(this.timeout);
@@ -124,8 +132,25 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		});
 	};
 
+	onSelect () {
+		this.range = this.refName.getRange();
+	};
+
+	onBlur () {
+		this.range = null;
+		this.onChange();
+	};
+
+	getValue () {
+		let t = String(this.refName?.getTextValue() || '');
+		if (t === '\n') {
+			t = '';
+		};
+		return t;
+	};
+
 	onKeyUp (e: any) {
-		const value = this.refName?.getTextValue().trim();
+		const value = this.getValue();
 
 		this.props.disableButton(!value);
 

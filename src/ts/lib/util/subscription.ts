@@ -4,9 +4,10 @@ import sha1 from 'sha1';
 const SYSTEM_DATE_RELATION_KEYS = [
 	'lastModifiedDate', 
 	'lastOpenedDate', 
+	'lastUsedDate',
+	'lastMessageDate',
 	'createdDate',
 	'addedDate',
-	'lastUsedDate',
 ];
 
 class UtilSubscription {
@@ -49,11 +50,15 @@ class UtilSubscription {
 
 	defaultFilters (param: any) {
 		const { config } = S.Common;
-		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
-		const filters = param.filters || [];
-		const skipLayouts = [ I.ObjectLayout.Chat ];
+		const { ignoreHidden, ignoreDeleted, ignoreArchived, ignoreChat } = param;
+		const filters = U.Common.objectCopy(param.filters || []);
+		
+		let skipLayouts = [];
 
-		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		if (ignoreChat) {
+			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
+		};
+
 		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
@@ -110,6 +115,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
+			ignoreChat: true,
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
@@ -117,10 +123,11 @@ class UtilSubscription {
 		}, param);
 
 		const { config } = S.Common;
-		const { spaceId, subId, idField, sorts, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
+		const { spaceId, subId, idField, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
 		const keys = this.mapKeys(param);
-		const filters = this.defaultFilters(param);
 		const debug = config.flagsMw.request;
+		const filters = this.defaultFilters(param);
+		const sorts = (param.sorts || []).map(this.sortMapper);
 
 		if (!subId) {
 			if (debug) {
@@ -144,7 +151,7 @@ class UtilSubscription {
 			return;
 		};
 
-		const hash = this.makeHash(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId);
+		const hash = this.makeHash(spaceId, subId, filters, sorts, keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId);
 
 		if (hash) {
 			if (this.map.has(subId) && (this.map.get(subId) == hash)) {
@@ -161,7 +168,7 @@ class UtilSubscription {
 			this.map.set(subId, hash);
 		};
 
-		C.ObjectSearchSubscribe(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
+		C.ObjectSearchSubscribe(spaceId, subId, filters.map(this.filterMapper), sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
 
 			if (callBack) {
@@ -271,14 +278,16 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
+			ignoreChat: true,
 			skipLayoutFormat: null,
 		}, param);
 
 		const { config } = S.Common;
-		const { spaceId, sorts, offset, limit, skipLayoutFormat } = param;
+		const { spaceId, offset, limit, skipLayoutFormat, fullText } = param;
 		const keys = this.mapKeys(param);
-		const filters = this.defaultFilters(param);
 		const debug = config.flagsMw.request;
+		const filters = this.defaultFilters(param);
+		const sorts = (param.sorts || []).map(this.sortMapper);
 
 		if (!spaceId) {
 			if (debug) {
@@ -291,7 +300,7 @@ class UtilSubscription {
 			return;
 		};
 
-		C.ObjectSearch(spaceId, filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
+		C.ObjectSearch(spaceId, filters, sorts, keys, fullText, offset, limit, (message: any) => {
 			if (message.records) {
 				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
 			};
@@ -300,6 +309,14 @@ class UtilSubscription {
 				callBack(message);
 			};
 		});
+	};
+
+	filterMapper (it: I.Filter) {
+		const relation = S.Record.getRelationByKey(it.relationKey);
+		if (relation) {
+			it.format = relation.format;
+		};
+		return it;
 	};
 
 	sortMapper (it: any) {
@@ -431,24 +448,10 @@ class UtilSubscription {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				ignoreArchived: false,
+				ignoreChat: false,
 				onSubscribe: () => {
 					S.Record.getRecords(J.Constant.subId.type).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
-			},
-			{
-				spaceId: J.Constant.storeSpaceId,
-				subId: J.Constant.subId.typeStore,
-				keys: this.typeRelationKeys(),
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
-				],
-				sorts: [
-					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
 			},
 			{
 				subId: J.Constant.subId.relation,
@@ -463,17 +466,6 @@ class UtilSubscription {
 				onSubscribe: () => {
 					S.Record.getRecords(J.Constant.subId.relation).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
-			},
-			{
-				spaceId: J.Constant.storeSpaceId,
-				subId: J.Constant.subId.relationStore,
-				keys: J.Relation.relation,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
 			},
 			{
 				subId: J.Constant.subId.option,

@@ -13,8 +13,10 @@ interface State {
 
 const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex extends React.Component<I.PageSettingsComponent, State> {
 
+	node: any = null;
 	refName: any = null;
 	refDescription: any = null;
+	canSave: boolean = true;
 
 	state = {
 		error: '',
@@ -27,6 +29,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		super(props);
 
 		this.setName = this.setName.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
@@ -52,7 +55,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const maxIcons = 5;
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
-			{ color: 'black', text: translate('commonSave'), onClick: this.onSave },
+			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave'  },
 		] : [
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: this.onEdit },
 		];
@@ -103,11 +106,11 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		};
 
 		return (
-			<>
+			<div ref={node => this.node = node}>
 				<div className={cnh.join(' ')}>
 					{canWrite ? (
 						<div className="buttons">
-							{headerButtons.map((el, idx) => <Button key={idx} text={el.text} className="c28" color={el.color} onClick={el.onClick} />)}
+							{headerButtons.map((el, idx) => <Button className={[ 'c28', el.className ? el.className : ''].join(' ')} key={idx} text={el.text} color={el.color} onClick={el.onClick} />)}
 						</div>
 					) : ''}
 
@@ -124,26 +127,36 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						onUpload={this.onUpload}
 					/>
 
-					<Input
-						ref={ref => this.refName = ref}
-						placeholder={translate('defaultNamePage')}
-						readonly={!canWrite || !isEditing}
-					/>
+					<div className="spaceNameWrapper">
+						<Editable
+							classNameWrap="spaceName"
+							ref={ref => this.refName = ref}
+							placeholder={translate('defaultNamePage')}
+							readonly={!canWrite || !isEditing}
+							onKeyUp={() => this.onKeyUp('name')}
+							maxLength={J.Constant.limit.spaceName}
+						/>
+						<div className="counter" />
+					</div>
 
 					{isEditing || this.checkDescription() ? (
-						<Editable
-							classNameWrap="spaceDescription"
-							ref={ref => this.refDescription = ref}
-							placeholder={translate('popupSettingsSpaceIndexDescriptionPlaceholder')}
-							readonly={!canWrite || !isEditing}
-							onKeyUp={() => this.refDescription?.placeholderCheck()}
-						/>
+						<div className="spaceDescriptionWrapper">
+							<Editable
+								classNameWrap="spaceDescription"
+								ref={ref => this.refDescription = ref}
+								placeholder={translate('popupSettingsSpaceIndexDescriptionPlaceholder')}
+								readonly={!canWrite || !isEditing}
+								onKeyUp={() => this.onKeyUp('description')}
+								maxLength={J.Constant.limit.spaceDescription}
+							/>
+							<div className="counter" />
+						</div>
 					) : ''}
 				</div>
 
 				{/*{membersIcons}*/}
 
-				<div className="buttons">
+				<div className="spaceButtons">
 					{buttons.map((el, idx) => {
 						const cn = [ 'btn' ];
 
@@ -241,7 +254,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						</div>
 					)}
 				</div>
-			</>
+			</div>
 		);
 	};
 
@@ -268,6 +281,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			name = '';
 		};
 		this.refName.setValue(name);
+		this.refName.placeholderCheck();
 
 		if (space.description) {
 			this.refDescription?.setValue(space.description);
@@ -302,6 +316,13 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		this.setState({ cid, key });
 	};
 
+	onKeyUp (input: string) {
+		const ref = input == 'name' ? this.refName : this.refDescription;
+
+		ref?.placeholderCheck();
+		this.updateCounters();
+	};
+
 	onDashboard () {
 		U.Menu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
 	};
@@ -313,6 +334,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			element: `#${getId()} #defaultType`,
 			horizontal: I.MenuDirection.Right,
 			data: {
+				canAdd: true,
 				filter: '',
 				filters: [
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
@@ -338,7 +360,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onDelete () {
-		Action.removeSpace(S.Common.space, 'Settings', (message: any) => {
+		Action.removeSpace(S.Common.space, analytics.route.settings, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			};
@@ -372,7 +394,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				const element = `#${U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)}`;
 				S.Menu.open('select', {
 					element,
-					offsetX: 16,
+					horizontal: I.MenuDirection.Center,
 					offsetY: -40,
 					onOpen: () => $(element).addClass('hover'),
 					onClose: () => $(element).removeClass('hover'),
@@ -430,12 +452,18 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	onEdit () {
 		this.setState({ isEditing: true });
-		this.refName?.focus();
+		this.refName?.setFocus();
+
+		this.updateCounters();
 	};
 
 	onSave () {
+		if (!this.canSave) {
+			return;
+		};
+
 		C.WorkspaceSetInfo(S.Common.space, {
-			name: this.checkName(this.refName?.getValue()),
+			name: this.checkName(this.refName?.getTextValue()),
 			description: this.refDescription?.getTextValue(),
 		});
 		this.setState({ isEditing: false });
@@ -470,6 +498,43 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
 			{ id: 'more', name: translate('commonMore'), icon: 'more' },
 		].filter(it => it);
+	};
+
+	updateCounters () {
+		const node = $(this.node);
+
+		let canSave = true;
+
+		[ 'name', 'description' ].forEach((input) => {
+			let ref = null;
+			let el = null;
+			let limit = 0;
+			let threshold = 0;
+
+			if (input == 'name') {
+				ref = this.refName;
+				el = node.find('.spaceNameWrapper .counter');
+				limit = J.Constant.limit.spaceName;
+				threshold = J.Constant.limit.spaceNameThreshold;
+			} else {
+				ref = this.refDescription;
+				el = node.find('.spaceDescriptionWrapper .counter');
+				limit = J.Constant.limit.spaceDescription;
+				threshold = J.Constant.limit.spaceDescriptionThreshold;
+			};
+
+			const counter = limit - ref?.getTextValue().length;
+
+			el.text(counter).toggleClass('show', counter <= threshold);
+			el.toggleClass('red', counter < 0);
+
+			if (counter < 0) {
+				canSave = false;
+			};
+		});
+
+		this.canSave = canSave;
+		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);
 	};
 
 });

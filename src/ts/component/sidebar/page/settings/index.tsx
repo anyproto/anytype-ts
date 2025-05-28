@@ -74,7 +74,13 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 							{participant.globalName ? <Label className="anyName" text={participant.globalName} /> : ''}
 						</>
 					);
-					icon = <IconObject object={{ ...participant, name: participant.globalName || participant.name }} param={{ userIconColor: { bg: J.Theme[theme].shape.transparentSecondary } }} size={40} iconSize={40} />;
+					icon = (
+						<IconObject 
+							object={{ ...participant, name: participant.globalName || participant.name }} 
+							size={40} 
+							iconSize={40} 
+						/>
+					);
 				};
 
 				cn.push('itemAccount');
@@ -134,7 +140,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 					<div className="list">
 						{isSpace ? (
 							<div className="head" onClick={this.onBack}>
-								<Icon className="back withBackground" />
+								<Icon className="back" />
 								<ObjectName object={space} />
 							</div>
 						) : ''}
@@ -232,6 +238,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 			{ id: 'dataIndex', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'dataPublish', 'delete' ] },
 			{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+			{ id: 'api', name: translate('popupSettingsApiTitle') },
 		];
 
 		if (this.withMembership()) {
@@ -298,7 +305,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			return;
 		};
 
-		U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Settings });
+		U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
 	};
 
 	onBack () {

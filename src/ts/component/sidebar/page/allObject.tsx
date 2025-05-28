@@ -55,6 +55,11 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_SECTION,
+		});
 	};
 
 	render () {
@@ -118,11 +123,11 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 					<div className="head">
 						<div className="titleWrap" onClick={() => sidebar.leftPanelSetState({ page: 'widget' })}>
 							<div className="side left">
-								<Icon className="back withBackground" />
+								<Icon className="back" />
 								<Title text={translate('commonAllContent')} />
 							</div>
 							<div className="side right">
-								<Icon id="button-object-more" className="more withBackground" onClick={this.onMore} />
+								<Icon id="button-object-more" className="more" onClick={this.onMore} />
 							</div>
 						</div>
 
@@ -245,6 +250,8 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			defaultHeight: i => this.getRowHeight(items[i]),
 			keyMapper: i => (items[i] || {}).id,
 		});
+
+		this.refList?.recomputeRowHeights(0);
 
 		this.setActive(items[this.n]);
 	};
@@ -374,7 +381,6 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 		if (clear) {
 			this.setState({ isLoading: true });
-			S.Record.recordsSet(J.Constant.subId.allObject, '', []);
 		};
 
 		U.Subscription.subscribe({
@@ -388,6 +394,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			ignoreDeleted: true,
 		}, (message: any) => {
 			this.setState({ isLoading: false });
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -599,6 +606,12 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		let layout = null;
 
 		switch (t) {
+			case I.ObjectContainerType.Object: {
+				type = S.Record.getPageType();
+				layout = I.ObjectLayout.Page;
+				break;
+			};
+
 			case I.ObjectContainerType.Bookmark: {
 				type = S.Record.getBookmarkType();
 				layout = I.ObjectLayout.Bookmark;

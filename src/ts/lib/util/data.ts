@@ -150,8 +150,6 @@ class UtilData {
 		const { pin } = S.Common;
 		const { root, widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const color = Storage.get('color');
-		const bgColor = Storage.get('bgColor');
 		const routeParam = Object.assign({ replace: true }, param.routeParam);
 		const route = param.route || redirect;
 
@@ -186,15 +184,6 @@ class UtilData {
 						S.Common.redirectSet('');
 					};
 
-					if (!color) {
-						Storage.set('color', 'orange');
-					};
-					if (!bgColor) {
-						Storage.set('bgColor', 'orange');
-					};
-
-					Storage.clearDeletedSpaces();
-
 					if (callBack) {
 						callBack();
 					};
@@ -216,11 +205,14 @@ class UtilData {
 			};
 		});
 
-		C.ChatSubscribeToMessagePreviews();
+		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
+			for (const item of message.previews) {
+				S.Chat.setState(S.Chat.getSubId(item.spaceId, item.chatId), item.state);
+			};
+		});
 
-		this.getMembershipTiers(noTierCache);
-		this.getMembershipStatus();
-		U.Subscription.createGlobal();
+		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
+		U.Subscription.createGlobal(() => Storage.clearDeletedSpaces());
 
 		analytics.event('OpenAccount');
 	};
@@ -367,6 +359,7 @@ class UtilData {
 			layout: object.layout,
 			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
 			layoutWidth: this.getLayoutWidth(rootId),
+			headerRelationsLayout: type?.headerRelationsLayout,
 		};
 
 		if (undefined !== object.layoutAlign) {
@@ -614,7 +607,7 @@ class UtilData {
 		});
 	};
 
-	getMembershipTiers (noCache: boolean) {
+	getMembershipTiers (noCache: boolean, callBack?: () => void) {
 		const { config, interfaceLang, isOnline } = S.Common;
 		const { testPayment } = config;
 
@@ -629,6 +622,10 @@ class UtilData {
 
 			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
 			S.Common.membershipTiersListSet(tiers);
+
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 
@@ -815,6 +812,11 @@ class UtilData {
 	};
 
 	getConflictRelations (rootId: string, callBack: (ids: string[]) => void) {
+		if (!rootId) {
+			console.error('[U.Data].getConflictRelations: No rootId');
+			return;
+		};
+
 		C.ObjectTypeListConflictingRelations(rootId, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;

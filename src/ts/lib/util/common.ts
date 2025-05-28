@@ -642,7 +642,7 @@ class UtilCommon {
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					U.Object.openAuto({ id: 'spaceList', layout: I.ObjectLayout.Settings });
+					U.Object.openRoute({ id: 'spaceList', layout: I.ObjectLayout.Settings });
 				},
 			},
 		});
@@ -721,7 +721,7 @@ class UtilCommon {
 	findClosestElement (array: number[], goal: number) {
 		return array.reduce((prev: number, curr: number) => {
 			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
-		});
+		}, 0);
 	};
 
 	
@@ -752,13 +752,13 @@ class UtilCommon {
 	};
 
 	matchUrl (s: string): string {
-		const m = String(s || '').match(/^(?:[a-z]+:(?:\/\/)?)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
-		return (m && m.length) ? m[0] : '';
+		const m = String(s || '').match(/^(?:[a-z]+:(?:\/\/)?)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?\s?$/gi);
+		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 
 	matchDomain (s: string): string {
 		const m = String(s || '').match(/^([a-z]+:\/\/)?([\w-]+\.)+[\w-]+(:\d+)?(\/[^?\s]*)?(\?[^#\s]*)?(#.*)?$/gi);
-		return (m && m.length) ? m[0] : '';
+		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 
 	matchLocalPath (s: string): string {
@@ -772,7 +772,7 @@ class UtilCommon {
 			m = s.match(ru);
 		};
 
-		return (m && m.length) ? m[0] : '';
+		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 
 	getDataTransferFiles (items: any[]): any[] {
@@ -926,7 +926,8 @@ class UtilCommon {
 		return DOMPurify.sanitize(s, { 
 			ADD_TAGS: tags,
 			ADD_ATTR: [ 'contenteditable' ],
-			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+			FORBID_ATTR: [ 'style' ],
 		});
 	};
 
@@ -984,7 +985,7 @@ class UtilCommon {
 	};
 
 	normalizeLineEndings (s: string) {
-		return String(s || '').replace(/\r\n?/g, '\n');
+		return String(s || '').replace(/\r?\n/g, '\n');
 	};
 
 	htmlSpecialChars (s: string) {

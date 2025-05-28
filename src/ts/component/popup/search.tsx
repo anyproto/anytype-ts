@@ -64,7 +64,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			let value: any = '';
 
 			if (relationKey) {
-				if ([ 'name', 'pluralName', 'type' ].includes(relationKey)) {
+				if ([ 'name', 'pluralName', 'type', 'snippet' ].includes(relationKey)) {
 					return '';
 				} else {
 					const relation = S.Record.getRelationByKey(relationKey);
@@ -811,7 +811,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			// Settings item
 			if (item.isSettings) {
-				U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Settings });
+				U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
 			} else 
 
 			// Import action

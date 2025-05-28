@@ -194,6 +194,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				focus.apply();
 			},
 			data: {
+				canAdd: true,
 				filter: '',
 				filters: [
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },

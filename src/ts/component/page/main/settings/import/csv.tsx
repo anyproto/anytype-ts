@@ -25,17 +25,12 @@ class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent,
 	render () {
 		this.init();
 
-		const { config } = S.Common;
 		const { error } = this.state;
 		const { delimiter, delimiters } = this.delimiterOptions();
-
 		const modeOptions: any[] = [ 
 			{ id: I.CsvImportMode.Collection, name: translate('popupSettingsImportCsvCollection') },
+			{ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') }
 		];
-
-		if (config.experimental) {
-			modeOptions.unshift({ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') });
-		};
 
 		return (
 			<div>

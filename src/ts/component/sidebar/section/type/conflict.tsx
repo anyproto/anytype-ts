@@ -2,11 +2,10 @@ import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'rea
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Icon, ObjectName, IconObject } from 'Component';
-import { I, C, S, U, Relation, translate, keyboard } from 'Lib';
+import { I, S, U, Relation, translate, keyboard } from 'Lib';
 
 const SidebarSectionTypeConflict = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 
-	const { space } = S.Common;
 	const { rootId, object, onChange } = props;
 	const [ dummy, setDummy ] = useState(0);
 	const [ conflictIds, setConflictIds ] = useState([]);

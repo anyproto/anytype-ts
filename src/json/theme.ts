@@ -22,11 +22,8 @@ export default {
 	'': {
 
 		error: '#000',
-		iconDefault: '#e3e3e3',
-
-		shape: {
-			transparentSecondary: 'rgba(0, 0, 0, 0.05)',
-		},
+		iconDefault: 'rgba(0,0,0,0.11)',
+		textInversion: '#fff',
 
 		color: {
 			default: '#252525',
@@ -63,10 +60,7 @@ export default {
 			bg: '#fff'
 		},
 
-		iconUser: {
-			text: '#b6b6b6',
-			bg: '#f2f2f2'
-		},
+		iconUser: '#b6b6b6',
 
 		progress: {
 			bg: '#ebebeb',
@@ -77,11 +71,8 @@ export default {
 	dark: {
 
 		error: '#fff',
-		iconDefault: '#323232',
-
-		shape: {
-			transparentSecondary: 'rgba(255, 255, 255, 0.05)',
-		},
+		iconDefault: 'rgba(255,255,255,0.11)',
+		textInversion: '#171717',
 
 		color: {
 			default: '#f8f8f8',
@@ -124,10 +115,7 @@ export default {
 			bg: '#fff'
 		},
 
-		iconUser: {
-			text: '#9a9a9a',
-			bg: '#b6b6b6'
-		},
+		iconUser: '#9a9a9a',
 
 		progress: {
 			bg: '#292929',

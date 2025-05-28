@@ -45,7 +45,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (withTypeSelect) {
-			itemsSettings.unshift({ id: 'type', name: translate('menuDataviewNewType'), arrow: true, caption: type.name });
+			itemsSettings.unshift({ id: 'type', name: translate('menuDataviewNewType'), arrow: true, caption: U.Object.name(type) });
 		};
 
 		let sections: any[] = [
@@ -118,6 +118,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			case 'type': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },

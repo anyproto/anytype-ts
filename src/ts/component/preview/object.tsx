@@ -307,11 +307,11 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		setIsLoading(true);
 
 		C.ObjectShow(rootId, TRACE_ID, U.Router.getRouteSpaceId(), () => {
-			setIsLoading(false);
-
 			if (setObject) {
 				setObject(S.Detail.get(contextId, rootId, []));
 			};
+
+			setIsLoading(false);
 		});
 	};
 

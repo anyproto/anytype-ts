@@ -57,16 +57,16 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const win = $(window);
 
 		unbind();
-		win.on('updateGraphSettings.graph', () => updateSettings());
-		win.on('updateGraphRoot.graph', (e: any, data: any) => setRootId(data.id));
-		win.on('removeGraphNode.graph', (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
-		win.on(`keydown.graph`, e => onKeyDown(e));
+		win.on(`updateGraphSettings.${id}`, () => updateSettings());
+		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => setRootId(data.id));
+		win.on(`removeGraphNode.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
+		win.on(`keydown.${id}`, e => onKeyDown(e));
 	};
 
 	const unbind = () => {
 		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'removeGraphNode', 'keydown' ];
 
-		$(window).off(events.map(it => `${it}.graph`).join(' '));
+		$(window).off(events.map(it => `${it}.${id}`).join(' '));
 	};
 
 	const getTouchDistance = (touches: { clientX: number, clientY: number }[]): number => {

@@ -20,12 +20,15 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const Color = (item: any) => (
 			<div
 				id={`item-${item.id}`}
-				className={[ 'item', 'color', `color-${item.className}` ].join(' ')}
+				className={[
+					'item',
+					'color',
+					`color-${item.className}`,
+					this.color == item.value ? 'selected' : ''
+				].join(' ')}
 				onClick={e => this.onClick(e, item)}
 				onMouseEnter={e => this.onMouseEnter(e, item)}
-			>
-				{this.color == item.value ? <Icon className="tick" /> : ''}
-			</div>
+			/>
 		);
 
 		const Section = (item: any) => (
@@ -104,14 +107,22 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isNew } = data;
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
+
+		let button = null;
+		if (isNew) {
+			button = { id: 'create', icon: 'add', name: translate('menuDataviewOptionEditCreate') };
+		} else {
+			button = { id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') };
+		};
 
 		return [
 			{ children: colors, className: 'colorPicker' },
 			{ 
-				children: [
-					{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
-				] 
+				children: [ button ]
 			},
 		];
 	};
@@ -128,6 +139,10 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	onKeyDown (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { isNew } = data;
+
 		window.clearTimeout(this.timeout);
 
 		let ret = false;
@@ -135,8 +150,12 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
-			this.save();
-			this.props.close();
+			if (isNew) {
+				this.create();
+			} else {
+				this.save();
+				this.props.close();
+			};
 
 			ret = true;
 		});
@@ -169,6 +188,9 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 					}
 				}
 			});
+		} else
+		if (item.id == 'create') {
+			this.create();
 		};
 	};
 
@@ -199,17 +221,49 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option } = data;
+		const { option, isNew } = data;
+		const value = this.refName ? this.refName.getValue() : '';
+
+		if (!value || isNew) {
+			return;
+		};
+
+		C.ObjectListSetDetails([ option.id ], [
+			{ key: 'name', value },
+			{ key: 'relationOptionColor', value: this.getColor() },
+		]);
+	};
+
+	create () {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { relationKey } = data;
 		const value = this.refName ? this.refName.getValue() : '';
 
 		if (!value) {
 			return;
 		};
 
-		C.ObjectListSetDetails([ option.id ], [ 
-			{ key: 'name', value },
-			{ key: 'relationOptionColor', value: this.color },
-		]);
+		if (!relationKey) {
+			console.error('[MenuDataviewOption.Create] No relationKey');
+			return;
+		};
+
+		C.ObjectCreateRelationOption({
+			relationKey,
+			name: value,
+			relationOptionColor: this.getColor(),
+		}, S.Common.space);
+		close();
+	};
+
+	getColor () {
+		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
+
+		if (this.n > -1) {
+			return colors[this.n]?.value || this.color;
+		};
+		return this.color;
 	};
 	
 });
