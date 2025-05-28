@@ -346,7 +346,7 @@ class UtilData {
 
 		const object = S.Detail.get(rootId, blockId, [ 
 			'type', 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'iconName', 'iconOption', 
-			'templateIsBundled', 'featuredRelations', 'targetObjectType', 'headerRelationsLayout',
+			'templateIsBundled', 'featuredRelations', 'targetObjectType',
 		].concat(J.Relation.cover).concat(keys), true);
 		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
@@ -359,7 +359,7 @@ class UtilData {
 			layout: object.layout,
 			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
 			layoutWidth: this.getLayoutWidth(rootId),
-			headerRelationsLayout: object.headerRelationsLayout,
+			headerRelationsLayout: type?.headerRelationsLayout,
 		};
 
 		if (undefined !== object.layoutAlign) {

@@ -47,8 +47,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
 		const object = this.getObject();
-		const type = S.Detail.get(rootId, object.type, [ 'headerRelationsLayout' ]);
-		const { headerRelationsLayout } = type;
+		const check = U.Data.checkDetails(rootId, rootId, []);
+		const { headerRelationsLayout } = check;
 
 		return (
 			<div 
@@ -852,7 +852,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems (): any[] {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const short = S.Detail.get(rootId, storeId, [ 'type', 'targetObjectType', 'layout', 'featuredRelations' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'type', 'targetObjectType', 'layout', 'featuredRelations', 'headerRelationsLayout' ], true);
 		const keys = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
 
 		let ret = [];
