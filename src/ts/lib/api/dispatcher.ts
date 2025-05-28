@@ -606,7 +606,7 @@ class Dispatcher {
 					let updateData = false;
 
 					if (fields !== null) {
-						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit' ];
+						const updateKeys = [ 'type', 'groupRelationKey', 'endRelationKey', 'pageLimit' ];
 
 						for (const f of updateKeys) {
 							if (fields[f] != view[f]) {

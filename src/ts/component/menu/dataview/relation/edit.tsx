@@ -238,6 +238,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			unlinkText = translate('commonUnlinkFromType');
 		};
 
+		let canOpen = true;
 		let canDuplicate = true;
 		let canDelete = true;
 		let canUnlink = !noUnlink && !isName;
@@ -246,7 +247,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			canUnlink = false;
 		};
 
-		if (relation) {
+		if (relation && relation.id) {
 			const isAllowedRelation = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 
 			canDuplicate = canDuplicate && isAllowedRelation;
@@ -257,9 +258,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			} else {
 				canUnlink = canUnlink && isAllowedRelation;
 			};
+		} else {
+			canOpen = false;
 		};
 
-		if (!relation || readonly) {
+		if (!relation || !relation.id || readonly) {
 			canDuplicate = false;
 			canDelete = false;
 		};
@@ -267,7 +270,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let sections: any[] = [
 			{
 				children: [
-					relation ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
+					canOpen ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
 					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
 					canUnlink ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
 					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonMoveToBin') } : null,

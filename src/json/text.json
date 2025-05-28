@@ -362,7 +362,7 @@
 	"viewName3": "Kanban",
 	"viewName4": "Calendar",
 	"viewName5": "Graph",
-
+	"viewName6": "Timeline",
 
 	"progressDropFiles": "Copying files...",
 	"progressImport": "Import in progress...",
@@ -1633,6 +1633,8 @@
 	"menuDataviewViewEditFitMedia": "Fit media",
 	"menuDataviewViewEditGroupBy": "Group by",
 	"menuDataviewViewEditDate": "Date Property",
+	"menuDataviewViewEditStartDate": "Start date",
+	"menuDataviewViewEditEndDate": "End date",
 	"menuDataviewViewEditColorColumns": "Color columns",
 	"menuDataviewViewEditShowIcon": "Show icon",
 	"menuDataviewViewEditPageLimit": "Page limit",
