@@ -501,6 +501,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	updateCounters () {
+		const node = $(this.node);
+
 		let canSave = true;
 
 		[ 'name', 'description' ].forEach((input) => {
@@ -511,29 +513,23 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 			if (input == 'name') {
 				ref = this.refName;
-				el = $(this.node).find('.spaceNameWrapper .counter');
+				el = node.find('.spaceNameWrapper .counter');
 				limit = J.Constant.limit.spaceName;
 				threshold = J.Constant.limit.spaceNameThreshold;
 			} else {
 				ref = this.refDescription;
-				el = $(this.node).find('.spaceDescriptionWrapper .counter');
+				el = node.find('.spaceDescriptionWrapper .counter');
 				limit = J.Constant.limit.spaceDescription;
 				threshold = J.Constant.limit.spaceDescriptionThreshold;
 			};
 
 			const counter = limit - ref?.getTextValue().length;
 
-			if (counter <= threshold) {
-				el.addClass('show').text(counter);
-			} else {
-				el.removeClass('show');
-			};
+			el.text(counter).toggleClass('show', counter <= threshold);
+			el.toggleClass('red', counter < 0);
 
 			if (counter < 0) {
-				el.addClass('red');
 				canSave = false;
-			} else {
-				el.removeClass('red');
 			};
 		});
 
