@@ -10,10 +10,11 @@ import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, Windo
 const HEIGHT = 36;
 const WIDTH = 40;
 const DAY = 86400; // seconds in a day
+const PADDING = 46;
 
 const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
-	const { className, isCollection, isPopup, readonly, getView, getSearchIds, getSubId, getKeys, getTarget, onContext } = props;
+	const { className, isCollection, isPopup, readonly, isInline, getView, getSearchIds, getSubId, getKeys, getTarget, onContext } = props;
 	const [ value, setValue ] = useState(U.Date.now());
 	const view = getView();
 	const { hideIcon } = view;
@@ -30,7 +31,6 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const object = getTarget();
 	const startRelation = S.Record.getRelationByKey(startKey);
 	const endRelation = S.Record.getRelationByKey(endKey);
-	const frame = useRef(0);
 
 	const canEditStart = !readonly && !startRelation.isReadonlyValue;
 	const canEditEnd = !readonly && !endRelation.isReadonlyValue;
@@ -355,9 +355,21 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const body = $(bodyRef.current);
 		const items = $(itemsRef.current);
 		const tooltips = $(tooltipRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
-		const top = body.offset().top - J.Size.header - 14 - container.scrollTop();
+		const scrollContainer = U.Common.getScrollContainer(isPopup);
+		const pageContainer = U.Common.getPageContainer(isPopup);
+		const top = body.offset().top - J.Size.header - 14 - scrollContainer.scrollTop();
 		const left = node.offset().left;
+
+		if (!isInline) {
+			node.css({ width: 0, marginLeft: 0 });
+
+			const cw = pageContainer.width();
+			const mw = cw - PADDING * 2;
+			const margin = (cw - mw) / 2;
+
+			node.css({ width: cw, marginLeft: -margin - 2 });
+		};
+
 		const width = node.width();
 
 		items.css({ height: Math.max(20, items.length) * HEIGHT });
