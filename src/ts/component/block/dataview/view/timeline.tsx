@@ -111,7 +111,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 			if (isCollection) {
 				dy = Math.ceil((e.pageY - top) / HEIGHT) - 1;
-				if (dy && (dy != item.index) && (dy != item.index + 1)) {
+				if ((dy >= 0) && (dy != item.index) && (dy != item.index + 1)) {
 					line.css({ top: dy * HEIGHT + 1 }).show();
 				};
 			};
@@ -125,10 +125,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			keyboard.setDragging(false);
 			line.hide();
 
-			const newIndex = dy - 1;
-
-			if (newIndex >= 0) {
-				const records = arrayMove(S.Record.getRecordIds(subId, ''), item.index, newIndex);
+			if (dy >= 0) {
+				const records = arrayMove(S.Record.getRecordIds(subId, ''), item.index, dy);
 
 				S.Record.recordsSet(subId, '', records);
 				objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
