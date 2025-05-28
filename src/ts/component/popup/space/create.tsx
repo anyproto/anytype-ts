@@ -140,19 +140,16 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	const updateCounter = () => {
 		const el = $('.popupSpaceCreate .nameWrapper .counter');
 		const counter = J.Constant.limit.spaceName - nameRef.current?.getTextValue().length;
+		const show = counter <= J.Constant.limit.spaceNameThreshold;
+		const isRed = counter < 0;
 
-		if (counter <= J.Constant.limit.spaceNameThreshold) {
-			el.addClass('show').text(counter);
-		} else {
-			el.removeClass('show');
-		};
+		el.toggleClass('show', show);
+		el.toggleClass('red', isRed);
 
-		if (counter < 0) {
-			el.addClass('red');
-			setCanSave(false);
-		} else {
-			el.removeClass('red');
-			setCanSave(true);
+		setCanSave(!isRed);
+
+		if (show) {
+			el.text(counter)
 		};
 	};
 
