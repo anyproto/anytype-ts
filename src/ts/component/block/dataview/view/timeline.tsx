@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
-import { I, U, S, C, Dataview, keyboard, translate } from 'Lib';
+import { I, U, S, C, Dataview, keyboard, translate, Preview } from 'Lib';
 import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 
 const HEIGHT = 32;
@@ -51,6 +51,10 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	};
 
 	const data = getData();
+
+	const getIndex = (t: number) => {
+		return data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', t));
+	};
 
 	const getItems = () => {
 		return view ? S.Record.getRecords(subId, [ view.groupRelationKey, 'dueDate' ]) : [];
@@ -156,8 +160,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		start = Number(start) || 0;
 		end = Number(end) || 0;
 
-		const idx1 = data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', start));
-		const idx2 = data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', end));
+		const idx1 = getIndex(start);
+		const idx2 = getIndex(end);
 
 		if ((idx1 < 0) || (idx2 < 0) || (idx1 >= idx2)) {
 			return;
@@ -205,7 +209,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return null;
 		}; 
 
-		const idx = data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', start));
+		const idx = getIndex(start);
 		if (idx < 0) {
 			return null;
 		};
@@ -308,7 +312,61 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 	};
 
+	const scrollTo = (t: number) => {
+		const node = $(nodeRef.current);
+		const idx = getIndex(t);
+
+		if (idx < 0) {
+			return;
+		};
+
+		const item = data[idx];
+		if (!item) {
+			return;
+		};
+
+		const el = node.find(`#day-${item.d}-${item.m}-${item.y}`);
+
+		if (!el.length) {
+			return;
+		};
+
+		const left = el.position().left - node.width() / 2 + WIDTH / 2;
+		node.scrollLeft(left);
+	};
+
+	const onScroll = () => {
+		if (!data.length) {
+			return;
+		};
+
+		const node = $(nodeRef.current);
+		const sl = node.scrollLeft();
+		const wrap = node.find('.viewContent');
+		const width = wrap.width() - node.width();
+		const first = data[0];
+		const last = data[data.length - 1];
+		const start = first.ts;
+		const end = last.ts;
+
+		if (sl <= 0) {
+			setValue(start);
+		};
+
+		if (sl >= width) {
+			setValue(end);
+		};
+	};
+
 	const items = getItems();
+
+	useEffect(() => {
+		scrollTo(U.Date.now());
+	}, []);
+
+	useEffect(() => {
+		scrollTo(value);
+	}, [ value ]);
 
 	useEffect(() => {
 		resize();
@@ -319,24 +377,57 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	}));
 
 	return (
-		<div ref={nodeRef} id="scroll" className="scroll">
-			<div id="scrollWrap" className="scrollWrap">
-				<div className={cn.join(' ')} style={{ width: data.length * WIDTH }}>
-					<div className="header months">
-						{months.map((it, i) => {
-							const md = U.Date.getMonthDays(it.y);
-							const css = { width: md[it.m] * WIDTH };
+		<div 
+			ref={nodeRef} 
+			id="scroll" 
+			className="scroll"
+			onScroll={onScroll}
+		>
+			<div className={cn.join(' ')} style={{ width: data.length * WIDTH }}>
+				<div className="header months">
+					{months.map((it, i) => {
+						const md = U.Date.getMonthDays(it.y);
+						const css = { width: md[it.m] * WIDTH };
 
-							return (
-								<div key={i} className="month" style={css}>
-									{translate(`month${it.m}`)}
+						return (
+							<div key={i} className="month" style={css}>
+								{translate(`month${it.m}`)} {it.y}
+							</div>
+						);
+					})}
+				</div>
+				<div className="header days">
+					{data.map((it, i) => {
+						const cn = [ 'day' ];
+
+						if (it.isWeekend) {
+							cn.push('weekend');
+						};
+
+						if (it.isToday) {
+							cn.push('today');
+						};
+
+						return (
+							<div key={i} id={`day-${it.d}-${it.m}-${it.y}`} className={cn.join(' ')}>
+								<div className="inner">
+									<div className="marker">
+										{it.d}
+									</div>
 								</div>
-							);
-						})}
-					</div>
-					<div className="header days">
+							</div>
+						);
+					})}
+				</div>
+
+				<div className="body">
+					<div className="grid">
 						{data.map((it, i) => {
-							const cn = [ 'day' ];
+							const cn = [ 'cell' ];
+
+							if (it.d == 1) {
+								cn.push('start');
+							};
 
 							if (it.isWeekend) {
 								cn.push('weekend');
@@ -347,72 +438,42 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 							};
 
 							return (
-								<div key={i} id={`day-${it.d}-${it.m}-${it.y}`} className={cn.join(' ')}>
-									<div className="inner">
-										<div className="marker">
-											{it.d}
-										</div>
-									</div>
-								</div>
+								<div key={[ it.d, it.m, it.y ].join('-')} className={cn.join(' ')} style={{ left: i * WIDTH }} />
 							);
 						})}
 					</div>
 
-					<div className="body">
-						<div className="grid">
-							{data.map((it, i) => {
-								const cn = [ 'cell' ];
-
-								if (it.d == 1) {
-									cn.push('start');
-								};
-
-								if (it.isWeekend) {
-									cn.push('weekend');
-								};
-
-								if (it.isToday) {
-									cn.push('today');
-								};
-
-								return (
-									<div key={[ it.d, it.m, it.y ].join('-')} className={cn.join(' ')} style={{ left: i * WIDTH }} />
-								);
-							})}
-						</div>
-
-						<div ref={itemsRef} className="items">
-							<InfiniteLoader
-								loadMoreRows={() => {}}
-								isRowLoaded={() => true}
-								rowCount={items.length}
-								threshold={10}
-							>
-								{({ onRowsRendered }) => (
-									<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-										{({ height, isScrolling, registerChild, scrollTop }) => (
-											<AutoSizer>
-												{({ width }) => (
-													<div ref={registerChild}>
-														<List
-															autoHeight={true}
-															height={Number(height) || 0}
-															width={Number(width) || 0}
-															isScrolling={isScrolling}
-															rowCount={items.length}
-															rowHeight={HEIGHT}
-															onRowsRendered={onRowsRendered}
-															rowRenderer={rowRenderer}
-															scrollTop={scrollTop}
-														/>
-													</div>
-												)}
-											</AutoSizer>
-										)}
-									</WindowScroller>
-								)}
-							</InfiniteLoader>
-						</div>
+					<div ref={itemsRef} className="items">
+						<InfiniteLoader
+							loadMoreRows={() => {}}
+							isRowLoaded={() => true}
+							rowCount={items.length}
+							threshold={10}
+						>
+							{({ onRowsRendered }) => (
+								<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+									{({ height, isScrolling, registerChild, scrollTop }) => (
+										<AutoSizer>
+											{({ width }) => (
+												<div ref={registerChild}>
+													<List
+														autoHeight={true}
+														height={Number(height) || 0}
+														width={Number(width) || 0}
+														isScrolling={isScrolling}
+														rowCount={items.length}
+														rowHeight={HEIGHT}
+														onRowsRendered={onRowsRendered}
+														rowRenderer={rowRenderer}
+														scrollTop={scrollTop}
+													/>
+												</div>
+											)}
+										</AutoSizer>
+									)}
+								</WindowScroller>
+							)}
+						</InfiniteLoader>
 					</div>
 				</div>
 			</div>
