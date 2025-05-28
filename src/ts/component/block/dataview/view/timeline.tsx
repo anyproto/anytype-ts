@@ -288,6 +288,12 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		item.index = param.index;
 
 		const idx = getIndex(start);
+		const cn = [ 'item' ];
+
+		if (idx < 0) {
+			cn.push('isHidden');
+		};
+
 		const icon = hideIcon ? null : <IconObject object={item} size={18} />;
 		const width = Math.max(1, Math.ceil(duration / DAY)) * WIDTH;
 		const left = idx * WIDTH;
@@ -302,7 +308,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			>
 				<div 
 					id={`item-${item.id}`}
-					className="item" 
+					className={cn.join(' ')}
 					style={{ ...param.style, width, left }} 
 					onClick={e => onClick(e, item)} 
 					onContextMenu={e => onContext(e, item.id)}

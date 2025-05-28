@@ -87,6 +87,8 @@
 					background: var(--color-bg-primary); 
 				}
 				.item {
+					&.isHidden { visibility: hidden; }
+
 					.iconObject { flex-shrink: 0; }
 					.name { @include text-overflow-nw; font-weight: 500; }
 
