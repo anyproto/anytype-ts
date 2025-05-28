@@ -142,7 +142,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						) : ''}
 					</div>
 
-					{!object._empty_ && object.isInstalled ? (
+					{!object._empty_ ? (
 						<div className="section set">
 							<div className="title">
 								<div className="side left">
