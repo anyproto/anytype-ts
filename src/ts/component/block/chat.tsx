@@ -163,9 +163,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			} else {
 				this.loadMessages(1, true, this.scrollToBottom);
 			};
-		});
 
-		analytics.event('ScreenChat');
+			analytics.event('ScreenChat');
+		});
 	};
 
 	componentWillUnmount () {
@@ -856,6 +856,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const subId = this.getSubId();
 		const message = S.Chat.getMessage(subId, item.replyToMessageId);
 
+		analytics.event('ClickScrollToReply');
+
 		if (message) {
 			this.scrollToMessage(message.id, true, true);
 			return;
@@ -874,8 +876,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			S.Chat.clear(subId);
 			this.loadMessagesByOrderId(reply.orderId, () => this.scrollToMessage(reply.id, true, true));
 		});
-
-		analytics.event('ClickScrollToReply');
 	};
 
 	getReplyContent (message: any): any {
