@@ -54,7 +54,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 						let text = '';
 
 						if (errorCodes.includes(code)) {
-							icon = 'lock';
+							icon = code == J.Error.Code.SpaceInviteView.INVITE_NOT_FOUND ? 'noaccess' : 'error';
 							title = translate(`popupConfirmInviteError${code}Title`);
 							text = translate(`popupConfirmInviteError${code}Text`);
 						} else {
