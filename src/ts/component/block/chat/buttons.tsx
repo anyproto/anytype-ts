@@ -252,11 +252,11 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				if (paths.length) {
 					addAttachments(paths.map(path => getObjectFromPath(path)));
 
-					analytics.event('AttachItemChat', { type: 'Upload' });
+					analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
 				};
 			});
 
-			analytics.event('ClickScreenChatAttach', { type: 'Upload' });
+			analytics.event('ClickChatAttach', { type: 'Upload' });
 		};
 
 		let menuId = '';
@@ -279,8 +279,8 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				onSelect: (item: any) => {
 					onChatButtonSelect(I.ChatButton.Object, item);
 
-					analytics.event('AttachItemChat', { type: analyticsMenuName });
-				}
+					analytics.event('AttachItemChat', { type: analyticsMenuName, count: 1 });
+				},
 			};
 
 			if (menu == 'object') {
@@ -299,7 +299,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 						name: translate('commonUpload'),
 						icon: 'upload',
 						onClick: upload
-					}
+					},
 				});
 			};
 
