@@ -14,7 +14,10 @@ const PADDING = 46;
 
 const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
-	const { className, isCollection, isPopup, readonly, isInline, getView, getSearchIds, getSubId, getKeys, getTarget, onContext, objectOrderUpdate, getRecords } = props;
+	const { 
+		rootId, block, className, isCollection, isPopup, readonly, isInline, 
+		getView, getSearchIds, getSubId, getKeys, getTarget, onContext, objectOrderUpdate, getRecords,
+	} = props;
 	const [ value, setValue ] = useState(U.Date.now());
 	const view = getView();
 	const { hideIcon } = view;
@@ -32,6 +35,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const object = getTarget();
 	const startRelation = S.Record.getRelationByKey(startKey);
 	const endRelation = S.Record.getRelationByKey(endKey);
+	const dateParam = U.Date.getDateParam(value);
 
 	const canEditStart = !readonly && !startRelation.isReadonlyValue;
 	const canEditEnd = !readonly && !endRelation.isReadonlyValue;
@@ -128,6 +132,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
 				};
 			});
+
 			unbind();
 			keyboard.setDragging(false);
 			line.hide();
@@ -250,7 +255,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				continue;
 			};
 
-			el.addClass('active');
+			el.addClass('hover');
 
 			if (i == 0) {
 				el.addClass('first');
@@ -266,7 +271,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	};
 
 	const onMouseLeave = () => {
-		$(nodeRef.current).find('.day').removeClass('active first last');
+		$(nodeRef.current).find('.day').removeClass('hover first last');
 	};
 
 	const getDuration = (item: any): number => {
@@ -450,6 +455,23 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 	};
 
+	const onArrow = (dir: number) => {
+		setValue(value + dir * DAY * 30);
+	};
+
+	const onCalendar = () => {
+		S.Menu.open('calendar', {
+			element: `#calendar-icon-${rootId}-${block.id}`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				value,
+				canEdit: true,
+				canClear: false,
+				onChange: setValue,
+			},
+		});
+	};
+
 	const onScrollVertical = (e: any) => {
 		resize();
 	};
@@ -545,6 +567,15 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	return (
 		<>
 			<div ref={tooltipRef} className="tooltipContainer" />
+			<div className="controlsContainer">
+				<div className="inner">
+					<div className="grad" />
+					<Icon className="arrow left withBackground" onClick={() => onArrow(-1)} />
+					<Icon className="arrow right withBackground" onClick={() => onArrow(1)}/>
+					<Icon id={`calendar-icon-${rootId}-${block.id}`} className="calendar withBackground" onClick={onCalendar} />
+				</div>
+			</div>
+
 			<div 
 				ref={nodeRef} 
 				id="scroll" 
@@ -576,6 +607,10 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 								if (it.isToday) {
 									cn.push('today');
+								};
+
+								if ((it.d == dateParam.d) && (it.m == dateParam.m) && (it.y == dateParam.y)) {
+									cn.push('active');
 								};
 
 								return (

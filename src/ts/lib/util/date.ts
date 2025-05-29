@@ -451,6 +451,11 @@ class UtilDate {
 		return ret;
 	};
 
+	getDateParam (t: number) {
+		const [ d, m, y ] = U.Date.date('j,n,Y', t).split(',').map(it => Number(it));
+		return { d, m, y };
+	};
+
 };
 
 export default new UtilDate();

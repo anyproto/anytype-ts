@@ -32,7 +32,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { value } = this.state;
 		const cn = [ 'viewContent', className ];
 		const data = U.Date.getCalendarMonth(value);
-		const { m, y } = this.getDateParam(value);
+		const { m, y } = U.Date.getDateParam(value);
 		const days = U.Date.getWeekDays();
 		const months = U.Date.getMonths();
 		const years = U.Date.getYears(0, 3000);
@@ -134,15 +134,10 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	init () {
-		const { m, y } = this.getDateParam(this.state.value);
+		const { m, y } = U.Date.getDateParam(this.state.value);
 
 		this.refMonth?.setValue(m);
 		this.refYear?.setValue(y);
-	};
-
-	getDateParam (t: number) {
-		const [ d, m, y ] = U.Date.date('j,n,Y', t).split(',').map(it => Number(it));
-		return { d, m, y };
 	};
 
 	load () {
@@ -209,7 +204,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	onArrow (dir: number) {
-		let { m, y } = this.getDateParam(this.state.value);
+		let { m, y } = U.Date.getDateParam(this.state.value);
 
 		m += dir;
 		if (m < 0) {
@@ -225,7 +220,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	onToday () {
-		const today = this.getDateParam(U.Date.now());
+		const today = U.Date.getDateParam(U.Date.now());
 
 		this.scroll = true;
 		this.setValue(U.Date.timestamp(today.y, today.m, today.d));
