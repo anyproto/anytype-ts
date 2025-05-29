@@ -426,15 +426,40 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 	onContext (item: any) {
 		const { x, y } = keyboard.mouse.page;
-
-		S.Menu.open('objectContext', {
+		const menuParam = {
 			element: `#sidebarLeft #containerSettings #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
-			data: {
-				objectIds: [ item.id ],
-				subId: J.Constant.subId.library,
-				route: analytics.route.library,
-			}
+			data: {},
+		};
+
+		let menuId = '';
+
+		switch (item.layout) {
+			case I.ObjectLayout.Type: {
+				menuId = 'objectContext';
+				menuParam.data = Object.assign(menuParam.data, {
+					objectIds: [ item.id ],
+					subId: J.Constant.subId.library,
+					route: analytics.route.library,
+				});
+				break;
+			};
+
+			case I.ObjectLayout.Relation: {
+				menuId = 'blockRelationEdit';
+				menuParam.data = Object.assign(menuParam.data, {
+					rootId: item.id,
+					filter: this.filter,
+					relationId: item.id,
+					route: analytics.route.settingsSpace,
+					noUnlink: true,
+				});
+				break;
+			};
+		};
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open(menuId, menuParam);
 		});
 	};
 
