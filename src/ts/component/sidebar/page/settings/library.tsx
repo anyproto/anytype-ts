@@ -178,14 +178,12 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	componentDidMount () {
+		const items = this.getItems();
+
 		this.type = this.props.page == 'types' ? I.ObjectContainerType.Type : I.ObjectContainerType.Relation;
 		this.refFilter.focus();
 		this.initSort();
 		this.load(true, this.openFirst);
-	};
-
-	componentDidUpdate () {
-		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
