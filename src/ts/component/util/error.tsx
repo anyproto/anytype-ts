@@ -21,9 +21,6 @@ const Error: FC<Props> = ({
 
 	const cn = [ 'error', className ];
 
-	console.log('TEXT', text);
-	console.log(U.Common.sanitize(text));
-
 	return (
 		<div 
 			id={id}

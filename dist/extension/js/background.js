@@ -3,7 +3,10 @@
 	let ports = [];
 	let isInitMenu = false;
 
-	const native = chrome.runtime.connectNative('com.anytype.desktop');
+	const native = browser.runtime.connectNative('com.anytype.desktop');
+
+	console.log(browser.runtime.id);
+	console.log(native);
 
 	native.postMessage({ type: 'getPorts' });
 
@@ -34,16 +37,16 @@
 	native.onDisconnect.addListener(() => {
 	});
 
-	chrome.runtime.onInstalled.addListener(details => {
+	browser.runtime.onInstalled.addListener(details => {
 		if (![ 'install', 'update' ].includes(details.reason)) {
 			return;
 		};
 
 		if (details.reason == 'update') {
-			const { version } = chrome.runtime.getManifest();
+			const { version } = browser.runtime.getManifest();
 		};
 
-		chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+		browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 			getActiveTab(tab => {
 				if (tab && (tabId == tab.id) && (undefined !== changeInfo.url)) {
 					sendToTab(tab, { type: 'hide' });
@@ -52,7 +55,7 @@
 		});
 	});
 
-	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+	browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		const res = {};
 
 		switch (msg.type) {
@@ -88,16 +91,16 @@
 
 		isInitMenu = true;
 
-		chrome.contextMenus.create({
+		browser.contextMenus.create({
 			id: 'webclipper',
 			title: 'Anytype Web Clipper',
 			contexts: [ 'selection' ]
 		});
 
-		chrome.contextMenus.onClicked.addListener(async () => {
+		browser.contextMenus.onClicked.addListener(async () => {
 			const tab = await getActiveTab();
 
-			chrome.scripting.executeScript({
+			browser.scripting.executeScript({
 				target: { tabId: tab.id },
 				function: () => {
 					const sel = window.getSelection();
@@ -122,7 +125,7 @@
 	};
 
 	getActiveTab = async () => {
-		const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+		const [ tab ] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
 		return tab;
 	};
 
@@ -136,7 +139,7 @@
 		};
 
 		msg.url = tab.url;
-		await chrome.tabs.sendMessage(tab.id, msg);
+		await browser.tabs.sendMessage(tab.id, msg);
 	};
 
 })();

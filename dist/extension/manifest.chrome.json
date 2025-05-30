@@ -20,6 +20,9 @@
 		"activeTab"
 	],
 	"background": {
+		"scripts": [ 
+			"js/browser-polyfill.min.js"
+		],
 		"service_worker": "js/background.js"
 	},
 	"content_scripts": [
