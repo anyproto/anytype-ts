@@ -77,8 +77,8 @@ const Item = observer(class Item extends React.Component<Props> {
 			return (
 				
 				<div 
-					id={`item-${item.id}`}
-					className="item" 
+					id={`record-${item.id}`}
+					className="record" 
 					draggable={canDrag}
 					onContextMenu={e => onContext(e, item.id)}
 					onMouseEnter={e => this.onMouseEnter(e, item)}
@@ -130,7 +130,7 @@ const Item = observer(class Item extends React.Component<Props> {
 
 	onMouseEnter (e: any, item: any) {
 		const node = $(this.node);
-		const element = node.find(`#item-${item.id}`);
+		const element = node.find(`#record-${item.id}`);
 		const name = U.Common.shorten(item.name, 50);
 
 		Preview.tooltipShow({ text: name, element });
