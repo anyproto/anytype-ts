@@ -49,7 +49,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		let more = null;
 		if (length > LIMIT) {
 			more = (
-				<div className="item more" onClick={this.onMore}>
+				<div className="record more" onClick={this.onMore}>
 					+{length - LIMIT} {translate('commonMore')} {U.Common.plural(length, translate('pluralObject')).toLowerCase()}
 				</div>
 			);
