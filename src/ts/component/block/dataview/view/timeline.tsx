@@ -31,14 +31,14 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const lineRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const startKey = view.groupRelationKey;
-	const endKey = 'dueDate'; // view.endRelationKey;
+	const endKey = view.endRelationKey;
 	const object = getTarget();
 	const startRelation = S.Record.getRelationByKey(startKey);
 	const endRelation = S.Record.getRelationByKey(endKey);
 	const dateParam = U.Date.getDateParam(value);
 
-	const canEditStart = !readonly && !startRelation.isReadonlyValue;
-	const canEditEnd = !readonly && !endRelation.isReadonlyValue;
+	const canEditStart = !readonly && !startRelation?.isReadonlyValue;
+	const canEditEnd = !readonly && !endRelation?.isReadonlyValue;
 	const months = [];
 
 	const rebind = () => {
@@ -341,7 +341,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	);
 
 	const load = () => {
-		if (!view || !data.length) {
+		if (!view || !data.length || !startRelation || !endRelation) {
 			return;
 		};
 
