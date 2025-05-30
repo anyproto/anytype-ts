@@ -402,8 +402,10 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				break;
 			};
 
+			const folder = size > 24 ? 'big/' : '';
+
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-			icon = <img src={`./img/icon/relation/${Relation.iconName(relationKey, relationFormat)}.svg`} className={icn.join(' ')} />;
+			icon = <img src={`./img/icon/relation/${folder}${Relation.iconName(relationKey, relationFormat)}.svg`} className={icn.join(' ')} />;
 			break;
 		};
 

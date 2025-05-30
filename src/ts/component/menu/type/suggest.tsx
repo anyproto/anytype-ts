@@ -19,7 +19,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const { param, getId, position, close, setHover, setActive, onKeyDown } = props;
 	const { data } = param;
-	const { noFilter, skipIds, onMore, onClick, canAdd } = data;
+	const { noFilter, skipIds, onMore, onClick, canAdd, noClose } = data;
 	const itemList = useRef([]);
 	const filter = String(data.filter || '');
 	const currentFilter = useRef('');
@@ -188,12 +188,15 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		e.stopPropagation();
 
 		const cb = (item: any) => {
-			close();
+			if (!noClose) {
+				close();
+			};
 
 			if (onClick) {
 				onClick(S.Detail.mapper(item));
 			};
 		};
+
 		const setLast = item => U.Object.setLastUsedDate(item.id, U.Date.now());
 
 		if (item.id == 'add') {

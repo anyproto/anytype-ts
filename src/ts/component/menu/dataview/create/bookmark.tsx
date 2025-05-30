@@ -30,7 +30,12 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 			<form onSubmit={this.onSubmit} className="flex">
 				{loading ? <Loader /> : ''}
 
-				<Input ref={ref => this.ref = ref} value={value} placeholder={translate('defaultNameBookmark')} />
+				<Input 
+					ref={ref => this.ref = ref} 
+					value={value} 
+					placeholder={translate('defaultNameBookmark')} 
+					focusOnMount={true}
+				/>
 
 				<div className="buttons">
 					<Button type="input" color="blank" text={translate('commonCreate')} onClick={this.onSubmit} />
@@ -40,13 +45,20 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 	};
 	
 	componentDidMount () {
-		if (this.ref) {
-			this.ref.focus(); 
-		};
+		this.rebind();
 	};
 
 	componentWillUnmount () {
-		keyboard.setFocus(false);
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', e => {});
+	};
+
+	unbind () {
+		$(window).off('keydown.menu');
 	};
 
 	onSubmit (e: any) {

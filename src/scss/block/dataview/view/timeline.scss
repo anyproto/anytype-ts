@@ -20,13 +20,27 @@
 					.icon.arrow { transform: scale3d(1, 1, 1); }
 				}
 				&.isLeft { flex-direction: row; left: 8px; }
-				&.isRight { flex-direction: row-reverse; right: 8px; }
+				&.isRight { flex-direction: row-reverse; right: 8px; text-align: right; }
 
 				&:hover {
 					.name { width: 120px; }
 					.icon.arrow { background-color: var(--color-shape-highlight-dark); }
 				}
 			}
+		}
+
+		.controlsContainer { 
+			display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: -24px; position: relative; z-index: 3;
+		}
+		.controlsContainer {
+			.inner { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; background-color: var(--color-bg-primary); }
+
+			.grad { width: 24px; height: 24px; background-image: linear-gradient(to left, var(--color-bg-primary) 20%, rgba(255, 255, 255, 0) 100%); }
+
+			.icon { width: 24px !important; height: 24px !important; }
+			.icon.calendar { background-image: url('~img/icon/relation/date.svg'); }
+			.icon.arrow { background-image: url('~img/arrow/dateSelectLight.svg'); }
+			.icon.arrow.left { transform: rotateZ(180deg); }
 		}
 
 		.viewContent.viewTimeline { display: flex; flex-direction: column; }
@@ -45,14 +59,14 @@
 						.inner, .marker { min-width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
 
 						&.today {
-							.marker { border-radius: 50%; background: var(--color-red); color: var(--color-text-inversion); }
+							.marker { border-radius: 50%; background: var(--color-red) !important; color: var(--color-text-inversion); }
 
 							&::after {
 								content: ''; position: absolute; bottom: -4px; left: calc(50% - 4px); width: 8px; height: 8px; border-radius: 50%; background: var(--color-red);
 							}
 						}
 
-						&.active {
+						&.hover {
 							.inner { background: var(--color-shape-highlight-medium); width: 100%; }
 
 							&.first {
@@ -61,6 +75,10 @@
 							&.last {
 								.inner { border-radius: 0px 12px 12px 0px; color: var(--color-text-primary); }
 							}
+						}
+
+						&.active {
+							.marker { border-radius: 50%; background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 						}
 					}
 				}
