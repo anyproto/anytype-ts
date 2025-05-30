@@ -42,7 +42,7 @@
 			}
 
 			.dropTarget { width: 100%; height: 100%; }
-			.dropTarget.targetBot { width: calc(100% - 8px); margin: -2px auto 0px auto; }
+			.dropTarget.targetBot { width: calc(100% - 8px); margin: 0px auto 0px auto; }
 
 			.head { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }
 			.head {
