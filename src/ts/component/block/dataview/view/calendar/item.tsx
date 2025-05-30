@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
-import { I, S, U, translate, Preview } from 'Lib';
+import { I, S, U, C, translate, Preview } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -28,6 +28,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		this.canCreate = this.canCreate.bind(this);
 		this.onCreate = this.onCreate.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
+		this.onRecordDrop = this.onRecordDrop.bind(this);
 	};
 
 	render () {
@@ -67,7 +68,7 @@ const Item = observer(class Item extends React.Component<Props> {
 
 			if (canDrag) {
 				content = (
-					<DropTarget {...this.props} rootId={rootId} id={item.id} dropType={I.DropType.Record}>
+					<DropTarget {...this.props} rootId={rootId} id={item.id} dropType={I.DropType.Record} viewType={view.type}>
 						{content}
 					</DropTarget>
 				);
@@ -84,8 +85,7 @@ const Item = observer(class Item extends React.Component<Props> {
 					onMouseLeave={this.onMouseLeave}
 					onDragStart={e => this.onDragStart(e, item)}
 				>
-					{icon}
-					<ObjectName object={item} onClick={() => this.onOpen(item)} />
+					{content}
 				</div>
 			);
 		};
@@ -97,29 +97,29 @@ const Item = observer(class Item extends React.Component<Props> {
 				onContextMenu={this.onContext}
 				onDoubleClick={this.onCreate}
 			>
-				<DropTarget {...this.props} rootId={rootId} id={[ y, m, d ].join('-')} dropType={I.DropType.Record}>
-					<div className="head">
-						{canCreate ? (
-							<Icon 
-								className="plus withBackground" 
-								tooltipParam={{ text: translate(`commonNewObject`) }} 
-								onClick={this.onCreate} 
-							/> 
-						) : ''}
+				<div className="head">
+					{canCreate ? (
+						<Icon 
+							className="plus withBackground" 
+							tooltipParam={{ text: translate(`commonNewObject`) }} 
+							onClick={this.onCreate} 
+						/> 
+					) : ''}
 
-						<div className="number" onClick={this.onOpenDate}>
-							<div className="inner">{d}</div>
-						</div>
+					<div className="number" onClick={this.onOpenDate}>
+						<div className="inner">{d}</div>
 					</div>
+				</div>
 
-					<div className="items">
-						{slice.map((item, i) => (
-							<Item key={[ y, m, d, item.id ].join('-')} {...item} />
-						))}
+				<div className="items">
+					{slice.map((item, i) => (
+						<Item key={[ y, m, d, item.id ].join('-')} {...item} />
+					))}
 
-						{more}
-					</div>
-				</DropTarget>
+					{more}
+
+					<DropTarget {...this.props} rootId={rootId} id={[ 'empty', y, m, d ].join('-')} isTargetBottom={true} dropType={I.DropType.Record} viewType={view.type} />
+				</div>
 			</div>
 		);
 	};
@@ -231,7 +231,35 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	onDragStart (e: any, item: any) {
-		console.log('onDragStart', item);
+		const dragProvider = S.Common.getRef('dragProvider');
+
+		dragProvider?.onDragStart(e, I.DropType.Record, [ item.id ], this);
+	};
+
+	onRecordDrop (targetId: string, ids: [], position: I.BlockPosition) {
+		const { getSubId, getView } = this.props;
+		const subId = getSubId();
+		const view = getView();
+
+		let value = 0;
+
+		if (targetId.match(/^empty-/)) {
+			const [ , y, m, d ] = targetId.split('-').map(Number);
+			
+			value = U.Date.timestamp(y, m, d, 0, 0, 0);
+		} else {
+			const records = S.Record.getRecords(subId);
+			const target = records.find(r => r.id == targetId);
+			if (!target) {
+				return;
+			};
+
+			value = target[view.groupRelationKey] + (position == I.BlockPosition.Bottom ? 1 : 0);
+		};
+
+		if (value) {
+			C.ObjectListSetDetails(ids, [ { key: view.groupRelationKey, value } ]);
+		};
 	};
 
 });
