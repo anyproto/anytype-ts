@@ -1306,8 +1306,6 @@ class UtilMenu {
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
-
-
 						const cb = (object: any, time: number) => {
 							if (callBack) {
 								callBack(object);
