@@ -563,13 +563,13 @@ class Action {
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
-	createSpace (route: string) {
+	createSpace (spaceKind: I.SpaceKind, route: string) {
 		if (!U.Space.canCreateSpace()) {
 			return;
 		};
 
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { route } });
+			S.Popup.open('spaceCreate', { data: { spaceKind, route } });
 		});
 	};
 

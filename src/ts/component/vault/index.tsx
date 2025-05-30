@@ -203,15 +203,19 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'chat': {
+							Action.createSpace(I.SpaceKind.Chat, analytics.route.vault);
 							break;
 						};
+
 						case 'space': {
-							Action.createSpace(analytics.route.vault);
+							Action.createSpace(I.SpaceKind.Space, analytics.route.vault);
 							break;
 						};
+
 						case 'import': {
 							break;
 						};
+
 						case 'join': {
 							break;
 						};

@@ -511,7 +511,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				Action.createSpace(route);
+				Action.createSpace(I.SpaceKind.Unknown, route);
 				break;
 			};
 

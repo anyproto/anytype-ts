@@ -12,7 +12,7 @@ const PageMainVoid = forwardRef<{}, I.PageComponent>(() => {
 				</div>
 				<Title text={translate('pageMainVoidTitle')} />
 				<Label text={translate('pageMainVoidText')} />
-				<Button onClick={() => Action.createSpace(analytics.route.void)} className="c36" text={translate('pageMainVoidCreateSpace')} />
+				<Button onClick={() => Action.createSpace(I.SpaceKind.Space, analytics.route.void)} className="c36" text={translate('pageMainVoidCreateSpace')} />
 			</div>
 		</div>
 	);
