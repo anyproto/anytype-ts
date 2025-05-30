@@ -1,7 +1,10 @@
 (() => {
 
-	const extensionIds = [ 'jbnammhjiplhpjfncnlejjjejghimdkf', 'jkmhmgghdjjbafmkgjmplhemjjnkligf' ];
-	const allowedOrigins = extensionIds.map(id => `chrome-extension://${id}`);
+	const extensionIdsChrome = [ 'jbnammhjiplhpjfncnlejjjejghimdkf', 'jkmhmgghdjjbafmkgjmplhemjjnkligf', 'lcamkcmpcofgmbmloefimnelnjpcdpfn' ];
+	const extensionIdsFirefox = [ 'd9abb804-4f96-464e-aa16-a57cdd023c44' ];
+	const allowedOrigins = []
+		.concat(extensionIdsChrome.map(id => `chrome-extension://${id}`))
+		.concat(extensionIdsFirefox.map(id => `moz-extension://${id}`));
 	const body = document.querySelector('body');
 	const container = document.createElement('div');
 	const dimmer = document.createElement('div');
@@ -16,14 +19,14 @@
 	container.appendChild(dimmer);
 
 	iframe.id = [ 'anytypeWebclipper', 'iframe' ].join('-');
-	iframe.src = chrome.runtime.getURL('iframe/index.html');
+	iframe.src = browser.runtime.getURL('iframe/index.html');
 
 	dimmer.className = 'dimmer';
 	dimmer.addEventListener('click', () => {
 		container.style.display = 'none';
 	});
 
-	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+	browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		if (!extensionIds.includes(sender.id)) {
 			return false;
 		};

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as hs from 'history';
+import browser from 'webextension-polyfill';
 import { Router, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
@@ -73,7 +74,7 @@ class Popup extends React.Component {
 		const win = $(window);
 
 		/* @ts-ignore */
-		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+		browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 			if (!J.Extension.clipper.ids.includes(sender.id)) {
 				return false;
 			};

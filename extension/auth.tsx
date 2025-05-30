@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as hs from 'history';
+import browser from 'webextension-polyfill';
 import { Router, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
@@ -62,7 +63,7 @@ class Auth extends React.Component {
 		U.Router.init(history);
 
 		/* @ts-ignore */
-		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+		browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 			switch (msg.type) {
 				case 'initAuth':
 					const { appKey, gatewayPort, serverPort } = msg;

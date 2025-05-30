@@ -1,4 +1,5 @@
 import * as React from 'react';
+import browser from 'webextension-polyfill';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
 import { I, C, S, U, J, Storage } from 'Lib';
@@ -80,7 +81,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 			});
 		} else {
 			/* @ts-ignore */
-			const manifest = chrome.runtime.getManifest();
+			const manifest = browser.runtime.getManifest();
 			const { serverPort, gatewayPort } = S.Extension;
 
 			C.AccountLocalLinkNewChallenge(manifest.name, (message: any) => {
@@ -96,7 +97,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 				};
 
 				/* @ts-ignore */
-				chrome.tabs.create({ url: chrome.runtime.getURL('auth/index.html') + `?data=${btoa(JSON.stringify(data))}` });
+				browser.tabs.create({ url: browser.runtime.getURL('auth/index.html') + `?data=${btoa(JSON.stringify(data))}` });
 			});
 		};
 	};

@@ -20,11 +20,17 @@
 		"activeTab"
 	],
 	"background": {
-		"scripts": [ "js/background.js" ]
+		"scripts": [ 
+			"js/browser-polyfill.min.js",
+			"js/background.js" 
+		]
 	},
 	"content_scripts": [
 		{
-			"js": [ "js/foreground.js" ],
+			"js": [ 
+				"js/browser-polyfill.min.js",
+				"js/foreground.min.js" 
+			],
 			"css": [ "css/foreground.css" ],
 			"matches": [ "<all_urls>" ]
 		}

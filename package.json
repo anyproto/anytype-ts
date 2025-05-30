@@ -87,7 +87,8 @@
 		"style-loader": "^1.2.1",
 		"typescript": "^5.3.3",
 		"typescript-eslint": "^0.0.1-alpha.0",
-		"wait-for-localhost-cli": "^3.0.0"
+		"wait-for-localhost-cli": "^3.0.0",
+		"webextension-polyfill": "^0.12.0"
 	},
 	"dependencies": {
 		"@dnd-kit/core": "^6.3.1",

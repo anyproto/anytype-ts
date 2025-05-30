@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import { S, U, J, C, dispatcher } from 'Lib';
 
 const INDEX_POPUP = '/popup/index.html';
@@ -8,7 +9,7 @@ class Util {
 
 	isExtension () {
 		return (
-			(location.protocol == 'chrome-extension:') && 
+			location.protocol.match('extension:') && 
 			J.Extension.clipper.ids.includes(location.hostname)
 		);
 	};
@@ -35,12 +36,12 @@ class Util {
 
 	sendMessage (msg: any, callBack: (response) => void) {
 		/* @ts-ignore */
-		chrome.runtime.sendMessage(msg, callBack);
+		browser.runtime.sendMessage(msg, callBack);
 	};
 
 	getCurrentTab (callBack: (tab) => void) {
 		/* @ts-ignore */
-		chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => callBack(tabs[0]));
+		browser.tabs.query({ active: true, lastFocusedWindow: true }, tabs => callBack(tabs[0]));
 	};
 
 	init (serverPort: string, gatewayPort: string) {
