@@ -56,7 +56,7 @@
         .featured { flex-direction: column; gap: 10px 0px; padding-top: 36px; }
         .featured {
             dl { width: 100%; display: flex; align-items: center; @include text-overflow-nw; }
-            dt { width: 35%; }
+            dt { width: 35%; @include text-overflow-nw; }
             dd { width: 65%; }
             dd {
                 .item { height: 12px; border-radius: 2px; background: var(--color-shape-secondary); }
