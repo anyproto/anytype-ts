@@ -2029,6 +2029,15 @@
 	"sidebarRelationLocalRemoveFromObject": "Remove from object",
 	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 
+	"sidebarMenuSpaceCreateTitleChat": "Chat",
+	"sidebarMenuSpaceCreateDescriptionChat": "For real-time conversations",
+	"sidebarMenuSpaceCreateTitleSpace": "Space",
+	"sidebarMenuSpaceCreateDescriptionSpace": "For organized content and data",
+	"sidebarMenuSpaceCreateTitleImport": "Import Data",
+	"sidebarMenuSpaceCreateDescriptionImport": "Transfer your data from another app",
+	"sidebarMenuSpaceCreateTitleJoin": "Join by Link",
+	"sidebarMenuSpaceCreateDescriptionJoin": "For those with an invite link",
+
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
 

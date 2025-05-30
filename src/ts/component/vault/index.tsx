@@ -157,7 +157,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 		switch (item.id) {
 			case 'add': {
-				Action.createSpace(analytics.route.vault);
+				onAdd();
 				break;
 			};
 
@@ -180,6 +180,45 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 				break;
 			};
 		};
+	};
+
+	const onAdd = () => {
+		let options: any[] = [ 'chat', 'space', 'import', 'join' ];
+		options = options.map(it => ({
+			id: it,
+			icon: it,
+			name: translate(`sidebarMenuSpaceCreateTitle${U.Common.toUpperCamelCase(it)}`),
+			description: translate(`sidebarMenuSpaceCreateDescription${U.Common.toUpperCamelCase(it)}`),
+			withDescription: true,
+		}));
+
+		S.Menu.open('select', {
+			element: `#vault #item-add`,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+			offsetY: 4,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'chat': {
+							break;
+						};
+						case 'space': {
+							Action.createSpace(analytics.route.vault);
+							break;
+						};
+						case 'import': {
+							break;
+						};
+						case 'join': {
+							break;
+						};
+					};
+				},
+			}
+		});
 	};
 
 	const onArrow = (dir: number) => {
