@@ -342,7 +342,7 @@ export const Mapper = {
 				cardSize: obj.getCardsize(),
 				hideIcon: obj.getHideicon(),
 				groupRelationKey: obj.getGrouprelationkey(),
-				endRelationKey: 'dueDate', // obj.getEndrelationkey(),
+				endRelationKey: obj.getEndrelationkey(),
 				groupBackgroundColors: obj.getGroupbackgroundcolors(),
 				pageLimit: obj.getPagelimit(),
 				defaultTemplateId: obj.getDefaulttemplateid(),
@@ -1004,7 +1004,7 @@ export const Mapper = {
 			item.setType(obj.type as any);
 			item.setCoverrelationkey(obj.coverRelationKey);
 			item.setGrouprelationkey(obj.groupRelationKey);
-			//item.setEndrelationkey(obj.endRelationKey);
+			item.setEndrelationkey(obj.endRelationKey);
 			item.setGroupbackgroundcolors(obj.groupBackgroundColors);
 			item.setCoverfit(obj.coverFit);
 			item.setCardsize(obj.cardSize as any);
