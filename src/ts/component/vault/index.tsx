@@ -346,10 +346,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 					onDragEnd={onSortEnd}
 					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 				>
-					<SortableContext
-						items={items.map((item) => item.id)}
-						strategy={verticalListSortingStrategy}
-					>
 						<div id="scroll" className="side top" onScroll={onScroll}>
 							{itemsWithCounter.map((item, i) => (
 								<VaultItem 
@@ -364,18 +360,22 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 							{itemsWithCounter.length > 0 ? <div className="div" /> : ''}
 
-							{itemsWithoutCounter.map((item, i) => (
-								<VaultItem 
-									key={`item-space-${item.id}`}
-									item={item}
-									onClick={e => onClick(e, item)}
-									onMouseEnter={e => onMouseEnter(e, item)}
-									onMouseLeave={() => Preview.tooltipHide()}
-									onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
-								/>
-							))}
+							<SortableContext
+								items={itemsWithoutCounter.map(item => item.id)}
+								strategy={verticalListSortingStrategy}
+							>
+								{itemsWithoutCounter.map((item, i) => (
+									<VaultItem 
+										key={`item-space-${item.id}`}
+										item={item}
+										onClick={e => onClick(e, item)}
+										onMouseEnter={e => onMouseEnter(e, item)}
+										onMouseLeave={() => Preview.tooltipHide()}
+										onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
+									/>
+								))}
+							</SortableContext>
 						</div>
-					</SortableContext>
 				</DndContext>
 				<div className="side bottom" onDragStart={e => e.preventDefault()}>
 					{canCreate ? (
