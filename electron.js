@@ -30,6 +30,10 @@ const Util = require('./electron/js/util.js');
 const Cors = require('./electron/json/cors.json');
 const csp = [];
 
+let deeplinkingUrl = '';
+let waitLibraryPromise = null;
+let mainWindow = null;
+
 MenuManager.store = store;
 
 for (let i in Cors) {
@@ -42,6 +46,10 @@ app.removeAsDefaultProtocolClient(protocol);
 if (process.defaultApp) {
 	if (process.argv.length >= 2) {
 		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
+
+		if (!is.macos) {
+			deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
+		};
 	};
 } else {
 	app.setAsDefaultProtocolClient(protocol);
@@ -65,10 +73,6 @@ ipcMain.on('storeSet', (e, key, value) => {
 ipcMain.on('storeDelete', (e, key) => {
 	e.returnValue = store.delete(key);
 });
-
-let deeplinkingUrl = '';
-let waitLibraryPromise = null;
-let mainWindow = null;
 
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
