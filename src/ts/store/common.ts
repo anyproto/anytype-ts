@@ -214,7 +214,6 @@ class CommonStore {
 		if (this.pinTimeId === null) {
 			this.pinTimeId = Storage.get('pinTime');
 		};
-
 		return (Number(this.pinTimeId) || J.Constant.default.pinTime) * 1000;
 	};
 
