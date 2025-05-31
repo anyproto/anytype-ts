@@ -52,6 +52,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			} else {
 				content = (
 					<PreviewObject
+						key={`preview-${item.id}`}
 						rootId={item.id}
 						size={previewSize}
 						onMore={onMore}
