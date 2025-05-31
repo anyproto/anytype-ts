@@ -339,12 +339,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconNetwork (syncStatus) {
-		let { network, error, syncingCounter, status } = syncStatus;
+		const { network, syncingCounter, error, status } = syncStatus;
 		const buttons: any[] = [];
-
-		error = 1;
-		status = 2;
-
 
 		let id = '';
 		let title = '';
@@ -374,7 +370,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				className = 'error';
 				break;
 			};
-
 		};
 
 		switch (network) {

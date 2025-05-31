@@ -338,14 +338,23 @@ class Action {
 				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
+					Storage.deleteLastOpenedByObjectId(ids);
 					C.ObjectListDelete(ids); 
-					
+
+					const isPopup = keyboard.isPopup();
+					const match = keyboard.getMatch();
+
+					if (ids.includes(match.params.id)) {
+						if (isPopup) {
+							S.Popup.close('page');
+						} else {
+							U.Space.openDashboard();
+						};
+					};
+
 					if (callBack) {
 						callBack();
 					};
-
-					// Remove last opened objects in case any is deleted
-					Storage.deleteLastOpenedByObjectId(ids);
 
 					analytics.event('RemoveCompletely', { count, route });
 				},

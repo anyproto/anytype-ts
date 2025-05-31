@@ -247,21 +247,25 @@ class Storage {
 		return this.get('pin');
 	};
 
+	getLastOpened () {
+		return this.get('lastOpenedObject') || {};
+	};
+
 	setLastOpened (windowId: string, param: any) {
-		const obj = this.get('lastOpenedObject') || {};
+		const obj = this.getLastOpened();
 
 		obj[windowId] = Object.assign(obj[windowId] || {}, param);
 		this.set('lastOpenedObject', obj);
 	};
 
-	deleteLastOpenedByObjectId (objectIds: string[]) {
-		objectIds = objectIds || [];
+	deleteLastOpenedByObjectId (ids: string[]) {
+		ids = ids || [];
 
-		const obj = this.get('lastOpenedObject') || {};
+		const obj = this.getLastOpened();
 		const windowIds = [];
 
 		for (const windowId in obj) {
-			if (!obj[windowId] || objectIds.includes(obj[windowId].id)) {
+			if (!obj[windowId] || ids.includes(obj[windowId].id)) {
 				windowIds.push(windowId);
 			};
 		};
@@ -269,22 +273,20 @@ class Storage {
 		this.deleteLastOpenedByWindowId(windowIds);
 	};
 
-	deleteLastOpenedByWindowId (windowIds: string[]) {
-		windowIds = windowIds.filter(id => id != '1');
-
-		if (!windowIds.length) {
+	deleteLastOpenedByWindowId (ids: string[]) {
+		if (!ids.length) {
 			return;
 		};
 
-		const obj = this.get('lastOpenedObject') || {};
+		const obj = this.getLastOpened();
 
-		windowIds.forEach(windowId => delete(obj[windowId]));
+		ids.forEach(ids => delete(obj[ids]));
 		this.set('lastOpenedObject', obj);
 	};
 
-	getLastOpened (windowId: string) {
-		const obj = this.get('lastOpenedObject') || {};
-		return obj[windowId] || obj[1] || null;
+	getLastOpenedByWindowId (id: string) {
+		const obj = this.getLastOpened();
+		return obj[id] || obj[1] || null;
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {
