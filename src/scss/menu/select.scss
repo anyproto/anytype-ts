@@ -75,6 +75,17 @@
 		.item.add { gap: 0px 12px; }
 	}
 
+	.menu.menuSelect.spaceCreate { width: var(--menu-width-set); }
+	.menu.menuSelect.spaceCreate {
+		.item {
+			.icon { width: 40px; height: 40px; }
+			.icon.chat { background-image: url('~img/icon/menu/spaceCreate/chat.svg'); }
+			.icon.space { background-image: url('~img/icon/menu/spaceCreate/space.svg'); }
+			.icon.import { background-image: url('~img/icon/menu/spaceCreate/import.svg'); }
+			.icon.join { background-image: url('~img/icon/menu/spaceCreate/join.svg'); }
+		}
+	}
+
 	/* Type layout conflict */
 	.menu.menuSelect.menuTypeLayout { width: var(--menu-width-icon); }
 

@@ -12,6 +12,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	const [ canSave, setCanSave ] = useState(true);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
+	const { data } = param;
+	const { spaceKind } = data;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
@@ -59,7 +61,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	};
 
 	const onSubmit = (withImport: boolean) => {
-		const { data } = param;
 		const { onCreate, route } = data;
 		const name = checkName(nameRef.current.getTextValue());
 
@@ -155,6 +156,20 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 	const object = getObject();
 
+	let button = null;
+
+	switch (spaceKind) {
+		case I.SpaceKind.Chat: {
+			button = <Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreateChat')} onClick={() => onSubmit(false)} />
+			break;
+		};
+
+		case I.SpaceKind.Space: {
+			button = <Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreateSpace')} onClick={() => onSubmit(false)} />
+			break;
+		};
+	};
+
 	useEffect(() => {
 		const object = getObject();
 		iconRef.current?.setObject(object);
@@ -191,8 +206,12 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 			</div>
 
 			<div className="buttons">
-				<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
-				<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+				{button ? button : (
+					<>
+						<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
+						<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+					</>
+				)}
 			</div>
 
 			<Error text={error} />
