@@ -129,7 +129,7 @@ const Progress: FC = observer(() => {
 				resizeObserver.disconnect();
 			};
 		};
-	});
+	}, []);
 
 	useEffect(() => resize(), [ list.length ]);
 

@@ -105,8 +105,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								return this.renderLinks(relation.relationKey, i);
 							};
 
-							console.log('canEdit', canEdit, relation.relationKey, relation.format, relation.isReadonlyValue);
-
 							return (
 								<span
 									key={i}

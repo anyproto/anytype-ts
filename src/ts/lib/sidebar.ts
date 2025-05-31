@@ -283,7 +283,6 @@ class Sidebar {
 		this.footer.css({ width: '' });
 
 		this.header.toggleClass('sidebarAnimation', animate);
-		this.header.toggleClass('isSmall', hw < 750);
 		this.footer.toggleClass('sidebarAnimation', animate);
 		//this.page.toggleClass('sidebarAnimation', animate);
 
