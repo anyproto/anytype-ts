@@ -2,6 +2,8 @@
 
 .pageMainRelation,
 .settingsPage.pageSettingsRelation {
+	#loader { position: fixed; top: 0px; width: 100%; height: 100%; background: var(--color-bg-primary); z-index: 5; }
+
 	.wrapper { width: calc(100% - 96px); margin: 0px auto; padding: 60px 0px 0px 0px; user-select: none; }
 	.wrapper.withIcon {
 		.editorControls {
@@ -81,5 +83,3 @@
 		}
 	}
 }
-
-.pageMainType > div > #loader { position: fixed; top: 0px; width: 100%; height: 100%; background: var(--color-bg-primary); z-index: 5; }
