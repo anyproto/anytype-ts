@@ -236,7 +236,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 					$(window).trigger('selectionClear');
 				};
 			} else {
-				let needCheck = false;
+				let needCheck = true;
 				if (e.ctrlKey || e.metaKey) {
 					for (const i in I.SelectType) {
 						const list = idsOnStart.current.get(I.SelectType[i]) || [];
