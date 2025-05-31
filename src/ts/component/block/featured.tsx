@@ -43,7 +43,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, size, iconSize, isPopup } = this.props;
+		const { rootId, block, size, iconSize, isPopup, readonly } = this.props;
 		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
 		const object = this.getObject();
@@ -60,24 +60,29 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			>
 				{headerRelationsLayout == I.FeaturedRelationLayout.Column ? (
 					<div className="listColumn">
-						{items.map((relation: any) => (
-							<Block
-								{...this.props}
-								key={relation.id}
-								rootId={rootId}
-								block={new M.Block({ id: relation.id, type: I.BlockType.Relation, content: { key: relation.relationKey } })}
-								readonly={!allowedValue}
-								isSelectionDisabled={true}
-								isContextMenuDisabled={true}
-							/>
-						))}
+						{items.map((relation: any) => {
+							const value = object[relation.relationKey];
+							const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
+
+							return (
+								<Block
+									{...this.props}
+									key={relation.id}
+									rootId={rootId}
+									block={new M.Block({ id: relation.id, type: I.BlockType.Relation, content: { key: relation.relationKey } })}
+									readonly={!canEdit}
+									isSelectionDisabled={true}
+									isContextMenuDisabled={true}
+								/>
+							);
+						})}
 					</div>
 				) : (
 					<div className="listInline">
 						{items.map((relation: any, i: any) => {
 							const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
 							const value = object[relation.relationKey];
-							const canEdit = allowedValue && !relation.isReadonlyValue;
+							const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
 							const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
 
 							if (i == items.length - 1) {
@@ -99,6 +104,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							if ([ 'links', 'backlinks' ].includes(relation.relationKey)) {
 								return this.renderLinks(relation.relationKey, i);
 							};
+
+							console.log('canEdit', canEdit, relation.relationKey, relation.format, relation.isReadonlyValue);
 
 							return (
 								<span

@@ -44,12 +44,15 @@
 			}
 
 			.cellContent.c-select {
-				.over { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0px 6px; }
+				.over { 
+					display: inline-flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0px 6px; vertical-align: middle; 
+					margin-top: -2px;
+				}
 				.tagItem { margin: 0px; max-width: 400px; }
 			}
 
 			.cellContent.c-file {
-				.over { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; height: 28px; }
+				.over { display: inline-flex; flex-direction: row; align-items: center; gap: 0px 2px; height: 28px; }
 				.element { flex-shrink: 0; display: flex; }
 				.iconObject { display: block; }
 				.name { display: none; }
@@ -60,7 +63,7 @@
 				.iconObject { flex-shrink: 0; margin: 0px 6px 0px 0px !important; }
 			}
 
-			.cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; height: 28px; gap: 0px 4px; }
+			.cellContent.c-checkbox { display: inline-flex; flex-direction: row; align-items: center; height: 28px; gap: 0px 4px; }
 
 			.cellContent.c-longText {
 				.name { display: inline-block; vertical-align: top; max-width: 220px; @include text-overflow-nw; }
