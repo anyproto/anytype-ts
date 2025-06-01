@@ -80,10 +80,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			pressed.current.add(key);
 		};
 
-		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
-			pressed.current.add(key);
-		};
-
 		keyboard.shortcut('nextSpace, prevSpace', e, pressed => {
 			checkKeyUp.current = true;
 			onArrow(pressed.match('shift') ? -1 : 1);
@@ -114,9 +110,10 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		pressed.current.delete(key);
 
 		if (
-			(pressed.current.has(Key.ctrl) || 
-			pressed.current.has(Key.tab) || 
-			pressed.current.has(Key.shift)) ||
+			(
+				pressed.current.has(Key.ctrl) || 
+				pressed.current.has(Key.tab)
+			) ||
 			!checkKeyUp.current
 		) {
 			return;
