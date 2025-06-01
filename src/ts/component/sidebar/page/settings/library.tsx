@@ -41,6 +41,8 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.onMore = this.onMore.bind(this);
 		this.getAnalyticsSuffix = this.getAnalyticsSuffix.bind(this);
 		this.openFirst = this.openFirst.bind(this);
+
+		this.cache = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM });
 	};
 
 	render () {
@@ -178,18 +180,10 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	componentDidMount () {
-		const items = this.getItems();
-
 		this.type = this.props.page == 'types' ? I.ObjectContainerType.Type : I.ObjectContainerType.Relation;
 		this.refFilter.focus();
 		this.initSort();
 		this.load(true, this.openFirst);
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: i => this.getRowHeight(items[i]),
-			keyMapper: i => (items[i] || {}).id,
-		});
 	};
 
 	componentWillUnmount () {
