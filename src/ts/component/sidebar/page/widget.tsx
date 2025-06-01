@@ -235,7 +235,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const targets = [];
 		const node = $(this.node);
 		const body = node.find('#body');
-		const position = body.outerHeight() + 350 > node.outerHeight() ? I.MenuDirection.Top : I.MenuDirection.Bottom;
+		const nh = node.outerHeight();
+		const button = node.find('#widget-list-add');
+		const { top } = button.offset();
+		const position = top + 350 > nh ? I.MenuDirection.Top : I.MenuDirection.Bottom;
 
 		blocks.forEach(block => {
 			const children = S.Block.getChildren(widgets, block.id);
@@ -278,7 +281,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			element: '#widget-list-add',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			offsetY: -4,
+			offsetY: position == I.MenuDirection.Top ? -4 : 4,
 			vertical: position,
 			subIds: J.Menu.widgetAdd,
 			data: {
