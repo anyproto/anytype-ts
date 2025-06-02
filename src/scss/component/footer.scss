@@ -25,10 +25,6 @@
 	}
 	.iconWrap:hover .bg { transform: scale3d(0.95, 0.95, 1); }
 	
-	#button-help {
-		.icon { background-image: url('~img/icon/footer/help.svg'); }
-	}
-
 	#button-progress {
 		.inner {
 			position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); background-color: var(--color-bg-primary);

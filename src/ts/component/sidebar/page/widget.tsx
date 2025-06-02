@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Widget, DropTarget, ShareBanner } from 'Component';
+import { Button, Icon, Widget, DropTarget, ShareBanner } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 type State = {
@@ -35,6 +35,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onScroll = this.onScroll.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
+		this.onHelp = this.onHelp.bind(this);
+		this.onSettings = this.onSettings.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -131,16 +133,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			if (isEditing) {
 				if (blocks.length <= J.Constant.limit.widgets) {
-					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetEditor) });
+					buttons.push({ id: 'widget-list-add', className: 'grey c28', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetEditor) });
 				};
 
-				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onMouseDown: this.onEdit });
-			} else 
-			if (canWrite) {
-				buttons = buttons.concat([
-					{ id: 'widget-list-add', className: 'grey c28', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
-					{ id: 'widget-list-edit', className: 'grey c28', text: translate('commonEdit'), onMouseDown: this.onEdit }
-				]);
+				buttons.push({ id: 'widget-list-done', className: 'grey c28', text: translate('commonDone'), onMouseDown: this.onEdit });
 			};
 
 			content = (
@@ -184,10 +180,26 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						/>
 					))}
 
-					<div className="buttons">
-						{buttons.map(button => (
-							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
-						))}
+					<div className="bottom">
+						<div className="side left">
+							<Icon className="settings withBackground" tooltipParam={{ text: translate('popupSettingsSpaceIndexTitle') }} onClick={this.onSettings} />
+						</div>
+
+						<div className="side center">
+							{isEditing ? (
+								<>
+									{buttons.map(button => (
+										<Button key={button.id} color="" {...button} />
+									))}
+								</>
+							) : (
+								<Button text={translate('sidebarEdit')} color="simple" onClick={this.onEdit} />
+							)}
+						</div>
+
+						<div className="side right">
+							<Icon id="button-widget-help" className="help withBackground" tooltipParam={{ text: translate('commonHelp') }} onClick={this.onHelp} />
+						</div>
 					</div>
 				</>
 			);
@@ -219,6 +231,22 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onScroll();
 	};
 
+	onHelp () {
+		S.Menu.open('help', {
+			element: '#button-widget-help',
+			classNameWrap: 'fixed',
+			className: 'fromSidebar',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
+			offsetY: () => -($('#notifications').height() + 78),
+		});
+	};
+
+	onSettings (e: any) {
+		e.stopPropagation();
+		U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+	};
+
 	onEdit (e: any): void {
 		e.stopPropagation();
 
@@ -234,7 +262,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
 		const targets = [];
 		const node = $(this.node);
-		const body = node.find('#body');
 		const nh = node.outerHeight();
 		const button = node.find('#widget-list-add');
 		const { top } = button.offset();
@@ -282,6 +309,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: position == I.MenuDirection.Top ? -4 : 4,
+			horizontal: I.MenuDirection.Center,
 			vertical: position,
 			subIds: J.Menu.widgetAdd,
 			data: {

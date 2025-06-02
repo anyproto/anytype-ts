@@ -188,9 +188,11 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	};
 
 	if (isEmpty) {
+		const label = targetId == J.Constant.widgetId.favorite ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel');
+
 		content = (
 			<div className="emptyWrap">
-				{!isLoading ? <Label className="empty" text={translate('widgetEmptyLabel')} /> : ''}
+				{!isLoading ? <Label className="empty" text={label} /> : ''}
 			</div>
 		);
 	} else {

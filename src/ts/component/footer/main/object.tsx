@@ -1,12 +1,10 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
-import { Icon } from 'Component';
-import { I, J, S, Preview, translate } from 'Lib';
+import { I, J, S } from 'Lib';
 
 const FooterMainObject = observer(forwardRef<{}, I.FooterComponent>((props, ref) => {
 
-	const { onHelp } = props;
 	const { show } = S.Progress;
 	const theme = S.Common.getThemeClass();
 	const skipState = [ I.ProgressState.Done, I.ProgressState.Canceled ];
@@ -14,13 +12,6 @@ const FooterMainObject = observer(forwardRef<{}, I.FooterComponent>((props, ref)
 	const list = S.Progress.getList(it => !skipType.includes(it.type) && !skipState.includes(it.state));
 	const percent = S.Progress.getPercent(list);
 	const color = J.Theme[theme].progress;
-
-	const onTooltipShow = (e: any, text: string, caption?: string) => {
-		const t = Preview.tooltipCaption(text, caption);
-		if (t) {
-			Preview.tooltipShow({ text: t, element: $(e.currentTarget), typeY: I.MenuDirection.Top });
-		};
-	};
 
 	return (
 		<div className="buttons">
@@ -42,17 +33,6 @@ const FooterMainObject = observer(forwardRef<{}, I.FooterComponent>((props, ref)
 					/>
 				</div>
 			) : ''}
-
-			<div 
-				id="button-help" 
-				className="iconWrap" 
-				onClick={onHelp}
-				onMouseEnter={e => onTooltipShow(e, translate('commonHelp'))}
-				onMouseLeave={() => Preview.tooltipHide(false)}
-			>
-				<Icon />
-				<div className="bg" />
-			</div>
 		</div>
 	);
 
