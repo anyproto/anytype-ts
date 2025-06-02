@@ -27,6 +27,7 @@ const getSections = () => {
 				{
 					name: translate('popupShortcutBasics'), children: [
 						{ id: 'createObject', name: translate('popupShortcutMainBasics1'), keys: [ cmdKey, 'n' ] },
+						{ id: 'createWidget', name: translate('popupShortcutMainBasicsCreateWidget'), keys: [ cmdKey, 'shift', 'w' ] },
 						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, 'alt', 'n' ] },
 						{ id: 'newWindow', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 'shift', 'n' ] },
 						{ id: 'close', name: translate('popupShortcutMainBasics10'), keys: [ cmdKey, 'q' ] },
