@@ -2,218 +2,160 @@ import * as React from 'react';
 import { Title, Icon, Label, Button, Checkbox, Error, Input } from 'Component';
 import { I, keyboard, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
+import { forwardRef } from 'react';
 
-interface State {
-	error: string;
-};
+const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup, State> {
+	const { param, close } = props;
+	const { data } = param;
+	const { title, text, icon, storageKey, confirmMessage } = data;
+	const [error, setError] = React.useState<string>(String(data.error || ''));
+	const buttonsRef = React.useRef<any>(null);
+	const checkboxRef = React.useRef<any>(null);
+	const inputRef = React.useRef<any>(null);
+	const nRef = React.useRef<number>(0);
 
-	refButtons: any = null;
-	refCheckbox: any = null;
-	refInput: any = null;
-	n = 0;
-	state = {
-		error: '',
-	};
+	const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
+	const canCancel = undefined === data.canCancel ? true : data.canCancel;
+	const textConfirm = data.textConfirm || translate('commonOk');
+	const textCancel = data.textCancel || translate('commonCancel');
+	const colorConfirm = data.colorConfirm || 'black';
+	const colorCancel = data.colorCancel || 'blank';
+	const bgColor = data.bgColor || '';
 
-	constructor (props: I.Popup) {
-		super(props);
-		
-		this.onCheck = this.onCheck.bind(this);
-		this.onConfirm = this.onConfirm.bind(this);
-		this.onCancel = this.onCancel.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.setHighlight = this.setHighlight.bind(this);
-	};
+	const setHighlight = React.useCallback(() => {
+		const buttons = $(buttonsRef.current).find('.button');
+		if (buttons[nRef.current]) {
+			$(buttonsRef.current).find('.hover').removeClass('hover');
+			$(buttons[nRef.current]).addClass('hover');
+		}
+	}, []);
 
-	render() {
-		const { param } = this.props;
-		const { data } = param;
-		const { title, text, icon, storageKey, confirmMessage } = data;
-		const cn = [ 'wrap' ];
-		const error = String(data.error || this.state.error || '');
-		
-		const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
-		const canCancel = undefined === data.canCancel ? true : data.canCancel;
-		const textConfirm = data.textConfirm || translate('commonOk');
-		const textCancel = data.textCancel || translate('commonCancel');
-		const colorConfirm = data.colorConfirm || 'black';
-		const colorCancel = data.colorCancel || 'blank';
-		const bgColor = data.bgColor || '';
+	const onMouseEnter = React.useCallback((e: any) => {
+		const buttons = $(buttonsRef.current).find('.button');
+		nRef.current = $(buttons).index(e.currentTarget);
+		setHighlight();
+	}, [setHighlight]);
 
-		if (storageKey) {
-			cn.push('withCheckbox');
-		};
+	const onCheck = React.useCallback((e: any) => {
+		const value = checkboxRef.current.getValue();
+		checkboxRef.current.toggle();
+		Storage.set(storageKey, !value);
+	}, [storageKey]);
 
+	const onConfirm = React.useCallback((e: any) => {
+		const { onConfirm, noCloseOnConfirm, confirmMessage } = data;
 		if (confirmMessage) {
-			cn.push('withInput');
-		};
-		
-		return (
-			<div className={[ 'wrap', (storageKey ? 'withCheckbox' : '') ].join(' ')}>
-				{icon ? (
-					<div className={[ 'iconWrapper', bgColor ].join(' ')}>
-						<Icon className={icon} />
-					</div>
-				) : ''}
-				<Title text={title} />
-				<Label className="descr" text={text} />
+			const value = inputRef.current.getValue();
+			if (value != confirmMessage) {
+				setError(translate('popupConfirmConfirmationTextError'));
+				return;
+			}
+		}
+		e.preventDefault();
+		if (!noCloseOnConfirm) {
+			close();
+		}
+		if (onConfirm) {
+			onConfirm();
+		}
+	}, [data, close]);
 
-				{storageKey ? (
-					<div className="checkboxWrapper" onClick={this.onCheck}>
-						<Checkbox ref={ref => this.refCheckbox = ref} value={false} />
-						<Label text={translate('commonDoNotShowAgain')} />
-					</div>
-				) : ''}
+	const onCancel = React.useCallback((e: any) => {
+		const { onCancel } = data;
+		close();
+		if (onCancel) {
+			onCancel();
+		}
+	}, [data, close]);
 
-				{confirmMessage ? (
-					<div className="confirmMessage">
-						<Input type="text" ref={ref => this.refInput = ref} placeholder={confirmMessage} />
-					</div>
-				) : ''}
-
-				<div ref={ref => this.refButtons = ref} className="buttons">
-					{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={this.onConfirm} onMouseEnter={this.onMouseEnter} /> : ''}
-					{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={this.onCancel} onMouseEnter={this.onMouseEnter} /> : ''}
-				</div>
-
-				<Error text={error} />
-			</div>
-		);
-	};
-
-	componentDidMount() {
-		keyboard.setFocus(true);
-		this.setHighlight();
-
-		this.rebind();
-	};
-
-	componentWillUnmount() {
-		keyboard.setFocus(false);
-
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.confirm', e => this.onKeyDown(e));
-	};
-
-	unbind () {
-		$(window).off('keydown.confirm');
-	};
-
-	onKeyDown (e: any) {
-		const { param, close } = this.props;
-		const { data } = param;
+	const onKeyDown = React.useCallback((e: any) => {
 		const { confirmMessage } = data;
 		const cmd = keyboard.cmdKey();
-		const buttons = $(this.refButtons).find('.button');
+		const buttons = $(buttonsRef.current).find('.button');
 
 		keyboard.shortcut('enter, space', e, (pressed: string) => {
 			e.stopPropagation();
-
 			if ((pressed === 'space') && confirmMessage) {
 				return;
-			};
-
-			if (buttons[this.n]) {
-				$(buttons[this.n]).trigger('click');
-			};
+			}
+			if (buttons[nRef.current]) {
+				$(buttons[nRef.current]).trigger('click');
+			}
 		});
 
 		keyboard.shortcut('escape', e, () => {
 			e.stopPropagation();
-			this.onCancel(e);
+			onCancel(e);
 		});
 
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
 			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? 1 : -1;
-
 			if (buttons.length < 2) {
 				return;
-			};
-
-			this.n += dir;
-			if (this.n < 0) {
-				this.n = buttons.length - 1;
-			};
-			if (this.n > buttons.length - 1) {
-				this.n = 0;
-			};
-
-			this.setHighlight();
+			}
+			nRef.current += dir;
+			if (nRef.current < 0) {
+				nRef.current = buttons.length - 1;
+			}
+			if (nRef.current > buttons.length - 1) {
+				nRef.current = 0;
+			}
+			setHighlight();
 		});
 
 		keyboard.shortcut(`${cmd}+c`, e, () => {
 			e.stopPropagation();
 		});
-	};
-	
-	onConfirm (e: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onConfirm, noCloseOnConfirm, confirmMessage } = data;
+	}, [data, setHighlight, onCancel]);
 
-		if (confirmMessage) {
-			const value = this.refInput.getValue();
-
-			if (value != confirmMessage) {
-				this.setState({ error: translate('popupConfirmConfirmationTextError') });
-				return;
-			};
+	React.useEffect(() => {
+		keyboard.setFocus(true);
+		setHighlight();
+		const handler = (e: any) => onKeyDown(e);
+		$(window).on('keydown.confirm', handler);
+		return () => {
+			keyboard.setFocus(false);
+			$(window).off('keydown.confirm', handler);
 		};
-		
-		e.preventDefault();
-		if (!noCloseOnConfirm) {
-			close();
-		};
-		
-		if (onConfirm) {
-			onConfirm();
-		};
-	};
+	}, [setHighlight, onKeyDown]);
 
-	onCheck (e: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { storageKey } = data;
-		const value = this.refCheckbox.getValue();
+	const cn = [ 'wrap' ];
+	if (storageKey) cn.push('withCheckbox');
+	if (confirmMessage) cn.push('withInput');
 
-		this.refCheckbox.toggle();
-		Storage.set(storageKey, !value);
-	};
-	
-	onCancel (e: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onCancel } = data;
+	return (
+		<div className={cn.join(' ')}>
+			{icon ? (
+				<div className={[ 'iconWrapper', bgColor ].join(' ')}>
+					<Icon className={icon} />
+				</div>
+			) : ''}
+			<Title text={title} />
+			<Label className="descr" text={text} />
 
-		this.props.close();
+			{storageKey ? (
+				<div className="checkboxWrapper" onClick={onCheck}>
+					<Checkbox ref={checkboxRef} value={false} />
+					<Label text={translate('commonDoNotShowAgain')} />
+				</div>
+			) : ''}
 
-		if (onCancel) {
-			onCancel();
-		};
-	};
+			{confirmMessage ? (
+				<div className="confirmMessage">
+					<Input type="text" ref={inputRef} placeholder={confirmMessage} />
+				</div>
+			) : ''}
 
-	onMouseEnter (e: any) {
-		const buttons = $(this.refButtons).find('.button');
+			<div ref={buttonsRef} className="buttons">
+				{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={onConfirm} onMouseEnter={onMouseEnter} /> : ''}
+				{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={onCancel} onMouseEnter={onMouseEnter} /> : ''}
+			</div>
 
-		this.n = $(buttons).index(e.currentTarget);
-		this.setHighlight();
-	};
+			<Error text={error} />
+		</div>
+	);
 
-	setHighlight () {
-		const buttons = $(this.refButtons).find('.button');
-
-		if (buttons[this.n]) {
-			$(this.refButtons).find('.hover').removeClass('hover');
-			$(buttons[this.n]).addClass('hover');
-		};
-	};
-	
-});
+}));
 
 export default PopupConfirm;
