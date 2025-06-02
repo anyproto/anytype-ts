@@ -1051,6 +1051,10 @@
 	"popupSpaceCreateCreateChat": "Create chat",
 	"popupSpaceCreateImport": "Import my data",
 
+	"popupSpaceJoinByLinkLabel": "Join by invite link",
+	"popupSpaceJoinByLinkInputPlaceholder": "Paste invite link...",
+	"popupSpaceJoinByLinkError": "Oops, this link seems incorrect",
+
 	"popupApiCreateCreate": "Create new API key",
 
 	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",

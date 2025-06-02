@@ -217,6 +217,9 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 						};
 
 						case 'join': {
+							S.Popup.closeAll(null, () => {
+								S.Popup.open('spaceJoinByLink', {});
+							});
 							break;
 						};
 					};

@@ -156,16 +156,26 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 	const object = getObject();
 
-	let button = null;
+	let buttons = null;
 
 	switch (spaceKind) {
 		case I.SpaceKind.Chat: {
-			button = <Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreateChat')} onClick={() => onSubmit(false)} />
+			buttons = <Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreateChat')} onClick={() => onSubmit(false)} />
 			break;
 		};
 
 		case I.SpaceKind.Space: {
-			button = <Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreateSpace')} onClick={() => onSubmit(false)} />
+			buttons = <Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreateSpace')} onClick={() => onSubmit(false)} />
+			break;
+		};
+
+		case I.SpaceKind.Unknown: {
+			buttons = (
+				<>
+					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
+					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+				</>
+			);
 			break;
 		};
 	};
@@ -206,12 +216,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 			</div>
 
 			<div className="buttons">
-				{button ? button : (
-					<>
-						<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
-						<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
-					</>
-				)}
+				{buttons}
 			</div>
 
 			<Error text={error} />
