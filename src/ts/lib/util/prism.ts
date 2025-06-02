@@ -15,7 +15,7 @@ class UtilPrism {
 	 * @param {string} lang - The language key.
 	 * @returns {string[]} The array of dependencies.
 	 */
-	private getDependencies (lang: string) {
+	private getDependencies (lang: string): string[] {
 		const result = [];
 		const language = Components.languages[lang] || {};
 		// the type of `require`, `optional`, `alias` is one of `undefined`, `string[]` and `string`
