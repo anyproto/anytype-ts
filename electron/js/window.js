@@ -105,6 +105,7 @@ class WindowManager {
 		if (!isChild) {
 			try {
 				state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
+
 				param = Object.assign(param, {
 					x: state.x,
 					y: state.y,

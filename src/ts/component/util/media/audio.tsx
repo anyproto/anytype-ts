@@ -181,7 +181,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 			unbind();
 
 			if (nodeRef.current) {
-				resizeObserver.unobserve(nodeRef.current);
+				resizeObserver.disconnect();
 			};
 		};
 	}, []);
@@ -212,9 +212,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 			<audio ref={audioRef} preload="auto" src={src} />
 
 			<div className="controlsWrapper">
-				<div className="name">
-					<span>{name}</span>
-				</div>
+				<div className="name">{name}</div>
 
 				<div className="controls">
 					<Icon 

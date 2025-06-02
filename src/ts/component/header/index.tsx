@@ -1,5 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import $ from 'jquery';
+import raf from 'raf';
+import { I, S, U, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
 
 import HeaderAuthIndex from './auth';
@@ -41,9 +43,13 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		onTab,
 	} = props;
 
+	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const Component = Components[component] || null;
 	const cn = [ 'header', component, className ];
+	const resizeObserver = new ResizeObserver(() => {
+		raf(() => resize());
+	});
 
 	if (![ 'authIndex' ].includes(component)) {
 		cn.push('isCommon');
@@ -159,6 +165,27 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		return (isPopup ? '.popup' : '') + ' .header';
 	};
 
+	const resize = () => {
+		const node = $(nodeRef.current);
+		const path = node.find('.path');
+
+		node.toggleClass('isSmall', path.outerWidth() < 180);
+	};
+
+	useEffect(() => {
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+
+		resize();
+
+		return () => {
+			if (nodeRef.current) {
+				resizeObserver.disconnect();
+			};
+		};
+	}, []);
+
 	useEffect(() => {
 		sidebar.resizePage(null, null, false);
 	});
@@ -180,6 +207,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	return (
 		<div 
 			id="header" 
+			ref={nodeRef}
 			className={cn.join(' ')}
 			onDoubleClick={onDoubleClick}
 		>

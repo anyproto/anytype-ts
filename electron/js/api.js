@@ -276,6 +276,17 @@ class Api {
 		return data;
 	};
 
+	focusWindow (win) {
+		if (!win || win.isDestroyed()) {
+			return;
+		};
+
+		win.show();
+		win.focus();
+		win.setAlwaysOnTop(true);
+		win.setAlwaysOnTop(false);
+	};
+
 };
 
 module.exports = new Api();

@@ -249,9 +249,11 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	let content = null;
 
 	if (!length) {
+		const label = targetId == J.Constant.widgetId.favorite ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel');
+
 		content = (
 			<div className="emptyWrap">
-				<Label className="empty" text={translate('widgetEmptyLabel')} />
+				<Label className="empty" text={label} />
 			</div>
 		);
 	} else 

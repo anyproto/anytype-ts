@@ -19,11 +19,22 @@ const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
 class UtilEmbed {
 
+	/**
+	 * Returns the HTML for embedding content based on the processor type.
+	 * @param {I.EmbedProcessor} processor - The embed processor type.
+	 * @param {any} content - The content to embed.
+	 * @returns {string} The HTML string for embedding.
+	 */
 	getHtml (processor: I.EmbedProcessor, content: any): string {
 		const fn = U.Common.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
 		return this[fn] ? this[fn](content) : content;
 	};
 
+	/**
+	 * Returns the HTML for embedding a YouTube video.
+	 * @param {string} content - The YouTube URL.
+	 * @returns {string} The HTML iframe string.
+	 */
 	getYoutubeHtml (content: string): string {
 		let url = '';
 
@@ -35,30 +46,65 @@ class UtilEmbed {
 		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding a Vimeo video.
+	 * @param {string} content - The Vimeo URL.
+	 * @returns {string} The HTML iframe string.
+	 */
 	getVimeoHtml (content: string): string {
 		return `<iframe src="${content}"  ${IFRAME_PARAM} allow="autoplay; fullscreen; picture-in-picture"></iframe>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding a Google Maps location.
+	 * @param {string} content - The Google Maps URL.
+	 * @returns {string} The HTML iframe string.
+	 */
 	getGoogleMapsHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM} loading="lazy"></iframe>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding a Miro board.
+	 * @param {string} content - The Miro URL.
+	 * @returns {string} The HTML iframe string.
+	 */
 	getMiroHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM} allow="fullscreen; clipboard-read; clipboard-write"></iframe>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding a Figma file.
+	 * @param {string} content - The Figma URL.
+	 * @returns {string} The HTML iframe string.
+	 */
 	getFigmaHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding an OpenStreetMap view.
+	 * @param {string} content - The OpenStreetMap URL.
+	 * @returns {string} The HTML iframe string.
+	 */
 	getOpenStreetMapHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding a GitHub Gist.
+	 * @param {string} content - The Gist URL.
+	 * @returns {string} The HTML script tag.
+	 */
 	getGithubGistHtml (content: string): string {
 		return `<script src="${content}.js"></script>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding a Codepen snippet.
+	 * @param {string} content - The Codepen URL.
+	 * @returns {string} The HTML string for Codepen.
+	 */
 	getCodepenHtml (content: string): string {
 		let p = [];
 
@@ -75,22 +121,47 @@ class UtilEmbed {
 		return `<p class="codepen" data-height="300" data-default-tab="html,result" data-slug-hash="${p[3]}" data-user="${p[1]}"></p>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding a Bilibili video.
+	 * @param {string} content - The Bilibili URL.
+	 * @returns {string} The HTML iframe string.
+	 */
 	getBilibiliHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding a Sketchfab model.
+	 * @param {string} content - The Sketchfab URL.
+	 * @returns {string} The HTML iframe string.
+	 */
 	getSketchfabHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding a Drawio diagram or SVG.
+	 * @param {string} content - The Drawio URL or SVG content.
+	 * @returns {string} The HTML iframe or SVG string.
+	 */
 	getDrawioHtml (content: string): string {
 		return content.match(/^<svg/) ? content : `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
+	/**
+	 * Returns the HTML for embedding an image.
+	 * @param {string} content - The image URL.
+	 * @returns {string} The HTML img tag.
+	 */
 	getImageHtml (content: string): string {
 		return `<img src="${content}" />`;
 	};
 
+	/**
+	 * Determines the embed processor type for a given URL.
+	 * @param {string} url - The URL to check.
+	 * @returns {I.EmbedProcessor|null} The processor type or null if not found.
+	 */
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
@@ -115,6 +186,11 @@ class UtilEmbed {
 		return p;
 	};
 
+	/**
+	 * Returns a parsed embed URL for a given processor type.
+	 * @param {string} url - The original URL.
+	 * @returns {string|undefined} The parsed embed URL or undefined.
+	 */
 	getParsedUrl (url: string): string {
 		const processor = this.getProcessorByUrl(url);
 

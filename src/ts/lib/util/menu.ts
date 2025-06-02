@@ -869,10 +869,9 @@ class UtilMenu {
 	};
 
 	getSystemWidgets () {
-		const space = U.Space.getSpaceview();
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-star' },
-			space.chatId || U.Object.isAllowedChat() ? { id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: 'widget-chat' } : null,
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
+			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: 'widget-chat' },
 			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
@@ -1298,6 +1297,7 @@ class UtilMenu {
 				data: {
 					noStore: true,
 					canAdd: true,
+					noClose: true,
 					onMore,
 					buttons,
 					filters: [
@@ -1305,26 +1305,49 @@ class UtilMenu {
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
-						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
-							if (message.error.code || !message.details) {
-								return;
-							};
-
-							const object = message.details;
-
+						const cb = (object: any, time: number) => {
 							if (callBack) {
 								callBack(object);
 							};
 
 							analytics.event('SelectObjectType', { objectType: object.type });
-							analytics.createObject(object.type, object.layout, route, message.middleTime);
-						});
+							analytics.createObject(object.type, object.layout, route, time);
+
+							menuContext.close();
+						};
+
+						if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
+							this.onBookmarkMenu({
+								...param,
+								element: `#${menuContext.getId()} #item-${item.id}`,
+							}, (object: any) => cb(object, 0));
+						} else {
+							C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
+								if (!message.error.code) {
+									cb(message.details, message.middleTime);
+								};
+							});
+						};
 					},
 				},
 			});
 		};
 
 		check();
+	};
+
+	onBookmarkMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
+		param = param || {};
+
+		S.Menu.open('dataviewCreateBookmark', {
+			type: I.MenuType.Horizontal,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				onSubmit: callBack,
+			},
+			...param,
+		});
 	};
 
 };

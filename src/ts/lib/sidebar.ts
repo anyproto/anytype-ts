@@ -186,7 +186,7 @@ class Sidebar {
 		const { x } = keyboard.mouse.page;
 		const { width, isClosed } = this.data;
 		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
-		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle' ]);
+		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle', 'typeSuggest' ]);
 		const popupOpen = S.Popup.isOpen();
 
 		let show = false;
@@ -283,7 +283,6 @@ class Sidebar {
 		this.footer.css({ width: '' });
 
 		this.header.toggleClass('sidebarAnimation', animate);
-		this.header.toggleClass('isSmall', hw < 750);
 		this.footer.toggleClass('sidebarAnimation', animate);
 		//this.page.toggleClass('sidebarAnimation', animate);
 

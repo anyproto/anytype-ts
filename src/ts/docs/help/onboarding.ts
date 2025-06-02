@@ -12,7 +12,7 @@ export default {
 		],
 
 		param: {
-			element: '#pageFlex.isFull #footer #button-help',
+			element: '#button-widget-help',
 			classNameWrap: 'fixed',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
@@ -26,7 +26,7 @@ export default {
 	emailCollection: () => ({
 		items: [ { noButton: true } ],
 		param: {
-			element: '#pageFlex.isFull #footer #button-help',
+			element: '#button-widget-help',
 			classNameWrap: 'fixed',
 			className: 'invertedColor',
 			vertical: I.MenuDirection.Top,
@@ -49,7 +49,7 @@ export default {
 			},
 		],
 		param: {
-			element: '#pageFlex.isFull #footer #button-help',
+			element: '#button-widget-help',
 			classNameWrap: 'fixed',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
@@ -72,7 +72,7 @@ export default {
 			},
 		],
 		param: {
-			element: '#pageFlex.isFull #footer #button-help',
+			element: '#button-widget-help',
 			classNameWrap: 'fixed',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,

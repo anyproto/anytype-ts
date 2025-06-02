@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, J, translate, analytics } from 'Lib';
+import { I, C, S, U, J, translate, Preview } from 'Lib';
 
 interface PageMainInviteRefProps {
 	resize: () => void;
@@ -104,7 +104,13 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 									text: U.Common.sprintf(translate('popupConfirmJoinSpaceText'), spaceName, creatorName),
 									textConfirm: translate('popupConfirmJoinSpaceButtonConfirm'),
 									onConfirm: () => {
-										C.SpaceJoin(account.info.networkId, message.spaceId, cid, key);
+										C.SpaceJoin(account.info.networkId, message.spaceId, cid, key, () => {
+											if (message.error.code) {
+												setError(message.error.description);
+											} else {
+												Preview.toastShow({ text: U.Common.sprintf(translate('toastJoinSpace'), spaceName) });
+											};
+										});
 									},
 								},
 							});

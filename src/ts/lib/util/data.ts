@@ -180,8 +180,6 @@ class UtilData {
 						} else {
 							U.Space.openDashboard(routeParam);
 						};
-
-						S.Common.redirectSet('');
 					};
 
 					if (callBack) {

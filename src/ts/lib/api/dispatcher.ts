@@ -925,11 +925,7 @@ class Dispatcher {
 							const { object } = payload;
 
 							U.Object.openAuto(object);
-							window.focus();
-
-							if (electron.focus) {
-								electron.focus();
-							};
+							Renderer.send('focusWindow');
 
 							analytics.createObject(object.type, object.layout, analytics.route.webclipper, 0);
 							break;

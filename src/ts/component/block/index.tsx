@@ -544,6 +544,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
+		if (e.ctrlKey) {
+			return;
+		};
+
 		if (
 			isContextMenuDisabled || 
 			readonly || 

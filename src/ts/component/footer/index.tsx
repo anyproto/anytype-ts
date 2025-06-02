@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef } from 'react';
-import { I, S } from 'Lib';
+import { I } from 'Lib';
 
 import FooterAuthIndex from './auth';
 import FooterAuthDisclaimer from './auth/disclaimer';
@@ -23,23 +23,12 @@ const Footer = forwardRef<{}, Props>((props, ref) => {
 	const Component = Components[component] || null;
 	const cn = [ 'footer', component, className ];
 
-	const onHelp = () => {
-		S.Menu.open('help', {
-			element: '#footer #button-help',
-			classNameWrap: 'fixed',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-			offsetY: () => -($('#notifications').height() + 78),
-		});
-	};
-
 	return (
 		<div id="footer" className={cn.join(' ')}>
 			{Component ? (
 				<Component 
 					ref={childRef} 
 					{...props} 
-					onHelp={onHelp}
 				/>
 			) : ''}
 		</div>

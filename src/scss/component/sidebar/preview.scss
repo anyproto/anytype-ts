@@ -57,6 +57,10 @@
         .featured {
             dl { width: 100%; display: flex; align-items: center; @include text-overflow-nw; }
             dt { width: 35%; }
+			dt {
+				.label { width: 100%; @include text-overflow-nw; }
+			}
+
             dd { width: 65%; }
             dd {
                 .item { height: 12px; border-radius: 2px; background: var(--color-shape-secondary); }

@@ -487,7 +487,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		window.clearTimeout(this.timeout);
 
-		if (v && (this.filter == v)) {
+		if (this.filter == v) {
 			return;
 		};
 

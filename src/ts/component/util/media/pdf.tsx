@@ -69,7 +69,7 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 			raf.cancel(frame.current);
 
 			if (nodeRef.current) {
-				resizeObserver.unobserve(nodeRef.current);
+				resizeObserver.disconnect();
 			};
 		};
 	});

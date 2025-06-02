@@ -960,13 +960,21 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		e.persist();
 
 		this.placeholderCheck();
-		this.setValue(block.getText());
-
 		keyboard.setFocus(true);
 
 		if (onFocus) {
 			onFocus(e);
 		};
+
+		// Workaround for focus issue and Latex rendering
+		window.setTimeout(() => {
+			const range = this.getRange();
+
+			this.setValue(block.getText());
+
+			focus.set(block.id, range);
+			focus.apply();
+		}, 0);
 	};
 	
 	onBlur (e: any) {

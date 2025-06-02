@@ -9,6 +9,7 @@ interface Props {
 	style?: number;
 	type?: I.BlockType;
 	dropType: I.DropType;
+	viewType?: I.ViewType;
 	className?: string;
 	canDropMiddle?: boolean;
 	isTargetTop?: boolean;
@@ -26,6 +27,7 @@ const DropTarget: FC<Props> = ({
 	cacheKey = '',
 	targetContextId = '',
 	dropType = I.DropType.None,
+	viewType = null,
 	type,
 	style = 0,
 	className = '',
@@ -71,6 +73,7 @@ const DropTarget: FC<Props> = ({
 				'drop-type': dropType,
 				'context-id': targetContextId,
 				'drop-middle': Number(canDropMiddle) || 0,
+				'view-type': Number(viewType) || 0,
 			})}
 		>
 			{children}

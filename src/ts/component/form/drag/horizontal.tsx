@@ -25,7 +25,7 @@ const SNAP = 0.025;
 const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 	id = '',
 	className = '',
-	value: initalValue = 0,
+	value: initialValue = 0,
 	snaps = [],
 	strictSnap = false,
 	iconIsOutside = false,
@@ -34,7 +34,7 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 	onMove,
 	onEnd,
 }, ref) => {
-	let value = initalValue;
+	let value = initialValue;
 
 	const nodeRef = useRef(null);
 	const iconRef = useRef(null);
@@ -154,7 +154,7 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		$(nodeRef.current).removeClass('isDragging');
 	};
 
-	useEffect(() => setValue(initalValue), []);
+	useEffect(() => setValue(initialValue), []);
 
 	useImperativeHandle(ref, () => ({
 		getValue,
