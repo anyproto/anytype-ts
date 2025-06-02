@@ -47,6 +47,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const hasShareBanner = U.Space.hasShareBanner();
+		const buttons: I.ButtonComponent[] = [];
 
 		if (isEditing) {
 			cn.push('isEditing');
@@ -57,6 +58,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		};
 
 		let content = null;
+		let first = null;
+		let bottom = null;
 
 		if (previewId) {
 			const block = S.Block.getLeaf(widgets, previewId);
@@ -124,9 +127,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				return 0;
 			});
 
-			let first = null;
-			let buttons: I.ButtonComponent[] = [];
-
 			if (blocks.length) {
 				first = blocks[0];
 			};
@@ -179,29 +179,31 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							setEditing={this.setEditing}
 						/>
 					))}
-
-					<div className="bottom">
-						<div className="side left">
-							<Icon className="settings withBackground" tooltipParam={{ text: translate('popupSettingsSpaceIndexTitle') }} onClick={this.onSettings} />
-						</div>
-
-						<div className="side center">
-							{isEditing ? (
-								<>
-									{buttons.map(button => (
-										<Button key={button.id} color="" {...button} />
-									))}
-								</>
-							) : (
-								<Button text={translate('sidebarEdit')} color="simple" onClick={this.onEdit} />
-							)}
-						</div>
-
-						<div className="side right">
-							<Icon id="button-widget-help" className="help withBackground" tooltipParam={{ text: translate('commonHelp') }} onClick={this.onHelp} />
-						</div>
-					</div>
 				</>
+			);
+
+			bottom = (
+				<div className="bottom">
+					<div className="side left">
+						<Icon className="settings withBackground" tooltipParam={{ text: translate('popupSettingsSpaceIndexTitle') }} onClick={this.onSettings} />
+					</div>
+
+					<div className="side center">
+						{isEditing ? (
+							<>
+								{buttons.map(button => (
+									<Button key={button.id} color="" {...button} />
+								))}
+							</>
+						) : (
+							<Button text={translate('sidebarEdit')} color="simple" onClick={this.onEdit} />
+						)}
+					</div>
+
+					<div className="side right">
+						<Icon id="button-widget-help" className="help withBackground" tooltipParam={{ text: translate('commonHelp') }} onClick={this.onHelp} />
+					</div>
+				</div>
 			);
 		};
 
@@ -223,6 +225,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				>
 					{content}
 				</div>
+
+				{bottom}
 			</div>
 		);
 	};
