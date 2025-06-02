@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Action" and related definitions.
+ */
 import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
 
 const Diff = require('diff');

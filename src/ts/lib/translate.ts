@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Module definitions and utilities.
+ */
 import { S, J } from 'Lib';
 
 /**

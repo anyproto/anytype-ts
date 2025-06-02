@@ -1,8 +1,11 @@
+/**
+ * @fileoverview Contains the enum "AccountStatusType" and related definitions.
+ */
 export enum AccountStatusType {
-	Active			 = 0,
-	PendingDeletion	 = 1,
-	StartedDeletion	 = 2,
-	Deleted			 = 3,
+        Active                   = 0, // Account is fully active
+        PendingDeletion  = 1, // Deletion has been requested
+        StartedDeletion  = 2, // Deletion process has begun
+        Deleted                  = 3, // Account has been removed
 };
 
 export interface Account {

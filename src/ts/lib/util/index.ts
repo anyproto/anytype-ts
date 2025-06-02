@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Module definitions and utilities.
+ */
 import Common from './common';
 import Data from './data';
 import Date from './date';

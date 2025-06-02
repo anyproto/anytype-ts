@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilFile" and related definitions.
+ */
 import loadImage from 'blueimp-load-image';
 import { I, S, U, J, Relation } from 'Lib';
 

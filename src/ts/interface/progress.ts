@@ -1,19 +1,22 @@
+/**
+ * @fileoverview Contains the enum "ProgressType" and related definitions.
+ */
 export enum ProgressType {
-	Drop		 = 'dropFiles',
-	Import		 = 'import',
-	Export		 = 'export',
-	Save		 = 'saveFile',
-	Migrate		 = 'migration',
-	Update		 = 'update',
-	UpdateCheck	 = 'updateCheck',
+        Drop             = 'dropFiles', // File drop progress
+        Import           = 'import', // Importing data
+        Export           = 'export', // Exporting data
+        Save             = 'saveFile', // Saving file
+        Migrate          = 'migration', // Data migration
+        Update           = 'update', // Application update
+        UpdateCheck      = 'updateCheck', // Checking for updates
 };
 
 export enum ProgressState {
-	None		 = 0,
-	Running		 = 1,
-	Done		 = 2,
-	Canceled	 = 3,
-	Error		 = 4,
+        None             = 0, // No operation
+        Running          = 1, // Operation in progress
+        Done             = 2, // Completed successfully
+        Canceled         = 3, // Operation canceled
+        Error            = 4, // Operation failed
 };
 
 export interface Progress {

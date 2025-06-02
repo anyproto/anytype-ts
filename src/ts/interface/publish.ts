@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the enum "PublishStatus" and related definitions.
+ */
 export enum PublishStatus {
 	Created		 = 0,
 	Published	 = 1,

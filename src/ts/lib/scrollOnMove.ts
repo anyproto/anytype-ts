@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "ScrollOnMove" and related definitions.
+ */
 import $ from 'jquery';
 import raf from 'raf';
 

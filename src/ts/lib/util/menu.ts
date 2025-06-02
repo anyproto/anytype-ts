@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilMenu" and related definitions.
+ */
 import $ from 'jquery';
 import raf from 'raf';
 import { observable } from 'mobx';

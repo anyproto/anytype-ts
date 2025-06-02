@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilCommon" and related definitions.
+ */
 import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';

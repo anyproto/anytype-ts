@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilSpace" and related definitions.
+ */
 import { I, C, S, U, J, Storage, translate } from 'Lib';
 
 class UtilSpace {

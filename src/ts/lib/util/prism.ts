@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilPrism" and related definitions.
+ */
 const Components = require(`prismjs/components.js`);
 
 class UtilPrism {

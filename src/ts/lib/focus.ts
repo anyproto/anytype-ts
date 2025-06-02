@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Focus" and related definitions.
+ */
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
 import { I, C, U, J, keyboard } from 'Lib';

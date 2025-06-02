@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Keyboard" and related definitions.
+ */
 import $ from 'jquery';
 import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
@@ -1370,22 +1373,22 @@ class Keyboard {
 };
 
 export enum Key {
-	backspace	 = 'backspace',
-	delete		 = 'delete',
-	tab			 = 'tab',
-	enter		 = 'enter',
-	shift		 = 'shift',
-	alt			 = 'alt',
-	ctrl		 = 'control',
-	meta		 = 'meta',
-	escape		 = 'escape',
-	space		 = 'space',
-	left		 = 'arrowleft',
-	up			 = 'arrowup',
-	right		 = 'arrowright',
-	down		 = 'arrowdown',
-	a			 = 'a',
-	b			 = 'b',
+        backspace        = 'backspace', // Backspace key
+        delete           = 'delete', // Delete key
+        tab                      = 'tab', // Tab key
+        enter            = 'enter', // Enter key
+        shift            = 'shift', // Shift key
+        alt                      = 'alt', // Alt key
+        ctrl             = 'control', // Control key
+        meta             = 'meta', // Meta key
+        escape           = 'escape', // Escape key
+        space            = 'space', // Spacebar
+        left             = 'arrowleft', // Left arrow
+        up                       = 'arrowup', // Up arrow
+        right            = 'arrowright', // Right arrow
+        down             = 'arrowdown', // Down arrow
+        a                        = 'a', // A key
+	b			 = 'b', // B key
 	c			 = 'c',
 	d			 = 'd',
 	e			 = 'e',
@@ -1400,7 +1403,7 @@ export enum Key {
 	x			 = 'x',
 	y			 = 'y',
 	z			 = 'z',
-	slash		 = '/',
+        slash            = '/', // Slash key
 };
 
 export const keyboard: Keyboard = new Keyboard();

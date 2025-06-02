@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the interface "PageInfo" and related definitions.
+ */
 import { I } from 'Lib';
 
 export interface PageInfo {

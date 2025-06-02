@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the enum "LayoutStyle" and related definitions.
+ */
 import { I } from 'Lib';
 
 export enum LayoutStyle {

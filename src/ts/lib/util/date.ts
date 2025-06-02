@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilDate" and related definitions.
+ */
 import { I, U, J, S, translate } from 'Lib';
 
 class UtilDate {

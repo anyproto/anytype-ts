@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilSubscription" and related definitions.
+ */
 import { I, S, J, C, U, Action } from 'Lib';
 import sha1 from 'sha1';
 

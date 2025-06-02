@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Highlight" and related definitions.
+ */
 import $ from 'jquery';
 import { Storage } from 'Lib';
 

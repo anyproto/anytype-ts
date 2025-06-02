@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "for" and related definitions.
+ */
 import $ from 'jquery';
 import { I, S, U, J, keyboard } from 'Lib';
 

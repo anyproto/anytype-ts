@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilData" and related definitions.
+ */
 import * as Sentry from '@sentry/browser';
 import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation } from 'Lib';
 

@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the interface "RouteParam" and related definitions.
+ */
 import $ from 'jquery';
 import { I, C, S, U, J, Preview, analytics, Storage, sidebar, keyboard, translate } from 'Lib';
 

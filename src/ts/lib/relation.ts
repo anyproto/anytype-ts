@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Relation" and related definitions.
+ */
 import { I, S, U, J, translate, Dataview } from 'Lib';
 
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];

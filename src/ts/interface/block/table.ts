@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the interface "BlockComponentTable" and related definitions.
+ */
 import { I } from 'Lib';
 
 export interface BlockComponentTable extends I.BlockComponent {

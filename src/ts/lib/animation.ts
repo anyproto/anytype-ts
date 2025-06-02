@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Animation" and related definitions.
+ */
 import raf from 'raf';
 import $ from 'jquery';
 import { I } from 'Lib';

@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Module definitions and utilities.
+ */
 import { I, M, U, Encode, Decode } from 'Lib';
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';

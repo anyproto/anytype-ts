@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Encode" and related definitions.
+ */
 import Struct from 'google-protobuf/google/protobuf/struct_pb.js';
 
 const prepare = (o: any) => {

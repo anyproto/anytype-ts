@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilSmile" and related definitions.
+ */
 import { U, J, translate } from 'Lib';
 import { init } from 'emoji-mart';
 

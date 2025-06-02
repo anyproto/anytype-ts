@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Dataview" and related definitions.
+ */
 import arrayMove from 'array-move';
 import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 

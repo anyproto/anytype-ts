@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the enum "CardSize" and related definitions.
+ */
 import { I } from 'Lib';
 
 export enum CardSize {

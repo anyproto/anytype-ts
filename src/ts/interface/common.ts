@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the enum "Platform" and related definitions.
+ */
 import { RouteComponentProps } from 'react-router';
 import { I } from 'Lib';
 

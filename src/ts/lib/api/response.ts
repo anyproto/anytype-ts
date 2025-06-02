@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Module definitions and utilities.
+ */
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import { S, Decode, Mapper } from 'Lib';
 

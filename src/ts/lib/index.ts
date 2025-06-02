@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Module definitions and utilities.
+ */
 import * as J from 'json';			 // JSON
 import * as I from 'Interface';		 // Interfaces
 import * as M from 'Model';			 // Models

@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the enum "MenuType" and related definitions.
+ */
 import { I } from 'Lib';
 
 export enum MenuType { Vertical = 1, Horizontal };

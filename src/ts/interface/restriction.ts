@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the enum "RestrictionObject" and related definitions.
+ */
  export enum RestrictionObject {
 	None					 = 0,
 	Delete					 = 1,

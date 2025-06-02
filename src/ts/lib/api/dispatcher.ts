@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Dispatcher" and related definitions.
+ */
 import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
 import arrayMove from 'array-move';

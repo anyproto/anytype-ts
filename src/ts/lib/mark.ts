@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Mark" and related definitions.
+ */
 import $ from 'jquery';
 import { I, U, J } from 'Lib';
 

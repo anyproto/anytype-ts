@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the enum "ObjectLayout" and related definitions.
+ */
 export enum ObjectLayout {
 	Page		 = 0,
 	Human		 = 1,

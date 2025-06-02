@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the interface "SidebarData" and related definitions.
+ */
 import $ from 'jquery';
 import raf from 'raf';
 import { U, S, J, Storage, keyboard } from 'Lib';

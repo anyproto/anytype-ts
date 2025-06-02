@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the enum "PreviewType" and related definitions.
+ */
 import { I } from 'Lib';
 
 export enum PreviewType {

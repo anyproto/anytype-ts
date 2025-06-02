@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Onboarding" and related definitions.
+ */
 import * as Docs from 'Docs';
 import { I, S, U, Storage } from 'Lib';
 

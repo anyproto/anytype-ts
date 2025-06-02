@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Analytics" and related definitions.
+ */
 import * as amplitude from 'amplitude-js';
 import { I, C, S, U, J, Relation } from 'Lib';
 

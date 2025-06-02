@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilEmbed" and related definitions.
+ */
 import { I, U, J } from 'Lib';
 
 const DOMAINS: any = {};

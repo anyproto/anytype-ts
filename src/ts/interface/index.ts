@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Module definitions and utilities.
+ */
 export * from './account';
 export * from './space';
 export * from './animation';

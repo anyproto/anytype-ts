@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilObject" and related definitions.
+ */
 import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 
 class UtilObject {

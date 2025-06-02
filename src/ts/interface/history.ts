@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the enum "DiffType" and related definitions.
+ */
 export enum DiffType {
 	None	 = 0,
 	Add		 = 1,

@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Storage" and related definitions.
+ */
 import { I, S, U, J, keyboard } from 'Lib';
 
 const electron = U.Common.getElectron();

@@ -1,27 +1,30 @@
+/**
+ * @fileoverview Contains the enum "NotificationType" and related definitions.
+ */
 import { I } from 'Lib';
 
 export enum NotificationType {
-	None		 = '',
-	Import		 = 'import',
-	Export		 = 'export',
-	Gallery		 = 'galleryImport',
-	Join		 = 'requestToJoin',
-	Leave		 = 'requestToLeave',
-	Approve		 = 'participantRequestApproved',
-	Remove		 = 'participantRemove',
-	Decline		 = 'participantRequestDecline',
-	Permission	 = 'participantPermissionsChange',
+        None             = '', // Generic notification
+        Import           = 'import', // Import finished
+        Export           = 'export', // Export finished
+        Gallery          = 'galleryImport', // Image import
+        Join             = 'requestToJoin', // Request to join space
+        Leave            = 'requestToLeave', // Request to leave space
+        Approve          = 'participantRequestApproved', // Join request approved
+        Remove           = 'participantRemove', // Participant removed
+        Decline          = 'participantRequestDecline', // Join request declined
+        Permission       = 'participantPermissionsChange', // Permissions changed
 };
 
 export enum NotificationStatus {
-	Created	 = 0,
-	Shown	 = 1,
-	Read	 = 2,
-	Replied	 = 3,
+        Created  = 0, // Notification created
+        Shown    = 1, // Displayed to the user
+        Read     = 2, // User read the notification
+        Replied  = 3, // User interacted with it
 };
 
 export enum NotificationAction {
-	Close	 = 0,
+        Close    = 0, // User dismissed the notification
 };
 
 export interface Notification {

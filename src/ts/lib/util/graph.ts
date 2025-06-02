@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "UtilGraph" and related definitions.
+ */
 import { I, S, U, J, Relation } from 'Lib';
 
 class UtilGraph {

@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Renderer" and related definitions.
+ */
 import { U } from 'Lib';
 
 class Renderer {

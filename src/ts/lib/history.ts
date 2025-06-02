@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "History" and related definitions.
+ */
 import { U } from 'Lib';
 
 class History {

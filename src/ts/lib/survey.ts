@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Contains the class "Survey" and related definitions.
+ */
 import { I, S, U, J, Storage, analytics, Action, translate } from 'Lib';
 
 class Survey {
