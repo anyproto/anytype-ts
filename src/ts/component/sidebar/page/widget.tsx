@@ -185,23 +185,25 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			bottom = (
 				<div className="bottom">
 					<div className="side left">
-						<Icon className="settings withBackground" tooltipParam={{ text: translate('popupSettingsSpaceIndexTitle') }} onClick={this.onSettings} />
-					</div>
-
-					<div className="side center">
 						{isEditing ? (
-							<>
-								{buttons.map(button => (
-									<Button key={button.id} color="" {...button} />
-								))}
-							</>
+							<Button id="widget-list-add" color="simple" icon="plus" text={translate('menuWidgetAddWidget')} onClick={this.onAdd} />
 						) : (
-							<Button text={translate('sidebarEdit')} color="simple" onClick={this.onEdit} />
+							<Icon className="settings withBackground" tooltipParam={{ text: translate('popupSettingsSpaceIndexTitle') }} onClick={this.onSettings} />
 						)}
 					</div>
 
+					<div className="side center">
+						{!isEditing ? (
+							<Button text={translate('sidebarEdit')} color="simple" onClick={this.onEdit} />
+						) : ''}
+					</div>
+
 					<div className="side right">
-						<Icon id="button-widget-help" className="help withBackground" tooltipParam={{ text: translate('commonHelp') }} onClick={this.onHelp} />
+						{isEditing ? (
+							<Button color="simple" text={translate('commonDone')} onClick={this.onEdit} />
+						) : (
+							<Icon id="button-widget-help" className="help withBackground" tooltipParam={{ text: translate('commonHelp') }} onClick={this.onHelp} />
+						)}
 					</div>
 				</div>
 			);
@@ -510,6 +512,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	setEditing (isEditing: boolean) {
+		console.trace();
+
 		this.setState({ isEditing });
 
 		if (!isEditing) {
@@ -530,7 +534,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		window.setTimeout(() => {
 			win.on('mousedown.sidebar', e => {
-				if (!$(e.target).parents('.widget').length) {
+				if (!$(e.target).parents('.widget, .bottom').length) {
 					close(e);
 				};
 			});

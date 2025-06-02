@@ -25,13 +25,13 @@
 
 		.icon.settings { background-image: url('~img/icon/widget/button/settings.svg'); }
 		.icon.help { background-image: url('~img/icon/widget/button/help.svg'); }
+		.icon.plus { margin-right: 4px; width: 20px; height: 20px; background-image: url('~img/icon/plus/widgetBottom0.svg'); }
 
 		.button.simple { @include text-common; color: var(--color-text-secondary); font-weight: 400; }
-		.button.disabled { background: var(--color-shape-tertiary); max-width: 80px; }
-		.button.grey { 
-			box-shadow: 0px 0px; background: var(--color-shape-highlight-medium); border-radius: 6px; @include text-common; color: var(--color-text-primary); line-height: 26px; width: auto;
-			padding: 0px 10px;
+		.button.simple:hover {
+			.icon.plus { background-image: url('~img/icon/plus/widgetBottom1.svg'); }
 		}
+		.button.disabled { background: var(--color-shape-tertiary); max-width: 80px; }
 	}
 
 	> .body {
@@ -88,11 +88,6 @@
 		}
 		.widget {
 			.dimmer { display: block; }
-		}
-
-		.widget.widgetSpace:hover {
-			.side.left { width: 100%; }
-			.side.right { display: none; }
 		}
 
 		.widget.isEditable:nth-child(2n + 1) { animation: shake1 0.2s linear infinite alternate; }
