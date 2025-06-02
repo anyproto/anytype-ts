@@ -2,8 +2,14 @@ import { I, S, U, J, Relation } from 'Lib';
 
 class UtilGraph {
 
-	imageSrc (d: any) {
-		d = d || {};
+	/**
+	* Determine image source for a graph node based on its layout.
+	*
+	* @param d - Object data describing the node.
+	* @returns Path to the image representing the object.
+	*/
+       imageSrc (d: any) {
+               d = d || {};
 
 		let src = '';
 

@@ -5,13 +5,22 @@ class UtilPrism {
 	map: { [ key: string ]: string } = {};
 	aliasMap: { [ key: string ]: string } = {};
 
-	constructor () {
-		this.map = this.getMap();
-		this.aliasMap = this.getAliasMap();
-	};
+	/**
+	* Create a new Prism util instance and pre-populate language maps.
+	*/
+       constructor () {
+               this.map = this.getMap();
+               this.aliasMap = this.getAliasMap();
+       };
 
-	private getDependencies (lang: string) {
-		const result = [];
+	/**
+	* Collect all language dependencies for a given Prism language.
+	*
+	* @param lang - Language id from Prism.
+	* @returns Ordered list of dependencies including the language itself.
+	*/
+       private getDependencies (lang: string) {
+               const result = [];
 		const language = Components.languages[lang] || {};
 		// the type of `require`, `optional`, `alias` is one of `undefined`, `string[]` and `string`
 		const requirements = [].concat(language.require || []);
@@ -24,8 +33,10 @@ class UtilPrism {
 		return result;
 	};
 
-	/** returns an array which is the correct order of loading all Prism components */
-	get components (): string[] {
+	/**
+	* Returns the list of Prism components in the correct load order.
+	*/
+       get components (): string[] {
 		const result = [];
 		for (const key in Components.languages) {
 			Components.languages[key].title && result.push(...this.getDependencies(key));
@@ -33,8 +44,11 @@ class UtilPrism {
 		return [ ...new Set(result) ];
 	};
 
-	private getMap () {
-		const result = {};
+	/**
+	* Build a map of language ids to their human‑readable titles.
+	*/
+       private getMap () {
+               const result = {};
 
 		for (const key in Components.languages) {
 			const lang = Components.languages[key];
@@ -52,7 +66,10 @@ class UtilPrism {
 		return result;
 	};
 
-	getValueKeyMap (): Map<string, string[]> {
+	/**
+	* Reverse the language map to group ids by title.
+	*/
+       getValueKeyMap (): Map<string, string[]> {
 		const ret: Map<string, string[]> = new Map();
 		for (const [ key, value ] of Object.entries(this.map)) {
 			ret.set(value, (ret.get(value) || []).concat(key));
@@ -60,7 +77,10 @@ class UtilPrism {
 		return ret;
 	};
 
-	getAliasMap () {
+	/**
+	* Create a mapping of all aliases to their canonical language id.
+	*/
+       getAliasMap () {
 		const map = this.getValueKeyMap();
 		const result: { [ key: string ]: string } = {};
 
@@ -73,7 +93,10 @@ class UtilPrism {
 		return result;
 	};
 
-	getTitles () {
+	/**
+	* Get sorted list of available languages with their identifiers.
+	*/
+       getTitles () {
 		const map = this.getValueKeyMap();
 		const result: { id: string; name: string }[] = [];
 

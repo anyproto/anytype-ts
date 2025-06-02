@@ -19,13 +19,26 @@ const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
 class UtilEmbed {
 
-	getHtml (processor: I.EmbedProcessor, content: any): string {
-		const fn = U.Common.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
-		return this[fn] ? this[fn](content) : content;
-	};
+	/**
+	* Dispatch to a processor specific HTML generator.
+	*
+	* @param processor - Embed processor type.
+	* @param content - Raw content value from the block.
+	* @returns Generated HTML or the original content if no processor exists.
+	*/
+       getHtml (processor: I.EmbedProcessor, content: any): string {
+               const fn = U.Common.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
+               return this[fn] ? this[fn](content) : content;
+       };
 
-	getYoutubeHtml (content: string): string {
-		let url = '';
+	/**
+	* Build YouTube iframe HTML from a video URL.
+	*
+	* @param content - Original YouTube URL.
+	* @returns HTML string for the embedded iframe.
+	*/
+       getYoutubeHtml (content: string): string {
+               let url = '';
 
 		try {
 			const a = new URL(content);
@@ -35,32 +48,67 @@ class UtilEmbed {
 		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>`;
 	};
 
-	getVimeoHtml (content: string): string {
-		return `<iframe src="${content}"  ${IFRAME_PARAM} allow="autoplay; fullscreen; picture-in-picture"></iframe>`;
-	};
+	/**
+	* Build Vimeo iframe HTML.
+	*
+	* @param content - Vimeo video URL.
+	*/
+       getVimeoHtml (content: string): string {
+               return `<iframe src="${content}"  ${IFRAME_PARAM} allow="autoplay; fullscreen; picture-in-picture"></iframe>`;
+       };
 
-	getGoogleMapsHtml (content: string): string {
-		return `<iframe src="${content}" ${IFRAME_PARAM} loading="lazy"></iframe>`;
-	};
+	/**
+	* Create embed HTML for Google Maps links.
+	*
+	* @param content - Maps URL.
+	*/
+       getGoogleMapsHtml (content: string): string {
+               return `<iframe src="${content}" ${IFRAME_PARAM} loading="lazy"></iframe>`;
+       };
 
-	getMiroHtml (content: string): string {
-		return `<iframe src="${content}" ${IFRAME_PARAM} allow="fullscreen; clipboard-read; clipboard-write"></iframe>`;
-	};
+	/**
+	* Create embed HTML for Miro boards.
+	*
+	* @param content - Miro board URL.
+	*/
+       getMiroHtml (content: string): string {
+               return `<iframe src="${content}" ${IFRAME_PARAM} allow="fullscreen; clipboard-read; clipboard-write"></iframe>`;
+       };
 
-	getFigmaHtml (content: string): string {
-		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
-	};
+	/**
+	* Generate Figma embed HTML.
+	*
+	* @param content - Figma share URL.
+	*/
+       getFigmaHtml (content: string): string {
+               return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+       };
 
-	getOpenStreetMapHtml (content: string): string {
-		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
-	};
+	/**
+	* Embed an OpenStreetMap viewer iframe.
+	*
+	* @param content - Source URL to OpenStreetMap.
+	*/
+       getOpenStreetMapHtml (content: string): string {
+               return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+       };
 
-	getGithubGistHtml (content: string): string {
-		return `<script src="${content}.js"></script>`;
-	};
+	/**
+	* Provide HTML snippet for a GitHub Gist.
+	*
+	* @param content - URL of the Gist without `.js` extension.
+	*/
+       getGithubGistHtml (content: string): string {
+               return `<script src="${content}.js"></script>`;
+       };
 
-	getCodepenHtml (content: string): string {
-		let p = [];
+	/**
+	* Generate HTML for embedding a CodePen snippet.
+	*
+	* @param content - CodePen URL.
+	*/
+       getCodepenHtml (content: string): string {
+               let p = [];
 
 		try {
 			const a = new URL(content);
@@ -75,21 +123,41 @@ class UtilEmbed {
 		return `<p class="codepen" data-height="300" data-default-tab="html,result" data-slug-hash="${p[3]}" data-user="${p[1]}"></p>`;
 	};
 
-	getBilibiliHtml (content: string): string {
-		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
-	};
+	/**
+	* Embed a Bilibili video via iframe.
+	*
+	* @param content - Bilibili player URL.
+	*/
+       getBilibiliHtml (content: string): string {
+               return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+       };
 
-	getSketchfabHtml (content: string): string {
-		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
-	};
+	/**
+	* Embed a Sketchfab model iframe.
+	*
+	* @param content - Sketchfab URL.
+	*/
+       getSketchfabHtml (content: string): string {
+               return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+       };
 
-	getDrawioHtml (content: string): string {
-		return content.match(/^<svg/) ? content : `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
-	};
+	/**
+	* Provide embed HTML for Draw.io diagrams.
+	*
+	* @param content - Draw.io iframe URL or raw SVG markup.
+	*/
+       getDrawioHtml (content: string): string {
+               return content.match(/^<svg/) ? content : `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+       };
 
-	getImageHtml (content: string): string {
-		return `<img src="${content}" />`;
-	};
+	/**
+	* Wrap an image URL into an img tag.
+	*
+	* @param content - Source image URL.
+	*/
+       getImageHtml (content: string): string {
+               return `<img src="${content}" />`;
+       };
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
