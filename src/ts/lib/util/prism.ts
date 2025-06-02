@@ -10,7 +10,7 @@ class UtilPrism {
 		this.aliasMap = this.getAliasMap();
 	};
 
-	private getDependencies (lang: string) {
+	private getDependencies (lang: string): string[] {
 		const result = [];
 		const language = Components.languages[lang] || {};
 		// the type of `require`, `optional`, `alias` is one of `undefined`, `string[]` and `string`
