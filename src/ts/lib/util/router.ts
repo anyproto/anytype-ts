@@ -87,6 +87,8 @@ class UtilRouter {
 			timeout = S.Popup.getTimeout();
 		};
 
+		console.log(`[UtilRouter].go: route=${route}`);
+
 		S.Menu.closeAll();
 		S.Popup.closeAll();
 		S.Common.redirectSet('');

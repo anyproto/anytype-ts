@@ -460,6 +460,8 @@ class CommonStore {
 	redirectSet (v: string) {
 		const param = U.Router.getParam(v);
 
+		console.log('[CommonStore] redirectSet', v);
+
 		if ((param.page == 'auth') && (param.action == 'pin-check')) {
 			return;
 		};

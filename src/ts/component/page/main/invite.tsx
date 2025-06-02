@@ -108,7 +108,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 											if (message.error.code) {
 												setError(message.error.description);
 											} else {
-												Preview.toastShow({ text: U.Common.sprintf(translate('toastJoinSpace'), spaceName) 									});
+												Preview.toastShow({ text: U.Common.sprintf(translate('toastJoinSpace'), spaceName) });
 											};
 										});
 									},
