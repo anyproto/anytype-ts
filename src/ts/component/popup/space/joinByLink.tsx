@@ -8,7 +8,6 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, clo
 
 	const inputRef = useRef(null)
 	const [ error, setError ] = useState('');
-	const [ isLoading, setIsLoading ] = useState(false);
 
 	const onKeyUp = () => {
 		const v = inputRef.current.getValue();
@@ -18,9 +17,8 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, clo
 	};
 
 	const onSubmit = () => {
-		const url = inputRef.current.getValue();
-		const r = U.Common.getRouteFromUrl(url);
-		const { cid, key } = U.Common.searchParam(r.split('?')[1]);
+		const route = U.Common.getRouteFromUrl(inputRef.current.getValue());
+		const { cid, key } = U.Common.searchParam(route.split('?')[1]);
 
 		if (cid && key) {
 			U.Router.go(`/main/invite/?cid=${cid}&key=${key}`, { replace: true });
@@ -32,7 +30,6 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, clo
 
 	return (
 		<>
-			{isLoading ? <Loader id="loader" /> : ''}
 			<Label text={translate('popupSpaceJoinByLinkLabel')} />
 
 			<Icon />
