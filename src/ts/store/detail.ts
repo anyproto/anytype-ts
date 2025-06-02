@@ -367,6 +367,11 @@ class DetailStore {
 		object.isLocalOk = [ I.SpaceStatus.Unknown, I.SpaceStatus.Ok ].includes(object.spaceLocalStatus);
 		object.isLocalLoading = object.spaceLocalStatus == I.SpaceStatus.Loading;
 
+		// UX type
+		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
+		object.isSpace = object.spaceUxType == I.SpaceUxType.Space;
+		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
+
 		return object;
 	};
 
