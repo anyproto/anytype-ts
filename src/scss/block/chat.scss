@@ -15,7 +15,7 @@
 
 		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; text-align: center; }
 		.emptyState {
-			.icon { width: 55px; height: 56px; background: url('~img/icon/chat/emptyState.svg'); }
+			.icon { width: 56px; height: 56px; background: url('~img/icon/chat/emptyState.svg'); }
 			.label { @include text-common; font-weight: 400; color: var(--color-text-secondary); }
 			.button { margin-top: 4px; }
 		}

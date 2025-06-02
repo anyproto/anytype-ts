@@ -13,7 +13,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
 	const { data } = param;
-	const { spaceUxType } = data;
+	const { uxType } = data;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
@@ -63,7 +63,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	const onSubmit = (withImport: boolean) => {
 		const { onCreate, route } = data;
 		const name = checkName(nameRef.current.getTextValue());
-		const isChatSpace = spaceUxType == I.SpaceUxType.Chat;
+		const isChatSpace = uxType == I.SpaceUxType.Chat;
 
 		if (isLoading || !canSave) {
 			return;
@@ -75,7 +75,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		const details = {
 			name,
 			iconOption,
-			spaceUxType,
+			spaceUxType: uxType,
 			spaceAccessType: I.SpaceType.Private,
 		};
 

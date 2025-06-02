@@ -6,7 +6,7 @@ import $ from 'jquery';
 
 const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 
-	const inputRef = useRef(null)
+	const inputRef = useRef(null);
 	const [ error, setError ] = useState('');
 
 	const onKeyUp = () => {
