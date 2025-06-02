@@ -70,7 +70,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 		setIsLoading(true);
 
-		const withChat = U.Object.isAllowedChat();
+		const withChat = spaceUxType == I.SpaceUxType.Chat ? true : U.Object.isAllowedChat();
 		const details = {
 			name,
 			iconOption,
