@@ -14,6 +14,7 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, clo
 		const v = inputRef.current.getValue();
 
 		$('.popupSpaceJoinByLink .button').toggleClass('disabled', !v.length);
+		setError('');
 	};
 
 	const onSubmit = () => {
