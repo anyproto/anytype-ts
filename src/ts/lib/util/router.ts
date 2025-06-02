@@ -5,10 +5,10 @@ interface RouteParam {
 	page: string; 
 	action: string; 
 	id: string; 
-	spaceId: string; 
-	viewId: string; 
-	relationKey: string;
-	additional: { key: string, value: string }[];
+	spaceId?: string; 
+	viewId?: string; 
+	relationKey?: string;
+	additional?: { key: string, value: string }[];
 };
 
 class UtilRouter {
@@ -27,7 +27,7 @@ class UtilRouter {
 	/**
 	 * Parses a route path into its parameter object.
 	 * @param {string} path - The route path string.
-	 * @returns {object} The parsed route parameters.
+	 * @returns {RouteParam} The parsed route parameters.
 	 */
 	getParam (path: string): any {
 		const route = path.split('/');
