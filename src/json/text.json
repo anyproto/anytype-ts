@@ -753,7 +753,8 @@
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
 
-	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
+	"blockChatEmpty": "There are no messages yet.<br/>Be the first to start a discussion",
+	"blockChatEmptyShareInviteLink": "Share invite link",
 	"blockChatMessageExpand": "Expand",
 	"blockChatMessageCollapse": "Collapse",
 	"blockChatReactionAdd": "Add reaction",

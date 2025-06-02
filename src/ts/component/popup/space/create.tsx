@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, IconObject, Button, Loader, Error, Editable } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Storage } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, analytics, Storage, Preview } from 'Lib';
 import $ from 'jquery';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
@@ -112,11 +112,19 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 								content: {
 									targetBlockId: J.Constant.widgetId.chat,
 								},
-							}
+							};
 							C.BlockCreateWidget(S.Block.widgets, '', chatWidget, I.BlockPosition.Top, I.WidgetLayout.Link, Number(limitOptions[0].id), (message: any) => {
 								if (message.error.code) {
 									return;
 								};
+							});
+
+							C.SpaceMakeShareable(S.Common.space, (message: any) => {
+								if (message.error.code) {
+									return;
+								};
+
+								C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer);
 							});
 						};
 
