@@ -259,6 +259,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		analytics.event('ClickAddWidget', { route });
 
 		const { widgets } = S.Block;
+		const space = U.Space.getSpaceview();
 		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
 		const targets = [];
 		const node = $(this.node);
@@ -322,14 +323,21 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				dataChange: (context: any, items: any[]) => {
 					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
-					const fixed: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
 					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
 						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplate(it.id) && (it.name.match(reg) || it.pluralName.match(reg))).
 						map(it => ({ ...it, caption: '' }));
 					const lists = [];
 
-					if (fixed.length) {
-						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(fixed));
+					let system: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
+
+					if (system.length) {
+						system = system.filter(it => it.id != J.Constant.widgetId.allObject);
+
+						if (!space.chatId && !U.Object.isAllowedChat()) {
+							system = system.filter(it => it.id != J.Constant.widgetId.chat);
+						};
+
+						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(system));
 					};
 
 					if (types.length) {
