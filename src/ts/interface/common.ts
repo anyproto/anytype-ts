@@ -173,7 +173,6 @@ export interface PageSettingsComponent extends PageComponent, RouteComponentProp
 };
 
 export interface FooterComponent {
-	onHelp?: (e: any) => void;
 	onTogglePanel?: (toggle: boolean) => void;
 };
 
