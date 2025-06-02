@@ -63,6 +63,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	const onSubmit = (withImport: boolean) => {
 		const { onCreate, route } = data;
 		const name = checkName(nameRef.current.getTextValue());
+		const isChatSpace = spaceUxType == I.SpaceUxType.Chat;
 
 		if (isLoading || !canSave) {
 			return;
@@ -70,11 +71,12 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 		setIsLoading(true);
 
-		const withChat = spaceUxType == I.SpaceUxType.Chat ? true : U.Object.isAllowedChat();
+		const withChat = isChatSpace ? true : U.Object.isAllowedChat();
 		const details = {
 			name,
 			iconOption,
 			spaceUxType,
+			spaceAccessType: I.SpaceType.Private,
 		};
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
@@ -103,10 +105,25 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					onRouteChange: () => {
 						U.Space.initSpaceState();
 
+						if (isChatSpace) {
+							const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
+							const chatWidget = {
+								type: I.BlockType.Link,
+								content: {
+									targetBlockId: J.Constant.widgetId.chat,
+								},
+							}
+							C.BlockCreateWidget(S.Block.widgets, '', chatWidget, I.BlockPosition.Top, I.WidgetLayout.Link, Number(limitOptions[0].id), (message: any) => {
+								if (message.error.code) {
+									return;
+								};
+							});
+						};
+
 						if (withImport) {
 							close(() => U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings }));
 						} else 
-						if (startingId) {
+						if (startingId && !isChatSpace) {
 							U.Object.getById(startingId, {}, (object: any) => {
 								if (object) {
 									U.Object.openRoute(object);
