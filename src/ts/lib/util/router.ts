@@ -5,10 +5,10 @@ interface RouteParam {
 	page: string; 
 	action: string; 
 	id: string; 
-	spaceId: string; 
-	viewId: string; 
-	relationKey: string;
-	additional: { key: string, value: string }[];
+	spaceId?: string; 
+	viewId?: string; 
+	relationKey?: string;
+	additional?: { key: string, value: string }[];
 };
 
 class UtilRouter {
@@ -16,10 +16,19 @@ class UtilRouter {
 	history: any = null;
 	isOpening = false;
 
+	/**
+	 * Initializes the router with a history object.
+	 * @param {any} history - The history object to use for navigation.
+	 */
 	init (history: any) {
 		this.history = history;
 	};
 
+	/**
+	 * Parses a route path into its parameter object.
+	 * @param {string} path - The route path string.
+	 * @returns {RouteParam} The parsed route parameters.
+	 */
 	getParam (path: string): any {
 		const route = path.split('/');
 		if (!route.length) {
@@ -45,6 +54,11 @@ class UtilRouter {
 		return param;
 	};
 
+	/**
+	 * Builds a route string from route parameters.
+	 * @param {Partial<RouteParam>} param - The route parameters.
+	 * @returns {string} The route string.
+	 */
 	build (param: Partial<RouteParam>): string {
 		const { page, action } = param;
 		const id = String(param.id || '');
@@ -71,6 +85,11 @@ class UtilRouter {
 		return route.join('/');
 	};
 
+	/**
+	 * Navigates to a route with optional parameters and animation.
+	 * @param {string} route - The route string.
+	 * @param {Partial<I.RouteParam>} param - Additional navigation parameters.
+	 */
 	go (route: string, param: Partial<I.RouteParam>) {
 		if (!route) {
 			return;
@@ -154,6 +173,14 @@ class UtilRouter {
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
 	};
 
+	/**
+	 * Switches to a different space, handling errors and fallbacks.
+	 * @param {string} id - The space ID to switch to.
+	 * @param {string} route - The route to navigate after switching.
+	 * @param {boolean} sendEvent - Whether to send analytics event.
+	 * @param {any} routeParam - Additional route parameters.
+	 * @param {boolean} useFallback - Whether to use fallback on error.
+	 */
 	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any, useFallback: boolean) {
 		if (this.isOpening) {
 			return;
@@ -220,10 +247,18 @@ class UtilRouter {
 		});
 	};
 
+	/**
+	 * Gets the current route path as a string.
+	 * @returns {string} The current route path.
+	 */
 	getRoute () {
 		return String(this.history?.location?.pathname || '');
 	};
 
+	/**
+	 * Gets the spaceId from the current route or the default space.
+	 * @returns {string} The spaceId.
+	 */
 	getRouteSpaceId () {
 		const param = this.getParam(this.getRoute());
 		return param.spaceId || S.Common.space;

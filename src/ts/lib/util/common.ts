@@ -12,10 +12,17 @@ const iconCache: Map<string, string> = new Map();
 
 class UtilCommon {
 
+	/**
+	 * Returns the Electron object from the window, or an empty object if not available.
+	 */
 	getElectron () {
 		return window.Electron || {};
 	};
 
+	/**
+	 * Gets the current Electron window ID as a string.
+	 * @returns {string} The current window ID or '0' if not available.
+	 */
 	getCurrentElectronWindowId (): string {
 		const electron = this.getElectron();
 
@@ -26,10 +33,18 @@ class UtilCommon {
 		return String(electron.currentWindow().windowId || '');
 	};
 
+	/**
+	 * Returns the global configuration object from the window.
+	 */
 	getGlobalConfig () {
 		return window.AnytypeGlobalConfig || {};
 	};
 
+	/**
+	 * Formats a string using sprintf-style formatting.
+	 * @param {...any[]} args - The format string followed by values to format.
+	 * @returns {string} The formatted string.
+	 */
 	sprintf (...args: any[]) {
 		const regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
 		const a = args;
@@ -149,6 +164,11 @@ class UtilCommon {
 		return format.replace(regex, doFormat);
 	};
 	
+	/**
+	 * Converts a string to UpperCamelCase.
+	 * @param {string} str - The string to convert.
+	 * @returns {string} The converted string.
+	 */
 	toUpperCamelCase (str: string) {
 		if (!str) {
 			return '';
@@ -157,6 +177,11 @@ class UtilCommon {
 		return this.toCamelCase(str).replace(/^[a-z]/, char => char.toUpperCase());
 	};
 	
+	/**
+	 * Converts a string to camelCase.
+	 * @param {string} str - The string to convert.
+	 * @returns {string} The converted string.
+	 */
 	toCamelCase (str: string): string {
 		if (!str) {
 			return '';
@@ -165,6 +190,12 @@ class UtilCommon {
 		return String(str || '').replace(/[_-\s]([a-zA-Z])/g, (_, char) => char.toUpperCase()).replace(/^[A-Z]/, char => char.toLowerCase());
 	};
 
+	/**
+	 * Converts a camelCase string to a delimited string using the given symbol.
+	 * @param {string} str - The camelCase string.
+	 * @param {string} symbol - The symbol to use as a delimiter.
+	 * @returns {string} The delimited string.
+	 */
 	fromCamelCase (str: string, symbol: string) {
 		if (!str) {
 			return '';
@@ -173,6 +204,11 @@ class UtilCommon {
 		return String(str || '').replace(/([A-Z]{1})/g, (_, char) => symbol + char.toLowerCase());
 	};
 
+	/**
+	 * Capitalizes the first character of a string and lowercases the rest.
+	 * @param {string} str - The string to capitalize.
+	 * @returns {string} The capitalized string.
+	 */
 	ucFirst (str: string): string {
 		if (!str) {
 			return '';
@@ -181,6 +217,11 @@ class UtilCommon {
 		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};
 
+	/**
+	 * Deep copies an object using JSON serialization.
+	 * @param {any} o - The object to copy.
+	 * @returns {any} The copied object.
+	 */
 	objectCopy (o: any): any {
 		if (typeof o === 'undefined') {
 			o = {};
@@ -188,11 +229,22 @@ class UtilCommon {
 		return JSON.parse(JSON.stringify(o));
 	};
 	
+	/**
+	 * Returns the length of an object or array.
+	 * @param {any} o - The object or array.
+	 * @returns {number} The length.
+	 */
 	objectLength (o: any) {
 		o = o || {};
 		return this.hasProperty(o, 'length') ? o.length : Object.keys(o).length;
 	};
 
+	/**
+	 * Compares two objects for equality by keys and values.
+	 * @param {any} o1 - The first object.
+	 * @param {any} o2 - The second object.
+	 * @returns {boolean} True if objects are equal, false otherwise.
+	 */
 	objectCompare (o1: any, o2: any): boolean {
 		o1 = o1 || {};
 		o2 = o2 || {};
@@ -215,20 +267,42 @@ class UtilCommon {
 		return this.compareJSON(k1, k2) && this.compareJSON(v1, v2);
 	};
 
+	/**
+	 * Compares two objects using JSON stringification.
+	 * @param {any} o1 - The first object.
+	 * @param {any} o2 - The second object.
+	 * @returns {boolean} True if objects are equal, false otherwise.
+	 */
 	compareJSON (o1: any, o2: any): boolean {
 		return JSON.stringify(o1) === JSON.stringify(o2);
 	};
 
+	/**
+	 * Returns the key in an object that matches the given value.
+	 * @param {any} o - The object to search.
+	 * @param {any} v - The value to find.
+	 * @returns {string|undefined} The key if found, otherwise undefined.
+	 */
 	getKeyByValue (o: any, v: any) {
 		return Object.keys(o || {}).find(k => o[k] === v);
 	};
 
+	/**
+	 * Checks if an object has a property.
+	 * @param {any} o - The object.
+	 * @param {string} p - The property name.
+	 * @returns {boolean} True if the property exists, false otherwise.
+	 */
 	hasProperty (o: any, p: string) {
 		o = o || {};
 		return Object.prototype.hasOwnProperty.call(o, p);
 	};
 
-	// Clear object for smaller console output
+	/**
+	 * Recursively clears empty or undefined properties from an object.
+	 * @param {any} o - The object to clear.
+	 * @returns {any} The cleared object.
+	 */
 	objectClear (o: any) {
 		for (const k in o) {
 			if (typeof o[k] === 'object') {
@@ -247,6 +321,11 @@ class UtilCommon {
 		return o;
 	};
 
+	/**
+	 * Converts an array of key-value pairs to an object, using the first value found in each pair.
+	 * @param {any[]} a - The array of key-value pairs.
+	 * @returns {object} The resulting object.
+	 */
 	fieldsMap (a: any[]) {
 		const o = {};
 		for (let i = 0; i < a.length; ++i) {
@@ -267,10 +346,21 @@ class UtilCommon {
 		return o;
 	};
 
+	/**
+	 * Returns a new array with only unique values from the input array.
+	 * @param {any[]} a - The array to filter.
+	 * @returns {any[]} The array with unique values.
+	 */
 	arrayUnique (a: any[]) {
 		return [ ...new Set(a) ];
 	};
 	
+	/**
+	 * Returns a new array with unique objects based on a key.
+	 * @param {any[]} a - The array of objects.
+	 * @param {string} k - The key to determine uniqueness.
+	 * @returns {any[]} The array with unique objects.
+	 */
 	arrayUniqueObjects (a: any[], k: string) {
 		const res: any[] = [];
 		const map = new Map();
@@ -289,19 +379,46 @@ class UtilCommon {
 		return res;
     };
 
+	/**
+	 * Returns the values of an array or object.
+	 * @param {any} a - The array or object.
+	 * @returns {any[]} The values as an array.
+	 */
 	arrayValues (a: any) {
 		return this.hasProperty(a, 'length') ? a : Object.values(a);
 	};
 
+	/**
+	 * Removes a substring from a string between start and end indices.
+	 * @param {string} haystack - The original string.
+	 * @param {number} start - The start index.
+	 * @param {number} end - The end index.
+	 * @returns {string} The resulting string.
+	 */
 	stringCut (haystack: string, start: number, end: number): string {
 		return String(haystack || '').substring(0, start) + haystack.substring(end);
 	};
 
+	/**
+	 * Inserts a substring into a string at the specified indices.
+	 * @param {string} haystack - The original string.
+	 * @param {string} needle - The string to insert.
+	 * @param {number} start - The start index.
+	 * @param {number} end - The end index.
+	 * @returns {string} The resulting string.
+	 */
 	stringInsert (haystack: string, needle: string, start: number, end: number): string {
 		haystack = String(haystack || '');
 		return haystack.substring(0, start) + needle + haystack.substring(end);
 	};
 	
+	/**
+	 * Shortens a string to a specified length, optionally adding an ellipsis.
+	 * @param {string} s - The string to shorten.
+	 * @param {number} [l=16] - The maximum length.
+	 * @param {boolean} [noEnding] - If true, do not add an ellipsis.
+	 * @returns {string} The shortened string.
+	 */
 	shorten (s: string, l?: number, noEnding?: boolean) {
 		s = String(s || '');
 		l = Number(l) || 16;
@@ -311,6 +428,12 @@ class UtilCommon {
 		return s;
 	};
 
+	/**
+	 * Masks the middle of a string, showing only the first and last n characters.
+	 * @param {string} s - The string to mask.
+	 * @param {number} n - The number of characters to show at each end.
+	 * @returns {string} The masked string.
+	 */
 	shortMask (s: string, n: number): string {
 		s = String(s || '');
 
@@ -328,6 +451,11 @@ class UtilCommon {
 		return ret;
 	};
 
+	/**
+	 * Copies data to the clipboard and optionally calls a callback.
+	 * @param {any} data - The data to copy (text, html, anytype).
+	 * @param {function} [callBack] - Optional callback after copy.
+	 */
 	clipboardCopy (data: any, callBack?: () => void) {
 		const handler = (e: any) => {
 			e.preventDefault();
@@ -353,11 +481,22 @@ class UtilCommon {
 		document.execCommand('copy');
 	};
 
+	/**
+	 * Shows a toast and copies text to the clipboard.
+	 * @param {string} label - The label for the toast.
+	 * @param {string} text - The text to copy.
+	 * @param {string} [toast] - Optional custom toast message.
+	 */
 	copyToast (label: string, text: string, toast?: string) {
 		this.clipboardCopy({ text });
 		Preview.toastShow({ text: this.sprintf(toast || translate('toastCopy'), label) });
 	};
 	
+	/**
+	 * Preloads images and calls a callback when all are loaded.
+	 * @param {string[]} images - Array of image URLs.
+	 * @param {function} [callBack] - Optional callback after all images are loaded.
+	 */
 	cacheImages (images: string[], callBack?: () => void) {
 		let loaded = 0;
 		const cb = () => {
@@ -376,6 +515,12 @@ class UtilCommon {
 		});
 	};
 	
+	/**
+	 * Returns a random integer between min and max (inclusive).
+	 * @param {number} min - The minimum value.
+	 * @param {number} max - The maximum value.
+	 * @returns {number} The random integer.
+	 */
 	rand (min: number, max: number): number {
 		if (max && (max != min)) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -384,11 +529,22 @@ class UtilCommon {
 		};
 	};
 
+	/**
+	 * Rounds a number to a specified number of decimal places.
+	 * @param {number} v - The value to round.
+	 * @param {number} l - The number of decimal places.
+	 * @returns {number} The rounded value.
+	 */
 	round (v: number, l: number) {
 		const d = Math.pow(10, l);
 		return d > 0 ? Math.round(v * d) / d : Math.round(v);
 	};
 
+	/**
+	 * Formats a number with spaces as thousands separators.
+	 * @param {number} v - The number to format.
+	 * @returns {string} The formatted number as a string.
+	 */
 	formatNumber (v: number): string {
 		let s = String(v || '');
 		if (s.length < 6) {
@@ -408,6 +564,11 @@ class UtilCommon {
 		return s;
 	};
 
+	/**
+	 * Sets the border color of an object based on its color and a parameter.
+	 * @param {any} obj - The jQuery object.
+	 * @param {any} param - The parameter with border alpha value.
+	 */
 	textStyle (obj: any, param: any) {
 		const color = String(obj.css('color') || '').replace(/\s/g, '');
 		const rgb = color.match(/rgba?\(([^\(]+)\)/);
@@ -423,10 +584,21 @@ class UtilCommon {
 		});
 	};
 	
+	/**
+	 * Replaces line breaks in a string with <br/> tags.
+	 * @param {string} s - The string to convert.
+	 * @returns {string} The converted string.
+	 */
 	lbBr (s: string) {
 		return s.toString().replace(new RegExp(/\n/gi), '<br/>');
 	};
 	
+	/**
+	 * Groups an array of objects by a field into a map of arrays.
+	 * @param {any[]} list - The array of objects.
+	 * @param {string} field - The field to group by.
+	 * @returns {object} The grouped map.
+	 */
 	mapToArray (list: any[], field: string): any {
 		list = list|| [] as any[];
 		
@@ -438,6 +610,12 @@ class UtilCommon {
 		return map;
 	};
 
+	/**
+	 * Maps an array of objects to an object using a field as the key.
+	 * @param {any[]} list - The array of objects.
+	 * @param {string} field - The field to use as the key.
+	 * @returns {object} The mapped object.
+	 */
 	mapToObject (list: any[], field: string) {
 		const obj: any = {};
 		for (let i = 0; i < list.length; i++) {
@@ -446,6 +624,11 @@ class UtilCommon {
 		return obj;
 	};
 	
+	/**
+	 * Flattens a map of arrays into a single array.
+	 * @param {object} map - The map of arrays.
+	 * @returns {any[]} The flattened array.
+	 */
 	unmap (map: any) {
 		let ret: any[] = [] as any[];
 		for (const field in map) {
@@ -454,10 +637,20 @@ class UtilCommon {
 		return ret;
 	};
 	
+	/**
+	 * Escapes special regex characters in a string.
+	 * @param {string} v - The string to escape.
+	 * @returns {string} The escaped string.
+	 */
 	regexEscape (v: string) {
 		return String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	};
 
+	/**
+	 * Ensures a URL has a scheme, defaulting to http if missing.
+	 * @param {string} url - The URL to fix.
+	 * @returns {string} The fixed URL.
+	 */
 	urlFix (url: string): string {
 		url = String(url || '');
 		if (!url) {
@@ -472,6 +665,10 @@ class UtilCommon {
 		return url;
 	};
 	
+	/**
+	 * Attaches click handlers to links in a jQuery object to open URLs or paths.
+	 * @param {any} obj - The jQuery object containing links.
+	 */
 	renderLinks (obj: any) {
 		const links = obj.find('a');
 
@@ -486,6 +683,11 @@ class UtilCommon {
 		});
 	};
 	
+	/**
+	 * Checks if a string is a valid email address.
+	 * @param {string} v - The string to check.
+	 * @returns {boolean} True if valid email, false otherwise.
+	 */
 	checkEmail (v: string) {
 		v = String(v || '');
 
@@ -494,6 +696,10 @@ class UtilCommon {
 		return reg.test(v);
 	};
 
+	/**
+	 * Gets the current selection range in the window.
+	 * @returns {Range|null} The selection range or null if none.
+	 */
 	getSelectionRange (): Range {
 		const sel: Selection = window.getSelection();
 		let range: Range = null;
@@ -505,6 +711,10 @@ class UtilCommon {
 		return range;
 	};
 
+	/**
+	 * Gets the bounding rectangle of the current selection.
+	 * @returns {object|null} The rectangle or null if no selection.
+	 */
 	getSelectionRect () {
 		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
 		const range = this.getSelectionRange();
@@ -520,11 +730,20 @@ class UtilCommon {
 		return rect;
 	};
 
+	/**
+	 * Clears the current selection in the document.
+	 */
 	clearSelection () {
 		$(document.activeElement).trigger('blur');
 		window.getSelection().removeAllRanges();
 	};
 
+	/**
+	 * Returns the correct plural form of a word based on a count.
+	 * @param {any} cnt - The count.
+	 * @param {string} words - The word forms separated by '|'.
+	 * @returns {string} The correct word form.
+	 */
 	plural (cnt: any, words: string) {
 		const chunks = words.split('|');
 		const single = chunks[0];
@@ -538,22 +757,43 @@ class UtilCommon {
 		return cnt.substr(-1) == '1' ? single : multiple;
 	};
 
+	/**
+	 * Gets the current platform as an enum value.
+	 * @returns {I.Platform} The platform.
+	 */
 	getPlatform (): I.Platform {
 		return J.Constant.platforms[this.getElectron().platform] || I.Platform.None;
 	};
 
+	/**
+	 * Checks if the current platform is Mac.
+	 * @returns {boolean} True if Mac, false otherwise.
+	 */
 	isPlatformMac (): boolean {
 		return this.getPlatform() == I.Platform.Mac;
 	};
 
+	/**
+	 * Checks if the current platform is Windows.
+	 * @returns {boolean} True if Windows, false otherwise.
+	 */
 	isPlatformWindows (): boolean {
 		return this.getPlatform() == I.Platform.Windows;
 	};
 
+	/**
+	 * Checks if the current platform is Linux.
+	 * @returns {boolean} True if Linux, false otherwise.
+	 */
 	isPlatformLinux (): boolean {
 		return this.getPlatform() == I.Platform.Linux;
 	};
 
+	/**
+	 * Handles common error codes and shows alerts or popups as needed.
+	 * @param {number} code - The error code.
+	 * @returns {boolean} True if no critical error, false otherwise.
+	 */
 	checkErrorCommon (code: number): boolean {
 		if (!code) {
 			return true;
@@ -575,6 +815,13 @@ class UtilCommon {
 		return true;
 	};
 
+	/**
+	 * Handles errors when opening an object, showing popups as needed.
+	 * @param {string} rootId - The root object ID.
+	 * @param {number} code - The error code.
+	 * @param {any} context - The React context or component.
+	 * @returns {boolean} True if no critical error, false otherwise.
+	 */
 	checkErrorOnOpen (rootId: string, code: number, context: any): boolean {
 		if (!rootId || !code) {
 			return true;
@@ -617,6 +864,10 @@ class UtilCommon {
 		return false;
 	};
 
+	/**
+	 * Shows an update popup and calls a callback on confirmation.
+	 * @param {function} [onConfirm] - Optional callback after update confirmation.
+	 */
 	onErrorUpdate (onConfirm?: () => void) {
 		S.Popup.open('confirm', {
 			data: {
@@ -636,6 +887,9 @@ class UtilCommon {
 		});
 	};
 
+	/**
+	 * Shows an invite request popup and handles navigation on cancel.
+	 */
 	onInviteRequest () {
 		S.Popup.open('confirm', {
 			data: {
@@ -650,6 +904,11 @@ class UtilCommon {
 		});
 	};
 
+	/**
+	 * Extracts the scheme (protocol) from a URL string.
+	 * @param {string} url - The URL string.
+	 * @returns {string} The scheme or empty string if invalid.
+	 */
 	getScheme(url: string): string {
 		try {
 			const u = new URL(String(url || ''));
@@ -659,22 +918,48 @@ class UtilCommon {
 		}
 	};
 
+	/**
+	 * Compares an object's property to a new value and returns the change if different.
+	 * @param {any} obj - The object.
+	 * @param {any} change - The change object with newValue and name.
+	 * @returns {any|null} The change if different, otherwise null.
+	 */
 	intercept (obj: any, change: any) {
 		return this.compareJSON(change.newValue, obj[change.name]) ? null : change;
 	};
 
+	/**
+	 * Returns the scroll container jQuery object depending on popup state.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {JQuery<HTMLElement>} The scroll container.
+	 */
 	getScrollContainer (isPopup: boolean) {
 		return (isPopup ? $('#popupPage-innerWrap') : $(window)) as JQuery<HTMLElement>;
 	};
 
+	/**
+	 * Returns the page flex container jQuery object depending on popup state.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {JQuery<HTMLElement>} The page flex container.
+	 */
 	getPageFlexContainer (isPopup: boolean) {
 		return $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
 	};
 
+	/**
+	 * Returns the page container jQuery object depending on popup state.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {JQuery<HTMLElement>} The page container.
+	 */
 	getPageContainer (isPopup: boolean) {
 		return $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
 	};
 
+	/**
+	 * Returns the selector for a cell container based on type.
+	 * @param {string} type - The type of container.
+	 * @returns {string} The selector string.
+	 */
 	getCellContainer (type: string) {
 		switch (type) {
 			default:
@@ -695,6 +980,11 @@ class UtilCommon {
 		};
 	};
 
+	/**
+	 * Parses URL search parameters into an object.
+	 * @param {string} url - The URL string.
+	 * @returns {object} The parameters as key-value pairs.
+	 */
 	searchParam (url: string): any {
 		const param: any = {};
 
@@ -708,6 +998,11 @@ class UtilCommon {
 		return param;
 	};
 
+	/**
+	 * Adds a class to the HTML body with a given prefix and value.
+	 * @param {string} prefix - The class prefix.
+	 * @param {string} v - The value to append.
+	 */
 	addBodyClass (prefix: string, v: string) {
 		const obj = $('html');
 		const reg = new RegExp(`^${prefix}`);
@@ -720,21 +1015,49 @@ class UtilCommon {
 		obj.attr({ class: c.join(' ') });
 	};
 
+	/**
+	 * Finds the closest number in an array to a goal value.
+	 * @param {number[]} array - The array of numbers.
+	 * @param {number} goal - The target value.
+	 * @returns {number} The closest number.
+	 */
 	findClosestElement (array: number[], goal: number) {
 		return array.reduce((prev: number, curr: number) => {
 			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
 		}, 0);
 	};
 
-	
+	/**
+	 * Checks if two rectangles collide.
+	 * @param {object} rect1 - The first rectangle.
+	 * @param {object} rect2 - The second rectangle.
+	 * @returns {boolean} True if they collide, false otherwise.
+	 */
 	rectsCollide (rect1: any, rect2: any) {
 		return this.coordsCollide(rect1.x, rect1.y, rect1.width, rect1.height, rect2.x, rect2.y, rect2.width, rect2.height);
 	};
 	
+	/**
+	 * Checks if two sets of coordinates and dimensions collide.
+	 * @param {number} x1 - X of first.
+	 * @param {number} y1 - Y of first.
+	 * @param {number} w1 - Width of first.
+	 * @param {number} h1 - Height of first.
+	 * @param {number} x2 - X of second.
+	 * @param {number} y2 - Y of second.
+	 * @param {number} w2 - Width of second.
+	 * @param {number} h2 - Height of second.
+	 * @returns {boolean} True if they collide, false otherwise.
+	 */
 	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
 		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 
+	/**
+	 * Extracts URLs from a block of text.
+	 * @param {string} text - The text to search.
+	 * @returns {any[]} Array of found URLs with positions and type.
+	 */
 	getUrlsFromText (text: string): any[] {
 		const urls = [];
 		const words = text.split(/[\s\r\n]+/);
@@ -753,16 +1076,31 @@ class UtilCommon {
 		return urls;
 	};
 
+	/**
+	 * Matches a string as a URL.
+	 * @param {string} s - The string to match.
+	 * @returns {string} The matched URL or empty string.
+	 */
 	matchUrl (s: string): string {
 		const m = String(s || '').match(/^(?:[a-z]+:(?:\/\/)?)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?\s?$/gi);
 		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 
+	/**
+	 * Matches a string as a domain.
+	 * @param {string} s - The string to match.
+	 * @returns {string} The matched domain or empty string.
+	 */
 	matchDomain (s: string): string {
 		const m = String(s || '').match(/^([a-z]+:\/\/)?([\w-]+\.)+[\w-]+(:\d+)?(\/[^?\s]*)?(\?[^#\s]*)?(#.*)?$/gi);
 		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 
+	/**
+	 * Matches a string as a local file path.
+	 * @param {string} s - The string to match.
+	 * @returns {string} The matched path or empty string.
+	 */
 	matchLocalPath (s: string): string {
 		s = String(s || '');
 
@@ -777,6 +1115,11 @@ class UtilCommon {
 		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 
+	/**
+	 * Extracts files from a DataTransfer items array.
+	 * @param {any[]} items - The DataTransfer items.
+	 * @returns {any[]} Array of files.
+	 */
 	getDataTransferFiles (items: any[]): any[] {
 		if (!items || !items.length) {
 			return [];
@@ -796,6 +1139,11 @@ class UtilCommon {
 		return files;
 	};
 
+	/**
+	 * Extracts HTML string items from a DataTransfer items array.
+	 * @param {any[]} items - The DataTransfer items.
+	 * @returns {any[]} Array of string items.
+	 */
 	getDataTransferItems (items: any[]) {
 		if (!items || !items.length) {
 			return [];
@@ -810,6 +1158,11 @@ class UtilCommon {
 		return ret;
 	};
 
+	/**
+	 * Gets a string from DataTransfer items and calls a callback with the result.
+	 * @param {any[]} items - The DataTransfer items.
+	 * @param {function} callBack - Callback with the resulting string.
+	 */
 	getDataTransferString (items: any[], callBack: (data: string) => void) {
 		if (!items || !items.length) {
 			return;
@@ -830,6 +1183,12 @@ class UtilCommon {
 		};
 	};
 
+	/**
+	 * Saves clipboard files and calls a callback with the result.
+	 * @param {any[]} items - The clipboard items.
+	 * @param {any} data - Additional data to include.
+	 * @param {function} callBack - Callback with the result.
+	 */
 	saveClipboardFiles (items: any[], data: any, callBack: (data: any) => void) {
 		if (!items.length) {
 			return;
@@ -864,6 +1223,11 @@ class UtilCommon {
 		};
 	};
 
+	/**
+	 * Converts an object's properties to data-* attributes.
+	 * @param {any} data - The data object.
+	 * @returns {object} The data-* attributes object.
+	 */
 	dataProps (data: any) {
 		data = data || {};
 
@@ -874,40 +1238,79 @@ class UtilCommon {
 		return ret;
 	};
 
+	/**
+	 * Returns the hostname from a URL or the URL itself if invalid.
+	 * @param {string} url - The URL string.
+	 * @returns {string} The hostname or original URL.
+	 */
 	shortUrl (url: string) {
 		let a: any = {};
 		try { a = new URL(url); } catch (e) {};
 		return a.hostname || url;
 	};
 
+	/**
+	 * Pauses all audio and video elements on the page.
+	 */
 	pauseMedia () {
 		$('audio, video').each((i: number, item: any) => { item.pause(); });
 	};
 
+	/**
+	 * Calculates a percentage of a number.
+	 * @param {number} num - The base number.
+	 * @param {number} percent - The percentage to calculate.
+	 * @returns {number} The calculated value.
+	 */
 	getPercentage (num: number, percent: number) {
 		return Number((num / 100 * percent).toFixed(3));
 	};
 
+	/**
+	 * Returns the event namespace for editor resize events.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {string} The event namespace.
+	 */
 	getEventNamespace (isPopup: boolean): string {
 		return isPopup ? '-popup' : '';
 	};
 
+	/**
+	 * Triggers a resize event for the editor.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
 	triggerResizeEditor (isPopup: boolean) {
 		$(window).trigger('resize.editor' + this.getEventNamespace(isPopup));
 	};
 
 	/**
 	 * Get width and height of window DOM node
+	 * Returns the percent value of part/whole.
+	 * @param {number} part - The part value.
+	 * @param {number} whole - The whole value.
+	 * @returns {number} The percent value.
 	 */
 	getWindowDimensions (): { ww: number; wh: number } {
 		const win = $(window);
 		return { ww: win.width(), wh: win.height() };
 	};
 
+	/**
+	 * Returns the percent value of part/whole.
+	 * @param {number} part - The part value.
+	 * @param {number} whole - The whole value.
+	 * @returns {number} The percent value.
+	 */
 	getPercent (part: number, whole: number): number {
 		return Number((part / whole * 100).toFixed(1));
 	};
 
+	/**
+	 * Translates an error code for a command, or returns the error description.
+	 * @param {string} command - The command name.
+	 * @param {any} error - The error object.
+	 * @returns {string} The translated error or description.
+	 */
 	translateError (command: string, error: any) {
 		const { code, description } = error;
 		const id = this.toCamelCase(`error-${command}${code}`);
@@ -916,6 +1319,11 @@ class UtilCommon {
 		return Text[id] ? translate(id) : description;
 	};
 
+	/**
+	 * Sanitizes a string for safe HTML rendering, allowing certain tags.
+	 * @param {string} s - The string to sanitize.
+	 * @returns {string} The sanitized string.
+	 */
 	sanitize (s: string): string {
 		s = String(s || '');
 
@@ -933,6 +1341,11 @@ class UtilCommon {
 		});
 	};
 
+	/**
+	 * Fixes ASAR paths for Electron packaged apps.
+	 * @param {string} path - The path to fix.
+	 * @returns {string} The fixed path.
+	 */
 	fixAsarPath (path: string): string {
 		const electron = this.getElectron();
 
@@ -945,6 +1358,11 @@ class UtilCommon {
 		return href + path.replace(/^\.\//, '/');
 	};
 
+	/**
+	 * Injects CSS into the document head with a given ID.
+	 * @param {string} id - The style element ID.
+	 * @param {string} css - The CSS string.
+	 */
 	injectCss (id: string, css: string) {
 		const head = $('head');
 		const element = $(`<style id="${id}" type="text/css">${css}</style>`);
@@ -953,6 +1371,11 @@ class UtilCommon {
 		head.append(element);
 	};
 
+	/**
+	 * Adds a script tag to the document body with a given ID and source.
+	 * @param {string} id - The script element ID.
+	 * @param {string} src - The script source URL.
+	 */
 	addScript (id: string, src: string) {
 		const body = $('body');
 		const element = $(`<script id="${id}" type="text/javascript" src="${src}"></script>`);
@@ -961,6 +1384,11 @@ class UtilCommon {
 		body.append(element);
 	};
 
+	/**
+	 * Converts a Uint8Array to a string.
+	 * @param {Uint8Array} u8a - The array to convert.
+	 * @returns {string} The resulting string.
+	 */
 	uint8ToString (u8a: Uint8Array): string {
 		const CHUNK = 0x8000;
 		const c = [];
@@ -971,6 +1399,12 @@ class UtilCommon {
 		return c.join('');
 	};
 
+	/**
+	 * Returns the key of an enum for a given value.
+	 * @param {any} e - The enum object.
+	 * @param {any} v - The value to find.
+	 * @returns {string} The key name.
+	 */
 	enumKey (e: any, v: any) {
 		let k = '';
 		for (const key in e) {
@@ -982,18 +1416,38 @@ class UtilCommon {
 		return k;
 	};
 
+	/**
+	 * Removes all HTML tags from a string.
+	 * @param {string} s - The string to strip.
+	 * @returns {string} The plain string.
+	 */
 	stripTags (s: string): string {
 		return String(s || '').replace(/<[^>]+>/g, '');
 	};
 
+	/**
+	 * Normalizes line endings in a string to \n.
+	 * @param {string} s - The string to normalize.
+	 * @returns {string} The normalized string.
+	 */
 	normalizeLineEndings (s: string) {
 		return String(s || '').replace(/\r?\n/g, '\n');
 	};
 
+	/**
+	 * Escapes HTML special characters in a string.
+	 * @param {string} s - The string to escape.
+	 * @returns {string} The escaped string.
+	 */
 	htmlSpecialChars (s: string) {
 		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	};
 
+	/**
+	 * Converts HTML special character entities back to characters.
+	 * @param {string} s - The string to convert.
+	 * @returns {string} The unescaped string.
+	 */
 	fromHtmlSpecialChars (s: string) {
 		return String(s || '').replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
 			if (p == '&lt;') p = '<';
@@ -1003,6 +1457,11 @@ class UtilCommon {
 		});
 	};
 
+	/**
+	 * Copies computed CSS styles from one element to another.
+	 * @param {HTMLElement} src - The source element.
+	 * @param {HTMLElement} dst - The destination element.
+	 */
 	copyCssSingle (src: HTMLElement, dst: HTMLElement) {
 		const styles = document.defaultView.getComputedStyle(src, '');
 		const css: any = {};
@@ -1018,6 +1477,11 @@ class UtilCommon {
 		$(dst).css(css);
 	};
 
+	/**
+	 * Recursively copies computed CSS styles from one element and its children to another.
+	 * @param {HTMLElement} src - The source element.
+	 * @param {HTMLElement} dst - The destination element.
+	 */
 	copyCss (src: HTMLElement, dst: HTMLElement) {
 		this.copyCssSingle(src, dst);
 
@@ -1032,6 +1496,11 @@ class UtilCommon {
 		};
 	};
 
+	/**
+	 * Shows a browser notification with a title and text, and handles click events.
+	 * @param {any} param - The notification parameters (title, text).
+	 * @param {function} [onClick] - Optional callback for click event.
+	 */
 	notification (param: any, onClick?: () => void) {
 		const title = U.Common.stripTags(String(param.title || ''));
 		const text = U.Common.stripTags(String(param.text || ''));
@@ -1052,22 +1521,45 @@ class UtilCommon {
 		};
 	};
 
+	/**
+	 * Checks if the app version is an alpha version.
+	 * @returns {boolean} True if alpha version, false otherwise.
+	 */
 	isAlphaVersion (): boolean {
 		return !!this.getElectron().version.app.match(/alpha/);
 	};
 
+	/**
+	 * Checks if the app version is a beta version.
+	 * @returns {boolean} True if beta version, false otherwise.
+	 */
 	isBetaVersion (): boolean {
 		return !!this.getElectron().version.app.match(/beta/);
 	};
 
+	/**
+	 * Checks if a string starts with a right-to-left character.
+	 * @param {string} s - The string to check.
+	 * @returns {boolean} True if RTL, false otherwise.
+	 */
 	checkRtl (s: string): boolean {
 		return /^[\u0591-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
 	};
 
+	/**
+	 * Converts a string to a URL-friendly slug.
+	 * @param {string} s - The string to slugify.
+	 * @returns {string} The slugified string.
+	 */
 	slug (s: string): string {
 		return slugify(String(s || ''));
 	};
 
+	/**
+	 * Renders LaTeX expressions in a string to HTML using KaTeX.
+	 * @param {string} html - The HTML string containing LaTeX.
+	 * @returns {string} The HTML with rendered LaTeX.
+	 */
 	getLatex (html: string): string {
 		if (!/\$[^\$]+\$/.test(html)) {
 			return html;
@@ -1128,6 +1620,11 @@ class UtilCommon {
 		return text;
 	};
 
+	/**
+	 * Toggles the open/closed state of an element with animation.
+	 * @param {any} obj - The jQuery object to toggle.
+	 * @param {number} delay - The animation delay in ms.
+	 */
 	toggle (obj: any, delay: number) {
 		const isOpen = obj.hasClass('isOpen');
 
@@ -1150,6 +1647,12 @@ class UtilCommon {
 		};
 	};
 
+	/**
+	 * Updates an SVG image's attributes and caches the result.
+	 * @param {string} src - The SVG source as a base64 string.
+	 * @param {any} param - The parameters (id, size, fill, stroke).
+	 * @returns {string} The updated SVG as a base64 string.
+	 */
 	updateSvg (src: string, param: any) {
 		const id = String(param.id || '');
 		const size = Number(param.size) || 0;
@@ -1192,6 +1695,11 @@ class UtilCommon {
 		return ret;
 	};
 
+	/**
+	 * Parses a URL and returns a route string for internal navigation.
+	 * @param {string} url - The URL to parse.
+	 * @returns {string} The route string.
+	 */
 	getRouteFromUrl (url: string): string {
 		url = String(url || '');
 
@@ -1234,6 +1742,11 @@ class UtilCommon {
 		return ret;
 	};
 
+	/**
+	 * Returns the background color for an icon option.
+	 * @param {number} o - The icon option index.
+	 * @returns {string} The background color string.
+	 */
 	iconBgByOption (o: number): string {
 		const { bg, list } = J.Theme.icon;
 
@@ -1243,6 +1756,9 @@ class UtilCommon {
 		return bg[list[o - 1]];
 	};
 
+	/**
+	 * Shows the "What's New" popup and updates storage.
+	 */
 	showWhatsNew () {
 		S.Popup.open('help', { data: { document: 'whatsNew' } });
 		Storage.set('whatsNew', false);
