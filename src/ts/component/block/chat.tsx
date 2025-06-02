@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Label, Icon } from 'Component';
+import { Label, Icon, Button } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Message from './chat/message';
@@ -57,6 +57,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const sections = this.getSections();
 		const subId = this.getSubId();
 		const hasScroll = this.hasScroll();
+		const space = U.Space.getSpaceview();
 
 		const Section = (item: any) => {
 			const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
@@ -106,8 +107,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				<div id="scrollWrapper" ref={ref => this.refList = ref} className="scrollWrapper">
 					{!messages.length ? (
 						<div className="emptyState">
-							<div className="img"><Icon /></div>
+							<Icon />
 							<Label text={translate('blockChatEmpty')} />
+							{space.isChat ? <Button onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} color="blank" className="c28" text={translate('blockChatEmptyShareInviteLink')} /> : ''}
 						</div>
 					) : (
 						<div className="scroll">

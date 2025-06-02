@@ -752,7 +752,8 @@
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
 
-	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
+	"blockChatEmpty": "There are no messages yet.<br/>Be the first to start a discussion",
+	"blockChatEmptyShareInviteLink": "Share invite link",
 	"blockChatMessageExpand": "Expand",
 	"blockChatMessageCollapse": "Collapse",
 	"blockChatReactionAdd": "Add reaction",
@@ -1046,7 +1047,13 @@
 
 	"popupSpaceCreateLabel": "Encrypted & local-first",
 	"popupSpaceCreateCreate": "Create from scratch",
+	"popupSpaceCreateCreateSpace": "Create space",
+	"popupSpaceCreateCreateChat": "Create chat",
 	"popupSpaceCreateImport": "Import my data",
+
+	"popupSpaceJoinByLinkLabel": "Join by invite link",
+	"popupSpaceJoinByLinkInputPlaceholder": "Paste invite link...",
+	"popupSpaceJoinByLinkError": "Oops, this link seems incorrect",
 
 	"popupApiCreateCreate": "Create new API key",
 
@@ -2030,6 +2037,15 @@
 	"sidebarRelationLocalAddToType": "Add to the Type",
 	"sidebarRelationLocalRemoveFromObject": "Remove from object",
 	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
+
+	"sidebarMenuSpaceCreateTitleChat": "Chat",
+	"sidebarMenuSpaceCreateDescriptionChat": "For real-time conversations",
+	"sidebarMenuSpaceCreateTitleSpace": "Space",
+	"sidebarMenuSpaceCreateDescriptionSpace": "For organized content and data",
+	"sidebarMenuSpaceCreateTitleImport": "Import Data",
+	"sidebarMenuSpaceCreateDescriptionImport": "Transfer your data from another app",
+	"sidebarMenuSpaceCreateTitleJoin": "Join by Link",
+	"sidebarMenuSpaceCreateDescriptionJoin": "For those with an invite link",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
