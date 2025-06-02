@@ -54,6 +54,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				type: item.attr('data-type'),
 				style: item.attr('data-style'),
 				targetContextId: item.attr('data-target-context-id'),
+				viewType: item.attr('data-view-type'),
 			};
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
@@ -428,7 +429,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 						const { onRecordDrop } = origin.current;
 
 						if (onRecordDrop) {
-							onRecordDrop(targetId, ids);
+							onRecordDrop(targetId, ids, position);
 						};
 						break;
 					};

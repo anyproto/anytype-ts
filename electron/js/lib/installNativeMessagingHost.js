@@ -18,7 +18,7 @@ const { fixPathForAsarUnpack, is } = require('electron-util');
 const APP_NAME = 'com.anytype.desktop';
 const MANIFEST_FILENAME = `${APP_NAME}.json`;
 const EXTENSION_IDS_CHROME = [ 'jbnammhjiplhpjfncnlejjjejghimdkf', 'jkmhmgghdjjbafmkgjmplhemjjnkligf', 'lcamkcmpcofgmbmloefimnelnjpcdpfn' ];
-const EXTENSION_IDS_FIREFOX = [ '6f3d2083562159a9e0a7635ee6008b1b6326202b@temporary-addon' ]
+const EXTENSION_IDS_FIREFOX = [ 'a46f8b5233f8efc536c649bd6db78cfd31312600@temporary-addon' ]
 const USER_PATH = app.getPath('userData');
 const EXE_PATH = app.getPath('exe');
 
@@ -70,11 +70,11 @@ const installNativeMessagingHost = () => {
 const installToMacOS = (manifest) => {
 	const dirs = getDarwinDirectory();
 
-	for (const [ key, value ] of Object.entries(dirs)) {
-		if (fs.existsSync(value)) {
-			writeManifest(path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME), manifest);
+	for (const [ key, dir ] of Object.entries(dirs)) {
+		if (fs.existsSync(dir)) {
+			writeManifest(path.join(dir, 'NativeMessagingHosts', MANIFEST_FILENAME), manifest);
 		} else {
-			console.log('[InstallNativeMessaging] Manifest skipped:', key);
+			console.log('[InstallNativeMessaging] Manifest skipped:', dir);
 		};
 	};
 };
@@ -159,12 +159,14 @@ const getLinuxDirectory = () => {
 };
 
 const getDarwinDirectory = () => {
-	const home = path.join(getHomeDir(), 'Library', 'Application Support');
+	const lib = path.join('Library', 'Application Support');
+	const home = path.join(getHomeDir(), lib);
 
 	/* eslint-disable no-useless-escape */
 
 	return {
-		'Firefox': path.join(home, 'Mozilla'),
+		'Firefox1': path.join(home, 'Mozilla'),
+		'Firefox2': path.join('/', lib, 'Mozilla'),
 		'Chrome': path.join(home, 'Google', 'Chrome'),
 		'Chrome Beta': path.join(home, 'Google', 'Chrome Beta'),
 		'Chrome Dev': path.join(home, 'Google', 'Chrome Dev'),

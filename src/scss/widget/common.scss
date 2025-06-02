@@ -3,8 +3,6 @@
 .widget { background: var(--color-bg-primary); border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }
 .widget {
-	.ReactVirtualized__List { overscroll-behavior: none; }
-
 	.head { padding: 8px; }
 	.head {
 		.sides { width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 2px 4px 2px 8px; }
@@ -72,7 +70,8 @@
 
 	.emptyWrap { padding: 0px 16px; display: flex; align-items: center; justify-content: center; }
 	.emptyWrap {
-		.label { text-align: center; @include text-common; white-space: nowrap; }
+		.label { text-align: center; @include text-common; white-space: nowrap; color: var(--color-text-secondary); }
+		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/widget/emptyMore.svg'); }
 	}
 
 	.icon.remove { position: absolute; top: -15px; left: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }

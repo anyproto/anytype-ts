@@ -106,7 +106,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 		let archive = null;
 		let remove = null;
-		let fav = null;
+		let pin = null;
 		let pageLock = null;
 		let template = null;
 		let setDefaultTemplate = null;
@@ -137,9 +137,9 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		if (object.isFavorite) {
-			fav = { id: 'unfav', name: translate('commonRemoveFromFavorites') };
+			pin = { id: 'unpin', icon: 'pin', name: translate('commonUnpin') };
 		} else {
-			fav = { id: 'fav', name: translate('commonAddToFavorites') };
+			pin = { id: 'pin', name: translate('commonPin') };
 		};
 
 		if (block) {
@@ -170,7 +170,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !isFilePreview && !isInSetLayouts;
 		const allowedHistory = !object.isArchived && !isInFileOrSystemLayouts && !isParticipant && !isDate && !object.templateIsBundled;
-		const allowedFav = canWrite && !object.isArchived && !object.templateIsBundled;
+		const allowedPin = canWrite && !object.isArchived && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystemLayouts;
 		const allowedLinkTo = canWrite && !object.isArchived;
 		const allowedAddCollection = canWrite && !object.isArchived && !isTemplate;
@@ -196,7 +196,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedReload)			 pageReload = null;
 		if (!allowedSearch)			 search = null;
 		if (!allowedHistory)		 history = null;
-		if (!allowedFav)			 fav = null;
+		if (!allowedPin)			 pin = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
 		if (!allowedWidget)			 createWidget = null;
 		if (!allowedLinkTo)			 linkTo = null;
@@ -229,7 +229,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			sections = sections.concat([
 				{ children: [ openObject ] },
-				{ children: [ createWidget, fav, pageLock, history ] },
+				{ children: [ createWidget, pin, pageLock, history ] },
 				{ children: [ linkTo, addCollection, template, pageLink ] },
 				{ children: [ search, pageCopy, archive, remove ] },
 				{ children: [ print ] },
@@ -252,7 +252,7 @@ class MenuObject extends React.Component<I.Menu> {
 			} else {
 				sections = sections.concat([
 					{ children: [ openObject ] },
-					{ children: [ createWidget, fav, pageLock ] },
+					{ children: [ createWidget, pin, pageLock ] },
 					{ children: [ linkTo, addCollection, template, pageLink ] },
 					{ children: [ search, history, pageCopy, archive ] },
 					{ children: [ pageReload ] },
@@ -527,13 +527,9 @@ class MenuObject extends React.Component<I.Menu> {
 				break;
 			};
 
-			case 'fav': {
-				Action.setIsFavorite([ rootId ], true, route);
-				break;
-			};
-
-			case 'unfav': {
-				Action.setIsFavorite([ rootId ], false, route);
+			case 'pin':
+			case 'unpin': {
+				Action.setIsFavorite([ rootId ], item.id == 'pin', route);
 				break;
 			};
 

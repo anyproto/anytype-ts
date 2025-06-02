@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName, EmptySearch } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
+import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -11,15 +11,11 @@ interface State {
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
-const LIMIT_HEIGHT = 12;
 const SUB_ID = 'syncStatusObjectsList';
 
 const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, State> {
 
-	_isMounted = false;
-	node = null;
 	cache: any = {};
-	items: any[] = [];
 	currentInfo = '';
 	state = { 
 		isLoading: false,
@@ -121,7 +117,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		return (
-			<div ref={ref => this.node = ref} className="syncMenuWrapper" onClick={this.onCloseInfo}>
+			<>
 				<div className="syncPanel">
 					<Title text={translate('menuSyncStatusTitle')} />
 
@@ -139,7 +135,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						<InfiniteLoader
 							rowCount={items.length}
 							isRowLoaded={({ index }) => !!items[index]}
-							threshold={LIMIT_HEIGHT}
+							threshold={20}
 							loadMoreRows={() => {}}
 						>
 							{({ onRowsRendered }) => (
@@ -162,32 +158,45 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						</InfiniteLoader>
 					</div>
 				) : ''}
-			</div>
+			</>
 		);
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
 		this.load();
+		this.rebind();
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
-		this.onCloseInfo();
+		this.unbind();
 
 		U.Subscription.destroyList([ SUB_ID ]);
+	};
+
+	rebind () {
+		const { getId } = this.props;
+
+		this.unbind();
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
+		$(`#${getId()}`).on('click', () => this.onCloseInfo());
+	};
+
+	unbind () {
+		const { getId } = this.props;
+
+		$(window).off('keydown.menu');
+		$(`#${getId()}`).off('click');
 	};
 
 	onContextMenu (e, item) {
 		e.stopPropagation();
 
-		const { param } = this.props;
+		const { getId, param } = this.props;
 		const { classNameWrap } = param;
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 		const element = $(e.currentTarget);
-		const node = $(this.node);
-		const itemElement = node.find(`#item-${item.id}`);
+		const itemElement = $(`#${getId()} #item-${item.id}`);
 		const options: any[] = [
 			{ id: 'open', name: translate('commonOpen') }
 		];
@@ -278,7 +287,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			sorts,
 			keys: U.Subscription.syncStatusRelationKeys(),
 			offset: 0,
-			limit: 30,
+			limit: 11,
 		}, () => {
 			this.setState({ isLoading: false });
 
@@ -339,12 +348,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconNetwork (syncStatus) {
-		let { network, error, syncingCounter, status } = syncStatus;
+		const { network, syncingCounter, error, status } = syncStatus;
 		const buttons: any[] = [];
-
-		error = 1;
-		status = 2;
-
 
 		let id = '';
 		let title = '';
@@ -374,7 +379,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				className = 'error';
 				break;
 			};
-
 		};
 
 		switch (network) {

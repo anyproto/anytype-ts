@@ -12,6 +12,11 @@ const UNITS = {
 
 class UtilFile {
 
+	/**
+	 * Returns a human-readable file size string for a given number of bytes.
+	 * @param {number} v - The file size in bytes.
+	 * @returns {string} The formatted file size string.
+	 */
 	size (v: number): string {
 		v = Number(v) || 0;
 
@@ -30,6 +35,11 @@ class UtilFile {
 		return ret ? U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + unit : '';
 	};
 
+	/**
+	 * Returns the icon name for a file object based on its properties.
+	 * @param {any} object - The file object.
+	 * @returns {string} The icon name.
+	 */
 	icon (object: any): string {
 		object = object || {};
 
@@ -120,10 +130,21 @@ class UtilFile {
 		return icon;
 	};
 
+	/**
+	 * Returns the icon path for a file object based on its properties and theme.
+	 * @param {any} object - The file object.
+	 * @returns {string} The icon path.
+	 */
 	iconPath (object: any) {
 		return `./img/${S.Common.getThemePath()}icon/file/${this.icon(object)}.svg`;
 	};
 
+	/**
+	 * Loads a preview canvas for an image file and calls a callback with the canvas.
+	 * @param {any} file - The image file.
+	 * @param {any} param - The parameters for loading.
+	 * @param {function} [success] - Callback with the loaded canvas.
+	 */
 	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {
 		if (!file) {
 			return;
@@ -145,6 +166,13 @@ class UtilFile {
 		});
 	};
 	
+	/**
+	 * Loads a preview image as a base64 string and calls a callback with the image and parameters.
+	 * @param {any} file - The image file.
+	 * @param {any} param - The parameters for loading.
+	 * @param {function} [success] - Callback with the image and parameters.
+	 * @param {function} [error] - Callback if loading fails.
+	 */
 	loadPreviewBase64 (file: any, param: any, success?: (image: string, param: any) => void, error?: (error: string) => void) {
 		this.loadPreviewCanvas(file, param, (canvas: any) => {
 			const image = canvas.toDataURL(param.type, param.quality);
@@ -159,10 +187,19 @@ class UtilFile {
 		});
 	};
 
+	/**
+	 * Returns the current date as a string suitable for filenames.
+	 * @returns {string} The date string.
+	 */
 	date () {
 		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
 	};
 
+	/**
+	 * Returns the file name for a file object, appending the extension if needed.
+	 * @param {any} object - The file object.
+	 * @returns {string} The file name.
+	 */
 	name (object: any) {
 		object = object || {};
 
@@ -176,6 +213,11 @@ class UtilFile {
 		return `${name}.${fileExt}`;
 	};
 
+	/**
+	 * Returns the object layout type for a given mime type.
+	 * @param {string} mime - The mime type string.
+	 * @returns {I.ObjectLayout} The object layout type.
+	 */
 	layoutByMime (mime: string) {
 		const t = mime.split('/');
 		
@@ -199,6 +241,11 @@ class UtilFile {
 		return layout;
 	};
 
+	/**
+	 * Checks if a drag event contains files.
+	 * @param {React.DragEvent} e - The drag event.
+	 * @returns {boolean} True if files are present, false otherwise.
+	 */
 	checkDropFiles (e: React.DragEvent): boolean {
 		return (e.dataTransfer.files && e.dataTransfer.files.length) ? true : false;
 	};

@@ -236,7 +236,9 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 					$(window).trigger('selectionClear');
 				};
 			} else {
-				let needCheck = false;
+				const needCheck = e.ctrlKey || e.metaKey;
+
+				/*
 				if (e.ctrlKey || e.metaKey) {
 					for (const i in I.SelectType) {
 						const list = idsOnStart.current.get(I.SelectType[i]) || [];
@@ -244,6 +246,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 						needCheck = needCheck || Boolean(list.length);
 					};
 				};
+				*/
 
 				if (needCheck) {
 					checkNodes(e);

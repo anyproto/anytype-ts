@@ -223,6 +223,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 			element: '#sidebarSync',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
+			subIds: J.Menu.syncStatus,
 			data: {
 				rootId: keyboard.getRootId(),
 			},

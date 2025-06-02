@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName, Icon } from 'Component';
-import { I, S, U, translate, Preview } from 'Lib';
+import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
+import { I, S, U, C, translate, Preview } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -27,16 +27,20 @@ const Item = observer(class Item extends React.Component<Props> {
 		this.onContext = this.onContext.bind(this);
 		this.canCreate = this.canCreate.bind(this);
 		this.onCreate = this.onCreate.bind(this);
+		this.onDragStart = this.onDragStart.bind(this);
+		this.onRecordDrop = this.onRecordDrop.bind(this);
 	};
 
 	render () {
-		const { items, className, d, m, y, getView, onContext } = this.props;
+		const { rootId, items, className, d, m, y, getView, onContext } = this.props;
 		const view = getView();
 		const { hideIcon } = view;
 		const slice = items.slice(0, LIMIT);
 		const length = items.length;
 		const cn = [ 'day' ];
 		const canCreate = this.canCreate();
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
+		const canDrag = relation && !relation.isReadonlyValue;
 
 		if (className) {
 			cn.push(className);
@@ -45,7 +49,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		let more = null;
 		if (length > LIMIT) {
 			more = (
-				<div className="item more" onClick={this.onMore}>
+				<div className="record more" onClick={this.onMore}>
 					+{length - LIMIT} {translate('commonMore')} {U.Common.plural(length, translate('pluralObject')).toLowerCase()}
 				</div>
 			);
@@ -55,16 +59,33 @@ const Item = observer(class Item extends React.Component<Props> {
 			const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && U.Object.isTaskLayout(item.layout);
 			const icon = hideIcon ? null : <IconObject id={`item-${item.id}-icon`} object={item} size={16} canEdit={canEdit} />;
 
+			let content = (
+				<>
+					{icon}
+					<ObjectName object={item} onClick={() => this.onOpen(item)} />
+				</>
+			);
+
+			if (canDrag) {
+				content = (
+					<DropTarget {...this.props} rootId={rootId} id={item.id} dropType={I.DropType.Record} viewType={view.type}>
+						{content}
+					</DropTarget>
+				);
+			};
+
 			return (
+				
 				<div 
-					id={`item-${item.id}`}
-					className="item" 
+					id={`record-${item.id}`}
+					className="record" 
+					draggable={canDrag}
 					onContextMenu={e => onContext(e, item.id)}
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 					onMouseLeave={this.onMouseLeave}
+					onDragStart={e => this.onDragStart(e, item)}
 				>
-					{icon}
-					<ObjectName object={item} onClick={() => this.onOpen(item)} />
+					{content}
 				</div>
 			);
 		};
@@ -96,6 +117,8 @@ const Item = observer(class Item extends React.Component<Props> {
 					))}
 
 					{more}
+
+					<DropTarget {...this.props} rootId={rootId} id={[ 'empty', y, m, d ].join('-')} isTargetBottom={true} dropType={I.DropType.Record} viewType={view.type} />
 				</div>
 			</div>
 		);
@@ -107,7 +130,7 @@ const Item = observer(class Item extends React.Component<Props> {
 
 	onMouseEnter (e: any, item: any) {
 		const node = $(this.node);
-		const element = node.find(`#item-${item.id}`);
+		const element = node.find(`#record-${item.id}`);
 		const name = U.Common.shorten(item.name, 50);
 
 		Preview.tooltipShow({ text: name, element });
@@ -205,6 +228,38 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
 		return groupRelation && (!groupRelation.isReadonlyValue || isToday) && isAllowedObject();
+	};
+
+	onDragStart (e: any, item: any) {
+		const dragProvider = S.Common.getRef('dragProvider');
+
+		dragProvider?.onDragStart(e, I.DropType.Record, [ item.id ], this);
+	};
+
+	onRecordDrop (targetId: string, ids: [], position: I.BlockPosition) {
+		const { getSubId, getView } = this.props;
+		const subId = getSubId();
+		const view = getView();
+
+		let value = 0;
+
+		if (targetId.match(/^empty-/)) {
+			const [ , y, m, d ] = targetId.split('-').map(Number);
+			
+			value = U.Date.timestamp(y, m, d, 0, 0, 0);
+		} else {
+			const records = S.Record.getRecords(subId);
+			const target = records.find(r => r.id == targetId);
+			if (!target) {
+				return;
+			};
+
+			value = target[view.groupRelationKey] + (position == I.BlockPosition.Bottom ? 1 : 0);
+		};
+
+		if (value) {
+			C.ObjectListSetDetails(ids, [ { key: view.groupRelationKey, value } ]);
+		};
 	};
 
 });

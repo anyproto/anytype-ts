@@ -8,7 +8,6 @@
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: middle; margin-top: -4px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-		.listColumn { padding-top: 36px; }
 		.listColumn {
 			.wrapMenu { display: none; }
 		}
@@ -17,7 +16,7 @@
 		.listInline {
 			.bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-secondary); }
 
-			.cell { white-space: nowrap; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 2px; height: 28px; }
+			.cell { white-space: nowrap; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 2px; min-height: 28px; }
 			.cell.canEdit {
 				.cellContent {
 					.empty { display: inline; }
@@ -45,12 +44,15 @@
 			}
 
 			.cellContent.c-select {
-				.over { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0px 6px; }
+				.over { 
+					display: inline-flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0px 6px; vertical-align: middle; 
+					margin-top: -2px;
+				}
 				.tagItem { margin: 0px; max-width: 400px; }
 			}
 
 			.cellContent.c-file {
-				.over { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; height: 28px; }
+				.over { display: inline-flex; flex-direction: row; align-items: center; gap: 0px 2px; height: 28px; }
 				.element { flex-shrink: 0; display: flex; }
 				.iconObject { display: block; }
 				.name { display: none; }
@@ -61,7 +63,7 @@
 				.iconObject { flex-shrink: 0; margin: 0px 6px 0px 0px !important; }
 			}
 
-			.cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; height: 28px; gap: 0px 4px; }
+			.cellContent.c-checkbox { display: inline-flex; flex-direction: row; align-items: center; height: 28px; gap: 0px 4px; }
 
 			.cellContent.c-longText {
 				.name { display: inline-block; vertical-align: top; max-width: 220px; @include text-overflow-nw; }

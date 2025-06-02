@@ -29,7 +29,7 @@
 		{
 			"js": [ 
 				"js/browser-polyfill.min.js",
-				"js/foreground.min.js" 
+				"js/foreground.js" 
 			],
 			"css": [ "css/foreground.css" ],
 			"matches": [ "<all_urls>" ]

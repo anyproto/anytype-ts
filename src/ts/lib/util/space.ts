@@ -90,7 +90,7 @@ class UtilSpace {
 	};
 
 	getLastObject () {
-		let home = Storage.getLastOpened(U.Common.getCurrentElectronWindowId());
+		let home = Storage.getLastOpenedByWindowId(U.Common.getCurrentElectronWindowId());
 
 		// Invalid data protection
 		if (!home || !home.id) {
