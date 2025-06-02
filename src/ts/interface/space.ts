@@ -18,10 +18,10 @@ export enum SpaceType {
 	Shared					 = 2,
 };
 
-export enum SpaceKind {
-	Unknown 				 = 0,
-	Chat 					 = 1,
-	Space 					 = 2,
+export enum SpaceUxType {
+	Chat 					 = 0,
+	Space 					 = 1,
+	Stream					 = 2,
 };
 
 export enum ParticipantPermissions {

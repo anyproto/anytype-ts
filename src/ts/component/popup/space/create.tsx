@@ -13,7 +13,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
 	const { data } = param;
-	const { spaceKind } = data;
+	const { spaceUxType } = data;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
@@ -74,6 +74,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		const details = {
 			name,
 			iconOption,
+			spaceUxType,
 		};
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
@@ -156,30 +157,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 	const object = getObject();
 
-	let buttons = null;
-
-	switch (spaceKind) {
-		case I.SpaceKind.Chat: {
-			buttons = <Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreateChat')} onClick={() => onSubmit(false)} />
-			break;
-		};
-
-		case I.SpaceKind.Space: {
-			buttons = <Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreateSpace')} onClick={() => onSubmit(false)} />
-			break;
-		};
-
-		case I.SpaceKind.Unknown: {
-			buttons = (
-				<>
-					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
-					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
-				</>
-			);
-			break;
-		};
-	};
-
 	useEffect(() => {
 		const object = getObject();
 		iconRef.current?.setObject(object);
@@ -216,11 +193,13 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 			</div>
 
 			<div className="buttons">
-				{buttons}
+				<>
+					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
+					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+				</>
 			</div>
 
 			<Error text={error} />
-
 		</>
 	);
 

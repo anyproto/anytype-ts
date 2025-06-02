@@ -183,7 +183,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	};
 
 	const onAdd = () => {
-		let options: any[] = [ 'chat', 'space', 'import', 'join' ];
+		let options: any[] = [ 'chat', 'space', 'join' ];
 		options = options.map(it => ({
 			id: it,
 			icon: it,
@@ -203,16 +203,12 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'chat': {
-							Action.createSpace(I.SpaceKind.Chat, analytics.route.vault);
+							Action.createSpace(I.SpaceUxType.Chat, analytics.route.vault);
 							break;
 						};
 
 						case 'space': {
-							Action.createSpace(I.SpaceKind.Space, analytics.route.vault);
-							break;
-						};
-
-						case 'import': {
+							Action.createSpace(I.SpaceUxType.Space, analytics.route.vault);
 							break;
 						};
 
