@@ -277,15 +277,15 @@ class UtilCommon {
 		
 		for (const item of a) {
 			if (!item) {
-				return;
+			continue;
 			};
-			if (!map.has(item[k])){
-				map.set(item[k], true);
-				res.push(item);
+			if (!map.has(item[k])) {
+			map.set(item[k], true);
+			res.push(item);
 			};
 		};
 		return res;
-	};
+        };
 
 	arrayValues (a: any) {
 		return this.hasProperty(a, 'length') ? a : Object.values(a);
