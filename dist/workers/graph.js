@@ -392,23 +392,24 @@ getEdgeMap = () => {
  * Updates orphan status and degree counts for all nodes.
  */
 updateOrphans = () => {
-	// Build a map of nodeId -> edges for efficient lookup
-	const nodeEdgeMap = getEdgeMap();
+	const edgeMap = getEdgeMap();
 
 	// Update nodes using the map
 	nodes = nodes.map(d => {
-		const nodeEdges = nodeEdgeMap.get(d.id) || [];
+		const edges = edgeMap.get(d.id) || [];
 
-		d.isOrphan = nodeEdges.length === 0;
+		d.isOrphan = !edges.length;
 		d.linkCnt = 0;
 		d.relationCnt = 0;
 
-		for (let i = 0; i < nodeEdges.length; i++) {
-			if (nodeEdges[i].type == EdgeType.Link) {
-					d.linkCnt++;
+		for (let i = 0; i < edges.length; i++) {
+			const t = edges[i].type;
+
+			if (t == EdgeType.Link) {
+				d.linkCnt++;
 			};
 
-			if (nodeEdges[i].type == EdgeType.Relation) {
+			if (t == EdgeType.Relation) {
 				d.relationCnt++;
 			};
 		};
