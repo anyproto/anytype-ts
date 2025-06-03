@@ -5,6 +5,11 @@ import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Rel
 
 class UtilMenu {
 
+	/**
+	 * Maps a block item, adding translation and aliases.
+	 * @param {any} it - The block item.
+	 * @returns {any} The mapped block item.
+	 */
 	mapperBlock (it: any) {
 		it.isBlock = true;
 		it.name = it.lang ? translate(`blockName${it.lang}`) : it.name;
@@ -27,6 +32,10 @@ class UtilMenu {
 		return it;
 	};
 	
+	/**
+	 * Returns the list of text block types.
+	 * @returns {any[]} The list of text block types.
+	 */
 	getBlockText () {
 		return [
 			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
@@ -42,6 +51,10 @@ class UtilMenu {
 		});
 	};
 	
+	/**
+	 * Returns the list of list block types.
+	 * @returns {any[]} The list of list block types.
+	 */
 	getBlockList () {
 		return [
 			{ id: I.TextStyle.Checkbox, lang: 'Checkbox', aliases: [ 'todo', 'checkbox' ] },
@@ -55,6 +68,10 @@ class UtilMenu {
 		});
 	};
 
+	/**
+	 * Returns the list of media block types.
+	 * @returns {any[]} The list of media block types.
+	 */
 	getBlockMedia () {
 		return [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File', aliases: [ 'file' ] },
@@ -67,6 +84,10 @@ class UtilMenu {
 		].map(this.mapperBlock);
 	};
 
+	/**
+	 * Returns the list of embed block types.
+	 * @returns {any[]} The list of embed block types.
+	 */
 	getBlockEmbed () {
 		const { config } = S.Common;
 
@@ -109,6 +130,10 @@ class UtilMenu {
 		});
 	};
 
+	/**
+	 * Returns the list of object block types.
+	 * @returns {any[]} The list of object block types.
+	 */
 	getBlockObject () {
 		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
@@ -138,6 +163,10 @@ class UtilMenu {
 		return ret.map(this.mapperBlock);
 	};
 
+	/**
+	 * Returns the list of other block types.
+	 * @returns {any[]} The list of other block types.
+	 */
 	getBlockOther () {
 		const aliasInline = [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
 
@@ -151,6 +180,10 @@ class UtilMenu {
 		].map(this.mapperBlock);
 	};
 
+	/**
+	 * Returns the list of page types for the turn menu.
+	 * @returns {any[]} The list of page types.
+	 */
 	getTurnPage () {
 		const ret = [];
 		const types = U.Data.getObjectTypesForNewObject(); 
@@ -172,6 +205,10 @@ class UtilMenu {
 		return ret;
 	};
 	
+	/**
+	 * Returns the list of div types for the turn menu.
+	 * @returns {any[]} The list of div types.
+	 */
 	getTurnDiv () {
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
@@ -179,6 +216,10 @@ class UtilMenu {
 		].map(this.mapperBlock);
 	};
 
+	/**
+	 * Returns the list of file types for the turn menu.
+	 * @returns {any[]} The list of file types.
+	 */
 	getTurnFile () {
 		return [
 			{ type: I.BlockType.File, id: I.FileStyle.Link, lang: 'Link' },
@@ -186,7 +227,11 @@ class UtilMenu {
 		].map(this.mapperBlock);
 	};
 
-	// Action menu
+	/**
+	 * Returns the list of actions for the action menu.
+	 * @param {any} param - The action menu parameters.
+	 * @returns {any[]} The list of actions.
+	 */
 	getActions (param: any) {
 		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject, count } = param;
 		const cmd = keyboard.cmdSymbol();

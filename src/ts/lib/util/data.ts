@@ -3,6 +3,11 @@ import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, 
 
 class UtilData {
 
+	/**
+	 * Returns the CSS class for a text block style.
+	 * @param {I.TextStyle} v - The text style.
+	 * @returns {string} The CSS class.
+	 */
 	blockTextClass (v: I.TextStyle): string {
 		return `text${String(I.TextStyle[v] || 'Paragraph')}`;
 	};

@@ -14,6 +14,15 @@ class UtilSubscription {
 
 	private map = new Map<string, string>();
 
+	/**
+	 * Checks if a subscription is active for a given user.
+	 * @param {string} userId - The user ID.
+	 * @returns {boolean} True if the subscription is active, false otherwise.
+	 */
+	isActive (userId: string): boolean {
+		return this.map.has(userId);
+	};
+
 	makeHash (...args: any[]): string {
 		args = args || [];
 		return sha1(JSON.stringify(args));

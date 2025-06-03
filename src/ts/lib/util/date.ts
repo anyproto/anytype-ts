@@ -2,7 +2,11 @@ import { I, U, J, S, translate } from 'Lib';
 
 class UtilDate {
 
-	/** The current time in seconds, rounded down to the nearest second */
+	/**
+	 * Returns the current date as a string in the specified format.
+	 * @param {string} format - The date format string.
+	 * @returns {string} The formatted date string.
+	 */
 	now (): number {
 		const date = new Date();
 		const timestamp = Math.floor(date.getTime() / 1000);

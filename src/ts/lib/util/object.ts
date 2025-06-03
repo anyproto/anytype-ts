@@ -2,6 +2,16 @@ import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, 
 
 class UtilObject {
 
+	/**
+	 * Returns the object type for a given object ID.
+	 * @param {string} objectId - The object ID.
+	 * @returns {string} The object type.
+	 */
+	getType (objectId: string): string {
+		// Implementation of getType method
+		return ''; // Placeholder return, actual implementation needed
+	}
+
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
 
