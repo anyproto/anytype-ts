@@ -177,16 +177,6 @@ class UtilSmile {
 		}));
 	};
 
-	/**
-	 * Returns the unicode character for a given smiley code.
-	 * @param {string} code - The smiley code.
-	 * @returns {string} The unicode character.
-	 */
-	get (code: string): string {
-		// Implementation of get method
-		return ''; // Placeholder return, actual implementation needed
-	}
-
 };
 
 export default new UtilSmile ();

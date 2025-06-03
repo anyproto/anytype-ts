@@ -10,24 +10,33 @@ const SYSTEM_DATE_RELATION_KEYS = [
 	'addedDate',
 ];
 
+/**
+ * Utility class for managing subscriptions, search, and data synchronization in the application.
+ * Provides methods for subscribing to object changes, searching, and managing subscription state.
+ */
 class UtilSubscription {
 
 	private map = new Map<string, string>();
 
 	/**
-	 * Checks if a subscription is active for a given user.
-	 * @param {string} userId - The user ID.
-	 * @returns {boolean} True if the subscription is active, false otherwise.
+	 * Generates a SHA-1 hash from the provided arguments.
+	 * @param {...any[]} args - Arguments to hash.
+	 * @returns {string} The resulting SHA-1 hash.
 	 */
-	isActive (userId: string): boolean {
-		return this.map.has(userId);
-	};
-
 	makeHash (...args: any[]): string {
 		args = args || [];
 		return sha1(JSON.stringify(args));
 	};
 
+	/**
+	 * Applies subscription results to the store, updating or setting details as needed.
+	 * @private
+	 * @param {string} subId - The subscription ID.
+	 * @param {string} idField - The field used as the object ID.
+	 * @param {string[]} keys - The list of keys to update.
+	 * @param {any} message - The subscription message.
+	 * @param {boolean} [update] - Whether to update existing details.
+	 */
 	private onSubscribe (subId: string, idField: string, keys: string[], message: any, update?: boolean) {
 		if (message.error.code) {
 			return;
@@ -57,6 +66,11 @@ class UtilSubscription {
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
+	/**
+	 * Returns the default filters for a subscription/search, based on provided parameters.
+	 * @param {any} param - Parameters for filter construction.
+	 * @returns {any[]} The array of filter objects.
+	 */
 	defaultFilters (param: any) {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, ignoreArchived, ignoreChat } = param;
@@ -90,6 +104,11 @@ class UtilSubscription {
 		return filters;
 	};
 
+	/**
+	 * Maps and ensures required keys are present for a subscription/search.
+	 * @param {Partial<I.SearchSubscribeParam>} param - The subscription/search parameters.
+	 * @returns {string[]} The list of keys.
+	 */
 	mapKeys (param: Partial<I.SearchSubscribeParam>) {
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
@@ -108,6 +127,11 @@ class UtilSubscription {
 		return keys;
 	};
 
+	/**
+	 * Subscribes to a set of objects matching the given parameters, updating the store on changes.
+	 * @param {Partial<I.SearchSubscribeParam>} param - Subscription parameters.
+	 * @param {(message: any) => void} [callBack] - Optional callback for subscription results.
+	 */
 	subscribe (param: Partial<I.SearchSubscribeParam>, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
@@ -186,6 +210,11 @@ class UtilSubscription {
 		});
 	};
 
+	/**
+	 * Subscribes to a specific set of object IDs, updating the store on changes.
+	 * @param {Partial<I.SearchIdsParam>} param - Subscription parameters for IDs.
+	 * @param {(message: any) => void} [callBack] - Optional callback for subscription results.
+	 */
 	subscribeIds (param: Partial<I.SearchIdsParam>, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
@@ -272,6 +301,11 @@ class UtilSubscription {
 		});
 	};
 
+	/**
+	 * Performs a search for objects matching the given parameters.
+	 * @param {Partial<I.SearchSubscribeParam> & { fullText?: string }} param - Search parameters.
+	 * @param {(message: any) => void} [callBack] - Optional callback for search results.
+	 */
 	search (param: Partial<I.SearchSubscribeParam> & { fullText?: string }, callBack?: (message: any) => void) {
 		const { space } = S.Common;
 
@@ -320,6 +354,11 @@ class UtilSubscription {
 		});
 	};
 
+	/**
+	 * Maps a filter object, adding format information if available.
+	 * @param {I.Filter} it - The filter object.
+	 * @returns {I.Filter} The mapped filter object.
+	 */
 	filterMapper (it: I.Filter) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 		if (relation) {
@@ -328,6 +367,11 @@ class UtilSubscription {
 		return it;
 	};
 
+	/**
+	 * Maps a sort object, setting includeTime for system date relations.
+	 * @param {any} it - The sort object.
+	 * @returns {any} The mapped sort object.
+	 */
 	sortMapper (it: any) {
 		if (undefined === it.includeTime) {
 			it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
@@ -335,12 +379,20 @@ class UtilSubscription {
 		return it;
 	};
 
+	/**
+	 * Creates all global and space subscriptions.
+	 * @param {() => void} [callBack] - Optional callback after creation.
+	 */
 	createAll (callBack?: () => void) {
 		this.createGlobal(() => {
 			this.createSpace(callBack);
 		});
 	};
 	
+	/**
+	 * Creates global subscriptions for the current account.
+	 * @param {() => void} [callBack] - Optional callback after creation.
+	 */
 	createGlobal (callBack?: () => void) {
 		const { account } = S.Auth;
 	
@@ -380,6 +432,11 @@ class UtilSubscription {
 		this.createList(list, () => this.createSubSpace(null, callBack));
 	};
 
+	/**
+	 * Creates subscriptions for all subspaces or a given list of space IDs.
+	 * @param {string[]} ids - List of space IDs to subscribe to.
+	 * @param {() => void} [callBack] - Optional callback after creation.
+	 */
 	createSubSpace (ids: string[], callBack?: () => void) {
 		const { account } = S.Auth;
 		const skipIds = U.Space.getSystemDashboardIds();
@@ -432,6 +489,10 @@ class UtilSubscription {
 		this.createList(list, callBack);
 	};
 
+	/**
+	 * Creates space-level subscriptions for deleted, type, relation, option, and participant objects.
+	 * @param {() => void} [callBack] - Optional callback after creation.
+	 */
 	createSpace (callBack?: () => void): void {
 		const list: any[] = [
 			{
@@ -506,6 +567,11 @@ class UtilSubscription {
 		this.createList(list, callBack);
 	};
 
+	/**
+	 * Creates a list of subscriptions from the provided list of parameters.
+	 * @param {I.SearchSubscribeParam[]} list - List of subscription parameters.
+	 * @param {() => void} [callBack] - Optional callback after all are created.
+	 */
 	createList (list: I.SearchSubscribeParam[], callBack?: () => void) {
 		let cnt = 0;
 		const cb = (item: any, message: any) => {
@@ -525,6 +591,12 @@ class UtilSubscription {
 		};
 	};
 	
+	/**
+	 * Destroys a list of subscriptions by their IDs, optionally clearing state.
+	 * @param {string[]} ids - List of subscription IDs to destroy.
+	 * @param {boolean} [clearState] - Whether to clear state for each subscription.
+	 * @param {() => void} [callBack] - Optional callback after destruction.
+	 */
 	destroyList (ids: string[], clearState?: boolean, callBack?: () => void): void {
 		ids = ids || [];
 
@@ -550,30 +622,58 @@ class UtilSubscription {
 		});
 	};
 
+	/**
+	 * Destroys all active subscriptions and optionally clears state.
+	 * @param {() => void} [callBack] - Optional callback after destruction.
+	 */
 	destroyAll (callBack?: () => void): void {
 		this.destroyList([ ...this.map.keys() ], true, callBack);
 	};
 
+	/**
+	 * Returns the relation keys for profile subscriptions.
+	 * @returns {string[]} The list of relation keys.
+	 */
 	profileRelationKeys () {
 		return J.Relation.default.concat('sharedSpacesLimit');
 	};
 
+	/**
+	 * Returns the relation keys for space subscriptions.
+	 * @returns {string[]} The list of relation keys.
+	 */
 	spaceRelationKeys () {
 		return J.Relation.default.concat(J.Relation.space).concat(J.Relation.participant);
 	};
 
+	/**
+	 * Returns the relation keys for type subscriptions.
+	 * @returns {string[]} The list of relation keys.
+	 */
 	typeRelationKeys () {
 		return J.Relation.default.concat(J.Relation.type).concat('lastUsedDate');
 	};
 
+	/**
+	 * Returns the relation keys for participant subscriptions.
+	 * @returns {string[]} The list of relation keys.
+	 */
 	participantRelationKeys () {
 		return J.Relation.default.concat(J.Relation.participant);
 	};
 
+	/**
+	 * Returns the relation keys for sync status subscriptions.
+	 * @returns {string[]} The list of relation keys.
+	 */
 	syncStatusRelationKeys () {
 		return J.Relation.default.concat(J.Relation.syncStatus);
 	};
 
+	/**
+	 * Returns the relation keys for chat subscriptions.
+	 * @returns {string[]} The list of relation keys.
+	 */
 	chatRelationKeys () {
 		return J.Relation.default.concat([ 'source', 'picture', 'widthInPixels', 'heightInPixels' ]);
 	};
