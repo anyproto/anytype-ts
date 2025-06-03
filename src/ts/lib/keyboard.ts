@@ -349,11 +349,18 @@ class Keyboard {
 			if (prev) {
 				const route = U.Router.getParam(prev.pathname);
 
+				let substitute = '';
+
+				if ([ 'object', 'invite', 'membership' ].includes(route.page)) {
+					substitute = history.entries[history.index - 2]?.pathname;
+				};
+
 				if ((route.page == 'main') && (route.action == 'history')) {
-					prev = history.entries[history.index - 3];
-					if (prev) {
-						U.Router.go(prev.pathname, {});
-					};
+					substitute = history.entries[history.index - 3]?.pathname;
+				};
+
+				if (substitute) {
+					U.Router.go(substitute, {});
 					return;
 				};
 
