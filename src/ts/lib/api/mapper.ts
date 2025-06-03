@@ -384,7 +384,6 @@ export const Mapper = {
 		HistoryVersion: (obj: Rpc.History.Version): I.HistoryVersion => {
 			return {
 				id: obj.getId(),
-				previousIds: obj.getPreviousidsList() || [],
 				authorId: obj.getAuthorid(),
 				groupId: obj.getGroupid(),
 				time: obj.getTime(),

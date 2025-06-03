@@ -73,7 +73,6 @@ export interface Option {
 
 export interface HistoryVersion {
 	id: string;
-	previousIds: string[];
 	authorId: string;
 	groupId: number;
 	time: number;
