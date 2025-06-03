@@ -1362,10 +1362,12 @@ class UtilMenu {
 						};
 
 						if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
-							this.onBookmarkMenu({
-								...param,
-								element: `#${menuContext.getId()} #item-${item.id}`,
-							}, (object: any) => cb(object, 0));
+							menuContext.close(() => {
+								this.onBookmarkMenu({
+									...param,
+									element: `#widget-space-arrow`,
+								}, object => cb(object, 0));
+							});
 						} else {
 							C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
 								if (!message.error.code) {
@@ -1384,12 +1386,16 @@ class UtilMenu {
 	onBookmarkMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
 		param = param || {};
 
+		const data = param.data || {};
+
+		delete(param.data);
+
 		S.Menu.open('dataviewCreateBookmark', {
 			type: I.MenuType.Horizontal,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,
+				...data,
 			},
 			...param,
 		});
