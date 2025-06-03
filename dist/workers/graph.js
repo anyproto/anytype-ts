@@ -308,13 +308,22 @@ updateForces = () => {
 	// Build edgeMap in a single pass over edges
 	edgeMap.clear();
 	const tempEdgeMap = new Map();
+
 	for (let i = 0; i < edges.length; i++) {
 		const e = edges[i];
-		if (!tempEdgeMap.has(e.source)) tempEdgeMap.set(e.source, []);
-		if (!tempEdgeMap.has(e.target)) tempEdgeMap.set(e.target, []);
+
+		if (!tempEdgeMap.has(e.source)) {
+			tempEdgeMap.set(e.source, []);
+		};
+
+		if (!tempEdgeMap.has(e.target)) {
+			tempEdgeMap.set(e.target, []);
+		};
+
 		tempEdgeMap.get(e.source).push(e.target);
 		tempEdgeMap.get(e.target).push(e.source);
-	}
+	};
+
 	nodes.forEach(d => {
 		edgeMap.set(d.id, tempEdgeMap.get(d.id) || []);
 	});
@@ -366,24 +375,40 @@ updateTheme = ({ theme, colors }) => {
 };
 
 /**
+ * Builds a map of edges grouped by their connected vertex IDs.
+ *
+ * Iterates over the global `edges` array and creates a `Map` where each key
+ * is a vertex ID (`source` or `target`), and the value is an array of edges
+ * connected to that vertex.
+ *
+ * @returns {Map<*, Object[]>} A map where each key is a vertex ID and each value is an array of edge objects.
+ */
+getEdgeMap = () => {
+	const map = new Map();
+
+	for (let i = 0; i < edges.length; i++) {
+		const e = edges[i];
+
+		if (!map.has(e.source)) {
+			map.set(e.source, []);
+		};
+		if (!map.has(e.target)) {
+			map.set(e.target, []);
+		};
+
+		map.get(e.source).push(e);
+		map.get(e.target).push(e);
+	};
+
+	return map;
+};
+
+/**
  * Updates orphan status and degree counts for all nodes.
  */
 updateOrphans = () => {
 	// Build a map of nodeId -> edges for efficient lookup
-	const nodeEdgeMap = new Map();
-	for (let i = 0; i < edges.length; i++) {
-		const e = edges[i];
-
-		if (!nodeEdgeMap.has(e.source)) {
-			nodeEdgeMap.set(e.source, []);
-		};
-		if (!nodeEdgeMap.has(e.target)) {
-			nodeEdgeMap.set(e.target, []);
-		};
-
-		nodeEdgeMap.get(e.source).push(e);
-		nodeEdgeMap.get(e.target).push(e);
-	};
+	const nodeEdgeMap = getEdgeMap();
 
 	// Update nodes using the map
 	nodes = nodes.map(d => {
