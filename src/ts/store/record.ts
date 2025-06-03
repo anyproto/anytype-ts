@@ -442,4 +442,4 @@ class RecordStore {
 
 };
 
- export const Record: RecordStore = new RecordStore();
+export const Record: RecordStore = new RecordStore();
