@@ -206,6 +206,7 @@
 	"commonIncludeTime": "Include time",
 	"commonShowHide": "Show / Hide",
 	"commonShowKey": "Reveal and copy Key",
+	"commonPasteLink": "Paste link",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",

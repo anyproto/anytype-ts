@@ -62,8 +62,6 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 	const onChange = (e: any, v: string) => {
 		$(buttonRef.current.getNode()).toggleClass('hide', !v);
-
-		console.log('V', v);
 	};
 
 	useEffect(() => {
@@ -82,7 +80,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			<Input 
 				ref={inputRef} 
 				value={value} 
-				placeholder={translate('defaultNameBookmark')} 
+				placeholder={translate('commonPasteLink')} 
 				focusOnMount={true}
 				onKeyDown={onChange}
 				onKeyUp={onChange}
