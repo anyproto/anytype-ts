@@ -306,26 +306,11 @@ updateForces = () => {
 		.links(edges);
 
 	// Build edgeMap in a single pass over edges
+	const tmpEdgeMap = getEdgeMap();
+
 	edgeMap.clear();
-	const tempEdgeMap = new Map();
-
-	for (let i = 0; i < edges.length; i++) {
-		const e = edges[i];
-
-		if (!tempEdgeMap.has(e.source)) {
-			tempEdgeMap.set(e.source, []);
-		};
-
-		if (!tempEdgeMap.has(e.target)) {
-			tempEdgeMap.set(e.target, []);
-		};
-
-		tempEdgeMap.get(e.source).push(e.target);
-		tempEdgeMap.get(e.target).push(e.source);
-	};
-
 	nodes.forEach(d => {
-		edgeMap.set(d.id, tempEdgeMap.get(d.id) || []);
+		edgeMap.set(d.id, tmpEdgeMap.get(d.id) || []);
 	});
 
 	simulation.alpha(1).restart();
