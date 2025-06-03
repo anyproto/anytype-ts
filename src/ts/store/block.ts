@@ -656,4 +656,4 @@ class BlockStore {
 
 };
 
- export const Block: BlockStore = new BlockStore();
+export const Block: BlockStore = new BlockStore();
