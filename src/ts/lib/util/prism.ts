@@ -108,17 +108,6 @@ class UtilPrism {
 		return result;
 	};
 
-	/**
-	 * Highlights code using Prism.js for a given language.
-	 * @param {string} code - The code to highlight.
-	 * @param {string} language - The language to use for highlighting.
-	 * @returns {string} The highlighted HTML string.
-	 */
-	highlight (code: string, language: string): string {
-		// Implementation of highlight method
-		return ''; // Placeholder return, actual implementation needed
-	}
-
 };
 
 export default new UtilPrism();
