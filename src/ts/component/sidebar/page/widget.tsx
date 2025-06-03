@@ -240,8 +240,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	onHelp () {
 		S.Menu.open('help', {
 			element: '#button-widget-help',
-			classNameWrap: 'fixed',
-			className: 'fromSidebar',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			offsetY: () => -($('#notifications').height() + 78),
