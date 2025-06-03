@@ -109,7 +109,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						<div className="emptyState">
 							<Icon />
 							<Label text={translate('blockChatEmpty')} />
-							{space.spaceUxType == I.SpaceUxType.Chat ? <Button onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} color="blank" className="c28" text={translate('blockChatEmptyShareInviteLink')} /> : ''}
+							{space.isChat ? <Button onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} color="blank" className="c28" text={translate('blockChatEmptyShareInviteLink')} /> : ''}
 						</div>
 					) : (
 						<div className="scroll">

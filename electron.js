@@ -48,7 +48,7 @@ if (process.defaultApp) {
 		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
 
 		if (!is.macos) {
-			deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
+			deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
 		};
 	};
 } else {

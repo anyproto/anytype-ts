@@ -180,12 +180,12 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	};
 
 	const onAdd = () => {
-		let options: any[] = [ 'chat', 'space', 'join' ];
-		options = options.map(it => ({
+		const suffix = (it) => U.Common.toUpperCamelCase(it);
+		const options = [ 'chat', 'space', 'join' ].map(it => ({
 			id: it,
 			icon: it,
-			name: translate(`sidebarMenuSpaceCreateTitle${U.Common.toUpperCamelCase(it)}`),
-			description: translate(`sidebarMenuSpaceCreateDescription${U.Common.toUpperCamelCase(it)}`),
+			name: translate(`sidebarMenuSpaceCreateTitle${suffix(it)}`),
+			description: translate(`sidebarMenuSpaceCreateDescription${suffix(it)}`),
 			withDescription: true,
 		}));
 

@@ -2,6 +2,10 @@ import { I, C, S, U, J, Storage, translate } from 'Lib';
 
 class UtilSpace {
 
+	/**
+	 * Opens the dashboard for the current space or the first available space.
+	 * @param {any} [param] - Optional parameters for opening the dashboard.
+	 */
 	openDashboard (param?: any) {
 		param = param || {};
 
@@ -27,6 +31,11 @@ class UtilSpace {
 		U.Object.openRoute(home, param);
 	};
 
+	/**
+	 * Opens the first available space or a void page if none exist.
+	 * @param {(it: any) => boolean} [filter] - Optional filter function for spaces.
+	 * @param {Partial<I.RouteParam>} [param] - Optional route parameters.
+	 */
 	openFirstSpaceOrVoid (filter?: (it: any) => boolean, param?: Partial<I.RouteParam>) {
 		param = param || {};
 
@@ -43,6 +52,10 @@ class UtilSpace {
 		};
 	};
 
+	/**
+	 * Gets the dashboard object for the current space.
+	 * @returns {any|null} The dashboard object or null if not found.
+	 */
 	getDashboard () {
 		const space = this.getSpaceview();
 		const id = space.spaceDashboardId;
@@ -55,7 +68,7 @@ class UtilSpace {
 		if (id == I.HomePredefinedId.Graph) {
 			ret = this.getGraph();
 		} else
-		if ((space.spaceUxType == I.SpaceUxType.Chat) || (id == I.HomePredefinedId.Chat)) {
+		if (space.isChat || (id == I.HomePredefinedId.Chat)) {
 			ret = this.getChat();
 		} else
 		if (id == I.HomePredefinedId.Last) {
@@ -70,10 +83,18 @@ class UtilSpace {
 		return ret;
 	};
 
+	/**
+	 * Gets the list of system dashboard IDs.
+	 * @returns {string[]} The list of system dashboard IDs.
+	 */
 	getSystemDashboardIds () {
 		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last ];
 	};
 
+	/**
+	 * Gets the graph dashboard object.
+	 * @returns {object} The graph dashboard object.
+	 */
 	getGraph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
@@ -82,6 +103,10 @@ class UtilSpace {
 		};
 	};
 
+	/**
+	 * Gets the last opened dashboard object.
+	 * @returns {object} The last opened dashboard object.
+	 */
 	getLastOpened () {
 		return { 
 			id: I.HomePredefinedId.Last,
@@ -89,6 +114,10 @@ class UtilSpace {
 		};
 	};
 
+	/**
+	 * Gets the last opened object for the current window.
+	 * @returns {any|null} The last opened object or null if not found.
+	 */
 	getLastObject () {
 		let home = Storage.getLastOpenedByWindowId(U.Common.getCurrentElectronWindowId());
 
@@ -104,6 +133,10 @@ class UtilSpace {
 		return home;
 	};
 
+	/**
+	 * Gets the chat dashboard object.
+	 * @returns {object} The chat dashboard object.
+	 */
 	getChat () {
 		return { 
 			id: S.Block.workspace,
@@ -112,37 +145,76 @@ class UtilSpace {
 		};
 	};
 
+	/**
+	 * Gets the list of active spaces.
+	 * @returns {any[]} The list of active spaces.
+	 */
 	getList () {
 		return S.Record.getRecords(J.Constant.subId.space, U.Subscription.spaceRelationKeys()).filter(it => it.isAccountActive);
 	};
 
+	/**
+	 * Gets the spaceview object for a given ID or the current spaceview.
+	 * @param {string} [id] - The spaceview ID.
+	 * @returns {any} The spaceview object.
+	 */
 	getSpaceview (id?: string) {
 		return S.Detail.get(J.Constant.subId.space, id || S.Block.spaceview);
 	};
 
+	/**
+	 * Gets the spaceview object by space ID.
+	 * @param {string} id - The space ID.
+	 * @returns {any} The spaceview object.
+	 */
 	getSpaceviewBySpaceId (id: string) {
 		return S.Record.getRecords(J.Constant.subId.space).find(it => it.targetSpaceId == id);
 	};
 
+	/**
+	 * Gets the list of participants, optionally filtered by status.
+	 * @param {I.ParticipantStatus[]} [statuses] - Optional list of statuses to filter by.
+	 * @returns {any[]} The list of participants.
+	 */
 	getParticipantsList (statuses?: I.ParticipantStatus[]) {
 		const ret = S.Record.getRecords(J.Constant.subId.participant);
 		return statuses ? ret.filter(it => statuses.includes(it.status)) : ret;
 	};
 
+	/**
+	 * Gets the participant ID for a given space and account.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} accountId - The account ID.
+	 * @returns {string} The participant ID.
+	 */
 	getParticipantId (spaceId: string, accountId: string) {
 		spaceId = String(spaceId || '').replace('.', '_');
 		return `_participant_${spaceId}_${accountId}`;
 	};
 
+	/**
+	 * Extracts the account ID from a participant ID.
+	 * @param {string} id - The participant ID.
+	 * @returns {string} The account ID.
+	 */
 	getAccountFromParticipantId (id: string) {
 		const a = String(id || '').split('_');
 		return a.length ? a[a.length - 1] : '';
 	};
 
+	/**
+	 * Gets the profile object for the current user.
+	 * @returns {any} The profile object.
+	 */
 	getProfile () {
 		return S.Detail.get(J.Constant.subId.profile, S.Block.profile);
 	};
 
+	/**
+	 * Gets a participant object by ID or for the current user in the current space.
+	 * @param {string} [id] - The participant ID.
+	 * @returns {any|null} The participant object or null if not found.
+	 */
 	getParticipant (id?: string) {
 		const { space } = S.Common;
 		const { account } = S.Auth;
@@ -155,10 +227,20 @@ class UtilSpace {
 		return object._empty_ ? null : object;
 	};
 
+	/**
+	 * Gets the subspace subId for a given space ID.
+	 * @param {string} spaceId - The space ID.
+	 * @returns {string} The subspace subId.
+	 */
 	getSubSpaceSubId (spaceId: string) {
 		return [ J.Constant.subId.subSpace, spaceId ].join('-');
 	};
 
+	/**
+	 * Gets the participant object for the current user in a given space.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {any|null} The participant object or null if not found.
+	 */
 	getMyParticipant (spaceId?: string) {
 		const { account } = S.Auth;
 		const { space } = S.Common;
@@ -175,24 +257,48 @@ class UtilSpace {
 		return object._empty_ ? null : object;
 	};
 
+	/**
+	 * Gets the creator object for a given space and ID.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} id - The creator ID.
+	 * @returns {any} The creator object.
+	 */
 	getCreator (spaceId: string, id: string) {
 		return S.Detail.get(this.getSubSpaceSubId(spaceId), id);
 	};
 
+	/**
+	 * Checks if the current user can write in a given space.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the user can write, false otherwise.
+	 */
 	canMyParticipantWrite (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId);
 		return participant ? (participant.isWriter || participant.isOwner) : true;
 	};
 
+	/**
+	 * Checks if the current user is the owner of a given space.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the user is the owner, false otherwise.
+	 */
 	isMyOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || S.Common.space);
 		return participant ? participant.isOwner : false;
 	};
 
+	/**
+	 * Checks if sharing is active for the current space.
+	 * @returns {boolean} True if sharing is active, false otherwise.
+	 */
 	isShareActive () {
 		return S.Common.isOnline && !U.Data.isLocalNetwork();
 	};
 
+	/**
+	 * Checks if the share banner should be shown.
+	 * @returns {boolean} True if the share banner should be shown, false otherwise.
+	 */
 	hasShareBanner () {
 		/*
 		const hasShared = !!this.getList().find(it => it.isShared && this.isMyOwner(it.targetSpaceId));
@@ -204,6 +310,10 @@ class UtilSpace {
 		return false;
 	};
 
+	/**
+	 * Gets the reader limit for the current space.
+	 * @returns {number} The reader limit.
+	 */
 	getReaderLimit () {
 		const space = this.getSpaceview();
 		if (!space) {
@@ -214,6 +324,10 @@ class UtilSpace {
 		return space.readersLimit - participants.length;
 	};
 
+	/**
+	 * Gets the writer limit for the current space.
+	 * @returns {number} The writer limit.
+	 */
 	getWriterLimit () {
 		const space = this.getSpaceview();
 		if (!space) {
@@ -224,10 +338,20 @@ class UtilSpace {
 		return space.writersLimit - participants.length;
 	};
 
+	/**
+	 * Gets the invite link for a given CID and key.
+	 * @param {string} cid - The CID.
+	 * @param {string} key - The key.
+	 * @returns {string} The invite link.
+	 */
 	getInviteLink (cid: string, key: string) {
 		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
+	/**
+	 * Checks if the user can create a new space.
+	 * @returns {boolean} True if the user can create a space, false otherwise.
+	 */
 	canCreateSpace (): boolean {
 		const { config } = S.Common;
 
@@ -246,6 +370,9 @@ class UtilSpace {
 		return length < J.Constant.limit.space;
 	};
 
+	/**
+	 * Initializes the space state.
+	 */
 	initSpaceState () {
 		const { widgets } = S.Block;
 		const blocks = S.Block.getChildren(widgets, widgets);
@@ -259,12 +386,21 @@ class UtilSpace {
 		blocks.forEach(block => Storage.setToggle('widget', block.id, false));
 	};
 
+	/**
+	 * Gets an invite by ID and calls a callback with the result.
+	 * @param {string} id - The invite ID.
+	 * @param {(cid: string, key: string, inviteType: I.InviteType) => void} callBack - Callback function.
+	 */
 	getInvite (id: string, callBack: (cid: string, key: string, inviteType: I.InviteType) => void) {
 		C.SpaceInviteGetCurrent(id, (message: any) => {
 			callBack(message.inviteCid, message.inviteKey, message.inviteType);
 		});
 	};
 
+	/**
+	 * Gets the publish domain for the current space.
+	 * @returns {string} The publish domain.
+	 */
 	getPublishDomain (): string {
 		const participant = this.getMyParticipant();
 
@@ -278,6 +414,11 @@ class UtilSpace {
 		return domain;
 	};
 
+	/**
+	 * Gets the publish URL for a given slug.
+	 * @param {string} slug - The slug.
+	 * @returns {string} The publish URL.
+	 */
 	getPublishUrl (slug: string): string {
 		return [ this.getPublishDomain(), slug ].join('/');
 	};

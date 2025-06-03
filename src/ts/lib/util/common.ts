@@ -352,7 +352,7 @@ class UtilCommon {
 	 * @returns {any[]} The array with unique values.
 	 */
 	arrayUnique (a: any[]) {
-		return [ ...new Set(a) ];
+		return a.length >= 2 ? [ ...new Set(a) ] : a;
 	};
 	
 	/**

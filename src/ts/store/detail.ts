@@ -346,7 +346,6 @@ class DetailStore {
 		object.chatId = Relation.getStringValue(object.chatId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
-		object.spaceUxType = Number(object.spaceUxType);
 
 		if (object.iconOption > 10) {
 			object.iconOption = object.iconOption - 10;

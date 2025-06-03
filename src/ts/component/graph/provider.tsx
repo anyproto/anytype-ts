@@ -67,9 +67,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'removeGraphNode', 'keydown' ];
 
 		$(window).off(events.map(it => `${it}.${id}`).join(' '));
+		$(canvas.current).off('touchstart touchmove');
 	};
 
-	const getTouchDistance = (touches: { clientX: number, clientY: number }[]): number => {
+	const getTouchDistance = (touches: TouchList): number => {
 		const dx = touches[0].clientX - touches[1].clientX;
 		const dy = touches[0].clientY - touches[1].clientY;
 
@@ -82,6 +83,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const width = node.width();
 		const height = node.height();
 		const settings = S.Common.getGraph(storageKey);
+		const cnv = $(canvas.current);
 
 		images.current = {};
 		zoom.current = d3.zoom().scaleExtent([ 0.05, 10 ])
@@ -101,24 +103,29 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		let touchStartDist = null;
 		let touchStartZoom = null;
 
-		canvas.current.addEventListener('touchstart', e => {
-			if (e.touches.length != 2) {
+		cnv.off('touchstart touchmove');
+		cnv.on('touchstart', e => {
+			const t = e.originalEvent.touches;
+
+			if (t.length != 2) {
 				return;
 			};
 
 			e.preventDefault();
-			touchStartDist = getTouchDistance(e.touches);
+			touchStartDist = getTouchDistance(t);
 			touchStartZoom = d3.zoomTransform(canvas.current).k;
 		});
 
-		canvas.current.addEventListener('touchmove', e => {
+		cnv.on('touchmove', e => {
 			e.preventDefault();
 
-			if (!touchStartDist || (e.touches.length != 2)) {
+			const t = e.originalEvent.touches;
+
+			if (!touchStartDist || (t.length != 2)) {
 				return;
 			};
 
-			const newDist = getTouchDistance(e.touches);
+			const newDist = getTouchDistance(t);
 			const scaleChange = newDist / touchStartDist;
 			const newZoom = touchStartZoom * scaleChange;
 
