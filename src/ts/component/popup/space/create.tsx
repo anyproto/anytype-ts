@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, IconObject, Button, Loader, Error, Editable } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Storage } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, analytics, Storage, Preview } from 'Lib';
 import $ from 'jquery';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
@@ -12,6 +12,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	const [ canSave, setCanSave ] = useState(true);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
+	const { data } = param;
+	const { uxType } = data;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
@@ -59,9 +61,9 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	};
 
 	const onSubmit = (withImport: boolean) => {
-		const { data } = param;
 		const { onCreate, route } = data;
 		const name = checkName(nameRef.current.getTextValue());
+		const isChatSpace = uxType == I.SpaceUxType.Chat;
 
 		if (isLoading || !canSave) {
 			return;
@@ -69,10 +71,12 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 		setIsLoading(true);
 
-		const withChat = U.Object.isAllowedChat();
+		const withChat = isChatSpace ? true : U.Object.isAllowedChat();
 		const details = {
 			name,
 			iconOption,
+			spaceUxType: uxType,
+			spaceAccessType: I.SpaceType.Private,
 		};
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
@@ -101,10 +105,33 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					onRouteChange: () => {
 						U.Space.initSpaceState();
 
+						if (isChatSpace) {
+							const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
+							const chatWidget = {
+								type: I.BlockType.Link,
+								content: {
+									targetBlockId: J.Constant.widgetId.chat,
+								},
+							};
+							C.BlockCreateWidget(S.Block.widgets, '', chatWidget, I.BlockPosition.Top, I.WidgetLayout.Link, Number(limitOptions[0].id), (message: any) => {
+								if (message.error.code) {
+									return;
+								};
+							});
+
+							C.SpaceMakeShareable(S.Common.space, (message: any) => {
+								if (message.error.code) {
+									return;
+								};
+
+								C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer);
+							});
+						};
+
 						if (withImport) {
 							close(() => U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings }));
 						} else 
-						if (startingId) {
+						if (startingId && !isChatSpace) {
 							U.Object.getById(startingId, {}, (object: any) => {
 								if (object) {
 									U.Object.openRoute(object);
@@ -191,12 +218,13 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 			</div>
 
 			<div className="buttons">
-				<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
-				<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+				<>
+					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
+					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+				</>
 			</div>
 
 			<Error text={error} />
-
 		</>
 	);
 

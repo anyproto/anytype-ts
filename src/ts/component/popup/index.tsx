@@ -26,6 +26,7 @@ import PopupMembership from './membership';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
 import PopupSpaceCreate from './space/create';
+import PopupSpaceJoinByLink from './space/joinByLink';
 import PopupLogout from './logout';
 import PopupOnboarding from './onboarding';
 import PopupApiCreate from './api/create';
@@ -75,6 +76,7 @@ class Popup extends React.Component<I.Popup> {
 			membershipFinalization:  PopupMembershipFinalization,
 			share:					 PopupShare,
 			spaceCreate:			 PopupSpaceCreate,
+			spaceJoinByLink:		 PopupSpaceJoinByLink,
 			logout: 				 PopupLogout,
 			onboarding:				 PopupOnboarding,
 			apiCreate:				 PopupApiCreate,

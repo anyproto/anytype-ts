@@ -15,9 +15,9 @@
 
 		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; text-align: center; }
 		.emptyState {
-			.img { width: 320px; height: 104px; display: flex; align-items: center; justify-content: center; background: radial-gradient(50% 50% at 50% 50%, #80d1ff 0%, rgba(187, 231, 255, 0.00) 100%); }
-			.icon { width: 108px; height: 88px; background: url('~img/icon/chat/emptyState.svg'); }
-			.label { @include text-common; color: var(--color-text-secondary); }
+			.icon { width: 56px; height: 56px; background: url('~img/icon/chat/emptyState.svg'); }
+			.label { @include text-common; font-weight: 400; color: var(--color-text-secondary); }
+			.button { margin-top: 4px; }
 		}
 
 		.section { display: flex; flex-direction: column; gap: 4px 0px; padding: 16px 0px; }

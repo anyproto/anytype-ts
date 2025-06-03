@@ -162,6 +162,7 @@ export default {
 		'createdDate',
 		'lastMessageDate',
 		'chatId',
+		'spaceUxType',
 	],
 
 	participant: [
