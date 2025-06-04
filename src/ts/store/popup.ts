@@ -128,6 +128,12 @@ class PopupStore {
 		return this.get(id) ? true : false;
 	};
 
+	/**
+	 * Checks if any popup in a list of IDs is open.
+	 * @private
+	 * @param {string[]} ids - The popup IDs.
+	 * @returns {boolean} True if any popup is open, false otherwise.
+	 */
 	isOpenList (ids: string[]) {
 		for (const id of ids) {
 			if (this.isOpen(id)) {
@@ -137,6 +143,11 @@ class PopupStore {
 		return false;
 	};
 
+	/**
+	 * Checks if a keyboard-related popup is open.
+	 * @private
+	 * @returns {boolean} True if a keyboard popup is open, false otherwise.
+	 */
 	isOpenKeyboard () {
 		return this.isOpenList([ 'search', 'template' ]);
 	};
@@ -204,19 +215,39 @@ class PopupStore {
 		};
 	};
 
+	/**
+	 * Gets the popup items, optionally filtered by IDs.
+	 * @private
+	 * @param {string[]} [ids] - Popup IDs.
+	 * @returns {I.Popup[]} The popup items.
+	 */
 	getItems (ids?: string[]) {
 		return ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
 	};
 
+	/**
+	 * Gets the timeout value for popups.
+	 * @private
+	 * @returns {number} The timeout value.
+	 */
 	getTimeout () {
 		return this.getItems().length ? J.Constant.delay.popup : 0;
 	};
 
+	/**
+	 * Gets the last popup in the list.
+	 * @private
+	 * @returns {I.Popup|null} The last popup or null.
+	 */
 	getLast () {
 		const l = this.popupList.length;
 		return l ? this.popupList[l - 1] : null;
 	};
 
+	/**
+	 * Closes the last open popup.
+	 * @private
+	 */
 	closeLast () {
 		const last = this.getLast();
 		if (last) {
@@ -224,14 +255,30 @@ class PopupStore {
 		};
 	};
 
+	/**
+	 * Clears the popup close timeout.
+	 * @private
+	 */
 	clearTimeout () {
 		window.clearTimeout(this.timeout);
 	};
 
+	/**
+	 * Gets the list of popup IDs that do not require a dimmer.
+	 * @private
+	 * @returns {string[]} The list of popup IDs.
+	 */
 	noDimmerIds () {
 		return NO_DIMMER_IDS;
 	};
 
+	/**
+	 * Replaces one popup with another.
+	 * @private
+	 * @param {string} oldId - The old popup ID.
+	 * @param {string} newId - The new popup ID.
+	 * @param {I.PopupParam} param - The popup parameters.
+	 */
 	replace (oldId: string, newId: string, param: I.PopupParam) {
 		this.close(oldId, () => this.open(newId, param));
 	};

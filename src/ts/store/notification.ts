@@ -15,6 +15,11 @@ class NotificationStore {
 		});
 	};
 
+	/**
+	 * Gets the notification list.
+	 * @private
+	 * @returns {I.Notification[]} The notification list.
+	 */
 	get list (): I.Notification[] {
 		return this.itemList || [];
 	};

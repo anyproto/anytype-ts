@@ -66,7 +66,8 @@ class ProgressStore {
 	};
 
 	/**
-	 * Gets the list of progress items, optionally filtered.
+	 * Gets the list of progress items, optionally filtered and by space.
+	 * @private
 	 * @param {(it: I.Progress) => boolean} [filter] - Optional filter function.
 	 * @returns {I.Progress[]} The filtered progress items.
 	 */
@@ -86,6 +87,7 @@ class ProgressStore {
 
 	/**
 	 * Gets a progress item by ID.
+	 * @private
 	 * @param {string} id - The progress item ID.
 	 * @returns {I.Progress} The progress item.
 	 */
@@ -95,6 +97,7 @@ class ProgressStore {
 
 	/**
 	 * Gets the percent complete for a list of progress items.
+	 * @private
 	 * @param {I.Progress[]} list - The list of progress items.
 	 * @returns {number} The percent complete.
 	 */

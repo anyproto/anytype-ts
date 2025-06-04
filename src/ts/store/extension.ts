@@ -17,6 +17,7 @@ class ExtensionStore {
 
 	/**
 	 * Gets the HTML value.
+	 * @private
 	 * @returns {string} The HTML value.
 	 */
 	get html (): string {
@@ -25,6 +26,7 @@ class ExtensionStore {
 
 	/**
 	 * Gets the tab URL value.
+	 * @private
 	 * @returns {string} The tab URL value.
 	 */
 	get tabUrl (): string {
