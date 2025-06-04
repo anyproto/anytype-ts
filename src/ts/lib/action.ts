@@ -406,6 +406,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Deletes a list of objects by IDs, with confirmation and analytics.
+	 * @param {string[]} ids - The object IDs to delete.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after deletion.
+	 */
 	delete (ids: string[], route: string, callBack?: () => void): void {
 		const count = ids.length;
 
@@ -458,6 +464,10 @@ class Action {
 		});
 	};
 
+	/**
+	 * Restores an account from a backup file, handling import and selection.
+	 * @param {function} onError - Callback for error handling, returns true to abort.
+	 */
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
 		const { networkConfig } = S.Auth;
 		const { dataPath } = S.Common;
@@ -504,6 +514,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Archives a list of objects by IDs.
+	 * @param {string[]} ids - The object IDs to archive.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after archiving.
+	 */
 	archive (ids: string[], route: string, callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, true, (message: any) => {
 			if (message.error.code) {
@@ -541,6 +557,13 @@ class Action {
 		});
 	};
 
+	/**
+	 * Imports objects into the current space from selected files.
+	 * @param {I.ImportType} type - The import type.
+	 * @param {string[]} extensions - Allowed file extensions.
+	 * @param {any} [options] - Additional import options.
+	 * @param {function} [callBack] - Optional callback after import.
+	 */
 	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
 		const fileOptions: any = { 
 			properties: [ 'openFile', 'multiSelections' ],
@@ -576,6 +599,15 @@ class Action {
 		});
 	};
 
+	/**
+	 * Exports objects from the current space to a selected directory.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string[]} ids - The object IDs to export.
+	 * @param {I.ExportType} type - The export type.
+	 * @param {any} param - Export parameters.
+	 * @param {function} [onSelectPath] - Optional callback after path selection.
+	 * @param {function} [callBack] - Optional callback after export.
+	 */
 	export (spaceId: string, ids: string[], type: I.ExportType, param: any, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		const { zip, nested, files, archived, json, route } = param;
 
@@ -820,6 +852,13 @@ class Action {
 		});
 	};
 
+	/**
+	 * Sets or unsets objects as favorites.
+	 * @param {string[]} objectIds - The object IDs to update.
+	 * @param {boolean} v - Whether to set as favorite.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after update.
+	 */
 	setIsFavorite (objectIds: string[], v: boolean, route: string, callBack?: (message: any) => void) {
 		C.ObjectListSetIsFavorite(objectIds, v, (message: any) => {
 			if (message.error.code) {
@@ -834,6 +873,14 @@ class Action {
 		});
 	};
 
+	/**
+	 * Creates a widget from an object and adds it to the widgets block.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} objectId - The object ID to create a widget from.
+	 * @param {string} targetId - The target block ID for insertion.
+	 * @param {I.BlockPosition} position - The position to insert the widget.
+	 * @param {string} [route] - The route context for analytics.
+	 */
 	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
 		const object = S.Detail.get(rootId, objectId);
 
@@ -868,6 +915,9 @@ class Action {
 		});
 	};
 
+	/**
+	 * Opens a membership upgrade confirmation popup.
+	 */
 	membershipUpgrade () {
 		S.Popup.open('confirm', {
 			data: {
@@ -880,6 +930,11 @@ class Action {
 		});
 	};
 
+	/**
+	 * Opens a confirmation popup to revoke a space invite link.
+	 * @param {string} spaceId - The space ID.
+	 * @param {function} [callBack] - Optional callback after revocation.
+	 */
 	inviteRevoke (spaceId: string, callBack?: () => void) {
 		S.Popup.open('confirm', {
 			data: {
@@ -910,6 +965,11 @@ class Action {
 		analytics.event('ScreenRevokeShareLink');
 	};
 
+	/**
+	 * Adds objects to a collection by target ID.
+	 * @param {string} targetId - The collection target ID.
+	 * @param {string[]} objectIds - The object IDs to add.
+	 */
 	addToCollection (targetId: string, objectIds: string[]) {
 		const collectionType = S.Record.getCollectionType();
 
@@ -923,12 +983,22 @@ class Action {
 		});
 	};
 
+	/**
+	 * Sets the application theme and notifies the renderer.
+	 * @param {string} id - The theme ID.
+	 */
 	themeSet (id: string) {
 		S.Common.themeSet(id);
 		Renderer.send('setTheme', id);
 		analytics.event('ThemeSet', { id });
 	};
 
+	/**
+	 * Toggles a relation as featured for a given object.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} relationKey - The relation key to toggle.
+	 * @returns {null|void} Returns null if the relation is not found.
+	 */
 	toggleFeatureRelation (rootId: string, relationKey: string) {
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
 		const featured = U.Common.objectCopy(object.featuredRelations || []);
