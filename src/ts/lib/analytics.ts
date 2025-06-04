@@ -227,10 +227,18 @@ class Analytics {
 		this.contextId = '';
 	};
 
+	/**
+	 * Sets the user's tier property for analytics.
+	 * @param {I.TierType} tier - The user's tier.
+	 */
 	setTier (tier: I.TierType) {
 		this.setProperty({ tier: I.TierType[tier] || 'Custom' });
 	};
 
+	/**
+	 * Sets user properties for analytics.
+	 * @param {any} props - The properties to set.
+	 */
 	setProperty (props: any) {
 		if (!this.instance || !this.isAllowed()) {
 			return;
@@ -240,6 +248,11 @@ class Analytics {
 		this.log(`[Analytics].setProperty: ${JSON.stringify(props, null, 3)}`);
 	};
 
+	/**
+	 * Logs an analytics event with the given code and data.
+	 * @param {string} code - The event code.
+	 * @param {any} [data] - Optional event data.
+	 */
 	event (code: string, data?: any) {
 		data = data || {};
 
@@ -599,18 +612,42 @@ class Analytics {
 		this.log(`[Analytics].event: ${code}`, param);
 	};
 
+	/**
+	 * Creates an analytics event for object creation.
+	 * @param {string} objectType - The type of object created.
+	 * @param {I.ObjectLayout} layout - The layout of the object.
+	 * @param {string} route - The route context for analytics.
+	 * @param {number} time - The time taken for creation.
+	 */
 	createObject (objectType: string, layout: I.ObjectLayout, route: string, time: number) {
 		this.event('CreateObject', { objectType, layout, route, middleTime: time });
 	};
 
+	/**
+	 * Creates an analytics event for widget creation.
+	 * @param {I.WidgetLayout} layout - The widget layout.
+	 * @param {string} route - The route context for analytics.
+	 * @param {string} type - The widget type.
+	 */
 	createWidget (layout: I.WidgetLayout, route: string, type: string) {
 		analytics.event('AddWidget', { type: layout, route, widgetType: type });
 	};
 
+	/**
+	 * Returns the widget type as a string.
+	 * @param {boolean} isAuto - Whether the widget is auto-created.
+	 * @returns {string} The widget type string.
+	 */
 	getWidgetType (isAuto: boolean) {
 		return isAuto ? this.widgetType.auto : this.widgetType.manual;
 	};
 
+	/**
+	 * Logs a change in relation value for analytics.
+	 * @param {any} relation - The relation object.
+	 * @param {any} value - The new value.
+	 * @param {any} param - Additional parameters.
+	 */
 	changeRelationValue (relation: any, value: any, param: any) {
 		if (!relation) {
 			return;
@@ -625,6 +662,11 @@ class Analytics {
 		this.event(key, { ...param, relationKey: relation.relationKey, format: relation.format });
 	};
 
+	/**
+	 * Maps page parameters to an analytics route string.
+	 * @param {any} params - The page parameters.
+	 * @returns {string} The mapped route string.
+	 */
 	pageMapper (params: any): string {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
@@ -641,6 +683,11 @@ class Analytics {
 		return map[key] || '';
 	};
 
+	/**
+	 * Maps popup parameters to an analytics route string.
+	 * @param {any} params - The popup parameters.
+	 * @returns {string} The mapped route string.
+	 */
 	popupMapper (params: any): string {
 		const { id } = params;
 		const map = {
@@ -650,6 +697,11 @@ class Analytics {
 		return map[id] || '';
 	};
 
+	/**
+	 * Maps menu parameters to an analytics route string.
+	 * @param {any} params - The menu parameters.
+	 * @returns {string} The mapped route string.
+	 */
 	menuMapper (params: any): string {
 		const { id } = params;
 		const map = {
@@ -659,6 +711,11 @@ class Analytics {
 		return map[id] || '';
 	};
 
+	/**
+	 * Maps settings parameters to an analytics route string.
+	 * @param {any} params - The settings parameters.
+	 * @returns {string} The mapped route string.
+	 */
 	settingsMapper (params: any): string {
 		const { id } = params;
 		const prefix = 'ScreenSettings';
@@ -676,6 +733,11 @@ class Analytics {
 		return code ? U.Common.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
+	/**
+	 * Maps a type ID to an analytics type string.
+	 * @param {string} id - The type ID.
+	 * @returns {string} The mapped type string.
+	 */
 	typeMapper (id: string): string {
 		let object = S.Record.getTypeById(id);
 		if (!object) {
@@ -685,6 +747,11 @@ class Analytics {
 		return object ? (object.sourceObject ? object.sourceObject : 'custom') : '';
 	};
 
+	/**
+	 * Maps a relation ID to an analytics relation string.
+	 * @param {string} id - The relation ID.
+	 * @returns {string} The mapped relation string.
+	 */
 	relationMapper (id: string) {
 		let object = S.Record.getRelationById(id);
 		if (!object) {
@@ -694,10 +761,20 @@ class Analytics {
 		return object ? (object.sourceObject ? object.sourceObject : 'custom') : '';
 	};
 
+	/**
+	 * Returns the embed type as a string.
+	 * @param {boolean} isInline - Whether the embed is inline.
+	 * @returns {string} The embed type string.
+	 */
 	embedType (isInline: boolean): string {
 		return isInline ? 'inline' : 'object';
 	};
 
+	/**
+	 * Returns the network type as a string.
+	 * @param {any} v - The network value.
+	 * @returns {string} The network type string.
+	 */
 	networkType (v: any): string {
 		v = Number(v) || 0;
 
@@ -709,10 +786,18 @@ class Analytics {
 		return '';
 	};
 
+	/**
+	 * Adds an event to the analytics stack.
+	 * @param {string} code - The event code.
+	 * @param {any} [data] - Optional event data.
+	 */
 	stackAdd (code: string, data?: any) {
 		this.stack.push({ code, data })
 	};
 
+	/**
+	 * Sends all stacked analytics events.
+	 */
 	stackSend () {
 		this.stack.forEach(({ code, data }) => {
 			this.event(code, data);
@@ -721,6 +806,10 @@ class Analytics {
 		this.stack = [];
 	};
 
+	/**
+	 * Logs analytics messages to the console.
+	 * @param {...any[]} args - Arguments to log.
+	 */
 	log (...args: any[]) {
 		if (!this.isAllowed()) {
 			return;
