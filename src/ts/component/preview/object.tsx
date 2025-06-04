@@ -366,7 +366,31 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		};
 	};
 
+	cn.push(cnPreviewSize);
+
+	if (isTask || isBookmark) {
+		iconSize = 16;
+
+		if (size == I.PreviewSize.Small) {
+			iconSize = 14;
+		};
+	};
+
 	let content = null;
+	let heading = (
+		<>
+			{withIcon ? <IconObject size={iconSize} object={object} /> : ''}
+			{withName ? <ObjectName object={object} /> : ''}
+		</>
+	);
+
+	if (isTask || isBookmark) {
+		heading = (
+			<div className="flex">
+				{heading}
+			</div>
+		);
+	};
 
 	if (!object._empty_) {
 		content = (
@@ -387,8 +411,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 				) : ''}
 
 				<div className="heading">
-					{withIcon ? <IconObject size={iconSize} object={object} /> : ''}
-					{withName ? <ObjectName object={object} /> : ''}
+					{heading}
 					<div className="featured" />
 				</div>
 
@@ -411,16 +434,6 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 				</div>
 			</>
 		);
-	};
-
-	cn.push(cnPreviewSize);
-
-	if (isTask || isBookmark) {
-		iconSize = 16;
-
-		if (size == I.PreviewSize.Small) {
-			iconSize = 14;
-		};
 	};
 
 	useEffect(() => {
