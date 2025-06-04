@@ -38,7 +38,11 @@ class DetailStore {
 		return el;
 	}; 
 
-	/** Idempotent. adds details to the detail store. */
+	/**
+	 * Adds details to the detail store.
+	 * @param {string} rootId - The root ID.
+	 * @param {Item[]} items - The items to add.
+	 */
 	public set (rootId: string, items: Item[]) {
 		if (!rootId) {
 			console.log('[S.Detail].set: rootId is not defined');
@@ -60,7 +64,12 @@ class DetailStore {
 		this.map.set(rootId, map);
 	};
 
-	/** Idempotent. updates details in the detail store. if clear is set, map wil delete details by item id. */
+	/**
+	 * Updates details in the detail store. If clear is set, map will delete details by item id.
+	 * @param {string} rootId - The root ID.
+	 * @param {Item} item - The item to update.
+	 * @param {boolean} clear - Whether to clear existing details.
+	 */
 	public update (rootId: string, item: Item, clear: boolean): void {
 		if (!rootId) {
 			console.log('[S.Detail].update: rootId is not defined');
@@ -122,17 +131,27 @@ class DetailStore {
 		};
 	};
 
-	/** Idempotent. Clears any data stored with rootId, if there happens to be any.  */
+	/**
+	 * Clears any data stored with rootId, if there happens to be any.
+	 * @param {string} rootId - The root ID.
+	 */
 	public clear (rootId: string): void {
 		this.map.delete(rootId);
 	};
 
-	/** Idempotent. Clears all of the data stored in DetailStore, if there happens to be any */
+	/**
+	 * Clears all of the data stored in DetailStore, if there happens to be any.
+	 */
 	public clearAll (): void {
 		this.map.clear();
 	};
 
-	/** Idempotent. Clears details by keys provided, if they exist. if no keys are provided, all details are cleared. */
+	/**
+	 * Clears details by keys provided, if they exist. If no keys are provided, all details are cleared.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The item ID.
+	 * @param {string[]} [keys] - The keys to clear.
+	 */
 	public delete (rootId: string, id: string, keys?: string[]): void {
 		const map = this.map.get(rootId);
 
@@ -147,7 +166,15 @@ class DetailStore {
 		};
 	};
 
-	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
+	/**
+	 * Gets the object. If no keys are provided, all properties are returned. If force keys is set, J.Relation.default are included.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The item ID.
+	 * @param {string[]} [withKeys] - Keys to include.
+	 * @param {boolean} [forceKeys] - Whether to force default keys.
+	 * @param {I.ObjectLayout[]} [skipLayoutFormat] - Layouts to skip formatting.
+	 * @returns {any} The object.
+	 */
 	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean, skipLayoutFormat?: I.ObjectLayout[]): any {
 		let list = this.map.get(rootId)?.get(id) || [];
 		if (!list.length) {
@@ -193,12 +220,22 @@ class DetailStore {
 		return this.mapper(object, skipLayoutFormat);
 	};
 
+	/**
+	 * Gets the keys for an item.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The item ID.
+	 * @returns {string[]} The keys.
+	 */
 	public getKeys (rootId: string, id: string): string[] {
 		return (this.map.get(rootId)?.get(id) || []).map(it => it.relationKey);
 	};
 
-	/** Mutates object provided and also returns a new object. Sets defaults.
-	 * This Function contains domain logic which should be encapsulated in a model */
+	/**
+	 * Mutates object provided and also returns a new object. Sets defaults.
+	 * @param {any} object - The object to map.
+	 * @param {I.ObjectLayout[]} [skipLayoutFormat] - Layouts to skip formatting.
+	 * @returns {any} The mapped object.
+	 */
 	public mapper (object: any, skipLayoutFormat?: I.ObjectLayout[]): any {
 		object = this.mapCommon(object || {});
 

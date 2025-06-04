@@ -30,6 +30,11 @@ class ChatStore {
 		});
 	};
 
+	/**
+	 * Sets the chat message list for a subId.
+	 * @param {string} subId - The subscription ID.
+	 * @param {I.ChatMessage[]} list - The chat messages.
+	 */
 	set (subId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
@@ -37,6 +42,11 @@ class ChatStore {
 		this.messageMap.set(subId, observable.array(list));
 	};
 
+	/**
+	 * Prepends chat messages to the list for a subId.
+	 * @param {string} subId - The subscription ID.
+	 * @param {I.ChatMessage[]} add - The chat messages to prepend.
+	 */
 	prepend (subId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
 
@@ -46,6 +56,11 @@ class ChatStore {
 		this.set(subId, list);
 	};
 
+	/**
+	 * Appends chat messages to the list for a subId.
+	 * @param {string} subId - The subscription ID.
+	 * @param {I.ChatMessage[]} add - The chat messages to append.
+	 */
 	append (subId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
 
@@ -55,6 +70,12 @@ class ChatStore {
 		this.set(subId, list);
 	};
 
+	/**
+	 * Adds a chat message at a specific index.
+	 * @param {string} subId - The subscription ID.
+	 * @param {number} idx - The index to insert at.
+	 * @param {I.ChatMessage} param - The chat message to add.
+	 */
 	add (subId: string, idx: number, param: I.ChatMessage): void {
 		const list = this.getList(subId);
 		const item = this.getMessage(subId, param.id);
@@ -67,6 +88,11 @@ class ChatStore {
 		this.set(subId, list);
 	};
 
+	/**
+	 * Updates a chat message by ID.
+	 * @param {string} subId - The subscription ID.
+	 * @param {Partial<I.ChatMessage>} param - The chat message update.
+	 */
 	update (subId: string, param: Partial<I.ChatMessage>): void {
 		const item = this.getMessage(subId, param.id);
 
@@ -75,10 +101,20 @@ class ChatStore {
 		};
 	};
 
+	/**
+	 * Deletes a chat message by ID.
+	 * @param {string} subId - The subscription ID.
+	 * @param {string} id - The chat message ID.
+	 */
 	delete (subId: string, id: string) {
 		this.set(subId, this.getList(subId).filter(it => it.id != id));
 	};
 
+	/**
+	 * Sets a reply message for a subId.
+	 * @param {string} subId - The subscription ID.
+	 * @param {I.ChatMessage} message - The reply message.
+	 */
 	setReply (subId: string, message: I.ChatMessage) {
 		const map = this.replyMap.get(subId) || new Map();
 
@@ -87,10 +123,22 @@ class ChatStore {
 		this.replyMap.set(subId, map);
 	};
 
+	/**
+	 * Sets the read status for messages by IDs.
+	 * @param {string} subId - The subscription ID.
+	 * @param {string[]} ids - The message IDs.
+	 * @param {boolean} value - The read status value.
+	 */
 	setReadMessageStatus (subId: string, ids: string[], value: boolean) {
 		(ids || []).forEach(id => this.update(subId, { id, isReadMessage: value }));
 	};
 
+	/**
+	 * Sets the read mention status for messages by IDs.
+	 * @param {string} subId - The subscription ID.
+	 * @param {string[]} ids - The message IDs.
+	 * @param {boolean} value - The read mention status value.
+	 */
 	setReadMentionStatus (subId: string, ids: string[], value: boolean) {
 		(ids || []).forEach(id => this.update(subId, { id, isReadMention: value }));
 	};
@@ -133,6 +181,11 @@ class ChatStore {
 		return [ J.Constant.subId.chatSpace, spaceId, chatId ].join('-');
 	};
 
+	/**
+	 * Sets the chat state for a subId.
+	 * @param {string} subId - The subscription ID.
+	 * @param {I.ChatState} state - The chat state.
+	 */
 	setState (subId: string, state: I.ChatState) {
 		const param = this.getSubParam(subId);
 	
@@ -159,6 +212,11 @@ class ChatStore {
 		this.stateMap.set(param.spaceId, spaceMap);
 	};
 
+	/**
+	 * Gets the chat state for a subId.
+	 * @param {string} subId - The subscription ID.
+	 * @returns {ChatState} The chat state.
+	 */
 	getState (subId: string): ChatState {
 		const param = this.getSubParam(subId);
 		const ret = {
@@ -172,6 +230,10 @@ class ChatStore {
 		return Object.assign(ret, this.stateMap.get(param.spaceId)?.get(param.chatId) || {});
 	};
 
+	/**
+	 * Clears all chat data for a subId.
+	 * @param {string} subId - The subscription ID.
+	 */
 	clear (subId: string) {
 		const param = this.getSubParam(subId);
 
@@ -180,24 +242,48 @@ class ChatStore {
 		this.stateMap.get(param.spaceId)?.delete(param.chatId);
 	};
 
+	/**
+	 * Clears all chat data in the store.
+	 */
 	clearAll () {
 		this.messageMap.clear();
 		this.replyMap.clear();
 		this.stateMap.clear();
 	};
 
+	/**
+	 * Gets the chat message list for a subId.
+	 * @param {string} subId - The subscription ID.
+	 * @returns {any[]} The chat messages.
+	 */
 	getList (subId: string): any[] {
 		return this.messageMap.get(subId) || [];
 	};
 
+	/**
+	 * Gets a chat message by ID.
+	 * @param {string} subId - The subscription ID.
+	 * @param {string} id - The chat message ID.
+	 * @returns {I.ChatMessage} The chat message.
+	 */
 	getMessage (subId: string, id: string): I.ChatMessage {
 		return this.getList(subId).find(it => it.id == id);
 	};
 
+	/**
+	 * Gets a reply message by ID.
+	 * @param {string} subId - The subscription ID.
+	 * @param {string} id - The reply message ID.
+	 * @returns {I.ChatMessage} The reply message.
+	 */
 	getReply (subId: string, id: string): I.ChatMessage {
 		return this.replyMap.get(subId)?.get(id);
 	};
 
+	/**
+	 * Gets the total mention and message counters for all spaces.
+	 * @returns {Counter} The total counters.
+	 */
 	getTotalCounters (): Counter {
 		const spaces = U.Space.getList();
 		const ret = { mentionCounter: 0, messageCounter: 0 };
@@ -218,6 +304,11 @@ class ChatStore {
 		return ret;
 	};
 
+	/**
+	 * Gets the mention and message counters for a space.
+	 * @param {string} spaceId - The space ID.
+	 * @returns {Counter} The counters for the space.
+	 */
 	getSpaceCounters (spaceId: string): Counter {
 		const spaceMap = this.stateMap.get(spaceId);
 		const ret = { mentionCounter: 0, messageCounter: 0 };
@@ -232,6 +323,12 @@ class ChatStore {
 		return ret;
 	};
 
+	/**
+	 * Gets the mention and message counters for a chat in a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} chatId - The chat ID.
+	 * @returns {Counter} The counters for the chat.
+	 */
 	getChatCounters (spaceId: string, chatId: string): Counter {
 		const spaceMap = this.stateMap.get(spaceId);
 		const ret = { mentionCounter: 0, messageCounter: 0 };

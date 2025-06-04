@@ -329,6 +329,10 @@ class CommonStore {
 		return Number(this.firstDayValue) || 1;
 	};
 
+	/**
+	 * Sets the gateway URL.
+	 * @param {string} v - The gateway URL.
+	 */
 	gatewaySet (v: string) {
 		this.gatewayUrl = v;
 	};
@@ -341,23 +345,45 @@ class CommonStore {
 		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
 	};
 
+	/**
+	 * Sets the filter 'from' value.
+	 * @param {number} from - The 'from' value.
+	 */
 	filterSetFrom (from: number) {
 		this.filterObj.from = from;
 	};
 
+	/**
+	 * Sets the filter text.
+	 * @param {string} text - The filter text.
+	 */
 	filterSetText (text: string) {
 		this.filterObj.text = text;
 	};
 
+	/**
+	 * Sets the filter values.
+	 * @param {number} from - The 'from' value.
+	 * @param {string} text - The filter text.
+	 */
 	filterSet (from: number, text: string) {
 		this.filterSetFrom(from);
 		this.filterSetText(text);
 	};
 
+	/**
+	 * Sets the preview object.
+	 * @param {I.Preview} preview - The preview object.
+	 */
 	previewSet (preview: I.Preview) {
 		this.previewObj = preview;
 	};
 
+	/**
+	 * Sets the graph settings for a key.
+	 * @param {string} key - The key.
+	 * @param {Partial<I.GraphSettings>} param - The graph settings.
+	 */
 	graphSet (key: string, param: Partial<I.GraphSettings>) {
 		Storage.set(key, Object.assign(this.getGraph(key), param));
 		$(window).trigger('updateGraphSettings');

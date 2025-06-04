@@ -66,26 +66,51 @@ class BlockStore {
 		return String(this.workspaceId || '');
 	};
 
+	/**
+	 * Sets the profile ID.
+	 * @param {string} id - The profile ID.
+	 */
 	profileSet (id: string) {
 		this.profileId = String(id || '');
 	};
 
+	/**
+	 * Sets the widgets ID.
+	 * @param {string} id - The widgets ID.
+	 */
 	widgetsSet (id: string) {
 		this.widgetsId = String(id || '');
 	};
 
+	/**
+	 * Sets the root ID.
+	 * @param {string} id - The root ID.
+	 */
 	rootSet (id: string) {
 		this.rootId = String(id || '');
 	};
 
+	/**
+	 * Sets the spaceview ID.
+	 * @param {string} id - The spaceview ID.
+	 */
 	spaceviewSet (id: string) {
 		this.spaceviewId = String(id || '');
 	};
 
+	/**
+	 * Sets the workspace ID.
+	 * @param {string} id - The workspace ID.
+	 */
 	workspaceSet (id: string) {
 		this.workspaceId = String(id || '');
 	};
 	
+	/**
+	 * Sets the block map for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {I.Block[]} blocks - The blocks to set.
+	 */
 	set (rootId: string, blocks: I.Block[]) {
 		const map: Map<string, I.Block> = new Map();
 		
@@ -96,6 +121,11 @@ class BlockStore {
 		this.blockMap.set(rootId, map);
 	};
 
+	/**
+	 * Adds a block to the block map for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {I.Block} block - The block to add.
+	 */
 	add (rootId: string, block: I.Block) {
 		const map = this.blockMap.get(rootId);
 		if (map) {
@@ -103,6 +133,12 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Updates a block in the block map.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} param - The parameters to update.
+	 */
 	update (rootId: string, blockId: string, param: any) {
 		const block = this.getLeaf(rootId, blockId);
 		if (!block) {
@@ -112,6 +148,12 @@ class BlockStore {
 		set(block, param);
 	};
 
+	/**
+	 * Updates the content of a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} content - The new content.
+	 */
 	updateContent (rootId: string, blockId: string, content: any) {
 		const block = this.getLeaf(rootId, blockId);
 		if (block) {
@@ -119,6 +161,10 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Clears all data for a root ID.
+	 * @param {string} rootId - The root ID.
+	 */
 	clear (rootId: string) {
 		this.blockMap.delete(rootId);
 		this.treeMap.delete(rootId);
@@ -126,6 +172,9 @@ class BlockStore {
 		this.participantMap.delete(rootId);
 	};
 
+	/**
+	 * Clears all data in the store.
+	 */
 	clearAll () {
 		this.profileSet('');
 		this.widgetsSet('');
@@ -137,6 +186,11 @@ class BlockStore {
 		this.participantMap.clear();
 	};
 
+	/**
+	 * Sets the structure map for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {any[]} list - The structure list.
+	 */
 	setStructure (rootId: string, list: any[]) {
 		const map: Map<string, I.BlockStructure> = new Map();
 
@@ -155,6 +209,12 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Updates the structure of a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string[]} childrenIds - The children IDs.
+	 */
 	updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		const element = this.getMapElement(rootId, blockId);
 		if (!element) {
@@ -165,6 +225,10 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Updates parent references in the structure map.
+	 * @param {string} rootId - The root ID.
+	 */
 	updateStructureParents (rootId: string) {
 		const map = this.getMap(rootId);
 
@@ -179,6 +243,11 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Deletes a block from the block and structure maps.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID to delete.
+	 */
 	delete (rootId: string, id: string) {
 		const blocks = this.getBlocks(rootId);
 		const map = this.getMap(rootId);
@@ -187,6 +256,11 @@ class BlockStore {
 		map.delete(id);
 	};
 
+	/**
+	 * Sets restrictions for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {any} restrictions - The restrictions object.
+	 */
 	restrictionsSet (rootId: string, restrictions: any) {
 		let map = this.restrictionMap.get(rootId);
 
@@ -203,6 +277,11 @@ class BlockStore {
 		this.restrictionMap.set(rootId, map);
 	};
 
+	/**
+	 * Sets participants for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {I.BlockParticipant[]} participants - The participants array.
+	 */
 	participantsSet (rootId: string, participants: I.BlockParticipant[]) {
 		let map = this.participantMap.get(rootId);
 
@@ -217,30 +296,65 @@ class BlockStore {
 		this.participantMap.set(rootId, map);
 	};
 
+	/**
+	 * Gets the structure map for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @returns {Map<string, I.BlockStructure>} The structure map.
+	 */
 	getMap (rootId: string) {
 		return this.treeMap.get(rootId) || new Map();
 	};
 
+	/**
+	 * Gets a structure element by block ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {I.BlockStructure|null} The structure element or null.
+	 */
 	getMapElement (rootId: string, blockId: string): I.BlockStructure {
 		const map = this.getMap(rootId);
 		return map ? map.get(blockId) : null;
 	};
 
+	/**
+	 * Gets the parent structure element for a block ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID.
+	 * @returns {I.BlockStructure|null} The parent structure element or null.
+	 */
 	getParentMapElement (rootId: string, id: string): I.BlockStructure {
 		const element = this.getMapElement(rootId, id);
 		return element ? this.getMapElement(rootId, element.parentId) : null;
 	};
 
+	/**
+	 * Gets a block by ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID.
+	 * @returns {I.Block|null} The block or null.
+	 */
 	getLeaf (rootId: string, id: string): I.Block {
 		const map = this.blockMap.get(rootId);
 		return map ? map.get(id) : null;
 	};
 
+	/**
+	 * Gets the parent block for a block ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID.
+	 * @returns {I.Block|null} The parent block or null.
+	 */
 	getParentLeaf (rootId: string, id: string): I.Block {
 		const element = this.getMapElement(rootId, id);
 		return element ? this.getLeaf(rootId, element.parentId) : null;
 	};
 
+	/**
+	 * Gets all blocks for a root ID, optionally filtered.
+	 * @param {string} rootId - The root ID.
+	 * @param {(it: any) => boolean} [filter] - Optional filter function.
+	 * @returns {I.Block[]} The blocks array.
+	 */
 	getBlocks (rootId: string, filter?: (it: any) => boolean): I.Block[] {
 		const map = this.blockMap.get(rootId);
 		if (!map) {
