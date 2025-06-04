@@ -189,6 +189,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			withDescription: true,
 		}));
 
+		analytics.event('ScreenVaultCreateMenu');
+
 		S.Menu.open('select', {
 			element: `#vault #item-add`,
 			className: 'spaceCreate fixed',
@@ -216,6 +218,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 							break;
 						};
 					};
+
+					analytics.event(`ClickVaultCreateMenu${U.Common.toUpperCamelCase(item.id)}`);
 				},
 			}
 		});

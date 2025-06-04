@@ -147,7 +147,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					} 
 				}, false);
 
-				analytics.event('CreateSpace', { usecase: I.Usecase.Empty, middleTime: message.middleTime, route });
+				analytics.event('CreateSpace', { usecase: I.Usecase.Empty, middleTime: message.middleTime, route, uxType: I.SpaceUxType[uxType] });
 				analytics.event('SelectUsecase', { type: I.Usecase.Empty });
 			});
 		});

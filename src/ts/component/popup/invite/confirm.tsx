@@ -14,6 +14,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const tier = U.Data.getMembershipTier(membership.tier);
 	const readerLimt = useRef(0);
 	const writerLimit = useRef(0);
+	const uxType = useRef(I.SpaceUxType.Space);
 
 	const onMembership = (type: string) => {
 		S.Popup.closeAll(null, () => {
@@ -32,7 +33,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
-			analytics.event('ApproveInviteRequest', { type: permissions });
+			analytics.event('ApproveInviteRequest', { type: permissions, uxType: I.SpaceUxType[uxType.current] });
 			setIsLoading(false);
 			close();
 		});
@@ -72,6 +73,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			readerLimt.current = space.readersLimit - records.length;
 			writerLimit.current = space.writersLimit - records.filter(it => it.isWriter || it.isOwner).length;
+			uxType.current = space.uxType;
 
 			setIsLoading(false);
 		});
