@@ -37,6 +37,11 @@ class PopupStore {
 		return this.popupList;
 	};
 
+	/**
+	 * Opens a popup with the given ID and parameters.
+	 * @param {string} id - The popup ID.
+	 * @param {I.PopupParam} param - The popup parameters.
+	 */
 	open (id: string, param: I.PopupParam) {
 		if (AUTH_IDS.includes(id) && !S.Auth.account) {
 			return;
@@ -67,10 +72,20 @@ class PopupStore {
 		Preview.previewHide(true);
 	};
 
+	/**
+	 * Gets a popup by ID.
+	 * @param {string} id - The popup ID.
+	 * @returns {I.Popup} The popup object.
+	 */
 	get (id: string): I.Popup {
 		return this.popupList.find(it => it.id == id);
 	};
 
+	/**
+	 * Updates a popup with the given ID and parameters.
+	 * @param {string} id - The popup ID.
+	 * @param {any} param - The popup parameters.
+	 */
 	update (id: string, param: any) {
 		const item = this.get(id);
 		if (!item) {
@@ -81,6 +96,11 @@ class PopupStore {
 		set(item, { param: Object.assign(item.param, param) });
 	};
 
+	/**
+	 * Updates the data of a popup with the given ID.
+	 * @param {string} id - The popup ID.
+	 * @param {any} data - The new data.
+	 */
 	updateData (id: string, data: any) {
 		const item = this.get(id);
 		if (item) {
@@ -89,6 +109,12 @@ class PopupStore {
 		};
 	};
 
+	/**
+	 * Checks if a popup is open.
+	 * @param {string} [id] - The popup ID.
+	 * @param {string[]} [filter] - Filter for popup IDs.
+	 * @returns {boolean} True if open, false otherwise.
+	 */
 	isOpen (id?: string, filter?: string[]): boolean {
 		if (!id) {
 			let length = 0;
@@ -115,6 +141,12 @@ class PopupStore {
 		return this.isOpenList([ 'search', 'template' ]);
 	};
 
+	/**
+	 * Closes a popup by ID.
+	 * @param {string} id - The popup ID.
+	 * @param {() => void} [callBack] - Optional callback after close.
+	 * @param {boolean} [force] - Whether to force close.
+	 */
 	close (id: string, callBack?: () => void, force?: boolean) {
 		const item = this.get(id);
 		if (!item) {
@@ -155,6 +187,11 @@ class PopupStore {
 		};
 	};
 
+	/**
+	 * Closes all popups, optionally filtered by IDs.
+	 * @param {string[]} [ids] - Popup IDs to close.
+	 * @param {() => void} [callBack] - Optional callback after close.
+	 */
 	closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
 		const timeout = items.length ? J.Constant.delay.popup : 0;

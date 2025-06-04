@@ -25,6 +25,11 @@ class MenuStore {
 		return this.menuList;
 	};
 
+	/**
+	 * Opens a menu with the given ID and parameters.
+	 * @param {string} id - The menu ID.
+	 * @param {I.MenuParam} param - The menu parameters.
+	 */
 	open (id: string, param: I.MenuParam) {
 		if (!id) {
 			return;
@@ -56,6 +61,11 @@ class MenuStore {
 		return param;
 	};
 
+	/**
+	 * Updates a menu with the given ID and parameters.
+	 * @param {string} id - The menu ID.
+	 * @param {any} param - The menu parameters.
+	 */
 	update (id: string, param: any) {
 		const item = this.get(id);
 		if (item) {
@@ -64,6 +74,11 @@ class MenuStore {
 		};
 	};
 
+	/**
+	 * Updates the data of a menu with the given ID.
+	 * @param {string} id - The menu ID.
+	 * @param {any} data - The new data.
+	 */
 	updateData (id: string, data: any) {
 		const item = this.get(id);
 		if (item) {
@@ -71,6 +86,12 @@ class MenuStore {
 		};
 	};
 
+	/**
+	 * Replaces a menu with a new ID and parameters.
+	 * @param {string} oldId - The old menu ID.
+	 * @param {string} newId - The new menu ID.
+	 * @param {I.MenuParam} param - The menu parameters.
+	 */
 	replace (oldId: string, newId: string, param: I.MenuParam) {
 		const idx = this.menuList.findIndex(it => it.id == oldId);
 		if (idx >= 0) {
@@ -80,10 +101,22 @@ class MenuStore {
 		};
 	};
 
+	/**
+	 * Gets a menu by ID.
+	 * @param {string} id - The menu ID.
+	 * @returns {I.Menu} The menu object.
+	 */
 	get (id: string): I.Menu {
 		return this.menuList.find(it => it.id == id);
 	};
 
+	/**
+	 * Checks if a menu is open.
+	 * @param {string} [id] - The menu ID.
+	 * @param {string} [key] - The menu key.
+	 * @param {string[]} [filter] - Filter for menu IDs.
+	 * @returns {boolean} True if open, false otherwise.
+	 */
 	isOpen (id?: string, key?: string, filter?: string[]): boolean {
 		if (!id) {
 			let length = 0;
@@ -112,6 +145,11 @@ class MenuStore {
 		return false;
 	};
 
+	/**
+	 * Closes a menu by ID.
+	 * @param {string} id - The menu ID.
+	 * @param {() => void} [callBack] - Optional callback after close.
+	 */
 	close (id: string, callBack?: () => void) {
 		const item = this.get(id);
 		if (!item) {
@@ -165,6 +203,11 @@ class MenuStore {
 		return !!this.isAnimatingFlag.get(id);
 	};
 
+	/**
+	 * Closes all menus, optionally filtered by IDs.
+	 * @param {string[]} [ids] - Menu IDs to close.
+	 * @param {() => void} [callBack] - Optional callback after close.
+	 */
 	closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
 		if (!items.length) {

@@ -39,6 +39,9 @@ class RecordStore {
 		});
 	}
 
+	/**
+	 * Clears all record-related maps in the store.
+	 */
 	clearAll () {
 		this.relationMap.clear();
 		this.relationKeyMap.clear();
@@ -49,6 +52,12 @@ class RecordStore {
 		this.groupMap.clear();
 	};
 
+	/**
+	 * Gets or creates a key map of the specified type for a space.
+	 * @param {string} type - The key map type ('relation' or 'type').
+	 * @param {string} spaceId - The space ID.
+	 * @returns {Map<string, string>} The key map.
+	 */
 	keyMapGet (type: string, spaceId: string) {
 		const key = `${type}KeyMap`;
 
@@ -61,28 +70,56 @@ class RecordStore {
 		return map;
 	}; 
 
+	/**
+	 * Sets a relation key map entry for a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} key - The relation key.
+	 * @param {string} id - The relation ID.
+	 */
 	relationKeyMapSet (spaceId: string, key: string, id: string) {
 		if (spaceId && key && id) {
 			this.keyMapGet(KeyMapType.Relation, spaceId).set(key, id);
 		};
 	};
 
+	/**
+	 * Gets a relation ID by key for the current space.
+	 * @param {string} key - The relation key.
+	 * @returns {string} The relation ID.
+	 */
 	relationKeyMapGet (key: string): string {
 		const map = this.keyMapGet(KeyMapType.Relation, S.Common.space);
 		return map?.get(key);
 	};
 
+	/**
+	 * Sets a type key map entry for a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} key - The type key.
+	 * @param {string} id - The type ID.
+	 */
 	typeKeyMapSet (spaceId: string, key: string, id: string) {
 		if (spaceId && key && id) {
 			this.keyMapGet(KeyMapType.Type, spaceId).set(key, id);
 		};
 	};
 
+	/**
+	 * Gets a type ID by key for the current space.
+	 * @param {string} key - The type key.
+	 * @returns {string} The type ID.
+	 */
 	typeKeyMapGet (key: string): string {
 		const map = this.keyMapGet(KeyMapType.Type, S.Common.space);
 		return map.get(key);
 	};
 
+	/**
+	 * Sets the relations for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any[]} list - The relations list.
+	 */
 	relationsSet (rootId: string, blockId: string, list: any[]) {
 		const key = this.getId(rootId, blockId);
 		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).
@@ -91,6 +128,12 @@ class RecordStore {
 		this.relationMap.set(key, U.Common.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
+	/**
+	 * Deletes relations by keys for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string[]} keys - The relation keys to delete.
+	 */
 	relationListDelete (rootId: string, blockId: string, keys: string[]) {
 		const key = this.getId(rootId, blockId);
 		const relations = this.getDataviewRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
@@ -98,6 +141,12 @@ class RecordStore {
 		this.relationMap.set(key, relations.map(it => ({ relationKey: it.relationKey, format: it.format })));
 	};
 
+	/**
+	 * Sets the views for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {I.View[]} list - The views list.
+	 */
 	viewsSet (rootId: string, blockId: string, list: I.View[]) {
 		const key = this.getId(rootId, blockId);
 		const views = this.getViews(rootId, blockId);
@@ -119,6 +168,12 @@ class RecordStore {
 		this.viewMap.set(key, observable.array(views));
 	};
 
+	/**
+	 * Sorts the views for a block in a root by IDs.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string[]} ids - The view IDs in order.
+	 */
 	viewsSort (rootId: string, blockId: string, ids: string[]) {
 		const views = this.getViews(rootId, blockId);
 
@@ -134,10 +189,21 @@ class RecordStore {
 		this.viewsSet(rootId, blockId, views);
 	};
 
+	/**
+	 * Clears the views for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	viewsClear (rootId: string, blockId: string) {
 		this.viewMap.delete(this.getId(rootId, blockId));
 	};
 
+	/**
+	 * Adds a view to a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} item - The view item.
+	 */
 	viewAdd (rootId: string, blockId: string, item: any) {
 		const views = this.getViews(rootId, blockId);
 		const view = this.getView(rootId, blockId, item.id);
@@ -149,6 +215,12 @@ class RecordStore {
 		};
 	};
 
+	/**
+	 * Updates a view for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} item - The view item.
+	 */
 	viewUpdate (rootId: string, blockId: string, item: any) {
 		const views = this.getViews(rootId, blockId);
 		const idx = views.findIndex(it => it.id == item.id);
@@ -163,10 +235,22 @@ class RecordStore {
 		set(views[idx], item);
 	};
 
+	/**
+	 * Deletes a view by ID for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} id - The view ID.
+	 */
 	viewDelete (rootId: string, blockId: string, id: string) {
 		this.viewMap.set(this.getId(rootId, blockId), this.getViews(rootId, blockId).filter(it => it.id != id));
 	};
 
+	/**
+	 * Sets the meta information for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} meta - The meta information.
+	 */
 	metaSet (rootId: string, blockId: string, meta: any) {
 		const data = this.metaMap.get(this.getId(rootId, blockId));
 
@@ -190,18 +274,41 @@ class RecordStore {
 		};
 	};
 
+	/**
+	 * Clears the meta information for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	metaClear (rootId: string, blockId: string) {
 		this.metaMap.delete(this.getId(rootId, blockId));
 	};
 
+	/**
+	 * Sets the record IDs for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string[]} list - The record IDs.
+	 */
 	recordsSet (rootId: string, blockId: string, list: string[]) {
 		this.recordMap.set(this.getId(rootId, blockId), observable.array(list));
 	};
 
+	/**
+	 * Clears the record IDs for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	recordsClear (rootId: string, blockId: string) {
 		this.recordMap.delete(this.getId(rootId, blockId));
 	};
 
+	/**
+	 * Adds a record ID at a specific index for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} id - The record ID.
+	 * @param {number} index - The index to insert at.
+	 */
 	recordAdd (rootId: string, blockId: string, id: string, index: number) {
 		const records = this.getRecordIds(rootId, blockId);
 		
@@ -209,14 +316,32 @@ class RecordStore {
 		this.recordsSet(rootId, blockId, records);
 	};
 
+	/**
+	 * Deletes a record ID for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} id - The record ID.
+	 */
 	recordDelete (rootId: string, blockId: string, id: string) {
 		this.recordMap.set(this.getId(rootId, blockId), this.getRecordIds(rootId, blockId).filter(it => it != id));
 	};
 
+	/**
+	 * Sets the groups for a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any[]} groups - The groups array.
+	 */
 	groupsSet (rootId: string, blockId: string, groups: any[]) {
 		this.groupMap.set(this.getGroupSubId(rootId, blockId, 'groups'), observable(groups));
 	};
 
+	/**
+	 * Adds groups to a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any[]} groups - The groups array.
+	 */
 	groupsAdd (rootId: string, blockId: string, groups: any[]) {
 		const list = this.getGroups(rootId, blockId);
 
@@ -230,6 +355,12 @@ class RecordStore {
 		this.groupMap.set(this.getGroupSubId(rootId, blockId, 'groups'), list);
 	};
 
+	/**
+	 * Removes groups by IDs from a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string[]} ids - The group IDs to remove.
+	 */
 	groupsRemove (rootId: string, blockId: string, ids: string[]) {
 		const groups = this.getGroups(rootId, blockId);
 
@@ -241,6 +372,11 @@ class RecordStore {
 		this.groupsSet(rootId, blockId, groups.filter(it => !ids.includes(it.id)));
 	};
 
+	/**
+	 * Clears all groups from a block in a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	groupsClear (rootId: string, blockId: string) {
 		this.groupsRemove(rootId, blockId, this.getGroups(rootId, blockId).map(it => it.id));
 	};
