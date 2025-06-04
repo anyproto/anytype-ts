@@ -102,6 +102,10 @@ class Survey {
 		return Number(profile?.createdDate) || 0;
 	};
 
+	/**
+	 * Checks if the PMF survey should be shown, based on registration and last survey time.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	checkPmf (type: I.SurveyType) {
 		const time = U.Date.now();
 		const obj = Storage.getSurvey(type);
@@ -127,6 +131,10 @@ class Survey {
 		};
 	};
 
+	/**
+	 * Checks if the Register survey should be shown, based on registration time.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	checkRegister (type: I.SurveyType) {
 		const timeRegister = this.getTimeRegister();
 		const isComplete = this.isComplete(type);
@@ -137,6 +145,10 @@ class Survey {
 		};
 	};
 
+	/**
+	 * Checks if the Delete survey should be shown, based on completion state.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	checkDelete (type: I.SurveyType) {
 		const isComplete = this.isComplete(type);
 
@@ -145,6 +157,10 @@ class Survey {
 		};
 	};
 
+	/**
+	 * Checks if the Object survey should be shown, based on created objects after registration.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	checkObject (type: I.SurveyType) {
 		const { space } = S.Common;
 		const timeRegister = this.getTimeRegister();
@@ -168,6 +184,10 @@ class Survey {
 		});
 	};
 
+	/**
+	 * Checks if the Shared survey should be shown, based on shared spaces.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	checkShared (type: I.SurveyType) {
 		const isComplete = this.isComplete(type);
 		if (isComplete || this.isComplete(I.SurveyType.Multiplayer)) {
@@ -183,6 +203,10 @@ class Survey {
 		this.show(type);
 	};
 
+	/**
+	 * Checks if the Multiplayer survey should be shown, based on registration and shared survey state.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	checkMultiplayer (type: I.SurveyType) {
 		const isComplete = this.isComplete(type);
 		const timeRegister = this.getTimeRegister();
@@ -197,6 +221,11 @@ class Survey {
 		};
 	};
 
+	/**
+	 * Returns true with the given percent probability, using a random seed.
+	 * @param {number} percent - The percent chance (0-100).
+	 * @returns {boolean} True if the random check passes.
+	 */
 	checkRandSeed (percent: number) {
 		const randSeed = 10000000;
 		const rand = U.Common.rand(0, randSeed);
