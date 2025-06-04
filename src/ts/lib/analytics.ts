@@ -5,7 +5,8 @@ const KEYS = [
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor', 'emptyType', 'status', 'sort', 'widgetType', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions'
+	'processor', 'emptyType', 'status', 'sort', 'widgetType', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
+	'uxType',
 ];
 const URL = 'amplitude.anytype.io';
 
@@ -554,6 +555,10 @@ class Analytics {
 
 		if (undefined !== converted.align) {
 			converted.align = I.BlockHAlign[converted.align];
+		};
+
+		if (undefined !== converted.uxType) {
+			converted.uxType = I.SpaceUxType[converted.uxType];
 		};
 
 		if (undefined !== converted.usecase) {
