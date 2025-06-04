@@ -303,12 +303,21 @@ class Action {
 		};
 	};
 
+	/**
+	 * Opens a file path using the system's default handler.
+	 * @param {string} path - The file path to open.
+	 */
 	openPath (path: string) {
 		if (path) {
 			Renderer.send('openPath', path);
 		};
 	};
 
+	/**
+	 * Opens a file by ID and route, downloading it if necessary.
+	 * @param {string} id - The file ID.
+	 * @param {string} route - The route context for analytics.
+	 */
 	openFile (id: string, route: string) {
 		if (!id) {
 			return;
@@ -322,6 +331,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Downloads a file by ID and route, optionally as an image.
+	 * @param {string} id - The file ID.
+	 * @param {string} route - The route context for analytics.
+	 * @param {boolean} isImage - Whether to treat the file as an image.
+	 */
 	downloadFile (id: string, route: string, isImage: boolean) {
 		if (!id) {
 			return;
@@ -333,6 +348,11 @@ class Action {
 		analytics.event('DownloadMedia', { route });
 	};
 
+	/**
+	 * Opens a file dialog for selecting files.
+	 * @param {any} param - Dialog parameters.
+	 * @param {function} [callBack] - Optional callback with selected paths.
+	 */
 	openFileDialog (param: any, callBack?: (paths: string[]) => void) {
 		param = Object.assign({
 			extensions: [],
@@ -363,6 +383,11 @@ class Action {
 		});
 	};
 
+	/**
+	 * Opens a directory dialog for selecting folders.
+	 * @param {any} param - Dialog parameters.
+	 * @param {function} [callBack] - Optional callback with selected paths.
+	 */
 	openDirectoryDialog (param: any, callBack?: (paths: string[]) => void) {
 		param = Object.assign({}, param);
 
@@ -494,6 +519,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Restores objects from the archive (bin).
+	 * @param {string[]} ids - The object IDs to restore.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after restore.
+	 */
 	restore (ids: string[], route: string, callBack?: () => void) {
 		ids = ids || [];
 
@@ -568,6 +599,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Copies or cuts blocks to the clipboard.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string[]} ids - The block IDs to copy or cut.
+	 * @param {boolean} isCut - Whether to cut (true) or copy (false).
+	 */
 	copyBlocks (rootId: string, ids: string[], isCut: boolean) {
 		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root) {
@@ -638,6 +675,11 @@ class Action {
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
+	/**
+	 * Creates a new space with the given UX type and route.
+	 * @param {I.SpaceUxType} uxType - The UX type for the new space.
+	 * @param {string} route - The route context for analytics.
+	 */
 	createSpace (uxType: I.SpaceUxType, route: string) {
 		if (!U.Space.canCreateSpace()) {
 			return;
@@ -648,6 +690,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Removes a space by ID, showing a confirmation dialog.
+	 * @param {string} id - The space ID.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after removal.
+	 */
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
 		const space = U.Space.getSpaceviewBySpaceId(id);
 
@@ -695,6 +743,14 @@ class Action {
 		});
 	};
 
+	/**
+	 * Approves a leave request for a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string[]} identities - The identities to approve.
+	 * @param {string} name - The name for the toast message.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after approval.
+	 */
 	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
 		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
 			if (!message.error.code) {
@@ -708,6 +764,10 @@ class Action {
 		});
 	};
 
+	/**
+	 * Sets the interface language and optionally the spelling language.
+	 * @param {string} id - The language ID.
+	 */
 	setInterfaceLang (id: string) {
 		const { config } = S.Common;
 		const { languages } = config;
@@ -725,6 +785,10 @@ class Action {
 		analytics.event('SwitchInterfaceLanguage', { type: id });
 	};
 
+	/**
+	 * Sets the spelling languages for the app.
+	 * @param {string[]} langs - The list of language codes.
+	 */
 	setSpellingLang (langs: string[]) {
 		langs = langs || [];
 
@@ -740,6 +804,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Imports a usecase into a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {I.Usecase} id - The usecase ID.
+	 * @param {function} [callBack] - Optional callback after import.
+	 */
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: (message: any) => void) {
 		C.ObjectImportUseCase(spaceId, id, (message: any) => {
 			S.Block.closeRecentWidgets();
