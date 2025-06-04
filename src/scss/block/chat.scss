@@ -30,6 +30,10 @@
 			> .date.hide { opacity: 0; }
 		}
 
+		markupmention.withImage {
+			smile, .space { display: none; }
+		}
+
 		@import "./chat/attachment";
 		@import "./chat/message";
 		@import "./chat/form";

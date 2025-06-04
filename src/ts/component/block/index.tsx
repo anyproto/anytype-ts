@@ -913,7 +913,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				});
 			});
 
-			U.Common.textStyle(item, { border: 0.35 });
+			U.Common.textStyle(item, { border: 0.3 });
 		});
 	};
 
@@ -1011,7 +1011,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				});
 			});
 
-			U.Common.textStyle(item, { border: 0.35 });
+			U.Common.textStyle(item, { border: 0.3 });
 		});
 	};
 
@@ -1078,7 +1078,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					onChange: marks => this.setMarksCallback(getValue(), marks, param.onChange),
 				});
 
-				U.Common.textStyle(item, { border: 0.35 });
+				U.Common.textStyle(item, { border: 0.3 });
 			});
 		});
 	};
