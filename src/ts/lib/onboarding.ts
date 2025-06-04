@@ -3,10 +3,22 @@ import { I, S, U, Storage } from 'Lib';
 
 class Onboarding {
 
+	/**
+	 * Gets the onboarding section data for a given key.
+	 * @param {string} key - The onboarding section key.
+	 * @returns {any} The section data.
+	 */
 	getSection (key: string) {
 		return Docs.Help.Onboarding[key] ? Docs.Help.Onboarding[key]() : {};
 	};
 	
+	/**
+	 * Starts the onboarding flow for a given key and context.
+	 * @param {string} key - The onboarding section key.
+	 * @param {boolean} isPopup - Whether onboarding is in a popup.
+	 * @param {boolean} [force] - Whether to force onboarding even if already completed.
+	 * @param {any} [options] - Additional options for onboarding.
+	 */
 	start (key: string, isPopup: boolean, force?: boolean, options?: any) {
 		options = options || {};
 
@@ -50,6 +62,14 @@ class Onboarding {
 		});
 	};
 
+	/**
+	 * Gets the menu parameters for a section and item.
+	 * @param {any} section - The onboarding section.
+	 * @param {any} item - The onboarding item.
+	 * @param {boolean} isPopup - Whether onboarding is in a popup.
+	 * @param {boolean} [force] - Whether to force onboarding.
+	 * @returns {any} The menu parameters.
+	 */
 	getParam (section: any, item: any, isPopup: boolean, force?: boolean): any {
 		section.param = section.param || {};
 		item.param = item.param || {};
@@ -148,6 +168,11 @@ class Onboarding {
 		return param;
 	};
 
+	/**
+	 * Checks if onboarding is completed for a given key.
+	 * @param {string} key - The onboarding section key.
+	 * @returns {boolean} True if onboarding is completed.
+	 */
 	isCompleted (key: string): boolean {
 		return Storage.getOnboarding(key);
 	};

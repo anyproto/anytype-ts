@@ -20,15 +20,10 @@ class Preview {
 	delayTooltip = 0;
 	isPreviewOpen = false;
 
-  /**
-   * Displays a tooltip with the given text and position relative to the specified element.
-   * @param text - The text to be displayed in the tooltip.
-   * @param element - The element relative to which the tooltip should be positioned.
-   * @param typeX - The horizontal direction in which the tooltip should be positioned.
-   * @param typeY - The vertical direction in which the tooltip should be positioned.
-   * @param delay - The length of time to wait before showing the tooltip.
-   * @param className - custom class name to be added to tooltip element.
-   */
+	/**
+	 * Displays a tooltip with the given parameters.
+	 * @param {Partial<I.TooltipParam>} param - Tooltip parameters.
+	 */
 	tooltipShow (param: Partial<I.TooltipParam>) {
 		const { element } = param;
 		const typeX = Number(param.typeX) || I.MenuDirection.Center;
@@ -134,7 +129,7 @@ class Preview {
 
 	/**
 	 * Hides the tooltip, if any is being shown.
-	 * @param force - hides the tooltip immediately by also removing the animation class.
+	 * @param {boolean} [force] - If true, hides the tooltip immediately.
 	 */
 	tooltipHide (force?: boolean) {
 		const obj = $('.tooltip');
@@ -149,6 +144,12 @@ class Preview {
 		window.clearTimeout(this.timeout.delay);
 	};
 
+	/**
+	 * Combines text and caption for tooltip display.
+	 * @param {string} text - The main text.
+	 * @param {string} caption - The caption text.
+	 * @returns {string} The combined tooltip HTML.
+	 */
 	tooltipCaption (text: string, caption: string): string {
 		const t = [];
 		if (text) {
@@ -161,7 +162,8 @@ class Preview {
 	};
 
 	/**
-	 * Display a preview
+	 * Displays a preview popup with the given parameters.
+	 * @param {I.Preview} param - Preview parameters.
 	 */
 	previewShow (param: I.Preview) {
 		if (

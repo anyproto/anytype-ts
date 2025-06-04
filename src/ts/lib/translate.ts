@@ -1,9 +1,10 @@
 import { S, J } from 'Lib';
 
 /**
- * 
- * @param key the key of the text as found in the json/text.json file
- * @returns a piece of display text in the language of the user
+ * Translates a key to display text in the user's language.
+ * @param {string} key - The key of the text as found in the json/text.json file.
+ * @param {string} [force] - Optional language code to force translation.
+ * @returns {string} The translated display text.
  * Defaults to the default lang set in constant.json (english)
  */
 export const translate = (key: string, force?: string): string => {

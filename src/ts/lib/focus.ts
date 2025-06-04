@@ -14,6 +14,12 @@ class Focus {
 		range: { from: 0, to: 0 } 
 	};
 	
+	/**
+	 * Sets the focus state to the given block and range.
+	 * @param {string} id - The block ID to focus.
+	 * @param {I.TextRange} range - The text range to select.
+	 * @returns {Focus} The Focus instance.
+	 */
 	set (id: string, range: I.TextRange): Focus {
 		if (!range) {
 			return;
@@ -32,15 +38,26 @@ class Focus {
 		return this;
 	};
 
+	/**
+	 * Restores the focus state from backup.
+	 */
 	restore () {
 		this.state = U.Common.objectCopy(this.backup);
 	};
 
+	/**
+	 * Clears the focus state and optionally the selection range.
+	 * @param {boolean} withRange - Whether to clear the selection range.
+	 */
 	clear (withRange: boolean) {
 		this.clearRange(withRange);
 		this.state = { focused: '', range: { from: 0, to: 0 } };
 	};
 
+	/**
+	 * Clears the selection range and focus class from elements.
+	 * @param {boolean} withRange - Whether to clear the selection range.
+	 */
 	clearRange (withRange: boolean) {
 		const { focused } = this.state;
 		const el = $('.focusable.c' + focused);
@@ -57,6 +74,10 @@ class Focus {
 		$('.focusable.isFocused').removeClass('isFocused');
 	};
 	
+	/**
+	 * Applies the current focus state to the DOM.
+	 * @returns {Focus} The Focus instance.
+	 */
 	apply (): Focus {
 		const { focused, range } = this.state;
 		if (!focused) {
@@ -85,6 +106,11 @@ class Focus {
 		return this;
 	};
 	
+	/**
+	 * Scrolls the focused element into view if needed.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @param {string} id - The block ID to scroll to.
+	 */
 	scroll (isPopup: boolean, id: string) {
 		if (!id) {
 			return;

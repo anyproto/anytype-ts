@@ -9,6 +9,9 @@ const HIGHLIGHTS_MAP = {
 
 class Highlight {
 
+	/**
+	 * Shows all highlights based on stored highlight keys.
+	 */
 	showAll () {
 		const highlights = Storage.get('highlights') || {};
 
@@ -19,6 +22,10 @@ class Highlight {
 		});
 	};
 
+	/**
+	 * Shows highlight for a specific key.
+	 * @param {string} key - The highlight key.
+	 */
 	show (key: string) {
 		if (!HIGHLIGHTS_MAP[key] || !Storage.getHighlight(key)) {
 			return;
@@ -27,6 +34,10 @@ class Highlight {
 		HIGHLIGHTS_MAP[key].forEach(item => this.add($(item)));
 	};
 
+	/**
+	 * Hides highlight for a specific key and updates storage.
+	 * @param {string} key - The highlight key.
+	 */
 	hide (key: string) {
 		Storage.setHighlight(key, false);
 
@@ -35,6 +46,10 @@ class Highlight {
 		};
 	};
 
+	/**
+	 * Adds a highlight mark to a node.
+	 * @param {JQuery<HTMLElement>} node - The node to add the highlight to.
+	 */
 	add (node) {
 		if (!node || !node.length) {
 			return;
@@ -48,6 +63,10 @@ class Highlight {
 		node.append(dot);
 	};
 
+	/**
+	 * Removes a highlight mark from a node.
+	 * @param {JQuery<HTMLElement>} node - The node to remove the highlight from.
+	 */
 	remove (node) {
 		if (!node || !node.length) {
 			return;

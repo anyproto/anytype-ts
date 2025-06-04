@@ -4,6 +4,11 @@ const Diff = require('diff');
 
 class Action {
 
+	/**
+	 * Closes a page and clears related data and subscriptions.
+	 * @param {string} rootId - The root object ID.
+	 * @param {boolean} withCommand - Whether to send a close command to the backend.
+	 */
 	pageClose (rootId: string, withCommand: boolean) {
 		if (keyboard.isCloseDisabled) {
 			return;
@@ -44,6 +49,10 @@ class Action {
 		};
 	};
 
+	/**
+	 * Clears all data related to a root object.
+	 * @param {string} rootId - The root object ID.
+	 */
 	dbClearRoot (rootId: string) {
 		if (!rootId) {
 			return;
@@ -54,6 +63,11 @@ class Action {
 		S.Detail.clear(rootId);
 	};
 
+	/**
+	 * Clears all data related to a block.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	dbClearBlock (rootId: string, blockId: string) {
 		if (!rootId || !blockId) {
 			return;
@@ -79,6 +93,11 @@ class Action {
 		U.Subscription.destroyList(groupIds.concat([ subId ]), true);
 	};
 
+	/**
+	 * Clears all data related to a chat block.
+	 * @param {string} chatId - The chat object ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	dbClearChat (chatId: string, blockId: string) {	
 		if (!chatId || !blockId) {
 			return;
@@ -90,6 +109,15 @@ class Action {
 		S.Chat.clear(subId);
 	};
 
+	/**
+	 * Uploads a file to a block.
+	 * @param {I.FileType} type - The file type.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} url - The file URL.
+	 * @param {string} path - The file path.
+	 * @param {function} [callBack] - Optional callback after upload.
+	 */
 	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
 		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
 			if (callBack) {
@@ -100,6 +128,15 @@ class Action {
 		});
 	};
 	
+	/**
+	 * Duplicates a list of blocks to a target context and position.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} targetContextId - The target context ID.
+	 * @param {string} blockId - The block ID to duplicate after.
+	 * @param {string[]} blockIds - The block IDs to duplicate.
+	 * @param {I.BlockPosition} position - The position to insert.
+	 * @param {function} [callBack] - Optional callback after duplication.
+	 */
 	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, targetContextId, blockIds, blockId, position, (message: any) => {
 			if (message.error.code) {
@@ -117,6 +154,15 @@ class Action {
 		});
 	};
 
+	/**
+	 * Moves a list of blocks to a target context and position.
+	 * @param {string} contextId - The source context ID.
+	 * @param {string} targetContextId - The target context ID.
+	 * @param {string} targetId - The target block ID.
+	 * @param {string[]} blockIds - The block IDs to move.
+	 * @param {I.BlockPosition} position - The position to insert.
+	 * @param {function} [callBack] - Optional callback after move.
+	 */
 	move (contextId: string, targetContextId: string, targetId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListMoveToExistingObject(contextId, targetContextId, targetId, blockIds, position, (message: any) => {
 			if (message.error.code) {
@@ -137,6 +183,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Removes a list of blocks from a root object.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID to focus after removal.
+	 * @param {string[]} blockIds - The block IDs to remove.
+	 */
 	remove (rootId: string, blockId: string, blockIds: string[]) {
 		const next = S.Block.getNextBlock(rootId, blockId, -1, (it: any) => {
 			return it.type == I.BlockType.Text;
@@ -155,6 +207,11 @@ class Action {
 		});
 	};
 
+	/**
+	 * Removes a widget block and updates storage.
+	 * @param {string} id - The widget block ID.
+	 * @param {any} target - The target parameter for analytics.
+	 */
 	removeWidget (id: string, target: any) {
 		const { widgets } = S.Block;
 		const block = S.Block.getLeaf(widgets, id);
@@ -177,6 +234,11 @@ class Action {
 		analytics.event('DeleteWidget', { layout, widgetType: analytics.getWidgetType(block.content.autoAdded), params: { target } });
 	};
 
+	/**
+	 * Focuses the end of a block for editing.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} id - The block ID to focus.
+	 */
 	focusToEnd (rootId: string, id: string) {
 		const block = S.Block.getLeaf(rootId, id);
 		if (!block) {
@@ -188,6 +250,10 @@ class Action {
 		focus.apply();
 	};
 
+	/**
+	 * Opens a URL, routing internally if possible.
+	 * @param {string} url - The URL to open.
+	 */
 	openUrl (url: string) {
 		if (!url) {
 			return;
@@ -237,12 +303,21 @@ class Action {
 		};
 	};
 
+	/**
+	 * Opens a file path using the system's default handler.
+	 * @param {string} path - The file path to open.
+	 */
 	openPath (path: string) {
 		if (path) {
 			Renderer.send('openPath', path);
 		};
 	};
 
+	/**
+	 * Opens a file by ID and route, downloading it if necessary.
+	 * @param {string} id - The file ID.
+	 * @param {string} route - The route context for analytics.
+	 */
 	openFile (id: string, route: string) {
 		if (!id) {
 			return;
@@ -256,6 +331,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Downloads a file by ID and route, optionally as an image.
+	 * @param {string} id - The file ID.
+	 * @param {string} route - The route context for analytics.
+	 * @param {boolean} isImage - Whether to treat the file as an image.
+	 */
 	downloadFile (id: string, route: string, isImage: boolean) {
 		if (!id) {
 			return;
@@ -267,6 +348,11 @@ class Action {
 		analytics.event('DownloadMedia', { route });
 	};
 
+	/**
+	 * Opens a file dialog for selecting files.
+	 * @param {any} param - Dialog parameters.
+	 * @param {function} [callBack] - Optional callback with selected paths.
+	 */
 	openFileDialog (param: any, callBack?: (paths: string[]) => void) {
 		param = Object.assign({
 			extensions: [],
@@ -297,6 +383,11 @@ class Action {
 		});
 	};
 
+	/**
+	 * Opens a directory dialog for selecting folders.
+	 * @param {any} param - Dialog parameters.
+	 * @param {function} [callBack] - Optional callback with selected paths.
+	 */
 	openDirectoryDialog (param: any, callBack?: (paths: string[]) => void) {
 		param = Object.assign({}, param);
 
@@ -315,6 +406,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Deletes a list of objects by IDs, with confirmation and analytics.
+	 * @param {string[]} ids - The object IDs to delete.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after deletion.
+	 */
 	delete (ids: string[], route: string, callBack?: () => void): void {
 		const count = ids.length;
 
@@ -367,6 +464,10 @@ class Action {
 		});
 	};
 
+	/**
+	 * Restores an account from a backup file, handling import and selection.
+	 * @param {function} onError - Callback for error handling, returns true to abort.
+	 */
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
 		const { networkConfig } = S.Auth;
 		const { dataPath } = S.Common;
@@ -413,6 +514,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Archives a list of objects by IDs.
+	 * @param {string[]} ids - The object IDs to archive.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after archiving.
+	 */
 	archive (ids: string[], route: string, callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, true, (message: any) => {
 			if (message.error.code) {
@@ -428,6 +535,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Restores objects from the archive (bin).
+	 * @param {string[]} ids - The object IDs to restore.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after restore.
+	 */
 	restore (ids: string[], route: string, callBack?: () => void) {
 		ids = ids || [];
 
@@ -444,6 +557,13 @@ class Action {
 		});
 	};
 
+	/**
+	 * Imports objects into the current space from selected files.
+	 * @param {I.ImportType} type - The import type.
+	 * @param {string[]} extensions - Allowed file extensions.
+	 * @param {any} [options] - Additional import options.
+	 * @param {function} [callBack] - Optional callback after import.
+	 */
 	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
 		const fileOptions: any = { 
 			properties: [ 'openFile', 'multiSelections' ],
@@ -479,6 +599,15 @@ class Action {
 		});
 	};
 
+	/**
+	 * Exports objects from the current space to a selected directory.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string[]} ids - The object IDs to export.
+	 * @param {I.ExportType} type - The export type.
+	 * @param {any} param - Export parameters.
+	 * @param {function} [onSelectPath] - Optional callback after path selection.
+	 * @param {function} [callBack] - Optional callback after export.
+	 */
 	export (spaceId: string, ids: string[], type: I.ExportType, param: any, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		const { zip, nested, files, archived, json, route } = param;
 
@@ -502,6 +631,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Copies or cuts blocks to the clipboard.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string[]} ids - The block IDs to copy or cut.
+	 * @param {boolean} isCut - Whether to cut (true) or copy (false).
+	 */
 	copyBlocks (rootId: string, ids: string[], isCut: boolean) {
 		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root) {
@@ -572,6 +707,11 @@ class Action {
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
+	/**
+	 * Creates a new space with the given UX type and route.
+	 * @param {I.SpaceUxType} uxType - The UX type for the new space.
+	 * @param {string} route - The route context for analytics.
+	 */
 	createSpace (uxType: I.SpaceUxType, route: string) {
 		if (!U.Space.canCreateSpace()) {
 			return;
@@ -582,6 +722,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Removes a space by ID, showing a confirmation dialog.
+	 * @param {string} id - The space ID.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after removal.
+	 */
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
 		const space = U.Space.getSpaceviewBySpaceId(id);
 
@@ -629,6 +775,14 @@ class Action {
 		});
 	};
 
+	/**
+	 * Approves a leave request for a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string[]} identities - The identities to approve.
+	 * @param {string} name - The name for the toast message.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after approval.
+	 */
 	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
 		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
 			if (!message.error.code) {
@@ -642,6 +796,10 @@ class Action {
 		});
 	};
 
+	/**
+	 * Sets the interface language and optionally the spelling language.
+	 * @param {string} id - The language ID.
+	 */
 	setInterfaceLang (id: string) {
 		const { config } = S.Common;
 		const { languages } = config;
@@ -659,6 +817,10 @@ class Action {
 		analytics.event('SwitchInterfaceLanguage', { type: id });
 	};
 
+	/**
+	 * Sets the spelling languages for the app.
+	 * @param {string[]} langs - The list of language codes.
+	 */
 	setSpellingLang (langs: string[]) {
 		langs = langs || [];
 
@@ -674,6 +836,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Imports a usecase into a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {I.Usecase} id - The usecase ID.
+	 * @param {function} [callBack] - Optional callback after import.
+	 */
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: (message: any) => void) {
 		C.ObjectImportUseCase(spaceId, id, (message: any) => {
 			S.Block.closeRecentWidgets();
@@ -684,6 +852,13 @@ class Action {
 		});
 	};
 
+	/**
+	 * Sets or unsets objects as favorites.
+	 * @param {string[]} objectIds - The object IDs to update.
+	 * @param {boolean} v - Whether to set as favorite.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after update.
+	 */
 	setIsFavorite (objectIds: string[], v: boolean, route: string, callBack?: (message: any) => void) {
 		C.ObjectListSetIsFavorite(objectIds, v, (message: any) => {
 			if (message.error.code) {
@@ -698,6 +873,14 @@ class Action {
 		});
 	};
 
+	/**
+	 * Creates a widget from an object and adds it to the widgets block.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} objectId - The object ID to create a widget from.
+	 * @param {string} targetId - The target block ID for insertion.
+	 * @param {I.BlockPosition} position - The position to insert the widget.
+	 * @param {string} [route] - The route context for analytics.
+	 */
 	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
 		const object = S.Detail.get(rootId, objectId);
 
@@ -732,6 +915,9 @@ class Action {
 		});
 	};
 
+	/**
+	 * Opens a membership upgrade confirmation popup.
+	 */
 	membershipUpgrade () {
 		S.Popup.open('confirm', {
 			data: {
@@ -744,6 +930,11 @@ class Action {
 		});
 	};
 
+	/**
+	 * Opens a confirmation popup to revoke a space invite link.
+	 * @param {string} spaceId - The space ID.
+	 * @param {function} [callBack] - Optional callback after revocation.
+	 */
 	inviteRevoke (spaceId: string, callBack?: () => void) {
 		S.Popup.open('confirm', {
 			data: {
@@ -774,6 +965,11 @@ class Action {
 		analytics.event('ScreenRevokeShareLink');
 	};
 
+	/**
+	 * Adds objects to a collection by target ID.
+	 * @param {string} targetId - The collection target ID.
+	 * @param {string[]} objectIds - The object IDs to add.
+	 */
 	addToCollection (targetId: string, objectIds: string[]) {
 		const collectionType = S.Record.getCollectionType();
 
@@ -787,12 +983,22 @@ class Action {
 		});
 	};
 
+	/**
+	 * Sets the application theme and notifies the renderer.
+	 * @param {string} id - The theme ID.
+	 */
 	themeSet (id: string) {
 		S.Common.themeSet(id);
 		Renderer.send('setTheme', id);
 		analytics.event('ThemeSet', { id });
 	};
 
+	/**
+	 * Toggles a relation as featured for a given object.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} relationKey - The relation key to toggle.
+	 * @returns {null|void} Returns null if the relation is not found.
+	 */
 	toggleFeatureRelation (rootId: string, relationKey: string) {
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
 		const featured = U.Common.objectCopy(object.featuredRelations || []);
