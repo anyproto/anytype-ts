@@ -69,7 +69,7 @@
 	.menu.menuDataviewViewEdit,
 	.menu.menuDataviewViewSettings,
 	.menu.menuDataviewViewLayout {
-		.content { max-height: 450px; }
+		.content { max-height: unset; }
 		.item.withCaption {
 			.caption { @include text-common; line-height: 20px; width: 150px; padding-right: 16px; }
 		}
