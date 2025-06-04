@@ -24,6 +24,13 @@ class DetailStore {
 		});
 	};
 
+	/**
+	 * Creates a detail list item with observables and intercepts.
+	 * @private
+	 * @param {string} k - The relation key.
+	 * @param {any} v - The value.
+	 * @returns {Detail} The created detail item.
+	 */
 	private createListItem (k: string, v: any): Detail {
 		const el = { relationKey: k, value: v, isDeleted: false };
 
@@ -253,6 +260,12 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps common properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with standardized properties.
+	 */
 	private mapCommon (object: any) {
 		object.name = Relation.getStringValue(object.name) || translate('defaultNamePage');
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
@@ -283,6 +296,12 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps note-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with note-specific properties.
+	 */
 	private mapNote (object: any) {
 		object.coverType = I.CoverType.None;
 		object.coverId = '';
@@ -297,6 +316,12 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps type-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with type-specific properties.
+	 */
 	private mapType (object: any) {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
@@ -323,6 +348,12 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps relation-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with relation-specific properties.
+	 */
 	private mapRelation (object: any) {
 		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 		object.format = object.relationFormat;
@@ -345,6 +376,12 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps option-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with option-specific properties.
+	 */
 	private mapOption (object: any) {
 		object.text = object.name;
 		object.color = Relation.getStringValue(object.color || object.relationOptionColor);
@@ -354,11 +391,23 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps set-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapSet (object: any) {
 		object.setOf = Relation.getArrayValue(object.setOf);
 		return object;
 	};
 
+	/**
+	 * Maps date-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapDate (object: any) {
 		object.timestamp = Number(object.timestamp) || 0;
 
@@ -372,6 +421,12 @@ class DetailStore {
 		return this.mapSet(object);
 	};
 
+	/**
+	 * Maps space view-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapSpaceView (object: any) {
 		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceType.Private;
 		object.spaceAccountStatus = Number(object.spaceAccountStatus) || I.SpaceStatus.Unknown;
@@ -412,11 +467,23 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps file-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
 		return object;
 	};
 
+	/**
+	 * Maps participant-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapParticipant (object) {
 		object.permissions = Number(object.permissions || object.participantPermissions) || I.ParticipantPermissions.Reader;
 		object.status = Number(object.status || object.participantStatus) || I.ParticipantStatus.Joining;
