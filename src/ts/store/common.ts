@@ -337,10 +337,23 @@ class CommonStore {
 		this.gatewayUrl = v;
 	};
 
+	/**
+	 * Gets the file URL for a given file ID.
+	 * @private
+	 * @param {string} id - The file ID.
+	 * @returns {string} The file URL.
+	 */
 	fileUrl (id: string) {
 		return [ this.gateway, 'file', String(id || '') ].join('/');
 	};
 
+	/**
+	 * Gets the image URL for a given image ID and width.
+	 * @private
+	 * @param {string} id - The image ID.
+	 * @param {number} width - The image width.
+	 * @returns {string} The image URL.
+	 */
 	imageUrl (id: string, width: number) {
 		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
 	};
@@ -389,6 +402,11 @@ class CommonStore {
 		$(window).trigger('updateGraphSettings');
 	};
 
+	/**
+	 * Sets the toast object, resolving object references if needed.
+	 * @private
+	 * @param {I.Toast} toast - The toast object.
+	 */
 	toastSet (toast: I.Toast) {
 		const { objectId, targetId, originId } = toast;
 		const ids = [ objectId, targetId, originId ].filter(it => it);
@@ -416,57 +434,111 @@ class CommonStore {
 		};
 	};
 
+	/**
+	 * Sets the current space ID.
+	 * @private
+	 * @param {string} id - The space ID.
+	 */
 	spaceSet (id: string) {
 		this.spaceId = String(id || '');
 	};
 
+	/**
+	 * Clears the preview object.
+	 * @private
+	 */
 	previewClear () {
 		this.previewObj = { type: I.PreviewType.None, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
 
+	/**
+	 * Clears the toast object.
+	 * @private
+	 */
 	toastClear () {
 		this.toastObj = null;
 	};
 
+	/**
+	 * Sets the default type.
+	 * @private
+	 * @param {string} v - The type value.
+	 */
 	typeSet (v: string) {
 		this.defaultType = String(v || '');
 
 		Storage.set('defaultType', this.defaultType);
 	};
 
+	/**
+	 * Sets the pin time value.
+	 * @private
+	 * @param {string} v - The pin time value.
+	 */
 	pinTimeSet (v: string) {
 		this.pinTimeId = Number(v) || J.Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
 	};
 
+	/**
+	 * Sets the pin value.
+	 * @private
+	 * @param {string} v - The pin value.
+	 */
 	pinSet (v: string) {
 		this.pinValue = String(v || '');
 		Storage.set('pin', this.pinValue);
 	};
 
+	/**
+	 * Sets the email confirmation time.
+	 * @private
+	 * @param {number} t - The time value.
+	 */
 	emailConfirmationTimeSet (t: number) {
 		this.emailConfirmationTimeId = t;
 
 		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
 	};
 
+	/**
+	 * Sets the show relative dates value.
+	 * @param {boolean} v - The show relative dates value.
+	 */
 	showRelativeDatesSet (v: boolean) {
 		this.boolSet('showRelativeDates', v);
 	};
 
+	/**
+	 * Sets the fullscreen object value.
+	 * @param {boolean} v - The fullscreen value.
+	 */
 	fullscreenObjectSet (v: boolean) {
 		this.boolSet('fullscreenObject', v);
 	};
 
+	/**
+	 * Sets the hide sidebar value.
+	 * @param {boolean} v - The hide sidebar value.
+	 */
 	hideSidebarSet (v: boolean) {
 		this.boolSet('hideSidebar', v);
 	};
 
+	/**
+	 * Sets the show sidebar right value.
+	 * @param {boolean} isPopup - Whether it is a popup.
+	 * @param {boolean} v - The value to set.
+	 */
 	showSidebarRightSet (isPopup: boolean, v: boolean) {
 		set(this.showSidebarRightValue, { [isPopup ? 'popup' : 'full'] : v });
 	};
 
+	/**
+	 * Sets the fullscreen mode.
+	 * @param {boolean} v - The fullscreen value.
+	 */
 	fullscreenSet (v: boolean) {
 		this.isFullScreen = v;
 
@@ -474,15 +546,27 @@ class CommonStore {
 		$(window).trigger('resize');
 	};
 
+	/**
+	 * Sets the show vault value.
+	 * @param {boolean} v - The show vault value.
+	 */
 	showVaultSet (v: boolean) {
 		this.boolSet('showVault', v);
 	};
 
+	/**
+	 * Sets the theme ID and updates the theme class.
+	 * @param {string} v - The theme ID.
+	 */
 	themeSet (v: string) {
 		this.themeId = String(v || '');
 		this.setThemeClass();
 	};
 
+	/**
+	 * Sets the redirect value.
+	 * @param {string} v - The redirect value.
+	 */
 	redirectSet (v: string) {
 		const param = U.Router.getParam(v);
 
@@ -493,16 +577,30 @@ class CommonStore {
 		this.redirect = v;
 	};
 
+	/**
+	 * Sets the Notion token value.
+	 * @param {string} v - The Notion token value.
+	 */
 	notionTokenSet (v: string) {
 		this.notionToken = v;
 	};
 
+	/**
+	 * Sets a reference by ID.
+	 * @param {string} id - The reference ID.
+	 * @param {any} ref - The reference object.
+	 */
 	refSet (id: string, ref: any) {
 		if (id && ref) {
 			this.refs.set(id, ref);
 		};
 	};
 
+	/**
+	 * Gets a boolean value by key, loading from storage if needed.
+	 * @param {string} k - The key.
+	 * @returns {boolean} The boolean value.
+	 */
 	boolGet (k: string) {
 		const tk = `${k}Value`;
 		if (this[tk] === null) {
@@ -511,6 +609,11 @@ class CommonStore {
 		return !!this[tk];
 	};
 
+	/**
+	 * Sets a boolean value by key and stores it.
+	 * @param {string} k - The key.
+	 * @param {boolean} v - The value to set.
+	 */
 	boolSet (k: string, v: boolean) {
 		v = Boolean(v);
 
@@ -518,6 +621,11 @@ class CommonStore {
 		Storage.set(k, v);
 	};
 
+	/**
+	 * Gets the current theme class string.
+	 * @private
+	 * @returns {string} The theme class.
+	 */
 	getThemeClass () {
 		let ret = '';
 
@@ -530,6 +638,10 @@ class CommonStore {
 		return String(ret || '');
 	};
 
+	/**
+	 * Sets the theme class on the document.
+	 * @private
+	 */
 	setThemeClass () {
 		const head = $('head');
 		const c = this.getThemeClass();
@@ -543,47 +655,85 @@ class CommonStore {
 		};
 	};
 
+	/**
+	 * Gets the theme path string.
+	 * @private
+	 * @returns {string} The theme path.
+	 */
 	getThemePath () {
 		const c = this.getThemeClass();
 		return c ? `theme/${c}/` : '';
 	};
 
+	/**
+	 * Sets the native theme dark mode value.
+	 * @param {boolean} isDark - Whether the theme is dark.
+	 */
 	nativeThemeSet (isDark: boolean) {
 		this.nativeThemeIsDark = isDark;
 	};
 
+	/**
+	 * Sets the available languages.
+	 * @param {string[]} v - The languages array.
+	 */
 	languagesSet (v: string[]) {
 		this.languages = v;
 	};
 
+	/**
+	 * Sets the link style value.
+	 * @param {I.LinkCardStyle} v - The link style value.
+	 */
 	linkStyleSet (v: I.LinkCardStyle) {
 		v = Number(v);
 		this.linkStyleValue = v;
 		Storage.set('linkStyle', v);
 	};
 
+	/**
+	 * Sets the date format value.
+	 * @param {I.DateFormat} v - The date format value.
+	 */
 	dateFormatSet (v: I.DateFormat) {
 		v = Number(v);
 		this.dateFormatValue = v;
 		Storage.set('dateFormat', v);
 	};
 
+	/**
+	 * Sets the time format value.
+	 * @param {I.TimeFormat} v - The time format value.
+	 */
 	timeFormatSet (v: I.TimeFormat) {
 		v = Number(v);
 		this.timeFormatValue = v;
 		Storage.set('timeFormat', v);
 	};
 
+	/**
+	 * Sets the online status value.
+	 * @param {boolean} v - The online status value.
+	 */
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
 		console.log('[Online status]:', v);
 	};
 
+	/**
+	 * Sets the first day value.
+	 * @param {number} v - The first day value.
+	 */
 	firstDaySet (v: number) {
 		this.firstDayValue = Number(v) || 1;
 		Storage.set('firstDay', this.firstDayValue);
 	};
 
+	/**
+	 * Sets the config object, optionally forcing all values.
+	 * @param {any} config - The config object.
+	 * @param {boolean} force - Whether to force all values.
+	 */
 	configSet (config: any, force: boolean) {
 		const html = $('html');
 		
@@ -604,22 +754,43 @@ class CommonStore {
 		html.toggleClass('debug', Boolean(this.configObj.debug.ui));
 	};
 
+	/**
+	 * Sets the space storage object.
+	 * @param {Partial<SpaceStorage>} value - The space storage value.
+	 */
 	spaceStorageSet (value: Partial<SpaceStorage>) {
 		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
 	};
 
+	/**
+	 * Sets the data path value.
+	 * @param {string} v - The data path value.
+	 */
 	dataPathSet (v: string) {
 		this.dataPathValue = String(v || '');
 	};
 
+	/**
+	 * Sets the membership tiers list.
+	 * @param {I.MembershipTier[]} list - The membership tiers list.
+	 */
 	membershipTiersListSet (list: I.MembershipTier[]) {
 		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
 	};
 
+	/**
+	 * Sets the diff value.
+	 * @param {I.Diff[]} diff - The diff value.
+	 */
 	diffSet (diff: I.Diff[]) {
 		this.diffValue = diff || [];
 	};
 
+	/**
+	 * Gets the graph settings for a key.
+	 * @param {string} key - The key.
+	 * @returns {I.GraphSettings} The graph settings.
+	 */
 	getGraph (key: string): I.GraphSettings {
 		const stored = Storage.get(key);
 		const def = U.Common.objectCopy(this.graphObj);
@@ -627,18 +798,39 @@ class CommonStore {
 		return Object.assign(def, stored);
 	};
 
+	/**
+	 * Gets a reference by ID.
+	 * @param {string} id - The reference ID.
+	 * @returns {any} The reference object.
+	 */
 	getRef (id: string) {
 		return this.refs.get(id);
 	};
 
+	/**
+	 * Gets the show sidebar right value for a popup or full view.
+	 * @param {boolean} isPopup - Whether it is a popup.
+	 * @returns {boolean} The show sidebar right value.
+	 */
 	getShowSidebarRight (isPopup: boolean): boolean {
 		return Boolean(this.showSidebarRightValue[isPopup ? 'popup' : 'full']);
 	};
 
+	/**
+	 * Gets the timeout value for a given ID.
+	 * @param {string} id - The timeout ID.
+	 * @returns {number} The timeout value.
+	 */
 	getTimeout (id: string): number {
 		return Number(this.timeoutMap.get(id)) || 0;
 	};
 
+	/**
+	 * Sets a timeout for a given ID and function.
+	 * @param {string} id - The timeout ID.
+	 * @param {number} timeout - The timeout duration.
+	 * @param {() => void} func - The function to call after timeout.
+	 */
 	setTimeout (id: string, timeout: number, func: () => void) {
 		window.clearTimeout(this.getTimeout(id));
 

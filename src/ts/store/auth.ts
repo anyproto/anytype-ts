@@ -147,6 +147,7 @@ class AuthStore {
 
 	/**
 	 * Clears the account list.
+	 * @private
 	 */
 	accountListClear () {
 		this.accountList = [];
@@ -207,6 +208,7 @@ class AuthStore {
 
 	/**
 	 * Gets the default sync status object.
+	 * @private
 	 * @returns {I.SyncStatus} The default sync status.
 	 */
 	getDefaultSyncStatus (): I.SyncStatus {

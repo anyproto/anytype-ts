@@ -47,6 +47,12 @@ class MenuStore {
 		Preview.previewHide(true);
 	};
 
+	/**
+	 * Normalises menu parameters, setting defaults as needed.
+	 * @private
+	 * @param {I.MenuParam} param - The menu parameters.
+	 * @returns {I.MenuParam} The normalised parameters.
+	 */
 	normaliseParam (param: I.MenuParam) {
 		param.type = Number(param.type) || I.MenuType.Vertical;
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
@@ -136,6 +142,12 @@ class MenuStore {
 		return key ? (item.param.menuKey == key) : true;
 	};
 
+	/**
+	 * Checks if any menu in a list of IDs is open.
+	 * @private
+	 * @param {string[]} ids - The menu IDs.
+	 * @returns {boolean} True if any menu is open, false otherwise.
+	 */
 	isOpenList (ids: string[]) {
 		for (const id of ids) {
 			if (this.isOpen(id)) {
@@ -195,10 +207,22 @@ class MenuStore {
 		};
 	};
 
+	/**
+	 * Sets the animating flag for a menu ID.
+	 * @private
+	 * @param {string} id - The menu ID.
+	 * @param {boolean} v - The animating value.
+	 */
 	setIsAnimating (id: string, v: boolean) {
 		this.isAnimatingFlag.set(id, v);
 	};
 
+	/**
+	 * Checks if a menu is animating.
+	 * @private
+	 * @param {string} id - The menu ID.
+	 * @returns {boolean} True if animating, false otherwise.
+	 */
 	isAnimating (id: string): boolean {
 		return !!this.isAnimatingFlag.get(id);
 	};
@@ -223,6 +247,12 @@ class MenuStore {
 		this.onCloseAll(timeout, callBack);
 	};
 
+	/**
+	 * Closes all menus forcibly, optionally filtered by IDs.
+	 * @private
+	 * @param {string[]} [ids] - Menu IDs to close.
+	 * @param {() => void} [callBack] - Optional callback after close.
+	 */
 	closeAllForced (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
 		const timeout = this.getTimeout(ids);
@@ -231,6 +261,12 @@ class MenuStore {
 		this.onCloseAll(timeout, callBack);
 	};
 
+	/**
+	 * Handles the callback after closing all menus with a timeout.
+	 * @private
+	 * @param {number} timeout - The timeout duration.
+	 * @param {() => void} [callBack] - Optional callback after close.
+	 */
 	onCloseAll (timeout: number, callBack?: () => void) {
 		if (!callBack) {
 			return;
@@ -240,6 +276,12 @@ class MenuStore {
 		this.timeout = window.setTimeout(() => callBack(), timeout);
 	};
 
+	/**
+	 * Gets the timeout value for a set of menu IDs.
+	 * @private
+	 * @param {string[]} [ids] - Menu IDs.
+	 * @returns {number} The timeout value.
+	 */
 	getTimeout (ids?: string[]): number {
 		const items = this.getItems(ids);
 
@@ -253,10 +295,20 @@ class MenuStore {
 		return t;
 	};
 
+	/**
+	 * Gets the menu items, optionally filtered by IDs.
+	 * @private
+	 * @param {string[]} [ids] - Menu IDs.
+	 * @returns {I.Menu[]} The menu items.
+	 */
 	getItems (ids?: string[]) {
 		return ids && ids.length ? this.menuList.filter(it => ids.includes(it.id)) : this.menuList;
 	};
 
+	/**
+	 * Closes the last open menu.
+	 * @private
+	 */
 	closeLast () {
 		const items = this.getItems(null).filter(it => !it.param.noClose);
 		if (items.length) {
@@ -264,14 +316,28 @@ class MenuStore {
 		};
 	};
 
+	/**
+	 * Clears the menu close timeout.
+	 * @private
+	 */
 	clearTimeout () {
 		window.clearTimeout(this.timeout);
 	};
 
+	/**
+	 * Checks if a menu with a given key is open.
+	 * @private
+	 * @param {string} key - The menu key.
+	 * @returns {boolean} True if open, false otherwise.
+	 */
 	checkKey (key: string) {
 		return this.menuList.find(it => it.param.menuKey == key) ? true : false;
 	};
 
+	/**
+	 * Triggers resize events for all open menus.
+	 * @private
+	 */
 	resizeAll () {
 		const win = $(window);
 		this.list.forEach(it => win.trigger(`resize.${U.Common.toCamelCase(`menu-${it.id}`)}`));

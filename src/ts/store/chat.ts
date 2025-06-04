@@ -143,6 +143,12 @@ class ChatStore {
 		(ids || []).forEach(id => this.update(subId, { id, isReadMention: value }));
 	};
 
+	/**
+	 * Creates a chat state object with observables and intercepts.
+	 * @private
+	 * @param {I.ChatState} state - The chat state input.
+	 * @returns {ChatState} The created chat state object.
+	 */
 	private createState (state: I.ChatState): ChatState {
 		const { messages, mentions, lastStateId } = state;
 		const el = {
@@ -167,6 +173,12 @@ class ChatStore {
 		return el;
 	};
 
+	/**
+	 * Parses a subId into its components.
+	 * @private
+	 * @param {string} subId - The subscription ID.
+	 * @returns {{ prefix: string; spaceId: string; chatId: string; isSpace: boolean; }} The parsed parameters.
+	 */
 	private getSubParam (subId: string): { prefix: string; spaceId: string; chatId: string; isSpace: boolean; } {
 		const [ prefix, spaceId, chatId ] = subId.split('-');
 
@@ -177,6 +189,12 @@ class ChatStore {
 		};
 	};
 
+	/**
+	 * Gets the subscription ID for a space and chat.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} chatId - The chat ID.
+	 * @returns {string} The subscription ID.
+	 */
 	getSubId (spaceId: string, chatId: string): string {
 		return [ J.Constant.subId.chatSpace, spaceId, chatId ].join('-');
 	};
@@ -344,6 +362,9 @@ class ChatStore {
 		return ret;
 	};
 
+	/**
+	 * Sets the badge count in the UI based on message counters.
+	 */
 	setBadge () {
 		const { config } = S.Common;
 
