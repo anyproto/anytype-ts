@@ -2,6 +2,10 @@ import { I, S, U, J, Storage, analytics, Action, translate } from 'Lib';
 
 class Survey {
 
+	/**
+	 * Checks and triggers the appropriate survey check function for the given type.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	check (type: I.SurveyType) {
 		const fn = `check${I.SurveyType[type]}`;
 
@@ -10,6 +14,10 @@ class Survey {
 		};
 	};
 
+	/**
+	 * Shows a survey popup for the given type.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	show (type: I.SurveyType) {
 		const prefix = `survey${type}`;
 
@@ -29,6 +37,10 @@ class Survey {
 		analytics.event('SurveyShow', { type });
 	};
 
+	/**
+	 * Handles survey confirmation, sets completion, and opens the survey URL.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	onConfirm (type: I.SurveyType) {
 		const { account } = S.Auth;
 		const t = I.SurveyType[type].toLowerCase();
@@ -50,6 +62,10 @@ class Survey {
 		analytics.event('SurveyOpen', { type });
 	};
 
+	/**
+	 * Handles survey skip, sets completion or cancel state.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
 	onSkip (type: I.SurveyType) {
 		const param: any = {};
 
@@ -68,10 +84,19 @@ class Survey {
 		analytics.event('SurveySkip', { type });
 	};
 
+	/**
+	 * Checks if a survey is complete for the given type.
+	 * @param {I.SurveyType} type - The survey type.
+	 * @returns {boolean} True if the survey is complete.
+	 */
 	isComplete (type: I.SurveyType) {
 		return Storage.getSurvey(type).complete;
 	};
 
+	/**
+	 * Gets the registration time for the current profile.
+	 * @returns {number} The registration timestamp.
+	 */
 	getTimeRegister (): number {
 		const profile = U.Space.getProfile();
 		return Number(profile?.createdDate) || 0;

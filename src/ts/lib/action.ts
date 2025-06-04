@@ -4,6 +4,11 @@ const Diff = require('diff');
 
 class Action {
 
+	/**
+	 * Closes a page and clears related data and subscriptions.
+	 * @param {string} rootId - The root object ID.
+	 * @param {boolean} withCommand - Whether to send a close command to the backend.
+	 */
 	pageClose (rootId: string, withCommand: boolean) {
 		if (keyboard.isCloseDisabled) {
 			return;
@@ -44,6 +49,10 @@ class Action {
 		};
 	};
 
+	/**
+	 * Clears all data related to a root object.
+	 * @param {string} rootId - The root object ID.
+	 */
 	dbClearRoot (rootId: string) {
 		if (!rootId) {
 			return;
@@ -54,6 +63,11 @@ class Action {
 		S.Detail.clear(rootId);
 	};
 
+	/**
+	 * Clears all data related to a block.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	dbClearBlock (rootId: string, blockId: string) {
 		if (!rootId || !blockId) {
 			return;
@@ -79,6 +93,11 @@ class Action {
 		U.Subscription.destroyList(groupIds.concat([ subId ]), true);
 	};
 
+	/**
+	 * Clears all data related to a chat block.
+	 * @param {string} chatId - The chat object ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	dbClearChat (chatId: string, blockId: string) {	
 		if (!chatId || !blockId) {
 			return;
@@ -90,6 +109,15 @@ class Action {
 		S.Chat.clear(subId);
 	};
 
+	/**
+	 * Uploads a file to a block.
+	 * @param {I.FileType} type - The file type.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} url - The file URL.
+	 * @param {string} path - The file path.
+	 * @param {function} [callBack] - Optional callback after upload.
+	 */
 	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
 		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
 			if (callBack) {
@@ -100,6 +128,15 @@ class Action {
 		});
 	};
 	
+	/**
+	 * Duplicates a list of blocks to a target context and position.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} targetContextId - The target context ID.
+	 * @param {string} blockId - The block ID to duplicate after.
+	 * @param {string[]} blockIds - The block IDs to duplicate.
+	 * @param {I.BlockPosition} position - The position to insert.
+	 * @param {function} [callBack] - Optional callback after duplication.
+	 */
 	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, targetContextId, blockIds, blockId, position, (message: any) => {
 			if (message.error.code) {
@@ -117,6 +154,15 @@ class Action {
 		});
 	};
 
+	/**
+	 * Moves a list of blocks to a target context and position.
+	 * @param {string} contextId - The source context ID.
+	 * @param {string} targetContextId - The target context ID.
+	 * @param {string} targetId - The target block ID.
+	 * @param {string[]} blockIds - The block IDs to move.
+	 * @param {I.BlockPosition} position - The position to insert.
+	 * @param {function} [callBack] - Optional callback after move.
+	 */
 	move (contextId: string, targetContextId: string, targetId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListMoveToExistingObject(contextId, targetContextId, targetId, blockIds, position, (message: any) => {
 			if (message.error.code) {
@@ -137,6 +183,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Removes a list of blocks from a root object.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID to focus after removal.
+	 * @param {string[]} blockIds - The block IDs to remove.
+	 */
 	remove (rootId: string, blockId: string, blockIds: string[]) {
 		const next = S.Block.getNextBlock(rootId, blockId, -1, (it: any) => {
 			return it.type == I.BlockType.Text;
@@ -155,6 +207,11 @@ class Action {
 		});
 	};
 
+	/**
+	 * Removes a widget block and updates storage.
+	 * @param {string} id - The widget block ID.
+	 * @param {any} target - The target parameter for analytics.
+	 */
 	removeWidget (id: string, target: any) {
 		const { widgets } = S.Block;
 		const block = S.Block.getLeaf(widgets, id);
@@ -177,6 +234,11 @@ class Action {
 		analytics.event('DeleteWidget', { layout, widgetType: analytics.getWidgetType(block.content.autoAdded), params: { target } });
 	};
 
+	/**
+	 * Focuses the end of a block for editing.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} id - The block ID to focus.
+	 */
 	focusToEnd (rootId: string, id: string) {
 		const block = S.Block.getLeaf(rootId, id);
 		if (!block) {
@@ -188,6 +250,10 @@ class Action {
 		focus.apply();
 	};
 
+	/**
+	 * Opens a URL, routing internally if possible.
+	 * @param {string} url - The URL to open.
+	 */
 	openUrl (url: string) {
 		if (!url) {
 			return;

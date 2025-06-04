@@ -3,6 +3,13 @@ import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 
 class Dataview {
 
+	/**
+	 * Gets the relations for a dataview, ordered and filtered for visibility.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {I.View} view - The dataview object.
+	 * @returns {I.ViewRelation[]} The list of view relations.
+	 */
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
 		if (!view) {
 			return [];
@@ -54,6 +61,15 @@ class Dataview {
 		return U.Common.arrayUniqueObjects(ret, 'relationKey');
 	};
 
+	/**
+	 * Adds a relation to a dataview and updates the view.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} relationKey - The relation key to add.
+	 * @param {number} index - The index to insert at.
+	 * @param {I.View} view - The dataview view object.
+	 * @param {function} [callBack] - Optional callback after addition.
+	 */
 	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view: I.View, callBack?: (message: any) => void) {
 		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
 			if (!message.error.code) {
@@ -62,6 +78,15 @@ class Dataview {
 		});
 	};
 
+	/**
+	 * Adds a relation to a dataview view and sorts it.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} relationKey - The relation key to add.
+	 * @param {number} index - The index to insert at.
+	 * @param {I.View} [view] - The dataview view object.
+	 * @param {function} [callBack] - Optional callback after addition.
+	 */
 	viewRelationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
 		if (!view) {
 			return;
@@ -94,6 +119,11 @@ class Dataview {
 		});
 	};
 
+	/**
+	 * Gets data for a dataview subscription, applying filters and sorts.
+	 * @param {any} param - The parameters for the data request.
+	 * @param {function} [callBack] - Optional callback after data is received.
+	 */
 	getData (param: any, callBack?: (message: any) => void) {
 		param = Object.assign({
 			rootId: '',
@@ -156,6 +186,12 @@ class Dataview {
 		}, callBack);
 	};
 
+	/**
+	 * Maps a filter or sort object for a dataview subscription.
+	 * @param {any} view - The dataview view object.
+	 * @param {any} it - The filter or sort object.
+	 * @returns {any} The mapped object.
+	 */
 	filterMapper (view: any, it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 
@@ -169,6 +205,13 @@ class Dataview {
 		return it;
 	};
 
+	/**
+	 * Gets a view object by ID or returns the first available view.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} [viewId] - The view ID.
+	 * @returns {I.View} The view object.
+	 */
 	getView (rootId: string, blockId: string, viewId?: string): I.View {
 		let view = null;
 
@@ -190,6 +233,12 @@ class Dataview {
 		return view;
 	};
 
+	/**
+	 * Checks if a block is a collection layout.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {boolean} True if the block is a collection.
+	 */
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
 		const isInline = !U.Object.isInSystemLayouts(object.layout);

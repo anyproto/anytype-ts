@@ -5,10 +5,20 @@ const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
 
 class Relation {
 
+	/**
+	 * Returns the type name for a relation type.
+	 * @param {I.RelationType} v - The relation type.
+	 * @returns {string} The type name.
+	 */
 	public typeName (v: I.RelationType): string {
 		return U.Common.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
+	/**
+	 * Returns the CSS class name for a relation type.
+	 * @param {I.RelationType} v - The relation type.
+	 * @returns {string} The class name.
+	 */
 	public className (v: I.RelationType): string {
 		v = Number(v);
 
@@ -21,23 +31,52 @@ class Relation {
 		return `c-${c}`;
 	};
 
+	/**
+	 * Returns the icon name for a relation key and type.
+	 * @param {string} key - The relation key.
+	 * @param {I.RelationType} v - The relation type.
+	 * @returns {string} The icon name.
+	 */
 	public iconName (key: string, v: I.RelationType): string {
 		return key == 'description' ? 'description' : this.typeName(v);
 	};
 
+	/**
+	 * Returns the select class name for a relation type.
+	 * @param {I.RelationType} v - The relation type.
+	 * @returns {string} The select class name.
+	 */
 	public selectClassName (v: I.RelationType): string {
 		return `is${I.RelationType[v]}`;
 	};
 
+	/**
+	 * Returns a cell ID string for a prefix, relation key, and ID.
+	 * @param {string} prefix - The prefix.
+	 * @param {string} relationKey - The relation key.
+	 * @param {string|number} id - The ID.
+	 * @returns {string} The cell ID.
+	 */
 	public cellId (prefix: string, relationKey: string, id: string|number) {
 		return [ prefix, relationKey, id ].join('-');
 	};
 
+	/**
+	 * Returns the width for a relation cell based on format.
+	 * @param {number} width - The width value.
+	 * @param {I.RelationType} format - The relation format.
+	 * @returns {number} The calculated width.
+	 */
 	public width (width: number, format: I.RelationType): number {
 		const size = J.Size.dataview.cell;
 		return Number(width || size[`format${format}`]) || size.default;
 	};
 
+	/**
+	 * Returns available filter conditions for a relation type.
+	 * @param {I.RelationType} type - The relation type.
+	 * @returns {Array<{id: I.FilterCondition, name: string}>} The filter conditions.
+	 */
 	public filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
 		let ret = [
 			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
@@ -115,6 +154,12 @@ class Relation {
 		return ret;
 	};
 
+	/**
+	 * Returns available formula options for a relation type.
+	 * @param {string} relationKey - The relation key.
+	 * @param {I.RelationType} type - The relation type.
+	 * @returns {Array<{id: string, name: string, short?: string, section: I.FormulaSection}>} The formula options.
+	 */
 	public formulaByType (relationKey: string, type: I.RelationType): { id: string, name: string, short?: string, section: I.FormulaSection }[] {
 		const relation = S.Record.getRelationByKey(relationKey);
 		if (!relation) {

@@ -47,6 +47,12 @@ const Order = [
 
 class Mark {
 
+	/**
+	 * Toggles a mark in the list of marks, handling overlaps and merging.
+	 * @param {I.Mark[]} marks - The current list of marks.
+	 * @param {I.Mark} mark - The mark to toggle.
+	 * @returns {I.Mark[]} The updated list of marks.
+	 */
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
 		if ((mark.type === null) || (mark.range.from == mark.range.to)) {
 			return marks;	
@@ -143,6 +149,12 @@ class Mark {
 		return U.Common.unmap(map).sort(this.sort);
 	};
 	
+	/**
+	 * Sorts marks by type and range.
+	 * @param {I.Mark} c1 - First mark.
+	 * @param {I.Mark} c2 - Second mark.
+	 * @returns {number} Sort order.
+	 */
 	sort (c1: I.Mark, c2: I.Mark) {
 		const o1 = Order.indexOf(c1.type);
 		const o2 = Order.indexOf(c2.type);
@@ -155,6 +167,12 @@ class Mark {
 		return 0;
 	};
 	
+	/**
+	 * Checks and fixes mark ranges, merging or removing invalid marks.
+	 * @param {string} text - The text content.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @returns {I.Mark[]} The updated list of marks.
+	 */
 	checkRanges (text: string, marks: I.Mark[]) {
 		marks = (marks || []).slice().sort(this.sort);
 		

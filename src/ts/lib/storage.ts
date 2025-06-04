@@ -58,6 +58,11 @@ const Api = {
 
 class Storage {
 	
+	/**
+	 * Gets a value from storage by key, handling space and account keys.
+	 * @param {string} key - The storage key.
+	 * @returns {any} The stored value.
+	 */
 	get (key: string): any {
 		if (!key) {
 			console.log('[Storage].get: key not specified');
@@ -89,6 +94,11 @@ class Storage {
 		};
 	};
 
+	/**
+	 * Sets a value in storage by key, handling space and account keys.
+	 * @param {string} key - The storage key.
+	 * @param {any} obj - The value to store.
+	 */
 	set (key: string, obj: any): void {
 		obj = U.Common.objectCopy(obj);
 
@@ -108,6 +118,10 @@ class Storage {
 		};
 	};
 	
+	/**
+	 * Deletes a value from storage by key, handling space and account keys.
+	 * @param {string} key - The storage key.
+	 */
 	delete (key: string) {
 		if (this.isSpaceKey(key)) {
 			this.deleteSpaceKey(key);
@@ -120,10 +134,21 @@ class Storage {
 		};
 	};
 
+	/**
+	 * Checks if a key is a space key.
+	 * @param {string} key - The key to check.
+	 * @returns {boolean} True if the key is a space key.
+	 */
 	isSpaceKey (key: string): boolean {
 		return SPACE_KEYS.includes(key);
 	};
 
+	/**
+	 * Sets a space key value for a specific space.
+	 * @param {string} key - The space key.
+	 * @param {any} value - The value to set.
+	 * @param {string} [spaceId] - The space ID (optional).
+	 */
 	setSpaceKey (key: string, value: any, spaceId?: string) {
 		spaceId = spaceId || S.Common.space;
 
@@ -136,6 +161,12 @@ class Storage {
 		this.setSpace(obj);
 	};
 
+	/**
+	 * Gets a space key value for a specific space.
+	 * @param {string} key - The space key.
+	 * @param {string} [spaceId] - The space ID (optional).
+	 * @returns {any} The value for the space key.
+	 */
 	getSpaceKey (key: string, spaceId?: string) {
 		spaceId = spaceId || S.Common.space;
 
@@ -143,6 +174,11 @@ class Storage {
 		return obj[spaceId][key];
 	};
 
+	/**
+	 * Deletes a space key value for a specific space.
+	 * @param {string} key - The space key.
+	 * @param {string} [spaceId] - The space ID (optional).
+	 */
 	deleteSpaceKey (key: string, spaceId?: string) {
 		spaceId = spaceId || S.Common.space;
 

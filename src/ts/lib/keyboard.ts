@@ -35,6 +35,9 @@ class Keyboard {
 	isShortcutEditing = false;
 	isRtl = false;
 	
+	/**
+	 * Initializes keyboard event listeners and shortcuts.
+	 */
 	init () {
 		this.unbind();
 		this.initShortcuts();
@@ -72,18 +75,31 @@ class Keyboard {
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 
+	/**
+	 * Initializes keyboard shortcuts from configuration.
+	 */
 	initShortcuts () {
 		this.shortcuts = J.Shortcut.getItems();
 	};
 	
+	/**
+	 * Unbinds all keyboard event listeners.
+	 */
 	unbind () {
 		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common');
 	};
 
+	/**
+	 * Handles scroll events to hide tooltips.
+	 */
 	onScroll () {
 		Preview.tooltipHide(false);
 	};
 
+	/**
+	 * Handles mouse down events for navigation and focus management.
+	 * @param {any} e - The mouse event.
+	 */
 	onMouseDown (e: any) {
 		const { focused } = focus.state;
 		const target = $(e.target);
@@ -106,6 +122,10 @@ class Keyboard {
 		};
 	};
 
+	/**
+	 * Handles mouse move events for pin checking and mouse state.
+	 * @param {any} e - The mouse event.
+	 */
 	onMouseMove (e: any) {
 		this.initPinCheck();
 		this.disableMouse(false);
@@ -120,6 +140,10 @@ class Keyboard {
 		};
 	};
 	
+	/**
+	 * Handles key down events for shortcuts and navigation.
+	 * @param {any} e - The keyboard event.
+	 */
 	onKeyDown (e: any) {
 		const { theme, pin } = S.Common;
 		const isPopup = this.isPopup();

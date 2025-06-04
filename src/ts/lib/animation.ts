@@ -11,6 +11,10 @@ class Animation {
 
 	isAnimating = false;
 
+	/**
+	 * Animates elements to visible state with scaling and opacity.
+	 * @param {() => void} [callBack] - Optional callback after animation.
+	 */
 	to (callBack?: () => void) {
 		if (this.isAnimating) {
 			return;
@@ -31,6 +35,10 @@ class Animation {
 		this.finish(callBack);
 	};
 
+	/**
+	 * Animates elements from visible state to hidden with scaling and opacity.
+	 * @param {() => void} [callBack] - Optional callback after animation.
+	 */
 	from (callBack?: () => void) {
 		if (this.isAnimating) {
 			return;
@@ -51,6 +59,10 @@ class Animation {
 		this.finish(callBack);
 	};
 
+	/**
+	 * Finishes the animation and calls the callback after duration.
+	 * @param {() => void} [callBack] - Optional callback after animation.
+	 */
 	finish (callBack?: () => void) {
 		window.setTimeout(() => {
 			this.isAnimating = false;
@@ -61,6 +73,11 @@ class Animation {
 		}, this.getDuration());
 	};
 
+	/**
+	 * Gets sorted animation nodes by direction and index.
+	 * @param {I.AnimDirection} dir - Animation direction.
+	 * @returns {Array<{el: JQuery<HTMLElement>, index: number, type: I.AnimType}>} Sorted nodes.
+	 */
 	getSortedNodes (dir: I.AnimDirection) {
 		const nodes: { el: JQuery<HTMLElement>, index: number, type: I.AnimType}[] = [];
 
@@ -94,6 +111,12 @@ class Animation {
 		return nodes;
 	};
 
+	/**
+	 * Initializes animation nodes with CSS and delay.
+	 * @param {object} css - CSS properties to apply.
+	 * @param {I.AnimDirection} dir - Animation direction.
+	 * @returns {Array<{el: JQuery<HTMLElement>, index: number, type: I.AnimType}>} The nodes.
+	 */
 	initNodes (css: object, dir: I.AnimDirection) {
 		const nodes = this.getSortedNodes(dir);
 
@@ -153,6 +176,13 @@ class Animation {
 		return nodes;
 	};
 
+	/**
+	 * Applies CSS transition to an element.
+	 * @param {JQuery<HTMLElement>} obj - The element.
+	 * @param {object} css - CSS properties.
+	 * @param {number} duration - Duration in seconds.
+	 * @param {number} delay - Delay in seconds.
+	 */
 	applyCss (obj: JQuery<HTMLElement>, css: object, duration: number, delay: number) {
 		obj.css({ ...css, transition: '' });
 
@@ -168,6 +198,10 @@ class Animation {
 		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * 1000);
 	};
 
+	/**
+	 * Gets the total animation duration in milliseconds.
+	 * @returns {number} The duration in ms.
+	 */
 	getDuration () {
 		const blockLength = $('.animation').length;
 		const wordLength = $('.animationWord').length;

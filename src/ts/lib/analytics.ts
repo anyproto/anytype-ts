@@ -101,15 +101,27 @@ class Analytics {
 		auto: 'Auto',
 	};
 
+	/**
+	 * Checks if analytics debug mode is enabled.
+	 * @returns {boolean} True if debug mode is enabled.
+	 */
 	debug () {
 		return S.Common.config.debug.analytics;
 	};
 
+	/**
+	 * Checks if analytics is allowed based on config and environment.
+	 * @returns {boolean} True if analytics is allowed.
+	 */
 	isAllowed (): boolean {
 		const { config } = S.Common;
 		return !(config.sudo || !U.Common.getElectron().isPackaged) || this.debug();
 	};
 	
+	/**
+	 * Initializes the analytics instance with options and sets user properties.
+	 * @param {any} [options] - Optional initialization options.
+	 */
 	init (options?: any) {
 		if (this.instance) {
 			return;
@@ -153,6 +165,9 @@ class Analytics {
 		this.log('[Analytics].init');
 	};
 
+	/**
+	 * Sets the version for analytics events based on app config and environment.
+	 */
 	setVersion () {
 		const { config } = S.Common;
 		const platform = U.Common.getPlatform();
@@ -178,6 +193,11 @@ class Analytics {
 		C.InitialSetParameters(platform, ret.join('-'), userPath(), '', false, false);
 	};
 
+	/**
+	 * Sets the user profile for analytics.
+	 * @param {string} id - The user ID.
+	 * @param {string} networkId - The network ID.
+	 */
 	profile (id: string, networkId: string) {
 		if (!this.instance || !this.isAllowed()) {
 			return;
@@ -191,11 +211,18 @@ class Analytics {
 		};
 	};
 
+	/**
+	 * Sets the current analytics context.
+	 * @param {string} context - The context identifier.
+	 */
 	setContext (context: string) {
 		this.contextId = context;
 		this.log(`[Analytics].setContext: ${context}`);
 	};
 
+	/**
+	 * Removes the current analytics context.
+	 */
 	removeContext () {
 		this.contextId = '';
 	};

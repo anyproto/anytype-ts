@@ -29,6 +29,9 @@ class Sidebar {
 	isAnimating = false;
 	timeoutAnim = 0;
 
+	/**
+	 * Initializes sidebar objects and state from storage.
+	 */
 	init () {
 		this.initObjects();
 
@@ -56,6 +59,9 @@ class Sidebar {
 		this.objLeft.toggleClass('isClosed', isClosed);
 	};
 
+	/**
+	 * Initializes DOM object references for sidebar elements.
+	 */
 	initObjects () {
 		const isPopup = keyboard.isPopup();
 		const vault = S.Common.getRef('vault');
@@ -76,6 +82,9 @@ class Sidebar {
 		};
 	};
 
+	/**
+	 * Closes the sidebar with animation and updates state.
+	 */
 	close (): void {
 		const { width, isClosed } = this.data;
 
@@ -105,6 +114,10 @@ class Sidebar {
 		});
 	};
 
+	/**
+	 * Opens the sidebar to the specified width with animation.
+	 * @param {number} [width] - The width to open the sidebar to.
+	 */
 	open (width?: number): void {
 		if (!this.objLeft || !this.objLeft.length || this.isAnimating || !this.data.isClosed) {
 			return;
@@ -133,6 +146,9 @@ class Sidebar {
 		}, this.getVaultDuration(width));
 	};
 
+	/**
+	 * Toggles the sidebar open/close state.
+	 */
 	toggleOpenClose () {
 		if (this.isAnimating) {
 			return;
@@ -144,12 +160,20 @@ class Sidebar {
 		S.Menu.closeAll();
 	};
 
+	/**
+	 * Sets the width of sidebar elements.
+	 * @param {any} width - The width to set.
+	 */
 	setElementsWidth (width: any): void {
 		this.objLeft.find('#head').css({ width });
 		this.objLeft.find('#body').css({ width });
 		this.objLeft.find('#shareBanner').css({ width: (width ? width - 24 : '') });
 	};
 
+	/**
+	 * Sets the sidebar width and updates layout.
+	 * @param {number} w - The width to set.
+	 */
 	setWidth (w: number): void {
 		w = this.limitWidth(w);
 
@@ -173,6 +197,9 @@ class Sidebar {
 		}, J.Constant.delay.sidebar);
 	};
 
+	/**
+	 * Handles mouse move events for sidebar hover and auto-show/hide.
+	 */
 	onMouseMove (): void {
 		const { showVault, hideSidebar } = S.Common;
 
