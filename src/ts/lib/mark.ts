@@ -223,6 +223,13 @@ class Mark {
 		return marks;
 	};
 	
+	/**
+	 * Gets the first mark of a given type that overlaps with the specified range.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @param {I.MarkType} type - The mark type to search for.
+	 * @param {I.TextRange} range - The range to check.
+	 * @returns {I.Mark|null} The found mark or null.
+	 */
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
 		if (!range) {
 			return null;
@@ -243,6 +250,13 @@ class Mark {
 		return null;
 	};
 
+	/**
+	 * Adjusts mark ranges after text insertion or deletion.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @param {number} from - The index where the change occurred.
+	 * @param {number} length - The length of the change (positive for insert, negative for delete).
+	 * @returns {I.Mark[]} The adjusted marks.
+	 */
 	adjust (marks: I.Mark[], from: number, length: number) {
 		marks = U.Common.objectCopy(marks || []);
 
@@ -260,6 +274,12 @@ class Mark {
 		return marks;
 	};
 	
+	/**
+	 * Converts text and marks to HTML.
+	 * @param {string} text - The text content.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @returns {string} The HTML string.
+	 */
 	toHtml (text: string, marks: I.Mark[]) {
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
@@ -376,6 +396,11 @@ class Mark {
 		return r.join('');
 	};
 
+	/**
+	 * Cleans HTML, removing unwanted tags and normalizing content.
+	 * @param {string} html - The HTML string.
+	 * @returns {JQuery<HTMLElement>} The cleaned jQuery object.
+	 */
 	cleanHtml (html: string) {
 		html = String(html || '');
 		html = html.replace(/&nbsp;/g, ' ');
@@ -407,6 +432,12 @@ class Mark {
 		return obj;
 	};
 	
+	/**
+	 * Parses HTML into marks and text, handling restrictions.
+	 * @param {string} html - The HTML string.
+	 * @param {I.MarkType[]} restricted - Restricted mark types.
+	 * @returns {{ marks: I.Mark[], text: string, adjustMarks: boolean }} The parsed result.
+	 */
 	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
 		const tags = this.getTags();
 		const rh = new RegExp(`<(\/)?(${Object.values(tags).join('|')})(?:([^>]*)>|>)`, 'ig');
@@ -484,6 +515,14 @@ class Mark {
 		return this.fromMarkdown(parsed.text, parsed.marks, restricted, parsed.adjustMarks);
 	};
 
+	/**
+	 * Parses markdown into marks and text, handling restrictions and adjustments.
+	 * @param {string} html - The markdown string.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @param {I.MarkType[]} restricted - Restricted mark types.
+	 * @param {boolean} adjustMarks - Whether to adjust marks.
+	 * @returns {{ marks: I.Mark[], text: string, adjustMarks: boolean }} The parsed result.
+	 */
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
 		const reg1 = /(^|[\s\(\[\{])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
 		const reg2 = /^[`\*_\[~]+/;
@@ -609,7 +648,12 @@ class Mark {
 		return { marks, text, adjustMarks };
 	};
 
-	// Unicode symbols
+	/**
+	 * Parses unicode patterns into marks and text.
+	 * @param {string} html - The HTML string.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @returns {{ marks: I.Mark[], text: string, adjustMarks: boolean }} The parsed result.
+	 */
 	fromUnicode (html: string, marks: I.Mark[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
 		const keys = Object.keys(Patterns).map(it => U.Common.regexEscape(it));
 		const reg = new RegExp(`(${keys.join('|')})`, 'g');
@@ -646,6 +690,12 @@ class Mark {
 		return { marks, text, adjustMarks };
 	};
 	
+	/**
+	 * Converts a mark type and param to an HTML attribute string.
+	 * @param {I.MarkType} type - The mark type.
+	 * @param {string} param - The parameter value.
+	 * @returns {string} The attribute string.
+	 */
 	paramToAttr (type: I.MarkType, param: string): string {
 		let attr = '';
 		
@@ -679,6 +729,12 @@ class Mark {
 		return attr;
 	};
 
+	/**
+	 * Toggles a link mark in the list of marks.
+	 * @param {I.Mark} newMark - The new link mark.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @returns {I.Mark[]} The updated marks.
+	 */
 	toggleLink (newMark: I.Mark, marks: I.Mark[]) {
 		for (let i = 0; i < marks.length; ++i) {
 			const mark = marks[i];
@@ -695,6 +751,12 @@ class Mark {
 		return this.toggle(marks, newMark);
 	};
 	
+	/**
+	 * Determines the overlap type between two text ranges.
+	 * @param {I.TextRange} a - The first range.
+	 * @param {I.TextRange} b - The second range.
+	 * @returns {I.MarkOverlap} The overlap type.
+	 */
 	overlap (a: I.TextRange, b: I.TextRange): I.MarkOverlap {
 		if (a.from == b.from && a.to == b.to) {
 			return I.MarkOverlap.Equal;
@@ -724,6 +786,10 @@ class Mark {
 		};
 	};
 
+	/**
+	 * Gets a mapping of mark type names to tag names.
+	 * @returns {Record<string, string>} The tags mapping.
+	 */
 	getTags () {
 		const tags: any = {};
 
@@ -736,6 +802,11 @@ class Mark {
 		return tags;
 	};
 
+	/**
+	 * Gets the HTML tag for a mark type.
+	 * @param {I.MarkType} t - The mark type.
+	 * @returns {string} The tag name.
+	 */
 	getTag (t: I.MarkType): string {
 		if (t == I.MarkType.Link) {
 			return 'a';
@@ -744,6 +815,11 @@ class Mark {
 		return I.MarkType[t] ? `markup${I.MarkType[t].toLowerCase()}` : '';
 	};
 
+	/**
+	 * Determines if a mark type needs a line break.
+	 * @param {I.MarkType} t - The mark type.
+	 * @returns {boolean} True if needs break.
+	 */
 	needsBreak (t: I.MarkType): boolean {
 		return [ 
 			I.MarkType.Link, 
@@ -755,6 +831,11 @@ class Mark {
 		].includes(t);
 	};
 
+	/**
+	 * Determines if a mark type can be saved.
+	 * @param {I.MarkType} t - The mark type.
+	 * @returns {boolean} True if can be saved.
+	 */
 	canSave (t: I.MarkType): boolean {
 		return ![ I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight ].includes(t);
 	};
