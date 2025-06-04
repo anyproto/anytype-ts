@@ -252,6 +252,10 @@ class Relation {
 		return U.Menu.prepareForSelect(ret);
 	};
 
+	/**
+	 * Returns filter conditions for dictionary relations.
+	 * @returns {Array<{id: I.FilterCondition, name: string}>} The filter conditions.
+	 */
 	public filterConditionsDictionary () {
 		return [ 
 			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
@@ -262,6 +266,12 @@ class Relation {
 		];
 	};
 
+	/**
+	 * Returns quick filter options for a relation type and condition.
+	 * @param {I.RelationType} type - The relation type.
+	 * @param {I.FilterCondition} condition - The filter condition.
+	 * @returns {Array<{id: I.FilterQuickOption, name: string}>} The quick options.
+	 */
 	public filterQuickOptions (type: I.RelationType, condition: I.FilterCondition) {
 		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
 			return [];
@@ -329,6 +339,13 @@ class Relation {
 		return ret.map(id => ({ id, name: translate(`quickOption${id}`) }));
 	};
 
+	/**
+	 * Formats a value for a relation, converting to the correct type.
+	 * @param {any} relation - The relation object.
+	 * @param {any} value - The value to format.
+	 * @param {boolean} maxCount - Whether to limit to maxCount.
+	 * @returns {any} The formatted value.
+	 */
 	public formatValue (relation: any, value: any, maxCount: boolean) {
 		if (!relation) {
 			return value;
@@ -376,6 +393,12 @@ class Relation {
 		return value;
 	};
 
+	/**
+	 * Checks if a value is valid for a relation.
+	 * @param {any} relation - The relation object.
+	 * @param {any} value - The value to check.
+	 * @returns {boolean} True if valid.
+	 */
 	public checkRelationValue (relation: any, value: any): boolean {
 		if (!relation) {
 			return false;
@@ -407,6 +430,12 @@ class Relation {
 		return ret;
 	};
 
+	/**
+	 * Maps a value for a relation key to a display value.
+	 * @param {any} relation - The relation object.
+	 * @param {any} value - The value to map.
+	 * @returns {any} The mapped value.
+	 */
 	public mapValue (relation: any, value: any) {
 		switch (relation.relationKey) {
 			case 'sizeInBytes': {
@@ -437,10 +466,22 @@ class Relation {
 		return null;
 	};
 
+	/**
+	 * Gets options for a relation value array.
+	 * @param {any[]} value - The value array.
+	 * @returns {any[]} The options.
+	 */
 	public getOptions (value: any[]) {
 		return this.getArrayValue(value).map(id => S.Record.getOption(id)).filter(it => it && !it._empty_);
 	};
 
+	/**
+	 * Gets filter options for a dataview.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {I.View} view - The view object.
+	 * @returns {any[]} The filter options.
+	 */
 	public getFilterOptions (rootId: string, blockId: string, view: I.View) {
 		const ret: any[] = [];
 		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
@@ -467,6 +508,10 @@ class Relation {
 		return ret;
 	};
 
+	/**
+	 * Gets size options for cards.
+	 * @returns {Array<{id: I.CardSize, name: string}>} The size options.
+	 */
 	public getSizeOptions () {
 		return U.Menu.prepareForSelect([
 			{ id: I.CardSize.Small, name: translate('libRelationSmall') },
@@ -475,6 +520,12 @@ class Relation {
 		]);
 	};
 
+	/**
+	 * Gets cover options for a dataview.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {any[]} The cover options.
+	 */
 	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
 		const options: any[] = U.Common.objectCopy(S.Record.getDataviewRelations(rootId, blockId)).filter(it => {
@@ -494,6 +545,13 @@ class Relation {
 		].concat(options);
 	};
 
+	/**
+	 * Gets group options for a dataview.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {I.ViewType} type - The view type.
+	 * @returns {any[]} The group options.
+	 */
 	public getGroupOptions (rootId: string, blockId: string, type: I.ViewType) {
 		let formats = [];
 
@@ -538,11 +596,25 @@ class Relation {
 		return options;
 	};
 
+	/**
+	 * Gets the group option for a dataview by relation key.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {I.ViewType} type - The view type.
+	 * @param {string} relationKey - The relation key.
+	 * @returns {any} The group option.
+	 */
 	public getGroupOption (rootId: string, blockId: string, type: I.ViewType, relationKey: string) {
 		const groupOptions = this.getGroupOptions(rootId, blockId, type);
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 
+	/**
+	 * Gets page limit options for a view type.
+	 * @param {I.ViewType} type - The view type.
+	 * @param {boolean} isInline - Whether the view is inline.
+	 * @returns {Array<{id: number, name: number}>} The page limit options.
+	 */
 	public getPageLimitOptions (type: I.ViewType, isInline: boolean) {
 		let options = [ 10, 20, 50, 70, 100 ];
 		if (type == I.ViewType.Gallery) {
@@ -551,6 +623,11 @@ class Relation {
 		return options.map(it => ({ id: it, name: it }));
 	};
 
+	/**
+	 * Gets dictionary options for a relation key.
+	 * @param {string} relationKey - The relation key.
+	 * @returns {Array<{id: string, name: string}>} The dictionary options.
+	 */
 	public getDictionaryOptions (relationKey: string) {
 		const names = U.Menu.getImportNames();
 		const dictionary = {
@@ -584,6 +661,11 @@ class Relation {
 		return options;
 	};
 
+	/**
+	 * Converts a value to a number, or null if invalid.
+	 * @param {any} value - The value to convert.
+	 * @returns {any} The number value or null.
+	 */
 	public getNumberValue (value: any): any {
 		if (value === 0) {
 			return value;
@@ -602,6 +684,11 @@ class Relation {
 		return value;
 	};
 
+	/**
+	 * Converts a value to a string.
+	 * @param {any} value - The value to convert.
+	 * @returns {string} The string value.
+	 */
 	public getStringValue (value: any): string {
 		if ((typeof value === 'object') && value && U.Common.hasProperty(value, 'length')) {
 			value = value.length ? value[0] : '';
@@ -609,6 +696,11 @@ class Relation {
 		return String(value || '');
 	};
 
+	/**
+	 * Converts a value to an array of strings.
+	 * @param {any} value - The value to convert.
+	 * @returns {any[]} The array value.
+	 */
 	public getArrayValue (value: any): any[] {
 		if (this.isEmpty(value)) {
 			return [];
@@ -622,22 +714,48 @@ class Relation {
 		return U.Common.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
 	};
 
+	/**
+	 * Checks if a value is empty (null, undefined, empty string, or empty array).
+	 * @param {any} v - The value to check.
+	 * @returns {boolean} True if empty.
+	 */
 	public isEmpty (v: any) {
 		return (v === null) || (v === undefined) || (v === '') || (Array.isArray(v) && !v.length);
 	};
 
+	/**
+	 * Checks if a relation type is a URL, email, or phone.
+	 * @param {I.RelationType} type - The relation type.
+	 * @returns {boolean} True if URL/email/phone.
+	 */
 	public isUrl (type: I.RelationType) {
 		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
 	};
 
+	/**
+	 * Checks if a relation type is text-like (URL, number, or short text).
+	 * @param {I.RelationType} type - The relation type.
+	 * @returns {boolean} True if text-like.
+	 */
 	public isText (type: I.RelationType) {
 		return this.isUrl(type) || [ I.RelationType.Number, I.RelationType.ShortText ].includes(type);
 	};
 
+	/**
+	 * Checks if a relation type is a date.
+	 * @param {I.RelationType} type - The relation type.
+	 * @returns {boolean} True if date.
+	 */
 	public isDate (type: I.RelationType) {
 		return type == I.RelationType.Date;
 	};
 
+	/**
+	 * Gets the URL scheme for a relation type.
+	 * @param {I.RelationType} type - The relation type.
+	 * @param {string} value - The value.
+	 * @returns {string} The URL scheme.
+	 */
 	public getUrlScheme (type: I.RelationType, value: string): string {
 		value = String(value || '');
 
@@ -654,6 +772,12 @@ class Relation {
 		return ret;
 	};
 
+	/**
+	 * Ensures a value has the correct URL scheme for a relation type.
+	 * @param {I.RelationType} type - The relation type.
+	 * @param {string} value - The value.
+	 * @returns {string} The value with scheme.
+	 */
 	public checkUrlScheme (type: I.RelationType, value: string): string {
 		value = String(value || '');
 
@@ -665,6 +789,13 @@ class Relation {
 		return scheme ? value : this.getUrlScheme(type, value) + value;
 	};
 
+	/**
+	 * Gets the setOf value as an array of objects for an object in the store.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} objectId - The object ID.
+	 * @param {I.ObjectLayout} layout - The object layout.
+	 * @returns {any[]} The set of objects.
+	 */
 	public getSetOfObjects (rootId: string, objectId: string, layout: I.ObjectLayout): any[] {
 		const object = S.Detail.get(rootId, objectId, [ 'setOf' ]);
 		const setOf = this.getArrayValue(object.setOf);
@@ -693,6 +824,12 @@ class Relation {
 		return ret;
 	};
 
+	/**
+	 * Gets a timestamp for a quick filter option.
+	 * @param {any} value - The value.
+	 * @param {I.FilterQuickOption} option - The quick option.
+	 * @returns {number} The timestamp.
+	 */
 	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
 		const time = U.Date.now();
 
@@ -748,6 +885,12 @@ class Relation {
 		return value;
 	};
 
+	/**
+	 * Gets parameters for creating a new object from a relation.
+	 * @param {string} name - The object name.
+	 * @param {any} relation - The relation object.
+	 * @returns {{ flags: I.ObjectFlag[], details: any }} The parameters.
+	 */
 	getParamForNewObject (name: string, relation: any): { flags: I.ObjectFlag[], details: any } {
 		const details: any = { name };
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
@@ -782,30 +925,62 @@ class Relation {
 		return { flags, details };
 	};
 
+	/**
+	 * Gets the list of system relation keys.
+	 * @returns {string[]} The system keys.
+	 */
 	systemKeys () {
 		return require('lib/json/generated/systemRelations.json');
 	};
 
+	/**
+	 * Gets the list of system relation keys, excluding user keys.
+	 * @returns {string[]} The system keys without user keys.
+	 */
 	systemKeysWithoutUser () {
 		return this.systemKeys().filter(it => !SKIP_SYSTEM_KEYS.includes(it));
 	};
 
+	/**
+	 * Checks if a relation key is a system key.
+	 * @param {string} relationKey - The relation key.
+	 * @returns {boolean} True if system key.
+	 */
 	isSystem (relationKey: string): boolean {
 		return this.systemKeys().includes(relationKey);
 	};
 
+	/**
+	 * Checks if a relation key is a system key (excluding user keys).
+	 * @param {string} relationKey - The relation key.
+	 * @returns {boolean} True if system key without user.
+	 */
 	isSystemWithoutUser (relationKey: string): boolean {
 		return this.systemKeysWithoutUser().includes(relationKey);
 	};
 
+	/**
+	 * Checks if a relation key is a dictionary key.
+	 * @param {string} relationKey - The relation key.
+	 * @returns {boolean} True if dictionary key.
+	 */
 	isDictionary (relationKey: string): boolean {
 		return DICTIONARY.includes(relationKey);
 	};
 
+	/**
+	 * Gets the list of array relation types.
+	 * @returns {I.RelationType[]} The array types.
+	 */
 	arrayTypes () {
 		return [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.File, I.RelationType.Object, I.RelationType.Relations ];
 	};
 
+	/**
+	 * Checks if a relation type is an array type.
+	 * @param {I.RelationType} format - The relation type.
+	 * @returns {boolean} True if array type.
+	 */
 	isArrayType (format: I.RelationType): boolean {
 		return this.arrayTypes().includes(format);
 	};
