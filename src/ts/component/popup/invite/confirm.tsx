@@ -33,7 +33,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
-			analytics.event('ApproveInviteRequest', { type: permissions, uxType: I.SpaceUxType[space?.uxType] });
+			analytics.event('ApproveInviteRequest', { type: permissions, uxType: space?.uxType });
 			setIsLoading(false);
 			close();
 		});

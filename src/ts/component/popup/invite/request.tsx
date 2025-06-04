@@ -56,7 +56,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		const { route } = data;
 		const space = U.Space.getSpaceview();
 
-		analytics.event('ScreenInviteRequest', { route, uxType: I.SpaceUxType[space.uxType] });
+		analytics.event('ScreenInviteRequest', { route, uxType: space.uxType });
 	};
 
 	onRequest () {
@@ -82,7 +82,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 
 			close(() => {
 				U.Common.onInviteRequest();
-				analytics.event('ScreenRequestSent', { uxType: I.SpaceUxType[space.uxType] });
+				analytics.event('ScreenRequestSent', { uxType: space.uxType });
 			});
 		});
 	};

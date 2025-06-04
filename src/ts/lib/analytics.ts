@@ -557,6 +557,10 @@ class Analytics {
 			converted.align = I.BlockHAlign[converted.align];
 		};
 
+		if (undefined !== converted.uxType) {
+			converted.uxType = I.SpaceUxType[converted.uxType];
+		};
+
 		if (undefined !== converted.usecase) {
 			converted.usecase = Number(converted.usecase) || 0;
 			converted.usecase = I.Usecase[converted.usecase];
