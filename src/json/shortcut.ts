@@ -119,8 +119,8 @@ const getSections = () => {
 						{ name: translate('popupShortcutNavigationPage5'), keys: [ cmdKey, 'arrowright' ] },
 						{ name: translate('popupShortcutNavigationPage6'), keys: [ cmdKey, 'arrowup' ] },
 						{ name: translate('popupShortcutNavigationPage7'), keys: [ cmdKey, 'arrowdown' ] },
-						{ id: 'moveSelectionUp', name: translate('popupShortcutNavigationPage8') + ' / ' + translate('blockTableShortcutRowMoveUp'), keys: [ cmdKey, 'shift', 'arrowup' ], description: translate('blockTableShortcutRowMoveUpDesc') },
-						{ id: 'moveSelectionDown', name: translate('popupShortcutNavigationPage11') + ' / ' + translate('blockTableShortcutRowMoveDown'), keys: [ cmdKey, 'shift', 'arrowdown' ], description: translate('blockTableShortcutRowMoveDownDesc') },
+						{ id: 'moveSelectionUp', name: translate('popupShortcutNavigationPage8'), keys: [ cmdKey, 'shift', 'arrowup' ] },
+						{ id: 'moveSelectionDown', name: translate('popupShortcutNavigationPage11'), keys: [ cmdKey, 'shift', 'arrowdown' ] },
 						{ name: translate('popupShortcutNavigationPage10'), keys: [ cmdKey, 'enter' ] },
 
 						{ id: 'turnBlock0', name: translate('popupShortcutEditorTurn0'), keys: [ cmdKey, '0' ], noEdit: true },
