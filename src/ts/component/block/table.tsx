@@ -786,6 +786,28 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let ret = false;
 
+		// Handle row reordering with Ctrl+Shift+Up/Down
+		keyboard.shortcut('moveSelectionUp, moveSelectionDown', e, (pressed: string) => {
+			e.preventDefault();
+
+			const dir = pressed == 'moveSelectionUp' ? -1 : 1;
+			const position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+			const { rows } = this.getData();
+			const idx = rows.findIndex(row => row.id === rowId);
+			const nextIdx = idx + dir;
+
+			if ((idx < 0) || (nextIdx < 0) || (nextIdx >= rows.length)) {
+				return;
+			};
+
+			const nextRow = rows[nextIdx];
+			if (nextRow && !nextRow.content.isHeader) {
+				this.onSortEndRow(rowId, nextRow.id, position);
+			};
+
+			ret = true;
+		});
+
 		keyboard.shortcut('shift+space', e, () => {
 			e.preventDefault();
 
@@ -796,7 +818,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		if (!ret) {
 			onKeyDown(e, text, marks, range, props);
 			this.framesUpdate();
-		};
+		}
 	};
 
 	onCellKeyUp (e: any, rowId: string, columnId: string, id: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
@@ -1173,7 +1195,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const { rootId } = this.props;
 
-		C.BlockTableColumnMove(this.props.rootId, id, targetId, position);
+		C.BlockTableColumnMove(rootId, id, targetId, position);
 
 		$('body').removeClass('grab');
 		keyboard.disableSelection(false);
