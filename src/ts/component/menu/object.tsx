@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, Preview, focus, Action, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, analytics, Preview, focus, Action, translate, sidebar } from 'Lib';
 
 class MenuObject extends React.Component<I.Menu> {
 	
@@ -101,6 +101,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const isInFileLayouts = U.Object.isInFileLayouts(object.layout);
 		const isInFileOrSystemLayouts = U.Object.isInFileOrSystemLayouts(object.layout);
 		const isTypeOrRelationLayout = U.Object.isTypeOrRelationLayout(object.layout);
+		const isType = U.Object.isTypeLayout(object.layout);
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
@@ -127,6 +128,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
 		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
+		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' }
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -184,6 +186,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedDownloadFile = isInFileLayouts;
 		const allowedOpenFile = isInFileLayouts;
 		const allowedOpenObject = isFilePreview;
+		const allowedEditType = isType;
 
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -206,6 +209,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedDownloadFile)	 downloadFile = null;
 		if (!allowedOpenFile)		 openFile = null;
 		if (!allowedOpenObject)		 openObject = null;
+		if (!allowedEditType) 		 editType = null;
 
 		if (!canWrite) {
 			template = null;
@@ -264,6 +268,7 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		sections = sections.concat([ { children: [ advanced ] } ]);
+		sections = [ { children: [ editType ] } ].concat(sections);
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -565,6 +570,11 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'openAsObject': {
 				U.Object.openAuto(object);
+				break;
+			};
+
+			case 'editType': {
+				sidebar.rightPanelToggle(true, true, keyboard.isPopup(), 'type', { rootId })
 				break;
 			};
 		};
