@@ -106,19 +106,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 						U.Space.initSpaceState();
 
 						if (isChatSpace) {
-							const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
-							const chatWidget = {
-								type: I.BlockType.Link,
-								content: {
-									targetBlockId: J.Constant.widgetId.chat,
-								},
-							};
-							C.BlockCreateWidget(S.Block.widgets, '', chatWidget, I.BlockPosition.Top, I.WidgetLayout.Link, Number(limitOptions[0].id), (message: any) => {
-								if (message.error.code) {
-									return;
-								};
-							});
-
 							C.SpaceMakeShareable(S.Common.space, (message: any) => {
 								if (message.error.code) {
 									return;
