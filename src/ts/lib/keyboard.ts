@@ -316,7 +316,7 @@ class Keyboard {
 				});
 
 				// Copy page link
-				this.shortcut(`${cmd}+shift+c`, e, () => {
+				this.shortcut('copyPageLink', e, () => {
 					e.preventDefault();
 					const rootId = this.getRootId();
 					const object = S.Detail.get(rootId, rootId);

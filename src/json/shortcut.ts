@@ -34,6 +34,7 @@ const getSections = () => {
 						{ id: 'undo', name: translate('popupShortcutMainBasics6'), keys: [ cmdKey, 'z' ] },
 						{ id: 'redo', name: translate('popupShortcutMainBasics7'), keys: [ cmdKey, 'shift', 'z' ] },
 						{ id: 'createWidget', name: translate('popupShortcutMainBasics25'), keys: [ cmdKey, 'shift', 'w' ] },
+						{ id: 'copyPageLink', name: translate('popupShortcutCopyPageLink'), keys: [ cmdKey, 'shift', 'c' ] },
 					]
 				},
 
