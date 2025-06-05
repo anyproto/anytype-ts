@@ -8,6 +8,7 @@ import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
 import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
+import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
 
 const SORT_IDS = [ 
 	'BlockAdd', 
@@ -39,7 +40,10 @@ class Dispatcher {
 			return;
 		};
 
-		this.service = new Service.ClientCommandsClient(address, null, null);
+		this.service = new Service.ClientCommandsClient(address, null, {
+			unaryInterceptors,
+			streamInterceptors,
+		});
 	};
 
 	startStream () {
