@@ -2,9 +2,9 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewCalendar { position: relative; height: 100%; padding: 0px; }
+		.viewContent.viewCalendar { position: relative; padding: 0px; }
 		.viewContent.viewCalendar {
-			.table { display: flex; flex-flow: column; height: 100%; }
+			.table { display: flex; flex-flow: column; }
 			.table {
 				> .head, > .body { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
 				> .head { flex-shrink: 0; }

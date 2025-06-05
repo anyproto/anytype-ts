@@ -23,7 +23,7 @@ class ScrollOnMove {
 
 		if (isPopup) {
 			const container = $('#popupPage-innerWrap');
-			const content = container.find('.content');
+			const content = container.find('> .content');
 
 			this.viewportWidth = container.width();
 			this.viewportHeight = container.height();
