@@ -54,6 +54,7 @@ const getSections = () => {
 				{
 					name: translate('popupShortcutNavigation'), children: [
 						{ id: 'settings', name: translate('popupShortcutNavigationBasics1'), keys: [ cmdKey, 'comma' ] },
+						{ id: 'settingsSpace', name: translate('popupShortcutNavigationBasics12'), keys: [] },
 						{ id: 'navigation', name: translate('popupShortcutNavigationBasics2'), keys: [ cmdKey, 'o' ] },
 						{ id: 'graph', name: translate('popupShortcutNavigationBasics3'), keys: [ cmdKey, 'alt', 'o' ] },
 						{ id: 'search', name: translate('popupShortcutNavigationBasics4'), keys: [ cmdKey, 'k' ] },

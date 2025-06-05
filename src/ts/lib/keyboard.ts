@@ -307,18 +307,11 @@ class Keyboard {
 				U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
 			});
 
-			// Move to bin
-			this.shortcut('moveToBin', e, () => {
+			// Settings
+			this.shortcut('settingsSpace', e, () => {
 				e.preventDefault();
 
-				Action[object.isArchived ? 'restore' : 'archive']([ rootId ], analytics.route.shortcut);
-			});
-
-			// Add to favorites
-			this.shortcut('addFavorite', e, () => {
-				e.preventDefault();
-
-				Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.shortcut);
+				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 			});
 
 			if (canWrite) {
@@ -341,6 +334,20 @@ class Keyboard {
 
 				// Lock/Unlock
 				this.shortcut('pageLock', e, () => this.onToggleLock());
+
+				// Move to bin
+				this.shortcut('moveToBin', e, () => {
+					e.preventDefault();
+
+					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], analytics.route.shortcut);
+				});
+
+				// Add to favorites
+				this.shortcut('addFavorite', e, () => {
+					e.preventDefault();
+
+					Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.shortcut);
+				});
 			};
 		};
 
