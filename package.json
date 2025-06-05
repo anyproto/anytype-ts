@@ -54,6 +54,7 @@
 		"@rspack/cli": "^1.1.0",
 		"@rspack/core": "^1.1.0",
 		"@rspack/plugin-react-refresh": "^1.0.0",
+		"@tomjs/electron-devtools-installer": "^3.0.1",
 		"@types/history": "^4.7.8",
 		"@types/jquery": "^3.5.14",
 		"@types/katex": "^0.14.0",

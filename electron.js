@@ -13,6 +13,10 @@ const Store = require('electron-store');
 const suffix = app.isPackaged ? '' : 'dev';
 const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
 
+// gRPC DevTools extension ID
+const GRPC_DEVTOOLS_ID = 'fohdnlaeecihjiendkfhifhlgldpeopm';
+const { installExtension } = require('@tomjs/electron-devtools-installer');
+
 // Fix notifications app name
 if (is.windows) {
     app.setAppUserModelId(app.name);
@@ -182,7 +186,7 @@ function createWindow () {
 	});
 };
 
-app.on('ready', () => {
+app.on('ready', async () => {
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		callback({
 			responseHeaders: {
@@ -191,6 +195,22 @@ app.on('ready', () => {
 			}
 		});
 	});
+
+	// Load gRPC DevTools extension in development mode
+	if (is.development) {
+		try {
+			// Install the extension using electron-devtools-installer
+			await installExtension(GRPC_DEVTOOLS_ID, {
+				loadExtensionOptions: {
+					allowFileAccess: true
+				}
+			});
+
+			console.log(`✅ gRPC DevTools extension installed`);
+		} catch (e) {
+			console.error('❌ Failed to install gRPC DevTools extension:', e.message);
+		};
+	};
 
 	ConfigManager.init(waitForLibraryAndCreateWindows);
 });
