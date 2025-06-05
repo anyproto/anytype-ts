@@ -781,74 +781,87 @@ class UtilMenu {
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const isLocalNetwork = U.Data.isLocalNetwork();
 		const { isOnline } = S.Common;
+		const options: any[] = [];
 
-		let options: any[] = [];
+		let cid = '';
+		let key = '';
 
-		if (isOwner && space.isShared && !isLocalNetwork && isOnline) {
-			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
-		};
+		const cb = () => {
+			if (isOwner && space.isShared && !isLocalNetwork && isOnline && cid && key) {
+				options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
+			};
 
-		if (space.isAccountRemoving) {
-			options = options.concat([
-				{ id: 'remove', color: 'red', name: translate('commonDelete') },
-			]);
-		} else 
-		if (space.isAccountJoining) {
-			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
-		} else {
-			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
-		};
+			if (space.isAccountRemoving) {
+				options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
+			} else 
+			if (space.isAccountJoining) {
+				options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
+			} else {
+				options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
+			};
 
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				onSelect: (e: any, element: any) => {
-					window.setTimeout(() => {
-						switch (element.id) {
-							case 'export': {
-								Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
-									zip: true, 
-									nested: true, 
-									files: true, 
-									archived: true, 
-									json: false, 
-									route: param.route,
-								});
-								break;
+			S.Menu.open('select', {
+				...param,
+				data: {
+					options,
+					onSelect: (e: any, element: any) => {
+						window.setTimeout(() => {
+							switch (element.id) {
+								case 'export': {
+									Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
+										zip: true, 
+										nested: true, 
+										files: true, 
+										archived: true, 
+										json: false, 
+										route: param.route,
+									});
+									break;
+								};
+
+								case 'remove': {
+									Action.removeSpace(targetSpaceId, param.route);
+									break;
+								};
+
+								case 'cancel': {
+									C.SpaceJoinCancel(targetSpaceId, (message: any) => {
+										if (message.error.code) {
+											window.setTimeout(() => {
+												S.Popup.open('confirm', { 
+													data: {
+														title: translate('commonError'),
+														text: message.error.description,
+													}
+												});
+											}, S.Popup.getTimeout());
+										};
+									});
+									break;
+								};
+
+								case 'revoke': {
+									Action.inviteRevoke(targetSpaceId);
+									break;
+								};
 							};
 
-							case 'remove': {
-								Action.removeSpace(targetSpaceId, param.route);
-								break;
-							};
-
-							case 'cancel': {
-								C.SpaceJoinCancel(targetSpaceId, (message: any) => {
-									if (message.error.code) {
-										window.setTimeout(() => {
-											S.Popup.open('confirm', { 
-												data: {
-													title: translate('commonError'),
-													text: message.error.description,
-												}
-											});
-										}, S.Popup.getTimeout());
-									};
-								});
-								break;
-							};
-
-							case 'revoke': {
-								Action.inviteRevoke(targetSpaceId);
-								break;
-							};
-						};
-
-					}, S.Menu.getTimeout());
+						}, S.Menu.getTimeout());
+					},
 				},
-			},
-		});
+			});
+		};
+
+		if (space.isShared) {
+			U.Space.getInvite(S.Common.space, (newCid: string, newKey: string, inviteType: I.InviteType) => {
+				cid = newCid;
+				key = newKey;
+
+				cb();
+			});
+		} else {
+			cb();
+		};
 	};
 
 	inviteContext (param: any) {
