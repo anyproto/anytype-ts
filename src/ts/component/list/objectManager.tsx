@@ -26,14 +26,14 @@ interface Props {
 	onAfterLoad?: (message: any) => void;
 };
 
-interface ListManagerRefProps {
+interface ObjectManagerRefProps {
 	getSelected(): string[];
 	setSelection(ids: string[]): void;
 	setSelectedRange(start: number, end: number): void;
 	selectionClear(): void;
 };
 
-const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
+const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	subId = '',
 	rowLength = 2,
 	buttons,
@@ -142,7 +142,9 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	};
 
 	const onScroll = ({ scrollTop }) => {
-		top.current = scrollTop;
+		if (scrollTop) {
+			top.current = scrollTop;
+		};
 	};
 
 	const load = () => {
@@ -421,6 +423,10 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 		};
 
 		listRef.current?.recomputeRowHeights();
+
+		if (top.current) {
+			listRef.current?.scrollToPosition(top.current);
+		};
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -438,4 +444,4 @@ const ListManager = observer(forwardRef<ListManagerRefProps, Props>(({
 	);
 }));
 
-export default ListManager;
+export default ObjectManager;
