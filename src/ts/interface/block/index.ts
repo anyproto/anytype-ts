@@ -1,5 +1,8 @@
 import { I } from 'Lib';
 
+export interface BlockRef {
+};
+
 export interface PageInfo {
 	id: string;
 	snippet: string;
