@@ -1633,6 +1633,10 @@ class Keyboard {
 				keys = item.split('+');
 			};
 
+			if (!keys.length) {
+				continue;
+			};
+
 			keys.sort();
 			
 			for (const k of keys) {
@@ -1647,7 +1651,7 @@ class Keyboard {
 			const check = U.Common.arrayUnique(pressed).sort().join('+');
 
 			if (check == keys.join('+')) {
-				res = check;
+				res = item;
 			};
 		};
 

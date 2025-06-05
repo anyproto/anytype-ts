@@ -80,9 +80,9 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			pressed.current.add(key);
 		};
 
-		keyboard.shortcut('nextSpace, prevSpace', e, pressed => {
+		keyboard.shortcut('prevSpace, nextSpace', e, pressed => {
 			checkKeyUp.current = true;
-			onArrow(pressed.match('shift') ? -1 : 1);
+			onArrow(pressed == 'prevSpace' ? -1 : 1);
 
 			if (sidebar.isAnimating) {
 				return;

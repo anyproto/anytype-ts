@@ -1009,12 +1009,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			// Tab, indent block
 			keyboard.shortcut('indent, outdent', e, (pressed: string) => {
-				const isShift = pressed.match('shift') ? true : false;
-
 				if (isInsideTable) {
 					this.onArrowHorizontal(e, text, pressed, { from: length, to: length }, length, props);
 				} else {
-					this.onTabBlock(e, range, isShift);
+					this.onTabBlock(e, range, pressed == 'outdent');
 				};
 			});
 
@@ -1059,7 +1057,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const shift = pressed.match('shift');
+		const shift = pressed == 'outdent';
 		const first = S.Block.getLeaf(rootId, ids[0]);
 		if (!first) {
 			return;
@@ -1096,7 +1094,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { rootId, isPopup } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
-		const dir = pressed.match(Key.up) ? -1 : 1;
+		const dir = pressed == 'moveSelectionUp' ? -1 : 1;
 		const ids = selection?.get(I.SelectType.Block, false) || [];
 
 		if (!ids.length) {
@@ -1167,7 +1165,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const dir = pressed.match(Key.up) ? -1 : 1;
+		const dir = pressed == 'moveSelectionUp' ? -1 : 1;
 
 		let next = S.Block.getNextBlock(rootId, block.id, dir, it => (
 			!it.isIcon() && 
@@ -1618,9 +1616,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = S.Block.getLeaf(rootId, focused);
-		const withTab = pressed.match(Key.tab);
+		const withTab = [ 'indent', 'outdent' ].includes(pressed);
 		const isRtl = U.Common.checkRtl(text);
-		const dir = (pressed.match([ Key.left, Key.shift ].join('|')) ? -1 : 1) * (isRtl ? -1 : 1);
+		
+		let dir = (pressed == 'outdent') || (pressed == Key.left) ? -1 : 1;
+		if (isRtl) {
+			dir = -dir;
+		};
 
 		if (!block) {
 			return;

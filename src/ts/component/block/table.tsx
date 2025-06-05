@@ -790,18 +790,20 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		keyboard.shortcut('moveSelectionUp, moveSelectionDown', e, (pressed: string) => {
 			e.preventDefault();
 
-			const dir = pressed.match('Up') ? -1 : 1;
+			const dir = pressed == 'moveSelectionUp' ? -1 : 1;
+			const position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			const { rows } = this.getData();
 			const idx = rows.findIndex(row => row.id === rowId);
 			const nextIdx = idx + dir;
 
-			if (idx === -1 || nextIdx < 0 || nextIdx >= rows.length) return;
+			if ((idx < 0) || (nextIdx < 0) || (nextIdx >= rows.length)) {
+				return;
+			};
 
 			const nextRow = rows[nextIdx];
 			if (nextRow && !nextRow.content.isHeader) {
-				const position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 				this.onSortEndRow(rowId, nextRow.id, position);
-			}
+			};
 
 			ret = true;
 		});
@@ -1193,7 +1195,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const { rootId } = this.props;
 
-		C.BlockTableColumnMove(this.props.rootId, id, targetId, position);
+		C.BlockTableColumnMove(rootId, id, targetId, position);
 
 		$('body').removeClass('grab');
 		keyboard.disableSelection(false);
