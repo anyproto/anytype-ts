@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, J, translate, Preview } from 'Lib';
+import { I, C, S, U, J, translate, Preview, Onboarding } from 'Lib';
 
 interface PageMainInviteRefProps {
 	resize: () => void;
@@ -8,7 +8,7 @@ interface PageMainInviteRefProps {
 
 const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((props, ref) => {
 
-	const { isPopup, match, location } = props;
+	const { isPopup, location } = props;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const cidRef = useRef('');
@@ -27,6 +27,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 
 		const request = (invite) => {
 			S.Popup.open('inviteRequest', { 
+				onClose: () => Onboarding.start('basics', isPopup),
 				data: { 
 					invite, 
 					cid, 
@@ -98,6 +99,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 							const creatorName = message.creatorName || translate('defaultNamePage');
 
 							S.Popup.open('confirm', {
+								onClose: () => Onboarding.start('basics', isPopup),
 								data: {
 									icon: 'join',
 									title: U.Common.sprintf(translate('popupConfirmJoinSpaceTitle'), spaceName),

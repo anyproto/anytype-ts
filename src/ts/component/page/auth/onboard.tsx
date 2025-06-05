@@ -12,6 +12,7 @@ enum Stage {
 const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	const { account } = S.Auth;
+	const { redirect } = S.Common;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const phraseRef = useRef(null);
@@ -61,23 +62,29 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 				S.Common.getRef('mainAnimation')?.destroy();
 				U.Space.initSpaceState();
 
-				const newRouteParam = { replace: true };
-
-				if (S.Auth.startingId) {
-					U.Object.getById(S.Auth.startingId, {}, object => {
-						if (object) {
-							U.Object.openRoute(object, newRouteParam);
-						} else {
-							U.Space.openDashboard(newRouteParam);
-						};
-					});
-				} else {
-					U.Space.openDashboard(newRouteParam);
-				};
+				const routeParam = { replace: true };
 
 				Storage.set('primitivesOnboarding', true);
 				Storage.setOnboarding('objectDescriptionButton');
 				Storage.setOnboarding('typeResetLayout');
+
+				if (redirect) {
+					U.Router.go(redirect, routeParam);
+					S.Common.redirectSet('');
+					return;
+				};
+
+				if (S.Auth.startingId) {
+					U.Object.getById(S.Auth.startingId, {}, object => {
+						if (object) {
+							U.Object.openRoute(object, routeParam);
+						} else {
+							U.Space.openDashboard(routeParam);
+						};
+					});
+				} else {
+					U.Space.openDashboard(routeParam);
+				};
 
 				Onboarding.start('basics', false);
 			},

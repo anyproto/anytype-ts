@@ -267,6 +267,8 @@ class UtilData {
 						};
 					};
 
+					S.Common.redirectSet('');
+
 					if (callBack) {
 						callBack();
 					};

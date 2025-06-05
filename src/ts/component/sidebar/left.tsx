@@ -154,8 +154,6 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 		};
 
 		this.frame = raf(() => {
-			console.log('onResizeMove', e.pageX, sidebar.isAnimating);
-
 			if (sidebar.isAnimating) {
 				return;
 			};

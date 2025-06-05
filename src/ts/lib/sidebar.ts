@@ -100,8 +100,6 @@ class Sidebar {
 		this.resizePage(0, null, true);
 		this.vaultHide();
 
-		console.log('CLOSE');
-
 		this.removeAnimation(() => {
 			this.objLeft.addClass('isClosed');
 
@@ -126,8 +124,6 @@ class Sidebar {
 		this.setElementsWidth(width);
 		this.setAnimating(true);
 		this.vaultShow(width);
-
-		console.log('OPEN');
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
