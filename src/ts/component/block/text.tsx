@@ -52,6 +52,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.onCopy = this.onCopy.bind(this);
 		this.onSelectIcon = this.onSelectIcon.bind(this);
 		this.onUploadIcon = this.onUploadIcon.bind(this);
+		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
@@ -207,7 +208,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
 					onDragStart={e => e.preventDefault()}
-					onCompositionEnd={this.onKeyUp}
+					onCompositionEnd={this.onCompositionEnd}
 				/>
 			</div>
 		);
@@ -253,55 +254,51 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this._isMounted = false;
 	};
 
-	setValue (v: string) {
+	setValue (v: string, restoreRange?: I.TextRange) {
 		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
 		const fields = block.fields || {};
-		
 		let text = String(v || '');
 		if (text === '\n') {
 			text = '';
-		};
-
+		}
 		this.text = text;
-
 		let html = text;
+		// Only apply unicode replacements if not composing IME
 		if (block.isTextCode()) {
 			const lang = U.Prism.aliasMap[fields.lang] || 'plain';fields.lang;
 			const grammar = Prism.languages[lang] || {};
-
 			html = Prism.highlight(html, grammar, lang);
 			this.refLang?.setValue(lang);
-		} else {
+		} else if (!keyboard.isComposition) {
 			const parsed = Mark.fromUnicode(html, this.marks);
-
 			html = parsed.text;
 			this.marks = parsed.marks;
-
 			html = Mark.toHtml(html, this.marks);
-		};
-
+		} else {
+			html = Mark.toHtml(html, this.marks);
+		}
 		html = html.replace(/\n/g, '<br/>');
-
 		if (this.refEditable) {
 			this.refEditable.setValue(html);
-		};
-
+			// Restore cursor position if provided
+			if (restoreRange) {
+				this.refEditable.setRange(restoreRange);
+			}
+		}
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
 			if (this.frame) {
 				raf.cancel(this.frame);
-			};
-
+			}
 			this.frame = raf(() => {
 				renderMentions(rootId, this.node, this.marks, () => this.getValue());
 				renderObjects(rootId, this.node, this.marks, () => this.getValue(), this.props);
 				renderLinks(rootId, this.node, this.marks, () => this.getValue(), this.props);
 				renderEmoji(this.node);
 			});
-		};
-
+		}
 		if (block.isTextTitle() || block.isTextDescription()) {
 			this.placeholderCheck();
-		};
+		}
 	};
 	
 	renderLatex () {
@@ -1234,6 +1231,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (this.refEditable) {
 			this.refEditable.placeholderHide();
 		};
+	};
+	
+	onCompositionEnd = (e: any, value: string, range: I.TextRange) => {
+		// Use provided value and range if available, fallback to current
+		const v = value !== undefined ? value : this.getValue();
+		const r = range !== undefined ? range : this.getRange();
+
+		this.setValue(v, r);
 	};
 	
 });

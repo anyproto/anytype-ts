@@ -23,7 +23,7 @@ interface Props {
 	onInput?: (e: any) => void;
 	onDragStart?: (e: any) => void;
 	onCompositionStart?: (e: any) => void;
-	onCompositionEnd?: (e: any) => void;
+	onCompositionEnd?: (e: any, value: string, range: I.TextRange) => void;
 };
 
 interface EditableRefProps {
@@ -200,7 +200,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		keyboard.setComposition(false);
 
 		if (onCompositionEnd) {
-			onCompositionEnd(e);
+			onCompositionEnd(e, getTextValue(), getRangeHandler());
 		};
 	};
 
