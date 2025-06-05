@@ -37,7 +37,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const itemsWithCounterIds = itemsWithCounter.map(it => it.id);
 	const itemsWithoutCounter = items.filter(it => !itemsWithCounterIds.includes(it.id));
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
-	const itemSettings = { ...profile, id: 'settings', name: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
+	const itemSettings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const canCreate = U.Space.canCreateSpace();
 
 	const cn = [ 'vault' ];
@@ -335,7 +335,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const element = node.find(`#item-${item.id}`);
 
 		Preview.tooltipShow({ 
-			text: U.Common.htmlSpecialChars(item.name), 
+			text: U.Common.htmlSpecialChars(item.tooltip || item.name), 
 			element, 
 			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,
