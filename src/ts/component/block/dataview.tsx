@@ -1243,6 +1243,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case 'source': {
+				cn.push('withHead');
+
 				emptyProps = {
 					title: translate('blockDataviewEmptySourceTitle'),
 					description: translate('blockDataviewEmptySourceDescription'),
