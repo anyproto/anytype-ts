@@ -303,13 +303,17 @@ class Keyboard {
 						e.preventDefault();
 						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 					});
-					// Create new widget
-					this.shortcut('createWidget', e, () => {
-						e.preventDefault();
-						const rootId = this.getRootId();
-						Action.createWidgetFromObject(rootId, rootId, rootId, I.BlockPosition.Top, analytics.route.shortcut);
-					});
 				};
+
+				// Create new widget
+				this.shortcut('createWidget', e, () => {
+					e.preventDefault();
+
+					const rootId = this.getRootId();
+					const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
+
+					Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.shortcut);
+				});
 
 				// Lock/Unlock
 				this.shortcut('pageLock', e, () => this.onToggleLock());
