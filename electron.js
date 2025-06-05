@@ -200,16 +200,17 @@ app.on('ready', async () => {
 	if (is.development) {
 		try {
 			// Install the extension using electron-devtools-installer
-			const extension = await installExtension(GRPC_DEVTOOLS_ID, {
+			await installExtension(GRPC_DEVTOOLS_ID, {
 				loadExtensionOptions: {
 					allowFileAccess: true
 				}
 			});
+
 			console.log(`✅ gRPC DevTools extension installed`);
-		} catch (err) {
-			console.error('❌ Failed to install gRPC DevTools extension:', err.message);
-		}
-	}
+		} catch (e) {
+			console.error('❌ Failed to install gRPC DevTools extension:', e.message);
+		};
+	};
 
 	ConfigManager.init(waitForLibraryAndCreateWindows);
 });
