@@ -152,9 +152,11 @@ class Keyboard {
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const selection = S.Common.getRef('selectionProvider');
+		const rootId = this.getRootId();
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
+
 			sidebar.toggleOpenClose();
 		});
 
@@ -309,10 +311,19 @@ class Keyboard {
 				this.shortcut('createWidget', e, () => {
 					e.preventDefault();
 
-					const rootId = this.getRootId();
 					const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
 					Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.shortcut);
+				});
+
+				// Copy page link
+				this.shortcut('copyPageLink', e, () => {
+					e.preventDefault();
+
+					const object = S.Detail.get(rootId, rootId);
+					const space = U.Space.getSpaceview();
+
+					U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
 				});
 
 				// Lock/Unlock
