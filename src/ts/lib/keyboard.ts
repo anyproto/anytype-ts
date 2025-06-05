@@ -147,12 +147,12 @@ class Keyboard {
 	onKeyDown (e: any) {
 		const { theme, pin } = S.Common;
 		const isPopup = this.isPopup();
-		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const selection = S.Common.getRef('selectionProvider');
 		const rootId = this.getRootId();
+		const object = S.Detail.get(rootId, rootId);
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -298,6 +298,22 @@ class Keyboard {
 				});
 			});
 
+			// Copy page link
+			this.shortcut('copyPageLink', e, () => {
+				e.preventDefault();
+
+				const space = U.Space.getSpaceview();
+
+				U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
+			});
+
+			// Move to bin
+			this.shortcut('moveToBin', e, () => {
+				e.preventDefault();
+
+				Action[object.isArchived ? 'restore' : 'archive']([ rootId ], analytics.route.shortcut);
+			});
+
 			if (canWrite) {
 				// Create new page
 				if (!S.Popup.isOpen('search') && !this.isMainSet()) {
@@ -314,16 +330,6 @@ class Keyboard {
 					const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
 					Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.shortcut);
-				});
-
-				// Copy page link
-				this.shortcut('copyPageLink', e, () => {
-					e.preventDefault();
-
-					const object = S.Detail.get(rootId, rootId);
-					const space = U.Space.getSpaceview();
-
-					U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
 				});
 
 				// Lock/Unlock

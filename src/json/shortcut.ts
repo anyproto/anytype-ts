@@ -35,6 +35,7 @@ const getSections = () => {
 						{ id: 'redo', name: translate('popupShortcutMainBasics7'), keys: [ cmdKey, 'shift', 'z' ] },
 						{ id: 'createWidget', name: translate('menuObjectCreateWidget'), keys: [] },
 						{ id: 'copyPageLink', name: translate('commonCopyLink'), keys: [] },
+						{ id: 'moveToBin', name: translate('popupShortcutMainBasics25'), keys: [] },
 					]
 				},
 
