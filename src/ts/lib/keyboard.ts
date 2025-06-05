@@ -315,6 +315,15 @@ class Keyboard {
 					Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.shortcut);
 				});
 
+				// Copy page link
+				this.shortcut(`${cmd}+shift+c`, e, () => {
+					e.preventDefault();
+					const rootId = this.getRootId();
+					const object = S.Detail.get(rootId, rootId);
+					const space = U.Space.getSpaceview();
+					U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
+				});
+
 				// Lock/Unlock
 				this.shortcut('pageLock', e, () => this.onToggleLock());
 			};
