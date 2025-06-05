@@ -305,6 +305,16 @@ class Keyboard {
 					});
 				};
 
+				// Create new widget
+				this.shortcut('createWidget', e, () => {
+					e.preventDefault();
+
+					const rootId = this.getRootId();
+					const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
+
+					Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.shortcut);
+				});
+
 				// Lock/Unlock
 				this.shortcut('pageLock', e, () => this.onToggleLock());
 			};

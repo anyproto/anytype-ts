@@ -170,7 +170,7 @@
 	"commonEdit": "Edit",
 	"commonEditType" : "Edit Type",
 	"commonShare": "Share",
-	"commonDoNotShowAgain": "Don’t show this again",
+	"commonDoNotShowAgain": "Don't show this again",
 	"commonObject": "Object",
 	"commonMedia": "Media",
 	"commonFile": "File",
@@ -425,7 +425,7 @@
 	"authOnboardNamePlaceholder": "Enter your name...",
 
 	"authOnboardEmailTitle": "Stay in the loop",
-	"authOnboardEmailLabel": "We’d love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won’t share your data. Ever.",
+	"authOnboardEmailLabel": "We'd love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won't share your data. Ever.",
 	"authOnboardEmailPlaceholder": "Enter your email...",
 
 	"authOnboardPhraseTitle": "This is your Key",
@@ -510,7 +510,7 @@
 	"pageMainHistoryRestore": "Restore",
 
 	"pageMainVoidTitle": "You're all out of spaces",
-	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
+	"pageMainVoidText": "Looks like you've cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
 	"pageMainVoidCreateSpace": "Create space",
 
 	"pageMainDateEmptyText" : "There is nothing here for this date yet",
@@ -536,11 +536,11 @@
 	"pageAuthMigrateInfoProcessTitle": "What to Expect",
 	"pageAuthMigrateInfoProcessText": "You'll see a loading screen during the update. Once finished, you can continue using the app normally.",
 	"pageAuthMigrateInfoDataTitle": "Your Data Remains Safe",
-	"pageAuthMigrateInfoDataText1": "During this update, your data remains fully secure. The update is performed directly on your device, and your synced data remains unaffected. We’ll just copy it to a new format, and a local backup will be created on your device, containing all your data in the previous format.",
-	"pageAuthMigrateInfoDataText2": "The reason we’re retaining this backup is to debug and assist you, in case of unforeseen.",
+	"pageAuthMigrateInfoDataText1": "During this update, your data remains fully secure. The update is performed directly on your device, and your synced data remains unaffected. We'll just copy it to a new format, and a local backup will be created on your device, containing all your data in the previous format.",
+	"pageAuthMigrateInfoDataText2": "The reason we're retaining this backup is to debug and assist you, in case of unforeseen.",
 
 	"pageAuthMigrateTitle": "Update is in progress...",
-	"pageAuthMigrateText": "This may take some time. Please don’t close the app until the process is complete.",
+	"pageAuthMigrateText": "This may take some time. Please don't close the app until the process is complete.",
 	"pageAuthMigrateErrorNotEnoughSpaceTitle": "Not enough space",
 	"pageAuthMigrateErrorNotEnoughSpaceText": "Please clear approximately %s of space and run the process again.",
 	"pageAuthMigrateTryAgain": "Try again",
@@ -869,7 +869,7 @@
 
 	"popupSettingsSpaceIndexShareShareTitle": "Share Space",
 	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
-	"popupSettingsSpaceIndexShareDefaultText": "Entry space can’t be shared. Create a new one to share",
+	"popupSettingsSpaceIndexShareDefaultText": "Entry space can't be shared. Create a new one to share",
 	"popupSettingsSpaceIndexShareInviteText": "Generate invite link and share the space with other members",
 	"popupSettingsSpaceIndexShareLinkTitle": "Invitation link",
 	"popupSettingsSpaceIndexShareLinkText": "Share this invite link so that others can join your Space",
@@ -951,7 +951,7 @@
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
 	"popupSettingsMembershipTitle1": "Membership",
-	"popupSettingsMembershipTitle2": "Let’s build together",
+	"popupSettingsMembershipTitle2": "Let's build together",
 	"popupSettingsMembershipText": "Joining Anytype network means contributing to its story",
 
 	"popupSettingsMembershipSlide0Title": "Build the Vision Together",
@@ -986,7 +986,7 @@
 	"popupSettingsOnboardingLocalOnlyNote": "This is an experimental mode.<br/>Use at your own risk.",
 	"popupSettingsOnboardingLocalOnlyConfirmText": "Local-only mode is an experimental feature and does not provide security benefits. Please use it at your own risk, as data loss may occur.",
 	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
-	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don’t use it",
+	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don't use it",
 
 
 	"popupSettingsDataLocalFiles": "Local files",
@@ -1044,7 +1044,7 @@
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
 	"popupLogoutTitle": "Make sure you saved your login key",
-	"popupLogoutText": "We have no way to recover your login key - it’s yours alone. Please save it before logging out.",
+	"popupLogoutText": "We have no way to recover your login key - it's yours alone. Please save it before logging out.",
 	"popupLogoutLogoutButton": "Logout",
 
 	"popupSpaceCreateLabel": "Encrypted & local-first",
@@ -1096,7 +1096,7 @@
 	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
 	"popupMembershipPaidByCrypto": "To upgrade your membership using cryptocurrency, please contact Anytype.",
 
-	"popupMembershipWhatsIncluded": "What’s included",
+	"popupMembershipWhatsIncluded": "What's included",
 
 	"popupMembershipSuccessTitle": "Welcome to the network, %s",
 	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
@@ -1142,7 +1142,7 @@
 	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
 
 	"popupConfirmRevokeLinkTitle": "Delete sharing link",
-	"popupConfirmRevokeLinkText": "New members won’t be able to join the space. You can generate a new link anytime.",
+	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can generate a new link anytime.",
 	"popupConfirmRevokeLinkConfirm": "Delete link",
 
 	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
@@ -1192,7 +1192,7 @@
 
 	"popupConfirmSpeedLimitTitle": "Hold up! Turbo typing detected!",
 	"popupConfirmSpeedLimitText": "Looks like you're sending messages at lightning speed. Give it a sec before your next one.",
-	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won’t carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
+	"popupConfirmReleaseChannelText": "<p>Switching to a different release channel will:</p><ul><li>Store your data in a separate sub-directory (your current account data won't carry over).</li><li>Unsynced files or objects may become inaccessible after switching.</li></ul><p>Your current account data remains in its previous location.</p>",
 
 	"popupConfirmLocalFieldsTitleSingle": "Add Property to the Type?",
 	"popupConfirmLocalFieldsTextSingle": "This Property will be added to the Type and will appear in all objects of this specific Type.",
@@ -1303,6 +1303,7 @@
 	"popupShortcutMainBasics22": "Lock Anytype",
 	"popupShortcutMainBasics23": "Previous Space",
 	"popupShortcutMainBasics24": "Lock / Unlock Object",
+	"popupShortcutMainBasics25": "Create widget",
 
 	"popupShortcutMainTextStyle": "Text style",
 	"popupShortcutMainTextStyle1": "Bold",
@@ -1475,7 +1476,7 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
-	"popupUsecaseBanner": "We’re updating our Gallery experiences so they're more compatible with our latest version. <a>Read more.</a>",
+	"popupUsecaseBanner": "We're updating our Gallery experiences so they're more compatible with our latest version. <a>Read more.</a>",
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no Properties shown yet",
@@ -1922,11 +1923,11 @@
 	"survey3Cancel": "No thanks",
 	"survey4Title": "Improve Anytype with Your Feedback",
 	"survey4Text": "Take our 1-minute survey to enhance space sharing. Your input makes Anytype better for everyone.",
-	"survey4Confirm": "Let’s Go!",
+	"survey4Confirm": "Let's Go!",
 	"survey4Cancel": "No thanks",
 	"survey5Title": "Improve Anytype with Your Feedback",
 	"survey5Text": "Take our 1-minute survey to enhance collaboration. Your input makes Anytype better for everyone.",
-	"survey5Confirm": "Let’s Go!",
+	"survey5Confirm": "Let's Go!",
 	"survey5Cancel": "No thanks",
 
 	"widget0Name": "Link",
@@ -2000,8 +2001,8 @@
 	"sidebarObjectSort": "Sort",
 	"sidebarObjectOrphan": "Only unlinked",
 	"sidebarObjectOrphanLabel": "Unlinked objects that do not have a direct link or backlink with other objects in the graph.",
-	"sidebarObjectEmpty": "It’s empty here.",
-	"sidebarObjectEmptyCreate": "It’s empty here.<br/><span class='small'>Create your first objects to get started.</span>",
+	"sidebarObjectEmpty": "It's empty here.",
+	"sidebarObjectEmptyCreate": "It's empty here.<br/><span class='small'>Create your first objects to get started.</span>",
 
 	"sidebarObjectSortCreated": "Date created",
 	"sidebarObjectSortUpdated": "Date updated",
@@ -2033,8 +2034,8 @@
 	"sidebarObjectRelationTypeDeleted": "The Type has been deleted",
 
 	"sidebarRelationLocal": "Local",
-	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren’t part of its type. Add them to the type to use in all objects, or remove",
-	"sidebarTypeRelationLocalDescription": "These properties exist in some objects but aren’t part of the Type. Add them to make them appear in all objects of this Type.",
+	"sidebarObjectRelationLocalDescription": "These properties exist only in this object and aren't part of its type. Add them to the type to use in all objects, or remove",
+	"sidebarTypeRelationLocalDescription": "These properties exist in some objects but aren't part of the Type. Add them to make them appear in all objects of this Type.",
 
 	"sidebarRelationLocalAddToType": "Add to the Type",
 	"sidebarRelationLocalRemoveFromObject": "Remove from object",
@@ -2066,7 +2067,7 @@
 	"onboardingStoreType": "Library",
 	"onboardingStoreType11": "<b>This Library contains all types of Objects and Properties.</b> It comes with preinstalled types, as well as types that can be uploaded to Anytype for different use cases.",
 	"onboardingStoreType21": "<b>You can create your own types with any object layout for your own purposes.</b> Additionally, you can save any existing object as a Library template if you need to use it frequently.",
-	"onboardingStoreType22": "Now, let’s take a look at the Properties menu.",
+	"onboardingStoreType22": "Now, let's take a look at the Properties menu.",
 
 	"onboardingStoreRelation": "Library",
 	"onboardingStoreRelation11": "<b>Properties are reusable links with meaning.</b> Here you can see some examples of Properties, but the idea is that you can create your own Properties which are valuable to you and connect the Objects through them.",
@@ -2081,8 +2082,8 @@
 	"emailCollectionStep0Title": "Want to stay in touch?",
 	"emailCollectionStep0Description": "Enter your email to receive tips and updates. We do not link your account with your email, ever. Cancel anytime.",
 	"emailCollectionStep1Title": "Just a moment",
-	"emailCollectionStep1Description": "Enter the code we’ve sent you to your email",
-	"emailCollectionStep2Title": "You’re Subscribed!",
+	"emailCollectionStep1Description": "Enter the code we've sent you to your email",
+	"emailCollectionStep2Title": "You're Subscribed!",
 
 	"emailCollectionStep2News": "You are now set to receive the latest updates. Enjoy exploring!",
 	"emailCollectionStep2Tips": "You are now set to receive new insights. Enjoy exploring!",
@@ -2408,7 +2409,7 @@
 	"notificationImportErrorText6": "The import was canceled by the user.",
 	"notificationImportErrorText7": "The number of lines of the CSV file exceeds limit of 1000 rows and 10 columns. Try splitting the file into smaller parts.",
 	"notificationImportErrorText8": "Error when uploading a file. Check if you have enough space and try again.",
-	"notificationImportErrorText9": "We don’t have permission to import into this Anytype space.",
+	"notificationImportErrorText9": "We don't have permission to import into this Anytype space.",
 	"notificationImportErrorText10": "An error occurred during HTML rendering. Check the format of your HTML file.",
 	"notificationImportErrorText11": "The imported AnyBlock file has an unsupported format. It may have been exported from an old or unsupported version of Anytype. Update it and try exporting again.",
 	"notificationImportErrorText12": "Notion API returned an internal error. Most likely something is broken on the Notion side. Try running the import again later.",
@@ -2515,6 +2516,6 @@
 
 	"apiScope0": "Webclipper",
 	"apiScope1": "API",
-	"apiScope2": "Full"
+	"apiScope2": "Full",
 
 }
