@@ -524,7 +524,10 @@ class Mark {
 	 * @returns {{ marks: I.Mark[], text: string, adjustMarks: boolean }} The parsed result.
 	 */
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const reg1 = /(^|[\s\(\[\{])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
+		// Updated regex: allow any character (including CJK/Unicode) before the markdown, and support leading underscores, etc.
+		// The negative lookbehind ensures we don't match inside other code marks, and we don't require a space or specific punctuation before the backtick.
+		// This will match inline code even if adjacent to CJK or other Unicode characters.
+		const reg1 = /((?<!`))(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/gu;
 		const reg2 = /^[`\*_\[~]+/;
 		const test = reg1.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
@@ -580,7 +583,8 @@ class Mark {
 			const length = symbol.length;
 			const from = o + p1l;
 			const to = from + p2l - length * 2;
-			const replace = p2.replace(new RegExp(U.Common.regexEscape(symbol), 'g'), '') + ' ';
+			// Remove the markdown symbols but do NOT add a space after the inline code (fix for CJK/Unicode/English adjacency)
+			const replace = p2.replace(new RegExp(U.Common.regexEscape(symbol), 'g'), '');
 
 			let check = true;
 			for (const mark of checked) {
@@ -596,7 +600,7 @@ class Mark {
 			};
 
 			marks = this.adjust(marks, from, -length);
-			marks = this.adjust(marks, to, -length + 1);
+			marks = this.adjust(marks, to, -length);
 			marks.push({ type, range: { from, to }, param: '' });
 
 			text = U.Common.stringInsert(text, replace, o + p1l, o + p1l + p2l);
