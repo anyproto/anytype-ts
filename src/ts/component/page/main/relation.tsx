@@ -525,7 +525,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						skipIds,
 						value: [],
 						relation: observable.box(object),
-						onChange: () => { return false },
 					},
 				});
 				break;

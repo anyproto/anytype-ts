@@ -285,7 +285,10 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		};
 
 		S.Menu.updateData(this.props.id, { value });
-		onChange(value);
+		
+		if (onChange) {
+			onChange(value);
+		};
 	};
 
 	onValueRemove (id: string) {
@@ -297,7 +300,10 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		value.splice(idx, 1);
 		S.Menu.updateData(this.props.id, { value });
-		onChange(value);
+		
+		if (onChange) {
+			onChange(value);
+		};
 	};
 
 	onOptionAdd () {
@@ -374,7 +380,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	getItems (): any[] {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, filterMapper, canEdit, noSelect } = data;
+		const { canAdd, filterMapper, canEdit } = data;
 		const relation = data.relation.get();
 		const isSelect = relation.format == I.RelationType.Select;
 		const value = Relation.getArrayValue(data.value);
@@ -400,13 +406,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			return 0;
 		});
 
-		if ((canEdit || noSelect) && data.filter) {
+		if (data.filter) {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
 			items = items.filter(it => it.name.match(filter));
 
-			if (canAdd && !check.length) {
+			if (canEdit && canAdd && !check.length) {
 				ret.unshift({ 
 					id: 'add', 
 					name: U.Common.sprintf(isSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
