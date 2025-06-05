@@ -314,6 +314,13 @@ class Keyboard {
 				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 			});
 
+			// Logout
+			this.shortcut('logout', e, () => {
+				e.preventDefault();
+
+				S.Popup.open('logout', {});
+			});
+
 			if (canWrite) {
 				// Create new page
 				if (!S.Popup.isOpen('search') && !this.isMainSet()) {
