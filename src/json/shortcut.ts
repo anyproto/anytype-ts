@@ -36,6 +36,7 @@ const getSections = () => {
 						{ id: 'createWidget', name: translate('menuObjectCreateWidget'), keys: [] },
 						{ id: 'copyPageLink', name: translate('commonCopyLink'), keys: [] },
 						{ id: 'moveToBin', name: translate('popupShortcutMainBasics25'), keys: [] },
+						{ id: 'addFavorite', name: translate('popupShortcutMainBasics26'), keys: [] },
 					]
 				},
 

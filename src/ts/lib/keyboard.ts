@@ -314,6 +314,13 @@ class Keyboard {
 				Action[object.isArchived ? 'restore' : 'archive']([ rootId ], analytics.route.shortcut);
 			});
 
+			// Add to favorites
+			this.shortcut('addFavorite', e, () => {
+				e.preventDefault();
+
+				Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.shortcut);
+			});
+
 			if (canWrite) {
 				// Create new page
 				if (!S.Popup.isOpen('search') && !this.isMainSet()) {
