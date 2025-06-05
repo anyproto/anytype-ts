@@ -197,10 +197,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	onMore (e: any, item: any) {
 		const { getId, param, id, position } = this.props;
 		const { data, classNameWrap } = param;
-		const { onChange } = data;
+		const { canEdit, onChange } = data;
 		const itemEl = $(`#${getId()} #item-${item.id}`);
 		const element = `#${getId()} #item-${item.id} .icon.more`;
-		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const isAllowed = canEdit && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 		let value = Relation.getArrayValue(data.value);
 		let options: any[] = [
