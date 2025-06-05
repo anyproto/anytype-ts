@@ -566,7 +566,7 @@ class App extends React.Component<object, State> {
 
 		keyboard.disableContextOpen(true);
 
-		const { focused, range } = focus.state;
+		const { focused } = focus.state;
 		const win = $(window);
 		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
 		const element = $(document.elementFromPoint(x, y));
@@ -596,10 +596,21 @@ class App extends React.Component<object, State> {
 									const value = String(obj.get(0).innerText || '');
 
 									S.Block.updateContent(rootId, focused, { text: value });
-									U.Data.blockInsertText(rootId, focused, item.id, range.from, range.to);
 
-									focus.set(focused, { from: range.from, to: range.from + item.id.length });
-									focus.apply();
+									// Find the first occurrence of the misspelled word in the value
+									const wordIndex = value.indexOf(misspelledWord);
+									if (wordIndex >= 0) {
+										U.Data.blockInsertText(
+											rootId,
+											focused,
+											item.id,
+											wordIndex,
+											wordIndex + misspelledWord.length
+										);
+
+										focus.set(focused, { from: wordIndex, to: wordIndex + item.id.length });
+										focus.apply();
+									};
 								} else 
 								if (isInput || isTextarea || isEditable) {
 									let value = '';

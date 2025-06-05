@@ -13,16 +13,23 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const onRegister = () => {
+		const { account } = S.Auth;
+		const cb = () => U.Router.go('/auth/onboard', {});
+
+		if (account) {
+			cb();
+			return;
+		};
+
 		registerRef.current.setLoading(true);
 
 		U.Data.accountCreate(error => {
 			registerRef.current.setLoading(false);
 			setError(error);
-		}, () => Animation.from(() => U.Router.go('/auth/onboard', {})));
+		}, () => Animation.from(cb));
 	};
 
 	useEffect(() => {
-		S.Auth.clearAll();
 		S.Common.getRef('mainAnimation')?.create();
 
 		Animation.to(() => {
