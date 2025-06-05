@@ -1,73 +1,31 @@
-import * as React from 'react';
-import { Input, Button, Loader } from 'Component';
-import { I, C, S, keyboard, translate, analytics } from 'Lib';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import { Input, Button, Loader, Icon } from 'Component';
+import { I, C, S, U, translate, analytics } from 'Lib';
 
-interface State { 
-	loading: boolean;
-};
+const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
-	
-	ref = null;
+	const { param, close } = props;
+	const inputRef = useRef(null);
+	const buttonRef = useRef(null);
+	const [ isLoading, setIsLoading ] = useState(false);
+	const { data } = param;
+	const { value } = data;
 
-	state = {
-		loading: false,
-	};
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onSubmit = this.onSubmit.bind(this);
-	};
-
-	render () {
-		const { loading } = this.state;
-		const { param } = this.props;
-		const { data } = param;
-		const { value } = data;
-
-		return (
-			<form onSubmit={this.onSubmit} className="flex">
-				{loading ? <Loader /> : ''}
-
-				<Input 
-					ref={ref => this.ref = ref} 
-					value={value} 
-					placeholder={translate('defaultNameBookmark')} 
-					focusOnMount={true}
-				/>
-
-				<div className="buttons">
-					<Button type="input" color="blank" text={translate('commonCreate')} onClick={this.onSubmit} />
-				</div>
-			</form>
-		);
-	};
-	
-	componentDidMount () {
-		this.rebind();
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
+	const rebind = () => {
+		unbind();
 		$(window).on('keydown.menu', e => {});
 	};
 
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onSubmit (e: any) {
+	const onSubmit = (e: any) => {
 		e.preventDefault();
 
-		const { close, param } = this.props;
 		const { data } = param;
 		const { onSubmit, route } = data;
-		const value = this.ref.getValue();
+		const value = inputRef.current.getValue();
 		const details = data.details || {};
 		const bookmark = S.Record.getBookmarkType();
 
@@ -75,10 +33,10 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		this.setState({ loading: true });
+		setIsLoading(true);
 
 		C.ObjectCreateBookmark({ ...details, source: value }, S.Common.space, bookmark?.defaultTemplateId, (message: any) => {
-			this.setState({ loading: false });
+			setIsLoading(false);
 
 			if (message.error.code) {
 				S.Popup.open('confirm', {
@@ -102,6 +60,38 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 		});
 	};
 
-};
+	const onChange = (e: any, v: string) => {
+		$(buttonRef.current.getNode()).toggleClass('hide', !v);
+	};
+
+	useEffect(() => {
+		rebind();
+		$(buttonRef.current.getNode()).addClass('hide');
+
+		return () => unbind();
+	}, []);
+
+	return (
+		<form onSubmit={onSubmit} className="form">
+			{isLoading ? <Loader /> : ''}
+
+			<Icon className="link" />
+
+			<Input 
+				ref={inputRef} 
+				value={value} 
+				placeholder={translate('commonPasteLink')} 
+				focusOnMount={true}
+				onKeyDown={onChange}
+				onKeyUp={onChange}
+			/>
+
+			<div className="buttons">
+				<Button ref={buttonRef} type="input" color="blank" text={translate('commonCreate')} onClick={onSubmit} />
+			</div>
+		</form>
+	);
+
+});
 
 export default MenuDataviewCreateBookmark;

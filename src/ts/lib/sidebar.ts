@@ -29,6 +29,9 @@ class Sidebar {
 	isAnimating = false;
 	timeoutAnim = 0;
 
+	/**
+	 * Initializes sidebar objects and state from storage.
+	 */
 	init () {
 		this.initObjects();
 
@@ -56,6 +59,9 @@ class Sidebar {
 		this.objLeft.toggleClass('isClosed', isClosed);
 	};
 
+	/**
+	 * Initializes DOM object references for sidebar elements.
+	 */
 	initObjects () {
 		const isPopup = keyboard.isPopup();
 		const vault = S.Common.getRef('vault');
@@ -76,6 +82,9 @@ class Sidebar {
 		};
 	};
 
+	/**
+	 * Closes the sidebar with animation and updates state.
+	 */
 	close (): void {
 		const { width, isClosed } = this.data;
 
@@ -91,6 +100,8 @@ class Sidebar {
 		this.resizePage(0, null, true);
 		this.vaultHide();
 
+		console.log('CLOSE');
+
 		this.removeAnimation(() => {
 			this.objLeft.addClass('isClosed');
 
@@ -103,6 +114,10 @@ class Sidebar {
 		});
 	};
 
+	/**
+	 * Opens the sidebar to the specified width with animation.
+	 * @param {number} [width] - The width to open the sidebar to.
+	 */
 	open (width?: number): void {
 		if (!this.objLeft || !this.objLeft.length || this.isAnimating || !this.data.isClosed) {
 			return;
@@ -111,6 +126,8 @@ class Sidebar {
 		this.setElementsWidth(width);
 		this.setAnimating(true);
 		this.vaultShow(width);
+
+		console.log('OPEN');
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
@@ -129,6 +146,9 @@ class Sidebar {
 		}, this.getVaultDuration(width));
 	};
 
+	/**
+	 * Toggles the sidebar open/close state.
+	 */
 	toggleOpenClose () {
 		if (this.isAnimating) {
 			return;
@@ -140,12 +160,20 @@ class Sidebar {
 		S.Menu.closeAll();
 	};
 
+	/**
+	 * Sets the width of sidebar elements.
+	 * @param {any} width - The width to set.
+	 */
 	setElementsWidth (width: any): void {
 		this.objLeft.find('#head').css({ width });
 		this.objLeft.find('#body').css({ width });
 		this.objLeft.find('#shareBanner').css({ width: (width ? width - 24 : '') });
 	};
 
+	/**
+	 * Sets the sidebar width and updates layout.
+	 * @param {number} w - The width to set.
+	 */
 	setWidth (w: number): void {
 		w = this.limitWidth(w);
 
@@ -169,6 +197,9 @@ class Sidebar {
 		}, J.Constant.delay.sidebar);
 	};
 
+	/**
+	 * Handles mouse move events for sidebar hover and auto-show/hide.
+	 */
 	onMouseMove (): void {
 		const { showVault, hideSidebar } = S.Common;
 
@@ -226,6 +257,12 @@ class Sidebar {
 		return isClosed || !showVault || !isMain || isPopup ? 0 : J.Size.vault.width;
 	};
 
+	/**
+	 * Resizes the page and sidebar elements based on sidebar widths and animation state.
+	 * @param {number} widthLeft - The width of the left sidebar.
+	 * @param {number} widthRight - The width of the right sidebar.
+	 * @param {boolean} animate - Whether to animate the resize.
+	 */
 	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
 		const isPopup = keyboard.isPopup();
 		const isMain = keyboard.isMain();
@@ -306,10 +343,17 @@ class Sidebar {
 		$(window).trigger('sidebarResize');
 	};
 
+	/**
+	 * Saves the current sidebar state to storage.
+	 */
 	private save (): void {
 		Storage.set('sidebar', this.data);
 	};
 
+	/**
+	 * Sets the sidebar data and updates the style.
+	 * @param {Partial<SidebarData>} v - The new sidebar data.
+	 */
 	set (v: Partial<SidebarData>): void {
 		v = Object.assign(this.data, v);
 
@@ -323,10 +367,18 @@ class Sidebar {
 		this.setStyle(this.data);
 	};
 
+	/**
+	 * Sets the animating state of the sidebar.
+	 * @param {boolean} v - The animating state.
+	 */
 	public setAnimating (v: boolean) {
 		this.isAnimating = v;
 	};
 
+	/**
+	 * Sets the style of the sidebar elements.
+	 * @param {Partial<SidebarData>} v - The style data.
+	 */
 	private setStyle (v: Partial<SidebarData>): void {
 		if (!this.objLeft || !this.objLeft.length) {
 			return;
@@ -338,29 +390,47 @@ class Sidebar {
 	};
 
 	/**
-	 * Limit the sidebar width to the max and min bounds
+	 * Limits the sidebar width to the allowed min and max bounds.
+	 * @param {number} width - The width to limit.
+	 * @returns {number} The limited width.
 	 */
 	private limitWidth (width: number): number {
 		const { min, max } = J.Size.sidebar.width;
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 
+	/**
+	 * Gets the width of the sidebar dummy element.
+	 * @returns {number} The dummy width.
+	 */
 	getDummyWidth (): number {
 		return Number($('#sidebarDummyLeft').outerWidth()) || 0;
 	};
 
+	/**
+	 * Hides the vault sidebar element with animation.
+	 */
 	vaultHide () {
 		this.vault.addClass('anim');
 		this.setVaultAnimationParam(this.data.width, true);
 		this.vault.addClass('isClosed');
 	};
 
+	/**
+	 * Shows the vault sidebar element with animation.
+	 * @param {number} width - The width to show the vault at.
+	 */
 	vaultShow (width: number) {
 		this.vault.addClass('anim');
 		this.setVaultAnimationParam(width, false);
 		this.vault.removeClass('isClosed');
 	};
 
+	/**
+	 * Sets the vault animation parameters.
+	 * @param {number} width - The width for the animation.
+	 * @param {boolean} withDelay - Whether to add a delay to the animation.
+	 */
 	setVaultAnimationParam (width: number, withDelay: boolean) {
 		const css: any = { transitionDuration: `${this.getVaultDuration(width)}ms`, transitionDelay: '' };
 
@@ -371,15 +441,33 @@ class Sidebar {
 		this.vault.css(css);
 	};
 
+	/**
+	 * Gets the duration for the vault animation based on width.
+	 * @param {number} width - The width for the animation.
+	 * @returns {number} The animation duration in ms.
+	 */
 	getVaultDuration (width: number): number {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
+	/**
+	 * Gets the reference to the right panel for the given context.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {any} The right panel reference.
+	 */
 	rightPanelRef (isPopup: boolean) {
 		const namespace = U.Common.getEventNamespace(isPopup);
 		return S.Common.getRef(`sidebarRight${namespace}`);
 	};
 
+	/**
+	 * Toggles the right panel open or closed with animation.
+	 * @param {boolean} v - Whether to open the panel.
+	 * @param {boolean} animate - Whether to animate the toggle.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @param {string} [page] - The page to show in the panel.
+	 * @param {any} [param] - Additional parameters for the panel.
+	 */
 	rightPanelToggle (v: boolean, animate: boolean, isPopup: boolean, page?: string, param?: any) {
 		if (v) {
 			S.Common.showSidebarRightSet(isPopup, v);
@@ -429,10 +517,19 @@ class Sidebar {
 		}, animate ? J.Constant.delay.sidebar : 0);
 	};
 
+	/**
+	 * Sets the state of the left panel.
+	 * @param {any} v - The state to set.
+	 */
 	leftPanelSetState (v: any) {
 		S.Common.getRef('sidebarLeft')?.setState(v);
 	};
 
+	/**
+	 * Sets the state of the right panel for the given context.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @param {any} v - The state to set.
+	 */
 	rightPanelSetState (isPopup: boolean, v: any) {
 		this.rightPanelRef(isPopup)?.setState(v);
 	};

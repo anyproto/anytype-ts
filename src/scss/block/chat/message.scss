@@ -145,16 +145,17 @@
 	}
 
 	&.canExpand {
-		.expand { display: flex; }
-		.text { @include clamp10; }
+		.bubbleInner {
+			.expand { display: flex; }
+			.text { @include clamp10; }
+		}
 	}
 
 	&.canExpand.isExpanded {
-		.text { -webkit-line-clamp: unset; }
-		.reply {
-			.text { @include clamp10; }
+		.bubbleInner {
+			.expand::after { transform: rotateZ(180deg); margin-top: 2px; }
+			.text { -webkit-line-clamp: unset; }
 		}
-		.expand::after { transform: rotateZ(180deg); margin-top: 2px; }
 	}
 
 	&:hover, &.hover {

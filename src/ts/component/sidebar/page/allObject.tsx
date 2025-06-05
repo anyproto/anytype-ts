@@ -657,22 +657,15 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	};
 
 	onBookmarkMenu (details: any, callBack: (id: string) => void) {
-		const node = $(this.node);
-		const width = node.width() - 32;
-
-		S.Menu.open('dataviewCreateBookmark', {
+		U.Menu.onBookmarkMenu({
 			element: '#sidebarLeft #containerObject #button-object-create',
 			offsetY: 4,
-			width,
+			width: $(this.node).width() - 32,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
-			type: I.MenuType.Horizontal,
-			data: {
-				details,
-				onSubmit: object => callBack(object.id),
-			},
-		});
+			data: { details },
+		}, object => callBack(object.id));
 	};
 
 	onOver (item: any, index: number) {

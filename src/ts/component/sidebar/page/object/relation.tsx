@@ -27,6 +27,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const type = S.Record.getTypeById(object.type);
 		const allowObjectDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const allowTypeDetails = S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
+		const isTemplate = U.Object.isTemplate(object.type);
 
         return (
 			<>
@@ -63,7 +64,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 						};
 
 						let button = null;
-						if ((id == 'local') && allowObjectDetails && !readonly) {
+						if ((id == 'local') && allowObjectDetails && !readonly && !isTemplate) {
 							button = (
 								<Icon 
 									className="plus withBackground" 

@@ -3,6 +3,13 @@ import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 
 class Dataview {
 
+	/**
+	 * Gets the relations for a dataview, ordered and filtered for visibility.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {I.View} view - The dataview object.
+	 * @returns {I.ViewRelation[]} The list of view relations.
+	 */
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
 		if (!view) {
 			return [];
@@ -54,6 +61,15 @@ class Dataview {
 		return U.Common.arrayUniqueObjects(ret, 'relationKey');
 	};
 
+	/**
+	 * Adds a relation to a dataview and updates the view.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} relationKey - The relation key to add.
+	 * @param {number} index - The index to insert at.
+	 * @param {I.View} view - The dataview view object.
+	 * @param {function} [callBack] - Optional callback after addition.
+	 */
 	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view: I.View, callBack?: (message: any) => void) {
 		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
 			if (!message.error.code) {
@@ -62,6 +78,15 @@ class Dataview {
 		});
 	};
 
+	/**
+	 * Adds a relation to a dataview view and sorts it.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} relationKey - The relation key to add.
+	 * @param {number} index - The index to insert at.
+	 * @param {I.View} [view] - The dataview view object.
+	 * @param {function} [callBack] - Optional callback after addition.
+	 */
 	viewRelationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
 		if (!view) {
 			return;
@@ -94,6 +119,11 @@ class Dataview {
 		});
 	};
 
+	/**
+	 * Gets data for a dataview subscription, applying filters and sorts.
+	 * @param {any} param - The parameters for the data request.
+	 * @param {function} [callBack] - Optional callback after data is received.
+	 */
 	getData (param: any, callBack?: (message: any) => void) {
 		param = Object.assign({
 			rootId: '',
@@ -156,6 +186,12 @@ class Dataview {
 		}, callBack);
 	};
 
+	/**
+	 * Maps a filter or sort object for a dataview subscription.
+	 * @param {any} view - The dataview view object.
+	 * @param {any} it - The filter or sort object.
+	 * @returns {any} The mapped object.
+	 */
 	filterMapper (view: any, it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 
@@ -169,6 +205,13 @@ class Dataview {
 		return it;
 	};
 
+	/**
+	 * Gets a view object by ID or returns the first available view.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} [viewId] - The view ID.
+	 * @returns {I.View} The view object.
+	 */
 	getView (rootId: string, blockId: string, viewId?: string): I.View {
 		let view = null;
 
@@ -190,6 +233,12 @@ class Dataview {
 		return view;
 	};
 
+	/**
+	 * Checks if a block is a collection layout.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {boolean} True if the block is a collection.
+	 */
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
 		const isInline = !U.Object.isInSystemLayouts(object.layout);
@@ -209,6 +258,13 @@ class Dataview {
 		return target ? U.Object.isCollectionLayout(target.layout) : isCollection;
 	};
 
+	/**
+	 * Loads the group list for a dataview and updates the store.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {any} object - The object data.
+	 */
 	loadGroupList (rootId: string, blockId: string, viewId: string, object: any) {
 		const view = this.getView(rootId, blockId, viewId);
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -268,6 +324,12 @@ class Dataview {
 		});
 	};
 
+	/**
+	 * Gets a filter object for a group relation and value.
+	 * @param {any} relation - The relation object.
+	 * @param {any} value - The value to filter by.
+	 * @returns {I.Filter} The filter object.
+	 */
 	getGroupFilter (relation: any, value: any): I.Filter {
 		const filter: any = { relationKey: relation.relationKey };
 
@@ -294,6 +356,14 @@ class Dataview {
 		return filter;
 	};
 
+	/**
+	 * Gets the list of groups for a dataview, applying order and visibility.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {boolean} withHidden - Whether to include hidden groups.
+	 * @returns {any[]} The list of groups.
+	 */
 	getGroups (rootId: string, blockId: string, viewId: string, withHidden: boolean) {
 		const groups = U.Common.objectCopy(S.Record.getGroups(rootId, blockId));
 		const ret = this.applyGroupOrder(rootId, blockId, viewId, groups);
@@ -301,6 +371,13 @@ class Dataview {
 		return !withHidden ? ret.filter(it => !it.isHidden) : ret;
 	};
 
+	/**
+	 * Updates the group list for a dataview block.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {any[]} groups - The new group list.
+	 */
 	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
@@ -315,6 +392,13 @@ class Dataview {
 		S.Block.updateContent(rootId, blockId, block.content);
 	};
 
+	/**
+	 * Updates the group order for a dataview block.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {any[]} groups - The new group order.
+	 */
 	groupOrderUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
@@ -333,6 +417,14 @@ class Dataview {
 		S.Block.updateContent(rootId, blockId, { groupOrder });
 	};
 
+	/**
+	 * Applies the group order to a list of groups for a dataview.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {any[]} groups - The group list.
+	 * @returns {any[]} The ordered group list.
+	 */
 	applyGroupOrder (rootId: string, blockId: string, viewId: string, groups: any[]) {
 		if (!viewId || !groups.length) {
 			return groups;
@@ -361,6 +453,15 @@ class Dataview {
 		return groups;
 	};
 
+	/**
+	 * Applies the object order to a list of record IDs for a dataview group.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {string} groupId - The group ID.
+	 * @param {string[]} records - The record IDs.
+	 * @returns {string[]} The ordered record IDs.
+	 */
 	applyObjectOrder (rootId: string, blockId: string, viewId: string, groupId: string, records: string[]): string[] {
 		records = records || [];
 
@@ -392,10 +493,24 @@ class Dataview {
 		return records;
 	};
 
+	/**
+	 * Gets the default view name for a view type.
+	 * @param {I.ViewType} type - The view type.
+	 * @returns {string} The default view name.
+	 */
 	defaultViewName (type: I.ViewType): string {
 		return translate(`viewName${type}`);
 	};
 
+	/**
+	 * Gets the details object for a dataview, including group and filter values.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} objectId - The object ID.
+	 * @param {string} [viewId] - The view ID.
+	 * @param {string} [groupId] - The group ID.
+	 * @returns {any} The details object.
+	 */
 	getDetails (rootId: string, blockId: string, objectId: string, viewId?: string, groupId?: string): any {
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const view = this.getView(rootId, blockId, viewId);
@@ -455,6 +570,14 @@ class Dataview {
 		return details;
 	};
 
+	/**
+	 * Gets the type ID for a dataview object, considering view and relations.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} objectId - The object ID.
+	 * @param {string} [viewId] - The view ID.
+	 * @returns {string} The type ID.
+	 */
 	getTypeId (rootId: string, blockId: string, objectId: string, viewId?: string) {
 		const view = this.getView(rootId, blockId, viewId);
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
@@ -499,6 +622,14 @@ class Dataview {
 		return typeId;
 	};
 
+	/**
+	 * Gets the tooltip text for creating a new object in a dataview.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} objectId - The object ID.
+	 * @param {string} viewId - The view ID.
+	 * @returns {string} The tooltip text.
+	 */
 	getCreateTooltip (rootId: string, blockId: string, objectId: string, viewId: string): string {
 		const isCollection = this.isCollection(rootId, blockId);
 
@@ -515,6 +646,14 @@ class Dataview {
 		return translate('commonCreateNewObject');
 	};
 
+	/**
+	 * Updates a dataview view with new parameters.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {Partial<I.View>} param - The parameters to update.
+	 * @param {function} [callBack] - Optional callback after update.
+	 */
 	viewUpdate (rootId: string, blockId: string, viewId: string, param: Partial<I.View>, callBack?: (message: any) => void) {
 		const view = U.Common.objectCopy(S.Record.getView(rootId, blockId, viewId));
 		if (view && view.id) {
@@ -522,6 +661,13 @@ class Dataview {
 		};
 	};
 
+	/**
+	 * Gets the cover object for a dataview relation.
+	 * @param {string} subId - The subscription ID.
+	 * @param {any} object - The object data.
+	 * @param {string} relationKey - The relation key.
+	 * @returns {any} The cover object.
+	 */
 	getCoverObject (subId: string, object: any, relationKey: string): any {
 		if (!relationKey) {
 			return null;
@@ -560,6 +706,12 @@ class Dataview {
 		return ret;
 	};
 
+	/**
+	 * Gets the result of a formula for a dataview relation.
+	 * @param {string} subId - The subscription ID.
+	 * @param {I.ViewRelation} viewRelation - The view relation.
+	 * @returns {any} The formula result.
+	 */
 	getFormulaResult (subId: string, viewRelation: I.ViewRelation): any {
 		if (!viewRelation) {
 			return null;
@@ -744,6 +896,11 @@ class Dataview {
 		return ret;
 	};
 
+	/**
+	 * Gets the placeholder name for a given layout type.
+	 * @param {I.ObjectLayout} layout - The layout type.
+	 * @returns {string} The placeholder name.
+	 */
 	namePlaceholder (layout: I.ObjectLayout): string {
 		let ret = '';
 		if (U.Object.isCollectionLayout(layout)) {
@@ -758,6 +915,16 @@ class Dataview {
 		return ret;
 	};
 
+	/**
+	 * Adds a type or dataview relation to a block and updates the view.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} relation - The relation object.
+	 * @param {any} object - The object data.
+	 * @param {I.View} view - The dataview view object.
+	 * @param {number} index - The index to insert at.
+	 * @param {function} [callBack] - Optional callback after addition.
+	 */
 	addTypeOrDataviewRelation (rootId: string, blockId: string, relation: any, object: any, view: I.View, index: number, callBack?: (message: any) => void) {
 		if (!rootId || !blockId || !relation || !object || !view) {
 			return;

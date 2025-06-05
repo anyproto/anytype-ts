@@ -124,7 +124,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 									return;
 								};
 
-								C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer);
+								C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithApprove, I.ParticipantPermissions.Writer);
 							});
 						};
 
@@ -147,7 +147,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					} 
 				}, false);
 
-				analytics.event('CreateSpace', { usecase: I.Usecase.Empty, middleTime: message.middleTime, route });
+				analytics.event('CreateSpace', { usecase: I.Usecase.Empty, middleTime: message.middleTime, route, uxType });
 				analytics.event('SelectUsecase', { type: I.Usecase.Empty });
 			});
 		});

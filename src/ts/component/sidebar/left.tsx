@@ -154,6 +154,8 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 		};
 
 		this.frame = raf(() => {
+			console.log('onResizeMove', e.pageX, sidebar.isAnimating);
+
 			if (sidebar.isAnimating) {
 				return;
 			};
@@ -165,7 +167,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 			const w = Math.max(0, (e.pageX - this.ox));
 			const d = w - this.width;
 
-			if (d === 0) {
+			if (!d) {
 				return;
 			};
 
@@ -178,7 +180,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 			};
 
 			if (d > 0) {
-				if ((w >= 0) && (w <= J.Size.sidebar.width.close)) {
+				if (sidebar.data.isClosed || ((w >= 0) && (w <= J.Size.sidebar.width.close))) {
 					sidebar.open(J.Size.sidebar.width.min);
 				} else 
 				if (w > J.Size.sidebar.width.close) {

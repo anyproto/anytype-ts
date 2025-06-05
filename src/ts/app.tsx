@@ -247,8 +247,6 @@ class App extends React.Component<object, State> {
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
-		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
-		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
 		Renderer.on('will-close-window', this.onWillCloseWindow);

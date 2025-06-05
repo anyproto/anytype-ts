@@ -37,7 +37,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const itemsWithCounterIds = itemsWithCounter.map(it => it.id);
 	const itemsWithoutCounter = items.filter(it => !itemsWithCounterIds.includes(it.id));
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
-	const itemSettings = { ...profile, id: 'settings', layout: I.ObjectLayout.Human };
+	const itemSettings = { ...profile, id: 'settings', name: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const canCreate = U.Space.canCreateSpace();
 
 	const cn = [ 'vault' ];
@@ -189,6 +189,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			withDescription: true,
 		}));
 
+		analytics.event('ScreenVaultCreateMenu');
+
 		S.Menu.open('select', {
 			element: `#vault #item-add`,
 			className: 'spaceCreate fixed',
@@ -216,6 +218,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 							break;
 						};
 					};
+
+					analytics.event(`ClickVaultCreateMenu${U.Common.toUpperCamelCase(item.id)}`);
 				},
 			}
 		});

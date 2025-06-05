@@ -295,7 +295,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const node = $(this.node);
 		const wrap = node.find('.wrap');
 
-		wrap.css({ width: 0, height: 0, marginLeft: 0 });
+		wrap.css({ width: 0, marginLeft: 0 });
 
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();

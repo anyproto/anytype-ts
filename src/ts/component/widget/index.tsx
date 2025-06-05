@@ -240,6 +240,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
+		if (spaceview.isChat && isChat) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 		const { x, y } = keyboard.mouse.page;
 
@@ -597,9 +601,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	} else {
 		buttons = (
 			<div className="buttons">
-				<div className="iconWrap more" onClick={onOptions}>
-					<Icon className="options" tooltipParam={{ text: translate('widgetOptions') }} />
-				</div>
+				{spaceview.isChat && isChat ? '' : (
+					<div className="iconWrap more" onClick={onOptions}>
+						<Icon className="options" tooltipParam={{ text: translate('widgetOptions') }} />
+					</div>
+				)}
 				{canCreate ? (
 					<div className="iconWrap create" onClick={onCreateClick}>
 						<Icon className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} />

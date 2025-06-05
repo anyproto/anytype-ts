@@ -167,9 +167,9 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 
 	const resize = () => {
 		const node = $(nodeRef.current);
-		const path = node.find('.path');
+		const center = node.find('.side.center');
 
-		node.toggleClass('isSmall', path.outerWidth() < 180);
+		node.toggleClass('isSmall', center.outerWidth() <= 260);
 	};
 
 	useEffect(() => {
