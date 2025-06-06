@@ -1324,7 +1324,7 @@ class UtilCommon {
 	 * @param {string} s - The string to sanitize.
 	 * @returns {string} The sanitized string.
 	 */
-	sanitize (s: string): string {
+	sanitize (s: string, withStyles?: boolean): string {
 		s = String(s || '');
 
 		if (!TEST_HTML.test(s)) {
@@ -1332,13 +1332,18 @@ class UtilCommon {
 		};
 
 		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ].concat(Object.values(Mark.getTags()));
-
-		return DOMPurify.sanitize(s, { 
+		const param: any = { 
 			ADD_TAGS: tags,
 			ADD_ATTR: [ 'contenteditable' ],
 			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
-			FORBID_ATTR: [ 'style' ],
-		});
+			FORBID_ATTR: [],
+		};
+
+		if (!withStyles) {
+			param.FORBID_ATTR.push('style');
+		};
+
+		return DOMPurify.sanitize(s, param);
 	};
 
 	/**
