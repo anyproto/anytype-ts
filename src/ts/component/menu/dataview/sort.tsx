@@ -305,7 +305,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			rootId,
 			blockId,
 			getView,
-			onSelect: (v) => {
+			onSelect: v => {
 				this.onChange(item.id, 'relationKey', v.relationKey ? v.relationKey : v.id);
 			}
 		});
@@ -326,11 +326,11 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			return;
 		};
 
-		const obj = $(`#${getId()}`);
-		const content = obj.find('.content');
+		const content = $(`#${getId()} .content`);
 		const newItem = { 
 			relationKey: relationOptions[0].id, 
 			type: I.SortType.Asc,
+			empty: I.EmptyType.End,
 		};
 
 		onSortAdd(newItem, () => {

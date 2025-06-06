@@ -368,7 +368,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		if (component == 'dataviewSort') {
-			newItem.type = I.SortType.Asc;
+			newItem = Object.assign(newItem, {
+				type: I.SortType.Asc,
+				empty: I.EmptyType.End,
+			});
 
 			onSortAdd(newItem, callBack);
 		} else
