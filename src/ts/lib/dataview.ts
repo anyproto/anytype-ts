@@ -20,6 +20,14 @@ class Dataview {
 		const viewRelations = (view.relations || []).filter(it => it);
 
 		let relations = S.Record.getDataviewRelations(rootId, blockId);
+
+		if (!relations.find(it => it.relationKey == 'name')) {
+			const nr = S.Record.getRelationByKey('name');
+			if (nr) {
+				relations.unshift(nr);
+			};
+		};
+
 		relations = U.Common.objectCopy(relations).filter(it => it);
 
 		if (!config.debug.hiddenObject) {
