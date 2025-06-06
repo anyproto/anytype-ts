@@ -62,7 +62,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		} else {
 			content = (
 				<InfiniteLoader
-					loadMoreRows={() => {}}
+					loadMoreRows={this.loadMoreRows}
 					isRowLoaded={({ index }) => !!records[index]}
 					rowCount={total}
 					threshold={10}

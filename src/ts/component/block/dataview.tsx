@@ -479,7 +479,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		switch (type) {
 			default: {
-				limit = isInline ? pageLimit : 0;
+				limit = isInline ? pageLimit : 1000;
 				break;
 			};
 
