@@ -143,12 +143,13 @@ class Dataview {
 			limit: 0,
 			sources: [],
 			clear: false,
+			isInline: false,
 			collectionId: '',
 			filters: [],
 			sorts: [],
 		}, param);
 
-		const { rootId, blockId, newViewId, keys, offset, limit, collectionId } = param;
+		const { rootId, blockId, newViewId, keys, offset, limit, collectionId, clear, isInline } = param;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const view = S.Record.getView(rootId, blockId, newViewId);
 		
@@ -168,6 +169,11 @@ class Dataview {
 		if (viewChange) {
 			meta.viewId = newViewId;
 		};
+
+		if (!isInline && (viewChange || clear)) {
+			S.Record.recordsSet(subId, '', []);
+		};
+
 
 		S.Record.metaSet(subId, '', meta);
 

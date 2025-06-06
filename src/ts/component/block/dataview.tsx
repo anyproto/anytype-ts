@@ -373,7 +373,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.viewId = viewId;
 
-		const { rootId, block } = this.props;
+		const { rootId, block, isInline } = this.props;
 		const subId = this.getSubId();
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
@@ -407,6 +407,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			Dataview.getData({
+				isInline,
 				rootId, 
 				subId,
 				blockId: block.id, 
