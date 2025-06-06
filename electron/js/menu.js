@@ -366,6 +366,7 @@ class MenuManager {
 				Separator,
 
 				{ label: 'Reset onboarding', click: () => Util.send(this.win, 'commandGlobal', 'resetOnboarding') },
+				{ label: 'Read all messages', click: () => Util.send(this.win, 'commandGlobal', 'readAllMessages') },
 
 				Separator,
 

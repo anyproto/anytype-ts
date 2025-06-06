@@ -16,8 +16,8 @@
 		.buttons { flex-shrink: 0; color: var(--color-control-active); font-weight: 500; user-select: none; display: flex; gap: 0px 16px; height: 100%; }
 		.buttons {
 			.button { 
-				display: inline-block; vertical-align: top; transition: $transitionAllCommon; color: var(--color-control-active);
-				background: none; border: 0px; padding: 0px; height: 100%; line-height: 44px;
+				display: inline-block; vertical-align: top; transition: $transitionAllCommon; background: none; border: 0px; padding: 0px; height: 100%; 
+				line-height: 44px;
 			}
 			.button.hide { display: none; }
 			.button:hover { color: var(--color-text-primary); }

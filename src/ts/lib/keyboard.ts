@@ -559,7 +559,6 @@ class Keyboard {
 		const logPath = electron.logPath();
 		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
-		const isMainChat = this.isMainChat();
 		const canUndo = !this.isFocused && this.isMainEditor();
 
 		switch (cmd) {
@@ -811,6 +810,11 @@ class Keyboard {
 						},
 					});
 				};
+				break;
+			};
+
+			case 'readAllMessages': {
+				C.ChatReadAll();
 				break;
 			};
 

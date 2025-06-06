@@ -2314,7 +2314,6 @@ export const ChatDeleteMessage = (objectId: string, messageId: string, callBack?
 	request.setMessageid(messageId);
 
 	dispatcher.request(ChatDeleteMessage.name, request, callBack);
-
 };
 
 export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOrderId: string, limit: number, includeBoundary: boolean, callBack?: (message: any) => void) => {
@@ -2348,6 +2347,12 @@ export const ChatUnreadMessages = (objectId: string, afterOrderId: string, callB
 	request.setAfterorderid(afterOrderId);
 
 	dispatcher.request(ChatUnreadMessages.name, request, callBack);
+};
+
+export const ChatReadAll = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.ReadAll.Request();
+
+	dispatcher.request(ChatReadAll.name, request, callBack);
 };
 
 export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId: string, callBack?: (message: any) => void) => {

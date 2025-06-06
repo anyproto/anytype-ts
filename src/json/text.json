@@ -1843,7 +1843,7 @@
 
 	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
 	"toastWidget": "Widget <b>%s</b> has been added",
-	"toastJoinSpace": "You have joined the <b>%s</b>",
+	"toastJoinSpace": "You have joined <b>%s</b>",
 
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
