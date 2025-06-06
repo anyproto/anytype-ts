@@ -69,8 +69,6 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	const cnw = [ 'editableWrap', classNameWrap ];
 	const cne = [ 'editable', classNameEditor ];
 	const cnp = [ 'placeholder', classNamePlaceholder ];
-
-	// Add a ref to track if composition just ended
 	const justEndedComposition = useRef(false);
 
 	const placeholderCheck = () => {
@@ -142,7 +140,8 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		if (justEndedComposition.current) {
 			justEndedComposition.current = false;
 			return;
-		}
+		};
+
 		placeholderCheck();
 
 		if (onInput) {
@@ -207,6 +206,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	const onCompositionEndHandler = (e: any) => {
 		keyboard.setComposition(false);
 		justEndedComposition.current = true;
+
 		if (onCompositionEnd) {
 			onCompositionEnd(e, getTextValue(), getRangeHandler());
 		};
