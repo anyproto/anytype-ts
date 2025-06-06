@@ -1906,7 +1906,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			let count = 0;
+			let count = 1;
 
 			if (message.isSameBlockCaret) {
 				id = focused;
