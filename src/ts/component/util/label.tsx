@@ -27,6 +27,12 @@ const Label: FC<Props> = ({
 }) => {
 	const nodeRef = useRef<HTMLDivElement | null>(null);
 	const cn = [ 'label' ];
+	const dataProps = { ...dataset };
+
+	if (className.match(/animation/)) {
+		dataProps['animation-type'] = I.AnimType.Text;
+		dataProps.content = text;
+	};
 
 	if (className) {
 		cn.push(className);
@@ -51,7 +57,7 @@ const Label: FC<Props> = ({
 			onMouseDown={onMouseDown}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
-			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
+			{...U.Common.dataProps(dataProps)}
 		/>
 	);
 
