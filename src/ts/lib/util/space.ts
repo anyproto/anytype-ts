@@ -367,7 +367,7 @@ class UtilSpace {
 		const items = U.Common.objectCopy(this.getList().filter(it => it.creator == this.getParticipantId(it.targetSpaceId, account.id)));
 		const length = items.length;
 
-		return length < J.Constant.limit.space;
+		return length < J.Constant.limit.space.count;
 	};
 
 	/**

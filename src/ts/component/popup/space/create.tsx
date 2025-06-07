@@ -14,6 +14,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
 	const { data } = param;
 	const { uxType } = data;
+	const { name: limit, nameThreshold: threshold } = J.Constant.limit.space;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
@@ -166,8 +167,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 	const updateCounter = () => {
 		const el = $('.popupSpaceCreate .nameWrapper .counter');
-		const counter = J.Constant.limit.spaceName - nameRef.current?.getTextValue().length;
-		const show = counter <= J.Constant.limit.spaceNameThreshold;
+		const counter = limit - nameRef.current?.getTextValue().length;
+		const show = counter <= threshold;
 		const isRed = counter < 0;
 
 		el.toggleClass('show', show);
@@ -212,7 +213,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					onKeyDown={onKeyDown}
 					onKeyUp={onKeyUp}
 					placeholder={translate('defaultNamePage')}
-					maxLength={J.Constant.limit.spaceName}
+					maxLength={limit}
 				/>
 				<div className="counter" />
 			</div>

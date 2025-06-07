@@ -134,7 +134,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							placeholder={translate('defaultNamePage')}
 							readonly={!canWrite || !isEditing}
 							onKeyUp={() => this.onKeyUp('name')}
-							maxLength={J.Constant.limit.spaceName}
+							maxLength={J.Constant.limit.space.name}
 						/>
 						<div className="counter" />
 					</div>
@@ -147,7 +147,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 								placeholder={translate('popupSettingsSpaceIndexDescriptionPlaceholder')}
 								readonly={!canWrite || !isEditing}
 								onKeyUp={() => this.onKeyUp('description')}
-								maxLength={J.Constant.limit.spaceDescription}
+								maxLength={J.Constant.limit.space.description}
 							/>
 							<div className="counter" />
 						</div>
@@ -502,6 +502,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	updateCounters () {
 		const node = $(this.node);
+		const { name, nameThreshold, description, descriptionThreshold } = J.Constant.limit.space;
 
 		let canSave = true;
 
@@ -514,13 +515,13 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			if (input == 'name') {
 				ref = this.refName;
 				el = node.find('.spaceNameWrapper .counter');
-				limit = J.Constant.limit.spaceName;
-				threshold = J.Constant.limit.spaceNameThreshold;
+				limit = name;
+				threshold = nameThreshold;
 			} else {
 				ref = this.refDescription;
 				el = node.find('.spaceDescriptionWrapper .counter');
-				limit = J.Constant.limit.spaceDescription;
-				threshold = J.Constant.limit.spaceDescriptionThreshold;
+				limit = description;
+				threshold = descriptionThreshold;
 			};
 
 			const counter = limit - ref?.getTextValue().length;
