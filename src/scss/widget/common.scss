@@ -41,6 +41,7 @@
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
 
 		.iconWrap:hover,
+		.iconWrap.hover,
 		.iconWrap.active {
 			.icon.back { background-image: url('~img/icon/widget/back1.svg'); }
 			.icon.options { background-image: url('~img/icon/widget/options1.svg'); }
@@ -55,7 +56,6 @@
 	&.isEmpty {
 		.head {
 			.buttons { display: flex; }
-			.iconWrap.more { display: none; }
 
 			.sides:hover {
 				.iconWrap.more { display: flex; }
@@ -109,12 +109,6 @@
 	.head { padding-right: 8px; }
 	.head {
 		.buttons { display: flex; }
-	}
-}
-
-.widget.active {
-	.head {
-		.iconWrap.more { background-color: var(--color-shape-highlight-medium); }
 	}
 }
 

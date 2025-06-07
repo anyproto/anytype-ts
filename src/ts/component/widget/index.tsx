@@ -20,7 +20,7 @@ interface Props extends I.WidgetComponent {
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { config, space } = S.Common;
+	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview } = props;
 	const { viewId } = block.content;
@@ -139,6 +139,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
+		const node = $(nodeRef.current);
 		const route = param.route || analytics.route.widget;
 		const isFavorite = object.id == J.Constant.widgetId.favorite;
 
@@ -192,37 +193,36 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		// Bookmark creation logic
-		const isBookmark =
-			(U.Object.isInSetLayouts(object.layout) && type && U.Object.isBookmarkLayout(type.recommendedLayout)) ||
-			(!U.Object.isInSetLayouts(object.layout) && U.Object.isBookmarkLayout(details.layout));
+		const cb = object => {
+			if (isFavorite) {
+				Action.setIsFavorite([ object.id ], true, route);
+			};
 
-		if (isBookmark) {
+			if (isCollection) {
+				C.ObjectCollectionAdd(object.id, [ object.id ]);
+			};
+
+			U.Object.openConfig(object);
+			analytics.createObject(object.type, object.layout, route, 0);
+
+			if (layout == I.WidgetLayout.Tree) {
+				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(object.id, object.layout, true), (message: any) => {
+					if (!message.error.code) {
+						analytics.event('CreateLink');
+					};
+				});
+			};
+		};
+
+		if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
 			U.Menu.onBookmarkMenu({
 				element: `#widget-${block.id} .iconWrap.create`,
+				onOpen: () => node.addClass('active'),
+				onClose: () => node.removeClass('active'),
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
 				data: { details },
-			}, (object) => {
-				if (isFavorite) {
-					Action.setIsFavorite([ object.id ], true, route);
-				};
-
-				if (isCollection) {
-					C.ObjectCollectionAdd(object.id, [ object.id ]);
-				};
-
-				U.Object.openConfig(object);
-				analytics.createObject(object.type, object.layout, route, 0);
-
-				if (layout == I.WidgetLayout.Tree) {
-					C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(object.id, object.layout, true), (message: any) => {
-						if (!message.error.code) {
-							analytics.event('CreateLink');
-						};
-					});
-				};
-			});
+			}, cb);
 			return;
 		};
 
@@ -236,29 +236,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const newObject = message.details;
-
-			if (isFavorite) {
-				Action.setIsFavorite([ newObject.id ], true, route);
-			};
-
-			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
-			};
-
-			U.Object.openConfig(newObject);
-			analytics.createObject(newObject.type, newObject.layout, route, message.middleTime);
-
-			if (layout == I.WidgetLayout.Tree) {
-				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(newObject.id, newObject.layout, true), (message: any) => {
-					if (!message.error.code) {
-						analytics.event('CreateLink');
-					};
-				});
+			if (!message.error.code) {
+				cb(message.details);
 			};
 		});
 	};
@@ -283,9 +262,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const { x, y } = keyboard.mouse.page;
 
 		S.Menu.open('widget', {
-			rect: { width: 0, height: 0, x: x + 4, y },
+			element: `#widget-${block.id} .iconWrap.more`,
+			rect: { width: 0, height: 0, x, y: y + 14 },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Center,
 			subIds: J.Menu.widget,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
