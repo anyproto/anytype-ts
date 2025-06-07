@@ -147,6 +147,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		let typeKey = '';
 		let templateId = '';
 		let isCollection = false;
+		let type = null;
 
 		if (U.Object.isInSetLayouts(object.layout)) {
 			const rootId = getRootId();
@@ -156,7 +157,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id, viewId);
-			const type = S.Record.getTypeById(typeId);
+			type = S.Record.getTypeById(typeId);
 
 			if (!type) {
 				return;
@@ -171,7 +172,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			switch (object.id) {
 				default:
 				case J.Constant.widgetId.favorite: {
-					const type = S.Record.getTypeById(S.Common.type);
+					type = S.Record.getTypeById(S.Common.type);
 
 					if (!type) {
 						return;
@@ -188,6 +189,40 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		if (!typeKey) {
+			return;
+		};
+
+		// Bookmark creation logic
+		const isBookmark =
+			(U.Object.isInSetLayouts(object.layout) && type && U.Object.isBookmarkLayout(type.recommendedLayout)) ||
+			(!U.Object.isInSetLayouts(object.layout) && U.Object.isBookmarkLayout(details.layout));
+
+		if (isBookmark) {
+			U.Menu.onBookmarkMenu({
+				element: `#widget-${block.id} .iconWrap.create`,
+				className: 'fixed',
+				classNameWrap: 'fromSidebar',
+				data: { details },
+			}, (object) => {
+				if (isFavorite) {
+					Action.setIsFavorite([ object.id ], true, route);
+				};
+
+				if (isCollection) {
+					C.ObjectCollectionAdd(object.id, [ object.id ]);
+				};
+
+				U.Object.openConfig(object);
+				analytics.createObject(object.type, object.layout, route, 0);
+
+				if (layout == I.WidgetLayout.Tree) {
+					C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(object.id, object.layout, true), (message: any) => {
+						if (!message.error.code) {
+							analytics.event('CreateLink');
+						};
+					});
+				};
+			});
 			return;
 		};
 
