@@ -4,6 +4,8 @@
 	.block.blockDataview {
 		.rowHead, .rowFoot, #rowHeadClone { display: grid; white-space: nowrap; height: 36px; }
 
+		.selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; }
+
 		.rowHead { user-select: none; }
 		.rowHead, .rowFoot { width: calc(100% - 4px); margin-left: 2px; }
 		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }

@@ -1,5 +1,5 @@
 const { app, shell, Menu, Tray } = require('electron');
-const { is } = require('electron-util');
+const { is, fixPathForAsarUnpack } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
 const ConfigManager = require('./config.js');
@@ -552,7 +552,7 @@ class MenuManager {
 			icon = `iconTrayTemplate.png`;
 		};
 
-		return icon ? path.join(Util.imagePath(), icon) : '';
+		return icon ? fixPathForAsarUnpack(path.join(Util.imagePath(), icon)) : '';
 	};
 
 	destroy () {
