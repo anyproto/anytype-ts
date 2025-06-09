@@ -236,7 +236,9 @@ app.on('second-instance', (event, argv) => {
 	if (!mainWindow.isVisible()) {
 		mainWindow.show();
 	};
+
 	mainWindow.focus();
+
 	// Ensure focus is properly stolen on macOS
 	if (is.macos) {
 		app.focus({ steal: true });
@@ -263,17 +265,23 @@ app.on('open-url', (e, url) => {
 
 	deeplinkingUrl = url;
 
-	if (mainWindow) {
-		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
-		if (mainWindow.isMinimized()) {
-			mainWindow.restore();
-		};
-		if (!mainWindow.isVisible()) {
-			mainWindow.show();
-		};
-		mainWindow.focus();
-		if (is.macos) {
-			app.focus({ steal: true });
-		};
+	if (!mainWindow) {
+		return;
+	};
+
+	Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
+
+	if (mainWindow.isMinimized()) {
+		mainWindow.restore();
+	};
+
+	if (!mainWindow.isVisible()) {
+		mainWindow.show();
+	};
+
+	mainWindow.focus();
+
+	if (is.macos) {
+		app.focus({ steal: true });
 	};
 });
