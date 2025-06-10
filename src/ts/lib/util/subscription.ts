@@ -1,15 +1,6 @@
 import { I, S, J, C, U, Action } from 'Lib';
 import sha1 from 'sha1';
 
-const SYSTEM_DATE_RELATION_KEYS = [
-	'lastModifiedDate', 
-	'lastOpenedDate', 
-	'lastUsedDate',
-	'lastMessageDate',
-	'createdDate',
-	'addedDate',
-];
-
 /**
  * Utility class for managing subscriptions, search, and data synchronization in the application.
  * Provides methods for subscribing to object changes, searching, and managing subscription state.
@@ -373,9 +364,6 @@ class UtilSubscription {
 	 * @returns {any} The mapped sort object.
 	 */
 	sortMapper (it: any) {
-		if (undefined === it.includeTime) {
-			it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
-		};
 		return it;
 	};
 

@@ -75,9 +75,9 @@ export default {
 		'relationReadonlyValue',
 		'relationDefaultValue',
 		'relationFormatObjectTypes',
+		'relationFormatIncludeTime',
 		'sourceObject',
 		'restrictions',
-		'relationFormatIncludeTime',
 	],
 
 	cover: [
