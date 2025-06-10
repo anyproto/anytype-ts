@@ -674,7 +674,7 @@ class Dispatcher {
 
 									if (idx >= 0) {
 										if (key.id == 'relation') {
-											const updateKeys = [ 'includeTime' ];
+											const updateKeys = [];
 
 											for (const f of updateKeys) {
 												if (list[idx][f] != item[f]) {

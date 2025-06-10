@@ -77,7 +77,7 @@ export default {
 		'relationFormatObjectTypes',
 		'sourceObject',
 		'restrictions',
-		'includeTime',
+		'relationFormatIncludeTime',
 	],
 
 	cover: [

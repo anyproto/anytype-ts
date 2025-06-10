@@ -79,7 +79,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				options = (
 					<Switch
 						value={object.includeTime}
-						onChange={(e: any, v: boolean) => this.onSwitch(e, 'includeTime', v)}
+						onChange={(e: any, v: boolean) => this.onSwitch(e, 'relationFormatIncludeTime', v)}
 					/>
 				);
 				break;

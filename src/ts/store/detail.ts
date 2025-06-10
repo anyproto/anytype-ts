@@ -362,7 +362,7 @@ class DetailStore {
 		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
 		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
-		object.includeTime = Boolean(object.includeTime) || false;
+		object.includeTime = Boolean(object.relationFormatIncludeTime) || false;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedRelation');
