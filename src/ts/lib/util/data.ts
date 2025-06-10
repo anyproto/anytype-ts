@@ -932,9 +932,12 @@ class UtilData {
 								S.Auth.startingId = message.startingId;
 							};
 
-							if (callBack) {
-								callBack();
+							const details = { 
+								name: translate('commonEntrySpace'), 
+								iconOption: U.Common.rand(1, J.Constant.count.icon),
 							};
+							
+							C.WorkspaceSetInfo(S.Common.space, details, callBack);
 						});
 
 						analytics.event('CreateAccount', { middleTime: message.middleTime });
