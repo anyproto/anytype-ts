@@ -176,8 +176,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		if (ids.length) {
 			selection?.renderSelection();
 		};
-
-		console.log('componentDidUpdate');
 	};
 
 	componentWillUnmount () {

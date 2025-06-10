@@ -103,7 +103,12 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	const getTextValue = (): string => {
 		const obj = Mark.cleanHtml($(editableRef.current).html());
-		return String(obj.get(0).innerText || '');
+		
+		let t = String(obj.get(0).innerText || '');
+		if (t == '\n') {
+			t = '';
+		};
+		return t;
 	};
 
 	const getHtmlValue = (): string => {
