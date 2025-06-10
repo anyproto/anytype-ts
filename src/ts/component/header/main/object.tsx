@@ -155,6 +155,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
 						className="relation withBackground"
 						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
+						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
 
@@ -167,7 +168,8 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 							typeY: I.MenuDirection.Bottom,
 						}}
 						className={[ (object.isFavorite ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
-						onClick={onPin} 
+						onClick={onPin}
+						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
 
@@ -177,6 +179,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
 						className="more withBackground"
 						onClick={onMore} 
+						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
 			</div>
