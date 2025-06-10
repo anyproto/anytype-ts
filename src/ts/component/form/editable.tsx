@@ -69,6 +69,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	const cnw = [ 'editableWrap', classNameWrap ];
 	const cne = [ 'editable', classNameEditor ];
 	const cnp = [ 'placeholder', classNamePlaceholder ];
+	const justEndedComposition = useRef(false);
 
 	const placeholderCheck = () => {
 		const text = getTextValue();
@@ -140,6 +141,12 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const onInputHandler = (e: any) => {
+		// If composition just ended, skip this input event
+		if (justEndedComposition.current) {
+			justEndedComposition.current = false;
+			return;
+		};
+
 		placeholderCheck();
 
 		if (onInput) {
@@ -203,6 +210,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	const onCompositionEndHandler = (e: any) => {
 		keyboard.setComposition(false);
+		justEndedComposition.current = true;
 
 		if (onCompositionEnd) {
 			onCompositionEnd(e, getTextValue(), getRangeHandler());
