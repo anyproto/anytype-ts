@@ -332,6 +332,10 @@ html.themeDark {
 
 	/* Header */
 
+	.header {
+		.icon.unpin { background-image: url('#{$themePath}/icon/header/unpin.svg'); }
+	}
+
 	.header.isCommon {
 		.path { border: 0px; line-height: 28px; }
 		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }

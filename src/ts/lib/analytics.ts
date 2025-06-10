@@ -57,6 +57,7 @@ class Analytics {
 		navigation: 'Navigation',
 		object: 'Object',
 		library: 'Library',
+		header: 'Header',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',
