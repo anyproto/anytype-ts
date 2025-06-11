@@ -111,6 +111,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			};
 		};
 
+		if (!output.length && (!canAdd || isReadonlyRelation)) {
+			options = null;
+		};
+
 		return (
 			<>
 				<Header 
