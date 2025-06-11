@@ -1,4 +1,4 @@
-import { I, S, J, C, U, Action } from 'Lib';
+import { I, S, J, C, U, Action, Relation } from 'Lib';
 import sha1 from 'sha1';
 
 /**
@@ -364,6 +364,12 @@ class UtilSubscription {
 	 * @returns {any} The mapped sort object.
 	 */
 	sortMapper (it: any) {
+		if (undefined === it.includeTime) {
+			const relation = S.Record.getRelationByKey(it.relationKey);
+			if (relation && Relation.isDate(relation.format)) {
+				it.includeTime = relation.includeTime;
+			};
+		};
 		return it;
 	};
 
