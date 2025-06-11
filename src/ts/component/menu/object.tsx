@@ -215,6 +215,7 @@ class MenuObject extends React.Component<I.Menu> {
 			template = null;
 			setDefaultTemplate = null;
 			remove = null;
+			pin = null;
 		};
 
 		advancedOptions.push(pageDeeplink);
@@ -224,6 +225,9 @@ class MenuObject extends React.Component<I.Menu> {
 		} else {
 			advanced = null;
 		};
+
+		// Temporary hidden options
+		pin = null;
 
 		let sections = [];
 		if (hasShortMenu) {
