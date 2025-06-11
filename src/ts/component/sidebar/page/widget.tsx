@@ -45,7 +45,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const { showVault } = S.Common;
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
-		const canWrite = U.Space.canMyParticipantWrite();
 		const hasShareBanner = U.Space.hasShareBanner();
 		const buttons: I.ButtonComponent[] = [];
 
@@ -202,7 +201,12 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						{isEditing ? (
 							<Button color="simple" text={translate('commonDone')} onClick={this.onEdit} />
 						) : (
-							<Icon id="button-widget-help" className="help withBackground" tooltipParam={{ text: translate('commonHelp') }} onClick={this.onHelp} />
+							<Icon 
+								id="button-widget-help" 
+								className="help withBackground" 
+								tooltipParam={{ text: translate('commonHelp') }} 
+								onClick={this.onHelp} 
+							/>
 						)}
 					</div>
 				</div>
@@ -243,8 +247,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-			offsetY: () => -($('#notifications').height() + 78),
+			offsetY: -78,
 		});
 	};
 

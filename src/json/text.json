@@ -392,7 +392,7 @@
 	"headerSettingsIdentityInfoText": "Anytype Identity can be linked to your global name in the network. Become a member to select your custom name.",
 	"headerSettingsIdentityInfoExplorePlans": "Explore plans",
 
-	"shareTooltipLabel": "<b>Share Anytype</b> with<br/>those you care about",
+	"shareTooltipLabel": "Become Anytype<br/>member today!",
 	"shareBannerLabel": "<b>Share the space!</b> Invite your friends and build together.",
 
 	"authInviteTitle": "Welcome to Anytype",
@@ -1702,6 +1702,7 @@
 	"menuHelpTerms": "Terms of Use",
 	"menuHelpPrivacy": "Privacy Policy",
 	"menuHelpGallery": "ANY Experience Gallery",
+	"menuHelpShare": "Share Anytype",
 
 	"menuObjectPrint": "Print",
 	"menuObjectSearchOnPage": "Search in Object",

@@ -20,10 +20,11 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const btn = <Button className="c16" text={U.Common.getElectron().version.app} />;
 
 		return [
-			{ id: 'whatsNew', document: 'whatsNew', caption: btn },
-			{ id: 'shortcut', caption: keyboard.getCaption('shortcut') },
+			{ id: 'whatsNew', icon: 'help-star',document: 'whatsNew', caption: btn },
+			{ id: 'shortcut', icon: 'help-keyboard', caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
-			{ id: 'gallery' },
+			//{ id: 'gallery' },
+			{ id: 'share' },
 			{ id: 'community' },
 			{ id: 'tutorial' },
 			{ id: 'contact' },
@@ -76,6 +77,11 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				break;
 			};
 
+			case 'share': {
+				S.Popup.open('share', {});
+				break;
+			};
+
 		};
 
 	};
@@ -110,7 +116,10 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				))}
 			</div>
 
-			<ShareTooltip route={analytics.route.menuHelp} />
+			<ShareTooltip
+				text={translate('shareTooltipLabel')}
+				onClick={() => U.Router.go('/main/settings/membership', {})}
+			/>
 		</>
 	);
 
