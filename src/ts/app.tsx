@@ -283,7 +283,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, account, languages, isPinChecked, css } = data;
+		const { dataPath, config, isDark, isChild, languages, isPinChecked, css } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(this.node);
@@ -344,30 +344,39 @@ class App extends React.Component<object, State> {
 			if (isChild) {
 				Renderer.send('keytarGet', accountId).then((phrase: string) => {
 					U.Data.createSession(phrase, '', () => {
-						if (!account) {
-							console.error('[App.onInit]: Account not found');
-							return;
-						};
+						C.AccountSelect(accountId, '', 0, '', (message: any) => {
+							if (message.error.code) {
+								console.error('[App.onInit]:', message.error.description);
+								return;
+							};
 
-						keyboard.setPinChecked(isPinChecked);
-						S.Auth.accountSet(account);
-						S.Common.redirectSet(route);
-						S.Common.configSet(account.config, false);
+							const { account } = message;
 
-						const spaceId = Storage.get('spaceId');
-						const routeParam = { 
-							replace: true, 
-							onRouteChange: hide,
-						};
+							if (!account) {
+								console.error('[App.onInit]: Account not found');
+								return;
+							};
 
-						if (spaceId) {
-							U.Router.switchSpace(spaceId, '', false, routeParam, true);
-						} else {
-							U.Data.onAuthWithoutSpace(routeParam);
-						};
+							keyboard.setPinChecked(isPinChecked);
+							S.Auth.accountSet(account);
+							S.Common.redirectSet(route);
+							S.Common.configSet(account.config, false);
 
-						U.Data.onInfo(account.info);
-						U.Data.onAuthOnce(false);
+							const spaceId = Storage.get('spaceId');
+							const routeParam = { 
+								replace: true, 
+								onRouteChange: hide,
+							};
+
+							if (spaceId) {
+								U.Router.switchSpace(spaceId, '', false, routeParam, true);
+							} else {
+								U.Data.onAuthWithoutSpace(routeParam);
+							};
+
+							U.Data.onInfo(account.info);
+							U.Data.onAuthOnce(false);
+						});
 					});
 				});
 

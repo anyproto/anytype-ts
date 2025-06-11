@@ -171,7 +171,6 @@ class AuthStore {
 
 		if (account.id) {
 			Storage.set('accountId', account.id);
-			Renderer.send('setAccount', this.accountItem);
 		};
 	};
 

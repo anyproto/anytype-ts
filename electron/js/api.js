@@ -17,7 +17,6 @@ const KEYTAR_SERVICE = 'Anytype';
 
 class Api {
 
-	account = null;
 	isPinChecked = false;
 
 	appOnLoad (win) {
@@ -34,7 +33,6 @@ class Api {
 			isDark: Util.isDarkTheme(),
 			isChild: win.isChild,
 			route: win.route,
-			account: this.account,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
@@ -58,10 +56,6 @@ class Api {
 				callBack();
 			};
 		});
-	};
-
-	setAccount (win, account) {
-		this.account = account;
 	};
 
 	setPinChecked (win, isPinChecked) {
