@@ -71,13 +71,19 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	componentDidMount () {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
-		const { option } = data;
+		const { option, isNew } = data;
 
 		this.color = option.color;
 		this.rebind();
 		this.forceUpdate();
+
+		if (isNew) {
+			window.setTimeout(() => {
+				$(`#${getId()} #item-create`).addClass('disabled');
+			}, J.Constant.delay.menu);
+		};
 	};
 
 	componentDidUpdate () {
@@ -166,8 +172,16 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	onKeyUp (e: any, v: string) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { isNew } = data;
+
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => this.save(), J.Constant.delay.keyboard);
+
+		if (isNew) {
+			$(`#${getId()} #item-create`).toggleClass('disabled', !v.length);
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -195,9 +209,14 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	onMouseEnter (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+		const { getId } = this.props;
+		const el = $(`#${getId()} #item-${item.id}`);
+
+		if (el.hasClass('disabled') || keyboard.isMouseDisabled) {
+			return;
 		};
+
+		this.props.setActive(item, false);
 	};
 
 	remove () {
