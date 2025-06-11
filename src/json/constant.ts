@@ -64,6 +64,7 @@ export default {
 
 	default: {
 		interfaceLang:	 'en-US',
+		spellingLang:	 'en',
 		codeLang:		 'plain',
 		typeKey:		 'ot-page',
 		pinTime:		 600,

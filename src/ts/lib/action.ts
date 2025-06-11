@@ -801,19 +801,23 @@ class Action {
 	 * @param {string} id - The language ID.
 	 */
 	setInterfaceLang (id: string) {
-		const { config } = S.Common;
-		const { languages } = config;
-
 		Renderer.send('setInterfaceLang', id);
+		analytics.event('SwitchInterfaceLanguage', { type: id });
+	};
+
+	/**
+	 * Checks and sets the default spelling language based on the interface language.
+	 */
+	checkDefaultSpellingLang () {
+		const { config } = S.Common;
+		const { languages, interfaceLang } = config;
 
 		if (!Storage.get('setSpellingLang') && !languages.length) {
-			const check = J.Lang.interfaceToSpellingLangMap[id] || 'en';
-		
+			const check = J.Lang.interfaceToSpellingLangMap[interfaceLang] || J.Constant.default.spellingLang;
+
 			this.setSpellingLang([ check ]);
 			Storage.set('setSpellingLang', true);
 		};
-
-		analytics.event('SwitchInterfaceLanguage', { type: id });
 	};
 
 	/**

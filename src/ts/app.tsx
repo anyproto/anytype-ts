@@ -301,6 +301,8 @@ class App extends React.Component<object, State> {
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 
+		Action.checkDefaultSpellingLang();
+
 		if (!color) {
 			Storage.set('color', 'orange');
 		};
