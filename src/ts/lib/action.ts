@@ -807,11 +807,10 @@ class Action {
 		Renderer.send('setInterfaceLang', id);
 
 		if (!Storage.get('setSpellingLang') && !languages.length) {
-			const check = J.Lang.interfaceToSpellingLangMap[id];
-			if (check) {
-				this.setSpellingLang([ check ]);
-				Storage.set('setSpellingLang', true);
-			};
+			const check = J.Lang.interfaceToSpellingLangMap[id] || 'en';
+		
+			this.setSpellingLang([ check ]);
+			Storage.set('setSpellingLang', true);
 		};
 
 		analytics.event('SwitchInterfaceLanguage', { type: id });
