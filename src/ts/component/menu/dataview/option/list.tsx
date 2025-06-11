@@ -243,7 +243,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { cellRef, canEdit, noSelect } = data;
 
-		if (!canEdit || noSelect) {
+		if (!canEdit) {
 			return;
 		};
 
@@ -255,11 +255,12 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		if (item.id == 'add') {
 			this.onOptionAdd();
-		} else
-		if (value.includes(item.id)) {
-			this.onValueRemove(item.id);
-		} else {
-			this.onValueAdd(item.id);
+		} else if (!noSelect) {
+			if (value.includes(item.id)) {
+				this.onValueRemove(item.id);
+			} else {
+				this.onValueAdd(item.id);
+			};
 		};
 
 		this.refFilter?.setValue('');
