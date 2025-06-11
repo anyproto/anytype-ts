@@ -61,6 +61,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 					className={'outlined textColor-' + this.color}
 					value={option.name}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
+					onClear={() => this.onClear()}
 				/>
 
 				{sections.map((item: any, i: number) => (
@@ -87,7 +88,16 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	componentDidUpdate () {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { isNew } = data;
+		const v = this.refName?.getValue() || '';
+
 		this.props.setActive();
+
+		if (isNew && !v.length) {
+			$(`#${getId()} #item-create`).addClass('disabled');
+		};
 	};
 
 	componentWillUnmount () {
@@ -217,6 +227,12 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		};
 
 		this.props.setActive(item, false);
+	};
+
+	onClear () {
+		const { getId } = this.props;
+
+		$(`#${getId()} #item-create`).addClass('disabled');
 	};
 
 	remove () {
