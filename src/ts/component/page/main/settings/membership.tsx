@@ -168,11 +168,11 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 						className="tiersList"
 						spaceBetween={16}
 						slidesPerView={3}
+						mousewheel={true}
 						pagination={membershipTiers.length > 3 ? { clickable: true } : false}
-						modules={[ Pagination ]}
+						modules={[ Pagination, Mousewheel ]}
 						onSwiper={this.onSwiper}
 					>
-
 						{membershipTiers.map((item) => (
 							<SwiperSlide key={item.id}>
 								<TierItem item={item} />
