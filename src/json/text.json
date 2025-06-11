@@ -1265,6 +1265,7 @@
 
 	"popupIndexComponentNotFound": "Component %s not found",
 
+	"popupShortcutDescription": "Click any shortcut to edit it",
 	"popupShortcutKeyboard": "Keyboard Shortcuts",
 	"popupShortcutResetKey": "Conflicts with %s. It has been set to blank.",
 	"popupShortcutConflict": "Conflicts with %s",
