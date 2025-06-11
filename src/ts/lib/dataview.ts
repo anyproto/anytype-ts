@@ -174,7 +174,6 @@ class Dataview {
 			S.Record.recordsSet(subId, '', []);
 		};
 
-
 		S.Record.metaSet(subId, '', meta);
 
 		if (block) {
@@ -186,18 +185,26 @@ class Dataview {
 			};
 		};
 
-		U.Subscription.subscribe({
-			...param,
-			subId,
-			filters: filters.map(it => this.filterMapper(view, it)),
-			sorts: sorts.map(it => this.filterMapper(view, it)),
-			keys,
-			limit,
-			offset,
-			collectionId,
-			ignoreDeleted: true,
-			ignoreHidden: true,
-		}, callBack);
+		const cb = () => {
+			U.Subscription.subscribe({
+				...param,
+				subId,
+				filters: filters.map(it => this.filterMapper(view, it)),
+				sorts: sorts.map(it => this.filterMapper(view, it)),
+				keys,
+				limit,
+				offset,
+				collectionId,
+				ignoreDeleted: true,
+				ignoreHidden: true,
+			}, callBack);
+		};
+
+		if (clear) {
+			U.Subscription.destroyList([ subId ], false, cb);
+		} else {
+			cb();
+		};
 	};
 
 	/**
