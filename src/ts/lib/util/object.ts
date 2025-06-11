@@ -746,12 +746,22 @@ class UtilObject {
 	createType (details: any, isPopup: boolean) {
 		details = details || {};
 
+		const newDetails: any = {
+			...this.getNewTypeDetails(),
+			...details,
+		};
+
+		sidebar.rightPanelToggle(true, true, isPopup, 'type', { details: newDetails });
+	};
+
+	getNewTypeDetails (): any {
 		const type = S.Record.getTypeType();
 		const featured = [ 'type', 'tag', 'backlinks' ];
 		const recommended = [ 'createdDate', 'creator', 'links' ];
 		const hidden = [ 'lastModifiedDate', 'lastModifiedBy', 'lastOpenedDate' ];
 		const mapper = it => S.Record.getRelationByKey(it)?.id;
-		const newDetails: any = {
+
+		return {
 			isNew: true,
 			type: type?.id,
 			layout: I.ObjectLayout.Type,
@@ -762,10 +772,7 @@ class UtilObject {
 			data: {
 				route: analytics.route.settingsSpace,
 			},
-			...details,
 		};
-
-		sidebar.rightPanelToggle(true, true, isPopup, 'type', { details: newDetails });
 	};
 
 	typeIcon (id: string, option: number, size: number, color?: string): string {
