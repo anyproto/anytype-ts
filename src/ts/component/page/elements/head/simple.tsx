@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, C, focus, keyboard, Relation, translate, analytics, Dataview } from 'Lib';
+import { I, M, S, U, J, C, focus, keyboard, Relation, translate, analytics, Dataview, sidebar } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -40,7 +40,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, isContextMenuDisabled, readonly, noIcon } = this.props;
+		const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup } = this.props;
 		const check = U.Data.checkDetails(rootId, '', []);
 		const object = S.Detail.get(rootId, rootId, [ 
 			'layout', 'spaceId', 'featuredRelations', 'recommendedLayout', 'pluralName', 'iconName', 'iconOption', 'iconEmoji', 'iconImage',
@@ -70,6 +70,8 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		const buttons = [];
 
 		let buttonLayout = null;
+		let buttonEdit = null;
+		let buttonTemplate = null;
 		let buttonCreate = null;
 		let descr = null;
 		let featured = null;
@@ -117,19 +119,49 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		};
 
 		if (isTypeOrRelation) {
-			if (isType && isOwner && total) {
-				buttonLayout = (
-					<Button
-						id="button-layout"
-						color="blank"
-						className="c28 resetLayout"
-						onClick={this.onLayout}
-					/>
-				);
+			if (isType) {
+				const isTemplate = U.Object.isTemplate(object.id);
+				const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
+
+				if (isOwner && total) {
+					buttonLayout = (
+						<Button
+							id="button-layout"
+							color="blank"
+							className="c28 resetLayout"
+							onClick={this.onLayout}
+						/>
+					);
+				};
+
+				if (canShowTemplates) {
+					buttonTemplate = (
+						<Button 
+							id="button-template" 
+							text={translate('commonTemplates')} 
+							color="blank" 
+							className="c28" 
+							onClick={this.onTemplates} 
+						/>
+					);
+				};
+
+				if (allowDetails) {
+					buttonEdit = (
+						<Button 
+							id="button-edit" 
+							color="blank" 
+							className="c28" 
+							text={translate('commonEditType')} 
+							onClick={() => sidebar.rightPanelToggle(true, true, isPopup, 'type', { rootId })}
+						/>
+					);
+				};
 			};
 
 			if (!canWrite) {
 				buttonCreate = null;
+				buttonEdit = null;
 			};
 		};
 
@@ -145,6 +177,12 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 
 		if (buttonLayout) {
 			buttons.push(() => buttonLayout);
+		};
+		if (buttonTemplate) {
+			buttons.push(() => buttonTemplate);
+		};
+		if (buttonEdit) {
+			buttons.push(() => buttonEdit);
 		};
 		if (buttonCreate) {
 			buttons.push(() => buttonCreate);
