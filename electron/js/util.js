@@ -49,7 +49,7 @@ class Util {
 	};
 
 	getRouteFromUrl (url) {
-		return url.replace(`${protocol}://`, '/');
+		return String(url || '').replace(`${protocol}://`, '/');
 	};
 
 	getTheme () {
