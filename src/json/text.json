@@ -217,6 +217,7 @@
 	"pluralTemplate": "Template|Templates",
 	"pluralLCTemplate": "template|templates",
 	"pluralBlock": "Block|Blocks",
+	"pluralLCBlock": "block|blocks",
 	"pluralObjectType": "Object Type|Object Types",
 	"pluralProperty": "Property|Properties",
 	"pluralLinks": "link|links",
@@ -230,7 +231,6 @@
 	"pluralYear": "year|years",
 	"pluralDevice": "device|devices",
 	"pluralOption": "Option|Options",
-
 	"pluralImage": "Image|Images",
 	"pluralVideo": "Video|Videos",
 	"pluralAudio": "Audio|Audios",

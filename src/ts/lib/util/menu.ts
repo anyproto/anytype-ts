@@ -237,7 +237,7 @@ class UtilMenu {
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
-			{ id: 'remove', icon: 'remove', name: translate('commonMoveToBin'), caption: 'Del' },
+			{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: copyName, caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];
