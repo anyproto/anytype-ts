@@ -16,7 +16,7 @@ const PageMainVoid = forwardRef<{}, I.PageComponent>(() => {
 
 				<div className="buttons">
 					<Button onClick={() => Action.createSpace(I.SpaceUxType.Space, analytics.route.void)} className="c36" text={translate('commonCreateSpace')} />
-					<Button onClick={() => Action.createSpace(I.SpaceUxType.Space, analytics.route.void)} className="c36" text={translate('commonCreateChat')} color="blank" />
+					<Button onClick={() => Action.createSpace(I.SpaceUxType.Chat, analytics.route.void)} className="c36" text={translate('commonCreateChat')} color="blank" />
 				</div>
 			</div>
 		</div>
