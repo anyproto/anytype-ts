@@ -33,7 +33,7 @@
 		.icon.help { background-image: url('~img/icon/widget/button/help.svg'); }
 		.icon.plus { margin-right: 4px; width: 20px; height: 20px; background-image: url('~img/icon/plus/widgetBottom0.svg'); }
 
-		.button.simple { @include text-common; color: var(--color-text-secondary); font-weight: 400; }
+		.button.simple { @include text-common; color: var(--color-text-secondary); font-weight: 400; height: 28px; }
 		.button.simple:hover {
 			.icon.plus { background-image: url('~img/icon/plus/widgetBottom1.svg'); }
 		}
