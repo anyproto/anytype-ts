@@ -25,6 +25,96 @@ export default () => {
 		{ type: I.BlockType.IconPage, icon: '👋' },
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
 
+		title(`Desktop 0.46.9 Released!`),
+		text(''),
+
+		h2(`Highlights`),
+		text(''),
+
+		h2(`Quality of Life Improvements`),
+		text(''),
+
+		text('<b>Draw.io Embeds</b>'),
+		text(`Draw.io diagrams are now supported in embed blocks. Big thanks to @${link('https://github.com/anyproto/anytype-ts/pull/1399', 'Shampra')} for the contribution!`),
+		img(``, 'c70'),
+		text(''),
+
+		text('<b>Bookmark Paste Menu</b>'),
+		text(`Creating a new object with the Bookmark type now instantly opens the ${hl('Paste link')} menu.`),
+		img(``, 'c70'),
+		text(''),
+
+		text('<b>Type Links in Graph</b>'),
+		text('Types are now connected to their objects on the Graph.'),
+		img(``, 'c70'),
+		text(''),
+
+		text('<b>Featured Properties Column View</b>'),
+		text('Added column view for featured properties, which you can switch to from the line view when editing a Type layout.'),
+		img(``, 'c70'),
+		text(''),
+
+		text('<b>Add to Pinned</b>'),
+		text(`The new ${hl('Add to Pinned')} button in the navigation bar lets you quickly save objects to the Pinned widget (formerly Favorites).`),
+		img(``, 'c70'),
+		text(''),
+
+		text('<b>Improved Sorting Logic</b>'),
+		text('Ascending sort now places empty values at the end by default.'),
+		text(''),
+
+		text('<b>Type Page Default View</b>'),
+		text('The Type page was updated to use List view by default.'),
+		text(''),
+
+		text('<b>Calendar Drag and Drop</b>'),
+		text('You can now drag and drop objects in the Calendar when using a custom date property.'),
+		text(''),
+
+		text('<b>New Shortcuts</b>'),
+		text('Added new shortcuts to create Widgets, open Space settings, Pin / Unpin objects, open Bin and more.'),
+		text(''),
+
+		text('<b>Access Pop-up Update</b>'),
+		text('Updated the "No access to this space" pop-up with clearer messaging and a new icon.'),
+		text(''),
+
+		text('<b>Space Name and Description Limits</b>'),
+		text('Set character limits for Space name (50) and description (200).'),
+		text(''),
+
+		h2(`Bug Fixes`),
+		bullet(`Addressed an issue where using Raycast snippets in empty object titles on macOS added an unintended new line. Thanks to @${link('https://community.anytype.io/t/raycast-snippet-issue-in-object-titles-macos/27209', 'Simon Lanz')}!`),
+		bullet(`Fixed a bug where using a reassigned CapsLock key caused selected blocks to be deleted instead of copied. Thanks to @${link('https://community.anytype.io/t/cant-copy-blocks-with-reasigned-capslock/26603', 'pytat0')}!`),
+		bullet(`Fixed a macOS issue where the Finder window didn’t close automatically after uploading a Space profile image. Thanks to @${link('https://community.anytype.io/t/uploading-image-to-space-profile/23537', 'Khang')}!`),
+		bullet(`Fixed an issue where text selection in the Editor would break when autoscroll was triggered, causing the start and end points to shift unexpectedly. Thanks to @${link('https://community.anytype.io/t/marking-a-text-area-with-the-mouse-autoscroll-causes-problem/18769', 'Code-Jack')}!`),
+		bullet(`Text selection now works correctly in formatted blocks: highlighting part of a bold, italic or underlined string no longer selects the entire block. Thanks again to @${link('https://community.anytype.io/t/formatted-substring-marking-with-the-mouse-does-always-select-the-whole-block/24586', 'Code-Jack')}!`),
+		bullet(`Fixed a visual glitch where a horizontal line briefly appeared at the top of Queries and Collections when switching from another page. Thanks to @${link('https://community.anytype.io/t/weird-horizontal-line-glitch-on-top-of-sets-and-collections/24852', 'Divinity')}!`),
+		bullet(`The text cursor no longer disappears when clicking on or near emphasized text (such as underlined or underlined) from a block in the Editor. Thanks to @${link('https://community.anytype.io/t/cursor-disappears-when-clicking-into-blocks-on-emphasis-text/26381', 'zewwo')}!`),
+		bullet(`Newly added properties now appear in the menu when selecting which properties to display in a view on the Type page. Thanks to @${link('https://community.anytype.io/t/added-properties-dont-show-up-in-built-in-object-list-of-type/27606', 'r0the')}!`),
+		bullet(`Locked objects fully prevent all changes to Properties. Thanks to @${link('https://community.anytype.io/t/its-possible-to-change-properties-of-an-object-on-a-locked-page/27909', 'VisualNotes')}!`),
+		bullet(`Fixed a bug where the Description field was incorrectly shown in the header. Thanks to @${link('https://community.anytype.io/t/description-stuck-in-header/28007', 'sandyeggo')}!`),
+		bullet(`Fixed an issue where the "Name" property was missing in Queries created via widgets. Thanks to @${link('https://community.anytype.io/t/name-property-not-seen-in-sets-created-through-widgets/27656', 'HarshaRaj')} & @${link('https://community.anytype.io/t/name-property-not-displayed-in-grid-and-gallery-views-in-old-spaces/27949', 'BadWorld')}!`),
+		bullet(`Improved performance when switching between Grid and Gallery views with a large number of objects in the Query. Transitions are now smoother and more responsive. Thanks for the detailed report @${link('https://community.anytype.io/t/15-seconds-lag-while-switching-from-a-giant-grid-view-to-a-small-gallery-view/28017', 'Code-Jack')}!`),
+		bullet(`Vertical videos maintain their correct orientation when resized.`),
+		bullet(`Opening a Property in the settings no longer causes the title bar to flicker when the window is narrow.`),
+		bullet(`Fixed an issue where switching Spaces after unlocking the app with a PIN code didn’t work on the first attempt.`),
+		bullet(`Fixed drag-and-drop behavior for Properties in the ${hl('Edit Type')} menu within the modal window.`),
+		bullet(`Fixed an issue where the Name column in a Query could shift when rearranging other columns in the modal window.`),
+		bullet(`Lock icon is no longer shown on Types for users with Viewer access.`),
+		bullet(`Profile icons now display with the correct background in Widgets.`),
+		bullet(`Objects permanently deleted via the sync menu now close automatically.`),
+		bullet(`Switching to the backlinks in Global Search no longer causes the selection to reset while navigating results with the keyboard.`),
+		bullet(`Navigation back works correctly after clicking a link to an object in the Editor.`),
+		bullet(`Switching to Kanban in view Settings no longer causes layout issues in the Settings menu.`),
+		bullet(`Long titles from Notes are now correctly displayed in the top navigation bar.`),
+		bullet(`Fixed an issue where Select and Multi-select property searches didn’t work on locked pages.`),
+
+		text(''),
+
+		div(),
+		// --------------------------------------------//
+
 		title(`Desktop 0.46.6 Released!`),
 		text(''),
 		text('This release marks an exciting and long-awaited moment in Anytype’s evolution: the <b>first iteration of our Local API</b> is here! It opens up powerful new possibilities for an ecosystem of plugins, automations and third-party integrations.'),
