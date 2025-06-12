@@ -2058,6 +2058,8 @@
 	"sidebarMenuSpaceCreateTitleJoin": "Join by Link",
 	"sidebarMenuSpaceCreateDescriptionJoin": "For those with an invite link",
 
+	"sidebarTemplateEmpty": "There are no Templates yet",
+
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
 
