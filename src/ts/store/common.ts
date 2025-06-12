@@ -75,7 +75,7 @@ class CommonStore {
 		filter: '',
 		depth: 1,
 		filterTypes: [],
-		includeTypeEdges: true,
+		typeEdges: true,
 	};
 
 	private timeoutMap = new Map<string, number>();
@@ -797,10 +797,10 @@ class CommonStore {
 		const def = U.Common.objectCopy(this.graphObj);
 		const result = Object.assign(def, stored);
 
-		// Ensure includeTypeEdges has a default value
-		if (result.includeTypeEdges === undefined) {
-			result.includeTypeEdges = true;
-		}
+		// Ensure typeEdges has a default value
+		if (result.typeEdges === undefined) {
+			result.typeEdges = true;
+		};
 
 		return result;
 	};

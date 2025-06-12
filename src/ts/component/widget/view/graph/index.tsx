@@ -20,7 +20,7 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
 
-		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? object.id : ''), object.setOf, settings.includeTypeEdges, (message: any) => {
+		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? object.id : ''), object.setOf, settings.typeEdges, (message: any) => {
 			setData({
 				edges: message.edges,
 				nodes: message.nodes.map(it => S.Detail.mapper(it))
@@ -47,6 +47,7 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 				rootId="" 
 				data={data}
 				storageKey={J.Constant.graphId.dataview}
+				load={load}
 			/>
 		</div>
 	);
