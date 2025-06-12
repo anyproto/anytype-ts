@@ -307,7 +307,27 @@ class MenuManager {
 				Separator,
 
 				{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
-				{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
+				{ label: Util.translate('electronMenuDebugObject'), click: (item, window, event) => {
+					const unanonymized = event && event.altKey;
+					
+					if (unanonymized) {
+						const { dialog } = require('electron');
+						const result = dialog.showMessageBoxSync(this.win, {
+							type: 'warning',
+							buttons: [ 'Cancel', 'OK' ],
+							defaultId: 0,
+							title: 'Debug without anonymization',
+							message: 'You are exporting this object and all its history of changes without anonymization.',
+							detail: 'This file will contain sensitive data. Only proceed if you understand the privacy implications.'
+						});
+						
+						if (!result) {
+							return; // User clicked Cancel
+						};
+					};
+					
+					Util.send(this.win, 'commandGlobal', 'debugTree', { unanonymized });
+				}},
 				{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
 				{ label: Util.translate('electronMenuDebugStat'), click: () => Util.send(this.win, 'commandGlobal', 'debugStat') },
 				{ label: Util.translate('electronMenuDebugReconcile'), click: () => Util.send(this.win, 'commandGlobal', 'debugReconcile') },

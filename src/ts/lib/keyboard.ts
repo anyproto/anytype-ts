@@ -686,7 +686,8 @@ class Keyboard {
 			};
 
 			case 'debugTree': {
-				C.DebugTree(rootId, logPath, false, (message: any) => {
+				const unanonymized = arg?.unanonymized || false;
+				C.DebugTree(rootId, logPath, unanonymized, (message: any) => {
 					if (!message.error.code) {
 						Action.openPath(logPath);
 					};
