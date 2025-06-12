@@ -697,7 +697,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onScrollToBottomClick () {
-		this.loadMessages(1, true, () => this.scrollToBottom(true));
+		this.loadMessages(1, true, () => {
+			this.scrollToBottom(true);
+		});
 	};
 
 	getMessageScrollOffset (id: string): number {
@@ -827,6 +829,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const cb = () => {
 			this.readScrolledMessages();
 			this.setAutoLoadDisabled(false);
+			this.setIsBottom(true);
 		};
 
 		if (animate) {
