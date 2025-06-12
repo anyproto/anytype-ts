@@ -92,7 +92,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const { blockId, rootId, isFilePreview } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
-		const isTemplate = U.Object.isTemplate(object.type);
+		const isTemplate = U.Object.isTemplateType(object.type);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isChat = U.Object.isChatLayout(object.layout);
 		const isBookmark = U.Object.isBookmarkLayout(object.layout);

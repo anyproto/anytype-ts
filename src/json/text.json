@@ -158,6 +158,7 @@
 	"commonVersionHistory": "Version History",
 	"commonActions": "Actions",
 	"commonAddRelation": "Add Property",
+	"commonAddTemplate": "Add Template",
 	"commonCollection": "Collection",
 	"commonSet": "Query",
 	"commonNewObject" : "New Object",

@@ -11,9 +11,12 @@
 		}
 	}
 
-	.section.typeRelation {
+	.section.typeRelation,
+	.section.typeTemplate {
 		.titleWrap { margin-top: 4px; padding-right: 12px; }
+	}
 
+	.section.typeRelation {
 		.items { margin: 0px 0px 8px 0px; }
 		.items:last-child { margin: 0px; }
 

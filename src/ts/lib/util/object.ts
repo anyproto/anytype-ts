@@ -362,9 +362,9 @@ class UtilObject {
 		return layout == I.ObjectLayout.Collection;
 	};
 
-	isTemplate (type: string): boolean {
-		const templateType = S.Record.getTemplateType();
-		return templateType ? type == templateType.id : false;
+	isTemplateType (id: string): boolean {
+		const type = S.Record.getTemplateType();
+		return type ? id == type.id : false;
 	};
 
 	isTypeLayout (layout: I.ObjectLayout): boolean {

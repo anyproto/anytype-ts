@@ -120,7 +120,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 
 		if (isTypeOrRelation) {
 			if (isType) {
-				const isTemplate = U.Object.isTemplate(object.id);
+				const isTemplate = U.Object.isTemplateType(object.id);
 				const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 
 				if (isOwner && total) {
