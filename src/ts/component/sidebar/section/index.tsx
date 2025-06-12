@@ -5,6 +5,7 @@ import { I, U } from 'Lib';
 import TypeTitle from './type/title';
 import TypeLayout from './type/layout';
 import TypeRelation from './type/relation';
+import TypeTemplate from './type/template';
 
 import ObjectRelation from './object/relation';
 
@@ -12,6 +13,7 @@ const Components = {
 	'type/title': TypeTitle,
 	'type/layout': TypeLayout,
 	'type/relation': TypeRelation,
+	'type/template': TypeTemplate,
 
 	'object/relation': ObjectRelation,
 };

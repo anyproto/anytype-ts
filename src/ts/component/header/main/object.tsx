@@ -32,7 +32,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	if (object.isArchived) {
 		bannerProps.type = I.BannerType.IsArchived;
 	} else
-	if (U.Object.isTemplate(object.type)) {
+	if (U.Object.isTemplateType(object.type)) {
 		bannerProps.type = I.BannerType.IsTemplate;
 	} else
 	if (allowedTemplateSelect && (templatesCnt > 1)) {

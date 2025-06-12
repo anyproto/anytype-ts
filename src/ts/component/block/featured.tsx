@@ -191,7 +191,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		);
 
 		let ret = null;
-		if (U.Object.isTemplate(object.type)) {
+		if (U.Object.isTemplateType(object.type)) {
 			ret = (
 				<span className="cell" key="type">
 					<div className="cellContent type disabled">{name}</div>

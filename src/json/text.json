@@ -158,6 +158,7 @@
 	"commonVersionHistory": "Version History",
 	"commonActions": "Actions",
 	"commonAddRelation": "Add Property",
+	"commonAddTemplate": "Add Template",
 	"commonCollection": "Collection",
 	"commonSet": "Query",
 	"commonNewObject" : "New Object",
@@ -2055,6 +2056,8 @@
 	"sidebarMenuSpaceCreateDescriptionImport": "Transfer your data from another app",
 	"sidebarMenuSpaceCreateTitleJoin": "Join by Link",
 	"sidebarMenuSpaceCreateDescriptionJoin": "For those with an invite link",
+
+	"sidebarTemplateEmpty": "There are no Templates yet",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

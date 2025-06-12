@@ -27,7 +27,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const type = S.Record.getTypeById(object.type);
 		const allowObjectDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const allowTypeDetails = S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
-		const isTemplate = U.Object.isTemplate(object.type);
+		const isTemplate = U.Object.isTemplateType(object.type);
 
         return (
 			<>
@@ -154,7 +154,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	getSections (): any[] {
 		const { rootId } = this.props;
 		const object = this.getObject();
-		const isTemplate = U.Object.isTemplate(object.type);
+		const isTemplate = U.Object.isTemplateType(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type) || {};
 		const local = S.Record
 			.getConflictRelations(rootId, rootId, type.id)
@@ -214,7 +214,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 	onLocal (e: React.MouseEvent, item: any) {
 		const { x, y } = keyboard.mouse.page;
 		const object = this.getObject();
-		const isTemplate = U.Object.isTemplate(object.type);
+		const isTemplate = U.Object.isTemplateType(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 
 		S.Menu.open('select', {

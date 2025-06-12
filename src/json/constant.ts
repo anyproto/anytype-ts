@@ -120,6 +120,7 @@ export default {
 		allObject:		 'allObject',
 		library: 		 'library',
 		chatSpace:		 'lastMessage',
+		template:		 'template',
 	},
 
 	typeKey: {

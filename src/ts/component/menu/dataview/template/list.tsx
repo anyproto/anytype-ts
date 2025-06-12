@@ -1,16 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, PreviewObject, EmptySearch } from 'Component';
-import { I, C, S, U, J, translate, keyboard, sidebar } from 'Lib';
+import { I, S, U, J, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
 const TEMPLATE_WIDTH = 224;
 
 const MenuTemplateList = observer(class MenuTemplateList extends React.Component<I.Menu> {
-
-	state = {
-		loading: false
-	};
 
 	node: any = null;
 	n = 0;
