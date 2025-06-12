@@ -343,7 +343,7 @@ class App extends React.Component<object, State> {
 		if (accountId) {
 			if (isChild) {
 				Renderer.send('keytarGet', accountId).then((phrase: string) => {
-					U.Data.createSession(phrase, '', () => {
+					U.Data.createSession(phrase, '', '', () => {
 						C.AccountSelect(accountId, '', 0, '', (message: any) => {
 							if (message.error.code) {
 								console.error('[App.onInit]:', message.error.description);
