@@ -827,6 +827,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const cb = () => {
 			this.readScrolledMessages();
 			this.setAutoLoadDisabled(false);
+			this.setIsBottom(true);
 		};
 
 		if (animate) {
