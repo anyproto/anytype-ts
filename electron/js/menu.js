@@ -321,10 +321,10 @@ class MenuManager {
 							detail: 'This file will contain sensitive data. Only proceed if you understand the privacy implications.'
 						});
 						
-						if (result === 0) {
+						if (!result) {
 							return; // User clicked Cancel
-						}
-					}
+						};
+					};
 					
 					Util.send(this.win, 'commandGlobal', 'debugTree', { unanonymized });
 				}},
