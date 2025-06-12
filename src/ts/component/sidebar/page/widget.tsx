@@ -165,19 +165,27 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</>
 					) : ''}
 
-					{blocks.map((block, i) => (
-						<Widget 
-							{...this.props}
-							key={`widget-${block.id}`}
-							block={block}
-							isEditing={isEditing}
-							className="isEditable"
-							onDragStart={this.onDragStart}
-							onDragOver={this.onDragOver}
-							setPreview={this.setPreview}
-							setEditing={this.setEditing}
-						/>
-					))}
+					{blocks.map((block, i) => {
+						const { widgets } = S.Block;
+						const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+						const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+						const targetId = child ? child.getTargetObjectId() : '';
+						const isChat = targetId == J.Constant.widgetId.chat;
+
+						return (
+							<Widget
+								{...this.props}
+								key={`widget-${block.id}`}
+								block={block}
+								isEditing={isChat && space.isChat ? false : isEditing}
+								className={isChat && space.isChat ? '' : 'isEditable'}
+								onDragStart={this.onDragStart}
+								onDragOver={this.onDragOver}
+								setPreview={this.setPreview}
+								setEditing={this.setEditing}
+							/>
+						);
+					})}
 				</>
 			);
 

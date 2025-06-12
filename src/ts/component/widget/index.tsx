@@ -71,6 +71,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let cnt = 0;
 	let showCnt = false;
 	let layout = block.content.layout;
+	let canRemove = true;
 
 	if (isFavorite) {
 		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
@@ -82,6 +83,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		cnt = counters.messageCounter;
 		showCnt = !!cnt;
+
+		if (spaceview.isChat) {
+			canRemove = false;
+		};
 	};
 
 	if (object) {
@@ -730,6 +735,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			content = <WidgetSpace {...childProps} />;
 
 			isDraggable = false;
+			canRemove = false;
 			break;
 		};
 
@@ -777,7 +783,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			onDragEnd={onDragEnd}
 			onContextMenu={onOptions}
 		>
-			<Icon className="remove" inner={<div className="inner" />} onClick={onRemove} />
+			{canRemove ? <Icon className="remove" inner={<div className="inner" />} onClick={onRemove} /> : ''}
 
 			{head}
 
