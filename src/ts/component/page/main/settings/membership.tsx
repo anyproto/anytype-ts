@@ -34,15 +34,25 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 			{ url: J.Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
 		];
 
-		const SlideItem = (slide) => (
-			<div className={[ 'slide', `c${slide.id}` ].join(' ')}>
-				<div className="illustration" />
-				<div className="text">
-					<Title text={translate(`popupSettingsMembershipSlide${slide.id}Title`)} />
-					<Label text={translate(`popupSettingsMembershipSlide${slide.id}Text`)} />
+		const SlideItem = (slide) => {
+			const { id } = slide;
+			const title = translate(`popupSettingsMembershipSlide${id}Title`);
+
+			let text = translate(`popupSettingsMembershipSlide${id}Text`);
+			if (id == 2) {
+				text = U.Common.sprintf(text, J.Url.vision);
+			};
+
+			return (
+				<div className={[ 'slide', `c${id}` ].join(' ')}>
+					<div className="illustration" />
+					<div className="text">
+						<Title text={title} />
+						<Label text={text} />
+					</div>
 				</div>
-			</div>
-		);
+			);
+		};
 
 		const TierItem = (props: any) => {
 			const { item } = props;
