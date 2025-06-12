@@ -75,6 +75,7 @@ class CommonStore {
 		filter: '',
 		depth: 1,
 		filterTypes: [],
+		includeTypeEdges: true,
 	};
 
 	private timeoutMap = new Map<string, number>();

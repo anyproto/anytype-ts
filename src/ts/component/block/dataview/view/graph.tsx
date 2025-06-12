@@ -72,7 +72,10 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
-		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, (message: any) => {
+		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
+		const includeTypeEdges = settings.includeTypeEdges !== undefined ? settings.includeTypeEdges : true;
+
+		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, includeTypeEdges, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};

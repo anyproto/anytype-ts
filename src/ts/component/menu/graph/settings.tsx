@@ -252,6 +252,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'link', name: translate('menuGraphSettingsLinks') },
 					{ id: 'relation', name: translate('menuGraphSettingsRelations') },
 					{ id: 'orphan', name: translate('menuGraphSettingsUnlinkedObjects') },
+					{ id: 'includeTypeEdges', name: translate('menuGraphSettingsTypeEdges') },
 				] 
 			},
 		];

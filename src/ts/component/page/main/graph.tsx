@@ -14,7 +14,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const rootIdRef = useRef('');
 
 	const unbind = () => {
-		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage sidebarResize.graphPage`);
+		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage sidebarResize.graphPage updateGraphSettings.graphPage`);
 	};
 
 	const rebind = () => {
@@ -24,6 +24,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		win.on(`keydown.graphPage`, e => onKeyDown(e));
 		win.on('updateGraphRoot.graphPage', (e: any, data: any) => initRootId(data.id));
 		win.on('sidebarResize.graphPage', () => resize());
+		win.on('updateGraphSettings.graphPage', () => load());
 	};
 
 	const onKeyDown = (e: any) => {
@@ -33,7 +34,10 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const load = () => {
 		setLoading(true);
 
-		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], (message: any) => {
+		const settings = S.Common.getGraph(J.Constant.graphId.global);
+		const includeTypeEdges = settings.includeTypeEdges !== undefined ? settings.includeTypeEdges : true;
+
+		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], includeTypeEdges, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

@@ -301,6 +301,7 @@ export interface GraphSettings {
 	filter: string;
 	depth: number;
 	filterTypes: string[];
+	includeTypeEdges: boolean;
 };
 
 export interface FocusState {
