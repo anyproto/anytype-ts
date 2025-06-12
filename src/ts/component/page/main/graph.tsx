@@ -35,9 +35,8 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		setLoading(true);
 
 		const settings = S.Common.getGraph(J.Constant.graphId.global);
-		const includeTypeEdges = settings.includeTypeEdges !== undefined ? settings.includeTypeEdges : true;
 
-		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], includeTypeEdges, (message: any) => {
+		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], settings.includeTypeEdges, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

@@ -73,9 +73,8 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		};
 
 		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
-		const includeTypeEdges = settings.includeTypeEdges !== undefined ? settings.includeTypeEdges : true;
 
-		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, includeTypeEdges, (message: any) => {
+		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, settings.includeTypeEdges, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};

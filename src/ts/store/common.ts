@@ -795,8 +795,14 @@ class CommonStore {
 	getGraph (key: string): I.GraphSettings {
 		const stored = Storage.get(key);
 		const def = U.Common.objectCopy(this.graphObj);
+		const result = Object.assign(def, stored);
 
-		return Object.assign(def, stored);
+		// Ensure includeTypeEdges has a default value
+		if (result.includeTypeEdges === undefined) {
+			result.includeTypeEdges = true;
+		}
+
+		return result;
 	};
 
 	/**

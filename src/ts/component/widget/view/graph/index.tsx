@@ -19,9 +19,8 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 		const object = getObject();
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
-		const includeTypeEdges = settings.includeTypeEdges !== undefined ? settings.includeTypeEdges : true;
 
-		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? object.id : ''), object.setOf, includeTypeEdges, (message: any) => {
+		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? object.id : ''), object.setOf, settings.includeTypeEdges, (message: any) => {
 			setData({
 				edges: message.edges,
 				nodes: message.nodes.map(it => S.Detail.mapper(it))
