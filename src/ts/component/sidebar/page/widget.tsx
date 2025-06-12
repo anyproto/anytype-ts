@@ -36,7 +36,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 		this.onHelp = this.onHelp.bind(this);
-		this.onSettings = this.onSettings.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -197,31 +196,27 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			bottom = (
 				<div className="bottom">
+					<div className="grad" />
+
 					<div className="side left">
-						{isEditing ? (
-							<Button id="widget-list-add" color="simple" icon="plus" text={translate('menuWidgetAddWidget')} onClick={this.onAdd} />
-						) : (
-							<Icon className="settings withBackground" tooltipParam={{ text: translate('popupSettingsSpaceIndexTitle') }} onClick={this.onSettings} />
-						)}
+						<Icon className="settings withBackground" tooltipParam={{ text: translate('popupSettingsSpaceIndexTitle') }} onClick={this.onEdit} />
 					</div>
 
 					<div className="side center">
 						{!isEditing ? (
-							<Button text={translate('sidebarEdit')} color="simple" onClick={this.onEdit} />
-						) : ''}
+							<Button id="widget-list-add" text={translate('menuWidgetAddWidget')} color="simple" onClick={this.onAdd} />
+						) : (
+							<Button color="simple" text={translate('commonDone')} onClick={this.onEdit} />
+						)}
 					</div>
 
 					<div className="side right">
-						{isEditing ? (
-							<Button color="simple" text={translate('commonDone')} onClick={this.onEdit} />
-						) : (
-							<Icon 
-								id="button-widget-help" 
-								className="help withBackground" 
-								tooltipParam={{ text: translate('commonHelp') }} 
-								onClick={this.onHelp} 
-							/>
-						)}
+						<Icon 
+							id="button-widget-help" 
+							className="help withBackground" 
+							tooltipParam={{ text: translate('commonHelp') }} 
+							onClick={this.onHelp} 
+						/>
 					</div>
 				</div>
 			);
@@ -263,11 +258,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			vertical: I.MenuDirection.Top,
 			offsetY: -78,
 		});
-	};
-
-	onSettings (e: any) {
-		e.stopPropagation();
-		U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 	};
 
 	onEdit (e: any): void {

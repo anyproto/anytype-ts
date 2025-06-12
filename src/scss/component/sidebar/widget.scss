@@ -15,10 +15,16 @@
 	}
 
 	> .bottom { 
-		position: sticky; bottom: 0px; left: 0px; display: flex; align-items: center; background-color: var(--color-shape-tertiary); height: 48px;
-		flex-shrink: 0; gap: 0px 8px; z-index: 1; padding: 0px 8px;
+		position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; 
+		padding: 0px 8px;
 	}
 	> .bottom {
+		.grad { 
+			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none; 
+			background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, var(--color-shape-tertiary) 68.18%);
+		}
+
+		.side { position: relative; z-index: 1; }
 		.side.left { flex-shrink: 0; }
 		.side.center { flex-grow: 1; text-align: center; gap: 0px 8px; display: flex; align-items: center; justify-content: center; }
 		.side.right { flex-shrink: 0; }
@@ -35,7 +41,7 @@
 	}
 
 	> .body {
-		padding: 0px 6px 0px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
+		padding: 0px 6px 68px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
 		display: flex; flex-direction: column; gap: 12px 0px;
 	}
 	> .body {
@@ -76,8 +82,6 @@
 	}
 
 	> .body.isEditing {
-		> .buttons { position: sticky; bottom: 0px; left: 0px; padding: 0px 16px; }
-		
 		.widget:not(.isEditable) { opacity: 0.5; }
 		.widget:not(.isEditable) {
 			.dimmer { cursor: default; }
