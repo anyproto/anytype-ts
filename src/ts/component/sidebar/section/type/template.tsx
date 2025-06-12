@@ -1,11 +1,13 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
 import { I, J, U, S, C, translate, analytics } from 'Lib';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Mousewheel } from 'swiper/modules';
 
 const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 
-	const { rootId, object, readonly } = props;
+	const { rootId, object, readonly, onChange } = props;
 	const subId = [ J.Constant.subId.template, rootId ].join('-');
 	const items = S.Record.getRecords(subId);
 	const templateId = object?.defaultTemplateId;
@@ -59,12 +61,12 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 					template: item,
 					isView: false,
 					typeId: rootId,
-					templateId: '',
+					templateId,
+					noToast: true,
 					route: '',
 					onDuplicate: object => U.Object.openConfig(object, {}),
 					onSetDefault: id => {
-						S.Menu.updateData('dataviewTemplateList', { templateId: id });
-						U.Object.setDefaultTemplateId(rootId, id);
+						onChange({ defaultTemplateId: id });
 					},
 				},
 			});
@@ -107,7 +109,6 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 			filters,
 			sorts,
 			keys,
-			limit: 2,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		});
@@ -135,9 +136,19 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 
 			{items.length ? (
 				<div className="items">
-					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
+					<Swiper
+						slidesPerView={2}
+						spaceBetween={12}
+						navigation={true}
+						mousewheel={true}
+						modules={[ Navigation, Mousewheel ]}
+					>
+						{items.map((item: any, i: number) => (
+							<SwiperSlide key={item.id}>
+								<Item key={i} {...item} />
+							</SwiperSlide>
+						))}
+					</Swiper>
 				</div>
 			) : <EmptySearch className="noItems" text={translate('sidebarTemplateEmpty')} />}
 		</div>
