@@ -3,6 +3,11 @@
 .menus {
 	.menu.menuHelp { width: var(--menu-width-icon); position: fixed; }
 	.menu.menuHelp {
+		.item.withCaption {
+			.caption { max-width: unset; }
+			.button { background-color: var(--color-shape-tertiary); color: var(--color-text-primary); }
+		}
+
 		.shareTooltip { width: 100%; display: flex; position: absolute; left: auto; right: 0; top: 100%; margin-top: 8px; }
 		.shareTooltip {
 			.icon.close { display: none; }

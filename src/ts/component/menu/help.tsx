@@ -3,7 +3,8 @@ import { MenuItemVertical, Button, ShareTooltip } from 'Component';
 import { I, S, U, J, keyboard, analytics, Action, Highlight, translate } from 'Lib';
 
 const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
-	const { setActive, close, getId, onKeyDown } = props;
+
+	const { setActive, close, getId, onKeyDown, param, getSize } = props;
 	const n = useRef(-1);
 
 	const rebind = () => {
@@ -16,11 +17,14 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		$(window).off('keydown.menu');
 	};
 
-	const getItems = () => {
-		const btn = <Button className="c16" text={U.Common.getElectron().version.app} />;
+	const optionMapper = (it: any) => ({ ...it, name: it.name || translate(U.Common.toCamelCase(`menuHelp-${it.id}`)) })
 
+	const getItems = () => {
 		return [
-			{ id: 'whatsNew', icon: 'help-star',document: 'whatsNew', caption: btn },
+			{ 
+				id: 'whatsNew', icon: 'help-star', document: 'whatsNew', 
+				caption: <Button className="c16" text={U.Common.getElectron().version.app} /> 
+			},
 			{ id: 'shortcut', icon: 'help-keyboard', caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
 			//{ id: 'gallery' },
@@ -28,16 +32,57 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ id: 'community' },
 			{ id: 'tutorial' },
 			{ id: 'contact' },
-			{ id: 'tech' },
 			{ isDiv: true },
-			{ id: 'terms' },
-			{ id: 'privacy' },
-		].map(it => ({ ...it, name: translate(U.Common.toCamelCase(`menuHelp-${it.id}`)) }));
+			{ 
+				id: 'more', arrow: true, children: [
+					{ id: 'terms' },
+					{ id: 'privacy' },
+					{ id: 'tech' },
+				].map(optionMapper),
+			},
+		].map(optionMapper);
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
+			onOver(e, item);
+		};
+	};
+
+	const onOver = (e: any, item: any) => {
+		if (!item.arrow) {
+			S.Menu.closeAll([ 'select' ]);
+			return;
+		};
+
+		const menuParam: I.MenuParam = {
+			menuKey: item.id,
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			className: param.className,
+			classNameWrap: param.classNameWrap,
+			rebind,
+		};
+
+		let menuId = '';
+		switch (item.id) {
+			case 'more': {
+				menuId = 'select';
+				menuParam.data = {
+					options: item.children,
+					onSelect: onClick,
+				};
+				break;
+			};
+		};
+
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll([ 'select' ], () => {
+				S.Menu.open(menuId, menuParam);
+			});
 		};
 	};
 
