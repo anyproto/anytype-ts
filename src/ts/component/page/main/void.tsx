@@ -4,6 +4,17 @@ import { I, translate, Action, analytics } from 'Lib';
 
 const PageMainVoid = forwardRef<{}, I.PageComponent>(() => {
 
+	const onClick = () => {
+		const param = {
+			element: '#void-button-create-space',
+			className: 'spaceCreate',
+			horizontal: I.MenuDirection.Center,
+			offsetY: 4,
+		};
+
+		Action.spaceCreateMenu(param, analytics.route.void);
+	};
+
 	return (
 		<div className="wrapper">
 			<div className="container">
@@ -14,10 +25,7 @@ const PageMainVoid = forwardRef<{}, I.PageComponent>(() => {
 				<Title text={translate('pageMainVoidTitle')} />
 				<Label text={translate('pageMainVoidText')} />
 
-				<div className="buttons">
-					<Button onClick={() => Action.createSpace(I.SpaceUxType.Space, analytics.route.void)} className="c36" text={translate('commonCreateSpace')} />
-					<Button onClick={() => Action.createSpace(I.SpaceUxType.Chat, analytics.route.void)} className="c36" text={translate('commonCreateChat')} color="blank" />
-				</div>
+				<Button id="void-button-create-space" onClick={onClick} className="c36" text={translate('commonCreateSpace')} />
 			</div>
 		</div>
 	);
