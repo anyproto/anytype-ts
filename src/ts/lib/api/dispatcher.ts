@@ -1180,7 +1180,7 @@ class Dispatcher {
 			return;
 		};
 
-		if (newIndex < oldIndex) {
+		if (newIndex && (newIndex < oldIndex)) {
 			newIndex++;
 		};
 
