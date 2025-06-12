@@ -314,7 +314,7 @@ class MenuManager {
 						const { dialog } = require('electron');
 						const result = dialog.showMessageBoxSync(this.win, {
 							type: 'warning',
-							buttons: ['Cancel', 'OK'],
+							buttons: [ 'Cancel', 'OK' ],
 							defaultId: 0,
 							title: 'Debug without anonymization',
 							message: 'You are exporting this object and all its history of changes without anonymization.',
