@@ -22,7 +22,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview } = props;
+	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview, canEdit, canRemove } = props;
 	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
 	const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -591,6 +591,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('withSelect');
 	};
 
+	if (canEdit) {
+		cn.push('isEditable');
+	};
+
 	let head = null;
 	let content = null;
 	let back = null;
@@ -777,7 +781,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			onDragEnd={onDragEnd}
 			onContextMenu={onOptions}
 		>
-			<Icon className="remove" inner={<div className="inner" />} onClick={onRemove} />
+			{canRemove ? <Icon className="remove" inner={<div className="inner" />} onClick={onRemove} /> : ''}
 
 			{head}
 

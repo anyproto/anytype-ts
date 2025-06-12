@@ -98,4 +98,10 @@
 			}
 		}
 	}
+
+	/* PopupSpaceJoinByLink */
+
+	.popup.popupSpaceJoinByLink {
+		.icon { background-image: url('#{$themePath}/icon/menu/spaceCreate/join.svg'); }
+	}
 }

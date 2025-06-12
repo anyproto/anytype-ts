@@ -73,6 +73,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						isPreview={true}
 						setPreview={this.setPreview}
 						setEditing={this.setEditing}
+						canEdit={true}
+						canRemove={false}
 					/>
 				);
 			};
@@ -160,24 +162,36 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									onDragStart={this.onDragStart}
 									onDragOver={this.onDragOver}
 									isEditing={isEditing}
+									canEdit={false}
+									canRemove={false}
 								/>
 							</DropTarget>
 						</>
 					) : ''}
 
-					{blocks.map((block, i) => (
-						<Widget 
-							{...this.props}
-							key={`widget-${block.id}`}
-							block={block}
-							isEditing={isEditing}
-							className="isEditable"
-							onDragStart={this.onDragStart}
-							onDragOver={this.onDragOver}
-							setPreview={this.setPreview}
-							setEditing={this.setEditing}
-						/>
-					))}
+					{blocks.map((block, i) => {
+						const { widgets } = S.Block;
+						const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+						const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+						const targetId = child ? child.getTargetObjectId() : '';
+						const isChat = targetId == J.Constant.widgetId.chat;
+						const canEdit = !isChat || !space.isChat;
+
+						return (
+							<Widget
+								{...this.props}
+								key={`widget-${block.id}`}
+								block={block}
+								isEditing={canEdit ? isEditing : false}
+								canEdit={canEdit}
+								canRemove={canEdit}
+								onDragStart={this.onDragStart}
+								onDragOver={this.onDragOver}
+								setPreview={this.setPreview}
+								setEditing={this.setEditing}
+							/>
+						);
+					})}
 				</>
 			);
 
