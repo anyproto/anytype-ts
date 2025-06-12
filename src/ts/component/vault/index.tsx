@@ -187,7 +187,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			offsetY: 4,
 		};
 
-		Action.spaceCreateMenu(param, 'Vault', analytics.route.vault);
+		Action.spaceCreateMenu(param, analytics.route.vault);
 	};
 
 	const onArrow = (dir: number) => {

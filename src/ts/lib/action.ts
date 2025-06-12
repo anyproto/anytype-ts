@@ -1018,7 +1018,7 @@ class Action {
 		};
 	};
 
-	spaceCreateMenu (param: I.MenuParam, analyticsPrefix, analyticsRoute) {
+	spaceCreateMenu (param: I.MenuParam, route) {
 		const suffix = (it) => U.Common.toUpperCamelCase(it);
 		const options = [ 'chat', 'space', 'join' ].map(it => ({
 			id: it,
@@ -1028,6 +1028,19 @@ class Action {
 			withDescription: true,
 		}));
 
+		let prefix = '';
+		switch (route) {
+			case analytics.route.void: {
+				prefix = 'Void';
+				break;
+			};
+
+			case analytics.route.vault: {
+				prefix = 'Vault';
+				break;
+			};
+		};
+
 		S.Menu.open('select', {
 			...param,
 			data: {
@@ -1036,12 +1049,12 @@ class Action {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'chat': {
-							this.createSpace(I.SpaceUxType.Chat, analyticsRoute);
+							this.createSpace(I.SpaceUxType.Chat, route);
 							break;
 						};
 
 						case 'space': {
-							this.createSpace(I.SpaceUxType.Space, analyticsRoute);
+							this.createSpace(I.SpaceUxType.Space, route);
 							break;
 						};
 
@@ -1053,12 +1066,12 @@ class Action {
 						};
 					};
 
-					analytics.event(`Click${analyticsPrefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
+					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
 				},
 			}
 		});
 
-		analytics.event(`Screen${analyticsPrefix}CreateMenu`);
+		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
 };

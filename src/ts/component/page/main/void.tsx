@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { Icon, Title, Label, Button } from 'Component';
 import { I, translate, Action, analytics } from 'Lib';
 
-const PageMainVoid = forwardRef<{}, I.PageComponent>((props) => {
+const PageMainVoid = forwardRef<{}, I.PageComponent>(() => {
 
 	const onClick = () => {
 		const param = {
@@ -12,7 +12,7 @@ const PageMainVoid = forwardRef<{}, I.PageComponent>((props) => {
 			offsetY: 4,
 		};
 
-		Action.spaceCreateMenu(param, 'Vault', analytics.route.vault);
+		Action.spaceCreateMenu(param, analytics.route.void);
 	};
 
 	return (

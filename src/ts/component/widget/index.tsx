@@ -22,7 +22,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview } = props;
+	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview, canEdit, canRemove } = props;
 	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
 	const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -71,7 +71,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let cnt = 0;
 	let showCnt = false;
 	let layout = block.content.layout;
-	let canRemove = true;
 
 	if (isFavorite) {
 		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
@@ -83,10 +82,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		cnt = counters.messageCounter;
 		showCnt = !!cnt;
-
-		if (spaceview.isChat) {
-			canRemove = false;
-		};
 	};
 
 	if (object) {
@@ -596,6 +591,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('withSelect');
 	};
 
+	if (canEdit) {
+		cn.push('isEditable');
+	};
+
 	let head = null;
 	let content = null;
 	let back = null;
@@ -735,7 +734,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			content = <WidgetSpace {...childProps} />;
 
 			isDraggable = false;
-			canRemove = false;
 			break;
 		};
 
