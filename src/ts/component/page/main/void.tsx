@@ -10,9 +10,14 @@ const PageMainVoid = forwardRef<{}, I.PageComponent>(() => {
 				<div className="iconWrapper">
 					<Icon />
 				</div>
+
 				<Title text={translate('pageMainVoidTitle')} />
 				<Label text={translate('pageMainVoidText')} />
-				<Button onClick={() => Action.createSpace(I.SpaceUxType.Space, analytics.route.void)} className="c36" text={translate('pageMainVoidCreateSpace')} />
+
+				<div className="buttons">
+					<Button onClick={() => Action.createSpace(I.SpaceUxType.Space, analytics.route.void)} className="c36" text={translate('commonCreateSpace')} />
+					<Button onClick={() => Action.createSpace(I.SpaceUxType.Space, analytics.route.void)} className="c36" text={translate('commonCreateChat')} color="blank" />
+				</div>
 			</div>
 		</div>
 	);
