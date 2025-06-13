@@ -75,6 +75,7 @@ class CommonStore {
 		filter: '',
 		depth: 1,
 		filterTypes: [],
+		typeEdges: true,
 	};
 
 	private timeoutMap = new Map<string, number>();
@@ -794,8 +795,14 @@ class CommonStore {
 	getGraph (key: string): I.GraphSettings {
 		const stored = Storage.get(key);
 		const def = U.Common.objectCopy(this.graphObj);
+		const result = Object.assign(def, stored);
 
-		return Object.assign(def, stored);
+		// Ensure typeEdges has a default value
+		if (result.typeEdges === undefined) {
+			result.typeEdges = true;
+		};
+
+		return result;
 	};
 
 	/**

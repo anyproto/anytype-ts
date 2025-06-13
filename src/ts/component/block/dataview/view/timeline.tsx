@@ -361,8 +361,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		U.Subscription.subscribe({
 			subId,
-			filters: filters.map(it => Dataview.filterMapper(view, it)),
-			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
+			filters: filters.map(Dataview.filterMapper),
+			sorts: sorts.map(Dataview.filterMapper),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			ignoreHidden: true,

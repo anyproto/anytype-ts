@@ -757,6 +757,7 @@ class UtilMenu {
 		r[I.ImportType.Text] = 'TXT';
 		r[I.ImportType.Protobuf] = 'Anytype';
 		r[I.ImportType.Csv] = 'CSV';
+		r[I.ImportType.Obsidian] = 'Obsidian';
 		return r;
 	};
 
@@ -764,11 +765,13 @@ class UtilMenu {
 		const names = this.getImportNames();
 
 		return ([
-			{ id: 'notion', format: I.ImportType.Notion },
+			{ id: 'obsidian', format: I.ImportType.Obsidian, isApp: true },
+			{ id: 'notion', format: I.ImportType.Notion, isApp: true },
+			{ id: 'protobuf', format: I.ImportType.Protobuf, isApp: true },
+
 			{ id: 'markdown', format: I.ImportType.Markdown },
 			{ id: 'html', format: I.ImportType.Html },
 			{ id: 'text', format: I.ImportType.Text },
-			{ id: 'protobuf', format: I.ImportType.Protobuf },
 			{ id: 'csv', format: I.ImportType.Csv },
 		] as any).map(it => {
 			it.name = names[it.format];

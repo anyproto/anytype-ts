@@ -12,6 +12,7 @@ interface Props {
 	rootId: string;
 	data: any;
 	storageKey: string;
+	load?: () => void;
 };
 
 interface GraphRefProps {
@@ -26,6 +27,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	rootId = '',
 	data = {},
 	storageKey = '',
+	load = () => {},
 }, ref) => {
 
 	const nodeRef = useRef(null);
@@ -59,12 +61,13 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		unbind();
 		win.on(`updateGraphSettings.${id}`, () => updateSettings());
 		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => setRootId(data.id));
+		win.on(`updateGraphData.${id}`, () => load());
 		win.on(`removeGraphNode.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
 		win.on(`keydown.${id}`, e => onKeyDown(e));
 	};
 
 	const unbind = () => {
-		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'removeGraphNode', 'keydown' ];
+		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'removeGraphNode', 'keydown' ];
 
 		$(window).off(events.map(it => `${it}.${id}`).join(' '));
 		$(canvas.current).off('touchstart touchmove');

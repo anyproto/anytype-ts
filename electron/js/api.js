@@ -17,6 +17,7 @@ const KEYTAR_SERVICE = 'Anytype';
 
 class Api {
 
+	token = '';
 	isPinChecked = false;
 
 	appOnLoad (win) {
@@ -36,6 +37,7 @@ class Api {
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
+			token: this.token,
 		});
 		win.route = '';
 	};
@@ -56,6 +58,10 @@ class Api {
 				callBack();
 			};
 		});
+	};
+
+	setToken (win, token) {
+		this.token = token;
 	};
 
 	setPinChecked (win, isPinChecked) {

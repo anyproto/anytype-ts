@@ -93,6 +93,7 @@ export default {
 			3:			 [ 'zip', 'pb', 'json' ],
 			4:			 [ 'zip', 'html', 'htm', 'mhtml' ],
 			5:			 [ 'zip', 'txt' ],
+			6:			 [ 'zip', 'csv' ],
 		},
 	},
 

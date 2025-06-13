@@ -26,7 +26,7 @@ class PageMainSettingsImportNotion extends React.Component<I.PageSettingsCompone
 		return (
 			<>
 				<Icon className="logo" />
-				<Title text="Notion" />
+				<Title text={U.Menu.getImportNames()[I.ImportType.Notion]} />
 				<Label className="description" text={translate('popupSettingsImportNotionDescription')} />
 
 				<div className="inputWrapper flex">
@@ -39,7 +39,7 @@ class PageMainSettingsImportNotion extends React.Component<I.PageSettingsCompone
 						/>
 						{error ? <Error text={error} /> : ''}
 					</div>
-					<Button text={translate('popupSettingsImportOk')} className="c36" onClick={this.onImport} />
+					<Button text={translate('popupSettingsImportData')} className="c36" onClick={this.onImport} />
 				</div>
 
 				<div className="line" />

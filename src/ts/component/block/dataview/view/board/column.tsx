@@ -175,8 +175,8 @@ const Column = observer(class Column extends React.Component<Props> {
 		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribe({
 				subId,
-				filters: filters.map(it => Dataview.filterMapper(view, it)),
-				sorts: sorts.map(it => Dataview.filterMapper(view, it)),
+				filters: filters.map(Dataview.filterMapper),
+				sorts: sorts.map(Dataview.filterMapper),
 				keys: getKeys(view.id),
 				sources: object.setOf || [],
 				limit,

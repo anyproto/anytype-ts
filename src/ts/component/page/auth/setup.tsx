@@ -26,12 +26,10 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				};
 
 				if (phrase) {
-					U.Data.createSession(phrase, '' ,(message: any) => {
-						if (setErrorHandler(message.error)) {
-							return;
+					U.Data.createSession(phrase, '', '', (message: any) => {
+						if (!setErrorHandler(message.error)) {
+							select(accountId, false);
 						};
-
-						select(accountId, false);
 					});
 				} else {
 					U.Router.go('/auth/select', { replace: true });
