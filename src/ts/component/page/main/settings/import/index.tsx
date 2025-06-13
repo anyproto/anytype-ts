@@ -32,7 +32,6 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 		return (
 			<>
 				<Title text={translate('popupSettingsImportTitle')} />
-				<Label className="description" text={translate('popupSettingsImportText')} />
 
 				<div className="sections">
 					<div className="section app">
