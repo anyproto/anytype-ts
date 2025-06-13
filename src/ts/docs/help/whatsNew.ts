@@ -96,6 +96,14 @@ export default () => {
 		bullet(`Fixed a bug where the Description field was incorrectly shown in the header. Thanks to @${link('https://community.anytype.io/t/description-stuck-in-header/28007', 'sandyeggo')}!`),
 		bullet(`Fixed an issue where the "Name" property was missing in Queries created via widgets. Thanks to @${link('https://community.anytype.io/t/name-property-not-seen-in-sets-created-through-widgets/27656', 'HarshaRaj')} & @${link('https://community.anytype.io/t/name-property-not-displayed-in-grid-and-gallery-views-in-old-spaces/27949', 'BadWorld')}!`),
 		bullet(`Improved performance when switching between Grid and Gallery views with a large number of objects in the Query. Transitions are now smoother and more responsive. Thanks for the detailed report @${link('https://community.anytype.io/t/15-seconds-lag-while-switching-from-a-giant-grid-view-to-a-small-gallery-view/28017', 'Code-Jack')}!`),
+
+		bullet(`Clearing date properties works correctly when using bulk edit in Grid view. Thanks to @${link('https://community.anytype.io/t/date-relations-cant-be-cleared-when-doing-a-bulk-edit-of-the-relation-in-a-grid-view/27432', 'garyp')}!`),
+		bullet(`Search now works correctly in Queries that were previously Sets before the new structure migration. Thanks to @${link('https://community.anytype.io/t/search-broken-for-queries/27467', 'stendekoniko')}!`),
+		bullet(`Changing bullets to checkboxes now correctly applies to all selected items, including multi-level lists. Thanks to @${link('https://community.anytype.io/t/changing-bullets-to-checkboxes-in-bulk-doesnt-change-whole-selection/27825', 'spiffytech')}!`),
+		bullet(`Resolved an issue where some Queries could appear reset. Thanks to @${link('https://community.anytype.io/t/some-queries-are-reset-after-updating-to-0-46-21-beta/27845', 'boots')}!`),
+		bullet(`Resolved an issue where some Templates were not displayed for certain Types. Thanks again to @${link('https://community.anytype.io/t/loss-of-templates-after-updating-to-0-46-21-beta/27843', 'boots')}!`),
+		bullet(`Fixed a bug where some objects could appear without a title and showed as "Untitled".`),
+
 		bullet(`Vertical videos maintain their correct orientation when resized.`),
 		bullet(`Opening a Property in the settings no longer causes the title bar to flicker when the window is narrow.`),
 		bullet(`Fixed an issue where switching Spaces after unlocking the app with a PIN code didn’t work on the first attempt.`),
