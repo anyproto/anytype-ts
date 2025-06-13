@@ -49,7 +49,7 @@ export default () => {
 		text(``),
 
 		h3('<b>Type Links in Graph</b>'),
-		text('Types are now connected to their objects on the Graph.'),
+		text('New setting to connect Types to Objects has been added to the Graph.'),
 		img(`47/5.png`, 'c70'),
 		text(''),
 
