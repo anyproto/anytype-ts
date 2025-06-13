@@ -92,6 +92,9 @@ let isOver = '';
 let maxDegree = 0;
 let clusters = {};
 let selectBox = { x: 0, y: 0, width: 0, height: 0 };
+let borderRadius = 0;
+let lineWidth = 0;
+let lineWidth3 = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -116,6 +119,7 @@ init = (param) => {
 	resize(data);
 	initTheme(data.theme);
 	initFonts();
+	recalcConstants();
 
 	ctx.lineCap = 'round';
 	ctx.fillStyle = data.colors.bg;
@@ -123,6 +127,7 @@ init = (param) => {
 	transform = d3.zoomIdentity.translate(0, 0).scale(1);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
+	simulation.alphaDecay(0.05);
 
 	initForces();
 
@@ -180,7 +185,6 @@ image = ({ src, bitmap }) => {
  */
 initForces = () => {
 	const { center, charge, link, forceX, forceY } = forceProps;
-	const m = 10;
 	const maxRadius = 500;
 
 	updateOrphans();
@@ -251,7 +255,7 @@ updateForces = () => {
 	// Filter types
 	if (settings.filterTypes && settings.filterTypes.length) {
 		nodes = nodes.filter(d => !settings.filterTypes.includes(d.type));
-	}
+	};
 
 	// Filter links
 	if (!settings.link) {
@@ -259,7 +263,7 @@ updateForces = () => {
 		edges = edges.filter(d => d.isDouble ? d.types.some(t => typesSet.has(t)) : d.type != EdgeType.Link);
 		const ids = nodeIdsFromEdges(edges);
 		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
-	}
+	};
 
 	// Filter relations
 	if (!settings.relation) {
@@ -267,19 +271,19 @@ updateForces = () => {
 		edges = edges.filter(d => d.isDouble ? d.types.some(t => typesSet.has(t)) : d.type != EdgeType.Relation);
 		const ids = nodeIdsFromEdges(edges);
 		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
-	}
+	};
 
 	// Filter local only edges
 	if (settings.local) {
 		edges = filterEdgesByDepth([ rootId ], settings.depth || 1);
 		const ids = nodeIdsFromEdges(edges); ids.add(rootId);
 		nodes = nodes.filter(d => ids.has(d.id));
-	}
+	};
 
 	// Filter orphans
 	if (!settings.orphan) {
 		nodes = nodes.filter(d => !d.isOrphan || d.forceShow);
-	}
+	};
 
 	// Cluster by object type
 	if (settings.cluster) {
@@ -288,7 +292,7 @@ updateForces = () => {
 			.strength(1)
 			.centerInertia(0.75));
 		simulation.force('collide', d3.forceCollide(d => getRadius(d) * 2));
-	}
+	};
 
 	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
@@ -425,6 +429,8 @@ updateOrphans = () => {
 draw = (t) => {
 	const radius = 5.7 / transform.k;
 
+	recalcConstants();
+
 	time = t;
 	TWEEN.update();
 
@@ -435,7 +441,9 @@ draw = (t) => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		drawEdge(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+		if (checkNodeInViewport(d.target) || checkNodeInViewport(d.source)) {
+			drawEdge(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+		};
 	});
 
 	nodes.forEach(d => {
@@ -491,7 +499,6 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const k = 5 / transform.k;
 	const io = (isOver == d.source.id) || (isOver == d.target.id);
 	const showName = io && d.name && settings.label;
-	const lineWidth = getLineWidth();
 
 	let colorLink = data.colors.link;
 	let colorArrow = data.colors.arrow;
@@ -527,10 +534,10 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
-		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, getBorderRadius());
+		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, borderRadius);
 
 		ctx.strokeStyle = colorLink;
-		ctx.lineWidth = lineWidth * 3;
+		ctx.lineWidth = lineWidth3;
 		ctx.fillStyle = data.colors.bg;
 		ctx.fill();
 		ctx.stroke();
@@ -582,7 +589,7 @@ drawNode = (d) => {
 	let colorNode = data.colors.node;
 	let colorText = data.colors.text;
 	let colorLine = '';
-	let lineWidth = 0;
+	let lw = 0;
 
 	if (isHovering) {
 		ctx.globalAlpha = hoverAlpha;
@@ -600,7 +607,7 @@ drawNode = (d) => {
 
 	if (io || (root && (d.id == root.id))) {
 		colorNode = colorText = colorLine = data.colors.highlight;
-		lineWidth = getLineWidth() * 3;
+		lw = lineWidth3;
 		ctx.globalAlpha = 1;
 	};
 
@@ -609,19 +616,19 @@ drawNode = (d) => {
 	};
 
 	if (io || isSelected) {
-		lineWidth = getLineWidth() * 3;
+		lw = lineWidth3;
 	};
 
 	if (settings.icon && img && (transform.k >= transformThresholdHalf)) {
 		ctx.save();
 
-		if (lineWidth) {
-			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, getBorderRadius());
+		if (lw) {
+			util.roundedRect(d.x - radius - lw * 2, d.y - radius - lw * 2, diameter + lw * 4, diameter + lw * 4, borderRadius);
 			ctx.fillStyle = data.colors.bg;
 			ctx.fill();
 
 			ctx.strokeStyle = colorLine;
-			ctx.lineWidth = lineWidth;
+			ctx.lineWidth = lw;
 			ctx.stroke();
 		};
 
@@ -637,7 +644,7 @@ drawNode = (d) => {
 			if (isLayoutHuman(d) || isLayoutParticipant(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
-				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, getBorderRadius());
+				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, borderRadius);
 			};
 	
 			ctx.fillStyle = data.colors.bg;
@@ -695,7 +702,7 @@ drawSelectBox = () => {
 	util.roundedRect(x, y, width, height, 1);
 
 	ctx.strokeStyle = data.colors.selected;
-	ctx.lineWidth = getLineWidth() * 3;
+	ctx.lineWidth = lineWidth3;
 	ctx.stroke();
 	ctx.restore();
 }
@@ -706,7 +713,18 @@ drawSelectBox = () => {
  */
 onZoom = (data) => {
 	transform = Object.assign(transform, data.transform);
+
+	recalcConstants();
 	redraw();
+};
+
+/**
+ * Recalculates constants to avoid recomputations with floats
+ */
+recalcConstants = () => {
+	borderRadius = getBorderRadius();
+	lineWidth = getLineWidth();
+	lineWidth3 = lineWidth * 3;
 };
 
 /**
@@ -1137,7 +1155,7 @@ const getRadius = (d) => {
 
 	let degree = 0;
 	if (settings.link) {
-		degree += d.linkCnt
+		degree += d.linkCnt;
 	};
 	if (settings.relation) {
 		degree += d.relationCnt;
