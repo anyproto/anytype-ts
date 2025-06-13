@@ -713,7 +713,9 @@
 
 	> .pageSettingsImportObsidian,
     > .pageSettingsImportNotion {
-        .inputWrapper { flex-direction: row; align-items: flex-start; gap: 0px 8px; margin: 0px 0px 58px 0px; }
+		.description { margin: 0px 0px 16px 0px; }
+
+        .inputWrapper { flex-direction: row; align-items: flex-start; gap: 0px 8px; margin: 0px 0px 42px 0px; }
         .inputWrapper {
             .input { height: 36px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
             .input:hover { border-color: var(--color-shape-primary); }
@@ -725,7 +727,7 @@
 
         .helpWrapper { flex-direction: row; align-items: center; gap: 0px 8px; margin: 0px 0px 16px 0px; justify-content: space-between; }
         .helpWrapper {
-            .title { @include text-paragraph; font-weight: 700; padding: 0px; }
+            .title { @include text-paragraph; font-weight: 700; padding: 0px; margin: 0px !important; }
 
             .btn {
                 display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-secondary);
@@ -740,11 +742,10 @@
             }
         }
 
-        .list { @include text-small; margin-left: 1.35em; }
         .list {
             li { margin: 0px 0px 12px 0px; }
-            .label { margin: 0px 0px 4px 0px; font-weight: 500; }
-            .label.grey { font-weight: 400; }
+            .label { margin: 0px 0px 4px 0px; }
+			.label.grey { @include text-small; }
             .label:last-child { margin: 0px; }
         }
     }
