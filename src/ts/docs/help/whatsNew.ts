@@ -56,8 +56,8 @@ export default () => {
 		img(`47/3.png`, 'c70'),
 		text(''),
 
-		text('<b>Featured Properties Column View</b>'),
-		text('Added column view for featured properties, which you can switch to from the line view when editing a Type layout.'),
+		text('<b>Header Properties Column View</b>'),
+		text('Added column view for the properties displayed in the object header, which you can switch to from the line view when editing a Type layout.'),
 		img(`47/4.png`, 'c70'),
 		text(''),
 
