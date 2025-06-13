@@ -40,7 +40,7 @@ export default () => {
 
 		h3(`Sidebar Design Refresh`),
 		text(`We’ve refreshed the <b>Sidebar</b> with several design and usability improvements:`),
-		bullet(`The <b>${hl('New')} button</b> for adding new object has a new design`),
+		bullet(`The <b>${hl('New')} button</b> for creating objects has a new design`),
 		bullet(`<b>Favorites</b> have been renamed to <b>Pinned</b>, with a new icon and updated empty state`),
 		bullet(`<b>Space settings</b> are now easily accessible at the bottom of the Sidebar`),
 		bullet(`<b>Help menu ${hl('?')}</b> has been moved to the bottom of the sidebar`),
