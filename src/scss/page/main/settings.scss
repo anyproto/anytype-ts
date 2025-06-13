@@ -705,12 +705,13 @@
 		.icon.logo { background-image: url('~img/icon/import/obsidian.svg'); }
 	}
 
-    > .pageSettingsImportNotion,
+	> .pageSettingsImportNotion,
     > .pageSettingsImportNotionHelp {
         .icon.logo { background-image: url('~img/icon/import/notion.svg'); }
         a { font-weight: bold; text-decoration: none; color: var(--color-control-active); }
     }
 
+	> .pageSettingsImportObsidian,
     > .pageSettingsImportNotion {
         .inputWrapper { flex-direction: row; align-items: flex-start; gap: 0px 8px; margin: 0px 0px 58px 0px; }
         .inputWrapper {

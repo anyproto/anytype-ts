@@ -903,7 +903,8 @@
 
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
-	"popupSettingsImportOk": "Import data",
+	"popupSettingsImportData": "Import data",
+	"popupSettingsImportFiles": "Import files",
 	"popupSettingsImportNotionTitle": "Notion Import",
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
@@ -1046,6 +1047,15 @@
 	"popupSettingsImportNotionIntegrationList22": "Integration settings → Capabilities → Read user information without email addresses",
 	"popupSettingsImportNotionIntegrationList31": "Add integration to the pages you want to import",
 	"popupSettingsImportNotionIntegrationList32": "Select document → ... → Add Connections → Confirm Integration",
+
+	"popupSettingsImportObsidianDescription": "Import your Obsidian files with 3 simple steps",
+	"popupSettingsImportObsidianHowTo": "How to import from Obsidian",
+	"popupSettingsImportObsidianList11": "Locate your Obsidian Vault",
+	"popupSettingsImportObsidianList12": "Go to Settings → Vault, then click the folder icon to open your vault location",
+	"popupSettingsImportObsidianList21": "Click Import Files and select your entire Vault folder (or a subfolder) with .md files",
+	"popupSettingsImportObsidianList22": "Anytype will process your files and automatically create objects for each Markdown file.",
+	"popupSettingsImportObsidianList31": "Content mapping",
+	"popupSettingsImportObsidianList32": "<ul><li>[[Internal Links]] → become linked objects in Anytype, so the connections between your notes are preserved.</li><li>#tags → become values in the Tag property. You can use them to filter, group or search across objects.</li><li>Frontmatter (the --- metadata at the top) → becomes object properties.</li></ul>",
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 

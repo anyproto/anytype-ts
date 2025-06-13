@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Title, Button, Input, Label, Icon, Error } from 'Component';
-import { I, C, S, U, J, translate, analytics } from 'Lib';
+import { Title, Button, Label, Icon } from 'Component';
+import { I, U, J, translate, Action } from 'Lib';
 
 interface State {
 	error: string;
@@ -27,42 +27,30 @@ class PageMainSettingsImportObsidian extends React.Component<I.PageSettingsCompo
 			<>
 				<Icon className="logo" />
 				<Title text={U.Menu.getImportNames()[I.ImportType.Obsidian]} />
-				<Label className="description" text={translate('popupSettingsImportNotionDescription')} />
+				<Label className="description" text={translate('popupSettingsImportObsidianDescription')} />
 
 				<div className="inputWrapper flex">
-					<div className="errorWrapper">
-						<Input 
-							focusOnMount
-							ref={ref => this.ref = ref}
-							type="password"
-							placeholder={translate('popupSettingsImportNotionTokenPlaceholder')}
-						/>
-						{error ? <Error text={error} /> : ''}
-					</div>
-					<Button text={translate('popupSettingsImportOk')} className="c36" onClick={this.onImport} />
+					<Button text={translate('popupSettingsImportFiles')} className="c36" onClick={this.onImport} />
 				</div>
 
 				<div className="line" />
 
 				<div className="helpWrapper flex">
-					<Title text={U.Common.sprintf(translate('popupSettingsImportNotionHowTo'), J.Url.notionFAQ)} />
-					<div className="btn" onClick={() => onPage('importNotionHelp')}>
-						<Icon className="help" />{translate('popupSettingsImportNotionStepByStepGuide')}
-					</div>
+					<Title text={translate('popupSettingsImportObsidianHowTo')} />
 				</div>
 
 				<ol className="list">
 					<li>
-						<Label text={translate('popupSettingsImportNotionIntegrationList11')} />
-						<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList12')} />
+						<Label text={translate('popupSettingsImportObsidianList11')} />
+						<Label className="grey" text={translate('popupSettingsImportObsidianList12')} />
 					</li>
 					<li>
-						<Label text={translate('popupSettingsImportNotionIntegrationList21')} />
-						<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList22')} />
+						<Label text={translate('popupSettingsImportObsidianList21')} />
+						<Label className="grey" text={translate('popupSettingsImportObsidianList22')} />
 					</li>
 					<li>
-						<Label text={translate('popupSettingsImportNotionIntegrationList31')} />
-						<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList32')} />
+						<Label text={translate('popupSettingsImportObsidianList31')} />
+						<Label className="grey" text={translate('popupSettingsImportObsidianList32')} />
 					</li>
 				</ol>
 			</>
@@ -70,6 +58,14 @@ class PageMainSettingsImportObsidian extends React.Component<I.PageSettingsCompo
 	};
 	
 	onImport (): void {
+		Action.import(I.ImportType.Csv, J.Constant.fileExtension.import[I.ImportType.Markdown], {}, (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+				return;
+			};
+
+			U.Space.openDashboard();
+		});
 	};
 
 };
