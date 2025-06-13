@@ -11,12 +11,17 @@ interface Props extends I.PageSettingsComponent {
 const PageMainSettingsExportIndex = observer(class PageMainSettingsExportIndex extends React.Component<Props> {
 
 	render () {
-		const { onPage } = this.props;
 		const items = this.getItems();
 
 		const Item = (item: any) => {
+			const cn = [ 'item', item.id ];
+
+			if (item.isApp) {
+				cn.push('isApp');
+			};
+
 			return (
-				<div className={[ 'item', item.id ].join(' ')} onClick={() => this.onClick(item.id)} >
+				<div className={cn.join(' ')} onClick={() => this.onClick(item.id)} >
 					<Icon className={`import-${item.id}`} />
 					<div className="name">{item.name}</div>
 				</div>
@@ -57,7 +62,7 @@ const PageMainSettingsExportIndex = observer(class PageMainSettingsExportIndex e
 	getItems (): any[] {
 		return [
 			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'protobuf', name: 'Any-Block' },
+			{ id: 'protobuf', name: 'Any-Block', isApp: true },
 		];
 	};
 

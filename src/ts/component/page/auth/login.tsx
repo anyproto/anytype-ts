@@ -45,7 +45,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 				};
 
 				S.Auth.accountListClear();
-				U.Data.createSession(phrase, '', () => {
+				U.Data.createSession(phrase, '', '', () => {
 					C.AccountRecover(message => {
 						setErrorHandler(message.error.code, message.error.description);
 					});

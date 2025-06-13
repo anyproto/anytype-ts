@@ -207,6 +207,10 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		this.save(values);
 
 		analytics.event('GraphSettings', { id });
+
+		if (id == 'typeEdges') {
+			$(window).trigger('updateGraphData');
+		};
 	};
 
 	save (values: I.GraphSettings) {
@@ -252,6 +256,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'link', name: translate('menuGraphSettingsLinks') },
 					{ id: 'relation', name: translate('menuGraphSettingsRelations') },
 					{ id: 'orphan', name: translate('menuGraphSettingsUnlinkedObjects') },
+					{ id: 'typeEdges', name: translate('menuGraphSettingsTypeEdges') },
 				] 
 			},
 		];

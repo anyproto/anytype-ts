@@ -189,8 +189,8 @@ class Dataview {
 			U.Subscription.subscribe({
 				...param,
 				subId,
-				filters: filters.map(it => this.filterMapper(view, it)),
-				sorts: sorts.map(it => this.filterMapper(view, it)),
+				filters: filters.map(this.filterMapper),
+				sorts: sorts.map(this.filterMapper),
 				keys,
 				limit,
 				offset,
@@ -213,15 +213,12 @@ class Dataview {
 	 * @param {any} it - The filter or sort object.
 	 * @returns {any} The mapped object.
 	 */
-	filterMapper (view: any, it: any) {
+	filterMapper (it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 
 		if (relation) {
 			it.format = relation.format;
-
-			if (relation.includeTime) {
-				it.includeTime = true;
-			};
+			it.includeTime = relation.includeTime;
 		};
 		return it;
 	};

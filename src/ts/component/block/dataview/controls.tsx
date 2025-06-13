@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -18,6 +19,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	node: any = null;
 	refFilter = null;
 	refHead = null;
+	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -207,6 +209,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		container.off('mousedown.filter');
 		win.off('keydown.filter');
+
+		raf.cancel(this.frame);
 	};
 
 	onViewSwitch (view: any) {
@@ -562,22 +566,28 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return;
 		};
 
-		const node = $(this.node);
-		const sideLeft = node.find('#dataviewControlsSideLeft');
-		const sideRight = node.find('#dataviewControlsSideRight');
-		const nw = node.outerWidth();
-
-		if (node.hasClass('small')) {
-			node.removeClass('small');
+		if (this.frame) {
+			raf.cancel(this.frame);
 		};
 
-		const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());
+		this.frame = raf(() => {
+			const node = $(this.node);
+			const sideLeft = node.find('#dataviewControlsSideLeft');
+			const sideRight = node.find('#dataviewControlsSideRight');
+			const nw = node.outerWidth();
 
-		if (width + 16 > nw) {
-			node.addClass('small');
-		} else {
-			S.Menu.closeAll([ 'dataviewViewList' ]);
-		};
+			if (node.hasClass('small')) {
+				node.removeClass('small');
+			};
+
+			const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());
+
+			if (width + 16 > nw) {
+				node.addClass('small');
+			} else {
+				S.Menu.closeAll([ 'dataviewViewList' ]);
+			};
+		});
 	};
 
 });

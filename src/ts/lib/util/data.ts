@@ -320,9 +320,9 @@ class UtilData {
 	 * @param {string} key - The key.
 	 * @param {(message: any) => void} [callBack] - Optional callback after session creation.
 	 */
-	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
+	createSession (phrase: string, key: string, token: string, callBack?: (message: any) => void) {
 		this.closeSession(() => {
-			C.WalletCreateSession(phrase, key, (message: any) => {
+			C.WalletCreateSession(phrase, key, token, (message: any) => {
 				if (!message.error.code) {
 					S.Auth.tokenSet(message.token);
 					S.Auth.appTokenSet(message.appToken);
@@ -910,7 +910,7 @@ class UtilData {
 
 				phrase = message.mnemonic;
 
-				this.createSession(phrase, '', (message) => {
+				this.createSession(phrase, '', '', (message) => {
 					if (message.error.code) {
 						onError(message.error.description);
 						return;

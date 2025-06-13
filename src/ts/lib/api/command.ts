@@ -85,7 +85,7 @@ export const WalletConvert = (mnemonic: string, entropy: string, callBack?: (mes
 	dispatcher.request(WalletConvert.name, request, callBack);
 };
 
-export const WalletCreateSession = (mnemonic: string, appKey: string, callBack?: (message: any) => void) => {
+export const WalletCreateSession = (mnemonic: string, appKey: string, token: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.CreateSession.Request();
 
 	if (mnemonic) {
@@ -93,6 +93,9 @@ export const WalletCreateSession = (mnemonic: string, appKey: string, callBack?:
 	} else 
 	if (appKey) {
 		request.setAppkey(appKey);
+	} else 
+	if (token) {
+		request.setToken(token);
 	};
 
 	dispatcher.request(WalletCreateSession.name, request, callBack);
@@ -1758,7 +1761,7 @@ export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, call
 	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
 };
 
-export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], callBack?: (message: any) => void) => {
+export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], typeEdges: boolean = true, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
 	const request = new Rpc.Object.Graph.Request();
@@ -1770,6 +1773,7 @@ export const ObjectGraph = (spaceId: string, filters: any[], limit: number, type
 	request.setKeysList(keys);
 	request.setCollectionid(collectionId);
 	request.setSetsourceList(sources);
+	request.setIncludetypeedges(typeEdges);
 
 	dispatcher.request(ObjectGraph.name, request, callBack);
 };

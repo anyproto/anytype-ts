@@ -18,6 +18,13 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	refGraph: any = null;
 	rootId = '';
 
+	constructor (props: I.ViewComponent) {
+		super(props);
+
+		this.load = this.load.bind(this);
+		this.resize = this.resize.bind(this);
+	};
+
 	render () {
 		const { block, className } = this.props;
 		const cn = [ 'viewContent', className ];
@@ -36,6 +43,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 						rootId="" 
 						data={this.data}
 						storageKey={J.Constant.graphId.dataview}
+						load={this.load}
 					/>
 				</div>
 			</div>
@@ -65,14 +73,16 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		};
 
 		const searchIds = getSearchIds();
-		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(it => Dataview.filterMapper(view, it));
+		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(Dataview.filterMapper);
 		const target = getTarget();
 
 		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
-		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, (message: any) => {
+		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
+
+		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, settings.typeEdges, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
