@@ -313,7 +313,6 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { rootId, blockId, isInline } = data;
 		const isReadonly = this.isReadonly();
 		const { type, groupRelationKey } = this.param;
-		const view = data.view.get();
 
 		if (!item.arrow || isReadonly) {
 			S.Menu.closeAll(J.Menu.viewEdit);
@@ -355,8 +354,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'groupRelationKey': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					value: Relation.getGroupOption(rootId, blockId, view.type, groupRelationKey)?.id,
-					options: Relation.getGroupOptions(rootId, blockId, view.type),
+					value: Relation.getGroupOption(rootId, blockId, type, groupRelationKey)?.id,
+					options: Relation.getGroupOptions(rootId, blockId, type),
 				});
 				break;
 			};
@@ -364,8 +363,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'endRelationKey': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					value: Relation.getGroupOption(rootId, blockId, view.type, this.param.endRelationKey)?.id,
-					options: Relation.getGroupOptions(rootId, blockId, view.type),
+					value: Relation.getGroupOption(rootId, blockId, type, this.param.endRelationKey)?.id,
+					options: Relation.getGroupOptions(rootId, blockId, type),
 				});
 				break;
 			};
