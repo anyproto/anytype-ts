@@ -10,7 +10,6 @@ interface Props extends I.PageSettingsComponent {
 const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex extends React.Component<Props> {
 
 	render () {
-		const { onPage } = this.props;
 		const items = this.getItems();
 
 		const Item = (item: any) => {

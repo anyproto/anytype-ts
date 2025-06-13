@@ -757,6 +757,7 @@ class UtilMenu {
 		r[I.ImportType.Text] = 'TXT';
 		r[I.ImportType.Protobuf] = 'Anytype';
 		r[I.ImportType.Csv] = 'CSV';
+		r[I.ImportType.Obsidian] = 'Obsidian';
 		return r;
 	};
 
@@ -770,6 +771,7 @@ class UtilMenu {
 			{ id: 'text', format: I.ImportType.Text },
 			{ id: 'protobuf', format: I.ImportType.Protobuf },
 			{ id: 'csv', format: I.ImportType.Csv },
+			{ id: 'obsidian', format: I.ImportType.Obsidian },
 		] as any).map(it => {
 			it.name = names[it.format];
 			return it;

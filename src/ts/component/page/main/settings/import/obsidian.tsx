@@ -6,7 +6,7 @@ interface State {
 	error: string;
 };
 
-class PageMainSettingsImportNotion extends React.Component<I.PageSettingsComponent, State> {
+class PageMainSettingsImportObsidian extends React.Component<I.PageSettingsComponent, State> {
 
 	ref = null;
 	state: State = {
@@ -26,7 +26,7 @@ class PageMainSettingsImportNotion extends React.Component<I.PageSettingsCompone
 		return (
 			<>
 				<Icon className="logo" />
-				<Title text={U.Menu.getImportNames()[I.ImportType.Notion]} />
+				<Title text={U.Menu.getImportNames()[I.ImportType.Obsidian]} />
 				<Label className="description" text={translate('popupSettingsImportNotionDescription')} />
 
 				<div className="inputWrapper flex">
@@ -70,23 +70,8 @@ class PageMainSettingsImportNotion extends React.Component<I.PageSettingsCompone
 	};
 	
 	onImport (): void {
-		const token = this.ref.getValue();
-
-		S.Common.notionTokenSet(token);
-
-		analytics.event('ClickImport', { type: I.ImportType.Notion });
-
-		C.ObjectImportNotionValidateToken(token, (message: any) => {
-			if (message.error.code) {
-				this.ref?.setError(true);
-				this.setState({ error: message.error.description });
-				return;
-			};
-
-			this.props.onPage('importNotionWarning');
-		});
 	};
 
 };
 
-export default PageMainSettingsImportNotion;
+export default PageMainSettingsImportObsidian;

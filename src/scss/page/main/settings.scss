@@ -687,6 +687,10 @@
         }
     }
 
+	> .pageSettingsImportObsidian {
+		.icon.logo { background-image: url('~img/icon/import/obsidian.svg'); }
+	}
+
     > .pageSettingsImportNotion,
     > .pageSettingsImportNotionHelp {
         .icon.logo { background-image: url('~img/icon/import/notion.svg'); }
