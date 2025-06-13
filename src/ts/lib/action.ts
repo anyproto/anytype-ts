@@ -1019,14 +1019,23 @@ class Action {
 	};
 
 	spaceCreateMenu (param: I.MenuParam, route) {
-		const suffix = (it) => U.Common.toUpperCamelCase(it);
-		const options = [ 'chat', 'space', 'join' ].map(it => ({
-			id: it,
-			icon: it,
-			name: translate(`sidebarMenuSpaceCreateTitle${suffix(it)}`),
-			description: translate(`sidebarMenuSpaceCreateDescription${suffix(it)}`),
-			withDescription: true,
-		}));
+		const ids = [ 'space', 'join' ];
+
+		if (U.Object.isAllowedChat()) {
+			ids.unshift('chat');
+		};
+
+		const options = ids.map(id => {
+			const suffix = U.Common.toUpperCamelCase(id);
+
+			return {
+				id,
+				icon: id,
+				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
+				description: translate(`sidebarMenuSpaceCreateDescription${suffix}`),
+				withDescription: true,
+			};
+		});
 
 		let prefix = '';
 		switch (route) {
