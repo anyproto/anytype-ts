@@ -105,7 +105,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 		switch (stage) {
 			case Stage.Phrase: {
-				Animation.from(() => setStage(stage + 2));
+				Animation.from(() => setStage(stage + 1));
 				break;
 			};
 
@@ -252,9 +252,14 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			);
 
 			buttons = (
-				<div className="animation">
-					<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={onForward} />
-				</div>
+				<>
+					<div className="animation">
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={onForward} />
+					</div>
+					<div className="animation">
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+					</div>
+				</>
 			);
 			break;
 		};
