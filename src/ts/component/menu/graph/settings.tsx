@@ -190,7 +190,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			this.menuContext?.ref?.updateOptions(this.getTypeOptions());
 		};
 
-		return S.Record.getTypes().
+		return S.Record.checkHiddenObjects(S.Record.getTypes()).
 			filter(it => !layouts.includes(it.recommendedLayout) && ![ J.Constant.typeKey.template ].includes(it.uniqueKey)).
 			map(it => ({ 
 				...it,
