@@ -11,10 +11,18 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 
 	render () {
 		const items = this.getItems();
+		const apps = items.filter(it => it.isApp);
+		const others = items.filter(it => !it.isApp);
 
 		const Item = (item: any) => {
+			const cn = [ 'item', item.id ];
+
+			if (item.isApp) {
+				cn.push('isApp');
+			};
+
 			return (
-				<div className={[ 'item', item.id ].join(' ')} onClick={() => this.onClick(item.id)} >
+				<div className={cn.join(' ')} onClick={() => this.onClick(item.id)} >
 					<Icon className={`import-${item.id}`} />
 					<div className="name">{item.name}</div>
 				</div>
@@ -26,10 +34,24 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 				<Title text={translate('popupSettingsImportTitle')} />
 				<Label className="description" text={translate('popupSettingsImportText')} />
 
-				<div className="items">
-					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
+				<div className="sections">
+					<div className="section app">
+						<Title className="sub" text={translate('popupSettingsImportByApp')} />
+						<div className="items">
+							{apps.map((item: any, i: number) => (
+								<Item key={i} {...item} />
+							))}
+						</div>
+					</div>
+
+					<div className="section">
+						<Title className="sub" text={translate('popupSettingsImportByFormat')} />
+						<div className="items">
+							{others.map((item: any, i: number) => (
+								<Item key={i} {...item} />
+							))}
+						</div>
+					</div>
 				</div>
 			</>
 		);

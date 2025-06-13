@@ -912,6 +912,8 @@
 	"popupSettingsImportTextTitle": "Text Import",
 	"popupSettingsImportProtobufTitle": "Any-Block Import",
 	"popupSettingsImportMarkdownTitle": "Markdown Import",
+	"popupSettingsImportByApp": "By app",
+	"popupSettingsImportByFormat": "By file type",
 
 	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose the format for your data export",
