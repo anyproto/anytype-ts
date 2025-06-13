@@ -192,12 +192,14 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 					</Swiper>
 				</div>
 
-				<div className="actionItems">
-					<div onClick={this.onCode} className="item redeemCode">
-						<Label text={translate('popupSettingsMembershipRedeemCode')} />
-						<Icon className="arrow" />
+				{!tier?.price ? (
+					<div className="actionItems">
+						<div onClick={this.onCode} className="item redeemCode">
+							<Label text={translate('popupSettingsMembershipRedeemCode')} />
+							<Icon className="arrow" />
+						</div>
 					</div>
-				</div>
+				) : ''}
 
 				<div className="actionItems">
 					{links.map((item, i) => (

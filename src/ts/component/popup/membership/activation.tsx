@@ -1,12 +1,13 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Loader, Error, Icon, Input } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Storage } from 'Lib';
+import { I, C, S, U, J, translate, Action } from 'Lib';
 import $ from 'jquery';
 
 const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
 
 	const inputRef = useRef(null);
+	const [ isLoading, setIsLoading ] = useState(false);
 	const [ error, setError ] = useState('');
 
 	const onKeyUp = () => {
@@ -19,15 +20,18 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>(({ param = {}
 	const onSubmit = () => {
 		const code = inputRef.current.getValue();
 
+		setIsLoading(true);
+
 		C.MembershipCodeGetInfo(code, (message) => {
-			console.log('MESSAGE: ', message)
+			setIsLoading(false);
 
 			if (message.error.code) {
 				setError(translate(`popupMembershipActivationError${message.error.code}`));
 				return;
 			};
-		});
 
+			S.Popup.replace('membershipActivation', 'membership', { data: { tier: message.tier, code } });
+		});
 	};
 
 	const onCancel = () => {
@@ -36,6 +40,8 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>(({ param = {}
 
 	return (
 		<>
+			{isLoading ? <Loader id="loader" /> : ''}
+
 			<Icon />
 
 			<Title text={translate('popupMembershipActivationTitle')} />

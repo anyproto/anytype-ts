@@ -1095,6 +1095,7 @@
 	"popupMembershipPayByCard": "Pay by Card",
 	"popupMembershipPayByCrypto": "Pay by Crypto",
 	"popupMembershipPaidBy": "Paid by %s",
+	"popupMembershipActivate": "Activate",
 
 	"popupMembershipResend": "Resend",
 	"popupMembershipCountdown": " in %s sec",
