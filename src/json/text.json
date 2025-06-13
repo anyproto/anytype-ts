@@ -976,6 +976,8 @@
 	"popupSettingsMembershipForeverFree": "Forever free",
 	"popupSettingsMembershipPending": "Pending...",
 
+	"popupSettingsMembershipRedeemCode": "I already have a code",
+
 	"popupSettingsMembershipLevelsDetails": "Membership plan details",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",

@@ -14,6 +14,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 
 		this.onSwiper = this.onSwiper.bind(this);
 		this.onContact = this.onContact.bind(this);
+		this.onCode = this.onCode.bind(this);
 	};
 
 	render () {
@@ -192,6 +193,13 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				</div>
 
 				<div className="actionItems">
+					<div onClick={this.onCode} className="item redeemCode">
+						<Label text={translate('popupSettingsMembershipRedeemCode')} />
+						<Icon className="arrow" />
+					</div>
+				</div>
+
+				<div className="actionItems">
 					{links.map((item, i) => (
 						<div key={i} onClick={() => this.onLink(item)} className="item">
 							<Label text={item.name} />
@@ -217,6 +225,10 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 	onContact () {
 		keyboard.onMembershipUpgrade();
 		analytics.event('MenuHelpContact', { route: analytics.route.settingsMembership });
+	};
+
+	onCode () {
+		console.log('CODE')
 	};
 
 });
