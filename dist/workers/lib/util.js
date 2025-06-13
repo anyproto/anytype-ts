@@ -4,6 +4,9 @@
 class Util {
 
 	ctx = null;
+	cache = {
+		text: {},
+	};
 
 	/**
 	 * Deep copies an object using JSON serialization.
@@ -78,8 +81,13 @@ class Util {
 	 * @param {string} color - The color of the line.
 	 */
 	line (x1, y1, x2, y2, width, color) {
+		if (!width) {
+			return;
+		};
+
 		const ctx = this.ctx;
-		ctx.save();
+		
+		//ctx.save();
 		ctx.beginPath();
 		ctx.moveTo(x1, y1);
 		ctx.lineTo(x2, y2);
@@ -87,7 +95,7 @@ class Util {
 		ctx.lineWidth = width;
 		ctx.strokeStyle = color;
 		ctx.stroke();
-		ctx.restore();
+		//ctx.restore();
 	};
 
 	/**
@@ -96,13 +104,25 @@ class Util {
 	 * @returns {{top: number, bottom: number, left: number, right: number}} The bounding box metrics.
 	 */
 	textMetrics (text) {
+		if (!text) {
+			return;
+		};
+
+		if (this.cache.text[text]) {
+			return this.cache.text[text];
+		};
+
 		const metrics = this.ctx.measureText(text);
-		return {
+		const param = {
 			top: -metrics.actualBoundingBoxAscent,
 			bottom: metrics.actualBoundingBoxDescent,
 			left: -metrics.actualBoundingBoxLeft,
 			right: metrics.actualBoundingBoxRight,
 		};
+
+		this.cache.text[text] = param;
+
+		return param;
 	};
 
 	/**
@@ -115,8 +135,13 @@ class Util {
 	 * @param {string} color - The fill color of the arrow head.
 	 */
 	arrowHead (x, y, angle, width, height, color) {
+		if (!width || !height) {
+			return;
+		};
+
 		const ctx = this.ctx;
 		const halfWidth = width / 2;
+
 		ctx.save();
 		ctx.translate(x, y);
 		ctx.rotate(angle);
@@ -138,6 +163,14 @@ class Util {
 	 */
 	arrayUnique (a) {
 		return a.length >= 2 ? [ ...new Set(a) ] : a;
+	};
+
+	/**
+	 * Clears cache for given key
+	 * @param {string} key - The key
+	 */
+	clearCache (key) {
+		this.cache[key] = {};
 	};
 
 };
