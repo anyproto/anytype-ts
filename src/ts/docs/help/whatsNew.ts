@@ -34,19 +34,24 @@ export default () => {
 		h2(`Highlights`),
 		h3(`Export & Import Improvements`),
 		bullet(`<b>Markdown export and import</b> now include support for properties, keeping more of your structure intact when moving content in and out of Anytype.`),
-		bullet(`<b>Obsidian imports</b> now support ${hl('[[double bracket]]')} links, allowing internal links to be correctly converted to object links in Anytype. The ${hl('[[')} shortcut is also supported in the editor for linking between objects.`),
+		bullet(`<b>Obsidian import</b> supports ${hl('[[double bracket]]')} links, allowing internal links to be correctly converted to object links in Anytype. The ${hl('[[')} shortcut is also supported inside Anytype for linking between objects.`),
 		img(`47/1.png`, 'c70'),
 		text(``),
 
 		h3(`Sidebar Design Refresh`),
 		text(`We’ve refreshed the <b>Sidebar</b> with several design and usability improvements:`),
-		bullet(`The <b>${hl('New')} button</b> for adding new object has a new design`),
+		bullet(`The <b>${hl('New')} button</b> for creating objects has a new design`),
 		bullet(`<b>Favorites</b> have been renamed to <b>Pinned</b>, with a new icon and updated empty state`),
 		bullet(`<b>Space settings</b> are now easily accessible at the bottom of the Sidebar`),
 		bullet(`<b>Help menu ${hl('?')}</b> has been moved to the bottom of the sidebar`),
 		bullet(`The <b>Bottom bar</b> now has a transparent gradient for a smoother visual transition`),
 		img(`47/2.png`, 'c70'),
 		text(``),
+
+		h3('<b>Type Links in Graph</b>'),
+		text('Types are now connected to their objects on the Graph.'),
+		img(`47/5.png`, 'c70'),
+		text(''),
 
 		h2(`Quality of Life Improvements`),
 		text(''),
@@ -59,11 +64,6 @@ export default () => {
 		text('<b>Header Properties Column View</b>'),
 		text('Added column view for the properties displayed in the object header, which you can switch to from the line view when editing a Type layout.'),
 		img(`47/4.png`, 'c70'),
-		text(''),
-
-		text('<b>Type Links in Graph</b>'),
-		text('Types are now connected to their objects on the Graph.'),
-		img(`47/5.png`, 'c70'),
 		text(''),
 
 		text('<b>Bookmark Paste Menu</b>'),
