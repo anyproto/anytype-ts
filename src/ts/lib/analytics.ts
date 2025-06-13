@@ -812,7 +812,7 @@ class Analytics {
 	 * @param {...any[]} args - Arguments to log.
 	 */
 	log (...args: any[]) {
-		if (!this.isAllowed()) {
+		if (!this.debug()) {
 			return;
 		};
 
