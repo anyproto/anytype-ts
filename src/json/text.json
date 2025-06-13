@@ -1117,6 +1117,10 @@
 
 	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
 
+	"popupMembershipActivationTitle": "Activate Your Membership",
+	"popupMembershipActivationText": "Enter the code we sent after purchase. Your membership will be activated instantly.",
+	"popupMembershipActivationPlaceholder": "Paste activation code...",
+
 	"popupConfirmConfirmationText": "Input this text to confirm:",
 	"popupConfirmConfirmationTextError": "Text does not match",
 

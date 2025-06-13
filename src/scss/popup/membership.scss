@@ -167,4 +167,18 @@
             .button { width: 100%; }
         }
     }
+
+    .popup.popupMembershipActivation {
+        .innerWrap { width: 424px; padding: 32px; text-align: center; }
+
+        .icon { width: 56px; height: 56px; margin: 0px 0px 12px 0px; background-image: url('~img/icon/popup/confirm/join.svg'); }
+
+        .title { @include text-header3; margin: 0px 0px 4px 0px; }
+        .label { margin: 0px 0px 20px 0px; }
+
+        .input { text-align: center; margin: 0px 0px 16px 0px; height: 36px; border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
+
+        .buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+        .button { width: 100%; }
+    }
 }

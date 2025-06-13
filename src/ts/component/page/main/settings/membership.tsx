@@ -228,7 +228,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 	};
 
 	onCode () {
-		console.log('CODE')
+		S.Popup.open('membershipActivation', {});
 	};
 
 });
