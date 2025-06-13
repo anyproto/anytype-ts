@@ -70,7 +70,7 @@
 
 	.emptyWrap { padding: 0px 16px; display: flex; align-items: center; justify-content: center; }
 	.emptyWrap {
-		.label { text-align: center; @include text-common; @include text-overflow-nw; width: 100%; color: var(--color-text-secondary); }
+		.label { text-align: center; @include text-common; @include clamp2; width: 100%; color: var(--color-text-secondary); }
 		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/widget/emptyMore.svg'); }
 	}
 

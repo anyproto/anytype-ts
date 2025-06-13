@@ -1971,7 +1971,7 @@
 	"widgetLibrary": "Library",
 	"widgetOptions": "Options",
 	"widgetEmptyLabel": "There are no objects here",
-	"widgetEmptyFavoriteLabel": "Add objects here using the <div class='icon more'></div> menu",
+	"widgetEmptyFavoriteLabel": "Pin objects here using the icon in the top right.",
 	"widgetShowAll": "See all Objects",
 	"widgetItemClipboard": "Create from clipboard",
 
