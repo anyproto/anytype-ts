@@ -67,10 +67,15 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 		const common = [ I.ImportType.Html, I.ImportType.Text, I.ImportType.Protobuf, I.ImportType.Markdown ];
 
 		if (common.includes(item.format)) {
-			Action.import(item.format, J.Constant.fileExtension.import[item.format]);
+			Action.import(item.format, J.Constant.fileExtension.import[item.format], {}, (message: any) => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+					return;
+				};
 
-			U.Space.openDashboard();
-			sidebar.leftPanelSetState({ page: 'widget' });
+				U.Space.openDashboard();
+				sidebar.leftPanelSetState({ page: 'widget' });
+			});
 		} else {
 			onPage(U.Common.toCamelCase('import-' + item.id));
 		};
