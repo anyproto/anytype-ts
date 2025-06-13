@@ -206,7 +206,7 @@
 	"commonYourName": "Your Name",
 	"commonIncludeTime": "Include time",
 	"commonShowHide": "Show / Hide",
-	"commonShowKey": "Reveal and copy Key",
+	"commonShowKey": "Show and copy Key",
 	"commonPasteLink": "Paste link",
 	"commonAppSettings": "App Settings",
 	"commonAddPinned": "Add to Pinned",
@@ -435,7 +435,7 @@
 
 	"authOnboardPhraseTitle": "This is your Key",
 	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — you control your data.<br/>You can find this key later in app settings.<br/><span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Reveal my key",
+	"authOnboardPhraseSubmit": "Show my key",
 
 	"onboardingExperienceSubTitle": "Build your first space",
 	"onboardingExperienceTypeTitle": "Who Will Use This Space?",
@@ -530,7 +530,7 @@
 	"pageAuthSetupImportTitle": "⚡️ Congratulations!",
 	"pageAuthSetupImportText": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
 	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupEntering": "Entering the Vault...",
+	"pageAuthSetupEntering": "Entering your Vault...",
 
 	"pageAuthMigrateInitTitle": "New Version Update",
 	"pageAuthMigrateInitText": "We're laying the groundwork for our new chats. Including counters, notifications and other features needed for smooth chat experience. It might take a little while, but don't worry, your data is safe.",
@@ -903,7 +903,8 @@
 
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
-	"popupSettingsImportOk": "Import data",
+	"popupSettingsImportData": "Import data",
+	"popupSettingsImportFiles": "Import files",
 	"popupSettingsImportNotionTitle": "Notion Import",
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
@@ -912,6 +913,8 @@
 	"popupSettingsImportTextTitle": "Text Import",
 	"popupSettingsImportProtobufTitle": "Any-Block Import",
 	"popupSettingsImportMarkdownTitle": "Markdown Import",
+	"popupSettingsImportByApp": "By app",
+	"popupSettingsImportByFormat": "By file type",
 
 	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose the format for your data export",
@@ -1044,6 +1047,15 @@
 	"popupSettingsImportNotionIntegrationList22": "Integration settings → Capabilities → Read user information without email addresses",
 	"popupSettingsImportNotionIntegrationList31": "Add integration to the pages you want to import",
 	"popupSettingsImportNotionIntegrationList32": "Select document → ... → Add Connections → Confirm Integration",
+
+	"popupSettingsImportObsidianDescription": "Import your Obsidian files with 3 simple steps",
+	"popupSettingsImportObsidianHowTo": "How to import from Obsidian",
+	"popupSettingsImportObsidianList11": "Locate your Obsidian Vault",
+	"popupSettingsImportObsidianList12": "Go to Settings → Vault, then click the folder icon to open your vault location",
+	"popupSettingsImportObsidianList21": "Click Import Files and select your entire Vault folder (or a subfolder) with .md files",
+	"popupSettingsImportObsidianList22": "Anytype will process your files and automatically create objects for each Markdown file.",
+	"popupSettingsImportObsidianList31": "Content mapping",
+	"popupSettingsImportObsidianList32": "<ul><li>[[Internal Links]] → become linked objects in Anytype, so the connections between your notes are preserved.</li><li>#tags → become values in the Tag property. You can use them to filter, group or search across objects.</li><li>Frontmatter (the --- metadata at the top) → becomes object properties.</li></ul>",
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 

@@ -96,6 +96,7 @@ export enum ImportType {
 	Html		 = 4,
 	Text		 = 5,
 	Csv			 = 6,
+	Obsidian	 = 7,
 };
 
 export enum ExportType {
