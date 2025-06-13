@@ -85,7 +85,7 @@ export const WalletConvert = (mnemonic: string, entropy: string, callBack?: (mes
 	dispatcher.request(WalletConvert.name, request, callBack);
 };
 
-export const WalletCreateSession = (mnemonic: string, appKey: string, callBack?: (message: any) => void) => {
+export const WalletCreateSession = (mnemonic: string, appKey: string, token: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.CreateSession.Request();
 
 	if (mnemonic) {
@@ -93,6 +93,9 @@ export const WalletCreateSession = (mnemonic: string, appKey: string, callBack?:
 	} else 
 	if (appKey) {
 		request.setAppkey(appKey);
+	} else 
+	if (token) {
+		request.setToken(token);
 	};
 
 	dispatcher.request(WalletCreateSession.name, request, callBack);
