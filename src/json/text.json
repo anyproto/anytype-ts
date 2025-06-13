@@ -1690,6 +1690,7 @@
 	"menuGraphSettingsFiles": "Files",
 	"menuGraphSettingsLocal": "Local graph",
 	"menuGraphSettingsDepth": "Depth",
+	"menuGraphSettingsTypeEdges": "Type Edges",
 
 	"menuHelpWhatsNew": "What's New",
 	"menuHelpShortcut": "Keyboard Shortcuts",
