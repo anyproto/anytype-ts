@@ -4,6 +4,9 @@
 class Util {
 
 	ctx = null;
+	cache = {
+		text: {},
+	};
 
 	/**
 	 * Deep copies an object using JSON serialization.
@@ -23,18 +26,17 @@ class Util {
 	 * @param {number} radius - The border radius.
 	 */
 	roundedRect (x, y, width, height, radius) {
-		const ctx = this.ctx;
-		ctx.beginPath();
-		ctx.moveTo(x + radius, y);
-		ctx.lineTo(x + width - radius, y);
-		ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-		ctx.lineTo(x + width, y + height - radius);
-		ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-		ctx.lineTo(x + radius, y + height);
-		ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-		ctx.lineTo(x, y + radius);
-		ctx.quadraticCurveTo(x, y, x + radius, y);
-		ctx.closePath();
+		this.ctx.beginPath();
+		this.ctx.moveTo(x + radius, y);
+		this.ctx.lineTo(x + width - radius, y);
+		this.ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+		this.ctx.lineTo(x + width, y + height - radius);
+		this.ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+		this.ctx.lineTo(x + radius, y + height);
+		this.ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+		this.ctx.lineTo(x, y + radius);
+		this.ctx.quadraticCurveTo(x, y, x + radius, y);
+		this.ctx.closePath();
 	};
 
 	/**
@@ -45,14 +47,13 @@ class Util {
 	 * @param {number} height - The height of the rectangle.
 	 */
 	rect (x, y, width, height) {
-		const ctx = this.ctx;
-		ctx.beginPath();
-		ctx.moveTo(x, y);
-		ctx.lineTo(x + width, y);
-		ctx.lineTo(x + width, y + height);
-		ctx.lineTo(x, y + height);
-		ctx.lineTo(x, y);
-		ctx.closePath();
+		this.ctx.beginPath();
+		this.ctx.moveTo(x, y);
+		this.ctx.lineTo(x + width, y);
+		this.ctx.lineTo(x + width, y + height);
+		this.ctx.lineTo(x, y + height);
+		this.ctx.lineTo(x, y);
+		this.ctx.closePath();
 	};
 
 	/**
@@ -62,10 +63,9 @@ class Util {
 	 * @param {number} radius - The radius of the circle.
 	 */
 	circle (x, y, radius) {
-		const ctx = this.ctx;
-		ctx.beginPath();
-		ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-		ctx.closePath();
+		this.ctx.beginPath();
+		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+		this.ctx.closePath();
 	};
 
 	/**
@@ -78,16 +78,17 @@ class Util {
 	 * @param {string} color - The color of the line.
 	 */
 	line (x1, y1, x2, y2, width, color) {
-		const ctx = this.ctx;
-		ctx.save();
-		ctx.beginPath();
-		ctx.moveTo(x1, y1);
-		ctx.lineTo(x2, y2);
-		ctx.closePath();
-		ctx.lineWidth = width;
-		ctx.strokeStyle = color;
-		ctx.stroke();
-		ctx.restore();
+		if (!width) {
+			return;
+		};
+		
+		this.ctx.beginPath();
+		this.ctx.moveTo(x1, y1);
+		this.ctx.lineTo(x2, y2);
+		this.ctx.closePath();
+		this.ctx.lineWidth = width;
+		this.ctx.strokeStyle = color;
+		this.ctx.stroke();
 	};
 
 	/**
@@ -96,13 +97,25 @@ class Util {
 	 * @returns {{top: number, bottom: number, left: number, right: number}} The bounding box metrics.
 	 */
 	textMetrics (text) {
+		if (!text) {
+			return;
+		};
+
+		if (this.cache.text[text]) {
+			return this.cache.text[text];
+		};
+
 		const metrics = this.ctx.measureText(text);
-		return {
+		const param = {
 			top: -metrics.actualBoundingBoxAscent,
 			bottom: metrics.actualBoundingBoxDescent,
 			left: -metrics.actualBoundingBoxLeft,
 			right: metrics.actualBoundingBoxRight,
 		};
+
+		this.cache.text[text] = param;
+
+		return param;
 	};
 
 	/**
@@ -115,20 +128,24 @@ class Util {
 	 * @param {string} color - The fill color of the arrow head.
 	 */
 	arrowHead (x, y, angle, width, height, color) {
-		const ctx = this.ctx;
+		if (!width || !height) {
+			return;
+		};
+
 		const halfWidth = width / 2;
-		ctx.save();
-		ctx.translate(x, y);
-		ctx.rotate(angle);
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		ctx.lineTo(height, -halfWidth);
-		ctx.lineTo(height, halfWidth);
-		ctx.lineTo(0, 0);
-		ctx.closePath();
-		ctx.fillStyle = color;
-		ctx.fill();
-		ctx.restore();
+
+		this.ctx.save();
+		this.ctx.translate(x, y);
+		this.ctx.rotate(angle);
+		this.ctx.beginPath();
+		this.ctx.moveTo(0, 0);
+		this.ctx.lineTo(height, -halfWidth);
+		this.ctx.lineTo(height, halfWidth);
+		this.ctx.lineTo(0, 0);
+		this.ctx.closePath();
+		this.ctx.fillStyle = color;
+		this.ctx.fill();
+		this.ctx.restore();
 	};
 
 	/**
@@ -138,6 +155,14 @@ class Util {
 	 */
 	arrayUnique (a) {
 		return a.length >= 2 ? [ ...new Set(a) ] : a;
+	};
+
+	/**
+	 * Clears cache for given key
+	 * @param {string} key - The key
+	 */
+	clearCache (key) {
+		this.cache[key] = {};
 	};
 
 };

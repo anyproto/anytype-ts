@@ -714,6 +714,7 @@ drawSelectBox = () => {
 onZoom = (data) => {
 	transform = Object.assign(transform, data.transform);
 
+	util.clearCache('text');
 	recalcConstants();
 	redraw();
 };
