@@ -2139,6 +2139,24 @@ export const MembershipFinalize = (name: string, callBack?: (message: any) => vo
 	dispatcher.request(MembershipFinalize.name, request, callBack);
 };
 
+export const MembershipCodeGetInfo = (code: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.CodeGetInfo.Request();
+
+	request.setCode(code);
+
+	dispatcher.request(MembershipCodeGetInfo.name, request, callBack);
+};
+
+export const MembershipCodeRedeem = (code: string, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.CodeRedeem.Request();
+
+	request.setCode(code);
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
+
+	dispatcher.request(MembershipCodeRedeem.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {

@@ -17,15 +17,17 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>(({ param = {}
 	};
 
 	const onSubmit = () => {
-		const route = U.Common.getRouteFromUrl(inputRef.current.getValue());
-		const { cid, key } = U.Common.searchParam(route.split('?')[1]);
+		const code = inputRef.current.getValue();
 
-		if (cid && key) {
-			U.Router.go(`/main/invite/?cid=${cid}&key=${key}`, { replace: true });
-			return;
-		};
+		C.MembershipCodeGetInfo(code, (message) => {
+			console.log('MESSAGE: ', message)
 
-		setError(translate('popupSpaceJoinByLinkError'));
+			if (message.error.code) {
+				setError(translate(`popupMembershipActivationError${message.error.code}`));
+				return;
+			};
+		});
+
 	};
 
 	const onCancel = () => {

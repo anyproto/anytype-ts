@@ -169,7 +169,7 @@
     }
 
     .popup.popupMembershipActivation {
-        .innerWrap { width: 424px; padding: 32px; text-align: center; }
+        .innerWrap { width: 424px; padding: 32px 32px 18px 32px; text-align: center; }
 
         .icon { width: 56px; height: 56px; margin: 0px 0px 12px 0px; background-image: url('~img/icon/popup/confirm/join.svg'); }
 
@@ -180,5 +180,7 @@
 
         .buttons { display: flex; flex-direction: column; gap: 8px 0px; }
         .button { width: 100%; }
+
+        .error { margin: 0px; padding-top: 12px; }
     }
 }
