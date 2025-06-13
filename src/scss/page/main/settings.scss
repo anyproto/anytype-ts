@@ -680,7 +680,7 @@
 			.items { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 		}
 
-		.title.sub { @include text-paragraph; font-weight: 600; padding: 8px 0px; }
+		.title.sub { @include text-paragraph; font-weight: 600; padding: 8px 0px; margin: 0px !important; }
 
         .item {
             height: 72px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; transition: $transitionAllCommon;
@@ -696,6 +696,10 @@
 			.name { font-weight: 500; }
 		}
     }
+
+	> .pageSettingsImportIndex {
+		.title { margin-bottom: 24px !important; }
+	}
 
 	> .pageSettingsImportObsidian {
 		.icon.logo { background-image: url('~img/icon/import/obsidian.svg'); }
