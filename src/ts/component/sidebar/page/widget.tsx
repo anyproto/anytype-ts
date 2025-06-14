@@ -199,7 +199,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					<div className="grad" />
 
 					<div className="side left">
-						<Icon className="settings withBackground" tooltipParam={{ text: translate('popupSettingsSpaceIndexTitle') }} onClick={this.onEdit} />
+						<Icon className="settings withBackground" tooltipParam={{ text: translate('sidebarEdit') }} onClick={this.onEdit} />
 					</div>
 
 					<div className="side center">
