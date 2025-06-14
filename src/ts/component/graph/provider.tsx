@@ -214,14 +214,16 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					return;
 				};
 
-				createImageBitmap(img, { resizeWidth: 160, resizeQuality: 'high' }).then((res: any) => {
-					if (images.current[d.src]) {
-						return;
-					};
+				try {
+					createImageBitmap(img, { resizeWidth: 160, resizeHeight: 160, resizeQuality: 'high' }).then((res: any) => {
+						if (images.current[d.src]) {
+							return;
+						};
 
-					images.current[d.src] = true;
-					send('image', { src: d.src, bitmap: res });
-				});
+						images.current[d.src] = true;
+						send('image', { src: d.src, bitmap: res });
+					});
+				} catch (e) { /**/ };
 			};
 			img.crossOrigin = 'anonymous';
 			img.src = d.src;
