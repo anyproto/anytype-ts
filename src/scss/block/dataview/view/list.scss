@@ -12,6 +12,13 @@
 				.cellContent:not(.isName) { display: none; }
 			}
 
+			.sides { display: flex; align-items: center; justify-content: space-between; gap: 0px 16px; }
+			.sides {
+				.side.right {
+					.cellContent:first-child::before { display: none; }
+				}
+			}
+
 			.dropTarget { height: 100%; padding: 0px 0px 10px 0px; }
 
 			.cellContent { 
