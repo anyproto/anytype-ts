@@ -19,7 +19,7 @@
                 }
             }
 
-            .side.right { padding: 28px 32px; }
+            .side.right { padding: 28px 32px; display: flex; flex-direction: column; justify-content: space-between; }
             .side.right {
                 .back {
                     color: var(--color-text-secondary); display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 8px 2px 6px;
@@ -34,7 +34,7 @@
                 .title.step2 { margin-bottom: 10px; }
                 .label { margin-bottom: 14px; }
 
-                .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 6px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
+                .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 12px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
                 .inputWrapper {
                     .input { @include text-common; border: 0; height: 36px; padding: 6px 0px; }
                     .ns { flex-shrink: 0; width: 27px; }
@@ -46,7 +46,7 @@
                     .icon.checkbox.active { background-image: url('~img/icon/payment/checkbox1.svg'); }
                 }
 
-                .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 2px; color: var(--color-text-secondary);  }
+                .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 2px; color: var(--color-text-secondary); text-align: center; }
                 .statusBar.error { color: var(--color-red); }
                 .statusBar.ok { color: var(--color-lime); }
 
@@ -55,7 +55,8 @@
                     .price { @include text-header2; display: inline-block; padding-right: 6px; }
                 }
 
-                .button { width: 100%; margin-bottom: 10px; }
+                .buttons { display: flex; flex-direction: column; gap: 10px 0px; margin-bottom: 12px; }
+                .button { width: 100%; }
 
                 .pin { margin: 26px 0px 6px; }
                 .pin {
@@ -99,6 +100,7 @@
                     a { color: var(--color-text-secondary); }
                 }
                 .paidOnOtherPlatform { text-align: center; margin: 0 8px; }
+                .platformLabel { margin-bottom: 12px; }
                 .platformLabel {
                     .button { margin-top: 8px; }
                 }
@@ -166,5 +168,21 @@
 
             .button { width: 100%; }
         }
+    }
+
+    .popup.popupMembershipActivation {
+        .innerWrap { width: 424px; padding: 32px 32px 18px 32px; text-align: center; }
+
+        .icon { width: 56px; height: 56px; margin: 0px 0px 12px 0px; background-image: url('~img/icon/popup/confirm/join.svg'); }
+
+        .title { @include text-header3; margin: 0px 0px 4px 0px; }
+        .label { margin: 0px 0px 20px 0px; }
+
+        .input { text-align: center; margin: 0px 0px 16px 0px; height: 36px; border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
+
+        .buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+        .button { width: 100%; }
+
+        .error { margin: 0px; padding-top: 12px; }
     }
 }

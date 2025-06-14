@@ -623,6 +623,12 @@ export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLin
 	};
 };
 
+export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Response) => {
+	return {
+		tier: response.getRequestedtier(),
+	};
+};
+
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {
 		inviteCid: response.getInvitecid(),
