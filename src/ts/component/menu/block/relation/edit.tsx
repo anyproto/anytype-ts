@@ -391,6 +391,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			name: relation.name, 
 			relationFormat: relation.format,
 			relationFormatObjectTypes: (relation.format == I.RelationType.Object) ? relation.objectTypes || [] : [],
+			relationFormatIncludeTime: this.includeTime,
 		});
 
 		close();
