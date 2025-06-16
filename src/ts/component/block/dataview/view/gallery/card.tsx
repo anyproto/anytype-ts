@@ -21,7 +21,9 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, getCoverObject } = this.props;
+		const {
+			rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations,
+			isInline, isCollection, getCoverObject, canCellEdit } = this.props;
 		const record = getRecord(recordId);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
@@ -47,6 +49,7 @@ const Card = observer(class Card extends React.Component<Props> {
 					{relations.map((vr: any) => {
 						const relation = S.Record.getRelationByKey(vr.relationKey);
 						const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+						const canEdit = canCellEdit(relation, record);
 
 						return (
 							<Cell
@@ -57,7 +60,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								subId={subId}
 								ref={ref => onRef(ref, id)}
 								relationKey={relation.relationKey}
-								viewType={view.type}
+								viewType={canEdit ? I.ViewType.Grid : view.type}
 								idPrefix={idPrefix}
 								arrayLimit={2}
 								tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
@@ -164,11 +167,12 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, recordId, getRecord } = this.props;
+		const { onCellClick, recordId, getRecord, canCellEdit } = this.props;
 		const record = getRecord(recordId);
 		const relation = S.Record.getRelationByKey(vr.relationKey);
+		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+		if (!relation || !canEdit) {
 			return;
 		};
 

@@ -147,9 +147,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			S.Common.cellId = '';
 		};
 
+		const element = cell.hasClass('cellContent') ? `#${cellId}` : `#${cellId} .cellContent`;
+
 		let ret = false;
 		let param: I.MenuParam = { 
-			element: `#${cellId} .cellContent`,
+			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 2,
 			noAnimation: true,
