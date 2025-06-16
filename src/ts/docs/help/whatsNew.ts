@@ -27,18 +27,16 @@ export default () => {
 
 		title(`Desktop 0.47.0 Released!`),
 		text(''),
-		text('This update brings a much-requested feature: markdown export, including support for properties. It’s one more step in our ongoing work toward data ownership, easier backups and long-term resilience.'),
-		text('You’ll also find a range of improvements across the app, including visual refinements and quality of life updates.'),
+		text('This update brings a range of improvements across the app, from visual refinements to quality of life updates, all designed to make your experience smoother and more consistent. In the meantime, we’re continuing our ongoing work to support data ownership, easier backups and long-term resilience.'),
 		text(''),
 
 		h2(`Highlights`),
-		/*
-		h3(`Export & Import Improvements`),
-		bullet(`<b>Markdown export and import</b> now include support for properties, keeping more of your structure intact when moving content in and out of Anytype.`),
-		bullet(`<b>Obsidian import</b> supports ${hl('[[double bracket]]')} links, allowing internal links to be correctly converted to object links in Anytype. The ${hl('[[')} shortcut is also supported inside Anytype for linking between objects.`),
+
+		h3(`Import Improvements`),
+		text(`Obsidian import supports ${hl('[[double bracket]]')} links, allowing internal links to be correctly converted to object links in Anytype. The ${hl('[[')} shortcut is also supported inside Anytype for linking between objects.`),
 		img(`47/1.png`, 'c70'),
 		text(``),
-		*/
+
 
 		h3(`Sidebar Design Refresh`),
 		text(`We’ve refreshed the <b>Sidebar</b> with several design and usability improvements:`),
@@ -113,7 +111,7 @@ export default () => {
 		bullet(`Fixed an issue where text selection in the Editor would break when autoscroll was triggered, causing the start and end points to shift unexpectedly. Thanks to @${link('https://community.anytype.io/t/marking-a-text-area-with-the-mouse-autoscroll-causes-problem/18769', 'Code-Jack')}!`),
 		bullet(`Text selection now works correctly in formatted blocks: highlighting part of a bold, italic or underlined string no longer selects the entire block. Thanks again to @${link('https://community.anytype.io/t/formatted-substring-marking-with-the-mouse-does-always-select-the-whole-block/24586', 'Code-Jack')}!`),
 		bullet(`Fixed a visual glitch where a horizontal line briefly appeared at the top of Queries and Collections when switching from another page. Thanks to @${link('https://community.anytype.io/t/weird-horizontal-line-glitch-on-top-of-sets-and-collections/24852', 'Divinity')}!`),
-		bullet(`The text cursor no longer disappears when clicking on or near emphasized text (such as underlined or underlined) from a block in the Editor. Thanks to @${link('https://community.anytype.io/t/cursor-disappears-when-clicking-into-blocks-on-emphasis-text/26381', 'zewwo')}!`),
+		bullet(`The text cursor no longer disappears when clicking on or near emphasized text (such as underlined or italic) from a block in the Editor. Thanks to @${link('https://community.anytype.io/t/cursor-disappears-when-clicking-into-blocks-on-emphasis-text/26381', 'zewwo')}!`),
 		bullet(`Newly added properties now appear in the menu when selecting which properties to display in a view on the Type page. Thanks to @${link('https://community.anytype.io/t/added-properties-dont-show-up-in-built-in-object-list-of-type/27606', 'r0the')}!`),
 		bullet(`Locked objects fully prevent all changes to Properties. Thanks to @${link('https://community.anytype.io/t/its-possible-to-change-properties-of-an-object-on-a-locked-page/27909', 'VisualNotes')}!`),
 		bullet(`Fixed a bug where the Description field was incorrectly shown in the header. Thanks to @${link('https://community.anytype.io/t/description-stuck-in-header/28007', 'sandyeggo')}!`),
