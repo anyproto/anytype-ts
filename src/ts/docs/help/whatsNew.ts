@@ -32,11 +32,13 @@ export default () => {
 		text(''),
 
 		h2(`Highlights`),
+		/*
 		h3(`Export & Import Improvements`),
 		bullet(`<b>Markdown export and import</b> now include support for properties, keeping more of your structure intact when moving content in and out of Anytype.`),
 		bullet(`<b>Obsidian import</b> supports ${hl('[[double bracket]]')} links, allowing internal links to be correctly converted to object links in Anytype. The ${hl('[[')} shortcut is also supported inside Anytype for linking between objects.`),
 		img(`47/1.png`, 'c70'),
 		text(``),
+		*/
 
 		h3(`Sidebar Design Refresh`),
 		text(`We’ve refreshed the <b>Sidebar</b> with several design and usability improvements:`),
