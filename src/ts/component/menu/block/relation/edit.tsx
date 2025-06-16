@@ -40,7 +40,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isType = U.Object.isTypeLayout(object.layout);
 		const isName = relation && (relation.relationKey == 'name');
 		const isDescription = relation && (relation.relationKey == 'description');
-		const isDate = this.format == I.RelationType.Date;
+		const isDate = Relation.isDate(this.format);
 
 		let canDuplicate = true;
 		let canDelete = !noDelete;
