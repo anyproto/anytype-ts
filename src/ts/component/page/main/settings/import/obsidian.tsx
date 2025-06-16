@@ -58,7 +58,7 @@ class PageMainSettingsImportObsidian extends React.Component<I.PageSettingsCompo
 	};
 	
 	onImport (): void {
-		Action.import(I.ImportType.Csv, J.Constant.fileExtension.import[I.ImportType.Markdown], {}, (message: any) => {
+		Action.import(I.ImportType.Obsidian, J.Constant.fileExtension.import[I.ImportType.Markdown], {}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
