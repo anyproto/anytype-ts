@@ -153,7 +153,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 							color="blank" 
 							className="c28" 
 							text={translate('commonEditType')} 
-							onClick={() => sidebar.rightPanelToggle(true, true, isPopup, 'type', { rootId })}
+							onClick={() => sidebar.rightPanelToggle(true, isPopup, 'type', { rootId })}
 						/>
 					);
 				};

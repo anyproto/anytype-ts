@@ -6,7 +6,7 @@ import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, onRelation, menuOpen } = props;
+	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, onRelation, menuOpen, onToc } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -19,6 +19,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const isDate = U.Object.isDateLayout(object.layout);
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
+	const showToc = true; // INFO: I don't think we need to hide toc button?
 	const showMenu = !isRelation && !isDeleted;
 	const showPin = canWrite && !isRelation;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
@@ -155,6 +156,15 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
+				) : ''}
+
+				{showToc ? (
+					<Icon 
+						id="button-header-toc" 
+						tooltipParam={{ text: translate('commonToc'), typeY: I.MenuDirection.Bottom }}
+						className="toc withBackground"
+						onClick={() => onToc({ rootId })}
+					/>
 				) : ''}
 
 				{showPin ? (

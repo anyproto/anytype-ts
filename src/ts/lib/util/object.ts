@@ -751,7 +751,7 @@ class UtilObject {
 			...details,
 		};
 
-		sidebar.rightPanelToggle(true, true, isPopup, 'type', { details: newDetails });
+		sidebar.rightPanelToggle(true, isPopup, 'type', { details: newDetails });
 	};
 
 	getNewTypeDetails (): any {

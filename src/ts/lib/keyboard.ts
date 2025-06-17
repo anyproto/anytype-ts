@@ -174,7 +174,7 @@ class Keyboard {
 				S.Menu.closeLast();
 			} else 
 			if (S.Common.getShowSidebarRight(isPopup)) {
-				sidebar.rightPanelToggle(false, true, isPopup);
+				sidebar.rightPanelToggle(true, isPopup);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;

@@ -186,6 +186,7 @@
 	"commonNotFound": "Not found",
 	"commonCalculate": "Calculate",
 	"commonRelations": "Properties",
+	"commonToc": "Table of Contents",
 	"commonSelectType": "Select Type",
 	"commonOpenType": "Open Type",
 	"commonManage": "Manage",
@@ -2043,6 +2044,9 @@
 	"sidebarSectionLayoutWidth": "Layout width",
 	"sidebarSectionLayoutDefaultView": "Default view",
 	"sidebarSectionLayoutDefaultType": "Default Object Type",
+
+	"sidebarToc": "Table of Contents",
+	"sidebarTocSidebar": "Table of Contents Panel",
 
 	"sidebarTypeRelation": "Properties",
 	"sidebarTypeRelationHeader": "Header",

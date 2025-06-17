@@ -158,7 +158,11 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onRelation = (data) => {
-		sidebar.rightPanelToggle(!S.Common.getShowSidebarRight(isPopup), true, isPopup, 'object/relation', { ...data, rootId });
+		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { ...data, rootId });
+	};
+
+	const onToc = () => {
+		sidebar.rightPanelToggle(true, isPopup, 'toc', { rootId });
 	};
 
 	const getContainer = () => {
@@ -222,6 +226,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 					renderLeftIcons={renderLeftIcons}
 					renderTabs={renderTabs}
 					onRelation={onRelation}
+					onToc={onToc}
 				/>
 			) : ''}
 		</div>
