@@ -18,36 +18,6 @@
 			}
 		}
 
-		.viewContent.viewList,
-		.viewContent.viewGallery,
-		.viewContent.viewBoard {
-			.cellContent.c-select {
-				.over { gap: 0px 6px; }
-			}
-			.cellContent.c-select.isEditing {
-				.editingWrapper { padding: 0px 4px; border-radius: 6px; background-color: var(--color-shape-highlight-medium); }
-				.editingWrapper,
-				.editingWrapper .dragbox { display: flex; gap: 0px 6px; }
-
-				.tagItem { padding-right: 4px; }
-				.tagItem {
-					.tagRemove { display: none; }
-				}
-			}
-		}
-
-		.viewContent.viewGallery,
-		.viewContent.viewBoard {
-			.cellContent.c-select {
-				.wrap { display: flex; padding: 2px 4px; margin-left: -4px; height: 24px; }
-			}
-			.cellContent.c-select.isEditing {
-				.wrap { padding: 0px; }
-				.editingWrapper { width: unset; padding: 2px 4px; border-radius: 4px; }
-				.tagItem { border-radius: 3px; }
-			}
-		}
-
 		.viewContent.viewGallery, 
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
@@ -151,6 +121,38 @@
 						video { object-fit: contain; }
 					}
 				}
+			}
+		}
+
+		/* In-place editing */
+		
+		.viewContent.viewList,
+		.viewContent.viewGallery,
+		.viewContent.viewBoard {
+			.cellContent.c-select {
+				.over { gap: 0px 6px; }
+			}
+			.cellContent.c-select.isEditing {
+				.editingWrapper { padding: 0px 4px; border-radius: 6px; background-color: var(--color-shape-highlight-medium); }
+				.editingWrapper,
+				.editingWrapper .dragbox { display: flex; gap: 0px 6px; }
+
+				.tagItem { padding-right: 4px; }
+				.tagItem {
+					.tagRemove { display: none; }
+				}
+			}
+		}
+
+		.viewContent.viewGallery,
+		.viewContent.viewBoard {
+			.cellContent.c-select {
+				.wrap { display: flex; padding: 2px 4px; margin-left: -4px; height: 24px; }
+			}
+			.cellContent.c-select.isEditing {
+				.wrap { padding: 0px; }
+				.editingWrapper { width: unset; padding: 2px 4px; border-radius: 4px; }
+				.tagItem { border-radius: 3px; }
 			}
 		}
 	}
