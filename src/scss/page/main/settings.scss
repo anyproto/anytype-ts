@@ -60,6 +60,9 @@
             .select { margin-right: -8px; }
             .button { border: 0px; margin-right: -8px; }
         }
+        > .item.redeemCode {
+            .icon.arrow { background: url('~img/icon/popup/settings/forwardBlack.svg') 100% 50% no-repeat; }
+        }
     }
     .actionItems:last-child { margin-bottom: 0px; }
 

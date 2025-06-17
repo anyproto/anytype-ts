@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button, FooterAuthDisclaimer } from 'Component';
 import { I, C, S, U, J, translate, analytics, Action } from 'Lib';
+import { MembershipCodeRedeem } from 'Lib/api/command';
 
 interface State {
 	status: string;
@@ -18,6 +19,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	refName: any = null;
 	refButtonCard: any = null;
 	refButtonCrypto: any = null;
+	refButtonActivate: any = null;
 	timeout: any = null;
 
 	constructor (props: I.Popup) {
@@ -25,13 +27,14 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onPay = this.onPay.bind(this);
+		this.onRedeemCode = this.onRedeemCode.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 	};
 
 	render() {
 		const { param } = this.props;
 		const { data } = param;
-		const { tier } = data;
+		const { tier, code } = data;
 		const { status, statusText } = this.state;
 		const tierItem = U.Data.getMembershipTier(tier);
 
@@ -100,47 +103,57 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		};
 
 		return (
-			<form className="anyNameForm" onSubmit={this.onSubmit}>
-				{tierItem.namesCount ? (
-					<>
-						<Title text={translate(`popupMembershipPaidTitle`)} />
-						<Label text={labelText} />
+			<>
+				<form className="anyNameForm" onSubmit={this.onSubmit}>
+					{tierItem.namesCount ? (
+						<>
+							<Title text={translate(`popupMembershipPaidTitle`)} />
+							<Label text={labelText} />
 
-						<div className="inputWrapper">
-							<Input
-								ref={ref => this.refName = ref}
-								value={name}
-								onKeyUp={this.onKeyUp}
-								readonly={!canEnterName}
-								className={!canEnterName ? 'disabled' : ''}
-								placeholder={translate(`popupMembershipPaidPlaceholder`)}
-							/>
-							<div className="ns">{J.Constant.namespace[nameType]}</div>
+							<div className="inputWrapper">
+								<Input
+									ref={ref => this.refName = ref}
+									value={name}
+									onKeyUp={this.onKeyUp}
+									readonly={!canEnterName}
+									className={!canEnterName ? 'disabled' : ''}
+									placeholder={translate(`popupMembershipPaidPlaceholder`)}
+								/>
+								<div className="ns">{J.Constant.namespace[nameType]}</div>
+							</div>
+						</>
+					) : ''}
+
+					{code ? '' : (
+						<div className="priceWrapper">
+							{tierItem.price ? <span className="price">{`$${tierItem.price}`}</span> : ''}
+							{periodText}
 						</div>
+					)}
 
-						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
-					</>
-				) : ''}
+					{platformText ? (
+						<div className="platformLabel">
+							<Label className="paidOnOtherPlatform" text={platformText} />
+							{withContactButton ? <Button onClick={() => Action.membershipUpgrade()} text={translate('popupMembershipWriteToAnyteam')} className="c36" color="blank" /> : ''}
+						</div>
+					) : (
+						<div className="buttons">
+							{code ? (
+								<Button onClick={() => this.onRedeemCode()} ref={ref => this.refButtonActivate = ref} className="c36" text={translate('popupMembershipActivate')} />
+							) : (
+								<>
+									<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+									<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+								</>
+							)}
+						</div>
+					)}
 
-				<div className="priceWrapper">
-					{tierItem.price ? <span className="price">{`$${tierItem.price}`}</span> : ''}
-					{periodText}
-				</div>
+					<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
+				</form>
 
-				{platformText ? (
-					<div className="platformLabel">
-						<Label className="paidOnOtherPlatform" text={platformText} />
-						{withContactButton ? <Button onClick={() => Action.membershipUpgrade()} text={translate('popupMembershipWriteToAnyteam')} className="c36" color="blank" /> : ''}
-					</div>
-				) : (
-					<>
-						<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
-						<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
-
-						<FooterAuthDisclaimer />
-					</>
-				)}
-			</form>
+				<FooterAuthDisclaimer />
+			</>
 		);
 	};
 
@@ -205,6 +218,34 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		refButton.setLoading(true);
 		tierItem.nameMinLength ? this.validateName(cb) : cb();
+	};
+
+	onRedeemCode () {
+		const { param } = this.props;
+		const { data } = param;
+		const { code } = data;
+
+		this.refButtonActivate.setLoading(true);
+
+		C.MembershipCodeRedeem(code, this.getName(), (message) => {
+			this.refButtonActivate.setLoading(false);
+
+			if (message.error.code) {
+				this.setError(message.error.description);
+				return;
+			};
+
+			U.Data.getMembershipTiers(true, () => {
+				U.Data.getMembershipStatus((membership) => {
+					if (!membership || membership.isNone) {
+						this.setError(translate('pageMainMembershipError'));
+						return;
+					};
+
+					S.Popup.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
+				});
+			});
+		});
 	};
 
 	validateName (callBack?: () => void) {
@@ -282,6 +323,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	disableButtons (v: boolean) {
 		this.refButtonCard?.setDisabled(v);
 		this.refButtonCrypto?.setDisabled(v);
+		this.refButtonActivate?.setDisabled(v);
 	};
 
 	setOk (t: string) {

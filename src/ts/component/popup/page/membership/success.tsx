@@ -37,6 +37,12 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 		);
 	};
 
+	componentDidMount () {
+		window.setTimeout(() => {
+			this.props.position();
+		}, 5);
+	};
+
 });
 
 export default PopupMembershipPageSuccess;
