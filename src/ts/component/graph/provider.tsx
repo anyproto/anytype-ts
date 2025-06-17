@@ -194,11 +194,15 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const nodeMapper = (d: any) => {
 		d = d || {};
+
+		const type = S.Record.getTypeById(d.type);
+
 		d.layout = Number(d.layout) || 0;
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
 		d.name = U.Smile.strip(U.Object.name(d, true));
 		d.shortName = U.Common.shorten(d.name, 24);
+		d.typeKey = type?.uniqueKey || d.type;
 
 		// Clear icon props to fix image size
 		if (U.Object.isTaskLayout(d.layout)) {

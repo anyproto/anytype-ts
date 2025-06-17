@@ -190,8 +190,8 @@ initForces = () => {
 	updateOrphans();
 
 	nodes.forEach(d => {
-		if (!clusters[d.type]) {
-			clusters[d.type] = { id: d.type, radius: 0, x: 0, y: 0 };
+		if (d.typeKey && !clusters[d.typeKey]) {
+			clusters[d.typeKey] = { id: d.typeKey, radius: 0, x: 0, y: 0 };
 		};
 	});
 
@@ -292,6 +292,9 @@ updateForces = () => {
 			.strength(1)
 			.centerInertia(0.75));
 		simulation.force('collide', d3.forceCollide(d => getRadius(d) * 2));
+	} else {
+		simulation.force('cluster', null);
+		simulation.force('collide', null);
 	};
 
 	let map = getNodeMap();
