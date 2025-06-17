@@ -979,6 +979,8 @@
 	"popupSettingsMembershipForeverFree": "Forever free",
 	"popupSettingsMembershipPending": "Pending...",
 
+	"popupSettingsMembershipRedeemCode": "I already have a code",
+
 	"popupSettingsMembershipLevelsDetails": "Membership plan details",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
@@ -1093,6 +1095,7 @@
 	"popupMembershipPayByCard": "Pay by Card",
 	"popupMembershipPayByCrypto": "Pay by Crypto",
 	"popupMembershipPaidBy": "Paid by %s",
+	"popupMembershipActivate": "Activate",
 
 	"popupMembershipResend": "Resend",
 	"popupMembershipCountdown": " in %s sec",
@@ -1126,6 +1129,17 @@
 	"popupMembershipCode6": "This tier does not support name",
 
 	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
+
+	"popupMembershipActivationTitle": "Activate Your Membership",
+	"popupMembershipActivationText": "Enter the code we sent after purchase. Your membership will be activated instantly.",
+	"popupMembershipActivationPlaceholder": "Paste activation code...",
+
+	"popupMembershipActivationError1": "Unknown error occured",
+	"popupMembershipActivationError2": "Bad input",
+	"popupMembershipActivationError3": "Not logged in",
+	"popupMembershipActivationError4": "No connection to payment node. Please try again.",
+	"popupMembershipActivationError5": "The code is not valid. Please check and try again.",
+	"popupMembershipActivationError6": "Membership already exists for the current identity",
 
 	"popupConfirmConfirmationText": "Input this text to confirm:",
 	"popupConfirmConfirmationTextError": "Text does not match",
