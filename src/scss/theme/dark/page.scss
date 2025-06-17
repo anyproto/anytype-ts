@@ -156,7 +156,7 @@
 	}
 
 	.pageSettingsSpaceIndex {
-		> .buttons {
+		.spaceButtons {
 			.btn {
 				.icon.invite { background: url('#{$themePath}/icon/settings/invite.svg'); }
 				.icon.qr { background: url('#{$themePath}/icon/settings/qr.svg'); }
