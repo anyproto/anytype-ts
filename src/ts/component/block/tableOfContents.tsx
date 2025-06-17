@@ -20,10 +20,6 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 		};
 	};
 
-	const onFocus = () => {
-		focus.set(block.id, { from: 0, to: 0 });
-	};
-
 	const getTree = () => {
 		const blocks = S.Block.unwrapTree([ S.Block.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
 		const list: any[] = [];
@@ -74,6 +70,12 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 		const y = Math.max(hh + 20, (isPopup ? (no - container.offset().top + st) : no) - hh - 20);
 
 		container.scrollTop(y);
+		focus.set(id, { from: 0, to: 0 });
+		focus.apply();
+		const targetBlockElement = $(`.focusable.c${id}`).get(0);
+		if (targetBlockElement && typeof targetBlockElement.focus === 'function') {
+			targetBlockElement.focus({ preventScroll: true });
+		}
 	};
 
 	const Item = (item: any) => (
@@ -94,7 +96,6 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 			tabIndex={0} 
 			onKeyDown={onKeyDownHandler} 
 			onKeyUp={onKeyUpHandler} 
-			onFocus={onFocus}
 		>
 			{!tree.length ? (
 				<div className="empty">{translate('blockTableOfContentsAdd')}</div>

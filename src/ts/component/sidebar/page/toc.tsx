@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label } from 'Component';
-import { I, S, U, sidebar, translate, keyboard, C, Storage, analytics } from 'Lib';
+import { I, S, U, translate, Storage, analytics } from 'Lib';
 import BlockTableOfContents from 'Component/block/tableOfContents';
 
 const SidebarPageToc = observer(class SidebarPageToc extends React.Component<I.SidebarPageComponent, {}> {
