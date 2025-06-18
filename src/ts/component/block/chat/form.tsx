@@ -517,6 +517,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		let text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
 		let value = U.Common.stringInsert(current, text, from, to);
 
+		this.marks = Mark.adjust(this.marks, from, text.length);
+
 		if (value.length >= limit) {
 			const excess = value.length - limit;
 			const keep = text.length - excess;
@@ -549,11 +551,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		for (const url of urls) {
 			const { from, to, isLocal, value } = url;
-			const param = isLocal ? `file://${value}` : value;
+			if (isLocal) {
+				continue;
+			};
 
 			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
-			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
-			this.addBookmark(param, true);
+			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: value });
+			this.addBookmark(value, true);
 		};
 
 		this.updateMarkup(text, { from: this.range.to + 1, to: this.range.to + 1 });
