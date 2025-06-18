@@ -544,7 +544,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			value = Prism.highlight(value, Prism.languages[lang], lang);
 		};
 
-		this.refEditable.setValue(value);
+		this.refEditable?.setValue(value);
 		this.placeholderCheck();
 
 		if (range) {

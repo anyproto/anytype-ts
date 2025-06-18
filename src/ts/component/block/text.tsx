@@ -257,48 +257,60 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	setValue (v: string, restoreRange?: I.TextRange) {
 		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
 		const fields = block.fields || {};
+
 		let text = String(v || '');
-		if (text === '\n') {
+		if (text == '\n') {
 			text = '';
-		}
+		};
+
 		this.text = text;
 		let html = text;
+
 		// Only apply unicode replacements if not composing IME
 		if (block.isTextCode()) {
 			const lang = U.Prism.aliasMap[fields.lang] || 'plain';fields.lang;
 			const grammar = Prism.languages[lang] || {};
+
 			html = Prism.highlight(html, grammar, lang);
 			this.refLang?.setValue(lang);
-		} else if (!keyboard.isComposition) {
+		} else 
+		if (!keyboard.isComposition) {
 			const parsed = Mark.fromUnicode(html, this.marks);
+
 			html = parsed.text;
 			this.marks = parsed.marks;
 			html = Mark.toHtml(html, this.marks);
 		} else {
 			html = Mark.toHtml(html, this.marks);
-		}
+		};
+
 		html = html.replace(/\n/g, '<br/>');
+
 		if (this.refEditable) {
 			this.refEditable.setValue(html);
+
 			// Restore cursor position if provided
 			if (restoreRange) {
 				this.refEditable.setRange(restoreRange);
-			}
-		}
+			};
+		};
+
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
 			if (this.frame) {
 				raf.cancel(this.frame);
-			}
+			};
+
 			this.frame = raf(() => {
 				renderMentions(rootId, this.node, this.marks, () => this.getValue());
 				renderObjects(rootId, this.node, this.marks, () => this.getValue(), this.props);
 				renderLinks(rootId, this.node, this.marks, () => this.getValue(), this.props);
 				renderEmoji(this.node);
 			});
-		}
+		};
+
 		if (block.isTextTitle() || block.isTextDescription()) {
 			this.placeholderCheck();
-		}
+		};
 	};
 	
 	renderLatex () {

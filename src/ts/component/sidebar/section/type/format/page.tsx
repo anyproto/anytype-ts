@@ -129,10 +129,10 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 	setValue () {
 		const { object } = this.props;
 
-		this.refLayout.setValue(object.recommendedLayout);
-		this.refAlign.setValue(object.layoutAlign);
-		this.refFeaturedView.setValue(object.headerRelationsLayout);
-		this.refWidth.setValue(object.layoutWidth);
+		this.refLayout?.setValue(object.recommendedLayout);
+		this.refAlign?.setValue(object.layoutAlign);
+		this.refFeaturedView?.setValue(object.headerRelationsLayout);
+		this.refWidth?.setValue(object.layoutWidth);
 	};
 
 	onWidthMove (v: number) {

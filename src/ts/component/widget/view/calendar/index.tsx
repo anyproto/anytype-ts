@@ -44,8 +44,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 	};
 
 	const setSelectsValue = () => {
-		monthRef.current.setValue(m);
-		yearRef.current.setValue(y);
+		monthRef.current?.setValue(m);
+		yearRef.current?.setValue(y);
 	};
 
 	const onArrow = (dir: number) => {

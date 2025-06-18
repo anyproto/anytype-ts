@@ -169,8 +169,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			this.forceUpdate();
 		};
 
-		if (this.ref && filter) {
-			this.ref.setValue(filter);
+		if (filter) {
+			this.ref?.setValue(filter);
 		};
 
 		this.focus();

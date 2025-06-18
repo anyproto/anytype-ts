@@ -280,8 +280,9 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		if (name == translate('defaultNamePage')) {
 			name = '';
 		};
-		this.refName.setValue(name);
-		this.refName.placeholderCheck();
+
+		this.refName?.setValue(name);
+		this.refName?.placeholderCheck();
 
 		if (space.description) {
 			this.refDescription?.setValue(space.description);

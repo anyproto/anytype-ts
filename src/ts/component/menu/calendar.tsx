@@ -177,8 +177,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { value } = data;
 		const { m, y } = U.Date.getCalendarDateParam(value);
 
-		this.refMonth.setValue(m);
-		this.refYear.setValue(y);
+		this.refMonth?.setValue(m);
+		this.refYear?.setValue(y);
 	};
 
 	componentWillUnmount () {

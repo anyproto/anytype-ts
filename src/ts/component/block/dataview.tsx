@@ -1062,9 +1062,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const ref = this.refControls.refHead;
 					const l = String(item.name || '').length;
 
-					ref.setValue(item.name);
-					ref.setRange({ from: l, to: l });
-					ref.setEditing(true);
+					if (ref) {
+						ref.setValue(item.name);
+						ref.setRange({ from: l, to: l });
+						ref.setEditing(true);
+					};
 				};
 
 				if (isInline) {

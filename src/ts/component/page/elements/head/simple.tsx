@@ -332,7 +332,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 				text = '';
 			};
 
-			this.refEditable[item.blockId].setValue(text);
+			this.refEditable[item.blockId]?.setValue(text);
 			this.placeholderCheck(item.blockId);
 		};
 	};

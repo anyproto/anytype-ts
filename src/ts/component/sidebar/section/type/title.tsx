@@ -104,11 +104,11 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 			text = '';
 		};
 
-		this.refName.setValue(text);
-		this.refName.placeholderCheck();
+		this.refName?.setValue(text);
+		this.refName?.placeholderCheck();
 
 		if (this.range) {
-			this.refName.setRange(this.range);
+			this.refName?.setRange(this.range);
 		};
 	};
 

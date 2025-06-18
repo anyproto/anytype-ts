@@ -140,8 +140,8 @@ class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent,
 
 			const { delimiter, delimiters } = this.delimiterOptions();
 
-			this.refDelimiter.setOptions(delimiters);
-			this.refDelimiter.setValue(delimiter?.id);
+			this.refDelimiter?.setOptions(delimiters);
+			this.refDelimiter?.setValue(delimiter?.id);
 
 			S.Menu.close('select');
 		});
