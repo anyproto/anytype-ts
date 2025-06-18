@@ -73,7 +73,10 @@ class UtilSubscription {
 			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
 		};
 
-		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		if (skipLayouts.length) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+			filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		};
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
@@ -139,7 +142,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: true,
+			ignoreChat: !U.Object.isAllowedMultiChat(),
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
@@ -312,7 +315,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: true,
+			ignoreChat: !U.Object.isAllowedMultiChat(),
 			skipLayoutFormat: null,
 		}, param);
 
