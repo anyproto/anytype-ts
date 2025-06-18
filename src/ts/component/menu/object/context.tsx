@@ -121,7 +121,7 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
 				allowedCopy = false;
 			};
-			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Type ])) {
+			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Type, I.RestrictionObject.Layout ])) {
 				allowedType = false;
 			};
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
