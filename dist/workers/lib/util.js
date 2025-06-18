@@ -98,7 +98,7 @@ class Util {
 	 */
 	textMetrics (text) {
 		if (!text) {
-			return;
+			return { top: 0, bottom: 0, left: 0, right: 0 };
 		};
 
 		if (this.cache.text[text]) {
