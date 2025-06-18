@@ -640,17 +640,46 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.addAttachments([ item ]);
 		};
 
-		this.isLoading.push(url);
+		const scheme = U.Common.getScheme(url);
+		const isInside = scheme == J.Constant.protocol;
 
-		C.LinkPreview(url, (message: any) => {
-			this.isLoading = this.isLoading.filter(it => it != url);
+		if (isInside) {
+			const route = '/' + url.split('://')[1];
+			const search = url.split('?')[1];
 
-			if (message.error.code) {
-				add({ title: url, url });
+			let target = '';
+			let spaceId = '';
+
+			if (search) {
+				const searchParam = U.Common.searchParam(search);
+
+				target = searchParam.objectId;
+				spaceId = searchParam.spaceId;
 			} else {
-				add({ ...message.previewLink, url });
+				const routeParam = U.Router.getParam(route);
+
+				target = routeParam.id;
+				spaceId = routeParam.spaceId;
 			};
-		});
+
+			U.Object.getById(target, { spaceId }, object => {
+				if (object) {
+					this.addAttachments([ object ]);
+				};
+			});
+		} else {
+			this.isLoading.push(url);
+
+			C.LinkPreview(url, (message: any) => {
+				this.isLoading = this.isLoading.filter(it => it != url);
+
+				if (message.error.code) {
+					add({ title: url, url });
+				} else {
+					add({ ...message.previewLink, url });
+				};
+			});
+		};
 	};
 
 	removeBookmarks () {
