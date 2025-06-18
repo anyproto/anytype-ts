@@ -73,9 +73,9 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 		focus.set(id, { from: 0, to: 0 });
 		focus.apply();
 		const targetBlockElement = $(`.focusable.c${id}`).get(0);
-		if (targetBlockElement && typeof targetBlockElement.focus === 'function') {
+		if (targetBlockElement && (typeof targetBlockElement.focus === 'function')) {
 			targetBlockElement.focus({ preventScroll: true });
-		}
+		};
 	};
 
 	const Item = (item: any) => (

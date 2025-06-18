@@ -26,7 +26,7 @@ interface State {
 const Components = {
 	'type': PageType,
 	'object/relation': PageObjectRelation,
-	'toc': PageToc,
+	'object/tableOfContents': PageToc,
 };
 
 

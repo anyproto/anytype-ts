@@ -533,7 +533,7 @@ class CommonStore {
 	 * @param {string | null} page - The page to set, null if no page is shown
 	 */
 	showSidebarRightSet (isPopup: boolean, page: string | null) {
-		const newState = { [isPopup ? 'popup' : 'full']: { page } };
+		const newState = { [(isPopup ? 'popup' : 'full')]: { page } };
 		set(this.showSidebarRightValue, newState);
 	};
 
@@ -820,8 +820,8 @@ class CommonStore {
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @returns {string} The current page shown in the sidebar, null if no page is shown
 	 */
-	getShowSidebarRight (isPopup: boolean): string {
-		return this.showSidebarRightValue[isPopup ? 'popup' : 'full'].page;
+	getShowSidebarRight (isPopup: boolean): string | null {
+		return this.showSidebarRightValue[(isPopup ? 'popup' : 'full')].page || null;
 	};
 
 	/**

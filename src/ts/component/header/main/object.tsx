@@ -13,13 +13,16 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const root = S.Block.getLeaf(rootId, rootId);
 	const object = S.Detail.get(rootId, rootId, J.Relation.template);
 	const isDeleted = object._empty_ || object.isDeleted;
+	const isTypeLayout = U.Object.isTypeLayout(object.layout);
+	const isRelationLayout = U.Object.isRelationLayout(object.layout);
+	const isFileLayout = U.Object.isFileLayout(object.layout);
 	const isLocked = root ? root.isLocked() : false;
 	const isRelation = U.Object.isRelationLayout(object.layout);
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
-	const showToc = true; // INFO: I don't think we need to hide toc button?
+	const showToc = !(isTypeLayout || isRelationLayout || isFileLayout);
 	const showMenu = !isRelation && !isDeleted;
 	const showPin = canWrite && !isRelation;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
@@ -161,7 +164,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{showToc ? (
 					<Icon 
 						id="button-header-toc" 
-						tooltipParam={{ text: translate('commonToc'), typeY: I.MenuDirection.Bottom }}
+						tooltipParam={{ text: translate('sidebarToc'), typeY: I.MenuDirection.Bottom }}
 						className="toc withBackground"
 						onClick={() => onToc({ rootId })}
 					/>

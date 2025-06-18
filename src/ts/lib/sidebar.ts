@@ -461,16 +461,17 @@ class Sidebar {
 	 * @param {boolean} v - Whether to open the panel.
 	 * @param {boolean} animate - Whether to animate the toggle.
 	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @param {string} [pageToShow] - The page to show in the panel.
+	 * @param {string} [page] - The page to show in the panel.
 	 * @param {any} [param] - Additional parameters for the panel.
 	 */
-	rightPanelToggle (animate: boolean, isPopup: boolean, pageToShow?: string, param?: any) {
-		const currentPageShown = S.Common.getShowSidebarRight(isPopup);
-		const shouldOpen = !pageToShow || pageToShow !== currentPageShown;
+	rightPanelToggle (animate: boolean, isPopup: boolean, page?: string, param?: any) {
+		const currentPage = S.Common.getShowSidebarRight(isPopup);
+		const shouldOpen = !page || (page != currentPage);
+
 		// open the panel if it is different page from the current page
 		if (shouldOpen) {
-			S.Common.showSidebarRightSet(isPopup, pageToShow);
-			this.rightPanelSetState(isPopup, { page: pageToShow, ...param });
+			S.Common.showSidebarRightSet(isPopup, page);
+			this.rightPanelSetState(isPopup, { page: page, ...param });
 		} else {
 			S.Common.showSidebarRightSet(isPopup, null);
 		};

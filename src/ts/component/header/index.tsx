@@ -162,7 +162,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onToc = () => {
-		sidebar.rightPanelToggle(true, isPopup, 'toc', { rootId });
+		sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId });
 	};
 
 	const getContainer = () => {
