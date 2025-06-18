@@ -16,7 +16,7 @@ const SidebarPageToc = observer(forwardRef<HTMLDivElement, I.SidebarPageComponen
 
 				<div className="body customScrollbar">
 					<div className="section">
-						<BlockTableOfContents key="sidebar-toc" block={{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents , content: '' }} {...props} />
+						<BlockTableOfContents key="sidebar-toc" block={{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents , content: '' }} isFocusDisabled {...props} />
 					</div>
 				</div>
 			</>
