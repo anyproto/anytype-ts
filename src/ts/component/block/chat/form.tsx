@@ -847,6 +847,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.updateMarkup('', { from: 0, to: 0 });
 		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
 		this.clearCounter();
+		this.checkSendButton();
 		this.refButtons.setButtons();
 	};
 
@@ -892,6 +893,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 						analytics.event('DeleteMessage');
 					});
+				},
+				onCancel: () => {
+					if (this.editingId == id) {
+						this.onEditClear();
+					};
 				},
 			}
 		});
