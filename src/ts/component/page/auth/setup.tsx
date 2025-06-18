@@ -68,17 +68,30 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 						I.SurveyType.Pmf,
 					].forEach(it => Survey.check(it));
 
-					if (!primitivesOnboarding) {
-						S.Popup.open('onboarding', {
-							onClose: () => {
-								Storage.set('primitivesOnboarding', true);
-								window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
-							},
-						});
-					} else
-					if (whatsNew) {
-						U.Common.showWhatsNew();
+					const cb = () => {
+						if (!primitivesOnboarding) {
+							S.Popup.open('onboarding', {
+								onClose: () => {
+									Storage.set('primitivesOnboarding', true);
+									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
+								},
+							});
+						} else
+						if (whatsNew) {
+							U.Common.showWhatsNew();
+						};
 					};
+
+					U.Data.getMembershipStatus(membership => {
+						if (membership.status == I.MembershipStatus.Finalization) {
+							S.Popup.open('membershipFinalization', { 
+								onClose: cb,
+								data: { tier: membership.tier },
+							});
+						} else {
+							cb();
+						};
+					});
 				},
 			};
 
