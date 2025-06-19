@@ -158,7 +158,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 								delay: 4000,
 								disableOnInteraction: true,
 							}}
-							mousewheel={true}
+							mousewheel={{ forceToAxis: true }}
 							navigation={true}
 							modules={[ Pagination, Autoplay, Mousewheel, Navigation ]}
 							centeredSlides={true}
@@ -179,7 +179,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 						className="tiersList"
 						spaceBetween={16}
 						slidesPerView={3}
-						mousewheel={true}
+						mousewheel={{ forceToAxis: true }}
 						pagination={membershipTiers.length > 3 ? { clickable: true } : false}
 						modules={[ Pagination, Mousewheel ]}
 						onSwiper={this.onSwiper}
