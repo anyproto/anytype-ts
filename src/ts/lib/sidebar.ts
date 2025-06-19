@@ -464,13 +464,16 @@ class Sidebar {
 	 * @param {string} [page] - The page to show in the panel.
 	 * @param {any} [param] - Additional parameters for the panel.
 	 */
-	rightPanelToggle (v: boolean, animate: boolean, isPopup: boolean, page?: string, param?: any) {
-		if (v) {
-			S.Common.showSidebarRightSet(isPopup, v);
+	rightPanelToggle (animate: boolean, isPopup: boolean, page?: string, param?: any) {
+		const currentPage = S.Common.getShowSidebarRight(isPopup);
+		const shouldOpen = !page || (page != currentPage);
 
-			if (page) {
-				this.rightPanelSetState(isPopup, { page, ...param });
-			};
+		// open the panel if it is different page from the current page
+		if (shouldOpen) {
+			S.Common.showSidebarRightSet(isPopup, page);
+			this.rightPanelSetState(isPopup, { page: page, ...param });
+		} else {
+			S.Common.showSidebarRightSet(isPopup, null);
 		};
 
 		window.setTimeout(() => {
@@ -480,7 +483,7 @@ class Sidebar {
 			const cssStart: any = {};
 			const cssEnd: any = {};
 
-			if (v) {
+			if (shouldOpen) {
 				cssStart.right = -width;
 				cssEnd.right = 0;
 			} else {
@@ -496,7 +499,7 @@ class Sidebar {
 				};
 
 				this.objRight.css(cssEnd);
-				this.resizePage(null, v ? null : 0, animate);
+				this.resizePage(null, shouldOpen ? null : 0, animate);
 			});
 		});
 
@@ -505,8 +508,8 @@ class Sidebar {
 				this.objRight.removeClass('anim');
 			};
 
-			if (!v) {
-				S.Common.showSidebarRightSet(isPopup, v);
+			if (!shouldOpen) {
+				S.Common.showSidebarRightSet(isPopup, null);
 			};
 
 			$(window).trigger('resize');

@@ -4,6 +4,7 @@ import { J, U, S, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
+import PageToc from './page/toc';
 
 interface Props {
 	isPopup?: boolean;
@@ -25,6 +26,7 @@ interface State {
 const Components = {
 	'type': PageType,
 	'object/relation': PageObjectRelation,
+	'object/tableOfContents': PageToc,
 };
 
 

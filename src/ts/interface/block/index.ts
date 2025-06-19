@@ -71,6 +71,7 @@ export interface BlockComponent {
 	traceId?: string;
 	block?: I.Block;
 	readonly?: boolean;
+	isFocusDisabled?: boolean;
 	isPopup?: boolean;
 	isInsideTable?: boolean;
 	isInsidePreview?: boolean;

@@ -2058,6 +2058,8 @@
 	"sidebarSectionLayoutDefaultView": "Default view",
 	"sidebarSectionLayoutDefaultType": "Default Object Type",
 
+	"sidebarToc": "Table of Contents",
+
 	"sidebarTypeRelation": "Properties",
 	"sidebarTypeRelationHeader": "Header",
 	"sidebarTypeRelationSidebar": "Properties panel",

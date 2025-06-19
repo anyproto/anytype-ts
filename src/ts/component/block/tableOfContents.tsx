@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
-	const { rootId, block, isPopup, onKeyDown, onKeyUp } = props;
+	const { rootId, block, isFocusDisabled, isPopup, onKeyDown, onKeyUp } = props;
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 
 	const onKeyDownHandler = (e: KeyboardEvent) => {
@@ -21,8 +21,10 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 	};
 
 	const onFocus = () => {
-		focus.set(block.id, { from: 0, to: 0 });
-	};
+		if (!isFocusDisabled) {
+			focus.set(block.id, { from: 0, to: 0 });
+		};
+	}
 
 	const getTree = () => {
 		const blocks = S.Block.unwrapTree([ S.Block.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
@@ -74,6 +76,12 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 		const y = Math.max(hh + 20, (isPopup ? (no - container.offset().top + st) : no) - hh - 20);
 
 		container.scrollTop(y);
+
+		if (isFocusDisabled) {
+			// We can't focus on the table of contents block in the onFocus handler because we don't have the table of contents block element's id in the sidebar. So we set the focus to the targeted block and apply it, to remove the focus from the sidebar.
+			focus.set(id, { from: 0, to: 0 });
+			focus.apply();
+		};
 	};
 
 	const Item = (item: any) => (

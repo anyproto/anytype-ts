@@ -42,7 +42,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public showVaultValue = null;
-	public showSidebarRightValue = { full: false, popup: false };
+	public showSidebarRightValue = { full: { page: null }, popup: { page: null } }; // If page is null, don't show sidebar
 	public hideSidebarValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
@@ -530,10 +530,11 @@ class CommonStore {
 	/**
 	 * Sets the show sidebar right value.
 	 * @param {boolean} isPopup - Whether it is a popup.
-	 * @param {boolean} v - The value to set.
+	 * @param {string | null} page - The page to set, null if no page is shown
 	 */
-	showSidebarRightSet (isPopup: boolean, v: boolean) {
-		set(this.showSidebarRightValue, { [isPopup ? 'popup' : 'full'] : v });
+	showSidebarRightSet (isPopup: boolean, page: string | null) {
+		const newState = { [(isPopup ? 'popup' : 'full')]: { page } };
+		set(this.showSidebarRightValue, newState);
 	};
 
 	/**
@@ -817,10 +818,10 @@ class CommonStore {
 	/**
 	 * Gets the show sidebar right value for a popup or full view.
 	 * @param {boolean} isPopup - Whether it is a popup.
-	 * @returns {boolean} The show sidebar right value.
+	 * @returns {string} The current page shown in the sidebar, null if no page is shown
 	 */
-	getShowSidebarRight (isPopup: boolean): boolean {
-		return Boolean(this.showSidebarRightValue[isPopup ? 'popup' : 'full']);
+	getShowSidebarRight (isPopup: boolean): string | null {
+		return this.showSidebarRightValue[(isPopup ? 'popup' : 'full')].page || null;
 	};
 
 	/**
