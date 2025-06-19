@@ -151,7 +151,6 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	onBanner?: (e: any) => void;
 	onBannerClose?: (e: any) => void;
 	onRelation?: (data?: any) => void;
-	onToc?: (data?: any) => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {

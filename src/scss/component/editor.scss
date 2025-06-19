@@ -26,6 +26,15 @@
 		.icon.buttonAdd.show { display: block; }
 		
 		.blockLast { margin-left: -50px; }
+
+		.tableOfContents { 
+			position: fixed; top: 50%; transform: translate3d(0px, -50%, 0px); width: 16px; display: flex; 
+			flex-direction: column; gap: 8px 0px; align-items: flex-end;
+		}
+		.tableOfContents {
+			.item { height: 2px; background: var(--color-shape-primary); }
+			.item.active { background: var(--color-control-accent); }
+		}
 	}
 
 	#editorSize { position: absolute; width: 400px; top: 48px; left: 50%; margin-left: -200px; z-index: 10; visibility: hidden; }

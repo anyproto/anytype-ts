@@ -6,23 +6,19 @@ import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, onRelation, menuOpen, onToc } = props;
+	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, onRelation, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const root = S.Block.getLeaf(rootId, rootId);
 	const object = S.Detail.get(rootId, rootId, J.Relation.template);
 	const isDeleted = object._empty_ || object.isDeleted;
-	const isTypeLayout = U.Object.isTypeLayout(object.layout);
-	const isRelationLayout = U.Object.isRelationLayout(object.layout);
-	const isFileLayout = U.Object.isFileLayout(object.layout);
 	const isLocked = root ? root.isLocked() : false;
 	const isRelation = U.Object.isRelationLayout(object.layout);
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
-	const showToc = !(isTypeLayout || isRelationLayout || isFileLayout);
 	const showMenu = !isRelation && !isDeleted;
 	const showPin = canWrite && !isRelation;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
@@ -159,15 +155,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
-				) : ''}
-
-				{showToc ? (
-					<Icon 
-						id="button-header-toc" 
-						tooltipParam={{ text: translate('sidebarToc'), typeY: I.MenuDirection.Bottom }}
-						className="toc withBackground"
-						onClick={() => onToc({ rootId })}
-					/>
 				) : ''}
 
 				{showPin ? (

@@ -160,6 +160,14 @@ class Keyboard {
 			sidebar.toggleOpenClose();
 		});
 
+		if (this.isMainEditor()) {
+			this.shortcut('tableOfContents', e, () => {
+				e.preventDefault();
+
+				sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId });
+			});
+		};
+
 		// Navigation
 		if (!this.isNavigationDisabled) {
 			this.shortcut('back', e, () => this.onBack());

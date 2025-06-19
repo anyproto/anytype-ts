@@ -8,6 +8,7 @@ import TypeRelation from './type/relation';
 import TypeTemplate from './type/template';
 
 import ObjectRelation from './object/relation';
+import ObjectTableOfContents from './object/tableOfContents';
 
 const Components = {
 	'type/title': TypeTitle,
@@ -16,6 +17,7 @@ const Components = {
 	'type/template': TypeTemplate,
 
 	'object/relation': ObjectRelation,
+	'object/tableOfContents': ObjectTableOfContents,
 };
 
 interface Props extends I.SidebarSectionComponent {

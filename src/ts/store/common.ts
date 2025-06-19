@@ -818,10 +818,10 @@ class CommonStore {
 	/**
 	 * Gets the show sidebar right value for a popup or full view.
 	 * @param {boolean} isPopup - Whether it is a popup.
-	 * @returns {string} The current page shown in the sidebar, null if no page is shown
+	 * @returns {string} The current page shown in the sidebar
 	 */
-	getShowSidebarRight (isPopup: boolean): string | null {
-		return this.showSidebarRightValue[(isPopup ? 'popup' : 'full')].page || null;
+	getShowSidebarRight (isPopup: boolean): string {
+		return String(this.showSidebarRightValue[(isPopup ? 'popup' : 'full')].page || '');
 	};
 
 	/**

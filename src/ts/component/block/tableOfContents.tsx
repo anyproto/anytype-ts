@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
-	const { rootId, block, isFocusDisabled, isPopup, onKeyDown, onKeyUp } = props;
+	const { rootId, block, isPopup, onKeyDown, onKeyUp } = props;
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 
 	const onKeyDownHandler = (e: KeyboardEvent) => {
@@ -21,67 +21,11 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 	};
 
 	const onFocus = () => {
-		if (!isFocusDisabled) {
-			focus.set(block.id, { from: 0, to: 0 });
-		};
-	}
-
-	const getTree = () => {
-		const blocks = S.Block.unwrapTree([ S.Block.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
-		const list: any[] = [];
-
-		let hasH1 = false;
-		let hasH2 = false;
-
-		blocks.forEach((block: I.Block) => {
-			let depth = 0;
-
-			if (block.isTextHeader1()) {
-				depth = 0;
-				hasH1 = true;
-				hasH2 = false;
-			};
-
-			if (block.isTextHeader2()) {
-				hasH2 = true;
-				if (hasH1) depth++;
-			};
-
-			if (block.isTextHeader3()) {
-				if (hasH1) depth++;
-				if (hasH2) depth++;
-			};
-
-			list.push({ 
-				depth, 
-				id: block.id,
-				text: String(block.content.text || translate('defaultNamePage')),
-			});
-		});
-
-		return list;
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 
 	const onClick = (e: any, id: string) => {
-		const node = $(`.focusable.c${id}`);
-
-		if (!node.length) {
-			return;
-		};
-
-		const container = U.Common.getScrollContainer(isPopup);
-		const no = node.offset().top;
-		const st = container.scrollTop();
-		const hh = J.Size.header;
-		const y = Math.max(hh + 20, (isPopup ? (no - container.offset().top + st) : no) - hh - 20);
-
-		container.scrollTop(y);
-
-		if (isFocusDisabled) {
-			// We can't focus on the table of contents block in the onFocus handler because we don't have the table of contents block element's id in the sidebar. So we set the focus to the targeted block and apply it, to remove the focus from the sidebar.
-			focus.set(id, { from: 0, to: 0 });
-			focus.apply();
-		};
+		U.Common.scrollToHeader(id, isPopup);
 	};
 
 	const Item = (item: any) => (
@@ -94,7 +38,7 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 		</div>
 	);
 
-	const tree = getTree();
+	const items = S.Block.getTableOfContents(rootId);
 
 	return (
 		<div 
@@ -104,11 +48,11 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 			onKeyUp={onKeyUpHandler} 
 			onFocus={onFocus}
 		>
-			{!tree.length ? (
+			{!items.length ? (
 				<div className="empty">{translate('blockTableOfContentsAdd')}</div>
 			) : (
 				<>
-					{tree.map((item: any, i: number) => (
+					{items.map((item: any, i: number) => (
 						<Item key={i} {...item} />
 					))}
 				</>

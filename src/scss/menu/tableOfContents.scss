@@ -1,0 +1,14 @@
+@import "~scss/_mixins";
+
+.menus {
+	.menu.menuTableOfContents { width: var(--menu-width-icon); }
+	.menu.menuTableOfContents {
+		.items { padding: 0px 8px; }
+
+		.item { padding-right: 8px; border-radius: 6px; }
+		.item {
+			.label { @include text-overflow-nw; }
+		}
+	}
+
+}
