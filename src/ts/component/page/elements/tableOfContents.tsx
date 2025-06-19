@@ -37,6 +37,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		const node = $(nodeRef.current);
 
 		S.Menu.open('tableOfContents', {
+			className: 'fixed',
 			element: node,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
