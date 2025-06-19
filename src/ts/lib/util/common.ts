@@ -1769,6 +1769,24 @@ class UtilCommon {
 		Storage.set('whatsNew', false);
 	};
 
+	/**
+	 * Scrolls to header in Table of contents
+	 */
+	scrollToHeader (id: string, isPopup: boolean) {
+		const node = $(`.focusable.c${id}`);
+
+		if (!node.length) {
+			return;
+		};
+
+		const container = this.getScrollContainer(isPopup);
+		const no = node.offset().top;
+		const st = container.scrollTop();
+		const y = Math.max(J.Size.header + 20, (isPopup ? (no - container.offset().top + st) : no) - J.Size.header - 20);
+
+		container.scrollTop(y);
+	};
+
 };
 
 export default new UtilCommon();

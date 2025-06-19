@@ -9,6 +9,7 @@ import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
 import MenuParticipant from './participant';
 import MenuPublish from './publish';
+import MenuTableOfContents from './tableOfContents';
 
 import MenuSelect from './select';
 import MenuButton from './button';
@@ -92,6 +93,7 @@ const Components: any = {
 	onboarding:				 MenuOnboarding,
 	participant:			 MenuParticipant,
 	publish:				 MenuPublish,
+	tableOfContents:		 MenuTableOfContents,
 
 	select:					 MenuSelect,
 	button:					 MenuButton,

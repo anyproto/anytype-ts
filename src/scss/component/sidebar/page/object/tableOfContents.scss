@@ -1,0 +1,19 @@
+> .sidebarPage.pageObjectTableOfContents {
+	> .body { overflow: hidden; height: 100%; }
+
+	.section.objectTableOfContents { height: 100%; padding: 0px; }
+	.section.objectTableOfContents {
+		.wrap { height: 100%; }
+
+		.items { overflow: scroll; overscroll-behavior: none; scrollbar-gutter: stable both-edges; padding: 0px; height: 100%; padding: 8px; }
+		.item {
+			.label { padding: 0px; @include text-common; @include text-overflow-nw; font-weight: 400; }
+
+			&::before { 
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); z-index: 1; pointer-events: none; 
+				border-radius: inherit;
+			}
+			&:hover::before { background: var(--color-shape-highlight-medium); }
+		}
+	}
+}

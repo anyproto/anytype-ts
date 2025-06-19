@@ -10,10 +10,12 @@
 
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
+
+		.icon.close { background-image: url('~img/icon/close.svg'); }
 	}
 
 	.body {
-		padding: 0px 12px 12px 12px; overflow: scroll; display: flex; flex-direction: column; gap: 12px 0px; overscroll-behavior: none; 
+		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow: scroll; overscroll-behavior: none; 
 		scrollbar-gutter: stable both-edges; flex-grow: 1;
 	}
 	.body {
@@ -124,4 +126,5 @@
 }
 
 @import "./page/type.scss";
-@import "./page/object.scss";
+@import "./page/object/relation.scss";
+@import "./page/object/tableOfContents.scss";
