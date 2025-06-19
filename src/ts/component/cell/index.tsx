@@ -29,6 +29,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const isName = relationKey == 'name';
 	const nodeRef = useRef(null);
 	const childRef = useRef<I.CellRef>(null);
+	const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 
 	const checkIcon = () => {
 		
@@ -83,7 +84,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const { config } = S.Common;
-		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 		const className = [];
@@ -512,6 +512,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		onClick: onClickHandler,
 		isEditing: () => childRef.current.isEditing(),
 		canEdit: () => canCellEdit(relation, record),
+		width: $(`#${cellId}`).outerWidth(),
 	}));
 
 	return (

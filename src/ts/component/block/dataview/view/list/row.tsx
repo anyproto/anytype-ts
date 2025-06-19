@@ -6,6 +6,7 @@ import { Cell, DropTarget, Icon, SelectionTarget } from 'Component';
 
 interface Props extends I.ViewComponent {
 	style?: any;
+	listOnRef?: (ref: any, rowId: string, relationKey: string) => void;
 };
 
 const Row = observer(class Row extends React.Component<Props> {
@@ -15,7 +16,7 @@ const Row = observer(class Row extends React.Component<Props> {
 
 	render () {
 		const {
-			rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, isInline, isCollection,
+			rootId, block, recordId, getRecord, getView, onRef, listOnRef, style, onContext, getIdPrefix, isInline, isCollection,
 			onDragRecordStart, onSelectToggle, canCellEdit
 		} = this.props;
 		const view = getView();
@@ -44,7 +45,10 @@ const Row = observer(class Row extends React.Component<Props> {
 						<Cell
 							key={'list-cell-' + relation.relationKey}
 							elementId={id}
-							ref={ref => onRef(ref, id)}
+							ref={ref => {
+								onRef(ref, id);
+								listOnRef(ref, record.id, relation.relationKey);
+							}}
 							{...this.props}
 							getRecord={() => record}
 							subId={subId}
