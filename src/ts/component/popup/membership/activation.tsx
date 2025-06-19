@@ -1,20 +1,26 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Loader, Error, Icon, Input } from 'Component';
-import { I, C, S, U, J, translate, Action } from 'Lib';
-import $ from 'jquery';
+import { I, C, S, translate } from 'Lib';
 
 const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
 
+	const { data } = param;
+	const { code } = data;
 	const inputRef = useRef(null);
+	const buttonRef = useRef(null);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ error, setError ] = useState('');
 
 	const onKeyUp = () => {
-		const v = inputRef.current.getValue();
-
-		$(`#${getId()} .button`).toggleClass('disabled', !v.length);
+		checkButton();
 		setError('');
+	};
+
+	const checkButton = () => {
+		const v = inputRef.current?.getValue();
+
+		buttonRef.current?.setDisabled(!v.length);
 	};
 
 	const onSubmit = () => {
@@ -34,9 +40,13 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>(({ param = {}
 		});
 	};
 
-	const onCancel = () => {
-		close();
-	};
+	useEffect(() => {
+		if (code) {
+			inputRef.current?.setValue(code);
+		};
+
+		window.setTimeout(() => checkButton());
+	}, []);
 
 	return (
 		<>
@@ -50,8 +60,8 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>(({ param = {}
 			<Input type="text" ref={inputRef} onKeyUp={onKeyUp} placeholder={translate('popupMembershipActivationPlaceholder')} />
 
 			<div className="buttons">
-				<Button className="c36 disabled" text={translate('commonContinue')} onClick={onSubmit} />
-				<Button className="c36" color="blank" text={translate('commonCancel')} onClick={onCancel} />
+				<Button ref={buttonRef} className="c36" text={translate('commonContinue')} onClick={onSubmit} />
+				<Button className="c36" color="blank" text={translate('commonCancel')} onClick={() => close()} />
 			</div>
 
 			<Error text={error} />
