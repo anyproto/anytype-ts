@@ -624,6 +624,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const list = this.getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
+		const isFocused = U.Common.getElectron().isFocused();
 
 		this.setIsBottom(false);
 
@@ -650,18 +651,20 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 		});
 
-		list.forEach(it => {
-			this.scrolledItems.add(it.id);
+		if (!isFocused) {
+			list.forEach(it => {
+				this.scrolledItems.add(it.id);
 
-			if (!it.isReadMessage) {
-				S.Chat.setReadMessageStatus(subId, [ it.id ], true);
-				C.ChatReadMessages(rootId, it.orderId, it.orderId, lastStateId, I.ChatReadType.Message);
-			};
-			if (!it.isReadMention) {
-				S.Chat.setReadMentionStatus(subId, [ it.id ], true);
-				C.ChatReadMessages(rootId, it.orderId, it.orderId, lastStateId, I.ChatReadType.Mention);
-			};
-		});
+				if (!it.isReadMessage) {
+					S.Chat.setReadMessageStatus(subId, [ it.id ], true);
+					C.ChatReadMessages(rootId, it.orderId, it.orderId, lastStateId, I.ChatReadType.Message);
+				};
+				if (!it.isReadMention) {
+					S.Chat.setReadMentionStatus(subId, [ it.id ], true);
+					C.ChatReadMessages(rootId, it.orderId, it.orderId, lastStateId, I.ChatReadType.Mention);
+				};
+			});
+		};
 
 		window.clearTimeout(this.timeoutScrollStop);
 		this.timeoutScrollStop = window.setTimeout(() => this.onReadStop(), 300);
@@ -684,14 +687,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const rootId = this.getRootId();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
+		const isFocused = U.Common.getElectron().isFocused();
 
-		if (first && last) {
-			C.ChatReadMessages(rootId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Message);
-			C.ChatReadMessages(rootId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Mention);
+		if (isFocused) {
+			if (first && last) {
+				C.ChatReadMessages(rootId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Message);
+				C.ChatReadMessages(rootId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Mention);
+			};
+
+			S.Chat.setReadMessageStatus(subId, ids, true);
+			S.Chat.setReadMentionStatus(subId, ids, true);
 		};
-
-		S.Chat.setReadMessageStatus(subId, ids, true);
-		S.Chat.setReadMentionStatus(subId, ids, true);
 
 		this.scrolledItems.clear();
 	};

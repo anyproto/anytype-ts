@@ -517,6 +517,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		let text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
 		let value = U.Common.stringInsert(current, text, from, to);
 
+		this.marks = Mark.adjust(this.marks, from, text.length);
+
 		if (value.length >= limit) {
 			const excess = value.length - limit;
 			const keep = text.length - excess;
@@ -549,11 +551,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		for (const url of urls) {
 			const { from, to, isLocal, value } = url;
-			const param = isLocal ? `file://${value}` : value;
+			if (isLocal) {
+				continue;
+			};
 
 			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
-			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
-			this.addBookmark(param, true);
+			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: value });
+			this.addBookmark(value, true);
 		};
 
 		this.updateMarkup(text, { from: this.range.to + 1, to: this.range.to + 1 });
@@ -640,17 +644,46 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.addAttachments([ item ]);
 		};
 
-		this.isLoading.push(url);
+		const scheme = U.Common.getScheme(url);
+		const isInside = scheme == J.Constant.protocol;
 
-		C.LinkPreview(url, (message: any) => {
-			this.isLoading = this.isLoading.filter(it => it != url);
+		if (isInside) {
+			const route = '/' + url.split('://')[1];
+			const search = url.split('?')[1];
 
-			if (message.error.code) {
-				add({ title: url, url });
+			let target = '';
+			let spaceId = '';
+
+			if (search) {
+				const searchParam = U.Common.searchParam(search);
+
+				target = searchParam.objectId;
+				spaceId = searchParam.spaceId;
 			} else {
-				add({ ...message.previewLink, url });
+				const routeParam = U.Router.getParam(route);
+
+				target = routeParam.id;
+				spaceId = routeParam.spaceId;
 			};
-		});
+
+			U.Object.getById(target, { spaceId }, object => {
+				if (object) {
+					this.addAttachments([ object ]);
+				};
+			});
+		} else {
+			this.isLoading.push(url);
+
+			C.LinkPreview(url, (message: any) => {
+				this.isLoading = this.isLoading.filter(it => it != url);
+
+				if (message.error.code) {
+					add({ title: url, url });
+				} else {
+					add({ ...message.previewLink, url });
+				};
+			});
+		};
 	};
 
 	removeBookmarks () {
@@ -818,6 +851,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.updateMarkup('', { from: 0, to: 0 });
 		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
 		this.clearCounter();
+		this.checkSendButton();
 		this.refButtons.setButtons();
 	};
 
@@ -863,6 +897,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 						analytics.event('DeleteMessage');
 					});
+				},
+				onCancel: () => {
+					if (this.editingId == id) {
+						this.onEditClear();
+					};
 				},
 			}
 		});
