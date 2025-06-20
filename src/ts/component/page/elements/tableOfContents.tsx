@@ -32,7 +32,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		};
 	};
 
-	const onClick = () => {
+	const onMouseEnter = () => {
 		const node = $(nodeRef.current);
 
 		S.Menu.open('tableOfContents', {
@@ -43,6 +43,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			offsetX: node.width() + 4,
 			noFlipX: true,
 			noFlipY: true,
+			isSub: true,
 			data: {
 				rootId,
 				isPopup,
@@ -89,7 +90,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	};
 
 	return (
-		<div ref={nodeRef} className="tableOfContents" onClick={onClick}>
+		<div ref={nodeRef} className="tableOfContents" onMouseEnter={onMouseEnter}>
 			{tree.map(item => (
 				<div 
 					id={`item-${item.id}`}

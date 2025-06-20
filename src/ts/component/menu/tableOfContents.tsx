@@ -4,7 +4,7 @@ import { I, S, U, keyboard, translate, sidebar } from 'Lib';
 
 const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, setActive, close, onKeyDown } = props;
+	const { param, getId, setActive, close, onKeyDown } = props;
 	const { data } = param;
 	const { rootId, isPopup } = data;
 	const n = useRef(-1);
@@ -13,10 +13,13 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		unbind();
 		$(window).on('keydown.menu', e => onKeyDown(e));
 		window.setTimeout(() => setActive(), 15);
+
+		$(`#${getId()}`).on('mouseleave', () => close());
 	};
 	
 	const unbind = () => {
 		$(window).off('keydown.menu');
+		$(`#${getId()}`).off('mouseleave')
 	};
 
 	const getItems = () => {
