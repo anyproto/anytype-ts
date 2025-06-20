@@ -13,6 +13,8 @@
 		.item {
 			.name { width: 100%; }
 			.label { @include text-overflow-nw; }
+
+			&.active::before { background: var(--color-shape-highlight-medium) !important; }
 		}
 	}
 

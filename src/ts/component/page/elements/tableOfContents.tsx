@@ -31,6 +31,8 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		if (id) {
 			node.find(`#item-${id}`).addClass('active');
 			blockRef.current = id;
+
+			S.Menu.updateData('tableOfContents', { blockId: id });
 		};
 	};
 

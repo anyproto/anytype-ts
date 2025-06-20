@@ -1,8 +1,9 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { observer } from 'mobx-react';
 import { Label, MenuItemVertical } from 'Component';
 import { I, S, U, keyboard, translate, sidebar } from 'Lib';
 
-const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, setActive, close, onKeyDown } = props;
 	const { data } = param;
@@ -60,7 +61,6 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				onClick={e => onClick(e, item)}
 				onMouseEnter={e => onMouseEnter(e, item)}
 				style={{ paddingLeft: 8 + item.depth * 16 }}
-				isActive={blockId == item.id}
 			/>
 		);
 	};
@@ -71,6 +71,10 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 		return () => unbind();
 	}, []);
+
+	useEffect(() => {
+		setActive(items.find(it => it.id == blockId), true);
+	}, [ blockId ]);
 
 	useImperativeHandle(ref, () => ({
 		rebind,
@@ -87,6 +91,6 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-});
+}));
 
 export default MenuTableOfContents;
