@@ -12,9 +12,9 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 	const { rootId, isPopup } = props;
 	const nodeRef = useRef(null);
-	const blocks = S.Block.getBlocks(rootId, it => it.isTextHeader());
-	const max = blocks.reduce((res, current) => Math.max(res, current.getLength()), 0);
-	
+	const tree = S.Block.getTableOfContents(rootId);
+	const max = tree.reduce((res, current) => Math.max(res, current.block.getLength()), 0);
+
 	const rebind = () => {
 		unbind();
 		$(window).on('resize.tableOfContents', () => resize());
@@ -64,7 +64,6 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			const o = isPopup && container.length ? container.offset().left : 0;
 
 			node.css({ left: o + width - node.width() - 22 });
-			console.log('resize', width, height);
 		});
 	};
 
@@ -87,18 +86,18 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		setBlock,
 	}));
 
-	if (!blocks.length || !max) {
+	if (!tree.length || !max) {
 		return null;
 	};
 
 	return (
 		<div ref={nodeRef} className="tableOfContents" onClick={onClick}>
-			{blocks.map(block => (
+			{tree.map(item => (
 				<div 
-					id={`item-${block.id}`}
+					id={`item-${item.id}`}
 					className="item" 
-					key={block.id} 
-					style={{ width: `${block.getLength() / max * 100}%` }}
+					key={item.id} 
+					style={{ width: `${item.block.getLength() / max * 100}%` }}
 				/>
 			))}
 		</div>

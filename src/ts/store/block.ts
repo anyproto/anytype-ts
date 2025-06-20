@@ -943,6 +943,7 @@ class BlockStore {
 				depth, 
 				id: block.id,
 				text: String(block.content.text || translate('defaultNamePage')),
+				block,
 			});
 		});
 
