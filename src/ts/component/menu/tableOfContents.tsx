@@ -20,11 +20,14 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getItems = () => {
-		return S.Block.getTableOfContents(rootId).concat({
-			id: 'sidebar',
-			text: translate('sidebarOpen'),
-			depth: 0,
-		});
+		return S.Block.getTableOfContents(rootId).concat([
+			{ isDiv: true },
+			{
+				id: 'sidebar',
+				text: translate('sidebarOpen'),
+				depth: 0,
+			},
+		]);
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
@@ -42,17 +45,33 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const Item = (item: any) => (
-		<div 
-			id={`item-${item.id}`}
-			className="item" 
-			onClick={e => onClick(e, item)}
-			onMouseEnter={e => onMouseEnter(e, item)}
-			style={{ paddingLeft: 8 + item.depth * 16 }}
-		>
-			<Label text={U.Common.getLatex(item.text)} />
-		</div>
-	);
+	const Item = (item: any) => {
+		const cn = [];
+		const props: any = {};
+
+		let content = null;
+
+		if (item.isDiv) {
+			cn.push('separator');
+			content = <div className="inner" />;
+		} else {
+			cn.push('item');
+			content = <Label text={U.Common.getLatex(item.text)} />;
+			props.id = `item-${item.id}`;
+		};
+
+		return (
+			<div 
+				{...props}
+				className={cn.join(' ')} 
+				onClick={e => onClick(e, item)}
+				onMouseEnter={e => onMouseEnter(e, item)}
+				style={{ paddingLeft: 8 + item.depth * 16 }}
+			>
+				{content}
+			</div>
+		);
+	};
 
 	const items = getItems();
 
