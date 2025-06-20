@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { Label } from 'Component';
+import { Label, MenuItemVertical } from 'Component';
 import { I, S, U, keyboard, translate, sidebar } from 'Lib';
 
 const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -24,8 +24,10 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ isDiv: true },
 			{
 				id: 'sidebar',
-				text: translate('sidebarOpen'),
+				icon: 'openSidebar',
+				name: translate('sidebarOpen'),
 				depth: 0,
+				isCommon: true,
 			},
 		]);
 	};
@@ -46,30 +48,16 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const Item = (item: any) => {
-		const cn = [];
-		const props: any = {};
-
-		let content = null;
-
-		if (item.isDiv) {
-			cn.push('separator');
-			content = <div className="inner" />;
-		} else {
-			cn.push('item');
-			content = <Label text={U.Common.getLatex(item.text)} />;
-			props.id = `item-${item.id}`;
-		};
+		const name = !item.isDiv && !item.isCommon ? <Label text={U.Common.getLatex(item.text)} /> : item.name;
 
 		return (
-			<div 
-				{...props}
-				className={cn.join(' ')} 
+			<MenuItemVertical 
+				{...item}
+				name={name}
 				onClick={e => onClick(e, item)}
 				onMouseEnter={e => onMouseEnter(e, item)}
 				style={{ paddingLeft: 8 + item.depth * 16 }}
-			>
-				{content}
-			</div>
+			/>
 		);
 	};
 

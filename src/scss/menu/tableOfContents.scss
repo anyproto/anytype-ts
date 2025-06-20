@@ -11,6 +11,7 @@
 
 		.item { padding-right: 8px; border-radius: 6px; }
 		.item {
+			.name { width: 100%; }
 			.label { @include text-overflow-nw; }
 		}
 	}
