@@ -6,7 +6,7 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, setActive, close, onKeyDown } = props;
 	const { data } = param;
-	const { rootId, isPopup } = data;
+	const { rootId, isPopup, blockId } = data;
 	const n = useRef(-1);
 
 	const rebind = () => {
@@ -60,6 +60,7 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				onClick={e => onClick(e, item)}
 				onMouseEnter={e => onMouseEnter(e, item)}
 				style={{ paddingLeft: 8 + item.depth * 16 }}
+				isActive={blockId == item.id}
 			/>
 		);
 	};

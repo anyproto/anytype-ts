@@ -13,6 +13,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const { rootId, isPopup } = props;
 	const nodeRef = useRef(null);
 	const tree = S.Block.getTableOfContents(rootId);
+	const blockRef = useRef('');
 
 	const rebind = () => {
 		unbind();
@@ -29,6 +30,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		node.find('.item.active').removeClass('active');
 		if (id) {
 			node.find(`#item-${id}`).addClass('active');
+			blockRef.current = id;
 		};
 	};
 
@@ -47,6 +49,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			data: {
 				rootId,
 				isPopup,
+				blockId: blockRef.current,
 			}
 		});
 	};
