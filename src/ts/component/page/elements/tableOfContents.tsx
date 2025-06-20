@@ -84,7 +84,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		setBlock,
 	}));
 
-	if (!tree.length) {
+	if (tree.length < 2) {
 		return null;
 	};
 
