@@ -11,6 +11,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	isFocused = false;
 	preventSaveOnClose = false;
 	param: any = {};
+	menuContext = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -307,6 +308,25 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 	};
 
+	getGroupOptions () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const canWrite = U.Space.canMyParticipantWrite();
+		const { type } = this.param;
+
+		let options = Relation.getGroupOptions(rootId, blockId, type);
+
+		if (canWrite) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'addRelation', icon: 'plus', name: translate('commonAddRelation') },
+			]);
+		};
+
+		return options;
+	};
+
 	onOver (e: any, item: any) {
 		const { id, param, getId, getSize } = this.props;
 		const { data } = param;
@@ -320,6 +340,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 
 		const element = `#${getId()} #item-${item.id}`;
+		const groupOptions = this.getGroupOptions();
 
 		const menuParam: I.MenuParam = { 
 			menuKey: item.id,
@@ -327,15 +348,28 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
+			onOpen: context => {
+				$(element).addClass('active');
+				this.menuContext = context;
+			},
+			onClose: () => {
+				$(element).removeClass('active');
+				this.menuContext = null;
+			},
 			rebind: this.rebind,
 			parentId: id,
 			data: {
 				value: this.param[item.id],
+				noClose: true,
 				onSelect: (e: any, el: any) => {
-					this.param[item.id] = el.id;
-					this.save();
+					if (el.id == 'addRelation') {
+						this.onAddRelation(item.id);
+					} else {
+						this.param[item.id] = el.id;
+						this.save();
+
+						this.menuContext.close();
+					};
 				},
 			}
 		};
@@ -355,7 +389,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
 					value: Relation.getGroupOption(rootId, blockId, type, groupRelationKey)?.id,
-					options: Relation.getGroupOptions(rootId, blockId, type),
+					options: groupOptions,
 				});
 				break;
 			};
@@ -364,7 +398,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
 					value: Relation.getGroupOption(rootId, blockId, type, this.param.endRelationKey)?.id,
-					options: Relation.getGroupOptions(rootId, blockId, type),
+					options: groupOptions,
 				});
 				break;
 			};
@@ -401,6 +435,52 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				S.Menu.open(menuId, menuParam);
 			});
 		};
+	};
+
+	onAddRelation (id: string) {
+		if (!this.menuContext) {
+			return;
+		};
+
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+		const relations = Dataview.viewGetRelations(rootId, blockId, view);
+		const object = S.Detail.get(rootId, rootId);
+		const { getId, getSize } = this.menuContext;
+		const { type } = this.param;
+		const types = Relation.getGroupTypes(type);
+
+		S.Menu.open('relationSuggest', { 
+			element: `#${getId()} #item-addRelation`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Top,
+			offsetY: 36,
+			noAnimation: true,
+			noFlipY: true,
+			data: {
+				...data,
+				menuIdEdit: 'dataviewRelationEdit',
+				filter: '',
+				ref: 'dataview',
+				types,
+				skipKeys: relations.map(it => it.relationKey),
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					const cb = (message: any) => {
+						this.param[id] = relation.relationKey;
+						this.save();
+						this.menuContext.close();
+
+						if (onChange) {
+							onChange(message);
+						};
+					};
+
+					Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, relations.length, cb);
+				},
+			}
+		});
 	};
 
 	onSwitch (e: any, key: string, v: boolean) {
