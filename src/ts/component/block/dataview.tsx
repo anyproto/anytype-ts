@@ -1058,8 +1058,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => this.loadData(message.views[0].id, 0, true), 50);
 				};
 
-				if (isNew && this.refControls && this.refControls.refHead) {
-					const ref = this.refControls.refHead;
+				if (isNew) {
+					const ref = this.refControls?.getHeadRef();
 					const l = String(item.name || '').length;
 
 					if (ref) {
@@ -1505,9 +1505,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				obj.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
 			};
 
-			if (this.refControls && this.refControls.resize) {
-				this.refControls.resize();
-			};
+			this.refControls?.resize();
 
 			if (this.refView && this.refView.resize) {
 				this.refView.resize();
