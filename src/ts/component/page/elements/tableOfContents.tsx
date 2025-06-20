@@ -60,7 +60,6 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 			const container = U.Common.getScrollContainer(isPopup);
 			const width = container.width();
-			const height = container.height();
 			const o = isPopup && container.length ? container.offset().left : 0;
 
 			node.css({ left: o + width - node.width() - 22 });
