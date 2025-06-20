@@ -1,233 +1,73 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
 import { Icon, Button, Filter } from 'Component';
-import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, sidebar, J } from 'Lib';
+import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J } from 'Lib';
 import Head from './head';
 
 interface Props extends I.ViewComponent {
 	onFilterChange?: (v: string) => void; 
 };
 
-const Controls = observer(class Controls extends React.Component<Props> {
+const Controls = observer(forwardRef<{}, Props>((props, ref) => {
 
-	_isMounted = false;
-	node: any = null;
-	refFilter = null;
-	refHead = null;
-	frame = 0;
+	const { 
+		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
+		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
+	} = props;
+	const target = getTarget();
+	const views = S.Record.getViews(rootId, block.id);
+	const view = getView();
+	const sortCnt = view.sorts.length;
+	const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
+	const filterCnt = filters.length;
+	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+	const cn = [ 'dataviewControls' ];
+	const buttonWrapCn = [ 'buttonWrap' ];
+	const hasSources = (isCollection || getSources().length);
+	const isAllowedObject = props.isAllowedObject();
+	const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
+	const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
 
-	constructor (props: Props) {
-		super(props);
+	const nodeRef = useRef(null);
+	const filterRef = useRef(null);
+	const headRef = useRef(null);
+	const frameRef = useRef(0);
+	const head = isInline ? <Head ref={headRef} {...props} /> : null;
 
-		this.onButton = this.onButton.bind(this);
-		this.sortOrFilterRelationSelect = this.sortOrFilterRelationSelect.bind(this);
-		this.onSortOrFilterAdd = this.onSortOrFilterAdd.bind(this);
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onViewAdd = this.onViewAdd.bind(this);
-		this.onFilterShow = this.onFilterShow.bind(this);
-		this.onFilterHide = this.onFilterHide.bind(this);
-		this.onViewSwitch = this.onViewSwitch.bind(this);
-		this.onViewContext = this.onViewContext.bind(this);
-		this.onViewCopy = this.onViewCopy.bind(this);
-		this.onViewRemove = this.onViewRemove.bind(this);
-		this.onViewSettings = this.onViewSettings.bind(this);
+	if (isInline) {
+		cn.push('isInline');
 	};
 
-	render () {
-		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, getTarget, getTypeId, readonly } = this.props;
-		const target = getTarget();
-		const views = S.Record.getViews(rootId, block.id);
-		const view = getView();
-		const sortCnt = view.sorts.length;
-		const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
-		const filterCnt = filters.length;
-		const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'dataviewControls' ];
-		const buttonWrapCn = [ 'buttonWrap' ];
-		const hasSources = (isCollection || getSources().length);
-		const isAllowedObject = this.props.isAllowedObject();
-		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
-		const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
-
-		if (isAllowedTemplate) {
-			buttonWrapCn.push('withSelect');
-		};
-
-		if (className) {
-			cn.push(className);
-		};
-
-		let head = null;
-		if (isInline) {
-			cn.push('isInline');
-			head = <Head ref={ref => this.refHead = ref} {...this.props} />;
-		};
-
-		const buttons = [
-			{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: filterCnt > 0 },
-			{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
-			{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
-		];
-
-		const ButtonItem = (item: any) => {
-			const elementId = `button-${block.id}-${item.id}`;
-			const cn = [ `btn-${item.id}`, 'withBackground' ];
-
-			if (item.on) {
-				cn.push('on');
-			};
-
-			return (
-				<Icon
-					id={elementId} 
-					className={cn.join(' ')}
-					tooltipParam={{ text: item.text }}
-					onClick={() => this.onButton(`#${elementId}`, item.menu)}
-				/>
-			);
-		};
-
-		const ViewItem = SortableElement((item: any) => {
-			const elementId = `view-item-${block.id}-${item.id}`;
-			return (
-				<div 
-					id={elementId} 
-					className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
-					onClick={() => this.onViewSet(item)} 
-					onContextMenu={e => this.onViewContext(e, `#views #${elementId}`, item)}
-				>
-					{item.name || translate('defaultNamePage')}
-				</div>
-			);
-		});
-
-		const Views = SortableContainer(() => (
-			<div id="views" className="views">
-				{views.map((item: I.View, i: number) => (
-					<ViewItem key={i} {...item} index={i} disabled={readonly} />
-				))}
-				{allowedView ? (
-					<Icon 
-						id={`button-${block.id}-view-add`} 
-						className="plus withBackground" 
-						tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
-						onClick={this.onViewAdd} /> 
-				) : ''}
-			</div>
-		));
-		
-		return (
-			<div
-				ref={node => this.node = node}
-				id="dataviewControls"
-				className={cn.join(' ')}
-			>
-				{head}
-				<div className="sides">
-					<div id="dataviewControlsSideLeft" className="side left">
-						<div 
-							id="view-selector"
-							className="viewSelect viewItem select"
-							onClick={() => this.onButton(`#block-${block.id} #view-selector`, 'dataviewViewList')}
-							onContextMenu={(e: any) => this.onViewContext(e, `#block-${block.id} #view-selector`, view)}
-						>
-							<div className="name">{view.name}</div>
-							<Icon className="arrow dark" />
-						</div>
-
-						<Views 
-							axis="x" 
-							lockAxis="x"
-							lockToContainerEdges={true}
-							transitionDuration={150}
-							distance={10}
-							onSortStart={this.onSortStart}
-							onSortEnd={this.onSortEnd}
-							helperClass="isDragging"
-							helperContainer={() => $(`#block-${block.id} .views`).get(0)}
-						/>
-					</div>
-
-					<div id="dataviewControlsSideRight" className="side right">
-						<Filter
-							ref={ref => this.refFilter = ref}
-							placeholder={translate('blockDataviewSearch')} 
-							icon="search withBackground"
-							tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
-							onChange={onFilterChange}
-							onIconClick={this.onFilterShow}
-						/>
-
-						{buttons.map((item: any, i: number) => (
-							<ButtonItem key={item.id} {...item} />
-						))}	
-						{isAllowedObject ? (
-							<div className={buttonWrapCn.join(' ')}>
-								<Button
-									id={`button-${block.id}-add-record`}
-									className="addRecord c28"
-									tooltipParam={{ text: tooltip }}
-									text={translate('commonNew')}
-									onClick={e => onRecordAdd(e, -1)}
-								/>
-								{isAllowedTemplate ? (
-									<Button
-										id={`button-${block.id}-add-record-select`}
-										className="select c28"
-										tooltipParam={{ text: translate('blockDataviewShowTemplates') }}
-										onClick={e => onTemplateMenu(e, -1)}
-									/>
-								) : ''}
-							</div>
-						) : ''}
-					</div>
-				</div>
-			</div>
-		);
+	if (isAllowedTemplate) {
+		buttonWrapCn.push('withSelect');
 	};
 
-	componentDidMount () {
-		this._isMounted = true;
+	if (className) {
+		cn.push(className);
 	};
 
-	componentDidUpdate () {
-		this.resize();	
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
-		const win = $(window);
-
-		container.off('mousedown.filter');
-		win.off('keydown.filter');
-
-		raf.cancel(this.frame);
-	};
-
-	onViewSwitch (view: any) {
-		this.onViewSet(view);
+	const onViewSwitch = (view: any) => {
+		onViewSet(view);
 
 		window.setTimeout(() => { 
-			$(`#button-${this.props.block.id}-settings`).trigger('click'); 
+			$(`#button-${block.id}-settings`).trigger('click'); 
 		}, 50);
 	};
 
-	onViewCopy (view) {
-		const { rootId, block, getSources, isInline, getTarget } = this.props;
+	const onViewCopy = (view) => {
 		const object = getTarget();
 		const sources = getSources();
 
 		C.BlockDataviewViewCreate(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
-			this.onViewSwitch({ id: message.viewId, type: view.type });
+			onViewSwitch({ id: message.viewId, type: view.type });
 
 			analytics.event('DuplicateView', {
 				type: view.type,
@@ -237,8 +77,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
-	onViewRemove (view) {
-		const { rootId, block, getView, isInline, getTarget } = this.props;
+	const onViewRemove = (view) => {
 		const views = S.Record.getViews(rootId, block.id);
 		const object = getTarget();
 		const idx = views.findIndex(it => it.id == view.id);
@@ -253,7 +92,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		if (next) {
 			C.BlockDataviewViewDelete(rootId, block.id, view.id, () => {
 				if (view.id == current.id) {
-					this.onViewSet(next);
+					onViewSet(next);
 				};
 
 				analytics.event('RemoveView', {
@@ -264,26 +103,22 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 	};
 
-	onButton (element: string, component: string) {
+	const onButton = (element: string, component: string) => {
 		if (!component) {
 			return;
 		};
 
-		const {
-			rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection,
-			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
-		} = this.props;
 		const view = getView();
 		const toggleParam = {
-			onOpen: () => this.toggleHoverArea(true),
-			onClose: () => this.toggleHoverArea(false),
+			onOpen: () => toggleHoverArea(true),
+			onClose: () => toggleHoverArea(false),
 		};
 		const isFilter = component == 'dataviewFilterList';
 		const isSort = component == 'dataviewSort';
 
 		if (!readonly && ((isFilter && !view.filters.length) || (isSort && !view.sorts.length))) {
-			this.sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
-				this.onButton(element, component);
+			sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
+				onButton(element, component);
 			});
 			return;
 		};
@@ -323,11 +158,11 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				onTemplateAdd,
 				onSortAdd,
 				onFilterAdd,
-				onViewSwitch: this.onViewSwitch,
-				onViewCopy: this.onViewCopy,
-				onViewRemove: this.onViewRemove,
+				onViewSwitch,
+				onViewCopy,
+				onViewRemove,
 				onFilterOrSortAdd: (menuId: string, component: string, menuWidth: number) => {
-					this.sortOrFilterRelationSelect(component, {
+					sortOrFilterRelationSelect(component, {
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
 						horizontal: I.MenuDirection.Right,
@@ -347,58 +182,52 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		S.Menu.open(component, param);
 	};
 
-	sortOrFilterRelationSelect (component: string, menuParam: Partial<I.MenuParam>, callBack?: () => void) {
-		const { rootId, block, getView } = this.props;
-
+	const sortOrFilterRelationSelect = (component: string, menuParam: Partial<I.MenuParam>, callBack?: () => void) => {
 		U.Menu.sortOrFilterRelationSelect(menuParam, {
 			rootId,
 			blockId: block.id,
 			getView,
-			onSelect: (item) => {
-				this.onSortOrFilterAdd(item, component, () => {
-					if (callBack) {
-						callBack();
-					};
-				});
-			}
+			onSelect: (item) => onSortOrFilterAdd(item, component, callBack),
 		});
 	};
 
-	onSortOrFilterAdd (item: any, component: string, callBack: () => void) {
-		const { onSortAdd, onFilterAdd } = this.props;
-
+	const onSortOrFilterAdd = (item: any, component: string, callBack: () => void) => {
 		let newItem: any = {
 			relationKey: item.relationKey ? item.relationKey : item.id
 		};
 
-		if (component == 'dataviewSort') {
-			newItem = Object.assign(newItem, {
-				type: I.SortType.Asc,
-				empty: I.EmptyType.End,
-			});
+		switch (component) {
+			case 'dataviewSort': {
+				newItem = Object.assign(newItem, {
+					type: I.SortType.Asc,
+					empty: I.EmptyType.End,
+				});
 
-			onSortAdd(newItem, callBack);
-		} else
-		if (component == 'dataviewFilterList') {
-			const conditions = Relation.filterConditionsByType(item.format);
-			const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-			const quickOptions = Relation.filterQuickOptions(item.format, condition);
-			const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
+				onSortAdd(newItem, callBack);
+				break;
+			};
 
-			newItem = Object.assign(newItem, {
-				condition: condition as I.FilterCondition,
-				value: Relation.formatValue(item, null, false),
-				quickOption,
-			});
+			case 'dataviewFilterList': {
+				const conditions = Relation.filterConditionsByType(item.format);
+				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+				const quickOptions = Relation.filterQuickOptions(item.format, condition);
+				const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
 
-			onFilterAdd(newItem, callBack);
+				newItem = Object.assign(newItem, {
+					condition: condition as I.FilterCondition,
+					value: Relation.formatValue(item, null, false),
+					quickOption,
+				});
+
+				onFilterAdd(newItem, callBack);
+				break;
+			};
 		};
 	};
 
-	onViewAdd (e: any) {
+	const onViewAdd = (e: any) => {
 		e.persist();
 
-		const { rootId, block, getSources, getTarget, isInline, getView } = this.props;
 		const sources = getSources();
 		const object = getTarget();
 		const view = getView();
@@ -431,8 +260,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				return;
 			};
 
-			this.resize();
-			this.onViewSwitch(view);
+			resize();
+			onViewSwitch(view);
 
 			analytics.event('AddView', {
 				type: view.type,
@@ -442,8 +271,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
-	onViewSet (view: any) {
-		const { rootId, block, isInline, getTarget } = this.props;
+	const onViewSet = (view: any) => {
 		const subId = S.Record.getSubId(rootId, block.id);
 		const object = getTarget();
 
@@ -457,21 +285,20 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
-	onViewContext (e: any, element: string, view: any) {
+	const onViewContext = (e: any, element: string, view: any) => {
 		e.stopPropagation();
 
-		const { rootId, block, readonly } = this.props;
 		if (readonly) {
 			return;
 		};
 
-		this.onViewSet(view);
+		onViewSet(view);
 		U.Menu.viewContextMenu({
 			rootId,
 			blockId: block.id,
 			view,
-			onCopy: this.onViewCopy,
-			onRemove: this.onViewRemove,
+			onCopy: onViewCopy,
+			onRemove: onViewRemove,
 			menuParam: {
 				element,
 				offsetY: 4,
@@ -481,17 +308,16 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
-	onViewSettings () {
-		this.onButton(`#button-${this.props.block.id}-settings`, 'dataviewViewSettings');
+	const onViewSettings = () => {
+		onButton(`#button-${block.id}-settings`, 'dataviewViewSettings');
 	};
 
-	onSortStart () {
+	const onSortStart = () => {
 		keyboard.disableSelection(true);
 	};
 
-	onSortEnd (result: any) {
+	const onSortEnd = (result: any) => {
 		const { oldIndex, newIndex } = result;
-		const { rootId, block, isInline, getTarget } = this.props;
 		const object = getTarget();
 		const views = S.Record.getViews(rootId, block.id);
 		const view = views[oldIndex];
@@ -509,27 +335,26 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		keyboard.disableSelection(false);
 	};
 
-	onFilterShow () {
-		if (!this.refFilter) {
+	const onFilterShow = () => {
+		if (!filterRef.current) {
 			return;
 		};
 
-		const { isPopup, isInline } = this.props;
 		const container = U.Common.getPageFlexContainer(isPopup);
 		const win = $(window);
 
-		this.refFilter.setActive(true);
-		this.toggleHoverArea(true);
+		filterRef.current.setActive(true);
+		toggleHoverArea(true);
 
 		if (!isInline) {
-			this.refFilter.focus();
+			filterRef.current.focus();
 		};
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
-			const value = this.refFilter.getValue();
+			const value = filterRef.current.getValue();
 
 			if (!value && !$(e.target).parents(`.filter`).length) {
-				this.onFilterHide();
+				onFilterHide();
 				container.off('mousedown.filter');
 			};
 		});
@@ -538,40 +363,36 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			e.stopPropagation();
 
 			keyboard.shortcut('escape', e, () => {
-				this.onFilterHide();
+				onFilterHide();
 				win.off('keydown.filter');
 			});
 		});
 	};
 
-	onFilterHide () {
-		if (!this.refFilter) {
+	const onFilterHide = () => {
+		if (!filterRef.current) {
 			return;
 		};
 
-		this.refFilter.setActive(false);
-		this.refFilter.setValue('');
-		this.refFilter.blur();
-		this.toggleHoverArea(false);
+		filterRef.current.setActive(false);
+		filterRef.current.setValue('');
+		filterRef.current.blur();
 
-		this.props.onFilterChange('');
+		toggleHoverArea(false);
+		onFilterChange('');
 	};
 
-	toggleHoverArea (v: boolean) {
-		$(`#block-${this.props.block.id} .hoverArea`).toggleClass('active', v);
+	const toggleHoverArea = (v: boolean) => {
+		$(`#block-${block.id} .hoverArea`).toggleClass('active', v);
 	};
 
-	resize () {
-		if (!this._isMounted) {
-			return;
+	const resize = () => {
+		if (frameRef.current) {
+			raf.cancel(frameRef.current);
 		};
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-		};
-
-		this.frame = raf(() => {
-			const node = $(this.node);
+		frameRef.current = raf(() => {
+			const node = $(nodeRef.current);
 			const sideLeft = node.find('#dataviewControlsSideLeft');
 			const sideRight = node.find('#dataviewControlsSideRight');
 			const nw = node.outerWidth();
@@ -590,6 +411,151 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
-});
+	const buttons = [
+		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: filterCnt > 0 },
+		{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
+		{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
+	];
+
+	const ButtonItem = (item: any) => {
+		const elementId = `button-${block.id}-${item.id}`;
+		const cn = [ `btn-${item.id}`, 'withBackground' ];
+
+		if (item.on) {
+			cn.push('on');
+		};
+
+		return (
+			<Icon
+				id={elementId} 
+				className={cn.join(' ')}
+				tooltipParam={{ text: item.text }}
+				onClick={() => this.onButton(`#${elementId}`, item.menu)}
+			/>
+		);
+	};
+
+	const ViewItem = SortableElement((item: any) => {
+		const elementId = `view-item-${block.id}-${item.id}`;
+		const cn = [ 'viewItem' ];
+
+		if (item.id == view.id) {
+			cn.push('active');
+		};
+
+		return (
+			<div 
+				id={elementId} 
+				className={cn.join(' ')} 
+				onClick={() => onViewSet(item)} 
+				onContextMenu={e => onViewContext(e, `#views #${elementId}`, item)}
+			>
+				{item.name || translate('defaultNamePage')}
+			</div>
+		);
+	});
+
+	const Views = SortableContainer(() => (
+		<div id="views" className="views">
+			{views.map((item: I.View, i: number) => (
+				<ViewItem key={i} {...item} index={i} disabled={readonly} />
+			))}
+
+			{allowedView ? (
+				<Icon 
+					id={`button-${block.id}-view-add`} 
+					className="plus withBackground" 
+					tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
+					onClick={onViewAdd} /> 
+			) : ''}
+		</div>
+	));
+
+	useEffect(() => {
+
+		return () => {
+			const container = U.Common.getPageFlexContainer(isPopup);
+			const win = $(window);
+
+			container.off('mousedown.filter');
+			win.off('keydown.filter');
+
+			raf.cancel(frameRef.current);
+		};
+
+	}, []);
+
+	useEffect(() => resize());
+
+	return (
+		<div
+			ref={nodeRef}
+			id="dataviewControls"
+			className={cn.join(' ')}
+		>
+			{head}
+			<div className="sides">
+				<div id="dataviewControlsSideLeft" className="side left">
+					<div 
+						id="view-selector"
+						className="viewSelect viewItem select"
+						onClick={() => onButton(`#block-${block.id} #view-selector`, 'dataviewViewList')}
+						onContextMenu={(e: any) => onViewContext(e, `#block-${block.id} #view-selector`, view)}
+					>
+						<div className="name">{view.name}</div>
+						<Icon className="arrow dark" />
+					</div>
+
+					<Views 
+						axis="x" 
+						lockAxis="x"
+						lockToContainerEdges={true}
+						transitionDuration={150}
+						distance={10}
+						onSortStart={onSortStart}
+						onSortEnd={onSortEnd}
+						helperClass="isDragging"
+						helperContainer={() => $(`#block-${block.id} .views`).get(0)}
+					/>
+				</div>
+
+				<div id="dataviewControlsSideRight" className="side right">
+					<Filter
+						ref={filterRef}
+						placeholder={translate('blockDataviewSearch')} 
+						icon="search withBackground"
+						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+						onChange={onFilterChange}
+						onIconClick={onFilterShow}
+					/>
+
+					{buttons.map((item: any, i: number) => (
+						<ButtonItem key={item.id} {...item} />
+					))}	
+					{isAllowedObject ? (
+						<div className={buttonWrapCn.join(' ')}>
+							<Button
+								id={`button-${block.id}-add-record`}
+								className="addRecord c28"
+								tooltipParam={{ text: tooltip }}
+								text={translate('commonNew')}
+								onClick={e => onRecordAdd(e, -1)}
+							/>
+							{isAllowedTemplate ? (
+								<Button
+									id={`button-${block.id}-add-record-select`}
+									className="select c28"
+									tooltipParam={{ text: translate('blockDataviewShowTemplates') }}
+									onClick={e => onTemplateMenu(e, -1)}
+								/>
+							) : ''}
+						</div>
+					) : ''}
+				</div>
+			</div>
+		</div>
+	);
+
+}));
 
 export default Controls;

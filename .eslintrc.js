@@ -75,6 +75,7 @@ module.exports = {
 		'react/no-unescaped-entities': 'off',
 		'react/no-direct-mutation-state': 'off',
 		'react/display-name': 'off',
+		'react/prop-types': 'off',
 	},
 	settings: {
 		react: {
