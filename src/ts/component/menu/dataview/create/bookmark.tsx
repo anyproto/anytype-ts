@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { Input, Button, Loader, Icon } from 'Component';
+import { Input, Button, Loader, Icon, Error } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 
 const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -8,8 +8,15 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	const inputRef = useRef(null);
 	const buttonRef = useRef(null);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ preview, setPreview ] = useState(null);
+	const [ error, setError ] = useState('');
 	const { data } = param;
 	const { value } = data;
+	const cn = [ 'form' ];
+
+	if (preview) {
+		cn.push('withPreview');
+	};
 
 	const rebind = () => {
 		unbind();
@@ -35,7 +42,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 		setIsLoading(true);
 
-		C.ObjectCreateBookmark({ ...details, source: value }, S.Common.space, bookmark?.defaultTemplateId, (message: any) => {
+		C.ObjectCreateFromUrl(details, S.Common.space, bookmark?.uniqueKey, value, true, bookmark?.defaultTemplateId, (message: any) => {
 			setIsLoading(false);
 
 			if (message.error.code) {
@@ -61,7 +68,33 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	};
 
 	const onChange = (e: any, v: string) => {
+		if (isLoading) {
+			return;
+		};
+
 		$(buttonRef.current.getNode()).toggleClass('hide', !v);
+
+		const url = U.Common.matchUrl(v);
+
+		if (url) {
+			if (preview && (url == preview.originalUrl)) {
+				return;
+			};
+
+			setIsLoading(true);
+
+			C.LinkPreview(url, (message: any) => {
+				setIsLoading(false);
+
+				if (message.error.code) {
+					setError(message.error.description);
+				} else {
+					setPreview({ ...message.previewLink, originalUrl: url });
+				};
+			});
+		} else {
+			setPreview(null);
+		};
 	};
 
 	useEffect(() => {
@@ -72,23 +105,37 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	}, []);
 
 	return (
-		<form onSubmit={onSubmit} className="form">
+		<form onSubmit={onSubmit} className={cn.join(' ')}>
 			{isLoading ? <Loader /> : ''}
 
-			<Icon className="link" />
+			<div className="inputWrap">
+				<Icon className="link" />
 
-			<Input 
-				ref={inputRef} 
-				value={value} 
-				placeholder={translate('commonPasteLink')} 
-				focusOnMount={true}
-				onKeyDown={onChange}
-				onKeyUp={onChange}
-			/>
+				<Input 
+					ref={inputRef} 
+					value={value} 
+					placeholder={translate('commonPasteLink')} 
+					focusOnMount={true}
+					onKeyDown={onChange}
+					onKeyUp={onChange}
+				/>
 
-			<div className="buttons">
-				<Button ref={buttonRef} type="input" color="blank" text={translate('commonCreate')} onClick={onSubmit} />
+				<div className="buttons">
+					<Button ref={buttonRef} type="input" color="blank" text={translate('commonCreate')} onClick={onSubmit} />
+				</div>
 			</div>
+
+			<Error text={error} />
+
+			{preview ? (
+				<div className="previewWrap">
+					<div className="pic" style={{ backgroundImage: `url("${preview.imageUrl}")` }} />
+					<div className="info">
+						<div className="name">{preview.title}</div>
+						<div className="descr">{preview.description}</div>
+					</div>
+				</div>
+			) : ''}
 		</form>
 	);
 
