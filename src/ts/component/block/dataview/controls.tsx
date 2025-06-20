@@ -3,10 +3,9 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Button, Filter } from 'Component';
 import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J } from 'Lib';
@@ -16,7 +15,14 @@ interface Props extends I.ViewComponent {
 	onFilterChange?: (v: string) => void; 
 };
 
-const Controls = observer(forwardRef<{}, Props>((props, ref) => {
+interface ControlsRefProps {
+	onViewSettings: () => void;
+	toggleHoverArea: (v: boolean) => void,
+	resize: () => void,
+	getHeadRef: () => any,
+};
+
+const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const { 
 		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
@@ -35,6 +41,10 @@ const Controls = observer(forwardRef<{}, Props>((props, ref) => {
 	const isAllowedObject = props.isAllowedObject();
 	const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
 	const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
 
 	const nodeRef = useRef(null);
 	const filterRef = useRef(null);
@@ -317,13 +327,20 @@ const Controls = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onSortEnd = (result: any) => {
-		const { oldIndex, newIndex } = result;
+		const { active, over } = result;
+
+		if (!active || !over) {
+			return;
+		};
+
 		const object = getTarget();
 		const views = S.Record.getViews(rootId, block.id);
+		const ids = views.map(it => it.id);
+		const oldIndex = ids.indexOf(active.id);
+		const newIndex = ids.indexOf(over.id);
 		const view = views[oldIndex];
-		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
-		S.Record.viewsSort(rootId, block.id, ids);
+		S.Record.viewsSort(rootId, block.id, arrayMove(views.map(it => it.id), oldIndex, newIndex));
 
 		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex, () => {
 			analytics.event('RepositionView', {
@@ -430,14 +447,25 @@ const Controls = observer(forwardRef<{}, Props>((props, ref) => {
 				id={elementId} 
 				className={cn.join(' ')}
 				tooltipParam={{ text: item.text }}
-				onClick={() => this.onButton(`#${elementId}`, item.menu)}
+				onClick={() => onButton(`#${elementId}`, item.menu)}
 			/>
 		);
 	};
 
-	const ViewItem = SortableElement((item: any) => {
+	const ViewItem = (item: any) => {
+		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: item.disabled });
 		const elementId = `view-item-${block.id}-${item.id}`;
 		const cn = [ 'viewItem' ];
+
+		if (transform) {
+			transform.scaleX = 1;
+			transform.scaleY = 1;
+		};
+
+		const style = {
+			transform: CSS.Transform.toString(transform),
+			transition,
+		};
 
 		if (item.id == view.id) {
 			cn.push('active');
@@ -449,27 +477,15 @@ const Controls = observer(forwardRef<{}, Props>((props, ref) => {
 				className={cn.join(' ')} 
 				onClick={() => onViewSet(item)} 
 				onContextMenu={e => onViewContext(e, `#views #${elementId}`, item)}
+				ref={setNodeRef}
+				{...attributes}
+				{...listeners}
+				style={style}
 			>
 				{item.name || translate('defaultNamePage')}
 			</div>
 		);
-	});
-
-	const Views = SortableContainer(() => (
-		<div id="views" className="views">
-			{views.map((item: I.View, i: number) => (
-				<ViewItem key={i} {...item} index={i} disabled={readonly} />
-			))}
-
-			{allowedView ? (
-				<Icon 
-					id={`button-${block.id}-view-add`} 
-					className="plus withBackground" 
-					tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
-					onClick={onViewAdd} /> 
-			) : ''}
-		</div>
-	));
+	};
 
 	useEffect(() => {
 
@@ -486,6 +502,13 @@ const Controls = observer(forwardRef<{}, Props>((props, ref) => {
 	}, []);
 
 	useEffect(() => resize());
+
+	useImperativeHandle(ref, () => ({
+		onViewSettings,
+		toggleHoverArea,
+		resize,
+		getHeadRef: () => headRef,
+	}));
 
 	return (
 		<div
@@ -506,17 +529,32 @@ const Controls = observer(forwardRef<{}, Props>((props, ref) => {
 						<Icon className="arrow dark" />
 					</div>
 
-					<Views 
-						axis="x" 
-						lockAxis="x"
-						lockToContainerEdges={true}
-						transitionDuration={150}
-						distance={10}
-						onSortStart={onSortStart}
-						onSortEnd={onSortEnd}
-						helperClass="isDragging"
-						helperContainer={() => $(`#block-${block.id} .views`).get(0)}
-					/>
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragStart={onSortStart}
+						onDragEnd={onSortEnd}
+						modifiers={[ restrictToHorizontalAxis, restrictToFirstScrollableAncestor ]}
+					>
+						<SortableContext
+							items={views.map(it => it.id)}
+							strategy={horizontalListSortingStrategy}
+						>
+							<div id="views" className="views">
+								{views.map((item: I.View, i: number) => (
+									<ViewItem key={i} {...item} index={i} disabled={readonly} />
+								))}
+
+								{allowedView ? (
+									<Icon 
+										id={`button-${block.id}-view-add`} 
+										className="plus withBackground" 
+										tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
+										onClick={onViewAdd} /> 
+								) : ''}
+							</div>
+						</SortableContext>
+					</DndContext>
 				</div>
 
 				<div id="dataviewControlsSideRight" className="side right">
@@ -532,6 +570,7 @@ const Controls = observer(forwardRef<{}, Props>((props, ref) => {
 					{buttons.map((item: any, i: number) => (
 						<ButtonItem key={item.id} {...item} />
 					))}	
+
 					{isAllowedObject ? (
 						<div className={buttonWrapCn.join(' ')}>
 							<Button
