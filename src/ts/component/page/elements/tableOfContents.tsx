@@ -13,7 +13,6 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const { rootId, isPopup } = props;
 	const nodeRef = useRef(null);
 	const tree = S.Block.getTableOfContents(rootId);
-	const max = tree.reduce((res, current) => Math.max(res, current.block.getLength()), 0);
 
 	const rebind = () => {
 		unbind();
@@ -85,7 +84,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		setBlock,
 	}));
 
-	if (!tree.length || !max) {
+	if (tree.length < 2) {
 		return null;
 	};
 
@@ -96,7 +95,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 					id={`item-${item.id}`}
 					className="item" 
 					key={item.id} 
-					style={{ width: `${item.block.getLength() / max * 100}%` }}
+					style={{ width: `${100 / (item.depth + 1)}%` }}
 				/>
 			))}
 		</div>
