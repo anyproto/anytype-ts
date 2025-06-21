@@ -234,7 +234,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		};
 
 		content = (
-			<div id="value" onClick={focus}>
+			<div id="value" onClick={focus} className="editingWrapper">
 				<div ref={placeholderRef} id="placeholder" className="placeholder">{placeholder}</div>
 
 				<span ref={listRef} id="list">
@@ -261,6 +261,8 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 						))}
 					</DragBox>
 				</span>
+
+				{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 				
 				{canEdit ? (
 					<span 

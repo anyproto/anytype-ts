@@ -3,20 +3,23 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, translate, J } from 'Lib';
 import Row from './list/row';
 
 const HEIGHT = 34;
+const PADDING = 40;
 
 const ViewList = observer(class ViewList extends React.Component<I.ViewComponent> {
 
 	node: any = null;
 	ref = null;
+	rows: Map<string, any[]> = new Map();
 
 	constructor (props: I.ViewComponent) {
 		super (props);
 
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+		this.listOnRef = this.listOnRef.bind(this);
 	};
 
 	render () {
@@ -45,6 +48,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 							{...this.props}
 							recordId={records[index]}
 							readonly={!isAllowedObject}
+							listOnRef={this.listOnRef}
 						/>
 					))}
 				</div>
@@ -77,6 +81,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 														{...this.props} 
 														recordId={records[index]}
 														recordIdx={index}
+														listOnRef={this.listOnRef}
 													/>
 												</div>
 											)}
@@ -122,15 +127,61 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		);
 	};
 
+	componentDidMount () {
+		this.rebind();
+		this.resize();
+	};
+
 	componentDidUpdate () {
 		U.Common.triggerResizeEditor(this.props.isPopup);
 
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
 
+		this.rebind();
+		this.resize();
+
 		if (ids.length) {
 			selection?.renderSelection();
 		};
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	rebind () {
+		const scroll = $(this.node).find('#scroll');
+
+		this.unbind();
+
+		scroll.on('scroll', () => this.onScroll());
+	};
+
+	unbind () {
+		const scroll = $(this.node).find('#scroll');
+
+		scroll.off('scroll');
+	};
+
+	listOnRef (ref: any, rowId: string, relationKey: string) {
+		const row = this.rows.get(rowId);
+
+		if (!row) {
+			this.rows.set(rowId, [ { ref, relationKey } ]);
+			return;
+		};
+
+		if (row.find(it => it.relationKey == relationKey)) {
+			return;
+		};
+
+		row.push({ ref, relationKey });
+		this.rows.set(rowId, row);
+	};
+
+	onScroll () {
+		S.Menu.resizeAll();
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -145,6 +196,63 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 			loadData(view.id, offset, false, resolve);
 			S.Record.metaSet(subId, '', { offset });
 		});
+	};
+
+	resize () {
+		const { rootId, block, isPopup, isInline, getVisibleRelations, getRecords } = this.props;
+		const parent = S.Block.getParentLeaf(rootId, block.id);
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
+		const wrap = node.find('#scrollWrap');
+		const container = U.Common.getPageContainer(isPopup);
+		const cw = container.width();
+		const records = getRecords();
+
+		let width = 0;
+		records.forEach((id) => {
+			const row = this.rows.get(id);
+
+			if (!row) {
+				return;
+			};
+
+			let rowWidth = row.reduce((res: number, current: any) => {
+				return res + Number(current.ref.width)
+			}, 0);
+
+			rowWidth += 8;
+			if (width < rowWidth) {
+				width = rowWidth;
+			};
+		});
+
+		if (isInline) {
+			if (parent) {
+				if (parent.isPage() || parent.isLayoutDiv()) {
+					const wrapper = container.find('#editorWrapper');
+					const ww = wrapper.width();
+					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
+					const margin = Math.max(0, (cw - ww) / 2);
+					const offset = 8;
+
+					scroll.css({ width: cw, marginLeft: -margin });
+					wrap.css({ width: vw + margin - offset, paddingLeft: margin, paddingRight: offset * 2 });
+				} else {
+					const parentObj = $(`#block-${parent.id}`);
+					const vw = parentObj.length ? (parentObj.width() - J.Size.blockMenu) : 0;
+
+					wrap.css({ width: Math.max(vw, width) });
+				};
+			};
+		} else {
+			const mw = cw - PADDING * 2;
+			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
+			const margin = (cw - mw) / 2;
+			const pr = width > mw ? PADDING : 0;
+
+			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+			wrap.css({ width: vw, paddingRight: pr });
+		};
 	};
 
 });

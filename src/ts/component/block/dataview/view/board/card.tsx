@@ -15,7 +15,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, getCoverObject } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, getCoverObject, canCellEdit } = this.props;
 		const view = getView();
 		const { coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -41,6 +41,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+						const canEdit = canCellEdit(relation, record);
 
 						return (
 							<Cell
@@ -53,7 +54,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								subId={subId}
 								ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
 								relationKey={relation.relationKey}
-								viewType={view.type}
+								viewType={canEdit ? I.ViewType.Grid : view.type}
 								idPrefix={idPrefix}
 								arrayLimit={2}
 								tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
@@ -129,12 +130,13 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { id, rootId, block, groupId, onCellClick } = this.props;
+		const { id, rootId, block, groupId, onCellClick, canCellEdit } = this.props;
 		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
 		const record = S.Detail.get(subId, id);
 		const relation = S.Record.getRelationByKey(vr.relationKey);
+		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+		if (!relation || !canEdit) {
 			return;
 		};
 
