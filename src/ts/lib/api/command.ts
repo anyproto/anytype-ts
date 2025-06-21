@@ -304,7 +304,6 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setLocalpath(path);
 	request.setType(type as number);
 	request.setDetails(Encode.struct(details));
-	request.setCreatetypewidgetifmissing(true);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -1313,7 +1312,6 @@ export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: st
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey || J.Constant.default.typeKey);
-	request.setCreatetypewidgetifmissing(true);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
