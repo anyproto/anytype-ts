@@ -288,6 +288,15 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			listRef.current.scrollToPosition(topRef.current);
 		};
 	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems: () => items,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+	}), []);
 	
 	return (
 		<div 
