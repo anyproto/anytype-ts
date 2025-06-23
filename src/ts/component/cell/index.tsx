@@ -14,6 +14,7 @@ interface Props extends I.Cell {
 	elementId?: string;
 	tooltipParam?: I.TooltipParam;
 	maxWidth?: number;
+	inplaceEditing?: boolean;
 };
 
 const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
@@ -22,6 +23,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
 		isInline, menuClassName = '', menuClassNameWrap = '', block, subId, rootId, onCellChange,
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
+		inplaceEditing,
 	} = props;
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
@@ -29,6 +31,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const isName = relationKey == 'name';
 	const nodeRef = useRef(null);
 	const childRef = useRef<I.CellRef>(null);
+	const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 
 	const checkIcon = () => {
 		
@@ -61,6 +64,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			return;
 		};
 
+		if (inplaceEditing) {
+			onInplaceEdit(e);
+			return;
+		};
+
 		const value = record[relation.relationKey] || '';
 		const canEdit = canCellEdit(relation, record);
 		const placeholder = getPlaceholder(relation, record);
@@ -83,7 +91,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const { config } = S.Common;
-		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 		const className = [];
@@ -418,6 +425,147 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		Preview.tooltipHide(false);
+	};
+
+	const onInplaceEdit = (e) => {
+		e.persist();
+		e.stopPropagation();
+
+		if (S.Menu.isOpen()) {
+			S.Menu.closeAll();
+			return;
+		};
+
+		let menuId = '';
+		let menuParam: any = {};
+		let menuData: any = {};
+		let ret = false;
+
+		switch (relation.format) {
+			case I.RelationType.Object: {
+				menuId = 'dataviewObjectValues';
+				menuParam.subIds = [ 'dataviewObjectList' ];
+				menuData = {
+					types: relation.objectTypes,
+					value: Relation.getArrayValue(record[relationKey]),
+					filters: []
+				};
+				break;
+			};
+
+			case I.RelationType.Date: {
+				let value = null;
+				let isEmpty = false;
+
+				if (record[relationKey]) {
+					value = Number(record[relationKey]);
+				} else {
+					value = Number(U.Date.now());
+					isEmpty = true;
+				};
+
+				if (!canCellEdit(relation, record)) {
+					U.Object.openDateByTimestamp(relationKey, value, 'config');
+					ret = true;
+					break;
+				};
+
+				menuId = 'calendar';
+				menuData = {
+					value,
+					isEmpty,
+				};
+				break;
+			};
+
+			case I.RelationType.Select:
+			case I.RelationType.MultiSelect: {
+				menuId = 'dataviewOptionList';
+				menuData = {
+					value: Relation.getArrayValue(record[relationKey]),
+					canAdd: true,
+					maxCount: relation.maxCount,
+				};
+				break;
+			};
+
+			case I.RelationType.File: {
+				menuId = 'dataviewFileValues';
+				menuParam = {
+					width: 280,
+					subIds: [ 'dataviewFileList' ],
+				};
+				menuData = {
+					value: record[relationKey] || [],
+					subId: rootId,
+				};
+				break;
+			};
+
+			case I.RelationType.Number:
+			case I.RelationType.Url:
+			case I.RelationType.Phone:
+			case I.RelationType.Email:
+			case I.RelationType.ShortText:
+			case I.RelationType.LongText: {
+				menuId = 'dataviewText';
+				menuParam.width = 288;
+				menuData.value = record[relationKey] || '';
+				break;
+			};
+
+			case I.RelationType.Checkbox: {
+				if (!canCellEdit(relation, record)) {
+					ret = true;
+					break;
+				};
+
+				const value = Relation.formatValue(relation, !record[relationKey], true);
+
+				C.ObjectListSetDetails([ record.id ], [ { key: relationKey, value } ]);
+				analytics.changeRelationValue(relation, value, { type: 'featured', id: 'Single' });
+				return;
+			};
+		};
+
+		if (!ret && menuId) {
+			onCellMenu(relationKey, menuId, menuParam, menuData);
+		};
+	};
+
+	const onCellMenu = (relationKey: string, menuId: string, param: any, data: any) => {
+		let menuParam = {
+			element: `#${cellId}`,
+			className: 'fromFeatured',
+			offsetY: 4,
+			noFlipX: true,
+			title: relation.name,
+			onClose: () => S.Menu.closeAll(),
+			data: {
+				rootId,
+				blockId: block.id,
+				relation: observable.box(relation),
+				relationKey: relation.relationKey,
+				canEdit: canCellEdit(relation, record),
+				onChange: (v: any, callBack?: () => void) => {
+					const value = Relation.formatValue(relation, v, true);
+
+					C.ObjectListSetDetails([ record.id ], [ { key: relationKey, value } ]);
+					analytics.changeRelationValue(relation, value, { type: 'featured', id: 'Single' });
+
+					if (callBack) {
+						callBack();
+					};
+				}
+			}
+		};
+
+		menuParam = Object.assign(menuParam, param);
+		menuParam.data = Object.assign(menuParam.data, data);
+
+		S.Menu.closeAll(J.Menu.cell, () => {
+			S.Menu.open(menuId, menuParam);
+		});
 	};
 
 	const getPlaceholder = (relation: any, record: any): string => {

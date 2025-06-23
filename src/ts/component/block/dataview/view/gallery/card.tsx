@@ -65,6 +65,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								iconSize={relation.relationKey == 'name' ? 20 : 18}
 								shortUrl={true}
 								withName={true}
+								inplaceEditing={true}
 							/>
 						);
 					})}
@@ -164,11 +165,12 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, recordId, getRecord } = this.props;
+		const { onCellClick, recordId, getRecord, canCellEdit } = this.props;
 		const record = getRecord(recordId);
 		const relation = S.Record.getRelationByKey(vr.relationKey);
+		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+		if (!relation || !canEdit) {
 			return;
 		};
 

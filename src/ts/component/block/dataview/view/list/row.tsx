@@ -53,6 +53,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							arrayLimit={2}
 							iconSize={relation.relationKey == 'name' ? 24 : 18}
 							withName={true}
+							inplaceEditing={true}
 						/>
 					);
 				})}
@@ -136,11 +137,12 @@ const Row = observer(class Row extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, recordId, getRecord } = this.props;
+		const { onCellClick, recordId, getRecord, canCellEdit } = this.props;
 		const record = getRecord(recordId);
 		const relation = S.Record.getRelationByKey(vr.relationKey);
+		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+		if (!relation || !canEdit) {
 			return;
 		};
 
