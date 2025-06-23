@@ -10,7 +10,7 @@
 		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; align-items: center; }
 		.item {
 			.grey { color: var(--color-control-active); }
-			.iconObject { margin-right: 10px; }
+			.iconObject { margin-right: 10px; background-color: var(--color-shape-highlight-medium); }
 
 			.buttons { line-height: 44px; display: none; gap: 0px 8px; margin: 0px 0px 0px 8px; }
 			.buttons {
