@@ -38,7 +38,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onFocus = this.onFocus.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
-		this.onRelation = this.onRelation.bind(this);
 		this.elementMapper = this.elementMapper.bind(this);
 	};
 
@@ -109,7 +108,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								<span
 									key={i}
 									className={cn.join(' ')}
-									onClick={e => this.onRelation(e, relation.relationKey)}
+									onClick={e => this.onCellClick(e, id)}
 								>
 									<Cell
 										ref={ref => this.cellRefs.set(id, ref)}
@@ -133,6 +132,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 										textLimit={150}
 										onMouseLeave={this.onMouseLeave}
 										withName={true}
+										inplaceEditing={true}
 									/>
 									<div className="bullet" />
 								</span>
@@ -292,7 +292,16 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					className="cellContent c-longText"
 					onClick={(e: any) => {
 						e.persist();
-						this.onRelation(e, relationKey);
+
+						const menuId = 'dataviewText';
+						const param = {
+							width: 288,
+						};
+						const data = {
+							value: object[relationKey] || '',
+						};
+
+						this.onCellMenu(relationKey, menuId, param, data);
 					}}
 					onMouseEnter={e => this.onMouseEnter(e, relationKey, translate('blockFeaturedIdentity'))}
 					onMouseLeave={this.onMouseLeave}
@@ -626,124 +635,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		});
 	};
 
-	onRelation (e: any, relationKey: string) {
-		e.persist();
-		e.stopPropagation();
+	onCellClick (e: any, id: string) {
+		const ref = this.cellRefs.get(id);
 
-		if (S.Menu.isOpen()) {
-			S.Menu.closeAll();
-			return;
-		};
-
-		const { isPopup, rootId } = this.props;
-		const storeId = this.getStoreId();
-		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
-		const relation = S.Record.getRelationByKey(relationKey);
-
-		if (!relation) {
-			return;
-		};
-
-		let menuId = '';
-		let menuParam: any = {};
-		let menuData: any = {};
-		let ret = false;
-
-		switch (relation.format) {
-			case I.RelationType.Object: {
-				menuId = 'dataviewObjectValues';
-				menuParam.subIds = [ 'dataviewObjectList' ];
-				menuData = {
-					types: relation.objectTypes,
-					value: Relation.getArrayValue(object[relationKey]),
-					filters: []
-				};
-				break;
-			};
-
-			case I.RelationType.Date: {
-				let value = null;
-				let isEmpty = false;
-
-				if (object[relationKey]) {
-					value = Number(object[relationKey]);
-				} else {
-					value = Number(U.Date.now());
-					isEmpty = true;
-				};
-
-				if (!this.canEdit(relation)) {
-					U.Object.openDateByTimestamp(relationKey, value, 'config');
-					ret = true;
-					break;
-				};
-
-				menuId = 'calendar';
-				menuData = {
-					value,
-					isEmpty,
-				};
-				break;
-			};
-
-			case I.RelationType.Select:
-			case I.RelationType.MultiSelect: {
-				menuId = 'dataviewOptionList';
-				menuData = {
-					value: Relation.getArrayValue(object[relationKey]),
-					canAdd: true,
-					maxCount: relation.maxCount,
-				};
-				break;
-			};
-
-			case I.RelationType.File: {
-				menuId = 'dataviewFileValues';
-				menuParam = {
-					width: 280,
-					subIds: [ 'dataviewFileList' ],
-				};
-				menuData = {
-					value: object[relationKey] || [],
-					subId: rootId,
-				};
-				break;
-			};
-
-			case I.RelationType.Number:
-			case I.RelationType.Url:
-			case I.RelationType.Phone:
-			case I.RelationType.Email:
-			case I.RelationType.ShortText:
-			case I.RelationType.LongText: {
-				menuId = 'dataviewText';
-				menuParam.width = 288;
-				menuData.value = object[relationKey] || '';
-				break;
-			};
-
-			case I.RelationType.Checkbox: {
-				if (!this.canEdit(relation)) {
-					ret = true;
-					break;
-				};
-
-				const object = S.Detail.get(rootId, rootId, [ relationKey ]);
-				const value = Relation.formatValue(relation, !object[relationKey], true);
-
-				C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value } ]);
-				analytics.changeRelationValue(relation, value, { type: 'featured', id: 'Single' });
-				return;
-			};
-		};
-
-		if (!ret && menuId) {
-			this.onCellMenu(relationKey, menuId, menuParam, menuData);
-		};
+		ref.onClick(e);
 	};
 
 	onCellMenu (relationKey: string, menuId: string, param: any, data: any) {
-		const { rootId, block, readonly } = this.props;
+		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
 		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
 		const relation = S.Record.getRelationByKey(relationKey);
