@@ -32,7 +32,7 @@
 			flex-direction: column; gap: 8px 0px; align-items: flex-end;
 		}
 		.tableOfContents {
-			.item { height: 2px; background: var(--color-shape-primary); border-radius: 2px; }
+			.item { height: 2px; background: var(--color-shape-primary); border-radius: 2px; transition: background $transitionCommon; }
 			.item.active { background: var(--color-control-accent); }
 		}
 	}
